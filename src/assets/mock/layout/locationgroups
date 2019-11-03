@@ -1,0 +1,30 @@
+{
+    "result" : 0,
+    "message" : "",
+    "data" : 
+        [
+            {
+                "id": 1,
+                "name": "EACH_PICKING_1",
+                "description": "Each Picking Zone - 1",
+                "locationGroupType": {
+                                        "name" : "Storage",
+                                        "description" : "Storage Locations",
+                                        "four_wall_inventory" : true,
+                                        "virtual" : false
+                                    }
+            },
+            {
+                "id": 2,
+                "name": "EACH_PICKING_2",
+                "description": "Each Picking Zone - 2",
+                "locationGroupType": {
+                                        "name" : "Storage",
+                                        "description" : "Storage Locations",
+                                        "four_wall_inventory" : true,
+                                        "virtual" : false
+                                    }
+            }
+
+        ]
+}

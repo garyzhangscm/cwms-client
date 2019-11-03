@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"typescript.tsdk": "./node_modules/typescript/lib",
+		"files.associations": {
+			"*.json": "jsonc",
+			".prettierrc": "jsonc",
+			".stylelintrc": "jsonc"
+		},
+		"ngschematics.schematics": [
+			"ng-alain"
+		]
+	}
+}
