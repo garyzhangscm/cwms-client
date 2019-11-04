@@ -104,6 +104,10 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
     this.selectedFiltersByLocationGroupType = selectedFiltersByLocationGroupType;
   }
 
+  addLocation(): void {}
+
+  deleteSelectedLocation(): void {}
+
   ngOnInit() {
     // initiate the search form
     this.searchForm = this.fb.group({

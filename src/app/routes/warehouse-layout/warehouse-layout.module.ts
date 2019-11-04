@@ -3,10 +3,12 @@ import { SharedModule } from '@shared';
 import { WarehouseLayoutRoutingModule } from './warehouse-layout-routing.module';
 import { WarehouseLayoutWarehouseComponent } from './warehouse/warehouse.component';
 import { WarehouseLayoutLocationGroupComponent } from './location-group/location-group.component';
+import { WarehouseLayoutWarehouseMaintenanceComponent } from './warehouse-maintenance/warehouse-maintenance.component';
 
 const COMPONENTS = [
   WarehouseLayoutWarehouseComponent,
-  WarehouseLayoutLocationGroupComponent];
+  WarehouseLayoutLocationGroupComponent,
+  WarehouseLayoutWarehouseMaintenanceComponent];
 const COMPONENTS_NOROUNT = [];
 
 @NgModule({

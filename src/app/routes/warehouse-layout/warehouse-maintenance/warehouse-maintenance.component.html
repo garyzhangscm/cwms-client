@@ -1,0 +1,72 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/warehouse-layout/warehouse"
+    routerLinkActive="active">{{'description.field.link.return' | translate}}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{'description.field.breadcrumb.home' | translate}}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{'description.field.breadcrumb.main' | translate}}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{'description.field.breadcrumb.warehouse-layout' | translate}}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/warehouse-layout/warehouse"
+        routerLinkActive="active">{{'description.field.breadcrumb.warehouse' | translate}}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{pageTitle}}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+
+<div nz-row>
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="1" [nzSize]="'default'">
+      <nz-step nzTitle="{{'description.steps.warehouse-maintenance.basic-info.title' | translate}}"
+        nzDescription="{{'description.steps.warehouse-maintenance.basic-info.description' | translate}}">
+      </nz-step>
+      <nz-step nzTitle="{{'description.steps.warehouse-maintenance.confirm.title' | translate}}"
+        nzDescription="{{'description.steps.warehouse-maintenance.confirm.description' | translate}}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+
+<form nz-form>
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseId">{{ 'description.field.label.warehouse.id' | translate }}
+    </nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24">
+      <input nz-input [(ngModel)]="currentWarehouse.id" id="warehouseId" name="id" disabled />
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseName">
+      {{ 'description.field.label.warehouse.name' | translate }}
+    </nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+      nzErrorTip="{{ 'error.form.field.warehouseName.required' | translate }}">
+      <input nz-input [(ngModel)]="currentWarehouse.name" id="warehouseName" name="name" required />
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseSize">
+      {{ 'description.field.label.warehouse.size' | translate }}
+    </nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+      nzErrorTip="{{ 'error.form.field.warehouseSize.required' | translate }}">
+      <input nz-input [(ngModel)]="currentWarehouse.size" id="warehouseSize" name="size" required />
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddress">
+      {{ 'description.field.label.warehouse.address' | translate }}
+    </nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+      nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}">
+      <input nz-input [(ngModel)]="currentWarehouse.address" id="warehouseAddress" name="address" required />
+    </nz-form-control>
+  </nz-form-item>
+</form>

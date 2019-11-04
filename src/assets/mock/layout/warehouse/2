@@ -1,0 +1,13 @@
+{
+    "result": 0,
+    "message": "",
+    "data":  
+        {
+
+            "id": 2,
+            "name": "WMNE",
+            "address": "Somewhere North East",
+            "size": "10000 sqft"
+
+        }
+}

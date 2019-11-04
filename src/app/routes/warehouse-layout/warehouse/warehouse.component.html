@@ -1,21 +1,18 @@
 <page-header [title]="'page.warehouse.header.title' | translate" [action]="addWarehouseActionTpl"> </page-header>
 <ng-template #addWarehouseActionTpl>
-  <button nz-button [nzType]="'primary'" (click)="addWarehouse()">
+  <a routerLink="/warehouse-layout/warehouse-maintenance" routerLinkActive="active">
     {{ 'description.field.button.add' | translate }}
-  </button>
+  </a>
 </ng-template>
 
 <ng-container *ngFor="let warehouse of warehouses">
   <nz-card nzTitle="{{ '#' + warehouse.id + '-' + warehouse.name }}" [nzActions]="[actionEdit, actionDelete]">
     <nz-descriptions nzBordered>
-      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.id' | translate }}"
-        >{{ warehouse.id }}
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.id' | translate }}">{{ warehouse.id }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.name' | translate }}"
-        >{{ warehouse.name }}
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.name' | translate }}">{{ warehouse.name }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.size' | translate }}"
-        >{{ warehouse.size }}
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.size' | translate }}">{{ warehouse.size }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.address' | translate }}" nzSpan="3">
         {{ warehouse.address }}
@@ -24,114 +21,12 @@
   </nz-card>
 
   <ng-template #actionEdit>
-    <i nz-icon nzType="edit" (click)="changeWarehouse(warehouse)"></i>
+    <a routerLink="/warehouse-layout/warehouse-maintenance/{{warehouse.id}}" routerLinkActive="active">
+      <!--<i nz-icon nzType="edit" (click)="changeWarehouse(warehouse)"></i>-->
+      <i nz-icon nzType="edit"></i>
+    </a>
   </ng-template>
   <ng-template #actionDelete>
     <i nz-icon nzType="delete" (click)="removeWarehouse(warehouse)"></i>
   </ng-template>
 </ng-container>
-
-<!-- Modal to add / edit warehouse-->
-<nz-modal
-  [(nzVisible)]="isModalVisible"
-  nzTitle="{{ 'page.warehouse.modal.edit.header.title' | translate }}"
-  (nzOnCancel)="handleCancel()"
-  (nzOnOk)="handleOk()"
->
-  <!--
-  <form nz-form [formGroup]="warehouseForm" (ngSubmit)="submitWarehouseForm()"> 
-    <nz-form-item>
-      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseId"
-        >{{ 'description.field.label.warehouse.id' | translate }}
-      </nz-form-label>
-      <nz-form-control [nzSm]="14" [nzXs]="24">
-        <input nz-input formControlName="warehouseId" id="warehouseId" />
-      </nz-form-control>
-    </nz-form-item>
-
-    <nz-form-item>
-      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseName">
-        {{ 'description.field.label.warehouse.name' | translate }}
-      </nz-form-label>
-      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="{{ 'error.form.field.warehouseName.required' | translate }}">
-        <input nz-input formControlName="warehouseName" id="warehouseName" />
-      </nz-form-control>
-    </nz-form-item>
-
-    <nz-form-item>
-      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseSize">
-        {{ 'description.field.label.warehouse.size' | translate }}
-      </nz-form-label>
-      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="{{ 'error.form.field.warehouseSize.required' | translate }}">
-        <input nz-input formControlName="warehouseSize" id="warehouseSize" />
-      </nz-form-control>
-    </nz-form-item>
-
-    <nz-form-item>
-      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddress">
-        {{ 'description.field.label.warehouse.address' | translate }}
-      </nz-form-label>
-      <nz-form-control
-        [nzSm]="14"
-        [nzXs]="24"
-        nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}"
-      >
-        <input nz-input formControlName="warehouseAddress" id="warehouseAddress" />
-      </nz-form-control>
-    </nz-form-item>
-  </form>
--->
-
-  <form nz-form>
-    <nz-form-item>
-      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseId"
-        >{{ 'description.field.label.warehouse.id' | translate }}
-      </nz-form-label>
-      <nz-form-control [nzSm]="14" [nzXs]="24">
-        <input nz-input [(ngModel)]="currentWarehouse.id" id="warehouseId" name="id" disabled />
-      </nz-form-control>
-    </nz-form-item>
-
-    <nz-form-item>
-      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseName">
-        {{ 'description.field.label.warehouse.name' | translate }}
-      </nz-form-label>
-      <nz-form-control
-        [nzSm]="14"
-        [nzXs]="24"
-        nzHasFeedback
-        nzErrorTip="{{ 'error.form.field.warehouseName.required' | translate }}"
-      >
-        <input nz-input [(ngModel)]="currentWarehouse.name" id="warehouseName" name="name" required />
-      </nz-form-control>
-    </nz-form-item>
-
-    <nz-form-item>
-      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseSize">
-        {{ 'description.field.label.warehouse.size' | translate }}
-      </nz-form-label>
-      <nz-form-control
-        [nzSm]="14"
-        [nzXs]="24"
-        nzHasFeedback
-        nzErrorTip="{{ 'error.form.field.warehouseSize.required' | translate }}"
-      >
-        <input nz-input [(ngModel)]="currentWarehouse.size" id="warehouseSize" name="size" required />
-      </nz-form-control>
-    </nz-form-item>
-
-    <nz-form-item>
-      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddress">
-        {{ 'description.field.label.warehouse.address' | translate }}
-      </nz-form-label>
-      <nz-form-control
-        [nzSm]="14"
-        [nzXs]="24"
-        nzHasFeedback
-        nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}"
-      >
-        <input nz-input [(ngModel)]="currentWarehouse.address" id="warehouseAddress" name="address" required />
-      </nz-form-control>
-    </nz-form-item>
-  </form>
-</nz-modal>

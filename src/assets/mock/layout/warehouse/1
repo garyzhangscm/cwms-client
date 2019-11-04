@@ -1,0 +1,12 @@
+{
+    "result": 0,
+    "message": "",
+    "data": 
+        {
+            "id": 1,
+            "name": "WMOR",
+            "address": "2164 N Batavia ST",
+            "size": "50000 sqft"
+        }
+
+}

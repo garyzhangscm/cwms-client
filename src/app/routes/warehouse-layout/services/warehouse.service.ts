@@ -14,6 +14,10 @@ export class WarehouseService {
     return this.http.get('layout/warehouses').pipe(map(res => res.data));
   }
 
+  getWarehouse(id: number): Observable<Warehouse> {
+    return this.http.get('layout/warehouse/' + id).pipe(map(res => res.data));
+  }
+
   addWarehouse(warehouse: Warehouse): Observable<Warehouse> {
     return this.http.post('layout/warehouses', warehouse).pipe(map(res => res.data));
   }
