@@ -6,8 +6,14 @@
 
             "id": 2,
             "name": "WMNE",
-            "address": "Somewhere North East",
-            "size": "10000 sqft"
+            "size": "10000 sqft"  ,        
+            "addressCountry": "U.S",
+            "addressState": "NY",
+            "addressCounty": "New York",
+            "addressCity": "New York",
+            "addressLine1": "5th ave",
+            "addressLine2": "2",
+            "addressPostcode": "10001"
 
         }
 }

@@ -1,0 +1,13 @@
+{
+    "result": 0,
+    "message": "",
+    "data": 
+        {
+            "id" : 5,
+            "name" : "Dispatched",
+            "description" : "Dispatched Shipment",
+            "fourWallInventory" : false,
+            "pickable" : false,
+            "virtual" : true
+        }
+}

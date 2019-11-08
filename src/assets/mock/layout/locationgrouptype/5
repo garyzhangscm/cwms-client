@@ -1,0 +1,14 @@
+{
+    "result": 0,
+    "message": "",
+    "data": 
+        {
+            "id" : 4,
+            "name" : "Shipping_Dock",
+            "description" : "Shipping Dock",
+            "fourWallInventory" : true,
+            "pickable" : false,
+            "virtual" : false,
+            "compatible" : "Receive_Dock"
+        }
+}

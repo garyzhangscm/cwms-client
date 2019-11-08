@@ -2,10 +2,8 @@ import { Component, OnInit, TemplateRef, ViewChild, ElementRef } from '@angular/
 import { _HttpClient } from '@delon/theme';
 import { Warehouse } from '../models/warehouse';
 import { WarehouseService } from '../services/warehouse.service';
-import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
-import { NzModalService, NzModalRef } from 'ng-zorro-antd';
+import { NzModalService } from 'ng-zorro-antd';
 import { I18NService } from '@core';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-warehouse-layout-warehouse',
@@ -13,16 +11,6 @@ import { Router } from '@angular/router';
 })
 export class WarehouseLayoutWarehouseComponent implements OnInit {
   warehouses: Warehouse[];
-
-  currentWarehouse: Warehouse;
-
-  emptyWarehouse: Warehouse = {
-    id: null,
-    name: '',
-    size: null,
-    address: '',
-  };
-
   // Edit form on modal
   // warehouseForm: FormGroup;
 
@@ -30,12 +18,10 @@ export class WarehouseLayoutWarehouseComponent implements OnInit {
     private warehouseService: WarehouseService,
     private modalService: NzModalService,
     private i18n: I18NService,
-    private router: Router,
   ) {}
 
   ngOnInit() {
     this.listWarehouses();
-    this.currentWarehouse = this.emptyWarehouse;
   }
 
   listWarehouses(): void {

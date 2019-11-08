@@ -1,0 +1,12 @@
+{
+    "result": 0,
+    "message": "",
+    "data": 
+        {
+            "id" : 0,
+            "name" : "Storage",
+            "description" : "Storage Locations",
+            "fourWallInventory" : true,
+            "virtual" : false
+        }
+}

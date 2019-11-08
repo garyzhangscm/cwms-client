@@ -27,9 +27,9 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="locationGroups"
+  <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfDisplayLocationGroups"
     (nzCurrentPageDataChange)="currentPageDataChange($event)" [nzFooter]="tableFoot">
-    <thead>
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
         <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
           (nzCheckedChange)="checkAll($event)"></th>
@@ -50,9 +50,41 @@
         <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
 
         <td>{{ data.id }}</td>
-        <td>{{ data.name }}</td>
-        <td>{{ data.description }}</td>
-        <td>{{ data.locationGroupType.name }}</td>
+        <td>
+          <div class="editable-cell" *ngIf="editId !== data.id|| editCol != 'name'; else editNameTpl">
+            <div class="editable-cell-value-wrap" (click)="startEdit(data.id, 'name', $event)">
+              {{ data.name }}
+            </div>
+          </div>
+          <ng-template #editNameTpl>
+            <input type="text" nz-input [(ngModel)]="data.name" (blur)="changeLocationGroup(data)" />
+          </ng-template>
+        </td>
+        <td>
+          <div class="editable-cell" *ngIf="editId !== data.id || editCol != 'description'; else editDescTpl">
+            <div class="editable-cell-value-wrap" (click)="startEdit(data.id, 'description', $event)">
+              {{ data.description }}
+            </div>
+          </div>
+          <ng-template #editDescTpl>
+            <input type="text" nz-input [(ngModel)]="data.description" (blur)="changeLocationGroup(data)" />
+          </ng-template>
+        </td>
+        <td>
+
+          <a nz-dropdown [nzDropdownMenu]="locationGroupTypesMenu">
+            {{ data.locationGroupType.description }}
+            <i nz-icon nzType="down"></i>
+          </a>
+          <nz-dropdown-menu #locationGroupTypesMenu="nzDropdownMenu">
+            <ul nz-menu nzSelectable>
+              <li nz-menu-item *ngFor="let locationGroupType of locationGroupTypes"
+                (click)="changeLocationGroupType(data, locationGroupType.value)">
+                {{locationGroupType.label}}
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+        </td>
       </tr>
     </tbody>
   </nz-table>
@@ -61,8 +93,11 @@
 
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start">
-    <button nz-button nzType="primary" (click)="addLocation()">{{'description.field.button.add' | translate}}</button>
+    <a nz-button nzType="primary" routerLink="/warehouse-layout/location-group-maintenance" routerLinkActive="active">
+      {{'description.field.button.add' | translate}}
+    </a>
+
     <button nz-button nzType="danger"
-      (click)="deleteSelectedLocation()">{{'description.field.button.delete' | translate}}</button>
+      (click)="removeSelectedLocationGroups()">{{'description.field.button.delete' | translate}}</button>
   </div>
 </ng-template>

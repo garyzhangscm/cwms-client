@@ -1,0 +1,13 @@
+{
+    "result": 0,
+    "message": "",
+    "data": 
+        {
+            "id" : 7,
+            "name" : "Yard",
+            "description" : "Yard",
+            "fourWallInventory" : false,
+            "pickable" : false,
+            "virtual" : true
+        }
+}

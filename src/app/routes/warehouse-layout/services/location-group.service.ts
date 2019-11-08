@@ -10,6 +10,10 @@ import { map } from 'rxjs/operators';
 export class LocationGroupService {
   constructor(private http: _HttpClient) {}
 
+  loadLocationGroups(): Observable<LocationGroup[]> {
+    return this.http.get('layout/locationgroups').pipe(map(res => res.data));
+  }
+
   getLocationGroups(locationGroupTypes: string[]): Observable<LocationGroup[]> {
     if (locationGroupTypes != null) {
       const params = {
@@ -17,19 +21,32 @@ export class LocationGroupService {
       };
       return this.http.get('layout/locationgroups', params).pipe(map(res => res.data));
     } else {
-      return this.http.get('layout/locationgroups').pipe(map(res => res.data));
+      return this.loadLocationGroups();
     }
   }
 
   addLocationGroup(locationGroup: LocationGroup): Observable<LocationGroup> {
-    return this.http.post('layout/locationgroups').pipe(map(res => res.data));
+    return this.http.post('layout/locationgroups', locationGroup).pipe(map(res => res.data));
   }
 
   changeLocationGroup(locationGroup: LocationGroup): Observable<LocationGroup> {
-    return this.http.put('layout/locationgroups').pipe(map(res => res.data));
+    const url = 'layout/locationgroup/' + locationGroup.id;
+    return this.http.put(url, locationGroup).pipe(map(res => res.data));
   }
 
-  deleteLocationGroup(locationGroup: LocationGroup): Observable<LocationGroup> {
-    return this.http.delete('layout/locationgroups').pipe(map(res => res.data));
+  removeLocationGroup(locationGroup: LocationGroup): Observable<LocationGroup> {
+    const url = 'layout/locationgroup/' + locationGroup.id;
+    return this.http.delete(url).pipe(map(res => res.data));
+  }
+
+  removeLocationGroups(locationgroups: LocationGroup[]): Observable<LocationGroup[]> {
+    const locationGroupIds: number[] = [];
+    locationgroups.forEach(locationGroup => {
+      locationGroupIds.push(locationGroup.id);
+    });
+    const params = {
+      location_group_ids: locationGroupIds.join(','),
+    };
+    return this.http.delete('layout/locationgroup', params).pipe(map(res => res.data));
   }
 }

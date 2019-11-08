@@ -1,0 +1,83 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/warehouse-layout/location-group" routerLinkActive="active">{{
+    'description.field.link.return' | translate
+  }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'description.field.breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.warehouse-layout' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/warehouse-layout/location-group" routerLinkActive="active">{{
+        'description.field.breadcrumb.warehouse' | translate
+      }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<div nz-row style="padding: 50px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="2" [nzSize]="'default'" (nzIndexChange)="onStepIndexChange($event)">
+      <nz-step nzTitle="{{ 'description.steps.location-group-maintenance.basic-info.title' | translate }}"
+        nzDescription="{{ 'description.steps.location-group-maintenance.basic-info.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'description.steps.location-group-maintenance.confirm.title' | translate }}"
+        nzDescription="{{ 'description.steps.location-group-maintenance.confirm.description' | translate }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+
+<ng-container>
+  <nz-card nzTitle="{{currentLocationGroup.name }}" [nzActions]="[actionSave]">
+    <nz-descriptions nzTitle="{{'description.field.label.location-group' | translate}}" nzBordered>
+
+      <nz-descriptions-item nzTitle="{{'description.field.label.location-group.name' | translate}}">
+        {{currentLocationGroup.name}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description.field.label.location-group.description' | translate}}" nzSpan="2">
+        {{currentLocationGroup.description}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description.field.label.location-group-type' | translate}}" nzSpan="3">
+        <div>
+          <nz-tag [nzColor]="'#2db7f5'" style="font-size: 14px">{{currentLocationGroup.locationGroupType.description}}
+          </nz-tag>
+          <nz-tag [nzColor]="'#2db7f5'" *ngIf="currentLocationGroup.locationGroupType.fourWallInventory"
+            style="font-size: 14px">
+            {{'description.field.label.location-group-type.four_wall_inventory' | translate}}</nz-tag>
+          <nz-tag [nzColor]="'#2db7f5'" *ngIf="currentLocationGroup.locationGroupType.virtual" style="font-size: 14px">
+            {{'description.field.label.location-group-type.virtual' | translate}}</nz-tag>
+        </div>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description.field.label.location-group.storable' | translate}}">
+        <i *ngIf="currentLocationGroup.storable" nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'"
+          [nzTwotoneColor]="'#52c41a'" style="font-size: 26px"></i>
+        <i *ngIf="!currentLocationGroup.storable" nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'"
+          [nzTwotoneColor]="'#eb2f96'" style="font-size: 26px"></i>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description.field.label.location-group.pickable' | translate}}">
+        <i *ngIf="currentLocationGroup.pickable" nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'"
+          [nzTwotoneColor]="'#52c41a'" style="font-size: 26px"></i>
+        <i *ngIf="!currentLocationGroup.pickable" nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'"
+          [nzTwotoneColor]="'#eb2f96'" style="font-size: 26px"></i>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description.field.label.location-group.countable' | translate}}">
+        <i *ngIf="currentLocationGroup.countable" nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'"
+          [nzTwotoneColor]="'#52c41a'" style="font-size: 26px"></i>
+        <i *ngIf="!currentLocationGroup.countable" nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'"
+          [nzTwotoneColor]="'#eb2f96'" style="font-size: 26px"></i>
+      </nz-descriptions-item>
+
+    </nz-descriptions>
+  </nz-card>
+</ng-container>
+
+
+<ng-template #actionSave>
+  <button nz-button nzType="primary"
+    (click)="saveLocationGroup()">{{ 'description.field.button.confirm' | translate}}</button>
+</ng-template>

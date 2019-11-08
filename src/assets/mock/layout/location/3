@@ -1,0 +1,35 @@
+{
+    "result": 0,
+    "message": "",
+    "data":  
+        {
+            "id": 3,
+            "name": "10201A003",
+            "aisle": "102",
+            "x": 0,
+            "y": 0,
+            "z": 0,
+            "length": 48,
+            "width": 48,
+            "height": 48,
+            "pickSequence": 3,
+            "putawaySequence": 3,
+            "countSequence": 3,
+            "capacity": 110592,
+            "fillPercentage": 80,
+            "locationGroup" : 
+            {
+                "id": 1,
+                "name": "EACH_PICKING_1",
+                "description": "Each Picking Zone - 1",
+                "locationGroupType": {
+                                        "id" : 0,
+                                        "name" : "Storage",
+                                        "description" : "Storage Locations",
+                                        "four_wall_inventory" : true,
+                                        "virtual" : false
+                                    },
+                "locationCount":15
+            }
+        }
+}

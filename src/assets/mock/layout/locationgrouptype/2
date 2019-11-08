@@ -1,0 +1,14 @@
+{
+    "result": 0,
+    "message": "",
+    "data": 
+        {
+            "id" : 1,
+            "name" : "Receive_Stage",
+            "description" : "Receiving Stage",
+            "fourWallInventory" : true,
+            "pickable" : false,
+            "virtual" : false,
+            "compatible" : "Shipping_Stage"
+        }
+}

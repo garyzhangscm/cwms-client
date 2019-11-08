@@ -3,77 +3,77 @@
     "message": "",
     "data": [
         {
-            "id" : 0,
+            "id" : 1,
             "name" : "Storage",
             "description" : "Storage Locations",
-            "four_wall_inventory" : true,
+            "fourWallInventory" : true,
             "virtual" : false
         },
         {
-            "id" : 1,
+            "id" : 2,
             "name" : "Receive_Stage",
             "description" : "Receiving Stage",
-            "four_wall_inventory" : true,
+            "fourWallInventory" : true,
             "pickable" : false,
             "virtual" : false,
             "compatible" : "Shipping_Stage"
         },
         {
-            "id" : 2,
+            "id" : 3,
             "name" : "Receive_Dock",
             "description" : "Receiving Dock",
-            "four_wall_inventory" : true,
+            "fourWallInventory" : true,
             "pickable" : false,
             "virtual" : false,
             "compatible" : "Shipping_Dock"
         },
         {
-            "id" : 3,
+            "id" : 4,
             "name" : "Shipping_Stage",
             "description" : "Shipping Stage",
-            "four_wall_inventory" : true,
+            "fourWallInventory" : true,
             "pickable" : false,
             "virtual" : false,
             "compatible" : "Receive_Stage"
         },
         {
-            "id" : 4,
+            "id" : 5,
             "name" : "Shipping_Dock",
             "description" : "Shipping Dock",
-            "four_wall_inventory" : true,
+            "fourWallInventory" : true,
             "pickable" : false,
             "virtual" : false,
             "compatible" : "Receive_Dock"
         },
         {
-            "id" : 5,
+            "id" : 6,
             "name" : "Dispatched",
             "description" : "Dispatched Shipment",
-            "four_wall_inventory" : false,
+            "fourWallInventory" : false,
             "pickable" : false,
             "virtual" : true
         },
         {
-            "id" : 6,
+            "id" : 7,
             "name" : "RF",
             "description" : "RF",
-            "four_wall_inventory" : true,
+            "fourWallInventory" : true,
             "pickable" : false,
             "virtual" : false
         },
         {
-            "id" : 7,
+            "id" : 8,
             "name" : "Yard",
             "description" : "Yard",
-            "four_wall_inventory" : false,
+            "fourWallInventory" : false,
             "pickable" : false,
             "virtual" : true
         },
         {
-            "id" : 8,
+            "id" : 9,
             "name" : "PickupDeposit",
             "description" : "Pickup and Deposit",
-            "four_wall_inventory" : true,
+            "fourWallInventory" : true,
             "pickable" : false,
             "virtual" : false
         }

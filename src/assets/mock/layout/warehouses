@@ -5,15 +5,27 @@
         {
             "id": 1,
             "name": "WMOR",
-            "address": "2164 N Batavia ST",
-            "size": "50000 sqft"
+            "size": "50000 sqft",
+            "addressCountry": "U.S",
+            "addressState": "CA",
+            "addressCounty": "Orange",
+            "addressCity": "Orange",
+            "addressLine1": "2164 N Batavia ST",
+            "addressLine2": "1",
+            "addressPostcode": "92865"
         },
         {
 
             "id": 2,
             "name": "WMNE",
-            "address": "Somewhere North East",
-            "size": "10000 sqft"
+            "size": "10000 sqft"  ,        
+            "addressCountry": "U.S",
+            "addressState": "NY",
+            "addressCounty": "New York",
+            "addressCity": "New York",
+            "addressLine1": "5th ave",
+            "addressLine2": "2",
+            "addressPostcode": "10001"
 
         }
 

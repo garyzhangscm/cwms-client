@@ -3,6 +3,13 @@ import { NgModule, LOCALE_ID, APP_INITIALIZER, Injector } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { IconDefinition } from '@ant-design/icons-angular';
+import { NzIconModule, NZ_ICON_DEFAULT_TWOTONE_COLOR, NZ_ICONS } from 'ng-zorro-antd/icon';
+
+// 引入你需要的图标，比如你需要 fill 主题的 AccountBook Alert 和 outline 主题的 Alert，推荐 ✔️
+import { CloseCircleTwoTone, CheckCircleTwoTone } from '@ant-design/icons-angular/icons';
+
+const icons: IconDefinition[] = [CloseCircleTwoTone, CheckCircleTwoTone];
 
 // #region default language
 // Reference: https://ng-alain.com/docs/i18n
@@ -35,39 +42,35 @@ export function I18nHttpLoaderFactory(http: HttpClient) {
 }
 
 const I18NSERVICE_MODULES = [
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: I18nHttpLoaderFactory,
-        deps: [HttpClient]
-      }
-    })
+  TranslateModule.forRoot({
+    loader: {
+      provide: TranslateLoader,
+      useFactory: I18nHttpLoaderFactory,
+      deps: [HttpClient],
+    },
+  }),
 ];
 
-const I18NSERVICE_PROVIDES = [
-  { provide: ALAIN_I18N_TOKEN, useClass: I18NService, multi: false }
-];
+const I18NSERVICE_PROVIDES = [{ provide: ALAIN_I18N_TOKEN, useClass: I18NService, multi: false }];
 // #region
 
 // #region JSON Schema form (using @delon/form)
 import { JsonSchemaModule } from '@shared/json-schema/json-schema.module';
-const FORM_MODULES = [ JsonSchemaModule ];
+const FORM_MODULES = [JsonSchemaModule];
 // #endregion
-
 
 // #region Http Interceptors
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { SimpleInterceptor } from '@delon/auth';
 import { DefaultInterceptor } from '@core/net/default.interceptor';
 const INTERCEPTOR_PROVIDES = [
-  { provide: HTTP_INTERCEPTORS, useClass: SimpleInterceptor, multi: true},
-  { provide: HTTP_INTERCEPTORS, useClass: DefaultInterceptor, multi: true}
+  { provide: HTTP_INTERCEPTORS, useClass: SimpleInterceptor, multi: true },
+  { provide: HTTP_INTERCEPTORS, useClass: DefaultInterceptor, multi: true },
 ];
 // #endregion
 
 // #region global third module
-const GLOBAL_THIRD_MODULES = [
-];
+const GLOBAL_THIRD_MODULES = [];
 // #endregion
 
 // #region Startup Service
@@ -81,8 +84,8 @@ const APPINIT_PROVIDES = [
     provide: APP_INITIALIZER,
     useFactory: StartupServiceFactory,
     deps: [StartupService],
-    multi: true
-  }
+    multi: true,
+  },
 ];
 // #endregion
 
@@ -94,9 +97,7 @@ import { RoutesModule } from './routes/routes.module';
 import { LayoutModule } from './layout/layout.module';
 
 @NgModule({
-  declarations: [
-    AppComponent
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -106,16 +107,19 @@ import { LayoutModule } from './layout/layout.module';
     SharedModule,
     LayoutModule,
     RoutesModule,
+    NzIconModule,
     ...I18NSERVICE_MODULES,
     ...FORM_MODULES,
-    ...GLOBAL_THIRD_MODULES
+    ...GLOBAL_THIRD_MODULES,
   ],
   providers: [
     ...LANG_PROVIDES,
     ...INTERCEPTOR_PROVIDES,
     ...I18NSERVICE_PROVIDES,
-    ...APPINIT_PROVIDES
+    ...APPINIT_PROVIDES,
+    { provide: NZ_ICON_DEFAULT_TWOTONE_COLOR, useValue: '#00ff00' }, // 不提供的话，即为 Ant Design 的主题蓝色
+    { provide: NZ_ICONS, useValue: icons },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

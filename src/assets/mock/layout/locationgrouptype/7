@@ -1,0 +1,13 @@
+{
+    "result": 0,
+    "message": "",
+    "data": 
+        {
+            "id" : 6,
+            "name" : "RF",
+            "description" : "RF",
+            "fourWallInventory" : true,
+            "pickable" : false,
+            "virtual" : false
+        }
+}

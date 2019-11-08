@@ -14,15 +14,34 @@
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.size' | translate }}">{{ warehouse.size }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.address' | translate }}" nzSpan="3">
-        {{ warehouse.address }}
+
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.address.country' | translate }}">
+        {{ warehouse.addressCountry }}
       </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.address.state' | translate }}">
+        {{ warehouse.addressState }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.address.county' | translate }}">
+        {{ warehouse.addressCounty }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.address.city' | translate }}">
+        {{ warehouse.addressCity }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.address.line1' | translate }}">
+        {{ warehouse.addressLine1 }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.address.line2' | translate }}">
+        {{ warehouse.addressLine2 }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.address.postcode' | translate }}">
+        {{ warehouse.addressPostcode }}
+      </nz-descriptions-item>
+
     </nz-descriptions>
   </nz-card>
 
   <ng-template #actionEdit>
     <a routerLink="/warehouse-layout/warehouse-maintenance/{{warehouse.id}}" routerLinkActive="active">
-      <!--<i nz-icon nzType="edit" (click)="changeWarehouse(warehouse)"></i>-->
       <i nz-icon nzType="edit"></i>
     </a>
   </ng-template>

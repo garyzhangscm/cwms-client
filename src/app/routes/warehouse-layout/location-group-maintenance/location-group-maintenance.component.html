@@ -1,0 +1,107 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/warehouse-layout/location-group" routerLinkActive="active">{{
+    'description.field.link.return' | translate
+  }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'description.field.breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.warehouse-layout' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/warehouse-layout/location-group" routerLinkActive="active">{{
+        'description.field.breadcrumb.location-group' | translate
+      }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<div nz-row style="padding: 50px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="1" [nzSize]="'default'">
+      <nz-step nzTitle="{{ 'description.steps.location-group-maintenance.basic-info.title' | translate }}"
+        nzDescription="{{ 'description.steps.location-group-maintenance.basic-info.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'description.steps.location-group-maintenance.confirm.title' | translate }}"
+        nzDescription="{{ 'description.steps.location-group-maintenance.confirm.description' | translate }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+<form nz-form>
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupName">
+      {{ 'description.field.label.location-group.name' | translate }}
+    </nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | translate }}">
+      <input nz-input [(ngModel)]="currentLocationGroup.name" id="locationGroupName" name="name" required />
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupDescription">
+      {{ 'description.field.label.location-group.description' | translate }}
+    </nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | translate }}">
+      <input nz-input [(ngModel)]="currentLocationGroup.description" id="locationGroupDescription" name="description"
+        required />
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupType">
+      {{ 'description.field.label.location-group-type' | translate }}
+    </nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | translate }}"
+      [nzSuccessTip]="locationGroupTypeDetailTpl">
+      <nz-select [(ngModel)]="currentLocationGroup.locationGroupType.id" name="locationGroupType"
+        (ngModelChange)="locationGroupTypeChange($event)">
+        <nz-option *ngFor="let locationGroupType of locationGroupTypes" nzValue="{{locationGroupType.value}}"
+          nzLabel="{{locationGroupType.label}}"></nz-option>
+
+      </nz-select>
+    </nz-form-control>
+  </nz-form-item>
+  <ng-template #locationGroupTypeDetailTpl>
+    <div>
+      <nz-tag [nzColor]="'#2db7f5'" *ngIf="currentLocationGroup.locationGroupType.fourWallInventory">
+        {{'description.field.label.location-group-type.four_wall_inventory' | translate}}</nz-tag>
+      <nz-tag [nzColor]="'#2db7f5'" *ngIf="currentLocationGroup.locationGroupType.virtual">
+        {{'description.field.label.location-group-type.virtual' | translate}}</nz-tag>
+    </div>
+  </ng-template>
+
+  <nz-form-item>
+    <nz-form-control>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupDescription">
+        {{ 'description.field.label.location-group.storable' | translate }}
+      </nz-form-label>
+      <label nz-checkbox [(ngModel)]="currentLocationGroup.storable" name="storable">
+      </label>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-control>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupDescription">
+        {{ 'description.field.label.location-group.pickable' | translate }}
+      </nz-form-label>
+      <label nz-checkbox [(ngModel)]="currentLocationGroup.pickable" name="pickable"></label>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-control>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupDescription">
+        {{ 'description.field.label.location-group.countable' | translate }}
+      </nz-form-label>
+      <label nz-checkbox [(ngModel)]="currentLocationGroup.countable" name="countable"></label>
+    </nz-form-control>
+  </nz-form-item>
+</form>
+
+<div nz-row nzType="flex" nzJustify="center">
+  <button nz-button nzType="primary" (click)="goToConfirmPage()">
+    {{ 'description.steps.next' | translate }} :
+    {{ 'description.steps.location-group-maintenance.confirm.title' | translate }}
+  </button>
+</div>

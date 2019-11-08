@@ -5,4 +5,8 @@ export interface LocationGroup {
   name: string;
   description: string;
   locationGroupType: LocationGroupType;
+  locationCount: number;
+  pickable: boolean;
+  storable: boolean;
+  countable: boolean;
 }

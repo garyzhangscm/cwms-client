@@ -1,0 +1,76 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/warehouse-layout/warehouse" routerLinkActive="active">{{
+    'description.field.link.return' | translate
+  }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'description.field.breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.warehouse-layout' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/warehouse-layout/warehouse" routerLinkActive="active">{{
+        'description.field.breadcrumb.warehouse' | translate
+      }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<div nz-row style="padding: 50px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="2" [nzSize]="'default'" (nzIndexChange)="onStepIndexChange($event)">
+      <nz-step nzTitle="{{ 'description.steps.warehouse-maintenance.basic-info.title' | translate }}"
+        nzDescription="{{ 'description.steps.warehouse-maintenance.basic-info.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'description.steps.warehouse-maintenance.confirm.title' | translate }}"
+        nzDescription="{{ 'description.steps.warehouse-maintenance.confirm.description' | translate }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+
+<ng-container>
+  <nz-card
+    nzTitle="{{ (currentWarehouse.id === null ? '' : ('#' + currentWarehouse.id + '-')) + currentWarehouse.name }}"
+    [nzActions]="[actionSave]">
+    <nz-descriptions nzTitle="{{'description.field.label.warehouse' | translate}}" nzBordered>
+
+      <nz-descriptions-item nzTitle="{{'description.field.label.warehouse.id' | translate}}">{{currentWarehouse.id}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description.field.label.warehouse.name' | translate}}">{{currentWarehouse.name}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description.field.label.warehouse.size' | translate}}">{{currentWarehouse.size}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.address.country' | translate }}">
+        {{ currentWarehouse.addressCountry }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.address.state' | translate }}">
+        {{ currentWarehouse.addressState }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.address.county' | translate }}">
+        {{ currentWarehouse.addressCounty }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.address.city' | translate }}">
+        {{ currentWarehouse.addressCity }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.address.line1' | translate }}">
+        {{ currentWarehouse.addressLine1 }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.address.line2' | translate }}">
+        {{ currentWarehouse.addressLine2 }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.warehouse.address.postcode' | translate }}">
+        {{ currentWarehouse.addressPostcode }}
+      </nz-descriptions-item>
+    </nz-descriptions>
+  </nz-card>
+</ng-container>
+
+
+<ng-template #actionSave>
+  <button nz-button nzType="primary"
+    (click)="saveWarehouse()">{{ 'description.field.button.confirm' | translate}}</button>
+</ng-template>

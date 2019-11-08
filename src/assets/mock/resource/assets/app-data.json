@@ -24,37 +24,8 @@
               "text": "仪表盘V1",
               "link": "/dashboard/v1",
               "i18n": "menu.dashboard.v1"
-            },
-            {
-              "text": "分析页",
-              "link": "/dashboard/analysis",
-              "i18n": "menu.dashboard.analysis"
-            },
-            {
-              "text": "监控页",
-              "link": "/dashboard/monitor",
-              "i18n": "menu.dashboard.monitor"
-            },
-            {
-              "text": "工作台",
-              "link": "/dashboard/workplace",
-              "i18n": "menu.dashboard.workplace"
             }
           ]
-        },
-        {
-          "text": "快捷菜单",
-          "i18n": "menu.shortcut",
-          "icon": "anticon-rocket",
-          "shortcutRoot": true,
-          "children": []
-        },
-        {
-          "text": "小部件",
-          "i18n": "menu.widgets",
-          "link": "/widgets",
-          "icon": "anticon-appstore",
-          "badge": 2
         }
       ]
     },
@@ -80,44 +51,24 @@
               "link": "/warehouse-layout/location-group",
               "i18n": "menu.main.layout.location.group",
               "shortcut": false
+            },
+            {
+              "text": "WarehouseLocation",
+              "link": "/warehouse-layout/warehouse-location",
+              "i18n": "menu.main.layout.location",
+              "shortcut": false
             }
           ]
-        }
-      ]
-    },
-    {
-      "text": "G.Z Test",
-      "i18n": "menu.test",
-      "group": true,
-      "hideInBreadcrumb": true,
-      "children": [
+        },
         {
-          "text": "Pages",
-          "i18n": "menu.test.pages",
+          "text": "Util",
+          "i18n": "menu.main.util",
           "icon": "anticon-info",
           "children": [
             {
-              "text": "Empty Page",
-              "link": "/test/empty",
-              "i18n": "menu.test.pages.empty",
-              "shortcut": false
-            },
-            {
-              "text": "List Page",
-              "link": "/test/list",
-              "i18n": "menu.test.pages.list",
-              "shortcut": false
-            },
-            {
-              "text": "Edit Page",
-              "link": "/test/edit",
-              "i18n": "menu.test.pages.edit",
-              "shortcut": false
-            },
-            {
-              "text": "View Page",
-              "link": "/test/t-maint",
-              "i18n": "menu.test.pages.view",
+              "text": "File Upload",
+              "link": "/util/file-upload",
+              "i18n": "menu.main.util.file-upload",
               "shortcut": false
             }
           ]

@@ -1,0 +1,14 @@
+{
+    "result": 0,
+    "message": "",
+    "data": 
+        {
+            "id" : 8,
+            "name" : "PickupDeposit",
+            "description" : "Pickup and Deposit",
+            "fourWallInventory" : true,
+            "pickable" : false,
+            "virtual" : false
+        }
+ 
+}

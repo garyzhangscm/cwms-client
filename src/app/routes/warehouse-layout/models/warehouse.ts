@@ -1,6 +1,14 @@
 export interface Warehouse {
   id: number;
   name: string;
-  address: string;
   size: string;
+
+  addressLine1: string;
+  addressLine2?: string;
+  addressCountry: string;
+  addressState: string;
+  addressCounty?: string;
+  addressCity: string;
+  addressStreet?: string;
+  addressPostcode: string;
 }

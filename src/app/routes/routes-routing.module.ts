@@ -25,6 +25,8 @@ const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent, data: { title: '仪表盘' } },
       { path: 'warehouse-layout', loadChildren: './warehouse-layout/warehouse-layout.module#WarehouseLayoutModule' },
+      { path: 'common', loadChildren: './common/common.module#CommonModule' },
+      { path: 'util', loadChildren: './util/util.module#UtilModule' },
       { path: 'exception', loadChildren: () => import('./exception/exception.module').then(m => m.ExceptionModule) },
       // 业务子模块
       // { path: 'widgets', loadChildren: () => import('./widgets/widgets.module').then(m => m.WidgetsModule) },
