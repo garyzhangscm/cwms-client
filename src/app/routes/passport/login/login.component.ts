@@ -7,6 +7,8 @@ import { SocialService, SocialOpenType, ITokenService, DA_SERVICE_TOKEN } from '
 import { ReuseTabService } from '@delon/abc';
 import { environment } from '@env/environment';
 import { StartupService } from '@core';
+import { Warehouse } from '../../warehouse-layout/models/warehouse';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Component({
   selector: 'passport-login',
@@ -28,15 +30,19 @@ export class UserLoginComponent implements OnDestroy {
     private startupSrv: StartupService,
     public http: _HttpClient,
     public msg: NzMessageService,
+    private warehouseService: WarehouseService,
   ) {
     this.form = fb.group({
       userName: [null, [Validators.required, Validators.minLength(4)]],
       password: [null, Validators.required],
+      warehouseId: [{ value: '', disabled: true }, Validators.required],
       mobile: [null, [Validators.required, Validators.pattern(/^1\d{10}$/)]],
       captcha: [null, [Validators.required]],
       remember: [true],
     });
     modalSrv.closeAll();
+    this.warehouses = [];
+    this.warehouseSelectionDisabled = true;
   }
 
   // #region fields
@@ -53,6 +59,9 @@ export class UserLoginComponent implements OnDestroy {
   get captcha() {
     return this.form.controls.captcha;
   }
+  get warehouseId() {
+    return this.form.controls.warehouseId;
+  }
   form: FormGroup;
   error = '';
   type = 0;
@@ -61,6 +70,8 @@ export class UserLoginComponent implements OnDestroy {
 
   count = 0;
   interval$: any;
+  warehouses: Warehouse[];
+  warehouseSelectionDisabled: boolean;
 
   // #endregion
 
@@ -106,10 +117,10 @@ export class UserLoginComponent implements OnDestroy {
     }
 
     // dev / aws-dev / etc
-    const loginURL = 'auth/login?_allow_anonymous=true';
+    // const loginURL = 'auth/login?_allow_anonymous=true';
 
     // Mock data
-    // const loginURL = '/login/account?_allow_anonymous=true';
+    const loginURL = '/login/account?_allow_anonymous=true';
 
     // 默认配置中对所有HTTP请求都会强制 [校验](https://ng-alain.com/auth/getting-started) 用户 Token
     // 然一般来说登录请求不需要校验，因此可以在请求URL加上：`/login?_allow_anonymous=true` 表示不触发用户 Token 校验
@@ -119,6 +130,7 @@ export class UserLoginComponent implements OnDestroy {
         userName: this.userName.value,
         username: this.userName.value,
         password: this.password.value,
+        warehouseId: this.warehouseId.value,
       })
       .subscribe((res: any) => {
         if (res.msg !== 'ok') {
@@ -188,6 +200,20 @@ export class UserLoginComponent implements OnDestroy {
     }
   }
 
+  loadWarehouses() {
+    if (this.userName.value === '') {
+      this.warehouses = [];
+      this.warehouseId.disable();
+    } else {
+      this.warehouseService.getWarehouseByUser(this.userName.value).subscribe((warehouses: Warehouse[]) => {
+        this.warehouses = warehouses;
+        if (warehouses.length >= 1) {
+          this.warehouseId.setValue(warehouses[0].id);
+        }
+        warehouses.length > 1 ? this.warehouseId.enable() : this.warehouseId.disable();
+      });
+    }
+  }
   // #endregion
 
   ngOnDestroy(): void {

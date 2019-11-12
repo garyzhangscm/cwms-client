@@ -12,7 +12,12 @@
             "addressCity": "Orange",
             "addressLine1": "2164 N Batavia ST",
             "addressLine2": "1",
-            "addressPostcode": "92865"
+            "addressPostcode": "92865",
+            "config" : {
+                "id":1,
+                "warehouseId": 1,
+                "threePLEnabled": true
+            }
         }
 
 }

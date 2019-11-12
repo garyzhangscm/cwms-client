@@ -6,13 +6,13 @@ export const environment = {
   // SERVER_URL: `./`,
 
   // With Mock data only
-  // SERVER_URL: `./assets/mock/`,
+  SERVER_URL: `./assets/mock/`,
 
   // with Local server
   // SERVER_URL: `http://localhost:5555/api/`,
 
   // AWS
-  SERVER_URL: `http://ec2-54-215-202-94.us-west-1.compute.amazonaws.com:5555/api/`,
+  // SERVER_URL: `http://ec2-54-183-27-113.us-west-1.compute.amazonaws.com:5555/api/`,
 
   production: false,
   useHash: true,

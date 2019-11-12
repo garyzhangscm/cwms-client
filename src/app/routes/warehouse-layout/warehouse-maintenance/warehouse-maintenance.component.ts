@@ -23,7 +23,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
     addressState: '',
     addressCounty: '',
     addressCity: '',
-    addressStreet: '',
+    addressDistrict: '',
     addressPostcode: '',
   };
 

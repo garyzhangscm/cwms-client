@@ -1,0 +1,36 @@
+{
+    "result": 0,
+    "message": "",
+    "data": [
+        {
+            "id": 1,
+            "name": "Papermart", 
+            "description": "Papermart",
+            "contactorFirstname": "Gary",
+            "contactorLastname": "Zhang",
+            "addressCountry": "U.S",
+            "addressState": "CA",
+            "addressCounty": "Orange",
+            "addressCity": "Orange",
+            "addressLine1": "2164 N Batavia ST",
+            "addressLine2": "1",
+            "addressPostcode": "92865"
+        },
+        {
+            "id": 2,
+            "name": "Walmart", 
+            "description": "Walmart",
+            "contactorFirstname": "Donald",
+            "contactorLastname": "XYZ",
+            "addressCountry": "U.S",
+            "addressState": "CA",
+            "addressCounty": "Orange",
+            "addressCity": "Orange",
+            "addressLine1": "1234 Tustin Rd",
+            "addressLine2": "1",
+            "addressPostcode": "92868"
+
+        }
+
+    ]
+}

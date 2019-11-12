@@ -13,7 +13,12 @@
             "addressCity": "New York",
             "addressLine1": "5th ave",
             "addressLine2": "2",
-            "addressPostcode": "10001"
+            "addressPostcode": "10001",
+            "config" : {
+                "id":2,
+                "warehouseId": 2,
+                "threePLEnabled": false
+            }
 
         }
 }

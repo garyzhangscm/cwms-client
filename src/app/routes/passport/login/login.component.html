@@ -5,7 +5,8 @@
       <nz-form-item>
         <nz-form-control [nzErrorTip]="'Please enter mobile number!' | translate">
           <nz-input-group nzSize="large" nzPrefixIcon="user">
-            <input nz-input formControlName="userName" placeholder="username: admin or user" />
+            <input nz-input formControlName="userName" placeholder="username: admin or user"
+              (blur)="loadWarehouses()" />
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
@@ -14,6 +15,14 @@
           <nz-input-group nzSize="large" nzPrefixIcon="lock">
             <input nz-input type="password" formControlName="password" placeholder="password: ng-alain.com" />
           </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control nzErrorTip="'error.form.field.login.warehouse.required' | translate">
+          <nz-select nz-input formControlName="warehouseId" [disabled]="warehouseSelectionDisabled">
+            <nz-option *ngFor="let warehouse of warehouses" [nzLabel]="warehouse.name" [nzValue]="warehouse.id">
+            </nz-option>
+          </nz-select>
         </nz-form-control>
       </nz-form-item>
     </nz-tab>

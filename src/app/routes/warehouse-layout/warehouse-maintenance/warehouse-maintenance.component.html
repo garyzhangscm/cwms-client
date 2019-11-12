@@ -121,13 +121,13 @@
     </div>
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddressStreet">
-          {{ 'description.field.label.warehouse.address.street' | translate }}
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddressDistrict">
+          {{ 'description.field.label.address.district' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}">
-          <input nz-input [(ngModel)]="currentWarehouse.addressStreet" id="warehouseAddressStreet" name="addressStreet"
-            required />
+          <input nz-input [(ngModel)]="currentWarehouse.addressDistrict" id="warehouseAddressDistrict"
+            name="addressDistrict" required />
         </nz-form-control>
       </nz-form-item>
     </div>

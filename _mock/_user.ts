@@ -102,7 +102,8 @@ export const USERS = {
     const data = req.body;
     if (
       !(data.userName === 'admin' || data.userName === 'user' || data.userName === 'GZHANG') ||
-      !(data.password === 'ng-alain.com' || data.password === 'GZHANG')) {
+      !(data.password === 'ng-alain.com' || data.password === 'GZHANG')
+    ) {
       return { msg: `Invalid username or password（admin/ng-alain.com）` };
     }
     return {
@@ -113,6 +114,10 @@ export const USERS = {
         email: `${data.userName}@qq.com`,
         id: 10000,
         time: +new Date(),
+        currentWarehouse: {
+          id: data.warehouseId,
+          name: `${data.warehouseId} - WMOR`,
+        },
       },
     };
   },

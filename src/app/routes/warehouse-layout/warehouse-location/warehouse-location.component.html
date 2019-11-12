@@ -41,8 +41,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfDisplayLocations"
-    (nzCurrentPageDataChange)="currentPageDataChange($event)" [nzFooter]="tableFoot">
+  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfDisplayLocations"
+    [nzFooter]="tableFoot">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
         <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"

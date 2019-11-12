@@ -85,11 +85,6 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       });
   }
 
-  currentPageDataChange($event: WarehouseLocation[]): void {
-    this.listOfDisplayLocations = $event;
-    this.refreshStatus();
-  }
-
   refreshStatus(): void {
     this.isAllDisplayDataChecked = this.listOfDisplayLocations.every(item => this.mapOfCheckedId[item.id]);
     this.indeterminate =

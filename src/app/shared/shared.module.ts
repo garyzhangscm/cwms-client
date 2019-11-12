@@ -6,6 +6,7 @@ import { RouterModule } from '@angular/router';
 import { AlainThemeModule } from '@delon/theme';
 import { DelonABCModule } from '@delon/abc';
 import { DelonACLModule } from '@delon/acl';
+import { DelonChartModule } from '@delon/chart';
 import { DelonFormModule } from '@delon/form';
 // i18n
 import { TranslateModule } from '@ngx-translate/core';
@@ -13,10 +14,7 @@ import { TranslateModule } from '@ngx-translate/core';
 // #region third libs
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { CountdownModule } from 'ngx-countdown';
-const THIRDMODULES = [
-  NgZorroAntdModule,
-  CountdownModule
-];
+const THIRDMODULES = [NgZorroAntdModule, CountdownModule];
 // #endregion
 
 // #region your componets & directives
@@ -34,13 +32,14 @@ const DIRECTIVES = [];
     DelonABCModule,
     DelonACLModule,
     DelonFormModule,
+    DelonChartModule,
     // third libs
-    ...THIRDMODULES
+    ...THIRDMODULES,
   ],
   declarations: [
     // your components
     ...COMPONENTS,
-    ...DIRECTIVES
+    ...DIRECTIVES,
   ],
   exports: [
     CommonModule,
@@ -51,13 +50,14 @@ const DIRECTIVES = [];
     DelonABCModule,
     DelonACLModule,
     DelonFormModule,
+    DelonChartModule,
     // i18n
     TranslateModule,
     // third libs
     ...THIRDMODULES,
     // your components
     ...COMPONENTS,
-    ...DIRECTIVES
-  ]
+    ...DIRECTIVES,
+  ],
 })
-export class SharedModule { }
+export class SharedModule {}
