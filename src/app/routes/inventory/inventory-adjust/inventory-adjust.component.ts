@@ -23,17 +23,6 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   controlArray: Array<{ index: number; show: boolean }> = [];
   isCollapse = true;
 
-  toggleCollapse(): void {
-    this.isCollapse = !this.isCollapse;
-    this.controlArray.forEach((c, index) => {
-      c.show = this.isCollapse ? index < 6 : true;
-    });
-  }
-
-  resetForm(): void {
-    this.searchForm.reset();
-  }
-
 
   // Table related data and functions
   listOfSelection = [
@@ -63,6 +52,17 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   listOfDisplayData: ItemData[] = [];
   listOfAllData: ItemData[] = [];
   mapOfCheckedId: { [key: string]: boolean } = {};
+
+  toggleCollapse(): void {
+    this.isCollapse = !this.isCollapse;
+    this.controlArray.forEach((c, index) => {
+      c.show = this.isCollapse ? index < 6 : true;
+    });
+  }
+
+  resetForm(): void {
+    this.searchForm.reset();
+  }
 
   currentPageDataChange($event: ItemData[]): void {
     this.listOfDisplayData = $event;
