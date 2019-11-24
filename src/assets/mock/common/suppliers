@@ -1,0 +1,36 @@
+{
+    "result": 0,
+    "message": "",
+    "data": [
+        {
+            "id": 1,
+            "name": "B&L", 
+            "description": "Baili Zhejiang",
+            "contactorFirstname": "Feng",
+            "contactorLastname": "Zhou",
+            "addressCountry": "China",
+            "addressState": "Zhejiang",
+            "addressCounty": "Shaoxing",
+            "addressCity": "Shengzhou",
+            "addressLine1": "1101 YiJing Road",
+            "addressLine2": "",
+            "addressPostcode": "312400"
+        },
+        {
+            "id": 2,
+            "name": "Paper US", 
+            "description": "Local Paper Company",
+            "contactorFirstname": "Kevin",
+            "contactorLastname": "Lee",
+            "addressCountry": "U.S",
+            "addressState": "CA",
+            "addressCounty": "Sam Bernadino",
+            "addressCity": "Chino Hill",
+            "addressLine1": "3363 Peyton Drive",
+            "addressLine2": "",
+            "addressPostcode": "91715"
+
+        }
+
+    ]
+}

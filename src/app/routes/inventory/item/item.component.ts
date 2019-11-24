@@ -1,6 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
-import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, NgForm } from '@angular/forms';
+import { Item } from '../models/item';
+import { ItemService } from '../services/item.service';
+import { ClientService } from '../../common/services/client.service';
+import { ItemFamilyService } from '../services/item-family.service';
+import { I18NService } from '@core';
+import { NzModalService } from 'ng-zorro-antd';
+import { STReq } from '@delon/abc';
+import { Client } from '../../common/models/client';
+import { ItemFamily } from '../models/item-family';
 
 interface ItemData {
   id: number;
@@ -12,92 +21,211 @@ interface ItemData {
 @Component({
   selector: 'app-inventory-item',
   templateUrl: './item.component.html',
-  styleUrls: ['./item.component.less']
+  styleUrls: ['./item.component.less'],
 })
 export class InventoryItemComponent implements OnInit {
-
-  constructor(private http: _HttpClient, private fb: FormBuilder) { }
-
+  // Select control for clients and item families
+  clients: Array<{ label: string; value: string }> = [];
+  itemFamilies: Array<{ label: string; value: string }> = [];
   // Form related data and functions
   searchForm: FormGroup;
-  controlArray: Array<{ index: number; show: boolean }> = [];
-  isCollapse = true;
 
-  toggleCollapse(): void {
-    this.isCollapse = !this.isCollapse;
-    this.controlArray.forEach((c, index) => {
-      c.show = this.isCollapse ? index < 6 : true;
-    });
-  }
+  // Table data for display
+  items: Item[] = [];
+  listOfDisplayItems: Item[] = [];
+  // Sort key: field's nzSortKey value
+  // sort value: ascend / descend
+  sortKey: string | null = null;
+  sortValue: string | null = null;
+  // Filters meta data
+  filtersByName = [];
+  filtersByClient = [];
+  filtersByItemFamily = [];
+  // Save filters that already selected
+  selectedFiltersByName: string[] = [];
+  selectedFiltersByClient: string[] = [];
+  selectedFiltersItemFamily: string[] = [];
+
+  // checkbox - select all
+  allChecked = false;
+  indeterminate = false;
+  isAllDisplayDataChecked = false;
+  // list of checked checkbox
+  mapOfCheckedId: { [key: string]: boolean } = {};
+
+  // editable cell
+  editId: string | null;
+  editCol: string | null;
+
+  constructor(
+    private fb: FormBuilder,
+    private itemService: ItemService,
+    private clientService: ClientService,
+    private itemFamilyService: ItemFamilyService,
+    private i18n: I18NService,
+    private modalService: NzModalService,
+  ) {}
 
   resetForm(): void {
     this.searchForm.reset();
+    this.items = [];
+    this.listOfDisplayItems = [];
+    this.filtersByName = [];
+    this.filtersByClient = [];
+    this.filtersByItemFamily = [];
+  }
+  search(): void {
+    this.itemService
+      .getItems(
+        this.searchForm.value.itemName,
+        this.searchForm.value.taggedClients,
+        this.searchForm.value.taggedItemFamilies,
+      )
+      .subscribe(itemRes => {
+        this.items = itemRes;
+        this.listOfDisplayItems = itemRes;
+
+        this.filtersByName = [];
+        this.filtersByClient = [];
+        this.filtersByItemFamily = [];
+
+        const existingClientId = new Set();
+        const existingItemFamilyId = new Set();
+
+        this.items.forEach(item => {
+          this.filtersByName.push({ text: item.name, value: item.name });
+
+          if (item.client && !existingClientId.has(item.client.id)) {
+            this.filtersByClient.push({
+              text: item.client.description,
+              value: item.client.id,
+            });
+            existingClientId.add(item.client.id);
+          }
+          if (item.itemFamily && !existingItemFamilyId.has(item.itemFamily.id)) {
+            this.filtersByItemFamily.push({
+              text: item.itemFamily.description,
+              value: item.itemFamily.id,
+            });
+            existingItemFamilyId.add(item.itemFamily.id);
+          }
+        });
+      });
   }
 
-
-  // Table related data and functions
-  listOfSelection = [
-    {
-      text: 'Select All Row',
-      onSelect: () => {
-        this.checkAll(true);
-      }
-    },
-    {
-      text: 'Select Odd Row',
-      onSelect: () => {
-        this.listOfDisplayData.forEach((data, index) => (this.mapOfCheckedId[data.id] = index % 2 !== 0));
-        this.refreshStatus();
-      }
-    },
-    {
-      text: 'Select Even Row',
-      onSelect: () => {
-        this.listOfDisplayData.forEach((data, index) => (this.mapOfCheckedId[data.id] = index % 2 === 0));
-        this.refreshStatus();
-      }
-    }
-  ];
-  isAllDisplayDataChecked = false;
-  isIndeterminate = false;
-  listOfDisplayData: ItemData[] = [];
-  listOfAllData: ItemData[] = [];
-  mapOfCheckedId: { [key: string]: boolean } = {};
-
-  currentPageDataChange($event: ItemData[]): void {
-    this.listOfDisplayData = $event;
+  currentPageDataChange($event: Item[]): void {
+    this.listOfDisplayItems = $event;
     this.refreshStatus();
   }
 
   refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayData.every(item => this.mapOfCheckedId[item.id]);
-    this.isIndeterminate =
-      this.listOfDisplayData.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+    this.isAllDisplayDataChecked = this.listOfDisplayItems.every(item => this.mapOfCheckedId[item.id]);
+    this.indeterminate =
+      this.listOfDisplayItems.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
   }
 
   checkAll(value: boolean): void {
-    this.listOfDisplayData.forEach(item => (this.mapOfCheckedId[item.id] = value));
+    this.listOfDisplayItems.forEach(item => (this.mapOfCheckedId[item.id] = value));
     this.refreshStatus();
   }
 
-  ngOnInit() { 
-    // initiate the form
-    this.searchForm = this.fb.group({});
-    for (let i = 0; i < 10; i++) {
-      this.controlArray.push({ index: i, show: i < 6 });
-      this.searchForm.addControl(`field${i}`, new FormControl());
-    }
-
-    // initiate the data for table
-    for (let i = 0; i < 100; i++) {
-      this.listOfAllData.push({
-        id: i,
-        name: `Edward King ${i}`,
-        age: 32,
-        address: `London, Park Lane no. ${i}`
-      });
-    }
-
+  sort(sort: { key: string; value: string }): void {
+    this.sortKey = sort.key;
+    this.sortValue = sort.value;
+    this.sortAndFilter();
   }
 
+  filter(selectedFiltersByName: string[], selectedFiltersByClient: string[], selectedFiltersItemFamily: string[]) {
+    this.selectedFiltersByName = selectedFiltersByName;
+    this.selectedFiltersByClient = selectedFiltersByClient;
+    this.selectedFiltersItemFamily = selectedFiltersItemFamily;
+    this.sortAndFilter();
+  }
+
+  sortAndFilter() {
+    // filter data
+    const filterFunc = (item: { id: number; name: string; client?: Client; itemFamily?: ItemFamily }) =>
+      (this.selectedFiltersByName.length
+        ? this.selectedFiltersByName.some(name => item.name.indexOf(name) !== -1)
+        : true) &&
+      (this.selectedFiltersByClient.length
+        ? this.selectedFiltersByClient.some(id => item.client !== null && item.client.id === +id)
+        : true) &&
+      (this.selectedFiltersItemFamily.length
+        ? this.selectedFiltersItemFamily.some(id => item.itemFamily !== null && item.itemFamily.id === +id)
+        : true);
+    const data = this.items.filter(item => filterFunc(item));
+
+    // sort data
+    if (this.sortKey && this.sortValue) {
+      this.listOfDisplayItems = data.sort((a, b) =>
+        this.sortValue === 'ascend'
+          ? a[this.sortKey!] > b[this.sortKey!]
+            ? 1
+            : -1
+          : b[this.sortKey!] > a[this.sortKey!]
+          ? 1
+          : -1,
+      );
+    } else {
+      this.listOfDisplayItems = data;
+    }
+  }
+
+  removeSelectedItems(): void {
+    // make sure we have at least one checkbox checked
+    const selectedItems = this.getSelectedItems();
+    if (selectedItems.length > 0) {
+      this.modalService.confirm({
+        nzTitle: this.i18n.fanyi('page.modal.delete.header.title'),
+        nzContent: this.i18n.fanyi('page.item.modal.delete.content'),
+        nzOkText: this.i18n.fanyi('description.field.button.confirm'),
+        nzOkType: 'danger',
+        nzOnOk: () => {
+          this.itemService.removeItems(selectedItems).subscribe(res => {
+            console.log('selected items removed');
+            this.search();
+          });
+        },
+        nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+        nzOnCancel: () => console.log('Cancel'),
+      });
+    }
+  }
+
+  getSelectedItems(): Item[] {
+    const selectedItems: Item[] = [];
+    this.items.forEach((item: Item) => {
+      if (this.mapOfCheckedId[item.id] === true) {
+        selectedItems.push(item);
+      }
+    });
+    return selectedItems;
+  }
+
+  startEdit(id: string, col: string, event: MouseEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.editId = id;
+    this.editCol = col;
+  }
+
+  ngOnInit() {
+    // initiate the search form
+    this.searchForm = this.fb.group({
+      taggedClients: [null],
+      taggedItemFamilies: [null],
+      itemName: [null],
+    });
+
+    // initiate the select control
+    this.clientService.loadClients().subscribe((clientList: Client[]) => {
+      clientList.forEach(client => this.clients.push({ label: client.description, value: client.id.toString() }));
+    });
+    this.itemFamilyService.loadItemFamilies().subscribe((itemFamilyList: ItemFamily[]) => {
+      itemFamilyList.forEach(itemFamily =>
+        this.itemFamilies.push({ label: itemFamily.description, value: itemFamily.id.toString() }),
+      );
+    });
+  }
 }

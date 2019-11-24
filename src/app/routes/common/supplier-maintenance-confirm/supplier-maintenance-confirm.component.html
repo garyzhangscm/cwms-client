@@ -1,0 +1,82 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/common/supplier" routerLinkActive="active">{{
+      'description.field.link.return' | translate
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'description.field.breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.common' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/common/supplier" routerLinkActive="active">{{
+          'description.field.breadcrumb.supplier' | translate
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+
+<div nz-row style="padding: 50px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="2" [nzSize]="'default'" (nzIndexChange)="onStepIndexChange($event)">
+      <nz-step nzTitle="{{ 'description.steps.basic-info.title' | translate }}"
+        nzDescription="{{ 'description.steps.supplier-maintenance.basic-info.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'description.steps.supplier-maintenance.address.title' | translate }}"
+        nzDescription="{{ 'description.steps.supplier-maintenance.address.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'description.steps.confirm.title' | translate }}"
+        nzDescription="{{ 'description.steps.confirm.description' | translate }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+
+<ng-container>
+  <nz-card nzTitle="{{ currentSupplier.name }}" [nzActions]="[actionSave]">
+    <nz-descriptions nzBordered>
+
+      <nz-descriptions-item nzTitle="{{'description.field.label.name' | translate}}">{{currentSupplier.name}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description.field.label.description' | translate}}" nzSpan="2">
+        {{currentSupplier.description}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description.field.label.contactorFirstname' | translate}}">
+        {{currentSupplier.contactorFirstname}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description.field.label.contactorLastname' | translate}}" nzSpan="2">
+        {{currentSupplier.contactorLastname}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.country' | translate }}">
+        {{ currentSupplier.addressCountry }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.state' | translate }}">
+        {{ currentSupplier.addressState }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.county' | translate }}">
+        {{ currentSupplier.addressCounty }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.city' | translate }}">
+        {{ currentSupplier.addressCity }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.postcode' | translate }}" nzSpan="2">
+        {{ currentSupplier.addressPostcode }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.line1' | translate }}" nzSpan="2">
+        {{ currentSupplier.addressLine1 }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.line2' | translate }}">
+        {{ currentSupplier.addressLine2 }}
+      </nz-descriptions-item>
+    </nz-descriptions>
+  </nz-card>
+</ng-container>
+
+
+<ng-template #actionSave>
+  <button nz-button nzType="primary" (click)="save()">{{ 'description.field.button.confirm' | translate}}</button>
+</ng-template>

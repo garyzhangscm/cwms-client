@@ -9,6 +9,8 @@ import { InventoryReplenishmentComponent } from './replenishment/replenishment.c
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
 import { InventoryItemComponent } from './item/item.component';
 import { InventoryItemFamilyComponent } from './item-family/item-family.component';
+import { InventoryItemFamilyMaintenanceComponent } from './item-family-maintenance/item-family-maintenance.component';
+import { InventoryItemFamilyMaintenanceConfirmComponent } from './item-family-maintenance-confirm/item-family-maintenance-confirm.component';
 
 const routes: Routes = [
   { path: 'inventory', component: InventoryInventoryComponent },
@@ -20,6 +22,8 @@ const routes: Routes = [
   { path: 'replenishment', component: InventoryReplenishmentComponent },
   { path: 'item', component: InventoryItemComponent },
   { path: 'item-family', component: InventoryItemFamilyComponent },
+  { path: 'item-family-maintenance', component: InventoryItemFamilyMaintenanceComponent },
+  { path: 'item-family-maintenance/confirm', component: InventoryItemFamilyMaintenanceConfirmComponent },
 ];
 
 @NgModule({

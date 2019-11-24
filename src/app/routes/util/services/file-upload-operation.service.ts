@@ -18,9 +18,12 @@ export class FileUploadOperationService {
     if (data !== null) {
       return of(data);
     }
-    return this.http
-      .get('resource/assets/fileUploadTypes')
-      .pipe(map(res => res.data))
-      .pipe(tap(res => this.gzLocalStorageService.setItem('resource.file-upload-types', res)));
+    return (
+      this.http
+        .get('resource/assets/fileUploadTypes')
+        // .get('inventory/test-data')
+        .pipe(map(res => res.data))
+        .pipe(tap(res => this.gzLocalStorageService.setItem('resource.file-upload-types', res)))
+    );
   }
 }

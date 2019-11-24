@@ -1,0 +1,97 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/common/supplier" routerLinkActive="active">{{
+    'description.field.link.return' | translate
+  }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'description.field.breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.common' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/common/supplier" routerLinkActive="active">{{
+        'description.field.breadcrumb.supplier' | translate
+      }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<div nz-row style="padding: 50px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="0" [nzSize]="'default'">
+      <nz-step nzTitle="{{ 'description.steps.basic-info.title' | translate }}"
+        nzDescription="{{ 'description.steps.supplier-maintenance.basic-info.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'description.steps.supplier-maintenance.address.title' | translate }}"
+        nzDescription="{{ 'description.steps.supplier-maintenance.address.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'description.steps.confirm.title' | translate }}"
+        nzDescription="{{ 'description.steps.confirm.description' | translate }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+<nz-card [nzActions]="[cardFoot]">
+  <form nz-form>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name">
+            {{ 'description.field.label.name' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <input nz-input [(ngModel)]="currentSupplier.name" id="name" name="name" required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="description">
+            {{ 'description.field.label.description' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.clientDescription.required' | translate }}">
+            <input nz-input [(ngModel)]="currentSupplier.description" id="description" name="description" required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="firstname">
+            {{ 'description.field.label.contactorFirstname' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.contactorFirstname.required' | translate }}">
+            <input nz-input [(ngModel)]="currentSupplier.contactorFirstname" id="firstname" name="firstname" required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lastname">
+            {{ 'description.field.label.contactorLastname' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.contactorLastname.required' | translate }}">
+            <input nz-input [(ngModel)]="currentSupplier.contactorLastname" id="lastname" name="lastname" required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+  </form>
+
+</nz-card>
+
+<ng-template #cardFoot>
+  <div nz-row nzType="flex" nzJustify="center">
+    <button nz-button nzType="primary" (click)="goToAddressPage()">
+      {{ 'description.steps.next' | translate }} :
+      {{ 'description.steps.supplier-maintenance.address.title' | translate }}
+    </button>
+  </div>
+</ng-template>

@@ -10,6 +10,8 @@ import { InventoryReplenishmentComponent } from './replenishment/replenishment.c
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
 import { InventoryItemComponent } from './item/item.component';
 import { InventoryItemFamilyComponent } from './item-family/item-family.component';
+import { InventoryItemFamilyMaintenanceComponent } from './item-family-maintenance/item-family-maintenance.component';
+import { InventoryItemFamilyMaintenanceConfirmComponent } from './item-family-maintenance-confirm/item-family-maintenance-confirm.component';
 
 const COMPONENTS = [
   InventoryInventoryComponent,
@@ -20,8 +22,10 @@ const COMPONENTS = [
   InventoryReplenishmentComponent,
   InventoryTriggerReplenishmentConfigComponent,
   InventoryItemComponent,
-,
-  InventoryItemFamilyComponent];
+  InventoryItemFamilyComponent,
+  InventoryItemFamilyMaintenanceComponent,
+  InventoryItemFamilyMaintenanceConfirmComponent,
+];
 const COMPONENTS_NOROUNT = [];
 
 @NgModule({

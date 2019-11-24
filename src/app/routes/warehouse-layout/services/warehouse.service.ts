@@ -37,4 +37,11 @@ export class WarehouseService {
     const url = 'layout/warehouse/' + warehouse.id;
     return this.http.delete(url).pipe(map(res => res.data));
   }
+
+  setCurrentWarehouse(warehouse: Warehouse) {
+    sessionStorage.setItem('current_warehouse', JSON.stringify(warehouse));
+  }
+  getCurrentWarehouse(): Warehouse {
+    return JSON.parse(sessionStorage.getItem('current_warehouse'));
+  }
 }

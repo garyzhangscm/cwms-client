@@ -22,7 +22,6 @@ export class UtilFileUploadComponent implements OnInit {
   ) {}
 
   loadFileForm: FormGroup;
-  selectedFileType: string;
   fromMenu: boolean;
   pageTitle: string;
   fileUploadUrl: string;
@@ -41,27 +40,27 @@ export class UtilFileUploadComponent implements OnInit {
       fileUploadTypes.forEach(fileUploadType =>
         this.allowedFileTypes.push({ label: fileUploadType.description, value: fileUploadType.name }),
       );
-    });
 
-    this.activatedRoute.queryParams.subscribe(params => {
-      if (this.activatedRoute.snapshot.params.filetype !== undefined) {
-        this.selectedFileType = this.activatedRoute.snapshot.params.filetype;
-        this.fromMenu = false;
-        this.pageTitle = this.i18n.fanyi('menu.main.util.file-upload');
-        this.titleService.setTitle(this.i18n.fanyi('menu.main.util.file-upload'));
-        this.setupFileUploadUrl();
-        this.fileUploadDisabled = false;
-      } else {
-        this.fromMenu = true;
-      }
+      this.activatedRoute.queryParams.subscribe(params => {
+        if (this.activatedRoute.snapshot.params.filetype) {
+          this.loadFileForm.get('fileTypeSelector').setValue(this.activatedRoute.snapshot.params.filetype);
+          this.fromMenu = false;
+          this.pageTitle = this.i18n.fanyi('menu.main.util.file-upload');
+          this.titleService.setTitle(this.i18n.fanyi('menu.main.util.file-upload'));
+          this.setupFileUploadUrl();
+          this.fileUploadDisabled = false;
+        } else {
+          this.fromMenu = true;
+        }
+      });
     });
   }
 
   setupFileUploadUrl() {
-    if (this.selectedFileType !== null) {
+    if (this.loadFileForm.value.fileTypeSelector) {
       this.fileUploadOperationService.getFileUploadTypes().subscribe((fileUploadTypes: FileUploadType[]) => {
         fileUploadTypes
-          .filter(item => item.name === this.selectedFileType)
+          .filter(item => item.name === this.loadFileForm.value.fileTypeSelector)
           .forEach(fileUploadType => (this.fileUploadUrl = fileUploadType.destinationUrl));
       });
     }
@@ -71,7 +70,6 @@ export class UtilFileUploadComponent implements OnInit {
     this.webLocation.back();
   }
   selectedFileTypeChanged(fileType: string) {
-    this.selectedFileType = fileType;
     this.setupFileUploadUrl();
     this.fileUploadDisabled = false;
   }

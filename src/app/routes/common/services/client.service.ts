@@ -11,12 +11,14 @@ import { map, tap } from 'rxjs/operators';
 export class ClientService {
   constructor(private http: _HttpClient, private gzLocalStorageService: GzLocalStorageServiceService) {}
 
-  loadClients(): Observable<Client[]> {
+  loadClients(refresh: boolean = false): Observable<Client[]> {
     // if we can find the value in local storage, we get it from their.
     // otherwise we get from server
-    const data = this.gzLocalStorageService.getItem('common.client');
-    if (data !== null) {
-      return of(data);
+    if (!refresh) {
+      const data = this.gzLocalStorageService.getItem('common.client');
+      if (data !== null) {
+        return of(data);
+      }
     }
     return this.http
       .get('common/clients')

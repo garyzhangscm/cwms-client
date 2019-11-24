@@ -53,12 +53,11 @@ export class CommonClientComponent implements OnInit {
 
   constructor(private clientService: ClientService, private i18n: I18NService, private modalService: NzModalService) {}
 
-  search(): void {
-    this.clientService.loadClients().subscribe(clientRes => {
+  search(refresh: boolean = false): void {
+    this.clientService.loadClients(refresh).subscribe(clientRes => {
       this.clients = clientRes;
       this.listOfDisplayClients = clientRes;
 
-      console.log('client:\n' + JSON.stringify(this.clients));
       this.filtersByName = [];
       this.filtersByDescription = [];
       this.filtersByAddressCountry = [];
@@ -167,14 +166,14 @@ export class CommonClientComponent implements OnInit {
     const selectedClients = this.getSelectedClients();
     if (selectedClients.length > 0) {
       this.modalService.confirm({
-        nzTitle: this.i18n.fanyi('page.location-group.modal.delete.header.title'),
-        nzContent: this.i18n.fanyi('page.location-group.modal.delete.content'),
+        nzTitle: this.i18n.fanyi('page.client.modal.delete.header.title'),
+        nzContent: this.i18n.fanyi('page.client.modal.delete.content'),
         nzOkText: this.i18n.fanyi('description.field.button.confirm'),
         nzOkType: 'danger',
         nzOnOk: () => {
           this.clientService.removeClients(selectedClients).subscribe(res => {
             console.log('selected clients are removed');
-            this.search();
+            this.refresh();
           });
         },
         nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
@@ -212,9 +211,12 @@ export class CommonClientComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.search();
+    this.search(true);
   }
   clearSessionClient() {
     sessionStorage.removeItem('client-maintenance.client');
+  }
+  refresh() {
+    this.search(true);
   }
 }

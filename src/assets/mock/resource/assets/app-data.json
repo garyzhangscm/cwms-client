@@ -84,6 +84,12 @@
           "icon": "anticon-info",
           "children": [
             {
+              "text": "Item Family",
+              "link": "/inventory/item-family",
+              "i18n": "menu.main.inventory.item-family",
+              "shortcut": false
+            },
+            {
               "text": "Item",
               "link": "/inventory/item",
               "i18n": "menu.main.inventory.item",
@@ -157,6 +163,18 @@
               "link": "/common/client",
               "i18n": "menu.main.common.client",
               "shortcut": false
+            },
+            {
+              "text": "Supplier",
+              "link": "/common/supplier",
+              "i18n": "menu.main.common.supplier",
+              "shortcut": false
+            },
+            {
+              "text": "Unit Of Measure",
+              "link": "/common/unit-of-measure",
+              "i18n": "menu.main.common.unit-of-measure",
+              "shortcut": false
             }
           ]
         },
@@ -169,6 +187,13 @@
               "text": "File Upload",
               "link": "/util/file-upload",
               "i18n": "menu.main.util.file-upload",
+              "shortcut": false
+            },
+            
+            {
+              "text": "Test Data Initial",
+              "link": "/util/test-data-init",
+              "i18n": "menu.main.util.test-data-init",
               "shortcut": false
             }
           ]

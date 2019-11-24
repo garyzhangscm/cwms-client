@@ -1,0 +1,25 @@
+{
+    "result": 0,
+    "message": "",
+    "data": [
+        {
+            "id": 1,
+            "name": "HIGH-VALUE",
+            "description": "High Value item that will need double check",
+            "totalItemCount": 0
+        },
+        {
+            "id": 3,
+            "name": "HAZARD",
+            "description": "Hazard Items that needs special handling",
+            "totalItemCount": 0
+        },
+        {
+            "id": 4,
+            "name": "OVERSIZE",
+            "description": "Oversize Items - will need more space",
+            "totalItemCount": 0
+        }
+
+    ]
+}

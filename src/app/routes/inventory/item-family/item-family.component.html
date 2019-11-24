@@ -1,48 +1,66 @@
-<!-- Form to query the result  -->
-<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
-  <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="6" *ngFor="let control of controlArray" [hidden]="!control.show">
-      <nz-form-item nzFlex>
-        <nz-form-label [nzFor]="'field' + control.index">Field {{ control.index }}</nz-form-label>
-        <nz-form-control>
-          <input nz-input placeholder="placeholder" [formControlName]="'field' + control.index"
-            [attr.id]="'field' + control.index" />
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-  </div>
-  <div nz-row>
-    <div nz-col [nzSpan]="24" class="search-area">
-      <button nz-button [nzType]="'primary'">{{'description.field.button.search' | translate}}</button>
-      <button nz-button (click)="resetForm()">{{'description.field.button.clear' | translate}}</button>
-      <a class="collapse" (click)="toggleCollapse()">
-        Collapse
-        <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
-      </a>
-    </div>
-  </div>
-</form>
+<page-header [title]="'page.item-family.header.title' | translate">
+</page-header>
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfAllData"
-    (nzCurrentPageDataChange)="currentPageDataChange($event)">
-    <thead>
+  <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfDisplayItemFamilies"
+    (nzCurrentPageDataChange)="currentPageDataChange($event)" [nzFooter]="tableFoot">
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
-        <th nzShowCheckbox nzShowRowSelection [nzSelections]="listOfSelection" [(nzChecked)]="isAllDisplayDataChecked"
-          [nzIndeterminate]="isIndeterminate" (nzCheckedChange)="checkAll($event)"></th>
-        <th>Name</th>
-        <th>Age</th>
-        <th>Address</th>
+        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="checkAll($event)"></th>
+        <th nzShowSort nzSortKey="id">{{'description.field.table.header.id' | translate}}</th>
+        <th nzShowSort nzSortKey="name" nzShowFilter [nzFilters]="filtersByName"
+          (nzFilterChange)="filter($event, selectedFiltersByDescription)">
+          {{'description.field.label.item-family.name' | translate}}</th>
+        <th nzShowFilter [nzFilters]="filtersByDescription" (nzFilterChange)="filter(selectedFiltersByName, $event)">
+          {{'description.field.label.item-family.description' | translate}}</th>
+        <th nzShowSort nzSortKey="totalItemCount">
+          {{'description.field.label.item-family.item-count' | translate}}</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let data of rowSelectionTable.data">
         <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
-        <td>{{ data.name }}</td>
-        <td>{{ data.age }}</td>
-        <td>{{ data.address }}</td>
+        <td>{{ data.id }}</td>
+        <td>
+          <div class="editable-cell" *ngIf="editId !== data.id|| editCol != 'name'; else editNameTpl">
+            <div class="editable-cell-value-wrap" (click)="startEdit(data.id, 'name', $event)">
+              {{ data.name }}
+            </div>
+          </div>
+          <ng-template #editNameTpl>
+            <input type="text" nz-input [(ngModel)]="data.name" (blur)="changeItemFamily(data)" />
+          </ng-template>
+        </td>
+        <td>
+          <div class="editable-cell" *ngIf="editId !== data.id || editCol != 'description'; else editDescTpl">
+            <div class="editable-cell-value-wrap" (click)="startEdit(data.id, 'description', $event)">
+              {{ data.description }}
+            </div>
+          </div>
+          <ng-template #editDescTpl>
+            <input type="text" nz-input [(ngModel)]="data.description" (blur)="changeItemFamily(data)" />
+          </ng-template>
+        </td>
+        <td>{{ data.totalItemCount}}
       </tr>
     </tbody>
   </nz-table>
 </div>
+
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start">
+    <a nz-button nzType="primary" (click)="refresh()">
+      {{'description.field.button.fresh' | translate}}
+    </a>
+    <a nz-button nzType="primary" routerLink="/inventory/item-family-maintenance" routerLinkActive="active"
+      (click)="clearSessionItemFamily()">
+      {{'description.field.button.add' | translate}}
+    </a>
+
+    <button nz-button nzType="danger"
+      (click)="removeSelectedItemFamilies()">{{'description.field.button.delete' | translate}}</button>
+  </div>
+</ng-template>

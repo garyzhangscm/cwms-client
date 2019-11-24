@@ -1,9 +1,64 @@
 import { Injectable } from '@angular/core';
+import { _HttpClient } from '@delon/theme';
+import { GzLocalStorageServiceService } from '@shared/service/gz-local-storage-service.service';
+import { Observable, of } from 'rxjs';
+import { ItemFamily } from '../models/item-family';
+import { map, tap } from 'rxjs/operators';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ItemFamilyService {
+  constructor(private http: _HttpClient, private gzLocalStorageService: GzLocalStorageServiceService) {}
 
-  constructor() { }
+  loadItemFamilies(refresh: boolean = false): Observable<ItemFamily[]> {
+    // if we can find the value in local storage, we get it from their.
+    // otherwise we get from server
+    if (!refresh) {
+      const data = this.gzLocalStorageService.getItem('inventory.ItemFamily');
+      if (data !== null) {
+        return of(data);
+      }
+    }
+    return this.http
+      .get('inventory/item-families')
+      .pipe(map(res => res.data))
+      .pipe(tap(res => this.gzLocalStorageService.setItem('inventory.ItemFamily', res)));
+  }
+  getItemFamily(itemFamilyId: number): Observable<ItemFamily> {
+    const data = this.gzLocalStorageService.getItem('inventory.ItemFamily.' + itemFamilyId);
+    if (data !== null) {
+      return of(data);
+    }
+
+    return this.http
+      .get('inventory/item-family/' + itemFamilyId)
+      .pipe(map(res => res.data))
+      .pipe(tap(res => this.gzLocalStorageService.setItem('inventory.ItemFamily.' + itemFamilyId, res)));
+  }
+
+  addItemFamily(itemFamily: ItemFamily): Observable<ItemFamily> {
+    return this.http.post('inventory/item-family', itemFamily).pipe(map(res => res.data));
+  }
+
+  changeItemFamily(itemFamily: ItemFamily): Observable<ItemFamily> {
+    const url = 'inventory/item-family/' + itemFamily.id;
+    return this.http.put(url, itemFamily).pipe(map(res => res.data));
+  }
+
+  removeItemFamily(itemFamily: ItemFamily): Observable<ItemFamily> {
+    const url = 'inventory/item-family/' + itemFamily.id;
+    return this.http.delete(url).pipe(map(res => res.data));
+  }
+
+  removeItemFamilies(itemFamilies: ItemFamily[]): Observable<ItemFamily[]> {
+    const itemFamilyIds: number[] = [];
+    itemFamilies.forEach(itemFamily => {
+      itemFamilyIds.push(itemFamily.id);
+    });
+    const params = {
+      item_family_ids: itemFamilyIds.join(','),
+    };
+    return this.http.delete('inventory/item-family', params).pipe(map(res => res.data));
+  }
 }
