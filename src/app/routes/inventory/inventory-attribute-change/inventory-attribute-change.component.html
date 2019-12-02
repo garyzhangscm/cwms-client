@@ -34,8 +34,8 @@
       <nz-descriptions-item nzTitle="{{'description.field.label.item.description' | translate}}" nzSpan="2">
         {{inventory.item.description}}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'description.field.label.item.package-type' | translate}}" nzSpan="2">
-        <nz-card nzTitle="{{inventory.itemPackageType.code}}">
+      <nz-descriptions-item nzTitle="{{'description.field.label.item.package-type' | translate}}" nzSpan="3">
+        <nz-card [nzTitle]="inventoryPackageTypes">
           <nz-table #itemPackageTypeDetailTable [nzData]="inventory.itemPackageType.itemUnitOfMeasures" nzSize="middle"
             [nzShowPagination]="false" nzBordered>
             <thead>
@@ -63,12 +63,29 @@
 
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'description.field.label.inventory.status' | translate}}">
-        {{inventory.inventoryStatus.name}}
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'description.field.label.quantity' | translate}}">
-        <input nz-input [(ngModel)]="inventory.quantity" style="width: 250px;" />
+
+        <nz-select nz-input [(ngModel)]="inventory.inventoryStatus.name" style="width: 250px">
+          <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses" [nzLabel]="inventoryStatus.description"
+            [nzValue]="inventoryStatus.name">
+          </nz-option>
+        </nz-select>
 
       </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description.field.label.quantity' | translate}}">
+        {{inventory.quantity}}
+
+      </nz-descriptions-item>
+
+
+      <ng-template #inventoryPackageTypes>
+
+        <nz-select nz-input [ngModel]="inventory.itemPackageType.code"
+          (ngModelChange)="itemPackageTypeChange(inventory, $event)" style="width: 250px">
+          <nz-option *ngFor="let availableItemPackageType of inventory.item.itemPackageTypes"
+            [nzLabel]="availableItemPackageType.code" [nzValue]="availableItemPackageType.code">
+          </nz-option>
+        </nz-select>
+      </ng-template>
     </nz-descriptions>
   </nz-card>
 </ng-container>

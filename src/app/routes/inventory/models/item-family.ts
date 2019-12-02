@@ -1,6 +1,6 @@
 export interface ItemFamily {
-  id: number;
+  id?: number;
   name: string;
   description: string;
-  totalItemCount: number;
+  totalItemCount?: number;
 }

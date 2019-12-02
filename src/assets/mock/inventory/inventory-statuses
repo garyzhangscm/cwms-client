@@ -1,0 +1,22 @@
+{
+    "result": 0,
+    "message": "",
+    "data": [
+        {
+            "id": 1,
+            "name": "AVAL",
+            "description": "可用"
+        },
+        {
+            "id": 3,
+            "name": "DAMAGED",
+            "description": "损坏"
+        },
+        {
+            "id": 4,
+            "name": "HOLD",
+            "description": "锁定"
+        }
+
+    ]
+}

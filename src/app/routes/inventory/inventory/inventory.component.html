@@ -1,48 +1,215 @@
+<page-header> </page-header>
+
 <!-- Form to query the result  -->
 <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
   <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="6" *ngFor="let control of controlArray" [hidden]="!control.show">
+    <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
-        <nz-form-label [nzFor]="'field' + control.index">Field {{ control.index }}</nz-form-label>
-        <nz-form-control>
-          <input nz-input placeholder="placeholder" [formControlName]="'field' + control.index"
-            [attr.id]="'field' + control.index" />
+        <nz-form-label for="client" [nzSm]="3" [nzXs]="3">
+          {{ 'description.field.label.client' | translate }}
+        </nz-form-label>
+        <nz-select nzMode="tags" formControlName="taggedClients">
+          <nz-option *ngFor="let client of clients" [nzLabel]="client.label" [nzValue]="client.value"></nz-option>
+        </nz-select>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="item-family" [nzSm]="3" [nzXs]="3">
+          {{ 'description.field.label.item-family' | translate }}
+        </nz-form-label>
+        <nz-select nzMode="tags" formControlName="taggedItemFamilies">
+          <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.label" [nzValue]="itemFamily.value">
+          </nz-option>
+        </nz-select>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="6">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="name">
+          {{ 'description.field.label.item' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="itemName" id="itemName" formControlName="itemName" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="6">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="location">
+          {{ 'description.field.label.location' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="location" id="location" formControlName="location" />
         </nz-form-control>
       </nz-form-item>
     </div>
   </div>
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
-      <button nz-button [nzType]="'primary'">{{'description.field.button.search' | translate}}</button>
-      <button nz-button (click)="resetForm()">{{'description.field.button.clear' | translate}}</button>
-      <a class="collapse" (click)="toggleCollapse()">
-        Collapse
-        <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
-      </a>
+      <button nz-button [nzType]="'primary'" (click)="search()">
+        {{ 'description.field.button.search' | translate }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
     </div>
   </div>
 </form>
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfAllData"
-    (nzCurrentPageDataChange)="currentPageDataChange($event)">
-    <thead>
+  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfDisplayInventories">
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
-        <th nzShowCheckbox nzShowRowSelection [nzSelections]="listOfSelection" [(nzChecked)]="isAllDisplayDataChecked"
-          [nzIndeterminate]="isIndeterminate" (nzCheckedChange)="checkAll($event)"></th>
-        <th>Name</th>
-        <th>Age</th>
-        <th>Address</th>
+        <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+        <th nzShowSort nzSortKey="lpn" [nzFilters]="filtersByLpn" (nzFilterChange)="
+            filter(
+              $event,
+              selectedFiltersByItem,
+              selectedFiltersByItemPackageType,
+              selectedFiltersByLocation,
+              selectedFiltersByInventoryStatus
+            )
+          ">
+          {{ 'description.field.label.lpn' | translate }}
+        </th>
+
+        <th nzShowSort nzSortKey="item" [nzFilters]="filtersByItem" (nzFilterChange)="
+            filter(
+              selectedFiltersByLpn,
+              $event,
+              selectedFiltersByItemPackageType,
+              selectedFiltersByLocation,
+              selectedFiltersByInventoryStatus
+            )
+          ">
+          {{ 'description.field.label.item' | translate }}
+        </th>
+
+        <th [nzFilters]="filtersByItemPackageType" (nzFilterChange)="
+            filter(
+              selectedFiltersByLpn,
+              selectedFiltersByItem,
+              $event,
+              selectedFiltersByLocation,
+              selectedFiltersByInventoryStatus
+            )
+          ">
+          {{ 'description.field.label.item.package-type' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="location" [nzFilters]="filtersByLocation" (nzFilterChange)="
+            filter(
+              selectedFiltersByLpn,
+              selectedFiltersByItem,
+              selectedFiltersByItemPackageType,
+              $event,
+              selectedFiltersByInventoryStatus
+            )
+          ">
+          {{ 'description.field.label.location' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="quantity">
+          {{ 'description.field.label.quantity' | translate }}
+        </th>
+        <th [nzFilters]="filtersByInventoryStatus" (nzFilterChange)="
+            filter(
+              selectedFiltersByLpn,
+              selectedFiltersByItem,
+              selectedFiltersByItemPackageType,
+              selectedFiltersByLocation,
+              $event
+            )
+          ">
+          {{ 'description.field.label.inventory.status' | translate }}
+        </th>
+        <th>{{ 'description.field.label.action' | translate }}</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let data of rowSelectionTable.data">
-        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
-        <td>{{ data.name }}</td>
-        <td>{{ data.age }}</td>
-        <td>{{ data.address }}</td>
+        <td>{{ data.id }}</td>
+        <td>{{ data.lpn }}</td>
+        <td>
+          <a nz-tooltip nzTooltipTitle="{{ data.item.description }}">{{ data.item.name }}</a>
+        </td>
+        <td>
+          <a nz-popover nzPopoverTitle="{{ 'description.field.label.itemPackageTypeDetails' | translate}}"
+            [nzPopoverContent]="itemPackageTypeDetails">{{ data.itemPackageType.name }}</a>
+        </td>
+        <td>{{ data.location.name }}</td>
+        <td>{{ data.quantity }}</td>
+        <td>
+          <a nz-tooltip nzTooltipTitle="{{ data.inventoryStatus.description }}">{{ data.inventoryStatus.name }}</a>
+        </td>
+        <td>
+          <a nz-button routerLink="/inventory/inventory-adjust" routerLinkActive="active"
+            [queryParams]="{lpn : data.lpn}">
+            {{ 'description.field.label.adjustInventory' | translate }}</a>
+          <nz-divider nzType="vertical"></nz-divider>
+
+          <a nz-button routerLink="/inventory/inventory-attribute-change" routerLinkActive="active"
+            [queryParams]="{lpn : data.lpn}">
+            {{ 'description.field.label.inventory.attributeChange' | translate }}</a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <button nz-button
+            (click)="openRemoveInventoryModal(data, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
+            nzType="danger">{{ 'description.field.label.removeInventory' | translate }}</button>
+        </td>
+        <ng-template #itemPackageTypeDetails>
+          <nz-table #itemPackageTypeDetailTable [nzData]="data.itemPackageType.itemUnitOfMeasures" nzSize="middle"
+            [nzShowPagination]="false" nzBordered>
+            <thead>
+              <tr>
+                <th>{{ 'description.field.label.unitOfMeasure' | translate}}</th>
+                <th>{{ 'description.field.label.quantity' | translate }}</th>
+                <th>{{ 'description.field.label.weight' | translate }}</th>
+                <th>{{ 'description.field.label.length' | translate }}</th>
+                <th>{{ 'description.field.label.width' | translate }}</th>
+                <th>{{ 'description.field.label.height' | translate }}</th>
+              </tr>
+            </thead>
+    <tbody>
+      <tr *ngFor="let itemUnitOfMeasure of itemPackageTypeDetailTable.data">
+        <td>{{ itemUnitOfMeasure.unitOfMeasure.name }}</td>
+        <td>{{ itemUnitOfMeasure.quantity }}</td>
+        <td>{{ itemUnitOfMeasure.weight }}</td>
+        <td>{{ itemUnitOfMeasure.length }}</td>
+        <td>{{ itemUnitOfMeasure.width }}</td>
+        <td>{{ itemUnitOfMeasure.height }}</td>
       </tr>
     </tbody>
   </nz-table>
+  </ng-template>
+  </tr>
+  </tbody>
+  </nz-table>
 </div>
+
+<!-- Modal for inventory remove warning -->
+<ng-template #tplInventoryRemovalModalTitle>
+  <span>{{ 'page.modal.delete.header.title' | translate}}</span>
+</ng-template>
+<ng-template #tplInventoryRemovalModalContent>
+  <nz-descriptions>
+    <nz-descriptions-item nzTitle="{{ 'description.field.label.lpn' | translate }}">
+      {{ inventoryToBeRemoved.lpn }}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'description.field.label.item' | translate }}">
+      {{ inventoryToBeRemoved.item.name }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'description.field.label.location' | translate }}">
+      {{ inventoryToBeRemoved.location.name }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'description.field.label.quantity' | translate }}">
+      {{ inventoryToBeRemoved.quantity }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'description.field.label.inventory.status' | translate }}" nzSpan="2">
+      {{ inventoryToBeRemoved.inventoryStatus.name }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'description.field.label.inventory.adjustment.reason' | translate }}" nzSpan="3">
+      <div>
+        <nz-select style="width: 320px;" [(ngModel)]="inventoryRemovalReason" nzShowSearch nzAllowClear
+          nzDropdownMatchSelectWidth="true">
+          <nz-option *ngFor="let reason of listOfReasons" [nzLabel]="reason.description" [nzValue]="reason.id">
+          </nz-option>
+        </nz-select>
+      </div>
+    </nz-descriptions-item>
+  </nz-descriptions>
+</ng-template>

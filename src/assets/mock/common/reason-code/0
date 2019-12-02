@@ -1,0 +1,27 @@
+{
+    "result": 0,
+    "message": "",
+    "data": [
+        {
+            "id": 1,
+            "name": "Damaged", 
+            "description": "Inventory is damaged",
+            "type" : "0"
+        },
+        {
+            "id": 2,
+            "name": "Office-Use", 
+            "description": "Used by Office",
+            "type" : "0"
+
+        },
+        {
+            "id": 3,
+            "name": "Customer-Gift", 
+            "description": "Used as a gift to customer",
+            "type" : "0"
+
+        }
+
+    ]
+}

@@ -1,7 +1,7 @@
 <page-header> </page-header>
 
 <!-- Form to query the result  -->
-<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form" (ngSubmit)="search($event)">
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
@@ -39,7 +39,7 @@
   </div>
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
-      <button nz-button [nzType]="'primary'" type="submit">
+      <button nz-button [nzType]="'primary'" (click)="search()">
         {{ 'description.field.button.search' | translate }}
       </button>
       <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
@@ -49,11 +49,12 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfDisplayItems" [nzFooter]="tableFoot">
+  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfDisplayItems" [nzFooter]="tableFoot" #nestedTable>
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
         <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
           (nzCheckedChange)="checkAll($event)"></th>
+        <th nzShowExpand></th>
         <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
         <th nzShowSort nzSortKey="name" [nzFilters]="filtersByName"
           (nzFilterChange)="filter($event, selectedFiltersByClient, selectedFiltersItemFamily)">
@@ -75,16 +76,51 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of rowSelectionTable.data">
-        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
-        <td>{{ data.id }}</td>
-        <td>{{ data.name }}</td>
-        <td>{{ data.description }}</td>
-        <td>{{ data.client?.name}}</td>
-        <td>{{ data.itemFamily?.name }}</td>
-        <td>{{ data.unitCost }}</td>
+      <ng-template ngFor let-data [ngForOf]="nestedTable.data">
+        <!--<tr *ngFor="let data of rowSelectionTable.data">-->
+        <tr>
+          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
+          <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]"></td>
+          <td>{{ data.id }}</td>
+          <td>{{ data.name }}</td>
+          <td>{{ data.description }}</td>
+          <td>{{ data.client?.name}}</td>
+          <td>{{ data.itemFamily?.name }}</td>
+          <td>{{ data.unitCost }}</td>
+        </tr>
+        <tr [nzExpand]="mapOfExpandedId[data.id]" *ngIf="data.itemPackageTypes?.length > 0"
+          (nzExpandChange)="showItemPackageType(data)">
+          <td></td>
+          <td colspan="7">
+            <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
+              <nz-tab *ngFor="let itemPackageType of data.itemPackageTypes" [nzTitle]="itemPackageType.name">
+                <div>{{ itemPackageType.description }}</div>
+
+                <nz-table #innerTable [nzData]="itemPackageType.itemUnitOfMeasures" nzSize="middle"
+                  [nzShowPagination]="false">
+                  <thead>
+                    <tr>
+                      <th>{{'description.field.label.unit-of-measure' | translate}}</th>
+                      <th>{{'description.field.label.quantity' | translate}}</th>
+                      <th>{{'description.field.label.weight' | translate}}</th>
+                    </tr>
+                  </thead>
+    <tbody>
+      <tr *ngFor="let data of innerTable.data">
+        <td>{{ data.unitOfMeasure?.name }}</td>
+        <td>{{ data.quantity }}</td>
+        <td>{{ data.weight }}</td>
       </tr>
     </tbody>
+  </nz-table>
+  </nz-tab>
+  </nz-tabset>
+
+
+  </td>
+  </tr>
+  </ng-template>
+  </tbody>
   </nz-table>
 </div>
 

@@ -102,12 +102,6 @@
               "shortcut": false
             },
             {
-              "text": "Inventory Adjust",
-              "link": "/inventory/inventory-adjust",
-              "i18n": "menu.main.inventory.adjust",
-              "shortcut": false
-            },
-            {
               "text": "Count",
               "i18n": "menu.main.inventory.count",
               "shortcut": false,              

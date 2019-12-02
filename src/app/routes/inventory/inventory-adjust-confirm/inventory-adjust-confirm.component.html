@@ -10,6 +10,7 @@
       <a routerLink="/" routerLinkActive="active">{{ 'description.field.breadcrumb.home' | translate }}</a>
     </nz-breadcrumb-item>
     <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.inventory' | translate }}</a></nz-breadcrumb-item>
     <nz-breadcrumb-item><a routerLink="/inventory/inventory" routerLinkActive="active">{{
         'description.field.breadcrumb.inventory' | translate
       }}</a></nz-breadcrumb-item>
@@ -20,7 +21,6 @@
 <ng-container>
   <nz-card [nzActions]="[actionConfirm]" *ngFor="let inventory of currentInventories ">
     <nz-descriptions nzBordered>
-
       <nz-descriptions-item nzTitle="{{'description.field.label.lpn' | translate}}">
         {{inventory.lpn}}
       </nz-descriptions-item>
@@ -66,17 +66,13 @@
         {{inventory.inventoryStatus.name}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'description.field.label.quantity' | translate}}">
-        <input nz-input [(ngModel)]="inventory.quantity" style="width: 250px;" />
-
+        {{  getInventoryOrignalQuantity(inventory.id) }} => {{inventory.quantity}}
       </nz-descriptions-item>
     </nz-descriptions>
+
+    <ng-template #actionConfirm>
+      <button nz-button nzType="primary" (click)="confirmInventoryAdjust(inventory)">
+        {{ 'description.steps.confirm.title' | translate }}</button>
+    </ng-template>
   </nz-card>
 </ng-container>
-
-
-<ng-template #actionConfirm>
-  <a nz-button nzType="primary" routerLink="/inventory/inventory-adjust/confirm" routerLinkActive="active"
-    (click)="saveCurrentInventory()">
-    {{ 'description.steps.next' | translate }} :
-    {{ 'description.steps.confirm.title' | translate }}</a>
-</ng-template>

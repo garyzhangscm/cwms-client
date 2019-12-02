@@ -89,7 +89,7 @@ export class InventoryItemFamilyComponent implements OnInit {
   }
   sortAndFilter() {
     // filter data
-    const filterFunc = (item: { id: number; name: string; description: string }) =>
+    const filterFunc = (item: { name: string; description: string }) =>
       (this.selectedFiltersByName.length
         ? this.selectedFiltersByName.some(name => item.name.indexOf(name) !== -1)
         : true) &&

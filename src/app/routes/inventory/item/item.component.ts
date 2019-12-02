@@ -11,13 +11,6 @@ import { STReq } from '@delon/abc';
 import { Client } from '../../common/models/client';
 import { ItemFamily } from '../models/item-family';
 
-interface ItemData {
-  id: number;
-  name: string;
-  age: number;
-  address: string;
-}
-
 @Component({
   selector: 'app-inventory-item',
   templateUrl: './item.component.html',
@@ -52,6 +45,8 @@ export class InventoryItemComponent implements OnInit {
   isAllDisplayDataChecked = false;
   // list of checked checkbox
   mapOfCheckedId: { [key: string]: boolean } = {};
+  // list of expanded row
+  mapOfExpandedId: { [key: string]: boolean } = {};
 
   // editable cell
   editId: string | null;
@@ -66,7 +61,7 @@ export class InventoryItemComponent implements OnInit {
     private modalService: NzModalService,
   ) {}
 
-  resetForm(): void {
+  resetForm(event): void {
     this.searchForm.reset();
     this.items = [];
     this.listOfDisplayItems = [];
@@ -84,6 +79,7 @@ export class InventoryItemComponent implements OnInit {
       .subscribe(itemRes => {
         this.items = itemRes;
         this.listOfDisplayItems = itemRes;
+        console.log('item res:\n' + JSON.stringify(itemRes));
 
         this.filtersByName = [];
         this.filtersByClient = [];
@@ -227,5 +223,9 @@ export class InventoryItemComponent implements OnInit {
         this.itemFamilies.push({ label: itemFamily.description, value: itemFamily.id.toString() }),
       );
     });
+  }
+
+  showItemPackageType(item: Item) {
+    // When we expand to show the item package type, load the details of the item package type
   }
 }

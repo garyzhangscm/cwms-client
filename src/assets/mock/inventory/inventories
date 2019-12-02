@@ -1,0 +1,165 @@
+{
+    "result": 0,
+    "message": "",
+    "data": [
+        {
+            "id": 1,
+            "lpn": "LPN00001",
+            "location": "10101A001",
+            "item": {
+                "id": 1,
+                "name": "100001",
+                "description": "IPhone 11 Pro",
+                "itemPackageTypes" : [
+                    {
+                        "id": 1, 
+                        "code": "1x6x12",
+                        "itemUnitOfMeasures" : [
+                            {
+                                "id":1,
+                                "unitOfMeasure":{
+                                    "id": 1,
+                                    "name": "EA",
+                                    "description" : "Each"
+                                },
+                                "quantity": 1,
+                                "weight": 1.5,
+                                "length": 12,
+                                "width": 4.6,
+                                "height": 0.75
+                            },
+                            {
+
+                                "id":2,
+                                "unitOfMeasure":{
+                                    "id": 2,
+                                    "name": "CS",
+                                    "description" : "Case"
+                                },
+                                "quantity": 6,
+                                "weight": 9,
+                                "length": 12,
+                                "width": 4.6,
+                                "height": 4.5
+                            },
+                            {
+
+                                "id":3,
+                                "unitOfMeasure":{
+                                    "id": 3,
+                                    "name": "PL",
+                                    "description" : "Pallet"
+                                },
+                                "quantity": 720,
+                                "weight": 1080,
+                                "length": 12,
+                                "width": 46,
+                                "height": 54
+                            }
+                        ]
+                    },
+                    {
+                        "id": 1, 
+                        "code": "1x12x100",
+                        "itemUnitOfMeasures" : [
+                            {
+                                "id":1,
+                                "unitOfMeasure":{
+                                    "id": 1,
+                                    "name": "EA",
+                                    "description" : "Each"
+                                },
+                                "quantity": 1,
+                                "weight": 1.5,
+                                "length": 12,
+                                "width": 4.6,
+                                "height": 0.75
+                            },
+                            {
+
+                                "id":2,
+                                "unitOfMeasure":{
+                                    "id": 2,
+                                    "name": "CS",
+                                    "description" : "Case"
+                                },
+                                "quantity": 12,
+                                "weight": 12,
+                                "length": 12,
+                                "width": 4.6,
+                                "height": 4.5
+                            },
+                            {
+
+                                "id":3,
+                                "unitOfMeasure":{
+                                    "id": 3,
+                                    "name": "PL",
+                                    "description" : "Pallet"
+                                },
+                                "quantity": 1200,
+                                "weight": 1200,
+                                "length": 12,
+                                "width": 46,
+                                "height": 54
+                            }
+                        ]
+                    }
+                ]
+            },
+            "itemPackageType" : {
+                "id": 1, 
+                "code": "1x6x12",
+                "itemUnitOfMeasures" : [
+                    {
+                        "id":1,
+                        "unitOfMeasure":{
+                            "id": 1,
+                            "name": "EA",
+                            "description" : "Each"
+                        },
+                        "quantity": 1,
+                        "weight": 1.5,
+                        "length": 12,
+                        "width": 4.6,
+                        "height": 0.75
+                    },
+                    {
+
+                        "id":2,
+                        "unitOfMeasure":{
+                            "id": 2,
+                            "name": "CS",
+                            "description" : "Case"
+                        },
+                        "quantity": 6,
+                        "weight": 9,
+                        "length": 12,
+                        "width": 4.6,
+                        "height": 4.5
+                    },
+                    {
+
+                        "id":3,
+                        "unitOfMeasure":{
+                            "id": 3,
+                            "name": "PL",
+                            "description" : "Pallet"
+                        },
+                        "quantity": 720,
+                        "weight": 1080,
+                        "length": 12,
+                        "width": 46,
+                        "height": 54
+                    }
+                ]
+            },
+            "quantity" : 10,
+            "inventoryStatus": {
+                "id": 1,
+                "name": "AVAL",
+                "description": "Available"
+            }
+        }
+    ]
+}
