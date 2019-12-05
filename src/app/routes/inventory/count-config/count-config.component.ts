@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
+import { I18NService } from '@core';
+import { Item } from '../models/item';
+import { Client } from '../../common/models/client';
+import { ItemFamily } from '../models/item-family';
+import { CycleCountBatch } from '../models/cycle-count-batch';
+import { CycleCountBatchService } from '../services/cycle-count-batch.service';
 
 interface ItemData {
   id: number;
@@ -12,92 +18,63 @@ interface ItemData {
 @Component({
   selector: 'app-inventory-count-config',
   templateUrl: './count-config.component.html',
-  styleUrls: ['./count-config.component.less']
+  styleUrls: ['./count-config.component.less'],
 })
 export class InventoryCountConfigComponent implements OnInit {
-
-  constructor(private http: _HttpClient, private fb: FormBuilder) { }
-
   // Form related data and functions
   searchForm: FormGroup;
-  controlArray: Array<{ index: number; show: boolean }> = [];
-  isCollapse = true;
+  // Table data for display
+  cycleCountBatches: CycleCountBatch[] = [];
+  listOfDisplayCycleCountBatches: CycleCountBatch[] = [];
 
+  // Sort key: field's nzSortKey value
+  // sort value: ascend / descend
+  sortKey: string | null = null;
+  sortValue: string | null = null;
 
-  // Table related data and functions
-  listOfSelection = [
-    {
-      text: 'Select All Row',
-      onSelect: () => {
-        this.checkAll(true);
-      }
-    },
-    {
-      text: 'Select Odd Row',
-      onSelect: () => {
-        this.listOfDisplayData.forEach((data, index) => (this.mapOfCheckedId[data.id] = index % 2 !== 0));
-        this.refreshStatus();
-      }
-    },
-    {
-      text: 'Select Even Row',
-      onSelect: () => {
-        this.listOfDisplayData.forEach((data, index) => (this.mapOfCheckedId[data.id] = index % 2 === 0));
-        this.refreshStatus();
-      }
-    }
-  ];
-  isAllDisplayDataChecked = false;
-  isIndeterminate = false;
-  listOfDisplayData: ItemData[] = [];
-  listOfAllData: ItemData[] = [];
-  mapOfCheckedId: { [key: string]: boolean } = {};
+  isCollapse = false;
 
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
-    this.controlArray.forEach((c, index) => {
-      c.show = this.isCollapse ? index < 6 : true;
-    });
   }
+
+  constructor(private fb: FormBuilder, private cycleCountBatchService: CycleCountBatchService) {}
 
   resetForm(): void {
     this.searchForm.reset();
+    this.cycleCountBatches = [];
+    this.listOfDisplayCycleCountBatches = [];
+  }
+  search(): void {
+    this.cycleCountBatchService.getCycleCountBatches(this.searchForm.value.batchId).subscribe(cycleCountBatchRes => {
+      this.cycleCountBatches = cycleCountBatchRes;
+      this.listOfDisplayCycleCountBatches = cycleCountBatchRes;
+      console.log('cycleCountBatchRes res:\n' + JSON.stringify(cycleCountBatchRes));
+    });
   }
 
-  currentPageDataChange($event: ItemData[]): void {
-    this.listOfDisplayData = $event;
-    this.refreshStatus();
+  currentPageDataChange($event: CycleCountBatch[]): void {
+    this.listOfDisplayCycleCountBatches = $event;
   }
 
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayData.every(item => this.mapOfCheckedId[item.id]);
-    this.isIndeterminate =
-      this.listOfDisplayData.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+  sort(sort: { key: string; value: string }): void {
+    this.sortKey = sort.key;
+    this.sortValue = sort.value;
+    this.listOfDisplayCycleCountBatches = this.cycleCountBatches.sort((a, b) =>
+      this.sortValue === 'ascend'
+        ? a[this.sortKey!] > b[this.sortKey!]
+          ? 1
+          : -1
+        : b[this.sortKey!] > a[this.sortKey!]
+        ? 1
+        : -1,
+    );
   }
 
-  checkAll(value: boolean): void {
-    this.listOfDisplayData.forEach(item => (this.mapOfCheckedId[item.id] = value));
-    this.refreshStatus();
+  ngOnInit() {
+    // initiate the search form
+    this.searchForm = this.fb.group({
+      batchId: [null],
+    });
   }
-
-  ngOnInit() { 
-    // initiate the form
-    this.searchForm = this.fb.group({});
-    for (let i = 0; i < 10; i++) {
-      this.controlArray.push({ index: i, show: i < 6 });
-      this.searchForm.addControl(`field${i}`, new FormControl());
-    }
-
-    // initiate the data for table
-    for (let i = 0; i < 100; i++) {
-      this.listOfAllData.push({
-        id: i,
-        name: `Edward King ${i}`,
-        age: 32,
-        address: `London, Park Lane no. ${i}`
-      });
-    }
-
-  }
-
 }

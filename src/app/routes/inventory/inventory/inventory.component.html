@@ -3,7 +3,7 @@
 <!-- Form to query the result  -->
 <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
   <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="12">
+    <div nz-col [nzSpan]="12" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label for="client" [nzSm]="3" [nzXs]="3">
           {{ 'description.field.label.client' | translate }}
@@ -14,7 +14,7 @@
       </nz-form-item>
     </div>
 
-    <div nz-col [nzSpan]="12">
+    <div nz-col [nzSpan]="12" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label for="item-family" [nzSm]="3" [nzXs]="3">
           {{ 'description.field.label.item-family' | translate }}
@@ -25,7 +25,7 @@
         </nz-select>
       </nz-form-item>
     </div>
-    <div nz-col [nzSpan]="6">
+    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="name">
           {{ 'description.field.label.item' | translate }}
@@ -35,7 +35,7 @@
         </nz-form-control>
       </nz-form-item>
     </div>
-    <div nz-col [nzSpan]="6">
+    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="location">
           {{ 'description.field.label.location' | translate }}
@@ -52,6 +52,11 @@
         {{ 'description.field.button.search' | translate }}
       </button>
       <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
+      <a class="collapse" (click)="toggleCollapse()">
+        {{ 'description.field.button.collapse' | translate }}
+
+        <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
+      </a>
     </div>
   </div>
 </form>
@@ -143,12 +148,12 @@
         </td>
         <td>
           <a nz-button routerLink="/inventory/inventory-adjust" routerLinkActive="active"
-            [queryParams]="{lpn : data.lpn}">
+            [queryParams]="{id : data.id}">
             {{ 'description.field.label.adjustInventory' | translate }}</a>
           <nz-divider nzType="vertical"></nz-divider>
 
           <a nz-button routerLink="/inventory/inventory-attribute-change" routerLinkActive="active"
-            [queryParams]="{lpn : data.lpn}">
+            [queryParams]="{id : data.id}">
             {{ 'description.field.label.inventory.attributeChange' | translate }}</a>
           <nz-divider nzType="vertical"></nz-divider>
           <button nz-button

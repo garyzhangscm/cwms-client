@@ -10,9 +10,9 @@ import { InventoryService } from '../services/inventory.service';
   templateUrl: './inventory-adjust-confirm.component.html',
 })
 export class InventoryInventoryAdjustConfirmComponent implements OnInit {
-  currentInventories: Inventory[];
+  currentInventory: Inventory;
   pageTitle: string;
-  originalInventoryQuantity: Array<{ key: number; quantity: number }> = [];
+  originalInventoryQuantity: number;
 
   constructor(
     private i18n: I18NService,
@@ -25,30 +25,15 @@ export class InventoryInventoryAdjustConfirmComponent implements OnInit {
 
   ngOnInit() {
     this.titleService.setTitle(this.i18n.fanyi('page.inventory.adjust.confirm.title'));
-    this.originalInventoryQuantity = [];
-    this.currentInventories = JSON.parse(sessionStorage.getItem('inventory-adjust.inventories'));
-    this.inventoryService.getInventoriesByLpn(this.currentInventories[0].lpn).subscribe(inventories => {
-      inventories.forEach(inventory => {
-        this.originalInventoryQuantity.push({
-          key: inventory.id,
-          quantity: inventory.quantity,
-        });
-      });
+    this.currentInventory = JSON.parse(sessionStorage.getItem('inventory-adjust.inventory'));
+    this.inventoryService.getInventoryById(this.currentInventory.id).subscribe(inventory => {
+      this.originalInventoryQuantity = inventory.quantity;
     });
   }
 
-  getInventoryOrignalQuantity(id: number): number {
-    const inventoryQuantity = this.originalInventoryQuantity.filter(item => item.key === id);
-    if (inventoryQuantity.length === 1) {
-      return inventoryQuantity[0].quantity;
-    } else {
-      return 0;
-    }
-  }
-
-  confirmInventoryAdjust(inventory: Inventory) {
+  confirmInventoryAdjust() {
     this.inventoryService
-      .changeInventory(inventory)
-      .subscribe(res => this.router.navigateByUrl('/inventory/inventory'));
+      .changeInventory(this.currentInventory)
+      .subscribe(res => this.router.navigateByUrl('/inventory/inventory?refresh'));
   }
 }

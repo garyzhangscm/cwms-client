@@ -1,0 +1,90 @@
+{
+    "result": 0,
+    "message": "",
+    "data": [
+        {
+            "id": 4,
+            "batchId": "CNT0000001",
+            "location": {
+                "id": 3,
+                "name": "10201A003",
+                "aisle": "102",
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "length": 48,
+                "width": 48,
+                "height": 48,
+                "pickSequence": 3,
+                "putawaySequence": 3,
+                "countSequence": 3,
+                "capacity": 110592,
+                "fillPercentage": 80,
+                "locationGroup" : 
+                {
+                    "id": 1,
+                    "name": "EACH_PICKING_1",
+                    "description": "Each Picking Zone - 1",
+                    "locationGroupType": {
+                                            "id" : 0,
+                                            "name" : "Storage",
+                                            "description" : "Storage Locations",
+                                            "four_wall_inventory" : true,
+                                            "virtual" : false
+                                        },
+                    "locationCount":15
+                }
+            },            
+            "item": {
+                "id": 1,
+                "name": "100001",
+                "description": "IPhone 11 Pro",
+                "itemFamily": {
+                    "id": 1,
+                    "name": "HIGH-VALUE",
+                    "description": "High Value item that will need double check"
+                },
+                "itemUnitOfMeasures" : [
+                    {
+                        "unitOfMeasure": {
+                            "id": 1,
+                            "name": "EA", 
+                            "description": "Each"
+                        },
+                        "quantity": 1,
+                        "weight": 6.63,
+                        "length": 5.67,
+                        "width": 2.81,
+                        "height": 0.32
+                    },
+                    {
+                        "unitOfMeasure": {
+                            "id": 10,
+                            "name": "CS", 
+                            "description": "Case"
+                        },
+                        "quantity": 10,
+                        "weight": 66.3,
+                        "length": 5.67,
+                        "width": 5.62,
+                        "height": 1.6
+                    },
+                    {
+                        "unitOfMeasure": {
+                            "id": 1,
+                            "name": "PL", 
+                            "description": "Pallet"
+                        },
+                        "quantity": 240,
+                        "weight": 1591.2,
+                        "length": 17.01,
+                        "width": 11.24,
+                        "height": 6.4
+                    }
+                ]
+            },
+            "quantity": 100,
+            "countQuantity": 99
+        }
+    ]
+}

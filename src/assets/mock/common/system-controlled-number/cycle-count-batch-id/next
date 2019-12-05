@@ -1,0 +1,9 @@
+{
+    "result": 0,
+    "message": "",
+    "data": 
+        {
+            "type": "cycle-count-batch-id",
+            "nextId": "CB000000012"
+        }
+}

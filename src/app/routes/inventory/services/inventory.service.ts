@@ -40,6 +40,19 @@ export class InventoryService {
     return this.http.get(url).pipe(map(res => res.data));
   }
 
+  getInventoryById(id: number): Observable<Inventory> {
+    const url = `inventory/inventory/${id}`;
+    return this.http.get(url).pipe(map(res => res.data));
+  }
+
+  getInventoriesByLocationName(location: string): Observable<Inventory[]> {
+    const url = `inventory/inventories?location=${location}`;
+    return this.http.get(url).pipe(map(res => res.data));
+  }
+  getInventoriesByLocationIds(locationIds: number[]): Observable<Inventory[]> {
+    const url = `inventory/inventories?locationIds=${locationIds.join(',')}`;
+    return this.http.get(url).pipe(map(res => res.data));
+  }
   getInventoriesByLpn(lpn: string): Observable<Inventory[]> {
     const url = `inventory/inventories?lpn=${lpn}`;
     return this.http.get(url).pipe(map(res => res.data));

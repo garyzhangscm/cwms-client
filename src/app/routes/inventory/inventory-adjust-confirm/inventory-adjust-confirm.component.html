@@ -19,25 +19,25 @@
 </ng-template>
 
 <ng-container>
-  <nz-card [nzActions]="[actionConfirm]" *ngFor="let inventory of currentInventories ">
+  <nz-card [nzActions]="[actionConfirm]">
     <nz-descriptions nzBordered>
       <nz-descriptions-item nzTitle="{{'description.field.label.lpn' | translate}}">
-        {{inventory.lpn}}
+        {{currentInventory.lpn}}
       </nz-descriptions-item>
 
       <nz-descriptions-item nzTitle="{{'description.field.label.location' | translate}}" nzSpan="2">
-        {{inventory.location}}
+        {{currentInventory.location.name}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'description.field.label.item' | translate}}">
-        {{inventory.item.name}}
+        {{currentInventory.item.name}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'description.field.label.item.description' | translate}}" nzSpan="2">
-        {{inventory.item.description}}
+        {{currentInventory.item.description}}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'description.field.label.item.package-type' | translate}}" nzSpan="2">
-        <nz-card nzTitle="{{inventory.itemPackageType.code}}">
-          <nz-table #itemPackageTypeDetailTable [nzData]="inventory.itemPackageType.itemUnitOfMeasures" nzSize="middle"
-            [nzShowPagination]="false" nzBordered>
+      <nz-descriptions-item nzTitle="{{'description.field.label.item.package-type' | translate}}" nzSpan="3">
+        <nz-card nzTitle="{{currentInventory.itemPackageType.name}}">
+          <nz-table #itemPackageTypeDetailTable [nzData]="currentInventory.itemPackageType.itemUnitOfMeasures"
+            nzSize="middle" [nzShowPagination]="false" nzBordered>
             <thead>
               <tr>
                 <th>{{ 'description.field.label.unitOfMeasure' | translate}}</th>
@@ -63,15 +63,24 @@
 
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'description.field.label.inventory.status' | translate}}">
-        {{inventory.inventoryStatus.name}}
+        {{currentInventory.inventoryStatus.name}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'description.field.label.quantity' | translate}}">
-        {{  getInventoryOrignalQuantity(inventory.id) }} => {{inventory.quantity}}
+        <span
+          *ngIf='currentInventory !== undefined && currentInventory.quantity === originalInventoryQuantity else quantityChangedTpl'>
+          {{currentInventory.quantity}}
+        </span>
       </nz-descriptions-item>
     </nz-descriptions>
 
+    <ng-template #quantityChangedTpl>
+      <span>{{ 'description.field.label.originalValue' | translate}} :
+        {{ originalInventoryQuantity }}</span>
+      <nz-divider nzType="vertical"></nz-divider>
+      <span>{{ 'description.field.label.newValue' | translate}} : {{  currentInventory.quantity }}</span>
+    </ng-template>
     <ng-template #actionConfirm>
-      <button nz-button nzType="primary" (click)="confirmInventoryAdjust(inventory)">
+      <button nz-button nzType="primary" (click)="confirmInventoryAdjust()">
         {{ 'description.steps.confirm.title' | translate }}</button>
     </ng-template>
   </nz-card>

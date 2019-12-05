@@ -10,7 +10,7 @@ import { InventoryService } from '../services/inventory.service';
   templateUrl: './inventory-adjust.component.html',
 })
 export class InventoryInventoryAdjustComponent implements OnInit {
-  currentInventories: Inventory[];
+  currentInventory: Inventory;
   pageTitle: string;
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -25,16 +25,16 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.titleService.setTitle(this.i18n.fanyi('page.inventory.adjust.header.title'));
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.inprocess === 'true') {
-        this.currentInventories = JSON.parse(sessionStorage.getItem('inventory-adjust.inventories'));
+        this.currentInventory = JSON.parse(sessionStorage.getItem('inventory-adjust.inventory'));
       } else {
-        this.inventoryService.getInventoriesByLpn(params.lpn).subscribe(inventory => {
-          this.currentInventories = inventory;
+        this.inventoryService.getInventoryById(params.id).subscribe(inventory => {
+          this.currentInventory = inventory;
         });
       }
     });
   }
 
   saveCurrentInventory() {
-    sessionStorage.setItem('inventory-adjust.inventories', JSON.stringify(this.currentInventories));
+    sessionStorage.setItem('inventory-adjust.inventory', JSON.stringify(this.currentInventory));
   }
 }

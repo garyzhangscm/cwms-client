@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { _HttpClient, TitleService } from '@delon/theme';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { Inventory } from '../models/inventory';
 import { InventoryService } from '../services/inventory.service';
@@ -16,7 +16,7 @@ import { ReasonCode } from '../../common/models/reason-code';
 import { ReasonCodeService } from '../../common/services/reason-code.service';
 import { ReasonCodeType } from '../../common/models/reason-code-type.enum';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-inventory-inventory',
@@ -55,6 +55,12 @@ export class InventoryInventoryComponent implements OnInit {
   inventoryRemovalReason: ReasonCode;
   listOfReasons: ReasonCode[];
 
+  isCollapse = false;
+
+  toggleCollapse(): void {
+    this.isCollapse = !this.isCollapse;
+  }
+
   constructor(
     private fb: FormBuilder,
     private inventoryService: InventoryService,
@@ -63,6 +69,8 @@ export class InventoryInventoryComponent implements OnInit {
     private i18n: I18NService,
     private modalService: NzModalService,
     private reasonCodeService: ReasonCodeService,
+    private activatedRoute: ActivatedRoute,
+    private titleService: TitleService,
   ) {}
 
   resetForm(): void {
@@ -117,7 +125,7 @@ export class InventoryInventoryComponent implements OnInit {
           }
           if (inventory.itemPackageType.id && !existingItemPackageTypeId.has(inventory.itemPackageType.id)) {
             this.filtersByItemPackageType.push({
-              text: inventory.itemPackageType.code,
+              text: inventory.itemPackageType.name,
               value: inventory.itemPackageType.id,
             });
             existingItemPackageTypeId.add(inventory.item.id);
@@ -253,7 +261,13 @@ export class InventoryInventoryComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.inventory'));
     this.initSearchForm();
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.hasOwnProperty('refresh')) {
+        this.search();
+      }
+    });
   }
 
   initSearchForm() {

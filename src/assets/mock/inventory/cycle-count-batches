@@ -1,0 +1,26 @@
+{
+    "result": 0,
+    "message": "",
+    "data": [
+        {
+            "id": 1,
+            "batchId": "CNT0000001",
+            "requestLocationCount": 190,
+            "openLocationCount": 150,
+            "finishedLocationCount": 37,
+            "cancelledLocationCount": 3,
+            "openAuditLocationCount": 1,
+            "finishedAuditLocationCount": 7
+        },
+        {
+            "id": 2,
+            "batchId": "CNT0000002",
+            "requestLocationCount": 222,
+            "openLocationCount": 18,
+            "finishedLocationCount": 202,
+            "cancelledLocationCount": 2,
+            "openAuditLocationCount": 0,
+            "finishedAuditLocationCount": 7
+        }
+    ]
+}

@@ -15,6 +15,7 @@ import { InventoryInventoryAdjustComponent } from './inventory-adjust/inventory-
 import { InventoryInventoryAdjustConfirmComponent } from './inventory-adjust-confirm/inventory-adjust-confirm.component';
 import { InventoryInventoryAttributeChangeComponent } from './inventory-attribute-change/inventory-attribute-change.component';
 import { InventoryInventoryAttributeChangeConfirmComponent } from './inventory-attribute-change-confirm/inventory-attribute-change-confirm.component';
+import { InventoryCycleCountMaintenanceComponent } from './cycle-count-maintenance/cycle-count-maintenance.component';
 
 const COMPONENTS = [
   InventoryInventoryComponent,
@@ -31,6 +32,7 @@ const COMPONENTS = [
   InventoryInventoryAdjustConfirmComponent,
   InventoryInventoryAttributeChangeComponent,
   InventoryInventoryAttributeChangeConfirmComponent,
+  InventoryCycleCountMaintenanceComponent,
 ];
 const COMPONENTS_NOROUNT = [];
 

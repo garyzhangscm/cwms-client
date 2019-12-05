@@ -12,7 +12,7 @@ import { InventoryStatusService } from '../services/inventory-status.service';
   templateUrl: './inventory-attribute-change.component.html',
 })
 export class InventoryInventoryAttributeChangeComponent implements OnInit {
-  currentInventories: Inventory[];
+  currentInventory: Inventory;
   pageTitle: string;
   availableInventoryStatuses: InventoryStatus[];
   constructor(
@@ -29,11 +29,10 @@ export class InventoryInventoryAttributeChangeComponent implements OnInit {
     this.titleService.setTitle(this.i18n.fanyi('page.inventory.attributeChange.header.title'));
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.inprocess === 'true') {
-        this.currentInventories = JSON.parse(sessionStorage.getItem('inventory-attribute-change.inventories'));
+        this.currentInventory = JSON.parse(sessionStorage.getItem('inventory-attribute-change.inventory'));
       } else {
-        this.inventoryService.getInventoriesByLpn(params.lpn).subscribe(inventories => {
-          this.currentInventories = inventories;
-          console.log('inventories:\n' + JSON.stringify(inventories));
+        this.inventoryService.getInventoryById(params.id).subscribe(inventory => {
+          this.currentInventory = inventory;
         });
       }
     });
@@ -43,19 +42,22 @@ export class InventoryInventoryAttributeChangeComponent implements OnInit {
   }
 
   saveCurrentInventory() {
-    sessionStorage.setItem('inventory-attribute-change.inventories', JSON.stringify(this.currentInventories));
+    sessionStorage.setItem('inventory-attribute-change.inventory', JSON.stringify(this.currentInventory));
   }
 
-  itemPackageTypeChange(inventory: Inventory, newItemPackageTypeCode) {
-    console.log('before item package type change:\n' + JSON.stringify(inventory));
-
-    const itemPackageTypes = inventory.item.itemPackageTypes.filter(
-      itemPackageType => itemPackageType.code === newItemPackageTypeCode,
+  itemPackageTypeChange(newItemPackageTypeName) {
+    const itemPackageTypes = this.currentInventory.item.itemPackageTypes.filter(
+      itemPackageType => itemPackageType.name === newItemPackageTypeName,
     );
     if (itemPackageTypes.length === 1) {
-      console.log(`reset item package type from inventory.itemPackageType.code to itemPackageTypes[0].code`);
-      inventory.itemPackageType = itemPackageTypes[0];
+      this.currentInventory.itemPackageType = itemPackageTypes[0];
     }
-    console.log('after item package type change:\n' + JSON.stringify(inventory));
+  }
+  inventoryStatusChange(newInventoryStatusName) {
+    this.availableInventoryStatuses.forEach(inventoryStatus => {
+      if (inventoryStatus.name === newInventoryStatusName) {
+        this.currentInventory.inventoryStatus = inventoryStatus;
+      }
+    });
   }
 }
