@@ -10,6 +10,6 @@ export class SystemControlledNumberService {
   constructor(private http: _HttpClient) {}
 
   getNextAvailableId(type: string): Observable<string> {
-    return this.http.get(`common/system-controlled-number/${type}/next`).pipe(map(res => res.data.nextId));
+    return this.http.get(`common/system-controlled-number/${type}/next`).pipe(map(res => res.data.nextNumber));
   }
 }

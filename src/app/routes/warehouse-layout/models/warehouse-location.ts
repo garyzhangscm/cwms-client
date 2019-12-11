@@ -15,6 +15,8 @@ export interface WarehouseLocation {
   countSequence: number;
   capacity: number;
   fillPercentage: number;
+  currentVolume: number;
+  pendingVolume: number;
   locationGroup: LocationGroup;
   enabled: boolean;
 }

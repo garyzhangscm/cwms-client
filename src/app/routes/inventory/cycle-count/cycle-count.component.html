@@ -16,6 +16,7 @@
   </div>
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
+
       <button nz-button [nzType]="'primary'" (click)="search()">
         {{ 'description.field.button.search' | translate }}
       </button>
@@ -24,6 +25,8 @@
         {{ 'description.field.button.collapse' | translate }}
         <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
       </a>
+
+
     </div>
   </div>
 </form>

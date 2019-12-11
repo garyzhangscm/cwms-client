@@ -6,6 +6,4 @@ export interface AuditCountRequest {
   id: number;
   batchId: string;
   location: WarehouseLocation;
-  item: Item;
-  cycleCountResult: CycleCountResult;
 }

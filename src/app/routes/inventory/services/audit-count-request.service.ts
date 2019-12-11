@@ -79,10 +79,10 @@ export class AuditCountRequestService {
       pageLines.push(`
                       <tr>
                         <td>${auditCountRequest.location.name}</td>
-                        <td>${auditCountRequest.item.name}</td>
-                        <td>${auditCountRequest.item.description}</td>
-                        <td>${auditCountRequest.cycleCountResult.quantity}</td>
-                        <td>${auditCountRequest.cycleCountResult.countQuantity}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td>_____________________</td>
                       </tr>`);
 

@@ -1,5 +1,6 @@
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { Item } from './item';
+import { AuditCountRequest } from './audit-count-request';
 
 export interface CycleCountResult {
   id: number;
@@ -8,4 +9,5 @@ export interface CycleCountResult {
   item: Item;
   quantity: number;
   countQuantity: number;
+  auditCountRequest: AuditCountRequest;
 }

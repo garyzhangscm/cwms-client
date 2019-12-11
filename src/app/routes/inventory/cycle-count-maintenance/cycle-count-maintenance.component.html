@@ -63,12 +63,12 @@
     <div nz-row [nzGutter]="24" *ngIf='requestTypeSelect.value'>
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="startValue">
-            <span *ngIf='requestByLocation()'>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="startValue" [ngSwitch]="requestTypeSelect.value">
+            <span *ngSwitchCase="'BY_LOCATION_RANGE'">
               {{ 'description.field.label.cycle-count-request.start-location' | translate }}</span>
-            <span *ngIf='requestByItem()'>
+            <span *ngSwitchCase="'BY_ITEM_RANGE'">
               {{ 'description.field.label.cycle-count-request.start-item' | translate }}</span>
-            <span *ngIf='requestByAisle()'>
+            <span *ngSwitchCase="'BY_AISLE_RANGE'">
               {{ 'description.field.label.cycle-count-request.start-aisle' | translate }}</span>
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
@@ -80,13 +80,14 @@
 
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="endValue">
-            <span *ngIf='requestByLocation()'>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="endValue" [ngSwitch]="requestTypeSelect.value">
+            <span *ngSwitchCase="'BY_LOCATION_RANGE'">
               {{ 'description.field.label.cycle-count-request.end-location' | translate }}</span>
-            <span *ngIf='requestByItem()'>
+            <span *ngSwitchCase="'BY_ITEM_RANGE'">
               {{ 'description.field.label.cycle-count-request.end-item' | translate }}</span>
-            <span *ngIf='requestByAisle()'>
+            <span *ngSwitchCase="'BY_AISLE_RANGE'">
               {{ 'description.field.label.cycle-count-request.end-aisle' | translate }}</span>
+
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -95,7 +96,8 @@
         </nz-form-item>
       </div>
 
-      <div nz-col [nzSpan]="8" *ngIf='requestByLocation() || requestByAisle()'>
+      <div nz-col [nzSpan]="8"
+        *ngIf='requestTypeSelect.value === "BY_LOCATION_RANGE" || requestTypeSelect.value === "BY_AISLE_RANGE"'>
         <nz-form-item nzFlex>
           <label nz-checkbox formControlName="includeEmptyLocation">
             {{ 'description.field.label.cycle-count-request.include-empty-location' | translate }}</label>
@@ -115,12 +117,11 @@
   </div>
 </ng-template>
 
-
 <nz-tabset>
   <nz-tab nzTitle="{{ 'description.field.label.cycle-count-request.open' | translate}}">
     <!-- Table to Display the result  -->
     <div class="search-result-list">
-      <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfOpenCycleCountRequests"
+      <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllOpenCycleCountRequests"
         (nzCurrentPageDataChange)="openCycleCountCurrentPageDataChange($event)" [nzFooter]="openCycleCountTableFoot"
         #openCycleCountTable>
         <thead (nzSortChange)="sortOpenCycleCountRequestTable($event)" nzSingleSort>
@@ -143,7 +144,7 @@
               (nzCheckedChange)="openCycleCountTableRefreshStatus()"></td>
             <td>{{ data.id }}</td>
             <td>{{ data.batchId }}</td>
-            <td>{{ data.location.name }}</td>
+            <td>{{ data.location?.name }}</td>
             <td>
               <button nz-button
                 (click)="openCountResultModal(data, tplCycleCountRequestConfirmModalTitle, tplCycleCountRequestConfirmModalContent)"
@@ -189,11 +190,12 @@
     </ng-template>
 
   </nz-tab>
+
   <nz-tab nzTitle="{{ 'description.field.label.cycle-count-request.finished' | translate}}">
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
-      <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfCycleCountResults"
+      <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllCycleCountResults"
         (nzCurrentPageDataChange)="cycleCountResultPageDataChange($event)" #cycleCountResultTable>
         <thead (nzSortChange)="sortCycleCountResultTable($event)" nzSingleSort>
           <tr>
@@ -217,9 +219,9 @@
           <tr *ngFor="let data of cycleCountResultTable.data">
             <td>{{ data.id }}</td>
             <td>{{ data.batchId }}</td>
-            <td>{{ data.location.name }}</td>
-            <td>{{ data.item.name }}</td>
-            <td>{{ data.item.description }}</td>
+            <td>{{ data.location?.name }}</td>
+            <td>{{ data.item?.name }}</td>
+            <td>{{ data.item?.description }}</td>
             <td>{{ data.quantity }}</td>
             <td>{{ data.countQuantity }}</td>
           </tr>
@@ -228,11 +230,12 @@
     </div>
 
   </nz-tab>
+
   <nz-tab nzTitle="{{ 'description.field.label.cycle-count-request.cancelled' | translate}}">
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
-      <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfCancelledCycleCountRequests"
+      <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllCancelledCycleCountRequests"
         (nzCurrentPageDataChange)="cancelledCycleCountCurrentPageDataChange($event)"
         [nzFooter]="cancelledCycleCountTableFoot" #cancelledCycleCountTable>
         <thead (nzSortChange)="sortCancelledCycleCountRequestTable($event)" nzSingleSort>
@@ -254,7 +257,7 @@
               (nzCheckedChange)="cancelledCycleCountTableRefreshStatus()"></td>
             <td>{{ data.id }}</td>
             <td>{{ data.batchId }}</td>
-            <td>{{ data.location.name }}</td>
+            <td>{{ data.location?.name }}</td>
           </tr>
         </tbody>
       </nz-table>
@@ -268,11 +271,12 @@
       </div>
     </ng-template>
   </nz-tab>
+
   <nz-tab nzTitle="{{ 'description.field.label.audit-count-request' | translate}}">
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
-      <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfOpenAuditCountRequests"
+      <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllOpenAuditCountRequests"
         (nzCurrentPageDataChange)="openAuditCountCurrentPageDataChange($event)" [nzFooter]="openAuditCountTableFoot"
         #openAuditCountTable>
         <thead (nzSortChange)="sortOpenAuditCountRequestTable($event)" nzSingleSort>
@@ -286,14 +290,6 @@
             </th>
             <th nzShowSort nzSortKey="location">
               {{'description.field.label.location' | translate}}</th>
-            <th>
-              {{'description.field.label.item' | translate}}</th>
-            <th>
-              {{'description.field.label.item.description' | translate}}</th>
-            <th>
-              {{'description.field.label.quantity' | translate}}</th>
-            <th>
-              {{'description.field.label.count-quantity' | translate}}</th>
             <th>{{ 'description.field.label.action' | translate }}</th>
           </tr>
         </thead>
@@ -303,11 +299,7 @@
               (nzCheckedChange)="openAuditCountTableRefreshStatus()"></td>
             <td>{{ data.id }}</td>
             <td>{{ data.batchId }}</td>
-            <td>{{ data.location.name }}</td>
-            <td>{{ data.item.name }}</td>
-            <td>{{ data.item.description }}</td>
-            <td>{{ data.cycleCountResult.quantity }}</td>
-            <td>{{ data.cycleCountResult.countQuantity }}</td>
+            <td>{{ data.location?.name }}</td>
             <td>
               <button nz-button
                 nzType="primary">{{ 'description.field.label.cycle-count.complete' | translate }}</button>
@@ -351,11 +343,12 @@
 
 
   </nz-tab>
+
   <nz-tab nzTitle="{{ 'description.field.label.audit-count-result' | translate}}">
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
-      <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAuditCountResults"
+      <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllAuditCountResults"
         (nzCurrentPageDataChange)="auditCountResultsCurrentPageDataChange($event)" #auditCountResultsTable>
         <thead (nzSortChange)="sortAuditCountResultsTable($event)" nzSingleSort>
           <tr>
@@ -365,6 +358,8 @@
             </th>
             <th nzShowSort nzSortKey="location">
               {{'description.field.label.location' | translate}}</th>
+            <th>
+              {{'description.field.label.lpn' | translate}}</th>
             <th>
               {{'description.field.label.item' | translate}}</th>
             <th>
@@ -381,11 +376,11 @@
           <tr *ngFor="let data of auditCountResultsTable.data">
             <td>{{ data.id }}</td>
             <td>{{ data.batchId }}</td>
-            <td>{{ data.location.name }}</td>
-            <td>{{ data.item.name }}</td>
-            <td>{{ data.item.description }}</td>
-            <td>{{ data.cycleCountResult.quantity }}</td>
-            <td>{{ data.cycleCountResult.countQuantity }}</td>
+            <td>{{ data.location?.name }}</td>
+            <td>{{ data.inventory.lpn }}</td>
+            <td>{{ data.inventory.item.name }}</td>
+            <td>{{ data.inventory.item.description }}</td>
+            <td>{{ data.quantity }}</td>
             <td>{{ data.countQuantity }}</td>
           </tr>
         </tbody>
@@ -394,6 +389,7 @@
 
 
   </nz-tab>
+
 </nz-tabset>
 
 
@@ -404,26 +400,36 @@
   <span>{{ 'page.modal.cycle-count.confirm.title' | translate}}</span>
 </ng-template>
 <ng-template #tplCycleCountRequestConfirmModalContent>
-  <form nz-form>
+  <form>
     <nz-table [nzData]="inventoriesToBeCount" #inventoriesTable nzShowPagination="false">
       <thead>
         <tr>
           <th>{{ 'description.field.label.location' | translate}}</th>
-          <th>{{ 'description.field.label.lpn' | translate}}</th>
           <th>{{ 'description.field.label.item' | translate}}</th>
           <th>{{ 'description.field.label.item.description' | translate}}</th>
           <th>{{ 'description.field.label.quantity' | translate}}</th>
           <th>{{ 'description.field.label.count-quantity' | translate}}</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let data of inventoriesTable.data">
-          <td>{{ data.location.name }}</td>
-          <td>{{ data.lpn }}</td>
-          <td>{{ data.item.name }}</td>
-          <td>{{ data.item.description }}</td>
+        <tr *ngFor="let data of inventoriesTable.data; let i = index">
+          <td>{{ data.location?.name }}</td>
+          <td>
+            <input *ngIf="data.item != null" type="text" [ngModel]="data.item?.name"
+              (blur)="countResultItemNameBlur($event.target.value, data)" name="itemName-{{i}}">
+          </td>
+          <td>{{ data.item?.description }}</td>
           <td>{{ data.quantity }}</td>
-          <td><input type="text" [(ngModel)]="cycleCountRequestResult[data.id]" [name]="data.id"></td>
+          <td><input type="text" [(ngModel)]="data.countQuantity" name='result-{{i}}'></td>
+          <td>
+            <button *ngIf="data.item !== null" nz-button nzType="primary" (click)="removeCountedInventory(i)">
+              <i nz-icon nzType="close" nzTheme="outline"></i>
+            </button>
+            <button *ngIf="i === inventoriesTable.data.length - 1" nz-button nzType="primary"
+              (click)="addCountedInventory(data)">
+              <i nz-icon nzType="plus" nzTheme="outline"></i></button>
+          </td>
         </tr>
       </tbody>
     </nz-table>

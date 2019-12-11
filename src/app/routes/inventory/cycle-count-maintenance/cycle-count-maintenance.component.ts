@@ -13,11 +13,9 @@ import { CycleCountRequestService } from '../services/cycle-count-request.servic
 import { CycleCountResultService } from '../services/cycle-count-result.service';
 import { AuditCountRequestService } from '../services/audit-count-request.service';
 import { AuditCountResultService } from '../services/audit-count-result.service';
-import { Lodop, LodopService } from '@delon/abc';
-import { PrintingService } from '../../common/services/printing.service';
-import { InventoryService } from '../services/inventory.service';
-import { Inventory } from '../models/inventory';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd';
+import { Item } from '../models/item';
+import { ItemService } from '../services/item.service';
 
 @Component({
   selector: 'app-inventory-cycle-count-maintenance',
@@ -27,20 +25,19 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   requestForm: FormGroup;
   pageTitle: string;
 
-  requestType: CycleCountRequestType;
-
   availableRequestType = CycleCountRequestType;
+  cycleCountRequestType: CycleCountRequestType;
 
-  listOfOpenCycleCountRequests: CycleCountRequest[] = [];
-  openCycleCountRequests: CycleCountRequest[] = [];
-  listOfCycleCountResults: CycleCountResult[] = [];
-  cycleCountResults: CycleCountResult[] = [];
-  listOfCancelledCycleCountRequests: CycleCountRequest[] = [];
-  cancelledCycleCountRequests: CycleCountRequest[] = [];
-  listOfOpenAuditCountRequests: AuditCountRequest[] = [];
-  openAuditCountRequests: AuditCountRequest[] = [];
-  listOfAuditCountResults: AuditCountResult[] = [];
-  auditCountResults: AuditCountResult[] = [];
+  listOfDisplayOpenCycleCountRequests: CycleCountRequest[] = [];
+  listOfAllOpenCycleCountRequests: CycleCountRequest[] = [];
+  listOfDisplayCycleCountResults: CycleCountResult[] = [];
+  listOfAllCycleCountResults: CycleCountResult[] = [];
+  listOfDisplayCancelledCycleCountRequests: CycleCountRequest[] = [];
+  listOfAllCancelledCycleCountRequests: CycleCountRequest[] = [];
+  listOfDisplayOpenAuditCountRequests: AuditCountRequest[] = [];
+  listOfAllOpenAuditCountRequests: AuditCountRequest[] = [];
+  listOfDisplayAuditCountResults: AuditCountResult[] = [];
+  listOfAllAuditCountResults: AuditCountResult[] = [];
 
   // control for table of open cycle count request
   // checkbox - select all
@@ -50,8 +47,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   openCycleCountTableMapOfCheckedId: { [key: string]: boolean } = {};
 
   // Model to let the user input cycle count result
-  inventoriesToBeCount: Inventory[] = [];
-  cycleCountRequestResult: { [inventoryId: number]: number } = {};
+  inventoriesToBeCount: CycleCountResult[] = [];
 
   cycleCountRequestConfirmModal: NzModalRef;
 
@@ -71,7 +67,6 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private router: Router,
     private i18n: I18NService,
     private titleService: TitleService,
     private fb: FormBuilder,
@@ -81,6 +76,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     private auditCountRequestService: AuditCountRequestService,
     private auditCountResultService: AuditCountResultService,
     private modalService: NzModalService,
+    private itemService: ItemService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inventory.cycle-count-request.title');
   }
@@ -112,7 +108,6 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
       this.requestForm.controls.batchId.disable();
       if (!this.requestForm.controls.batchId.value) {
         this.cycleCountBatchService.getNextCycleCountBatchId().subscribe(nextId => {
-          console.log(JSON.stringify(nextId));
           this.requestForm.controls.batchId.setValue(nextId);
         });
       }
@@ -120,20 +115,25 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
       this.requestForm.controls.batchId.enable();
     }
   }
-  requestByLocation(): boolean {
-    return this.requestType === CycleCountRequestType.Location;
-  }
-  requestByItem(): boolean {
-    return this.requestType === CycleCountRequestType.Item;
-  }
-  requestByAisle(): boolean {
-    return this.requestType === CycleCountRequestType.Aisle;
-  }
   requestTypeChange(newRequestType) {
-    this.requestType = newRequestType;
+    this.cycleCountRequestType = newRequestType;
   }
 
-  generateCountRequest() {}
+  generateCountRequest() {
+    this.cycleCountRequestService
+      .generateCycleCountRequests(
+        this.requestForm.controls.batchId.value,
+        this.cycleCountRequestType,
+        this.requestForm.controls.startValue.value,
+        this.requestForm.controls.endValue.value,
+        this.requestForm.controls.includeEmptyLocation.value,
+      )
+      .subscribe(res => {
+        this.requestForm.controls.startValue.reset();
+        this.requestForm.controls.endValue.reset();
+        this.refreshCountBatchResults();
+      });
+  }
 
   refreshCountBatchResults() {
     const batchId = this.requestForm.controls.batchId.value;
@@ -148,34 +148,32 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
 
   loadOpenCycleCountRequest(batchId: string) {
     this.cycleCountRequestService.getOpenCycleCountRequestDetails(batchId, true).subscribe(res => {
-      this.openCycleCountRequests = res;
-      this.listOfOpenCycleCountRequests = res;
+      this.listOfAllOpenCycleCountRequests = res;
+      this.listOfDisplayOpenCycleCountRequests = res;
     });
   }
   loadFinishedCycleCountRequest(batchId: string) {
     this.cycleCountResulttService.getCycleCountResultDetails(batchId, true).subscribe(res => {
-      this.cycleCountResults = res;
-      this.listOfCycleCountResults = res;
+      this.listOfAllCycleCountResults = res;
+      this.listOfDisplayCycleCountResults = res;
     });
   }
   loadCancelledCycleCountRequest(batchId: string) {
     this.cycleCountRequestService.getCancelledCycleCountRequestDetails(batchId, true).subscribe(res => {
-      this.cancelledCycleCountRequests = res;
-      this.listOfCancelledCycleCountRequests = res;
+      this.listOfAllCancelledCycleCountRequests = res;
+      this.listOfDisplayCancelledCycleCountRequests = res;
     });
   }
   loadOpenAuditCountRequest(batchId: string) {
     this.auditCountRequestService.getAuditCountRequestDetails(batchId, true).subscribe(res => {
-      this.openAuditCountRequests = res;
-      this.listOfOpenAuditCountRequests = res;
+      this.listOfAllOpenAuditCountRequests = res;
+      this.listOfDisplayOpenAuditCountRequests = res;
     });
   }
   loadAuditCountResult(batchId: string) {
-    console.log('start to load audit count result');
     this.auditCountResultService.getAuditCountResultDetails(batchId, true).subscribe(res => {
-      this.auditCountResults = res;
-      this.listOfAuditCountResults = res;
-      console.log('listOfAuditCountResults:\n' + JSON.stringify(this.listOfAuditCountResults));
+      this.listOfAllAuditCountResults = res;
+      this.listOfDisplayAuditCountResults = res;
     });
   }
 
@@ -189,37 +187,37 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
    */
 
   openCycleCountCurrentPageDataChange($event: CycleCountRequest[]): void {
-    this.listOfOpenCycleCountRequests = $event;
+    this.listOfDisplayOpenCycleCountRequests = $event;
     this.openCycleCountTableRefreshStatus();
   }
 
   openCycleCountTableRefreshStatus(): void {
-    this.openCycleCountTableAllChecked = this.listOfOpenCycleCountRequests.every(
+    this.openCycleCountTableAllChecked = this.listOfDisplayOpenCycleCountRequests.every(
       item => this.openCycleCountTableMapOfCheckedId[item.id],
     );
     this.openCycleCountTableIndeterminate =
-      this.listOfOpenCycleCountRequests.some(item => this.openCycleCountTableMapOfCheckedId[item.id]) &&
+      this.listOfDisplayOpenCycleCountRequests.some(item => this.openCycleCountTableMapOfCheckedId[item.id]) &&
       !this.openCycleCountTableAllChecked;
   }
 
   openCycleCountTableCheckAll(value: boolean): void {
-    this.listOfOpenCycleCountRequests.forEach(item => (this.openCycleCountTableMapOfCheckedId[item.id] = value));
+    this.listOfDisplayOpenCycleCountRequests.forEach(item => (this.openCycleCountTableMapOfCheckedId[item.id] = value));
     this.openCycleCountTableRefreshStatus();
   }
 
   sortOpenCycleCountRequestTable(sort: { key: string; value: string }): void {
     if (sort.key && sort.value) {
-      this.listOfOpenCycleCountRequests = this.openCycleCountRequests.sort((a, b) =>
+      this.listOfDisplayOpenCycleCountRequests = this.listOfAllOpenCycleCountRequests.sort((a, b) =>
         sort.value === 'ascend' ? (a[sort.key!] > b[sort.key!] ? 1 : -1) : b[sort.key!] > a[sort.key!] ? 1 : -1,
       );
     } else {
-      this.listOfOpenCycleCountRequests = this.openCycleCountRequests;
+      this.listOfDisplayOpenCycleCountRequests = this.listOfAllOpenCycleCountRequests;
     }
   }
 
   getSelectedOpenCycleCounts(): CycleCountRequest[] {
     const selectedOpenCycleCounts: CycleCountRequest[] = [];
-    this.openCycleCountRequests.forEach((cycleCountRequest: CycleCountRequest) => {
+    this.listOfAllOpenCycleCountRequests.forEach((cycleCountRequest: CycleCountRequest) => {
       if (this.openCycleCountTableMapOfCheckedId[cycleCountRequest.id] === true) {
         selectedOpenCycleCounts.push(cycleCountRequest);
       }
@@ -229,14 +227,12 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
 
   confirmSelectedCycleCounts() {
     this.cycleCountRequestService.confirmCycleCountRequests(this.getSelectedOpenCycleCounts()).subscribe(res => {
-      console.log('confirmed!');
       this.refreshCountBatchResults();
     });
   }
 
   confirmAllCycleCounts() {
-    this.cycleCountRequestService.confirmCycleCountRequests(this.openCycleCountRequests).subscribe(res => {
-      console.log('confirmed!');
+    this.cycleCountRequestService.confirmCycleCountRequests(this.listOfAllOpenCycleCountRequests).subscribe(res => {
       this.refreshCountBatchResults();
     });
   }
@@ -251,13 +247,12 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   printAllCycleCounts() {
     this.cycleCountRequestService.printCycleCountRequestReport(
       this.requestForm.controls.batchId.value,
-      this.openCycleCountRequests,
+      this.listOfAllOpenCycleCountRequests,
     );
   }
 
   cancelSelectedCycleCounts() {
     this.cycleCountRequestService.cancelCycleCountRequests(this.getSelectedOpenCycleCounts()).subscribe(res => {
-      console.log('cancelled!');
       this.refreshCountBatchResults();
     });
   }
@@ -267,10 +262,8 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     tplCycleCountRequestConfirmModalContent: TemplateRef<{}>,
   ) {
     // Get all inventory, allow the user to input quantity
-    this.cycleCountRequestService.getInventoryForCount(cycleCountRequest).subscribe(inventories => {
-      this.inventoriesToBeCount = inventories;
-      this.cycleCountRequestResult = {};
-      this.inventoriesToBeCount.forEach(inventory => (this.cycleCountRequestResult[inventory.id] = 0));
+    this.cycleCountRequestService.getInventorySummariesForCount(cycleCountRequest).subscribe(inventorySummaries => {
+      this.inventoriesToBeCount = inventorySummaries;
 
       // show the model
       this.cycleCountRequestConfirmModal = this.modalService.create({
@@ -284,38 +277,146 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
           this.refreshCountBatchResults();
         },
         nzOnOk: () => {
-          this.saveCycleCountResults(cycleCountRequest, this.cycleCountRequestResult);
-          this.refreshCountBatchResults();
+          this.saveCycleCountResults(cycleCountRequest, this.inventoriesToBeCount);
         },
-        nzWidth: 700,
+        nzWidth: 1000,
       });
     });
   }
-  saveCycleCountResults(
-    cycleCountRequest: CycleCountRequest,
-    cycleCountRequestResult: { [inventoryId: number]: number },
-  ) {
-    console.log('cycleCountRequestResult:' + JSON.stringify(cycleCountRequestResult));
-    this.cycleCountRequestService
-      .saveCycleCountResults(cycleCountRequest, cycleCountRequestResult)
-      .subscribe(res => console.log('result saved!'));
+
+  countResultItemNameBlur(itemName: string, cycleCountResult: CycleCountResult) {
+    // Load the item informaiton when the name is changed
+    console.log('countResultItemNameBlur, name changed to: ' + itemName);
+    console.log('countResultItemNameBlur, original name: ' + cycleCountResult.item.name);
+    if (itemName !== cycleCountResult.item.name) {
+      console.log('item changed!');
+      if (itemName.length === 0) {
+        // item is chagned to empty, let's clear the item
+        cycleCountResult.item = this.getEmptyItem();
+      } else {
+        this.itemService.getItems(itemName).subscribe(items => {
+          // we should only get one item based on the name
+          cycleCountResult.item = items.length > 0 ? items[0] : this.getEmptyItem();
+        });
+      }
+    }
   }
 
+  saveCycleCountResults(cycleCountRequest: CycleCountRequest, cycleCountResults: CycleCountResult[]) {
+    this.cycleCountRequestService
+      .saveCycleCountResults(cycleCountRequest, this.setupCycleCountResults(cycleCountResults))
+      .subscribe(res => this.refreshCountBatchResults());
+  }
+  setupCycleCountResults(cycleCountResults: CycleCountResult[]): CycleCountResult[] {
+    // We will loop through each cycle count result to make sure
+    // 1. if this is count as a empty location, then there's only one result with no item informaiton
+    // 2. If this is not count as a empty location, then there's no result with null item information
+
+    const emptyLocation = !cycleCountResults.some(
+      cycleCountResult =>
+        cycleCountResult.item != null && cycleCountResult.item.name != null && cycleCountResult.item.name.length > 0,
+    );
+
+    if (emptyLocation) {
+      // for empty location, let's make sure we only have one cycle count result with null item
+      const emptyCycleCountResult = this.getEmptyCycleCountResult();
+      emptyCycleCountResult.batchId = cycleCountResults[0].batchId;
+      emptyCycleCountResult.location = cycleCountResults[0].location;
+      return [emptyCycleCountResult];
+    } else {
+      // This is not an empty location, let's remove all lines that has empty locations.
+      const nonEmptyCycleCountResults: CycleCountResult[] = [];
+      cycleCountResults.every(cycleCountResult => {
+        if (
+          cycleCountResult.item != null &&
+          cycleCountResult.item.name != null &&
+          cycleCountResult.item.name.length > 0
+        ) {
+          nonEmptyCycleCountResults.push(cycleCountResult);
+        }
+      });
+      return nonEmptyCycleCountResults;
+    }
+  }
+
+  /**
+   * Add or remove inventory from cycle count result
+   */
+  addCountedInventory(inventorySummary: CycleCountResult) {
+    if (inventorySummary.item == null) {
+      // Ok, we are try to add inventory to an empty location, let's add an empty item information
+      // so the user can start to count with the actual inventory in the location
+      inventorySummary.item = this.getEmptyItem();
+    } else {
+      const extraCycleCountResult = this.getEmptyCycleCountResult();
+      extraCycleCountResult.item = this.getEmptyItem();
+      extraCycleCountResult.batchId = inventorySummary.batchId;
+      extraCycleCountResult.location = inventorySummary.location;
+      // Add an empty count result
+
+      console.log('before add:\n ' + JSON.stringify(this.inventoriesToBeCount));
+      this.inventoriesToBeCount = [...this.inventoriesToBeCount, extraCycleCountResult];
+
+      console.log('after add:\n ' + JSON.stringify(this.inventoriesToBeCount));
+    }
+  }
+
+  removeCountedInventory(index: number) {
+    // If this is a the last item in this location, we will
+    // create an empty structure with the same batch id
+    // and location, just to count this location as an empty location
+    if (this.inventoriesToBeCount.length === 1) {
+      const extraCycleCountResult = this.getEmptyCycleCountResult();
+      extraCycleCountResult.batchId = this.inventoriesToBeCount[index].batchId;
+      extraCycleCountResult.location = this.inventoriesToBeCount[index].location;
+      // Remove the current item at the index
+      this.inventoriesToBeCount = this.inventoriesToBeCount.filter((item, i) => i !== index);
+
+      // Add an empty count result
+      this.inventoriesToBeCount = [...this.inventoriesToBeCount, extraCycleCountResult];
+    } else {
+      this.inventoriesToBeCount = this.inventoriesToBeCount.filter((item, i) => i !== index);
+    }
+  }
+
+  getEmptyItem(): Item {
+    return {
+      id: null,
+      name: '',
+      description: '',
+      client: null,
+      itemFamily: null,
+      itemPackageTypes: null,
+      unitCost: null,
+    };
+  }
+
+  getEmptyCycleCountResult(): CycleCountResult {
+    return {
+      id: null,
+      batchId: null,
+      location: null,
+      item: null,
+      quantity: 0,
+      countQuantity: 0,
+      auditCountRequest: null,
+    };
+  }
   /**
    * Cycle count result event and attribute
    * > Sort
    */
   cycleCountResultPageDataChange($event: CycleCountResult[]): void {
-    this.listOfCycleCountResults = $event;
+    this.listOfDisplayCycleCountResults = $event;
   }
 
   sortCycleCountResultTable(sort: { key: string; value: string }): void {
     if (sort.key && sort.value) {
-      this.listOfCycleCountResults = this.cycleCountResults.sort((a, b) =>
+      this.listOfDisplayCycleCountResults = this.listOfAllCycleCountResults.sort((a, b) =>
         sort.value === 'ascend' ? (a[sort.key!] > b[sort.key!] ? 1 : -1) : b[sort.key!] > a[sort.key!] ? 1 : -1,
       );
     } else {
-      this.listOfCycleCountResults = this.cycleCountResults;
+      this.listOfDisplayCycleCountResults = this.listOfAllCycleCountResults;
     }
   }
 
@@ -327,21 +428,22 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
    */
 
   cancelledCycleCountCurrentPageDataChange($event: CycleCountRequest[]): void {
-    this.listOfCancelledCycleCountRequests = $event;
+    this.listOfDisplayCancelledCycleCountRequests = $event;
     this.cancelledCycleCountTableRefreshStatus();
   }
 
   cancelledCycleCountTableRefreshStatus(): void {
-    this.cancelledCycleCountTableAllChecked = this.listOfCancelledCycleCountRequests.every(
+    this.cancelledCycleCountTableAllChecked = this.listOfDisplayCancelledCycleCountRequests.every(
       item => this.cancelledCycleCountTableMapOfCheckedId[item.id],
     );
     this.cancelledCycleCountTableIndeterminate =
-      this.listOfCancelledCycleCountRequests.some(item => this.cancelledCycleCountTableMapOfCheckedId[item.id]) &&
-      !this.cancelledCycleCountTableAllChecked;
+      this.listOfDisplayCancelledCycleCountRequests.some(
+        item => this.cancelledCycleCountTableMapOfCheckedId[item.id],
+      ) && !this.cancelledCycleCountTableAllChecked;
   }
 
   cancelledCycleCountTableCheckAll(value: boolean): void {
-    this.listOfCancelledCycleCountRequests.forEach(
+    this.listOfDisplayCancelledCycleCountRequests.forEach(
       item => (this.cancelledCycleCountTableMapOfCheckedId[item.id] = value),
     );
     this.cancelledCycleCountTableRefreshStatus();
@@ -349,17 +451,17 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
 
   sortCancelledCycleCountRequestTable(sort: { key: string; value: string }): void {
     if (sort.key && sort.value) {
-      this.listOfCancelledCycleCountRequests = this.cancelledCycleCountRequests.sort((a, b) =>
+      this.listOfDisplayCancelledCycleCountRequests = this.listOfAllCancelledCycleCountRequests.sort((a, b) =>
         sort.value === 'ascend' ? (a[sort.key!] > b[sort.key!] ? 1 : -1) : b[sort.key!] > a[sort.key!] ? 1 : -1,
       );
     } else {
-      this.listOfCancelledCycleCountRequests = this.cancelledCycleCountRequests;
+      this.listOfDisplayCancelledCycleCountRequests = this.listOfAllCancelledCycleCountRequests;
     }
   }
 
   getSelectedCancelledCycleCounts(): CycleCountRequest[] {
     const selectedCancelledCycleCounts: CycleCountRequest[] = [];
-    this.cancelledCycleCountRequests.forEach((cycleCountRequest: CycleCountRequest) => {
+    this.listOfAllCancelledCycleCountRequests.forEach((cycleCountRequest: CycleCountRequest) => {
       if (this.cancelledCycleCountTableMapOfCheckedId[cycleCountRequest.id] === true) {
         selectedCancelledCycleCounts.push(cycleCountRequest);
       }
@@ -369,7 +471,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   reopenCancelledCycleCountRequest() {
     this.cycleCountRequestService
       .reopenCancelledCycleCountRequests(this.getSelectedCancelledCycleCounts())
-      .subscribe(res => console.log('selected cycle count requests are reopened'));
+      .subscribe(res => this.refreshCountBatchResults());
   }
 
   /**
@@ -381,37 +483,37 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
    */
 
   openAuditCountCurrentPageDataChange($event: AuditCountRequest[]): void {
-    this.listOfOpenAuditCountRequests = $event;
+    this.listOfDisplayOpenAuditCountRequests = $event;
     this.openAuditCountTableRefreshStatus();
   }
 
   openAuditCountTableRefreshStatus(): void {
-    this.openAuditCountTableAllChecked = this.listOfOpenAuditCountRequests.every(
+    this.openAuditCountTableAllChecked = this.listOfDisplayOpenAuditCountRequests.every(
       item => this.openAuditCountTableMapOfCheckedId[item.id],
     );
     this.openAuditCountTableIndeterminate =
-      this.listOfOpenAuditCountRequests.some(item => this.openAuditCountTableMapOfCheckedId[item.id]) &&
+      this.listOfDisplayOpenAuditCountRequests.some(item => this.openAuditCountTableMapOfCheckedId[item.id]) &&
       !this.openAuditCountTableAllChecked;
   }
 
   openAuditCountTableCheckAll(value: boolean): void {
-    this.listOfOpenAuditCountRequests.forEach(item => (this.openAuditCountTableMapOfCheckedId[item.id] = value));
+    this.listOfDisplayOpenAuditCountRequests.forEach(item => (this.openAuditCountTableMapOfCheckedId[item.id] = value));
     this.openAuditCountTableRefreshStatus();
   }
 
   sortOpenAuditCountRequestTable(sort: { key: string; value: string }): void {
     if (sort.key && sort.value) {
-      this.listOfOpenAuditCountRequests = this.openAuditCountRequests.sort((a, b) =>
+      this.listOfDisplayOpenAuditCountRequests = this.listOfAllOpenAuditCountRequests.sort((a, b) =>
         sort.value === 'ascend' ? (a[sort.key!] > b[sort.key!] ? 1 : -1) : b[sort.key!] > a[sort.key!] ? 1 : -1,
       );
     } else {
-      this.listOfOpenAuditCountRequests = this.openAuditCountRequests;
+      this.listOfDisplayOpenAuditCountRequests = this.listOfAllOpenAuditCountRequests;
     }
   }
 
   getSelectedOpenAuditCounts(): AuditCountRequest[] {
     const selectedOpenAuditCounts: AuditCountRequest[] = [];
-    this.openAuditCountRequests.forEach((auditCountRequest: AuditCountRequest) => {
+    this.listOfAllOpenAuditCountRequests.forEach((auditCountRequest: AuditCountRequest) => {
       if (this.openAuditCountTableMapOfCheckedId[auditCountRequest.id] === true) {
         selectedOpenAuditCounts.push(auditCountRequest);
       }
@@ -421,14 +523,12 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
 
   confirmSelectedAuditCounts() {
     this.auditCountRequestService.confirmAuditCountRequests(this.getSelectedOpenAuditCounts()).subscribe(res => {
-      console.log('audit count confirmed!');
       this.refreshCountBatchResults();
     });
   }
 
   confirmAllAuditCounts() {
-    this.auditCountRequestService.confirmAuditCountRequests(this.openAuditCountRequests).subscribe(res => {
-      console.log('audit count confirmed!');
+    this.auditCountRequestService.confirmAuditCountRequests(this.listOfAllOpenAuditCountRequests).subscribe(res => {
       this.refreshCountBatchResults();
     });
   }
@@ -443,7 +543,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   printAllAuditCounts() {
     this.auditCountRequestService.printAuditCountRequestReport(
       this.requestForm.controls.batchId.value,
-      this.openAuditCountRequests,
+      this.listOfAllOpenAuditCountRequests,
     );
   }
 
@@ -452,16 +552,16 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
    * > Sort
    */
   auditCountResultsCurrentPageDataChange($event: AuditCountResult[]): void {
-    this.listOfAuditCountResults = $event;
+    this.listOfDisplayAuditCountResults = $event;
   }
 
   sortAuditCountResultsTable(sort: { key: string; value: string }): void {
     if (sort.key && sort.value) {
-      this.listOfAuditCountResults = this.auditCountResults.sort((a, b) =>
+      this.listOfDisplayAuditCountResults = this.listOfAllAuditCountResults.sort((a, b) =>
         sort.value === 'ascend' ? (a[sort.key!] > b[sort.key!] ? 1 : -1) : b[sort.key!] > a[sort.key!] ? 1 : -1,
       );
     } else {
-      this.listOfAuditCountResults = this.auditCountResults;
+      this.listOfDisplayAuditCountResults = this.listOfAllAuditCountResults;
     }
   }
 }

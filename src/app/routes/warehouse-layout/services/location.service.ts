@@ -11,17 +11,19 @@ export class LocationService {
   constructor(private http: _HttpClient) {}
 
   getLocations(locationGroupTypes: string[], locationGroups: string[]): Observable<WarehouseLocation[]> {
-    const params = {
-      location_group_types: '',
-      location_groups: '',
-    };
+    let params = '';
     if (locationGroupTypes != null) {
-      params.location_group_types = locationGroupTypes.join(',');
+      params = `location_group_type_ids=${locationGroupTypes.join(',')}`;
     }
     if (locationGroups != null) {
-      params.location_groups = locationGroups.join(',');
+      params = `&location_group_ids=${locationGroups.join(',')}`;
     }
-    return this.http.get('layout/locations', params).pipe(map(res => res.data));
+    if (params.startsWith('&')) {
+      params = params.substring(1);
+    }
+
+    const url = 'layout/locations' + (params.length > 0 ? '?' + params : '');
+    return this.http.get(url).pipe(map(res => res.data));
   }
 
   getLocation(id: number): Observable<WarehouseLocation> {
