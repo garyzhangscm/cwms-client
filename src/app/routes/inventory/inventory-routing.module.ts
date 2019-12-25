@@ -15,6 +15,8 @@ import { InventoryInventoryAdjustConfirmComponent } from './inventory-adjust-con
 import { InventoryInventoryAttributeChangeComponent } from './inventory-attribute-change/inventory-attribute-change.component';
 import { InventoryInventoryAttributeChangeConfirmComponent } from './inventory-attribute-change-confirm/inventory-attribute-change-confirm.component';
 import { InventoryCycleCountMaintenanceComponent } from './cycle-count-maintenance/cycle-count-maintenance.component';
+import { InventoryAuditCountResultComponent } from './audit-count-result/audit-count-result.component';
+import { InventoryAuditCountConfirmComponent } from './audit-count-confirm/audit-count-confirm.component';
 
 const routes: Routes = [
   { path: 'inventory', component: InventoryInventoryComponent },
@@ -32,6 +34,8 @@ const routes: Routes = [
   { path: 'inventory-attribute-change', component: InventoryInventoryAttributeChangeComponent },
   { path: 'inventory-attribute-change/confirm', component: InventoryInventoryAttributeChangeConfirmComponent },
   { path: 'count/cycle-count-maintenance', component: InventoryCycleCountMaintenanceComponent },
+  { path: 'count/audit-count-result', component: InventoryAuditCountResultComponent },
+  { path: 'count/audit-count-confirm', component: InventoryAuditCountConfirmComponent },
 ];
 
 @NgModule({

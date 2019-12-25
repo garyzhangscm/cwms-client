@@ -9,15 +9,24 @@ import { TestDataUploadService } from '../services/test-data-upload.service';
 export class UtilTestDataInitComponent implements OnInit {
   dataNames: string[];
   currentStep: number;
-  constructor(private http: _HttpClient, private testDataUploadService: TestDataUploadService) {}
+  loadButtonDisabled: boolean;
+  loadButtonLoading: boolean;
+  constructor(private http: _HttpClient, private testDataUploadService: TestDataUploadService) {
+    this.loadButtonDisabled = true;
+    this.loadButtonLoading = false;
+  }
 
   ngOnInit() {
     this.testDataUploadService.getTestDataNames().subscribe(res => {
       this.dataNames = res;
       this.currentStep = 0;
+      this.loadButtonDisabled = false;
+      this.loadButtonLoading = false;
     });
   }
   loadData(index) {
+    this.loadButtonDisabled = true;
+    this.loadButtonLoading = true;
     this.currentStep = index;
     if (index < this.dataNames.length) {
       this.testDataUploadService.loadTestData(this.dataNames[index]).subscribe(res => {
@@ -25,6 +34,9 @@ export class UtilTestDataInitComponent implements OnInit {
         console.log('>> Result: ' + JSON.stringify(res));
         this.loadData(index + 1);
       });
+    } else {
+      this.loadButtonDisabled = false;
+      this.loadButtonLoading = false;
     }
   }
 }

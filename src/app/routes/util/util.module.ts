@@ -4,9 +4,11 @@ import { UtilRoutingModule } from './util-routing.module';
 import { UtilFileUploadComponent } from './file-upload/file-upload.component';
 import { UtilStackedBarChartComponent } from './stacked-bar-chart/stacked-bar-chart.component';
 import { UtilTestDataInitComponent } from './test-data-init/test-data-init.component';
+import { UtilIconListComponent } from './icon-list/icon-list.component';
 
 const COMPONENTS = [UtilFileUploadComponent, UtilStackedBarChartComponent,
-  UtilTestDataInitComponent];
+  UtilTestDataInitComponent,
+  UtilIconListComponent];
 const COMPONENTS_NOROUNT = [];
 
 @NgModule({

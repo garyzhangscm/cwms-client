@@ -131,6 +131,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
       .subscribe(res => {
         this.requestForm.controls.startValue.reset();
         this.requestForm.controls.endValue.reset();
+        this.requestForm.controls.includeEmptyLocation.reset();
         this.refreshCountBatchResults();
       });
   }
@@ -286,10 +287,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
 
   countResultItemNameBlur(itemName: string, cycleCountResult: CycleCountResult) {
     // Load the item informaiton when the name is changed
-    console.log('countResultItemNameBlur, name changed to: ' + itemName);
-    console.log('countResultItemNameBlur, original name: ' + cycleCountResult.item.name);
     if (itemName !== cycleCountResult.item.name) {
-      console.log('item changed!');
       if (itemName.length === 0) {
         // item is chagned to empty, let's clear the item
         cycleCountResult.item = this.getEmptyItem();
@@ -354,10 +352,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
       extraCycleCountResult.location = inventorySummary.location;
       // Add an empty count result
 
-      console.log('before add:\n ' + JSON.stringify(this.inventoriesToBeCount));
       this.inventoriesToBeCount = [...this.inventoriesToBeCount, extraCycleCountResult];
-
-      console.log('after add:\n ' + JSON.stringify(this.inventoriesToBeCount));
     }
   }
 

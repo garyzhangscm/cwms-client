@@ -1,0 +1,73 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/inventory/count/cycle-count-maintenance/{batchId}" routerLinkActive="active">{{
+    'description.field.link.return' | translate
+  }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'description.field.breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.inventory' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/inventory/count/cycle-count" routerLinkActive="active">{{
+        'description.field.breadcrumb.cycle-count' | translate
+      }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<!-- Table to show inventory  -->
+
+<div class="search-result-list">
+  <nz-table nzShowPagination [nzData]="listOfAllAuditCountResult"
+    (nzCurrentPageDataChange)="inventoryTableCurrentPageDataChange($event)" [nzFooter]="inventoryTableFoot"
+    #inventoryTable>
+    <thead>
+      <tr>
+        <th>{{ 'description.field.table.header.id' | translate }}</th>
+        <th>{{ 'description.field.label.lpn' | translate }}</th>
+        <th>{{ 'description.field.label.item' | translate }}</th>
+        <th>{{ 'description.field.label.item.description' | translate }}</th>
+        <th>{{ 'description.field.label.item.package-type' | translate }}</th>
+        <th>{{ 'description.field.label.location' | translate }}</th>
+        <th>{{ 'description.field.label.quantity' | translate }}</th>
+        <th>{{ 'description.field.label.inventory.status' | translate }}</th>
+        <th>{{ 'description.field.label.count-quantity' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of inventoryTable.data; let i = index">
+        <td>{{ data.inventory?.id }}</td>
+        <td>
+          {{ data.inventory?.lpn }}
+        </td>
+        <td>
+          {{ data.inventory?.item?.name }}
+        </td>
+        <td>
+          {{ data.inventory?.item?.description }}
+        </td>
+        <td>
+          {{ data.inventory?.itemPackageType?.name }}
+        </td>
+        <td>{{ data.location?.name }}</td>
+        <td>{{ data.quantity }}</td>
+        <td>
+          {{ data.inventory?.inventoryStatus?.description }}
+        </td>
+        <td>
+          {{ data.countQuantity}}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+<ng-template #inventoryTableFoot>
+  <div nz-row nzType="flex" nzJustify="start">
+    <button nz-button nzType="primary" (click)="confirmResult()">
+      {{ 'description.field.button.confirm' | translate }}
+    </button>
+  </div>
+</ng-template>

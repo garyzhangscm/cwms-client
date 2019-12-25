@@ -10,7 +10,15 @@ import { InventoryService } from '../services/inventory.service';
   templateUrl: './inventory-adjust.component.html',
 })
 export class InventoryInventoryAdjustComponent implements OnInit {
-  currentInventory: Inventory;
+  currentInventory: Inventory = {
+    id: null,
+    lpn: '',
+    location: null,
+    item: null,
+    itemPackageType: null,
+    quantity: 0,
+    inventoryStatus: null,
+  };
   pageTitle: string;
   constructor(
     private activatedRoute: ActivatedRoute,

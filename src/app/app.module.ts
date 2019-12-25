@@ -4,7 +4,11 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IconDefinition } from '@ant-design/icons-angular';
-import { NzIconModule, NZ_ICON_DEFAULT_TWOTONE_COLOR, NZ_ICONS } from 'ng-zorro-antd/icon';
+
+// import { NzIconModule, NZ_ICON_DEFAULT_TWOTONE_COLOR, NZ_ICONS } from 'ng-zorro-antd/icon';
+// ng-zorro-antd-core.js:694 [NG-ZORRO]: deprecated: 'NZ_ICON_DEFAULT_TWOTONE_COLOR'
+// is deprecated and will be removed in 9.0.0. Please use 'NZ_CONFIG' instead! Error
+import { NzIconModule, NZ_ICONS } from 'ng-zorro-antd/icon';
 
 // 引入你需要的图标，比如你需要 fill 主题的 AccountBook Alert 和 outline 主题的 Alert，推荐 ✔️
 import { CloseCircleTwoTone, CheckCircleTwoTone } from '@ant-design/icons-angular/icons';
@@ -117,7 +121,7 @@ import { LayoutModule } from './layout/layout.module';
     ...INTERCEPTOR_PROVIDES,
     ...I18NSERVICE_PROVIDES,
     ...APPINIT_PROVIDES,
-    { provide: NZ_ICON_DEFAULT_TWOTONE_COLOR, useValue: '#00ff00' }, // 不提供的话，即为 Ant Design 的主题蓝色
+    // { provide: NZ_ICON_DEFAULT_TWOTONE_COLOR, useValue: '#00ff00' }, // 不提供的话，即为 Ant Design 的主题蓝色
     { provide: NZ_ICONS, useValue: icons },
   ],
   bootstrap: [AppComponent],

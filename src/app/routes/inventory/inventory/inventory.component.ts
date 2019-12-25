@@ -253,7 +253,7 @@ export class InventoryInventoryComponent implements OnInit {
   }
 
   removeInventory() {
-    this.inventoryService.removeInventory(this.inventoryToBeRemoved).subscribe(res => {
+    this.inventoryService.adjustDownInventory(this.inventoryToBeRemoved).subscribe(res => {
       this.search();
     });
 

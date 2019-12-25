@@ -10,13 +10,16 @@ import { WarehouseLocation } from '../models/warehouse-location';
 export class LocationService {
   constructor(private http: _HttpClient) {}
 
-  getLocations(locationGroupTypes: string[], locationGroups: string[]): Observable<WarehouseLocation[]> {
+  getLocations(locationGroupTypes: string[], locationGroups: string[], name?: string): Observable<WarehouseLocation[]> {
     let params = '';
     if (locationGroupTypes != null) {
       params = `location_group_type_ids=${locationGroupTypes.join(',')}`;
     }
     if (locationGroups != null) {
       params = `&location_group_ids=${locationGroups.join(',')}`;
+    }
+    if (name != null) {
+      params = `&name=${name}`;
     }
     if (params.startsWith('&')) {
       params = params.substring(1);

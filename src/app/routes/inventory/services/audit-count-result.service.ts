@@ -25,4 +25,20 @@ export class AuditCountResultService {
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem(`inventory.audit-count-result.${batchId}`, res)));
   }
+
+  getEmptyAuditCountResultDetails(batchId: string, locationId: number): Observable<AuditCountResult[]> {
+    return this.http
+      .get(`inventory/audit-count-result/${batchId}/${locationId}/inventories`)
+      .pipe(map(res => res.data));
+  }
+
+  saveAuditCountResultDetails(
+    batchId: string,
+    locationId: number,
+    auditCountResults: AuditCountResult[],
+  ): Observable<AuditCountResult[]> {
+    return this.http
+      .post(`inventory/audit-count-result/${batchId}/${locationId}/confirm`, auditCountResults)
+      .pipe(map(res => res.data));
+  }
 }

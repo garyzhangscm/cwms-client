@@ -120,8 +120,8 @@
 <nz-tabset>
   <nz-tab nzTitle="{{ 'description.field.label.cycle-count-request.open' | translate}}">
     <!-- Table to Display the result  -->
-    <div class="search-result-list">
-      <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllOpenCycleCountRequests"
+    <div>
+      <nz-table nzShowPagination [nzData]="listOfAllOpenCycleCountRequests"
         (nzCurrentPageDataChange)="openCycleCountCurrentPageDataChange($event)" [nzFooter]="openCycleCountTableFoot"
         #openCycleCountTable>
         <thead (nzSortChange)="sortOpenCycleCountRequestTable($event)" nzSingleSort>
@@ -301,8 +301,9 @@
             <td>{{ data.batchId }}</td>
             <td>{{ data.location?.name }}</td>
             <td>
-              <button nz-button
-                nzType="primary">{{ 'description.field.label.cycle-count.complete' | translate }}</button>
+              <a nz-button nzType="primary" routerLink="/inventory/count/audit-count-result" routerLinkActive="active"
+                [queryParams]="{batchId : data.batchId, locationId: data.location?.id}">
+                {{ 'description.field.label.cycle-count.complete' | translate }}</a>
             </td>
           </tr>
         </tbody>
@@ -368,8 +369,6 @@
               {{'description.field.label.quantity' | translate}}</th>
             <th>
               {{'description.field.label.count-quantity' | translate}}</th>
-            <th>
-              {{'description.field.label.audit-count-result.quantity' | translate}}</th>
           </tr>
         </thead>
         <tbody>
@@ -377,9 +376,9 @@
             <td>{{ data.id }}</td>
             <td>{{ data.batchId }}</td>
             <td>{{ data.location?.name }}</td>
-            <td>{{ data.inventory.lpn }}</td>
-            <td>{{ data.inventory.item.name }}</td>
-            <td>{{ data.inventory.item.description }}</td>
+            <td>{{ data.inventory?.lpn }}</td>
+            <td>{{ data.inventory?.item.name }}</td>
+            <td>{{ data.inventory?.item.description }}</td>
             <td>{{ data.quantity }}</td>
             <td>{{ data.countQuantity }}</td>
           </tr>

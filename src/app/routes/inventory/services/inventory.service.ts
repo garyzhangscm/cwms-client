@@ -6,12 +6,17 @@ import { Inventory } from '../models/inventory';
 import { map } from 'rxjs/operators';
 import { Client } from '../../common/models/client';
 import { ItemFamily } from '../models/item-family';
+import { SystemControlledNumberService } from '../../common/services/system-controlled-number.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class InventoryService {
-  constructor(private http: _HttpClient, private gzLocalStorageService: GzLocalStorageServiceService) {}
+  constructor(
+    private http: _HttpClient,
+    private gzLocalStorageService: GzLocalStorageServiceService,
+    private systemControlledNumberService: SystemControlledNumberService,
+  ) {}
 
   getInventories(
     clients?: Client[],
@@ -61,8 +66,16 @@ export class InventoryService {
     const url = 'inventory/inventory/' + inventory.id;
     return this.http.delete(url).pipe(map(res => res.data));
   }
+  adjustDownInventory(inventory: Inventory): Observable<Inventory> {
+    const url = 'inventory/inventory-adj/' + inventory.id;
+    return this.http.delete(url).pipe(map(res => res.data));
+  }
   changeInventory(inventory: Inventory): Observable<Inventory> {
     const url = `inventory/inventory/${inventory.id}`;
     return this.http.put(url, inventory).pipe(map(res => res.data));
+  }
+
+  getNextLPN(): Observable<string> {
+    return this.systemControlledNumberService.getNextAvailableId('LPN');
   }
 }

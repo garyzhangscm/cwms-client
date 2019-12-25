@@ -26,17 +26,17 @@
       </nz-descriptions-item>
 
       <nz-descriptions-item nzTitle="{{'description.field.label.location' | translate}}" nzSpan="2">
-        {{currentInventory.location.name}}
+        {{currentInventory.location?.name}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'description.field.label.item' | translate}}">
-        {{currentInventory.item.name}}
+        {{currentInventory.item?.name}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'description.field.label.item.description' | translate}}" nzSpan="2">
-        {{currentInventory.item.description}}
+        {{currentInventory.item?.description}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'description.field.label.item.package-type' | translate}}" nzSpan="3">
-        <nz-card *ngIf='currentInventory !== undefined' nzTitle="{{currentInventory.itemPackageType.name}}">
-          <nz-table #itemPackageTypeDetailTable [nzData]="currentInventory.itemPackageType.itemUnitOfMeasures"
+        <nz-card *ngIf='currentInventory !== undefined' nzTitle="{{currentInventory.itemPackageType?.name}}">
+          <nz-table #itemPackageTypeDetailTable [nzData]="currentInventory.itemPackageType?.itemUnitOfMeasures"
             nzSize="middle" [nzShowPagination]="false" nzBordered>
             <thead>
               <tr>
@@ -63,7 +63,7 @@
 
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'description.field.label.inventory.status' | translate}}">
-        {{currentInventory.inventoryStatus.name}}
+        {{currentInventory.inventoryStatus?.name}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'description.field.label.quantity' | translate}}">
         <input nz-input [(ngModel)]="currentInventory.quantity" style="width: 250px;" />

@@ -45,7 +45,6 @@ export class InventoryCycleCountComponent implements OnInit {
     this.cycleCountBatchService.getCycleCountBatches(this.searchForm.value.batchId).subscribe(cycleCountBatchRes => {
       this.cycleCountBatches = cycleCountBatchRes;
       this.listOfDisplayCycleCountBatches = cycleCountBatchRes;
-      console.log('cycleCountBatchRes res:\n' + JSON.stringify(cycleCountBatchRes));
     });
   }
 

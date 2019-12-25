@@ -42,7 +42,6 @@ export class UserLoginComponent implements OnDestroy {
     });
     modalSrv.closeAll();
     this.warehouses = [];
-    this.warehouseSelectionDisabled = true;
   }
 
   // #region fields
@@ -71,7 +70,6 @@ export class UserLoginComponent implements OnDestroy {
   count = 0;
   interval$: any;
   warehouses: Warehouse[];
-  warehouseSelectionDisabled: boolean;
 
   // #endregion
 

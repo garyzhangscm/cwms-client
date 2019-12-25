@@ -19,7 +19,7 @@
       </nz-form-item>
       <nz-form-item>
         <nz-form-control nzErrorTip="'error.form.field.login.warehouse.required' | translate">
-          <nz-select nz-input formControlName="warehouseId" [disabled]="warehouseSelectionDisabled">
+          <nz-select nz-input formControlName="warehouseId">
             <nz-option *ngFor="let warehouse of warehouses" [nzLabel]="warehouse.name" [nzValue]="warehouse.id">
             </nz-option>
           </nz-select>
