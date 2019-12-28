@@ -3,6 +3,7 @@ import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { PutawayConfiguration } from '../models/putaway-configuration';
 import { map } from 'rxjs/operators';
+import { Inventory } from '../../inventory/models/inventory';
 
 @Injectable({
   providedIn: 'root',
@@ -64,5 +65,12 @@ export class PutawayConfigurationService {
       putaway_configuration_ids: putawayConfigurationIds.join(','),
     };
     return this.http.delete('inbound/putaway-configuration', params).pipe(map(res => res.data));
+  }
+
+  allocateLocation(inventory: Inventory): Observable<Inventory> {
+    return this.http.post(`inbound/putaway-configuration/allocate-location`, inventory).pipe(map(res => res.data));
+  }
+  reallocateLocation(inventory: Inventory): Observable<Inventory> {
+    return this.http.post(`inbound/putaway-configuration/reallocate-location`, inventory).pipe(map(res => res.data));
   }
 }

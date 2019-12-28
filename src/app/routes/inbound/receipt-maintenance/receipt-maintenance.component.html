@@ -138,7 +138,8 @@
             <td>{{ data.expectedQuantity }}</td>
             <td>{{ data.receivedQuantity }}</td>
             <td>
-              <button nz-button (click)="openReceivingModal(data, tplReceivingModalTitle, tplReceivingModalContent)"
+              <!-- Only if the receipt is already checked in -->
+              <button nz-button [disabled]="currentReceipt?.receiptStatus === receiptStatus.OPEN" (click)="openReceivingModal(data, tplReceivingModalTitle, tplReceivingModalContent)"
                 nzType="primary">{{ 'description.field.label.receiving' | translate }}</button>
             </td>
           </tr>
@@ -203,9 +204,17 @@
             <td>{{ data.quantity }}</td>
             <td>{{ data.inventoryStatus.name }}</td>
             <td>{{ data.location.name }}</td>
-            <td>{{ data.nextLocation?.name }}</td>
             <td>
-              <button nz-button nzType="primary">{{ 'description.field.label.allocateLocation' | translate }}</button>
+              <p *ngFor="let inventoryMovement of data.inventoryMovements; let i = index">
+                {{ i+1 }} - {{ inventoryMovement.location?.name}}
+              </p>
+            </td>
+            <td>
+              <button nz-button nzType="primary" *ngIf="data.inventoryMovements.length === 0"
+                (click)="allocateLocation(data)">{{ 'description.field.label.allocateLocation' | translate }}</button>
+
+              <button nz-button nzType="primary" *ngIf="data.inventoryMovements.length > 0"
+                (click)="reallocateLocation(data)">{{ 'description.field.label.reallocateLocation' | translate }}</button>
             </td>
           </tr>
         </tbody>

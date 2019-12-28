@@ -19,6 +19,7 @@ import { ItemService } from '../../inventory/services/item.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ReceiptStatus } from '../models/receipt-status.enum';
 import { LocationService } from '../../warehouse-layout/services/location.service';
+import { PutawayConfigurationService } from '../services/putaway-configuration.service';
 
 @Component({
   selector: 'app-inbound-receipt-maintenance',
@@ -68,6 +69,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
   currentReceiptLine: ReceiptLine;
 
+  receiptStatus = ReceiptStatus;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private i18n: I18NService,
@@ -79,6 +82,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     private supplierService: SupplierService,
     private modalService: NzModalService,
     private inventoryStatusService: InventoryStatusService,
+    private putawayConfigurationService: PutawayConfigurationService,
     private itemService: ItemService,
     private locationService: LocationService,
     private message: NzMessageService,
@@ -431,4 +435,27 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     }
   }
   removeSelectedReceiptLines() {}
+
+  allocateLocation(inventory: Inventory) {
+    this.putawayConfigurationService.allocateLocation(inventory).subscribe(allocatedInventory => {
+      this.message.success(this.i18n.fanyi('message.allocate-location.success'));
+      this.listOfAllReceivedInventory.forEach(receivedInventory => {
+        if (receivedInventory.id === allocatedInventory.id) {
+          receivedInventory.inventoryMovements = allocatedInventory.inventoryMovements;
+        }
+      });
+      this.listOfDisplayReceivedInventory = this.listOfAllReceivedInventory;
+    });
+  }
+  reallocateLocation(inventory: Inventory) {
+    this.putawayConfigurationService.reallocateLocation(inventory).subscribe(allocatedInventory => {
+      this.message.success(this.i18n.fanyi('message.allocate-location.success'));
+      this.listOfAllReceivedInventory.forEach(receivedInventory => {
+        if (receivedInventory.id === allocatedInventory.id) {
+          receivedInventory.inventoryMovements = allocatedInventory.inventoryMovements;
+        }
+      });
+      this.listOfDisplayReceivedInventory = this.listOfAllReceivedInventory;
+    });
+  }
 }

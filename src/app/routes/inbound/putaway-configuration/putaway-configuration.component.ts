@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { PutawayConfiguration } from '../models/putaway-configuration';
 import { FormGroup, FormBuilder } from '@angular/forms';
@@ -7,6 +7,8 @@ import { NzModalService } from 'ng-zorro-antd';
 import { I18NService } from '@core';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
+import { Item } from '../../inventory/models/item';
+import { ItemService } from '../../inventory/services/item.service';
 
 @Component({
   selector: 'app-inbound-putaway-configuration',
@@ -20,6 +22,10 @@ export class InboundPutawayConfigurationComponent implements OnInit {
   // Table data for display
   listOfAllPutawayConfiguration: PutawayConfiguration[] = [];
   listOfDisplayPutawayConfiguration: PutawayConfiguration[] = [];
+
+  listOfAllItems: Item[];
+  listOfDisplayItems: Item[];
+
   // Sort key: field's nzSortKey value
   // sort value: ascend / descend
   sortKey: string | null = null;
@@ -34,10 +40,15 @@ export class InboundPutawayConfigurationComponent implements OnInit {
 
   availableInventoryStatuses: InventoryStatus[];
 
+  lookupDrawerVisible = false;
+
+  lookupCriteria: string;
+
   constructor(
     private fb: FormBuilder,
     private putawayConfigurationService: PutawayConfigurationService,
     private inventoryStatusService: InventoryStatusService,
+    private itemService: ItemService,
     private modalService: NzModalService,
     private i18n: I18NService,
   ) {}
@@ -148,5 +159,55 @@ export class InboundPutawayConfigurationComponent implements OnInit {
     this.inventoryStatusService.loadInventoryStatuses().subscribe(inventoryStatusRes => {
       this.availableInventoryStatuses = inventoryStatusRes;
     });
+  }
+  openLookupDrawer() {
+    this.lookupDrawerVisible = true;
+    this.clearDrawerContent();
+  }
+  lookupDrawerclosed() {
+    this.lookupDrawerVisible = false;
+    this.clearDrawerContent();
+  }
+  clearDrawerContent() {
+    this.listOfAllItems = [];
+    this.listOfDisplayItems = [];
+    this.lookupCriteria = '';
+  }
+
+  lookup() {
+    console.log(`start to lookup ${this.lookupCriteria}`);
+    this.itemService.getItems(this.lookupCriteria).subscribe(itemsRes => {
+      console.log(`get item res: ${JSON.stringify(itemsRes)}`);
+      this.listOfAllItems = itemsRes;
+      this.listOfDisplayItems = itemsRes;
+    });
+  }
+  currentItemPageDataChange($event: Item[]): void {
+    // this.locationGroups = $event;
+    this.listOfDisplayItems = $event;
+  }
+
+  sortItem(sort: { key: string; value: string }): void {
+    this.sortKey = sort.key;
+    this.sortValue = sort.value;
+    if (this.sortKey && this.sortValue) {
+      this.listOfDisplayItems = this.listOfAllItems.sort((a, b) =>
+        this.sortValue === 'ascend'
+          ? a[this.sortKey!] > b[this.sortKey!]
+            ? 1
+            : -1
+          : b[this.sortKey!] > a[this.sortKey!]
+          ? 1
+          : -1,
+      );
+    } else {
+      this.listOfDisplayItems = this.listOfAllItems;
+    }
+  }
+  lookupSelect(itemName: string) {
+    console.log(`user selected: ${itemName}`);
+
+    this.lookupDrawerclosed();
+    this.searchForm.controls.itemName.setValue(itemName);
   }
 }

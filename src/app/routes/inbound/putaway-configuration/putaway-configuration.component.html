@@ -9,7 +9,15 @@
           {{'description.field.label.item' | translate}}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
-          <input nz-input name="itemName" id="itemName" formControlName="itemName" />
+
+          <nz-input-group nzSearch [nzAddOnAfter]="lookupDrawerOpener">
+            <input nz-input name="itemName" id="itemName" formControlName="itemName" />
+          </nz-input-group>
+          <ng-template #lookupDrawerOpener>
+            <button nz-button nzType="primary" nzSearch (click)="openLookupDrawer()"><i nz-icon
+                nzType="search"></i></button>
+          </ng-template>
+
         </nz-form-control>
       </nz-form-item>
     </div>
@@ -59,7 +67,7 @@
         <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
           (nzCheckedChange)="checkAll($event)"></th>
         <th nzShowSort nzSortKey="id">{{'description.field.table.header.id' | translate}}</th>
-        <th nzShowSort nzSortKey="id">{{'description.field.label.sequence' | translate}}</th>
+        <th nzShowSort nzSortKey="sequence">{{'description.field.label.sequence' | translate}}</th>
         <th nzShowSort nzSortKey="item">
           {{'description.field.label.item' | translate}}</th>
         <th nzShowSort nzSortKey="itemFamily">
@@ -72,6 +80,8 @@
           {{'description.field.label.location-group' | translate}}</th>
         <th>
           {{'description.field.label.location-group-type' | translate}}</th>
+        <th>
+          {{'description.field.label.putaway-configuration.strategy' | translate}}</th>
       </tr>
     </thead>
     <tbody>
@@ -80,12 +90,16 @@
 
         <td>{{ data.id }}</td>
         <td>{{ data.sequence }}</td>
-        <td>{{ data.item?.name}}</td>
-        <td>{{ data.itemFamily?.name}}</td>
-        <td>{{ data.inventoryStatus?.name}}</td>
-        <td>{{ data.location?.name}}</td>
-        <td>{{ data.locationGroup?.name}}</td>
-        <td>{{ data.locationGroupType?.name}}</td>
+        <td><a nz-tooltip nzTooltipTitle="{{ data.item?.description}}">{{ data.item?.name}}</a></td>
+        <td><a nz-tooltip nzTooltipTitle="{{ data.itemFamily?.description}}">{{ data.itemFamily?.name}}</a></td>
+        <td><a nz-tooltip nzTooltipTitle="{{ data.inventoryStatus?.description}}">{{ data.inventoryStatus?.name}}</a>
+        </td>
+        <td><a nz-tooltip nzTooltipTitle="{{ data.location?.description}}">{{ data.location?.name}}</a></td>
+        <td><a nz-tooltip nzTooltipTitle="{{ data.locationGroup?.description}}">{{ data.locationGroup?.name}}</a>
+        </td>
+        <td><a nz-tooltip
+            nzTooltipTitle="{{ data.locationGroupType?.description}}">{{ data.locationGroupType?.name}}</a></td>
+        <td> {{ data.strategies}} </td>
 
       </tr>
     </tbody>
@@ -103,3 +117,36 @@
       (click)="removeSelectedPutawayConfigurations()">{{'description.field.button.delete' | translate}}</button>
   </div>
 </ng-template>
+
+<nz-drawer [nzClosable]="true" [nzVisible]="lookupDrawerVisible" nzPlacement="right"
+  nzTitle="{{ 'description.drawer.title.lookup' | translate }}" nzWidth="50%" (nzOnClose)="lookupDrawerclosed()">
+  <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+    <input type="text" nz-input [(ngModel)]='lookupCriteria' />
+  </nz-input-group>
+  <ng-template #suffixIconButton>
+    <button nz-button nzType="primary" nzSearch (click)="lookup()"><i nz-icon nzType="search"></i></button>
+  </ng-template>
+
+
+  <nz-table #itemTable nzShowSizeChanger [nzData]="listOfAllItems"
+    (nzCurrentPageDataChange)="currentItemPageDataChange($event)">
+    <thead (nzSortChange)="sortItem($event)" nzSingleSort>
+      <tr>
+        <th nzShowSort nzSortKey="id">{{'description.field.table.header.id' | translate}}</th>
+        <th nzShowSort nzSortKey="item">
+          {{'description.field.label.item' | translate}}</th>
+        <th>
+          {{'description.field.label.item.description' | translate}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of itemTable.data">
+
+        <td>{{ data.id }}</td>
+        <td><a (click)="lookupSelect(data.name)"> {{ data.name}}</a> </td>
+        <td> {{ data.description}} </td>
+
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-drawer>
