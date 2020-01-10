@@ -3,7 +3,7 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfDisplaySuppliers"
+  <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfAllSuppliers"
     (nzCurrentPageDataChange)="currentPageDataChange($event)" [nzFooter]="tableFoot">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>

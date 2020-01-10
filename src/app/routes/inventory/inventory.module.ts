@@ -18,6 +18,9 @@ import { InventoryInventoryAttributeChangeConfirmComponent } from './inventory-a
 import { InventoryCycleCountMaintenanceComponent } from './cycle-count-maintenance/cycle-count-maintenance.component';
 import { InventoryAuditCountResultComponent } from './audit-count-result/audit-count-result.component';
 import { InventoryAuditCountConfirmComponent } from './audit-count-confirm/audit-count-confirm.component';
+import { InventoryMovementPathComponent } from './movement-path/movement-path.component';
+import { InventoryMovementPathMaintenanceComponent } from './movement-path-maintenance/movement-path-maintenance.component';
+import { InventoryMovementPathConfirmComponent } from './movement-path-confirm/movement-path-confirm.component';
 
 const COMPONENTS = [
   InventoryInventoryComponent,
@@ -37,6 +40,9 @@ const COMPONENTS = [
   InventoryCycleCountMaintenanceComponent,
   InventoryAuditCountResultComponent,
   InventoryAuditCountConfirmComponent,
+  InventoryMovementPathComponent,
+  InventoryMovementPathMaintenanceComponent,
+  InventoryMovementPathConfirmComponent,
 ];
 const COMPONENTS_NOROUNT = [];
 

@@ -71,6 +71,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
   receiptStatus = ReceiptStatus;
 
+  selectedTabIndex = 0;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private i18n: I18NService,
@@ -85,6 +87,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     private putawayConfigurationService: PutawayConfigurationService,
     private itemService: ItemService,
     private locationService: LocationService,
+    private inventoryService: InventoryService,
     private message: NzMessageService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inbound.receipt.title');
@@ -205,7 +208,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.refreshReceiptResults();
   }
 
-  refreshReceiptResults() {
+  refreshReceiptResults(selectedTabIndex = 0) {
+    this.selectedTabIndex = selectedTabIndex;
     const receiptNumber = this.receiptForm.controls.receiptNumber.value;
     if (receiptNumber) {
       this.loadReceipt(receiptNumber);
@@ -457,5 +461,16 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       });
       this.listOfDisplayReceivedInventory = this.listOfAllReceivedInventory;
     });
+  }
+
+  confirmPutaway(index: number, receivedInventory: Inventory) {
+    console.log(`confirm putaway with movement index ${index}, inventory: ${receivedInventory.lpn}`);
+    console.log(
+      `confirm putaway with movement index ${receivedInventory.inventoryMovements[index].location.name}, inventory: ${receivedInventory.lpn}`,
+    );
+
+    this.inventoryService
+      .move(receivedInventory, receivedInventory.inventoryMovements[index].location)
+      .subscribe(inventory => this.refreshReceiptResults(1));
   }
 }

@@ -1,0 +1,82 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/common/customer" routerLinkActive="active">{{
+      'description.field.link.return' | translate
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'description.field.breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.common' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/common/customer" routerLinkActive="active">{{
+          'description.field.breadcrumb.customer' | translate
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+
+<div nz-row style="padding: 50px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="2" [nzSize]="'default'" (nzIndexChange)="onStepIndexChange($event)">
+      <nz-step nzTitle="{{ 'description.steps.basic-info.title' | translate }}"
+        nzDescription="{{ 'description.steps.customer-maintenance.basic-info.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'description.steps.customer-maintenance.address.title' | translate }}"
+        nzDescription="{{ 'description.steps.customer-maintenance.address.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'description.steps.confirm.title' | translate }}"
+        nzDescription="{{ 'description.steps.confirm.description' | translate }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+
+<ng-container>
+  <nz-card nzTitle="{{ currentCustomer?.name }}" [nzActions]="[actionSave]">
+    <nz-descriptions nzBordered>
+
+      <nz-descriptions-item nzTitle="{{'description.field.label.name' | translate}}">{{currentCustomer?.name}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description.field.label.description' | translate}}" nzSpan="2">
+        {{currentCustomer?.description}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description.field.label.contactorFirstname' | translate}}">
+        {{currentCustomer?.contactorFirstname}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description.field.label.contactorLastname' | translate}}" nzSpan="2">
+        {{currentCustomer?.contactorLastname}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.country' | translate }}">
+        {{ currentCustomer?.addressCountry }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.state' | translate }}">
+        {{ currentCustomer?.addressState }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.county' | translate }}">
+        {{ currentCustomer?.addressCounty }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.city' | translate }}">
+        {{ currentCustomer?.addressCity }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.postcode' | translate }}" nzSpan="2">
+        {{ currentCustomer?.addressPostcode }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.line1' | translate }}" nzSpan="2">
+        {{ currentCustomer?.addressLine1 }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.line2' | translate }}">
+        {{ currentCustomer?.addressLine2 }}
+      </nz-descriptions-item>
+    </nz-descriptions>
+  </nz-card>
+</ng-container>
+
+
+<ng-template #actionSave>
+  <button nz-button nzType="primary" (click)="save()">{{ 'description.field.button.confirm' | translate}}</button>
+</ng-template>

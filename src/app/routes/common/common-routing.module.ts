@@ -11,6 +11,10 @@ import { CommonSupplierComponent } from './supplier/supplier.component';
 import { CommonSupplierMaintenanceComponent } from './supplier-maintenance/supplier-maintenance.component';
 import { CommonSupplierAddressMaintenanceComponent } from './supplier-address-maintenance/supplier-address-maintenance.component';
 import { CommonSupplierMaintenanceConfirmComponent } from './supplier-maintenance-confirm/supplier-maintenance-confirm.component';
+import { CommonCustomerComponent } from './customer/customer.component';
+import { CommonCustomerMaintenanceComponent } from './customer-maintenance/customer-maintenance.component';
+import { CommonCustomerMaintenanceConfirmComponent } from './customer-maintenance-confirm/customer-maintenance-confirm.component';
+import { CommonCustomerAddressMaintenanceComponent } from './customer-address-maintenance/customer-address-maintenance.component';
 
 const routes: Routes = [
   { path: 'client', component: CommonClientComponent },
@@ -24,6 +28,10 @@ const routes: Routes = [
   { path: 'supplier-maintenance', component: CommonSupplierMaintenanceComponent },
   { path: 'supplier-maintenance/address', component: CommonSupplierAddressMaintenanceComponent },
   { path: 'supplier-maintenance/confirm', component: CommonSupplierMaintenanceConfirmComponent },
+  { path: 'customer', component: CommonCustomerComponent },
+  { path: 'customer-maintenance', component: CommonCustomerMaintenanceComponent },
+  { path: 'customer-maintenance/confirm', component: CommonCustomerMaintenanceConfirmComponent },
+  { path: 'customer-maintenance/address', component: CommonCustomerAddressMaintenanceComponent },
 ];
 
 @NgModule({

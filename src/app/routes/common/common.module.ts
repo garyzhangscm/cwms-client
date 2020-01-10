@@ -12,6 +12,10 @@ import { CommonSupplierComponent } from './supplier/supplier.component';
 import { CommonSupplierMaintenanceComponent } from './supplier-maintenance/supplier-maintenance.component';
 import { CommonSupplierAddressMaintenanceComponent } from './supplier-address-maintenance/supplier-address-maintenance.component';
 import { CommonSupplierMaintenanceConfirmComponent } from './supplier-maintenance-confirm/supplier-maintenance-confirm.component';
+import { CommonCustomerComponent } from './customer/customer.component';
+import { CommonCustomerMaintenanceComponent } from './customer-maintenance/customer-maintenance.component';
+import { CommonCustomerMaintenanceConfirmComponent } from './customer-maintenance-confirm/customer-maintenance-confirm.component';
+import { CommonCustomerAddressMaintenanceComponent } from './customer-address-maintenance/customer-address-maintenance.component';
 
 const COMPONENTS = [
   CommonClientComponent,
@@ -24,7 +28,11 @@ const COMPONENTS = [
   CommonSupplierComponent,
   CommonSupplierMaintenanceComponent,
   CommonSupplierAddressMaintenanceComponent,
-  CommonSupplierMaintenanceConfirmComponent];
+  CommonSupplierMaintenanceConfirmComponent,
+  CommonCustomerComponent,
+  CommonCustomerMaintenanceComponent,
+  CommonCustomerMaintenanceConfirmComponent,
+  CommonCustomerAddressMaintenanceComponent];
 const COMPONENTS_NOROUNT = [];
 
 @NgModule({

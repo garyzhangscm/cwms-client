@@ -6,6 +6,26 @@ import { _HttpClient } from '@delon/theme';
   templateUrl: './icon-list.component.html',
 })
 export class UtilIconListComponent implements OnInit {
+  // outlineIconList valid:
+  // 'down', 'up', 'left', 'right', 'caret-up',  'caret-down', 'double-right', 'double-left',  'arrow-down', 'logout',
+  // 'menu-fold', 'menu-unfold', 'fullscreen', 'fullscreen-exit',  'question-circle', 'plus',  'info',  'info-circle',
+  // 'exclamation-circle', 'close', 'close-circle', 'check', 'check-circle', 'clock-circle', 'edit', 'copy', 'delete',
+  // 'pie-chart',  'github', 'dingding', 'weibo-circle', 'taobao-circle', 'alipay-circle', 'taobao', 'api',
+  // 'bell', 'book', 'bulb',  'calendar',  'cloud', 'customer-service',  'dislike', 'eye',
+  // 'frown',  'hdd', 'like',  'mail',  'lock', 'message', 'printer', 'profile', 'rocket', 'sound',
+  //  'trophy', 'usb', 'bars', 'copyright', 'download', 'ellipsis',    'fork',
+  // 'global', 'inbox', 'laptop', 'link', 'loading', 'paper-clip', 'scan',  'search', 'share-alt', 'shopping-cart',
+  // 'team', 'upload', 'user',
+
+  // already used:
+  // "i18n": "menu.dashboard" / "icon": "anticon-dashboard",
+  // "i18n": "menu.main.layout" / "icon": "anticon-appstore",
+  // "i18n": "menu.main.inventory" / "icon": "anticon-star",
+  // "i18n": "menu.main.inbound" / "icon": "anticon-exception",
+  // "i18n": "menu.main.outbound" / "icon": "anticon-global",
+  // "i18n": "menu.main.common" / "icon": "anticon-setting",
+  // "i18n": "menu.main.util" /  "icon": "anticon-tool",
+
   outlineIconList = [
     //  'step-backward',
     //  'step-forward',

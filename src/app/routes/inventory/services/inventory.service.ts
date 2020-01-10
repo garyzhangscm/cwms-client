@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { Client } from '../../common/models/client';
 import { ItemFamily } from '../models/item-family';
 import { SystemControlledNumberService } from '../../common/services/system-controlled-number.service';
+import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +24,7 @@ export class InventoryService {
     itemFamilies?: ItemFamily[],
     itemName?: string,
     location?: string,
+    lpn?: string,
   ): Observable<Inventory[]> {
     let params = '';
     if (itemName) {
@@ -36,6 +38,9 @@ export class InventoryService {
     }
     if (location) {
       params = `${params}&location=${location}`;
+    }
+    if (lpn) {
+      params = `${params}&lpn=${lpn}`;
     }
     if (params.startsWith('&')) {
       params = params.substring(1);
@@ -77,5 +82,9 @@ export class InventoryService {
 
   getNextLPN(): Observable<string> {
     return this.systemControlledNumberService.getNextAvailableId('LPN');
+  }
+  move(inventory: Inventory, destination: WarehouseLocation): Observable<Inventory> {
+    const url = `inventory/inventory/${inventory.id}/move`;
+    return this.http.post(url, destination).pipe(map(res => res.data));
   }
 }

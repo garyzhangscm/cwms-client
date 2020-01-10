@@ -94,8 +94,6 @@
           <td colspan="7">
             <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
               <nz-tab *ngFor="let itemPackageType of data.itemPackageTypes" [nzTitle]="itemPackageType.name">
-                <div>{{ itemPackageType.description }}</div>
-
                 <nz-table #innerTable [nzData]="itemPackageType.itemUnitOfMeasures" nzSize="middle"
                   [nzShowPagination]="false">
                   <thead>

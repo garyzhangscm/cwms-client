@@ -45,6 +45,17 @@
         </nz-form-control>
       </nz-form-item>
     </div>
+
+    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="lpn">
+          {{ 'description.field.label.lpn' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="lpn" id="lpn" formControlName="lpn" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
   </div>
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">

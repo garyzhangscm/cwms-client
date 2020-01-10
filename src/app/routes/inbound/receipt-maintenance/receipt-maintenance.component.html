@@ -100,7 +100,7 @@
   </div>
 </ng-template>
 
-<nz-tabset>
+<nz-tabset [nzSelectedIndex]="selectedTabIndex">
   <nz-tab nzTitle="{{ 'description.field.label.receipt.line' | translate }}">
     <!-- Table to Display the result  -->
     <div>
@@ -139,7 +139,8 @@
             <td>{{ data.receivedQuantity }}</td>
             <td>
               <!-- Only if the receipt is already checked in -->
-              <button nz-button [disabled]="currentReceipt?.receiptStatus === receiptStatus.OPEN" (click)="openReceivingModal(data, tplReceivingModalTitle, tplReceivingModalContent)"
+              <button nz-button [disabled]="currentReceipt?.receiptStatus === receiptStatus.OPEN"
+                (click)="openReceivingModal(data, tplReceivingModalTitle, tplReceivingModalContent)"
                 nzType="primary">{{ 'description.field.label.receiving' | translate }}</button>
             </td>
           </tr>
@@ -210,11 +211,32 @@
               </p>
             </td>
             <td>
-              <button nz-button nzType="primary" *ngIf="data.inventoryMovements.length === 0"
+              <button nz-button nzType="primary"
+                *ngIf="data.location.name === currentReceipt.number && data.inventoryMovements.length === 0"
                 (click)="allocateLocation(data)">{{ 'description.field.label.allocateLocation' | translate }}</button>
 
-              <button nz-button nzType="primary" *ngIf="data.inventoryMovements.length > 0"
-                (click)="reallocateLocation(data)">{{ 'description.field.label.reallocateLocation' | translate }}</button>
+
+              <div *ngIf="data.inventoryMovements.length > 0">
+                <button nz-button nzType="primary" *ngIf="data.location.name === currentReceipt.number"
+                  (click)="reallocateLocation(data)">{{ 'description.field.label.reallocateLocation' | translate }}</button>
+                <nz-divider nzType="vertical" *ngIf="data.location.name === currentReceipt.number"></nz-divider>
+                <button nz-button nzType="primary" *ngIf="data.inventoryMovements.length === 1"
+                  (click)="confirmPutaway(0, data)">{{ 'description.field.button.putaway' | translate }}</button>
+
+                <button nz-button nz-dropdown [nzDropdownMenu]="putawayDestinationTpl"
+                  *ngIf="data.inventoryMovements.length > 1">
+                  {{ 'description.field.button.putaway' | translate }}<i nz-icon nzType="down"></i></button>
+                <nz-dropdown-menu #putawayDestinationTpl="nzDropdownMenu">
+                  <ul nz-menu>
+                    <li nz-menu-item *ngFor="let inventoryMovement of data.inventoryMovements; let i=index">
+                      <a (click)="confirmPutaway(i, data)">
+                        {{ i+1 }} - {{ inventoryMovement.location?.name}}</a>
+                    </li>
+                  </ul>
+                </nz-dropdown-menu>
+
+
+              </div>
             </td>
           </tr>
         </tbody>

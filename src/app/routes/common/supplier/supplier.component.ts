@@ -13,7 +13,7 @@ import { I18NService } from '@core';
 })
 export class CommonSupplierComponent implements OnInit {
   // Table data for display
-  suppliers: Supplier[] = [];
+  listOfAllSuppliers: Supplier[] = [];
   listOfDisplaySuppliers: Supplier[] = [];
 
   // Sort key: field's nzSortKey value
@@ -51,9 +51,9 @@ export class CommonSupplierComponent implements OnInit {
   ) {}
 
   search(refresh: boolean = false): void {
-    this.supplierService.loadSuppliers(refresh).subscribe(clientRes => {
-      this.suppliers = clientRes;
-      this.listOfDisplaySuppliers = clientRes;
+    this.supplierService.loadSuppliers(refresh).subscribe(supplierRes => {
+      this.listOfAllSuppliers = supplierRes;
+      this.listOfDisplaySuppliers = supplierRes;
 
       this.filtersByName = [];
       this.filtersByDescription = [];
@@ -63,7 +63,7 @@ export class CommonSupplierComponent implements OnInit {
       const existingCountries = new Set();
       const existingStates = new Set();
 
-      this.suppliers.forEach(supplier => {
+      this.listOfAllSuppliers.forEach(supplier => {
         this.filtersByName.push({ text: supplier.name, value: supplier.name });
         this.filtersByDescription.push({ text: supplier.description, value: supplier.description });
 
@@ -140,7 +140,7 @@ export class CommonSupplierComponent implements OnInit {
         ? this.selectedFiltersByState.some(addressState => item.addressState.indexOf(addressState) !== -1)
         : true);
 
-    const data = this.suppliers.filter(item => filterFunc(item));
+    const data = this.listOfAllSuppliers.filter(item => filterFunc(item));
 
     // sort data
     if (this.sortKey && this.sortValue) {
@@ -181,7 +181,7 @@ export class CommonSupplierComponent implements OnInit {
 
   getSelectedSuppliers(): Supplier[] {
     const selectedSuppliers: Supplier[] = [];
-    this.suppliers.forEach((supplier: Supplier) => {
+    this.listOfAllSuppliers.forEach((supplier: Supplier) => {
       if (this.mapOfCheckedId[supplier.id] === true) {
         selectedSuppliers.push(supplier);
       }

@@ -91,6 +91,7 @@ export class InventoryInventoryComponent implements OnInit {
         this.searchForm.value.taggedItemFamilies,
         this.searchForm.value.itemName,
         this.searchForm.value.location,
+        this.searchForm.value.lpn,
       )
       .subscribe(inventoryRes => {
         this.inventories = inventoryRes;
@@ -277,6 +278,7 @@ export class InventoryInventoryComponent implements OnInit {
       taggedItemFamilies: [null],
       itemName: [null],
       location: [null],
+      lpn: [null],
     });
 
     // initiate the select control
