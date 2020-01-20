@@ -46,5 +46,7 @@ export interface Order {
   totalLineCount?: number;
   totalItemCount?: number;
   totalExpectedQuantity?: number;
+  totalOpenQuantity?: number;
+  totalInprocessQuantity?: number;
   totalShippedQuantity?: number;
 }

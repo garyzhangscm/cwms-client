@@ -134,7 +134,6 @@ export class UserLoginComponent implements OnDestroy {
           this.error = res.msg;
           return;
         }
-        console.log('login with user:\n' + JSON.stringify(res));
         // 清空路由复用信息
         this.reuseTabService.clear();
         // 设置用户Token信息

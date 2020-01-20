@@ -1,103 +1,156 @@
 import { Component, OnInit } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
-
-interface ItemData {
-  id: number;
-  name: string;
-  age: number;
-  address: string;
-}
+import { I18NService } from '@core';
+import { NzModalService, NzMessageService } from 'ng-zorro-antd';
+import { WaveService } from '../services/wave.service';
+import { Wave } from '../models/wave';
 
 @Component({
   selector: 'app-outbound-wave',
   templateUrl: './wave.component.html',
-  styleUrls: ['./wave.component.less']
+  styleUrls: ['./wave.component.less'],
 })
 export class OutboundWaveComponent implements OnInit {
-
-  constructor(private http: _HttpClient, private fb: FormBuilder) { }
+  constructor(
+    private fb: FormBuilder,
+    private i18n: I18NService,
+    private modalService: NzModalService,
+    private waveService: WaveService,
+    private message: NzMessageService,
+  ) {}
 
   // Form related data and functions
   searchForm: FormGroup;
-  controlArray: Array<{ index: number; show: boolean }> = [];
-  isCollapse = true;
 
-  toggleCollapse(): void {
-    this.isCollapse = !this.isCollapse;
-    this.controlArray.forEach((c, index) => {
-      c.show = this.isCollapse ? index < 6 : true;
-    });
-  }
+  // Table data for display
+  listOfAllWaves: Wave[] = [];
+  listOfDisplayWaves: Wave[] = [];
+  // Sort key: field's nzSortKey value
+  // sort value: ascend / descend
+  sortKey: string | null = null;
+  sortValue: string | null = null;
+
+  // checkbox - select all
+  allChecked = false;
+  indeterminate = false;
+  isAllDisplayDataChecked = false;
+  // list of checked checkbox
+  mapOfCheckedId: { [key: string]: boolean } = {};
+  // list of expanded row
+  mapOfExpandedId: { [key: string]: boolean } = {};
 
   resetForm(): void {
     this.searchForm.reset();
+    this.listOfAllWaves = [];
+    this.listOfDisplayWaves = [];
   }
 
+  search(): void {
+    this.waveService.getWaves(this.searchForm.controls.number.value).subscribe(waveRes => {
+      console.log(`listOfAllWaves:\n${JSON.stringify(waveRes)}`);
+      this.listOfAllWaves = this.calculateQuantities(waveRes);
+      this.listOfDisplayWaves = this.calculateQuantities(waveRes);
+    });
+  }
 
-  // Table related data and functions
-  listOfSelection = [
-    {
-      text: 'Select All Row',
-      onSelect: () => {
-        this.checkAll(true);
-      }
-    },
-    {
-      text: 'Select Odd Row',
-      onSelect: () => {
-        this.listOfDisplayData.forEach((data, index) => (this.mapOfCheckedId[data.id] = index % 2 !== 0));
-        this.refreshStatus();
-      }
-    },
-    {
-      text: 'Select Even Row',
-      onSelect: () => {
-        this.listOfDisplayData.forEach((data, index) => (this.mapOfCheckedId[data.id] = index % 2 === 0));
-        this.refreshStatus();
-      }
-    }
-  ];
-  isAllDisplayDataChecked = false;
-  isIndeterminate = false;
-  listOfDisplayData: ItemData[] = [];
-  listOfAllData: ItemData[] = [];
-  mapOfCheckedId: { [key: string]: boolean } = {};
+  calculateQuantities(waves: Wave[]): Wave[] {
+    waves.forEach(wave => {
+      wave.totalOrderCount = 0;
+      wave.totalItemCount = 0;
+      wave.totalQuantity = 0;
+      wave.totalPickedQuantity = 0;
+      wave.totalStagedQuantity = 0;
+      wave.totalShippedQuantity = 0;
 
-  currentPageDataChange($event: ItemData[]): void {
-    this.listOfDisplayData = $event;
-    this.refreshStatus();
+      const existingItemIds = new Set();
+      const existingOrderNumbers = new Set();
+
+      wave.shipmentLines.forEach(shipmentLine => {
+        existingItemIds.add(shipmentLine.orderLine.itemId);
+        existingOrderNumbers.add(shipmentLine.orderNumber);
+
+        wave.totalQuantity += shipmentLine.quantity;
+        wave.totalShippedQuantity += shipmentLine.quantity;
+      });
+      wave.totalItemCount = existingItemIds.size;
+      wave.totalOrderCount = existingOrderNumbers.size;
+    });
+    return waves;
   }
 
   refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayData.every(item => this.mapOfCheckedId[item.id]);
-    this.isIndeterminate =
-      this.listOfDisplayData.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+    this.isAllDisplayDataChecked = this.listOfDisplayWaves.every(item => this.mapOfCheckedId[item.id]);
+    this.indeterminate =
+      this.listOfDisplayWaves.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
   }
 
   checkAll(value: boolean): void {
-    this.listOfDisplayData.forEach(item => (this.mapOfCheckedId[item.id] = value));
+    this.listOfDisplayWaves.forEach(item => (this.mapOfCheckedId[item.id] = value));
     this.refreshStatus();
   }
 
-  ngOnInit() { 
-    // initiate the form
-    this.searchForm = this.fb.group({});
-    for (let i = 0; i < 10; i++) {
-      this.controlArray.push({ index: i, show: i < 6 });
-      this.searchForm.addControl(`field${i}`, new FormControl());
+  sort(sort: { key: string; value: string }): void {
+    this.sortKey = sort.key;
+    this.sortValue = sort.value;
+    // sort data
+    if (this.sortKey && this.sortValue) {
+      this.listOfDisplayWaves = this.listOfAllWaves.sort((a, b) =>
+        this.sortValue === 'ascend'
+          ? a[this.sortKey!] > b[this.sortKey!]
+            ? 1
+            : -1
+          : b[this.sortKey!] > a[this.sortKey!]
+          ? 1
+          : -1,
+      );
+    } else {
+      this.listOfDisplayWaves = this.listOfAllWaves;
     }
-
-    // initiate the data for table
-    for (let i = 0; i < 100; i++) {
-      this.listOfAllData.push({
-        id: i,
-        name: `Edward King ${i}`,
-        age: 32,
-        address: `London, Park Lane no. ${i}`
-      });
-    }
-
   }
 
+  removeSelectedWaves(): void {
+    // make sure we have at least one checkbox checked
+    const selectedWaves = this.getSelectedWaves();
+    if (selectedWaves.length > 0) {
+      this.modalService.confirm({
+        nzTitle: this.i18n.fanyi('page.location-group.modal.delete.header.title'),
+        nzContent: this.i18n.fanyi('page.location-group.modal.delete.content'),
+        nzOkText: this.i18n.fanyi('description.field.button.confirm'),
+        nzOkType: 'danger',
+        nzOnOk: () => {
+          this.waveService.removeWaves(selectedWaves).subscribe(res => {
+            console.log('selected wave removed');
+            this.search();
+          });
+        },
+        nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+        nzOnCancel: () => console.log('Cancel'),
+      });
+    }
+  }
+
+  getSelectedWaves(): Wave[] {
+    const selectedWaves: Wave[] = [];
+    this.listOfAllWaves.forEach((wave: Wave) => {
+      if (this.mapOfCheckedId[wave.id] === true) {
+        selectedWaves.push(wave);
+      }
+    });
+    return selectedWaves;
+  }
+
+  ngOnInit() {
+    // initiate the search form
+    this.searchForm = this.fb.group({
+      number: [null],
+    });
+  }
+
+  allocateWave(wave: Wave) {
+    this.waveService.allocateWave(wave).subscribe(waveRes => {
+      this.message.success(this.i18n.fanyi('message.wave.allocated'));
+      this.search();
+    });
+  }
 }

@@ -106,10 +106,14 @@ export class OutboundOrderComponent implements OnInit {
       order.totalLineCount = order.orderLines.length;
       order.totalItemCount = 0;
       order.totalExpectedQuantity = 0;
+      order.totalOpenQuantity = 0;
+      order.totalInprocessQuantity = 0;
       order.totalShippedQuantity = 0;
 
       order.orderLines.forEach(orderLine => {
         order.totalExpectedQuantity += orderLine.expectedQuantity;
+        order.totalOpenQuantity += orderLine.openQuantity;
+        order.totalInprocessQuantity += orderLine.inprocessQuantity;
         order.totalShippedQuantity += orderLine.shippedQuantity;
         if (!existingItemIds.has(orderLine.item.id)) {
           existingItemIds.add(orderLine.item.id);
