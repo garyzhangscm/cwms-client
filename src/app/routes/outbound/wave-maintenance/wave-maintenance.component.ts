@@ -40,6 +40,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   currentWave: Wave = {
     id: null,
     number: '',
+    status: null,
     shipmentLines: [],
     totalOrderCount: 0,
     totalItemCount: 0,

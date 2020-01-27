@@ -31,7 +31,7 @@
   </div>
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
-      <button nz-button [nzType]="'primary'" (click)="search()">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
         {{ 'description.field.button.search' | translate }}
       </button>
       <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>

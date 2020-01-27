@@ -30,6 +30,8 @@ export class InventoryInventoryComponent implements OnInit {
   // Form related data and functions
   searchForm: FormGroup;
 
+  searching = false;
+
   // Table data for display
   inventories: Inventory[] = [];
   listOfDisplayInventories: Inventory[] = [];
@@ -85,6 +87,7 @@ export class InventoryInventoryComponent implements OnInit {
     this.filtersByInventoryStatus = [];
   }
   search(): void {
+    this.searching = true;
     this.inventoryService
       .getInventories(
         this.searchForm.value.taggedClients,
@@ -146,6 +149,8 @@ export class InventoryInventoryComponent implements OnInit {
             existingInventoryStatusId.add(inventory.inventoryStatus.id);
           }
         });
+
+        this.searching = false;
       });
   }
 

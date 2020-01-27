@@ -11,7 +11,7 @@ export class ShipmentService {
   constructor(private http: _HttpClient) {}
 
   getShipments(number: string): Observable<Shipment[]> {
-    const url = number ? `outbound/shipments?number=${number}` : `outbound/orders`;
+    const url = number ? `outbound/shipments?number=${number}` : `outbound/shipments`;
 
     return this.http.get(url).pipe(map(res => res.data));
   }
@@ -42,5 +42,10 @@ export class ShipmentService {
       shipment_ids: shipmentIds.join(','),
     };
     return this.http.delete('outbound/shipments', params).pipe(map(res => res.data));
+  }
+
+  completeShipment(shipment: Shipment): Observable<Shipment> {
+    const url = `outbound/shipments/${shipment.id}/complete`;
+    return this.http.put(url).pipe(map(res => res.data));
   }
 }

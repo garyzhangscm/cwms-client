@@ -39,6 +39,9 @@
         <th nzShowSort nzSortKey="number">
           {{ 'description.field.label.wave.number' | translate }}
         </th>
+        <th nzShowSort nzSortKey="status">
+          {{ 'description.field.label.wave.status' | translate }}
+        </th>
         <th nzShowSort nzSortKey="totalOrderCount">
           {{ 'description.field.label.wave.totalOrderCount' | translate }}
         </th>
@@ -72,6 +75,7 @@
           <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]"></td>
           <td>{{ data.id }}</td>
           <td>{{ data.number }}</td>
+          <td>{{ data.status }}</td>
           <td>{{ data.totalOrderCount }}</td>
           <td>{{ data.totalItemCount }}</td>
           <td>{{ data.totalQuantity }}</td>
@@ -159,35 +163,35 @@
 
       </tbody>
     </nz-table>
-  </nz-tab> 
+  </nz-tab>
   <nz-tab nzTitle="{{ 'description.field.label.short-allocation' | translate }}">
-    
-      <nz-table #innerTable [nzData]="data.shortAllocations" nzSize="middle" [nzShowPagination]="false" nzBordered
-        class="inner-table">
 
-        <thead>
-          <th>
-            {{ 'description.field.label.order.number' | translate }}</th>
+    <nz-table #innerTable [nzData]="data.shortAllocations" nzSize="middle" [nzShowPagination]="false" nzBordered
+      class="inner-table">
 
-          <th>
-            {{ 'description.field.label.item' | translate }}</th>
-          <th>
-            {{ 'description.field.label.item.description' | translate }}</th>
-          <th>
-            {{ 'description.field.label.short-allocation.quantity' | translate }}</th>
+      <thead>
+        <th>
+          {{ 'description.field.label.order.number' | translate }}</th>
 
-        </thead>
-        <tbody>
-          <tr *ngFor="let shortAllocation of data.shortAllocations">
-            <td>{{ shortAllocation.orderNumber }}</td>
-            <td>{{ shortAllocation.item?.name }}</td>
-            <td>{{ shortAllocation.item?.description }}</td>
-            <td>{{ shortAllocation.quantity }}</td>
-          </tr>
+        <th>
+          {{ 'description.field.label.item' | translate }}</th>
+        <th>
+          {{ 'description.field.label.item.description' | translate }}</th>
+        <th>
+          {{ 'description.field.label.short-allocation.quantity' | translate }}</th>
 
-        </tbody>
-      </nz-table> 
-  </nz-tab> 
+      </thead>
+      <tbody>
+        <tr *ngFor="let shortAllocation of data.shortAllocations">
+          <td>{{ shortAllocation.orderNumber }}</td>
+          <td>{{ shortAllocation.item?.name }}</td>
+          <td>{{ shortAllocation.item?.description }}</td>
+          <td>{{ shortAllocation.quantity }}</td>
+        </tr>
+
+      </tbody>
+    </nz-table>
+  </nz-tab>
   </nz-tabset>
   </td>
   </tr>

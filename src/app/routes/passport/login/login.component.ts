@@ -200,6 +200,7 @@ export class UserLoginComponent implements OnDestroy {
   }
 
   loadWarehouses() {
+    console.log(`Start to load warehouse ${this.userName.value}`);
     if (this.userName.value === '') {
       this.warehouses = [];
       this.warehouseId.disable();

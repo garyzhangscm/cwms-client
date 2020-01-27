@@ -60,11 +60,11 @@
         <td>{{ data.id }}</td>
         <td>{{ data.number }}</td>
         <td>{{ data.status }}</td>
-        <td>{{ data.carrier.name }}</td>
-        <td>{{ data.carrierServiceLevel.name }}</td>
+        <td>{{ data.carrier?.name }}</td>
+        <td>{{ data.carrierServiceLevel?.name }}</td>
         <td>
 
-          <button nz-button nzType="danger" (click)="completeShipment(data)">
+          <button nz-button nzType="primary" (click)="completeShipment(data)">
             {{ 'description.field.button.complete' | translate }}
           </button>
         </td>

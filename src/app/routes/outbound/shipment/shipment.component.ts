@@ -124,9 +124,9 @@ export class OutboundShipmentComponent implements OnInit {
   }
 
   completeShipment(shipment: Shipment) {
-    this.shipmentService.cancelShipment(shipment).subscribe(res => {
-      console.log('shipment cancelled');
-      this.message.success(this.i18n.fanyi('message.shipment.cancelled'));
+    this.shipmentService.completeShipment(shipment).subscribe(res => {
+      console.log('shipment complete');
+      this.message.success(this.i18n.fanyi('message.shipment.complete'));
       this.search();
     });
   }

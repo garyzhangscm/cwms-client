@@ -40,6 +40,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   // Form related data and functions
   searchForm: FormGroup;
 
+  searching = false;
+
   // Table data for display
   locations: WarehouseLocation[] = [];
   listOfDisplayLocations: WarehouseLocation[] = [];
@@ -67,6 +69,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   }
 
   search(): void {
+    this.searching = true;
     this.locationService
       .getLocations(this.selectedLocationGroupTypes, this.selectedLocationGroups)
       .subscribe(locationRes => {
@@ -82,6 +85,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
             existingLocationGroupId.add(location.locationGroup.id);
           }
         });
+
+        this.searching = false;
       });
   }
 

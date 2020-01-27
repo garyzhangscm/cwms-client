@@ -3,12 +3,13 @@ import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { WarehouseLocation } from '../models/warehouse-location';
+import { WarehouseService } from './warehouse.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LocationService {
-  constructor(private http: _HttpClient) {}
+  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
   getLocations(locationGroupTypes: string[], locationGroups: string[], name?: string): Observable<WarehouseLocation[]> {
     let params = '';
@@ -16,11 +17,14 @@ export class LocationService {
       params = `location_group_type_ids=${locationGroupTypes.join(',')}`;
     }
     if (locationGroups != null) {
-      params = `&location_group_ids=${locationGroups.join(',')}`;
+      params = `${params}&location_group_ids=${locationGroups.join(',')}`;
     }
     if (name != null) {
-      params = `&name=${name}`;
+      params = `${params}&name=${name}`;
     }
+
+    params = `${params}&warehouseName=${this.warehouseService.getCurrentWarehouse().name}`;
+
     if (params.startsWith('&')) {
       params = params.substring(1);
     }

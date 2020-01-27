@@ -5,12 +5,17 @@ import { map } from 'rxjs/operators';
 import { Item } from '../models/item';
 import { _HttpClient } from '@delon/theme';
 import { GzLocalStorageServiceService } from '@shared/service/gz-local-storage-service.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MovementPathService {
-  constructor(private http: _HttpClient, private gzLocalStorageService: GzLocalStorageServiceService) {}
+  constructor(
+    private http: _HttpClient,
+    private gzLocalStorageService: GzLocalStorageServiceService,
+    private warehouseService: WarehouseService,
+  ) {}
 
   getMovementPaths(
     fromLocationId?: number,
@@ -20,17 +25,18 @@ export class MovementPathService {
   ): Observable<MovementPath[]> {
     let params = '';
     if (fromLocationId) {
-      params = 'from_location_id=' + fromLocationId;
+      params = `from_location_id=${fromLocationId}`;
     }
     if (fromLocationGroupId) {
-      params = 'from_location_group_id=' + fromLocationGroupId;
+      params = `${params}&from_location_group_id=${fromLocationGroupId}`;
     }
     if (toLocationId) {
-      params = 'to_location_id=' + toLocationId;
+      params = `${params}&to_location_id=${toLocationId}`;
     }
     if (toLocationGroupId) {
-      params = 'to_location_group_id=' + toLocationGroupId;
+      params = `${params}&to_location_group_id=${toLocationGroupId}`;
     }
+    params = `${params}&warehouseName=${this.warehouseService.getCurrentWarehouse().name}`;
     if (params.startsWith('&')) {
       params = params.substring(1);
     }

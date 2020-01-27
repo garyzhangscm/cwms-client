@@ -3,7 +3,6 @@ import { Warehouse } from '../models/warehouse';
 import { Observable } from 'rxjs';
 import { _HttpClient } from '@delon/theme';
 import { map } from 'rxjs/operators';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -16,11 +15,12 @@ export class WarehouseService {
   }
 
   getWarehouse(id: number): Observable<Warehouse> {
-    return this.http.get('layout/warehouse/' + id).pipe(map(res => res.data));
+    return this.http.get('layout/warehouses/' + id).pipe(map(res => res.data));
   }
 
   getWarehouseByUser(username: string): Observable<Warehouse[]> {
-    const url = 'layout/warehouse/accessible/' + username;
+    const url = 'layout/warehouses/accessible/' + username;
+    console.log(`start to get warehouse from ${url}`);
     return this.http.get(url).pipe(map(res => res.data));
   }
 
@@ -29,12 +29,12 @@ export class WarehouseService {
   }
 
   changeWarehouse(warehouse: Warehouse): Observable<Warehouse> {
-    const url = 'layout/warehouse/' + warehouse.id;
+    const url = 'layout/warehouses/' + warehouse.id;
     return this.http.put(url, warehouse).pipe(map(res => res.data));
   }
 
   removeWarehouse(warehouse: Warehouse): Observable<Warehouse> {
-    const url = 'layout/warehouse/' + warehouse.id;
+    const url = 'layout/warehouses/' + warehouse.id;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 

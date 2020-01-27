@@ -55,7 +55,7 @@ export function fnDelonAuthConfig(): DelonAuthConfig {
     token_send_key: 'Authorization',
     token_send_template: 'Bearer ${token}',
     login_url: '/passport/login',
-    ignores: [/\/login/, /assets/, /passport/, /layout\/warehouse\/accessible\//],
+    ignores: [/\/login/, /assets/, /passport/, /layout\/warehouses\/accessible\//],
   };
 }
 

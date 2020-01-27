@@ -8,6 +8,7 @@ import { Client } from '../../common/models/client';
 import { ItemFamily } from '../models/item-family';
 import { SystemControlledNumberService } from '../../common/services/system-controlled-number.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,7 @@ import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-locat
 export class InventoryService {
   constructor(
     private http: _HttpClient,
-    private gzLocalStorageService: GzLocalStorageServiceService,
+    private warehouseService: WarehouseService,
     private systemControlledNumberService: SystemControlledNumberService,
   ) {}
 
@@ -42,6 +43,7 @@ export class InventoryService {
     if (lpn) {
       params = `${params}&lpn=${lpn}`;
     }
+    params = `${params}&warehouseName=${this.warehouseService.getCurrentWarehouse().name}`;
     if (params.startsWith('&')) {
       params = params.substring(1);
     }

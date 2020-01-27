@@ -11,9 +11,9 @@ import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-locat
 export class TrailerService {
   constructor(private http: _HttpClient) {}
 
-  getTrailers(): Observable<Trailer[]> {
-    const url = `outbound/trailers`;
+  getTrailers(number: string): Observable<Trailer[]> { 
 
+    const url = number ? `outbound/trailers?number=${number}` : `outbound/trailers`;
     return this.http.get(url).pipe(map(res => res.data));
   }
 
