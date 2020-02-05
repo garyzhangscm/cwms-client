@@ -10,6 +10,7 @@ import { InventoryStatus } from '../models/inventory-status';
 import { InventoryStatusService } from '../services/inventory-status.service';
 import { ItemService } from '../services/item.service';
 import { InventoryService } from '../services/inventory.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Component({
   selector: 'app-inventory-audit-count-result',
@@ -21,6 +22,7 @@ export class InventoryAuditCountResultComponent implements OnInit {
 
   batchId: string;
   location: WarehouseLocation;
+  warehouseId: number;
 
   validInventoryStatuses: InventoryStatus[] = [];
 
@@ -34,6 +36,7 @@ export class InventoryAuditCountResultComponent implements OnInit {
     private inventoryStatusService: InventoryStatusService,
     private itemService: ItemService,
     private inventoryService: InventoryService,
+    private warehouseService: WarehouseService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inventory.audit-count-result.title');
   }
@@ -128,10 +131,13 @@ export class InventoryAuditCountResultComponent implements OnInit {
       id: null,
       batchId: this.batchId,
       location: this.location,
+      warehouseId: this.warehouseService.getCurrentWarehouse().id,
       inventory: {
         id: null,
         lpn: '',
+        warehouseId: this.warehouseService.getCurrentWarehouse().id,
         location: this.location,
+        virtual: false, // default to NON virtual inventory. It make no sense to adjust virtual inventory
         item: {
           id: null,
           name: '',

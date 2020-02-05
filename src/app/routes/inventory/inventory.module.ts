@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '@shared';
+import { DirectivesModule } from '../directives/directives.module';
 import { InventoryRoutingModule } from './inventory-routing.module';
 import { InventoryInventoryComponent } from './inventory/inventory.component';
 import { InventoryCycleCountComponent } from './cycle-count/cycle-count.component';
@@ -47,7 +48,7 @@ const COMPONENTS = [
 const COMPONENTS_NOROUNT = [];
 
 @NgModule({
-  imports: [SharedModule, InventoryRoutingModule],
+  imports: [SharedModule, InventoryRoutingModule, DirectivesModule],
   declarations: [...COMPONENTS, ...COMPONENTS_NOROUNT],
   entryComponents: COMPONENTS_NOROUNT,
 })

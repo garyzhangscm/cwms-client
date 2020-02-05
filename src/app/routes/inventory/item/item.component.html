@@ -91,7 +91,7 @@
         <tr [nzExpand]="mapOfExpandedId[data.id]" *ngIf="data.itemPackageTypes?.length > 0"
           (nzExpandChange)="showItemPackageType(data)">
           <td></td>
-          <td colspan="7">
+          <td colspan="4">
             <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
               <nz-tab *ngFor="let itemPackageType of data.itemPackageTypes" [nzTitle]="itemPackageType.name">
                 <nz-table #innerTable [nzData]="itemPackageType.itemUnitOfMeasures" nzSize="middle"

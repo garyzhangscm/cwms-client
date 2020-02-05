@@ -4,14 +4,14 @@ import { Observable } from 'rxjs';
 import { Wave } from '../models/wave';
 import { map } from 'rxjs/operators';
 import { Order } from '../models/order';
-import { sequence } from '@angular/animations';
 import { OrderLine } from '../models/order-line';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WaveService {
-  constructor(private http: _HttpClient) {}
+  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
   getWaves(number: string): Observable<Wave[]> {
     const url = number ? `outbound/waves?number=${number}` : `outbound/waves`;
@@ -66,8 +66,11 @@ export class WaveService {
   }
 
   createWaveWithOrderLines(waveNumber: string, orderLines: OrderLine[]): Observable<Wave> {
-    const url = waveNumber ? `outbound/waves/plan?waveNumber=${waveNumber}` : `outbound/waves/plan`;
-
+    let url = `outbound/waves/plan?`;
+    url = `${url}warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    if (waveNumber) {
+      url = `${url}&waveNumber=${waveNumber}`;
+    }
     return this.http.post(url, orderLines).pipe(map(res => res.data));
   }
 

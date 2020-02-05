@@ -13,7 +13,7 @@ import { CycleCountRequestService } from '../services/cycle-count-request.servic
 import { CycleCountResultService } from '../services/cycle-count-result.service';
 import { AuditCountRequestService } from '../services/audit-count-request.service';
 import { AuditCountResultService } from '../services/audit-count-result.service';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd';
+import { NzModalRef, NzModalService, NzMessageService } from 'ng-zorro-antd';
 import { Item } from '../models/item';
 import { ItemService } from '../services/item.service';
 
@@ -77,6 +77,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     private auditCountResultService: AuditCountResultService,
     private modalService: NzModalService,
     private itemService: ItemService,
+    private message: NzMessageService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inventory.cycle-count-request.title');
   }
@@ -132,8 +133,16 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
         this.requestForm.controls.startValue.reset();
         this.requestForm.controls.endValue.reset();
         this.requestForm.controls.includeEmptyLocation.reset();
+        this.message.info(this.i18n.fanyi('message.new.complete'));
         this.refreshCountBatchResults();
       });
+  }
+  batchIdOnBlur(batchId?: string) {
+    // When we use the 'fkey' to automatically generate the next cycle count id
+    // the reactive form control may not have the right value.Let's set
+    // the number back to the bind control
+    this.requestForm.controls.batchId.setValue(batchId);
+    this.refreshCountBatchResults();
   }
 
   refreshCountBatchResults() {
@@ -320,11 +329,12 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
       const emptyCycleCountResult = this.getEmptyCycleCountResult();
       emptyCycleCountResult.batchId = cycleCountResults[0].batchId;
       emptyCycleCountResult.location = cycleCountResults[0].location;
+      emptyCycleCountResult.warehouseId = cycleCountResults[0].warehouseId;
       return [emptyCycleCountResult];
     } else {
       // This is not an empty location, let's remove all lines that has empty locations.
       const nonEmptyCycleCountResults: CycleCountResult[] = [];
-      cycleCountResults.every(cycleCountResult => {
+      cycleCountResults.forEach(cycleCountResult => {
         if (
           cycleCountResult.item != null &&
           cycleCountResult.item.name != null &&
@@ -333,6 +343,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
           nonEmptyCycleCountResults.push(cycleCountResult);
         }
       });
+
       return nonEmptyCycleCountResults;
     }
   }
@@ -350,9 +361,13 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
       extraCycleCountResult.item = this.getEmptyItem();
       extraCycleCountResult.batchId = inventorySummary.batchId;
       extraCycleCountResult.location = inventorySummary.location;
+      extraCycleCountResult.warehouseId = inventorySummary.warehouseId;
       // Add an empty count result
 
       this.inventoriesToBeCount = [...this.inventoriesToBeCount, extraCycleCountResult];
+      console.log(
+        `After added, we got the following inventories to be count \n ${JSON.stringify(this.inventoriesToBeCount)}`,
+      );
     }
   }
 
@@ -390,6 +405,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     return {
       id: null,
       batchId: null,
+      warehouseId: null,
       location: null,
       item: null,
       quantity: 0,

@@ -12,16 +12,16 @@ export class ReceiptLineService {
   constructor(private http: _HttpClient) {}
 
   getNextReceiptLineNumber(receiptId: number): Observable<string> {
-    return this.http.get(`inbound/receipt/${receiptId}/next-line-number`).pipe(map(res => res.data));
+    return this.http.get(`inbound/receipts/${receiptId}/next-line-number`).pipe(map(res => res.data));
   }
 
   createReceiptLine(receiptId: number, receiptLine: ReceiptLine): Observable<ReceiptLine> {
-    return this.http.post(`inbound/receipt/${receiptId}/lines`, receiptLine).pipe(map(res => res.data));
+    return this.http.post(`inbound/receipts/${receiptId}/lines`, receiptLine).pipe(map(res => res.data));
   }
 
   receiveInventory(receiptId: number, receiptLineId: number, inventory: Inventory): Observable<Inventory> {
     return this.http
-      .post(`inbound/receipt/${receiptId}/line/${receiptLineId}/receive`, inventory)
+      .post(`inbound/receipts/${receiptId}/line/${receiptLineId}/receive`, inventory)
       .pipe(map(res => res.data));
   }
 }

@@ -12,13 +12,6 @@ import { OrderService } from '../services/order.service';
 import { Order } from '../models/order';
 import { Customer } from '../../common/models/customer';
 
-interface ItemData {
-  id: number;
-  name: string;
-  age: number;
-  address: string;
-}
-
 @Component({
   selector: 'app-outbound-order',
   templateUrl: './order.component.html',

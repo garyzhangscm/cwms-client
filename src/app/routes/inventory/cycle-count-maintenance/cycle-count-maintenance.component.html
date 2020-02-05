@@ -28,17 +28,20 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
-            <input nz-input formControlName="batchId" id="batchId" name="batchId" required />
+            <input appFkey variable="cycle-count-batch-id" nz-input formControlName="batchId" id="batchId"
+              name="batchId" required (blur)="batchIdOnBlur($event.target.value)" />
           </nz-form-control>
 
         </nz-form-item>
       </div>
+      <!--
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <label nz-checkbox formControlName="autoGenerateId" (ngModelChange)="generateBatchId($event)">
             {{ 'description.field.label.number.auto' | translate }}</label>
         </nz-form-item>
       </div>
+    -->
     </div>
 
     <div nz-row [nzGutter]="24">

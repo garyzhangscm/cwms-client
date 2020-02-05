@@ -317,7 +317,7 @@
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
           <nz-input-group nzSize="large">
-            <input appFkey variable="LPN" nz-input [ngModel]="currentInventory.lpn"
+            <input appFkey variable="lpn" nz-input [ngModel]="currentInventory.lpn"
               (blur)="receivingLPNChanged($event.target.value)" id="lpn" name="lpn" />
           </nz-input-group>
         </nz-form-control>

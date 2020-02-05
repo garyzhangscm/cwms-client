@@ -65,7 +65,6 @@
       <tr *ngFor="let data of shortAllocationTable.data">
         <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
 
-        <td>{{ data.number }}</td>
         <td>{{ data.orderNumber }}</td>
         <td>{{ data.item?.name }}</td>
         <td>{{ data.item?.description }}</td>

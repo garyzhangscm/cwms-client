@@ -27,6 +27,7 @@ const routes: Routes = [
       { path: 'inventory', loadChildren: './inventory/inventory.module#InventoryModule' },
       { path: 'inbound', loadChildren: './inbound/inbound.module#InboundModule' },
       { path: 'outbound', loadChildren: './outbound/outbound.module#OutboundModule' },
+      { path: 'work-order', loadChildren: './work-order/work-order.module#WorkOrderModule' },
       { path: 'integration', loadChildren: './integration/integration.module#IntegrationModule' },
       { path: 'common', loadChildren: './common/common.module#CommonModule' },
       { path: 'util', loadChildren: './util/util.module#UtilModule' },

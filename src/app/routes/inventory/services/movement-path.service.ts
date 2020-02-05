@@ -36,7 +36,7 @@ export class MovementPathService {
     if (toLocationGroupId) {
       params = `${params}&to_location_group_id=${toLocationGroupId}`;
     }
-    params = `${params}&warehouseName=${this.warehouseService.getCurrentWarehouse().name}`;
+    params = `${params}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (params.startsWith('&')) {
       params = params.substring(1);
     }

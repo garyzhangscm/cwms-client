@@ -17,7 +17,7 @@ export class OrderService {
   }
 
   getOrder(id: number): Observable<Order> {
-    return this.http.get(`outbound/order/${id}`).pipe(map(res => res.data));
+    return this.http.get(`outbound/orders/${id}`).pipe(map(res => res.data));
   }
 
   addOrder(order: Order): Observable<Order> {
@@ -25,12 +25,12 @@ export class OrderService {
   }
 
   changeOrder(order: Order): Observable<Order> {
-    const url = `outbound/order/${order.id}`;
+    const url = `outbound/orders/${order.id}`;
     return this.http.put(url, order).pipe(map(res => res.data));
   }
 
   removeOrder(order: Order): Observable<Order> {
-    const url = `outbound/order/${order.id}`;
+    const url = `outbound/orders/${order.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
   removeOrders(orders: Order[]): Observable<Order[]> {
@@ -41,6 +41,6 @@ export class OrderService {
     const params = {
       order_ids: orderIds.join(','),
     };
-    return this.http.delete('outbound/order', params).pipe(map(res => res.data));
+    return this.http.delete('outbound/orders', params).pipe(map(res => res.data));
   }
 }

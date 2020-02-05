@@ -4,12 +4,17 @@ import { GzLocalStorageServiceService } from '@shared/service/gz-local-storage-s
 import { Observable, of } from 'rxjs';
 import { ItemFamily } from '../models/item-family';
 import { map, tap } from 'rxjs/operators';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ItemFamilyService {
-  constructor(private http: _HttpClient, private gzLocalStorageService: GzLocalStorageServiceService) {}
+  constructor(
+    private http: _HttpClient,
+    private gzLocalStorageService: GzLocalStorageServiceService,
+    private warehouseService: WarehouseService,
+  ) {}
 
   loadItemFamilies(refresh: boolean = false): Observable<ItemFamily[]> {
     // if we can find the value in local storage, we get it from their.
@@ -21,7 +26,7 @@ export class ItemFamilyService {
       }
     }
     return this.http
-      .get('inventory/item-families')
+      .get(`inventory/item-families?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem('inventory.ItemFamily', res)));
   }

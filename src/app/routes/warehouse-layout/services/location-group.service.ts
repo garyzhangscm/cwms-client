@@ -12,12 +12,12 @@ export class LocationGroupService {
   constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
   loadLocationGroups(): Observable<LocationGroup[]> {
-    const url = `layout/locationgroups?warehouseName=${this.warehouseService.getCurrentWarehouse().name}`;
+    const url = `layout/locationgroups?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     return this.http.get(url).pipe(map(res => res.data));
   }
 
   getLocationGroups(locationGroupTypes: string[]): Observable<LocationGroup[]> {
-    const url = `layout/locationgroups?warehouseName=${this.warehouseService.getCurrentWarehouse().name}`;
+    const url = `layout/locationgroups?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (locationGroupTypes != null) {
       const params = {
         location_group_types: locationGroupTypes.join(','),

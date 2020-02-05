@@ -10,6 +10,7 @@ import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-locat
 import { Inventory } from '../models/inventory';
 import { CycleCountResult } from '../models/cycle-count-result';
 import { CycleCountRequestType } from '../models/cycle-count-request-type.enum';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,6 +21,7 @@ export class CycleCountRequestService {
     private http: _HttpClient,
     private gzLocalStorageService: GzLocalStorageServiceService,
     private printingService: PrintingService,
+    private warehouseService: WarehouseService,
   ) {}
 
   generateCycleCountRequests(
@@ -33,11 +35,12 @@ export class CycleCountRequestService {
       includeEmptyLocation = false;
     }
     const params = {
-      batch_id: batchId,
-      cycle_count_request_type: cycleCountRequestType,
-      begin_value: beginValue,
-      end_value: endValue,
-      include_empty_location: includeEmptyLocation,
+      batchId,
+      cycleCountRequestType,
+      beginValue,
+      endValue,
+      includeEmptyLocation,
+      warehouseId: this.warehouseService.getCurrentWarehouse().id,
     };
 
     return this.http.post(`inventory/cycle-count-requests`, null, params).pipe(map(res => res.data));

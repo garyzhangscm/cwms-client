@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 import { PutawayConfiguration } from '../models/putaway-configuration';
 import { map } from 'rxjs/operators';
 import { Inventory } from '../../inventory/models/inventory';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PutawayConfigurationService {
-  constructor(private http: _HttpClient) {}
+  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
   getPutawayConfigurations(
     sequence?: number,
@@ -22,14 +23,15 @@ export class PutawayConfigurationService {
       params = `sequence=${sequence}`;
     }
     if (itemName != null) {
-      params = `&itemName=${itemName}`;
+      params = `${params}&itemName=${itemName}`;
     }
     if (itemFamilyName != null) {
-      params = `&itemFamilyName=${itemFamilyName}`;
+      params = `${params}&itemFamilyName=${itemFamilyName}`;
     }
     if (inventoryStatus != null) {
-      params = `&inventoryStatusId=${inventoryStatus}`;
+      params = `${params}&inventoryStatusId=${inventoryStatus}`;
     }
+    params = `${params}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (params.startsWith('&')) {
       params = params.substring(1);
     }

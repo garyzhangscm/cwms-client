@@ -1,0 +1,190 @@
+<page-header [title]="'page.bill-of-material.header.title' | translate"> </page-header>
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="number" [nzSm]="3" [nzXs]="3">
+          {{ 'description.field.label.bill-of-material.number' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="number" id="number" formControlName="number" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="item" [nzSm]="3" [nzXs]="3">
+          {{ 'description.field.label.item' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="item" id="item" formControlName="item" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        {{ 'description.field.button.search' | translate }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllBillOfMaterial">
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="checkAll($event)"></th>
+        <th nzShowExpand></th>
+        <th nzShowSort nzSortKey="id">{{ 'description.field.label.id' | translate }}</th>
+        <th nzShowSort nzSortKey="number">
+          {{ 'description.field.label.bill-of-material.number' | translate }}
+        </th>
+        <th>
+          {{ 'description.field.label.item' | translate }}
+        </th>
+        <th>
+          {{ 'description.field.label.bill-of-material.expectedQuantity' | translate }}
+        </th>
+        <th>
+          {{ 'description.field.label.action' | translate }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-template ngFor let-data [ngForOf]="nestedTable.data">
+        <tr>
+          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
+
+          <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]"></td>
+          <td>{{ data.id }}</td>
+          <td>{{ data.number }}</td>
+          <td>{{ data.item?.name }}</td>
+          <td>{{ data.expectedQuantity }}</td>
+          <td>
+            <button nz-button nzType="primary"
+              (click)="openNewWorkOrderModal(data, tplCreatingWorkOrderModalTitle, tplCreatingWorkOrderModalContent)">
+              {{ 'description.field.button.bill-of-material.create-work-order' | translate }}
+            </button>
+          </td>
+        </tr>
+        <tr [nzExpand]="mapOfExpandedId[data.id]">
+          <td colspan="2"></td>
+          <td colspan="4">
+            <nz-tabset>
+              <nz-tab nzTitle=" {{ 'description.field.label.bill-of-material.line' | translate }}">
+                <nz-table [nzData]="data.billOfMaterialLines" nzSize="middle" [nzShowPagination]="false">
+
+                  <thead>
+                    <th>
+                      {{ 'description.field.label.bill-of-material.line.number' | translate }}</th>
+                    <th>
+                      {{ 'description.field.label.item' | translate }}</th>
+                    <th>
+                      {{ 'description.field.label.item.description' | translate }}</th>
+                    <th>
+                      {{ 'description.field.label.bill-of-material.line.expectedQuantity' | translate }}</th>
+                    <th>
+                      {{ 'description.field.label.inventory.status' | translate }}</th>
+                  </thead>
+    <tbody>
+
+      <tr *ngFor="let billOfMaterialLine of data.billOfMaterialLines">
+        <td>{{ billOfMaterialLine.number }}</td>
+        <td>{{ billOfMaterialLine.item.name }}</td>
+        <td>{{ billOfMaterialLine.item.description }}</td>
+        <td>{{ billOfMaterialLine.expectedQuantity }}</td>
+        <td>{{ billOfMaterialLine.inventoryStatus.name }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+  </nz-tab>
+  <nz-tab nzTitle=" {{ 'description.field.label.work-order-instruction-template' | translate }}">
+    <nz-table [nzData]="data.workOrderInstructionTemplates" nzSize="middle" [nzShowPagination]="false">
+
+      <thead>
+        <th>
+          {{ 'description.field.label.id' | translate }}</th>
+        <th>
+          {{ 'description.field.label.work-order-instruction-template.sequence' | translate }}</th>
+        <th>
+          {{ 'description.field.label.work-order-instruction-template.instruction' | translate }}</th>
+      </thead>
+      <tbody>
+
+        <tr *ngFor="let workOrderInstructionTemplate of data.workOrderInstructionTemplates">
+          <td>{{ workOrderInstructionTemplate.id }}</td>
+          <td>{{ workOrderInstructionTemplate.sequence }}</td>
+          <td>{{ workOrderInstructionTemplate.instruction }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+  </nz-tabset>
+  </td>
+  </tr>
+  </ng-template>
+  </tbody>
+  </nz-table>
+</div>
+
+
+<!-- Modal for create work order from BOM -->
+<ng-template #tplCreatingWorkOrderModalTitle>
+  <span>{{ 'page.modal.bill-of-material.create-work-order' | translate}}</span>
+</ng-template>
+<ng-template #tplCreatingWorkOrderModalContent>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="workOrderNumber">
+          {{ 'description.field.label.work-order' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input appFkey variable="work-order-number" nz-input [(ngModel)]="newWorkOrder.number" id="workOrderNumber"
+            name="workOrderNumber" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="productionLine">
+          {{ 'description.field.label.production-line' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <nz-select nz-input [ngModel]="newWorkOrder?.productionLine?.id" (ngModelChange)="productLineChanged($event)"
+            style="width: 250px">
+            <nz-option *ngFor="let productionLine of availableProductionLines" [nzLabel]="productionLine.name"
+              [nzValue]="productionLine.id">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="expectedQuantity">
+          {{ 'description.field.label.work-order.expected-quantity' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input [(ngModel)]="newWorkOrder.expectedQuantity" id="expectedQuantity" name="expectedQuantity" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+
+
+
+</ng-template>

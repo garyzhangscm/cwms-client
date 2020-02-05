@@ -3,12 +3,17 @@ import { _HttpClient } from '@delon/theme';
 import { GzLocalStorageServiceService } from '@shared/service/gz-local-storage-service.service';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TestDataUploadService {
-  constructor(private http: _HttpClient, private gzLocalStorageService: GzLocalStorageServiceService) {}
+  constructor(
+    private http: _HttpClient,
+    private gzLocalStorageService: GzLocalStorageServiceService,
+    private warehouseService: WarehouseService,
+  ) {}
   getTestDataNames(): Observable<string[]> {
     // if we can find the value in local storage, we get it from their.
     // otherwise we get from server
@@ -23,6 +28,7 @@ export class TestDataUploadService {
   }
 
   loadTestData(name: string): Observable<string> {
-    return this.http.post('resource/test-data/init/' + name).pipe(map(res => res.data));
+    const url = `resource/test-data/init/${name}?warehouseName=${this.warehouseService.getCurrentWarehouse().name}`;
+    return this.http.post(url).pipe(map(res => res.data));
   }
 }

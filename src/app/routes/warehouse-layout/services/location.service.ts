@@ -23,7 +23,7 @@ export class LocationService {
       params = `${params}&name=${name}`;
     }
 
-    params = `${params}&warehouseName=${this.warehouseService.getCurrentWarehouse().name}`;
+    params = `${params}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
 
     if (params.startsWith('&')) {
       params = params.substring(1);
@@ -34,7 +34,7 @@ export class LocationService {
   }
 
   getLocation(id: number): Observable<WarehouseLocation> {
-    return this.http.get('layout/location/' + id).pipe(map(res => res.data));
+    return this.http.get('layout/locations/' + id).pipe(map(res => res.data));
   }
 
   addLocation(location: WarehouseLocation): Observable<WarehouseLocation> {
@@ -42,12 +42,12 @@ export class LocationService {
   }
 
   changeLocation(location: WarehouseLocation): Observable<WarehouseLocation> {
-    const url = 'layout/location/' + location.id;
+    const url = 'layout/locations/' + location.id;
     return this.http.put(url, location).pipe(map(res => res.data));
   }
 
   removeLocation(location: WarehouseLocation): Observable<WarehouseLocation> {
-    const url = 'layout/location/' + location.id;
+    const url = 'layout/locations/' + location.id;
     return this.http.delete(url).pipe(map(res => res.data));
   }
   removeLocations(locations: WarehouseLocation[]): Observable<WarehouseLocation[]> {
@@ -58,6 +58,6 @@ export class LocationService {
     const params = {
       location_ids: locationIds.join(','),
     };
-    return this.http.delete('layout/location', params).pipe(map(res => res.data));
+    return this.http.delete('layout/locations', params).pipe(map(res => res.data));
   }
 }

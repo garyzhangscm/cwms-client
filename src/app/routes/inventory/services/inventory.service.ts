@@ -43,7 +43,7 @@ export class InventoryService {
     if (lpn) {
       params = `${params}&lpn=${lpn}`;
     }
-    params = `${params}&warehouseName=${this.warehouseService.getCurrentWarehouse().name}`;
+    params = `${params}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (params.startsWith('&')) {
       params = params.substring(1);
     }

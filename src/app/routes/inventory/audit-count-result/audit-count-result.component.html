@@ -43,13 +43,10 @@
         <td>
           <div *ngIf="data.inventory?.id === null">
             <div class="row">
-              <input type="text" [ngModel]="data.inventory?.lpn" (blur)="lpnChanged($event.target.value, data)"
-                name="lpn-{{ i }}" id="lpn-{{ i }}" />
+              <input appFkey variable="lpn" type="text" [ngModel]="data.inventory?.lpn"
+                (blur)="lpnChanged($event.target.value, data)" name="lpn-{{ i }}" id="lpn-{{ i }}" />
             </div>
 
-            <label nz-checkbox (nzCheckedChange)="generateLPN($event, i, data)">
-              {{ 'description.field.label.number.auto' | translate }}
-            </label>
           </div>
           <span *ngIf="data.inventory?.id">
             {{ data.inventory?.lpn }}
