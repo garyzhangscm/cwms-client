@@ -47,6 +47,12 @@
           {{ 'description.field.label.production-line.outbound-stage-location' | translate }}
         </th>
         <th>
+          {{ 'description.field.label.production-line.single-work-order-only' | translate }}
+        </th>
+        <th>
+          {{ 'description.field.label.enabled' | translate }}
+        </th>
+        <th>
           {{ 'description.field.label.action' | translate }}
         </th>
       </tr>
@@ -59,9 +65,14 @@
         <td>{{ data.productionLineLocation?.name }}</td>
         <td>{{ data.inboundStageLocation?.name }}</td>
         <td>{{ data.outboundStageLocation?.name }}</td>
+        <td>{{ data.workOrderExclusiveFlag }}</td>
+        <td>{{ data.enabled }}</td>
         <td>
-          <button nz-button nzType="primary" (click)="disableProductionLine(data)">
+          <button nz-button nzType="primary" (click)="disableProductionLine(data, true)" *ngIf="data.enabled">
             {{ 'description.field.button.disable' | translate }}
+          </button>
+          <button nz-button nzType="primary" (click)="disableProductionLine(data, false)" *ngIf="!data.enabled">
+            {{ 'description.field.button.enable' | translate }}
           </button>
         </td>
 

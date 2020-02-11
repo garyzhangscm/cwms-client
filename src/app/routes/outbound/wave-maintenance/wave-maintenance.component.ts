@@ -1,25 +1,9 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { _HttpClient, TitleService } from '@delon/theme';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { Receipt } from '../../inbound/models/receipt';
-import { ReceiptStatus } from '../../inbound/models/receipt-status.enum';
-import { Client } from '../../common/models/client';
-import { Supplier } from '../../common/models/supplier';
-import { ReceiptLine } from '../../inbound/models/receipt-line';
-import { Inventory } from '../../inventory/models/inventory';
-import { NzModalRef, NzModalService, NzMessageService } from 'ng-zorro-antd';
-import { InventoryStatus } from '../../inventory/models/inventory-status';
+import { NzModalService, NzMessageService } from 'ng-zorro-antd';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { ReceiptService } from '../../inbound/services/receipt.service';
-import { ReceiptLineService } from '../../inbound/services/receipt-line.service';
-import { ClientService } from '../../common/services/client.service';
-import { SupplierService } from '../../common/services/supplier.service';
-import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
-import { PutawayConfigurationService } from '../../inbound/services/putaway-configuration.service';
-import { ItemService } from '../../inventory/services/item.service';
-import { LocationService } from '../../warehouse-layout/services/location.service';
-import { InventoryService } from '../../inventory/services/inventory.service';
 import { Wave } from '../models/wave';
 import { OrderLine } from '../models/order-line';
 import { Order } from '../models/order';
@@ -87,7 +71,6 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     private i18n: I18NService,
     private titleService: TitleService,
     private fb: FormBuilder,
-    private modalService: NzModalService,
     private waveService: WaveService,
     private message: NzMessageService,
   ) {

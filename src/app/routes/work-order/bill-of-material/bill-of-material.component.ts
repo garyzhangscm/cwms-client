@@ -10,6 +10,7 @@ import { BillOfMaterial } from '../models/bill-of-material';
 import { WorkOrder } from '../models/work-order';
 import { ProductionLine } from '../models/production-line';
 import { ProductionLineService } from '../services/production-line.service';
+import { WorkOrderStatus } from '../models/work-order-status.enum';
 
 @Component({
   selector: 'app-work-order-bill-of-material',
@@ -42,6 +43,7 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
     expectedQuantity: null,
     producedQuantity: null,
     assignments: null,
+    status: WorkOrderStatus.PENDING,
   };
   searching = false;
 
@@ -175,6 +177,7 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
       expectedQuantity: null,
       producedQuantity: null,
       assignments: null,
+      status: WorkOrderStatus.PENDING,
     };
     // show the model
     this.newWorkOrderModal = this.modalService.create({

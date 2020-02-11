@@ -18,6 +18,11 @@ export class ProductionLineService {
 
     return this.http.get(url).pipe(map(res => res.data));
   }
+  getAvailableProductionLines(): Observable<ProductionLine[]> {
+    const url = `workorder/production-lines/available?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+
+    return this.http.get(url).pipe(map(res => res.data));
+  }
   getProductionLinesByNameList(productionLineIds: string[]): Observable<ProductionLine[]> {
     const idList = productionLineIds.join(',');
     const url =
@@ -44,6 +49,10 @@ export class ProductionLineService {
   removeProductionLine(productionLine: ProductionLine): Observable<ProductionLine> {
     const url = `workorder/production-lines/${productionLine.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
+  }
+  disableProductionLine(productionLine: ProductionLine, disabled: boolean): Observable<ProductionLine> {
+    const url = `workorder/production-lines/${productionLine.id}/disable?disabled=${disabled}`;
+    return this.http.post(url).pipe(map(res => res.data));
   }
   removeProductionLines(productionLines: ProductionLine[]): Observable<ProductionLine[]> {
     const productionLineIds: number[] = [];

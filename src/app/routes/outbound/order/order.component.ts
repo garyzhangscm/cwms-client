@@ -3,14 +3,15 @@ import { _HttpClient } from '@delon/theme';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { I18NService } from '@core';
 import { NzModalService, NzMessageService } from 'ng-zorro-antd';
-import { ReceiptService } from '../../inbound/services/receipt.service';
-import { Receipt } from '../../inbound/models/receipt';
-import { Client } from '../../common/models/client';
-import { Supplier } from '../../common/models/supplier';
-import { ReceiptStatus } from '../../inbound/models/receipt-status.enum';
 import { OrderService } from '../services/order.service';
 import { Order } from '../models/order';
 import { Customer } from '../../common/models/customer';
+import { Router, ActivatedRoute } from '@angular/router';
+import { PickWork } from '../models/pick-work';
+import { PickService } from '../services/pick.service';
+import { ShortAllocationService } from '../services/short-allocation.service';
+import { ShortAllocation } from '../models/short-allocation';
+import { Inventory } from '../../inventory/models/inventory';
 
 @Component({
   selector: 'app-outbound-order',
@@ -23,7 +24,11 @@ export class OutboundOrderComponent implements OnInit {
     private i18n: I18NService,
     private modalService: NzModalService,
     private orderService: OrderService,
-    private message: NzMessageService,
+    private messageService: NzMessageService,
+    private router: Router,
+    private pickService: PickService,
+    private shortAllocationService: ShortAllocationService,
+    private activatedRoute: ActivatedRoute,
   ) {}
 
   // Form related data and functions
@@ -51,6 +56,18 @@ export class OutboundOrderComponent implements OnInit {
   mapOfCheckedId: { [key: string]: boolean } = {};
   // list of expanded row
   mapOfExpandedId: { [key: string]: boolean } = {};
+
+  // list of record with allocation in process
+  mapOfAllocationInProcessId: { [key: string]: boolean } = {};
+
+  // list of record with printing in process
+  mapOfPrintingInProcessId: { [key: string]: boolean } = {};
+
+  // list of record with printing in process
+  mapOfPicks: { [key: string]: PickWork[] } = {};
+  mapOfShortAllocations: { [key: string]: ShortAllocation[] } = {};
+
+  mapOfPickedInventory: { [key: string]: Inventory[] } = {};
 
   resetForm(): void {
     this.searchForm.reset();
@@ -90,7 +107,13 @@ export class OutboundOrderComponent implements OnInit {
           existingBillToCustomer.add(billToCustomerName);
         }
       });
+
+      this.collapseAllRecord();
     });
+  }
+
+  collapseAllRecord() {
+    this.listOfDisplayOrders.forEach(item => (this.mapOfExpandedId[item.id] = false));
   }
 
   calculateQuantities(orders: Order[]): Order[] {
@@ -112,6 +135,7 @@ export class OutboundOrderComponent implements OnInit {
           existingItemIds.add(orderLine.item.id);
         }
       });
+
       order.totalItemCount = existingItemIds.size;
     });
     return orders;
@@ -186,7 +210,7 @@ export class OutboundOrderComponent implements OnInit {
     }
   }
 
-  removeSelectedOrders(): void {
+  cancelSelectedOrders(): void {
     // make sure we have at least one checkbox checked
     const selectedOrders = this.getSelectedOrders();
     if (selectedOrders.length > 0) {
@@ -222,5 +246,111 @@ export class OutboundOrderComponent implements OnInit {
     this.searchForm = this.fb.group({
       number: [null],
     });
+
+    // IN case we get the number passed in, refresh the display
+    // and show the order information
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.number) {
+        this.searchForm.controls.number.setValue(params.number);
+        this.search();
+      }
+    });
   }
+
+  allocateOrder(order: Order) {
+    this.mapOfAllocationInProcessId[order.id] = true;
+    this.orderService.allocateOrder(order).subscribe(orderRes => {
+      this.messageService.success(this.i18n.fanyi('message.allocate.success'));
+      this.mapOfAllocationInProcessId[order.id] = false;
+      this.search();
+    });
+  }
+
+  isOrderAllocatable(order: Order): boolean {
+    return order.totalOpenQuantity > 0 || order.totalPendingAllocationQuantity > 0;
+  }
+
+  printPickSheets(order: Order) {
+    this.mapOfPrintingInProcessId[order.id] = true;
+    this.orderService.printOrderPickSheet(order);
+    // purposely to show the 'loading' status of the print button
+    // for at least 1 second. The above printWorkOrderPickSheet will
+    // return immediately but the print job(or print preview page)
+    // will start with some delay. During the delay, we will
+    // display the 'print' button as 'Loading' status
+    setTimeout(() => {
+      this.mapOfPrintingInProcessId[order.id] = false;
+    }, 1000);
+  }
+  confirmPicks(order: Order) {
+    this.router.navigateByUrl(`/outbound/pick/confirm?type=order&number=${order.number}`);
+  }
+  showOrderDetails(order: Order) {
+    console.log(`expanded: ${JSON.stringify(order)}`);
+    // When we expand the details for the order, load the picks and short allocation from the server
+    if (this.mapOfExpandedId[order.id] === true) {
+      this.showPicks(order);
+      this.showShortAllocations(order);
+      this.showPickedInventory(order);
+    }
+  }
+  showPicks(order: Order) {
+    this.pickService.getPicks(null, order.id).subscribe(pickRes => {
+      this.mapOfPicks[order.id] = [...pickRes];
+      console.log(`Map of picks:\n${JSON.stringify(this.mapOfPicks)}`);
+    });
+  }
+  showShortAllocations(order: Order) {
+    this.shortAllocationService
+      .getShortAllocations(order.number)
+      .subscribe(shortAllocationRes => (this.mapOfShortAllocations[order.id] = [...shortAllocationRes]));
+  }
+  showPickedInventory(order: Order) {
+    // Get all the picks and then load the pikced inventory
+    this.pickService.getPicks(null, order.id).subscribe(pickRes => {
+      this.pickService.getPickedInventories(pickRes).subscribe(pickedInventoryRes => {
+        console.log(`pickedInventoryRes:\n${JSON.stringify(pickedInventoryRes)}`);
+        this.mapOfPickedInventory[order.id] = [...pickedInventoryRes];
+      });
+    });
+  }
+
+  stageOrder(order: Order) {
+    this.orderService.stageOrder(order).subscribe(orderRes => {
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      this.search();
+    });
+  }
+
+  loadTrailer(order: Order) {
+    this.orderService.loadTrailer(order).subscribe(orderRes => {
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      this.search();
+    });
+  }
+
+  dispatchTrailer(order: Order) {
+    this.orderService.dispatchTrailer(order).subscribe(orderRes => {
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      this.search();
+    });
+  }
+
+  isReadyForStaging(order: Order): boolean {
+    return true;
+  }
+  isReadyForLoading(order: Order): boolean {
+    return true;
+  }
+  isReadyForDispatching(order: Order): boolean {
+    return true;
+  }
+
+  cancelPick(order: Order, pick: PickWork) {
+    this.pickService.cancelPick(pick).subscribe(pickRes => {
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      this.search();
+    });
+  }
+  unpick(inventory: Inventory) {}
 }

@@ -46,7 +46,16 @@ export interface Order {
   totalLineCount?: number;
   totalItemCount?: number;
   totalExpectedQuantity?: number;
-  totalOpenQuantity?: number;
-  totalInprocessQuantity?: number;
+  totalOpenQuantity?: number; // Open quantity that is not in shipment yet
+  totalInprocessQuantity?: number; // Total quantity that is in shipment
+  // totalInprocessQuantity = totalPendingAllocationQuantity + totalOpenPickQuantity + totalPickedQuantity
+  totalPendingAllocationQuantity?: number;
+  totalOpenPickQuantity?: number;
+  totalPickedQuantity?: number;
   totalShippedQuantity?: number;
+
+  isReadyForShipping?: boolean;
+  isReadyForStaging?: boolean;
+  isReadyForLoading?: boolean;
+  isReadyForDispatching?: boolean;
 }

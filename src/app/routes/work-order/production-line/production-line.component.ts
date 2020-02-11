@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { I18NService } from '@core';
-import { NzModalService } from 'ng-zorro-antd';
+import { NzModalService, NzMessageService } from 'ng-zorro-antd';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { LocationGroupType } from '../../warehouse-layout/models/location-group-type';
@@ -19,7 +19,7 @@ export class WorkOrderProductionLineComponent implements OnInit {
     private fb: FormBuilder,
     private productionLineService: ProductionLineService,
     private i18n: I18NService,
-    private modalService: NzModalService,
+    private messageService: NzMessageService,
   ) {}
 
   // Select control for Location Group Types
@@ -108,5 +108,10 @@ export class WorkOrderProductionLineComponent implements OnInit {
       );
     });
   }
-  disableProductionLine() {}
+  disableProductionLine(productionLine: ProductionLine, disabled: boolean) {
+    this.productionLineService.disableProductionLine(productionLine, disabled).subscribe(productionLine => {
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      this.search();
+    });
+  }
 }

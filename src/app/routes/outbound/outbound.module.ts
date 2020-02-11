@@ -11,6 +11,7 @@ import { OutboundPickComponent } from './pick/pick.component';
 import { OutboundShortAllocationComponent } from './short-allocation/short-allocation.component';
 import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
+import { OutboundPickConfirmComponent } from './pick-confirm/pick-confirm.component';
 
 const COMPONENTS = [
   OutboundOrderComponent,
@@ -23,6 +24,7 @@ const COMPONENTS = [
   OutboundShortAllocationComponent,
   OutboundStopComponent,
   OutboundTrailerComponent,
+  OutboundPickConfirmComponent,
 ];
 const COMPONENTS_NOROUNT = [];
 

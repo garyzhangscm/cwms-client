@@ -180,6 +180,14 @@ export class CycleCountRequestService {
         pageLines.length = 0;
       }
     });
+    // When cycleCountResults.length % this.COUNT_REQUEST_PER_PAGE !== 0
+    // It means we haven't setup the last page correctly yet. Let's
+    // add the page end and add the last page to the page list
+    if (cycleCountResults.length % this.COUNT_REQUEST_PER_PAGE !== 0) {
+      pageLines.push(`</table>`);
+      pages.push(pageLines.join(''));
+      pageLines.length = 0;
+    }
 
     return pages;
   }

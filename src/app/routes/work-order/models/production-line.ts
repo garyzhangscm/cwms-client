@@ -17,4 +17,6 @@ export interface ProductionLine {
   productionLineLocation?: WarehouseLocation;
 
   workOrders: WorkOrder[];
+  workOrderExclusiveFlag: boolean;
+  enabled: boolean;
 }

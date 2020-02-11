@@ -47,6 +47,9 @@
         <th nzShowSort nzSortKey="number">
           {{ 'description.field.label.work-order.number' | translate }}
         </th>
+        <th nzShowSort nzSortKey="status">
+          {{ 'description.field.label.status' | translate }}
+        </th>
         <th>
           {{ 'description.field.label.item' | translate }}
         </th>
@@ -55,6 +58,17 @@
         </th>
         <th>
           {{ 'description.field.label.work-order.produced-quantity' | translate }}
+        </th>
+
+        <th>
+          {{ 'description.field.label.work-order.totalLineExpectedQuantity' | translate }}</th>
+        <th>
+          {{ 'description.field.label.work-order.totalLineOpenQuantity' | translate }}</th>
+        <th>
+          {{ 'description.field.label.work-order.totalLineInprocessQuantity' | translate }}</th>
+        <th>
+          {{ 'description.field.label.work-order.totalLineConsumedQuantity' | translate }}</th>
+
         <th>
           {{ 'description.field.label.production-line' | translate }}
         </th>
@@ -75,13 +89,32 @@
           <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]"></td>
           <td>{{ data.id }}</td>
           <td>{{ data.number }}</td>
+          <td>{{ data.status }}</td>
           <td>{{ data.item?.name }}</td>
           <td>{{ data.expectedQuantity }}</td>
           <td>{{ data.producedQuantity }}</td>
-          <td>{{ data.productionLine?.name }}</td>
+          <td>{{ data.totalLineExpectedQuantity }}</td>
+          <td>{{ data.totalLineOpenQuantity }}</td>
+          <td>{{ data.totalLineInprocessQuantity }}</td>
+          <td>{{ data.totalLineConsumedQuantity }}</td>
+          <td>
+            <a nz-dropdown [nzDropdownMenu]="productionLineMenu" [nzDisabled]="!isProductionLineChangable(data)">
+              {{ data.productionLine?.name }}
+              <i nz-icon nzType="down"></i>
+            </a>
+            <nz-dropdown-menu #productionLineMenu="nzDropdownMenu">
+              <ul nz-menu nzSelectable>
+                <li nz-menu-item *ngFor="let productionLine of availableProductionLines"
+                  (click)="changeProductionLine(data, productionLine.value)">
+                  {{productionLine.label}}
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+          </td>
           <td>{{ data.assignedUserCount }}</td>
           <td>
-            <button nz-button nzType="primary" (click)="allocateWorkOrder(data)" [nzLoading]="allocating">
+            <button nz-button nzType="primary" (click)="allocateWorkOrder(data)"
+              [nzLoading]="mapOfAllocationInProcessId[data.id]" [disabled]="!isWorkOrderAllocatable(data)">
               {{ 'description.field.button.allocate' | translate }}
             </button>
           </td>
@@ -90,7 +123,7 @@
         <tr [nzExpand]="mapOfExpandedId[data.id]" class="inner-table">
 
           <td colspan="3"></td>
-          <td colspan="5">
+          <td colspan="8">
             <nz-tabset>
               <nz-tab nzTitle=" {{ 'description.field.label.work-order.line' | translate }}">
                 <nz-table [nzData]="data.workOrderLines" nzSize="middle" [nzShowPagination]="false">
@@ -156,9 +189,9 @@
         <th>
           {{ 'description.field.label.user.username' | translate }}</th>
         <th>
-          {{ 'description.field.label.user.firstname' | translate }}</th>
+          {{ 'description.field.label.firstname' | translate }}</th>
         <th>
-          {{ 'description.field.label.user.lastname' | translate }}</th>
+          {{ 'description.field.label.lastname' | translate }}</th>
       </thead>
       <tbody>
 
@@ -172,13 +205,11 @@
   </nz-tab>
 
   <nz-tab nzTitle=" {{ 'description.field.label.pick' | translate }}">
-    <nz-table [nzData]="data.workOrderLines" nzSize="middle" [nzShowPagination]="false">
+    <nz-table [nzData]="data.workOrderLines" nzSize="middle" [nzShowPagination]="false" [nzFooter]="pickTableFoot">
 
       <thead>
         <th>
           {{ 'description.field.label.pick.number' | translate }}</th>
-        <th>
-          {{ 'description.field.label.order.number' | translate }}</th>
         <th>
           {{ 'description.field.label.sourceLocation' | translate }}</th>
         <th>
@@ -192,22 +223,31 @@
         <th>
           {{ 'description.field.label.pick.pickedQuantity' | translate }}</th>
       </thead>
-      <tbody>
-        <div *ngFor="let workOrderLine of data.workOrderLines">
+      <tbody *ngFor="let workOrderLine of data.workOrderLines">
 
-          <tr *ngFor="let pick of workOrderLine.picks">
-            <td>{{ pick.number }}</td>
-            <td>{{ pick.orderNumber }}</td>
-            <td>{{ pick.sourceLocation?.name }}</td>
-            <td>{{ pick.destinationLocation?.name }}</td>
-            <td>{{ pick.item?.name }}</td>
-            <td>{{ pick.item?.description }}</td>
-            <td>{{ pick.quantity }}</td>
-            <td>{{ pick.pickedQuantity }}</td>
-          </tr>
-        </div>
+        <tr *ngFor="let pick of workOrderLine.picks">
+          <td>{{ pick.number }}</td>
+          <td>{{ pick.sourceLocation?.name }}</td>
+          <td>{{ pick.destinationLocation?.name }}</td>
+          <td>{{ pick.item?.name }}</td>
+          <td>{{ pick.item?.description }}</td>
+          <td>{{ pick.quantity }}</td>
+          <td>{{ pick.pickedQuantity }}</td>
+        </tr>
       </tbody>
     </nz-table>
+
+    <ng-template #pickTableFoot>
+      <div nz-row nzType="flex" nzJustify="start">
+        <button nz-button nzType="primary" (click)="printPickSheets(data)"
+          [nzLoading]="mapOfPrintingInProcessId[data.id]">
+          {{ 'description.field.button.print' | translate }}
+        </button>
+        <button nz-button (click)="confirmPicks(data)">
+          {{ 'description.field.button.confirm' | translate }}
+        </button>
+      </div>
+    </ng-template>
   </nz-tab>
   <nz-tab nzTitle=" {{ 'description.field.label.short-allocation' | translate }}">
     <nz-table [nzData]="data.workOrderLines" nzSize="middle" [nzShowPagination]="false">

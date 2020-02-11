@@ -10,6 +10,7 @@ import { OutboundPickComponent } from './pick/pick.component';
 import { OutboundShortAllocationComponent } from './short-allocation/short-allocation.component';
 import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
+import { OutboundPickConfirmComponent } from './pick-confirm/pick-confirm.component';
 
 const routes: Routes = [
   { path: 'order', component: OutboundOrderComponent },
@@ -22,6 +23,7 @@ const routes: Routes = [
   { path: 'short-allocation', component: OutboundShortAllocationComponent },
   { path: 'stop', component: OutboundStopComponent },
   { path: 'trailer', component: OutboundTrailerComponent },
+  { path: 'pick/confirm', component: OutboundPickConfirmComponent },
 ];
 
 @NgModule({
