@@ -17,7 +17,7 @@
   </div>
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
-      <button nz-button [nzType]="'primary'" (click)="search()">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
         {{ 'description.field.button.search' | translate }}
       </button>
       <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
@@ -27,8 +27,7 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfDisplayReceipts"
-    [nzFooter]="tableFoot">
+  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllReceipts" [nzFooter]="tableFoot">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
         <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"

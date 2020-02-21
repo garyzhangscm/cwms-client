@@ -16,7 +16,7 @@
   </div>
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
-      <button nz-button [nzType]="'primary'" (click)="search()">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
         {{ 'description.field.button.search' | translate }}
       </button>
       <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
@@ -357,14 +357,45 @@
           {{ 'description.field.label.item.description' | translate }}
         </th>
         <th>
-          {{ 'description.field.label.pick.quantity' | translate }}
+          {{ 'description.field.label.short-allocation.quantity' | translate }}
+        </th>
+        <th>
+          {{ 'description.field.label.short-allocation.openQuantity' | translate }}
+        </th>
+        <th>
+          {{ 'description.field.label.short-allocation.inprocessQuantity' | translate }}
+        </th>
+        <th>
+          {{ 'description.field.label.short-allocation.deliveredQuantity' | translate }}
+        </th>
+        <th>
+          {{ 'description.field.label.short-allocation.status' | translate }}
+        </th>
+        <th>
+          {{ 'description.field.label.short-allocation.allocationCount' | translate }}
+        </th>
+        <th>
+          {{ 'description.field.label.action' | translate }}
         </th>
       </thead>
-      <tbody>
-        <tr *ngFor="let shortAllocation of mapOfShortAllocations[data.id]">
+      <tbody *ngFor="let shortAllocation of mapOfShortAllocations[data.id]">
+        <tr *ngIf="shortAllocation.status !== shortAllocationStatus.CANCELLED">
+
           <td>{{ shortAllocation.item?.name }}</td>
           <td>{{ shortAllocation.item?.description }}</td>
           <td>{{ shortAllocation.quantity }}</td>
+          <td>{{ shortAllocation.openQuantity }}</td>
+          <td>{{ shortAllocation.inprocessQuantity }}</td>
+          <td>{{ shortAllocation.deliveredQuantity }}</td>
+          <td>{{ shortAllocation.status }}</td>
+          <td>{{ shortAllocation.allocationCount }}</td>
+          <td>
+            <button nz-button (click)="cancelShortAllocation(shortAllocation)"
+              *ngIf="shortAllocation.status !== shortAllocationStatus.COMPLETED">
+              {{ 'description.field.button.cancel' | translate }}
+            </button>
+
+          </td>
         </tr>
       </tbody>
     </nz-table>
@@ -382,7 +413,7 @@
     <button nz-button nzType="danger" (click)="cancelSelectedOrders()">
       {{ 'description.field.button.cancel' | translate }}
     </button>
-    <button nz-button nzType="primary" routerLink="/inbound/order-maintenance" routerLinkActive="active">
+    <button nz-button nzType="primary" routerLink="/outbound/order-maintenance" routerLinkActive="active">
       {{ 'description.field.button.add' | translate }}
     </button>
   </div>

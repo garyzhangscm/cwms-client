@@ -9,6 +9,7 @@ export interface Inventory {
   id: number;
   lpn: string;
   location: WarehouseLocation;
+  locationName?: string;
   item: Item;
   virtual?: boolean;
   warehouseId?: number;

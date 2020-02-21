@@ -35,11 +35,21 @@ export class StartupService {
   }
 
   private viaHttp(resolve: any, reject: any) {
+    let siteInformationUrl = `resource/site-information`;
+    if (!this.tokenService.get().token) {
+      console.log(`The user has not been loged in`);
+      // If the user has not been login, get the default
+      // site information
+
+      siteInformationUrl = `${siteInformationUrl}/default`;
+    }
+
     zip(
       // this.httpClient.get(`assets/tmp/i18n/${this.i18n.defaultLang}.json`),
       // this.httpClient.get('assets/tmp/app-data.json')
       this.httpClient.get(`resource/assets/i18n/${this.i18n.defaultLang}.json`),
-      this.httpClient.get('resource/assets/app-data.json'),
+      // this.httpClient.get(`resource/assets/app-data.json`),
+      this.httpClient.get(siteInformationUrl),
     )
       .pipe(
         catchError(([langData, appData]) => {
@@ -54,7 +64,7 @@ export class StartupService {
           this.translate.setDefaultLang(this.i18n.defaultLang);
 
           // Application data
-          const res: any = appData;
+          const res: any = appData.data;
           // Application information: including site name, description, year
           this.settingService.setApp(res.app);
           // User information: including name, avatar, email address

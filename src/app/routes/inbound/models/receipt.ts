@@ -9,8 +9,10 @@ export interface Receipt {
   client: Client;
   clientId: number;
   supplier: Supplier;
+  warehouseId: number;
   supplierId: number;
   receiptStatus: ReceiptStatus;
+  allowUnexpectedItem: boolean;
   receiptLines: ReceiptLine[];
   totalItemCount?: number;
   totalLineCount?: number;

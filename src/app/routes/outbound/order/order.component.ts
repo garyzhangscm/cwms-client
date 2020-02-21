@@ -12,6 +12,7 @@ import { PickService } from '../services/pick.service';
 import { ShortAllocationService } from '../services/short-allocation.service';
 import { ShortAllocation } from '../models/short-allocation';
 import { Inventory } from '../../inventory/models/inventory';
+import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
 
 @Component({
   selector: 'app-outbound-order',
@@ -33,6 +34,7 @@ export class OutboundOrderComponent implements OnInit {
 
   // Form related data and functions
   searchForm: FormGroup;
+  searching = false;
 
   // Table data for display
   listOfAllOrders: Order[] = [];
@@ -69,6 +71,8 @@ export class OutboundOrderComponent implements OnInit {
 
   mapOfPickedInventory: { [key: string]: Inventory[] } = {};
 
+  shortAllocationStatus = ShortAllocationStatus;
+
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllOrders = [];
@@ -80,6 +84,7 @@ export class OutboundOrderComponent implements OnInit {
   }
 
   search(): void {
+    this.searching = true;
     this.orderService.getOrders(this.searchForm.controls.number.value).subscribe(orderRes => {
       this.listOfAllOrders = this.calculateQuantities(orderRes);
       this.listOfDisplayOrders = this.calculateQuantities(orderRes);
@@ -109,6 +114,7 @@ export class OutboundOrderComponent implements OnInit {
       });
 
       this.collapseAllRecord();
+      this.searching = false;
     });
   }
 
@@ -352,5 +358,14 @@ export class OutboundOrderComponent implements OnInit {
       this.search();
     });
   }
-  unpick(inventory: Inventory) {}
+  unpick(inventory: Inventory) {
+    this.messageService.error(this.i18n.fanyi('message.action.not-supported'));
+  }
+
+  cancelShortAllocation(shortAllocation: ShortAllocation) {
+    this.shortAllocationService.cancelShortAllocations([shortAllocation]).subscribe(shortAllocationRes => {
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      this.search();
+    });
+  }
 }

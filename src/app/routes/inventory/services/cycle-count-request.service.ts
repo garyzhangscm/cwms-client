@@ -16,7 +16,7 @@ import { WarehouseService } from '../../warehouse-layout/services/warehouse.serv
   providedIn: 'root',
 })
 export class CycleCountRequestService {
-  private COUNT_REQUEST_PER_PAGE = 1;
+  private COUNT_REQUEST_PER_PAGE = 10;
   constructor(
     private http: _HttpClient,
     private gzLocalStorageService: GzLocalStorageServiceService,
@@ -168,7 +168,7 @@ export class CycleCountRequestService {
       pageLines.push(`
                       <tr>
                         <td>${cycleCountResult.location.name}</td>
-                        <td>${cycleCountResult.item.name}</td>
+                        <td>${cycleCountResult.item ? cycleCountResult.item.name : '_______________'}</td>
                         <td>${cycleCountResult.quantity}</td>
                         <td>_____________________</td>
                       </tr>`);

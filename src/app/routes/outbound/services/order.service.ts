@@ -6,7 +6,6 @@ import { map } from 'rxjs/operators';
 import { PrintingService } from '../../common/services/printing.service';
 import { PickWork } from '../models/pick-work';
 import { PickService } from './pick.service';
-import { Inventory } from '../../inventory/models/inventory';
 
 @Injectable({
   providedIn: 'root',

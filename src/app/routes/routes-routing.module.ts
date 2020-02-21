@@ -24,6 +24,7 @@ const routes: Routes = [
       { path: '', redirectTo: 'dashboard/default', pathMatch: 'full' },
       { path: 'dashboard', loadChildren: './dashboard/dashboard.module#DashboardModule' },
       { path: 'warehouse-layout', loadChildren: './warehouse-layout/warehouse-layout.module#WarehouseLayoutModule' },
+      { path: 'auth', loadChildren: './auth/auth.module#AuthModule' },
       { path: 'inventory', loadChildren: './inventory/inventory.module#InventoryModule' },
       { path: 'inbound', loadChildren: './inbound/inbound.module#InboundModule' },
       { path: 'outbound', loadChildren: './outbound/outbound.module#OutboundModule' },

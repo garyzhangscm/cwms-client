@@ -26,6 +26,7 @@ export class InboundReceiptComponent implements OnInit {
 
   // Form related data and functions
   searchForm: FormGroup;
+  searching = false;
 
   // Table data for display
   listOfAllReceipts: Receipt[] = [];
@@ -61,6 +62,7 @@ export class InboundReceiptComponent implements OnInit {
   }
 
   search(): void {
+    this.searching = true;
     this.receiptService.getReceipts(this.searchForm.controls.number.value).subscribe(receiptRes => {
       this.listOfAllReceipts = this.calculateQuantities(receiptRes);
       this.listOfDisplayReceipts = this.calculateQuantities(receiptRes);
@@ -86,6 +88,8 @@ export class InboundReceiptComponent implements OnInit {
           existingStatus.add(receipt.receiptStatus);
         }
       });
+
+      this.searching = false;
     });
   }
 

@@ -6,4 +6,6 @@ export interface ReceiptLine {
   item: Item;
   expectedQuantity: number;
   receivedQuantity: number;
+  overReceivingQuantity: number;
+  overReceivingPercent: number;
 }

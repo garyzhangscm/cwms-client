@@ -3,7 +3,7 @@ import { _HttpClient, TitleService } from '@delon/theme';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { CycleCountRequestType } from '../models/cycle-count-request-type.enum';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CycleCountBatchService } from '../services/cycle-count-batch.service';
 import { CycleCountRequest } from '../models/cycle-count-request';
 import { CycleCountResult } from '../models/cycle-count-result';
@@ -65,6 +65,8 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   // list of checked checkbox
   openAuditCountTableMapOfCheckedId: { [key: string]: boolean } = {};
 
+  printingCycleCountRequest = false;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private i18n: I18NService,
@@ -86,9 +88,8 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     this.titleService.setTitle(this.i18n.fanyi('page.inventory.cycle-count-request.title'));
 
     this.requestForm = this.fb.group({
-      batchId: [null],
-      autoGenerateId: [null],
-      requestType: [null],
+      batchId: ['', Validators.required],
+      requestType: ['', Validators.required],
       startValue: [null],
       endValue: [null],
       includeEmptyLocation: [null],
@@ -98,7 +99,6 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
       if (params.batchId) {
         this.requestForm.controls.batchId.setValue(params.batchId);
         this.requestForm.controls.batchId.disable();
-        this.requestForm.controls.autoGenerateId.disable();
       }
       this.refreshCountBatchResults();
     });
@@ -135,6 +135,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
         this.requestForm.controls.includeEmptyLocation.reset();
         this.message.info(this.i18n.fanyi('message.new.complete'));
         this.refreshCountBatchResults();
+        this.requestForm.controls.batchId.disable();
       });
   }
   batchIdOnBlur(batchId?: string) {
@@ -255,10 +256,14 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   }
 
   printAllCycleCounts() {
+    this.printingCycleCountRequest = true;
     this.cycleCountRequestService.printCycleCountRequestReport(
       this.requestForm.controls.batchId.value,
       this.listOfAllOpenCycleCountRequests,
     );
+    setTimeout(() => {
+      this.printingCycleCountRequest = false;
+    }, 1000);
   }
 
   cancelSelectedCycleCounts() {

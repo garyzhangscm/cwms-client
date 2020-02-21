@@ -86,72 +86,82 @@ export class InventoryInventoryComponent implements OnInit {
     this.filtersByLocation = [];
     this.filtersByInventoryStatus = [];
   }
-  search(): void {
+  search(id?: number): void {
     this.searching = true;
-    this.inventoryService
-      .getInventories(
-        this.searchForm.value.taggedClients,
-        this.searchForm.value.taggedItemFamilies,
-        this.searchForm.value.itemName,
-        this.searchForm.value.location,
-        this.searchForm.value.lpn,
-      )
-      .subscribe(inventoryRes => {
-        this.inventories = inventoryRes;
-        this.listOfDisplayInventories = inventoryRes;
-
-        this.filtersByLpn = [];
-        this.filtersByItem = [];
-        this.filtersByItemPackageType = [];
-        this.filtersByLocation = [];
-        this.filtersByInventoryStatus = [];
-
-        const existingLpn = new Set();
-        const existingItemId = new Set();
-        const existingItemPackageTypeId = new Set();
-        const existingLocation = new Set();
-        const existingInventoryStatusId = new Set();
-
-        this.inventories.forEach(inventory => {
-          if (inventory.lpn && !existingLpn.has(inventory.lpn)) {
-            this.filtersByLpn.push({
-              text: inventory.lpn,
-              value: inventory.lpn,
-            });
-            existingLpn.add(inventory.lpn);
-          }
-          if (inventory.item.id && !existingLpn.has(inventory.item.id)) {
-            this.filtersByItem.push({
-              text: inventory.item.name,
-              value: inventory.item.id,
-            });
-            existingItemId.add(inventory.item.id);
-          }
-          if (inventory.itemPackageType.id && !existingItemPackageTypeId.has(inventory.itemPackageType.id)) {
-            this.filtersByItemPackageType.push({
-              text: inventory.itemPackageType.name,
-              value: inventory.itemPackageType.id,
-            });
-            existingItemPackageTypeId.add(inventory.item.id);
-          }
-          if (inventory.location && !existingLocation.has(inventory.location)) {
-            this.filtersByLocation.push({
-              text: inventory.location,
-              value: inventory.location,
-            });
-            existingLocation.add(inventory.location);
-          }
-          if (inventory.inventoryStatus.id && !existingInventoryStatusId.has(inventory.inventoryStatus.id)) {
-            this.filtersByInventoryStatus.push({
-              text: inventory.inventoryStatus.name,
-              value: inventory.inventoryStatus.id,
-            });
-            existingInventoryStatusId.add(inventory.inventoryStatus.id);
-          }
-        });
-
+    if (id) {
+      this.inventoryService.getInventoryById(id).subscribe(inventoryRes => {
+        this.processInventoryQueryResult([inventoryRes]);
         this.searching = false;
       });
+    } else {
+      this.inventoryService
+        .getInventories(
+          this.searchForm.value.taggedClients,
+          this.searchForm.value.taggedItemFamilies,
+          this.searchForm.value.itemName,
+          this.searchForm.value.location,
+          this.searchForm.value.lpn,
+        )
+        .subscribe(inventoryRes => {
+          this.processInventoryQueryResult(inventoryRes);
+          this.searching = false;
+        });
+    }
+  }
+
+  processInventoryQueryResult(inventories: Inventory[]) {
+    this.inventories = inventories;
+    this.listOfDisplayInventories = inventories;
+
+    this.filtersByLpn = [];
+    this.filtersByItem = [];
+    this.filtersByItemPackageType = [];
+    this.filtersByLocation = [];
+    this.filtersByInventoryStatus = [];
+
+    const existingLpn = new Set();
+    const existingItemId = new Set();
+    const existingItemPackageTypeId = new Set();
+    const existingLocation = new Set();
+    const existingInventoryStatusId = new Set();
+
+    this.inventories.forEach(inventory => {
+      if (inventory.lpn && !existingLpn.has(inventory.lpn)) {
+        this.filtersByLpn.push({
+          text: inventory.lpn,
+          value: inventory.lpn,
+        });
+        existingLpn.add(inventory.lpn);
+      }
+      if (inventory.item.id && !existingLpn.has(inventory.item.id)) {
+        this.filtersByItem.push({
+          text: inventory.item.name,
+          value: inventory.item.id,
+        });
+        existingItemId.add(inventory.item.id);
+      }
+      if (inventory.itemPackageType.id && !existingItemPackageTypeId.has(inventory.itemPackageType.id)) {
+        this.filtersByItemPackageType.push({
+          text: inventory.itemPackageType.name,
+          value: inventory.itemPackageType.id,
+        });
+        existingItemPackageTypeId.add(inventory.item.id);
+      }
+      if (inventory.location && !existingLocation.has(inventory.location)) {
+        this.filtersByLocation.push({
+          text: inventory.location,
+          value: inventory.location,
+        });
+        existingLocation.add(inventory.location);
+      }
+      if (inventory.inventoryStatus.id && !existingInventoryStatusId.has(inventory.inventoryStatus.id)) {
+        this.filtersByInventoryStatus.push({
+          text: inventory.inventoryStatus.name,
+          value: inventory.inventoryStatus.id,
+        });
+        existingInventoryStatusId.add(inventory.inventoryStatus.id);
+      }
+    });
   }
 
   currentPageDataChange($event: Inventory[]): void {
@@ -248,6 +258,7 @@ export class InventoryInventoryComponent implements OnInit {
         this.removeInventory();
         this.search();
       },
+      nzWidth: 1000,
     });
     this.inventoryRemovalModal.afterOpen.subscribe(() => this.initReasonList());
   }
@@ -271,7 +282,11 @@ export class InventoryInventoryComponent implements OnInit {
     this.initSearchForm();
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.hasOwnProperty('refresh')) {
-        this.search();
+        if (params.id) {
+          this.search(params.id);
+        } else {
+          this.search();
+        }
       }
     });
   }

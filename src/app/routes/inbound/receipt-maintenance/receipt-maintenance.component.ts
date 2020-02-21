@@ -1,8 +1,8 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { _HttpClient, TitleService } from '@delon/theme';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NzModalRef, NzModalService, NzMessageService } from 'ng-zorro-antd';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { Client } from '../../common/models/client';
 import { Supplier } from '../../common/models/supplier';
@@ -20,6 +20,7 @@ import { InventoryService } from '../../inventory/services/inventory.service';
 import { ReceiptStatus } from '../models/receipt-status.enum';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { PutawayConfigurationService } from '../services/putaway-configuration.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Component({
   selector: 'app-inbound-receipt-maintenance',
@@ -36,8 +37,10 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     clientId: null,
     supplier: null,
     supplierId: null,
+    warehouseId: this.warehouseService.getCurrentWarehouse().id,
     receiptStatus: ReceiptStatus.OPEN,
     receiptLines: [],
+    allowUnexpectedItem: false,
   };
 
   validClients: Client[];
@@ -63,6 +66,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
   receivingModal: NzModalRef;
   addReceiptLineModal: NzModalRef;
+  manualPutawayModal: NzModalRef;
 
   currentInventory: Inventory;
   availableInventoryStatuses: InventoryStatus[];
@@ -72,6 +76,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   receiptStatus = ReceiptStatus;
 
   selectedTabIndex = 0;
+  printingInProcess = false;
+  printingPutawayWork = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -89,6 +95,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     private locationService: LocationService,
     private inventoryService: InventoryService,
     private message: NzMessageService,
+    private warehouseService: WarehouseService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inbound.receipt.title');
   }
@@ -98,9 +105,10 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
     this.receiptForm = this.fb.group({
       receiptId: [null],
-      receiptNumber: [null],
+      receiptNumber: ['', [Validators.required]],
       client: [null],
       supplier: [null],
+      allowUnexpectedItem: [false],
     });
     this.receiptForm.controls.receiptId.disable();
 
@@ -148,6 +156,11 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
         this.currentReceipt = res;
         this.setupDisplay();
         this.message.success(this.i18n.fanyi('message.new.complete'));
+
+        this.receiptForm.controls.receiptId.setValue(res.id);
+        this.receiptForm.controls.receiptId.disable();
+        this.receiptForm.controls.receiptNumber.setValue(res.number);
+        this.receiptForm.controls.receiptNumber.disable();
       });
     }
   }
@@ -232,11 +245,28 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       }
     });
   }
+  calculateQuantities(receipt: Receipt): Receipt {
+    const existingItemIds = new Set();
+    receipt.totalExpectedQuantity = 0;
+    receipt.totalReceivedQuantity = 0;
+    receipt.totalLineCount = receipt.receiptLines.length;
+
+    receipt.receiptLines.forEach(receiptLine => {
+      receipt.totalExpectedQuantity += receiptLine.expectedQuantity;
+      receipt.totalReceivedQuantity += receiptLine.receivedQuantity;
+      if (!existingItemIds.has(receiptLine.item.id)) {
+        existingItemIds.add(receiptLine.item.id);
+      }
+    });
+    receipt.totalItemCount = existingItemIds.size;
+    return receipt;
+  }
 
   loadReceivedInventory(receipt: Receipt) {
     this.receiptService.getReceivedInventory(receipt).subscribe(inventories => {
       this.listOfAllReceivedInventory = inventories;
       this.listOfDisplayReceivedInventory = inventories;
+      console.log(`this.listOfAllReceivedInventory:\n${JSON.stringify(this.listOfAllReceivedInventory)}`);
     });
   }
 
@@ -271,7 +301,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
   getSelectedReceiptLines(): ReceiptLine[] {
     const selectedReceiptLines: ReceiptLine[] = [];
-    this.listOfDisplayReceiptLines.forEach((receiptLine: ReceiptLine) => {
+    this.listOfAllReceiptLines.forEach((receiptLine: ReceiptLine) => {
       if (this.receiptLinesTableMapOfCheckedId[receiptLine.id] === true) {
         selectedReceiptLines.push(receiptLine);
       }
@@ -331,6 +361,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       id: null,
       lpn: '',
       location: null,
+      locationName: '',
       item: receiptLine.item,
       itemPackageType: null,
       quantity: null,
@@ -358,11 +389,62 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
           },
           nzWidth: 1000,
         });
+        this.receivingModal.afterOpen.subscribe(() => this.setupDefaultInventoryValue());
       }
     });
   }
+
+  openManualPutawayModal(
+    inventory: Inventory,
+    tplManualPutawayModalTitle: TemplateRef<{}>,
+    tplManualPutawayModalContent: TemplateRef<{}>,
+  ) {
+    this.currentInventory = inventory;
+    // Load the location
+    this.manualPutawayModal = this.modalService.create({
+      nzTitle: tplManualPutawayModalTitle,
+      nzContent: tplManualPutawayModalContent,
+      nzOkText: this.i18n.fanyi('description.field.button.confirm'),
+      nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.manualPutawayModal.destroy();
+        // this.refreshReceiptResults();
+      },
+      nzOnOk: () => {
+        this.manualPutawayInventory(this.currentInventory);
+      },
+      nzWidth: 1000,
+    });
+  }
+  manualPutawayInventory(inventory: Inventory) {
+    if (inventory.locationName) {
+      // Location name is setup
+      // Let's find the location by name and assign it to the inventory
+      // that will be received
+      console.log(`Will setup received inventory's location to ${inventory.locationName}`);
+
+      this.locationService.getLocations(null, null, inventory.locationName).subscribe(locations => {
+        // There should be only one location returned.
+        // Move the inventory to the location
+        this.inventoryService.move(inventory, locations[0]).subscribe(() => {
+          this.message.success(this.i18n.fanyi('message.action.success'));
+          this.refreshReceiptResults();
+        });
+      });
+    }
+  }
+
   receivingLPNChanged(lpn: string) {
     this.currentInventory.lpn = lpn;
+  }
+  setupDefaultInventoryValue() {
+    if (this.currentInventory.item.itemPackageTypes.length === 1) {
+      this.currentInventory.itemPackageType = this.currentInventory.item.itemPackageTypes[0];
+    }
+    if (this.availableInventoryStatuses.length === 1) {
+      this.currentInventory.inventoryStatus = this.availableInventoryStatuses[0];
+    }
   }
 
   itemPackageTypeChange(newItemPackageTypeName) {
@@ -382,15 +464,29 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
 
   receivingInventory(receiptId: number, receiptLineId: number, inventory: Inventory) {
-    this.receiptLineService.receiveInventory(receiptId, receiptLineId, inventory).subscribe(receivedInventory => {
-      this.message.success(this.i18n.fanyi('message.receiving.success'));
-      this.refreshReceiptResults();
-    });
+    if (inventory.locationName) {
+      // Location name is setup
+      // Let's find the location by name and assign it to the inventory
+      // that will be received
+      console.log(`Will setup received inventory's location to ${inventory.locationName}`);
+      this.locationService.getLocations(null, null, inventory.locationName).subscribe(locations => {
+        inventory.location = locations[0];
+        this.receiptLineService.receiveInventory(receiptId, receiptLineId, inventory).subscribe(receivedInventory => {
+          this.message.success(this.i18n.fanyi('message.receiving.success'));
+          this.refreshReceiptResults();
+        });
+      });
+    } else {
+      this.receiptLineService.receiveInventory(receiptId, receiptLineId, inventory).subscribe(receivedInventory => {
+        this.message.success(this.i18n.fanyi('message.receiving.success'));
+        this.refreshReceiptResults();
+      });
+    }
   }
 
   showAddReceiptLineModal(tplReceiptLineModalTitle: TemplateRef<{}>, tplReceiptLineModalContent: TemplateRef<{}>) {
     if (!this.currentReceipt.id) {
-      this.message.error('message.error.saveReceiptFirst');
+      this.message.error(this.i18n.fanyi('message.error.saveReceiptFirst'));
       return;
     }
     this.currentReceiptLine = {
@@ -399,6 +495,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       item: null,
       expectedQuantity: 0,
       receivedQuantity: 0,
+      overReceivingQuantity: 0,
+      overReceivingPercent: 0,
     };
     // calculate the next line number
     this.receiptLineService
@@ -438,7 +536,25 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       this.currentReceiptLine.item = null;
     }
   }
-  removeSelectedReceiptLines() {}
+  removeSelectedReceiptLines() {
+    const selectedReceiptLines = this.getSelectedReceiptLines();
+    if (selectedReceiptLines.length > 0) {
+      this.modalService.confirm({
+        nzTitle: this.i18n.fanyi('page.modal.delete.header.title'),
+        nzContent: this.i18n.fanyi('page.modal.delete.content'),
+        nzOkText: this.i18n.fanyi('description.field.button.confirm'),
+        nzOkType: 'danger',
+        nzOnOk: () => {
+          this.receiptLineService.removeReceiptLines(selectedReceiptLines).subscribe(res => {
+            this.message.success(this.i18n.fanyi('message.remove.complete'));
+            this.refreshReceiptResults();
+          });
+        },
+        nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+        nzOnCancel: () => console.log('Cancel'),
+      });
+    }
+  }
 
   allocateLocation(inventory: Inventory) {
     this.putawayConfigurationService.allocateLocation(inventory).subscribe(allocatedInventory => {
@@ -472,5 +588,18 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.inventoryService
       .move(receivedInventory, receivedInventory.inventoryMovements[index].location)
       .subscribe(inventory => this.refreshReceiptResults(1));
+  }
+  manualPutaway(receivedInventory: Inventory) {}
+  printReceipt() {
+    this.printingInProcess = true;
+    this.receiptService.printReceipt(this.calculateQuantities(this.currentReceipt));
+    // purposely to show the 'loading' status of the print button
+    // for at least 1 second. The above printReceipt will
+    // return immediately but the print job(or print preview page)
+    // will start with some delay. During the delay, we will
+    // display the 'print' button as 'Loading' status
+    setTimeout(() => {
+      this.printingInProcess = false;
+    }, 1000);
   }
 }

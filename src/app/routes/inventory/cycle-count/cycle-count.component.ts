@@ -4,13 +4,6 @@ import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { CycleCountBatch } from '../models/cycle-count-batch';
 import { CycleCountBatchService } from '../services/cycle-count-batch.service';
 
-interface ItemData {
-  id: number;
-  name: string;
-  age: number;
-  address: string;
-}
-
 @Component({
   selector: 'app-inventory-cycle-count',
   templateUrl: './cycle-count.component.html',
@@ -19,6 +12,7 @@ interface ItemData {
 export class InventoryCycleCountComponent implements OnInit {
   // Form related data and functions
   searchForm: FormGroup;
+  searching = false;
   // Table data for display
   cycleCountBatches: CycleCountBatch[] = [];
   listOfDisplayCycleCountBatches: CycleCountBatch[] = [];
@@ -42,9 +36,11 @@ export class InventoryCycleCountComponent implements OnInit {
     this.listOfDisplayCycleCountBatches = [];
   }
   search(): void {
+    this.searching = true;
     this.cycleCountBatchService.getCycleCountBatches(this.searchForm.value.batchId).subscribe(cycleCountBatchRes => {
       this.cycleCountBatches = cycleCountBatchRes;
       this.listOfDisplayCycleCountBatches = cycleCountBatchRes;
+      this.searching = false;
     });
   }
 

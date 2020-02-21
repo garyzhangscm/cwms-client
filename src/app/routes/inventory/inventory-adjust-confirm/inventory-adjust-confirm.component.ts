@@ -34,6 +34,6 @@ export class InventoryInventoryAdjustConfirmComponent implements OnInit {
   confirmInventoryAdjust() {
     this.inventoryService
       .changeInventory(this.currentInventory)
-      .subscribe(res => this.router.navigateByUrl('/inventory/inventory?refresh'));
+      .subscribe(res => this.router.navigateByUrl(`/inventory/inventory?id=${res.id}&refresh=true`));
   }
 }

@@ -54,6 +54,27 @@
       "hideInBreadcrumb": false,
       "children": [
         {
+          "text": "Authorization",
+          "i18n": "menu.main.auth",
+          "icon": "anticon-team",
+          "children": [
+            {
+              "text": "User",
+              "link": "/auth/user",
+              "i18n": "menu.main.auth.user",
+              "icon": "anticon-appstore",
+              "shortcut": false
+            },
+            {
+              "text": "Role",
+              "link": "/auth/role",
+              "i18n": "menu.main.auth.role",
+              "icon": "anticon-appstore",
+              "shortcut": false
+            }
+          ]
+        },
+        {
           "text": "Layout",
           "i18n": "menu.main.layout",
           "icon": "anticon-appstore",
@@ -66,7 +87,7 @@
               "shortcut": false
             },
             {
-              "text": "LocationType",
+              "text": "LocationGroup",
               "link": "/warehouse-layout/location-group",
               "i18n": "menu.main.layout.location.group",
               "shortcut": false
@@ -103,7 +124,7 @@
               "shortcut": false
             },
             {
-              "text": "Inventory",
+              "text": "Movement Path",
               "link": "/inventory/movement-path",
               "i18n": "menu.main.inventory.movement-path",
               "shortcut": false
@@ -263,7 +284,7 @@
               "link": "/util/test-data-init",
               "i18n": "menu.main.util.test-data-init",
               "shortcut": false
-            },
+            }, 
             {
               "text": "Valid Icon",
               "link": "/util/icon-list",
