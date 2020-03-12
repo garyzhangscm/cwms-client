@@ -6,6 +6,6 @@ export interface MenuGroup {
   i18n: string;
   groupFlag: boolean;
   hideInBreadcrumb: boolean;
-  menuSubGroups: MenuSubGroup[];
+  children: MenuSubGroup[];
   sequence: number;
 }

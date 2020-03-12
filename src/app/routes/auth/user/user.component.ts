@@ -4,10 +4,6 @@ import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { I18NService } from '@core';
 import { NzModalService, NzMessageService } from 'ng-zorro-antd';
 import { ReceiptService } from '../../inbound/services/receipt.service';
-import { Receipt } from '../../inbound/models/receipt';
-import { Client } from '../../common/models/client';
-import { Supplier } from '../../common/models/supplier';
-import { ReceiptStatus } from '../../inbound/models/receipt-status.enum';
 import { UserService } from '../services/user.service';
 import { SiteInformationService } from '../services/site-information.service';
 

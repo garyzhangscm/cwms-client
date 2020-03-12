@@ -1,9 +1,11 @@
-import { Menu } from '@delon/theme';
+import { User } from './user';
+import { MenuGroup } from './menu-group';
 
 export interface Role {
   id: number;
   name: string;
   description: string;
   enabled: boolean;
-  menus: Menu[];
+  menuGroups: MenuGroup[];
+  users?: User[];
 }

@@ -74,6 +74,9 @@
 
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start">
+    <a nz-button routerLink="/auth/user/maintenance"
+      routerLinkActive="active">{{ 'description.field.label.new' | translate }}</a>
+    <nz-divider nzType="vertical"></nz-divider>
     <button nz-button nzType="danger" (click)="removeUser()">
       {{ 'description.field.button.delete' | translate }}
     </button>

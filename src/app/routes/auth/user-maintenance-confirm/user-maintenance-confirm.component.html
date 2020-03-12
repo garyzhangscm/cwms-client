@@ -1,0 +1,92 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/auth/user" routerLinkActive="active">{{
+    'description.field.link.return' | translate
+  }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'description.field.breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.auth' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/auth/user" routerLinkActive="active">{{
+        'description.field.breadcrumb.user' | translate
+      }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<div nz-row style="padding: 10px" *ngIf="newUser">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="2" [nzSize]="'default'" (nzIndexChange)="onStepsIndexChange($event)">
+      <nz-step nzTitle="{{ 'description.steps.basic-info.title' | translate }}"
+        nzDescription="{{ 'description.steps.role.basic-info.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'description.steps.role.assign-roles.title' | translate }}"
+        nzDescription="{{ 'description.steps.role.assign-roles.description' | translate }}">
+      </nz-step>
+
+      <nz-step nzTitle="{{ 'description.steps.confirm.title' | translate }}"
+        nzDescription="{{ 'description.steps.confirm.description' | translate }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+
+<nz-card nzTitle="{{ 'description.steps.basic-info.title' | translate }}">
+  <nz-descriptions nzBordered="true">
+    <nz-descriptions-item nzTitle="{{ 'description.field.label.user.username' | translate}}">{{currentUser.name}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzSpan=2 nzTitle="{{ 'description.field.label.user.password' | translate}}">
+      {{currentUser.description}}
+    </nz-descriptions-item>
+
+    <nz-descriptions-item nzTitle="{{ 'description.field.label.user.firstname' | translate}}">{{currentUser.firstname}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'description.field.label.user.lastname' | translate}}">{{currentUser.lastname}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'description.field.label.user.email' | translate}}">{{currentUser.email}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'description.field.label.user.enabled' | translate}}">{{currentUser.enabled}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'description.field.label.user.locked' | translate}}">{{currentUser.locked}}
+    </nz-descriptions-item>
+  </nz-descriptions>
+</nz-card>
+
+<nz-card nzTitle="{{ 'description.steps.role.assign-roles.title' | translate }}" [nzActions]="cardFoot">
+  <nz-table #roleTable [nzData]="currentUser.roles">
+    <thead>
+      <tr>
+        <th nzShowSort nzSortKey="name">
+          {{ 'description.field.label.name' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="description">
+          {{ 'description.field.label.description' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="enabled">
+          {{ 'description.field.label.enabled' | translate }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of roleTable.data">
+
+        <td>
+          {{ data.name }}</td>
+        <td>{{ data.description }}</td>
+        <td>{{ data.enabled }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+<ng-template #cardFoot>
+  <div nz-row nzType="flex" nzJustify="center" style='padding-left: 20px;'>
+    <button nz-button nzType="primary" (click)="confirm()">
+      {{ 'description.steps.confirm.title' | translate }}
+    </button>
+  </div>
+</ng-template>

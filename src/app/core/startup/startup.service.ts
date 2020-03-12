@@ -37,7 +37,6 @@ export class StartupService {
   private viaHttp(resolve: any, reject: any) {
     let siteInformationUrl = `resource/site-information`;
     if (!this.tokenService.get().token) {
-      console.log(`The user has not been loged in`);
       // If the user has not been login, get the default
       // site information
 

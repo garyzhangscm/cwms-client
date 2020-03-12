@@ -1,4 +1,4 @@
-import { Menu } from '@delon/theme';
+import { Menu } from './menu';
 
 export interface MenuSubGroup {
   id: number;
@@ -7,7 +7,7 @@ export interface MenuSubGroup {
   icon: string;
   shortcutRoot: boolean;
 
-  menus: Menu[];
+  children: Menu[];
   sequence: number;
   link: string;
   badge: number;
