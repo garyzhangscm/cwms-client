@@ -13,7 +13,6 @@ import { InventoryItemFamilyComponent } from './item-family/item-family.componen
 import { InventoryItemFamilyMaintenanceComponent } from './item-family-maintenance/item-family-maintenance.component';
 import { InventoryItemFamilyMaintenanceConfirmComponent } from './item-family-maintenance-confirm/item-family-maintenance-confirm.component';
 import { InventoryInventoryAdjustComponent } from './inventory-adjust/inventory-adjust.component';
-import { InventoryInventoryAdjustConfirmComponent } from './inventory-adjust-confirm/inventory-adjust-confirm.component';
 import { InventoryInventoryAttributeChangeComponent } from './inventory-attribute-change/inventory-attribute-change.component';
 import { InventoryInventoryAttributeChangeConfirmComponent } from './inventory-attribute-change-confirm/inventory-attribute-change-confirm.component';
 import { InventoryCycleCountMaintenanceComponent } from './cycle-count-maintenance/cycle-count-maintenance.component';
@@ -22,6 +21,9 @@ import { InventoryAuditCountConfirmComponent } from './audit-count-confirm/audit
 import { InventoryMovementPathComponent } from './movement-path/movement-path.component';
 import { InventoryMovementPathMaintenanceComponent } from './movement-path-maintenance/movement-path-maintenance.component';
 import { InventoryMovementPathConfirmComponent } from './movement-path-confirm/movement-path-confirm.component';
+import { InventoryInventoryQuantityChangeComponent } from './inventory-quantity-change/inventory-quantity-change.component';
+import { InventoryAddInventoryComponent } from './add-inventory/add-inventory.component';
+import { InventoryInventoryQuantityChangeConfirmComponent } from './inventory-quantity-change-confirm/inventory-quantity-change-confirm.component';
 
 const COMPONENTS = [
   InventoryInventoryComponent,
@@ -35,7 +37,6 @@ const COMPONENTS = [
   InventoryItemFamilyMaintenanceComponent,
   InventoryItemFamilyMaintenanceConfirmComponent,
   InventoryInventoryAdjustComponent,
-  InventoryInventoryAdjustConfirmComponent,
   InventoryInventoryAttributeChangeComponent,
   InventoryInventoryAttributeChangeConfirmComponent,
   InventoryCycleCountMaintenanceComponent,
@@ -44,6 +45,9 @@ const COMPONENTS = [
   InventoryMovementPathComponent,
   InventoryMovementPathMaintenanceComponent,
   InventoryMovementPathConfirmComponent,
+  InventoryInventoryQuantityChangeComponent,
+  InventoryInventoryQuantityChangeConfirmComponent,
+  InventoryAddInventoryComponent,
 ];
 const COMPONENTS_NOROUNT = [];
 

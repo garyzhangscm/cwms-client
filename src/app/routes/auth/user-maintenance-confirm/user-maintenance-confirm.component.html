@@ -18,7 +18,7 @@
   </nz-breadcrumb>
 </ng-template>
 
-<div nz-row style="padding: 10px" *ngIf="newUser">
+<div nz-row style="padding: 10px">
   <div nz-col nzSpan="12" nzOffset="6">
     <nz-steps [nzCurrent]="2" [nzSize]="'default'" (nzIndexChange)="onStepsIndexChange($event)">
       <nz-step nzTitle="{{ 'description.steps.basic-info.title' | translate }}"
@@ -38,26 +38,26 @@
 
 <nz-card nzTitle="{{ 'description.steps.basic-info.title' | translate }}">
   <nz-descriptions nzBordered="true">
-    <nz-descriptions-item nzTitle="{{ 'description.field.label.user.username' | translate}}">{{currentUser.name}}
+    <nz-descriptions-item nzTitle="{{ 'description.field.label.user.username' | translate}}">{{currentUser.username}}
     </nz-descriptions-item>
     <nz-descriptions-item nzSpan=2 nzTitle="{{ 'description.field.label.user.password' | translate}}">
-      {{currentUser.description}}
+      ******
     </nz-descriptions-item>
 
-    <nz-descriptions-item nzTitle="{{ 'description.field.label.user.firstname' | translate}}">{{currentUser.firstname}}
+    <nz-descriptions-item nzTitle="{{ 'description.field.label.firstname' | translate}}">{{currentUser.firstname}}
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'description.field.label.user.lastname' | translate}}">{{currentUser.lastname}}
+    <nz-descriptions-item nzTitle="{{ 'description.field.label.lastname' | translate}}">{{currentUser.lastname}}
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'description.field.label.user.email' | translate}}">{{currentUser.email}}
+    <nz-descriptions-item nzTitle="{{ 'description.field.label.email' | translate}}">{{currentUser.email}}
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'description.field.label.user.enabled' | translate}}">{{currentUser.enabled}}
+    <nz-descriptions-item nzTitle="{{ 'description.field.label.enabled' | translate}}">{{currentUser.enabled}}
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'description.field.label.user.locked' | translate}}">{{currentUser.locked}}
+    <nz-descriptions-item nzTitle="{{ 'description.field.label.locked' | translate}}">{{currentUser.locked}}
     </nz-descriptions-item>
   </nz-descriptions>
 </nz-card>
 
-<nz-card nzTitle="{{ 'description.steps.role.assign-roles.title' | translate }}" [nzActions]="cardFoot">
+<nz-card nzTitle="{{ 'description.steps.role.assign-roles.title' | translate }}" [nzActions]="[cardFoot]">
   <nz-table #roleTable [nzData]="currentUser.roles">
     <thead>
       <tr>

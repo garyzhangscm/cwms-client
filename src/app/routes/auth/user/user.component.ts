@@ -56,16 +56,10 @@ export class AuthUserComponent implements OnInit {
 
   search(): void {
     this.userService.getUsers(this.searchForm.controls.username.value).subscribe(userRes => {
-      console.log(`user:\n${JSON.stringify(userRes)}`);
+      //      console.log(`user:\n${JSON.stringify(userRes)}`);
       this.listOfAllUsers = userRes;
       this.listOfDisplayUsers = userRes;
     });
-
-    this.siteInformationService
-      .getSiteInformation(this.searchForm.controls.username.value)
-      .subscribe(siteInformaiton => {
-        console.log(`siteInformaiton:\n${JSON.stringify(siteInformaiton)}`);
-      });
   }
 
   refreshStatus(): void {

@@ -130,10 +130,10 @@ export class AuthUserRoleComponent implements OnInit {
   onStepsIndexChange(index: number) {
     switch (index) {
       case 0:
-        this.router.navigateByUrl('/auth/role/maintenance?new-role');
+        this.router.navigateByUrl('/auth/user/maintenance?new-user');
         break;
       default:
-        this.router.navigateByUrl('/auth/role/maintenance?new-role');
+        this.router.navigateByUrl('/auth/user/maintenance?new-user');
         break;
     }
   }

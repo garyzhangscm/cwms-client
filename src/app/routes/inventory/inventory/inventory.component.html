@@ -158,8 +158,8 @@
           <a nz-tooltip nzTooltipTitle="{{ data.inventoryStatus.description }}">{{ data.inventoryStatus.name }}</a>
         </td>
         <td>
-          <a nz-button routerLink="/inventory/inventory-adjust" routerLinkActive="active"
-            [queryParams]="{id : data.id}">
+          <a nz-button routerLink="/inventory/inventory-quantity-change" routerLinkActive="active"
+            [queryParams]="{id : data.id, by : 'inventory'}">
             {{ 'description.field.label.adjustInventory' | translate }}</a>
           <nz-divider nzType="vertical"></nz-divider>
 

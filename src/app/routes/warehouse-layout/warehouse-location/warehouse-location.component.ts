@@ -35,8 +35,6 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   // Select control for Location Group Types
   locationGroupTypes: Array<{ label: string; value: string }> = [];
   locationGroups: Array<{ label: string; value: string }> = [];
-  selectedLocationGroupTypes = [];
-  selectedLocationGroups = [];
   // Form related data and functions
   searchForm: FormGroup;
 
@@ -69,9 +67,16 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   }
 
   search(): void {
+    console.log(`search with \n 
+    this.searchForm.controls.taggedLocationGroupTypes.value: ${this.searchForm.controls.taggedLocationGroupTypes.value}\n
+    this.searchForm.controls.taggedLocationGroups.value: ${this.searchForm.controls.taggedLocationGroups.value}`);
+
     this.searching = true;
     this.locationService
-      .getLocations(this.selectedLocationGroupTypes, this.selectedLocationGroups)
+      .getLocations(
+        this.searchForm.controls.taggedLocationGroupTypes.value,
+        this.searchForm.controls.taggedLocationGroups.value,
+      )
       .subscribe(locationRes => {
         this.locations = locationRes;
         this.listOfDisplayLocations = locationRes;
@@ -88,6 +93,12 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
 
         this.searching = false;
       });
+  }
+
+  currentPageDataChange($event: WarehouseLocation[]): void {
+    // this.locationGroups = $event;
+    this.listOfDisplayLocations = $event;
+    this.refreshStatus();
   }
 
   refreshStatus(): void {

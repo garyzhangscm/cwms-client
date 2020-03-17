@@ -66,6 +66,8 @@
         <td>{{ data.enabled }}</td>
         <td>{{ data.locked }}</td>
         <td>
+          <a nz-button routerLink="/auth/user-role" routerLinkActive="active"
+            [queryParams]="{userId : data.id}">{{ 'description.field.label.assign-role' | translate }}</a>
         </td>
       </tr>
     </tbody>

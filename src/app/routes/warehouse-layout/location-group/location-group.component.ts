@@ -15,12 +15,11 @@ import { NzInputDirective, NzModalService } from 'ng-zorro-antd';
 export class WarehouseLayoutLocationGroupComponent implements OnInit {
   // Select control for Location Group Types
   locationGroupTypes: Array<{ label: string; value: string }> = [];
-  selectedLocationGroupTypes = [];
   // Form related data and functions
   searchForm: FormGroup;
 
   // Table data for display
-  locationGroups: LocationGroup[] = [];
+  listOfAllLocationGroups: LocationGroup[] = [];
   listOfDisplayLocationGroups: LocationGroup[] = [];
   // Sort key: field's nzSortKey value
   // sort value: ascend / descend
@@ -57,35 +56,37 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
 
   resetForm(): void {
     this.searchForm.reset();
-    this.locationGroups = [];
+    this.listOfAllLocationGroups = [];
     this.listOfDisplayLocationGroups = [];
     this.filtersByName = [];
     this.filtersByDescription = [];
     this.filtersByLocationGroupType = [];
   }
   search(): void {
-    this.locationGroupService.getLocationGroups(this.selectedLocationGroupTypes).subscribe(locationGroupsRes => {
-      this.locationGroups = locationGroupsRes;
-      this.listOfDisplayLocationGroups = locationGroupsRes;
+    this.locationGroupService
+      .getLocationGroups(this.searchForm.controls.taggedLocationGroupTypes.value)
+      .subscribe(locationGroupsRes => {
+        this.listOfAllLocationGroups = locationGroupsRes;
+        this.listOfDisplayLocationGroups = locationGroupsRes;
 
-      this.filtersByName = [];
-      this.filtersByDescription = [];
-      this.filtersByLocationGroupType = [];
+        this.filtersByName = [];
+        this.filtersByDescription = [];
+        this.filtersByLocationGroupType = [];
 
-      const existingLocationGroupTypeId = new Set();
+        const existingLocationGroupTypeId = new Set();
 
-      this.locationGroups.forEach(locationGroup => {
-        this.filtersByName.push({ text: locationGroup.name, value: locationGroup.name });
-        this.filtersByDescription.push({ text: locationGroup.description, value: locationGroup.description });
-        if (!existingLocationGroupTypeId.has(locationGroup.locationGroupType.id)) {
-          this.filtersByLocationGroupType.push({
-            text: locationGroup.locationGroupType.description,
-            value: locationGroup.locationGroupType.id,
-          });
-          existingLocationGroupTypeId.add(locationGroup.locationGroupType.id);
-        }
+        this.listOfAllLocationGroups.forEach(locationGroup => {
+          this.filtersByName.push({ text: locationGroup.name, value: locationGroup.name });
+          this.filtersByDescription.push({ text: locationGroup.description, value: locationGroup.description });
+          if (!existingLocationGroupTypeId.has(locationGroup.locationGroupType.id)) {
+            this.filtersByLocationGroupType.push({
+              text: locationGroup.locationGroupType.description,
+              value: locationGroup.locationGroupType.id,
+            });
+            existingLocationGroupTypeId.add(locationGroup.locationGroupType.id);
+          }
+        });
       });
-    });
   }
 
   currentPageDataChange($event: LocationGroup[]): void {
@@ -139,7 +140,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
       (this.selectedFiltersByLocationGroupType.length
         ? this.selectedFiltersByLocationGroupType.some(id => item.locationGroupType.id === +id)
         : true);
-    const data = this.locationGroups.filter(item => filterFunc(item));
+    const data = this.listOfAllLocationGroups.filter(item => filterFunc(item));
 
     // sort data
     if (this.sortKey && this.sortValue) {
@@ -180,7 +181,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
 
   getSelectedLocationGroups(): LocationGroup[] {
     const selectedLocationGroups: LocationGroup[] = [];
-    this.locationGroups.forEach((locationGroup: LocationGroup) => {
+    this.listOfAllLocationGroups.forEach((locationGroup: LocationGroup) => {
       if (this.mapOfCheckedId[locationGroup.id] === true) {
         selectedLocationGroups.push(locationGroup);
       }

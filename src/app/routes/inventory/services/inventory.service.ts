@@ -58,11 +58,15 @@ export class InventoryService {
   }
 
   getInventoriesByLocationName(location: string): Observable<Inventory[]> {
-    const url = `inventory/inventories?location=${location}`;
+    const url = `inventory/inventories?location=${location}&warehouseId=${
+      this.warehouseService.getCurrentWarehouse().id
+    }`;
     return this.http.get(url).pipe(map(res => res.data));
   }
-  getInventoriesByLocationIds(locationIds: number[]): Observable<Inventory[]> {
-    const url = `inventory/inventories?locationIds=${locationIds.join(',')}`;
+  getInventoriesByLocationId(locationId: number): Observable<Inventory[]> {
+    const url = `inventory/inventories?locationId=${locationId}&warehouseId=${
+      this.warehouseService.getCurrentWarehouse().id
+    }`;
     return this.http.get(url).pipe(map(res => res.data));
   }
   getInventoriesByLpn(lpn: string): Observable<Inventory[]> {
@@ -88,5 +92,10 @@ export class InventoryService {
   move(inventory: Inventory, destination: WarehouseLocation): Observable<Inventory> {
     const url = `inventory/inventory/${inventory.id}/move`;
     return this.http.post(url, destination).pipe(map(res => res.data));
+  }
+
+  addInventory(inventory: Inventory): Observable<Inventory> {
+    const url = `inventory/inventory-adj`;
+    return this.http.put(url, inventory).pipe(map(res => res.data));
   }
 }

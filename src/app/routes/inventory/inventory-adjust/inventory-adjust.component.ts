@@ -1,48 +1,325 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { _HttpClient, TitleService } from '@delon/theme';
 import { Inventory } from '../models/inventory';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { InventoryService } from '../services/inventory.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { LocationService } from '../../warehouse-layout/services/location.service';
+import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
+import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
+import { NzModalService, NzModalRef } from 'ng-zorro-antd';
+import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { LocationGroup } from '../../warehouse-layout/models/location-group';
+import { LocationGroupType } from '../../warehouse-layout/models/location-group-type';
+import { ReasonCode } from '../../common/models/reason-code';
+import { ReasonCodeType } from '../../common/models/reason-code-type.enum';
+import { ReasonCodeService } from '../../common/services/reason-code.service';
+import { InventoryStatus } from '../models/inventory-status';
+import { InventoryStatusService } from '../services/inventory-status.service';
+import { ItemService } from '../services/item.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Component({
   selector: 'app-inventory-inventory-adjust',
   templateUrl: './inventory-adjust.component.html',
+  styleUrls: ['./inventory-adjust.component.less'],
 })
 export class InventoryInventoryAdjustComponent implements OnInit {
-  currentInventory: Inventory = {
-    id: null,
-    lpn: '',
-    location: null,
-    item: null,
-    itemPackageType: null,
-    quantity: 0,
-    inventoryStatus: null,
-  };
-  pageTitle: string;
   constructor(
-    private activatedRoute: ActivatedRoute,
+    private fb: FormBuilder,
+    private locationService: LocationService,
+    private locationGroupTypeService: LocationGroupTypeService,
+    private locationGroupService: LocationGroupService,
     private i18n: I18NService,
-    private titleService: TitleService,
+    private modalService: NzModalService,
+    private reasonCodeService: ReasonCodeService,
     private inventoryService: InventoryService,
+    private activatedRoute: ActivatedRoute,
+    private titleService: TitleService,
+    private inventoryStatusService: InventoryStatusService,
+    private itemService: ItemService,
+    private warehouseService: WarehouseService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inventory.adjust.header.title');
   }
 
+  // Select control for Location Group Types
+  locationGroupTypes: Array<{ label: string; value: string }> = [];
+  locationGroups: Array<{ label: string; value: string }> = [];
+  // Form related data and functions
+  searchForm: FormGroup;
+  pageTitle: string;
+
+  currentInventory: Inventory;
+  addInventoryModal: NzModalRef;
+  availableInventoryStatuses: InventoryStatus[];
+
+  searching = false;
+
+  // Table data for display
+  listOfAllLocations: WarehouseLocation[] = [];
+  listOfDisplayLocations: WarehouseLocation[] = [];
+  // Sort key: field's nzSortKey value
+  // sort value: ascend / descend
+  sortKey: string | null = null;
+  sortValue: string | null = null;
+  // Filters meta data
+  filtersByLocationGroup = [];
+  // Save filters that already selected
+  selectedFiltersByLocationGroup: string[] = [];
+
+  // list of expanded row
+  mapOfExpandedId: { [key: string]: boolean } = {};
+
+  inventoryToBeRemoved: Inventory;
+  inventoryRemovalModal: NzModalRef;
+  inventoryRemovalReason: ReasonCode;
+  listOfReasons: ReasonCode[];
+
+  // Inventory in locations
+  // key: locatin id
+  // value: list of inventroy in the location
+  mapOfInventories: { [key: string]: Inventory[] } = {};
+
+  resetForm(): void {
+    this.searchForm.reset();
+    this.listOfAllLocations = [];
+    this.listOfDisplayLocations = [];
+    this.filtersByLocationGroup = [];
+  }
+
+  search(expand?: boolean): void {
+    this.searching = true;
+    this.locationService
+      .getLocations(
+        this.searchForm.controls.taggedLocationGroupTypes.value,
+        this.searchForm.controls.taggedLocationGroups.value,
+        this.searchForm.controls.location.value,
+      )
+      .subscribe(locationRes => {
+        this.listOfAllLocations = locationRes;
+        this.listOfDisplayLocations = locationRes;
+        if (expand) {
+          // expand all the result
+          this.listOfDisplayLocations.forEach(location => {
+            this.mapOfExpandedId[location.id] = true;
+            this.showInventoryDetails(location);
+          });
+        }
+
+        this.filtersByLocationGroup = [];
+        const existingLocationGroupId = new Set();
+
+        this.listOfAllLocations.forEach(location => {
+          if (!existingLocationGroupId.has(location.locationGroup.id)) {
+            this.filtersByLocationGroup.push({ text: location.locationGroup.name, value: location.locationGroup.id });
+            existingLocationGroupId.add(location.locationGroup.id);
+          }
+        });
+
+        this.searching = false;
+      });
+  }
+
+  currentPageDataChange($event: WarehouseLocation[]): void {
+    // this.locationGroups = $event;
+    this.listOfDisplayLocations = $event;
+  }
+
+  sort(sort: { key: string; value: string }): void {
+    this.sortKey = sort.key;
+    this.sortValue = sort.value;
+    this.sortAndFilter();
+  }
+
+  filter(selectedFiltersByLocationGroup: string[]) {
+    this.selectedFiltersByLocationGroup = selectedFiltersByLocationGroup;
+    this.sortAndFilter();
+  }
+
+  sortAndFilter() {
+    // filter data
+    const filterFunc = (item: { locationGroup: LocationGroup }) =>
+      this.selectedFiltersByLocationGroup.length
+        ? this.selectedFiltersByLocationGroup.some(id => item.locationGroup.id === +id)
+        : true;
+
+    const data = this.listOfAllLocations.filter(item => filterFunc(item));
+
+    // sort data
+    if (this.sortKey && this.sortValue) {
+      this.listOfDisplayLocations = data.sort((a, b) =>
+        this.sortValue === 'ascend'
+          ? a[this.sortKey!] > b[this.sortKey!]
+            ? 1
+            : -1
+          : b[this.sortKey!] > a[this.sortKey!]
+          ? 1
+          : -1,
+      );
+    } else {
+      this.listOfDisplayLocations = data;
+    }
+  }
+
   ngOnInit() {
     this.titleService.setTitle(this.i18n.fanyi('page.inventory.adjust.header.title'));
+    // initiate the search form
+    this.searchForm = this.fb.group({
+      taggedLocationGroupTypes: [null],
+      taggedLocationGroups: [null],
+      location: [null],
+    });
+
+    // initiate the select control
+    this.locationGroupTypeService.loadLocationGroupTypes().subscribe((locationGroupTypeList: LocationGroupType[]) => {
+      locationGroupTypeList.forEach(locationGroupType =>
+        this.locationGroupTypes.push({ label: locationGroupType.description, value: locationGroupType.id.toString() }),
+      );
+    });
+    this.locationGroupService.loadLocationGroups().subscribe((locationGroupList: LocationGroup[]) => {
+      locationGroupList.forEach(locationGroup =>
+        this.locationGroups.push({ label: locationGroup.description, value: locationGroup.id.toString() }),
+      );
+    });
+
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.inprocess === 'true') {
-        this.currentInventory = JSON.parse(sessionStorage.getItem('inventory-adjust.inventory'));
-      } else {
-        this.inventoryService.getInventoryById(params.id).subscribe(inventory => {
-          this.currentInventory = inventory;
-        });
+      if (params.locationName) {
+        const expand = params.hasOwnProperty('expand') ? params.hasOwnProperty('expand') : false;
+        this.searchForm.controls.location.setValue(params.locationName);
+        this.search(expand);
+      }
+    });
+
+    this.inventoryStatusService
+      .loadInventoryStatuses()
+      .subscribe(inventoryStatuses => (this.availableInventoryStatuses = inventoryStatuses));
+  }
+
+  showInventoryDetails(location: WarehouseLocation) {
+    console.log(`expanded: ${JSON.stringify(location)}`);
+    this.inventoryService.getInventoriesByLocationId(location.id).subscribe(inventories => {
+      this.mapOfInventories[location.id] = [...inventories];
+    });
+  }
+
+  openRemoveInventoryModal(
+    inventory: Inventory,
+    tplInventoryRemovalModalTitle: TemplateRef<{}>,
+    tplInventoryRemovalModalContent: TemplateRef<{}>,
+  ) {
+    this.inventoryToBeRemoved = inventory;
+
+    this.inventoryRemovalModal = this.modalService.create({
+      nzTitle: tplInventoryRemovalModalTitle,
+      nzContent: tplInventoryRemovalModalContent,
+      nzOkText: this.i18n.fanyi('description.field.button.confirm'),
+      nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.inventoryRemovalModal.destroy();
+        this.search();
+      },
+      nzOnOk: () => {
+        this.removeInventory();
+        this.search();
+      },
+      nzWidth: 1000,
+    });
+    this.inventoryRemovalModal.afterOpen.subscribe(() => this.initReasonList());
+  }
+
+  initReasonList() {
+    this.reasonCodeService.loadReasonCodeByType(ReasonCodeType.Inventory_Adjust).subscribe(res => {
+      this.listOfReasons = res;
+    });
+  }
+
+  removeInventory() {
+    this.inventoryService.adjustDownInventory(this.inventoryToBeRemoved).subscribe(res => {
+      this.search();
+    });
+
+    this.inventoryRemovalModal.destroy();
+  }
+
+  openAddInventoryModal(
+    location: WarehouseLocation,
+    tplAddInventoryModalTitle: TemplateRef<{}>,
+    tplAddInventoryModalContent: TemplateRef<{}>,
+  ) {
+    this.currentInventory = {
+      id: null,
+      lpn: '',
+      location,
+      locationName: location.name,
+      item: null,
+      itemPackageType: null,
+      quantity: null,
+      inventoryStatus: null,
+      warehouseId: this.warehouseService.getCurrentWarehouse().id,
+    };
+    // Load the location
+
+    // show the model
+    this.addInventoryModal = this.modalService.create({
+      nzTitle: tplAddInventoryModalTitle,
+      nzContent: tplAddInventoryModalContent,
+      nzOkText: this.i18n.fanyi('description.field.button.confirm'),
+      nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.addInventoryModal.destroy();
+        // refresh after cancel
+        this.search();
+      },
+      nzOnOk: () => {
+        this.addInventory(this.currentInventory);
+      },
+      nzWidth: 1000,
+    });
+    this.addInventoryModal.afterOpen.subscribe(() => this.setupDefaultInventoryValue());
+  }
+
+  lpnChanged(lpn: string) {
+    this.currentInventory.lpn = lpn;
+  }
+  setupDefaultInventoryValue() {
+    if (this.availableInventoryStatuses.length === 1) {
+      this.currentInventory.inventoryStatus = this.availableInventoryStatuses[0];
+    }
+  }
+
+  itemNumberChanged(itemNumber) {
+    this.itemService.getItems(itemNumber).subscribe(itemRes => {
+      if (itemRes.length > 0) {
+        // with a name, we should only get one item information
+        this.currentInventory.item = itemRes[0];
+      }
+    });
+  }
+  itemPackageTypeChange(newItemPackageTypeName) {
+    const itemPackageTypes = this.currentInventory.item.itemPackageTypes.filter(
+      itemPackageType => itemPackageType.name === newItemPackageTypeName,
+    );
+    if (itemPackageTypes.length === 1) {
+      this.currentInventory.itemPackageType = itemPackageTypes[0];
+    }
+  }
+  inventoryStatusChange(newInventoryStatusName) {
+    this.availableInventoryStatuses.forEach(inventoryStatus => {
+      if (inventoryStatus.name === newInventoryStatusName) {
+        this.currentInventory.inventoryStatus = inventoryStatus;
       }
     });
   }
 
-  saveCurrentInventory() {
-    sessionStorage.setItem('inventory-adjust.inventory', JSON.stringify(this.currentInventory));
+  addInventory(inventory: Inventory) {
+    this.inventoryService.addInventory(inventory).subscribe(inventoryRes => {
+      // display the newly added inventory
+      this.searchForm.controls.location.setValue(inventoryRes.location.name);
+      this.search(true);
+    });
   }
 }

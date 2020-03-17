@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { _HttpClient, User, TitleService } from '@delon/theme';
+import { _HttpClient, TitleService } from '@delon/theme';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
+import { User } from '../models/user';
 
 @Component({
   selector: 'app-auth-user-maintenance',
@@ -14,6 +15,7 @@ export class AuthUserMaintenanceComponent implements OnInit {
 
   emptyUser: User = {
     id: null,
+    password: '',
     username: '',
     firstname: '',
     lastname: '',
@@ -51,6 +53,7 @@ export class AuthUserMaintenanceComponent implements OnInit {
   }
   goToNextPage(): void {
     sessionStorage.setItem('user-maintenance.user', JSON.stringify(this.currentUser));
+    // console.log(`this.currentUser:${this.currentUser}`);
     const url = '/auth/user-role?new-user';
     this.router.navigateByUrl(url);
   }
