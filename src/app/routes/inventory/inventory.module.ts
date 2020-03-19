@@ -24,6 +24,7 @@ import { InventoryMovementPathConfirmComponent } from './movement-path-confirm/m
 import { InventoryInventoryQuantityChangeComponent } from './inventory-quantity-change/inventory-quantity-change.component';
 import { InventoryAddInventoryComponent } from './add-inventory/add-inventory.component';
 import { InventoryInventoryQuantityChangeConfirmComponent } from './inventory-quantity-change-confirm/inventory-quantity-change-confirm.component';
+import { InventoryInventoryActivityComponent } from './inventory-activity/inventory-activity.component';
 
 const COMPONENTS = [
   InventoryInventoryComponent,
@@ -48,6 +49,7 @@ const COMPONENTS = [
   InventoryInventoryQuantityChangeComponent,
   InventoryInventoryQuantityChangeConfirmComponent,
   InventoryAddInventoryComponent,
+  InventoryInventoryActivityComponent,
 ];
 const COMPONENTS_NOROUNT = [];
 

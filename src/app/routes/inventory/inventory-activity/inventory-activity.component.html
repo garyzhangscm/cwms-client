@@ -56,6 +56,59 @@
         </nz-form-control>
       </nz-form-item>
     </div>
+
+    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="username">
+          {{ 'description.field.label.username' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="username" id="username" formControlName="username" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="inventoryActivityType">
+          {{ 'description.field.label.inventory-activity.type' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+
+          <nz-select nzMode="tags" formControlName="type">
+            <nz-option *ngFor="let inventoryActivityType of inventoryActivityTypes" [nzLabel]="inventoryActivityType"
+              [nzValue]="inventoryActivityType">
+            </nz-option>
+          </nz-select>
+
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="activityDateTimeRanger">
+          {{ 'description.field.label.inventory-activity.date-time' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-range-picker [nzShowTime]="{ nzHideDisabledOptions: true, nzDefaultOpenValue: timeDefaultValue }"
+            nzFormat="yyyy-MM-dd HH:mm:ss" formControlName="activityDateTimeRanger" name="activityDateTimeRanger">
+          </nz-range-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="activityDate">
+          {{ 'description.field.label.inventory-activity.date' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-date-picker formControlName="activityDate" name="activityDate"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
   </div>
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
@@ -74,7 +127,7 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="inventories">
+  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllInventoryActivities">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
         <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
@@ -138,7 +191,14 @@
           ">
           {{ 'description.field.label.inventory.status' | translate }}
         </th>
-        <th>{{ 'description.field.label.action' | translate }}</th>
+        <th>{{ 'description.field.label.inventory-activity.type' | translate }}</th>
+        <th>{{ 'description.field.label.inventory-activity.date-time' | translate }}</th>
+        <th>{{ 'description.field.label.inventory-activity.username' | translate }}</th>
+        <th>{{ 'description.field.label.inventory-activity.value-type' | translate }}</th>
+        <th>{{ 'description.field.label.inventory-activity.from-value' | translate }}</th>
+        <th>{{ 'description.field.label.inventory-activity.to-value' | translate }}</th>
+        <th>{{ 'description.field.label.inventory-activity.document-number' | translate }}</th>
+        <th>{{ 'description.field.label.inventory-activity.comment' | translate }}</th>
       </tr>
     </thead>
     <tbody>
@@ -157,20 +217,16 @@
         <td>
           <a nz-tooltip nzTooltipTitle="{{ data.inventoryStatus.description }}">{{ data.inventoryStatus.name }}</a>
         </td>
-        <td>
-          <a nz-button routerLink="/inventory/inventory-quantity-change" routerLinkActive="active"
-            [queryParams]="{id : data.id, by : 'inventory'}">
-            {{ 'description.field.label.adjustInventory' | translate }}</a>
-          <nz-divider nzType="vertical"></nz-divider>
-
-          <a nz-button routerLink="/inventory/inventory-attribute-change" routerLinkActive="active"
-            [queryParams]="{id : data.id}">
-            {{ 'description.field.label.inventory.attributeChange' | translate }}</a>
-          <nz-divider nzType="vertical"></nz-divider>
-          <button nz-button
-            (click)="openRemoveInventoryModal(data, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
-            nzType="danger">{{ 'description.field.label.removeInventory' | translate }}</button>
+        <td> {{ data.type }} </td>
+        <td> {{ data.activityDateTime[1] }}/{{ data.activityDateTime[2] }}/{{ data.activityDateTime[0] }}
+          {{ data.activityDateTime[3] }}:{{ data.activityDateTime[4] }}:{{ data.activityDateTime[5] }}
         </td>
+        <td> {{ data.username }} </td>
+        <td> {{ data.valueType }} </td>
+        <td> {{ data.fromValue }} </td>
+        <td> {{ data.toValue }} </td>
+        <td> {{ data.documentNumber }} </td>
+        <td> {{ data.comment }} </td>
         <ng-template #itemPackageTypeDetails>
           <nz-table #itemPackageTypeDetailTable [nzData]="data.itemPackageType.itemUnitOfMeasures" nzSize="middle"
             [nzShowPagination]="false" nzBordered>
@@ -200,32 +256,3 @@
   </tbody>
   </nz-table>
 </div>
-
-<!-- Modal for inventory remove warning -->
-<ng-template #tplInventoryRemovalModalTitle>
-  <span>{{ 'page.modal.delete.header.title' | translate}}</span>
-</ng-template>
-<ng-template #tplInventoryRemovalModalContent>
-  <nz-descriptions nzBordered>
-    <nz-descriptions-item nzTitle="{{ 'description.field.label.lpn' | translate }}">
-      {{ inventoryToBeRemoved.lpn }}
-    </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'description.field.label.item' | translate }}">
-      {{ inventoryToBeRemoved.item.name }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'description.field.label.location' | translate }}">
-      {{ inventoryToBeRemoved.location.name }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'description.field.label.quantity' | translate }}">
-      {{ inventoryToBeRemoved.quantity }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'description.field.label.inventory.status' | translate }}" nzSpan="2">
-      {{ inventoryToBeRemoved.inventoryStatus.name }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'description.field.label.inventory.adjustment.reason' | translate }}" nzSpan="3">
-      <div>
-        <nz-select style="width: 320px;" [(ngModel)]="inventoryRemovalReason" nzShowSearch nzAllowClear
-          nzDropdownMatchSelectWidth="true">
-          <nz-option *ngFor="let reason of listOfReasons" [nzLabel]="reason.description" [nzValue]="reason.id">
-          </nz-option>
-        </nz-select>
-      </div>
-    </nz-descriptions-item>
-  </nz-descriptions>
-</ng-template>
