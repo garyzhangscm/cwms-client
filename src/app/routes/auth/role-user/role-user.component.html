@@ -1,6 +1,6 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
-  <a routerLink="/auth/role" routerLinkActive="active">{{
+  <a (click)="return()" routerLinkActive="active">{{
     'description.field.link.return' | translate
   }}</a>
 </ng-template>

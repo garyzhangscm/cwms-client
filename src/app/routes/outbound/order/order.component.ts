@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { Component, OnInit, TemplateRef } from '@angular/core';
+import { _HttpClient, TitleService } from '@delon/theme';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { I18NService } from '@core';
-import { NzModalService, NzMessageService } from 'ng-zorro-antd';
+import { NzModalService, NzMessageService, NzModalRef } from 'ng-zorro-antd';
 import { OrderService } from '../services/order.service';
 import { Order } from '../models/order';
 import { Customer } from '../../common/models/customer';
@@ -30,11 +30,15 @@ export class OutboundOrderComponent implements OnInit {
     private pickService: PickService,
     private shortAllocationService: ShortAllocationService,
     private activatedRoute: ActivatedRoute,
+    private titleService: TitleService,
   ) {}
 
   // Form related data and functions
   searchForm: FormGroup;
+  unpickForm: FormGroup;
   searching = false;
+
+  unpickedInventory: Inventory;
 
   // Table data for display
   listOfAllOrders: Order[] = [];
@@ -72,6 +76,8 @@ export class OutboundOrderComponent implements OnInit {
   mapOfPickedInventory: { [key: string]: Inventory[] } = {};
 
   shortAllocationStatus = ShortAllocationStatus;
+
+  unpickModal: NzModalRef;
 
   resetForm(): void {
     this.searchForm.reset();
@@ -248,6 +254,7 @@ export class OutboundOrderComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.order'));
     // initiate the search form
     this.searchForm = this.fb.group({
       number: [null],
@@ -358,9 +365,40 @@ export class OutboundOrderComponent implements OnInit {
       this.search();
     });
   }
-  unpick(inventory: Inventory) {
-    this.messageService.error(this.i18n.fanyi('message.action.not-supported'));
+  openUnpickModal(inventory: Inventory, tplUnpickModalTitle: TemplateRef<{}>, tplUnpickModalContent: TemplateRef<{}>) {
+    console.log(`start to unpick ${inventory}`);
+    this.unpickForm = this.fb.group({
+      lpn: new FormControl({ value: inventory.lpn, disabled: true }),
+      itemNumber: new FormControl({ value: inventory.item.name, disabled: true }),
+      itemDescription: new FormControl({ value: inventory.item.description, disabled: true }),
+      inventoryStatus: new FormControl({ value: inventory.inventoryStatus.name, disabled: true }),
+      itemPackageType: new FormControl({ value: inventory.itemPackageType.name, disabled: true }),
+      quantity: new FormControl({ value: inventory.quantity, disabled: true }),
+      locationName: new FormControl({ value: inventory.location.name, disabled: true }),
+      destinationLocation: [null],
+      immediatelyPutaway: [null],
+    });
+    this.unpickedInventory = inventory;
+
+    // Load the location
+    this.unpickModal = this.modalService.create({
+      nzTitle: tplUnpickModalTitle,
+      nzContent: tplUnpickModalContent,
+      nzOkText: this.i18n.fanyi('description.field.button.confirm'),
+      nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.unpickModal.destroy();
+        // this.refreshReceiptResults();
+      },
+      nzOnOk: () => {
+        this.unpickInventory();
+      },
+      nzWidth: 1000,
+    });
   }
+
+  unpickInventory() {}
 
   cancelShortAllocation(shortAllocation: ShortAllocation) {
     this.shortAllocationService.cancelShortAllocations([shortAllocation]).subscribe(shortAllocationRes => {

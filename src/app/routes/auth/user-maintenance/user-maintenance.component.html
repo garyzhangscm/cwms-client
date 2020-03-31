@@ -46,7 +46,8 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
-            <input nz-input [(ngModel)]="currentUser.username" id="username" name="username" required />
+            <input nz-input [(ngModel)]="currentUser.username" id="username" name="username" required
+              [disabled]="modifying" />
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -58,7 +59,8 @@
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
             <nz-input-group [nzSuffix]="suffixTemplate">
-              <input [type]="passwordVisible ? 'text' : 'password'" nz-input [(ngModel)]="currentUser.password" id="password" name="password" required/>
+              <input [type]="passwordVisible ? 'text' : 'password'" nz-input [(ngModel)]="currentUser.password"
+                id="password" name="password" required />
             </nz-input-group>
             <ng-template #suffixTemplate>
               <i nz-icon [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
@@ -109,20 +111,28 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item>
           <nz-form-control>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="enabled">
-              {{ 'description.field.label.enabled' | translate }}
-            </nz-form-label>
-            <label nz-checkbox [(ngModel)]="currentUser.enabled" name="enabled"></label>
+            <label nz-checkbox [(ngModel)]="currentUser.enabled" name="enabled">
+              <span>{{ 'description.field.label.enabled'  | translate }}</span>
+
+
+            </label>
           </nz-form-control>
         </nz-form-item>
       </div>
       <div nz-col [nzSpan]="8">
         <nz-form-item>
           <nz-form-control>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locked">
-              {{ 'description.field.label.locked' | translate }}
-            </nz-form-label>
-            <label nz-checkbox [(ngModel)]="currentUser.locked" name="locked"></label>
+            <label nz-checkbox [(ngModel)]="currentUser.locked" name="locked">
+              <span>{{ 'description.field.label.locked'  | translate }}</span></label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-control>
+            <label nz-checkbox [(ngModel)]="currentUser.changePasswordAtNextLogon" name="changePasswordAtNextLogon">
+              <span>{{ 'description.field.label.user.change-password-at-next-logon' | translate }}</span>
+            </label>
           </nz-form-control>
         </nz-form-item>
       </div>

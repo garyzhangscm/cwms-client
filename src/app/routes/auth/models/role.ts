@@ -1,5 +1,6 @@
 import { User } from './user';
 import { MenuGroup } from './menu-group';
+import { Menu } from './menu';
 
 export interface Role {
   id: number;
@@ -7,5 +8,6 @@ export interface Role {
   description: string;
   enabled: boolean;
   menuGroups: MenuGroup[];
+  menus: Menu[];
   users?: User[];
 }

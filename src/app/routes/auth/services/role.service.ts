@@ -29,6 +29,12 @@ export class RoleService {
   saveRole(role: Role): Observable<Role> {
     return this.http.post(`resource/roles`, role).pipe(map(res => res.data));
   }
+  disableRole(roleId: number): Observable<Role> {
+    return this.http.post(`resource/roles/${roleId}/disable`).pipe(map(res => res.data));
+  }
+  enableRole(roleId: number): Observable<Role> {
+    return this.http.post(`resource/roles/${roleId}/enable`).pipe(map(res => res.data));
+  }
   addRole(role: Role): Observable<Role> {
     return this.http.put(`resource/roles`, role).pipe(map(res => res.data));
   }
@@ -57,5 +63,14 @@ export class RoleService {
       )}&deassigned=${deassignedUserIds.join(',')}`;
       return this.http.post(url).pipe(map(res => res.data));
     }
+  }
+
+  deassignUser(roleId: number, userId: number) {
+    const url = `resource/roles/${roleId}/users?deassigned=${userId}`;
+    return this.http.post(url).pipe(map(res => res.data));
+  }
+  deassignMenu(roleId: number, menuId: number) {
+    const url = `resource/roles/${roleId}/menus?deassigned=${menuId}`;
+    return this.http.post(url).pipe(map(res => res.data));
   }
 }

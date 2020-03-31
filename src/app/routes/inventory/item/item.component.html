@@ -39,7 +39,7 @@
   </div>
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
-      <button nz-button [nzType]="'primary'" (click)="search()">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
         {{ 'description.field.button.search' | translate }}
       </button>
       <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
@@ -52,8 +52,6 @@
   <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfDisplayItems" [nzFooter]="tableFoot" #nestedTable>
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
-        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
-          (nzCheckedChange)="checkAll($event)"></th>
         <th nzShowExpand></th>
         <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
         <th nzShowSort nzSortKey="name" [nzFilters]="filtersByName"
@@ -79,7 +77,6 @@
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <!--<tr *ngFor="let data of rowSelectionTable.data">-->
         <tr>
-          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
           <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]"></td>
           <td>{{ data.id }}</td>
           <td>{{ data.name }}</td>
@@ -124,9 +121,6 @@
 
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start">
-    <button nz-button nzType="danger" (click)="removeSelectedItems()">
-      {{ 'description.field.button.delete' | translate }}
-    </button>
     <button nz-button nzType="primary" routerLink="/util/file-upload/items" routerLinkActive="active">
       {{ 'description.field.button.file-upload' | translate }}
     </button>

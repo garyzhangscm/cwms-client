@@ -11,10 +11,12 @@ import { User } from '../models/user';
 export class UserService {
   constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
-  getUsers(username?: string): Observable<User[]> {
+  getUsers(username?: string, rolename?: string): Observable<User[]> {
     let url = `resource/users`;
     if (username) {
       url = `${url}?username=${username}`;
+    } else if (rolename) {
+      url = `${url}?rolename=${rolename}`;
     }
     console.log(`start to get users from ${url}`);
 
@@ -37,5 +39,25 @@ export class UserService {
       )}&deassigned=${deassignedRoleIds.join(',')}`;
       return this.http.post(url).pipe(map(res => res.data));
     }
+  }
+
+  disableUsers(userIds: number[]): Observable<User[]> {
+    return this.http.post(`resource/users/disable?userIds=${userIds}`).pipe(map(res => res.data));
+  }
+
+  disableUser(userId: number): Observable<User[]> {
+    return this.http.post(`resource/users/disable?userIds=${userId}`).pipe(map(res => res.data));
+  }
+  enableUser(userId: number): Observable<User[]> {
+    return this.http.post(`resource/users/enable?userIds=${userId}`).pipe(map(res => res.data));
+  }
+  lockUsers(userIds: number[]): Observable<User[]> {
+    return this.http.post(`resource/users/lock?userIds=${userIds}`).pipe(map(res => res.data));
+  }
+  lockUser(userId: number): Observable<User[]> {
+    return this.http.post(`resource/users/lock?userIds=${userId}`).pipe(map(res => res.data));
+  }
+  unlockUser(userId: number): Observable<User[]> {
+    return this.http.post(`resource/users/unlock?userIds=${userId}`).pipe(map(res => res.data));
   }
 }

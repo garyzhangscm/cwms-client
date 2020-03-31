@@ -16,6 +16,7 @@ export class HeaderComponent {
   constructor(public settings: SettingsService, private warehouseService: WarehouseService, private router: Router) {
     const warehouse = this.warehouseService.getCurrentWarehouse();
     if (warehouse === null) {
+      console.log(`Not able to get current warehouse, will force the user to log in again`);
       router.navigateByUrl('passport/login');
     } else {
       this.currentWarehouse = warehouse.name;

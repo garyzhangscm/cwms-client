@@ -57,7 +57,7 @@ export class InventoryMovementPathComponent implements OnInit {
     private modalService: NzModalService,
   ) {}
 
-  resetForm(event): void {
+  resetForm(): void {
     this.searchForm.reset();
     this.listOfAllMovementPath = [];
     this.listOfDisplayMovementPath = [];

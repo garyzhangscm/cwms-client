@@ -27,11 +27,10 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllRoles" [nzFooter]="tableFoot">
+  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllRoles" [nzFooter]="tableFoot">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
-        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
-          (nzCheckedChange)="checkAll($event)"></th>
+        <th nzShowExpand></th>
         <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
         <th nzShowSort nzSortKey="name">
           {{ 'description.field.label.name' | translate }}
@@ -47,22 +46,122 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of rowSelectionTable.data">
-        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
-        <td>{{ data.id }}</td>
+      <ng-template ngFor let-data [ngForOf]="nestedTable.data">
+        <tr>
+          <td nzShowExpand [nzExpand]="mapOfExpandedId[data.id]" (nzExpandChange)="loadUserAndMenu($event, data)"></td>
+          <td>{{ data.id }}</td>
+          <td>
+            {{ data.name }}</td>
+          <td>{{ data.description }}</td>
+          <td>{{ data.enabled }}</td>
+          <td>
+            <a nz-button routerLink="/auth/role-menu" routerLinkActive="active"
+              [queryParams]="{roleId : data.id}">{{ 'description.field.label.assign-menu' | translate }}</a>
+            <nz-divider nzType="vertical"></nz-divider>
+            <a nz-button routerLink="/auth/role-user" routerLinkActive="active"
+              [queryParams]="{roleId : data.id}">{{ 'description.field.label.assign-user' | translate }}</a>
+            <nz-divider nzType="vertical"></nz-divider>
+            <button nz-button nzType="danger" *ngIf="data.enabled === true"
+              (click)="disableRole(data.id)">{{ 'description.field.label.disable' | translate }}</button>
+            <button nz-button nzType="primary" *ngIf="data.enabled === false"
+              (click)="enableRole(data.id)">{{ 'description.field.label.enable' | translate }}</button>
+          </td>
+        </tr>
+        <tr [nzExpand]="mapOfExpandedId[data.id]">
+          <td></td>
+          <td colspan="4">
+            <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" [nzSelectedIndex]="tabIndex">
+              <nz-tab nzTitle="{{'menu.main.auth.user' | translate}}">
+                <nz-table #userTable [nzData]="data.users" nzSize="middle" [nzShowPagination]="false">
+                  <thead>
+                    <tr>
+                      <th nzShowSort nzSortKey="username">
+                        {{ 'description.field.label.username' | translate }}
+                      </th>
+                      <th nzShowSort nzSortKey="firstname">
+                        {{ 'description.field.label.firstname' | translate }}
+                      </th>
+                      <th nzShowSort nzSortKey="lastname">
+                        {{ 'description.field.label.lastname' | translate }}
+                      </th>
+                      <th nzShowSort nzSortKey="email">
+                        {{ 'description.field.label.email' | translate }}
+                      </th>
+                      <th nzShowSort nzSortKey="enabled">
+                        {{ 'description.field.label.enabled' | translate }}
+                      </th>
+                      <th nzShowSort nzSortKey="locked">
+                        {{ 'description.field.label.locked' | translate }}
+                      </th>
+                      <th>{{ 'description.field.label.action' | translate }}</th>
+                    </tr>
+                  </thead>
+    <tbody>
+      <tr *ngFor="let user of userTable.data">
         <td>
-          {{ data.name }}</td>
-        <td>{{ data.description }}</td>
-        <td>{{ data.enabled }}</td>
+          {{ user.username }}</td>
+        <td>{{ user.firstname }}</td>
+        <td>{{ user.lastname }}</td>
+        <td>{{ user.email }} </td>
+        <td>{{ user.enabled }}</td>
+        <td>{{ user.locked }}</td>
         <td>
-          <a nz-button routerLink="/auth/role-menu" routerLinkActive="active"
-            [queryParams]="{roleId : data.id}">{{ 'description.field.label.assign-menu' | translate }}</a>
-          <nz-divider nzType="vertical"></nz-divider>
-          <a nz-button routerLink="/auth/role-user" routerLinkActive="active"
-            [queryParams]="{roleId : data.id}">{{ 'description.field.label.assign-user' | translate }}</a>
+          <button nz-button
+            (click)="deassignUser(data.id, user.id)">{{ 'description.field.label.role.unassign-user' | translate }}</button>
         </td>
       </tr>
     </tbody>
+  </nz-table>
+  </nz-tab>
+  <nz-tab nzTitle="{{'menu.main.auth.menu' | translate}}">
+    <nz-table #menuTable [nzData]="data.menus" nzSize="middle" [nzShowPagination]="true">
+      <thead>
+        <tr>
+          <th nzShowSort nzSortKey="menuGroup">
+            {{ 'description.field.label.menuGroup' | translate }}
+          </th>
+          <th nzShowSort nzSortKey="menuSubGroup">
+            {{ 'description.field.label.menuSubGroup' | translate }}
+          </th>
+          <th nzShowSort nzSortKey="name">
+            {{ 'description.field.label.name' | translate }}
+          </th>
+          <th nzShowSort nzSortKey="sequence">
+            {{ 'description.field.label.sequence' | translate }}
+          </th>
+          <th nzShowSort nzSortKey="i18n">
+            {{ 'description.field.label.menu.i18n' | translate }}
+          </th>
+          <th nzShowSort nzSortKey="link">
+            {{ 'description.field.label.link' | translate }}
+          </th>
+          <th>{{ 'description.field.label.action' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let menu of menuTable.data">
+          <td>
+            {{ menu.menuGroup }}</td>
+          <td>{{ menu.menuSubGroup }}</td>
+          <td>{{ menu.i18n | translate }}</td>
+          <td>{{ menu.sequence }} </td>
+          <td>{{ menu.i18n }}</td>
+          <td>{{ menu.link }}</td>
+          <td>
+            <button nz-button
+              (click)="deassignMenu(data.id, menu.id)">{{ 'description.field.label.role.unassign-menu' | translate }}</button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+  </nz-tabset>
+
+
+  </td>
+  </tr>
+  </ng-template>
+  </tbody>
   </nz-table>
 </div>
 
@@ -70,9 +169,5 @@
   <div nz-row nzType="flex" nzJustify="start">
     <a nz-button routerLink="/auth/role/maintenance"
       routerLinkActive="active">{{ 'description.field.label.new' | translate }}</a>
-    <nz-divider nzType="vertical"></nz-divider>
-    <button nz-button nzType="danger" (click)="removeRoles()">
-      {{ 'description.field.button.delete' | translate }}
-    </button>
   </div>
 </ng-template>

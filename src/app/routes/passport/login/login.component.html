@@ -3,7 +3,7 @@
     <nz-tab [nzTitle]="'app.login.tab-login-credentials' | translate">
       <nz-alert *ngIf="error" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
       <nz-form-item>
-        <nz-form-control [nzErrorTip]="'Please enter mobile number!' | translate">
+        <nz-form-control [nzErrorTip]="'Please enter valid username!' | translate">
           <nz-input-group nzSize="large" nzPrefixIcon="user">
             <input nz-input formControlName="userName" placeholder="username: admin or user"
               (blur)="loadWarehouses()" />

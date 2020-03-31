@@ -131,6 +131,8 @@
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
         <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+        <th nzShowSort nzSortKey="transactionId">
+          {{ 'description.field.label.inventory-activity.transaction-id' | translate }}</th>
         <th nzShowSort nzSortKey="lpn" [nzFilters]="filtersByLpn" (nzFilterChange)="
             filter(
               $event,
@@ -204,6 +206,7 @@
     <tbody>
       <tr *ngFor="let data of rowSelectionTable.data">
         <td>{{ data.id }}</td>
+        <td>{{ data.transactionId }}</td>
         <td>{{ data.lpn }}</td>
         <td>
           <a nz-tooltip nzTooltipTitle="{{ data.item.description }}">{{ data.item.name }}</a>
@@ -217,7 +220,7 @@
         <td>
           <a nz-tooltip nzTooltipTitle="{{ data.inventoryStatus.description }}">{{ data.inventoryStatus.name }}</a>
         </td>
-        <td> {{ data.type }} </td>
+        <td> {{ 'INVENTORY-ACTIVITY-TYPE-' + data.type | translate}} </td>
         <td> {{ data.activityDateTime[1] }}/{{ data.activityDateTime[2] }}/{{ data.activityDateTime[0] }}
           {{ data.activityDateTime[3] }}:{{ data.activityDateTime[4] }}:{{ data.activityDateTime[5] }}
         </td>

@@ -60,7 +60,7 @@
             <!--
             <input type="text" nz-input [(ngModel)]="data.name" (blur)="changeLocationGroup(data)" />
           -->
-            <input type="text" nz-input [ngModel]="data.name" (blur)="changeLocationGroup(data, $event)" />
+            <input type="text" nz-input [ngModel]="data.name" (blur)="changeLocationGroup(data)" />
           </ng-template>
         </td>
         <td>
@@ -74,7 +74,7 @@
               
             <input type="text" nz-input [(ngModel)]="data.description" (blur)="changeLocationGroup(data)" />
             -->
-            <input type="text" nz-input [ngModel]="data.description" (blur)="changeLocationGroup(data, $event)" />
+            <input type="text" nz-input [ngModel]="data.description" (blur)="changeLocationGroup(data)" />
           </ng-template>
         </td>
         <td>

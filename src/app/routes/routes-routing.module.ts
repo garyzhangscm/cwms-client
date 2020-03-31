@@ -20,6 +20,7 @@ const routes: Routes = [
     path: '',
     component: LayoutDefaultComponent,
     canActivate: [SimpleGuard],
+    // canActivateChild: [SimpleGuard],
     children: [
       { path: '', redirectTo: 'dashboard/default', pathMatch: 'full' },
       { path: 'dashboard', loadChildren: './dashboard/dashboard.module#DashboardModule' },

@@ -38,7 +38,7 @@ export class InventoryInventoryQuantityChangeConfirmComponent implements OnInit 
   }
 
   confirmInventoryAdjust() {
-    this.inventoryService.changeInventory(this.currentInventory).subscribe(res => {
+    this.inventoryService.adjustInventoryQuantity(this.currentInventory).subscribe(res => {
       if (this.previousApplication === 'inventory') {
         this.router.navigateByUrl(`/inventory/inventory?id=${res.id}&refresh=true`);
       } else {

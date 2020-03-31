@@ -56,7 +56,7 @@
     <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | translate }}"
       [nzSuccessTip]="locationGroupTypeDetailTpl">
       <nz-select [(ngModel)]="currentLocationGroup.locationGroupType.id" name="locationGroupType"
-        (ngModelChange)="locationGroupTypeChange($event)">
+        (ngModelChange)="locationGroupTypeChange()">
         <nz-option *ngFor="let locationGroupType of locationGroupTypes" nzValue="{{locationGroupType.value}}"
           nzLabel="{{locationGroupType.label}}"></nz-option>
 

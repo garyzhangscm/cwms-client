@@ -86,6 +86,11 @@ export class InventoryService {
     return this.http.put(url, inventory).pipe(map(res => res.data));
   }
 
+  adjustInventoryQuantity(inventory: Inventory): Observable<Inventory> {
+    const url = `inventory/inventory/${inventory.id}/adjust-quantity?newQuantity=${inventory.quantity}`;
+    return this.http.post(url).pipe(map(res => res.data));
+  }
+
   getNextLPN(): Observable<string> {
     return this.systemControlledNumberService.getNextAvailableId('LPN');
   }

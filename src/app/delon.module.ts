@@ -48,7 +48,7 @@ export function fnPageHeaderConfig(): PageHeaderConfig {
   };
 }
 
-import { DelonAuthConfig, DA_STORE_TOKEN, MemoryStore, SessionStorageStore } from '@delon/auth';
+import { DelonAuthConfig, DA_STORE_TOKEN, MemoryStore, SessionStorageStore, LocalStorageStore } from '@delon/auth';
 export function fnDelonAuthConfig(): DelonAuthConfig {
   return {
     ...new DelonAuthConfig(),
@@ -102,7 +102,7 @@ export class DelonModule {
         // MemoryStorage: lost after close the tab(lost after refresh)
         // LocalStorageStore: saved until manually clear. DEFAULT option
         // SessionStorageStore: lost after close the broswer
-        { provide: DA_STORE_TOKEN, useClass: SessionStorageStore },
+        { provide: DA_STORE_TOKEN, useClass: LocalStorageStore },
       ],
     };
   }

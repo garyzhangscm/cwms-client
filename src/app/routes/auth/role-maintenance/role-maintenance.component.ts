@@ -18,6 +18,7 @@ export class AuthRoleMaintenanceComponent implements OnInit {
     description: '',
     enabled: true,
     menuGroups: [],
+    menus: [],
     users: [],
   };
 

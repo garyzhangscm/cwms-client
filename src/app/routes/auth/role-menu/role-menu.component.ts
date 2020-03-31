@@ -25,6 +25,7 @@ export class AuthRoleMenuComponent implements OnInit {
   assignedMenuText: string;
   processingMenu = false;
   newRole = false;
+  previousPage: string;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -51,12 +52,14 @@ export class AuthRoleMenuComponent implements OnInit {
           this.currentRole = roleRes;
           this.initMenuAssignment();
           this.newRole = false;
+          this.previousPage = `/auth/role?name=${this.currentRole.name}`;
         });
       }
       if (params.hasOwnProperty('new-role')) {
         this.newRole = true;
         this.currentRole = JSON.parse(sessionStorage.getItem('role-maintenance.role'));
         this.initMenuAssignment();
+        this.previousPage = `/auth/role`;
       }
     });
   }
@@ -257,5 +260,8 @@ export class AuthRoleMenuComponent implements OnInit {
         this.router.navigateByUrl('/auth/role/maintenance?new-role');
         break;
     }
+  }
+  return() {
+    this.router.navigateByUrl(this.previousPage);
   }
 }

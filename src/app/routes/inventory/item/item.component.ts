@@ -39,18 +39,14 @@ export class InventoryItemComponent implements OnInit {
   selectedFiltersByClient: string[] = [];
   selectedFiltersItemFamily: string[] = [];
 
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
   // list of expanded row
   mapOfExpandedId: { [key: string]: boolean } = {};
 
   // editable cell
   editId: string | null;
   editCol: string | null;
+
+  searching = false;
 
   constructor(
     private fb: FormBuilder,
@@ -61,7 +57,7 @@ export class InventoryItemComponent implements OnInit {
     private modalService: NzModalService,
   ) {}
 
-  resetForm(event): void {
+  resetForm(): void {
     this.searchForm.reset();
     this.items = [];
     this.listOfDisplayItems = [];
@@ -70,6 +66,7 @@ export class InventoryItemComponent implements OnInit {
     this.filtersByItemFamily = [];
   }
   search(): void {
+    this.searching = true;
     this.itemService
       .getItems(
         this.searchForm.value.itemName,
@@ -79,7 +76,6 @@ export class InventoryItemComponent implements OnInit {
       .subscribe(itemRes => {
         this.items = itemRes;
         this.listOfDisplayItems = itemRes;
-        console.log('item res:\n' + JSON.stringify(itemRes));
 
         this.filtersByName = [];
         this.filtersByClient = [];
@@ -106,23 +102,13 @@ export class InventoryItemComponent implements OnInit {
             existingItemFamilyId.add(item.itemFamily.id);
           }
         });
+
+        this.searching = false;
       });
   }
 
   currentPageDataChange($event: Item[]): void {
     this.listOfDisplayItems = $event;
-    this.refreshStatus();
-  }
-
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayItems.every(item => this.mapOfCheckedId[item.id]);
-    this.indeterminate =
-      this.listOfDisplayItems.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
-  }
-
-  checkAll(value: boolean): void {
-    this.listOfDisplayItems.forEach(item => (this.mapOfCheckedId[item.id] = value));
-    this.refreshStatus();
   }
 
   sort(sort: { key: string; value: string }): void {
@@ -166,37 +152,6 @@ export class InventoryItemComponent implements OnInit {
     } else {
       this.listOfDisplayItems = data;
     }
-  }
-
-  removeSelectedItems(): void {
-    // make sure we have at least one checkbox checked
-    const selectedItems = this.getSelectedItems();
-    if (selectedItems.length > 0) {
-      this.modalService.confirm({
-        nzTitle: this.i18n.fanyi('page.modal.delete.header.title'),
-        nzContent: this.i18n.fanyi('page.item.modal.delete.content'),
-        nzOkText: this.i18n.fanyi('description.field.button.confirm'),
-        nzOkType: 'danger',
-        nzOnOk: () => {
-          this.itemService.removeItems(selectedItems).subscribe(res => {
-            console.log('selected items removed');
-            this.search();
-          });
-        },
-        nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
-        nzOnCancel: () => console.log('Cancel'),
-      });
-    }
-  }
-
-  getSelectedItems(): Item[] {
-    const selectedItems: Item[] = [];
-    this.items.forEach((item: Item) => {
-      if (this.mapOfCheckedId[item.id] === true) {
-        selectedItems.push(item);
-      }
-    });
-    return selectedItems;
   }
 
   startEdit(id: string, col: string, event: MouseEvent): void {

@@ -24,6 +24,7 @@ export class AuthRoleUserComponent implements OnInit {
   assignedUserText: string;
   processingUser = false;
   newRole = false;
+  previousPage: string;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -49,12 +50,14 @@ export class AuthRoleUserComponent implements OnInit {
           this.currentRole = roleRes;
           this.initUserAssignment();
           this.newRole = false;
+          this.previousPage = `/auth/role?name=${this.currentRole.name}`;
         });
       }
       if (params.hasOwnProperty('new-role')) {
         this.newRole = true;
         this.currentRole = JSON.parse(sessionStorage.getItem('role-maintenance.role'));
         this.initUserAssignment();
+        this.previousPage = `/auth/role`;
       }
     });
   }
@@ -137,5 +140,8 @@ export class AuthRoleUserComponent implements OnInit {
         this.router.navigateByUrl('/auth/role/maintenance?new-role');
         break;
     }
+  }
+  return() {
+    this.router.navigateByUrl(this.previousPage);
   }
 }

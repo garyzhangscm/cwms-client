@@ -39,9 +39,12 @@ export class WarehouseService {
   }
 
   setCurrentWarehouse(warehouse: Warehouse) {
-    sessionStorage.setItem('current_warehouse', JSON.stringify(warehouse));
+    // We will save the current warehouse in local storage so that
+    // different tab / web broswer session can share the same warehouse id
+    // sessionStorage.setItem('current_warehouse', JSON.stringify(warehouse));
+    localStorage.setItem('current_warehouse', JSON.stringify(warehouse));
   }
   getCurrentWarehouse(): Warehouse {
-    return JSON.parse(sessionStorage.getItem('current_warehouse'));
+    return JSON.parse(localStorage.getItem('current_warehouse'));
   }
 }

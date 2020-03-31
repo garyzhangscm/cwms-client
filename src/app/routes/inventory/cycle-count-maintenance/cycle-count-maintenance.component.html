@@ -55,7 +55,7 @@
             <nz-select #requestTypeSelect formControlName="requestType" name="requestType"
               (ngModelChange)="requestTypeChange($event)">
               <nz-option *ngFor="let type of availableRequestType | keyvalue" nzValue="{{type.key}}"
-                nzLabel="{{type.value}}">
+                nzLabel="{{'CYCLE-COUNT-REQUEST-TYPE-' + type.value | translate}}">
               </nz-option>
             </nz-select>
           </nz-form-control>

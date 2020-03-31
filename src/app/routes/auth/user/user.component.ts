@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { _HttpClient, User } from '@delon/theme';
+import { _HttpClient, TitleService } from '@delon/theme';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { I18NService } from '@core';
 import { NzModalService, NzMessageService } from 'ng-zorro-antd';
-import { ReceiptService } from '../../inbound/services/receipt.service';
 import { UserService } from '../services/user.service';
-import { SiteInformationService } from '../services/site-information.service';
+import { ActivatedRoute } from '@angular/router';
+import { User } from '../models/user';
 
 interface ItemData {
   id: number;
@@ -23,12 +23,12 @@ export class AuthUserComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private i18n: I18NService,
-    private modalService: NzModalService,
-    private receiptService: ReceiptService,
-    private message: NzMessageService,
     private userService: UserService,
-    private siteInformationService: SiteInformationService,
-  ) {}
+    private titleService: TitleService,
+    private activatedRoute: ActivatedRoute,
+  ) {
+    this.titleService.setTitle(this.i18n.fanyi('menu.main.auth.user'));
+  }
 
   // Form related data and functions
   searchForm: FormGroup;
@@ -41,12 +41,7 @@ export class AuthUserComponent implements OnInit {
   sortKey: string | null = null;
   sortValue: string | null = null;
 
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
+  pageTitle: string;
 
   resetForm(): void {
     this.searchForm.reset();
@@ -60,17 +55,6 @@ export class AuthUserComponent implements OnInit {
       this.listOfAllUsers = userRes;
       this.listOfDisplayUsers = userRes;
     });
-  }
-
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayUsers.every(item => this.mapOfCheckedId[item.id]);
-    this.indeterminate =
-      this.listOfDisplayUsers.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
-  }
-
-  checkAll(value: boolean): void {
-    this.listOfDisplayUsers.forEach(item => (this.mapOfCheckedId[item.id] = value));
-    this.refreshStatus();
   }
 
   sort(sort: { key: string; value: string }): void {
@@ -93,11 +77,17 @@ export class AuthUserComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.titleService.setTitle(this.i18n.fanyi('menu.main.auth.user'));
     // initiate the search form
     this.searchForm = this.fb.group({
       username: [null],
     });
-  }
 
-  removeUser() {}
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.username) {
+        this.searchForm.controls.username.setValue(params.username);
+        this.search();
+      }
+    });
+  }
 }

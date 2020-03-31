@@ -66,7 +66,7 @@
             {{ data.number }}</a></td>
         <td>{{ data.client?.name }}</td>
         <td>{{ data.supplier?.name }}</td>
-        <td>{{ data.receiptStatus }} </td>
+        <td>{{ 'RECEIPT-STATUS-' + data.receiptStatus | translate}} </td>
         <td>{{ data.totalLineCount }}</td>
         <td>{{ data.totalItemCount }}</td>
         <td>{{ data.totalExpectedQuantity }}</td>

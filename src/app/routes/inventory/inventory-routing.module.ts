@@ -20,7 +20,6 @@ import { InventoryMovementPathComponent } from './movement-path/movement-path.co
 import { InventoryMovementPathMaintenanceComponent } from './movement-path-maintenance/movement-path-maintenance.component';
 import { InventoryMovementPathConfirmComponent } from './movement-path-confirm/movement-path-confirm.component';
 import { InventoryInventoryQuantityChangeComponent } from './inventory-quantity-change/inventory-quantity-change.component';
-import { InventoryAddInventoryComponent } from './add-inventory/add-inventory.component';
 import { InventoryInventoryQuantityChangeConfirmComponent } from './inventory-quantity-change-confirm/inventory-quantity-change-confirm.component';
 import { InventoryInventoryActivityComponent } from './inventory-activity/inventory-activity.component';
 
@@ -46,7 +45,6 @@ const routes: Routes = [
   { path: 'movement-path-confirm', component: InventoryMovementPathConfirmComponent },
   { path: 'inventory-quantity-change', component: InventoryInventoryQuantityChangeComponent },
   { path: 'inventory-quantity-change/confirm', component: InventoryInventoryQuantityChangeConfirmComponent },
-  { path: 'add-inventory', component: InventoryAddInventoryComponent },
   { path: 'inventory-activity', component: InventoryInventoryActivityComponent },
 ];
 
