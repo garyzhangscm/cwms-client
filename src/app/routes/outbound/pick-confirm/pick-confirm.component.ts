@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { _HttpClient, TitleService } from '@delon/theme';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { FormBuilder } from '@angular/forms';
-import { WaveService } from '../services/wave.service';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { WorkOrderService } from '../../work-order/services/work-order.service';
 import { WorkOrder } from '../../work-order/models/work-order';
@@ -24,6 +22,8 @@ export class OutboundPickConfirmComponent implements OnInit {
   number = '';
   workOrder: WorkOrder;
   order: Order;
+  confirming = false;
+  totalPickCountToConfirm = 0;
 
   // Table data for display
   listOfAllPicks: PickWork[] = [];
@@ -40,6 +40,11 @@ export class OutboundPickConfirmComponent implements OnInit {
   // list of checked checkbox
   mapOfCheckedId: { [key: string]: boolean } = {};
   // confirmed quantity for each picks
+
+  // If all picks displayed are fully confirmed
+  // we will disable the cancel button, confirm button
+  // and the "check all" check box
+  allPicksFullyConfirmed = false;
 
   mapOfConfirmedQuantity: { [key: string]: number } = {};
 
@@ -109,6 +114,7 @@ export class OutboundPickConfirmComponent implements OnInit {
           this.listOfAllPicks = [...this.listOfAllPicks, ...workOrderLine.picks];
           this.listOfDisplayPicks = [...this.listOfDisplayPicks, ...workOrderLine.picks];
           this.setupConfirmedQuantity(this.listOfAllPicks);
+          this.refreshStatus();
         });
       }
     });
@@ -126,6 +132,7 @@ export class OutboundPickConfirmComponent implements OnInit {
           this.listOfAllPicks = pickRes;
           this.listOfDisplayPicks = pickRes;
           this.setupConfirmedQuantity(this.listOfAllPicks);
+          this.refreshStatus();
         });
       }
     });
@@ -144,6 +151,8 @@ export class OutboundPickConfirmComponent implements OnInit {
     this.isAllDisplayDataChecked = this.listOfDisplayPicks.every(item => this.mapOfCheckedId[item.id]);
     this.indeterminate =
       this.listOfDisplayPicks.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+
+    this.allPicksFullyConfirmed = this.listOfDisplayPicks.every(item => item.pickedQuantity >= item.quantity);
   }
 
   checkAll(value: boolean): void {
@@ -194,15 +203,24 @@ export class OutboundPickConfirmComponent implements OnInit {
     // make sure we have at least one checkbox checked
     const selectedPicks = this.getSelectedPicks();
     if (selectedPicks.length > 0) {
+      this.confirming = true;
+      this.totalPickCountToConfirm = selectedPicks.length;
       selectedPicks.forEach(pick => {
-        this.confirmPick(pick);
+        this.pickService.confirmPick(pick, this.mapOfConfirmedQuantity[pick.number]).subscribe(pickRes => {
+          this.message.success(this.i18n.fanyi('message.action.success'));
+          this.displayInformation();
+          this.totalPickCountToConfirm--;
+          if (this.totalPickCountToConfirm === 0) {
+            this.confirming = false;
+          }
+        });
       });
     }
   }
   getSelectedPicks(): PickWork[] {
     const selectedPicks: PickWork[] = [];
     this.listOfAllPicks.forEach((pick: PickWork) => {
-      if (this.mapOfCheckedId[pick.id] === true) {
+      if (this.mapOfCheckedId[pick.id] === true && pick.quantity > pick.pickedQuantity) {
         selectedPicks.push(pick);
       }
     });
@@ -210,9 +228,11 @@ export class OutboundPickConfirmComponent implements OnInit {
   }
 
   confirmPick(pick: PickWork) {
+    this.confirming = true;
     this.pickService.confirmPick(pick, this.mapOfConfirmedQuantity[pick.number]).subscribe(pickRes => {
       this.message.success(this.i18n.fanyi('message.action.success'));
       this.displayInformation();
+      this.confirming = false;
     });
   }
   returnToPreviousPage() {

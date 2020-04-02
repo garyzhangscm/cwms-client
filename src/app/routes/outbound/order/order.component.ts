@@ -13,6 +13,7 @@ import { ShortAllocationService } from '../services/short-allocation.service';
 import { ShortAllocation } from '../models/short-allocation';
 import { Inventory } from '../../inventory/models/inventory';
 import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
+import { InventoryService } from '../../inventory/services/inventory.service';
 
 @Component({
   selector: 'app-outbound-order',
@@ -31,15 +32,14 @@ export class OutboundOrderComponent implements OnInit {
     private shortAllocationService: ShortAllocationService,
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
+    private inventoryService: InventoryService,
   ) {}
 
   // Form related data and functions
   searchForm: FormGroup;
   unpickForm: FormGroup;
   searching = false;
-
-  unpickedInventory: Inventory;
-
+  tabSelectedIndex = 0;
   // Table data for display
   listOfAllOrders: Order[] = [];
   listOfDisplayOrders: Order[] = [];
@@ -89,7 +89,7 @@ export class OutboundOrderComponent implements OnInit {
     this.selectedFiltersByShipToCustomer = [];
   }
 
-  search(): void {
+  search(expandedOrderId?: number, tabSelectedIndex?: number): void {
     this.searching = true;
     this.orderService.getOrders(this.searchForm.controls.number.value).subscribe(orderRes => {
       this.listOfAllOrders = this.calculateQuantities(orderRes);
@@ -119,13 +119,24 @@ export class OutboundOrderComponent implements OnInit {
         }
       });
 
-      this.collapseAllRecord();
+      this.collapseAllRecord(expandedOrderId);
       this.searching = false;
+      if (tabSelectedIndex) {
+        this.tabSelectedIndex = tabSelectedIndex;
+      }
     });
   }
 
-  collapseAllRecord() {
+  collapseAllRecord(expandedOrderId?: number) {
     this.listOfDisplayOrders.forEach(item => (this.mapOfExpandedId[item.id] = false));
+    if (expandedOrderId) {
+      this.mapOfExpandedId[expandedOrderId] = true;
+      this.listOfDisplayOrders.forEach(order => {
+        if (order.id === expandedOrderId) {
+          this.showOrderDetails(order);
+        }
+      });
+    }
   }
 
   calculateQuantities(orders: Order[]): Order[] {
@@ -233,7 +244,6 @@ export class OutboundOrderComponent implements OnInit {
         nzOkType: 'danger',
         nzOnOk: () => {
           this.orderService.removeOrders(selectedOrders).subscribe(res => {
-            console.log('selected order removed');
             this.search();
           });
         },
@@ -299,7 +309,6 @@ export class OutboundOrderComponent implements OnInit {
     this.router.navigateByUrl(`/outbound/pick/confirm?type=order&number=${order.number}`);
   }
   showOrderDetails(order: Order) {
-    console.log(`expanded: ${JSON.stringify(order)}`);
     // When we expand the details for the order, load the picks and short allocation from the server
     if (this.mapOfExpandedId[order.id] === true) {
       this.showPicks(order);
@@ -310,7 +319,6 @@ export class OutboundOrderComponent implements OnInit {
   showPicks(order: Order) {
     this.pickService.getPicks(null, order.id).subscribe(pickRes => {
       this.mapOfPicks[order.id] = [...pickRes];
-      console.log(`Map of picks:\n${JSON.stringify(this.mapOfPicks)}`);
     });
   }
   showShortAllocations(order: Order) {
@@ -321,10 +329,13 @@ export class OutboundOrderComponent implements OnInit {
   showPickedInventory(order: Order) {
     // Get all the picks and then load the pikced inventory
     this.pickService.getPicks(null, order.id).subscribe(pickRes => {
-      this.pickService.getPickedInventories(pickRes).subscribe(pickedInventoryRes => {
-        console.log(`pickedInventoryRes:\n${JSON.stringify(pickedInventoryRes)}`);
-        this.mapOfPickedInventory[order.id] = [...pickedInventoryRes];
-      });
+      if (pickRes.length === 0) {
+        this.mapOfPickedInventory[order.id] = [];
+      } else {
+        this.pickService.getPickedInventories(pickRes).subscribe(pickedInventoryRes => {
+          this.mapOfPickedInventory[order.id] = [...pickedInventoryRes];
+        });
+      }
     });
   }
 
@@ -365,8 +376,12 @@ export class OutboundOrderComponent implements OnInit {
       this.search();
     });
   }
-  openUnpickModal(inventory: Inventory, tplUnpickModalTitle: TemplateRef<{}>, tplUnpickModalContent: TemplateRef<{}>) {
-    console.log(`start to unpick ${inventory}`);
+  openUnpickModal(
+    order: Order,
+    inventory: Inventory,
+    tplUnpickModalTitle: TemplateRef<{}>,
+    tplUnpickModalContent: TemplateRef<{}>,
+  ) {
     this.unpickForm = this.fb.group({
       lpn: new FormControl({ value: inventory.lpn, disabled: true }),
       itemNumber: new FormControl({ value: inventory.item.name, disabled: true }),
@@ -376,9 +391,8 @@ export class OutboundOrderComponent implements OnInit {
       quantity: new FormControl({ value: inventory.quantity, disabled: true }),
       locationName: new FormControl({ value: inventory.location.name, disabled: true }),
       destinationLocation: [null],
-      immediatelyPutaway: [null],
+      immediateMove: [null],
     });
-    this.unpickedInventory = inventory;
 
     // Load the location
     this.unpickModal = this.modalService.create({
@@ -392,13 +406,28 @@ export class OutboundOrderComponent implements OnInit {
         // this.refreshReceiptResults();
       },
       nzOnOk: () => {
-        this.unpickInventory();
+        this.unpickInventory(
+          order,
+          inventory,
+          this.unpickForm.controls.destinationLocation.value,
+          this.unpickForm.controls.immediateMove.value,
+        );
       },
       nzWidth: 1000,
     });
   }
 
-  unpickInventory() {}
+  unpickInventory(order: Order, inventory: Inventory, destinationLocation: string, immediateMove: boolean) {
+    console.log(
+      `Start to unpick ${JSON.stringify(inventory)} to ${destinationLocation}, immediateMove: ${immediateMove}`,
+    );
+    this.inventoryService.unpick(inventory, destinationLocation, immediateMove).subscribe(res => {
+      console.log(`unpick is done`);
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      // refresh the picked inventory
+      this.search(order.id, 2);
+    });
+  }
 
   cancelShortAllocation(shortAllocation: ShortAllocation) {
     this.shortAllocationService.cancelShortAllocations([shortAllocation]).subscribe(shortAllocationRes => {

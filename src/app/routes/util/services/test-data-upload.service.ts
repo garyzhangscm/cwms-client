@@ -31,4 +31,9 @@ export class TestDataUploadService {
     const url = `resource/test-data/init/${name}?warehouseName=${this.warehouseService.getCurrentWarehouse().name}`;
     return this.http.post(url).pipe(map(res => res.data));
   }
+
+  clearAll(): Observable<string> {
+    const url = `resource/test-data/clear?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    return this.http.post(url).pipe(map(res => res.data));
+  }
 }

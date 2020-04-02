@@ -95,7 +95,7 @@
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
         <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
-          (nzCheckedChange)="checkAll($event)"></th>
+          (nzCheckedChange)="checkAll($event)" [nzDisabled]="allPicksFullyConfirmed"></th>
 
 
         <th nzShowSort nzSortKey="number">
@@ -134,10 +134,10 @@
         <td>{{ data.pickedQuantity }}</td>
         <td>
           <input nz-input [(ngModel)]="mapOfConfirmedQuantity[data.number]"
-            [disabled]="mapOfConfirmedQuantity[data.number] === 0" style="width: 250px;" /></td>
+            [disabled]="mapOfConfirmedQuantity[data.number] === 0 || confirming === true" style="width: 250px;" /></td>
         <td>
           <button nz-button nzType="primary" (click)="confirmPick(data)"
-            [disabled]="mapOfConfirmedQuantity[data.number] === 0">
+            [disabled]="mapOfConfirmedQuantity[data.number] <= 0" [nzLoading]="confirming">
             {{ 'description.field.button.confirm' | translate }}
           </button></td>
       </tr>
@@ -148,10 +148,11 @@
 
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start">
-    <button nz-button nzType="danger" (click)="cancelSelectedPicks()">
-      {{ 'description.field.button.delete' | translate }}
+    <button nz-button nzType="danger" (click)="cancelSelectedPicks()" [disabled]="allPicksFullyConfirmed">
+      {{ 'description.field.button.cancel' | translate }}
     </button>
-    <button nz-button nzType="primary" (click)="confirmPicks()">
+    <button nz-button nzType="primary" (click)="confirmPicks()" [nzLoading]="confirming"
+      [disabled]="allPicksFullyConfirmed">
       {{ 'description.field.button.confirm' | translate }}
     </button>
   </div>

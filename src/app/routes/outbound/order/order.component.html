@@ -197,7 +197,7 @@
         <tr [nzExpand]="mapOfExpandedId[data.id]" class="inner-table">
           <td colspan="3"></td>
           <td colspan="7">
-            <nz-tabset>
+            <nz-tabset [nzSelectedIndex]="tabSelectedIndex">
               <nz-tab nzTitle=" {{ 'description.field.label.order.line' | translate }}">
                 <nz-table #innerTable [nzData]="data.orderLines" nzSize="middle" [nzShowPagination]="false">
                   <thead>
@@ -286,10 +286,10 @@
     <ng-template #pickTableFoot>
       <div nz-row nzType="flex" nzJustify="start">
         <button nz-button nzType="primary" (click)="printPickSheets(data)"
-          [nzLoading]="mapOfPrintingInProcessId[data.id]">
+          [nzLoading]="mapOfPrintingInProcessId[data.id]" [disabled]="mapOfPicks[data.id]?.length === 0">
           {{ 'description.field.button.print' | translate }}
         </button>
-        <button nz-button (click)="confirmPicks(data)">
+        <button nz-button (click)="confirmPicks(data)" [disabled]="mapOfPicks[data.id]?.length === 0">
           {{ 'description.field.button.confirm' | translate }}
         </button>
       </div>
@@ -338,7 +338,7 @@
           <td>{{ inventory.quantity }}</td>
           <td>{{ inventory.pickedQuantity }}</td>
           <td>
-            <button nz-button (click)="openUnpickModal(inventory, tplUnpickModalTitle, tplUnpickModalContent)">
+            <button nz-button (click)="openUnpickModal(data, inventory, tplUnpickModalTitle, tplUnpickModalContent)">
               {{ 'description.field.button.unpick' | translate }}
             </button>
           </td>
@@ -541,7 +541,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-control [nzSpan]="14" [nzOffset]="6">
-            <label nz-checkbox formControlName="immediatelyPutaway">
+            <label nz-checkbox formControlName="immediateMove">
               <span>{{ 'description.field.label.unpick.immediately-putaway' | translate}}</span>
             </label>
           </nz-form-control>

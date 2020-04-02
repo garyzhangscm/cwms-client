@@ -22,6 +22,7 @@ import { InventoryMovementPathConfirmComponent } from './movement-path-confirm/m
 import { InventoryInventoryQuantityChangeComponent } from './inventory-quantity-change/inventory-quantity-change.component';
 import { InventoryInventoryQuantityChangeConfirmComponent } from './inventory-quantity-change-confirm/inventory-quantity-change-confirm.component';
 import { InventoryInventoryActivityComponent } from './inventory-activity/inventory-activity.component';
+import { InventoryInventoryMoveComponent } from './inventory-move/inventory-move.component';
 
 const routes: Routes = [
   { path: 'inventory', component: InventoryInventoryComponent },
@@ -46,6 +47,7 @@ const routes: Routes = [
   { path: 'inventory-quantity-change', component: InventoryInventoryQuantityChangeComponent },
   { path: 'inventory-quantity-change/confirm', component: InventoryInventoryQuantityChangeConfirmComponent },
   { path: 'inventory-activity', component: InventoryInventoryActivityComponent },
+  { path: 'inventory-move', component: InventoryInventoryMoveComponent },
 ];
 
 @NgModule({

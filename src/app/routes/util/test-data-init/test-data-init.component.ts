@@ -11,9 +11,14 @@ export class UtilTestDataInitComponent implements OnInit {
   currentStep: number;
   loadButtonDisabled: boolean;
   loadButtonLoading: boolean;
+  clearButtonDisabled: boolean;
+  clearButtonLoading: boolean;
+
   constructor(private http: _HttpClient, private testDataUploadService: TestDataUploadService) {
     this.loadButtonDisabled = true;
     this.loadButtonLoading = false;
+    this.clearButtonDisabled = true;
+    this.clearButtonLoading = false;
   }
 
   ngOnInit() {
@@ -22,11 +27,17 @@ export class UtilTestDataInitComponent implements OnInit {
       this.currentStep = 0;
       this.loadButtonDisabled = false;
       this.loadButtonLoading = false;
+
+      this.clearButtonDisabled = false;
+      this.clearButtonLoading = false;
     });
   }
   loadData(index) {
     this.loadButtonDisabled = true;
     this.loadButtonLoading = true;
+    this.clearButtonDisabled = true;
+    this.clearButtonLoading = true;
+
     this.currentStep = index;
     if (index < this.dataNames.length) {
       this.testDataUploadService.loadTestData(this.dataNames[index]).subscribe(res => {
@@ -37,6 +48,22 @@ export class UtilTestDataInitComponent implements OnInit {
     } else {
       this.loadButtonDisabled = false;
       this.loadButtonLoading = false;
+      this.clearButtonDisabled = false;
+      this.clearButtonLoading = false;
     }
+  }
+
+  clearData() {
+    this.loadButtonDisabled = true;
+    this.loadButtonLoading = true;
+    this.clearButtonDisabled = true;
+    this.clearButtonLoading = true;
+    this.testDataUploadService.clearAll().subscribe(res => {
+      console.log('>> clear test data is cleared');
+      this.loadButtonDisabled = false;
+      this.loadButtonLoading = false;
+      this.clearButtonDisabled = false;
+      this.clearButtonLoading = false;
+    });
   }
 }

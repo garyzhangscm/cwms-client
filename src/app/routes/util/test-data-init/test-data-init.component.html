@@ -10,5 +10,9 @@
     <button nz-button (click)="loadData(0)" [disabled]="loadButtonDisabled" [nzLoading]="loadButtonLoading"
       nzType="primary">Load
       Data</button>
+    <nz-divider nzType="vertical"></nz-divider>
+    <button nz-button (click)="clearData(0)" [disabled]="clearButtonDisabled" [nzLoading]="clearButtonLoading"
+      nzType="danger">Clear
+      Data</button>
   </ng-template>
 </ng-container>

@@ -103,4 +103,17 @@ export class InventoryService {
     const url = `inventory/inventory-adj`;
     return this.http.put(url, inventory).pipe(map(res => res.data));
   }
+
+  unpick(inventory: Inventory, destinationLocationName?: string, immediateMove?: boolean): Observable<Inventory> {
+    let url = `inventory/inventory/${inventory.id}/unpick?warehouseId=${
+      this.warehouseService.getCurrentWarehouse().id
+    }`;
+    if (destinationLocationName) {
+      url = url + `&destinationLocationName=${destinationLocationName}`;
+    }
+    if (immediateMove) {
+      url = url + `&immediateMove=${immediateMove}`;
+    }
+    return this.http.post(url).pipe(map(res => res.data));
+  }
 }
