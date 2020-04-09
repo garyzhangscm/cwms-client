@@ -20,4 +20,5 @@ export interface WarehouseLocation {
   pendingVolume: number;
   locationGroup: LocationGroup;
   enabled: boolean;
+  locked: boolean;
 }

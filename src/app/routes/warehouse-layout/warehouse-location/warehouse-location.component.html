@@ -29,6 +29,18 @@
       </nz-form-item>
     </div>
   </div>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="name">
+          {{ 'description.field.label.location' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="locationName" id="locationName" formControlName="locationName" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
       <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
@@ -86,6 +98,12 @@
         <th nzShowSort nzSortKey="countSequence">
           {{ 'description.field.table.header.location.countSequence' | translate }}
         </th>
+        <th nzShowSort nzSortKey="enabled">
+          {{ 'description.field.table.header.location.enabled' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="locked">
+          {{ 'description.field.table.header.location.locked' | translate }}
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -105,6 +123,8 @@
         <td>{{ data.putawaySequence }}</td>
         <td>{{ data.pickSequence }}</td>
         <td>{{ data.countSequence }}</td>
+        <td>{{ data.enabled }}</td>
+        <td>{{ data.locked }}</td>
       </tr>
     </tbody>
   </nz-table>

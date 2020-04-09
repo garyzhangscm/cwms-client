@@ -25,6 +25,10 @@ import { InventoryInventoryQuantityChangeComponent } from './inventory-quantity-
 import { InventoryInventoryQuantityChangeConfirmComponent } from './inventory-quantity-change-confirm/inventory-quantity-change-confirm.component';
 import { InventoryInventoryActivityComponent } from './inventory-activity/inventory-activity.component';
 import { InventoryInventoryMoveComponent } from './inventory-move/inventory-move.component';
+import { InventoryInventoryAdjustmentRequestComponent } from './inventory-adjustment-request/inventory-adjustment-request.component';
+import { InventoryInventoryAdjustmentThresholdComponent } from './inventory-adjustment-threshold/inventory-adjustment-threshold.component';
+import { InventoryInventoryAdjustmentThresholdMaintenanceComponent } from './inventory-adjustment-threshold-maintenance/inventory-adjustment-threshold-maintenance.component';
+import { InventoryInventoryAdjustmentThresholdConfirmComponent } from './inventory-adjustment-threshold-confirm/inventory-adjustment-threshold-confirm.component';
 
 const COMPONENTS = [
   InventoryInventoryComponent,
@@ -50,6 +54,10 @@ const COMPONENTS = [
   InventoryInventoryQuantityChangeConfirmComponent,
   InventoryInventoryActivityComponent,
   InventoryInventoryMoveComponent,
+  InventoryInventoryAdjustmentRequestComponent,
+  InventoryInventoryAdjustmentThresholdComponent,
+  InventoryInventoryAdjustmentThresholdMaintenanceComponent,
+  InventoryInventoryAdjustmentThresholdConfirmComponent,
 ];
 const COMPONENTS_NOROUNT = [];
 

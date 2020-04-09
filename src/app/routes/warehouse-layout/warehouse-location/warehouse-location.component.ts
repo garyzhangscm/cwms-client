@@ -76,6 +76,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       .getLocations(
         this.searchForm.controls.taggedLocationGroupTypes.value,
         this.searchForm.controls.taggedLocationGroups.value,
+        this.searchForm.controls.locationName.value,
       )
       .subscribe(locationRes => {
         this.locations = locationRes;
@@ -184,6 +185,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
     this.searchForm = this.fb.group({
       taggedLocationGroupTypes: [null],
       taggedLocationGroups: [null],
+      locationName: [null],
     });
 
     // initiate the select control

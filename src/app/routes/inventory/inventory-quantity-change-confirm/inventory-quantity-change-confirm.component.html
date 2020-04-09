@@ -65,11 +65,19 @@
       <nz-descriptions-item nzTitle="{{'description.field.label.inventory.status' | translate}}">
         {{currentInventory.inventoryStatus.name}}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'description.field.label.quantity' | translate}}">
+      <nz-descriptions-item nzTitle="{{'description.field.label.quantity' | translate}}" nzSpan="2">
         <span
           *ngIf='currentInventory !== undefined && currentInventory.quantity === originalInventoryQuantity else quantityChangedTpl'>
           {{currentInventory.quantity}}
         </span>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description.field.label.document-number' | translate}}">
+
+        <input nz-input [(ngModel)]="documentNumber" style="width: 250px;" />
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description.field.label.comment' | translate}}">
+
+        <input nz-input [(ngModel)]="comment" style="width: 250px;" />
       </nz-descriptions-item>
     </nz-descriptions>
 
@@ -79,6 +87,8 @@
       <nz-divider nzType="vertical"></nz-divider>
       <span>{{ 'description.field.label.newValue' | translate}} : {{  currentInventory.quantity }}</span>
     </ng-template>
+
+
     <ng-template #actionConfirm>
       <button nz-button nzType="primary" (click)="confirmInventoryAdjust()">
         {{ 'description.steps.confirm.title' | translate }}</button>

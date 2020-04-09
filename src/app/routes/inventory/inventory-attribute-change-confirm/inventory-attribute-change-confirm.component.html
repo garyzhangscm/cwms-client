@@ -74,10 +74,10 @@
         <div
           *ngIf="currentInventory !== undefined && currentInventory.inventoryStatus.name !== originalInventoryStatusName else inventoryStatusTpl">
           <span>{{ 'description.field.label.originalValue' | translate}} :
-            {{ originalInventoryStatusName }}</span>
+            {{ 'INVENTORY-STATUS-' + originalInventoryStatusName | translate}}</span>
           <nz-divider nzType="vertical"></nz-divider>
           <span>{{ 'description.field.label.newValue' | translate}} :
-            {{currentInventory.inventoryStatus.name}}</span>
+            {{ 'INVENTORY-STATUS-' + currentInventory.inventoryStatus.name | translate}}</span>
         </div>
 
       </nz-descriptions-item>
@@ -85,6 +85,8 @@
         {{currentInventory.quantity}}
 
       </nz-descriptions-item>
+
+
       <ng-template #inventoryStatusTpl>
         {{currentInventory.inventoryStatus.name}}</ng-template>
 

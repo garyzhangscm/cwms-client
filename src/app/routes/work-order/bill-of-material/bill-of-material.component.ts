@@ -191,7 +191,6 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
         this.search();
       },
       nzOnOk: () => {
-        console.log(`newWorkOrder:\n${JSON.stringify(this.newWorkOrder)}`);
         this.createWorkOrderFromBOM(billOfMaterial, this.newWorkOrder);
       },
       nzWidth: 1000,
@@ -210,5 +209,9 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
     if (productionLines.length === 1) {
       this.newWorkOrder.productionLine = productionLines[0];
     }
+  }
+
+  workOrderNumberOnBlur(workOrderNumber: string) {
+    this.newWorkOrder.number = workOrderNumber;
   }
 }

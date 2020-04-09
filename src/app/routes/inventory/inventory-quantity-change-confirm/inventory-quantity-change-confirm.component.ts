@@ -4,6 +4,7 @@ import { Inventory } from '../models/inventory';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { InventoryService } from '../services/inventory.service';
+import { NzMessageService } from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-inventory-inventory-quantity-change-confirm',
@@ -14,6 +15,8 @@ export class InventoryInventoryQuantityChangeConfirmComponent implements OnInit 
   pageTitle: string;
   originalInventoryQuantity: number;
   previousApplication: string;
+  documentNumber: string;
+  comment: string;
 
   constructor(
     private i18n: I18NService,
@@ -21,6 +24,7 @@ export class InventoryInventoryQuantityChangeConfirmComponent implements OnInit 
     private inventoryService: InventoryService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
+    private messageService: NzMessageService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inventory.adjust.confirm.title');
   }
@@ -38,12 +42,23 @@ export class InventoryInventoryQuantityChangeConfirmComponent implements OnInit 
   }
 
   confirmInventoryAdjust() {
-    this.inventoryService.adjustInventoryQuantity(this.currentInventory).subscribe(res => {
-      if (this.previousApplication === 'inventory') {
-        this.router.navigateByUrl(`/inventory/inventory?id=${res.id}&refresh=true`);
-      } else {
-        this.router.navigateByUrl(`/inventory/inventory-adjust?locationName=${res.location.name}&expand=true`);
-      }
-    });
+    this.inventoryService
+      .adjustInventoryQuantity(this.currentInventory, this.documentNumber, this.comment)
+      .subscribe(inventoryRes => {
+        if (inventoryRes.lockedForAdjust === true) {
+          this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.request-success'));
+        } else {
+          this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.adjust-success'));
+        }
+        setTimeout(() => {
+          if (this.previousApplication === 'inventory') {
+            this.router.navigateByUrl(`/inventory/inventory?id=${inventoryRes.id}&refresh=true`);
+          } else {
+            this.router.navigateByUrl(
+              `/inventory/inventory-adjust?locationName=${inventoryRes.location.name}&expand=true`,
+            );
+          }
+        }, 2500);
+      });
   }
 }

@@ -77,6 +77,8 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   inventoryRemovalReason: ReasonCode;
   listOfReasons: ReasonCode[];
 
+  documentNumber: string;
+  comment: string;
   // Inventory in locations
   // key: locatin id
   // value: list of inventroy in the location
@@ -260,7 +262,8 @@ export class InventoryInventoryAdjustComponent implements OnInit {
       inventoryStatus: null,
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
     };
-    // Load the location
+    this.documentNumber = '';
+    this.comment = '';
 
     // show the model
     this.addInventoryModal = this.modalService.create({
@@ -316,7 +319,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   }
 
   addInventory(inventory: Inventory) {
-    this.inventoryService.addInventory(inventory).subscribe(inventoryRes => {
+    this.inventoryService.addInventory(inventory, this.documentNumber, this.comment).subscribe(inventoryRes => {
       // display the newly added inventory
       this.searchForm.controls.location.setValue(inventoryRes.location.name);
       this.search(true);

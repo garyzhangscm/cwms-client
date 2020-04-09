@@ -5,7 +5,7 @@ import { Inventory } from '../models/inventory';
 import { InventoryService } from '../services/inventory.service';
 import { ClientService } from '../../common/services/client.service';
 import { ItemFamilyService } from '../services/item-family.service';
-import { NzModalService, NzModalRef } from 'ng-zorro-antd';
+import { NzModalService, NzModalRef, NzMessageService } from 'ng-zorro-antd';
 import { I18NService } from '@core';
 import { Item } from '../models/item';
 import { ItemPackageType } from '../models/item-package-type';
@@ -17,6 +17,7 @@ import { ReasonCodeService } from '../../common/services/reason-code.service';
 import { ReasonCodeType } from '../../common/models/reason-code-type.enum';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { Router, ActivatedRoute } from '@angular/router';
+import { LocationService } from '../../warehouse-layout/services/location.service';
 
 @Component({
   selector: 'app-inventory-inventory',
@@ -29,6 +30,7 @@ export class InventoryInventoryComponent implements OnInit {
   itemFamilies: Array<{ label: string; value: string }> = [];
   // Form related data and functions
   searchForm: FormGroup;
+  inventoryMovementForm: FormGroup;
 
   searching = false;
 
@@ -54,10 +56,15 @@ export class InventoryInventoryComponent implements OnInit {
 
   inventoryToBeRemoved: Inventory;
   inventoryRemovalModal: NzModalRef;
-  inventoryRemovalReason: ReasonCode;
-  listOfReasons: ReasonCode[];
+
+  documentNumber: string;
+  comment: string;
 
   isCollapse = false;
+
+  inventoryMoveModal: NzModalRef;
+
+  mapOfInprocessInventoryId: { [key: string]: boolean } = {};
 
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
@@ -70,9 +77,10 @@ export class InventoryInventoryComponent implements OnInit {
     private itemFamilyService: ItemFamilyService,
     private i18n: I18NService,
     private modalService: NzModalService,
-    private reasonCodeService: ReasonCodeService,
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
+    private locationService: LocationService,
+    private messageService: NzMessageService,
   ) {}
 
   resetForm(): void {
@@ -242,7 +250,10 @@ export class InventoryInventoryComponent implements OnInit {
     tplInventoryRemovalModalTitle: TemplateRef<{}>,
     tplInventoryRemovalModalContent: TemplateRef<{}>,
   ) {
+    this.mapOfInprocessInventoryId[inventory.id] = true;
     this.inventoryToBeRemoved = inventory;
+    this.documentNumber = '';
+    this.comment = '';
 
     this.inventoryRemovalModal = this.modalService.create({
       nzTitle: tplInventoryRemovalModalTitle,
@@ -252,25 +263,19 @@ export class InventoryInventoryComponent implements OnInit {
       nzMaskClosable: false,
       nzOnCancel: () => {
         this.inventoryRemovalModal.destroy();
+        this.mapOfInprocessInventoryId[inventory.id] = false;
         this.search();
       },
       nzOnOk: () => {
-        this.removeInventory();
-        this.search();
+        this.removeInventory(this.inventoryToBeRemoved);
       },
       nzWidth: 1000,
     });
-    this.inventoryRemovalModal.afterOpen.subscribe(() => this.initReasonList());
   }
 
-  initReasonList() {
-    this.reasonCodeService.loadReasonCodeByType(ReasonCodeType.Inventory_Adjust).subscribe(res => {
-      this.listOfReasons = res;
-    });
-  }
-
-  removeInventory() {
-    this.inventoryService.adjustDownInventory(this.inventoryToBeRemoved).subscribe(res => {
+  removeInventory(inventory: Inventory) {
+    this.inventoryService.adjustDownInventory(inventory, this.documentNumber, this.comment).subscribe(res => {
+      this.mapOfInprocessInventoryId[inventory.id] = false;
       this.search();
     });
 
@@ -309,6 +314,57 @@ export class InventoryInventoryComponent implements OnInit {
       itemFamilyList.forEach(itemFamily =>
         this.itemFamilies.push({ label: itemFamily.description, value: itemFamily.id.toString() }),
       );
+    });
+  }
+
+  openMoveInventoryModal(
+    inventory: Inventory,
+    tplInventoryMoveModalTitle: TemplateRef<{}>,
+    tplInventoryMoveModalContent: TemplateRef<{}>,
+  ) {
+    this.mapOfInprocessInventoryId[inventory.id] = true;
+    this.inventoryMovementForm = this.fb.group({
+      lpn: new FormControl({ value: inventory.lpn, disabled: true }),
+      itemNumber: new FormControl({ value: inventory.item.name, disabled: true }),
+      itemDescription: new FormControl({ value: inventory.item.description, disabled: true }),
+      inventoryStatus: new FormControl({ value: inventory.inventoryStatus.name, disabled: true }),
+      itemPackageType: new FormControl({ value: inventory.itemPackageType.name, disabled: true }),
+      quantity: new FormControl({ value: inventory.quantity, disabled: true }),
+      locationName: new FormControl({ value: inventory.location.name, disabled: true }),
+      destinationLocation: [null],
+      immediateMove: [null],
+    });
+
+    // Load the location
+    this.inventoryMoveModal = this.modalService.create({
+      nzTitle: tplInventoryMoveModalTitle,
+      nzContent: tplInventoryMoveModalContent,
+      nzOkText: this.i18n.fanyi('description.field.button.confirm'),
+      nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.inventoryMoveModal.destroy();
+        this.mapOfInprocessInventoryId[inventory.id] = false;
+      },
+      nzOnOk: () => {
+        this.moveInventory(
+          inventory,
+          this.inventoryMovementForm.controls.destinationLocation.value,
+          this.inventoryMovementForm.controls.immediateMove.value,
+        );
+      },
+
+      nzWidth: 1000,
+    });
+  }
+  moveInventory(inventory: Inventory, destinationLocationName: string, immediateMove: boolean) {
+    this.locationService.getLocations(null, null, destinationLocationName).subscribe(location => {
+      this.inventoryService.move(inventory, location[0], immediateMove).subscribe(inventoryRes => {
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+
+        this.mapOfInprocessInventoryId[inventory.id] = false;
+        this.search();
+      });
     });
   }
 }

@@ -77,8 +77,14 @@ export class InventoryService {
     const url = 'inventory/inventory/' + inventory.id;
     return this.http.delete(url).pipe(map(res => res.data));
   }
-  adjustDownInventory(inventory: Inventory): Observable<Inventory> {
-    const url = `inventory/inventory-adj/${inventory.id}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+  adjustDownInventory(inventory: Inventory, documentNumber?: string, comment?: string): Observable<Inventory> {
+    let url = `inventory/inventory-adj/${inventory.id}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    if (documentNumber) {
+      url = `${url}&documentNumber=${documentNumber}`;
+    }
+    if (comment) {
+      url = `${url}&comment=${comment}`;
+    }
     return this.http.delete(url).pipe(map(res => res.data));
   }
   changeInventory(inventory: Inventory): Observable<Inventory> {
@@ -86,21 +92,33 @@ export class InventoryService {
     return this.http.put(url, inventory).pipe(map(res => res.data));
   }
 
-  adjustInventoryQuantity(inventory: Inventory): Observable<Inventory> {
-    const url = `inventory/inventory/${inventory.id}/adjust-quantity?newQuantity=${inventory.quantity}`;
+  adjustInventoryQuantity(inventory: Inventory, documentNumber?: string, comment?: string): Observable<Inventory> {
+    let url = `inventory/inventory/${inventory.id}/adjust-quantity?newQuantity=${inventory.quantity}`;
+    if (documentNumber) {
+      url = `${url}&documentNumber=${documentNumber}`;
+    }
+    if (comment) {
+      url = `${url}&comment=${comment}`;
+    }
     return this.http.post(url).pipe(map(res => res.data));
   }
 
   getNextLPN(): Observable<string> {
     return this.systemControlledNumberService.getNextAvailableId('LPN');
   }
-  move(inventory: Inventory, destination: WarehouseLocation): Observable<Inventory> {
-    const url = `inventory/inventory/${inventory.id}/move`;
+  move(inventory: Inventory, destination: WarehouseLocation, immediateMove: boolean = true): Observable<Inventory> {
+    const url = `inventory/inventory/${inventory.id}/move?immediateMove=${immediateMove}`;
     return this.http.post(url, destination).pipe(map(res => res.data));
   }
 
-  addInventory(inventory: Inventory): Observable<Inventory> {
-    const url = `inventory/inventory-adj`;
+  addInventory(inventory: Inventory, documentNumber?: string, comment?: string): Observable<Inventory> {
+    let url = `inventory/inventory-adj?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    if (documentNumber) {
+      url = `${url}&documentNumber=${documentNumber}`;
+    }
+    if (comment) {
+      url = `${url}&comment=${comment}`;
+    }
     return this.http.put(url, inventory).pipe(map(res => res.data));
   }
 

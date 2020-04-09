@@ -138,6 +138,7 @@
           ">
           {{ 'description.field.label.inventory.status' | translate }}
         </th>
+        <th>{{ 'description.field.label.inventory.locked-for-adjustment' | translate }}</th>
         <th>{{ 'description.field.label.action' | translate }}</th>
       </tr>
     </thead>
@@ -155,21 +156,36 @@
         <td>{{ data.location.name }}</td>
         <td>{{ data.quantity }}</td>
         <td>
-          <a nz-tooltip nzTooltipTitle="{{ data.inventoryStatus.description }}">{{ data.inventoryStatus.name }}</a>
+          <a nz-tooltip
+            nzTooltipTitle="{{ 'INVENTORY-STATUS-' + data.inventoryStatus.name | translate }}">{{ 'INVENTORY-STATUS-' + data.inventoryStatus.name | translate}}</a>
         </td>
+
         <td>
-          <a nz-button routerLink="/inventory/inventory-quantity-change" routerLinkActive="active"
-            [queryParams]="{id : data.id, by : 'inventory'}">
-            {{ 'description.field.label.adjustInventory' | translate }}</a>
+          <span *ngIf="data.lockedForAdjust === false">{{ (data.lockedForAdjust + '') | translate }}</span>
+          <span *ngIf="data.lockedForAdjust === true"><a routerLink="/inventory/inventory-adjustment-request"
+              routerLinkActive="active"
+              [queryParams]="{inventoryId : data.id}">{{ (data.lockedForAdjust + '') | translate }}</a></span></td>
+        <td>
+          <button nz-button routerLink="/inventory/inventory-quantity-change" routerLinkActive="active"
+            [queryParams]="{id : data.id, by : 'inventory'}" [disabled]="data.lockedForAdjust === true"
+            [nzLoading]="mapOfInprocessInventoryId[data.id]">
+            {{ 'description.field.label.adjustInventory' | translate }}</button>
           <nz-divider nzType="vertical"></nz-divider>
 
-          <a nz-button routerLink="/inventory/inventory-attribute-change" routerLinkActive="active"
-            [queryParams]="{id : data.id}">
-            {{ 'description.field.label.inventory.attributeChange' | translate }}</a>
+          <button nz-button routerLink="/inventory/inventory-attribute-change" routerLinkActive="active"
+            [queryParams]="{id : data.id}" [disabled]="data.lockedForAdjust === true"
+            [nzLoading]="mapOfInprocessInventoryId[data.id]">
+            {{ 'description.field.label.inventory.attributeChange' | translate }}</button>
+          <nz-divider nzType="vertical"></nz-divider>
+          <button nz-button
+            (click)="openMoveInventoryModal(data, tplInventoryMoveModalTitle, tplInventoryMoveModalContent )"
+            [nzLoading]="mapOfInprocessInventoryId[data.id]" [disabled]="data.lockedForAdjust === true">
+            {{ 'description.field.label.moveInventory' | translate }}</button>
           <nz-divider nzType="vertical"></nz-divider>
           <button nz-button
             (click)="openRemoveInventoryModal(data, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
-            nzType="danger">{{ 'description.field.label.removeInventory' | translate }}</button>
+            nzType="danger" [nzLoading]="mapOfInprocessInventoryId[data.id]"
+            [disabled]="data.lockedForAdjust === true">{{ 'description.field.label.removeInventory' | translate }}</button>
         </td>
         <ng-template #itemPackageTypeDetails>
           <nz-table #itemPackageTypeDetailTable [nzData]="data.itemPackageType.itemUnitOfMeasures" nzSize="middle"
@@ -218,6 +234,8 @@
       {{ inventoryToBeRemoved.quantity }}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="{{ 'description.field.label.inventory.status' | translate }}" nzSpan="2">
       {{ inventoryToBeRemoved.inventoryStatus.name }}</nz-descriptions-item>
+    <!--
+
     <nz-descriptions-item nzTitle="{{ 'description.field.label.inventory.adjustment.reason' | translate }}" nzSpan="3">
       <div>
         <nz-select style="width: 320px;" [(ngModel)]="inventoryRemovalReason" nzShowSearch nzAllowClear
@@ -227,5 +245,147 @@
         </nz-select>
       </div>
     </nz-descriptions-item>
+
+      -->
+    <nz-descriptions-item nzTitle="{{'description.field.label.document-number' | translate}}">
+
+      <input nz-input [(ngModel)]="documentNumber" style="width: 250px;" />
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'description.field.label.comment' | translate}}">
+
+      <input nz-input [(ngModel)]="comment" style="width: 250px;" />
+    </nz-descriptions-item>
   </nz-descriptions>
+</ng-template>
+
+
+
+<!-- Modal for inventory movement-->
+<ng-template #tplInventoryMoveModalTitle>
+  <span>{{ 'page.modal.delete.header.title' | translate}}</span>
+</ng-template>
+<ng-template #tplInventoryMoveModalContent>
+  <form nz-form [formGroup]="inventoryMovementForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
+            {{ 'description.field.label.lpn' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="lpn" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNumber">
+            {{ 'description.field.label.item' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="itemNumber" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemDescription">
+            {{ 'description.field.label.item.description' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="itemDescription" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'description.field.label.inventory.status' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input nz-input formControlName="inventoryStatus" />
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemPackageType">
+            {{ 'description.field.label.item.package-type' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+
+            <input nz-input formControlName="itemPackageType" />
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="quantity">
+            {{ 'description.field.label.quantity' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="quantity" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationName">
+            {{ 'description.field.label.location' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="locationName" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="destinationLocation">
+            {{ 'description.field.label.unpick.destination-location' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="destinationLocation" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-control [nzSpan]="14" [nzOffset]="6">
+            <label nz-checkbox formControlName="immediateMove">
+              <span>{{ 'description.field.label.unpick.immediately-putaway' | translate}}</span>
+            </label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>
+  </form>
 </ng-template>

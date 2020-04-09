@@ -18,4 +18,5 @@ export interface Inventory {
   quantity: number;
   inventoryStatus: InventoryStatus;
   inventoryMovements?: InventoryMovement[];
+  lockedForAdjust?: boolean;
 }

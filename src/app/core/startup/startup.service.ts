@@ -12,6 +12,7 @@ import { I18NService } from '../i18n/i18n.service';
 import { NzIconService } from 'ng-zorro-antd/icon';
 import { ICONS_AUTO } from '../../../style-icons-auto';
 import { ICONS } from '../../../style-icons';
+import { NzNotificationService } from 'ng-zorro-antd';
 
 /**
  * Used for application startup
@@ -29,9 +30,23 @@ export class StartupService {
     private titleService: TitleService,
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
     private httpClient: HttpClient,
+
     private injector: Injector,
   ) {
     iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
+  }
+
+  private get notification(): NzNotificationService {
+    return this.injector.get(NzNotificationService);
+  }
+  private goToLoginForm() {
+    // Before we go back to login form, we may need to at least load the langugue
+    this.httpClient.get(`resource/assets/i18n/${this.i18n.defaultLang}.json`).subscribe(res => {
+      // Setting language data
+      this.translate.setTranslation(this.i18n.defaultLang, res);
+      this.translate.setDefaultLang(this.i18n.defaultLang);
+      setTimeout(() => this.injector.get(Router).navigateByUrl('/passport/login'));
+    });
   }
 
   private viaHttp(resolve: any, reject: any) {
@@ -41,6 +56,21 @@ export class StartupService {
       // site information
 
       siteInformationUrl = `${siteInformationUrl}/default`;
+    } else {
+      const currentDateTime = new Date().getTime();
+
+      const expiredDateTime = new Date(this.tokenService.get().time);
+
+      expiredDateTime.setSeconds(expiredDateTime.getSeconds() + this.tokenService.get().refreshIn);
+      // expiredDateTime.setSeconds(expiredDateTime.getSeconds() + 10);
+
+      if (currentDateTime >= expiredDateTime.getTime()) {
+        console.log(`Login expired! current token was expired at ${expiredDateTime}`);
+        // OK, the current authrization is already expired. let's go back to the login form
+        // clear token and go back to the login form
+        (this.injector.get(DA_SERVICE_TOKEN) as ITokenService).clear();
+        this.goToLoginForm();
+      }
     }
 
     zip(
@@ -77,6 +107,9 @@ export class StartupService {
         },
         () => {},
         () => {
+          // if we are here, we probably get some error when try to load data
+          // let's follow back to login form
+
           resolve(null);
         },
       );

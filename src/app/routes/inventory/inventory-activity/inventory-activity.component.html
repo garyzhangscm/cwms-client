@@ -218,7 +218,8 @@
         <td>{{ data.location.name }}</td>
         <td>{{ data.quantity }}</td>
         <td>
-          <a nz-tooltip nzTooltipTitle="{{ data.inventoryStatus.description }}">{{ data.inventoryStatus.name }}</a>
+          <a nz-tooltip
+            nzTooltipTitle="{{ 'INVENTORY-STATUS-' + data.inventoryStatus.name | translate }}">{{ 'INVENTORY-STATUS-' + data.inventoryStatus.name | translate}}</a>
         </td>
         <td> {{ 'INVENTORY-ACTIVITY-TYPE-' + data.type | translate}} </td>
         <td> {{ data.activityDateTime[1] }}/{{ data.activityDateTime[2] }}/{{ data.activityDateTime[0] }}

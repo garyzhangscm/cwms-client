@@ -148,8 +148,9 @@
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
+
           <input appFkey variable="work-order-number" nz-input [(ngModel)]="newWorkOrder.number" id="workOrderNumber"
-            name="workOrderNumber" />
+            name="workOrderNumber" (blur)="workOrderNumberOnBlur($event.target.value)" />
         </nz-form-control>
       </nz-form-item>
     </div>
