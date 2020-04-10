@@ -216,8 +216,8 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.inventoryRemovalModal = this.modalService.create({
       nzTitle: tplInventoryRemovalModalTitle,
       nzContent: tplInventoryRemovalModalContent,
-      nzOkText: this.i18n.fanyi('description.field.button.confirm'),
-      nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
       nzMaskClosable: false,
       nzOnCancel: () => {
         this.inventoryRemovalModal.destroy();
@@ -269,8 +269,8 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.addInventoryModal = this.modalService.create({
       nzTitle: tplAddInventoryModalTitle,
       nzContent: tplAddInventoryModalContent,
-      nzOkText: this.i18n.fanyi('description.field.button.confirm'),
-      nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
       nzMaskClosable: false,
       nzOnCancel: () => {
         this.addInventoryModal.destroy();

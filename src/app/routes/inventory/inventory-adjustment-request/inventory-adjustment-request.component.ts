@@ -273,8 +273,8 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
     this.inventoryAdjustmentRequestModal = this.modalService.create({
       nzTitle: tplRequestProcessModalTitle,
       nzContent: tplRequestProcessModalContent,
-      nzOkText: this.i18n.fanyi('description.field.button.confirm'),
-      nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
       nzMaskClosable: false,
       nzOnCancel: () => {
         this.inventoryAdjustmentRequestModal.destroy();

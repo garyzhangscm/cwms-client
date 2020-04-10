@@ -73,12 +73,12 @@ export class OrderService {
                           <td>Customer:</td><td>${order.shipToCustomer == null ? '' : order.shipToCustomer.name}</td>
                           <td>First Name:</td><td>${
                             order.shipToCustomer == null
-                              ? order.shipToContactorFirstname
+                              ? order.shipTocontactorFirstname
                               : order.shipToCustomer.contactorFirstname
                           }</td>
                           <td>Last Name:</td><td>${
                             order.shipToCustomer == null
-                              ? order.shipToContactorLastname
+                              ? order.shipTocontactorLastname
                               : order.shipToCustomer.contactorLastname
                           }</td>
                         </tr>

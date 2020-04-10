@@ -6,7 +6,7 @@
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
         <nz-form-label for="number" [nzSm]="3" [nzXs]="3">
-          {{ 'description.field.label.wave.number' | translate }}
+          {{ 'wave.number' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="number" id="number" formControlName="number" />
@@ -18,9 +18,9 @@
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
       <button nz-button [nzType]="'primary'" (click)="search()">
-        {{ 'description.field.button.search' | translate }}
+        {{ 'search' | translate }}
       </button>
-      <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
     </div>
   </div>
 </form>
@@ -35,35 +35,35 @@
           (nzCheckedChange)="checkAll($event)"></th>
 
         <th nzShowExpand></th>
-        <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+        <th nzShowSort nzSortKey="id">id</th>
         <th nzShowSort nzSortKey="number">
-          {{ 'description.field.label.wave.number' | translate }}
+          {{ 'wave.number' | translate }}
         </th>
         <th nzShowSort nzSortKey="status">
-          {{ 'description.field.label.wave.status' | translate }}
+          {{ 'wave.status' | translate }}
         </th>
         <th nzShowSort nzSortKey="totalOrderCount">
-          {{ 'description.field.label.wave.totalOrderCount' | translate }}
+          {{ 'wave.totalOrderCount' | translate }}
         </th>
         <th nzShowSort nzSortKey="totalItemCount">
-          {{ 'description.field.label.wave.totalItemCount' | translate }}
+          {{ 'wave.totalItemCount' | translate }}
         </th>
         <th nzShowSort nzSortKey="totalQuantity">
-          {{ 'description.field.label.wave.totalQuantity' | translate }}
+          {{ 'wave.totalQuantity' | translate }}
         </th>
 
         <th nzShowSort nzSortKey="totalPickedQuantity">
-          {{ 'description.field.label.wave.totalPickedQuantity' | translate }}
+          {{ 'wave.totalPickedQuantity' | translate }}
         </th>
 
         <th nzShowSort nzSortKey="totalStagedQuantity">
-          {{ 'description.field.label.wave.totalStagedQuantity' | translate }}
+          {{ 'wave.totalStagedQuantity' | translate }}
         </th>
         <th nzShowSort nzSortKey="totalShippedQuantity">
-          {{ 'description.field.label.wave.totalShippedQuantity' | translate }}
+          {{ 'wave.totalShippedQuantity' | translate }}
         </th>
         <th>
-          {{ 'description.field.label.action' | translate }}
+          {{ 'action' | translate }}
         </th>
       </tr>
     </thead>
@@ -84,33 +84,33 @@
           <td>{{ data.totalShippedQuantity }}</td>
           <td>
             <button nz-button nzType="primary" (click)="allocateWave(data)">
-              {{ 'description.field.button.wave.allocate' | translate }}
+              {{ 'wave.allocate' | translate }}
             </button></td>
         </tr>
         <tr [nzExpand]="mapOfExpandedId[data.id]">
           <td colspan="2"></td>
           <td colspan="8">
             <nz-tabset>
-              <nz-tab nzTitle="{{ 'description.field.label.shipment' | translate }}">
+              <nz-tab nzTitle="{{ 'shipment' | translate }}">
 
                 <nz-table #innerTable [nzData]="data.shipmentLines" nzSize="middle" [nzShowPagination]="false"
                   nzBordered class="inner-table">
 
                   <thead>
                     <th>
-                      {{ 'description.field.label.shipment.number' | translate }}</th>
+                      {{ 'shipment.number' | translate }}</th>
                     <th>
-                      {{ 'description.field.label.shipment.line.number' | translate }}</th>
+                      {{ 'shipment.line.number' | translate }}</th>
                     <th>
-                      {{ 'description.field.label.order.number' | translate }}</th>
+                      {{ 'order.number' | translate }}</th>
                     <th>
-                      {{ 'description.field.label.order.line.number' | translate }}</th>
+                      {{ 'order.line.number' | translate }}</th>
                     <th>
-                      {{ 'description.field.label.item' | translate }}</th>
+                      {{ 'item' | translate }}</th>
                     <th>
-                      {{ 'description.field.label.shipment.line.quantity' | translate }}</th>
+                      {{ 'shipment.line.quantity' | translate }}</th>
                     <th>
-                      {{ 'description.field.label.shipment.line.shippedQuantity' | translate }}</th>
+                      {{ 'shipment.line.shippedQuantity' | translate }}</th>
                   </thead>
     <tbody>
       <tr *ngFor="let shipmentLine of data.shipmentLines">
@@ -126,28 +126,28 @@
     </tbody>
   </nz-table>
   </nz-tab>
-  <nz-tab nzTitle="{{ 'description.field.label.pick' | translate }}">
+  <nz-tab nzTitle="{{ 'pick' | translate }}">
 
     <nz-table #innerTable [nzData]="data.picks" nzSize="middle" [nzShowPagination]="false" nzBordered
       class="inner-table">
 
       <thead>
         <th>
-          {{ 'description.field.label.pick.number' | translate }}</th>
+          {{ 'pick.number' | translate }}</th>
         <th>
-          {{ 'description.field.label.order.number' | translate }}</th>
+          {{ 'order.number' | translate }}</th>
         <th>
-          {{ 'description.field.label.sourceLocation' | translate }}</th>
+          {{ 'sourceLocation' | translate }}</th>
         <th>
-          {{ 'description.field.label.destinationLocation' | translate }}</th>
+          {{ 'destinationLocation' | translate }}</th>
         <th>
-          {{ 'description.field.label.item' | translate }}</th>
+          {{ 'item' | translate }}</th>
         <th>
-          {{ 'description.field.label.item.description' | translate }}</th>
+          {{ 'item.description' | translate }}</th>
         <th>
-          {{ 'description.field.label.pick.quantity' | translate }}</th>
+          {{ 'pick.quantity' | translate }}</th>
         <th>
-          {{ 'description.field.label.pick.pickedQuantity' | translate }}</th>
+          {{ 'pick.pickedQuantity' | translate }}</th>
       </thead>
       <tbody>
         <tr *ngFor="let pick of data.picks">
@@ -164,21 +164,21 @@
       </tbody>
     </nz-table>
   </nz-tab>
-  <nz-tab nzTitle="{{ 'description.field.label.short-allocation' | translate }}">
+  <nz-tab nzTitle="{{ 'short-allocation' | translate }}">
 
     <nz-table #innerTable [nzData]="data.shortAllocations" nzSize="middle" [nzShowPagination]="false" nzBordered
       class="inner-table">
 
       <thead>
         <th>
-          {{ 'description.field.label.order.number' | translate }}</th>
+          {{ 'order.number' | translate }}</th>
 
         <th>
-          {{ 'description.field.label.item' | translate }}</th>
+          {{ 'item' | translate }}</th>
         <th>
-          {{ 'description.field.label.item.description' | translate }}</th>
+          {{ 'item.description' | translate }}</th>
         <th>
-          {{ 'description.field.label.short-allocation.quantity' | translate }}</th>
+          {{ 'short-allocation.quantity' | translate }}</th>
 
       </thead>
       <tbody>
@@ -203,10 +203,10 @@
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start">
     <button nz-button nzType="danger" (click)="removeSelectedWaves()">
-      {{ 'description.field.button.delete' | translate }}
+      {{ 'delete' | translate }}
     </button>
     <button nz-button nzType="primary" routerLink="/outbound/wave-maintenance" routerLinkActive="active">
-      {{ 'description.field.button.add' | translate }}
+      {{ 'add' | translate }}
     </button>
   </div>
 </ng-template>

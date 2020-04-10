@@ -98,7 +98,7 @@ export class OutboundShipmentComponent implements OnInit {
       this.modalService.confirm({
         nzTitle: this.i18n.fanyi('page.location-group.modal.delete.header.title'),
         nzContent: this.i18n.fanyi('page.location-group.modal.delete.content'),
-        nzOkText: this.i18n.fanyi('description.field.button.confirm'),
+        nzOkText: this.i18n.fanyi('confirm'),
         nzOkType: 'danger',
         nzOnOk: () => {
           this.shipmentService.cancelShipments(selectedShipments).subscribe(res => {
@@ -107,7 +107,7 @@ export class OutboundShipmentComponent implements OnInit {
             this.search();
           });
         },
-        nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+        nzCancelText: this.i18n.fanyi('cancel'),
         nzOnCancel: () => console.log('Cancel'),
       });
     }

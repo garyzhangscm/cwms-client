@@ -25,7 +25,7 @@
     <form nz-form [formGroup]="loadFileForm">
       <nz-form-item>
         <nz-form-label for="fileType" [nzSpan]="3" nzRequired="true">
-          {{'description.field.label.file-upload.filetype' | translate}}
+          {{'file-upload.filetype' | translate}}
         </nz-form-label>
         <nz-form-control [nzSpan]="12">
           <nz-select nzPlaceHolder="{{'description.field.placeholder.file-upload.filetype' | translate}}" name="Type"
@@ -39,7 +39,7 @@
       <nz-form-item>
         <nz-upload [nzAction]="fileUploadUrl" [nzDisabled]="fileUploadDisabled">
           <button nz-button><i nz-icon nzType="upload"></i><span>
-              {{'description.field.button.file-upload' | translate}}
+              {{'file-upload' | translate}}
             </span></button>
         </nz-upload>
       </nz-form-item>

@@ -6,7 +6,7 @@
     <div nz-col [nzSpan]="6" *ngIf='!isCollapse'>
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="5" [nzXs]="5" nzFor="batchId">
-          {{ 'description.field.label.cycle-count.batchId' | translate }}
+          {{ 'cycle-count.batchId' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="batchId" id="batchId" formControlName="batchId">
@@ -18,11 +18,11 @@
     <div nz-col [nzSpan]="24" class="search-area">
 
       <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
-        {{ 'description.field.button.search' | translate }}
+        {{ 'search' | translate }}
       </button>
-      <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
       <a class="collapse" (click)="toggleCollapse()">
-        {{ 'description.field.button.collapse' | translate }}
+        {{ 'collapse' | translate }}
         <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
       </a>
 
@@ -37,22 +37,22 @@
     #rowSelectionTable>
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
-        <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+        <th nzShowSort nzSortKey="id">id</th>
         <th nzShowSort nzSortKey="batchId">
-          {{ 'description.field.label.cycle-count.batchId' | translate }}
+          {{ 'cycle-count.batchId' | translate }}
         </th>
         <th nzShowSort nzSortKey="requestLocationCount">
-          {{'description.field.label.cycle-count-request.count' | translate}}</th>
+          {{'cycle-count-request.count' | translate}}</th>
         <th nzShowSort nzSortKey="openLocationCount">
-          {{'description.field.label.cycle-count-request.open.count' | translate}}</th>
+          {{'cycle-count-request.open.count' | translate}}</th>
         <th nzShowSort nzSortKey="finishedLocationCount">
-          {{'description.field.label.cycle-count-request.finished.count' | translate}}</th>
+          {{'cycle-count-request.finished.count' | translate}}</th>
         <th nzShowSort nzSortKey="cancelledLocationCount">
-          {{'description.field.label.cycle-count-request.cancelled.count' | translate}}</th>
+          {{'cycle-count-request.cancelled.count' | translate}}</th>
         <th nzShowSort nzSortKey="openAuditLocationCount">
-          {{'description.field.label.audit-count-request.count' | translate}}</th>
+          {{'audit-count-request.count' | translate}}</th>
         <th nzShowSort nzSortKey="finishedAuditLocationCount">
-          {{'description.field.label.audit-count-result.count' | translate}}</th>
+          {{'audit-count-result.count' | translate}}</th>
       </tr>
     </thead>
     <tbody>
@@ -74,7 +74,7 @@
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start">
     <button nz-button nzType="primary" routerLink="/inventory/count/cycle-count-maintenance" routerLinkActive="active">
-      {{ 'description.field.button.add' | translate }}
+      {{ 'add' | translate }}
     </button>
   </div>
 </ng-template>

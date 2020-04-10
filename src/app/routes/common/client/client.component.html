@@ -9,35 +9,35 @@
       <tr>
         <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
           (nzCheckedChange)="checkAll($event)"></th>
-        <th nzShowSort nzSortKey="id">{{'description.field.table.header.id' | translate}}</th>
+        <th nzShowSort nzSortKey="id">id</th>
         <th nzShowSort nzSortKey="name" nzShowFilter [nzFilters]="filtersByName"
           (nzFilterChange)="filter($event, selectedFiltersByDescription, selectedFiltersByCountry, selectedFiltersByState)">
-          {{'description.field.table.header.client.name' | translate}}</th>
+          {{'name' | translate}}</th>
         <th nzShowFilter [nzFilters]="filtersByDescription"
           (nzFilterChange)="filter(selectedFiltersByName, $event, selectedFiltersByCountry, selectedFiltersByState)">
-          {{'description.field.table.header.client.description' | translate}}</th>
+          {{'description' | translate}}</th>
         <th>
-          {{'description.field.table.header.contactor.firstname' | translate}}</th>
+          {{'contactor.firstname' | translate}}</th>
         <th>
-          {{'description.field.table.header.contactor.lastname' | translate}}</th>
+          {{'contactor.lastname' | translate}}</th>
         <th nzShowSort nzSortKey="addressCountry" nzShowFilter [nzFilters]="filtersByAddressCountry"
           (nzFilterChange)="filter(selectedFiltersByName, selectedFiltersByDescription, $event, selectedFiltersByState)">
-          {{'description.field.table.header.address.country' | translate}}</th>
+          {{'country' | translate}}</th>
         <th nzShowSort nzSortKey="addressState" nzShowFilter [nzFilters]="filtersByAddressState"
           (nzFilterChange)="filter(selectedFiltersByName, selectedFiltersByDescription, selectedFiltersByCountry, $event)">
-          {{'description.field.table.header.address.state' | translate}}</th>
+          {{'state' | translate}}</th>
         <th>
-          {{'description.field.table.header.address.county' | translate}}</th>
+          {{'county' | translate}}</th>
         <th>
-          {{'description.field.table.header.address.city' | translate}}</th>
+          {{'city' | translate}}</th>
         <th>
-          {{'description.field.table.header.address.district' | translate}}</th>
+          {{'district' | translate}}</th>
         <th>
-          {{'description.field.table.header.address.line1' | translate}}</th>
+          {{'line1' | translate}}</th>
         <th>
-          {{'description.field.table.header.address.line2' | translate}}</th>
+          {{'line2' | translate}}</th>
         <th>
-          {{'description.field.table.header.address.postcode' | translate}}</th>
+          {{'postcode' | translate}}</th>
       </tr>
     </thead>
     <tbody>
@@ -67,24 +67,24 @@
         </td>
         <td>
           <div class="editable-cell"
-            *ngIf="editId !== data.id || editCol != 'contactorFirstname'; else editContactorFirstNameTpl">
-            <div class="editable-cell-value-wrap" (click)="startEdit(data.id, 'contactorFirstname', $event)">
-              {{ data.contactorFirstname }}
+            *ngIf="editId !== data.id || editCol != 'contactor.firstname'; else editcontactorFirstnameTpl">
+            <div class="editable-cell-value-wrap" (click)="startEdit(data.id, 'contactor.firstname', $event)">
+              {{ data.contactor.firstname }}
             </div>
           </div>
-          <ng-template #editContactorFirstNameTpl>
-            <input type="text" nz-input [(ngModel)]="data.contactorFirstname" (blur)="changeClient(data)" />
+          <ng-template #editcontactorFirstnameTpl>
+            <input type="text" nz-input [(ngModel)]="data.contactor.firstname" (blur)="changeClient(data)" />
           </ng-template>
         </td>
         <td>
           <div class="editable-cell"
-            *ngIf="editId !== data.id || editCol != 'contactorLastname'; else editContactorLastNameTpl">
-            <div class="editable-cell-value-wrap" (click)="startEdit(data.id, 'contactorLastname', $event)">
-              {{ data.contactorLastname }}
+            *ngIf="editId !== data.id || editCol != 'contactor.lastname'; else editcontactorLastnameTpl">
+            <div class="editable-cell-value-wrap" (click)="startEdit(data.id, 'contactor.lastname', $event)">
+              {{ data.contactor.lastname }}
             </div>
           </div>
-          <ng-template #editContactorLastNameTpl>
-            <input type="text" nz-input [(ngModel)]="data.contactorLastname" (blur)="changeClient(data)" />
+          <ng-template #editcontactorLastnameTpl>
+            <input type="text" nz-input [(ngModel)]="data.contactor.lastname" (blur)="changeClient(data)" />
           </ng-template>
         </td>
         <td>
@@ -180,14 +180,13 @@
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start">
     <a nz-button nzType="primary" (click)="refresh()">
-      {{'description.field.button.fresh' | translate}}
+      {{'fresh' | translate}}
     </a>
     <a nz-button nzType="primary" routerLink="/common/client-maintenance" routerLinkActive="active"
       (click)="clearSessionClient()">
-      {{'description.field.button.add' | translate}}
+      {{'add' | translate}}
     </a>
 
-    <button nz-button nzType="danger"
-      (click)="removeSelectedClients()">{{'description.field.button.delete' | translate}}</button>
+    <button nz-button nzType="danger" (click)="removeSelectedClients()">{{'delete' | translate}}</button>
   </div>
 </ng-template>

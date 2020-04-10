@@ -21,31 +21,31 @@
 <ng-container>
   <nz-card [nzActions]="[actionConfirm]">
     <nz-descriptions nzBordered>
-      <nz-descriptions-item nzTitle="{{'description.field.label.lpn' | translate}}">
+      <nz-descriptions-item nzTitle="{{'lpn' | translate}}">
         {{currentInventory.lpn}}
       </nz-descriptions-item>
 
-      <nz-descriptions-item nzTitle="{{'description.field.label.location' | translate}}" nzSpan="2">
+      <nz-descriptions-item nzTitle="{{'location' | translate}}" nzSpan="2">
         {{currentInventory.location.name}}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'description.field.label.item' | translate}}">
+      <nz-descriptions-item nzTitle="{{'item' | translate}}">
         {{currentInventory.item.name}}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'description.field.label.item.description' | translate}}" nzSpan="2">
+      <nz-descriptions-item nzTitle="{{'item.description' | translate}}" nzSpan="2">
         {{currentInventory.item.description}}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'description.field.label.item.package-type' | translate}}" nzSpan="3">
+      <nz-descriptions-item nzTitle="{{'item.package-type' | translate}}" nzSpan="3">
         <nz-card nzTitle="{{currentInventory.itemPackageType.name}}">
           <nz-table #itemPackageTypeDetailTable [nzData]="currentInventory.itemPackageType.itemUnitOfMeasures"
             nzSize="middle" [nzShowPagination]="false" nzBordered>
             <thead>
               <tr>
-                <th>{{ 'description.field.label.unitOfMeasure' | translate}}</th>
-                <th>{{ 'description.field.label.quantity' | translate }}</th>
-                <th>{{ 'description.field.label.weight' | translate }}</th>
-                <th>{{ 'description.field.label.length' | translate }}</th>
-                <th>{{ 'description.field.label.width' | translate }}</th>
-                <th>{{ 'description.field.label.height' | translate }}</th>
+                <th>{{ 'unitOfMeasure' | translate}}</th>
+                <th>{{ 'quantity' | translate }}</th>
+                <th>{{ 'weight' | translate }}</th>
+                <th>{{ 'length' | translate }}</th>
+                <th>{{ 'width' | translate }}</th>
+                <th>{{ 'height' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -62,30 +62,30 @@
         </nz-card>
 
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'description.field.label.inventory.status' | translate}}">
+      <nz-descriptions-item nzTitle="{{'inventory.status' | translate}}">
         {{currentInventory.inventoryStatus.name}}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'description.field.label.quantity' | translate}}" nzSpan="2">
+      <nz-descriptions-item nzTitle="{{'quantity' | translate}}" nzSpan="2">
         <span
           *ngIf='currentInventory !== undefined && currentInventory.quantity === originalInventoryQuantity else quantityChangedTpl'>
           {{currentInventory.quantity}}
         </span>
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'description.field.label.document-number' | translate}}">
+      <nz-descriptions-item nzTitle="{{'document-number' | translate}}">
 
         <input nz-input [(ngModel)]="documentNumber" style="width: 250px;" />
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'description.field.label.comment' | translate}}">
+      <nz-descriptions-item nzTitle="{{'comment' | translate}}">
 
         <input nz-input [(ngModel)]="comment" style="width: 250px;" />
       </nz-descriptions-item>
     </nz-descriptions>
 
     <ng-template #quantityChangedTpl>
-      <span>{{ 'description.field.label.originalValue' | translate}} :
+      <span>{{ 'originalValue' | translate}} :
         {{ originalInventoryQuantity }}</span>
       <nz-divider nzType="vertical"></nz-divider>
-      <span>{{ 'description.field.label.newValue' | translate}} : {{  currentInventory.quantity }}</span>
+      <span>{{ 'newValue' | translate}} : {{  currentInventory.quantity }}</span>
     </ng-template>
 
 

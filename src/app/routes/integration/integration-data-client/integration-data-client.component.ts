@@ -1,18 +1,12 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { _HttpClient, TitleService } from '@delon/theme';
+import { Component, OnInit, TemplateRef } from '@angular/core';
+import { _HttpClient } from '@delon/theme';
 import { IntegrationClientData } from '../models/integration-client-data';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { IntegrationClientDataService } from '../services/integration-client-data.service';
 import { ClientService } from '../../common/services/client.service';
 import { I18NService } from '@core';
-import { NzModalService } from 'ng-zorro-antd';
-import { InventoryActivity } from '../../inventory/models/inventory-activity';
-import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
-import { Item } from '../../inventory/models/item';
-import { ItemPackageType } from '../../inventory/models/item-package-type';
-import { InventoryStatus } from '../../inventory/models/inventory-status';
+import { NzModalService, NzModalRef } from 'ng-zorro-antd';
 import { Client } from '../../common/models/client';
-import { ItemFamily } from '../../inventory/models/item-family';
 
 @Component({
   selector: 'app-integration-integration-data-client',
@@ -38,6 +32,9 @@ export class IntegrationIntegrationDataClientComponent implements OnInit {
 
   isCollapse = false;
 
+  integrationDataModal: NzModalRef;
+  integrationDataForm: FormGroup;
+
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
   }
@@ -56,9 +53,9 @@ export class IntegrationIntegrationDataClientComponent implements OnInit {
     this.listOfAllIntegrationClientData = [];
     this.listOfDisplayIntegrationClientData = [];
   }
-  search(): void {
+  search(integrationClientDataId?: number): void {
     this.searching = true;
-    this.integrationClientDataService.getClientData().subscribe(integrationClientDataRes => {
+    this.integrationClientDataService.getClientData(integrationClientDataId).subscribe(integrationClientDataRes => {
       this.listOfAllIntegrationClientData = integrationClientDataRes;
       this.listOfDisplayIntegrationClientData = integrationClientDataRes;
       this.searching = false;
@@ -95,13 +92,56 @@ export class IntegrationIntegrationDataClientComponent implements OnInit {
     this.searchForm = this.fb.group({
       taggedClients: [null],
 
-      activityDateTimeRanger: [null],
-      activityDate: [null],
+      integrationDateTimeRanger: [null],
+      integrationDate: [null],
     });
 
     // initiate the select control
     this.clientService.loadClients().subscribe((clientList: Client[]) => {
       clientList.forEach(client => this.clients.push({ label: client.description, value: client.id.toString() }));
+    });
+  }
+
+  openAddIntegrationDataModal(
+    tplIntegrationDataModalTitle: TemplateRef<{}>,
+    tplIntegrationDataModalContent: TemplateRef<{}>,
+  ) {
+    this.integrationDataForm = this.fb.group({
+      name: [null],
+      description: [null],
+      contactorFirstname: [null],
+      contactorLastname: [null],
+      addressCountry: [null],
+      addressState: [null],
+      addressCounty: [null],
+      addressCity: [null],
+      addressDistrict: [null],
+      addressLine1: [null],
+      addressLine2: [null],
+      addressPostcode: [null],
+    });
+
+    this.integrationDataModal = this.modalService.create({
+      nzTitle: tplIntegrationDataModalTitle,
+      nzContent: tplIntegrationDataModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.integrationDataModal.destroy();
+      },
+      nzOnOk: () => {
+        this.createIntegrationData(this.integrationDataForm.value);
+      },
+
+      nzWidth: 1000,
+    });
+  }
+  createIntegrationData(clientData: IntegrationClientData) {
+    console.log(`start to add integration data: ${JSON.stringify(clientData)}`);
+
+    this.integrationClientDataService.addClientData(clientData).subscribe(integrationClientDataRes => {
+      this.search(integrationClientDataRes.id);
     });
   }
 }

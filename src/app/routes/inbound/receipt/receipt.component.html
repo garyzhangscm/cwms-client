@@ -6,7 +6,7 @@
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
         <nz-form-label for="receiptNumber" [nzSm]="3" [nzXs]="3">
-          {{ 'description.field.label.receipt.number' | translate }}
+          {{ 'receipt.number' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="number" id="number" formControlName="number" />
@@ -18,9 +18,9 @@
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
       <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
-        {{ 'description.field.button.search' | translate }}
+        {{ 'search' | translate }}
       </button>
-      <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
     </div>
   </div>
 </form>
@@ -32,29 +32,29 @@
       <tr>
         <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
           (nzCheckedChange)="checkAll($event)"></th>
-        <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+        <th nzShowSort nzSortKey="id">id</th>
         <th nzShowSort nzSortKey="number">
-          {{ 'description.field.label.receipt.number' | translate }}
+          {{ 'receipt.number' | translate }}
         </th>
         <th nzShowFilter [nzFilters]="filtersByClient"
           (nzFilterChange)="filter($event, selectedFiltersBySupplier, selectedFiltersByStatus)">
-          {{'description.field.label.client' | translate}}</th>
+          {{'client' | translate}}</th>
 
         <th nzShowFilter [nzFilters]="filtersBySupplier"
           (nzFilterChange)="filter(selectedFiltersByClient, $event, selectedFiltersByStatus)">
-          {{'description.field.label.supplier' | translate}}</th>
+          {{'supplier' | translate}}</th>
         <th nzShowFilter [nzFilters]="filtersByStatus"
           (nzFilterChange)="filter(selectedFiltersByClient, selectedFiltersBySupplier,  $event)">
-          {{'description.field.label.receipt.status' | translate}}</th>
-        <th nzShowSort nzSortKey="totalLineCount">{{ 'description.field.label.receipt.totalLineCount' | translate }}
+          {{'status' | translate}}</th>
+        <th nzShowSort nzSortKey="totalLineCount">{{ 'receipt.totalLineCount' | translate }}
         </th>
-        <th nzShowSort nzSortKey="totalItemCount">{{ 'description.field.label.receipt.totalItemCount' | translate }}
+        <th nzShowSort nzSortKey="totalItemCount">{{ 'receipt.totalItemCount' | translate }}
         </th>
         <th nzShowSort nzSortKey="totalExpectedQuantity">
-          {{ 'description.field.label.receipt.totalExpectedQuantity' | translate }}</th>
+          {{ 'receipt.totalExpectedQuantity' | translate }}</th>
         <th nzShowSort nzSortKey="totalReceivedQuantity">
-          {{ 'description.field.label.receipt.totalReceivedQuantity' | translate }}</th>
-        <th>{{ 'description.field.label.action' | translate }}</th>
+          {{ 'receipt.totalReceivedQuantity' | translate }}</th>
+        <th>{{ 'action' | translate }}</th>
       </tr>
     </thead>
     <tbody>
@@ -74,7 +74,7 @@
         <td>
           <a nz-button nz-type="primary" (click)="checkInReceipt(data)"
             *ngIf="data.receiptStatus === receiptStatus.OPEN">
-            {{ 'description.field.label.receipt.check-in' | translate }}</a>
+            {{ 'receipt.check-in' | translate }}</a>
           <!--<nz-divider nzType="vertical"></nz-divider> -->
         </td>
       </tr>
@@ -85,10 +85,10 @@
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start">
     <button nz-button nzType="danger" (click)="removeSelectedReceipts()">
-      {{ 'description.field.button.delete' | translate }}
+      {{ 'delete' | translate }}
     </button>
     <button nz-button nzType="primary" routerLink="/inbound/receipt-maintenance" routerLinkActive="active">
-      {{ 'description.field.button.add' | translate }}
+      {{ 'add' | translate }}
     </button>
   </div>
 </ng-template>

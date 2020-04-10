@@ -284,8 +284,8 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
       this.cycleCountRequestConfirmModal = this.modalService.create({
         nzTitle: tplCycleCountRequestConfirmModalTitle,
         nzContent: tplCycleCountRequestConfirmModalContent,
-        nzOkText: this.i18n.fanyi('description.field.button.confirm'),
-        nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+        nzOkText: this.i18n.fanyi('confirm'),
+        nzCancelText: this.i18n.fanyi('cancel'),
         nzMaskClosable: false,
         nzOnCancel: () => {
           this.cycleCountRequestConfirmModal.destroy();

@@ -13,8 +13,8 @@ export interface Order {
   billToCustomer: Customer;
 
   // Ship to Address
-  shipToContactorFirstname: string;
-  shipToContactorLastname: string;
+  shipTocontactorFirstname: string;
+  shipTocontactorLastname: string;
 
   shipToAddressCountry: string;
   shipToAddressState: string;
@@ -26,8 +26,8 @@ export interface Order {
   shipToAddressPostcode: string;
 
   // Bill to Address
-  billToContactorFirstname: string;
-  billToContactorLastname: string;
+  billTocontactorFirstname: string;
+  billTocontactorLastname: string;
 
   billToAddressCountry: string;
   billToAddressState: string;

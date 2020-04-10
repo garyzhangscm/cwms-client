@@ -42,7 +42,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="username">
-            {{ 'description.field.label.user.username' | translate }}
+            {{ 'user.username' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -54,7 +54,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="password">
-            {{ 'description.field.label.user.password' | translate }}
+            {{ 'user.password' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -75,7 +75,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="firstname">
-            {{ 'description.field.label.firstname' | translate }}
+            {{ 'firstname' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -86,7 +86,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lastname">
-            {{ 'description.field.label.lastname' | translate }}
+            {{ 'lastname' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -97,7 +97,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="email">
-            {{ 'description.field.label.email' | translate }}
+            {{ 'email' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -112,7 +112,7 @@
         <nz-form-item>
           <nz-form-control>
             <label nz-checkbox [(ngModel)]="currentUser.enabled" name="enabled">
-              <span>{{ 'description.field.label.enabled'  | translate }}</span>
+              <span>{{ 'enabled'  | translate }}</span>
 
 
             </label>
@@ -123,7 +123,7 @@
         <nz-form-item>
           <nz-form-control>
             <label nz-checkbox [(ngModel)]="currentUser.locked" name="locked">
-              <span>{{ 'description.field.label.locked'  | translate }}</span></label>
+              <span>{{ 'locked'  | translate }}</span></label>
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -131,7 +131,7 @@
         <nz-form-item>
           <nz-form-control>
             <label nz-checkbox [(ngModel)]="currentUser.changePasswordAtNextLogon" name="changePasswordAtNextLogon">
-              <span>{{ 'description.field.label.user.change-password-at-next-logon' | translate }}</span>
+              <span>{{ 'user.change-password-at-next-logon' | translate }}</span>
             </label>
           </nz-form-control>
         </nz-form-item>

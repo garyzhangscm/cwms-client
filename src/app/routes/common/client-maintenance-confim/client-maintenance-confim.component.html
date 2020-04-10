@@ -1,18 +1,18 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
   <a routerLink="/common/client" routerLinkActive="active">{{
-      'description.field.link.return' | translate
+      'return' | translate
     }}</a>
 </ng-template>
 <ng-template #breadcrumb>
   <nz-breadcrumb>
     <nz-breadcrumb-item>
-      <a routerLink="/" routerLinkActive="active">{{ 'description.field.breadcrumb.home' | translate }}</a>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
     </nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.common' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.common' | translate }}</a></nz-breadcrumb-item>
     <nz-breadcrumb-item><a routerLink="/common/client" routerLinkActive="active">{{
-          'description.field.breadcrumb.client' | translate
+          'breadcrumb.client' | translate
         }}</a></nz-breadcrumb-item>
     <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
   </nz-breadcrumb>
@@ -21,14 +21,14 @@
 <div nz-row style="padding: 50px">
   <div nz-col nzSpan="12" nzOffset="6">
     <nz-steps [nzCurrent]="2" [nzSize]="'default'" (nzIndexChange)="onStepIndexChange($event)">
-      <nz-step nzTitle="{{ 'description.steps.client-maintenance.basic-info.title' | translate }}"
-        nzDescription="{{ 'description.steps.client-maintenance.basic-info.description' | translate }}">
+      <nz-step nzTitle="{{ 'steps.client-maintenance.basic-info.title' | translate }}"
+        nzDescription="{{ 'steps.client-maintenance.basic-info.description' | translate }}">
       </nz-step>
-      <nz-step nzTitle="{{ 'description.steps.client-maintenance.address.title' | translate }}"
-        nzDescription="{{ 'description.steps.client-maintenance.address.description' | translate }}">
+      <nz-step nzTitle="{{ 'steps.client-maintenance.address.title' | translate }}"
+        nzDescription="{{ 'steps.client-maintenance.address.description' | translate }}">
       </nz-step>
-      <nz-step nzTitle="{{ 'description.steps.client-maintenance.confirm.title' | translate }}"
-        nzDescription="{{ 'description.steps.client-maintenance.confirm.description' | translate }}">
+      <nz-step nzTitle="{{ 'steps.client-maintenance.confirm.title' | translate }}"
+        nzDescription="{{ 'steps.client-maintenance.confirm.description' | translate }}">
       </nz-step>
     </nz-steps>
   </div>
@@ -39,36 +39,36 @@
   <nz-card nzTitle="{{ currentClient.name }}" [nzActions]="[actionSave]">
     <nz-descriptions nzBordered>
 
-      <nz-descriptions-item nzTitle="{{'description.field.label.client.name' | translate}}">{{currentClient.name}}
+      <nz-descriptions-item nzTitle="{{'name' | translate}}">{{currentClient.name}}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'description.field.label.client.description' | translate}}" nzSpan="2">
+      <nz-descriptions-item nzTitle="{{'description' | translate}}" nzSpan="2">
         {{currentClient.description}}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'description.field.label.client.contactorFirstname' | translate}}">
+      <nz-descriptions-item nzTitle="{{'contactor.firstname' | translate}}">
         {{currentClient.contactorFirstname}}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'description.field.label.client.contactorLastname' | translate}}" nzSpan="2">
+      <nz-descriptions-item nzTitle="{{'contactor.lastname' | translate}}" nzSpan="2">
         {{currentClient.contactorLastname}}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.country' | translate }}">
+      <nz-descriptions-item nzTitle="{{ 'country' | translate }}">
         {{ currentClient.addressCountry }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.state' | translate }}">
+      <nz-descriptions-item nzTitle="{{ 'state' | translate }}">
         {{ currentClient.addressState }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.county' | translate }}">
+      <nz-descriptions-item nzTitle="{{ 'county' | translate }}">
         {{ currentClient.addressCounty }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.city' | translate }}">
+      <nz-descriptions-item nzTitle="{{ 'city' | translate }}">
         {{ currentClient.addressCity }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.postcode' | translate }}" nzSpan="2">
+      <nz-descriptions-item nzTitle="{{ 'postcode' | translate }}" nzSpan="2">
         {{ currentClient.addressPostcode }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.line1' | translate }}" nzSpan="2">
+      <nz-descriptions-item nzTitle="{{ 'address.line1' | translate }}" nzSpan="2">
         {{ currentClient.addressLine1 }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'description.field.label.address.line2' | translate }}">
+      <nz-descriptions-item nzTitle="{{ 'address.line2' | translate }}">
         {{ currentClient.addressLine2 }}
       </nz-descriptions-item>
     </nz-descriptions>
@@ -77,5 +77,5 @@
 
 
 <ng-template #actionSave>
-  <button nz-button nzType="primary" (click)="saveClient()">{{ 'description.field.button.confirm' | translate}}</button>
+  <button nz-button nzType="primary" (click)="saveClient()">{{ 'confirm' | translate}}</button>
 </ng-template>

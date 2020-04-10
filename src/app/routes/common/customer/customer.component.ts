@@ -94,7 +94,7 @@ export class CommonCustomerComponent implements OnInit {
     });
   }
 
-  currentPageDataChange($event: Supplier[]): void {
+  currentPageDataChange($event: Customer[]): void {
     this.listOfDisplayCustomers = $event;
     this.refreshStatus();
   }
@@ -174,7 +174,7 @@ export class CommonCustomerComponent implements OnInit {
       this.modalService.confirm({
         nzTitle: this.i18n.fanyi('page.modal.delete.header.title'),
         nzContent: this.i18n.fanyi('page.supplier.modal.delete.content'),
-        nzOkText: this.i18n.fanyi('description.field.button.confirm'),
+        nzOkText: this.i18n.fanyi('confirm'),
         nzOkType: 'danger',
         nzOnOk: () => {
           this.customerService.removeCustomers(selectedCustomers).subscribe(res => {
@@ -182,7 +182,7 @@ export class CommonCustomerComponent implements OnInit {
             this.refresh();
           });
         },
-        nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+        nzCancelText: this.i18n.fanyi('cancel'),
         nzOnCancel: () => console.log('Cancel'),
       });
     }

@@ -6,7 +6,7 @@
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
         <nz-form-label for="number" [nzSm]="3" [nzXs]="3">
-          {{ 'description.field.label.bill-of-material.number' | translate }}
+          {{ 'bill-of-material.number' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="number" id="number" formControlName="number" />
@@ -16,7 +16,7 @@
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
         <nz-form-label for="item" [nzSm]="3" [nzXs]="3">
-          {{ 'description.field.label.item' | translate }}
+          {{ 'item' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="item" id="item" formControlName="item" />
@@ -27,9 +27,9 @@
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
       <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
-        {{ 'description.field.button.search' | translate }}
+        {{ 'search' | translate }}
       </button>
-      <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
     </div>
   </div>
 </form>
@@ -42,18 +42,18 @@
         <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
           (nzCheckedChange)="checkAll($event)"></th>
         <th nzShowExpand></th>
-        <th nzShowSort nzSortKey="id">{{ 'description.field.label.id' | translate }}</th>
+        <th nzShowSort nzSortKey="id">id</th>
         <th nzShowSort nzSortKey="number">
-          {{ 'description.field.label.bill-of-material.number' | translate }}
+          {{ 'bill-of-material.number' | translate }}
         </th>
         <th>
-          {{ 'description.field.label.item' | translate }}
+          {{ 'item' | translate }}
         </th>
         <th>
-          {{ 'description.field.label.bill-of-material.expectedQuantity' | translate }}
+          {{ 'bill-of-material.expectedQuantity' | translate }}
         </th>
         <th>
-          {{ 'description.field.label.action' | translate }}
+          {{ 'action' | translate }}
         </th>
       </tr>
     </thead>
@@ -70,7 +70,7 @@
           <td>
             <button nz-button nzType="primary"
               (click)="openNewWorkOrderModal(data, tplCreatingWorkOrderModalTitle, tplCreatingWorkOrderModalContent)">
-              {{ 'description.field.button.bill-of-material.create-work-order' | translate }}
+              {{ 'bill-of-material.create-work-order' | translate }}
             </button>
           </td>
         </tr>
@@ -78,20 +78,20 @@
           <td colspan="2"></td>
           <td colspan="4">
             <nz-tabset>
-              <nz-tab nzTitle=" {{ 'description.field.label.bill-of-material.line' | translate }}">
+              <nz-tab nzTitle=" {{ 'bill-of-material.line' | translate }}">
                 <nz-table [nzData]="data.billOfMaterialLines" nzSize="middle" [nzShowPagination]="false">
 
                   <thead>
                     <th>
-                      {{ 'description.field.label.bill-of-material.line.number' | translate }}</th>
+                      {{ 'bill-of-material.line.number' | translate }}</th>
                     <th>
-                      {{ 'description.field.label.item' | translate }}</th>
+                      {{ 'item' | translate }}</th>
                     <th>
-                      {{ 'description.field.label.item.description' | translate }}</th>
+                      {{ 'item.description' | translate }}</th>
                     <th>
-                      {{ 'description.field.label.bill-of-material.line.expectedQuantity' | translate }}</th>
+                      {{ 'bill-of-material.line.expectedQuantity' | translate }}</th>
                     <th>
-                      {{ 'description.field.label.inventory.status' | translate }}</th>
+                      {{ 'inventory.status' | translate }}</th>
                   </thead>
     <tbody>
 
@@ -105,16 +105,16 @@
     </tbody>
   </nz-table>
   </nz-tab>
-  <nz-tab nzTitle=" {{ 'description.field.label.work-order-instruction-template' | translate }}">
+  <nz-tab nzTitle=" {{ 'work-order-instruction-template' | translate }}">
     <nz-table [nzData]="data.workOrderInstructionTemplates" nzSize="middle" [nzShowPagination]="false">
 
       <thead>
         <th>
-          {{ 'description.field.label.id' | translate }}</th>
+          id</th>
         <th>
-          {{ 'description.field.label.work-order-instruction-template.sequence' | translate }}</th>
+          {{ 'work-order-instruction-template.sequence' | translate }}</th>
         <th>
-          {{ 'description.field.label.work-order-instruction-template.instruction' | translate }}</th>
+          {{ 'work-order-instruction-template.instruction' | translate }}</th>
       </thead>
       <tbody>
 
@@ -144,7 +144,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="workOrderNumber">
-          {{ 'description.field.label.work-order' | translate }}
+          {{ 'work-order' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -157,7 +157,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="productionLine">
-          {{ 'description.field.label.production-line' | translate }}
+          {{ 'production-line' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -175,7 +175,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="8" [nzXs]="24" nzFor="expectedQuantity">
-          {{ 'description.field.label.work-order.expected-quantity' | translate }}
+          {{ 'work-order.expected-quantity' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">

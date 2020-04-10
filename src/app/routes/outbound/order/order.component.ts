@@ -103,7 +103,7 @@ export class OutboundOrderComponent implements OnInit {
       this.listOfAllOrders.forEach(order => {
         const shipToCustomerName = order.shipToCustomer
           ? order.shipToCustomer.name
-          : `${order.shipToContactorFirstname} ${order.shipToContactorLastname}`;
+          : `${order.shipTocontactorFirstname} ${order.shipTocontactorLastname}`;
 
         if (!existingShipToCustomer.has(shipToCustomerName)) {
           this.filtersByShipToCustomer.push({ text: shipToCustomerName, value: shipToCustomerName });
@@ -111,7 +111,7 @@ export class OutboundOrderComponent implements OnInit {
         }
         const billToCustomerName = order.billToCustomer
           ? order.billToCustomer.name
-          : `${order.billToContactorFirstname} ${order.billToContactorLastname}`;
+          : `${order.billTocontactorFirstname} ${order.billTocontactorLastname}`;
 
         if (!existingBillToCustomer.has(billToCustomerName)) {
           this.filtersByBillToCustomer.push({ text: billToCustomerName, value: billToCustomerName });
@@ -192,17 +192,17 @@ export class OutboundOrderComponent implements OnInit {
     const filterFunc = (item: {
       shipToCustomer: Customer;
       billToCustomer: Customer;
-      shipToContactorFirstname: string;
-      shipToContactorLastname: string;
-      billToContactorFirstname: string;
-      billToContactorLastname: string;
+      shipTocontactorFirstname: string;
+      shipTocontactorLastname: string;
+      billTocontactorFirstname: string;
+      billTocontactorLastname: string;
     }) =>
       this.selectedFiltersByShipToCustomer.length
         ? this.selectedFiltersByShipToCustomer.some(shipToCustomerName => {
             if (item.shipToCustomer) {
               return item.shipToCustomer.name === shipToCustomerName;
             } else {
-              return item.shipToContactorFirstname + ' ' + item.shipToContactorLastname === shipToCustomerName;
+              return item.shipTocontactorFirstname + ' ' + item.shipTocontactorLastname === shipToCustomerName;
             }
           })
         : true && this.selectedFiltersByBillToCustomer.length
@@ -210,7 +210,7 @@ export class OutboundOrderComponent implements OnInit {
             if (item.billToCustomer) {
               return item.billToCustomer.name === billToCustomerName;
             } else {
-              return item.billToContactorFirstname + ' ' + item.billToContactorLastname === billToCustomerName;
+              return item.billTocontactorFirstname + ' ' + item.billTocontactorLastname === billToCustomerName;
             }
           })
         : true;
@@ -240,14 +240,14 @@ export class OutboundOrderComponent implements OnInit {
       this.modalService.confirm({
         nzTitle: this.i18n.fanyi('page.location-group.modal.delete.header.title'),
         nzContent: this.i18n.fanyi('page.location-group.modal.delete.content'),
-        nzOkText: this.i18n.fanyi('description.field.button.confirm'),
+        nzOkText: this.i18n.fanyi('confirm'),
         nzOkType: 'danger',
         nzOnOk: () => {
           this.orderService.removeOrders(selectedOrders).subscribe(res => {
             this.search();
           });
         },
-        nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+        nzCancelText: this.i18n.fanyi('cancel'),
         nzOnCancel: () => console.log('Cancel'),
       });
     }
@@ -398,8 +398,8 @@ export class OutboundOrderComponent implements OnInit {
     this.unpickModal = this.modalService.create({
       nzTitle: tplUnpickModalTitle,
       nzContent: tplUnpickModalContent,
-      nzOkText: this.i18n.fanyi('description.field.button.confirm'),
-      nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
       nzMaskClosable: false,
       nzOnCancel: () => {
         this.unpickModal.destroy();

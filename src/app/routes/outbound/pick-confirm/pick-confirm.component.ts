@@ -186,7 +186,7 @@ export class OutboundPickConfirmComponent implements OnInit {
       this.modalService.confirm({
         nzTitle: this.i18n.fanyi('page.location-group.modal.delete.header.title'),
         nzContent: this.i18n.fanyi('page.location-group.modal.delete.content'),
-        nzOkText: this.i18n.fanyi('description.field.button.confirm'),
+        nzOkText: this.i18n.fanyi('confirm'),
         nzOkType: 'danger',
         nzOnOk: () => {
           this.pickService.cancelPicks(selectedPicks).subscribe(res => {
@@ -194,7 +194,7 @@ export class OutboundPickConfirmComponent implements OnInit {
             this.displayInformation();
           });
         },
-        nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+        nzCancelText: this.i18n.fanyi('cancel'),
       });
     }
   }

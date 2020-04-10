@@ -38,8 +38,8 @@ export class AuthRoleMenuComponent implements OnInit {
     private router: Router,
   ) {
     this.pageTitle = this.i18n.fanyi('page.auth.role.menus');
-    this.unassignedMenuText = this.i18n.fanyi('description.field.label.menu.unassigned');
-    this.assignedMenuText = this.i18n.fanyi('description.field.label.menu.assigned');
+    this.unassignedMenuText = this.i18n.fanyi('menu.unassigned');
+    this.assignedMenuText = this.i18n.fanyi('menu.assigned');
   }
 
   ngOnInit() {

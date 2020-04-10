@@ -1,18 +1,18 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
   <a routerLink="/inbound/receipt" routerLinkActive="active">{{
-    'description.field.link.return' | translate
+    'return' | translate
   }}</a>
 </ng-template>
 <ng-template #breadcrumb>
   <nz-breadcrumb>
     <nz-breadcrumb-item>
-      <a routerLink="/" routerLinkActive="active">{{ 'description.field.breadcrumb.home' | translate }}</a>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
     </nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.inbound' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.inbound' | translate }}</a></nz-breadcrumb-item>
     <nz-breadcrumb-item><a routerLink="/inbound/receipt" routerLinkActive="active">{{
-        'description.field.breadcrumb.receipt' | translate
+        'breadcrumb.receipt' | translate
       }}</a></nz-breadcrumb-item>
     <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
   </nz-breadcrumb>
@@ -24,7 +24,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="batchId">
-            {{ 'description.field.label.id' | translate }}
+            id
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -35,7 +35,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="batchId">
-            {{ 'description.field.label.receipt.number' | translate }}
+            {{ 'receipt.number' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -50,7 +50,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="client">
-            {{ 'description.field.label.client' | translate }}
+            {{ 'client' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -64,7 +64,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="supplier">
-            {{ 'description.field.label.supplier' | translate }}
+            {{ 'supplier' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -80,7 +80,7 @@
           <nz-form-control>
             <label nz-checkbox formControlName="allowUnexpectedItem">
               <span>
-                {{ 'description.field.label.receipt.allowUnexpectedItem' | translate }}</span>
+                {{ 'receipt.allowUnexpectedItem' | translate }}</span>
             </label>
 
           </nz-form-control>
@@ -107,16 +107,16 @@
 <ng-template #cardFoot>
   <div nz-row nzType="flex" nzJustify="left" style='padding-left: 20px;'>
     <button nz-button nzType="primary" (click)="saveReceipt()" [disabled]="!receiptForm.valid">
-      {{ 'description.field.button.confirm' | translate }}
+      {{ 'confirm' | translate }}
     </button>
     <button nz-button (click)="printReceipt()" [disabled]="currentReceipt.id === null" [nzLoading]="printingInProcess">
-      {{ 'description.field.button.print' | translate }}
+      {{ 'print' | translate }}
     </button>
   </div>
 </ng-template>
 
 <nz-tabset [nzSelectedIndex]="selectedTabIndex">
-  <nz-tab nzTitle="{{ 'description.field.label.receipt.line' | translate }}">
+  <nz-tab nzTitle="{{ 'receipt.line' | translate }}">
     <!-- Table to Display the result  -->
     <div>
       <nz-table nzShowPagination [nzData]="listOfAllReceiptLines"
@@ -127,19 +127,19 @@
             <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="receiptLinesTableAllChecked"
               [nzIndeterminate]="receiptLinesTableIndeterminate" (nzCheckedChange)="receiptLinesTableCheckAll($event)">
             </th>
-            <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+            <th nzShowSort nzSortKey="id">id</th>
             <th nzShowSort nzSortKey="number">
-              {{ 'description.field.label.receipt.line.number' | translate }}
+              {{ 'receipt.line.number' | translate }}
             </th>
             <th nzShowSort nzSortKey="item">
-              {{'description.field.label.item' | translate}}</th>
+              {{'item' | translate}}</th>
             <th>
-              {{'description.field.label.item.description' | translate}}</th>
+              {{'item.description' | translate}}</th>
             <th>
-              {{'description.field.label.receipt.line.expectedQuantity' | translate}}</th>
+              {{'receipt.line.expectedQuantity' | translate}}</th>
             <th>
-              {{'description.field.label.receipt.line.receivedQuantity' | translate}}</th>
-            <th>{{ 'description.field.label.action' | translate }}</th>
+              {{'receipt.line.receivedQuantity' | translate}}</th>
+            <th>{{ 'action' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -156,7 +156,7 @@
               <!-- Only if the receipt is already checked in -->
               <button nz-button [disabled]="currentReceipt?.receiptStatus === receiptStatus.OPEN"
                 (click)="openReceivingModal(data, tplReceivingModalTitle, tplReceivingModalContent)"
-                nzType="primary">{{ 'description.field.label.receiving' | translate }}</button>
+                nzType="primary">{{ 'receiving' | translate }}</button>
             </td>
           </tr>
         </tbody>
@@ -167,10 +167,10 @@
       <div nz-row nzType="flex" nzJustify="left" style='padding-left: 10px;'>
         <button nz-button nzType="primary"
           (click)="showAddReceiptLineModal(tplReceiptLineModalTitle, tplReceiptLineModalContent)">
-          {{ 'description.field.button.add' | translate }}
+          {{ 'add' | translate }}
         </button>
         <button nz-button nzType="danger" (click)="removeSelectedReceiptLines()">
-          {{ 'description.field.button.remove' | translate }}
+          {{ 'remove' | translate }}
         </button>
 
       </div>
@@ -178,7 +178,7 @@
 
   </nz-tab>
 
-  <nz-tab nzTitle="{{ 'description.field.label.receipt.receivedInventory' | translate }}">
+  <nz-tab nzTitle="{{ 'receipt.receivedInventory' | translate }}">
     <!-- Table to Display the result  -->
     <div>
       <nz-table nzShowPagination [nzData]="listOfAllReceivedInventory"
@@ -190,23 +190,23 @@
               [nzIndeterminate]="receivedInventoryTableIndeterminate"
               (nzCheckedChange)="receivedInventoryTableCheckAll($event)">
             </th>
-            <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+            <th nzShowSort nzSortKey="id">id</th>
             <th nzShowSort nzSortKey="lpn">
-              {{ 'description.field.label.lpn' | translate }}
+              {{ 'lpn' | translate }}
             </th>
             <th nzShowSort nzSortKey="item">
-              {{'description.field.label.item' | translate}}</th>
+              {{'item' | translate}}</th>
             <th>
-              {{'description.field.label.item.description' | translate}}</th>
+              {{'item.description' | translate}}</th>
             <th>
-              {{'description.field.label.quantity' | translate}}</th>
+              {{'quantity' | translate}}</th>
             <th>
-              {{'description.field.label.inventory.status' | translate}}</th>
+              {{'inventory.status' | translate}}</th>
             <th>
-              {{'description.field.label.location' | translate}}</th>
+              {{'location' | translate}}</th>
             <th>
-              {{'description.field.label.nextLocation' | translate}}</th>
-            <th>{{ 'description.field.label.action' | translate }}</th>
+              {{'nextLocation' | translate}}</th>
+            <th>{{ 'action' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -228,19 +228,19 @@
             <td>
               <button nz-button nzType="primary"
                 *ngIf="data.location.name === currentReceipt.number && data.inventoryMovements.length === 0"
-                (click)="allocateLocation(data)">{{ 'description.field.label.allocateLocation' | translate }}</button>
+                (click)="allocateLocation(data)">{{ 'allocateLocation' | translate }}</button>
 
 
               <div *ngIf="data.inventoryMovements.length > 0">
                 <button nz-button nzType="primary" *ngIf="data.location.name === currentReceipt.number"
-                  (click)="reallocateLocation(data)">{{ 'description.field.label.reallocateLocation' | translate }}</button>
+                  (click)="reallocateLocation(data)">{{ 'reallocateLocation' | translate }}</button>
                 <nz-divider nzType="vertical" *ngIf="data.location.name === currentReceipt.number"></nz-divider>
                 <button nz-button nzType="primary" *ngIf="data.inventoryMovements.length === 1"
-                  (click)="confirmPutaway(0, data)">{{ 'description.field.button.putaway' | translate }}</button>
+                  (click)="confirmPutaway(0, data)">{{ 'putaway' | translate }}</button>
 
                 <button nz-button nz-dropdown [nzDropdownMenu]="putawayDestinationTpl"
                   *ngIf="data.inventoryMovements.length > 1">
-                  {{ 'description.field.button.putaway' | translate }}<i nz-icon nzType="down"></i></button>
+                  {{ 'putaway' | translate }}<i nz-icon nzType="down"></i></button>
                 <nz-dropdown-menu #putawayDestinationTpl="nzDropdownMenu">
                   <ul nz-menu>
                     <li nz-menu-item *ngFor="let inventoryMovement of data.inventoryMovements; let i=index">
@@ -257,7 +257,7 @@
               <button nz-button nzType="primary"
                 *ngIf="data.location.name === currentReceipt.number || data.location.locationGroup?.locationGroupType?.receivingStage === true "
                 (click)="openManualPutawayModal(data, tplManualPutawayModalTitle, tplManualPutawayModalContent)">
-                {{ 'description.field.label.putaway.manual' | translate }}</button>
+                {{ 'putaway.manual' | translate }}</button>
             </td>
           </tr>
         </tbody>
@@ -268,18 +268,18 @@
       <div nz-row nzType="flex" nzJustify="left" style='padding-left: 10px;'>
         <button nz-button nzType="primary"
           (click)="showAddReceiptLineModal(tplReceiptLineModalTitle, tplReceiptLineModalContent)">
-          {{ 'description.field.label.allocateLocation' | translate }}
+          {{ 'allocateLocation' | translate }}
         </button>
         <button nz-button nz-dropdown [nzDropdownMenu]="printSelectionTpl" [nzLoading]="printingPutawayWork">
-          {{ 'description.field.button.print' | translate }}<i nz-icon nzType="down"></i>
+          {{ 'print' | translate }}<i nz-icon nzType="down"></i>
         </button>
         <nz-dropdown-menu #printSelectionTpl="nzDropdownMenu">
           <ul nz-menu>
             <li nz-menu-item>
-              <a (click)="printSelectedPutawayWork()">{{ 'description.field.button.printSelected' | translate }}</a>
+              <a (click)="printSelectedPutawayWork()">{{ 'printSelected' | translate }}</a>
             </li>
             <li nz-menu-item>
-              <a (click)="printAllPutawayWork()">{{ 'description.field.button.printAll' | translate }}</a>
+              <a (click)="printAllPutawayWork()">{{ 'printAll' | translate }}</a>
             </li>
           </ul>
         </nz-dropdown-menu>
@@ -303,7 +303,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNumber">
-          {{ 'description.field.label.item' | translate }}
+          {{ 'item' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -316,7 +316,7 @@
     <div nz-col [nzSpan]="16">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemDescription">
-          {{ 'description.field.label.item.description' | translate }}
+          {{ 'item.description' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -333,7 +333,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
-          {{ 'description.field.label.lpn' | translate }}
+          {{ 'lpn' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -348,7 +348,7 @@
     <div nz-col [nzSpan]="16">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
-          {{ 'description.field.label.inventory.status' | translate }}
+          {{ 'inventory.status' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -367,7 +367,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemPackageType">
-          {{ 'description.field.label.item.package-type' | translate }}
+          {{ 'item.package-type' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -385,7 +385,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="quantity">
-          {{ 'description.field.label.quantity' | translate }}
+          {{ 'quantity' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -399,7 +399,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationName">
-          {{ 'description.field.label.location' | translate }}
+          {{ 'location' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -416,12 +416,12 @@
       nzSize="middle" [nzShowPagination]="false" nzBordered>
       <thead>
         <tr>
-          <th>{{ 'description.field.label.unitOfMeasure' | translate}}</th>
-          <th>{{ 'description.field.label.quantity' | translate }}</th>
-          <th>{{ 'description.field.label.weight' | translate }}</th>
-          <th>{{ 'description.field.label.length' | translate }}</th>
-          <th>{{ 'description.field.label.width' | translate }}</th>
-          <th>{{ 'description.field.label.height' | translate }}</th>
+          <th>{{ 'unitOfMeasure' | translate}}</th>
+          <th>{{ 'quantity' | translate }}</th>
+          <th>{{ 'weight' | translate }}</th>
+          <th>{{ 'length' | translate }}</th>
+          <th>{{ 'width' | translate }}</th>
+          <th>{{ 'height' | translate }}</th>
         </tr>
       </thead>
       <tbody>
@@ -449,7 +449,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="receiptLineNumber">
-          {{ 'description.field.label.receipt.line.number' | translate }}
+          {{ 'receipt.line.number' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -466,7 +466,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNumber">
-          {{ 'description.field.label.item' | translate }}
+          {{ 'item' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -481,7 +481,7 @@
     <div nz-col [nzSpan]="16">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemDescription">
-          {{ 'description.field.label.item.description' | translate }}
+          {{ 'item.description' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -496,7 +496,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="expectedQuantity">
-          {{ 'description.field.label.receipt.line.expectedQuantity' | translate }}
+          {{ 'receipt.line.expectedQuantity' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -509,7 +509,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="overReceivingQuantity">
-          {{ 'description.field.label.receipt.line.overReceivingQuantity' | translate }}
+          {{ 'receipt.line.overReceivingQuantity' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -523,7 +523,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="overReceivingPercent">
-          {{ 'description.field.label.receipt.line.overReceivingPercent' | translate }}
+          {{ 'receipt.line.overReceivingPercent' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -548,7 +548,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNumber">
-          {{ 'description.field.label.item' | translate }}
+          {{ 'item' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24">
           <nz-input-group nzSize="large">
@@ -560,7 +560,7 @@
     <div nz-col [nzSpan]="16">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemDescription">
-          {{ 'description.field.label.item.description' | translate }}
+          {{ 'item.description' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24">
           <nz-input-group nzSize="large">
@@ -575,7 +575,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
-          {{ 'description.field.label.lpn' | translate }}
+          {{ 'lpn' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24">
           <nz-input-group nzSize="large">
@@ -588,7 +588,7 @@
     <div nz-col [nzSpan]="16">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
-          {{ 'description.field.label.inventory.status' | translate }}
+          {{ 'inventory.status' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24">
           <input nz-input [ngModel]="currentInventory.inventoryStatus?.name" disabled />
@@ -602,7 +602,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemPackageType">
-          {{ 'description.field.label.item.package-type' | translate }}
+          {{ 'item.package-type' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24">
 
@@ -615,7 +615,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="quantity">
-          {{ 'description.field.label.quantity' | translate }}
+          {{ 'quantity' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24">
           <nz-input-group nzSize="large">
@@ -628,7 +628,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationName">
-          {{ 'description.field.label.location' | translate }}
+          {{ 'location' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -645,12 +645,12 @@
       nzSize="middle" [nzShowPagination]="false" nzBordered>
       <thead>
         <tr>
-          <th>{{ 'description.field.label.unitOfMeasure' | translate}}</th>
-          <th>{{ 'description.field.label.quantity' | translate }}</th>
-          <th>{{ 'description.field.label.weight' | translate }}</th>
-          <th>{{ 'description.field.label.length' | translate }}</th>
-          <th>{{ 'description.field.label.width' | translate }}</th>
-          <th>{{ 'description.field.label.height' | translate }}</th>
+          <th>{{ 'unitOfMeasure' | translate}}</th>
+          <th>{{ 'quantity' | translate }}</th>
+          <th>{{ 'weight' | translate }}</th>
+          <th>{{ 'length' | translate }}</th>
+          <th>{{ 'width' | translate }}</th>
+          <th>{{ 'height' | translate }}</th>
         </tr>
       </thead>
       <tbody>

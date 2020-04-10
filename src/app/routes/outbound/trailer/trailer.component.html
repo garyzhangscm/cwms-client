@@ -6,7 +6,7 @@
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
         <nz-form-label for="number" [nzSm]="3" [nzXs]="3">
-          {{ 'description.field.label.order.number' | translate }}
+          {{ 'order.number' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="number" id="number" formControlName="number" />
@@ -18,9 +18,9 @@
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
       <button nz-button [nzType]="'primary'" (click)="search()">
-        {{ 'description.field.button.search' | translate }}
+        {{ 'search' | translate }}
       </button>
-      <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
     </div>
   </div>
 </form>
@@ -34,39 +34,39 @@
         <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
           (nzCheckedChange)="checkAll($event)"></th>
 
-        <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+        <th nzShowSort nzSortKey="id">id</th>
         <th nzShowSort nzSortKey="number">
-          {{ 'description.field.label.trailer.number' | translate }}
+          {{ 'trailer.number' | translate }}
         </th>
         <th nzShowSort nzSortKey="status">
-          {{ 'description.field.label.trailer.status' | translate }}
+          {{ 'trailer.status' | translate }}
         </th>
         <th nzShowSort nzSortKey="carrier">
-          {{ 'description.field.label.carrier' | translate }}
+          {{ 'carrier' | translate }}
         </th>
         <th nzShowSort nzSortKey="carrierServiceLevel">
-          {{ 'description.field.label.carrier.serviceLevel' | translate }}
+          {{ 'carrier.serviceLevel' | translate }}
         </th>
         <th>
-          {{ 'description.field.label.trailer.driverFirstName' | translate }}
+          {{ 'trailer.driverFirstName' | translate }}
         </th>
         <th>
-          {{ 'description.field.label.trailer.driverLastName' | translate }}
+          {{ 'trailer.driverLastName' | translate }}
         </th>
         <th>
-          {{ 'description.field.label.trailer.licensePlateNumber' | translate }}
+          {{ 'trailer.licensePlateNumber' | translate }}
         </th>
         <th>
-          {{ 'description.field.label.trailer.size' | translate }}
+          {{ 'trailer.size' | translate }}
         </th>
         <th>
-          {{ 'description.field.label.trailer.type' | translate }}
+          {{ 'trailer.type' | translate }}
         </th>
         <th>
-          {{ 'description.field.label.trailer.location' | translate }}
+          {{ 'trailer.location' | translate }}
         </th>
         <th>
-          {{ 'description.field.label.action' | translate }}
+          {{ 'action' | translate }}
         </th>
       </tr>
     </thead>
@@ -91,11 +91,11 @@
         <td>
 
           <button nz-button (click)="checkInTrailer(data)">
-            {{ 'description.field.button.trailer.checkin' | translate }}
+            {{ 'trailer.checkin' | translate }}
           </button>
           <nz-divider nzType="vertical"></nz-divider>
           <button nz-button nzType="primary" (click)="dispatchTrailer(data)">
-            {{ 'description.field.button.trailer.dispatch' | translate }}
+            {{ 'trailer.dispatch' | translate }}
           </button>
         </td>
       </tr>
@@ -106,7 +106,7 @@
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start">
     <button nz-button nzType="danger" (click)="cancelSelectedTrailers()">
-      {{ 'description.field.button.cancel' | translate }}
+      {{ 'cancel' | translate }}
     </button>
   </div>
 </ng-template>

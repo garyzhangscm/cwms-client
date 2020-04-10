@@ -24,7 +24,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="batchId">
-            {{ 'description.field.label.cycle-count.batchId' | translate }}
+            {{ 'cycle-count.batchId' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -38,7 +38,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <label nz-checkbox formControlName="autoGenerateId" (ngModelChange)="generateBatchId($event)">
-            {{ 'description.field.label.number.auto' | translate }}</label>
+            {{ 'number.auto' | translate }}</label>
         </nz-form-item>
       </div>
     -->
@@ -48,7 +48,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="requestType">
-            {{ 'description.field.label.cycle-count.request-type' | translate }}
+            {{ 'cycle-count.request-type' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -68,11 +68,11 @@
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="startValue" [ngSwitch]="requestTypeSelect.value">
             <span *ngSwitchCase="'BY_LOCATION_RANGE'">
-              {{ 'description.field.label.cycle-count-request.start-location' | translate }}</span>
+              {{ 'cycle-count-request.start-location' | translate }}</span>
             <span *ngSwitchCase="'BY_ITEM_RANGE'">
-              {{ 'description.field.label.cycle-count-request.start-item' | translate }}</span>
+              {{ 'cycle-count-request.start-item' | translate }}</span>
             <span *ngSwitchCase="'BY_AISLE_RANGE'">
-              {{ 'description.field.label.cycle-count-request.start-aisle' | translate }}</span>
+              {{ 'cycle-count-request.start-aisle' | translate }}</span>
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -85,11 +85,11 @@
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="endValue" [ngSwitch]="requestTypeSelect.value">
             <span *ngSwitchCase="'BY_LOCATION_RANGE'">
-              {{ 'description.field.label.cycle-count-request.end-location' | translate }}</span>
+              {{ 'cycle-count-request.end-location' | translate }}</span>
             <span *ngSwitchCase="'BY_ITEM_RANGE'">
-              {{ 'description.field.label.cycle-count-request.end-item' | translate }}</span>
+              {{ 'cycle-count-request.end-item' | translate }}</span>
             <span *ngSwitchCase="'BY_AISLE_RANGE'">
-              {{ 'description.field.label.cycle-count-request.end-aisle' | translate }}</span>
+              {{ 'cycle-count-request.end-aisle' | translate }}</span>
 
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
@@ -103,7 +103,7 @@
         *ngIf='requestTypeSelect.value === "BY_LOCATION_RANGE" || requestTypeSelect.value === "BY_AISLE_RANGE"'>
         <nz-form-item nzFlex>
           <label nz-checkbox formControlName="includeEmptyLocation">
-            {{ 'description.field.label.cycle-count-request.include-empty-location' | translate }}</label>
+            {{ 'cycle-count-request.include-empty-location' | translate }}</label>
         </nz-form-item>
       </div>
     </div>
@@ -115,13 +115,13 @@
 <ng-template #cardFoot>
   <div nz-row nzType="flex" nzJustify="left" style='padding-left: 20px;'>
     <button nz-button nzType="primary" (click)="generateCountRequest()" [disabled]="!requestForm.valid">
-      {{ 'description.field.button.confirm' | translate }}
+      {{ 'confirm' | translate }}
     </button>
   </div>
 </ng-template>
 
 <nz-tabset>
-  <nz-tab nzTitle="{{ 'description.field.label.cycle-count-request.open' | translate}}">
+  <nz-tab nzTitle="{{ 'cycle-count-request.open' | translate}}">
     <!-- Table to Display the result  -->
     <div>
       <nz-table nzShowPagination [nzData]="listOfAllOpenCycleCountRequests"
@@ -132,13 +132,13 @@
             <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="openCycleCountTableAllChecked"
               [nzIndeterminate]="openCycleCountTableIndeterminate"
               (nzCheckedChange)="openCycleCountTableCheckAll($event)"></th>
-            <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+            <th nzShowSort nzSortKey="id">id</th>
             <th nzShowSort nzSortKey="batchId">
-              {{ 'description.field.label.cycle-count.batchId' | translate }}
+              {{ 'cycle-count.batchId' | translate }}
             </th>
             <th nzShowSort nzSortKey="location">
-              {{'description.field.label.location' | translate}}</th>
-            <th>{{ 'description.field.label.action' | translate }}</th>
+              {{'location' | translate}}</th>
+            <th>{{ 'action' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -151,7 +151,7 @@
             <td>
               <button nz-button
                 (click)="openCountResultModal(data, tplCycleCountRequestConfirmModalTitle, tplCycleCountRequestConfirmModalContent)"
-                nzType="primary">{{ 'description.field.label.cycle-count.complete' | translate }}</button>
+                nzType="primary">{{ 'cycle-count.complete' | translate }}</button>
             </td>
           </tr>
         </tbody>
@@ -161,31 +161,31 @@
     <ng-template #openCycleCountTableFoot>
       <div nz-row nzType="flex" nzJustify="left" style='padding-left: 10px;'>
         <button nz-button nzType="primary" nz-dropdown [nzDropdownMenu]="confirmSelectionTpl">
-          {{ 'description.field.button.confirm' | translate }}<i nz-icon nzType="down"></i>
+          {{ 'confirm' | translate }}<i nz-icon nzType="down"></i>
         </button>
         <button nz-button nz-dropdown [nzDropdownMenu]="printSelectionTpl" [nzLoading]="printingCycleCountRequest">
-          {{ 'description.field.button.print' | translate }}<i nz-icon nzType="down"></i>
+          {{ 'print' | translate }}<i nz-icon nzType="down"></i>
         </button>
         <button nz-button nzType="danger" (click)="cancelSelectedCycleCounts()">
-          {{ 'description.field.button.cancel' | translate }}
+          {{ 'cancel' | translate }}
         </button>
         <nz-dropdown-menu #printSelectionTpl="nzDropdownMenu">
           <ul nz-menu>
             <li nz-menu-item>
-              <a (click)="printSelectedCycleCounts()">{{ 'description.field.button.printSelected' | translate }}</a>
+              <a (click)="printSelectedCycleCounts()">{{ 'printSelected' | translate }}</a>
             </li>
             <li nz-menu-item>
-              <a (click)="printAllCycleCounts()">{{ 'description.field.button.printAll' | translate }}</a>
+              <a (click)="printAllCycleCounts()">{{ 'printAll' | translate }}</a>
             </li>
           </ul>
         </nz-dropdown-menu>
         <nz-dropdown-menu #confirmSelectionTpl="nzDropdownMenu">
           <ul nz-menu>
             <li nz-menu-item>
-              <a (click)="confirmSelectedCycleCounts()">{{ 'description.field.button.confirmSelected' | translate }}</a>
+              <a (click)="confirmSelectedCycleCounts()">{{ 'confirmSelected' | translate }}</a>
             </li>
             <li nz-menu-item>
-              <a (click)="confirmAllCycleCounts()">{{ 'description.field.button.confirmAll' | translate }}</a>
+              <a (click)="confirmAllCycleCounts()">{{ 'confirmAll' | translate }}</a>
             </li>
           </ul>
         </nz-dropdown-menu>
@@ -194,7 +194,7 @@
 
   </nz-tab>
 
-  <nz-tab nzTitle="{{ 'description.field.label.cycle-count-request.finished' | translate}}">
+  <nz-tab nzTitle="{{ 'cycle-count-request.finished' | translate}}">
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
@@ -202,20 +202,20 @@
         (nzCurrentPageDataChange)="cycleCountResultPageDataChange($event)" #cycleCountResultTable>
         <thead (nzSortChange)="sortCycleCountResultTable($event)" nzSingleSort>
           <tr>
-            <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+            <th nzShowSort nzSortKey="id">id</th>
             <th nzShowSort nzSortKey="batchId">
-              {{ 'description.field.label.cycle-count.batchId' | translate }}
+              {{ 'cycle-count.batchId' | translate }}
             </th>
             <th nzShowSort nzSortKey="location">
-              {{'description.field.label.location' | translate}}</th>
+              {{'location' | translate}}</th>
             <th>
-              {{'description.field.label.item' | translate}}</th>
+              {{'item' | translate}}</th>
             <th>
-              {{'description.field.label.item.description' | translate}}</th>
+              {{'item.description' | translate}}</th>
             <th>
-              {{'description.field.label.quantity' | translate}}</th>
+              {{'quantity' | translate}}</th>
             <th>
-              {{'description.field.label.count-quantity' | translate}}</th>
+              {{'count-quantity' | translate}}</th>
           </tr>
         </thead>
         <tbody>
@@ -234,7 +234,7 @@
 
   </nz-tab>
 
-  <nz-tab nzTitle="{{ 'description.field.label.cycle-count-request.cancelled' | translate}}">
+  <nz-tab nzTitle="{{ 'cycle-count-request.cancelled' | translate}}">
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
@@ -246,12 +246,12 @@
             <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="cancelledCycleCountTableAllChecked"
               [nzIndeterminate]="cancelledCycleCountTableIndeterminate"
               (nzCheckedChange)="cancelledCycleCountTableCheckAll($event)"></th>
-            <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+            <th nzShowSort nzSortKey="id">id</th>
             <th nzShowSort nzSortKey="batchId">
-              {{ 'description.field.label.cycle-count.batchId' | translate }}
+              {{ 'cycle-count.batchId' | translate }}
             </th>
             <th nzShowSort nzSortKey="location">
-              {{'description.field.label.location' | translate}}</th>
+              {{'location' | translate}}</th>
           </tr>
         </thead>
         <tbody>
@@ -269,13 +269,13 @@
     <ng-template #cancelledCycleCountTableFoot>
       <div nz-row nzType="flex" nzJustify="left" style='padding-left: 10px;'>
         <button nz-button nzType="primary" (click)="reopenCancelledCycleCountRequest()">
-          {{ 'description.field.button.cycle-count-request.reopen' | translate }}
+          {{ 'cycle-count-request.reopen' | translate }}
         </button>
       </div>
     </ng-template>
   </nz-tab>
 
-  <nz-tab nzTitle="{{ 'description.field.label.audit-count-request' | translate}}">
+  <nz-tab nzTitle="{{ 'audit-count-request' | translate}}">
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
@@ -287,13 +287,13 @@
             <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="openAuditCountTableAllChecked"
               [nzIndeterminate]="openAuditCountTableIndeterminate"
               (nzCheckedChange)="openAuditCountTableCheckAll($event)"></th>
-            <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+            <th nzShowSort nzSortKey="id">id</th>
             <th nzShowSort nzSortKey="batchId">
-              {{ 'description.field.label.cycle-count.batchId' | translate }}
+              {{ 'cycle-count.batchId' | translate }}
             </th>
             <th nzShowSort nzSortKey="location">
-              {{'description.field.label.location' | translate}}</th>
-            <th>{{ 'description.field.label.action' | translate }}</th>
+              {{'location' | translate}}</th>
+            <th>{{ 'action' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -306,7 +306,7 @@
             <td>
               <a nz-button nzType="primary" routerLink="/inventory/count/audit-count-result" routerLinkActive="active"
                 [queryParams]="{batchId : data.batchId, locationId: data.location?.id}">
-                {{ 'description.field.label.cycle-count.complete' | translate }}</a>
+                {{ 'cycle-count.complete' | translate }}</a>
             </td>
           </tr>
         </tbody>
@@ -316,29 +316,29 @@
     <ng-template #openAuditCountTableFoot>
       <div nz-row nzType="flex" nzJustify="left" style='padding-left: 10px;'>
         <button nz-button nzType="primary" nz-dropdown [nzDropdownMenu]="confirmSelectedAuditCountTpl">
-          {{ 'description.field.button.confirm' | translate }}<i nz-icon nzType="down"></i>
+          {{ 'confirm' | translate }}<i nz-icon nzType="down"></i>
         </button>
         <button nz-button nz-dropdown [nzDropdownMenu]="printSelectedAuditCountTpl">
-          {{ 'description.field.button.print' | translate }}<i nz-icon nzType="down"></i>
+          {{ 'print' | translate }}<i nz-icon nzType="down"></i>
         </button>
 
         <nz-dropdown-menu #printSelectedAuditCountTpl="nzDropdownMenu">
           <ul nz-menu>
             <li nz-menu-item>
-              <a (click)="printSelectedAuditCounts()">{{ 'description.field.button.printSelected' | translate }}</a>
+              <a (click)="printSelectedAuditCounts()">{{ 'printSelected' | translate }}</a>
             </li>
             <li nz-menu-item>
-              <a (click)="printAllAuditCounts()">{{ 'description.field.button.printAll' | translate }}</a>
+              <a (click)="printAllAuditCounts()">{{ 'printAll' | translate }}</a>
             </li>
           </ul>
         </nz-dropdown-menu>
         <nz-dropdown-menu #confirmSelectedAuditCountTpl="nzDropdownMenu">
           <ul nz-menu>
             <li nz-menu-item>
-              <a (click)="confirmSelectedAuditCounts()">{{ 'description.field.button.confirmSelected' | translate }}</a>
+              <a (click)="confirmSelectedAuditCounts()">{{ 'confirmSelected' | translate }}</a>
             </li>
             <li nz-menu-item>
-              <a (click)="confirmAllAuditCounts()">{{ 'description.field.button.confirmAll' | translate }}</a>
+              <a (click)="confirmAllAuditCounts()">{{ 'confirmAll' | translate }}</a>
             </li>
           </ul>
         </nz-dropdown-menu>
@@ -348,7 +348,7 @@
 
   </nz-tab>
 
-  <nz-tab nzTitle="{{ 'description.field.label.audit-count-result' | translate}}">
+  <nz-tab nzTitle="{{ 'audit-count-result' | translate}}">
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
@@ -356,22 +356,22 @@
         (nzCurrentPageDataChange)="auditCountResultsCurrentPageDataChange($event)" #auditCountResultsTable>
         <thead (nzSortChange)="sortAuditCountResultsTable($event)" nzSingleSort>
           <tr>
-            <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+            <th nzShowSort nzSortKey="id">id</th>
             <th nzShowSort nzSortKey="batchId">
-              {{ 'description.field.label.cycle-count.batchId' | translate }}
+              {{ 'cycle-count.batchId' | translate }}
             </th>
             <th nzShowSort nzSortKey="location">
-              {{'description.field.label.location' | translate}}</th>
+              {{'location' | translate}}</th>
             <th>
-              {{'description.field.label.lpn' | translate}}</th>
+              {{'lpn' | translate}}</th>
             <th>
-              {{'description.field.label.item' | translate}}</th>
+              {{'item' | translate}}</th>
             <th>
-              {{'description.field.label.item.description' | translate}}</th>
+              {{'item.description' | translate}}</th>
             <th>
-              {{'description.field.label.quantity' | translate}}</th>
+              {{'quantity' | translate}}</th>
             <th>
-              {{'description.field.label.count-quantity' | translate}}</th>
+              {{'count-quantity' | translate}}</th>
           </tr>
         </thead>
         <tbody>
@@ -406,11 +406,11 @@
     <nz-table [nzData]="inventoriesToBeCount" #inventoriesTable nzShowPagination="false">
       <thead>
         <tr>
-          <th>{{ 'description.field.label.location' | translate}}</th>
-          <th>{{ 'description.field.label.item' | translate}}</th>
-          <th>{{ 'description.field.label.item.description' | translate}}</th>
-          <th>{{ 'description.field.label.quantity' | translate}}</th>
-          <th>{{ 'description.field.label.count-quantity' | translate}}</th>
+          <th>{{ 'location' | translate}}</th>
+          <th>{{ 'item' | translate}}</th>
+          <th>{{ 'item.description' | translate}}</th>
+          <th>{{ 'quantity' | translate}}</th>
+          <th>{{ 'count-quantity' | translate}}</th>
           <th></th>
         </tr>
       </thead>

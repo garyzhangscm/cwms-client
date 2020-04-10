@@ -6,7 +6,7 @@
     <div nz-col [nzSpan]="12" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label for="client" [nzSm]="3" [nzXs]="3">
-          {{ 'description.field.label.inventory-quantity-change-type' | translate }}
+          {{ 'inventory-quantity-change-type' | translate }}
         </nz-form-label>
         <nz-select nzMode="tags" formControlName="inventoryQuantityChangeType">
           <nz-option *ngFor="let inventoryQuantityChangeType of inventoryQuantityChangeTypes | keyvalue"
@@ -18,7 +18,7 @@
     <div nz-col [nzSpan]="12" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label for="status" [nzSm]="3" [nzXs]="3">
-          {{ 'description.field.label.inventory-adjustment-request.status' | translate }}
+          {{ 'inventory-adjustment-request.status' | translate }}
         </nz-form-label>
         <nz-select nzMode="tags" formControlName="status">
           <nz-option *ngFor="let inventoryAdjustmentRequestStatus of inventoryAdjustmentRequestStatuses  | keyvalue"
@@ -30,7 +30,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemName">
-          {{ 'description.field.label.item' | translate }}
+          {{ 'item' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="itemName" id="itemName" formControlName="itemName" />
@@ -40,7 +40,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="location">
-          {{ 'description.field.label.location' | translate }}
+          {{ 'location' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="location" id="location" formControlName="location" />
@@ -53,11 +53,11 @@
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
       <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
-        {{ 'description.field.button.search' | translate }}
+        {{ 'search' | translate }}
       </button>
-      <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
       <a class="collapse" (click)="toggleCollapse()">
-        {{ 'description.field.button.collapse' | translate }}
+        {{ 'collapse' | translate }}
 
         <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
       </a>
@@ -70,9 +70,9 @@
   <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllInventoryAdjustmentRequests">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
-        <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+        <th nzShowSort nzSortKey="id">id</th>
         <th nzShowSort nzSortKey="inventoryId">
-          {{ 'description.field.label.inventory-adjustment-request.inventory-id' | translate }}</th>
+          {{ 'inventory-adjustment-request.inventory-id' | translate }}</th>
         <th nzShowSort nzSortKey="lpn" [nzFilters]="filtersByLpn" (nzFilterChange)="
             filter(
               $event,
@@ -82,7 +82,7 @@
               selectedFiltersByInventoryStatus
             )
           ">
-          {{ 'description.field.label.lpn' | translate }}
+          {{ 'lpn' | translate }}
         </th>
 
         <th nzShowSort nzSortKey="item" [nzFilters]="filtersByItem" (nzFilterChange)="
@@ -94,7 +94,7 @@
               selectedFiltersByInventoryStatus
             )
           ">
-          {{ 'description.field.label.item' | translate }}
+          {{ 'item' | translate }}
         </th>
 
         <th [nzFilters]="filtersByItemPackageType" (nzFilterChange)="
@@ -106,7 +106,7 @@
               selectedFiltersByInventoryStatus
             )
           ">
-          {{ 'description.field.label.item.package-type' | translate }}
+          {{ 'item.package-type' | translate }}
         </th>
         <th nzShowSort nzSortKey="location" [nzFilters]="filtersByLocation" (nzFilterChange)="
             filter(
@@ -117,13 +117,13 @@
               selectedFiltersByInventoryStatus
             )
           ">
-          {{ 'description.field.label.location' | translate }}
+          {{ 'location' | translate }}
         </th>
         <th nzShowSort nzSortKey="quantity">
-          {{ 'description.field.label.quantity' | translate }}
+          {{ 'quantity' | translate }}
         </th>
         <th nzShowSort nzSortKey="newQuantity">
-          {{ 'description.field.label.inventory-adjustment-request.new-quantity' | translate }}
+          {{ 'inventory-adjustment-request.new-quantity' | translate }}
         </th>
         <th [nzFilters]="filtersByInventoryStatus" (nzFilterChange)="
             filter(
@@ -134,17 +134,17 @@
               $event
             )
           ">
-          {{ 'description.field.label.inventory.status' | translate }}
+          {{ 'inventory.status' | translate }}
         </th>
-        <th>{{ 'description.field.label.inventory-quantity-change-type' | translate }}</th>
-        <th>{{ 'description.field.label.inventory-adjustment-request.status' | translate }}</th>
-        <th>{{ 'description.field.label.inventory-adjustment-request.requested-by-username' | translate }}</th>
-        <th>{{ 'description.field.label.inventory-adjustment-request.requested-by-datetime' | translate }}</th>
-        <th>{{ 'description.field.label.inventory-adjustment-request.processed-by-username' | translate }}</th>
-        <th>{{ 'description.field.label.inventory-adjustment-request.processed-by-datetime' | translate }}</th>
-        <th>{{ 'description.field.label.inventory-adjustment-request.document-number' | translate }}</th>
-        <th>{{ 'description.field.label.inventory-adjustment-request.comment' | translate }}</th>
-        <th>{{ 'description.field.label.action' | translate }}</th>
+        <th>{{ 'inventory-quantity-change-type' | translate }}</th>
+        <th>{{ 'inventory-adjustment-request.status' | translate }}</th>
+        <th>{{ 'inventory-adjustment-request.requested-by-username' | translate }}</th>
+        <th>{{ 'inventory-adjustment-request.requested-by-datetime' | translate }}</th>
+        <th>{{ 'inventory-adjustment-request.processed-by-username' | translate }}</th>
+        <th>{{ 'inventory-adjustment-request.processed-by-datetime' | translate }}</th>
+        <th>{{ 'inventory-adjustment-request.document-number' | translate }}</th>
+        <th>{{ 'inventory-adjustment-request.comment' | translate }}</th>
+        <th>{{ 'action' | translate }}</th>
       </tr>
     </thead>
     <tbody>
@@ -156,7 +156,7 @@
           <a nz-tooltip nzTooltipTitle="{{ data.item.description }}">{{ data.item.name }}</a>
         </td>
         <td>
-          <a nz-popover nzPopoverTitle="{{ 'description.field.label.itemPackageTypeDetails' | translate}}"
+          <a nz-popover nzPopoverTitle="{{ 'itemPackageTypeDetails' | translate}}"
             [nzPopoverContent]="itemPackageTypeDetails">{{ data.itemPackageType.name }}</a>
         </td>
         <td>{{ data.location.name }}</td>
@@ -184,7 +184,7 @@
           <span *ngIf="data.status === inventoryAdjustmentRequestStatuses.PENDING">
 
             <button nz-button
-              (click)="openRequestProcessModel(data, tplRequestProcessModalTitle, tplRequestProcessModalContent )">{{ 'description.field.label.process' | translate }}</button>
+              (click)="openRequestProcessModel(data, tplRequestProcessModalTitle, tplRequestProcessModalContent )">{{ 'process' | translate }}</button>
 
 
           </span>
@@ -194,12 +194,12 @@
             [nzShowPagination]="false" nzBordered>
             <thead>
               <tr>
-                <th>{{ 'description.field.label.unitOfMeasure' | translate}}</th>
-                <th>{{ 'description.field.label.quantity' | translate }}</th>
-                <th>{{ 'description.field.label.weight' | translate }}</th>
-                <th>{{ 'description.field.label.length' | translate }}</th>
-                <th>{{ 'description.field.label.width' | translate }}</th>
-                <th>{{ 'description.field.label.height' | translate }}</th>
+                <th>{{ 'unitOfMeasure' | translate}}</th>
+                <th>{{ 'quantity' | translate }}</th>
+                <th>{{ 'weight' | translate }}</th>
+                <th>{{ 'length' | translate }}</th>
+                <th>{{ 'width' | translate }}</th>
+                <th>{{ 'height' | translate }}</th>
               </tr>
             </thead>
     <tbody>
@@ -231,7 +231,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
-            {{ 'description.field.label.lpn' | translate }}
+            {{ 'lpn' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <nz-input-group nzSize="large">
@@ -243,7 +243,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNumber">
-            {{ 'description.field.label.item' | translate }}
+            {{ 'item' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <nz-input-group nzSize="large">
@@ -255,7 +255,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemDescription">
-            {{ 'description.field.label.item.description' | translate }}
+            {{ 'item.description' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <nz-input-group nzSize="large">
@@ -271,7 +271,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24">
-            {{ 'description.field.label.inventory.status' | translate }}
+            {{ 'inventory.status' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <input nz-input formControlName="inventoryStatus" />
@@ -282,7 +282,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationName">
-            {{ 'description.field.label.location' | translate }}
+            {{ 'location' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -299,7 +299,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="documentNumber">
-            {{ 'description.field.label.document-number' | translate }}
+            {{ 'document-number' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <nz-input-group nzSize="large">
@@ -311,7 +311,7 @@
       <div nz-col [nzSpan]="16">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="comment">
-            {{ 'description.field.label.inventory-adjustment-request.comment' | translate }}
+            {{ 'inventory-adjustment-request.comment' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <nz-input-group nzSize="large">
@@ -329,8 +329,8 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-radio-group formControlName="approved" nzName="approved">
-            <label nz-radio nzValue="true">{{ 'description.field.label.approve' | translate}}</label>
-            <label nz-radio nzValue="false">{{ 'description.field.label.deny' | translate}}</label>
+            <label nz-radio nzValue="true">{{ 'approve' | translate}}</label>
+            <label nz-radio nzValue="false">{{ 'deny' | translate}}</label>
           </nz-radio-group>
         </nz-form-item>
       </div>

@@ -9,14 +9,14 @@
       <tr>
         <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
           (nzCheckedChange)="checkAll($event)"></th>
-        <th nzShowSort nzSortKey="id">{{'description.field.table.header.id' | translate}}</th>
+        <th nzShowSort nzSortKey="id">{{'id' | translate}}</th>
         <th nzShowSort nzSortKey="name" nzShowFilter [nzFilters]="filtersByName"
           (nzFilterChange)="filter($event, selectedFiltersByDescription)">
-          {{'description.field.label.item-family.name' | translate}}</th>
+          {{'item-family.name' | translate}}</th>
         <th nzShowFilter [nzFilters]="filtersByDescription" (nzFilterChange)="filter(selectedFiltersByName, $event)">
-          {{'description.field.label.item-family.description' | translate}}</th>
+          {{'item-family.description' | translate}}</th>
         <th nzShowSort nzSortKey="totalItemCount">
-          {{'description.field.label.item-family.item-count' | translate}}</th>
+          {{'item-family.item-count' | translate}}</th>
       </tr>
     </thead>
     <tbody>
@@ -53,14 +53,13 @@
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start">
     <a nz-button nzType="primary" (click)="refresh()">
-      {{'description.field.button.fresh' | translate}}
+      {{'fresh' | translate}}
     </a>
     <a nz-button nzType="primary" routerLink="/inventory/item-family-maintenance" routerLinkActive="active"
       (click)="clearSessionItemFamily()">
-      {{'description.field.button.add' | translate}}
+      {{'add' | translate}}
     </a>
 
-    <button nz-button nzType="danger"
-      (click)="removeSelectedItemFamilies()">{{'description.field.button.delete' | translate}}</button>
+    <button nz-button nzType="danger" (click)="removeSelectedItemFamilies()">{{'delete' | translate}}</button>
   </div>
 </ng-template>

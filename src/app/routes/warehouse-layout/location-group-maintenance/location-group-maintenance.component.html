@@ -34,7 +34,7 @@
 <form nz-form>
   <nz-form-item>
     <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupName">
-      {{ 'description.field.label.location-group.name' | translate }}
+      {{ 'location-group.name' | translate }}
     </nz-form-label>
     <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | translate }}">
       <input nz-input [(ngModel)]="currentLocationGroup.name" id="locationGroupName" name="name" required />
@@ -42,7 +42,7 @@
   </nz-form-item>
   <nz-form-item>
     <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupDescription">
-      {{ 'description.field.label.location-group.description' | translate }}
+      {{ 'location-group.description' | translate }}
     </nz-form-label>
     <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | translate }}">
       <input nz-input [(ngModel)]="currentLocationGroup.description" id="locationGroupDescription" name="description"
@@ -51,7 +51,7 @@
   </nz-form-item>
   <nz-form-item>
     <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupType">
-      {{ 'description.field.label.location-group-type' | translate }}
+      {{ 'location-group-type' | translate }}
     </nz-form-label>
     <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | translate }}"
       [nzSuccessTip]="locationGroupTypeDetailTpl">
@@ -66,16 +66,16 @@
   <ng-template #locationGroupTypeDetailTpl>
     <div>
       <nz-tag [nzColor]="'#2db7f5'" *ngIf="currentLocationGroup.locationGroupType.fourWallInventory">
-        {{'description.field.label.location-group-type.four_wall_inventory' | translate}}</nz-tag>
+        {{'location-group-type.four_wall_inventory' | translate}}</nz-tag>
       <nz-tag [nzColor]="'#2db7f5'" *ngIf="currentLocationGroup.locationGroupType.virtual">
-        {{'description.field.label.location-group-type.virtual' | translate}}</nz-tag>
+        {{'location-group-type.virtual' | translate}}</nz-tag>
     </div>
   </ng-template>
 
   <nz-form-item>
     <nz-form-control>
       <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupDescription">
-        {{ 'description.field.label.location-group.storable' | translate }}
+        {{ 'location-group.storable' | translate }}
       </nz-form-label>
       <label nz-checkbox [(ngModel)]="currentLocationGroup.storable" name="storable">
       </label>
@@ -84,7 +84,7 @@
   <nz-form-item>
     <nz-form-control>
       <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupDescription">
-        {{ 'description.field.label.location-group.pickable' | translate }}
+        {{ 'location-group.pickable' | translate }}
       </nz-form-label>
       <label nz-checkbox [(ngModel)]="currentLocationGroup.pickable" name="pickable"></label>
     </nz-form-control>
@@ -92,7 +92,7 @@
   <nz-form-item>
     <nz-form-control>
       <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupDescription">
-        {{ 'description.field.label.location-group.countable' | translate }}
+        {{ 'location-group.countable' | translate }}
       </nz-form-label>
       <label nz-checkbox [(ngModel)]="currentLocationGroup.countable" name="countable"></label>
     </nz-form-control>

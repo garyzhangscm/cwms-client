@@ -36,8 +36,8 @@ export class AuthRoleUserComponent implements OnInit {
     private router: Router,
   ) {
     this.pageTitle = this.i18n.fanyi('page.auth.role.users');
-    this.unassignedUserText = this.i18n.fanyi('description.field.label.user.unassigned');
-    this.assignedUserText = this.i18n.fanyi('description.field.label.user.assigned');
+    this.unassignedUserText = this.i18n.fanyi('user.unassigned');
+    this.assignedUserText = this.i18n.fanyi('user.assigned');
   }
 
   ngOnInit() {

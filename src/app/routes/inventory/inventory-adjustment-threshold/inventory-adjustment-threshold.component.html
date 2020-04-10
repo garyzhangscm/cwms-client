@@ -6,7 +6,7 @@
     <div nz-col [nzSpan]="12" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label for="client" [nzSm]="3" [nzXs]="3">
-          {{ 'description.field.label.inventory-quantity-change-type' | translate }}
+          {{ 'inventory-quantity-change-type' | translate }}
         </nz-form-label>
         <nz-select nzMode="tags" formControlName="inventoryQuantityChangeType">
           <nz-option *ngFor="let inventoryQuantityChangeType of inventoryQuantityChangeTypes | keyvalue"
@@ -18,7 +18,7 @@
     <div nz-col [nzSpan]="12" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label for="client" [nzSm]="3" [nzXs]="3">
-          {{ 'description.field.label.client' | translate }}
+          {{ 'client' | translate }}
         </nz-form-label>
         <nz-select nzMode="tags" formControlName="taggedClients">
           <nz-option *ngFor="let client of clients" [nzLabel]="client.label" [nzValue]="client.value"></nz-option>
@@ -31,7 +31,7 @@
     <div nz-col [nzSpan]="12" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label for="item-family" [nzSm]="3" [nzXs]="3">
-          {{ 'description.field.label.item-family' | translate }}
+          {{ 'item-family' | translate }}
         </nz-form-label>
         <nz-select nzMode="tags" formControlName="taggedItemFamilies">
           <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.label" [nzValue]="itemFamily.value">
@@ -42,7 +42,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemName">
-          {{ 'description.field.label.item' | translate }}
+          {{ 'item' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="itemName" id="itemName" formControlName="itemName" />
@@ -52,7 +52,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="username">
-          {{ 'description.field.label.username' | translate }}
+          {{ 'username' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="username" id="username" formControlName="username" />
@@ -62,7 +62,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="roleName">
-          {{ 'description.field.label.role.name' | translate }}
+          {{ 'role.name' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="roleName" id="roleName" formControlName="roleName" />
@@ -73,7 +73,7 @@
       <nz-form-item nzFlex>
         <label nz-checkbox formControlName="enabled">
           <span>
-            {{ 'description.field.label.enabled' | translate }}</span>
+            {{ 'enabled' | translate }}</span>
         </label>
       </nz-form-item>
     </div>
@@ -85,11 +85,11 @@
     <div nz-row>
       <div nz-col [nzSpan]="24" class="search-area">
         <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
-          {{ 'description.field.button.search' | translate }}
+          {{ 'search' | translate }}
         </button>
-        <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
         <a class="collapse" (click)="toggleCollapse()">
-          {{ 'description.field.button.collapse' | translate }}
+          {{ 'collapse' | translate }}
 
           <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
         </a>
@@ -103,24 +103,24 @@
   <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllInventoryAdjustmentThresholds">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
-        <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+        <th nzShowSort nzSortKey="id">id</th>
         <th nzShowSort nzSortKey="item">
-          {{ 'description.field.label.item' | translate }}
+          {{ 'item' | translate }}
         </th>
 
         <th>
-          {{ 'description.field.label.item-family' | translate }}
+          {{ 'item-family' | translate }}
         </th>
         <th>
-          {{ 'description.field.label.client' | translate }}
+          {{ 'client' | translate }}
         </th>
-        <th>{{ 'description.field.label.inventory-quantity-change-type' | translate }}</th>
-        <th>{{ 'description.field.label.user' | translate }}</th>
-        <th>{{ 'description.field.label.role.name' | translate }}</th>
-        <th>{{ 'description.field.label.inventory-adjustment-threshold.quantity-threshold' | translate }}</th>
-        <th>{{ 'description.field.label.inventory-adjustment-threshold.cost-threshold' | translate }}</th>
-        <th>{{ 'description.field.label.enabled' | translate }}</th>
-        <th>{{ 'description.field.label.action' | translate }}</th>
+        <th>{{ 'inventory-quantity-change-type' | translate }}</th>
+        <th>{{ 'user' | translate }}</th>
+        <th>{{ 'role.name' | translate }}</th>
+        <th>{{ 'inventory-adjustment-threshold.quantity-threshold' | translate }}</th>
+        <th>{{ 'inventory-adjustment-threshold.cost-threshold' | translate }}</th>
+        <th>{{ 'enabled' | translate }}</th>
+        <th>{{ 'action' | translate }}</th>
       </tr>
     </thead>
     <tbody>

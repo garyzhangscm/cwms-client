@@ -6,7 +6,7 @@
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
         <nz-form-label for="client" [nzSm]="3" [nzXs]="3">
-          {{ 'description.field.label.client' | translate }}
+          {{ 'client' | translate }}
         </nz-form-label>
         <nz-select nzMode="tags" formControlName="taggedClients">
           <nz-option *ngFor="let client of clients" [nzLabel]="client.label" [nzValue]="client.value"></nz-option>
@@ -18,7 +18,7 @@
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
         <nz-form-label for="item-family" [nzSm]="3" [nzXs]="3">
-          {{ 'description.field.label.item-family' | translate }}
+          {{ 'item-family' | translate }}
         </nz-form-label>
         <nz-select nzMode="tags" formControlName="taggedItemFamilies">
           <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.label" [nzValue]="itemFamily.value">
@@ -29,7 +29,7 @@
     <div nz-col [nzSpan]="6">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="3" [nzXs]="3" nzFor="name">
-          {{ 'description.field.label.name' | translate }}
+          {{ 'name' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="name" id="name" formControlName="itemName">
@@ -40,36 +40,36 @@
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
       <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
-        {{ 'description.field.button.search' | translate }}
+        {{ 'search' | translate }}
       </button>
-      <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
     </div>
   </div>
 </form>
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfDisplayItems" [nzFooter]="tableFoot" #nestedTable>
+  <nz-table nzShowSizeChanger nzShowPagination [nzData]="items" [nzFooter]="tableFoot" #nestedTable>
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
         <th nzShowExpand></th>
-        <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+        <th nzShowSort nzSortKey="id">id</th>
         <th nzShowSort nzSortKey="name" [nzFilters]="filtersByName"
           (nzFilterChange)="filter($event, selectedFiltersByClient, selectedFiltersItemFamily)">
-          {{ 'description.field.label.name' | translate }}
+          {{ 'name' | translate }}
         </th>
         <th>
-          {{'description.field.label.description' | translate}}</th>
+          {{'description' | translate}}</th>
         <th nzShowSort nzSortKey="client" [nzFilters]="filtersByClient"
           (nzFilterChange)="filter(selectedFiltersByName, $event, selectedFiltersItemFamily)">
-          {{ 'description.field.label.client' | translate }}
+          {{ 'client' | translate }}
         </th>
         <th nzShowSort nzSortKey="itemFamily" [nzFilters]="filtersByItemFamily"
           (nzFilterChange)="filter(selectedFiltersByName, selectedFiltersByClient, $event)">
-          {{ 'description.field.label.item-family' | translate }}
+          {{ 'item-family' | translate }}
         </th>
         <th nzShowSort nzSortKey="unitCost">
-          {{ 'description.field.label.unit-cost' | translate }}
+          {{ 'unit-cost' | translate }}
         </th>
       </tr>
     </thead>
@@ -95,9 +95,9 @@
                   [nzShowPagination]="false">
                   <thead>
                     <tr>
-                      <th>{{'description.field.label.unit-of-measure' | translate}}</th>
-                      <th>{{'description.field.label.quantity' | translate}}</th>
-                      <th>{{'description.field.label.weight' | translate}}</th>
+                      <th>{{'unit-of-measure' | translate}}</th>
+                      <th>{{'quantity' | translate}}</th>
+                      <th>{{'weight' | translate}}</th>
                     </tr>
                   </thead>
     <tbody>
@@ -122,7 +122,7 @@
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start">
     <button nz-button nzType="primary" routerLink="/util/file-upload/items" routerLinkActive="active">
-      {{ 'description.field.button.file-upload' | translate }}
+      {{ 'file-upload' | translate }}
     </button>
   </div>
 </ng-template>

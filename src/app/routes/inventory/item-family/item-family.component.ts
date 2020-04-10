@@ -122,7 +122,7 @@ export class InventoryItemFamilyComponent implements OnInit {
       this.modalService.confirm({
         nzTitle: this.i18n.fanyi('page.modal.delete.header.title'),
         nzContent: this.i18n.fanyi('page.item-family.modal.delete.content'),
-        nzOkText: this.i18n.fanyi('description.field.button.confirm'),
+        nzOkText: this.i18n.fanyi('confirm'),
         nzOkType: 'danger',
         nzOnOk: () => {
           this.itemFamilyService.removeItemFamilies(selectedItemFamilies).subscribe(res => {
@@ -130,7 +130,7 @@ export class InventoryItemFamilyComponent implements OnInit {
             this.refresh();
           });
         },
-        nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+        nzCancelText: this.i18n.fanyi('cancel'),
         nzOnCancel: () => console.log('Cancel'),
       });
     }

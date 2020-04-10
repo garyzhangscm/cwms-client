@@ -53,7 +53,7 @@
 <ng-template #cardFoot>
   <div nz-row nzType="flex" nzJustify="center" *ngIf="!newUser">
     <button nz-button nzType="primary" (click)="assignRole()" [nzLoading]="processingRole">
-      {{ 'description.field.button.confirm' | translate }}
+      {{ 'confirm' | translate }}
     </button>
   </div>
   <div nz-row nzType="flex" nzJustify="center" *ngIf="newUser">

@@ -26,15 +26,15 @@
     #inventoryTable>
     <thead>
       <tr>
-        <th>{{ 'description.field.table.header.id' | translate }}</th>
-        <th>{{ 'description.field.label.lpn' | translate }}</th>
-        <th>{{ 'description.field.label.item' | translate }}</th>
-        <th>{{ 'description.field.label.item.description' | translate }}</th>
-        <th>{{ 'description.field.label.item.package-type' | translate }}</th>
-        <th>{{ 'description.field.label.location' | translate }}</th>
-        <th>{{ 'description.field.label.quantity' | translate }}</th>
-        <th>{{ 'description.field.label.inventory.status' | translate }}</th>
-        <th>{{ 'description.field.label.count-quantity' | translate }}</th>
+        <th>id</th>
+        <th>{{ 'lpn' | translate }}</th>
+        <th>{{ 'item' | translate }}</th>
+        <th>{{ 'item.description' | translate }}</th>
+        <th>{{ 'item.package-type' | translate }}</th>
+        <th>{{ 'location' | translate }}</th>
+        <th>{{ 'quantity' | translate }}</th>
+        <th>{{ 'inventory.status' | translate }}</th>
+        <th>{{ 'count-quantity' | translate }}</th>
       </tr>
     </thead>
     <tbody>
@@ -96,11 +96,11 @@
 <ng-template #inventoryTableFoot>
   <div nz-row nzType="flex" nzJustify="start">
     <button nz-button nzType="primary" (click)="addExtraInventory()">
-      {{ 'description.field.button.add' | translate }}
+      {{ 'add' | translate }}
     </button>
     <button nz-button nzType="primary" routerLink="/inventory/count/audit-count-confirm" routerLinkActive="active"
       [queryParams]="{batchId : batchId, locationId: location?.id}" (click)="saveCurrentAuditCountResults()">
-      {{ 'description.field.button.confirm' | translate }}
+      {{ 'confirm' | translate }}
     </button>
   </div>
 </ng-template>

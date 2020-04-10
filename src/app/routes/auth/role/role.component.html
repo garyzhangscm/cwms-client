@@ -6,7 +6,7 @@
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
         <nz-form-label for="name" [nzSm]="3" [nzXs]="3">
-          {{ 'description.field.label.role.name' | translate }}
+          {{ 'role.name' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="name" id="name" formControlName="name" />
@@ -18,9 +18,9 @@
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
       <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
-        {{ 'description.field.button.search' | translate }}
+        {{ 'search' | translate }}
       </button>
-      <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
     </div>
   </div>
 </form>
@@ -31,18 +31,18 @@
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
         <th nzShowExpand></th>
-        <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+        <th nzShowSort nzSortKey="id">id</th>
         <th nzShowSort nzSortKey="name">
-          {{ 'description.field.label.name' | translate }}
+          {{ 'name' | translate }}
         </th>
         <th nzShowSort nzSortKey="description">
-          {{ 'description.field.label.description' | translate }}
+          {{ 'description' | translate }}
         </th>
         <th nzShowSort nzSortKey="enabled">
-          {{ 'description.field.label.enabled' | translate }}
+          {{ 'enabled' | translate }}
         </th>
 
-        <th>{{ 'description.field.label.action' | translate }}</th>
+        <th>{{ 'action' | translate }}</th>
       </tr>
     </thead>
     <tbody>
@@ -56,15 +56,15 @@
           <td>{{ data.enabled }}</td>
           <td>
             <a nz-button routerLink="/auth/role-menu" routerLinkActive="active"
-              [queryParams]="{roleId : data.id}">{{ 'description.field.label.assign-menu' | translate }}</a>
+              [queryParams]="{roleId : data.id}">{{ 'assign-menu' | translate }}</a>
             <nz-divider nzType="vertical"></nz-divider>
             <a nz-button routerLink="/auth/role-user" routerLinkActive="active"
-              [queryParams]="{roleId : data.id}">{{ 'description.field.label.assign-user' | translate }}</a>
+              [queryParams]="{roleId : data.id}">{{ 'assign-user' | translate }}</a>
             <nz-divider nzType="vertical"></nz-divider>
             <button nz-button nzType="danger" *ngIf="data.enabled === true"
-              (click)="disableRole(data.id)">{{ 'description.field.label.disable' | translate }}</button>
+              (click)="disableRole(data.id)">{{ 'disable' | translate }}</button>
             <button nz-button nzType="primary" *ngIf="data.enabled === false"
-              (click)="enableRole(data.id)">{{ 'description.field.label.enable' | translate }}</button>
+              (click)="enableRole(data.id)">{{ 'enable' | translate }}</button>
           </td>
         </tr>
         <tr [nzExpand]="mapOfExpandedId[data.id]">
@@ -76,24 +76,24 @@
                   <thead>
                     <tr>
                       <th nzShowSort nzSortKey="username">
-                        {{ 'description.field.label.username' | translate }}
+                        {{ 'username' | translate }}
                       </th>
                       <th nzShowSort nzSortKey="firstname">
-                        {{ 'description.field.label.firstname' | translate }}
+                        {{ 'firstname' | translate }}
                       </th>
                       <th nzShowSort nzSortKey="lastname">
-                        {{ 'description.field.label.lastname' | translate }}
+                        {{ 'lastname' | translate }}
                       </th>
                       <th nzShowSort nzSortKey="email">
-                        {{ 'description.field.label.email' | translate }}
+                        {{ 'email' | translate }}
                       </th>
                       <th nzShowSort nzSortKey="enabled">
-                        {{ 'description.field.label.enabled' | translate }}
+                        {{ 'enabled' | translate }}
                       </th>
                       <th nzShowSort nzSortKey="locked">
-                        {{ 'description.field.label.locked' | translate }}
+                        {{ 'locked' | translate }}
                       </th>
-                      <th>{{ 'description.field.label.action' | translate }}</th>
+                      <th>{{ 'action' | translate }}</th>
                     </tr>
                   </thead>
     <tbody>
@@ -106,8 +106,7 @@
         <td>{{ user.enabled }}</td>
         <td>{{ user.locked }}</td>
         <td>
-          <button nz-button
-            (click)="deassignUser(data.id, user.id)">{{ 'description.field.label.role.unassign-user' | translate }}</button>
+          <button nz-button (click)="deassignUser(data.id, user.id)">{{ 'role.unassign-user' | translate }}</button>
         </td>
       </tr>
     </tbody>
@@ -118,24 +117,24 @@
       <thead>
         <tr>
           <th nzShowSort nzSortKey="menuGroup">
-            {{ 'description.field.label.menuGroup' | translate }}
+            {{ 'menuGroup' | translate }}
           </th>
           <th nzShowSort nzSortKey="menuSubGroup">
-            {{ 'description.field.label.menuSubGroup' | translate }}
+            {{ 'menuSubGroup' | translate }}
           </th>
           <th nzShowSort nzSortKey="name">
-            {{ 'description.field.label.name' | translate }}
+            {{ 'name' | translate }}
           </th>
           <th nzShowSort nzSortKey="sequence">
-            {{ 'description.field.label.sequence' | translate }}
+            {{ 'sequence' | translate }}
           </th>
           <th nzShowSort nzSortKey="i18n">
-            {{ 'description.field.label.menu.i18n' | translate }}
+            {{ 'menu.i18n' | translate }}
           </th>
           <th nzShowSort nzSortKey="link">
-            {{ 'description.field.label.link' | translate }}
+            {{ 'link' | translate }}
           </th>
-          <th>{{ 'description.field.label.action' | translate }}</th>
+          <th>{{ 'action' | translate }}</th>
         </tr>
       </thead>
       <tbody>
@@ -148,8 +147,7 @@
           <td>{{ menu.i18n }}</td>
           <td>{{ menu.link }}</td>
           <td>
-            <button nz-button
-              (click)="deassignMenu(data.id, menu.id)">{{ 'description.field.label.role.unassign-menu' | translate }}</button>
+            <button nz-button (click)="deassignMenu(data.id, menu.id)">{{ 'role.unassign-menu' | translate }}</button>
           </td>
         </tr>
       </tbody>
@@ -167,7 +165,6 @@
 
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start">
-    <a nz-button routerLink="/auth/role/maintenance"
-      routerLinkActive="active">{{ 'description.field.label.new' | translate }}</a>
+    <a nz-button routerLink="/auth/role/maintenance" routerLinkActive="active">{{ 'new' | translate }}</a>
   </div>
 </ng-template>

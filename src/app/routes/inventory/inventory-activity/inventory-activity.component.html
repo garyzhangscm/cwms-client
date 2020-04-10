@@ -6,7 +6,7 @@
     <div nz-col [nzSpan]="12" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label for="client" [nzSm]="3" [nzXs]="3">
-          {{ 'description.field.label.client' | translate }}
+          {{ 'client' | translate }}
         </nz-form-label>
         <nz-select nzMode="tags" formControlName="taggedClients">
           <nz-option *ngFor="let client of clients" [nzLabel]="client.label" [nzValue]="client.value"></nz-option>
@@ -17,7 +17,7 @@
     <div nz-col [nzSpan]="12" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label for="item-family" [nzSm]="3" [nzXs]="3">
-          {{ 'description.field.label.item-family' | translate }}
+          {{ 'item-family' | translate }}
         </nz-form-label>
         <nz-select nzMode="tags" formControlName="taggedItemFamilies">
           <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.label" [nzValue]="itemFamily.value">
@@ -28,7 +28,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="name">
-          {{ 'description.field.label.item' | translate }}
+          {{ 'item' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="itemName" id="itemName" formControlName="itemName" />
@@ -38,7 +38,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="location">
-          {{ 'description.field.label.location' | translate }}
+          {{ 'location' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="location" id="location" formControlName="location" />
@@ -49,7 +49,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="lpn">
-          {{ 'description.field.label.lpn' | translate }}
+          {{ 'lpn' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="lpn" id="lpn" formControlName="lpn" />
@@ -60,7 +60,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="username">
-          {{ 'description.field.label.username' | translate }}
+          {{ 'username' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="username" id="username" formControlName="username" />
@@ -71,7 +71,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="inventoryActivityType">
-          {{ 'description.field.label.inventory-activity.type' | translate }}
+          {{ 'inventory-activity.type' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
 
@@ -89,7 +89,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="activityDateTimeRanger">
-          {{ 'description.field.label.inventory-activity.date-time' | translate }}
+          {{ 'inventory-activity.date-time' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <nz-range-picker [nzShowTime]="{ nzHideDisabledOptions: true, nzDefaultOpenValue: timeDefaultValue }"
@@ -102,7 +102,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="activityDate">
-          {{ 'description.field.label.inventory-activity.date' | translate }}
+          {{ 'inventory-activity.date' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <nz-date-picker formControlName="activityDate" name="activityDate"></nz-date-picker>
@@ -113,11 +113,11 @@
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
       <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
-        {{ 'description.field.button.search' | translate }}
+        {{ 'search' | translate }}
       </button>
-      <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
       <a class="collapse" (click)="toggleCollapse()">
-        {{ 'description.field.button.collapse' | translate }}
+        {{ 'collapse' | translate }}
 
         <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
       </a>
@@ -130,9 +130,9 @@
   <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllInventoryActivities">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
-        <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+        <th nzShowSort nzSortKey="id">id</th>
         <th nzShowSort nzSortKey="transactionId">
-          {{ 'description.field.label.inventory-activity.transaction-id' | translate }}</th>
+          {{ 'inventory-activity.transaction-id' | translate }}</th>
         <th nzShowSort nzSortKey="lpn" [nzFilters]="filtersByLpn" (nzFilterChange)="
             filter(
               $event,
@@ -142,7 +142,7 @@
               selectedFiltersByInventoryStatus
             )
           ">
-          {{ 'description.field.label.lpn' | translate }}
+          {{ 'lpn' | translate }}
         </th>
 
         <th nzShowSort nzSortKey="item" [nzFilters]="filtersByItem" (nzFilterChange)="
@@ -154,7 +154,7 @@
               selectedFiltersByInventoryStatus
             )
           ">
-          {{ 'description.field.label.item' | translate }}
+          {{ 'item' | translate }}
         </th>
 
         <th [nzFilters]="filtersByItemPackageType" (nzFilterChange)="
@@ -166,7 +166,7 @@
               selectedFiltersByInventoryStatus
             )
           ">
-          {{ 'description.field.label.item.package-type' | translate }}
+          {{ 'item.package-type' | translate }}
         </th>
         <th nzShowSort nzSortKey="location" [nzFilters]="filtersByLocation" (nzFilterChange)="
             filter(
@@ -177,10 +177,10 @@
               selectedFiltersByInventoryStatus
             )
           ">
-          {{ 'description.field.label.location' | translate }}
+          {{ 'location' | translate }}
         </th>
         <th nzShowSort nzSortKey="quantity">
-          {{ 'description.field.label.quantity' | translate }}
+          {{ 'quantity' | translate }}
         </th>
         <th [nzFilters]="filtersByInventoryStatus" (nzFilterChange)="
             filter(
@@ -191,16 +191,16 @@
               $event
             )
           ">
-          {{ 'description.field.label.inventory.status' | translate }}
+          {{ 'inventory.status' | translate }}
         </th>
-        <th>{{ 'description.field.label.inventory-activity.type' | translate }}</th>
-        <th>{{ 'description.field.label.inventory-activity.date-time' | translate }}</th>
-        <th>{{ 'description.field.label.inventory-activity.username' | translate }}</th>
-        <th>{{ 'description.field.label.inventory-activity.value-type' | translate }}</th>
-        <th>{{ 'description.field.label.inventory-activity.from-value' | translate }}</th>
-        <th>{{ 'description.field.label.inventory-activity.to-value' | translate }}</th>
-        <th>{{ 'description.field.label.inventory-activity.document-number' | translate }}</th>
-        <th>{{ 'description.field.label.inventory-activity.comment' | translate }}</th>
+        <th>{{ 'inventory-activity.type' | translate }}</th>
+        <th>{{ 'inventory-activity.date-time' | translate }}</th>
+        <th>{{ 'inventory-activity.username' | translate }}</th>
+        <th>{{ 'inventory-activity.value-type' | translate }}</th>
+        <th>{{ 'inventory-activity.from-value' | translate }}</th>
+        <th>{{ 'inventory-activity.to-value' | translate }}</th>
+        <th>{{ 'inventory-activity.document-number' | translate }}</th>
+        <th>{{ 'inventory-activity.comment' | translate }}</th>
       </tr>
     </thead>
     <tbody>
@@ -212,7 +212,7 @@
           <a nz-tooltip nzTooltipTitle="{{ data.item.description }}">{{ data.item.name }}</a>
         </td>
         <td>
-          <a nz-popover nzPopoverTitle="{{ 'description.field.label.itemPackageTypeDetails' | translate}}"
+          <a nz-popover nzPopoverTitle="{{ 'itemPackageTypeDetails' | translate}}"
             [nzPopoverContent]="itemPackageTypeDetails">{{ data.itemPackageType.name }}</a>
         </td>
         <td>{{ data.location.name }}</td>
@@ -236,12 +236,12 @@
             [nzShowPagination]="false" nzBordered>
             <thead>
               <tr>
-                <th>{{ 'description.field.label.unitOfMeasure' | translate}}</th>
-                <th>{{ 'description.field.label.quantity' | translate }}</th>
-                <th>{{ 'description.field.label.weight' | translate }}</th>
-                <th>{{ 'description.field.label.length' | translate }}</th>
-                <th>{{ 'description.field.label.width' | translate }}</th>
-                <th>{{ 'description.field.label.height' | translate }}</th>
+                <th>{{ 'unitOfMeasure' | translate}}</th>
+                <th>{{ 'quantity' | translate }}</th>
+                <th>{{ 'weight' | translate }}</th>
+                <th>{{ 'length' | translate }}</th>
+                <th>{{ 'width' | translate }}</th>
+                <th>{{ 'height' | translate }}</th>
               </tr>
             </thead>
     <tbody>

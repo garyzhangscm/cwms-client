@@ -21,20 +21,20 @@
 
 <!-- Display Work Order Informaiton -->
 <nz-card *ngIf="type === 'workOrder'">
-  <nz-descriptions nzTitle="{{'description.field.label.work-order' | translate}}" nzBordered>
-    <nz-descriptions-item nzTitle="{{'description.field.label.work-order.number' | translate}}">{{workOrder?.number}}
+  <nz-descriptions nzTitle="{{'work-order' | translate}}" nzBordered>
+    <nz-descriptions-item nzTitle="{{'work-order.number' | translate}}">{{workOrder?.number}}
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{'description.field.label.status' | translate}}">{{workOrder?.status}}
+    <nz-descriptions-item nzTitle="{{'status' | translate}}">{{workOrder?.status}}
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{'description.field.label.production-line' | translate}}">
+    <nz-descriptions-item nzTitle="{{'production-line' | translate}}">
       {{workOrder?.productionLine?.name}}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{'description.field.label.item' | translate}}">{{workOrder?.item?.name}}
+    <nz-descriptions-item nzTitle="{{'item' | translate}}">{{workOrder?.item?.name}}
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{'description.field.label.item.description' | translate}}">
+    <nz-descriptions-item nzTitle="{{'item.description' | translate}}">
       {{workOrder?.item?.description}}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{'description.field.label.work-order.expected-quantity' | translate}}">
+    <nz-descriptions-item nzTitle="{{'work-order.expected-quantity' | translate}}">
       {{workOrder?.expectedQuantity}}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{'description.field.label.work-order.produced-quantity' | translate}}">
+    <nz-descriptions-item nzTitle="{{'work-order.produced-quantity' | translate}}">
       {{workOrder?.producedQuantity}}</nz-descriptions-item>
   </nz-descriptions>
 </nz-card>
@@ -42,23 +42,23 @@
 
 <!-- Display Work Order Informaiton -->
 <nz-card *ngIf="type === 'order'">
-  <nz-descriptions nzTitle="{{'description.field.label.order' | translate}}" nzBordered>
-    <nz-descriptions-item nzTitle="{{'description.field.label.order.number' | translate}}">
+  <nz-descriptions nzTitle="{{'order' | translate}}" nzBordered>
+    <nz-descriptions-item nzTitle="{{'order.number' | translate}}">
       {{order?.number}}
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{'description.field.label.order.shipToCustomer' | translate}}">
+    <nz-descriptions-item nzTitle="{{'order.shipToCustomer' | translate}}">
       {{ order?.shipToCustomer?.name}}
     </nz-descriptions-item>
 
-    <nz-descriptions-item nzTitle="{{'description.field.label.order.shipToCustomer.name' | translate}}">
+    <nz-descriptions-item nzTitle="{{'order.shipToCustomer.name' | translate}}">
       <span *ngIf="order?.shipToCustomer !== null">
-        {{ order?.shipToCustomer.contactorFirstname }} {{ order?.shipToCustomer.contactorLastname }}
+        {{ order?.shipToCustomer.contactor.firstname }} {{ order?.shipToCustomer.contactor.lastname }}
       </span>
       <span *ngIf="order?.shipToCustomer === null">
-        {{ order?.shipToContactorFirstname }} {{ order?.shipToContactorLastname }}
+        {{ order?.shipTocontactor.firstname }} {{ order?.shipTocontactor.lastname }}
       </span>
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{'description.field.label.order.shipToCustomer.address' | translate}}">
+    <nz-descriptions-item nzTitle="{{'order.shipToCustomer.address' | translate}}">
       <div *ngIf="order?.shipToCustomer !== null">
         <span>
           {{ order?.shipToCustomer.addressLine1 }}
@@ -99,24 +99,24 @@
 
 
         <th nzShowSort nzSortKey="number">
-          {{ 'description.field.label.pick.number' | translate }}</th>
+          {{ 'pick.number' | translate }}</th>
         <th nzShowSort nzSortKey="sourceLocation">
-          {{ 'description.field.label.sourceLocation' | translate }}</th>
+          {{ 'sourceLocation' | translate }}</th>
         <th nzShowSort nzSortKey="destinationLocation">
-          {{ 'description.field.label.destinationLocation' | translate }}</th>
+          {{ 'destinationLocation' | translate }}</th>
         <th nzShowSort nzSortKey="item">
-          {{ 'description.field.label.item' | translate }}</th>
+          {{ 'item' | translate }}</th>
         <th>
-          {{ 'description.field.label.item.description' | translate }}</th>
+          {{ 'item.description' | translate }}</th>
         <th nzShowSort nzSortKey="quantity">
-          {{ 'description.field.label.pick.quantity' | translate }}</th>
+          {{ 'pick.quantity' | translate }}</th>
         <th nzShowSort nzSortKey="pickedQuantity">
-          {{ 'description.field.label.pick.pickedQuantity' | translate }}</th>
+          {{ 'pick.pickedQuantity' | translate }}</th>
         <th>
-          {{ 'description.field.label.pick.confirmQuantity' | translate }}</th>
+          {{ 'pick.confirmQuantity' | translate }}</th>
 
         <th>
-          {{ 'description.field.label.action' | translate }}
+          {{ 'action' | translate }}
         </th>
       </tr>
     </thead>
@@ -138,7 +138,7 @@
         <td>
           <button nz-button nzType="primary" (click)="confirmPick(data)"
             [disabled]="mapOfConfirmedQuantity[data.number] <= 0" [nzLoading]="confirming">
-            {{ 'description.field.button.confirm' | translate }}
+            {{ 'confirm' | translate }}
           </button></td>
       </tr>
 
@@ -149,11 +149,11 @@
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start">
     <button nz-button nzType="danger" (click)="cancelSelectedPicks()" [disabled]="allPicksFullyConfirmed">
-      {{ 'description.field.button.cancel' | translate }}
+      {{ 'cancel' | translate }}
     </button>
     <button nz-button nzType="primary" (click)="confirmPicks()" [nzLoading]="confirming"
       [disabled]="allPicksFullyConfirmed">
-      {{ 'description.field.button.confirm' | translate }}
+      {{ 'confirm' | translate }}
     </button>
   </div>
 </ng-template>

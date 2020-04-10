@@ -9,10 +9,17 @@ import { IntegrationClientData } from '../models/integration-client-data';
   providedIn: 'root',
 })
 export class IntegrationClientDataService {
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
+  constructor(private http: _HttpClient) {}
 
-  getClientData(): Observable<IntegrationClientData[]> {
-    const url = `integration/integration-data/clients`;
+  getClientData(integrationClientDataId?: number): Observable<IntegrationClientData[]> {
+    let url = `integration/integration-data/clients`;
+    if (integrationClientDataId) {
+      url = `${url}/${integrationClientDataId}`;
+    }
     return this.http.get(url).pipe(map(res => res.data));
+  }
+  addClientData(clientData: IntegrationClientData) {
+    const url = `integration/integration-data/clients`;
+    return this.http.put(url, clientData).pipe(map(res => res.data));
   }
 }

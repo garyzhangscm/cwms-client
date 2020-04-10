@@ -6,7 +6,7 @@
     <div nz-col [nzSpan]="12" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label for="client" [nzSm]="3" [nzXs]="3">
-          {{ 'description.field.label.client' | translate }}
+          {{ 'client' | translate }}
         </nz-form-label>
         <nz-select nzMode="tags" formControlName="taggedClients">
           <nz-option *ngFor="let client of clients" [nzLabel]="client.label" [nzValue]="client.value"></nz-option>
@@ -17,7 +17,7 @@
     <div nz-col [nzSpan]="12" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label for="item-family" [nzSm]="3" [nzXs]="3">
-          {{ 'description.field.label.item-family' | translate }}
+          {{ 'item-family' | translate }}
         </nz-form-label>
         <nz-select nzMode="tags" formControlName="taggedItemFamilies">
           <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.label" [nzValue]="itemFamily.value">
@@ -28,7 +28,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="name">
-          {{ 'description.field.label.item' | translate }}
+          {{ 'item' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="itemName" id="itemName" formControlName="itemName" />
@@ -38,7 +38,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="location">
-          {{ 'description.field.label.location' | translate }}
+          {{ 'location' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="location" id="location" formControlName="location" />
@@ -49,7 +49,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="lpn">
-          {{ 'description.field.label.lpn' | translate }}
+          {{ 'lpn' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="lpn" id="lpn" formControlName="lpn" />
@@ -60,11 +60,11 @@
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
       <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
-        {{ 'description.field.button.search' | translate }}
+        {{ 'search' | translate }}
       </button>
-      <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
       <a class="collapse" (click)="toggleCollapse()">
-        {{ 'description.field.button.collapse' | translate }}
+        {{ 'collapse' | translate }}
 
         <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
       </a>
@@ -77,7 +77,7 @@
   <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="inventories">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
-        <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+        <th nzShowSort nzSortKey="id">id</th>
         <th nzShowSort nzSortKey="lpn" [nzFilters]="filtersByLpn" (nzFilterChange)="
             filter(
               $event,
@@ -87,7 +87,7 @@
               selectedFiltersByInventoryStatus
             )
           ">
-          {{ 'description.field.label.lpn' | translate }}
+          {{ 'lpn' | translate }}
         </th>
 
         <th nzShowSort nzSortKey="item" [nzFilters]="filtersByItem" (nzFilterChange)="
@@ -99,7 +99,7 @@
               selectedFiltersByInventoryStatus
             )
           ">
-          {{ 'description.field.label.item' | translate }}
+          {{ 'item' | translate }}
         </th>
 
         <th [nzFilters]="filtersByItemPackageType" (nzFilterChange)="
@@ -111,7 +111,7 @@
               selectedFiltersByInventoryStatus
             )
           ">
-          {{ 'description.field.label.item.package-type' | translate }}
+          {{ 'item.package-type' | translate }}
         </th>
         <th nzShowSort nzSortKey="location" [nzFilters]="filtersByLocation" (nzFilterChange)="
             filter(
@@ -122,10 +122,10 @@
               selectedFiltersByInventoryStatus
             )
           ">
-          {{ 'description.field.label.location' | translate }}
+          {{ 'location' | translate }}
         </th>
         <th nzShowSort nzSortKey="quantity">
-          {{ 'description.field.label.quantity' | translate }}
+          {{ 'quantity' | translate }}
         </th>
         <th [nzFilters]="filtersByInventoryStatus" (nzFilterChange)="
             filter(
@@ -136,10 +136,10 @@
               $event
             )
           ">
-          {{ 'description.field.label.inventory.status' | translate }}
+          {{ 'inventory.status' | translate }}
         </th>
-        <th>{{ 'description.field.label.inventory.locked-for-adjustment' | translate }}</th>
-        <th>{{ 'description.field.label.action' | translate }}</th>
+        <th>{{ 'inventory.locked-for-adjustment' | translate }}</th>
+        <th>{{ 'action' | translate }}</th>
       </tr>
     </thead>
     <tbody>
@@ -150,7 +150,7 @@
           <a nz-tooltip nzTooltipTitle="{{ data.item.description }}">{{ data.item.name }}</a>
         </td>
         <td>
-          <a nz-popover nzPopoverTitle="{{ 'description.field.label.itemPackageTypeDetails' | translate}}"
+          <a nz-popover nzPopoverTitle="{{ 'itemPackageTypeDetails' | translate}}"
             [nzPopoverContent]="itemPackageTypeDetails">{{ data.itemPackageType.name }}</a>
         </td>
         <td>{{ data.location.name }}</td>
@@ -169,35 +169,35 @@
           <button nz-button routerLink="/inventory/inventory-quantity-change" routerLinkActive="active"
             [queryParams]="{id : data.id, by : 'inventory'}" [disabled]="data.lockedForAdjust === true"
             [nzLoading]="mapOfInprocessInventoryId[data.id]">
-            {{ 'description.field.label.adjustInventory' | translate }}</button>
+            {{ 'adjustInventory' | translate }}</button>
           <nz-divider nzType="vertical"></nz-divider>
 
           <button nz-button routerLink="/inventory/inventory-attribute-change" routerLinkActive="active"
             [queryParams]="{id : data.id}" [disabled]="data.lockedForAdjust === true"
             [nzLoading]="mapOfInprocessInventoryId[data.id]">
-            {{ 'description.field.label.inventory.attributeChange' | translate }}</button>
+            {{ 'inventory.attributeChange' | translate }}</button>
           <nz-divider nzType="vertical"></nz-divider>
           <button nz-button
             (click)="openMoveInventoryModal(data, tplInventoryMoveModalTitle, tplInventoryMoveModalContent )"
             [nzLoading]="mapOfInprocessInventoryId[data.id]" [disabled]="data.lockedForAdjust === true">
-            {{ 'description.field.label.moveInventory' | translate }}</button>
+            {{ 'moveInventory' | translate }}</button>
           <nz-divider nzType="vertical"></nz-divider>
           <button nz-button
             (click)="openRemoveInventoryModal(data, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
             nzType="danger" [nzLoading]="mapOfInprocessInventoryId[data.id]"
-            [disabled]="data.lockedForAdjust === true">{{ 'description.field.label.removeInventory' | translate }}</button>
+            [disabled]="data.lockedForAdjust === true">{{ 'removeInventory' | translate }}</button>
         </td>
         <ng-template #itemPackageTypeDetails>
           <nz-table #itemPackageTypeDetailTable [nzData]="data.itemPackageType.itemUnitOfMeasures" nzSize="middle"
             [nzShowPagination]="false" nzBordered>
             <thead>
               <tr>
-                <th>{{ 'description.field.label.unitOfMeasure' | translate}}</th>
-                <th>{{ 'description.field.label.quantity' | translate }}</th>
-                <th>{{ 'description.field.label.weight' | translate }}</th>
-                <th>{{ 'description.field.label.length' | translate }}</th>
-                <th>{{ 'description.field.label.width' | translate }}</th>
-                <th>{{ 'description.field.label.height' | translate }}</th>
+                <th>{{ 'unitOfMeasure' | translate}}</th>
+                <th>{{ 'quantity' | translate }}</th>
+                <th>{{ 'weight' | translate }}</th>
+                <th>{{ 'length' | translate }}</th>
+                <th>{{ 'width' | translate }}</th>
+                <th>{{ 'height' | translate }}</th>
               </tr>
             </thead>
     <tbody>
@@ -223,20 +223,20 @@
 </ng-template>
 <ng-template #tplInventoryRemovalModalContent>
   <nz-descriptions nzBordered>
-    <nz-descriptions-item nzTitle="{{ 'description.field.label.lpn' | translate }}">
+    <nz-descriptions-item nzTitle="{{ 'lpn' | translate }}">
       {{ inventoryToBeRemoved.lpn }}
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'description.field.label.item' | translate }}">
+    <nz-descriptions-item nzTitle="{{ 'item' | translate }}">
       {{ inventoryToBeRemoved.item.name }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'description.field.label.location' | translate }}">
+    <nz-descriptions-item nzTitle="{{ 'location' | translate }}">
       {{ inventoryToBeRemoved.location.name }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'description.field.label.quantity' | translate }}">
+    <nz-descriptions-item nzTitle="{{ 'quantity' | translate }}">
       {{ inventoryToBeRemoved.quantity }}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'description.field.label.inventory.status' | translate }}" nzSpan="2">
+    <nz-descriptions-item nzTitle="{{ 'inventory.status' | translate }}" nzSpan="2">
       {{ inventoryToBeRemoved.inventoryStatus.name }}</nz-descriptions-item>
     <!--
 
-    <nz-descriptions-item nzTitle="{{ 'description.field.label.inventory.adjustment.reason' | translate }}" nzSpan="3">
+    <nz-descriptions-item nzTitle="{{ 'inventory.adjustment.reason' | translate }}" nzSpan="3">
       <div>
         <nz-select style="width: 320px;" [(ngModel)]="inventoryRemovalReason" nzShowSearch nzAllowClear
           nzDropdownMatchSelectWidth="true">
@@ -247,11 +247,11 @@
     </nz-descriptions-item>
 
       -->
-    <nz-descriptions-item nzTitle="{{'description.field.label.document-number' | translate}}">
+    <nz-descriptions-item nzTitle="{{'document-number' | translate}}">
 
       <input nz-input [(ngModel)]="documentNumber" style="width: 250px;" />
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{'description.field.label.comment' | translate}}">
+    <nz-descriptions-item nzTitle="{{'comment' | translate}}">
 
       <input nz-input [(ngModel)]="comment" style="width: 250px;" />
     </nz-descriptions-item>
@@ -270,7 +270,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
-            {{ 'description.field.label.lpn' | translate }}
+            {{ 'lpn' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <nz-input-group nzSize="large">
@@ -282,7 +282,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNumber">
-            {{ 'description.field.label.item' | translate }}
+            {{ 'item' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <nz-input-group nzSize="large">
@@ -294,7 +294,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemDescription">
-            {{ 'description.field.label.item.description' | translate }}
+            {{ 'item.description' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <nz-input-group nzSize="large">
@@ -310,7 +310,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24">
-            {{ 'description.field.label.inventory.status' | translate }}
+            {{ 'inventory.status' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <input nz-input formControlName="inventoryStatus" />
@@ -322,7 +322,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemPackageType">
-            {{ 'description.field.label.item.package-type' | translate }}
+            {{ 'item.package-type' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
 
@@ -334,7 +334,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="quantity">
-            {{ 'description.field.label.quantity' | translate }}
+            {{ 'quantity' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <nz-input-group nzSize="large">
@@ -351,7 +351,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationName">
-            {{ 'description.field.label.location' | translate }}
+            {{ 'location' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -365,7 +365,7 @@
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="destinationLocation">
-            {{ 'description.field.label.unpick.destination-location' | translate }}
+            {{ 'unpick.destination-location' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
@@ -380,7 +380,7 @@
         <nz-form-item nzFlex>
           <nz-form-control [nzSpan]="14" [nzOffset]="6">
             <label nz-checkbox formControlName="immediateMove">
-              <span>{{ 'description.field.label.unpick.immediately-putaway' | translate}}</span>
+              <span>{{ 'unpick.immediately-putaway' | translate}}</span>
             </label>
           </nz-form-control>
         </nz-form-item>

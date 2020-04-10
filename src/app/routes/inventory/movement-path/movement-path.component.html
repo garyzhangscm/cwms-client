@@ -7,7 +7,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="fromLocation">
-          {{ 'description.field.label.from-location' | translate }}
+          {{ 'from-location' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="fromLocation" id="fromLocation" formControlName="fromLocation" />
@@ -18,7 +18,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="toLocation">
-          {{ 'description.field.label.to-location' | translate }}
+          {{ 'to-location' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <input nz-input name="toLocation" id="toLocation" formControlName="toLocation" />
@@ -28,7 +28,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="fromLocationGroup">
-          {{ 'description.field.label.from-location-group' | translate }}
+          {{ 'from-location-group' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <nz-select nzShowSearch nzAllowClear formControlName="fromLocationGroup">
@@ -42,7 +42,7 @@
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="toLocationGroup">
-          {{ 'description.field.label.to-location-group' | translate }}
+          {{ 'to-location-group' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <nz-select nzShowSearch nzAllowClear formControlName="toLocationGroup">
@@ -56,11 +56,11 @@
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
       <button nz-button [nzType]="'primary'" (click)="search()">
-        {{ 'description.field.button.search' | translate }}
+        {{ 'search' | translate }}
       </button>
-      <button nz-button (click)="resetForm()">{{ 'description.field.button.clear' | translate }}</button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
       <a class="collapse" (click)="toggleCollapse()">
-        {{ 'description.field.button.collapse' | translate }}
+        {{ 'collapse' | translate }}
 
         <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
       </a>
@@ -78,24 +78,24 @@
           (nzCheckedChange)="checkAll($event)"></th>
 
         <th nzShowExpand></th>
-        <th nzShowSort nzSortKey="id">{{ 'description.field.table.header.id' | translate }}</th>
+        <th nzShowSort nzSortKey="id">id</th>
         <th nzShowSort nzSortKey="sequence">
-          {{ 'description.field.label.sequence' | translate }}
+          {{ 'sequence' | translate }}
         </th>
         <th nzShowSort nzSortKey="fromLocation">
-          {{ 'description.field.label.from-location' | translate }}
+          {{ 'from-location' | translate }}
         </th>
         <th nzShowSort nzSortKey="toLocation">
-          {{ 'description.field.label.to-location' | translate }}
+          {{ 'to-location' | translate }}
         </th>
         <th nzShowSort nzSortKey="fromLocationGroup">
-          {{ 'description.field.label.from-location-group' | translate }}
+          {{ 'from-location-group' | translate }}
         </th>
         <th nzShowSort nzSortKey="toLocationGroup">
-          {{ 'description.field.label.to-location-group' | translate }}
+          {{ 'to-location-group' | translate }}
         </th>
         <th>
-          {{ 'description.field.label.action' | translate }}
+          {{ 'action' | translate }}
         </th>
       </tr>
     </thead>
@@ -121,13 +121,13 @@
 
               <thead>
                 <th>
-                  {{ 'description.field.label.sequence' | translate }}</th>
+                  {{ 'sequence' | translate }}</th>
                 <th>
-                  {{ 'description.field.label.movement-path.detail.hop-location' | translate }}</th>
+                  {{ 'movement-path.detail.hop-location' | translate }}</th>
                 <th>
-                  {{ 'description.field.label.movement-path.detail.hop-location-group' | translate }}</th>
+                  {{ 'movement-path.detail.hop-location-group' | translate }}</th>
                 <th>
-                  {{ 'description.field.label.strategy' | translate }}</th>
+                  {{ 'strategy' | translate }}</th>
               </thead>
     <tbody>
       <tr *ngFor="let movementPathDetail of data.movementPathDetails">
@@ -149,10 +149,10 @@
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start">
     <button nz-button nzType="danger" (click)="removeSelectedMovementPaths()">
-      {{ 'description.field.button.delete' | translate }}
+      {{ 'delete' | translate }}
     </button>
     <button nz-button nzType="primary" routerLink="/util/file-upload/movement-path" routerLinkActive="active">
-      {{ 'description.field.button.file-upload' | translate }}
+      {{ 'file-upload' | translate }}
     </button>
   </div>
 </ng-template>

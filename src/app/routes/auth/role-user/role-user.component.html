@@ -54,12 +54,12 @@
 
 
 <ng-template #cardTitle>
-  <h4>{{ 'description.field.label.role.name' | translate}} : {{ currentRole?.name}}</h4>
+  <h4>{{ 'role.name' | translate}} : {{ currentRole?.name}}</h4>
 </ng-template>
 <ng-template #cardFoot>
   <div nz-row nzType="flex" nzJustify="center" *ngIf="!newRole">
     <button nz-button nzType="primary" (click)="assignUser()" [nzLoading]="processingUser">
-      {{ 'description.field.button.confirm' | translate }}
+      {{ 'confirm' | translate }}
     </button>
   </div>
   <div nz-row nzType="flex" nzJustify="center" *ngIf="newRole">

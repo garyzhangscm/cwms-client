@@ -377,8 +377,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
         this.receivingModal = this.modalService.create({
           nzTitle: tplReceivingModalTitle,
           nzContent: tplReceivingModalContent,
-          nzOkText: this.i18n.fanyi('description.field.button.confirm'),
-          nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+          nzOkText: this.i18n.fanyi('confirm'),
+          nzCancelText: this.i18n.fanyi('cancel'),
           nzMaskClosable: false,
           nzOnCancel: () => {
             this.receivingModal.destroy();
@@ -404,8 +404,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.manualPutawayModal = this.modalService.create({
       nzTitle: tplManualPutawayModalTitle,
       nzContent: tplManualPutawayModalContent,
-      nzOkText: this.i18n.fanyi('description.field.button.confirm'),
-      nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
       nzMaskClosable: false,
       nzOnCancel: () => {
         this.manualPutawayModal.destroy();
@@ -506,8 +506,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.addReceiptLineModal = this.modalService.create({
       nzTitle: tplReceiptLineModalTitle,
       nzContent: tplReceiptLineModalContent,
-      nzOkText: this.i18n.fanyi('description.field.button.confirm'),
-      nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
       nzMaskClosable: false,
       nzOnCancel: () => {
         this.addReceiptLineModal.destroy();
@@ -542,7 +542,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       this.modalService.confirm({
         nzTitle: this.i18n.fanyi('page.modal.delete.header.title'),
         nzContent: this.i18n.fanyi('page.modal.delete.content'),
-        nzOkText: this.i18n.fanyi('description.field.button.confirm'),
+        nzOkText: this.i18n.fanyi('confirm'),
         nzOkType: 'danger',
         nzOnOk: () => {
           this.receiptLineService.removeReceiptLines(selectedReceiptLines).subscribe(res => {
@@ -550,7 +550,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
             this.refreshReceiptResults();
           });
         },
-        nzCancelText: this.i18n.fanyi('description.field.button.cancel'),
+        nzCancelText: this.i18n.fanyi('cancel'),
         nzOnCancel: () => console.log('Cancel'),
       });
     }
