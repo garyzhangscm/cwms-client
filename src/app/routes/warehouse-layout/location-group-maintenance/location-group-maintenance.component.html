@@ -1,18 +1,18 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
   <a routerLink="/warehouse-layout/location-group" routerLinkActive="active">{{
-    'description.field.link.return' | translate
+    'return' | translate
   }}</a>
 </ng-template>
 <ng-template #breadcrumb>
   <nz-breadcrumb>
     <nz-breadcrumb-item>
-      <a routerLink="/" routerLinkActive="active">{{ 'description.field.breadcrumb.home' | translate }}</a>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
     </nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.warehouse-layout' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.warehouse-layout' | translate }}</a></nz-breadcrumb-item>
     <nz-breadcrumb-item><a routerLink="/warehouse-layout/location-group" routerLinkActive="active">{{
-        'description.field.breadcrumb.location-group' | translate
+        'breadcrumb.location-group' | translate
       }}</a></nz-breadcrumb-item>
     <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
   </nz-breadcrumb>
@@ -21,11 +21,11 @@
 <div nz-row style="padding: 50px">
   <div nz-col nzSpan="12" nzOffset="6">
     <nz-steps [nzCurrent]="1" [nzSize]="'default'">
-      <nz-step nzTitle="{{ 'description.steps.location-group-maintenance.basic-info.title' | translate }}"
-        nzDescription="{{ 'description.steps.location-group-maintenance.basic-info.description' | translate }}">
+      <nz-step nzTitle="{{ 'steps.location-group-maintenance.basic-info.title' | translate }}"
+        nzDescription="{{ 'steps.location-group-maintenance.basic-info.description' | translate }}">
       </nz-step>
-      <nz-step nzTitle="{{ 'description.steps.location-group-maintenance.confirm.title' | translate }}"
-        nzDescription="{{ 'description.steps.location-group-maintenance.confirm.description' | translate }}">
+      <nz-step nzTitle="{{ 'steps.location-group-maintenance.confirm.title' | translate }}"
+        nzDescription="{{ 'steps.location-group-maintenance.confirm.description' | translate }}">
       </nz-step>
     </nz-steps>
   </div>
@@ -34,7 +34,7 @@
 <form nz-form>
   <nz-form-item>
     <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupName">
-      {{ 'location-group.name' | translate }}
+      {{ 'name' | translate }}
     </nz-form-label>
     <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | translate }}">
       <input nz-input [(ngModel)]="currentLocationGroup.name" id="locationGroupName" name="name" required />
@@ -42,7 +42,7 @@
   </nz-form-item>
   <nz-form-item>
     <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupDescription">
-      {{ 'location-group.description' | translate }}
+      {{ 'description' | translate }}
     </nz-form-label>
     <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | translate }}">
       <input nz-input [(ngModel)]="currentLocationGroup.description" id="locationGroupDescription" name="description"
@@ -101,7 +101,7 @@
 
 <div nz-row nzType="flex" nzJustify="center">
   <button nz-button nzType="primary" (click)="goToConfirmPage()">
-    {{ 'description.steps.next' | translate }} :
-    {{ 'description.steps.location-group-maintenance.confirm.title' | translate }}
+    {{ 'steps.next' | translate }} :
+    {{ 'steps.location-group-maintenance.confirm.title' | translate }}
   </button>
 </div>

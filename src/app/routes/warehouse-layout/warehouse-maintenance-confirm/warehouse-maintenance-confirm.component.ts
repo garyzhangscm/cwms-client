@@ -29,23 +29,23 @@ export class WarehouseLayoutWarehouseMaintenanceConfirmComponent implements OnIn
   }
 
   saveWarehouse() {
-    if (this.currentWarehouse.id === undefined) {
+    if (this.currentWarehouse.id) {
       this.warehouseService
-        .addWarehouse(this.currentWarehouse)
+        .changeWarehouse(this.currentWarehouse)
         .subscribe(res => this.router.navigateByUrl('/warehouse-layout/warehouse'));
     } else {
       this.warehouseService
-        .changeWarehouse(this.currentWarehouse)
+        .addWarehouse(this.currentWarehouse)
         .subscribe(res => this.router.navigateByUrl('/warehouse-layout/warehouse'));
     }
   }
   onStepIndexChange() {
-    if (this.currentWarehouse.id === undefined) {
-      this.router.navigateByUrl('/warehouse-layout/warehouse-maintenance?inprocess=true');
-    } else {
+    if (this.currentWarehouse.id) {
       this.router.navigateByUrl(
         '/warehouse-layout/warehouse-maintenance/' + this.currentWarehouse.id + '?inprocess=true',
       );
+    } else {
+      this.router.navigateByUrl('/warehouse-layout/warehouse-maintenance?inprocess=true');
     }
   }
 }

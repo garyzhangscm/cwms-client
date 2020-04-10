@@ -8,32 +8,32 @@
 <ng-container *ngFor="let warehouse of warehouses">
   <nz-card nzTitle="{{ '#' + warehouse.id + '-' + warehouse.name }}" [nzActions]="[actionEdit, actionDelete]">
     <nz-descriptions nzBordered>
-      <nz-descriptions-item nzTitle="{{ 'warehouse.id' | translate }}">{{ warehouse.id }}
+      <nz-descriptions-item nzTitle="{{ 'id' | translate }}">{{ warehouse.id }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'warehouse.name' | translate }}">{{ warehouse.name }}
+      <nz-descriptions-item nzTitle="{{ 'name' | translate }}">{{ warehouse.name }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'warehouse.size' | translate }}">{{ warehouse.size }}
+      <nz-descriptions-item nzTitle="{{ 'size' | translate }}">{{ warehouse.size }}
       </nz-descriptions-item>
 
-      <nz-descriptions-item nzTitle="{{ 'warehouse.address.country' | translate }}">
+      <nz-descriptions-item nzTitle="{{ 'country' | translate }}">
         {{ warehouse.addressCountry }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'warehouse.address.state' | translate }}">
+      <nz-descriptions-item nzTitle="{{ 'state' | translate }}">
         {{ warehouse.addressState }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'warehouse.address.county' | translate }}">
+      <nz-descriptions-item nzTitle="{{ 'county' | translate }}">
         {{ warehouse.addressCounty }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'warehouse.address.city' | translate }}">
+      <nz-descriptions-item nzTitle="{{ 'city' | translate }}">
         {{ warehouse.addressCity }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'warehouse.address.line1' | translate }}">
+      <nz-descriptions-item nzTitle="{{ 'address.line1' | translate }}">
         {{ warehouse.addressLine1 }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'warehouse.address.line2' | translate }}">
+      <nz-descriptions-item nzTitle="{{ 'address.line2' | translate }}">
         {{ warehouse.addressLine2 }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'warehouse.address.postcode' | translate }}">
+      <nz-descriptions-item nzTitle="{{ 'postcode' | translate }}">
         {{ warehouse.addressPostcode }}
       </nz-descriptions-item>
 

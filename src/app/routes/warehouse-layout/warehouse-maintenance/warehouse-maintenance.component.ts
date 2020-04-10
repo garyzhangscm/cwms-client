@@ -88,7 +88,11 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
   }
   goToConfirmPage(): void {
     sessionStorage.setItem('warehouse-maintenance.warehouse', JSON.stringify(this.currentWarehouse));
-    const url = '/warehouse-layout/warehouse-maintenance/' + this.currentWarehouse.id + '/confirm';
+    const url = this.currentWarehouse.id
+      ? '/warehouse-layout/warehouse-maintenance/' + this.currentWarehouse.id + '/confirm'
+      : '/warehouse-layout/warehouse-maintenance/confirm';
+
+    console.log(`will go to ${url}`);
     this.router.navigateByUrl(url);
   }
 }

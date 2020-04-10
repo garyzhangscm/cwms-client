@@ -6,7 +6,7 @@
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
         <nz-form-label for="location_group_type" [nzSm]="3" [nzXs]="3">
-          {{ 'locationgrouptype' | translate }}
+          {{ 'location-group-type' | translate }}
         </nz-form-label>
         <nz-select nzMode="tags" formControlName="taggedProductionLine" [(ngModel)]="selectedProductionLine">
           <nz-option *ngFor="let productionLine of availableProductionLines" [nzLabel]="productionLine.label"

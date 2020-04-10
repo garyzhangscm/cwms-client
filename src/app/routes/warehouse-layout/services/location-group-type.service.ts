@@ -30,7 +30,7 @@ export class LocationGroupTypeService {
     }
 
     return this.http
-      .get('layout/locationgrouptype/' + locationGroupTypeId)
+      .get('layout/locationgrouptypes/' + locationGroupTypeId)
       .pipe(map(res => res.data))
       .pipe(
         tap(res =>

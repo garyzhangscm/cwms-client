@@ -67,24 +67,24 @@
         </td>
         <td>
           <div class="editable-cell"
-            *ngIf="editId !== data.id || editCol != 'contactor.firstname'; else editcontactorFirstnameTpl">
-            <div class="editable-cell-value-wrap" (click)="startEdit(data.id, 'contactor.firstname', $event)">
+            *ngIf="editId !== data.id || editCol != 'contactorFirstname'; else editcontactorFirstnameTpl">
+            <div class="editable-cell-value-wrap" (click)="startEdit(data.id, 'contactorFirstname', $event)">
               {{ data.contactorFirstname }}
             </div>
           </div>
           <ng-template #editcontactorFirstnameTpl>
-            <input type="text" nz-input [(ngModel)]="data.contactor.firstname" (blur)="changeCustomer(data)" />
+            <input type="text" nz-input [(ngModel)]="data.contactorFirstname" (blur)="changeCustomer(data)" />
           </ng-template>
         </td>
         <td>
           <div class="editable-cell"
-            *ngIf="editId !== data.id || editCol != 'contactor.lastname'; else editcontactorLastnameTpl">
-            <div class="editable-cell-value-wrap" (click)="startEdit(data.id, 'contactor.lastname', $event)">
+            *ngIf="editId !== data.id || editCol != 'contactorLastname'; else editcontactorLastnameTpl">
+            <div class="editable-cell-value-wrap" (click)="startEdit(data.id, 'contactorLastname', $event)">
               {{ data.contactorLastname }}
             </div>
           </div>
           <ng-template #editcontactorLastnameTpl>
-            <input type="text" nz-input [(ngModel)]="data.contactor.lastname" (blur)="changeCustomer(data)" />
+            <input type="text" nz-input [(ngModel)]="data.contactorLastname" (blur)="changeCustomer(data)" />
           </ng-template>
         </td>
         <td>

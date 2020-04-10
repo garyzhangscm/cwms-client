@@ -12,13 +12,13 @@ import { IntegrationIntegrationDataSupplierComponent } from './integration-data-
 const routes: Routes = [
   { path: 'integration-data', component: IntegrationIntegrationDataComponent },
   { path: 'integration-data-client', component: IntegrationIntegrationDataClientComponent },
-,
   { path: 'integration-data-customer', component: IntegrationIntegrationDataCustomerComponent },
   { path: 'integration-data-item', component: IntegrationIntegrationDataItemComponent },
   { path: 'integration-data-item-family', component: IntegrationIntegrationDataItemFamilyComponent },
   { path: 'integration-data-item-package-type', component: IntegrationIntegrationDataItemPackageTypeComponent },
   { path: 'integration-data-item-unit-of-measure', component: IntegrationIntegrationDataItemUnitOfMeasureComponent },
-  { path: 'integration-data-supplier', component: IntegrationIntegrationDataSupplierComponent }];
+  { path: 'integration-data-supplier', component: IntegrationIntegrationDataSupplierComponent },
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

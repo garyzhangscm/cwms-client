@@ -1,17 +1,17 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
   <a routerLink="/inventory/inventory" routerLinkActive="active">{{
-    'description.field.link.return' | translate
+    'return' | translate
   }}</a>
 </ng-template>
 <ng-template #breadcrumb>
   <nz-breadcrumb>
     <nz-breadcrumb-item>
-      <a routerLink="/" routerLinkActive="active">{{ 'description.field.breadcrumb.home' | translate }}</a>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
     </nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
     <nz-breadcrumb-item><a routerLink="/inventory/inventory" routerLinkActive="active">{{
-        'description.field.breadcrumb.inventory' | translate
+        'breadcrumb.inventory' | translate
       }}</a></nz-breadcrumb-item>
     <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
   </nz-breadcrumb>
@@ -66,8 +66,8 @@
 
         <nz-select *ngIf='currentInventory !== undefined' nz-input [ngModel]="currentInventory.inventoryStatus.name"
           (ngModelChange)="inventoryStatusChange($event)" style="width: 250px">
-          <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses" nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | translate}}"
-            [nzValue]="inventoryStatus.name">
+          <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
+            nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | translate}}" [nzValue]="inventoryStatus.name">
           </nz-option>
         </nz-select>
 
@@ -95,6 +95,6 @@
 <ng-template #actionConfirm>
   <a nz-button nzType="primary" routerLink="/inventory/inventory-attribute-change/confirm" routerLinkActive="active"
     (click)="saveCurrentInventory()">
-    {{ 'description.steps.next' | translate }} :
-    {{ 'description.steps.confirm.title' | translate }}</a>
+    {{ 'steps.next' | translate }} :
+    {{ 'steps.confirm.title' | translate }}</a>
 </ng-template>

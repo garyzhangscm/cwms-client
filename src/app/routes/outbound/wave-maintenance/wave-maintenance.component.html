@@ -1,18 +1,18 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
   <a routerLink="/outbound/wave" routerLinkActive="active">{{
-    'description.field.link.return' | translate
+    'return' | translate
   }}</a>
 </ng-template>
 <ng-template #breadcrumb>
   <nz-breadcrumb>
     <nz-breadcrumb-item>
-      <a routerLink="/" routerLinkActive="active">{{ 'description.field.breadcrumb.home' | translate }}</a>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
     </nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.outbound' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.outbound' | translate }}</a></nz-breadcrumb-item>
     <nz-breadcrumb-item><a routerLink="/outbound/wave" routerLinkActive="active">{{
-        'description.field.breadcrumb.wave' | translate
+        'breadcrumb.wave' | translate
       }}</a></nz-breadcrumb-item>
     <nz-breadcrumb-item><a>{{ pageTitle }}</a>
     </nz-breadcrumb-item>

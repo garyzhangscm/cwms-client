@@ -1,18 +1,18 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
   <a routerLink="/inventory/item-family" routerLinkActive="active">{{
-    'description.field.link.return' | translate
+    'return' | translate
   }}</a>
 </ng-template>
 <ng-template #breadcrumb>
   <nz-breadcrumb>
     <nz-breadcrumb-item>
-      <a routerLink="/" routerLinkActive="active">{{ 'description.field.breadcrumb.home' | translate }}</a>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
     </nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.inventory' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.inventory' | translate }}</a></nz-breadcrumb-item>
     <nz-breadcrumb-item><a routerLink="/inventory/item-family" routerLinkActive="active">{{
-        'description.field.breadcrumb.item-family' | translate
+        'breadcrumb.item-family' | translate
       }}</a></nz-breadcrumb-item>
     <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
   </nz-breadcrumb>
@@ -21,11 +21,11 @@
 <div nz-row style="padding: 50px">
   <div nz-col nzSpan="12" nzOffset="6">
     <nz-steps [nzCurrent]="0" [nzSize]="'default'">
-      <nz-step nzTitle="{{ 'description.steps.basic-info.title' | translate }}"
-        nzDescription="{{ 'description.steps.item-family-maintenance.basic-info.description' | translate }}">
+      <nz-step nzTitle="{{ 'steps.basic-info.title' | translate }}"
+        nzDescription="{{ 'steps.item-family-maintenance.basic-info.description' | translate }}">
       </nz-step>
-      <nz-step nzTitle="{{ 'description.steps.confirm.title' | translate }}"
-        nzDescription="{{ 'description.steps.confirm.description' | translate }}">
+      <nz-step nzTitle="{{ 'steps.confirm.title' | translate }}"
+        nzDescription="{{ 'steps.confirm.description' | translate }}">
       </nz-step>
     </nz-steps>
   </div>
@@ -66,8 +66,8 @@
 <ng-template #cardFoot>
   <div nz-row nzType="flex" nzJustify="center">
     <button nz-button nzType="primary" (click)="goToConfirmPage()">
-      {{ 'description.steps.next' | translate }} :
-      {{ 'description.steps.confirm.title' | translate }}
+      {{ 'steps.next' | translate }} :
+      {{ 'steps.confirm.title' | translate }}
     </button>
   </div>
 </ng-template>

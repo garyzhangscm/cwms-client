@@ -1,18 +1,18 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
   <a routerLink="/warehouse-layout/warehouse" routerLinkActive="active">{{
-    'description.field.link.return' | translate
+    'return' | translate
   }}</a>
 </ng-template>
 <ng-template #breadcrumb>
   <nz-breadcrumb>
     <nz-breadcrumb-item>
-      <a routerLink="/" routerLinkActive="active">{{ 'description.field.breadcrumb.home' | translate }}</a>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
     </nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.warehouse-layout' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.warehouse-layout' | translate }}</a></nz-breadcrumb-item>
     <nz-breadcrumb-item><a routerLink="/warehouse-layout/warehouse" routerLinkActive="active">{{
-        'description.field.breadcrumb.warehouse' | translate
+        'breadcrumb.warehouse' | translate
       }}</a></nz-breadcrumb-item>
     <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
   </nz-breadcrumb>
@@ -21,11 +21,11 @@
 <div nz-row style="padding: 50px">
   <div nz-col nzSpan="12" nzOffset="6">
     <nz-steps [nzCurrent]="1" [nzSize]="'default'">
-      <nz-step nzTitle="{{ 'description.steps.warehouse-maintenance.basic-info.title' | translate }}"
-        nzDescription="{{ 'description.steps.warehouse-maintenance.basic-info.description' | translate }}">
+      <nz-step nzTitle="{{ 'steps.warehouse-maintenance.basic-info.title' | translate }}"
+        nzDescription="{{ 'steps.warehouse-maintenance.basic-info.description' | translate }}">
       </nz-step>
-      <nz-step nzTitle="{{ 'description.steps.warehouse-maintenance.confirm.title' | translate }}"
-        nzDescription="{{ 'description.steps.warehouse-maintenance.confirm.description' | translate }}">
+      <nz-step nzTitle="{{ 'steps.warehouse-maintenance.confirm.title' | translate }}"
+        nzDescription="{{ 'steps.warehouse-maintenance.confirm.description' | translate }}">
       </nz-step>
     </nz-steps>
   </div>
@@ -36,7 +36,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseId">
-          {{ 'warehouse.id' | translate }}
+          id
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24">
           <input nz-input [(ngModel)]="currentWarehouse.id" id="warehouseId" name="id" disabled />
@@ -46,7 +46,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseName">
-          {{ 'warehouse.name' | translate }}
+          {{ 'name' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.warehouseName.required' | translate }}">
@@ -57,7 +57,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseSize">
-          {{ 'warehouse.size' | translate }}
+          {{ 'size' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.warehouseSize.required' | translate }}">
@@ -71,7 +71,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddressCountry">
-          {{ 'warehouse.address.country' | translate }}
+          {{ 'country' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}">
@@ -83,7 +83,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddressState">
-          {{ 'warehouse.address.state' | translate }}
+          {{ 'state' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}">
@@ -95,7 +95,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddressCounty">
-          {{ 'warehouse.address.county' | translate }}
+          {{ 'county' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}">
@@ -110,7 +110,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddressCity">
-          {{ 'warehouse.address.city' | translate }}
+          {{ 'city' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}">
@@ -122,7 +122,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddressDistrict">
-          {{ 'address.district' | translate }}
+          {{ 'district' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}">
@@ -137,7 +137,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddressLine1">
-          {{ 'warehouse.address.line1' | translate }}
+          {{ 'address.line1' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}">
@@ -149,7 +149,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddressLine2">
-          {{ 'warehouse.address.line2' | translate }}
+          {{ 'address.line2' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}">
@@ -161,7 +161,7 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddressPostcode">
-          {{ 'warehouse.address.postcode' | translate }}
+          {{ 'postcode' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}">
@@ -175,7 +175,7 @@
 
 <div nz-row nzType="flex" nzJustify="center">
   <button nz-button nzType="primary" (click)="goToConfirmPage()">
-    {{ 'description.steps.next' | translate }} :
-    {{ 'description.steps.warehouse-maintenance.confirm.title' | translate }}
+    {{ 'steps.next' | translate }} :
+    {{ 'steps.warehouse-maintenance.confirm.title' | translate }}
   </button>
 </div>

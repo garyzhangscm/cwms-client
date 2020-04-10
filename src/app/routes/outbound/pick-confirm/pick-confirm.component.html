@@ -1,18 +1,18 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
   <a (click)="returnToPreviousPage()">{{
-    'description.field.link.return' | translate
+    'return' | translate
   }}</a>
 </ng-template>
 <ng-template #breadcrumb>
   <nz-breadcrumb>
     <nz-breadcrumb-item>
-      <a routerLink="/" routerLinkActive="active">{{ 'description.field.breadcrumb.home' | translate }}</a>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
     </nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ 'description.field.breadcrumb.outbound' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.outbound' | translate }}</a></nz-breadcrumb-item>
     <nz-breadcrumb-item><a routerLink="/outbound/pick" routerLinkActive="active">{{
-        'description.field.breadcrumb.pick' | translate
+        'breadcrumb.pick' | translate
       }}</a></nz-breadcrumb-item>
     <nz-breadcrumb-item><a>{{ pageTitle }}</a>
     </nz-breadcrumb-item>
@@ -52,10 +52,10 @@
 
     <nz-descriptions-item nzTitle="{{'order.shipToCustomer.name' | translate}}">
       <span *ngIf="order?.shipToCustomer !== null">
-        {{ order?.shipToCustomer.contactor.firstname }} {{ order?.shipToCustomer.contactor.lastname }}
+        {{ order?.shipToCustomer.contactorFirstname }} {{ order?.shipToCustomer.contactorLastname }}
       </span>
       <span *ngIf="order?.shipToCustomer === null">
-        {{ order?.shipTocontactor.firstname }} {{ order?.shipTocontactor.lastname }}
+        {{ order?.shipTocontactorFirstname }} {{ order?.shipTocontactorLastname }}
       </span>
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="{{'order.shipToCustomer.address' | translate}}">

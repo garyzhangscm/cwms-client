@@ -33,12 +33,12 @@ export class LocationGroupService {
   }
 
   changeLocationGroup(locationGroup: LocationGroup): Observable<LocationGroup> {
-    const url = 'layout/locationgroup/' + locationGroup.id;
+    const url = 'layout/locationgroups/' + locationGroup.id;
     return this.http.put(url, locationGroup).pipe(map(res => res.data));
   }
 
   removeLocationGroup(locationGroup: LocationGroup): Observable<LocationGroup> {
-    const url = 'layout/locationgroup/' + locationGroup.id;
+    const url = 'layout/locationgroups/' + locationGroup.id;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 
@@ -50,6 +50,6 @@ export class LocationGroupService {
     const params = {
       location_group_ids: locationGroupIds.join(','),
     };
-    return this.http.delete('layout/locationgroup', params).pipe(map(res => res.data));
+    return this.http.delete('layout/locationgroups', params).pipe(map(res => res.data));
   }
 }

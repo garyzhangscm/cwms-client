@@ -6,10 +6,9 @@
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
         <nz-form-label for="location_group_type" [nzSm]="3" [nzXs]="3">
-          {{ 'locationgrouptype' | translate }}
+          {{ 'location-group-type' | translate }}
         </nz-form-label>
-        <nz-select nzMode="tags" nzPlaceHolder="{{ 'description.field.placeholder.locationgrouptype' | translate }}"
-          formControlName="taggedLocationGroupTypes">
+        <nz-select nzMode="tags" formControlName="taggedLocationGroupTypes">
           <nz-option *ngFor="let locationGroupType of locationGroupTypes" [nzLabel]="locationGroupType.label"
             [nzValue]="locationGroupType.value"></nz-option>
         </nz-select>
@@ -21,8 +20,7 @@
         <nz-form-label for="location_group" [nzSm]="3" [nzXs]="3">
           {{ 'location-group' | translate }}
         </nz-form-label>
-        <nz-select nzMode="tags" nzPlaceHolder="{{ 'description.field.placeholder.location-group' | translate }}"
-          formControlName="taggedLocationGroups">
+        <nz-select nzMode="tags" formControlName="taggedLocationGroups">
           <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.label"
             [nzValue]="locationGroup.value"></nz-option>
         </nz-select>
@@ -64,7 +62,7 @@
           {{ 'location.name' | translate }}
         </th>
         <th nzShowFilter [nzFilters]="filtersByLocationGroup" (nzFilterChange)="filter($event)">
-          {{'locationgroup.name' | translate}}</th>
+          {{'location-group' | translate}}</th>
         <th nzShowSort nzSortKey="aisle">
           {{ 'location.aisle' | translate }}
         </th>

@@ -1,34 +1,46 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
-  <a routerLink="/common/supplier" routerLinkActive="active">{{
-    'return' | translate
-  }}</a>
+  <a routerLink="/common/supplier" routerLinkActive="active">{{ 'return' | translate }}</a>
 </ng-template>
 <ng-template #breadcrumb>
   <nz-breadcrumb>
     <nz-breadcrumb-item>
       <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
     </nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ 'breadcrumb.common' | translate }}</a></nz-breadcrumb-item>
-    <nz-breadcrumb-item><a routerLink="/common/supplier" routerLinkActive="active">{{
+    <nz-breadcrumb-item
+      ><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item
+    >
+    <nz-breadcrumb-item
+      ><a>{{ 'breadcrumb.common' | translate }}</a></nz-breadcrumb-item
+    >
+    <nz-breadcrumb-item
+      ><a routerLink="/common/supplier" routerLinkActive="active">{{
         'breadcrumb.supplier' | translate
-      }}</a></nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+      }}</a></nz-breadcrumb-item
+    >
+    <nz-breadcrumb-item
+      ><a>{{ pageTitle }}</a></nz-breadcrumb-item
+    >
   </nz-breadcrumb>
 </ng-template>
 
 <div nz-row style="padding: 50px">
   <div nz-col nzSpan="12" nzOffset="6">
     <nz-steps [nzCurrent]="0" [nzSize]="'default'">
-      <nz-step nzTitle="{{ 'steps.basic-info.title' | translate }}"
-        nzDescription="{{ 'steps.supplier-maintenance.basic-info.description' | translate }}">
+      <nz-step
+        nzTitle="{{ 'steps.basic-info.title' | translate }}"
+        nzDescription="{{ 'steps.supplier-maintenance.basic-info.description' | translate }}"
+      >
       </nz-step>
-      <nz-step nzTitle="{{ 'steps.supplier-maintenance.address.title' | translate }}"
-        nzDescription="{{ 'steps.supplier-maintenance.address.description' | translate }}">
+      <nz-step
+        nzTitle="{{ 'steps.supplier-maintenance.address.title' | translate }}"
+        nzDescription="{{ 'steps.supplier-maintenance.address.description' | translate }}"
+      >
       </nz-step>
-      <nz-step nzTitle="{{ 'steps.confirm.title' | translate }}"
-        nzDescription="{{ 'steps.confirm.description' | translate }}">
+      <nz-step
+        nzTitle="{{ 'steps.confirm.title' | translate }}"
+        nzDescription="{{ 'steps.confirm.description' | translate }}"
+      >
       </nz-step>
     </nz-steps>
   </div>
@@ -42,8 +54,12 @@
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name">
             {{ 'name' | translate }}
           </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <nz-form-control
+            [nzSm]="14"
+            [nzXs]="24"
+            nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}"
+          >
             <input nz-input [(ngModel)]="currentSupplier.name" id="name" name="name" required />
           </nz-form-control>
         </nz-form-item>
@@ -53,8 +69,12 @@
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="description">
             {{ 'description' | translate }}
           </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-            nzErrorTip="{{ 'error.form.field.clientDescription.required' | translate }}">
+          <nz-form-control
+            [nzSm]="14"
+            [nzXs]="24"
+            nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.clientDescription.required' | translate }}"
+          >
             <input nz-input [(ngModel)]="currentSupplier.description" id="description" name="description" required />
           </nz-form-control>
         </nz-form-item>
@@ -64,10 +84,13 @@
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="firstname">
             {{ 'contactor.firstname' | translate }}
           </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-            nzErrorTip="{{ 'error.form.field.contactor.firstname.required' | translate }}">
-            <input nz-input [(ngModel)]="currentSupplier.contactor.firstname" id="firstname" name="firstname"
-              required />
+          <nz-form-control
+            [nzSm]="14"
+            [nzXs]="24"
+            nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.contactor.firstname.required' | translate }}"
+          >
+            <input nz-input [(ngModel)]="currentSupplier.contactorFirstname" id="firstname" name="firstname" required />
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -76,16 +99,18 @@
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lastname">
             {{ 'contactor.lastname' | translate }}
           </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-            nzErrorTip="{{ 'error.form.field.contactor.lastname.required' | translate }}">
-            <input nz-input [(ngModel)]="currentSupplier.contactor.lastname" id="lastname" name="lastname" required />
+          <nz-form-control
+            [nzSm]="14"
+            [nzXs]="24"
+            nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.contactor.lastname.required' | translate }}"
+          >
+            <input nz-input [(ngModel)]="currentSupplier.contactorLastname" id="lastname" name="lastname" required />
           </nz-form-control>
         </nz-form-item>
       </div>
     </div>
-
   </form>
-
 </nz-card>
 
 <ng-template #cardFoot>

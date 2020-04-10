@@ -6,10 +6,9 @@
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
         <nz-form-label for="location_group_type" [nzSm]="3" [nzXs]="3">
-          {{'locationgrouptype' | translate}}
+          {{'location-group-type' | translate}}
         </nz-form-label>
-        <nz-select nzMode="tags" nzPlaceHolder="{{'description.field.placeholder.locationgrouptype' | translate}}"
-          formControlName="taggedLocationGroupTypes">
+        <nz-select nzMode="tags" formControlName="taggedLocationGroupTypes">
           <nz-option *ngFor="let locationGroupType of locationGroupTypes" [nzLabel]="locationGroupType.label"
             [nzValue]="locationGroupType.value"></nz-option>
         </nz-select>
@@ -32,16 +31,16 @@
       <tr>
         <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
           (nzCheckedChange)="checkAll($event)"></th>
-        <th nzShowSort nzSortKey="id">{{'locationgroup.id' | translate}}</th>
+        <th nzShowSort nzSortKey="id">id</th>
         <th nzShowSort nzSortKey="name" nzShowFilter [nzFilters]="filtersByName"
           (nzFilterChange)="filter($event, selectedFiltersByDescription, selectedFiltersByLocationGroupType)">
-          {{'locationgroup.name' | translate}}</th>
+          {{'name' | translate}}</th>
         <th nzShowFilter [nzFilters]="filtersByDescription"
           (nzFilterChange)="filter(selectedFiltersByName, $event, selectedFiltersByLocationGroupType)">
-          {{'locationgroup.description' | translate}}</th>
+          {{'description' | translate}}</th>
         <th nzShowSort nzSortKey="locationGroupType" nzShowFilter [nzFilters]="filtersByLocationGroupType"
           (nzFilterChange)="filter(selectedFiltersByName, selectedFiltersByDescription, $event)">
-          {{'locationgroup.locationGroupType' | translate}}</th>
+          {{'type' | translate}}</th>
       </tr>
     </thead>
     <tbody>
