@@ -1,10 +1,17 @@
 import { Customer } from '../../common/models/customer';
 import { Client } from '../../common/models/client';
 import { OrderLine } from './order-line';
+import { Carrier } from '../../common/models/carrier';
+import { CarrierServiceLevel } from '../../common/models/carrier-service-level';
 
 export interface Order {
   id: number;
   number: string;
+
+  carrierId: number;
+  carrier: Carrier;
+  carrierServiceLevelId: number;
+  carrierServiceLevel: CarrierServiceLevel;
 
   shipToCustomerId: number;
   shipToCustomer: Customer;

@@ -17,6 +17,10 @@ const routes: Routes = [
   { path: 'warehouse-maintenance/:id/confirm', component: WarehouseLayoutWarehouseMaintenanceConfirmComponent },
   { path: 'location-group-maintenance', component: WarehouseLayoutLocationGroupMaintenanceComponent },
   {
+    path: 'location-group-maintenance/confirm',
+    component: WarehouseLayoutLocationGroupMaintenanceConfirmComponent,
+  },
+  {
     path: 'location-group-maintenance/:id/confirm',
     component: WarehouseLayoutLocationGroupMaintenanceConfirmComponent,
   },

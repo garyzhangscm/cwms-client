@@ -12,36 +12,54 @@ import { WarehouseService } from '../../warehouse-layout/services/warehouse.serv
 export class PickService {
   constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
+  getPicksByOrder(orderId: number): Observable<PickWork[]> {
+    return this.getPicks(null, orderId);
+  }
+  getPicksByShipment(shipmentId: number): Observable<PickWork[]> {
+    return this.getPicks(null, null, shipmentId);
+  }
+  getPicksByWorkOrder(workOrderId: number): Observable<PickWork[]> {
+    return this.getPicks(null, null, null, workOrderId);
+  }
+  getPicksByWave(waveId: number): Observable<PickWork[]> {
+    return this.getPicks(null, null, null, null, waveId);
+  }
   getPicks(
     number?: string,
     orderId?: number,
+    shipmentId?: number,
+    workOrderId?: number,
+    waveId?: number,
     itemId?: number,
     sourceLocationId?: number,
     destinationLocationId?: number,
   ): Observable<PickWork[]> {
-    let params = '';
+    let url = `outbound/picks?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (number) {
-      params = `number=${number}`;
+      url = `${url}&number=${number}`;
     }
 
     if (orderId) {
-      params = `${params}&orderId=${orderId}`;
+      url = `${url}&orderId=${orderId}`;
+    }
+    if (shipmentId) {
+      url = `${url}&shipmentId=${shipmentId}`;
+    }
+    if (workOrderId) {
+      url = `${url}&workOrderId=${workOrderId}`;
+    }
+    if (waveId) {
+      url = `${url}&waveId=${waveId}`;
     }
     if (itemId) {
-      params = `${params}&itemId=${itemId}`;
+      url = `${url}&itemId=${itemId}`;
     }
     if (sourceLocationId) {
-      params = `${params}&sourceLocationId=${sourceLocationId}`;
+      url = `${url}&sourceLocationId=${sourceLocationId}`;
     }
     if (destinationLocationId) {
-      params = `${params}&destinationLocationId=${destinationLocationId}`;
+      url = `${url}&destinationLocationId=${destinationLocationId}`;
     }
-
-    if (params.startsWith('&')) {
-      params = params.substring(1);
-    }
-
-    const url = 'outbound/picks' + (params.length > 0 ? '?' + params : '');
 
     return this.http.get(url).pipe(map(res => res.data));
   }

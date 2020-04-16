@@ -31,37 +31,37 @@
   </div>
 </div>
 
-<form nz-form>
+<form nz-form [formGroup]="warehouseForm">
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseId">
+        <nz-form-label [nzSm]="6" [nzXs]="24">
           id
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24">
-          <input nz-input [(ngModel)]="currentWarehouse.id" id="warehouseId" name="id" disabled />
+          <input nz-input formControlName="warehouseId" />
         </nz-form-control>
       </nz-form-item>
     </div>
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseName">
+        <nz-form-label [nzSm]="6" [nzXs]="24">
           {{ 'name' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-          nzErrorTip="{{ 'error.form.field.warehouseName.required' | translate }}">
-          <input nz-input [(ngModel)]="currentWarehouse.name" id="warehouseName" name="name" required />
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input formControlName="name" />
         </nz-form-control>
       </nz-form-item>
     </div>
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseSize">
+        <nz-form-label [nzSm]="6" [nzXs]="24">
           {{ 'size' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-          nzErrorTip="{{ 'error.form.field.warehouseSize.required' | translate }}">
-          <input nz-input [(ngModel)]="currentWarehouse.size" id="warehouseSize" name="size" required />
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input type="number" formControlName="size" />
         </nz-form-control>
       </nz-form-item>
     </div>
@@ -70,37 +70,34 @@
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddressCountry">
+        <nz-form-label [nzSm]="6" [nzXs]="24">
           {{ 'country' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-          nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}">
-          <input nz-input [(ngModel)]="currentWarehouse.addressCountry" id="warehouseAddressCountry"
-            name="addressCountry" required />
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input formControlName="addressCountry" />
         </nz-form-control>
       </nz-form-item>
     </div>
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddressState">
+        <nz-form-label [nzSm]="6" [nzXs]="24">
           {{ 'state' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-          nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}">
-          <input nz-input [(ngModel)]="currentWarehouse.addressState" id="warehouseAddressState" name="addressState"
-            required />
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input formControlName="addressState" />
         </nz-form-control>
       </nz-form-item>
     </div>
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddressCounty">
+        <nz-form-label [nzSm]="6" [nzXs]="24">
           {{ 'county' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-          nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}">
-          <input nz-input [(ngModel)]="currentWarehouse.addressCounty" id="warehouseAddresscounty" name="addressCounty"
-            required />
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input formControlName="addressCounty" />
         </nz-form-control>
       </nz-form-item>
     </div>
@@ -109,25 +106,23 @@
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddressCity">
+        <nz-form-label [nzSm]="6" [nzXs]="24">
           {{ 'city' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-          nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}">
-          <input nz-input [(ngModel)]="currentWarehouse.addressCity" id="warehouseAddressCity" name="addressCity"
-            required />
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input formControlName="addressCity" />
         </nz-form-control>
       </nz-form-item>
     </div>
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddressDistrict">
+        <nz-form-label [nzSm]="6" [nzXs]="24">
           {{ 'district' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-          nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}">
-          <input nz-input [(ngModel)]="currentWarehouse.addressDistrict" id="warehouseAddressDistrict"
-            name="addressDistrict" required />
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input formControlName="addressDistrict" />
         </nz-form-control>
       </nz-form-item>
     </div>
@@ -136,37 +131,34 @@
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddressLine1">
+        <nz-form-label [nzSm]="6" [nzXs]="24">
           {{ 'address.line1' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-          nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}">
-          <input nz-input [(ngModel)]="currentWarehouse.addressLine1" id="warehouseAddressLine1" name="addressLine1"
-            required />
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input formControlName="addressLine1" />
         </nz-form-control>
       </nz-form-item>
     </div>
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddressLine2">
+        <nz-form-label [nzSm]="6" [nzXs]="24">
           {{ 'address.line2' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-          nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}">
-          <input nz-input [(ngModel)]="currentWarehouse.addressLine2" id="warehouseAddressLine2" name="addressLine2"
-            required />
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input formControlName="addressLine2" />
         </nz-form-control>
       </nz-form-item>
     </div>
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="warehouseAddressPostcode">
+        <nz-form-label [nzSm]="6" [nzXs]="24">
           {{ 'postcode' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-          nzErrorTip="{{ 'error.form.field.warehouseAddress.required' | translate }}">
-          <input nz-input [(ngModel)]="currentWarehouse.addressPostcode" id="warehouseAddressPostcode"
-            name="addressPostcode" required />
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input formControlName="addressPostcode" />
         </nz-form-control>
       </nz-form-item>
     </div>

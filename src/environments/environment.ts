@@ -12,7 +12,7 @@ export const environment = {
   // SERVER_URL: `http://localhost:5555/api/`,
 
   // AWS
-  SERVER_URL: `http://ec2-54-219-134-111.us-west-1.compute.amazonaws.com:5555/api/`,
+  SERVER_URL: `http://ec2-54-177-85-9.us-west-1.compute.amazonaws.com:5555/api/`,
 
   production: false,
   useHash: true,

@@ -154,8 +154,8 @@ export class OutboundOrderComponent implements OnInit {
         order.totalOpenQuantity += orderLine.openQuantity;
         order.totalInprocessQuantity += orderLine.inprocessQuantity;
         order.totalShippedQuantity += orderLine.shippedQuantity;
-        if (!existingItemIds.has(orderLine.item.id)) {
-          existingItemIds.add(orderLine.item.id);
+        if (!existingItemIds.has(orderLine.itemId)) {
+          existingItemIds.add(orderLine.itemId);
         }
       });
 
@@ -306,7 +306,7 @@ export class OutboundOrderComponent implements OnInit {
     }, 1000);
   }
   confirmPicks(order: Order) {
-    this.router.navigateByUrl(`/outbound/pick/confirm?type=order&number=${order.number}`);
+    this.router.navigateByUrl(`/outbound/pick/confirm?type=order&id=${order.id}`);
   }
   showOrderDetails(order: Order) {
     // When we expand the details for the order, load the picks and short allocation from the server
@@ -317,18 +317,18 @@ export class OutboundOrderComponent implements OnInit {
     }
   }
   showPicks(order: Order) {
-    this.pickService.getPicks(null, order.id).subscribe(pickRes => {
+    this.pickService.getPicksByOrder(order.id).subscribe(pickRes => {
       this.mapOfPicks[order.id] = [...pickRes];
     });
   }
   showShortAllocations(order: Order) {
     this.shortAllocationService
-      .getShortAllocations(order.number)
+      .getShortAllocationsByOrder(order.id)
       .subscribe(shortAllocationRes => (this.mapOfShortAllocations[order.id] = [...shortAllocationRes]));
   }
   showPickedInventory(order: Order) {
     // Get all the picks and then load the pikced inventory
-    this.pickService.getPicks(null, order.id).subscribe(pickRes => {
+    this.pickService.getPicksByOrder(order.id).subscribe(pickRes => {
       if (pickRes.length === 0) {
         this.mapOfPickedInventory[order.id] = [];
       } else {

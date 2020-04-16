@@ -207,6 +207,6 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     }, 1000);
   }
   confirmPicks(workOrder: WorkOrder) {
-    this.router.navigateByUrl(`/outbound/pick/confirm?type=workOrder&number=${workOrder.number}`);
+    this.router.navigateByUrl(`/outbound/pick/confirm?type=workOrder&id=${workOrder.id}`);
   }
 }

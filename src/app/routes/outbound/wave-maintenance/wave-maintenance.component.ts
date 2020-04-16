@@ -1,7 +1,7 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { _HttpClient, TitleService } from '@delon/theme';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { NzModalService, NzMessageService } from 'ng-zorro-antd';
+import { NzMessageService } from 'ng-zorro-antd';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { Wave } from '../models/wave';
@@ -27,8 +27,11 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     status: null,
     shipmentLines: [],
     totalOrderCount: 0,
+    totalOrderLineCount: 0,
     totalItemCount: 0,
     totalQuantity: 0,
+    totalOpenQuantity: 0,
+    totalInprocessQuantity: 0,
     totalPickedQuantity: 0,
     totalStagedQuantity: 0,
     totalShippedQuantity: 0,
@@ -89,20 +92,67 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     this.newWave = true;
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.waveNumber) {
-        this.loadWave(params.waveNumber);
+      if (params.id) {
+        this.loadWave(params.id);
       }
     });
   }
 
-  loadWave(waveNumber: string) {
-    this.waveService.getWaves(waveNumber).subscribe(waveRes => {
-      if (waveRes.length === 1) {
-        this.currentWave = waveRes[0];
-        this.searchForm.controls.waveNumber.disable();
-        this.newWave = false;
+  loadWave(waveId: number) {
+    this.waveService.getWave(waveId).subscribe(waveRes => {
+      this.setupWaveInformation(waveRes);
+    });
+  }
+  setupWaveInformation(wave: Wave) {
+    this.currentWave = this.setupWaveQuantities(wave);
+    console.log(`wave: ${JSON.stringify(wave)}`);
+
+    this.searchForm.controls.waveNumber.setValue(this.currentWave.number);
+    this.searchForm.controls.waveNumber.disable();
+    this.newWave = false;
+  }
+  setupWaveQuantities(wave: Wave): Wave {
+    let totalQuantity = 0;
+    let totalOpenQuantity = 0;
+    let totalInprocessQuantity = 0;
+    let totalPickedQuantity = 0;
+    let totalStagedQuantity = 0;
+    let totalShippedQuantity = 0;
+
+    const existingItemIds = new Set();
+    const existingOrderNumbers = new Set();
+    const existingOrderLineIds = new Set();
+
+    wave.shipmentLines.forEach(shipmentLine => {
+      totalQuantity += shipmentLine.quantity;
+      totalOpenQuantity += shipmentLine.openQuantity;
+      totalInprocessQuantity += shipmentLine.inprocessQuantity;
+      shipmentLine.picks.forEach(pick => (totalPickedQuantity += pick.pickedQuantity));
+      totalStagedQuantity += shipmentLine.stagedQuantity;
+      totalShippedQuantity += shipmentLine.shippedQuantity;
+
+      if (!existingItemIds.has(shipmentLine.orderLine.itemId)) {
+        existingItemIds.add(shipmentLine.orderLine.itemId);
+      }
+      if (!existingOrderNumbers.has(shipmentLine.orderNumber)) {
+        existingOrderNumbers.add(shipmentLine.orderNumber);
+      }
+      if (!existingOrderLineIds.has(shipmentLine.orderLine.id)) {
+        existingOrderLineIds.add(shipmentLine.orderLine.id);
       }
     });
+
+    wave.totalOrderCount = existingOrderNumbers.size;
+    wave.totalOrderLineCount = existingOrderLineIds.size;
+    wave.totalItemCount = existingItemIds.size;
+
+    wave.totalQuantity = totalQuantity;
+    wave.totalOpenQuantity = totalOpenQuantity;
+    wave.totalInprocessQuantity = totalInprocessQuantity;
+    wave.totalPickedQuantity = totalPickedQuantity;
+    wave.totalStagedQuantity = totalStagedQuantity;
+    wave.totalShippedQuantity = totalShippedQuantity;
+    return wave;
   }
 
   findWaveCandidate() {
@@ -111,7 +161,6 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
       .subscribe(wavableOrders => {
         this.listOfAllOrders = this.calculateQuantities(wavableOrders);
         this.listOfDisplayOrders = this.calculateQuantities(wavableOrders);
-        console.log(`get orders:\n ${JSON.stringify(this.listOfAllOrders)}`);
 
         this.filtersByShipToCustomer = [];
         this.filtersByBillToCustomer = [];
@@ -140,7 +189,6 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
 
         this.listOfAllOrderLines = this.getWavableOrderLines(wavableOrders);
         this.listOfDisplayOrderLines = this.getWavableOrderLines(wavableOrders);
-        console.log(`get order lines:\n ${JSON.stringify(this.listOfAllOrderLines)}`);
 
         this.listOfAllOrderLines.forEach(orderLine => {
           if (orderLine.item && !existingItemId.has(orderLine.item.id)) {
@@ -311,6 +359,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
       .createWaveWithOrderLines(this.searchForm.controls.waveNumber.value, wavableOrderLines)
       .subscribe(wave => {
         this.message.info(this.i18n.fanyi('message.new.complete'));
+        this.setupWaveInformation(wave);
         this.findWaveCandidate();
       });
   }
@@ -331,6 +380,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
       .createWaveWithOrderLines(this.searchForm.controls.waveNumber.value, wavableOrderLines)
       .subscribe(wave => {
         this.message.info(this.i18n.fanyi('message.new.complete'));
+        this.setupWaveInformation(wave);
         this.findWaveCandidate();
       });
   }
@@ -343,5 +393,9 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
       }
     });
     return selectedOrderLines;
+  }
+
+  setWaveNumber(waveNumber: string) {
+    this.searchForm.controls.waveNumber.setValue(waveNumber);
   }
 }

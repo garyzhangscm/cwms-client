@@ -29,6 +29,10 @@ export class LocationGroupService {
   }
 
   addLocationGroup(locationGroup: LocationGroup): Observable<LocationGroup> {
+    if (!locationGroup.warehouse) {
+      console.log(`warehouse is not setup yet`);
+      locationGroup.warehouse = this.warehouseService.getCurrentWarehouse();
+    }
     return this.http.post('layout/locationgroups', locationGroup).pipe(map(res => res.data));
   }
 

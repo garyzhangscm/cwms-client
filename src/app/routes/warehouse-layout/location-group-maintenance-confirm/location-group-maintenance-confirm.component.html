@@ -36,10 +36,10 @@
   <nz-card nzTitle="{{currentLocationGroup.name }}" [nzActions]="[actionSave]">
     <nz-descriptions nzTitle="{{'location-group' | translate}}" nzBordered>
 
-      <nz-descriptions-item nzTitle="{{'location-group.name' | translate}}">
+      <nz-descriptions-item nzTitle="{{'name' | translate}}">
         {{currentLocationGroup.name}}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'location-group.description' | translate}}" nzSpan="2">
+      <nz-descriptions-item nzTitle="{{'description' | translate}}" nzSpan="2">
         {{currentLocationGroup.description}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'location-group-type' | translate}}" nzSpan="3">
@@ -70,6 +70,20 @@
           [nzTwotoneColor]="'#52c41a'" style="font-size: 26px"></i>
         <i *ngIf="!currentLocationGroup.countable" nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'"
           [nzTwotoneColor]="'#eb2f96'" style="font-size: 26px"></i>
+      </nz-descriptions-item>
+
+
+      <nz-descriptions-item nzTitle="{{'location-group.tracking-volume' | translate}}">
+        <i *ngIf="currentLocationGroup.trackingVolume" nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'"
+          [nzTwotoneColor]="'#52c41a'" style="font-size: 26px"></i>
+        <i *ngIf="!currentLocationGroup.trackingVolume" nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'"
+          [nzTwotoneColor]="'#eb2f96'" style="font-size: 26px"></i>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'location-group.volume-tracking-policy' | translate}}">
+        {{ 'LOCATION-VOLUME-TRACKING-POLICY-' + currentLocationGroup.volumeTrackingPolicy | translate }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'location-group.inventory-consolidation-strategy' | translate}}">
+        {{ 'INVENTORY-CONSOLIDATION-STRATEGY-' + currentLocationGroup.inventoryConsolidationStrategy | translate }}
       </nz-descriptions-item>
 
     </nz-descriptions>

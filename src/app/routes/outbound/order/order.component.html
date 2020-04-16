@@ -39,7 +39,7 @@
         </th>
         <th rowspan="2" nzShowFilter [nzFilters]="filtersByShipToCustomer"
           (nzFilterChange)="filter($event, selectedFiltersByBillToCustomer)">
-          {{ 'order.shipToCustomer' | translate }}
+          {{ 'shipToCustomer' | translate }}
         </th>
         <th rowspan="2" nzShowFilter [nzFilters]="filtersByBillToCustomer"
           (nzFilterChange)="filter(selectedFiltersByShipToCustomer, $event)">
@@ -195,8 +195,8 @@
           </td>
         </tr>
         <tr [nzExpand]="mapOfExpandedId[data.id]" class="inner-table">
-          <td colspan="3"></td>
-          <td colspan="7">
+          <td colspan="2"></td>
+          <td colspan="12">
             <nz-tabset [nzSelectedIndex]="tabSelectedIndex">
               <nz-tab nzTitle=" {{ 'order.line' | translate }}">
                 <nz-table #innerTable [nzData]="data.orderLines" nzSize="middle" [nzShowPagination]="false">
@@ -297,7 +297,7 @@
   </nz-tab>
 
   <nz-tab nzTitle=" {{ 'picked-inventory' | translate }}">
-    <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfPicks[data.id]">
+    <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfPickedInventory[data.id]">
       <thead>
         <th>
           {{ 'pick.number' | translate }}

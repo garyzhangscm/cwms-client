@@ -3,15 +3,19 @@ import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { Shipment } from '../models/shipment';
 import { map } from 'rxjs/operators';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShipmentService {
-  constructor(private http: _HttpClient) {}
+  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
   getShipments(number: string): Observable<Shipment[]> {
-    const url = number ? `outbound/shipments?number=${number}` : `outbound/shipments`;
+    let url = `outbound/shipments?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    if (number) {
+      url = `${url}&number=${number}`;
+    }
 
     return this.http.get(url).pipe(map(res => res.data));
   }
@@ -47,5 +51,22 @@ export class ShipmentService {
   completeShipment(shipment: Shipment): Observable<Shipment> {
     const url = `outbound/shipments/${shipment.id}/complete`;
     return this.http.put(url).pipe(map(res => res.data));
+  }
+
+  allocateShipment(shipment: Shipment): Observable<Shipment> {
+    const url = `outbound/shipments/${shipment.id}/allocate`;
+    return this.http.put(url).pipe(map(res => res.data));
+  }
+
+  stageShipment(shipment: Shipment): Observable<Shipment> {
+    return this.http.post(`outbound/shipments/${shipment.id}/stage`).pipe(map(res => res.data));
+  }
+
+  loadTrailer(shipment: Shipment): Observable<Shipment> {
+    return this.http.post(`outbound/shipments/${shipment.id}/load`).pipe(map(res => res.data));
+  }
+
+  dispatchTrailer(shipment: Shipment): Observable<Shipment> {
+    return this.http.post(`outbound/shipments/${shipment.id}/dispatch`).pipe(map(res => res.data));
   }
 }

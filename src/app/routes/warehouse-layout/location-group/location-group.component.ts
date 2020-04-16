@@ -5,7 +5,7 @@ import { LocationGroupType } from '../models/location-group-type';
 import { LocationGroup } from '../models/location-group';
 import { LocationGroupService } from '../services/location-group.service';
 import { I18NService } from '@core';
-import { NzInputDirective, NzModalService } from 'ng-zorro-antd';
+import { NzInputDirective, NzModalService, NzMessageService } from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-warehouse-layout-location-group',
@@ -52,6 +52,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
     private locationGroupService: LocationGroupService,
     private i18n: I18NService,
     private modalService: NzModalService,
+    private messageService: NzMessageService,
   ) {}
 
   resetForm(): void {
@@ -169,7 +170,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
         nzOkType: 'danger',
         nzOnOk: () => {
           this.locationGroupService.removeLocationGroups(selectedLocationGroups).subscribe(res => {
-            console.log('selected location groups removed');
+            this.messageService.success(this.i18n.fanyi('message.action.success'));
             this.search();
           });
         },
@@ -214,7 +215,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
   changeLocationGroup(locationGroup: LocationGroup) {
     this.locationGroupService
       .changeLocationGroup(locationGroup)
-      .subscribe(res => console.log('locationGroup changed!'));
+      .subscribe(res => this.messageService.success(this.i18n.fanyi('message.action.success')));
   }
 
   ngOnInit() {

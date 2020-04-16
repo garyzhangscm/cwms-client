@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from '@shared';
+import { DirectivesModule } from '../directives/directives.module';
 import { OutboundRoutingModule } from './outbound-routing.module';
 import { OutboundOrderComponent } from './order/order.component';
 import { OutboundWaveComponent } from './wave/wave.component';
@@ -29,7 +30,7 @@ const COMPONENTS = [
 const COMPONENTS_NOROUNT = [];
 
 @NgModule({
-  imports: [SharedModule, OutboundRoutingModule],
+  imports: [SharedModule, OutboundRoutingModule, DirectivesModule],
   declarations: [...COMPONENTS, ...COMPONENTS_NOROUNT],
   entryComponents: COMPONENTS_NOROUNT,
 })

@@ -6,10 +6,13 @@ export interface Wave {
   number: string;
   status: WaveStatus;
   shipmentLines: ShipmentLine[];
-  totalOrderCount: number;
-  totalItemCount: number;
-  totalQuantity: number;
-  totalPickedQuantity: number;
-  totalStagedQuantity: number;
-  totalShippedQuantity: number;
+  totalOrderCount?: number;
+  totalOrderLineCount?: number;
+  totalItemCount?: number;
+  totalQuantity?: number;
+  totalOpenQuantity?: number;
+  totalInprocessQuantity?: number;
+  totalPickedQuantity?: number;
+  totalStagedQuantity?: number;
+  totalShippedQuantity?: number;
 }

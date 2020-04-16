@@ -9,6 +9,10 @@ export interface ShipmentLine {
   orderNumber: string;
   orderLine: OrderLine;
   quantity: number;
+  openQuantity: number;
+  inprocessQuantity: number;
+  stagedQuantity: number;
+  loadedQuantity: number;
   shippedQuantity: number;
   shipment?: Shipment;
 

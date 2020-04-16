@@ -1,8 +1,6 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
-  <a routerLink="/warehouse-layout/location-group" routerLinkActive="active">{{
-    'return' | translate
-  }}</a>
+  <a routerLink="/warehouse-layout/location-group" routerLinkActive="active">{{ 'return' | translate }}</a>
 </ng-template>
 <ng-template #breadcrumb>
   <nz-breadcrumb>
@@ -31,72 +29,132 @@
   </div>
 </div>
 
-<form nz-form>
-  <nz-form-item>
-    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupName">
-      {{ 'name' | translate }}
-    </nz-form-label>
-    <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | translate }}">
-      <input nz-input [(ngModel)]="currentLocationGroup.name" id="locationGroupName" name="name" required />
-    </nz-form-control>
-  </nz-form-item>
-  <nz-form-item>
-    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupDescription">
-      {{ 'description' | translate }}
-    </nz-form-label>
-    <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | translate }}">
-      <input nz-input [(ngModel)]="currentLocationGroup.description" id="locationGroupDescription" name="description"
-        required />
-    </nz-form-control>
-  </nz-form-item>
-  <nz-form-item>
-    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupType">
-      {{ 'location-group-type' | translate }}
-    </nz-form-label>
-    <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | translate }}"
-      [nzSuccessTip]="locationGroupTypeDetailTpl">
-      <nz-select [(ngModel)]="currentLocationGroup.locationGroupType.id" name="locationGroupType"
-        (ngModelChange)="locationGroupTypeChange()">
-        <nz-option *ngFor="let locationGroupType of locationGroupTypes" nzValue="{{locationGroupType.value}}"
-          nzLabel="{{locationGroupType.label}}"></nz-option>
+<form nz-form [formGroup]="locationGroupForm">
 
-      </nz-select>
-    </nz-form-control>
-  </nz-form-item>
-  <ng-template #locationGroupTypeDetailTpl>
-    <div>
-      <nz-tag [nzColor]="'#2db7f5'" *ngIf="currentLocationGroup.locationGroupType.fourWallInventory">
-        {{'location-group-type.four_wall_inventory' | translate}}</nz-tag>
-      <nz-tag [nzColor]="'#2db7f5'" *ngIf="currentLocationGroup.locationGroupType.virtual">
-        {{'location-group-type.virtual' | translate}}</nz-tag>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'name' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input formControlName="name" required />
+        </nz-form-control>
+      </nz-form-item>
     </div>
-  </ng-template>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'description' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input formControlName="description" required />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'location-group-type' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          nzErrorTip="{{ 'error.form.field.required' | translate }}" [nzSuccessTip]="locationGroupTypeDetailTpl">
+          <nz-select formControlName="type" (ngModelChange)="locationGroupTypeChange($event)">
+            <nz-option *ngFor="let locationGroupType of locationGroupTypes" nzValue="{{ locationGroupType.value }}"
+              nzLabel="{{ locationGroupType.label }}"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <ng-template #locationGroupTypeDetailTpl>
+        <div>
+          <nz-tag [nzColor]="'#2db7f5'" *ngIf="selectedLocationGroupType.fourWallInventory">
+            {{ 'location-group-type.four_wall_inventory' | translate }}</nz-tag>
+          <nz-tag [nzColor]="'#2db7f5'" *ngIf="selectedLocationGroupType.virtual">
+            {{ 'location-group-type.virtual' | translate }}</nz-tag>
+        </div>
+      </ng-template>
+    </div>
+  </div>
 
-  <nz-form-item>
-    <nz-form-control>
-      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupDescription">
-        {{ 'location-group.storable' | translate }}
-      </nz-form-label>
-      <label nz-checkbox [(ngModel)]="currentLocationGroup.storable" name="storable">
-      </label>
-    </nz-form-control>
-  </nz-form-item>
-  <nz-form-item>
-    <nz-form-control>
-      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupDescription">
-        {{ 'location-group.pickable' | translate }}
-      </nz-form-label>
-      <label nz-checkbox [(ngModel)]="currentLocationGroup.pickable" name="pickable"></label>
-    </nz-form-control>
-  </nz-form-item>
-  <nz-form-item>
-    <nz-form-control>
-      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationGroupDescription">
-        {{ 'location-group.countable' | translate }}
-      </nz-form-label>
-      <label nz-checkbox [(ngModel)]="currentLocationGroup.countable" name="countable"></label>
-    </nz-form-control>
-  </nz-form-item>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+
+      <nz-form-item>
+        <nz-form-control>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'location-group.storable' | translate }}
+          </nz-form-label>
+          <label nz-checkbox formControlName="storable"> </label>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-control>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'location-group.pickable' | translate }}
+          </nz-form-label>
+          <label nz-checkbox formControlName="pickable"></label>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-control>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'location-group.countable' | translate }}
+          </nz-form-label>
+          <label nz-checkbox formControlName="countable"></label>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+
+      <nz-form-item>
+        <nz-form-control>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'location-group.tracking-volume' | translate }}
+          </nz-form-label>
+          <label nz-checkbox formControlName="trackingVolume"></label>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'location-group.volume-tracking-policy' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <nz-select formControlName="volumeTrackingPolicy">
+            <nz-option *ngFor="let volumeTrackingPolicy of volumeTrackingPolicies | keys"
+              [nzValue]="volumeTrackingPolicy.key"
+              nzLabel="{{ 'LOCATION-VOLUME-TRACKING-POLICY-' + volumeTrackingPolicy.key | translate }}"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'location-group.inventory-consolidation-strategy' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <nz-select formControlName="inventoryConsolidationStrategy">
+            <nz-option *ngFor="let inventoryConsolidationStrategy of inventoryConsolidationStrategies | keys"
+              nzValue="{{ inventoryConsolidationStrategy.key }}"
+              nzLabel="{{ 'INVENTORY-CONSOLIDATION-STRATEGY-' + inventoryConsolidationStrategy.key | translate }}">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
 </form>
 
 <div nz-row nzType="flex" nzJustify="center">

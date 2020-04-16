@@ -4,42 +4,42 @@ import { Warehouse } from '../models/warehouse';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WarehouseService } from '../services/warehouse.service';
 import { I18NService } from '@core';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-warehouse-layout-warehouse-maintenance',
   templateUrl: './warehouse-maintenance.component.html',
 })
 export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
-  currentWarehouse: Warehouse;
   pageTitle: string;
-
-  emptyWarehouse: Warehouse = {
-    id: null,
-    name: '',
-    size: null,
-    addressLine1: '',
-    addressLine2: '',
-    addressCountry: '',
-    addressState: '',
-    addressCounty: '',
-    addressCity: '',
-    addressDistrict: '',
-    addressPostcode: '',
-  };
+  warehouseForm: FormGroup;
 
   constructor(
+    private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private warehouseService: WarehouseService,
     private i18n: I18NService,
     private titleService: TitleService,
   ) {
-    this.currentWarehouse = this.emptyWarehouse;
     titleService.setTitle(this.i18n.fanyi('page.warehouse-maintenance.header.title'));
     this.pageTitle = this.i18n.fanyi('page.warehouse-maintenance.header.title');
   }
 
   ngOnInit() {
+    this.warehouseForm = this.fb.group({
+      warehouseId: new FormControl({ value: '', disabled: true }),
+      name: new FormControl('', Validators.required),
+      size: ['', Validators.required],
+      addressCountry: [''],
+      addressState: ['', Validators.required],
+      addressCounty: ['', Validators.required],
+      addressCity: ['', Validators.required],
+      addressDistrict: [''],
+      addressLine1: ['', Validators.required],
+      addressLine2: [''],
+      addressPostcode: ['', Validators.required],
+    });
     this.activatedRoute.queryParams.subscribe(params => {
       // We are in process of adding / changing a warehouse
       // and we already fill in all the information. Let's
@@ -62,37 +62,57 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
   }
 
   loadWarehouseFromSessionStorage(): boolean {
-    this.currentWarehouse = JSON.parse(sessionStorage.getItem('warehouse-maintenance.warehouse'));
-    if (this.currentWarehouse.name === undefined) {
+    const warehouse = JSON.parse(sessionStorage.getItem('warehouse-maintenance.warehouse'));
+    if (warehouse.name === undefined) {
       return false;
     }
+
+    this.warehouseForm.controls.warehouseId.setValue(warehouse.id);
+    this.warehouseForm.patchValue(warehouse);
+
     return true;
   }
 
   loadWarehouseFromServer(warehouseId: string) {
-    if (warehouseId !== undefined) {
+    if (warehouseId) {
       this.warehouseService.getWarehouse(+warehouseId).subscribe((warehouse: Warehouse) => {
-        this.currentWarehouse = warehouse;
+        this.warehouseForm.controls.warehouseId.setValue(warehouseId);
+        this.warehouseForm.patchValue(warehouse);
       });
     }
   }
 
   setupPageTitle() {
-    if (this.currentWarehouse.id === undefined) {
-      this.titleService.setTitle(this.i18n.fanyi('page.warehouse-maintenance.add.header.title'));
-      this.pageTitle = this.i18n.fanyi('page.warehouse-maintenance.add.header.title');
-    } else {
+    if (this.warehouseForm.controls.warehouseId.value) {
       this.titleService.setTitle(this.i18n.fanyi('page.warehouse-maintenance.modify.header.title'));
       this.pageTitle = this.i18n.fanyi('page.warehouse-maintenance.modify.header.title');
+    } else {
+      this.titleService.setTitle(this.i18n.fanyi('page.warehouse-maintenance.add.header.title'));
+      this.pageTitle = this.i18n.fanyi('page.warehouse-maintenance.add.header.title');
     }
   }
   goToConfirmPage(): void {
-    sessionStorage.setItem('warehouse-maintenance.warehouse', JSON.stringify(this.currentWarehouse));
-    const url = this.currentWarehouse.id
-      ? '/warehouse-layout/warehouse-maintenance/' + this.currentWarehouse.id + '/confirm'
-      : '/warehouse-layout/warehouse-maintenance/confirm';
+    if (this.warehouseForm.valid) {
+      const warehouse: Warehouse = this.warehouseForm.value;
+      warehouse.id = this.warehouseForm.controls.warehouseId.value;
 
-    console.log(`will go to ${url}`);
-    this.router.navigateByUrl(url);
+      sessionStorage.setItem('warehouse-maintenance.warehouse', JSON.stringify(warehouse));
+      const url = this.warehouseForm.controls.warehouseId.value
+        ? '/warehouse-layout/warehouse-maintenance/' + this.warehouseForm.controls.warehouseId.value + '/confirm'
+        : '/warehouse-layout/warehouse-maintenance/confirm';
+
+      this.router.navigateByUrl(url);
+    } else {
+      this.displayFormError(this.warehouseForm);
+    }
+  }
+
+  displayFormError(fromGroup: FormGroup) {
+    console.log(`validateForm`);
+    // tslint:disable-next-line: forin
+    for (const i in fromGroup.controls) {
+      fromGroup.controls[i].markAsDirty();
+      fromGroup.controls[i].updateValueAndValidity();
+    }
   }
 }

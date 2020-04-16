@@ -32,7 +32,8 @@
             </nz-form-label>
             <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
               nzErrorTip="{{ 'error.form.field.required' | translate }}">
-              <input nz-input formControlName="waveNumber" id="waveNumber" name="waveNumber" required />
+              <input appFkey variable="wave-number" nz-input formControlName="waveNumber" id="waveNumber"
+                name="waveNumber" required (blur)="setWaveNumber($event.target.value)" />
             </nz-form-control>
           </nz-form-item>
         </div>
@@ -89,7 +90,7 @@
 
       <!-- Table to Display the result  -->
       <div class="search-result-list">
-        <nz-table #orderTable [nzShowPagination]="'false'" [nzData]="listOfDisplayOrders" [nzFooter]="orderTableFoot">
+        <nz-table #orderTable [nzShowPagination]="'false'" [nzData]="listOfAllOrders" [nzFooter]="orderTableFoot">
           <thead (nzSortChange)="sortOrderTable($event)" nzSingleSort>
             <tr>
               <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="orderTableAllChecked"
@@ -101,7 +102,7 @@
               </th>
               <th nzShowFilter [nzFilters]="filtersByShipToCustomer"
                 (nzFilterChange)="filterOrderTable($event, selectedFiltersByBillToCustomer)">
-                {{ 'order.shipToCustomer' | translate }}
+                {{ 'shipToCustomer' | translate }}
               </th>
               <th nzShowFilter [nzFilters]="filtersByBillToCustomer"
                 (nzFilterChange)="filterOrderTable(selectedFiltersByShipToCustomer, $event)">
@@ -139,7 +140,7 @@
                   </a>
                   <ng-template #shipToCustomerTooltipTpl>
                     <div>
-                      {{ data.shipToCustomer.contactor.firstname }} {{ data.shipToCustomer.contactor.lastname }}
+                      {{ data.shipToCustomer.contactorFirstname }} {{ data.shipToCustomer.contactorLastname }}
                     </div>
                     <div>
                       {{ data.shipToCustomer.addressLine1 }}
@@ -155,7 +156,7 @@
                 </div>
                 <div *ngIf="data.shipToCustomer === null">
                   <a nz-tooltip [nzTooltipTitle]="shipToAddressTooltipTpl">
-                    {{ data.shipTocontactor.firstname }} {{ data.shipTocontactor.lastname }}
+                    {{ data.shipTocontactorFirstname }} {{ data.shipTocontactorLastname }}
                   </a>
                   <ng-template #shipToAddressTooltipTpl>
                     <div>
@@ -179,7 +180,7 @@
                   </a>
                   <ng-template #billToCustomerTooltipTpl>
                     <div>
-                      {{ data.billToCustomer.contactor.firstname }} {{ data.billToCustomer.contactor.lastname }}
+                      {{ data.billToCustomer.contactorFirstname }} {{ data.billToCustomer.contactorLastname }}
                     </div>
                     <div>
                       {{ data.billToCustomer.addressLine1 }}
@@ -195,7 +196,7 @@
                 </div>
                 <div *ngIf="data.billToCustomer === null">
                   <a nz-tooltip [nzTooltipTitle]="billToAddressTooltipTpl">
-                    {{ data.billTocontactor.firstname }} {{ data.billTocontactor.lastname }}
+                    {{ data.billTocontactorFirstname }} {{ data.billTocontactorLastname }}
                   </a>
                   <ng-template #billToAddressTooltipTpl>
                     <div>
@@ -225,7 +226,7 @@
       <ng-template #orderTableFoot>
         <div nz-row nzType="flex" nzJustify="start">
           <button nz-button nzType="primary" (click)="createWaveWithOrders()">
-            {{ 'add' | translate }}
+            {{ 'add-to-wave' | translate }}
           </button>
         </div>
       </ng-template>
@@ -294,7 +295,7 @@
       <ng-template #orderLineTableFoot>
         <div nz-row nzType="flex" nzJustify="start">
           <button nz-button nzType="primary" (click)="createWaveWithOrderLines()">
-            {{ 'add' | translate }}
+            {{ 'add-to-wave' | translate }}
           </button>
         </div>
       </ng-template>

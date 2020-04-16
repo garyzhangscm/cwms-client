@@ -33,8 +33,7 @@
 
 
 <ng-container>
-  <nz-card
-    nzTitle="{{ (currentWarehouse.id === null ? '' : ('#' + currentWarehouse.id + '-')) + currentWarehouse.name }}"
+  <nz-card nzTitle="{{ (currentWarehouse.id ? ('#' + currentWarehouse.id + '-') : '' ) + currentWarehouse.name }}"
     [nzActions]="[actionSave]">
     <nz-descriptions nzTitle="{{'warehouse' | translate}}" nzBordered>
 

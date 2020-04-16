@@ -40,17 +40,28 @@
 </nz-card>
 
 
-<!-- Display Work Order Informaiton -->
+<!-- Display Wave Informaiton -->
+<nz-card *ngIf="type === 'wave'">
+  <nz-descriptions nzTitle="{{'wave' | translate}}" nzBordered>
+    <nz-descriptions-item nzTitle="{{'wave.number' | translate}}">{{wave?.number}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'status' | translate}}">{{'WAVE-STATUS-' + wave?.status | translate}}
+    </nz-descriptions-item>
+  </nz-descriptions>
+</nz-card>
+
+
+<!-- Display Order Informaiton -->
 <nz-card *ngIf="type === 'order'">
   <nz-descriptions nzTitle="{{'order' | translate}}" nzBordered>
     <nz-descriptions-item nzTitle="{{'order.number' | translate}}">
       {{order?.number}}
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{'order.shipToCustomer' | translate}}">
+    <nz-descriptions-item nzTitle="{{'shipToCustomer' | translate}}">
       {{ order?.shipToCustomer?.name}}
     </nz-descriptions-item>
 
-    <nz-descriptions-item nzTitle="{{'order.shipToCustomer.name' | translate}}">
+    <nz-descriptions-item nzTitle="{{'shipToCustomer.name' | translate}}">
       <span *ngIf="order?.shipToCustomer !== null">
         {{ order?.shipToCustomer.contactorFirstname }} {{ order?.shipToCustomer.contactorLastname }}
       </span>
@@ -58,7 +69,7 @@
         {{ order?.shipTocontactorFirstname }} {{ order?.shipTocontactorLastname }}
       </span>
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{'order.shipToCustomer.address' | translate}}">
+    <nz-descriptions-item nzTitle="{{'shipToCustomer.address' | translate}}">
       <div *ngIf="order?.shipToCustomer !== null">
         <span>
           {{ order?.shipToCustomer.addressLine1 }}
@@ -87,6 +98,52 @@
   </nz-descriptions>
 </nz-card>
 
+<!-- Display Shipment Informaiton -->
+<nz-card *ngIf="type === 'shipment'">
+  <nz-descriptions nzTitle="{{'shipment' | translate}}" nzBordered>
+    <nz-descriptions-item nzTitle="{{'shipment.number' | translate}}">
+      {{shipment?.number}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'shipToCustomer' | translate}}">
+      {{ shipment?.shipToCustomer?.name}}
+    </nz-descriptions-item>
+
+    <nz-descriptions-item nzTitle="{{'shipToCustomer.name' | translate}}">
+      <span *ngIf="shipment?.shipToCustomer !== null">
+        {{ shipment?.shipToCustomer.contactorFirstname }} {{ shipment?.shipToCustomer.contactorLastname }}
+      </span>
+      <span *ngIf="order?.shipToCustomer === null">
+        {{ shipment?.shipTocontactorFirstname }} {{ shipment?.shipTocontactorLastname }}
+      </span>
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'shipToCustomer.address' | translate}}">
+      <div *ngIf="shipment?.shipToCustomer !== null">
+        <span>
+          {{ shipment?.shipToCustomer.addressLine1 }}
+        </span>
+        <span *ngIf="shipment?.shipToCustomer.addressLine2 != null">
+          , {{ shipment?.shipToCustomer.addressLine2 }}
+        </span>
+        <div>
+          {{ shipment?.shipToCustomer.addressCity }}, {{ shipment?.shipToCustomer.addressState }}
+          {{ shipment?.shipToCustomer.addressPostcode }}
+        </div>
+      </div>
+      <div *ngIf="shipment?.shipToCustomer === null">
+        <span>
+          {{ shipment?.shipToAddressLine1 }}
+        </span>
+        <span *ngIf="shipment?.shipToAddressLine2 != null">
+          , {{ shipment?.shipToAddressLine2 }}
+        </span>
+        <div>
+          {{ shipment?.shipToAddressCity }}, {{ shipment?.shipToAddressState }}
+          {{ shipment?.shipToAddressPostcode }}
+        </div>
+      </div>
+    </nz-descriptions-item>
+  </nz-descriptions>
+</nz-card>
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">

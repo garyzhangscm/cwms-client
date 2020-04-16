@@ -9,6 +9,10 @@ import { Order } from '../models/order';
 import { OrderService } from '../services/order.service';
 import { PickWork } from '../models/pick-work';
 import { PickService } from '../services/pick.service';
+import { ShipmentService } from '../services/shipment.service';
+import { Shipment } from '../models/shipment';
+import { WaveService } from '../services/wave.service';
+import { Wave } from '../models/wave';
 
 @Component({
   selector: 'app-outbound-pick-confirm',
@@ -19,9 +23,11 @@ export class OutboundPickConfirmComponent implements OnInit {
   pageTitle: string;
   lastPageUrl: string;
   type = 'NONE';
-  number = '';
+  id: number;
   workOrder: WorkOrder;
   order: Order;
+  shipment: Shipment;
+  wave: Wave;
   confirming = false;
   totalPickCountToConfirm = 0;
 
@@ -56,7 +62,9 @@ export class OutboundPickConfirmComponent implements OnInit {
     private message: NzMessageService,
     private workOrderService: WorkOrderService,
     private orderService: OrderService,
+    private shipmentService: ShipmentService,
     private pickService: PickService,
+    private waveService: WaveService,
     private router: Router,
   ) {
     this.pageTitle = this.i18n.fanyi('page.outbound.pick-confirm.title');
@@ -78,8 +86,8 @@ export class OutboundPickConfirmComponent implements OnInit {
       if (params.type) {
         this.type = params.type;
       }
-      if (params.number) {
-        this.number = params.number;
+      if (params.id) {
+        this.id = params.id;
       }
       this.displayInformation();
     });
@@ -88,56 +96,82 @@ export class OutboundPickConfirmComponent implements OnInit {
   displayInformation() {
     switch (this.type) {
       case 'workOrder':
-        this.displayWorkOrder(this.number);
+        this.displayWorkOrder(this.id);
         break;
       case 'order':
-        this.displayOrder(this.number);
+        this.displayOrder(this.id);
+        break;
+      case 'shipment':
+        this.displayShipment(this.id);
         break;
       case 'pickList':
-        this.displayPickList(this.number);
+        this.displayPickList(this.id);
+        break;
+      case 'wave':
+        this.displayWave(this.id);
         break;
       default:
         break;
     }
   }
-  displayWorkOrder(workOrderNumber: string) {
+  displayWorkOrder(workOrderId: number) {
     // Let's get the work order by number
-    this.workOrderService.getWorkOrders(workOrderNumber, null).subscribe(workOrdersRes => {
-      // we query by work order number, which is a unique key. So we should only
-      // get one work order(if the number is a valid number)
-      if (workOrdersRes.length > 0) {
-        this.workOrder = workOrdersRes[0];
-        this.lastPageUrl = `/work-order/work-order?number=${workOrderNumber}`;
-        // initial the picks array;
-        this.listOfAllPicks = [];
-        this.workOrder.workOrderLines.forEach(workOrderLine => {
-          this.listOfAllPicks = [...this.listOfAllPicks, ...workOrderLine.picks];
-          this.listOfDisplayPicks = [...this.listOfDisplayPicks, ...workOrderLine.picks];
-          this.setupConfirmedQuantity(this.listOfAllPicks);
-          this.refreshStatus();
-        });
-      }
+    this.workOrderService.getWorkOrder(workOrderId).subscribe(workOrderRes => {
+      this.workOrder = workOrderRes;
+      this.lastPageUrl = `/work-order/work-order?number=${this.workOrder.number}`;
+      // initial the picks array;
+      this.listOfAllPicks = [];
+      this.pickService.getPicksByWorkOrder(this.workOrder.id).subscribe(pickRes => {
+        this.listOfAllPicks = pickRes;
+        this.listOfDisplayPicks = pickRes;
+        this.setupConfirmedQuantity(this.listOfAllPicks);
+        this.refreshStatus();
+      });
     });
   }
-  displayOrder(orderNumber: string) {
+  displayOrder(orderId: number) {
     // Let's get the work order by number
-    this.orderService.getOrders(orderNumber).subscribe(ordersRes => {
-      // we query by  order number, which is a unique key. So we should only
-      // get one  order(if the number is a valid number)
-      if (ordersRes.length > 0) {
-        this.order = ordersRes[0];
-        this.lastPageUrl = `/outbound/order?number=${orderNumber}`;
-        // initial the picks array;
-        this.pickService.getPicks(null, this.order.id).subscribe(pickRes => {
-          this.listOfAllPicks = pickRes;
-          this.listOfDisplayPicks = pickRes;
-          this.setupConfirmedQuantity(this.listOfAllPicks);
-          this.refreshStatus();
-        });
-      }
+    this.orderService.getOrder(orderId).subscribe(orderRes => {
+      this.order = orderRes;
+      this.lastPageUrl = `/outbound/order?number=${this.order.number}`;
+      // initial the picks array;
+      this.pickService.getPicksByOrder(this.order.id).subscribe(pickRes => {
+        this.listOfAllPicks = pickRes;
+        this.listOfDisplayPicks = pickRes;
+        this.setupConfirmedQuantity(this.listOfAllPicks);
+        this.refreshStatus();
+      });
     });
   }
-  displayPickList(pickListNumber: string) {}
+  displayShipment(shipmentId: number) {
+    // Let's get the work order by number
+    this.shipmentService.getShipment(shipmentId).subscribe(shipmentRes => {
+      this.shipment = shipmentRes;
+      this.lastPageUrl = `/outbound/shipment?number=${this.shipment.number}`;
+      // initial the picks array;
+      this.pickService.getPicksByShipment(this.shipment.id).subscribe(pickRes => {
+        this.listOfAllPicks = pickRes;
+        this.listOfDisplayPicks = pickRes;
+        this.setupConfirmedQuantity(this.listOfAllPicks);
+        this.refreshStatus();
+      });
+    });
+  }
+  displayWave(waveId: number) {
+    // Let's get the work order by number
+    this.waveService.getWave(waveId).subscribe(waveRes => {
+      this.wave = waveRes;
+      this.lastPageUrl = `/outbound/wave?number=${this.wave.number}`;
+      // initial the picks array;
+      this.pickService.getPicksByWave(this.wave.id).subscribe(pickRes => {
+        this.listOfAllPicks = pickRes;
+        this.listOfDisplayPicks = pickRes;
+        this.setupConfirmedQuantity(this.listOfAllPicks);
+        this.refreshStatus();
+      });
+    });
+  }
+  displayPickList(pickListId: number) {}
 
   setupConfirmedQuantity(picks: PickWork[]) {
     picks.forEach(pick => {
