@@ -375,6 +375,9 @@
           {{ 'short-allocation.allocationCount' | translate }}
         </th>
         <th>
+          {{ 'short-allocation.lastAllocationDatetime' | translate }}
+        </th>
+        <th>
           {{ 'action' | translate }}
         </th>
       </thead>
@@ -385,14 +388,30 @@
           <td>{{ shortAllocation.item?.description }}</td>
           <td>{{ shortAllocation.quantity }}</td>
           <td>{{ shortAllocation.openQuantity }}</td>
-          <td>{{ shortAllocation.inprocessQuantity }}</td>
+          <td><a routerLink="/outbound/pick" routerLinkActive="active"
+              [queryParams]="{shortAllocationId : shortAllocation.id}">
+              {{ shortAllocation.inprocessQuantity }}
+            </a></td>
           <td>{{ shortAllocation.deliveredQuantity }}</td>
-          <td>{{ shortAllocation.status }}</td>
+          <td>{{ 'SHORT-ALLOCATION-STATUS-' +shortAllocation.status | translate}}</td>
           <td>{{ shortAllocation.allocationCount }}</td>
+
+          <td>
+            <span *ngIf="shortAllocation.lastAllocationDatetime">
+              {{ shortAllocation.lastAllocationDatetime[1] }}/{{ shortAllocation.lastAllocationDatetime[2] }}/{{ shortAllocation.lastAllocationDatetime[0] }}
+              {{ shortAllocation.lastAllocationDatetime[3] }}:{{ shortAllocation.lastAllocationDatetime[4] }}:{{ shortAllocation.lastAllocationDatetime[5] }}
+            </span>
+          </td>
           <td>
             <button nz-button (click)="cancelShortAllocation(shortAllocation)"
-              *ngIf="shortAllocation.status !== shortAllocationStatus.COMPLETED">
+              [disabled]="shortAllocation.status !== shortAllocationStatus.COMPLETED">
               {{ 'cancel' | translate }}
+            </button>
+
+            <nz-divider nzType="vertical"></nz-divider>
+            <button nz-button (click)="allocateShortAllocation(data, shortAllocation)"
+              [disabled]="!isShortAllocationAllocatable(shortAllocation)">
+              {{ 'allocate' | translate }}
             </button>
 
           </td>

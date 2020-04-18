@@ -33,6 +33,7 @@ export class PickService {
     itemId?: number,
     sourceLocationId?: number,
     destinationLocationId?: number,
+    shortAllocationId?: number,
   ): Observable<PickWork[]> {
     let url = `outbound/picks?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (number) {
@@ -59,6 +60,9 @@ export class PickService {
     }
     if (destinationLocationId) {
       url = `${url}&destinationLocationId=${destinationLocationId}`;
+    }
+    if (shortAllocationId) {
+      url = `${url}&shortAllocationId=${shortAllocationId}`;
     }
 
     return this.http.get(url).pipe(map(res => res.data));

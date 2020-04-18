@@ -1,5 +1,6 @@
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { Item } from '../../inventory/models/item';
+import { PickType } from './pick-type.enum';
 
 export interface PickWork {
   id: number;
@@ -15,4 +16,5 @@ export interface PickWork {
 
   quantity: number;
   pickedQuantity: number;
+  pickType: PickType;
 }

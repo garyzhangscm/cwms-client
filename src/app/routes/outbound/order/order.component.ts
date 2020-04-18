@@ -435,4 +435,14 @@ export class OutboundOrderComponent implements OnInit {
       this.search();
     });
   }
+
+  isShortAllocationAllocatable(shortAllocation: ShortAllocation) {
+    return shortAllocation.openQuantity > 0;
+  }
+  allocateShortAllocation(order: Order, shortAllocation: ShortAllocation) {
+    this.shortAllocationService.allocateShortAllocation(shortAllocation).subscribe(shortAllocationRes => {
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      this.search(order.id, 3);
+    });
+  }
 }

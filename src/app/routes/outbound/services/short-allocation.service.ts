@@ -76,4 +76,9 @@ export class ShortAllocationService {
 
     return this.http.delete('outbound/shortAllocations', params).pipe(map(res => res.data));
   }
+
+  allocateShortAllocation(shortAllocation: ShortAllocation): Observable<ShortAllocation> {
+    const url = `outbound/shortAllocations/${shortAllocation.id}/allocate`;
+    return this.http.post(url).pipe(map(res => res.data));
+  }
 }

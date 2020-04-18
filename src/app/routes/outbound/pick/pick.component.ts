@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { _HttpClient, TitleService } from '@delon/theme';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { I18NService } from '@core';
 import { NzModalService, NzMessageService } from 'ng-zorro-antd';
-import { WaveService } from '../services/wave.service';
-import { Wave } from '../models/wave';
 import { PickWork } from '../models/pick-work';
 import { PickService } from '../services/pick.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-outbound-pick',
@@ -20,6 +19,9 @@ export class OutboundPickComponent implements OnInit {
     private modalService: NzModalService,
     private pickService: PickService,
     private message: NzMessageService,
+    private activatedRoute: ActivatedRoute,
+    private titleService: TitleService,
+    private router: Router,
   ) {}
 
   // Form related data and functions
@@ -46,7 +48,7 @@ export class OutboundPickComponent implements OnInit {
     this.listOfDisplayPicks = [];
   }
 
-  search(): void {
+  search(shortAllocationId?: number): void {
     this.pickService
       .getPicks(
         this.searchForm.controls.number.value,
@@ -54,6 +56,10 @@ export class OutboundPickComponent implements OnInit {
         this.searchForm.controls.itemNumber.value,
         this.searchForm.controls.sourceLocation.value,
         this.searchForm.controls.destinationLocation.value,
+        null,
+        null,
+        null,
+        shortAllocationId,
       )
       .subscribe(pickRes => {
         this.listOfAllPicks = pickRes;
@@ -112,16 +118,13 @@ export class OutboundPickComponent implements OnInit {
     }
   }
 
-  confirmPicks(): void {
+  confirmSelectedPicks(): void {
     // make sure we have at least one checkbox checked
     const selectedPicks = this.getSelectedPicks();
     if (selectedPicks.length > 0) {
-      selectedPicks.forEach(pick => {
-        this.pickService.confirmPick(pick).subscribe(pick => {
-          this.message.success(this.i18n.fanyi('message.pick.confirmed'));
-          this.search();
-        });
-      });
+      const selectedPickList = selectedPicks.map(pick => pick.id).join(',');
+      console.log(`selectedPickList: ${selectedPickList}`);
+      this.router.navigateByUrl(`/outbound/pick/confirm?type=picks&id=${selectedPickList}`);
     }
   }
   getSelectedPicks(): PickWork[] {
@@ -135,6 +138,7 @@ export class OutboundPickComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.pick'));
     // initiate the search form
     this.searchForm = this.fb.group({
       number: [null],
@@ -142,6 +146,12 @@ export class OutboundPickComponent implements OnInit {
       itemNumber: [null],
       sourceLocation: [null],
       destinationLocation: [null],
+    });
+
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.shortAllocationId) {
+        this.search(params.shortAllocationId);
+      }
     });
   }
 }

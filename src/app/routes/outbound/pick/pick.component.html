@@ -82,6 +82,8 @@
 
         <th nzShowSort nzSortKey="number">
           {{ 'pick.number' | translate }}</th>
+        <th nzShowSort nzSortKey="pickType">
+          {{ 'pick.type' | translate }}</th>
         <th nzShowSort nzSortKey="orderNumber">
           {{ 'order.number' | translate }}</th>
         <th nzShowSort nzSortKey="sourceLocation">
@@ -107,6 +109,7 @@
         <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
 
         <td>{{ data.number }}</td>
+        <td>{{ 'PICK-TYPE-' + data.pickType | translate}}</td>
         <td>{{ data.orderNumber }}</td>
         <td>{{ data.sourceLocation?.name }}</td>
         <td>{{ data.destinationLocation?.name }}</td>
@@ -126,7 +129,7 @@
     <button nz-button nzType="danger" (click)="cancelSelectedPicks()">
       {{ 'delete' | translate }}
     </button>
-    <button nz-button nzType="primary" (click)="confirmPicks()">
+    <button nz-button nzType="primary" (click)="confirmSelectedPicks()">
       {{ 'confirm' | translate }}
     </button>
   </div>

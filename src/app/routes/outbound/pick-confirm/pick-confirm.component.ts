@@ -23,7 +23,8 @@ export class OutboundPickConfirmComponent implements OnInit {
   pageTitle: string;
   lastPageUrl: string;
   type = 'NONE';
-  id: number;
+  id: string;
+
   workOrder: WorkOrder;
   order: Order;
   shipment: Shipment;
@@ -96,23 +97,29 @@ export class OutboundPickConfirmComponent implements OnInit {
   displayInformation() {
     switch (this.type) {
       case 'workOrder':
-        this.displayWorkOrder(this.id);
+        this.displayWorkOrder(+this.id);
         break;
       case 'order':
-        this.displayOrder(this.id);
+        this.displayOrder(+this.id);
         break;
       case 'shipment':
-        this.displayShipment(this.id);
+        this.displayShipment(+this.id);
+        break;
+      case 'picks':
+        this.displayPicks(this.id);
         break;
       case 'pickList':
-        this.displayPickList(this.id);
+        this.displayPickList(+this.id);
         break;
       case 'wave':
-        this.displayWave(this.id);
+        this.displayWave(+this.id);
         break;
       default:
         break;
     }
+  }
+  displayPicks(pickIds: string) {
+    console.log(`we will display picks by id list: ${pickIds}`);
   }
   displayWorkOrder(workOrderId: number) {
     // Let's get the work order by number
