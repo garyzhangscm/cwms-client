@@ -17,4 +17,7 @@ export interface PickWork {
   quantity: number;
   pickedQuantity: number;
   pickType: PickType;
+
+  pickListNumber?: string;
+  cartonizationNumber?: string;
 }

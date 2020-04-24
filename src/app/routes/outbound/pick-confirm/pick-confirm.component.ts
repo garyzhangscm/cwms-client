@@ -13,6 +13,10 @@ import { ShipmentService } from '../services/shipment.service';
 import { Shipment } from '../models/shipment';
 import { WaveService } from '../services/wave.service';
 import { Wave } from '../models/wave';
+import { PickListService } from '../services/pick-list.service';
+import { PickList } from '../models/pick-list';
+import { Cartonization } from '../models/cartonization';
+import { CartonizationService } from '../services/cartonization.service';
 
 @Component({
   selector: 'app-outbound-pick-confirm',
@@ -29,6 +33,8 @@ export class OutboundPickConfirmComponent implements OnInit {
   order: Order;
   shipment: Shipment;
   wave: Wave;
+  pickList: PickList;
+  cartonization: Cartonization;
   confirming = false;
   totalPickCountToConfirm = 0;
 
@@ -65,7 +71,9 @@ export class OutboundPickConfirmComponent implements OnInit {
     private orderService: OrderService,
     private shipmentService: ShipmentService,
     private pickService: PickService,
+    private pickListService: PickListService,
     private waveService: WaveService,
+    private cartonizationService: CartonizationService,
     private router: Router,
   ) {
     this.pageTitle = this.i18n.fanyi('page.outbound.pick-confirm.title');
@@ -114,12 +122,24 @@ export class OutboundPickConfirmComponent implements OnInit {
       case 'wave':
         this.displayWave(+this.id);
         break;
+      case 'cartonization':
+        this.displayCartonization(+this.id);
+        break;
       default:
         break;
     }
   }
   displayPicks(pickIds: string) {
     console.log(`we will display picks by id list: ${pickIds}`);
+
+    this.lastPageUrl = `/outbound/picks?ids=${pickIds}`;
+    // initial the picks array;
+    this.pickService.getPicksByIds(pickIds).subscribe(pickRes => {
+      this.listOfAllPicks = pickRes;
+      this.listOfDisplayPicks = pickRes;
+      this.setupConfirmedQuantity(this.listOfAllPicks);
+      this.refreshStatus();
+    });
   }
   displayWorkOrder(workOrderId: number) {
     // Let's get the work order by number
@@ -178,7 +198,34 @@ export class OutboundPickConfirmComponent implements OnInit {
       });
     });
   }
-  displayPickList(pickListId: number) {}
+  displayPickList(pickListId: number) {
+    // Let's get the work order by number
+    this.pickListService.getPickList(pickListId).subscribe(pickListRes => {
+      this.pickList = pickListRes;
+      this.lastPageUrl = `/outbound/pick-list?number=${this.pickList.number}`;
+      // initial the picks array;
+      this.pickService.getPicksByPickList(this.pickList.id).subscribe(pickRes => {
+        this.listOfAllPicks = pickRes;
+        this.listOfDisplayPicks = pickRes;
+        this.setupConfirmedQuantity(this.listOfAllPicks);
+        this.refreshStatus();
+      });
+    });
+  }
+  displayCartonization(cartonizationId: number) {
+    // Let's get the work order by number
+    this.cartonizationService.get(cartonizationId).subscribe(cartonizationRes => {
+      this.cartonization = cartonizationRes;
+      this.lastPageUrl = `/outbound/cartonization?number=${this.cartonization.number}`;
+      // initial the picks array;
+      this.pickService.getPicksByCartonization(this.cartonization.id).subscribe(pickRes => {
+        this.listOfAllPicks = pickRes;
+        this.listOfDisplayPicks = pickRes;
+        this.setupConfirmedQuantity(this.listOfAllPicks);
+        this.refreshStatus();
+      });
+    });
+  }
 
   setupConfirmedQuantity(picks: PickWork[]) {
     picks.forEach(pick => {

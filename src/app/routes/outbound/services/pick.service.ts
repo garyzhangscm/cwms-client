@@ -24,16 +24,62 @@ export class PickService {
   getPicksByWave(waveId: number): Observable<PickWork[]> {
     return this.getPicks(null, null, null, null, waveId);
   }
+  getPicksByPickList(pickListId: number): Observable<PickWork[]> {
+    return this.getPicks(null, null, null, null, null, pickListId);
+  }
+  getPicksByShortAllocation(shortAllocationId: number): Observable<PickWork[]> {
+    return this.getPicks(null, null, null, null, null, null, shortAllocationId);
+  }
+  getPicksByCartonization(cartonizationId: number): Observable<PickWork[]> {
+    return this.getPicks(null, null, null, null, null, null, null, cartonizationId);
+  }
+  getPicksByIds(ids: string): Observable<PickWork[]> {
+    return this.getPicks(null, null, null, null, null, null, null, null, ids);
+  }
+  queryPicks(
+    number?: string,
+    orderNumber?: string,
+    itemNumber?: string,
+    sourceLocation?: string,
+    destinationLocation?: string,
+    shortAllocationId?: number,
+  ): Observable<PickWork[]> {
+    return this.getPicks(
+      number,
+      null,
+      null,
+      null,
+      null,
+      null,
+      shortAllocationId,
+      null,
+      null,
+      null,
+      null,
+      null,
+      orderNumber,
+      itemNumber,
+      sourceLocation,
+      destinationLocation,
+    );
+  }
   getPicks(
     number?: string,
     orderId?: number,
     shipmentId?: number,
     workOrderId?: number,
     waveId?: number,
+    listId?: number,
+    shortAllocationId?: number,
+    cartonizationId?: number,
+    ids?: string,
     itemId?: number,
     sourceLocationId?: number,
     destinationLocationId?: number,
-    shortAllocationId?: number,
+    orderNumber?: string,
+    itemNumber?: string,
+    sourceLocationName?: string,
+    destinationLocationName?: string,
   ): Observable<PickWork[]> {
     let url = `outbound/picks?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (number) {
@@ -52,6 +98,15 @@ export class PickService {
     if (waveId) {
       url = `${url}&waveId=${waveId}`;
     }
+    if (ids) {
+      url = `${url}&ids=${ids}`;
+    }
+    if (listId) {
+      url = `${url}&listId=${listId}`;
+    }
+    if (cartonizationId) {
+      url = `${url}&cartonizationId=${cartonizationId}`;
+    }
     if (itemId) {
       url = `${url}&itemId=${itemId}`;
     }
@@ -63,6 +118,19 @@ export class PickService {
     }
     if (shortAllocationId) {
       url = `${url}&shortAllocationId=${shortAllocationId}`;
+    }
+
+    if (orderNumber) {
+      url = `${url}&orderNumber=${orderNumber}`;
+    }
+    if (itemNumber) {
+      url = `${url}&itemNumber=${itemNumber}`;
+    }
+    if (sourceLocationName) {
+      url = `${url}&sourceLocationName=${sourceLocationName}`;
+    }
+    if (destinationLocationName) {
+      url = `${url}&destinationLocationName=${destinationLocationName}`;
     }
 
     return this.http.get(url).pipe(map(res => res.data));

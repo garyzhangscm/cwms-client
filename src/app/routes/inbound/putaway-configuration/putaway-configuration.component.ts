@@ -52,6 +52,19 @@ export class InboundPutawayConfigurationComponent implements OnInit {
     private modalService: NzModalService,
     private i18n: I18NService,
   ) {}
+  ngOnInit() {
+    // initiate the search form
+    this.searchForm = this.fb.group({
+      itemName: [null],
+      itemFamilyName: [null],
+      inventoryStatus: [null],
+    });
+
+    // initiate the select control
+    this.inventoryStatusService.loadInventoryStatuses().subscribe(inventoryStatusRes => {
+      this.availableInventoryStatuses = inventoryStatusRes;
+    });
+  }
 
   resetForm(): void {
     this.searchForm.reset();
@@ -147,19 +160,6 @@ export class InboundPutawayConfigurationComponent implements OnInit {
     return selectedPutawayConfigurations;
   }
 
-  ngOnInit() {
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      itemName: [null],
-      itemFamilyName: [null],
-      inventoryStatus: [null],
-    });
-
-    // initiate the select control
-    this.inventoryStatusService.loadInventoryStatuses().subscribe(inventoryStatusRes => {
-      this.availableInventoryStatuses = inventoryStatusRes;
-    });
-  }
   openLookupDrawer() {
     this.lookupDrawerVisible = true;
     this.clearDrawerContent();

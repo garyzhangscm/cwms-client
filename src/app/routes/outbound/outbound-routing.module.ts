@@ -11,6 +11,12 @@ import { OutboundShortAllocationComponent } from './short-allocation/short-alloc
 import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundPickConfirmComponent } from './pick-confirm/pick-confirm.component';
+import { OutboundPickListComponent } from './pick-list/pick-list.component';
+import { OutboundCartonComponent } from './carton/carton.component';
+import { OutboundCartonizationComponent } from './cartonization/cartonization.component';
+import { OutboundCartonizationConfigurationComponent } from './cartonization-configuration/cartonization-configuration.component';
+import { OutboundCartonizationConfigurationMaintenanceComponent } from './cartonization-configuration-maintenance/cartonization-configuration-maintenance.component';
+import { OutboundCartonizationConfigurationConfirmComponent } from './cartonization-configuration-confirm/cartonization-configuration-confirm.component';
 
 const routes: Routes = [
   { path: 'order', component: OutboundOrderComponent },
@@ -24,6 +30,15 @@ const routes: Routes = [
   { path: 'stop', component: OutboundStopComponent },
   { path: 'trailer', component: OutboundTrailerComponent },
   { path: 'pick/confirm', component: OutboundPickConfirmComponent },
+  { path: 'pick-list', component: OutboundPickListComponent },
+  { path: 'carton', component: OutboundCartonComponent },
+  { path: 'cartonization', component: OutboundCartonizationComponent },
+  { path: 'cartonization-configuration', component: OutboundCartonizationConfigurationComponent },
+  {
+    path: 'cartonization-configuration/maintenance',
+    component: OutboundCartonizationConfigurationMaintenanceComponent,
+  },
+  { path: 'cartonization-configuration/confirm', component: OutboundCartonizationConfigurationConfirmComponent },
 ];
 
 @NgModule({

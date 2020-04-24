@@ -13,6 +13,12 @@ import { OutboundShortAllocationComponent } from './short-allocation/short-alloc
 import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundPickConfirmComponent } from './pick-confirm/pick-confirm.component';
+import { OutboundPickListComponent } from './pick-list/pick-list.component';
+import { OutboundCartonComponent } from './carton/carton.component';
+import { OutboundCartonizationComponent } from './cartonization/cartonization.component';
+import { OutboundCartonizationConfigurationComponent } from './cartonization-configuration/cartonization-configuration.component';
+import { OutboundCartonizationConfigurationMaintenanceComponent } from './cartonization-configuration-maintenance/cartonization-configuration-maintenance.component';
+import { OutboundCartonizationConfigurationConfirmComponent } from './cartonization-configuration-confirm/cartonization-configuration-confirm.component';
 
 const COMPONENTS = [
   OutboundOrderComponent,
@@ -26,6 +32,12 @@ const COMPONENTS = [
   OutboundStopComponent,
   OutboundTrailerComponent,
   OutboundPickConfirmComponent,
+  OutboundPickListComponent,
+  OutboundCartonComponent,
+  OutboundCartonizationComponent,
+  OutboundCartonizationConfigurationComponent,
+  OutboundCartonizationConfigurationMaintenanceComponent,
+  OutboundCartonizationConfigurationConfirmComponent,
 ];
 const COMPONENTS_NOROUNT = [];
 

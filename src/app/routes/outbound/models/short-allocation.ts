@@ -21,4 +21,7 @@ export interface ShortAllocation {
   allocationCount: number;
   status: ShortAllocationStatus;
   lastAllocationDatetime: number[];
+
+  orderNumber: string;
+  workOrderNumber: string;
 }

@@ -311,14 +311,17 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     }
   }
   inventoryStatusChange(newInventoryStatusName) {
+    console.log(`Inventory status name changed to ${JSON.stringify(newInventoryStatusName)}`);
     this.availableInventoryStatuses.forEach(inventoryStatus => {
       if (inventoryStatus.name === newInventoryStatusName) {
+        console.log(`Inventory status changed to ${JSON.stringify(inventoryStatus)}`);
         this.currentInventory.inventoryStatus = inventoryStatus;
       }
     });
   }
 
   addInventory(inventory: Inventory) {
+    console.log(`Start to add inventory: ${JSON.stringify(inventory)}`);
     this.inventoryService.addInventory(inventory, this.documentNumber, this.comment).subscribe(inventoryRes => {
       // display the newly added inventory
       this.searchForm.controls.location.setValue(inventoryRes.location.name);

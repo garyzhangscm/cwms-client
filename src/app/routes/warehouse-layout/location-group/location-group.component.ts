@@ -1,5 +1,5 @@
 import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 import { LocationGroupTypeService } from '../services/location-group-type.service';
 import { LocationGroupType } from '../models/location-group-type';
 import { LocationGroup } from '../models/location-group';
@@ -54,6 +54,20 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
     private modalService: NzModalService,
     private messageService: NzMessageService,
   ) {}
+
+  ngOnInit() {
+    // initiate the search form
+    this.searchForm = this.fb.group({
+      taggedLocationGroupTypes: [null],
+    });
+
+    // initiate the select control
+    this.locationGroupTypeService.loadLocationGroupTypes().subscribe((locationGroupTypeList: LocationGroupType[]) => {
+      locationGroupTypeList.forEach(locationGroupType =>
+        this.locationGroupTypes.push({ label: locationGroupType.description, value: locationGroupType.id.toString() }),
+      );
+    });
+  }
 
   resetForm(): void {
     this.searchForm.reset();
@@ -207,7 +221,15 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
 
   @HostListener('window:click', ['$event'])
   handleClick(e: MouseEvent): void {
+    console.log(
+      `window:click: ${this.editId} \n 
+      this.inputElement:\n ${JSON.stringify(this.inputElement)}  \n 
+      this.inputElement.nativeElement:\n ${JSON.stringify(this.inputElement.nativeElement)}  \n 
+      e.target: \n ${JSON.stringify(e.target)}\n
+       ${this.inputElement.nativeElement !== e.target}`,
+    );
     if (this.editId && this.inputElement && this.inputElement.nativeElement !== e.target) {
+      console.log(`reset editId to null`);
       this.editId = null;
     }
   }
@@ -216,19 +238,5 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
     this.locationGroupService
       .changeLocationGroup(locationGroup)
       .subscribe(res => this.messageService.success(this.i18n.fanyi('message.action.success')));
-  }
-
-  ngOnInit() {
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      taggedLocationGroupTypes: [null],
-    });
-
-    // initiate the select control
-    this.locationGroupTypeService.loadLocationGroupTypes().subscribe((locationGroupTypeList: LocationGroupType[]) => {
-      locationGroupTypeList.forEach(locationGroupType =>
-        this.locationGroupTypes.push({ label: locationGroupType.description, value: locationGroupType.id.toString() }),
-      );
-    });
   }
 }

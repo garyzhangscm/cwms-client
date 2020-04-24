@@ -373,7 +373,7 @@ export class OutboundOrderComponent implements OnInit {
   cancelPick(order: Order, pick: PickWork) {
     this.pickService.cancelPick(pick).subscribe(pickRes => {
       this.messageService.success(this.i18n.fanyi('message.action.success'));
-      this.search();
+      this.search(order.id, 1);
     });
   }
   openUnpickModal(
@@ -429,10 +429,11 @@ export class OutboundOrderComponent implements OnInit {
     });
   }
 
-  cancelShortAllocation(shortAllocation: ShortAllocation) {
+  cancelShortAllocation(order: Order, shortAllocation: ShortAllocation) {
     this.shortAllocationService.cancelShortAllocations([shortAllocation]).subscribe(shortAllocationRes => {
       this.messageService.success(this.i18n.fanyi('message.action.success'));
-      this.search();
+      // refresh the short allocation
+      this.search(order.id, 3);
     });
   }
 

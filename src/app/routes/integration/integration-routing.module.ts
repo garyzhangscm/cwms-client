@@ -8,6 +8,12 @@ import { IntegrationIntegrationDataItemFamilyComponent } from './integration-dat
 import { IntegrationIntegrationDataItemPackageTypeComponent } from './integration-data-item-package-type/integration-data-item-package-type.component';
 import { IntegrationIntegrationDataItemUnitOfMeasureComponent } from './integration-data-item-unit-of-measure/integration-data-item-unit-of-measure.component';
 import { IntegrationIntegrationDataSupplierComponent } from './integration-data-supplier/integration-data-supplier.component';
+import { IntegrationIntegrationDataOrderComponent } from './integration-data-order/integration-data-order.component';
+import { IntegrationIntegrationDataReceiptComponent } from './integration-data-receipt/integration-data-receipt.component';
+import { IntegrationIntegrationDataReceiptConfirmComponent } from './integration-data-receipt-confirm/integration-data-receipt-confirm.component';
+import { IntegrationIntegrationDataOrderConfirmComponent } from './integration-data-order-confirm/integration-data-order-confirm.component';
+import { IntegrationIntegrationDataInventoryAdjustComponent } from './integration-data-inventory-adjust/integration-data-inventory-adjust.component';
+import { IntegrationIntegrationDataInventoryStatusChangeComponent } from './integration-data-inventory-status-change/integration-data-inventory-status-change.component';
 
 const routes: Routes = [
   { path: 'integration-data', component: IntegrationIntegrationDataComponent },
@@ -18,6 +24,15 @@ const routes: Routes = [
   { path: 'integration-data-item-package-type', component: IntegrationIntegrationDataItemPackageTypeComponent },
   { path: 'integration-data-item-unit-of-measure', component: IntegrationIntegrationDataItemUnitOfMeasureComponent },
   { path: 'integration-data-supplier', component: IntegrationIntegrationDataSupplierComponent },
+  { path: 'integration-data-order', component: IntegrationIntegrationDataOrderComponent },
+  { path: 'integration-data-receipt', component: IntegrationIntegrationDataReceiptComponent },
+  { path: 'integration-data-receipt-confirm', component: IntegrationIntegrationDataReceiptConfirmComponent },
+  { path: 'integration-data-order-confirm', component: IntegrationIntegrationDataOrderConfirmComponent },
+  { path: 'integration-data-inventory-adjust', component: IntegrationIntegrationDataInventoryAdjustComponent },
+  {
+    path: 'integration-data-inventory-status-change',
+    component: IntegrationIntegrationDataInventoryStatusChangeComponent,
+  },
 ];
 
 @NgModule({

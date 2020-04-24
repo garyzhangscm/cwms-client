@@ -40,6 +40,26 @@
 </nz-card>
 
 
+<!-- Display Pick List Informaiton -->
+<nz-card *ngIf="type === 'pickList'">
+  <nz-descriptions nzTitle="{{'pick-list' | translate}}" nzBordered>
+    <nz-descriptions-item nzTitle="{{'pick-list.number' | translate}}">{{pickList?.number}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'status' | translate}}">{{'PICK-LIST-STATUS-' + pickList?.status | translate}}
+    </nz-descriptions-item>
+  </nz-descriptions>
+</nz-card>
+
+<!-- Display Cartonization Informaiton -->
+<nz-card *ngIf="type === 'cartonization'">
+  <nz-descriptions nzTitle="{{'cartonization' | translate}}" nzBordered>
+    <nz-descriptions-item nzTitle="{{'cartonization.number' | translate}}">{{cartonization?.number}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'status' | translate}}">
+      {{'CARTONIZATION-STATUS-' + cartonization?.status | translate}}
+    </nz-descriptions-item>
+  </nz-descriptions>
+</nz-card>
 <!-- Display Wave Informaiton -->
 <nz-card *ngIf="type === 'wave'">
   <nz-descriptions nzTitle="{{'wave' | translate}}" nzBordered>

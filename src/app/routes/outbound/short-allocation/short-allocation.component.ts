@@ -7,6 +7,7 @@ import { PickService } from '../services/pick.service';
 import { PickWork } from '../models/pick-work';
 import { ShortAllocation } from '../models/short-allocation';
 import { ShortAllocationService } from '../services/short-allocation.service';
+import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
 
 @Component({
   selector: 'app-outbound-short-allocation',
@@ -19,7 +20,7 @@ export class OutboundShortAllocationComponent implements OnInit {
     private i18n: I18NService,
     private modalService: NzModalService,
     private shortAllocationService: ShortAllocationService,
-    private message: NzMessageService,
+    private messageService: NzMessageService,
   ) {}
 
   // Form related data and functions
@@ -39,6 +40,8 @@ export class OutboundShortAllocationComponent implements OnInit {
   isAllDisplayDataChecked = false;
   // list of checked checkbox
   mapOfCheckedId: { [key: string]: boolean } = {};
+
+  shortAllocationStatus = ShortAllocationStatus;
 
   resetForm(): void {
     this.searchForm.reset();
@@ -96,7 +99,7 @@ export class OutboundShortAllocationComponent implements OnInit {
         nzOkType: 'danger',
         nzOnOk: () => {
           this.shortAllocationService.cancelShortAllocations(selectedShortAllocations).subscribe(res => {
-            this.message.success(this.i18n.fanyi('message.short-allocation.cancelled'));
+            this.messageService.success(this.i18n.fanyi('message.short-allocation.cancelled'));
             this.search();
           });
         },
@@ -121,6 +124,25 @@ export class OutboundShortAllocationComponent implements OnInit {
     this.searchForm = this.fb.group({
       orderNumber: [null],
       itemNumber: [null],
+    });
+  }
+
+  cancelShortAllocation(shortAllocation: ShortAllocation) {
+    this.shortAllocationService.cancelShortAllocations([shortAllocation]).subscribe(shortAllocationRes => {
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      // refresh the short allocation
+      this.search();
+    });
+  }
+
+  isShortAllocationAllocatable(shortAllocation: ShortAllocation) {
+    return shortAllocation.openQuantity > 0;
+  }
+
+  allocateShortAllocation(shortAllocation: ShortAllocation) {
+    this.shortAllocationService.allocateShortAllocation(shortAllocation).subscribe(shortAllocationRes => {
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      this.search();
     });
   }
 }

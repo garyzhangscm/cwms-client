@@ -50,15 +50,12 @@ export class OutboundPickComponent implements OnInit {
 
   search(shortAllocationId?: number): void {
     this.pickService
-      .getPicks(
+      .queryPicks(
         this.searchForm.controls.number.value,
         this.searchForm.controls.orderNumber.value,
         this.searchForm.controls.itemNumber.value,
         this.searchForm.controls.sourceLocation.value,
         this.searchForm.controls.destinationLocation.value,
-        null,
-        null,
-        null,
         shortAllocationId,
       )
       .subscribe(pickRes => {

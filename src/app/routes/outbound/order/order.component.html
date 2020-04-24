@@ -231,7 +231,7 @@
         <td>{{ orderLine.openQuantity }}</td>
         <td>{{ orderLine.inprocessQuantity }}</td>
         <td>{{ orderLine.shippedQuantity }}</td>
-        <td>{{ orderLine.inventoryStatus.name }}</td>
+        <td>{{ 'INVENTORY-STATUS-' + orderLine.inventoryStatus.name | translate}}</td>
       </tr>
     </tbody>
   </nz-table>
@@ -242,6 +242,12 @@
       <thead>
         <th>
           {{ 'pick.number' | translate }}
+        </th>
+        <th>
+          {{ 'list-pick.number' | translate }}
+        </th>
+        <th>
+          {{ 'cartonization.number' | translate }}
         </th>
         <th>
           {{ 'sourceLocation' | translate }}
@@ -268,6 +274,10 @@
       <tbody>
         <tr *ngFor="let pick of mapOfPicks[data.id]">
           <td>{{ pick.number }}</td>
+          <td><a routerLink="/outbound/pick-list" routerLinkActive="active"
+              [queryParams]="{number : pick.pickListNumber}">{{ pick.pickListNumber }}</a></td>
+          <td><a routerLink="/outbound/cartonization" routerLinkActive="active"
+              [queryParams]="{number : pick.cartonizationNumber}">{{ pick.cartonizationNumber }}</a></td>
           <td>{{ pick.sourceLocation?.name }}</td>
           <td>{{ pick.destinationLocation?.name }}</td>
           <td>{{ pick.item?.name }}</td>
@@ -403,8 +413,8 @@
             </span>
           </td>
           <td>
-            <button nz-button (click)="cancelShortAllocation(shortAllocation)"
-              [disabled]="shortAllocation.status !== shortAllocationStatus.COMPLETED">
+            <button nz-button (click)="cancelShortAllocation(data,shortAllocation)"
+              [disabled]="shortAllocation.status !== shortAllocationStatus.PENDING">
               {{ 'cancel' | translate }}
             </button>
 
