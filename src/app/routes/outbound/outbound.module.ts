@@ -19,6 +19,8 @@ import { OutboundCartonizationComponent } from './cartonization/cartonization.co
 import { OutboundCartonizationConfigurationComponent } from './cartonization-configuration/cartonization-configuration.component';
 import { OutboundCartonizationConfigurationMaintenanceComponent } from './cartonization-configuration-maintenance/cartonization-configuration-maintenance.component';
 import { OutboundCartonizationConfigurationConfirmComponent } from './cartonization-configuration-confirm/cartonization-configuration-confirm.component';
+import { OutboundGridComponent } from './grid/grid.component';
+import { OutboundGridMaintenanceComponent } from './grid-maintenance/grid-maintenance.component';
 
 const COMPONENTS = [
   OutboundOrderComponent,
@@ -38,6 +40,8 @@ const COMPONENTS = [
   OutboundCartonizationConfigurationComponent,
   OutboundCartonizationConfigurationMaintenanceComponent,
   OutboundCartonizationConfigurationConfirmComponent,
+  OutboundGridComponent,
+  OutboundGridMaintenanceComponent,
 ];
 const COMPONENTS_NOROUNT = [];
 

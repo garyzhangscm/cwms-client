@@ -17,6 +17,8 @@ import { OutboundCartonizationComponent } from './cartonization/cartonization.co
 import { OutboundCartonizationConfigurationComponent } from './cartonization-configuration/cartonization-configuration.component';
 import { OutboundCartonizationConfigurationMaintenanceComponent } from './cartonization-configuration-maintenance/cartonization-configuration-maintenance.component';
 import { OutboundCartonizationConfigurationConfirmComponent } from './cartonization-configuration-confirm/cartonization-configuration-confirm.component';
+import { OutboundGridComponent } from './grid/grid.component';
+import { OutboundGridMaintenanceComponent } from './grid-maintenance/grid-maintenance.component';
 
 const routes: Routes = [
   { path: 'order', component: OutboundOrderComponent },
@@ -39,6 +41,8 @@ const routes: Routes = [
     component: OutboundCartonizationConfigurationMaintenanceComponent,
   },
   { path: 'cartonization-configuration/confirm', component: OutboundCartonizationConfigurationConfirmComponent },
+  { path: 'grid', component: OutboundGridComponent },
+  { path: 'grid-maintenance', component: OutboundGridMaintenanceComponent },
 ];
 
 @NgModule({

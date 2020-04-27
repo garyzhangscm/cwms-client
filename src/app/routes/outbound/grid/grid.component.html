@@ -1,0 +1,45 @@
+<page-header></page-header>
+
+<nz-card>
+
+  <form nz-form class="query-form">
+
+
+    <nz-form-item nzFlex>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="currentGridId">
+        {{ 'location-group' | translate }}
+      </nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24">
+        <nz-select [ngModel]="currentGridId" (ngModelChange)="gridChanged($event)" name="currentGridId">
+          <nz-option *ngFor="let grid of availableGrids" [nzLabel]="grid.locationGroup?.name"
+            [nzValue]="grid.locationGroupId">
+          </nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item nzFlex>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="inventoryId">
+        id
+      </nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24">
+        <input type="text" nz-input [(ngModel)]="inventoryId" name="inventoryId"
+          (keyup.enter)="onUserInputInventoryIdEvent()" />
+      </nz-form-control>
+    </nz-form-item>
+
+  </form>
+</nz-card>
+
+
+<!-- Table to Display the result  -->
+<div class="grid">
+  <table>
+    <tr *ngFor="let gridRow of gridRows">
+      <td *ngFor="let cell of gridRow.cells" [colSpan]="cell.columnSpan">
+        <div (click)="gridCellClicked(cell.locationName)">{{ cell.locationName}}</div>
+      </td>
+    </tr>
+
+
+  </table>
+</div>
