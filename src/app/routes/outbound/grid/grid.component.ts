@@ -1,12 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { GridConfiguration } from '../models/grid-configuration';
 import { GridConfigurationService } from '../services/grid-configuration.service';
 import { GridLocationConfigurationService } from '../services/grid-location-configuration.service';
+import { GridDistributionWorkService } from '../services/grid-distribution-work.service';
+import { GridDistributionWork } from '../models/grid-distribution-work';
 
+enum CellStatus {
+  OPEN = 'OPEN',
+  RESERVED = 'RESERVED',
+  IMPROCESS = 'IMPROCESS',
+  COMPLETED = 'COMPLETED',
+}
 interface CellData {
   locationName: string;
   columnSpan: number;
+  status: CellStatus;
 }
 interface RowData {
   cells: CellData[];
@@ -36,6 +45,27 @@ interface RowData {
         padding-top: 20px;
         padding-bottom: 20px;
       }
+      td.OPEN {
+      }
+      td.RESERVED {
+        background-color: red;
+      }
+      td.IMPROCESS {
+        background-color: green;
+      }
+      td.COMPLETED {
+        background-color: grey;
+      }
+
+      .search-result-list {
+        min-height: 200px;
+        margin-top: 16px;
+        padding-top: 10px;
+        text-align: center;
+        background-color: #fafafa;
+        border: 1px solid #d9d9d9;
+        border-radius: 6px;
+      }
     `,
   ],
 })
@@ -43,29 +73,33 @@ export class OutboundGridComponent implements OnInit {
   currentGridId: number;
   availableGrids: GridConfiguration[];
   inventoryId = '';
+  locationGroupId: number;
   gridRows: RowData[];
+  listOfDistributionWork: GridDistributionWork[] = [];
+  itemName: string;
+
+  @ViewChild('itemNameTextBox', { static: true }) itemNameTextBox: ElementRef;
 
   constructor(
     private http: _HttpClient,
     private gridConfigurationService: GridConfigurationService,
     private gridLocationConfigurationService: GridLocationConfigurationService,
+    private gridDistributionWorkService: GridDistributionWorkService,
   ) {}
 
   ngOnInit() {
     // Let's get all grids defined in the system
     this.gridConfigurationService.getAll().subscribe(res => {
       this.availableGrids = res;
-      console.log(`grid configuration loaded!`);
     });
   }
 
   gridChanged(locationGroupId: number) {
-    console.log(`Grid is changed to ${locationGroupId}`);
     this.gridRows = [];
+    this.locationGroupId = locationGroupId;
 
     // Let's load all the grid location configurations
     this.gridLocationConfigurationService.getAll(locationGroupId).subscribe(gridLocationConfigurationList => {
-      console.log(`Get grid locations: \n ${JSON.stringify(gridLocationConfigurationList)}`);
       let currentRowNumber = -1;
       let currentRow: RowData = {
         cells: [],
@@ -85,6 +119,7 @@ export class OutboundGridComponent implements OnInit {
         currentRow.cells.push({
           locationName: gridLocationConfiguration.location.name,
           columnSpan: gridLocationConfiguration.columnSpan,
+          status: CellStatus.OPEN,
         });
       });
 
@@ -92,13 +127,31 @@ export class OutboundGridComponent implements OnInit {
         // Save the last row
         this.gridRows.push(currentRow);
       }
-      console.log(`After process, we get data\n ${JSON.stringify(this.gridRows)}`);
     });
   }
   onUserInputInventoryIdEvent() {
-    console.log(`inventoryId is changed to ${this.inventoryId}`);
+    this.gridDistributionWorkService.get(this.locationGroupId, this.inventoryId).subscribe(gridDistributionWorks => {
+      this.listOfDistributionWork = gridDistributionWorks;
+      gridDistributionWorks.forEach(gridDistributionWork => {
+        this.markCellAsInprocess(gridDistributionWork.gridLocationName);
+      });
+      this.itemNameTextBox.nativeElement.focus();
+    });
   }
   gridCellClicked(locationName: string) {
     console.log(`gridCellClicked ${locationName}`);
+  }
+
+  markCellAsInprocess(gridLocationName: string) {
+    this.gridRows.forEach(gridRow => {
+      gridRow.cells.forEach(cell => {
+        if (cell.locationName === gridLocationName) {
+          cell.status = CellStatus.IMPROCESS;
+        }
+      });
+    });
+  }
+  onUserInputItemNameEvent(itemName: string) {
+    console.log(`itemName ${itemName}`);
   }
 }

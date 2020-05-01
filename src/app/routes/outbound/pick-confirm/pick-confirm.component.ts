@@ -17,6 +17,7 @@ import { PickListService } from '../services/pick-list.service';
 import { PickList } from '../models/pick-list';
 import { Cartonization } from '../models/cartonization';
 import { CartonizationService } from '../services/cartonization.service';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-outbound-pick-confirm',
@@ -61,6 +62,10 @@ export class OutboundPickConfirmComponent implements OnInit {
 
   mapOfConfirmedQuantity: { [key: string]: number } = {};
 
+  queryForm: FormGroup;
+  searching = false;
+  containerId: string;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private i18n: I18NService,
@@ -75,6 +80,7 @@ export class OutboundPickConfirmComponent implements OnInit {
     private waveService: WaveService,
     private cartonizationService: CartonizationService,
     private router: Router,
+    private fb: FormBuilder,
   ) {
     this.pageTitle = this.i18n.fanyi('page.outbound.pick-confirm.title');
   }
@@ -92,9 +98,8 @@ export class OutboundPickConfirmComponent implements OnInit {
     // 3. pick list display
     // 4. replenishment display
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.type) {
-        this.type = params.type;
-      }
+      this.type = params.type ? params.type : '';
+
       if (params.id) {
         this.id = params.id;
       }
@@ -102,7 +107,7 @@ export class OutboundPickConfirmComponent implements OnInit {
     });
   }
 
-  displayInformation() {
+  displayInformation(refresh = false) {
     switch (this.type) {
       case 'workOrder':
         this.displayWorkOrder(+this.id);
@@ -126,8 +131,61 @@ export class OutboundPickConfirmComponent implements OnInit {
         this.displayCartonization(+this.id);
         break;
       default:
+        this.displayBlankQueryForm(refresh);
         break;
     }
+  }
+  // Show query form to accept user input with
+  // carton number or pick list number to begin
+  // pick confirmation
+  // Refresh mode: Everytime we finish a pick,
+  // we will refresh
+  displayBlankQueryForm(refresh: boolean) {
+    if (refresh) {
+      // in refresh mode, we will query again
+      // with the same criteria
+      this.searchPicks();
+    } else {
+      this.queryForm = this.fb.group({
+        containerId: ['', Validators.required],
+        pickToContainerFlag: [true],
+      });
+    }
+  }
+  searchPicks() {
+    if (this.queryForm.valid) {
+      this.containerId = this.queryForm.controls.containerId.value;
+      this.searchPicksByContainer(this.queryForm.controls.containerId.value);
+    } else {
+      this.displayFormError(this.queryForm);
+    }
+  }
+  displayFormError(fromGroup: FormGroup) {
+    // tslint:disable-next-line: forin
+    for (const i in fromGroup.controls) {
+      fromGroup.controls[i].markAsDirty();
+      fromGroup.controls[i].updateValueAndValidity();
+    }
+  }
+
+  // We allow the user to scan one of the following id
+  // 1. Pick work's number
+  // 2. Order Number: TO-DO
+  // 3. Shipment Number: TO-DO
+  // 4. Work Order Number: TO-DO
+  // 5. List Pick Number
+  // 6. Carton Number
+  searchPicksByContainer(containerId: string) {
+    this.pickService.getPicksByContainerId(containerId).subscribe(pickRes => {
+      if (pickRes.length > 0) {
+        this.listOfAllPicks = pickRes;
+        this.listOfDisplayPicks = pickRes;
+        this.setupConfirmedQuantity(this.listOfAllPicks);
+        this.refreshStatus(true);
+      } else {
+        // Show error
+      }
+    });
   }
   displayPicks(pickIds: string) {
     console.log(`we will display picks by id list: ${pickIds}`);
@@ -233,12 +291,12 @@ export class OutboundPickConfirmComponent implements OnInit {
     });
   }
 
-  refreshStatus(): void {
-    console.log(`Start to check all picks: ${JSON.stringify(this.mapOfCheckedId)}`);
-
-    this.isAllDisplayDataChecked = this.listOfDisplayPicks.every(item => this.mapOfCheckedId[item.id]);
-    this.indeterminate =
-      this.listOfDisplayPicks.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+  refreshStatus(checkAll?: boolean): void {
+    if (checkAll) {
+      this.listOfDisplayPicks.every(item => (this.mapOfCheckedId[item.id] = true));
+    }
+    this.allChecked = this.listOfDisplayPicks.every(item => this.mapOfCheckedId[item.id]);
+    this.indeterminate = this.listOfDisplayPicks.some(item => this.mapOfCheckedId[item.id]) && !this.allChecked;
 
     this.allPicksFullyConfirmed = this.listOfDisplayPicks.every(item => item.pickedQuantity >= item.quantity);
   }
@@ -293,15 +351,23 @@ export class OutboundPickConfirmComponent implements OnInit {
     if (selectedPicks.length > 0) {
       this.confirming = true;
       this.totalPickCountToConfirm = selectedPicks.length;
+
+      let pickToContainer = false;
+      if (this.queryForm) {
+        pickToContainer = this.queryForm.controls.pickToContainerFlag.value;
+      }
+
       selectedPicks.forEach(pick => {
-        this.pickService.confirmPick(pick, this.mapOfConfirmedQuantity[pick.number]).subscribe(pickRes => {
-          this.message.success(this.i18n.fanyi('message.action.success'));
-          this.displayInformation();
-          this.totalPickCountToConfirm--;
-          if (this.totalPickCountToConfirm === 0) {
-            this.confirming = false;
-          }
-        });
+        this.pickService
+          .confirmPick(pick, this.mapOfConfirmedQuantity[pick.number], pickToContainer, this.containerId)
+          .subscribe(pickRes => {
+            this.message.success(this.i18n.fanyi('message.action.success'));
+            this.totalPickCountToConfirm--;
+            if (this.totalPickCountToConfirm === 0) {
+              this.displayInformation(true);
+              this.confirming = false;
+            }
+          });
       });
     }
   }
@@ -317,11 +383,18 @@ export class OutboundPickConfirmComponent implements OnInit {
 
   confirmPick(pick: PickWork) {
     this.confirming = true;
-    this.pickService.confirmPick(pick, this.mapOfConfirmedQuantity[pick.number]).subscribe(pickRes => {
-      this.message.success(this.i18n.fanyi('message.action.success'));
-      this.displayInformation();
-      this.confirming = false;
-    });
+
+    let pickToContainer = false;
+    if (this.queryForm) {
+      pickToContainer = this.queryForm.controls.pickToContainerFlag.value;
+    }
+    this.pickService
+      .confirmPick(pick, this.mapOfConfirmedQuantity[pick.number], pickToContainer, this.containerId)
+      .subscribe(pickRes => {
+        this.message.success(this.i18n.fanyi('message.action.success'));
+        this.displayInformation(true);
+        this.confirming = false;
+      });
   }
   returnToPreviousPage() {
     this.router.navigateByUrl(this.lastPageUrl);

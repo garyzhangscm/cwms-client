@@ -1,6 +1,6 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
-  <a (click)="returnToPreviousPage()">{{
+  <a (click)="returnToPreviousPage()" *ngIf="type !== ''">{{
     'return' | translate
   }}</a>
 </ng-template>
@@ -18,6 +18,30 @@
     </nz-breadcrumb-item>
   </nz-breadcrumb>
 </ng-template>
+
+<!-- Accept scan in list id / carton id / etc -->
+<nz-card *ngIf="type === ''" nzSize="small">
+  <form nz-form [formGroup]="queryForm" (ngSubmit)="searchPicks()">
+    <nz-form-item nz-row nzFlex>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>ID</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | translate }}">
+        <input nz-input formControlName="containerId" id="containerId" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item nz-row nzFlex>
+      <nz-form-control [nzSpan]="14" [nzOffset]="6">
+        <label nz-checkbox formControlName="pickToContainerFlag">
+          <span>{{ 'pick-to-container' | translate}}</span>
+        </label>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item nz-row nzFlex>
+      <nz-form-control [nzSpan]="14" [nzOffset]="6">
+        <button nz-button nzType="primary" [nzLoading]="searching">{{ 'search' | translate }}</button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</nz-card>
 
 <!-- Display Work Order Informaiton -->
 <nz-card *ngIf="type === 'workOrder'">

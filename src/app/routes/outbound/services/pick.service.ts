@@ -15,17 +15,127 @@ export class PickService {
   getPicksByOrder(orderId: number): Observable<PickWork[]> {
     return this.getPicks(null, orderId);
   }
+  getPicksByOrderNumber(orderNumber: string): Observable<PickWork[]> {
+    return this.getPicks(
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      orderNumber,
+    );
+  }
   getPicksByShipment(shipmentId: number): Observable<PickWork[]> {
     return this.getPicks(null, null, shipmentId);
+  }
+  getPicksByShipmentNumber(shipmentNumber: string): Observable<PickWork[]> {
+    return this.getPicks(
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      shipmentNumber,
+    );
   }
   getPicksByWorkOrder(workOrderId: number): Observable<PickWork[]> {
     return this.getPicks(null, null, null, workOrderId);
   }
+  getPicksByWorkOrderNumber(workOrderNumber: string): Observable<PickWork[]> {
+    return this.getPicks(
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      workOrderNumber,
+    );
+  }
   getPicksByWave(waveId: number): Observable<PickWork[]> {
     return this.getPicks(null, null, null, null, waveId);
   }
+  getPicksByWaveNumber(waveNumber: string): Observable<PickWork[]> {
+    return this.getPicks(
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      waveNumber,
+    );
+  }
   getPicksByPickList(pickListId: number): Observable<PickWork[]> {
     return this.getPicks(null, null, null, null, null, pickListId);
+  }
+  getPicksByPickListNumber(pickListNumber: string): Observable<PickWork[]> {
+    return this.getPicks(
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      pickListNumber,
+    );
   }
   getPicksByShortAllocation(shortAllocationId: number): Observable<PickWork[]> {
     return this.getPicks(null, null, null, null, null, null, shortAllocationId);
@@ -33,9 +143,61 @@ export class PickService {
   getPicksByCartonization(cartonizationId: number): Observable<PickWork[]> {
     return this.getPicks(null, null, null, null, null, null, null, cartonizationId);
   }
+  getPicksByCartonizationNumber(cartonizationNumber: string): Observable<PickWork[]> {
+    return this.getPicks(
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      cartonizationNumber,
+    );
+  }
   getPicksByIds(ids: string): Observable<PickWork[]> {
     return this.getPicks(null, null, null, null, null, null, null, null, ids);
   }
+  getPicksByContainerId(containerId: string): Observable<PickWork[]> {
+    return this.getPicks(
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      containerId,
+    );
+  }
+
   queryPicks(
     number?: string,
     orderNumber?: string,
@@ -57,10 +219,10 @@ export class PickService {
       null,
       null,
       null,
-      orderNumber,
       itemNumber,
       sourceLocation,
       destinationLocation,
+      orderNumber,
     );
   }
   getPicks(
@@ -76,10 +238,16 @@ export class PickService {
     itemId?: number,
     sourceLocationId?: number,
     destinationLocationId?: number,
-    orderNumber?: string,
     itemNumber?: string,
     sourceLocationName?: string,
     destinationLocationName?: string,
+    orderNumber?: string,
+    shipmentNumber?: string,
+    workOrderNumber?: string,
+    waveNumber?: string,
+    pickListNumber?: string,
+    cartonizationNumber?: string,
+    containerId?: string,
   ): Observable<PickWork[]> {
     let url = `outbound/picks?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (number) {
@@ -123,6 +291,24 @@ export class PickService {
     if (orderNumber) {
       url = `${url}&orderNumber=${orderNumber}`;
     }
+
+    if (shipmentNumber) {
+      url = `${url}&shipmentNumber=${shipmentNumber}`;
+    }
+
+    if (workOrderNumber) {
+      url = `${url}&workOrderNumber=${workOrderNumber}`;
+    }
+    if (waveNumber) {
+      url = `${url}&waveNumber=${waveNumber}`;
+    }
+
+    if (pickListNumber) {
+      url = `${url}&pickListNumber=${pickListNumber}`;
+    }
+    if (cartonizationNumber) {
+      url = `${url}&cartonizationNumber=${cartonizationNumber}`;
+    }
     if (itemNumber) {
       url = `${url}&itemNumber=${itemNumber}`;
     }
@@ -131,6 +317,9 @@ export class PickService {
     }
     if (destinationLocationName) {
       url = `${url}&destinationLocationName=${destinationLocationName}`;
+    }
+    if (containerId) {
+      url = `${url}&containerId=${containerId}`;
     }
 
     return this.http.get(url).pipe(map(res => res.data));
@@ -165,9 +354,22 @@ export class PickService {
     return this.http.delete('outbound/picks', params).pipe(map(res => res.data));
   }
 
-  confirmPick(pick: PickWork, quantity?: number): Observable<PickWork> {
+  confirmPick(
+    pick: PickWork,
+    quantity?: number,
+    pickToContainer?: boolean,
+    containerId?: string,
+  ): Observable<PickWork> {
     const confirmedQuantity = quantity === undefined ? pick.quantity - pick.pickedQuantity : quantity;
-    return this.http.post(`outbound/picks/${pick.id}/confirm?quantity=${confirmedQuantity}`).pipe(map(res => res.data));
+    let url = `outbound/picks/${pick.id}/confirm?quantity=${confirmedQuantity}`;
+
+    if (pickToContainer) {
+      url = `${url}&pickToContainer=${pickToContainer}`;
+    }
+    if (containerId) {
+      url = `${url}&containerId=${containerId}`;
+    }
+    return this.http.post(url).pipe(map(res => res.data));
   }
 
   getPickedInventories(picks: PickWork[]): Observable<Inventory[]> {

@@ -27,6 +27,16 @@
       </nz-form-control>
     </nz-form-item>
 
+    <nz-form-item nzFlex>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemName">
+        {{ 'item' | translate }}
+      </nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24">
+        <input type="text" nz-input [ngModel]="itemName" name="itemName" #itemNameTextBox
+          (keyup.enter)="onUserInputItemNameEvent($event.target.value)" />
+      </nz-form-control>
+    </nz-form-item>
+
   </form>
 </nz-card>
 
@@ -35,11 +45,31 @@
 <div class="grid">
   <table>
     <tr *ngFor="let gridRow of gridRows">
-      <td *ngFor="let cell of gridRow.cells" [colSpan]="cell.columnSpan">
+      <td *ngFor="let cell of gridRow.cells" [colSpan]="cell.columnSpan" [ngClass]="cell.status">
         <div (click)="gridCellClicked(cell.locationName)">{{ cell.locationName}}</div>
       </td>
     </tr>
-
-
   </table>
+</div>
+
+<div class="search-result-list" *ngIf="listOfDistributionWork?.length > 0">
+  <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfDistributionWork">
+    <thead>
+      <tr>
+        <th>
+          {{'item' | translate}}</th>
+        <th>
+          {{'location' | translate}}</th>
+        <th>
+          {{'quantity' | translate}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data">
+        <td>{{data.itemName}}</td>
+        <td>{{data.gridLocationName}}</td>
+        <td>{{data.quantity}}</td>
+      </tr>
+    </tbody>
+  </nz-table>
 </div>
