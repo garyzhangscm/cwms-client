@@ -19,10 +19,23 @@ export class GridDistributionWorkService {
     return this.http.get(url).pipe(map(res => res.data));
   }
 
-  confirm(locationGroupId: number, id: string, itemName: string, quantity = 1): Observable<GridDistributionWork[]> {
+  confirmByItem(
+    locationGroupId: number,
+    id: string,
+    itemName: string,
+    quantity = 1,
+  ): Observable<GridDistributionWork[]> {
     const url = `outbound/grid-distribution-work/confirm?warehouseId=${
       this.warehouseService.getCurrentWarehouse().id
     }&locationGroupId=${locationGroupId}&id=${id}&itemName=${itemName}&quantity=${quantity}`;
+
+    return this.http.post(url).pipe(map(res => res.data));
+  }
+
+  confirm(gridLocationConfigurationId: number, id: string): Observable<any> {
+    const url = `outbound/grid-distribution-work/confirm?warehouseId=${
+      this.warehouseService.getCurrentWarehouse().id
+    }&gridLocationConfigurationId=${gridLocationConfigurationId}&id=${id}`;
 
     return this.http.post(url).pipe(map(res => res.data));
   }

@@ -5,6 +5,7 @@ import { GridConfigurationService } from '../services/grid-configuration.service
 import { GridLocationConfigurationService } from '../services/grid-location-configuration.service';
 import { GridDistributionWorkService } from '../services/grid-distribution-work.service';
 import { GridDistributionWork } from '../models/grid-distribution-work';
+import { FormGroup, FormBuilder } from '@angular/forms';
 
 enum CellStatus {
   OPEN = 'OPEN',
@@ -13,9 +14,13 @@ enum CellStatus {
   COMPLETED = 'COMPLETED',
 }
 interface CellData {
+  gridLocationConfigurationId: number;
   locationName: string;
   columnSpan: number;
   status: CellStatus;
+  progress: number;
+  pendingQuantity: number;
+  arrivedQuantity: number;
 }
 interface RowData {
   cells: CellData[];
@@ -27,7 +32,6 @@ interface RowData {
   styles: [
     `
       .query-form {
-        max-width: 300px;
       }
       table {
         width: 100%;
@@ -39,11 +43,19 @@ interface RowData {
         text-align: center;
         cursor: pointer;
       }
-      td div {
+      td .grid-cell {
         width: 100%;
         height: 100%;
         padding-top: 20px;
         padding-bottom: 20px;
+      }
+      td .grid-cell-inv {
+        text-align: right;
+      }
+      td .grid-cell-inv .badge {
+        padding-right: 5px;
+        padding-top: 10px;
+        color: blue;
       }
       td.OPEN {
       }
@@ -70,18 +82,19 @@ interface RowData {
   ],
 })
 export class OutboundGridComponent implements OnInit {
-  currentGridId: number;
   availableGrids: GridConfiguration[];
-  inventoryId = '';
-  locationGroupId: number;
   gridRows: RowData[];
   listOfDistributionWork: GridDistributionWork[] = [];
-  itemName: string;
+
+  gridQueryForm: FormGroup;
+  showDistributionWork = false;
+  refresh = true;
+  gridDisplaySpan = 24;
 
   @ViewChild('itemNameTextBox', { static: true }) itemNameTextBox: ElementRef;
 
   constructor(
-    private http: _HttpClient,
+    private fb: FormBuilder,
     private gridConfigurationService: GridConfigurationService,
     private gridLocationConfigurationService: GridLocationConfigurationService,
     private gridDistributionWorkService: GridDistributionWorkService,
@@ -92,11 +105,18 @@ export class OutboundGridComponent implements OnInit {
     this.gridConfigurationService.getAll().subscribe(res => {
       this.availableGrids = res;
     });
+    this.gridQueryForm = this.fb.group({
+      locationGroupId: [null],
+      inventoryId: [null],
+      itemName: [null],
+    });
   }
 
   gridChanged(locationGroupId: number) {
     this.gridRows = [];
-    this.locationGroupId = locationGroupId;
+    this.gridQueryForm.controls.inventoryId.reset();
+
+    this.listOfDistributionWork = [];
 
     // Let's load all the grid location configurations
     this.gridLocationConfigurationService.getAll(locationGroupId).subscribe(gridLocationConfigurationList => {
@@ -117,9 +137,13 @@ export class OutboundGridComponent implements OnInit {
           currentRowNumber = gridLocationConfiguration.rowNumber;
         }
         currentRow.cells.push({
+          gridLocationConfigurationId: gridLocationConfiguration.id,
           locationName: gridLocationConfiguration.location.name,
           columnSpan: gridLocationConfiguration.columnSpan,
           status: CellStatus.OPEN,
+          progress: (gridLocationConfiguration.arrivedQuantity * 100) / gridLocationConfiguration.pendingQuantity,
+          pendingQuantity: gridLocationConfiguration.pendingQuantity,
+          arrivedQuantity: gridLocationConfiguration.arrivedQuantity,
         });
       });
 
@@ -130,16 +154,32 @@ export class OutboundGridComponent implements OnInit {
     });
   }
   onUserInputInventoryIdEvent() {
-    this.gridDistributionWorkService.get(this.locationGroupId, this.inventoryId).subscribe(gridDistributionWorks => {
-      this.listOfDistributionWork = gridDistributionWorks;
-      gridDistributionWorks.forEach(gridDistributionWork => {
-        this.markCellAsInprocess(gridDistributionWork.gridLocationName);
+    this.gridDistributionWorkService
+      .get(this.gridQueryForm.controls.locationGroupId.value, this.gridQueryForm.controls.inventoryId.value)
+      .subscribe(gridDistributionWorks => {
+        this.listOfDistributionWork = gridDistributionWorks;
+        gridDistributionWorks.forEach(gridDistributionWork => {
+          this.markCellAsInprocess(gridDistributionWork.gridLocationName);
+        });
+        this.itemNameTextBox.nativeElement.focus();
       });
-      this.itemNameTextBox.nativeElement.focus();
-    });
   }
-  gridCellClicked(locationName: string) {
-    console.log(`gridCellClicked ${locationName}`);
+  // Click the grid cell to confirm by the inventory group id(LPN / Pick List Number / Carton Number / etc)
+  gridCellClicked(gridLocationConfigurationId: number) {
+    console.log(
+      `start to confirm with gridCellClicked: ${gridLocationConfigurationId} and inventoryId: ${this.gridQueryForm.controls.inventoryId.value}`,
+    );
+    console.log(`this.itemNameTextBox.nativeElement.value: ${this.itemNameTextBox.nativeElement.value}`);
+    this.gridDistributionWorkService
+      .confirm(gridLocationConfigurationId, this.gridQueryForm.controls.inventoryId.value)
+      .subscribe(res => {
+        console.log(`cell confirmed ${JSON.stringify(res)}`);
+        // reload the grid information after confirm
+        this.gridChanged(this.gridQueryForm.controls.locationGroupId.value);
+      });
+  }
+  showDetailInformation(locationName: string) {
+    console.log(`showDetailInformation: ${locationName}`);
   }
 
   markCellAsInprocess(gridLocationName: string) {
@@ -153,5 +193,16 @@ export class OutboundGridComponent implements OnInit {
   }
   onUserInputItemNameEvent(itemName: string) {
     console.log(`itemName ${itemName}`);
+  }
+  showPendingInventory(locationName: string) {
+    console.log(`showPendingInventory: ${locationName}`);
+  }
+  showArrivedQuantity(locationName: string) {
+    console.log(`showArrivedQuantity: ${locationName}`);
+  }
+  showDistributionWorkChanged(showDistributionWork) {
+    this.showDistributionWork = showDistributionWork;
+
+    this.gridDisplaySpan = showDistributionWork ? 16 : 24;
   }
 }
