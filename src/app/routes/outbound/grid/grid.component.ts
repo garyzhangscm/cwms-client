@@ -6,6 +6,9 @@ import { GridLocationConfigurationService } from '../services/grid-location-conf
 import { GridDistributionWorkService } from '../services/grid-distribution-work.service';
 import { GridDistributionWork } from '../models/grid-distribution-work';
 import { FormGroup, FormBuilder } from '@angular/forms';
+import { NzMessageService } from 'ng-zorro-antd';
+import { I18NService } from '@core';
+import { InventoryService } from '../../inventory/services/inventory.service';
 
 enum CellStatus {
   OPEN = 'OPEN',
@@ -24,6 +27,11 @@ interface CellData {
 }
 interface RowData {
   cells: CellData[];
+}
+
+interface InventoryData {
+  itemName: string;
+  quantity: number;
 }
 
 @Component({
@@ -90,6 +98,16 @@ export class OutboundGridComponent implements OnInit {
   showDistributionWork = false;
   refresh = true;
   gridDisplaySpan = 24;
+  workInProgress = false;
+
+  processedInventoryVisible = false;
+  pendingInventoryVisible = false;
+  // list of processed inventory
+  // key: item name
+  // value: quantity of the item in the location
+  listOfProcessedInventory: InventoryData[];
+
+  listOfPendingInventory: GridDistributionWork[] = [];
 
   @ViewChild('itemNameTextBox', { static: true }) itemNameTextBox: ElementRef;
 
@@ -98,6 +116,9 @@ export class OutboundGridComponent implements OnInit {
     private gridConfigurationService: GridConfigurationService,
     private gridLocationConfigurationService: GridLocationConfigurationService,
     private gridDistributionWorkService: GridDistributionWorkService,
+    private messageService: NzMessageService,
+    private i18n: I18NService,
+    private inventoryService: InventoryService,
   ) {}
 
   ngOnInit() {
@@ -110,11 +131,36 @@ export class OutboundGridComponent implements OnInit {
       inventoryId: [null],
       itemName: [null],
     });
+
+    // refresh every 1 minutes
+    setTimeout(() => {
+      this.refreshGrid();
+    }, 60000);
   }
 
-  gridChanged(locationGroupId: number) {
-    this.gridRows = [];
+  // Refresh to get the latest status of the
+  // grid
+  refreshGrid() {
+    // only refresh when
+    // 1. we have choosen the grid
+    // 2. fresh checkbox is turn on
+    // 3. no one is working on the page right now
+  }
+  resetForm() {
     this.gridQueryForm.controls.inventoryId.reset();
+    this.gridQueryForm.controls.itemName.reset();
+    this.workInProgress = false;
+  }
+
+  refreshGridDisplay(locationGroupId: number, resetInventoryId?: boolean, resetItemNumber?: boolean) {
+    this.gridRows = [];
+
+    if (resetInventoryId !== false) {
+      this.gridQueryForm.controls.inventoryId.reset();
+    }
+    if (resetItemNumber !== false) {
+      this.gridQueryForm.controls.itemName.reset();
+    }
 
     this.listOfDistributionWork = [];
 
@@ -141,7 +187,9 @@ export class OutboundGridComponent implements OnInit {
           locationName: gridLocationConfiguration.location.name,
           columnSpan: gridLocationConfiguration.columnSpan,
           status: CellStatus.OPEN,
-          progress: (gridLocationConfiguration.arrivedQuantity * 100) / gridLocationConfiguration.pendingQuantity,
+          progress:
+            (gridLocationConfiguration.arrivedQuantity * 100) /
+            (gridLocationConfiguration.pendingQuantity + gridLocationConfiguration.arrivedQuantity),
           pendingQuantity: gridLocationConfiguration.pendingQuantity,
           arrivedQuantity: gridLocationConfiguration.arrivedQuantity,
         });
@@ -151,35 +199,50 @@ export class OutboundGridComponent implements OnInit {
         // Save the last row
         this.gridRows.push(currentRow);
       }
+
+      if (this.gridQueryForm.controls.inventoryId.value) {
+        this.displayDistributionWork(
+          this.gridQueryForm.controls.locationGroupId.value,
+          this.gridQueryForm.controls.inventoryId.value,
+        );
+      }
     });
   }
-  onUserInputInventoryIdEvent() {
-    this.gridDistributionWorkService
-      .get(this.gridQueryForm.controls.locationGroupId.value, this.gridQueryForm.controls.inventoryId.value)
-      .subscribe(gridDistributionWorks => {
-        this.listOfDistributionWork = gridDistributionWorks;
-        gridDistributionWorks.forEach(gridDistributionWork => {
-          this.markCellAsInprocess(gridDistributionWork.gridLocationName);
-        });
-        this.itemNameTextBox.nativeElement.focus();
-      });
+  onUserInputInventoryIdEnter() {
+    this.itemNameTextBox.nativeElement.focus();
   }
+  onUserInputInventoryIdBlur() {
+    if (this.gridQueryForm.controls.inventoryId.value) {
+      this.workInProgress = true;
+      this.displayDistributionWork(
+        this.gridQueryForm.controls.locationGroupId.value,
+        this.gridQueryForm.controls.inventoryId.value,
+      );
+    }
+  }
+
+  displayDistributionWork(locationGroupId: number, inventoryId: string) {
+    this.gridDistributionWorkService.get(locationGroupId, inventoryId).subscribe(gridDistributionWorks => {
+      this.listOfDistributionWork = gridDistributionWorks;
+      gridDistributionWorks.forEach(gridDistributionWork => {
+        this.markCellAsInprocess(gridDistributionWork.gridLocationName);
+      });
+    });
+  }
+
   // Click the grid cell to confirm by the inventory group id(LPN / Pick List Number / Carton Number / etc)
   gridCellClicked(gridLocationConfigurationId: number) {
-    console.log(
-      `start to confirm with gridCellClicked: ${gridLocationConfigurationId} and inventoryId: ${this.gridQueryForm.controls.inventoryId.value}`,
-    );
-    console.log(`this.itemNameTextBox.nativeElement.value: ${this.itemNameTextBox.nativeElement.value}`);
     this.gridDistributionWorkService
       .confirm(gridLocationConfigurationId, this.gridQueryForm.controls.inventoryId.value)
       .subscribe(res => {
-        console.log(`cell confirmed ${JSON.stringify(res)}`);
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
         // reload the grid information after confirm
-        this.gridChanged(this.gridQueryForm.controls.locationGroupId.value);
+        // we will clear the id and item number field as we are already
+        // confirmed the whole id(container)
+        this.refreshGridDisplay(this.gridQueryForm.controls.locationGroupId.value, true, true);
+
+        this.workInProgress = false;
       });
-  }
-  showDetailInformation(locationName: string) {
-    console.log(`showDetailInformation: ${locationName}`);
   }
 
   markCellAsInprocess(gridLocationName: string) {
@@ -191,18 +254,84 @@ export class OutboundGridComponent implements OnInit {
       });
     });
   }
-  onUserInputItemNameEvent(itemName: string) {
-    console.log(`itemName ${itemName}`);
+  onUserInputItemNameEvent() {
+    const inprocessCells = this.getInprocessCell();
+    if (inprocessCells.length > 1) {
+      console.log(`We should only have one in process cell`);
+    } else if (inprocessCells.length === 0) {
+      console.log(`We should have at least one in process cell`);
+    } else {
+      this.gridDistributionWorkService
+        .confirmByItem(
+          this.gridQueryForm.controls.locationGroupId.value,
+          inprocessCells[0].gridLocationConfigurationId,
+          this.gridQueryForm.controls.inventoryId.value,
+          this.gridQueryForm.controls.itemName.value,
+        )
+        .subscribe(res => {
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          // reload the grid information after confirm
+          // we will only reset the item number field so that the user
+          // can continue with the next item in the same id(container)
+          this.refreshGridDisplay(this.gridQueryForm.controls.locationGroupId.value, false, true);
+        });
+    }
   }
-  showPendingInventory(locationName: string) {
-    console.log(`showPendingInventory: ${locationName}`);
+  showPendingInventory(cell: CellData) {
+    this.pendingInventoryVisible = true;
+
+    this.gridDistributionWorkService
+      .getByGridLocation(cell.gridLocationConfigurationId)
+      .subscribe(gridDistributionWorks => {
+        this.listOfPendingInventory = gridDistributionWorks;
+      });
   }
-  showArrivedQuantity(locationName: string) {
-    console.log(`showArrivedQuantity: ${locationName}`);
+  showArrivedQuantity(cell: CellData) {
+    this.processedInventoryVisible = true;
+
+    this.listOfProcessedInventory = [];
+    this.inventoryService.getInventoriesByLocationName(cell.locationName).subscribe(inventories => {
+      const processInventories: InventoryData[] = [];
+      inventories.forEach(inventory => {
+        const matchedProcessedInventory = processInventories.filter(
+          processedInventory => processedInventory.itemName === inventory.item.name,
+        );
+        if (matchedProcessedInventory.length === 0) {
+          processInventories.push({
+            itemName: inventory.item.name,
+            quantity: inventory.quantity,
+          });
+        } else {
+          matchedProcessedInventory[0].quantity += inventory.quantity;
+        }
+      });
+      this.listOfProcessedInventory = processInventories;
+    });
   }
   showDistributionWorkChanged(showDistributionWork) {
     this.showDistributionWork = showDistributionWork;
 
     this.gridDisplaySpan = showDistributionWork ? 16 : 24;
+  }
+  cancelPendingInventoryModal() {
+    this.pendingInventoryVisible = false;
+  }
+  confirmPendingInventoryModal() {
+    this.pendingInventoryVisible = false;
+  }
+  cancelProcessedInventoryModal() {
+    this.processedInventoryVisible = false;
+  }
+  confirmProcessedInventoryModal() {
+    this.processedInventoryVisible = false;
+  }
+
+  getInprocessCell(): CellData[] {
+    let cells: CellData[] = [];
+    this.gridRows.forEach(row => {
+      cells = cells.concat(row.cells.filter(cell => cell.status === CellStatus.IMPROCESS));
+    });
+
+    return cells;
   }
 }
