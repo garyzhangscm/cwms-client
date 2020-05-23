@@ -24,6 +24,9 @@ interface CellData {
   progress: number;
   pendingQuantity: number;
   arrivedQuantity: number;
+  permanentLPNFlag: boolean;
+  permanentLPN: string;
+  currentLPN: string;
 }
 interface RowData {
   cells: CellData[];
@@ -192,6 +195,9 @@ export class OutboundGridComponent implements OnInit {
             (gridLocationConfiguration.pendingQuantity + gridLocationConfiguration.arrivedQuantity),
           pendingQuantity: gridLocationConfiguration.pendingQuantity,
           arrivedQuantity: gridLocationConfiguration.arrivedQuantity,
+          permanentLPNFlag: gridLocationConfiguration.permanentLPNFlag,
+          permanentLPN: gridLocationConfiguration.permanentLPN,
+          currentLPN: gridLocationConfiguration.currentLPN,
         });
       });
 
@@ -227,11 +233,14 @@ export class OutboundGridComponent implements OnInit {
       gridDistributionWorks.forEach(gridDistributionWork => {
         this.markCellAsInprocess(gridDistributionWork.gridLocationName);
       });
+
+      this.workInProgress = false;
     });
   }
 
   // Click the grid cell to confirm by the inventory group id(LPN / Pick List Number / Carton Number / etc)
   gridCellClicked(gridLocationConfigurationId: number) {
+    this.workInProgress = true;
     this.gridDistributionWorkService
       .confirm(gridLocationConfigurationId, this.gridQueryForm.controls.inventoryId.value)
       .subscribe(res => {
@@ -255,6 +264,7 @@ export class OutboundGridComponent implements OnInit {
     });
   }
   onUserInputItemNameEvent() {
+    this.workInProgress = true;
     const inprocessCells = this.getInprocessCell();
     if (inprocessCells.length > 1) {
       console.log(`We should only have one in process cell`);
@@ -274,6 +284,7 @@ export class OutboundGridComponent implements OnInit {
           // we will only reset the item number field so that the user
           // can continue with the next item in the same id(container)
           this.refreshGridDisplay(this.gridQueryForm.controls.locationGroupId.value, false, true);
+          this.workInProgress = false;
         });
     }
   }

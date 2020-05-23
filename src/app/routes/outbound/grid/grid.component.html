@@ -1,92 +1,80 @@
 <page-header></page-header>
+<nz-spin [nzSpinning]="workInProgress" [nzSize]="'large'">
 
-<nz-card [nzExtra]="configTemplate">
-  <form nz-form [formGroup]="gridQueryForm" class="query-form">
-    <div nz-row [nzGutter]="24">
-      <div nz-col [nzSpan]="8">
-        <nz-form-item nzFlex>
-          <nz-form-label>
-            {{ 'location-group' | translate }}
-          </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24">
-            <nz-select (ngModelChange)="refreshGridDisplay($event)" formControlName="locationGroupId">
-              <nz-option
-                *ngFor="let grid of availableGrids"
-                [nzLabel]="grid.locationGroup?.name"
-                [nzValue]="grid.locationGroupId"
-              >
-              </nz-option>
-            </nz-select>
-          </nz-form-control>
-        </nz-form-item>
+  <nz-card [nzExtra]="configTemplate">
+    <form nz-form [formGroup]="gridQueryForm" class="query-form">
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label>
+              {{ 'location-group' | translate }}
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              <nz-select (ngModelChange)="refreshGridDisplay($event)" formControlName="locationGroupId">
+                <nz-option *ngFor="let grid of availableGrids" [nzLabel]="grid.locationGroup?.name"
+                  [nzValue]="grid.locationGroupId">
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
       </div>
-    </div>
 
-    <div nz-row [nzGutter]="24">
-      <div nz-col [nzSpan]="5">
-        <nz-form-item nzFlex>
-          <nz-form-label>
-            id
-          </nz-form-label>
-          <nz-form-control>
-            <!--
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="5">
+          <nz-form-item nzFlex>
+            <nz-form-label>
+              id
+            </nz-form-label>
+            <nz-form-control>
+              <!--
               
             <input type="text" nz-input formControlName="inventoryId" name="inventoryId"
               (keyup.enter)="onUserInputInventoryIdEvent()" />
             -->
-            <input
-              type="text"
-              nz-input
-              formControlName="inventoryId"
-              (keyup.enter)="onUserInputInventoryIdEnter()"
-              (blur)="onUserInputInventoryIdBlur()"
-            />
-          </nz-form-control>
-        </nz-form-item>
-      </div>
+              <input type="text" nz-input formControlName="inventoryId" (keyup.enter)="onUserInputInventoryIdEnter()"
+                (blur)="onUserInputInventoryIdBlur()" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
 
-      <div nz-col [nzSpan]="5">
-        <nz-form-item nzFlex>
-          <nz-form-label>
-            {{ 'item' | translate }}
-          </nz-form-label>
-          <nz-form-control>
-            <input
-              type="text"
-              nz-input
-              #itemNameTextBox
-              formControlName="itemName"
-              (keyup.enter)="onUserInputItemNameEvent()"
-            />
-          </nz-form-control>
-        </nz-form-item>
+        <div nz-col [nzSpan]="5">
+          <nz-form-item nzFlex>
+            <nz-form-label>
+              {{ 'item' | translate }}
+            </nz-form-label>
+            <nz-form-control>
+              <input type="text" nz-input #itemNameTextBox formControlName="itemName"
+                (keyup.enter)="onUserInputItemNameEvent()" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </form>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <!--<button nz-button (click)="onUserInputInventoryIdEvent()">{{'search' | translate}}</button>-->
+        <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
       </div>
     </div>
-  </form>
-  <div nz-row>
-    <div nz-col [nzSpan]="24" class="search-area">
-      <!--<button nz-button (click)="onUserInputInventoryIdEvent()">{{'search' | translate}}</button>-->
-      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
-    </div>
-  </div>
-</nz-card>
+  </nz-card>
 
-<ng-template #configTemplate>
-  <label nz-checkbox [ngModel]="showDistributionWork" (ngModelChange)="showDistributionWorkChanged($event)">
-    <span>{{ 'grid.showDistributionWork' | translate }}</span>
-  </label>
-  <label nz-checkbox [(ngModel)]="refresh">
-    <span>{{ 'grid.refresh' | translate }}</span>
-  </label>
-</ng-template>
+  <ng-template #configTemplate>
+    <label nz-checkbox [ngModel]="showDistributionWork" (ngModelChange)="showDistributionWorkChanged($event)">
+      <span>{{ 'grid.showDistributionWork' | translate }}</span>
+    </label>
+    <label nz-checkbox [(ngModel)]="refresh">
+      <span>{{ 'grid.refresh' | translate }}</span>
+    </label>
+  </ng-template>
 
-<!-- Table to Display the result  -->
-<div nz-row [nzGutter]="8">
-  <div nz-col [nzSpan]="gridDisplaySpan">
-    <table>
-      <tr *ngFor="let gridRow of gridRows">
-        <td *ngFor="let cell of gridRow.cells" [colSpan]="cell.columnSpan" [ngClass]="cell.status">
-          <!--
+  <!-- Table to Display the result  -->
+  <div nz-row [nzGutter]="8">
+    <div nz-col [nzSpan]="gridDisplaySpan">
+      <table>
+        <tr *ngFor="let gridRow of gridRows">
+          <td *ngFor="let cell of gridRow.cells" [colSpan]="cell.columnSpan" [ngClass]="cell.status">
+            <!--
         <nz-card [nzExtra]="showDetailInformationTemplate" [nzActions]="progressTemplate">
 
           <div (click)="gridCellClicked(cell.gridLocationConfigurationId)">
@@ -104,59 +92,59 @@
 
 
         -->
-          <div class="grid-cell-inv">
-            <a (click)="showPendingInventory(cell)" class="badge">
-              <nz-badge [nzCount]="cell.pendingQuantity" nzShowZero>{{ 'pending' | translate }} </nz-badge>
-            </a>
-            <a (click)="showArrivedQuantity(cell)" class="badge">
-              <nz-badge [nzCount]="cell.arrivedQuantity" [nzStyle]="{ backgroundColor: '#52c41a' }" nzShowZero>
-                {{ 'processed' | translate }}
-              </nz-badge>
-            </a>
-          </div>
+            <div class="grid-cell-inv">
+              LPN: <span *ngIf="cell.permanentLPNFlag === true">{{ cell.permanentLPN}}</span>
+              <span *ngIf="cell.permanentLPNFlag === true">{{ cell.currentLPN}}</span>
+              <a (click)="showPendingInventory(cell)" class="badge">
+                <nz-badge [nzCount]="cell.pendingQuantity" nzShowZero>{{ 'pending' | translate }} </nz-badge>
+              </a>
+              <a (click)="showArrivedQuantity(cell)" class="badge">
+                <nz-badge [nzCount]="cell.arrivedQuantity" [nzStyle]="{ backgroundColor: '#52c41a' }" nzShowZero>
+                  {{ 'processed' | translate }}
+                </nz-badge>
+              </a>
+            </div>
 
-          <div class="grid-cell" (click)="gridCellClicked(cell.gridLocationConfigurationId)">
-            {{ cell.locationName }}
-          </div>
-          <div class="grid-cell-progress">
-            <nz-progress [nzPercent]="cell.progress"></nz-progress>
-          </div>
-        </td>
-      </tr>
-    </table>
-  </div>
-  <div nz-col [nzSpan]="8" *ngIf="listOfDistributionWork?.length > 0 && showDistributionWork">
-    <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfDistributionWork">
-      <thead>
-        <tr>
-          <th>
-            {{ 'item' | translate }}
-          </th>
-          <th>
-            {{ 'location' | translate }}
-          </th>
-          <th>
-            {{ 'quantity' | translate }}
-          </th>
+            <div class="grid-cell" (click)="gridCellClicked(cell.gridLocationConfigurationId)">
+              {{ cell.locationName }}
+            </div>
+            <div class="grid-cell-progress">
+              <nz-progress [nzPercent]="cell.progress"></nz-progress>
+            </div>
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let data of rowSelectionTable.data">
-          <td>{{ data.itemName }}</td>
-          <td>{{ data.gridLocationName }}</td>
-          <td>{{ data.quantity }}</td>
-        </tr>
-      </tbody>
-    </nz-table>
+      </table>
+    </div>
+    <div nz-col [nzSpan]="8" *ngIf="listOfDistributionWork?.length > 0 && showDistributionWork">
+      <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfDistributionWork">
+        <thead>
+          <tr>
+            <th>
+              {{ 'item' | translate }}
+            </th>
+            <th>
+              {{ 'location' | translate }}
+            </th>
+            <th>
+              {{ 'quantity' | translate }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of rowSelectionTable.data">
+            <td>{{ data.itemName }}</td>
+            <td>{{ data.gridLocationName }}</td>
+            <td>{{ data.quantity }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
   </div>
-</div>
 
-<nz-modal
-  [(nzVisible)]="processedInventoryVisible"
-  nzTitle="{{ 'processed' | translate }}"
-  (nzOnCancel)="cancelProcessedInventoryModal()"
-  (nzOnOk)="confirmProcessedInventoryModal()"
->
+</nz-spin>
+
+<nz-modal [(nzVisible)]="processedInventoryVisible" nzTitle="{{ 'processed' | translate }}"
+  (nzOnCancel)="cancelProcessedInventoryModal()" (nzOnOk)="confirmProcessedInventoryModal()">
   <nz-table #processedInventoryTable [nzData]="listOfProcessedInventory">
     <thead>
       <tr>
@@ -179,12 +167,8 @@
   </nz-table>
 </nz-modal>
 
-<nz-modal
-  [(nzVisible)]="pendingInventoryVisible"
-  nzTitle="{{ 'pending' | translate }}"
-  (nzOnCancel)="cancelPendingInventoryModal()"
-  (nzOnOk)="confirmPendingInventoryModal()"
->
+<nz-modal [(nzVisible)]="pendingInventoryVisible" nzTitle="{{ 'pending' | translate }}"
+  (nzOnCancel)="cancelPendingInventoryModal()" (nzOnOk)="confirmPendingInventoryModal()">
   <nz-table #pendingInventoryTable [nzData]="listOfPendingInventory">
     <thead>
       <tr>

@@ -17,4 +17,8 @@ export interface GridLocationConfiguration {
 
   pendingQuantity: number;
   arrivedQuantity: number;
+
+  permanentLPNFlag: boolean;
+  permanentLPN: string;
+  currentLPN: string;
 }

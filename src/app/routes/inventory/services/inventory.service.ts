@@ -70,7 +70,7 @@ export class InventoryService {
     return this.http.get(url).pipe(map(res => res.data));
   }
   getInventoriesByLpn(lpn: string): Observable<Inventory[]> {
-    const url = `inventory/inventories?lpn=${lpn}`;
+    const url = `inventory/inventories?lpn=${lpn}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     return this.http.get(url).pipe(map(res => res.data));
   }
   removeInventory(inventory: Inventory): Observable<Inventory> {

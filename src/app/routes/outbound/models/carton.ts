@@ -15,4 +15,7 @@ export interface Carton {
 
   enabled: boolean;
   totalSpace: number;
+
+  shippingCartonFlag: boolean;
+  pickingCartonFlag: boolean;
 }

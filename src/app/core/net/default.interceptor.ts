@@ -129,7 +129,19 @@ export class DefaultInterceptor implements HttpInterceptor {
         // 若一切都正常，则后续操作
         return of(event);
       }),
-      catchError((err: HttpErrorResponse) => this.handleData(err)),
+      /***
+       * Error will be handled at service level
+      catchError((err: HttpErrorResponse) => 
+        this.handleData(err);
+      ),
+       */
+      catchError((err: HttpErrorResponse) => {
+        const errortext = CODEMESSAGE[err.status] || err.statusText;
+        // this.notification.error(`请求错误 ${ev.status}: ${ev.url}`, errortext);
+        this.notification.error(`${err.status}: ${err.url}`, errortext);
+
+        return throwError(err);
+      }),
     );
   }
 }

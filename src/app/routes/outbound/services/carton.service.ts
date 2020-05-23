@@ -11,13 +11,30 @@ import { map } from 'rxjs/operators';
 export class CartonService {
   constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
-  getAll(name?: string, enabled?: boolean): Observable<Carton[]> {
+  getAllPickingCarton(name?: string, enabled?: boolean): Observable<Carton[]> {
+    return this.getAll(name, enabled, true, null);
+  }
+  getAllShippingCarton(name?: string, enabled?: boolean): Observable<Carton[]> {
+    return this.getAll(name, enabled, null, true);
+  }
+  getAll(
+    name?: string,
+    enabled?: boolean,
+    pickingCartonFlag?: boolean,
+    shippingCartonFlag?: boolean,
+  ): Observable<Carton[]> {
     let url = `outbound/cartons?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (name) {
       url = `${url}&name=${name}`;
     }
     if (enabled) {
       url = `${url}&enabled=${enabled}`;
+    }
+    if (pickingCartonFlag) {
+      url = `${url}&pickingCartonFlag=${pickingCartonFlag}`;
+    }
+    if (shippingCartonFlag) {
+      url = `${url}&shippingCartonFlag=${shippingCartonFlag}`;
     }
 
     return this.http.get(url).pipe(map(res => res.data));
