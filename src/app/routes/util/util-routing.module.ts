@@ -4,6 +4,7 @@ import { UtilFileUploadComponent } from './file-upload/file-upload.component';
 import { UtilStackedBarChartComponent } from './stacked-bar-chart/stacked-bar-chart.component';
 import { UtilTestDataInitComponent } from './test-data-init/test-data-init.component';
 import { UtilIconListComponent } from './icon-list/icon-list.component';
+import { UtilTesterComponent } from './tester/tester.component';
 
 const routes: Routes = [
   { path: 'file-upload', component: UtilFileUploadComponent },
@@ -11,6 +12,7 @@ const routes: Routes = [
   { path: 'stacked-bar-chart', component: UtilStackedBarChartComponent },
   { path: 'test-data-init', component: UtilTestDataInitComponent },
   { path: 'icon-list', component: UtilIconListComponent },
+  { path: 'tester', component: UtilTesterComponent },
 ];
 
 @NgModule({

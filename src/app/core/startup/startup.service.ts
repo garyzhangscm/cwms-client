@@ -51,6 +51,7 @@ export class StartupService {
 
   private viaHttp(resolve: any, reject: any) {
     let siteInformationUrl = `resource/site-information`;
+    console.log(`this.tokenService.get().token: ${this.tokenService.get().token}`);
     if (!this.tokenService.get().token) {
       // If the user has not been login, get the default
       // site information
@@ -105,10 +106,15 @@ export class StartupService {
           // Can be set page suffix title, https://ng-alain.com/theme/title
           this.titleService.suffix = res.app.name;
         },
-        () => {},
+        () => {
+          console.log(`error while loading infromation`);
+          (this.injector.get(DA_SERVICE_TOKEN) as ITokenService).clear();
+          this.goToLoginForm();
+        },
         () => {
           // if we are here, we probably get some error when try to load data
           // let's follow back to login form
+          console.log(`finally while loading infromation`);
 
           resolve(null);
         },

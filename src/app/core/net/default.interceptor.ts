@@ -136,9 +136,11 @@ export class DefaultInterceptor implements HttpInterceptor {
       ),
        */
       catchError((err: HttpErrorResponse) => {
+        console.log(`!! Get error ${err.status} while call ${url}`);
         const errortext = CODEMESSAGE[err.status] || err.statusText;
         // this.notification.error(`请求错误 ${ev.status}: ${ev.url}`, errortext);
         this.notification.error(`${err.status}: ${err.url}`, errortext);
+        console.log(`!! will throw error ${err.status}`);
 
         return throwError(err);
       }),

@@ -6,8 +6,6 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 import { IntegrationSupplierDataService } from '../services/integration-supplier-data.service';
 import { SupplierService } from '../../common/services/supplier.service';
 import { I18NService } from '@core';
-import { Customer } from '../../common/models/customer';
-import { IntegrationCustomerData } from '../models/integration-customer-data';
 import { Supplier } from '../../common/models/supplier';
 
 @Component({

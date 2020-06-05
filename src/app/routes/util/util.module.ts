@@ -5,10 +5,12 @@ import { UtilFileUploadComponent } from './file-upload/file-upload.component';
 import { UtilStackedBarChartComponent } from './stacked-bar-chart/stacked-bar-chart.component';
 import { UtilTestDataInitComponent } from './test-data-init/test-data-init.component';
 import { UtilIconListComponent } from './icon-list/icon-list.component';
+import { UtilTesterComponent } from './tester/tester.component';
 
 const COMPONENTS = [UtilFileUploadComponent, UtilStackedBarChartComponent,
   UtilTestDataInitComponent,
-  UtilIconListComponent];
+  UtilIconListComponent,
+  UtilTesterComponent];
 const COMPONENTS_NOROUNT = [];
 
 @NgModule({
