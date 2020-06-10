@@ -28,7 +28,7 @@ export class AuditCountRequestService {
       }
     }
     return this.http
-      .get(`inventory/audit-count-request/${batchId}`)
+      .get(`inventory/audit-count-request/batch/${batchId}`)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem(`inventory.audit-count-request.${batchId}`, res)));
   }

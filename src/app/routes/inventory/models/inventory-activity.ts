@@ -8,6 +8,7 @@ import { InventoryActivityType } from './inventory-activity-type.enum';
 export interface InventoryActivity {
   id: number;
   transactionId: string;
+  transactionGroupId: string;
   lpn: string;
   location: WarehouseLocation;
   locationName?: string;

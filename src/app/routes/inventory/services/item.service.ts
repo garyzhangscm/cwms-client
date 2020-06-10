@@ -6,28 +6,30 @@ import { Client } from '../../common/models/client';
 import { ItemFamily } from '../models/item-family';
 import { Item } from '../models/item';
 import { map } from 'rxjs/operators';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ItemService {
-  constructor(private http: _HttpClient, private gzLocalStorageService: GzLocalStorageServiceService) {}
+  constructor(
+    private http: _HttpClient,
+    private gzLocalStorageService: GzLocalStorageServiceService,
+    private warehouseService: WarehouseService,
+  ) {}
 
   getItems(name?: string, clients?: Client[], itemFamilies?: ItemFamily[]): Observable<Item[]> {
-    let params = '';
+    let url = `inventory/items?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (name) {
-      params = 'name=' + name;
+      url = `${url}&name=${name}`;
     }
     if (clients && clients.length > 0) {
-      params += '&clients=' + clients.join(',');
+      url = `${url}&clientIds=${clients.join(',')}`;
     }
     if (itemFamilies && itemFamilies.length > 0) {
-      params += '&item_families=' + itemFamilies.join(',');
+      url = `${url}&itemFamilyIds=${itemFamilies.join(',')}`;
     }
-    if (params.startsWith('&')) {
-      params = params.substring(1);
-    }
-    const url = 'inventory/items' + (params.length > 0 ? '?' + params : '');
+
     return this.http.get(url).pipe(map(res => res.data));
   }
 

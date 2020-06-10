@@ -55,7 +55,7 @@ export class CycleCountRequestService {
       }
     }
     return this.http
-      .get(`inventory/cycle-count-request/${batchId}`)
+      .get(`inventory/cycle-count-request/batch/${batchId}`)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem(`inventory.cycle-count-request.${batchId}`, res)));
   }
@@ -69,7 +69,7 @@ export class CycleCountRequestService {
       }
     }
     return this.http
-      .get(`inventory/cycle-count-request/${batchId}/open`)
+      .get(`inventory/cycle-count-request/batch/${batchId}/open`)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem(`inventory.cycle-count-request.${batchId}.open`, res)));
   }
@@ -83,7 +83,7 @@ export class CycleCountRequestService {
       }
     }
     return this.http
-      .get(`inventory/cycle-count-request/${batchId}/cancelled`)
+      .get(`inventory/cycle-count-request/batch/${batchId}/cancelled`)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem(`inventory.cycle-count-request.${batchId}.cancelled`, res)));
   }
@@ -97,7 +97,7 @@ export class CycleCountRequestService {
       cycleCountRequestIds.push(cycleCountRequest.id);
     });
     const params = {
-      cycle_count_request_ids: cycleCountRequestIds.join(','),
+      cycleCountRequestIds: cycleCountRequestIds.join(','),
     };
     return this.http.post('inventory/cycle-count-request/confirm', null, params).pipe(map(res => res.data));
   }
@@ -117,7 +117,7 @@ export class CycleCountRequestService {
       cycleCountRequestIds.push(cycleCountRequest.id);
     });
     const params = {
-      cycle_count_request_ids: cycleCountRequestIds.join(','),
+      cycleCountRequestIds: cycleCountRequestIds.join(','),
     };
     return this.http.post('inventory/cycle-count-request/cancel', null, params).pipe(map(res => res.data));
   }
@@ -128,7 +128,7 @@ export class CycleCountRequestService {
       cycleCountRequestIds.push(cycleCountRequest.id);
     });
     const params = {
-      cycle_count_request_ids: cycleCountRequestIds.join(','),
+      cycleCountRequestIds: cycleCountRequestIds.join(','),
     };
     return this.http.post('inventory/cycle-count-request/reopen', null, params).pipe(map(res => res.data));
   }
