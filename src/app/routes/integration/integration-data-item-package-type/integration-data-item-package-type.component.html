@@ -125,20 +125,77 @@
         </tr>
         <tr [nzExpand]="mapOfExpandedId[data.id]" *ngIf="data.itemUnitOfMeasures?.length > 0">
           <td></td>
-          <td colspan="4">
+          <td colspan="14">
             <nz-table #innerTable [nzData]="data.itemUnitOfMeasures" nzSize="middle" [nzShowPagination]="false">
               <thead>
                 <tr>
-                  <th>{{'unit-of-measure' | translate}}</th>
-                  <th>{{'quantity' | translate}}</th>
-                  <th>{{'weight' | translate}}</th>
+
+                  <th nzShowSort nzSortKey="id">id</th>
+                  <th>
+                    {{ 'item-id' | translate }}
+                  </th>
+                  <th>
+                    {{ 'item-name' | translate }}
+                  </th>
+                  <th>
+                    {{ 'item-package-type-id' | translate }}
+                  </th>
+                  <th>
+                    {{ 'item-package-type-name' | translate }}
+                  </th>
+
+                  <th>
+                    {{'item-unit-of-measure.id' | translate}}</th>
+                  <th nzShowSort nzSortKey="name">
+                    {{'item-unit-of-measure.name' | translate}}</th>
+
+                  <th>
+                    {{ 'quantity' | translate }}
+                  </th>
+                  <th>
+                    {{ 'weight' | translate }}
+                  </th>
+                  <th>
+                    {{ 'length' | translate }}
+                  </th>
+                  <th>
+                    {{ 'width' | translate }}
+                  </th>
+                  <th>
+                    {{ 'height' | translate }}
+                  </th>
+
+                  <th>
+                    {{ 'warehouse-id' | translate }}
+                  </th>
+                  <th>
+                    {{ 'warehouse-name' | translate }}
+                  </th>
                 </tr>
               </thead>
     <tbody>
       <tr *ngFor="let data of innerTable.data">
-        <td>{{ data.unitOfMeasure?.name }}</td>
+        <td>{{ data.id }}</td>
+
+        <td>{{ data.itemId }}</td>
+        <td>{{ data.itemName }}</td>
+
+
+        <td>{{ data.itemPackageTypeId }}</td>
+        <td>{{ data.itemPackageTypeName }}</td>
+
+        <td>{{ data.unitOfMeasureId }}</td>
+        <td>{{ data.unitOfMeasureName }}</td>
+
         <td>{{ data.quantity }}</td>
         <td>{{ data.weight }}</td>
+
+        <td>{{ data.length }}</td>
+        <td>{{ data.width }}</td>
+        <td>{{ data.height }}</td>
+
+        <td>{{ data.warehouseId }}</td>
+        <td>{{ data.warehouseName }}</td>
       </tr>
     </tbody>
   </nz-table>

@@ -21,4 +21,5 @@ export interface IntegrationItemData {
   status: IntegrationStatus;
   insertTime: number[];
   lastUpdateTime: number[];
+  errorMessage: string;
 }

@@ -6,7 +6,7 @@
         <nz-form-label for="supplier" [nzSm]="3" [nzXs]="3">
           {{ 'supplier' | translate }}
         </nz-form-label>
-        <nz-select nzMode="tags" formControlName="taggedSupplier">
+        <nz-select nzMode="tags" formControlName="taggedSuppliers">
           <nz-option *ngFor="let supplier of suppliers" [nzLabel]="supplier.label" [nzValue]="supplier.value">
           </nz-option>
         </nz-select>
@@ -112,8 +112,8 @@
 
         <td>{{ data.name }}</td>
         <td>{{ data.description }}</td>
-        <td>{{ data.contactor.firstname }}</td>
-        <td>{{ data.contactor.lastname }}</td>
+        <td>{{ data.contactorFirstname }}</td>
+        <td>{{ data.contactorLastname }}</td>
         <td>{{ data.addressCountry }}</td>
         <td>{{ data.addressState }}</td>
         <td>{{ data.addressCounty }}</td>

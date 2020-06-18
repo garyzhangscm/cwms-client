@@ -44,7 +44,7 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
   <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination
-    [nzData]="listOfAllIntegrationInventoryAdjustmentConfirmations">
+    [nzData]="listOfAllIntegrationInventoryAttributeChangeConfirmations">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
         <th nzShowSort nzSortKey="id">id</th>
@@ -74,8 +74,19 @@
         </th>
 
         <th>
-          {{ 'adjustQuantity' | translate }}
+          {{ 'quantity' | translate }}
         </th>
+        <th>
+          {{ 'attributeName' | translate }}
+        </th>
+        <th>
+          {{ 'originalValue' | translate }}
+        </th>
+        <th>
+          {{ 'newValue' | translate }}
+        </th>
+
+
         <th>
           {{ 'integration.status' | translate }}
         </th>
@@ -101,13 +112,16 @@
         <td>{{ data.itemName }}</td>
         <td>{{ data.inventoryStatusId }}</td>
         <td>{{ data.inventoryStatusName }}</td>
-        <td>{{ data.adjustQuantity }}</td>
+        <td>{{ data.quantity }}</td>
+        <td>{{ data.attributeName }}</td>
+        <td>{{ data.originalValue }}</td>
+        <td>{{ data.newValue }}</td>
 
         <td>{{ data.status }}</td>
         <td>
           {{ data.insertTime[1] }}/{{ data.insertTime[2] }}/{{ data.insertTime[0] }} {{ data.insertTime[3] }}:{{
-                  data.insertTime[4]
-                }}:{{ data.insertTime[5] }}
+                    data.insertTime[4]
+                  }}:{{ data.insertTime[5] }}
         </td>
         <td>
           {{ data.lastUpdateTime[1] }}/{{ data.lastUpdateTime[2] }}/{{ data.lastUpdateTime[0] }}

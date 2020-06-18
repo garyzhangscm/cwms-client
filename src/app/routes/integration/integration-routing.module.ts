@@ -13,7 +13,7 @@ import { IntegrationIntegrationDataReceiptComponent } from './integration-data-r
 import { IntegrationIntegrationDataReceiptConfirmComponent } from './integration-data-receipt-confirm/integration-data-receipt-confirm.component';
 import { IntegrationIntegrationDataOrderConfirmComponent } from './integration-data-order-confirm/integration-data-order-confirm.component';
 import { IntegrationIntegrationDataInventoryAdjustComponent } from './integration-data-inventory-adjust/integration-data-inventory-adjust.component';
-import { IntegrationIntegrationDataInventoryStatusChangeComponent } from './integration-data-inventory-status-change/integration-data-inventory-status-change.component';
+import { IntegrationIntegrationDataInventoryAttributeChangeComponent } from './integration-data-inventory-attribute-change/integration-data-inventory-attribute-change.component';
 
 const routes: Routes = [
   { path: 'integration-data', component: IntegrationIntegrationDataComponent },
@@ -30,8 +30,8 @@ const routes: Routes = [
   { path: 'integration-data-order-confirm', component: IntegrationIntegrationDataOrderConfirmComponent },
   { path: 'integration-data-inventory-adjust', component: IntegrationIntegrationDataInventoryAdjustComponent },
   {
-    path: 'integration-data-inventory-status-change',
-    component: IntegrationIntegrationDataInventoryStatusChangeComponent,
+    path: 'integration-data-inventory-attribute-change',
+    component: IntegrationIntegrationDataInventoryAttributeChangeComponent,
   },
 ];
 

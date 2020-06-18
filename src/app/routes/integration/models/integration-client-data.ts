@@ -18,4 +18,5 @@ export interface IntegrationClientData {
   status: IntegrationStatus;
   insertTime: number[];
   lastUpdateTime: number[];
+  errorMessage: string;
 }

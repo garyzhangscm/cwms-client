@@ -18,4 +18,5 @@ export interface IntegrationSupplierData {
   status: IntegrationStatus;
   insertTime: number[];
   lastUpdateTime: number[];
+  errorMessage: string;
 }

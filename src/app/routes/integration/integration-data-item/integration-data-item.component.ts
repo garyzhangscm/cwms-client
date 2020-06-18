@@ -42,6 +42,7 @@ export class IntegrationIntegrationDataItemComponent implements OnInit {
   search(): void {
     this.searching = true;
     this.integrationItemDataService.getItemData().subscribe(integrationItemDataRes => {
+      console.log(`integrationItemDataRes:\n${JSON.stringify(integrationItemDataRes)}`);
       this.listOfAllIntegrationItemData = integrationItemDataRes;
       this.listOfDisplayIntegrationItemData = integrationItemDataRes;
       this.searching = false;

@@ -32,22 +32,22 @@ export class ClientService {
     }
 
     return this.http
-      .get('common/client/' + clientId)
+      .get('common/clients/' + clientId)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem('common.client.' + clientId, res)));
   }
 
   addClient(client: Client): Observable<Client> {
-    return this.http.post('common/client', client).pipe(map(res => res.data));
+    return this.http.post('common/clients', client).pipe(map(res => res.data));
   }
 
   changeClient(client: Client): Observable<Client> {
-    const url = 'common/client/' + client.id;
+    const url = 'common/clients/' + client.id;
     return this.http.put(url, client).pipe(map(res => res.data));
   }
 
   removeClient(client: Client): Observable<Client> {
-    const url = 'common/client/' + client.id;
+    const url = 'common/clients/' + client.id;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 
@@ -59,6 +59,6 @@ export class ClientService {
     const params = {
       client_ids: clientIds.join(','),
     };
-    return this.http.delete('common/client', params).pipe(map(res => res.data));
+    return this.http.delete('common/clients', params).pipe(map(res => res.data));
   }
 }

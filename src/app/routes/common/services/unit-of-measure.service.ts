@@ -32,22 +32,22 @@ export class UnitOfMeasureService {
     }
 
     return this.http
-      .get('common/unit-of-measure/' + unitOfMeasureId)
+      .get('common/unit-of-measures/' + unitOfMeasureId)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem('common.unit-of-measure.' + unitOfMeasureId, res)));
   }
 
   addUnitOfMeasure(unitOfMeasure: UnitOfMeasure): Observable<UnitOfMeasure> {
-    return this.http.post('common/unit-of-measure', unitOfMeasure).pipe(map(res => res.data));
+    return this.http.post('common/unit-of-measures', unitOfMeasure).pipe(map(res => res.data));
   }
 
   changeUnitOfMeasure(unitOfMeasure: UnitOfMeasure): Observable<UnitOfMeasure> {
-    const url = 'common/unit-of-measure/' + unitOfMeasure.id;
+    const url = 'common/unit-of-measures/' + unitOfMeasure.id;
     return this.http.put(url, unitOfMeasure).pipe(map(res => res.data));
   }
 
   removeUnitOfMeasure(unitOfMeasure: UnitOfMeasure): Observable<UnitOfMeasure> {
-    const url = 'common/unit-of-measure/' + unitOfMeasure.id;
+    const url = 'common/unit-of-measures/' + unitOfMeasure.id;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 
@@ -59,6 +59,6 @@ export class UnitOfMeasureService {
     const params = {
       unit_of_measure_ids: unitOfMeasureIds.join(','),
     };
-    return this.http.delete('common/unit-of-measure', params).pipe(map(res => res.data));
+    return this.http.delete('common/unit-of-measures', params).pipe(map(res => res.data));
   }
 }

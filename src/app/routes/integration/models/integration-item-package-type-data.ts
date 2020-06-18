@@ -25,4 +25,5 @@ export interface IntegrationItemPackageTypeData {
   status: IntegrationStatus;
   insertTime: number[];
   lastUpdateTime: number[];
+  errorMessage: string;
 }

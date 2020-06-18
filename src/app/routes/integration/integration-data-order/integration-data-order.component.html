@@ -7,12 +7,8 @@
           {{ 'integration.date-time' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
-          <nz-range-picker
-            [nzShowTime]="{ nzHideDisabledOptions: true }"
-            nzFormat="yyyy-MM-dd HH:mm:ss"
-            formControlName="integrationDateTimeRanger"
-            name="integrationDateTimeRanger"
-          >
+          <nz-range-picker [nzShowTime]="{ nzHideDisabledOptions: true }" nzFormat="yyyy-MM-dd HH:mm:ss"
+            formControlName="integrationDateTimeRanger" name="integrationDateTimeRanger">
           </nz-range-picker>
         </nz-form-control>
       </nz-form-item>
@@ -44,37 +40,26 @@
   </div>
 </form>
 
+
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationItemData">
+  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationOrders" #nestedTable>
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
+
+
         <th nzShowExpand></th>
         <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="name">
-          {{ 'name' | translate }}
+        <th nzShowSort nzSortKey="number">
+          {{ 'order.number' | translate }}
         </th>
-        <th nzShowFilter>
-          {{ 'item.description' | translate }}
+        <th nzShowFilter [nzFilters]="filtersByShipToCustomer"
+          (nzFilterChange)="filter($event, selectedFiltersByBillToCustomer)">
+          {{ 'shipToCustomer' | translate }}
         </th>
-        <th>
-          {{ 'client-id' | translate }}
-        </th>
-
-        <th>
-          {{ 'client-name' | translate }}
-        </th>
-        <th>
-          {{ 'item.item-family' | translate }}
-        </th>
-        <th>
-          {{ 'unit-cost' | translate }}
-        </th>
-        <th>
-          {{ 'warehouse-id' | translate }}
-        </th>
-        <th>
-          {{ 'warehouse-name' | translate }}
+        <th nzShowFilter [nzFilters]="filtersByBillToCustomer"
+          (nzFilterChange)="filter(selectedFiltersByShipToCustomer, $event)">
+          {{ 'order.billToCustomer' | translate }}
         </th>
         <th>
           {{ 'integration.status' | translate }}
@@ -85,65 +70,141 @@
         <th>
           {{ 'integration.lastUpdateTime' | translate }}
         </th>
+        <th>
+          {{ 'integration.errorMessage' | translate }}
+        </th>
       </tr>
     </thead>
     <tbody>
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <tr>
+
           <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]"></td>
           <td>{{ data.id }}</td>
-
-          <td>{{ data.name }}</td>
-          <td>{{ data.description }}</td>
-          <td>{{ data.clientId }}</td>
-          <td>{{ data.clientName }}</td>
-          <td>{{ data.itemFamily?.name }}</td>
-          <td>{{ data.unitCost }}</td>
-          <td>{{ data.warehouseId }}</td>
-          <td>{{ data.warehouseName }}</td>
-
+          <td>{{ data.number }}</td>
+          <td>
+            <div *ngIf="data.shipToCustomer != null">
+              <a nz-tooltip [nzTooltipTitle]="shipToCustomerTooltipTpl">
+                {{ data.shipToCustomer.name }}
+              </a>
+              <ng-template #shipToCustomerTooltipTpl>
+                <div>{{ data.shipToCustomer.contactor.firstname }} {{ data.shipToCustomer.contactor.lastname }}</div>
+                <div>
+                  {{ data.shipToCustomer.addressLine1 }}
+                </div>
+                <div *ngIf="data.shipToCustomer.addressLine2 != null">
+                  {{ data.shipToCustomer.addressLine2 }}
+                </div>
+                <div>
+                  {{ data.shipToCustomer.addressCity }}, {{ data.shipToCustomer.addressState }}
+                  {{ data.shipToCustomer.addressPostcode }}
+                </div>
+              </ng-template>
+            </div>
+            <div *ngIf="data.shipToCustomer === null">
+              <a nz-tooltip [nzTooltipTitle]="shipToAddressTooltipTpl">
+                {{ data.shipTocontactor.firstname }} {{ data.shipTocontactor.lastname }}
+              </a>
+              <ng-template #shipToAddressTooltipTpl>
+                <div>
+                  {{ data.shipToAddressLine1 }}
+                </div>
+                <div *ngIf="data.shipToAddressLine2 != null">
+                  {{ data.shipToAddressLine2 }}
+                </div>
+                <div>
+                  {{ data.shipToAddressCity }}, {{ data.shipToAddressState }}
+                  {{ data.shipToAddressPostcode }}
+                </div>
+              </ng-template>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="data.billToCustomer != null">
+              <a nz-tooltip [nzTooltipTitle]="billToCustomerTooltipTpl">
+                {{ data.billToCustomer.name }}
+              </a>
+              <ng-template #billToCustomerTooltipTpl>
+                <div>{{ data.billToCustomer.contactor.firstname }} {{ data.billToCustomer.contactor.lastname }}</div>
+                <div>
+                  {{ data.billToCustomer.addressLine1 }}
+                </div>
+                <div *ngIf="data.billToCustomer.addressLine2 != null">
+                  {{ data.billToCustomer.addressLine2 }}
+                </div>
+                <div>
+                  {{ data.billToCustomer.addressCity }}, {{ data.billToCustomer.addressState }}
+                  {{ data.billToCustomer.addressPostcode }}
+                </div>
+              </ng-template>
+            </div>
+            <div *ngIf="data.billToCustomer === null">
+              <a nz-tooltip [nzTooltipTitle]="billToAddressTooltipTpl">
+                {{ data.billTocontactor.firstname }} {{ data.billTocontactor.lastname }}
+              </a>
+              <ng-template #billToAddressTooltipTpl>
+                <div>
+                  {{ data.billToAddressLine1 }}
+                </div>
+                <div *ngIf="data.billToAddressLine2 != null">
+                  {{ data.billToAddressLine2 }}
+                </div>
+                <div>
+                  {{ data.billToAddressCity }}, {{ data.billToAddressState }}
+                  {{ data.billToAddressPostcode }}
+                </div>
+              </ng-template>
+            </div>
+          </td>
           <td>{{ data.status }}</td>
           <td>
             {{ data.insertTime[1] }}/{{ data.insertTime[2] }}/{{ data.insertTime[0] }} {{ data.insertTime[3] }}:{{
-              data.insertTime[4]
-            }}:{{ data.insertTime[5] }}
+                data.insertTime[4]
+              }}:{{ data.insertTime[5] }}
           </td>
           <td>
             {{ data.lastUpdateTime[1] }}/{{ data.lastUpdateTime[2] }}/{{ data.lastUpdateTime[0] }}
             {{ data.lastUpdateTime[3] }}:{{ data.lastUpdateTime[4] }}:{{ data.lastUpdateTime[5] }}
           </td>
+          <td>{{ data.errorMessage }}</td>
+
         </tr>
-        <tr [nzExpand]="mapOfExpandedId[data.id]" *ngIf="data.itemPackageTypes?.length > 0">
-          <td></td>
-          <td colspan="4">
+        <tr [nzExpand]="mapOfExpandedId[data.id]" class="inner-table">
+          <td colspan="2"></td>
+          <td colspan="3">
             <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
-              <nz-tab *ngFor="let itemPackageType of data.itemPackageTypes" [nzTitle]="itemPackageType.name">
-                <nz-table
-                  #innerTable
-                  [nzData]="itemPackageType.itemUnitOfMeasures"
-                  nzSize="middle"
-                  [nzShowPagination]="false"
-                >
+              <nz-tab nzTitle=" {{ 'order.line' | translate }}">
+                <nz-table #innerTable [nzData]="data.orderLines" nzSize="middle" [nzShowPagination]="false">
                   <thead>
-                    <tr>
-                      <th>{{ 'unit-of-measure' | translate }}</th>
-                      <th>{{ 'quantity' | translate }}</th>
-                      <th>{{ 'weight' | translate }}</th>
-                    </tr>
+                    <th>
+                      {{ 'order.line.number' | translate }}
+                    </th>
+                    <th>
+                      {{ 'item' | translate }}
+                    </th>
+                    <th>
+                      {{ 'order.line.expectedQuantity' | translate }}
+                    </th>
+                    <th>
+                      {{ 'inventory.status' | translate }}
+                    </th>
                   </thead>
-                  <tbody>
-                    <tr *ngFor="let data of innerTable.data">
-                      <td>{{ data.unitOfMeasure?.name }}</td>
-                      <td>{{ data.quantity }}</td>
-                      <td>{{ data.weight }}</td>
-                    </tr>
-                  </tbody>
-                </nz-table>
-              </nz-tab>
-            </nz-tabset>
-          </td>
-        </tr>
-      </ng-template>
+    <tbody>
+      <tr *ngFor="let orderLine of data.orderLines">
+        <td>{{ orderLine.number }}</td>
+        <td>{{ orderLine.item.name }}</td>
+        <td>{{ orderLine.expectedQuantity }}</td>
+        <td>{{ 'INVENTORY-STATUS-' + orderLine.inventoryStatus.name | translate}}</td>
+      </tr>
     </tbody>
+  </nz-table>
+  </nz-tab>
+
+
+  </nz-tabset>
+  </td>
+  </tr>
+  </ng-template>
+  </tbody>
   </nz-table>
 </div>

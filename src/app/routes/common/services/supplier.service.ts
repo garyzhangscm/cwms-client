@@ -32,22 +32,22 @@ export class SupplierService {
     }
 
     return this.http
-      .get('common/supplier/' + supplierId)
+      .get('common/suppliers/' + supplierId)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem('common.supplier.' + supplierId, res)));
   }
 
   addSupplier(supplier: Supplier): Observable<Supplier> {
-    return this.http.post('common/supplier', supplier).pipe(map(res => res.data));
+    return this.http.post('common/suppliers', supplier).pipe(map(res => res.data));
   }
 
   changeSupplier(supplier: Supplier): Observable<Supplier> {
-    const url = 'common/supplier/' + supplier.id;
+    const url = 'common/suppliers/' + supplier.id;
     return this.http.put(url, supplier).pipe(map(res => res.data));
   }
 
   removeSupplier(supplier: Supplier): Observable<Supplier> {
-    const url = 'common/supplier/' + supplier.id;
+    const url = 'common/suppliers/' + supplier.id;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 
@@ -59,6 +59,6 @@ export class SupplierService {
     const params = {
       supplier_ids: supplierIds.join(','),
     };
-    return this.http.delete('common/supplier', params).pipe(map(res => res.data));
+    return this.http.delete('common/suppliers', params).pipe(map(res => res.data));
   }
 }

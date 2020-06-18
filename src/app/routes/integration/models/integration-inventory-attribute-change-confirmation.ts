@@ -1,15 +1,21 @@
-import { IntegrationOrderLineConfirmation } from './integration-order-line-confirmation';
 import { IntegrationStatus } from './integration-status.enum';
 
-export interface IntegrationOrderConfirmation {
+export interface IntegrationInventoryAttributeChangeConfirmation {
   id: number;
 
-  number: string;
+  itemId: number;
+  itemName: string;
 
   warehouseId: number;
   warehouseName: string;
 
-  orderLines: IntegrationOrderLineConfirmation[];
+  quantity: number;
+
+  inventoryStatusId: number;
+  inventoryStatusName: string;
+
+  clientId: number;
+  clientName: string;
 
   status: IntegrationStatus;
   insertTime: number[];

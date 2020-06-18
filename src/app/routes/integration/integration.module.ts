@@ -14,9 +14,11 @@ import { IntegrationIntegrationDataReceiptComponent } from './integration-data-r
 import { IntegrationIntegrationDataReceiptConfirmComponent } from './integration-data-receipt-confirm/integration-data-receipt-confirm.component';
 import { IntegrationIntegrationDataOrderConfirmComponent } from './integration-data-order-confirm/integration-data-order-confirm.component';
 import { IntegrationIntegrationDataInventoryAdjustComponent } from './integration-data-inventory-adjust/integration-data-inventory-adjust.component';
-import { IntegrationIntegrationDataInventoryStatusChangeComponent } from './integration-data-inventory-status-change/integration-data-inventory-status-change.component';
+import { IntegrationIntegrationDataInventoryAttributeChangeComponent } from './integration-data-inventory-attribute-change/integration-data-inventory-attribute-change.component';
 
-const COMPONENTS = [IntegrationIntegrationDataComponent, IntegrationIntegrationDataClientComponent,
+const COMPONENTS = [
+  IntegrationIntegrationDataComponent,
+  IntegrationIntegrationDataClientComponent,
   IntegrationIntegrationDataClientComponent,
   IntegrationIntegrationDataCustomerComponent,
   IntegrationIntegrationDataItemComponent,
@@ -29,7 +31,8 @@ const COMPONENTS = [IntegrationIntegrationDataComponent, IntegrationIntegrationD
   IntegrationIntegrationDataReceiptConfirmComponent,
   IntegrationIntegrationDataOrderConfirmComponent,
   IntegrationIntegrationDataInventoryAdjustComponent,
-  IntegrationIntegrationDataInventoryStatusChangeComponent];
+  IntegrationIntegrationDataInventoryAttributeChangeComponent,
+];
 const COMPONENTS_NOROUNT = [];
 
 @NgModule({

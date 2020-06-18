@@ -12,4 +12,5 @@ export interface IntegrationItemFamilyData {
   status: IntegrationStatus;
   insertTime: number[];
   lastUpdateTime: number[];
+  errorMessage: string;
 }

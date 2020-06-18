@@ -103,6 +103,9 @@
         <th>
           {{ 'integration.lastUpdateTime' | translate }}
         </th>
+        <th>
+          {{ 'integration.errorMessage' | translate }}
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -111,8 +114,8 @@
 
         <td>{{ data.name }}</td>
         <td>{{ data.description }}</td>
-        <td>{{ data.contactor.firstname }}</td>
-        <td>{{ data.contactor.lastname }}</td>
+        <td>{{ data.contactorFirstname }}</td>
+        <td>{{ data.contactorLastname }}</td>
         <td>{{ data.addressCountry }}</td>
         <td>{{ data.addressState }}</td>
         <td>{{ data.addressCounty }}</td>
@@ -132,6 +135,7 @@
           {{ data.lastUpdateTime[1] }}/{{ data.lastUpdateTime[2] }}/{{ data.lastUpdateTime[0] }}
           {{ data.lastUpdateTime[3] }}:{{ data.lastUpdateTime[4] }}:{{ data.lastUpdateTime[5] }}
         </td>
+        <td>{{ data.errorMessage }}</td>
       </tr>
 
     </tbody>

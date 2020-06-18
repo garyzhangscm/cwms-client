@@ -4,7 +4,7 @@
   <nz-card [nzExtra]="extraTemplate" *ngIf="testScenarioSuit">
     <nz-steps nzDirection="vertical">
       <nz-step *ngFor="let testScenario of testScenarioSuit.testScenarios" nzTitle="{{testScenario.name}}"
-        nzDescription="{{testScenario.name}}" [nzStatus]="mapOfStepStatus[testScenario.name]"></nz-step>
+        nzDescription="{{testScenario.description}}" [nzStatus]="mapOfStepStatus[testScenario.name]"></nz-step>
     </nz-steps>
   </nz-card>
   <ng-template #extraTemplate>

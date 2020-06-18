@@ -23,4 +23,5 @@ export interface IntegrationItemUnitOfMeasureData {
   status: IntegrationStatus;
   insertTime: number[];
   lastUpdateTime: number[];
+  errorMessage: string;
 }

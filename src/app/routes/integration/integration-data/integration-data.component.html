@@ -1,6 +1,6 @@
 <page-header> </page-header>
 
-<nz-tabset (nzSelectChange)="refreshData($event)">
+<nz-tabset>
   <nz-tab nzTitle="{{ 'integration.in.client' | translate }}">
     <app-integration-integration-data-client></app-integration-integration-data-client>
   </nz-tab>
@@ -50,9 +50,9 @@
     <app-integration-integration-data-inventory-adjust></app-integration-integration-data-inventory-adjust>
   </nz-tab>
 
-  <nz-tab nzTitle="{{ 'integration.out.inventory-status-change' | translate }}">
-    <app-integration-integration-data-inventory-status-change>
-    </app-integration-integration-data-inventory-status-change>
+  <nz-tab nzTitle="{{ 'integration.out.inventory-attribute-change' | translate }}">
+    <app-integration-integration-data-inventory-attribute-change>
+    </app-integration-integration-data-inventory-attribute-change>
   </nz-tab>
 
 </nz-tabset>

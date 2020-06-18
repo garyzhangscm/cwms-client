@@ -10,8 +10,4 @@ export class IntegrationIntegrationDataComponent implements OnInit {
   constructor(private http: _HttpClient) {}
 
   ngOnInit() {}
-
-  refreshData(index: number) {
-    console.log(`index ${index} selected!`);
-  }
 }

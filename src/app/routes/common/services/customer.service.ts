@@ -33,22 +33,22 @@ export class CustomerService {
     }
 
     return this.http
-      .get('common/customer/' + customerId)
+      .get('common/customers/' + customerId)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem('common.customer.' + customerId, res)));
   }
 
   addCustomer(customer: Customer): Observable<Customer> {
-    return this.http.post('common/customer', customer).pipe(map(res => res.data));
+    return this.http.post('common/customers', customer).pipe(map(res => res.data));
   }
 
   changeCustomer(customer: Customer): Observable<Customer> {
-    const url = 'common/customer/' + customer.id;
+    const url = 'common/customers/' + customer.id;
     return this.http.put(url, customer).pipe(map(res => res.data));
   }
 
   removeCustomer(customer: Customer): Observable<Customer> {
-    const url = 'common/customer/' + customer.id;
+    const url = 'common/customers/' + customer.id;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 
@@ -60,6 +60,6 @@ export class CustomerService {
     const params = {
       customer_ids: customerIds.join(','),
     };
-    return this.http.delete('common/customer', params).pipe(map(res => res.data));
+    return this.http.delete('common/customers', params).pipe(map(res => res.data));
   }
 }
