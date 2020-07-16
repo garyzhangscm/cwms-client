@@ -16,11 +16,14 @@ export class LocationGroupService {
     return this.http.get(url).pipe(map(res => res.data));
   }
 
+  getLocationGroup(id: string): Observable<LocationGroup> {
+    return this.http.get(`layout/locationgroups/${id}`).pipe(map(res => res.data));
+  }
   getLocationGroups(locationGroupTypes: string[]): Observable<LocationGroup[]> {
     const url = `layout/locationgroups?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (locationGroupTypes != null) {
       const params = {
-        location_group_types: locationGroupTypes.join(','),
+        locationGroupTypes: locationGroupTypes.join(','),
       };
       return this.http.get(url, params).pipe(map(res => res.data));
     } else {
@@ -52,7 +55,7 @@ export class LocationGroupService {
       locationGroupIds.push(locationGroup.id);
     });
     const params = {
-      location_group_ids: locationGroupIds.join(','),
+      locationGroupIds: locationGroupIds.join(','),
     };
     return this.http.delete('layout/locationgroups', params).pipe(map(res => res.data));
   }

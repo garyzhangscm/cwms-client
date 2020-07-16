@@ -6,6 +6,10 @@ import { LocationGroup } from '../models/location-group';
 import { LocationGroupService } from '../services/location-group.service';
 import { I18NService } from '@core';
 import { NzInputDirective, NzModalService, NzMessageService } from 'ng-zorro-antd';
+import { LocationVolumeTrackingPolicy } from '../models/location-volume-tracking-policy.enum';
+import { InventoryConsolidationStrategy } from '../models/inventory-consolidation-strategy.enum';
+import { ActivatedRoute } from '@angular/router';
+import { TitleService } from '@delon/theme';
 
 @Component({
   selector: 'app-warehouse-layout-location-group',
@@ -14,9 +18,14 @@ import { NzInputDirective, NzModalService, NzMessageService } from 'ng-zorro-ant
 })
 export class WarehouseLayoutLocationGroupComponent implements OnInit {
   // Select control for Location Group Types
-  locationGroupTypes: Array<{ label: string; value: string }> = [];
+  // locationGroupTypes: Array<{ label: string; value: string }> = [];
+  locationGroupTypes: LocationGroupType[];
+  locationVolumeTrackingPolicy = LocationVolumeTrackingPolicy;
+  inventoryConsolidationStrategy = InventoryConsolidationStrategy;
   // Form related data and functions
   searchForm: FormGroup;
+
+  editCache: { [key: string]: { edit: boolean; data: LocationGroup; locationGroupTypeName: string } } = {};
 
   // Table data for display
   listOfAllLocationGroups: LocationGroup[] = [];
@@ -41,11 +50,6 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
   // list of checked checkbox
   mapOfCheckedId: { [key: string]: boolean } = {};
 
-  // editable cell
-  editId: string | null;
-  editCol: string | null;
-  @ViewChild(NzInputDirective, { static: false, read: ElementRef }) inputElement: ElementRef;
-
   constructor(
     private fb: FormBuilder,
     private locationGroupTypeService: LocationGroupTypeService,
@@ -53,19 +57,26 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
     private i18n: I18NService,
     private modalService: NzModalService,
     private messageService: NzMessageService,
+    private activatedRoute: ActivatedRoute,
+    private titleService: TitleService,
   ) {}
 
   ngOnInit() {
+    this.titleService.setTitle(this.i18n.fanyi('menu.main.layout.location.group'));
     // initiate the search form
     this.searchForm = this.fb.group({
       taggedLocationGroupTypes: [null],
     });
 
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.id) {
+        this.search(params.id);
+      }
+    });
+
     // initiate the select control
     this.locationGroupTypeService.loadLocationGroupTypes().subscribe((locationGroupTypeList: LocationGroupType[]) => {
-      locationGroupTypeList.forEach(locationGroupType =>
-        this.locationGroupTypes.push({ label: locationGroupType.description, value: locationGroupType.id.toString() }),
-      );
+      this.locationGroupTypes = locationGroupTypeList;
     });
   }
 
@@ -77,31 +88,41 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
     this.filtersByDescription = [];
     this.filtersByLocationGroupType = [];
   }
-  search(): void {
-    this.locationGroupService
-      .getLocationGroups(this.searchForm.controls.taggedLocationGroupTypes.value)
-      .subscribe(locationGroupsRes => {
-        this.listOfAllLocationGroups = locationGroupsRes;
-        this.listOfDisplayLocationGroups = locationGroupsRes;
-
-        this.filtersByName = [];
-        this.filtersByDescription = [];
-        this.filtersByLocationGroupType = [];
-
-        const existingLocationGroupTypeId = new Set();
-
-        this.listOfAllLocationGroups.forEach(locationGroup => {
-          this.filtersByName.push({ text: locationGroup.name, value: locationGroup.name });
-          this.filtersByDescription.push({ text: locationGroup.description, value: locationGroup.description });
-          if (!existingLocationGroupTypeId.has(locationGroup.locationGroupType.id)) {
-            this.filtersByLocationGroupType.push({
-              text: locationGroup.locationGroupType.description,
-              value: locationGroup.locationGroupType.id,
-            });
-            existingLocationGroupTypeId.add(locationGroup.locationGroupType.id);
-          }
-        });
+  search(id?: string): void {
+    if (id) {
+      this.locationGroupService.getLocationGroup(id).subscribe(locationGroupsRes => {
+        this.setupLocationGroupRes([locationGroupsRes]);
       });
+    } else {
+      this.locationGroupService
+        .getLocationGroups(this.searchForm.controls.taggedLocationGroupTypes.value)
+        .subscribe(locationGroupsRes => {
+          this.setupLocationGroupRes(locationGroupsRes);
+        });
+    }
+  }
+  setupLocationGroupRes(locationGroupsRes: LocationGroup[]) {
+    this.listOfAllLocationGroups = locationGroupsRes;
+    this.listOfDisplayLocationGroups = locationGroupsRes;
+    this.updateEditCache();
+
+    this.filtersByName = [];
+    this.filtersByDescription = [];
+    this.filtersByLocationGroupType = [];
+
+    const existingLocationGroupTypeId = new Set();
+
+    this.listOfAllLocationGroups.forEach(locationGroup => {
+      this.filtersByName.push({ text: locationGroup.name, value: locationGroup.name });
+      this.filtersByDescription.push({ text: locationGroup.description, value: locationGroup.description });
+      if (!existingLocationGroupTypeId.has(locationGroup.locationGroupType.id)) {
+        this.filtersByLocationGroupType.push({
+          text: locationGroup.locationGroupType.description,
+          value: locationGroup.locationGroupType.id,
+        });
+        existingLocationGroupTypeId.add(locationGroup.locationGroupType.id);
+      }
+    });
   }
 
   currentPageDataChange($event: LocationGroup[]): void {
@@ -204,12 +225,6 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
     return selectedLocationGroups;
   }
 
-  startEdit(id: string, col: string, event: MouseEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
-    this.editId = id;
-    this.editCol = col;
-  }
   changeLocationGroupType(locationGroup: LocationGroup, locationGroupTypeId: string) {
     this.locationGroupTypeService
       .getLocationGroupType(+locationGroupTypeId)
@@ -219,24 +234,51 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
       });
   }
 
-  @HostListener('window:click', ['$event'])
-  handleClick(e: MouseEvent): void {
-    console.log(
-      `window:click: ${this.editId} \n 
-      this.inputElement:\n ${JSON.stringify(this.inputElement)}  \n 
-      this.inputElement.nativeElement:\n ${JSON.stringify(this.inputElement.nativeElement)}  \n 
-      e.target: \n ${JSON.stringify(e.target)}\n
-       ${this.inputElement.nativeElement !== e.target}`,
-    );
-    if (this.editId && this.inputElement && this.inputElement.nativeElement !== e.target) {
-      console.log(`reset editId to null`);
-      this.editId = null;
-    }
-  }
-
   changeLocationGroup(locationGroup: LocationGroup) {
     this.locationGroupService
       .changeLocationGroup(locationGroup)
       .subscribe(res => this.messageService.success(this.i18n.fanyi('message.action.success')));
+  }
+
+  startEdit(id: string): void {
+    this.editCache[id].edit = true;
+  }
+
+  cancelEdit(id: string): void {
+    const index = this.listOfAllLocationGroups.findIndex(item => item.id === +id);
+    this.editCache[id] = {
+      data: { ...this.listOfAllLocationGroups[index] },
+      edit: false,
+      locationGroupTypeName: this.listOfAllLocationGroups[index].locationGroupType.name,
+    };
+  }
+
+  saveRecord(id: string): void {
+    const index = this.listOfAllLocationGroups.findIndex(item => item.id === +id);
+
+    // setup the location group type if the type is changed
+    if (this.editCache[id].data.locationGroupType.name !== this.editCache[id].locationGroupTypeName) {
+      const matchedLocationGroupType = this.locationGroupTypes.filter(locationGroupType => {
+        return locationGroupType.name === this.editCache[id].locationGroupTypeName;
+      });
+      if (matchedLocationGroupType.length > 0) {
+        this.editCache[id].data.locationGroupType = matchedLocationGroupType[0];
+      }
+    }
+    Object.assign(this.listOfAllLocationGroups[index], this.editCache[id].data);
+
+    // we will
+    this.changeLocationGroup(this.listOfAllLocationGroups[index]);
+    this.editCache[id].edit = false;
+  }
+
+  updateEditCache(): void {
+    this.listOfAllLocationGroups.forEach(item => {
+      this.editCache[item.id] = {
+        edit: false,
+        data: { ...item },
+        locationGroupTypeName: item.locationGroupType.name,
+      };
+    });
   }
 }

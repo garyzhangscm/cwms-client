@@ -204,9 +204,11 @@ export class OutboundPickConfirmComponent implements OnInit {
     this.workOrderService.getWorkOrder(workOrderId).subscribe(workOrderRes => {
       this.workOrder = workOrderRes;
       this.lastPageUrl = `/work-order/work-order?number=${this.workOrder.number}`;
+
       // initial the picks array;
       this.listOfAllPicks = [];
-      this.pickService.getPicksByWorkOrder(this.workOrder.id).subscribe(pickRes => {
+
+      this.pickService.getPicksByWorkOrder(this.workOrder).subscribe(pickRes => {
         this.listOfAllPicks = pickRes;
         this.listOfDisplayPicks = pickRes;
         this.setupConfirmedQuantity(this.listOfAllPicks);

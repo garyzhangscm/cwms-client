@@ -104,7 +104,7 @@
           <td>{{ data.clientName }}</td>
           <td>{{ data.supplierId }}</td>
           <td>{{ data.supplierName }}</td>
-          <td>{{ data.allowUnexpectedItem }}</td>
+          <td>{{ data.allowUnexpectedItem + '' | translate}}</td>
           <td>{{ data.status }}</td>
           <td>
             {{ data.insertTime[1] }}/{{ data.insertTime[2] }}/{{ data.insertTime[0] }} {{ data.insertTime[3] }}:{{
@@ -112,8 +112,11 @@
                   }}:{{ data.insertTime[5] }}
           </td>
           <td>
-            {{ data.lastUpdateTime[1] }}/{{ data.lastUpdateTime[2] }}/{{ data.lastUpdateTime[0] }}
-            {{ data.lastUpdateTime[3] }}:{{ data.lastUpdateTime[4] }}:{{ data.lastUpdateTime[5] }}
+            <span *ngIf="data.lastUpdateTime !== null">
+
+              {{ data.lastUpdateTime[1] }}/{{ data.lastUpdateTime[2] }}/{{ data.lastUpdateTime[0] }}
+              {{ data.lastUpdateTime[3] }}:{{ data.lastUpdateTime[4] }}:{{ data.lastUpdateTime[5] }}
+            </span>
           </td>
           <td>{{ data.errorMessage }}</td>
 
@@ -135,16 +138,16 @@
                       {{ 'item.name' | translate }}
                     </th>
                     <th>
-                      {{ 'expectedQuantity' | translate }}
+                      {{ 'receipt.line.expectedQuantity' | translate }}
                     </th>
                     <th>
-                      {{ 'receivedQuantity' | translate }}
+                      {{ 'receipt.line.receivedQuantity' | translate }}
                     </th>
                     <th>
-                      {{ 'overReceivingQuantity' | translate }}
+                      {{ 'receipt.line.overReceivingQuantity' | translate }}
                     </th>
                     <th>
-                      {{ 'overReceivingPercent' | translate }}
+                      {{ 'receipt.line.overReceivingPercent' | translate }}
                     </th>
                   </thead>
     <tbody>

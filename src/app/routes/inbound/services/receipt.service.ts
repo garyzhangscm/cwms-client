@@ -61,6 +61,9 @@ export class ReceiptService {
     return this.http.put(`inbound/receipts/${receipt.id}/check-in`).pipe(map(res => res.data));
   }
 
+  closeReceipt(receipt: Receipt): Observable<Receipt> {
+    return this.http.post(`inbound/receipts/${receipt.id}/complete`).pipe(map(res => res.data));
+  }
   getReceivedInventory(receipt: Receipt): Observable<Inventory[]> {
     return this.http.get(`inbound/receipts/${receipt.id}/inventories`).pipe(map(res => res.data));
   }

@@ -14,6 +14,7 @@ import { ShortAllocation } from '../models/short-allocation';
 import { Inventory } from '../../inventory/models/inventory';
 import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
 import { InventoryService } from '../../inventory/services/inventory.service';
+import { OrderStatus } from '../models/order-status.enum';
 
 @Component({
   selector: 'app-outbound-order',
@@ -78,6 +79,8 @@ export class OutboundOrderComponent implements OnInit {
   shortAllocationStatus = ShortAllocationStatus;
 
   unpickModal: NzModalRef;
+
+  orderStatusEnum = OrderStatus;
 
   resetForm(): void {
     this.searchForm.reset();
@@ -289,8 +292,19 @@ export class OutboundOrderComponent implements OnInit {
     });
   }
 
+  completeOrder(order: Order) {
+    this.mapOfAllocationInProcessId[order.id] = true;
+    this.orderService.completeOrder(order).subscribe(orderRes => {
+      this.messageService.success(this.i18n.fanyi('message.allocate.success'));
+      this.mapOfAllocationInProcessId[order.id] = false;
+      this.search();
+    });
+  }
   isOrderAllocatable(order: Order): boolean {
     return order.totalOpenQuantity > 0 || order.totalPendingAllocationQuantity > 0;
+  }
+  isOrderReadyForComplete(order: Order): boolean {
+    return order.status === OrderStatus.OPEN;
   }
 
   printPickSheets(order: Order) {

@@ -6,17 +6,25 @@ import { map } from 'rxjs/operators';
 import { PrintingService } from '../../common/services/printing.service';
 import { PickWork } from '../models/pick-work';
 import { PickService } from './pick.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class OrderService {
   private PICKS_PER_PAGE = 20;
-  constructor(private http: _HttpClient, private printingService: PrintingService, private pickService: PickService) {}
+  constructor(
+    private http: _HttpClient,
+    private warehouseService: WarehouseService,
+    private printingService: PrintingService,
+    private pickService: PickService,
+  ) {}
 
   getOrders(number: string): Observable<Order[]> {
-    const url = number ? `outbound/orders?number=${number}` : `outbound/orders`;
-
+    let url = `outbound/orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    if (number) {
+      url = `${url}&number=${number}`;
+    }
     return this.http.get(url).pipe(map(res => res.data));
   }
 
@@ -49,6 +57,9 @@ export class OrderService {
   }
   allocateOrder(order: Order): Observable<Order> {
     return this.http.post(`outbound/orders/${order.id}/allocate`).pipe(map(res => res.data));
+  }
+  completeOrder(order: Order): Observable<Order> {
+    return this.http.post(`outbound/orders/${order.id}/complete`).pipe(map(res => res.data));
   }
 
   printOrderPickSheet(order: Order) {

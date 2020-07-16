@@ -89,16 +89,19 @@
               }}:{{ data.insertTime[5] }}
           </td>
           <td>
-            {{ data.lastUpdateTime[1] }}/{{ data.lastUpdateTime[2] }}/{{ data.lastUpdateTime[0] }}
-            {{ data.lastUpdateTime[3] }}:{{ data.lastUpdateTime[4] }}:{{ data.lastUpdateTime[5] }}
+            <span *ngIf="data.lastUpdateTime !== null">
+              {{ data.lastUpdateTime[1] }}/{{ data.lastUpdateTime[2] }}/{{ data.lastUpdateTime[0] }}
+              {{ data.lastUpdateTime[3] }}:{{ data.lastUpdateTime[4] }}:{{ data.lastUpdateTime[5] }}
+
+            </span>
           </td>
           <td>{{ data.errorMessage }}</td>
 
 
         </tr>
         <tr [nzExpand]="mapOfExpandedId[data.id]" class="inner-table">
-          <td colspan="2"></td>
-          <td colspan="3">
+          <td colspan="1"></td>
+          <td colspan="8">
             <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
               <nz-tab nzTitle=" {{ 'order.line' | translate }}">
                 <nz-table #innerTable [nzData]="data.orderLines" nzSize="middle" [nzShowPagination]="false">
@@ -128,7 +131,7 @@
                       {{ 'carrier.service-level.id' | translate }}
                     </th>
                     <th>
-                      {{ 'icarrier.service-leve.name' | translate }}
+                      {{ 'carrier.service-level.name' | translate }}
                     </th>
                     <th>
                       {{ 'order.line.expectedQuantity' | translate }}

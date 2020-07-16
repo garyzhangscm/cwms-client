@@ -209,4 +209,11 @@ export class InboundReceiptComponent implements OnInit {
       this.search();
     });
   }
+
+  closeReceipt(receipt: Receipt) {
+    this.receiptService.closeReceipt(receipt).subscribe(res => {
+      this.message.success(this.i18n.fanyi('message.action.success'));
+      this.search();
+    });
+  }
 }

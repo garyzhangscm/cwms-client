@@ -3,10 +3,13 @@ import { Client } from '../../common/models/client';
 import { OrderLine } from './order-line';
 import { Carrier } from '../../common/models/carrier';
 import { CarrierServiceLevel } from '../../common/models/carrier-service-level';
+import { OrderStatus } from './order-status.enum';
 
 export interface Order {
   id: number;
   number: string;
+
+  status: OrderStatus;
 
   carrierId: number;
   carrier: Carrier;

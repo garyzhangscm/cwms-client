@@ -12,7 +12,7 @@ export const environment = {
   // SERVER_URL: `http://localhost:5555/api/`,
 
   // AWS
-  SERVER_URL: `http://ec2-13-52-241-23.us-west-1.compute.amazonaws.com:5555/api/`,
+  SERVER_URL: `http://ec2-54-183-92-161.us-west-1.compute.amazonaws.com:5555/api/`,
 
   // AWS K8S load balancer
   // SERVER_URL: `http://a1012631c841d42c7bc96fc6d54e56d8-1273732806.us-west-2.elb.amazonaws.com:5555/api/`,

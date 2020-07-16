@@ -9,8 +9,8 @@
           {{ 'location-group-type' | translate }}
         </nz-form-label>
         <nz-select nzMode="tags" formControlName="taggedLocationGroupTypes">
-          <nz-option *ngFor="let locationGroupType of locationGroupTypes" [nzLabel]="locationGroupType.label"
-            [nzValue]="locationGroupType.value"></nz-option>
+          <nz-option *ngFor="let locationGroupType of locationGroupTypes" [nzLabel]="locationGroupType.description"
+            [nzValue]="locationGroupType.id"></nz-option>
         </nz-select>
       </nz-form-item>
     </div>
@@ -21,8 +21,8 @@
           {{ 'location-group' | translate }}
         </nz-form-label>
         <nz-select nzMode="tags" formControlName="taggedLocationGroups">
-          <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.label"
-            [nzValue]="locationGroup.value"></nz-option>
+          <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description"
+            [nzValue]="locationGroup.id"></nz-option>
         </nz-select>
       </nz-form-item>
     </div>
@@ -51,8 +51,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="locations"
-    (nzCurrentPageDataChange)="currentPageDataChange($event)" [nzFooter]="tableFoot">
+  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllLocations"
+    (nzCurrentPageDataChange)="currentPageDataChange($event)" [nzFooter]="tableFoot" nzTableLayout="true">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
         <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
@@ -102,27 +102,79 @@
         <th nzShowSort nzSortKey="locked">
           {{ 'location.locked' | translate }}
         </th>
+        <th nzShowSort nzSortKey="reservedCode">
+          {{ 'location.reservedCode' | translate }}
+        </th>
+        <th>
+          {{ 'action' | translate }}
+        </th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let data of rowSelectionTable.data">
-        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
-        <td>{{ data.id }}</td>
-        <td>{{ data.name }}</td>
-        <td>{{ data.locationGroup.description }}</td>
-        <td>{{ data.aisle }}</td>
-        <td>{{ data.length }}</td>
-        <td>{{ data.width }}</td>
-        <td>{{ data.height }}</td>
-        <td>{{ data.capacity }}</td>
-        <td>{{ data.fillPercentage }}</td>
-        <td>{{ data.currentVolume }}</td>
-        <td>{{ data.pendingVolume }}</td>
-        <td>{{ data.putawaySequence }}</td>
-        <td>{{ data.pickSequence }}</td>
-        <td>{{ data.countSequence }}</td>
-        <td>{{ data.enabled }}</td>
-        <td>{{ data.locked }}</td>
+        <ng-container *ngIf="!editCache[data.id].edit; else editTemplate">
+          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
+          <td>{{ data.id }}</td>
+          <td>{{ data.name }}</td>
+          <td>{{ data.locationGroup.description }}</td>
+          <td>{{ data.aisle }}</td>
+          <td>{{ data.length }}</td>
+          <td>{{ data.width }}</td>
+          <td>{{ data.height }}</td>
+          <td>{{ data.capacity }}</td>
+          <td>{{ data.fillPercentage }}</td>
+          <td>{{ data.currentVolume }}</td>
+          <td>{{ data.pendingVolume }}</td>
+          <td>{{ data.putawaySequence }}</td>
+          <td>{{ data.pickSequence }}</td>
+          <td>{{ data.countSequence }}</td>
+          <td>{{ data.enabled + ''| translate}}</td>
+          <td>{{ data.locked + '' | translate}}</td>
+          <td>{{ data.reservedCode }}</td>
+          <td><a (click)="startEdit(data.id)"> {{ 'modify' | translate }}</a></td>
+        </ng-container>
+
+        <ng-template #editTemplate>
+          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
+          <td>{{ data.id }}</td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.name" /></td>
+          <td>
+
+            <nz-select [(ngModel)]="editCache[data.id].locationGroupName">
+              <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description"
+                [nzValue]="locationGroup.name"></nz-option>
+            </nz-select>
+
+          </td>
+
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.aisle" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.length" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.width" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.height" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.capacity" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.fillPercentage" /></td>
+          <td>{{ data.currentVolume }}</td>
+          <td>{{ data.pendingVolume }}</td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.putawaySequence" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.pickSequence" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.countSequence" /></td>
+
+          <td>
+            <nz-select [(ngModel)]="editCache[data.id].data.enabled">
+              <nz-option nzLabel="{{ 'true' | translate }} " [nzValue]="true"></nz-option>
+              <nz-option nzLabel="{{ 'false' | translate }}" [nzValue]="false"></nz-option>
+            </nz-select>
+          </td>
+
+          <td>{{ data.locked + '' | translate}}</td>
+          <td>{{ data.reservedCode }}</td>
+
+          <td>
+            <a (click)="saveRecord(data.id)" class="save">{{'save' | translate }}</a>
+            <a nz-popconfirm nzTitle="{{ 'sure-to-cancel' | translate }}"
+              (nzOnConfirm)="cancelEdit(data.id)">{{'cancel' | translate }}</a>
+          </td>
+        </ng-template>
       </tr>
     </tbody>
   </nz-table>

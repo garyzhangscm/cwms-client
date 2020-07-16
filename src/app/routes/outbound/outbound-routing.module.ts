@@ -20,6 +20,7 @@ import { OutboundCartonizationConfigurationConfirmComponent } from './cartonizat
 import { OutboundGridComponent } from './grid/grid.component';
 import { OutboundGridMaintenanceComponent } from './grid-maintenance/grid-maintenance.component';
 import { OutboundShippingCartonizationComponent } from './shipping-cartonization/shipping-cartonization.component';
+import { OutboundAllocationConfigurationComponent } from './allocation-configuration/allocation-configuration.component';
 
 const routes: Routes = [
   { path: 'order', component: OutboundOrderComponent },
@@ -45,6 +46,7 @@ const routes: Routes = [
   { path: 'grid', component: OutboundGridComponent },
   { path: 'grid-maintenance', component: OutboundGridMaintenanceComponent },
   { path: 'shipping-cartonization', component: OutboundShippingCartonizationComponent },
+  { path: 'allocation-configuration', component: OutboundAllocationConfigurationComponent },
 ];
 
 @NgModule({

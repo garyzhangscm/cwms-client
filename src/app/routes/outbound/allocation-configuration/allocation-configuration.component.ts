@@ -1,29 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { _HttpClient, TitleService } from '@delon/theme';
-import { EmergencyReplenishmentConfiguration } from '../models/emergency-replenishment-configuration';
-import { UnitOfMeasure } from '../../common/models/unit-of-measure';
-import { ItemFamily } from '../models/item-family';
+import { ItemFamily } from '../../inventory/models/item-family';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { EmergencyReplenishmentConfigurationService } from '../services/emergency-replenishment-configuration.service';
+import { AllocationConfiguration } from '../models/allocation-configuration';
+import { EmergencyReplenishmentConfigurationService } from '../../inventory/services/emergency-replenishment-configuration.service';
 import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
-import { ItemFamilyService } from '../services/item-family.service';
+import { ItemFamilyService } from '../../inventory/services/item-family.service';
 import { I18NService } from '@core';
 import { NzModalService } from 'ng-zorro-antd';
-import { InventoryActivity } from '../models/inventory-activity';
-import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
-import { Item } from '../models/item';
-import { ItemPackageType } from '../models/item-package-type';
-import { InventoryStatus } from '../models/inventory-status';
-import { Client } from '../../common/models/client';
+import { EmergencyReplenishmentConfiguration } from '../../inventory/models/emergency-replenishment-configuration';
+import { UnitOfMeasure } from '../../common/models/unit-of-measure';
+import { AllocationConfigurationService } from '../services/allocation-configuration.service';
 
 @Component({
-  selector: 'app-inventory-emergency-replenishment-config',
-  templateUrl: './emergency-replenishment-config.component.html',
-  styleUrls: ['./emergency-replenishment-config.component.less'],
+  selector: 'app-outbound-allocation-configuration',
+  templateUrl: './allocation-configuration.component.html',
+  styleUrls: ['./allocation-configuration.component.less'],
 })
-export class InventoryEmergencyReplenishmentConfigComponent implements OnInit {
+export class OutboundAllocationConfigurationComponent implements OnInit {
   // Select control for clients and item families
-  unitOfMeasures: UnitOfMeasure[] = [];
 
   itemFamilies: ItemFamily[] = [];
 
@@ -33,8 +28,8 @@ export class InventoryEmergencyReplenishmentConfigComponent implements OnInit {
   searching = false;
 
   // Table data for display
-  listOfAllConfigurations: EmergencyReplenishmentConfiguration[] = [];
-  listOfDisplayConfigurations: EmergencyReplenishmentConfiguration[] = [];
+  listOfAllConfigurations: AllocationConfiguration[] = [];
+  listOfDisplayConfigurations: AllocationConfiguration[] = [];
   // Sort key: field's nzSortKey value
   // sort value: ascend / descend
   sortKey: string | null = null;
@@ -48,8 +43,8 @@ export class InventoryEmergencyReplenishmentConfigComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private emergencyReplenishmentConfigurationService: EmergencyReplenishmentConfigurationService,
-    private unitOfMeasureService: UnitOfMeasureService,
+    private allocationConfigurationService: AllocationConfigurationService,
+
     private itemFamilyService: ItemFamilyService,
     private i18n: I18NService,
     private modalService: NzModalService,
@@ -63,16 +58,14 @@ export class InventoryEmergencyReplenishmentConfigComponent implements OnInit {
   }
   search(): void {
     this.searching = true;
-    this.emergencyReplenishmentConfigurationService
-      .getEmergencyReplenishmentConfiguration()
-      .subscribe(configurationRes => {
-        this.listOfAllConfigurations = configurationRes;
-        this.listOfDisplayConfigurations = configurationRes;
-        this.searching = false;
-      });
+    this.allocationConfigurationService.getAllocationConfiguration().subscribe(configurationRes => {
+      this.listOfAllConfigurations = configurationRes;
+      this.listOfDisplayConfigurations = configurationRes;
+      this.searching = false;
+    });
   }
 
-  currentPageDataChange($event: EmergencyReplenishmentConfiguration[]): void {
+  currentPageDataChange($event: AllocationConfiguration[]): void {
     this.listOfDisplayConfigurations = $event;
   }
   sort(sort: { key: string; value: string }): void {
@@ -95,22 +88,17 @@ export class InventoryEmergencyReplenishmentConfigComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.replenishment.emergency.config'));
+    this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.allocation-configuration'));
     this.initSearchForm();
   }
 
   initSearchForm() {
     // initiate the search form
     this.searchForm = this.fb.group({
-      unitOfMeasure: [null],
       itemFamily: [null],
       itemName: [null],
     });
 
-    // initiate the select control
-    this.unitOfMeasureService.loadUnitOfMeasures().subscribe((unitOfMeasuresRes: UnitOfMeasure[]) => {
-      this.unitOfMeasures = unitOfMeasuresRes;
-    });
     this.itemFamilyService.loadItemFamilies().subscribe((itemFamilyRes: ItemFamily[]) => {
       this.itemFamilies = itemFamilyRes;
     });

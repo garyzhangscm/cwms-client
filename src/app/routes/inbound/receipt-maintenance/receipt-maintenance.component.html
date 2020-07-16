@@ -218,7 +218,7 @@
             <td>{{ data.item?.name }}</td>
             <td>{{ data.item?.description }}</td>
             <td>{{ data.quantity }}</td>
-            <td>{{ data.inventoryStatus.name }}</td>
+            <td>{{ 'INVENTORY-STATUS-' +  data.inventoryStatus.name | translate}}</td>
             <td>{{ data.location.name }}</td>
             <td>
               <p *ngFor="let inventoryMovement of data.inventoryMovements; let i = index">

@@ -8,7 +8,7 @@ import { WorkOrder } from '../models/work-order';
 
 import { ProductionLineService } from '../services/production-line.service';
 import { WorkOrderStatus } from '../models/work-order-status.enum';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-work-order-work-order',
@@ -24,6 +24,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     private messageService: NzMessageService,
     private productionLineService: ProductionLineService,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
   ) {}
   workOrderStatus = WorkOrderStatus;
   // Form related data and functions
@@ -54,6 +55,21 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
   // list of record with printing in process
   mapOfPrintingInProcessId: { [key: string]: boolean } = {};
+
+  ngOnInit() {
+    // initiate the search form
+    this.searchForm = this.fb.group({
+      number: [null],
+      item: [null],
+    });
+
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.number) {
+        this.searchForm.controls.number.setValue(params.number);
+        this.search();
+      }
+    });
+  }
 
   resetForm(): void {
     this.searchForm.reset();
@@ -153,14 +169,6 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     return selectedWorkOrders;
   }
 
-  ngOnInit() {
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      number: [null],
-      item: [null],
-    });
-  }
-
   loadAvailableProductionLine() {
     this.availableProductionLines = [];
     // load all available production lines
@@ -208,5 +216,12 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   }
   confirmPicks(workOrder: WorkOrder) {
     this.router.navigateByUrl(`/outbound/pick/confirm?type=workOrder&id=${workOrder.id}`);
+  }
+
+  isWorkOrderReadyForComplete(workOrder: WorkOrder): boolean {
+    return true;
+  }
+  completeWorkOrder(workOrder: WorkOrder): boolean {
+    return true;
   }
 }

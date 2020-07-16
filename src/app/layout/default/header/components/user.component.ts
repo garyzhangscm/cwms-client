@@ -17,6 +17,7 @@ import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
     </div>
     <nz-dropdown-menu #userMenu="nzDropdownMenu">
       <div nz-menu class="width-sm">
+        <!--
         <div nz-menu-item routerLink="/pro/account/center">
           <i nz-icon nzType="user" class="mr-sm"></i>
           {{ 'menu.account.center' | translate }}
@@ -30,6 +31,7 @@ import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
           {{ 'menu.account.trigger' | translate }}
         </div>
         <li nz-menu-divider></li>
+-->
         <div nz-menu-item (click)="logout()">
           <i nz-icon nzType="logout" class="mr-sm"></i>
           {{ 'menu.account.logout' | translate }}

@@ -4,6 +4,7 @@ import { LocationGroup } from '../models/location-group';
 import { I18NService } from '@core';
 import { Router } from '@angular/router';
 import { LocationGroupService } from '../services/location-group.service';
+import { NzMessageService } from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-warehouse-layout-location-group-maintenance-confirm',
@@ -18,6 +19,7 @@ export class WarehouseLayoutLocationGroupMaintenanceConfirmComponent implements 
     private titleService: TitleService,
     private locationGroupService: LocationGroupService,
     private router: Router,
+    private messageService: NzMessageService,
   ) {
     this.pageTitle = i18n.fanyi('page.location-group-maintenance.confirm.header.title');
   }
@@ -28,9 +30,12 @@ export class WarehouseLayoutLocationGroupMaintenanceConfirmComponent implements 
   }
 
   saveLocationGroup() {
-    this.locationGroupService
-      .addLocationGroup(this.currentLocationGroup)
-      .subscribe(res => this.router.navigateByUrl('/warehouse-layout/location-group'));
+    this.locationGroupService.addLocationGroup(this.currentLocationGroup).subscribe(res => {
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      setTimeout(() => {
+        this.router.navigateByUrl(`/warehouse-layout/location-group?id=${res.id}`);
+      }, 2000);
+    });
   }
 
   onStepIndexChange() {

@@ -11,7 +11,7 @@ import { Inventory } from '../models/inventory';
   providedIn: 'root',
 })
 export class AuditCountRequestService {
-  private COUNT_REQUEST_PER_PAGE = 10;
+  private COUNT_REQUEST_PER_PAGE = 30;
   constructor(
     private http: _HttpClient,
     private gzLocalStorageService: GzLocalStorageServiceService,

@@ -55,7 +55,7 @@ export class InventoryAuditCountConfirmComponent implements OnInit {
     this.auditCountResultService
       .saveAuditCountResultDetails(this.batchId, this.locationId, this.listOfAllAuditCountResult)
       .subscribe(savedAuditCountResults => {
-        this.router.navigateByUrl(`/inventory/count/cycle-count-maintenance?batchId=${this.batchId}`);
+        this.router.navigateByUrl(`/inventory/count/cycle-count-maintenance?batchId=${this.batchId}&from=auditConfirm`);
       });
   }
 }

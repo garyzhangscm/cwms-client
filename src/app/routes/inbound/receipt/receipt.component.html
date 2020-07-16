@@ -75,7 +75,10 @@
           <a nz-button nz-type="primary" (click)="checkInReceipt(data)"
             *ngIf="data.receiptStatus === receiptStatus.OPEN">
             {{ 'receipt.check-in' | translate }}</a>
-          <!--<nz-divider nzType="vertical"></nz-divider> -->
+          <nz-divider nzType="vertical" *ngIf="data.receiptStatus === receiptStatus.OPEN"></nz-divider>
+          <a nz-button nz-type="primary" (click)="closeReceipt(data)"
+            *ngIf="data.receiptStatus !== receiptStatus.CLOSED">
+            {{ 'complete' | translate }}</a>
         </td>
       </tr>
     </tbody>

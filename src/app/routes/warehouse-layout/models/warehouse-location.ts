@@ -21,4 +21,5 @@ export interface WarehouseLocation {
   locationGroup: LocationGroup;
   enabled: boolean;
   locked: boolean;
+  reservedCode: string;
 }

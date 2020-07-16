@@ -22,6 +22,7 @@ import { OutboundCartonizationConfigurationConfirmComponent } from './cartonizat
 import { OutboundGridComponent } from './grid/grid.component';
 import { OutboundGridMaintenanceComponent } from './grid-maintenance/grid-maintenance.component';
 import { OutboundShippingCartonizationComponent } from './shipping-cartonization/shipping-cartonization.component';
+import { OutboundAllocationConfigurationComponent } from './allocation-configuration/allocation-configuration.component';
 
 const COMPONENTS = [
   OutboundOrderComponent,
@@ -44,6 +45,7 @@ const COMPONENTS = [
   OutboundGridComponent,
   OutboundGridMaintenanceComponent,
   OutboundShippingCartonizationComponent,
+  OutboundAllocationConfigurationComponent,
 ];
 const COMPONENTS_NOROUNT = [];
 

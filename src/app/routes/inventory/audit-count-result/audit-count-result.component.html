@@ -79,8 +79,9 @@
           <nz-select style="width: 150px" *ngIf="data.inventory?.id === null"
             [ngModel]="data.inventory.inventoryStatus.id" (ngModelChange)="inventoryStatusChanged($event, data)"
             nzShowSearch nzAllowClear>
-            <nz-option *ngFor="let inventoryStatus of validInventoryStatuses" [nzLabel]="inventoryStatus.description"
-              [nzValue]="inventoryStatus?.id"></nz-option>
+            <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
+              nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | translate }}" [nzValue]="inventoryStatus?.id">
+            </nz-option>
           </nz-select>
 
           <span *ngIf="data.inventory?.id">

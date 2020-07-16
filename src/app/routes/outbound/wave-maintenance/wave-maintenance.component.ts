@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { _HttpClient, TitleService } from '@delon/theme';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { Wave } from '../models/wave';
 import { OrderLine } from '../models/order-line';
@@ -76,6 +76,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     private fb: FormBuilder,
     private waveService: WaveService,
     private message: NzMessageService,
+    private router: Router,
   ) {
     this.pageTitle = this.i18n.fanyi('page.outbound.wave.title');
   }
@@ -397,5 +398,14 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
 
   setWaveNumber(waveNumber: string) {
     this.searchForm.controls.waveNumber.setValue(waveNumber);
+  }
+
+  returnToPreviousPage() {
+    console.log(`this.searchForm.controls.waveNumber.value: ${this.searchForm.controls.waveNumber.value}`);
+    if (this.searchForm.controls.waveNumber.value) {
+      this.router.navigateByUrl(`outbound/wave?number=${this.searchForm.controls.waveNumber.value}`);
+    } else {
+      this.router.navigateByUrl('outbound/wave');
+    }
   }
 }

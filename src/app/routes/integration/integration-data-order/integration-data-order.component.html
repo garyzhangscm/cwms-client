@@ -53,6 +53,12 @@
         <th nzShowSort nzSortKey="number">
           {{ 'order.number' | translate }}
         </th>
+        <th nzShowSort nzSortKey="warehouseId">
+          {{ 'warehouse.id' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="warehouseName">
+          {{ 'warehouse.name' | translate }}
+        </th>
         <th nzShowFilter [nzFilters]="filtersByShipToCustomer"
           (nzFilterChange)="filter($event, selectedFiltersByBillToCustomer)">
           {{ 'shipToCustomer' | translate }}
@@ -82,6 +88,8 @@
           <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]"></td>
           <td>{{ data.id }}</td>
           <td>{{ data.number }}</td>
+          <td>{{ data.warehouseId }}</td>
+          <td>{{ data.warehouseName }}</td>
           <td>
             <div *ngIf="data.shipToCustomer != null">
               <a nz-tooltip [nzTooltipTitle]="shipToCustomerTooltipTpl">
@@ -170,31 +178,68 @@
 
         </tr>
         <tr [nzExpand]="mapOfExpandedId[data.id]" class="inner-table">
-          <td colspan="2"></td>
-          <td colspan="3">
+          <td colspan="1"></td>
+          <td colspan="8">
             <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
               <nz-tab nzTitle=" {{ 'order.line' | translate }}">
                 <nz-table #innerTable [nzData]="data.orderLines" nzSize="middle" [nzShowPagination]="false">
+
                   <thead>
                     <th>
                       {{ 'order.line.number' | translate }}
                     </th>
                     <th>
-                      {{ 'item' | translate }}
+                      {{ 'item.id' | translate }}
+                    </th>
+                    <th>
+                      {{ 'item.name' | translate }}
+                    </th>
+                    <th>
+                      {{ 'inventory-status.id' | translate }}
+                    </th>
+                    <th>
+                      {{ 'inventory-status.name' | translate }}
+                    </th>
+                    <th>
+                      {{ 'carrier.id' | translate }}
+                    </th>
+                    <th>
+                      {{ 'carrier.name' | translate }}
+                    </th>
+                    <th>
+                      {{ 'carrier.service-level.id' | translate }}
+                    </th>
+                    <th>
+                      {{ 'carrier.service-level.name' | translate }}
                     </th>
                     <th>
                       {{ 'order.line.expectedQuantity' | translate }}
                     </th>
                     <th>
-                      {{ 'inventory.status' | translate }}
+                      {{ 'order.line.openQuantity' | translate }}
+                    </th>
+                    <th>
+                      {{ 'order.line.inprocessQuantity' | translate }}
+                    </th>
+                    <th>
+                      {{ 'order.line.shippedQuantity' | translate }}
                     </th>
                   </thead>
     <tbody>
       <tr *ngFor="let orderLine of data.orderLines">
         <td>{{ orderLine.number }}</td>
-        <td>{{ orderLine.item.name }}</td>
+        <td>{{ orderLine.itemId }}</td>
+        <td>{{ orderLine.itemName }}</td>
+        <td>{{ orderLine.inventoryStatusId }}</td>
+        <td>{{ orderLine.inventoryStatusName }}</td>
+        <td>{{ orderLine.carrierId }}</td>
+        <td>{{ orderLine.carrierName }}</td>
+        <td>{{ orderLine.carrierServiceLevelId }}</td>
+        <td>{{ orderLine.carrierServiceLevelName }}</td>
         <td>{{ orderLine.expectedQuantity }}</td>
-        <td>{{ 'INVENTORY-STATUS-' + orderLine.inventoryStatus.name | translate}}</td>
+        <td>{{ orderLine.openQuantity }}</td>
+        <td>{{ orderLine.inprocessQuantity }}</td>
+        <td>{{ orderLine.shippedQuantity }}</td>
       </tr>
     </tbody>
   </nz-table>

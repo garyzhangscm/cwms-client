@@ -45,6 +45,7 @@ export class IntegrationIntegrationDataOrderConfirmComponent implements OnInit {
   search(): void {
     this.searching = true;
     this.integrationOrderConfirmationService.getData().subscribe(integrationOrderConfirmationRes => {
+      console.log(`integrationOrderConfirmationRes:${JSON.stringify(integrationOrderConfirmationRes)}`);
       this.listOfAllIntegrationOrderConfirmations = integrationOrderConfirmationRes;
       this.listOfDisplayIntegrationOrderConfirmations = integrationOrderConfirmationRes;
 

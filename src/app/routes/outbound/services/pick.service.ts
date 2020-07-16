@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Inventory } from '../../inventory/models/inventory';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { WorkOrder } from '../../work-order/models/work-order';
 
 @Injectable({
   providedIn: 'root',
@@ -59,8 +60,37 @@ export class PickService {
       shipmentNumber,
     );
   }
-  getPicksByWorkOrder(workOrderId: number): Observable<PickWork[]> {
-    return this.getPicks(null, null, null, workOrderId);
+  getPicksByWorkOrder(workOrder: WorkOrder): Observable<PickWork[]> {
+    const workOrderLineIds: number[] = [];
+    workOrder.workOrderLines.forEach(workOrderLine => {
+      workOrderLineIds.push(workOrderLine.id);
+    });
+
+    return this.getPicks(
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      workOrderLineIds.join(','),
+    );
   }
   getPicksByWorkOrderNumber(workOrderNumber: string): Observable<PickWork[]> {
     return this.getPicks(
@@ -248,6 +278,7 @@ export class PickService {
     pickListNumber?: string,
     cartonizationNumber?: string,
     containerId?: string,
+    workOrderLineIds?: string,
   ): Observable<PickWork[]> {
     let url = `outbound/picks?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (number) {
@@ -320,6 +351,9 @@ export class PickService {
     }
     if (containerId) {
       url = `${url}&containerId=${containerId}`;
+    }
+    if (workOrderLineIds) {
+      url = `${url}&workOrderLineIds=${workOrderLineIds}`;
     }
 
     return this.http.get(url).pipe(map(res => res.data));

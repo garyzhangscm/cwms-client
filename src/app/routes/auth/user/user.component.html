@@ -60,8 +60,8 @@
         <td>{{ data.firstname }}</td>
         <td>{{ data.lastname }}</td>
         <td>{{ data.email }} </td>
-        <td>{{ data.enabled }}</td>
-        <td>{{ data.locked }}</td>
+        <td>{{ data.enabled + '' | translate }}</td>
+        <td>{{ data.locked + '' | translate}}</td>
         <td>
           <a nz-button routerLink="/auth/user-role" routerLinkActive="active"
             [queryParams]="{userId : data.id}">{{ 'assign-role' | translate }}</a>

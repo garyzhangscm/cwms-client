@@ -50,7 +50,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   inventoriesToBeCount: CycleCountResult[] = [];
 
   cycleCountRequestConfirmModal: NzModalRef;
-
+  tabSelectedIndex = 0;
   // control for table of cancelled cycle count request
   // checkbox - select all
   cancelledCycleCountTableAllChecked = false;
@@ -101,6 +101,14 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
         this.requestForm.controls.batchId.disable();
       }
       this.refreshCountBatchResults();
+
+      if (params.from === 'auditConfirm') {
+        // If we are comes from audit confirm, then we will show 'Audot Confirmed'
+        // tab
+        this.tabSelectedIndex = 4;
+      } else {
+        this.tabSelectedIndex = 0;
+      }
     });
   }
 

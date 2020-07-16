@@ -53,7 +53,7 @@
           <td>
             {{ data.name }}</td>
           <td>{{ data.description }}</td>
-          <td>{{ data.enabled }}</td>
+          <td>{{ data.enabled + '' | translate }}</td>
           <td>
             <a nz-button routerLink="/auth/role-menu" routerLinkActive="active"
               [queryParams]="{roleId : data.id}">{{ 'assign-menu' | translate }}</a>

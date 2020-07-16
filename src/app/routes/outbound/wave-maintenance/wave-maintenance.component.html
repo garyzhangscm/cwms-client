@@ -1,6 +1,6 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
-  <a routerLink="/outbound/wave" routerLinkActive="active">{{
+  <a (click)="returnToPreviousPage()" routerLinkActive="active">{{
     'return' | translate
   }}</a>
 </ng-template>

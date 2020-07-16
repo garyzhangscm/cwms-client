@@ -37,6 +37,9 @@
         <th rowspan="2" nzShowSort nzSortKey="number">
           {{ 'order.number' | translate }}
         </th>
+
+        <th rowspan="2">
+          {{ 'status' | translate }}</th>
         <th rowspan="2" nzShowFilter [nzFilters]="filtersByShipToCustomer"
           (nzFilterChange)="filter($event, selectedFiltersByBillToCustomer)">
           {{ 'shipToCustomer' | translate }}
@@ -84,13 +87,14 @@
           <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]" (nzExpandChange)="showOrderDetails(data)"></td>
           <td>{{ data.id }}</td>
           <td>{{ data.number }}</td>
+          <td>{{ 'ORDER-STATUS-' + data.status | translate}}</td>
           <td>
             <div *ngIf="data.shipToCustomer != null">
               <a nz-tooltip [nzTooltipTitle]="shipToCustomerTooltipTpl">
                 {{ data.shipToCustomer.name }}
               </a>
               <ng-template #shipToCustomerTooltipTpl>
-                <div>{{ data.shipToCustomer.contactor.firstname }} {{ data.shipToCustomer.contactor.lastname }}</div>
+                <div>{{ data.shipToCustomer.contactoFirstname }} {{ data.shipToCustomer.contactorLastname }}</div>
                 <div>
                   {{ data.shipToCustomer.addressLine1 }}
                 </div>
@@ -127,7 +131,7 @@
                 {{ data.billToCustomer.name }}
               </a>
               <ng-template #billToCustomerTooltipTpl>
-                <div>{{ data.billToCustomer.contactor.firstname }} {{ data.billToCustomer.contactor.lastname }}</div>
+                <div>{{ data.billToCustomer.contactorFirstname }} {{ data.billToCustomer.contactorLastname }}</div>
                 <div>
                   {{ data.billToCustomer.addressLine1 }}
                 </div>
@@ -172,6 +176,14 @@
             </button>
 
             <nz-divider nzType="vertical"></nz-divider>
+
+            <button nz-button nzType="primary" (click)="completeOrder(data)"
+              [nzLoading]="mapOfAllocationInProcessId[data.id]" [disabled]="!isOrderReadyForComplete(data)">
+              {{ 'complete' | translate }}
+            </button>
+            <!--
+
+            <nz-divider nzType="vertical"></nz-divider>
             <button nz-button nz-dropdown [nzDropdownMenu]="shippingOrderTpl"
               [nzDisabled]="data.totalInprocessQuantity == 0">
               {{ 'shipping' | translate }}
@@ -192,6 +204,9 @@
                 </li>
               </ul>
             </nz-dropdown-menu>
+
+
+            -->
           </td>
         </tr>
         <tr [nzExpand]="mapOfExpandedId[data.id]" class="inner-table">
@@ -285,7 +300,8 @@
           <td>{{ pick.quantity }}</td>
           <td>{{ pick.pickedQuantity }}</td>
           <td>
-            <button nz-button (click)="cancelPick(data, pick)" [disabled]="pick.quantity === pick.pickedQuantity">
+            <button nz-button (click)="cancelPick(data, pick)"
+              [disabled]="pick.quantity === pick.pickedQuantity || data.status === orderStatusEnum.COMPLETE">
               {{ 'cancel' | translate }}
             </button>
           </td>
@@ -299,7 +315,8 @@
           [nzLoading]="mapOfPrintingInProcessId[data.id]" [disabled]="mapOfPicks[data.id]?.length === 0">
           {{ 'print' | translate }}
         </button>
-        <button nz-button (click)="confirmPicks(data)" [disabled]="mapOfPicks[data.id]?.length === 0">
+        <button nz-button (click)="confirmPicks(data)"
+          [disabled]="mapOfPicks[data.id]?.length === 0 || data.status === orderStatusEnum.COMPLETE">
           {{ 'confirm' | translate }}
         </button>
       </div>
@@ -348,7 +365,8 @@
           <td>{{ inventory.quantity }}</td>
           <td>{{ inventory.pickedQuantity }}</td>
           <td>
-            <button nz-button (click)="openUnpickModal(data, inventory, tplUnpickModalTitle, tplUnpickModalContent)">
+            <button nz-button (click)="openUnpickModal(data, inventory, tplUnpickModalTitle, tplUnpickModalContent)"
+              [disabled]="data.status === orderStatusEnum.COMPLETE">
               {{ 'unpick' | translate }}
             </button>
           </td>
@@ -414,13 +432,13 @@
           </td>
           <td>
             <button nz-button (click)="cancelShortAllocation(data,shortAllocation)"
-              [disabled]="shortAllocation.status !== shortAllocationStatus.PENDING">
+              [disabled]="shortAllocation.status !== shortAllocationStatus.PENDING || data.status === orderStatusEnum.COMPLETE">
               {{ 'cancel' | translate }}
             </button>
 
             <nz-divider nzType="vertical"></nz-divider>
             <button nz-button (click)="allocateShortAllocation(data, shortAllocation)"
-              [disabled]="!isShortAllocationAllocatable(shortAllocation)">
+              [disabled]="!isShortAllocationAllocatable(shortAllocation) || data.status === orderStatusEnum.COMPLETE">
               {{ 'allocate' | translate }}
             </button>
 

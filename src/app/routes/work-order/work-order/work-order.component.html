@@ -43,7 +43,6 @@
         <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
           (nzCheckedChange)="checkAll($event)"></th>
         <th nzShowExpand></th>
-        <th nzShowSort nzSortKey="id">id</th>
         <th nzShowSort nzSortKey="number">
           {{ 'work-order.number' | translate }}
         </th>
@@ -87,7 +86,6 @@
           <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
 
           <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]"></td>
-          <td>{{ data.id }}</td>
           <td>{{ data.number }}</td>
           <td>{{ data.status }}</td>
           <td>{{ data.item?.name }}</td>
@@ -116,6 +114,12 @@
             <button nz-button nzType="primary" (click)="allocateWorkOrder(data)"
               [nzLoading]="mapOfAllocationInProcessId[data.id]" [disabled]="!isWorkOrderAllocatable(data)">
               {{ 'allocate' | translate }}
+            </button>
+            <nz-divider nzType="vertical"></nz-divider>
+
+            <button nz-button nzType="primary" (click)="completeWorkOrder(data)"
+              [nzLoading]="mapOfAllocationInProcessId[data.id]" [disabled]="!isWorkOrderReadyForComplete(data)">
+              {{ 'complete' | translate }}
             </button>
           </td>
 
