@@ -87,6 +87,7 @@ export class InventoryAuditCountResultComponent implements OnInit {
 
   lpnChanged(lpn: string, auditCountResult: AuditCountResult) {
     auditCountResult.inventory.lpn = lpn;
+    auditCountResult.lpn = lpn;
   }
 
   generateLPN(checked: boolean, index: number, auditCountResult: AuditCountResult) {
@@ -103,6 +104,7 @@ export class InventoryAuditCountResultComponent implements OnInit {
       // since item name is a nature key, we should only have one record returned(or nothing)
       if (items.length > 0) {
         auditCountResult.inventory.item = items[0];
+        auditCountResult.item = items[0];
       }
     });
   }
@@ -164,6 +166,19 @@ export class InventoryAuditCountResultComponent implements OnInit {
       },
       quantity: 0,
       countQuantity: 0,
+      lpn: '',
+      item: {
+        id: null,
+        name: '',
+        description: '',
+        itemPackageTypes: [
+          {
+            id: null,
+            name: '',
+            itemUnitOfMeasures: null,
+          },
+        ],
+      },
     };
   }
 }

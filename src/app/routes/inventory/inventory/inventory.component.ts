@@ -83,6 +83,23 @@ export class InventoryInventoryComponent implements OnInit {
     private messageService: NzMessageService,
   ) {}
 
+  ngOnInit() {
+    this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.inventory'));
+    this.initSearchForm();
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.hasOwnProperty('refresh')) {
+        if (params.id) {
+          this.search(params.id);
+        } else if (params.lpn) {
+          this.searchForm.controls.lpn.setValue(params.lpn);
+          this.search();
+        } else {
+          this.search();
+        }
+      }
+    });
+  }
+
   resetForm(): void {
     this.searchForm.reset();
     this.inventories = [];
@@ -274,26 +291,17 @@ export class InventoryInventoryComponent implements OnInit {
   }
 
   removeInventory(inventory: Inventory) {
-    this.inventoryService.adjustDownInventory(inventory, this.documentNumber, this.comment).subscribe(res => {
+    this.inventoryService.adjustDownInventory(inventory, this.documentNumber, this.comment).subscribe(inventoryRes => {
       this.mapOfInprocessInventoryId[inventory.id] = false;
+      if (inventoryRes.lockedForAdjust === true) {
+        this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.request-success'));
+      } else {
+        this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.adjust-success'));
+      }
       this.search();
     });
 
     this.inventoryRemovalModal.destroy();
-  }
-
-  ngOnInit() {
-    this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.inventory'));
-    this.initSearchForm();
-    this.activatedRoute.queryParams.subscribe(params => {
-      if (params.hasOwnProperty('refresh')) {
-        if (params.id) {
-          this.search(params.id);
-        } else {
-          this.search();
-        }
-      }
-    });
   }
 
   initSearchForm() {

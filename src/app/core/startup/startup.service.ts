@@ -70,6 +70,7 @@ export class StartupService {
         // OK, the current authrization is already expired. let's go back to the login form
         // clear token and go back to the login form
         (this.injector.get(DA_SERVICE_TOKEN) as ITokenService).clear();
+        siteInformationUrl = `${siteInformationUrl}/default`;
         this.goToLoginForm();
       }
     }

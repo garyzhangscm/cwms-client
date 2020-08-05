@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PickWork } from '../../outbound/models/pick-work';
 import { PrintingService } from '../../common/services/printing.service';
+import { Inventory } from '../../inventory/models/inventory';
 
 @Injectable({
   providedIn: 'root',
@@ -62,10 +63,44 @@ export class WorkOrderService {
     return this.http.post(`workorder/work-orders/${workOrder.id}/allocate`).pipe(map(res => res.data));
   }
 
+  getReturnedInventory(workOrder: WorkOrder): Observable<Inventory[]> {
+    return this.http.get(`workorder/work-orders/${workOrder.id}/returned-inventory`).pipe(map(res => res.data));
+  }
+  getProducedInventory(workOrder: WorkOrder): Observable<Inventory[]> {
+    return this.http.get(`workorder/work-orders/${workOrder.id}/produced-inventory`).pipe(map(res => res.data));
+  }
+  getDeliveredInventory(workOrder: WorkOrder): Observable<Inventory[]> {
+    return this.http.get(`workorder/work-orders/${workOrder.id}/delivered-inventory`).pipe(map(res => res.data));
+  }
+
   changeProductionLine(workOrder: WorkOrder, productionLineId: number) {
     return this.http
       .post(`workorder/work-orders/${workOrder.id}/change-production-line?productionLineId=${productionLineId}`)
       .pipe(map(res => res.data));
+  }
+  unpick(
+    workOrder: WorkOrder,
+    inventory: Inventory,
+    overrideConsumedQuantity: boolean,
+    consumedQuantity: number,
+    destinationLocationName?: string,
+    immediateMove?: boolean,
+  ): Observable<Inventory[]> {
+    let url = `workorder/work-orders/${workOrder.id}/unpick-inventory?warehouseId=${
+      this.warehouseService.getCurrentWarehouse().id
+    }`;
+
+    if (overrideConsumedQuantity === true) {
+      url = url + `&overrideConsumedQuantity=${overrideConsumedQuantity}&consumedQuantity=${consumedQuantity}`;
+    }
+
+    if (destinationLocationName) {
+      url = url + `&destinationLocationName=${destinationLocationName}`;
+    }
+    if (immediateMove) {
+      url = url + `&immediateMove=${immediateMove}`;
+    }
+    return this.http.post(url, inventory).pipe(map(res => res.data));
   }
 
   printWorkOrderPickSheet(workOrder: WorkOrder) {

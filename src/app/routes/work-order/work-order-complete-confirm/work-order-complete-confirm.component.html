@@ -1,0 +1,153 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/work-order/work-order" routerLinkActive="active"
+    [queryParams]="{ number: currentWorkOrder?.number }">{{ 'return' | translate }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/work-order" routerLinkActive="active">{{
+        'breadcrumb.work-order' | translate
+      }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+
+<div nz-row style="padding: 10px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="2" [nzSize]="'small'" (nzIndexChange)="onStepsIndexChange($event)">
+      <nz-step nzTitle="{{ 'steps.work-order-complete.info.title' | translate }}"
+        nzDescription="{{ 'steps.work-order-complete.info.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.work-order-complete.user-kpi.title' | translate }}"
+        nzDescription="{{ 'steps.work-order-complete.user-kpi.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.work-order-complete.confirm.title' | translate }}"
+        nzDescription="{{ 'steps.work-order-complete.confirm.description' | translate }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+<!-- Show the work order information -->
+<nz-card nzTitle="{{ 'work-order' | translate}}" *ngIf="workOrderCompleteTransaction !== undefined">
+
+  <nz-descriptions nzBordered>
+    <nz-descriptions-item nzTitle="{{ 'work-order.number' | translate}}">
+      {{ workOrderCompleteTransaction.workOrder.number}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'item-name' | translate}}">
+      {{ workOrderCompleteTransaction.workOrder.item?.name}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'item.description' | translate}}">
+      {{ workOrderCompleteTransaction.workOrder.item?.description}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'work-order.expected-quantity' | translate}}">
+      {{ workOrderCompleteTransaction.workOrder?.expectedQuantity}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'work-order.produced-quantity' | translate}}">
+      {{ workOrderCompleteTransaction.workOrder?.producedQuantity}}</nz-descriptions-item>
+  </nz-descriptions>
+</nz-card>
+
+
+<!-- Table to show work order  lines-->
+
+<div class="search-result-list">
+  <nz-table [nzData]="workOrderCompleteTransaction?.workOrderLineCompleteTransactions" nzShowPagination="false"
+    nzBordered="true" #workOrderLineTable>
+
+    <thead>
+      <th>
+        {{ 'work-order.line.number' | translate }}</th>
+      <th>
+        {{ 'item' | translate }}</th>
+      <th>
+        {{ 'item.description' | translate }}</th>
+      <th>
+        {{ 'work-order.line.expectedQuantity' | translate }}</th>
+      <th>
+        {{ 'work-order.line.openQuantity' | translate }}</th>
+      <th>
+        {{ 'work-order.line.inprocessQuantity' | translate }}</th>
+      <th>
+        {{ 'work-order.line.deliveredQuantity' | translate }}</th>
+      <th>
+        {{ 'work-order.line.consumedQuantity' | translate }}</th>
+      <th>
+        {{ 'inventory.status' | translate }}</th>
+      <th>
+        {{ 'work-order.line.override-consumed-quantity' | translate }}</th>
+      <th>
+        {{ 'work-order.line.scrappedQuantity' | translate }}</th>
+      <th>
+        {{ 'work-order.line.returnMaterialRequest' | translate }}</th>
+
+    </thead>
+    <tbody>
+
+      <tr *ngFor="let data of workOrderLineTable.data">
+        <td>{{ data.workOrderLine.number }}</td>
+        <td>{{ data.workOrderLine.item.name }}</td>
+        <td>{{ data.workOrderLine.item.description }}</td>
+        <td>{{ data.workOrderLine.expectedQuantity }}</td>
+        <td>{{ data.workOrderLine.openQuantity }}</td>
+        <td>{{ data.workOrderLine.inprocessQuantity }}</td>
+        <td>{{ data.workOrderLine.deliveredQuantity }}</td>
+        <td>{{ data.workOrderLine.consumedQuantity }}</td>
+        <td>{{ data.workOrderLine.inventoryStatus.name }}</td>
+        <td>
+          {{ data.adjustedConsumedQuantity }}
+
+        </td>
+        <td>{{data.scrappedQuantity}}
+        </td>
+        <td>
+          <ul *ngIf="data.returnMaterialRequests.length > 0">
+            <li *ngFor="let returnMaterialRequest of data.returnMaterialRequests">
+
+              <a nz-popover nzPopoverTitle="{{returnMaterialRequest.lpn}}"
+                [nzPopoverContent]="returnMaterialRequestDetails">{{returnMaterialRequest.lpn}}</a>
+
+              <ng-template #returnMaterialRequestDetails>
+
+
+                <nz-descriptions nzBordered="true" nzSize="small">
+                  <nz-descriptions-item nzTitle="{{'lpn' | translate}}">{{returnMaterialRequest.lpn}}
+                  </nz-descriptions-item>
+                  <nz-descriptions-item nzTitle="{{'item' | translate}}">{{data.workOrderLine.item?.name}}
+                  </nz-descriptions-item>
+                  <nz-descriptions-item nzTitle="{{'item.description' | translate}}">
+                    {{data.workOrderLine.item?.description}}</nz-descriptions-item>
+
+                  <nz-descriptions-item nzTitle="{{'quantity' | translate}}">
+                    {{ returnMaterialRequest.quantity | translate}}</nz-descriptions-item>
+                  <nz-descriptions-item nzTitle="{{'inventory-status' | translate}}">
+                    {{'INVENTORY-STATUS-' + returnMaterialRequest.inventoryStatus?.name | translate}}
+                  </nz-descriptions-item>
+                  <nz-descriptions-item nzTitle="{{'item-package-type' | translate}}">
+                    {{returnMaterialRequest.itemPackageType?.name}}</nz-descriptions-item>
+                  <nz-descriptions-item nzTitle="{{'location' | translate}}">{{returnMaterialRequest.location}}
+                  </nz-descriptions-item>
+
+                </nz-descriptions>
+              </ng-template>
+            </li>
+
+          </ul>
+        </td>
+
+      </tr>
+    </tbody>
+
+  </nz-table>
+</div>
+
+<div nz-row style="padding-top: 10px;">
+
+
+  <button nz-button nzType="primary" (click)="confirmWorkOrderComplete()" [nzLoading]="savingInProcess">
+    {{ 'confirm' | translate }}
+  </button>
+</div>

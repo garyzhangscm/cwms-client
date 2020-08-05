@@ -28,6 +28,11 @@ export class BillOfMaterialService {
   getBillOfMaterial(id: number): Observable<BillOfMaterial> {
     return this.http.get(`workorder/bill-of-materials/${id}`).pipe(map(res => res.data));
   }
+  findMatchedBillOfMaterial(workOrderId: number): Observable<BillOfMaterial> {
+    return this.http
+      .get(`workorder/bill-of-materials/matched-with-work-order?workOrderId=${workOrderId}`)
+      .pipe(map(res => res.data));
+  }
 
   addBillOfMaterial(billOfMaterial: BillOfMaterial): Observable<BillOfMaterial> {
     return this.http.post(`workorder/bill-of-materials`, billOfMaterial).pipe(map(res => res.data));

@@ -31,5 +31,6 @@ export interface WorkOrder {
   totalLineExpectedQuantity?: number;
   totalLineOpenQuantity?: number;
   totalLineInprocessQuantity?: number;
+  totalLineDeliveredQuantity?: number;
   totalLineConsumedQuantity?: number;
 }

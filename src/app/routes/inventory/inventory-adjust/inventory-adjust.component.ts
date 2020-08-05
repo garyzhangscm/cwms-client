@@ -8,7 +8,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
-import { NzModalService, NzModalRef } from 'ng-zorro-antd';
+import { NzModalService, NzModalRef, NzMessageService } from 'ng-zorro-antd';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { LocationGroupType } from '../../warehouse-layout/models/location-group-type';
@@ -40,6 +40,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     private inventoryStatusService: InventoryStatusService,
     private itemService: ItemService,
     private warehouseService: WarehouseService,
+    private messageService: NzMessageService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inventory.adjust.header.title');
   }
@@ -84,6 +85,39 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   // value: list of inventroy in the location
   mapOfInventories: { [key: string]: Inventory[] } = {};
 
+  ngOnInit() {
+    this.titleService.setTitle(this.i18n.fanyi('page.inventory.adjust.header.title'));
+    // initiate the search form
+    this.searchForm = this.fb.group({
+      taggedLocationGroupTypes: [null],
+      taggedLocationGroups: [null],
+      location: [null],
+    });
+
+    // initiate the select control
+    this.locationGroupTypeService.loadLocationGroupTypes().subscribe((locationGroupTypeList: LocationGroupType[]) => {
+      locationGroupTypeList.forEach(locationGroupType =>
+        this.locationGroupTypes.push({ label: locationGroupType.description, value: locationGroupType.id.toString() }),
+      );
+    });
+    this.locationGroupService.loadLocationGroups().subscribe((locationGroupList: LocationGroup[]) => {
+      locationGroupList.forEach(locationGroup =>
+        this.locationGroups.push({ label: locationGroup.description, value: locationGroup.id.toString() }),
+      );
+    });
+
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.locationName) {
+        const expand = params.hasOwnProperty('expand') ? params.hasOwnProperty('expand') : false;
+        this.searchForm.controls.location.setValue(params.locationName);
+        this.search(expand);
+      }
+    });
+
+    this.inventoryStatusService
+      .loadInventoryStatuses()
+      .subscribe(inventoryStatuses => (this.availableInventoryStatuses = inventoryStatuses));
+  }
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllLocations = [];
@@ -163,40 +197,6 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     } else {
       this.listOfDisplayLocations = data;
     }
-  }
-
-  ngOnInit() {
-    this.titleService.setTitle(this.i18n.fanyi('page.inventory.adjust.header.title'));
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      taggedLocationGroupTypes: [null],
-      taggedLocationGroups: [null],
-      location: [null],
-    });
-
-    // initiate the select control
-    this.locationGroupTypeService.loadLocationGroupTypes().subscribe((locationGroupTypeList: LocationGroupType[]) => {
-      locationGroupTypeList.forEach(locationGroupType =>
-        this.locationGroupTypes.push({ label: locationGroupType.description, value: locationGroupType.id.toString() }),
-      );
-    });
-    this.locationGroupService.loadLocationGroups().subscribe((locationGroupList: LocationGroup[]) => {
-      locationGroupList.forEach(locationGroup =>
-        this.locationGroups.push({ label: locationGroup.description, value: locationGroup.id.toString() }),
-      );
-    });
-
-    this.activatedRoute.queryParams.subscribe(params => {
-      if (params.locationName) {
-        const expand = params.hasOwnProperty('expand') ? params.hasOwnProperty('expand') : false;
-        this.searchForm.controls.location.setValue(params.locationName);
-        this.search(expand);
-      }
-    });
-
-    this.inventoryStatusService
-      .loadInventoryStatuses()
-      .subscribe(inventoryStatuses => (this.availableInventoryStatuses = inventoryStatuses));
   }
 
   showInventoryDetails(location: WarehouseLocation) {
@@ -325,7 +325,14 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.inventoryService.addInventory(inventory, this.documentNumber, this.comment).subscribe(inventoryRes => {
       // display the newly added inventory
       this.searchForm.controls.location.setValue(inventoryRes.location.name);
-      this.search(true);
+
+      if (inventoryRes.lockedForAdjust === true) {
+        this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.request-success'));
+        this.search();
+      } else {
+        this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.adjust-success'));
+        this.search(true);
+      }
     });
   }
 }

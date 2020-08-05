@@ -12,7 +12,10 @@ export interface WorkOrderLine {
   expectedQuantity: number;
   openQuantity: number;
   inprocessQuantity: number;
+  deliveredQuantity: number;
   consumedQuantity: number;
+  scrappedQuantity: number;
+  returnedQuantity: number;
 
   inventoryStatusId: number;
   inventoryStatus: InventoryStatus;

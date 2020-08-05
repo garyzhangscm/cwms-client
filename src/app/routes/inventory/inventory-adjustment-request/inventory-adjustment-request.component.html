@@ -151,7 +151,9 @@
       <tr *ngFor="let data of rowSelectionTable.data">
         <td>{{ data.id }}</td>
         <td>{{ data.inventoryId }}</td>
-        <td>{{ data.lpn }}</td>
+        <td><a routerLink="/inventory/inventory" routerLinkActive="active"
+            [queryParams]="{lpn : data.lpn, refresh: true}">
+            {{ data.lpn }}</a></td>
         <td>
           <a nz-tooltip nzTooltipTitle="{{ data.item.description }}">{{ data.item.name }}</a>
         </td>

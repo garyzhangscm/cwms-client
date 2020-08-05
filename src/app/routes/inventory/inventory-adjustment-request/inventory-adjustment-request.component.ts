@@ -67,6 +67,19 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
     private modalService: NzModalService,
     private activatedRoute: ActivatedRoute,
   ) {}
+  ngOnInit() {
+    this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.inventory-adjustment-request'));
+    this.initSearchForm();
+
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.inventoryId) {
+        this.search(params.inventoryId);
+      } else if (params.locationName) {
+        this.searchForm.controls.location.setValue(params.locationName);
+        this.search();
+      }
+    });
+  }
 
   resetForm(): void {
     this.searchForm.reset();
@@ -225,20 +238,6 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
     } else {
       this.listOfDisplayInventoryAdjustmentRequests = data;
     }
-  }
-
-  ngOnInit() {
-    this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.inventory-activity'));
-    this.initSearchForm();
-
-    this.activatedRoute.queryParams.subscribe(params => {
-      if (params.inventoryId) {
-        this.search(params.inventoryId);
-      } else if (params.locationName) {
-        this.searchForm.controls.location.setValue(params.locationName);
-        this.search();
-      }
-    });
   }
 
   initSearchForm() {

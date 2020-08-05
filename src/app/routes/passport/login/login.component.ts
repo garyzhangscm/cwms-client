@@ -1,5 +1,5 @@
 import { SettingsService, _HttpClient } from '@delon/theme';
-import { Component, OnDestroy, Inject, Optional } from '@angular/core';
+import { Component, OnDestroy, Inject, Optional, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
@@ -16,7 +16,7 @@ import { WarehouseService } from '../../warehouse-layout/services/warehouse.serv
   styleUrls: ['./login.component.less'],
   providers: [SocialService],
 })
-export class UserLoginComponent implements OnDestroy {
+export class UserLoginComponent implements OnInit, OnDestroy {
   constructor(
     fb: FormBuilder,
     modalSrv: NzModalService,
@@ -43,7 +43,6 @@ export class UserLoginComponent implements OnDestroy {
     modalSrv.closeAll();
     this.warehouses = [];
   }
-
   // #region fields
 
   get userName() {
@@ -70,6 +69,10 @@ export class UserLoginComponent implements OnDestroy {
   count = 0;
   interval$: any;
   warehouses: Warehouse[];
+
+  ngOnInit() {
+    console.log(`Welcome, please login first!`);
+  }
 
   // #endregion
 

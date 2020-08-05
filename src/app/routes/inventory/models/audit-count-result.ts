@@ -1,6 +1,7 @@
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { Inventory } from './inventory';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
+import { Item } from './item';
 
 export interface AuditCountResult {
   id: number;
@@ -9,6 +10,8 @@ export interface AuditCountResult {
   warehouseId: number;
   warehouse?: Warehouse;
   inventory: Inventory;
+  lpn: string;
+  item: Item;
   quantity: number;
   countQuantity: number;
 }
