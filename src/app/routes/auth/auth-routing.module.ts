@@ -9,6 +9,10 @@ import { AuthRoleMaintenanceComponent } from './role-maintenance/role-maintenanc
 import { AuthUserMaintenanceComponent } from './user-maintenance/user-maintenance.component';
 import { AuthRoleMaintenanceConfirmComponent } from './role-maintenance-confirm/role-maintenance-confirm.component';
 import { AuthUserMaintenanceConfirmComponent } from './user-maintenance-confirm/user-maintenance-confirm.component';
+import { AuthWorkingTeamComponent } from './working-team/working-team.component';
+import { AuthWorkingTeamMaintenanceComponent } from './working-team-maintenance/working-team-maintenance.component';
+import { AuthWorkingTeamMaintenanceConfirmComponent } from './working-team-maintenance-confirm/working-team-maintenance-confirm.component';
+import { AuthWorkingTeamUserComponent } from './working-team-user/working-team-user.component';
 
 const routes: Routes = [
   { path: 'user', component: AuthUserComponent },
@@ -20,6 +24,10 @@ const routes: Routes = [
   { path: 'user/maintenance', component: AuthUserMaintenanceComponent },
   { path: 'role/maintenance/confirm', component: AuthRoleMaintenanceConfirmComponent },
   { path: 'user/maintenance/confirm', component: AuthUserMaintenanceConfirmComponent },
+  { path: 'working-team', component: AuthWorkingTeamComponent },
+  { path: 'working-team/maintenance', component: AuthWorkingTeamMaintenanceComponent },
+  { path: 'working-team/maintenance/confirm', component: AuthWorkingTeamMaintenanceConfirmComponent },
+  { path: 'working-team/user', component: AuthWorkingTeamUserComponent },
 ];
 
 @NgModule({

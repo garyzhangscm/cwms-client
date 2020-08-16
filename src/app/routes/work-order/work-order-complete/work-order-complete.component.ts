@@ -12,6 +12,8 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd';
 import { WorkOrderLineCompleteTransaction } from '../models/work-order-line-complete-transaction';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { WorkOrderLine } from '../models/work-order-line';
+import { WorkOrderKpi } from '../models/work-order-kpi';
+import { WorkOrderKpiTransaction } from '../models/work-order-kpi-transaction';
 
 @Component({
   selector: 'app-work-order-work-order-complete',
@@ -71,6 +73,8 @@ export class WorkOrderWorkOrderCompleteComponent implements OnInit {
       id: null,
       workOrder,
       workOrderLineCompleteTransactions: [],
+      workOrderKPITransactions: [],
+      workOrderByProductProduceTransactions: [],
     };
     workOrder.workOrderLines.forEach(workOrderLine => {
       this.workOrderCompleteTransaction.workOrderLineCompleteTransactions = [
@@ -89,8 +93,31 @@ export class WorkOrderWorkOrderCompleteComponent implements OnInit {
       this.mapOfWorkOrderLineStatus[workOrderLine.id] =
         workOrderLine.deliveredQuantity === workOrderLine.consumedQuantity;
     });
+
+    // init the work order KPI transaction
+    this.workOrderService.getKPIs(this.currentWorkOrder).subscribe(workOrderKPIs => {
+      // copy the existing work order KPIs into the transaction variable so
+      // that we allow the user to change
+      this.workOrderCompleteTransaction.workOrderKPITransactions = this.getWorkOrderKPITransaction(workOrderKPIs);
+    });
   }
 
+  getWorkOrderKPITransaction(workOrderKPIs: WorkOrderKpi[]): WorkOrderKpiTransaction[] {
+    const workOrderKpiTransactions: WorkOrderKpiTransaction[] = [];
+    workOrderKPIs.forEach(workOrderKPI => {
+      workOrderKpiTransactions.push({
+        id: null,
+        workOrder: workOrderKPI.workOrder,
+        workOrderCompleteTransaction: null,
+        workOrderProduceTransaction: null,
+        username: workOrderKPI.username,
+        workingTeamName: workOrderKPI.workingTeamName,
+        kpiMeasurement: workOrderKPI.kpiMeasurement,
+        amount: workOrderKPI.amount,
+      });
+    });
+    return workOrderKpiTransactions;
+  }
   openReturnMaterialModal(
     workOrderLineCompleteTransaction: WorkOrderLineCompleteTransaction,
     tplReturnMaterialModalTitle: TemplateRef<{}>,

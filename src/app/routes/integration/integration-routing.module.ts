@@ -14,6 +14,7 @@ import { IntegrationIntegrationDataReceiptConfirmComponent } from './integration
 import { IntegrationIntegrationDataOrderConfirmComponent } from './integration-data-order-confirm/integration-data-order-confirm.component';
 import { IntegrationIntegrationDataInventoryAdjustComponent } from './integration-data-inventory-adjust/integration-data-inventory-adjust.component';
 import { IntegrationIntegrationDataInventoryAttributeChangeComponent } from './integration-data-inventory-attribute-change/integration-data-inventory-attribute-change.component';
+import { IntegrationIntegrationDataWorkOrderConfirmComponent } from './integration-data-work-order-confirm/integration-data-work-order-confirm.component';
 
 const routes: Routes = [
   { path: 'integration-data', component: IntegrationIntegrationDataComponent },
@@ -33,6 +34,7 @@ const routes: Routes = [
     path: 'integration-data-inventory-attribute-change',
     component: IntegrationIntegrationDataInventoryAttributeChangeComponent,
   },
+  { path: 'integration-data-work-order-confirm', component: IntegrationIntegrationDataWorkOrderConfirmComponent },
 ];
 
 @NgModule({

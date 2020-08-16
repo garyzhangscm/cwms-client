@@ -10,6 +10,10 @@ import { AuthRoleMaintenanceComponent } from './role-maintenance/role-maintenanc
 import { AuthUserMaintenanceComponent } from './user-maintenance/user-maintenance.component';
 import { AuthRoleMaintenanceConfirmComponent } from './role-maintenance-confirm/role-maintenance-confirm.component';
 import { AuthUserMaintenanceConfirmComponent } from './user-maintenance-confirm/user-maintenance-confirm.component';
+import { AuthWorkingTeamComponent } from './working-team/working-team.component';
+import { AuthWorkingTeamMaintenanceComponent } from './working-team-maintenance/working-team-maintenance.component';
+import { AuthWorkingTeamMaintenanceConfirmComponent } from './working-team-maintenance-confirm/working-team-maintenance-confirm.component';
+import { AuthWorkingTeamUserComponent } from './working-team-user/working-team-user.component';
 
 const COMPONENTS = [
   AuthUserComponent,
@@ -20,7 +24,11 @@ const COMPONENTS = [
   AuthRoleMaintenanceComponent,
   AuthUserMaintenanceComponent,
   AuthRoleMaintenanceConfirmComponent,
-  AuthUserMaintenanceConfirmComponent];
+  AuthUserMaintenanceConfirmComponent,
+  AuthWorkingTeamComponent,
+  AuthWorkingTeamMaintenanceComponent,
+  AuthWorkingTeamMaintenanceConfirmComponent,
+  AuthWorkingTeamUserComponent];
 const COMPONENTS_NOROUNT = [];
 
 @NgModule({

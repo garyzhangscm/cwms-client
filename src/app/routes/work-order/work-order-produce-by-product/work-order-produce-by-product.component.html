@@ -1,0 +1,123 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/work-order/work-order" routerLinkActive="active"
+    [queryParams]="{ number: currentWorkOrder?.number }">{{ 'return' | translate }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/work-order" routerLinkActive="active">{{
+        'breadcrumb.work-order' | translate
+      }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+
+
+<div nz-row style="padding: 10px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps nzType="navigation" [nzCurrent]="1" [nzSize]="'small'" (nzIndexChange)="onIndexChange($event)">
+      <nz-step nzTitle="{{ 'steps.work-order-produce.produce.title' | translate }}"
+        nzDescription="{{ 'steps.work-order-produce.produce.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.work-order-produce.by-product.title' | translate }}"
+        nzDescription="{{ 'steps.work-order-produce.by-product.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.work-order-produce.user-kpi.title' | translate }}"
+        nzDescription="{{ 'steps.work-order-produce.user-kpi.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.work-order-produce.confirm.title' | translate }}"
+        nzDescription="{{ 'steps.work-order-produce.confirm.description' | translate }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+
+<!-- Table to show inventory  -->
+
+<div class="search-result-list">
+  <nz-table [nzData]="workOrderProduceTransaction?.workOrderByProductProduceTransactions"
+    [nzFooter]="inventoryTableFoot" nzShowPagination="false" #inventoryTable>
+    <thead>
+      <tr>
+        <th>{{ 'lpn' | translate }}</th>
+        <th>{{ 'item' | translate }}</th>
+        <th>{{ 'item.description' | translate }}</th>
+        <th>{{ 'item.package-type' | translate }}</th>
+        <th>{{ 'location' | translate }}</th>
+        <th>{{ 'inventory.status' | translate }}</th>
+        <th>{{ 'work-order.by-product.expectedQuantity' | translate }}</th>
+        <th>{{ 'work-order.by-product.producedQuantity' | translate }}</th>
+        <th>{{ 'quantity' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let workOrderByProductProduceTransaction of inventoryTable.data; let i = index">
+        <td>
+          <div class="row">
+            <input appFkey variable="lpn" type="text" [ngModel]="workOrderByProductProduceTransaction?.lpn"
+              (blur)="lpnChanged($event.target.value, workOrderByProductProduceTransaction)" name="lpn-{{ i }}"
+              id="lpn-{{ i }}" />
+          </div>
+        </td>
+        <td>
+          <nz-select style="width: 150px"
+            [ngModel]="workOrderByProductProduceTransaction.workOrderByProduct?.item?.name"
+            (ngModelChange)="itemChanged($event, workOrderByProductProduceTransaction)" nzShowSearch nzAllowClear>
+            <nz-option *ngFor="let workOrderByProduct of currentWorkOrder?.workOrderByProducts"
+              [nzLabel]="workOrderByProduct.item.name" [nzValue]="workOrderByProduct.item.name"></nz-option>
+          </nz-select>
+        </td>
+        <td>
+          {{ workOrderByProductProduceTransaction.workOrderByProduct?.item?.description }}
+        </td>
+        <td>
+          <nz-select style="width: 150px" [ngModel]="workOrderByProductProduceTransaction.itemPackageType?.name"
+            (ngModelChange)="itemPackageTypeChanged($event, workOrderByProductProduceTransaction)" nzShowSearch
+            nzAllowClear>
+            <nz-option
+              *ngFor="let itemPackageType of workOrderByProductProduceTransaction.workOrderByProduct?.item?.itemPackageTypes"
+              [nzLabel]="itemPackageType.name" [nzValue]="itemPackageType.name"></nz-option>
+          </nz-select>
+        </td>
+        <td>{{ currentWorkOrder.productionLine?.outboundStageLocation?.name }}</td>
+        <td>
+          <nz-select style="width: 150px" [ngModel]="workOrderByProductProduceTransaction.inventoryStatus?.id"
+            (ngModelChange)="inventoryStatusChanged($event, workOrderByProductProduceTransaction)" nzShowSearch
+            nzAllowClear>
+            <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
+              nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | translate }}" [nzValue]="inventoryStatus?.id">
+            </nz-option>
+          </nz-select>
+        </td>
+        <td>{{ workOrderByProductProduceTransaction.workOrderByProduct?.expectedQuantity }}</td>
+        <td>{{ workOrderByProductProduceTransaction.workOrderByProduct?.producedQuantity }}</td>
+        <td><input type="text" [(ngModel)]="workOrderByProductProduceTransaction.quantity" name="result-{{ i }}" /></td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+<ng-template #inventoryTableFoot>
+  <div nz-row nzType="flex" nzJustify="start">
+    <nz-layout>
+      <nz-sider>
+        <button nz-button nzType="primary" (click)="addExtraInventory()">
+          {{ 'add' | translate }}
+        </button></nz-sider>
+      <nz-content>
+        <a nz-button nzType="link" (click)="addKPIInfo()">
+          {{ 'steps.work-order-produce.user-kpi.title' | translate }}</a>
+        <button nz-button nzType="primary" routerLink="/work-order/work-order/produce/confirm" routerLinkActive="active"
+          [queryParams]="{ id: currentWorkOrder?.id }" (click)="saveCurrentWorkOrderResults()">
+          {{ 'confirm' | translate }}
+        </button>
+      </nz-content>
+    </nz-layout>
+  </div>
+</ng-template>

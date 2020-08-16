@@ -11,12 +11,14 @@ import { User } from '../models/user';
 export class UserService {
   constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
-  getUsers(username?: string, rolename?: string): Observable<User[]> {
+  getUsers(username?: string, rolename?: string, workingTeamName?: string): Observable<User[]> {
     let url = `resource/users`;
     if (username) {
       url = `${url}?username=${username}`;
     } else if (rolename) {
       url = `${url}?rolename=${rolename}`;
+    } else if (workingTeamName) {
+      url = `${url}?workingTeamName=${workingTeamName}`;
     }
     console.log(`start to get users from ${url}`);
 

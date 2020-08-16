@@ -130,7 +130,6 @@
   <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllInventoryActivities">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
-        <th nzShowSort nzSortKey="id">id</th>
         <th nzShowSort nzSortKey="transactionId">
           {{ 'inventory-activity.transaction-id' | translate }}</th>
         <th nzShowSort nzSortKey="transactionGroupId">
@@ -207,7 +206,6 @@
     </thead>
     <tbody>
       <tr *ngFor="let data of rowSelectionTable.data">
-        <td>{{ data.id }}</td>
         <td>{{ data.transactionId }}</td>
         <td>{{ data.transactionGroupId }}</td>
         <td>{{ data.lpn }}</td>

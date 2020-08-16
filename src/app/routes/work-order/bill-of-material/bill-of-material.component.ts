@@ -37,6 +37,8 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
     productionLine: null,
     itemId: null,
     item: null,
+    workOrderKPIs: [],
+    workOrderByProducts: [],
 
     warehouseId: null,
     warehouse: null,
@@ -171,6 +173,8 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
       productionLine: null,
       itemId: null,
       item: null,
+      workOrderKPIs: [],
+      workOrderByProducts: [],
 
       warehouseId: null,
       warehouse: null,

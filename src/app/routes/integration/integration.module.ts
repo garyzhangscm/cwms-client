@@ -15,6 +15,7 @@ import { IntegrationIntegrationDataReceiptConfirmComponent } from './integration
 import { IntegrationIntegrationDataOrderConfirmComponent } from './integration-data-order-confirm/integration-data-order-confirm.component';
 import { IntegrationIntegrationDataInventoryAdjustComponent } from './integration-data-inventory-adjust/integration-data-inventory-adjust.component';
 import { IntegrationIntegrationDataInventoryAttributeChangeComponent } from './integration-data-inventory-attribute-change/integration-data-inventory-attribute-change.component';
+import { IntegrationIntegrationDataWorkOrderConfirmComponent } from './integration-data-work-order-confirm/integration-data-work-order-confirm.component';
 
 const COMPONENTS = [
   IntegrationIntegrationDataComponent,
@@ -32,6 +33,7 @@ const COMPONENTS = [
   IntegrationIntegrationDataOrderConfirmComponent,
   IntegrationIntegrationDataInventoryAdjustComponent,
   IntegrationIntegrationDataInventoryAttributeChangeComponent,
+  IntegrationIntegrationDataWorkOrderConfirmComponent,
 ];
 const COMPONENTS_NOROUNT = [];
 

@@ -1,4 +1,5 @@
 import { Role } from './role';
+import { WorkingTeam } from './working-team';
 
 export interface User {
   id: number;
@@ -10,5 +11,6 @@ export interface User {
   enabled: boolean;
   locked: boolean;
   roles: Role[];
+  workingTeams: WorkingTeam[];
   changePasswordAtNextLogon: boolean;
 }

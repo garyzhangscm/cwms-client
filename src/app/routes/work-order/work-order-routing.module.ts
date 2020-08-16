@@ -10,18 +10,24 @@ import { WorkOrderWorkOrderLineCompleteComponent } from './work-order-line-compl
 import { WorkOrderWorkOrderLineCompleteConfirmComponent } from './work-order-line-complete-confirm/work-order-line-complete-confirm.component';
 import { WorkOrderWorkOrderCompleteConfirmComponent } from './work-order-complete-confirm/work-order-complete-confirm.component';
 import { WorkOrderWorkOrderCompleteKpiComponent } from './work-order-complete-kpi/work-order-complete-kpi.component';
+import { WorkOrderWorkOrderCompleteByProductComponent } from './work-order-complete-by-product/work-order-complete-by-product.component';
+import { WorkOrderWorkOrderProduceKpiComponent } from './work-order-produce-kpi/work-order-produce-kpi.component';
+import { WorkOrderWorkOrderProduceByProductComponent } from './work-order-produce-by-product/work-order-produce-by-product.component';
 
 const routes: Routes = [
   { path: 'work-order', component: WorkOrderWorkOrderComponent },
   { path: 'production-line', component: WorkOrderProductionLineComponent },
   { path: 'bill-of-material', component: WorkOrderBillOfMaterialComponent },
   { path: 'work-order/produce', component: WorkOrderWorkOrderProduceComponent },
+  { path: 'work-order/produce/by-product', component: WorkOrderWorkOrderProduceByProductComponent },
+  { path: 'work-order/produce/kpi', component: WorkOrderWorkOrderProduceKpiComponent },
   { path: 'work-order/produce/confirm', component: WorkOrderWorkOrderProduceConfirmComponent },
-  { path: 'work-order/complete', component: WorkOrderWorkOrderCompleteComponent },
   { path: 'work-order/line/complete', component: WorkOrderWorkOrderLineCompleteComponent },
   { path: 'work-order/line/complete/confirm', component: WorkOrderWorkOrderLineCompleteConfirmComponent },
-  { path: 'work-order/complete/confirm', component: WorkOrderWorkOrderCompleteConfirmComponent },
+  { path: 'work-order/complete', component: WorkOrderWorkOrderCompleteComponent },
+  { path: 'work-order/complete/by-product', component: WorkOrderWorkOrderCompleteByProductComponent },
   { path: 'work-order/complete/kpi', component: WorkOrderWorkOrderCompleteKpiComponent },
+  { path: 'work-order/complete/confirm', component: WorkOrderWorkOrderCompleteConfirmComponent },
 ];
 
 @NgModule({

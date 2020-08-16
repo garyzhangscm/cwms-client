@@ -29,6 +29,8 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
   workOrderProduceTransaction: WorkOrderProduceTransaction;
 
   isWorkOrderCollapse = true;
+  isWorkOrderByProductCollapse = true;
+  isWorkOrderKPICollapse = true;
 
   savingInProcess = false;
 
@@ -56,6 +58,7 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
 
     this.workOrderProduceTransaction = JSON.parse(sessionStorage.getItem('currentWorkOrderProduceTransaction'));
 
+    console.log(`kpi 3: \n ${JSON.stringify(this.workOrderProduceTransaction.workOrderKPITransactions)}`);
     if (
       this.workOrderProduceTransaction.consumeByBomQuantity === true &&
       this.workOrderProduceTransaction.matchedBillOfMaterial !== null
@@ -82,6 +85,12 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
   toggleCollapse() {
     this.isWorkOrderCollapse = !this.isWorkOrderCollapse;
   }
+  toggleByProductCollapse() {
+    this.isWorkOrderByProductCollapse = !this.isWorkOrderByProductCollapse;
+  }
+  toggleKPICollapse() {
+    this.isWorkOrderKPICollapse = !this.isWorkOrderKPICollapse;
+  }
 
   saveWorkOrderProduceResults() {
     this.savingInProcess = true;
@@ -94,5 +103,29 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
           this.router.navigateByUrl(`/work-order/work-order?number=${workOrderProduceTransactionRes.workOrder.number}`);
         }, 2500);
       });
+  }
+
+  onIndexChange(index: number) {
+    sessionStorage.setItem('currentWorkOrderProduceTransaction', JSON.stringify(this.workOrderProduceTransaction));
+    switch (index) {
+      case 0:
+        this.router.navigateByUrl(`/work-order/work-order/produce?id=${this.workOrderProduceTransaction.workOrder.id}`);
+        break;
+      case 1:
+        this.router.navigateByUrl(
+          `/work-order/work-order/produce/by-product?id=${this.workOrderProduceTransaction.workOrder.id}`,
+        );
+        break;
+      case 2:
+        this.router.navigateByUrl(
+          `/work-order/work-order/produce/kpi?id=${this.workOrderProduceTransaction.workOrder.id}`,
+        );
+        break;
+      case 3:
+        this.router.navigateByUrl(
+          `/work-order/work-order/produce/confirm?id=${this.workOrderProduceTransaction.workOrder.id}`,
+        );
+        break;
+    }
   }
 }

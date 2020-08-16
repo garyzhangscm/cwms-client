@@ -37,11 +37,9 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllWorkOrder" [nzFooter]="tableFoot">
+  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllWorkOrder">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
-        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
-          (nzCheckedChange)="checkAll($event)"></th>
         <th nzShowExpand></th>
         <th nzShowSort nzSortKey="number">
           {{ 'work-order.number' | translate }}
@@ -88,7 +86,6 @@
 
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <tr>
-          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
 
           <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]" (nzExpandChange)="showWorkOrderDetails(data)"></td>
           <td>{{ data.number }}</td>
@@ -185,6 +182,90 @@
     </tbody>
   </nz-table>
   </nz-tab>
+
+  <nz-tab nzTitle=" {{ 'work-order.by-product' | translate }}">
+    <nz-table [nzData]="data.workOrderByProducts" nzSize="middle" [nzShowPagination]="false">
+
+      <thead>
+        <th>
+          {{ 'item' | translate }}</th>
+        <th>
+          {{ 'item.description' | translate }}</th>
+        <th>
+          {{ 'work-order.by-product.expectedQuantity' | translate }}</th>
+        <th>
+          {{ 'work-order.by-product.producedQuantity' | translate }}</th>
+        <th>
+          {{ 'inventory.status' | translate }}</th>
+      </thead>
+      <tbody>
+
+        <tr *ngFor="let workOrderByProduct of data.workOrderByProducts">
+          <td>{{ workOrderByProduct.item?.name }}</td>
+          <td>{{ workOrderByProduct.item?.description }}</td>
+          <td>{{ workOrderByProduct.expectedQuantity }}</td>
+          <td>{{ workOrderByProduct.producedQuantity }}</td>
+          <td>{{ 'INVENTORY-STATUS-' + workOrderByProduct.inventoryStatus.name | translate}}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+
+
+  <nz-tab nzTitle=" {{ 'work-order.kpi' | translate }}">
+    <nz-table [nzData]="mapOfKPIs[data.id]" nzSize="middle" [nzShowPagination]="false">
+
+      <thead>
+        <th>{{ 'username' | translate }}</th>
+        <th>{{ 'working-team' | translate }}</th>
+        <th>{{ 'amount' | translate }}</th>
+        <th>{{ 'KPIMeasure' | translate }}</th>
+      </thead>
+      <tbody>
+
+
+        <tr *ngFor="let workOrderKPI of mapOfKPIs[data.id]">
+          <td>{{ workOrderKPI.username }}</td>
+          <td>{{ workOrderKPI.workingTeamName }}</td>
+          <td>{{ workOrderKPI.amount }}</td>
+          <td>{{  'KPI-MEASUREMENT-' + workOrderKPI.kpiMeasurement | translate }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+
+  <nz-tab nzTitle=" {{ 'work-order.kpi-transaction' | translate }}">
+    <nz-table [nzData]="mapOfKPITransactions[data.id]" nzSize="middle" [nzShowPagination]="false">
+
+      <thead>
+        <th>{{ 'username' | translate }}</th>
+        <th>{{ 'working-team' | translate }}</th>
+        <th>{{ 'amount' | translate }}</th>
+        <th>{{ 'KPIMeasure' | translate }}</th>
+        <th>{{ 'insert-date' | translate }}</th>
+      </thead>
+      <tbody>
+
+
+        <tr *ngFor="let workOrderKPITransaction of mapOfKPITransactions[data.id]">
+          <td>{{ workOrderKPITransaction.username }}</td>
+          <td>{{ workOrderKPITransaction.workingTeamName }}</td>
+          <td>{{ workOrderKPITransaction.amount }}</td>
+
+          <td>{{  'KPI-MEASUREMENT-' + workOrderKPITransaction.kpiMeasurement | translate }}</td>
+          <td>
+
+            {{ workOrderKPITransaction.createdTime[1] }}/{{ workOrderKPITransaction.createdTime[2] }}/{{ workOrderKPITransaction.createdTime[0] }}
+            {{ workOrderKPITransaction.createdTime[3] }}:{{
+              workOrderKPITransaction.createdTime[4]
+            }}:{{ workOrderKPITransaction.createdTime[5] }}
+
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+
   <nz-tab nzTitle=" {{ 'work-order-instruction' | translate }}">
     <nz-table [nzData]="data.workOrderInstructions" nzSize="middle" [nzShowPagination]="false">
 
@@ -436,6 +517,96 @@
     </nz-table>
   </nz-tab>
 
+  <nz-tab nzTitle=" {{ 'work-order.by-product.produced' | translate }}">
+
+    <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfProducedByProduct[data.id]">
+      <thead>
+
+        <th>
+          {{ 'location' | translate }}
+        </th>
+        <th>
+          {{ 'lpn' | translate }}
+        </th>
+        <th>
+          {{ 'item' | translate }}
+        </th>
+        <th>
+          {{ 'item.description' | translate }}
+        </th>
+        <th>
+          {{ 'item.package-type' | translate }}
+        </th>
+        <th>
+          {{ 'quantity' | translate }}
+        </th>
+        <th>
+          {{ 'inventory.status' | translate }}
+        </th>
+        <th>
+          {{'nextLocation' | translate}}</th>
+        <th>
+          {{ 'action' | translate }}
+        </th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let inventory of mapOfProducedByProduct[data.id]">
+          <td>{{ inventory.location?.name }}</td>
+          <td>{{ inventory.lpn }}</td>
+          <td>{{ inventory.item?.name }}</td>
+          <td>{{ inventory.item?.description }}</td>
+          <td>{{ inventory.itemPackageType?.name }}</td>
+          <td>{{ inventory.quantity }}</td>
+          <td>{{ 'INVENTORY-STATUS-' + inventory.inventoryStatus?.name | translate}}</td>
+
+          <td>
+            <p *ngFor="let inventoryMovement of inventory.inventoryMovements; let i = index">
+              {{ i+1 }} - {{ inventoryMovement.location?.name}}
+            </p>
+          </td>
+          <td>
+
+            <button nz-button nzType="primary"
+              *ngIf="inventoryReadyForPutaway(data, inventory) && inventory.inventoryMovements?.length === 0"
+              (click)="allocateLocation(data, inventory)">{{ 'allocateLocation' | translate }}</button>
+
+
+            <div *ngIf="inventory.inventoryMovements?.length > 0">
+              <button nz-button nzType="primary"
+                *ngIf="inventory.location.name === data.productionLine?.outboundStageLocation?.name"
+                (click)="reallocateLocation(data, inventory)">{{ 'reallocateLocation' | translate }}</button>
+              <nz-divider nzType="vertical"
+                *ngIf="inventory.location.name === data.productionLine?.outboundStageLocation?.name"></nz-divider>
+              <button nz-button nzType="primary" *ngIf="inventory.inventoryMovements?.length === 1"
+                (click)="confirmPutaway(data, 0, inventory)">{{ 'putaway' | translate }}</button>
+
+              <button nz-button nz-dropdown [nzDropdownMenu]="putawayDestinationTpl"
+                *ngIf="inventory.inventoryMovements?.length > 1">
+                {{ 'putaway' | translate }}<i nz-icon nzType="down"></i></button>
+              <nz-dropdown-menu #putawayDestinationTpl="nzDropdownMenu">
+                <ul nz-menu>
+                  <li nz-menu-item *ngFor="let inventoryMovement of inventory.inventoryMovements; let i=index">
+                    <a (click)="confirmPutaway(data, i, inventory)">
+                      {{ i+1 }} - {{ inventoryMovement.location?.name}}</a>
+                  </li>
+                </ul>
+              </nz-dropdown-menu>
+
+
+            </div>
+
+
+            <button nz-button nzType="primary"
+              *ngIf="inventory.location.name === data.productionLine?.outboundStageLocation?.name"
+              (click)="openManualPutawayModal(data, inventory, tplManualPutawayModalTitle, tplManualPutawayModalContent)">
+              {{ 'putaway.manual' | translate }}</button>
+
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+
   <nz-tab nzTitle=" {{ 'work-order.returned-inventory' | translate }}">
 
     <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfReturnedInventory[data.id]">
@@ -532,16 +703,6 @@
   </nz-table>
 </div>
 
-<ng-template #tableFoot>
-  <div nz-row nzType="flex" nzJustify="start">
-    <button nz-button nzType="danger" (click)="removeSelectedWorkOrders()">
-      {{ 'delete' | translate }}
-    </button>
-    <button nz-button nzType="primary" routerLink="/util/file-upload/locations" routerLinkActive="active">
-      {{ 'file-upload' | translate }}
-    </button>
-  </div>
-</ng-template>
 
 
 

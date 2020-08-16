@@ -26,6 +26,7 @@ export class AuthUserMaintenanceComponent implements OnInit {
     locked: false,
     roles: [],
     changePasswordAtNextLogon: false,
+    workingTeams: [],
   };
 
   constructor(

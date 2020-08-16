@@ -14,6 +14,8 @@ import { Inventory } from '../../inventory/models/inventory';
 import { PutawayConfigurationService } from '../../inbound/services/putaway-configuration.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
+import { WorkOrderKpi } from '../models/work-order-kpi';
+import { WorkOrderKpiTransaction } from '../models/work-order-kpi-transaction';
 
 @Component({
   selector: 'app-work-order-work-order',
@@ -73,6 +75,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   mapOfDeliveredInventory: { [key: string]: Inventory[] } = {};
   mapOfProducedInventory: { [key: string]: Inventory[] } = {};
   mapOfReturnedInventory: { [key: string]: Inventory[] } = {};
+  mapOfProducedByProduct: { [key: string]: Inventory[] } = {};
+  mapOfKPIs: { [key: string]: WorkOrderKpi[] } = {};
+  mapOfKPITransactions: { [key: string]: WorkOrderKpiTransaction[] } = {};
 
   ngOnInit() {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.work-order.work-order'));
@@ -259,7 +264,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   }
 
   isWorkOrderReadyForComplete(workOrder: WorkOrder): boolean {
-    return workOrder.status === WorkOrderStatus.INPROCESS;
+    return workOrder.status === WorkOrderStatus.INPROCESS || workOrder.status === WorkOrderStatus.PENDING;
   }
   completeWorkOrder(workOrder: WorkOrder) {
     this.router.navigateByUrl(`/work-order/work-order/complete?id=${workOrder.id}`);
@@ -283,6 +288,12 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     });
   }
 
+  showProducedByProduct(workOrder: WorkOrder) {
+    this.workOrderService.getProducedByProduct(workOrder).subscribe(producedByProductRes => {
+      this.mapOfProducedByProduct[workOrder.id] = [...producedByProductRes];
+    });
+  }
+
   showProducedInventory(workOrder: WorkOrder) {
     this.workOrderService.getProducedInventory(workOrder).subscribe(returnedInventoryRes => {
       this.mapOfProducedInventory[workOrder.id] = [...returnedInventoryRes];
@@ -295,12 +306,27 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     });
   }
 
+  showKPIs(workOrder: WorkOrder) {
+    this.workOrderService.getKPIs(workOrder).subscribe(workOrderKPIs => {
+      this.mapOfKPIs[workOrder.id] = [...workOrderKPIs];
+    });
+  }
+
+  showKPITransactions(workOrder: WorkOrder) {
+    this.workOrderService.getKPITransactions(workOrder).subscribe(workOrderKPITransactions => {
+      this.mapOfKPITransactions[workOrder.id] = [...workOrderKPITransactions];
+    });
+  }
+
   showWorkOrderDetails(workOrder: WorkOrder) {
     // When we expand the details for the order, load the picks and short allocation from the server
     if (this.mapOfExpandedId[workOrder.id] === true) {
       this.showDeliveredInventory(workOrder);
       this.showProducedInventory(workOrder);
+      this.showProducedByProduct(workOrder);
       this.showReturnedInventory(workOrder);
+      this.showKPITransactions(workOrder);
+      this.showKPIs(workOrder);
     }
   }
 

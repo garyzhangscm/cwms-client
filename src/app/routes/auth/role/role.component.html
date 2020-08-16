@@ -103,8 +103,8 @@
         <td>{{ user.firstname }}</td>
         <td>{{ user.lastname }}</td>
         <td>{{ user.email }} </td>
-        <td>{{ user.enabled }}</td>
-        <td>{{ user.locked }}</td>
+        <td>{{ user.enabled + '' | translate }}</td>
+        <td>{{ user.locked  + '' | translate}}</td>
         <td>
           <button nz-button (click)="deassignUser(data.id, user.id)">{{ 'role.unassign-user' | translate }}</button>
         </td>

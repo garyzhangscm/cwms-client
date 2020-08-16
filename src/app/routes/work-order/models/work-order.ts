@@ -10,6 +10,8 @@ import { Warehouse } from '../../warehouse-layout/models/warehouse';
 
 import { WorkOrderAssignment } from './work-order-assignment';
 import { WorkOrderStatus } from './work-order-status.enum';
+import { WorkOrderKpi } from './work-order-kpi';
+import { WorkOrderByProduct } from './work-order-by-product';
 
 export interface WorkOrder {
   id: number;
@@ -25,6 +27,8 @@ export interface WorkOrder {
   expectedQuantity: number;
   producedQuantity: number;
   assignments: WorkOrderAssignment[];
+  workOrderKPIs: WorkOrderKpi[];
+  workOrderByProducts: WorkOrderByProduct[];
 
   status: WorkOrderStatus;
 

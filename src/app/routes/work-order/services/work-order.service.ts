@@ -7,6 +7,8 @@ import { map } from 'rxjs/operators';
 import { PickWork } from '../../outbound/models/pick-work';
 import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
+import { WorkOrderKpi } from '../models/work-order-kpi';
+import { WorkOrderKpiTransaction } from '../models/work-order-kpi-transaction';
 
 @Injectable({
   providedIn: 'root',
@@ -71,6 +73,17 @@ export class WorkOrderService {
   }
   getDeliveredInventory(workOrder: WorkOrder): Observable<Inventory[]> {
     return this.http.get(`workorder/work-orders/${workOrder.id}/delivered-inventory`).pipe(map(res => res.data));
+  }
+  getProducedByProduct(workOrder: WorkOrder): Observable<Inventory[]> {
+    return this.http.get(`workorder/work-orders/${workOrder.id}/produced-by-product`).pipe(map(res => res.data));
+  }
+
+  getKPIs(workOrder: WorkOrder): Observable<WorkOrderKpi[]> {
+    return this.http.get(`workorder/work-orders/${workOrder.id}/kpi`).pipe(map(res => res.data));
+  }
+
+  getKPITransactions(workOrder: WorkOrder): Observable<WorkOrderKpiTransaction[]> {
+    return this.http.get(`workorder/work-orders/${workOrder.id}/kpi-transaction`).pipe(map(res => res.data));
   }
 
   changeProductionLine(workOrder: WorkOrder, productionLineId: number) {
