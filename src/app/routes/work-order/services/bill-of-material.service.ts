@@ -13,7 +13,7 @@ import { HttpParams } from '@angular/common/http';
 export class BillOfMaterialService {
   constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
-  getBillOfMaterials(number: string, itemName: string): Observable<BillOfMaterial[]> {
+  getBillOfMaterials(number?: string, itemName?: string): Observable<BillOfMaterial[]> {
     let url = `workorder/bill-of-materials?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (number) {
       url = `${url}&number=${number}`;
@@ -34,6 +34,15 @@ export class BillOfMaterialService {
       .pipe(map(res => res.data));
   }
 
+  findMatchedBillOfMaterialByItemName(itemName: string): Observable<BillOfMaterial[]> {
+    return this.http
+      .get(
+        `workorder/bill-of-materials/matched-with-item?warehouseId=${
+          this.warehouseService.getCurrentWarehouse().id
+        }&itemName=${itemName}`,
+      )
+      .pipe(map(res => res.data));
+  }
   addBillOfMaterial(billOfMaterial: BillOfMaterial): Observable<BillOfMaterial> {
     return this.http.post(`workorder/bill-of-materials`, billOfMaterial).pipe(map(res => res.data));
   }

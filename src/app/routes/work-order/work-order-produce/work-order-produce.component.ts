@@ -39,6 +39,7 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
   consumeByBomQuantity = 'true';
   currentWorkOrder: WorkOrder;
   findMatchedBOM = true;
+  pageLoading = false;
 
   validInventoryStatuses: InventoryStatus[] = [];
   isCollapse = true;
@@ -61,6 +62,7 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.pageLoading = true;
     this.titleService.setTitle(this.i18n.fanyi('page.work-order.produce'));
 
     this.activatedRoute.queryParams.subscribe(params => {
@@ -102,6 +104,8 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
           workOrderKPITransactions: [],
         };
       }
+
+      this.pageLoading = false;
     });
   }
 

@@ -13,6 +13,7 @@ import { UserService } from '../../auth/services/user.service';
 import { WorkingTeamService } from '../../auth/services/working-team.service';
 import { WorkOrderKpiTransaction } from '../models/work-order-kpi-transaction';
 import { WorkOrderService } from '../services/work-order.service';
+import { WorkOrderKpiTransactionType } from '../models/work-order-kpi-transaction-type.enum';
 
 @Component({
   selector: 'app-work-order-work-order-complete-kpi',
@@ -101,6 +102,7 @@ export class WorkOrderWorkOrderCompleteKpiComponent implements OnInit {
       workOrder: this.currentWorkOrder,
       workOrderCompleteTransaction: null,
       workOrderProduceTransaction: null,
+      type: WorkOrderKpiTransactionType.OVERRIDE,
       username: '',
       workingTeamName: '',
       kpiMeasurement: KpiMeasurement.BY_QUANTITY,

@@ -11,6 +11,7 @@ import { UserService } from '../../auth/services/user.service';
 import { WorkOrderKpi } from '../models/work-order-kpi';
 import { WorkingTeamService } from '../../auth/services/working-team.service';
 import { WorkOrderKpiTransaction } from '../models/work-order-kpi-transaction';
+import { WorkOrderKpiTransactionType } from '../models/work-order-kpi-transaction-type.enum';
 
 @Component({
   selector: 'app-work-order-work-order-produce-kpi',
@@ -85,6 +86,7 @@ export class WorkOrderWorkOrderProduceKpiComponent implements OnInit {
       workOrder: this.currentWorkOrder,
       workOrderCompleteTransaction: null,
       workOrderProduceTransaction: null,
+      type: WorkOrderKpiTransactionType.ADD,
       username: '',
       workingTeamName: '',
       kpiMeasurement: KpiMeasurement.BY_QUANTITY,

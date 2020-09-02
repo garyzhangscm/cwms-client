@@ -14,6 +14,7 @@ import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { WorkOrderLine } from '../models/work-order-line';
 import { WorkOrderKpi } from '../models/work-order-kpi';
 import { WorkOrderKpiTransaction } from '../models/work-order-kpi-transaction';
+import { WorkOrderKpiTransactionType } from '../models/work-order-kpi-transaction-type.enum';
 
 @Component({
   selector: 'app-work-order-work-order-complete',
@@ -111,6 +112,7 @@ export class WorkOrderWorkOrderCompleteComponent implements OnInit {
         workOrderCompleteTransaction: null,
         workOrderProduceTransaction: null,
         username: workOrderKPI.username,
+        type: WorkOrderKpiTransactionType.OVERRIDE,
         workingTeamName: workOrderKPI.workingTeamName,
         kpiMeasurement: workOrderKPI.kpiMeasurement,
         amount: workOrderKPI.amount,

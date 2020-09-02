@@ -1,0 +1,464 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/work-order/production-plan" routerLinkActive="active">{{ 'return' | translate }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/work-order" routerLinkActive="active">{{
+        'breadcrumb.work-order' | translate
+      }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+  <nz-step nzTitle="{{ 'steps.production-plan.new.info' | translate }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.production-plan.new.order-line' | translate }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.production-plan.new.bom' | translate }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.production-plan.new.confirm' | translate }}"> </nz-step>
+</nz-steps>
+
+<div class="steps-content" *ngIf="stepIndex === 0">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'production-plan.number' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input appFkey variable="production-plan" nz-input [(ngModel)]="currentProductionPlan.number"
+            (blur)="productionPlanNumberOnBlur($event.target.value)" required />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'description' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input [(ngModel)]="currentProductionPlan.description" required />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</div>
+
+<!-- Show the order line that is valid for new production plan-->
+<div class="steps-content" *ngIf="stepIndex === 1">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'order.number' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input [(ngModel)]="filterOrderNumber" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'item.name' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input [(ngModel)]="filterItemName" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <button nz-button (click)="findMatchedOrderLines()">
+          {{ 'search' | translate }}
+        </button>
+        <nz-divider nzType="vertical"></nz-divider>
+        <button nz-button (click)="clearMatchedOrderLines()">
+          {{ 'clear' | translate }}
+        </button>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div class="search-result-list">
+    <nz-table #basicTable [nzData]="validOrderLines">
+      <thead>
+        <th nzShowCheckbox [(nzChecked)]="allOrderLinesChecked" [nzIndeterminate]="allOrderLinesCheckedIndeterminate"
+          (nzCheckedChange)="onAllOrderLineChecked($event)" nzAlign="center"
+          [nzDisabled]="validOrderLines.length === 0"></th>
+        <th>
+          {{ 'order.number' | translate }}
+        </th>
+        <th>
+          {{ 'order.line.number' | translate }}
+        </th>
+        <th>
+          {{ 'item' | translate }}
+        </th>
+        <th>
+          {{ 'order.line.expectedQuantity' | translate }}
+        </th>
+        <th>
+          {{ 'order.line.openQuantity' | translate }}
+        </th>
+        <th>
+          {{ 'order.line.inprocessQuantity' | translate }}
+        </th>
+        <th>
+          {{ 'order.line.shippedQuantity' | translate }}
+        </th>
+
+        <th>
+          {{ 'production-plan.line.inprocessQuantity' | translate }}
+        </th>
+        <th>
+          {{ 'production-plan.line.producedQuantity' | translate }}
+        </th>
+        <th>
+          {{ 'inventory.status' | translate }}
+        </th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let orderLine of basicTable.data">
+          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[orderLine.id]"
+            (nzCheckedChange)="selectedOrderLineChange($event, orderLine)"></td>
+          <td>{{ orderLine.orderNumber }}</td>
+          <td>{{ orderLine.number }}</td>
+          <td>{{ orderLine.item?.name }}</td>
+          <td>{{ orderLine.expectedQuantity }}</td>
+          <td>{{ orderLine.openQuantity }}</td>
+          <td>{{ orderLine.inprocessQuantity }}</td>
+          <td>{{ orderLine.shippedQuantity }}</td>
+          <td>{{ orderLine.productionPlanInprocessQuantity }}</td>
+          <td>{{ orderLine.productionPlanProducedQuantity }}</td>
+          <td>{{ 'INVENTORY-STATUS-' + orderLine.inventoryStatus?.name | translate }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>
+<!-- Show the production plan list and allow the user to input
+    1. BOM
+    2. production quantity
+    We will allow the user to 
+    1. add item without order line
+    2. remove any existing line from the current plan
+-->
+
+<div *ngIf="stepIndex === 2" class="small-card">
+  <div class="search-result-list">
+    <nz-table #nestedTable [nzData]="currentProductionPlan.productionPlanLines" [nzShowPagination]="false">
+      <thead>
+
+        <tr>
+          <th nzShowExpand></th>
+          <th>
+            {{ 'order.number' | translate }}
+          </th>
+          <th>
+            {{ 'order.line.number' | translate }}
+          </th>
+          <th>
+            {{ 'item' | translate }}
+          </th>
+          <th>
+            {{ 'order.line.expectedQuantity' | translate }}
+          </th>
+          <th>
+            {{ 'order.line.openQuantity' | translate }}
+          </th>
+          <th>
+            {{ 'order.line.inprocessQuantity' | translate }}
+          </th>
+          <th>
+            {{ 'order.line.shippedQuantity' | translate }}
+          </th>
+          <th>
+            {{ 'inventory.status' | translate }}
+          </th>
+          <th>
+            {{ 'bill-of-material.number' | translate }}
+          </th>
+          <th>
+            {{ 'production-plan.line.expectedQuantity' | translate }}
+          </th>
+          <th>
+            {{ 'action' | translate }}
+          </th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+        <ng-container *ngFor="let data of nestedTable.data; let recordIndex = index">
+
+          <tr>
+
+            <td nzShowExpand [(nzExpand)]="mapOfExpandedBOMId[recordIndex]" [nzDisabled]="data.billOfMaterial === null">
+            </td>
+
+            <td>{{ data.orderLine?.orderNumber }}</td>
+            <td>{{ data.orderLine?.number }}</td>
+            <td>
+              <!-- If this is created from order line, then we won't allow the user to change
+            the item 
+      -->
+              <span *ngIf="data.orderLine !== null">{{ data.item?.name }}</span>
+
+              <!-- If we create a production plan line without an order line, then we allow the
+          user to select a item -->
+              <div *ngIf="data.orderLine === null">
+                <nz-input-group nzCompact>
+                  <nz-select nzShowSearch nzAllowClear [(ngModel)]="data.itemId"
+                    (ngModelChange)="itemNameSelected($event, data)" style="width: 200px;">
+                    <nz-option *ngFor="let item of listOfValidBomItem" [nzLabel]="item.name" [nzValue]="item.id">
+                    </nz-option>
+                  </nz-select>
+                </nz-input-group>
+              </div>
+            </td>
+            <td>{{ data.orderLine?.expectedQuantity }}</td>
+            <td>{{ data.orderLine?.openQuantity }}</td>
+            <td>{{ data.orderLine?.inprocessQuantity }}</td>
+            <td>{{ data.orderLine?.shippedQuantity }}</td>
+            <td>
+              <!-- If we create the production plan from order line, then
+                we force the user to only use the inventory status from the order line
+                Otherwise, we allow the user to select a valid inventory status
+              -->
+              <span *ngIf="data.orderLine !== null">
+                {{ 'INVENTORY-STATUS-' + data.orderLine?.inventoryStatus?.name | translate }}
+              </span>
+
+              <span *ngIf="data.orderLine === null">
+
+                <nz-form-item nzFlex>
+
+                  <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+                    nzErrorTip="{{ 'error.form.field.required' | translate }}">
+                    <nz-select nz-input [ngModel]="data.inventoryStatus?.name"
+                      (ngModelChange)="inventoryStatusChange($event, data)" style="width: 250px">
+                      <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
+                        nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | translate}}"
+                        [nzValue]="inventoryStatus.name">
+                      </nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </span>
+
+            </td>
+            <td>
+              <nz-form-item *ngIf="data.item !== null">
+                <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+                  nzErrorTip="{{ 'error.form.field.required' | translate }}">
+                  <nz-select nz-input [(ngModel)]="selectedBOM[data.item.name]"
+                    (ngModelChange)="selectedBOMChange($event, data)" style="width: 250px">
+                    <nz-option *ngFor="let billOfMaterial of this.mapOfAvailableBillOfMaterial[data.item.name]"
+                      [nzLabel]="billOfMaterial.number" [nzValue]="billOfMaterial.number">
+                    </nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </td>
+            <td>
+              <nz-form-item>
+                <nz-form-control [nzSm]="12" [nzXs]="24">
+                  <input nz-input [(ngModel)]="data.expectedQuantity" />
+                </nz-form-control>
+              </nz-form-item>
+            </td>
+            <td></td>
+          </tr>
+
+          <tr [nzExpand]="mapOfExpandedBOMId[recordIndex]">
+            <td colspan="1"></td>
+            <td colspan="11">
+
+              <nz-tabset>
+
+                <nz-tab nzTitle=" {{ 'bill-of-material.line' | translate }}">
+                  <nz-table [nzData]="data.billOfMaterial?.billOfMaterialLines" nzSize="middle"
+                    [nzShowPagination]="false">
+                    <thead>
+                      <th>
+                        {{ 'bill-of-material.line.number' | translate }}
+                      </th>
+                      <th>
+                        {{ 'item' | translate }}
+                      </th>
+                      <th>
+                        {{ 'item.description' | translate }}
+                      </th>
+                      <th>
+                        {{ 'bill-of-material.line.expectedQuantity' | translate }}
+                      </th>
+                      <th>
+                        {{ 'inventory.status' | translate }}
+                      </th>
+                    </thead>
+      <tbody>
+        <tr *ngFor="let billOfMaterialLine of data.billOfMaterial?.billOfMaterialLines">
+          <td>{{ billOfMaterialLine.number }}</td>
+          <td>{{ billOfMaterialLine.item?.name }}</td>
+          <td>{{ billOfMaterialLine.item?.description }}</td>
+          <td>{{ billOfMaterialLine.expectedQuantity }}</td>
+          <td>{{ billOfMaterialLine.inventoryStatus?.name }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+    </nz-tab>
+    <nz-tab nzTitle=" {{ 'work-order-instruction-template' | translate }}">
+      <nz-table [nzData]="data.billOfMaterial?.workOrderInstructionTemplates" nzSize="middle"
+        [nzShowPagination]="false">
+        <thead>
+          <th>
+            id
+          </th>
+          <th>
+            {{ 'work-order-instruction-template.sequence' | translate }}
+          </th>
+          <th>
+            {{ 'work-order-instruction-template.instruction' | translate }}
+          </th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let workOrderInstructionTemplate of data.billOfMaterial?.workOrderInstructionTemplates">
+            <td>{{ workOrderInstructionTemplate.id }}</td>
+            <td>{{ workOrderInstructionTemplate.sequence }}</td>
+            <td>{{ workOrderInstructionTemplate.instruction }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-tab>
+
+    </nz-tabset>
+
+    </td>
+    </tr>
+    </ng-container>
+    </tbody>
+
+    </nz-table>
+
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 10px;">
+      <button nz-button nzType="primary" (click)="addEmptyProductionLine()">
+        {{ 'add' | translate }}
+      </button>
+    </div>
+  </div>
+
+
+</div>
+<!-- Show the result for confirm -->
+<div *ngIf="stepIndex === 3">
+
+  <nz-descriptions nzTitle="{{'production-plan' | translate}}" nzBordered>
+    <nz-descriptions-item nzTitle="{{'production-plan.number' | translate}}">
+      {{ currentProductionPlan.number}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'production-plan.description' | translate}}">
+      {{ currentProductionPlan.description}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'production-plan.expectedQuantity' | translate}}">
+      {{ currentProductionPlan.expectedQuantity}}
+    </nz-descriptions-item>
+  </nz-descriptions>
+
+  <!--
+    Show the result for confirm
+  -->
+
+  <div class="search-result-list">
+
+    <nz-table #resultTable [nzData]="currentProductionPlan.productionPlanLines">
+      <thead>
+
+        <tr>
+          <th>
+            {{ 'order.number' | translate }}
+          </th>
+          <th>
+            {{ 'order.line.number' | translate }}
+          </th>
+          <th>
+            {{ 'item' | translate }}
+          </th>
+          <th>
+            {{ 'order.line.expectedQuantity' | translate }}
+          </th>
+          <th>
+            {{ 'order.line.openQuantity' | translate }}
+          </th>
+          <th>
+            {{ 'order.line.inprocessQuantity' | translate }}
+          </th>
+          <th>
+            {{ 'order.line.shippedQuantity' | translate }}
+          </th>
+          <th>
+            {{ 'inventory.status' | translate }}
+          </th>
+          <th>
+            {{ 'bill-of-material.number' | translate }}
+          </th>
+          <th>
+            {{ 'production-plan.line.expectedQuantity' | translate }}
+          </th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let productionPlanLine of resultTable.data">
+
+          <td>{{ productionPlanLine.orderLine?.orderNumber }}</td>
+          <td>{{ productionPlanLine.orderLine?.number }}</td>
+          <td> {{ productionPlanLine.item?.name }}
+
+          </td>
+          <td>{{ productionPlanLine.orderLine?.expectedQuantity }}</td>
+          <td>{{ productionPlanLine.orderLine?.openQuantity }}</td>
+          <td>{{ productionPlanLine.orderLine?.inprocessQuantity }}</td>
+          <td>{{ productionPlanLine.orderLine?.shippedQuantity }}</td>
+          <td>
+            {{ 'INVENTORY-STATUS-' + productionPlanLine.inventoryStatus?.name | translate }}
+          </td>
+          <td>
+            {{ productionPlanLine.billOfMaterial?.number}}
+          </td>
+          <td>
+            {{ productionPlanLine.expectedQuantity}}
+          </td>
+        </tr>
+      </tbody>
+
+    </nz-table>
+  </div>
+
+</div>
+
+<div class="steps-action">
+  <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0"
+    [disabled]="previousButtonDisabled()">
+    <span>{{ 'steps.previous' | translate }}</span>
+  </button>
+  <nz-divider nzType="vertical" *ngIf="canbeSkipped(stepIndex)"></nz-divider>
+  <a (click)="skipToNextStep()" *ngIf="canbeSkipped(stepIndex)">
+    <span>{{ 'steps.skip' | translate }}</span>
+  </a>
+  <nz-divider nzType="vertical" *ngIf="stepIndex < 3"></nz-divider>
+  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 3" [disabled]="nextButtonDisabled()">
+    <span>{{ 'steps.next' | translate }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirmProductionPlanComplete()" *ngIf="stepIndex === 3">
+    <span> {{ 'confirm' | translate }}</span>
+  </button>
+</div>

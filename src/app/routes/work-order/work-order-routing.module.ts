@@ -13,6 +13,9 @@ import { WorkOrderWorkOrderCompleteKpiComponent } from './work-order-complete-kp
 import { WorkOrderWorkOrderCompleteByProductComponent } from './work-order-complete-by-product/work-order-complete-by-product.component';
 import { WorkOrderWorkOrderProduceKpiComponent } from './work-order-produce-kpi/work-order-produce-kpi.component';
 import { WorkOrderWorkOrderProduceByProductComponent } from './work-order-produce-by-product/work-order-produce-by-product.component';
+import { WorkOrderProductionPlanComponent } from './production-plan/production-plan.component';
+import { WorkOrderProductionPlanMaintenanceComponent } from './production-plan-maintenance/production-plan-maintenance.component';
+import { WorkOrderWorkOrderLineMaintenanceComponent } from './work-order-line-maintenance/work-order-line-maintenance.component';
 
 const routes: Routes = [
   { path: 'work-order', component: WorkOrderWorkOrderComponent },
@@ -28,6 +31,9 @@ const routes: Routes = [
   { path: 'work-order/complete/by-product', component: WorkOrderWorkOrderCompleteByProductComponent },
   { path: 'work-order/complete/kpi', component: WorkOrderWorkOrderCompleteKpiComponent },
   { path: 'work-order/complete/confirm', component: WorkOrderWorkOrderCompleteConfirmComponent },
+  { path: 'production-plan', component: WorkOrderProductionPlanComponent },
+  { path: 'production-plan/maintenance', component: WorkOrderProductionPlanMaintenanceComponent },
+  { path: 'work-order/line/maintenance', component: WorkOrderWorkOrderLineMaintenanceComponent },
 ];
 
 @NgModule({

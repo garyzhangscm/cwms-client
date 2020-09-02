@@ -11,6 +11,9 @@ import { WarehouseService } from '../../warehouse-layout/services/warehouse.serv
 export class OrderLineService {
   constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
+  getOrderLine(id: number): Observable<OrderLine> {
+    return this.http.get(`outbound/orders/lines/${id}`).pipe(map(res => res.data));
+  }
   getNextOrderLineNumber(orderId: number): Observable<string> {
     return this.http.get(`outbound/order/${orderId}/next-line-number`).pipe(map(res => res.data));
   }
@@ -23,6 +26,19 @@ export class OrderLineService {
     const url = `outbound/orders/lines?warehouseId=${
       this.warehouseService.getCurrentWarehouse().id
     }&shipmentId=${shipmentId}`;
+    return this.http.get(url).pipe(map(res => res.data));
+  }
+
+  findProductionPlanCandidate(orderNumber?: string, itemName?: string): Observable<OrderLine[]> {
+    let url = `outbound/orders/lines/production-plan-candidate?warehouseId=${
+      this.warehouseService.getCurrentWarehouse().id
+    }`;
+    if (orderNumber) {
+      url = `${url}&orderNumber=${orderNumber}`;
+    }
+    if (itemName) {
+      url = `${url}&itemName=${itemName}`;
+    }
     return this.http.get(url).pipe(map(res => res.data));
   }
 }

@@ -184,6 +184,39 @@
   </nz-tab>
 
 
+  <nz-tab nzTitle=" {{ 'work-order.by-product' | translate }}">
+    <nz-table #innerTable [nzData]="data.workOrderByProductConfirmations" nzSize="middle" [nzShowPagination]="false">
+      <thead>
+
+        <th>
+          {{ 'item' | translate }}</th>
+        <th>
+          {{ 'item.description' | translate }}</th>
+
+        <th>
+          {{ 'work-order.by-product.expectedQuantity' | translate }}</th>
+        <th>
+          {{ 'work-order.by-product.producedQuantity' | translate }}</th>
+        <th>
+          {{ 'inventory-status.id' | translate }}</th>
+        <th>
+          {{ 'inventory-status.name' | translate }}</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let workOrderByProduct of data.workOrderByProductConfirmations">
+
+          <td>{{ workOrderByProduct.itemId }}</td>
+          <td>{{ workOrderByProduct.itemName }}</td>
+          <td>{{ workOrderByProduct.expectedQuantity }}</td>
+          <td>{{ workOrderByProduct.producedQuantity }}</td>
+
+          <td>{{ workOrderByProduct.inventoryStatusId }}</td>
+          <td>{{ workOrderByProduct.inventoryStatusName }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+
   </nz-tabset>
   </td>
   </tr>

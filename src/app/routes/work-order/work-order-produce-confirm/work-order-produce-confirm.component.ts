@@ -94,15 +94,19 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
 
   saveWorkOrderProduceResults() {
     this.savingInProcess = true;
-    this.workOrderProduceTransactionService
-      .saveWorkOrderProduceTransaction(this.workOrderProduceTransaction)
-      .subscribe(workOrderProduceTransactionRes => {
+    this.workOrderProduceTransactionService.saveWorkOrderProduceTransaction(this.workOrderProduceTransaction).subscribe(
+      workOrderProduceTransactionRes => {
         this.messageService.success(this.i18n.fanyi('message.work-order.produced-success'));
         setTimeout(() => {
           this.savingInProcess = false;
           this.router.navigateByUrl(`/work-order/work-order?number=${workOrderProduceTransactionRes.workOrder.number}`);
         }, 2500);
-      });
+      },
+      error => {
+        console.log(`error: ${JSON.stringify(error)}`);
+        this.savingInProcess = false;
+      },
+    );
   }
 
   onIndexChange(index: number) {

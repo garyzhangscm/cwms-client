@@ -22,7 +22,7 @@ export class WorkOrderService {
     private printingService: PrintingService,
   ) {}
 
-  getWorkOrders(number: string, itemName: string): Observable<WorkOrder[]> {
+  getWorkOrders(number: string, itemName: string, productionPlanId?: number): Observable<WorkOrder[]> {
     let url = `workorder/work-orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (number) {
       url = `${url}&number=${number}`;
@@ -30,7 +30,14 @@ export class WorkOrderService {
     if (itemName) {
       url = `${url}&itemName=${itemName}`;
     }
+    if (productionPlanId) {
+      url = `${url}&productionPlanId=${productionPlanId}`;
+    }
     return this.http.get(url).pipe(map(res => res.data));
+  }
+
+  getWorkOrdersByProductionPlan(productionPlanId: number): Observable<WorkOrder[]> {
+    return this.getWorkOrders(null, null, productionPlanId);
   }
 
   getWorkOrder(id: number): Observable<WorkOrder> {
@@ -84,6 +91,9 @@ export class WorkOrderService {
 
   getKPITransactions(workOrder: WorkOrder): Observable<WorkOrderKpiTransaction[]> {
     return this.http.get(`workorder/work-orders/${workOrder.id}/kpi-transaction`).pipe(map(res => res.data));
+  }
+  modifyWorkOrderLine(workOrder: WorkOrder): Observable<WorkOrder> {
+    return this.http.post(`workorder/work-orders/${workOrder.id}/modify-lines`, workOrder).pipe(map(res => res.data));
   }
 
   changeProductionLine(workOrder: WorkOrder, productionLineId: number) {

@@ -232,10 +232,19 @@
                       {{ 'order.line.inprocessQuantity' | translate }}
                     </th>
                     <th>
+                      {{ 'production-plan.line.inprocessQuantity' | translate }}
+                    </th>
+                    <th>
+                      {{ 'production-plan.line.producedQuantity' | translate }}
+                    </th>
+                    <th>
                       {{ 'order.line.shippedQuantity' | translate }}
                     </th>
                     <th>
                       {{ 'inventory.status' | translate }}
+                    </th>
+                    <th>
+                      {{ 'order.line.allocationStrategyType' | translate }}
                     </th>
                   </thead>
     <tbody>
@@ -245,8 +254,11 @@
         <td>{{ orderLine.expectedQuantity }}</td>
         <td>{{ orderLine.openQuantity }}</td>
         <td>{{ orderLine.inprocessQuantity }}</td>
+        <td>{{ orderLine.productionPlanInprocessQuantity }}</td>
+        <td>{{ orderLine.productionPlanProducedQuantity }}</td>
         <td>{{ orderLine.shippedQuantity }}</td>
         <td>{{ 'INVENTORY-STATUS-' + orderLine.inventoryStatus.name | translate}}</td>
+        <td>{{ 'ALLOCATION-STRATEGY-TYPE-' + orderLine.allocationStrategyType | translate}}</td>
       </tr>
     </tbody>
   </nz-table>

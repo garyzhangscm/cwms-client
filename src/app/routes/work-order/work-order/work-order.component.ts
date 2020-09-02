@@ -226,6 +226,14 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       this.search();
     });
   }
+  workOrderHasAnyAction(workOrder: WorkOrder): boolean {
+    return (
+      this.isWorkOrderChangable(workOrder) ||
+      this.isWorkOrderAllocatable(workOrder) ||
+      this.isWorkOrderReadyForProduce(workOrder) ||
+      this.isWorkOrderReadyForComplete(workOrder)
+    );
+  }
   isWorkOrderPickable(workOrder: WorkOrder): boolean {
     return workOrder.status === WorkOrderStatus.INPROCESS;
   }
@@ -237,6 +245,13 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       this.messageService.success(this.i18n.fanyi('message.action.success'));
       this.search();
     });
+  }
+  isWorkOrderChangable(workOrder: WorkOrder): boolean {
+    return (
+      workOrder.status !== WorkOrderStatus.COMPLETED &&
+      workOrder.status !== WorkOrderStatus.CANCELLED &&
+      workOrder.status !== WorkOrderStatus.CLOSED
+    );
   }
   isWorkOrderAllocatable(workOrder: WorkOrder): boolean {
     return workOrder.productionLine != null && workOrder.totalLineOpenQuantity > 0;
@@ -314,6 +329,12 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
   showKPITransactions(workOrder: WorkOrder) {
     this.workOrderService.getKPITransactions(workOrder).subscribe(workOrderKPITransactions => {
+      workOrderKPITransactions.forEach(transaction => {
+        console.log(
+          `transaction: ${transaction.amount}, type: ${transaction.type}, createdBy: ${transaction.createdTime}`,
+        );
+        console.log(`transaction: ${JSON.stringify(transaction)}`);
+      });
       this.mapOfKPITransactions[workOrder.id] = [...workOrderKPITransactions];
     });
   }
@@ -418,11 +439,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   }
 
   inventoryReadyForPutaway(workOrder: WorkOrder, inventory: Inventory): boolean {
-    // console.log(`inventory.location.id: ${inventory.location.id}`);
-    // console.log(
-    //  `workOrder.productionLine.outboundStageLocationId: ${workOrder.productionLine.outboundStageLocationId}`,
-    // );
-    // inventory can be putaway only when it is in the production
+    if (workOrder.productionLine === null || workOrder.productionLine === undefined) {
+      return false;
+    }
     return inventory.location.id === workOrder.productionLine.outboundStageLocationId;
   }
 
@@ -494,5 +513,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         });
       });
     }
+  }
+
+  changeWorkOrderLine(workOrder: WorkOrder) {
+    this.router.navigateByUrl(`/work-order/work-order/line/maintenance?id=${workOrder.id}`);
   }
 }

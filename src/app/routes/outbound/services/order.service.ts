@@ -7,6 +7,7 @@ import { PrintingService } from '../../common/services/printing.service';
 import { PickWork } from '../models/pick-work';
 import { PickService } from './pick.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { OrderLine } from '../models/order-line';
 
 @Injectable({
   providedIn: 'root',

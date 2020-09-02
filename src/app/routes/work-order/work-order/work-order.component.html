@@ -113,6 +113,29 @@
             </nz-dropdown-menu>
           </td>
           <td>
+            <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary"
+              [nzLoading]="mapOfAllocationInProcessId[data.id]" *ngIf="workOrderHasAnyAction(data)">
+              {{ 'action' | translate }} <i nz-icon nzType="down"></i></button>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu>
+                <li nz-menu-item *ngIf="isWorkOrderChangable(data)">
+                  <a (click)="changeWorkOrderLine(data)">{{ 'work-order.modify-line' | translate }}</a>
+                </li>
+                <li nz-menu-item *ngIf="isWorkOrderAllocatable(data)">
+                  <a (click)="allocateWorkOrder(data)">
+                    {{ 'allocate' | translate }}</a>
+                </li>
+                <li nz-menu-item *ngIf="isWorkOrderReadyForProduce(data)">
+                  <a (click)="produceFromWorkOrder(data)">{{ 'work-order.produce' | translate }}</a>
+                </li>
+                <li nz-menu-item *ngIf="isWorkOrderReadyForComplete(data)">
+                  <a (click)="completeWorkOrder(data)">{{ 'complete' | translate }}</a>
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+            <!--
+
+
             <button nz-button nzType="primary" (click)="allocateWorkOrder(data)"
               [nzLoading]="mapOfAllocationInProcessId[data.id]" [disabled]="!isWorkOrderAllocatable(data)">
               {{ 'allocate' | translate }}
@@ -129,6 +152,7 @@
               [nzLoading]="mapOfAllocationInProcessId[data.id]" [disabled]="!isWorkOrderReadyForComplete(data)">
               {{ 'complete' | translate }}
             </button>
+-->
           </td>
 
         </tr>
@@ -242,6 +266,7 @@
         <th>{{ 'working-team' | translate }}</th>
         <th>{{ 'amount' | translate }}</th>
         <th>{{ 'KPIMeasure' | translate }}</th>
+        <th>{{ 'work-order.kpi-transaction.type' | translate }}</th>
         <th>{{ 'insert-date' | translate }}</th>
       </thead>
       <tbody>
@@ -253,6 +278,7 @@
           <td>{{ workOrderKPITransaction.amount }}</td>
 
           <td>{{  'KPI-MEASUREMENT-' + workOrderKPITransaction.kpiMeasurement | translate }}</td>
+          <td>{{ 'WORK-ORDER-KPI-TRANSACTION-TYPE-' + workOrderKPITransaction.type | translate }}</td>
           <td>
 
             {{ workOrderKPITransaction.createdTime[1] }}/{{ workOrderKPITransaction.createdTime[2] }}/{{ workOrderKPITransaction.createdTime[0] }}

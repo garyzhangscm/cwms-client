@@ -191,7 +191,7 @@
         <td>{{ billOfMaterialLine.item?.name }}</td>
         <td>{{ billOfMaterialLine.item?.description }}</td>
         <td>{{ billOfMaterialLine.expectedQuantity }}</td>
-        <td>{{ billOfMaterialLine.inventoryStatus?.name }}</td>
+        <td>{{ 'INVENTORY-STATUS-' + billOfMaterialLine.inventoryStatus?.name | translate}}</td>
       </tr>
     </tbody>
   </nz-table>

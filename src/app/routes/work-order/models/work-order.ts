@@ -12,6 +12,7 @@ import { WorkOrderAssignment } from './work-order-assignment';
 import { WorkOrderStatus } from './work-order-status.enum';
 import { WorkOrderKpi } from './work-order-kpi';
 import { WorkOrderByProduct } from './work-order-by-product';
+import { ProductionPlanLine } from './production-plan-line';
 
 export interface WorkOrder {
   id: number;
@@ -21,6 +22,7 @@ export interface WorkOrder {
   productionLine: ProductionLine;
   itemId: number;
   item: Item;
+  productionPlanLine?: ProductionPlanLine; // When we create a work order from a production line
 
   warehouseId: number;
   warehouse: Warehouse;
