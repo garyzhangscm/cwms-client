@@ -3,6 +3,8 @@ import { _HttpClient } from '@delon/theme';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { CycleCountBatch } from '../models/cycle-count-batch';
 import { CycleCountBatchService } from '../services/cycle-count-batch.service';
+import { I18NService } from '@core/i18n/i18n.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-inventory-cycle-count',
@@ -13,6 +15,8 @@ export class InventoryCycleCountComponent implements OnInit {
   // Form related data and functions
   searchForm: FormGroup;
   searching = false;
+  searchResult = '';
+
   // Table data for display
   cycleCountBatches: CycleCountBatch[] = [];
   listOfDisplayCycleCountBatches: CycleCountBatch[] = [];
@@ -28,7 +32,11 @@ export class InventoryCycleCountComponent implements OnInit {
     this.isCollapse = !this.isCollapse;
   }
 
-  constructor(private fb: FormBuilder, private cycleCountBatchService: CycleCountBatchService) {}
+  constructor(
+    private fb: FormBuilder,
+    private cycleCountBatchService: CycleCountBatchService,
+    private i18n: I18NService,
+  ) {}
 
   resetForm(): void {
     this.searchForm.reset();
@@ -37,11 +45,22 @@ export class InventoryCycleCountComponent implements OnInit {
   }
   search(): void {
     this.searching = true;
-    this.cycleCountBatchService.getCycleCountBatches(this.searchForm.value.batchId).subscribe(cycleCountBatchRes => {
-      this.cycleCountBatches = cycleCountBatchRes;
-      this.listOfDisplayCycleCountBatches = cycleCountBatchRes;
-      this.searching = false;
-    });
+    this.searchResult = '';
+    this.cycleCountBatchService.getCycleCountBatches(this.searchForm.value.batchId).subscribe(
+      cycleCountBatchRes => {
+        this.cycleCountBatches = cycleCountBatchRes;
+        this.listOfDisplayCycleCountBatches = cycleCountBatchRes;
+        this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: cycleCountBatchRes.length,
+        });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   currentPageDataChange($event: CycleCountBatch[]): void {

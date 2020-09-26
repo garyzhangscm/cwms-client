@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular
 import { _HttpClient } from '@delon/theme';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { ItemFamily } from '../models/item-family';
-import { NzInputDirective, NzModalService } from 'ng-zorro-antd';
+import { NzInputDirective, NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { ItemFamilyService } from '../services/item-family.service';
 import { I18NService } from '@core';
 
@@ -44,6 +44,7 @@ export class InventoryItemFamilyComponent implements OnInit {
     private itemFamilyService: ItemFamilyService,
     private i18n: I18NService,
     private modalService: NzModalService,
+    private messageService: NzMessageService,
   ) {}
 
   search(refresh: boolean = false): void {
@@ -154,7 +155,9 @@ export class InventoryItemFamilyComponent implements OnInit {
   }
 
   changeItemFamily(itemFamily: ItemFamily) {
-    this.itemFamilyService.changeItemFamily(itemFamily).subscribe(res => console.log('item family changed!'));
+    this.itemFamilyService
+      .changeItemFamily(itemFamily)
+      .subscribe(res => this.messageService.success(this.i18n.fanyi('message.modify.success')));
   }
 
   @HostListener('window:click', ['$event'])

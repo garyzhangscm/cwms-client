@@ -27,6 +27,7 @@ import { InventoryInventoryAdjustmentRequestComponent } from './inventory-adjust
 import { InventoryInventoryAdjustmentThresholdComponent } from './inventory-adjustment-threshold/inventory-adjustment-threshold.component';
 import { InventoryInventoryAdjustmentThresholdMaintenanceComponent } from './inventory-adjustment-threshold-maintenance/inventory-adjustment-threshold-maintenance.component';
 import { InventoryInventoryAdjustmentThresholdConfirmComponent } from './inventory-adjustment-threshold-confirm/inventory-adjustment-threshold-confirm.component';
+import { InventoryItemMaintenanceComponent } from './item-maintenance/item-maintenance.component';
 
 const routes: Routes = [
   { path: 'inventory', component: InventoryInventoryComponent },
@@ -59,6 +60,7 @@ const routes: Routes = [
     component: InventoryInventoryAdjustmentThresholdMaintenanceComponent,
   },
   { path: 'inventory-adjustment-threshold-confirm', component: InventoryInventoryAdjustmentThresholdConfirmComponent },
+  { path: 'item/maintenance', component: InventoryItemMaintenanceComponent },
 ];
 
 @NgModule({

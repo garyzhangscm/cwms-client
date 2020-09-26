@@ -4,12 +4,17 @@ import { GzLocalStorageServiceService } from '@shared/service/gz-local-storage-s
 import { Client } from '../models/client';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ClientService {
-  constructor(private http: _HttpClient, private gzLocalStorageService: GzLocalStorageServiceService) {}
+  constructor(
+    private http: _HttpClient,
+    private gzLocalStorageService: GzLocalStorageServiceService,
+    private warehouseService: WarehouseService,
+  ) {}
 
   loadClients(refresh: boolean = false): Observable<Client[]> {
     // if we can find the value in local storage, we get it from their.
@@ -21,7 +26,7 @@ export class ClientService {
       }
     }
     return this.http
-      .get('common/clients')
+      .get(`common/clients?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem('common.client', res)));
   }

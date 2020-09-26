@@ -1,9 +1,15 @@
 <div class="alain-default__header-logo">
   <a [routerLink]="['/']" class="alain-default__header-logo-link">
+    <!--
+
+      
     <img class="alain-default__header-logo-expanded" src="./assets/logo-full.svg" alt="{{settings.app.name}}"
       style="max-height:40px;" />
     <img class="alain-default__header-logo-collapsed" src="./assets/logo.svg" alt="{{settings.app.name}}"
       style="max-height:30px;" />
+      
+    -->
+    {{ currentCompany.code  }} - {{ currentCompany.name}}
   </a>
 </div>
 <div class="alain-default__nav-wrap">
@@ -15,11 +21,16 @@
       </div>
     </li>
     <!-- Github Page -->
+    <!--
+
+
     <li>
       <a class="alain-default__nav-item" href="//github.com/garyzhangscm/cwms-client" target="_blank">
         <i nz-icon nzType="github"></i>
       </a>
     </li>
+
+    -->
     <!-- Lock Page -->
     <!--
     <li class="hidden-mobile">

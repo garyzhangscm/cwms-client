@@ -18,6 +18,7 @@ import { PickService } from '../services/pick.service';
 import { ShortAllocationService } from '../services/short-allocation.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { OrderLineService } from '../services/order-line.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-outbound-shipment',
@@ -45,6 +46,7 @@ export class OutboundShipmentComponent implements OnInit {
   searchForm: FormGroup;
   unpickForm: FormGroup;
   searching = false;
+  searchResult = '';
   tabSelectedIndex = 0;
 
   // Table data for display
@@ -89,16 +91,28 @@ export class OutboundShipmentComponent implements OnInit {
 
   search(expandedShipmentId?: number, tabSelectedIndex?: number): void {
     this.searching = true;
-    this.shipmentService.getShipments(this.searchForm.controls.number.value).subscribe(shipmentRes => {
-      this.listOfAllShipments = this.calculateQuantities(shipmentRes);
-      this.listOfDisplayShipments = this.calculateQuantities(shipmentRes);
+    this.searchResult = '';
 
-      this.collapseAllRecord(expandedShipmentId);
-      this.searching = false;
-      if (tabSelectedIndex) {
-        this.tabSelectedIndex = tabSelectedIndex;
-      }
-    });
+    this.shipmentService.getShipments(this.searchForm.controls.number.value).subscribe(
+      shipmentRes => {
+        this.listOfAllShipments = this.calculateQuantities(shipmentRes);
+        this.listOfDisplayShipments = this.calculateQuantities(shipmentRes);
+
+        this.collapseAllRecord(expandedShipmentId);
+        this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: shipmentRes.length,
+        });
+        if (tabSelectedIndex) {
+          this.tabSelectedIndex = tabSelectedIndex;
+        }
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   calculateQuantities(shipments: Shipment[]): Shipment[] {

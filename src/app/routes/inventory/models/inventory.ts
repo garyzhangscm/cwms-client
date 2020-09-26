@@ -4,6 +4,7 @@ import { InventoryStatus } from './inventory-status';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { InventoryMovement } from './inventory-movement';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
+import { PickWork } from '../../outbound/models/pick-work';
 
 export interface Inventory {
   id: number;
@@ -19,4 +20,12 @@ export interface Inventory {
   inventoryStatus: InventoryStatus;
   inventoryMovements?: InventoryMovement[];
   lockedForAdjust?: boolean;
+
+  pickId?: number;
+  pick?: PickWork;
+  allocatedByPickId?: number;
+  allocatedByPick?: PickWork;
+
+  receiptId?: number;
+  receiptLineId?: number;
 }

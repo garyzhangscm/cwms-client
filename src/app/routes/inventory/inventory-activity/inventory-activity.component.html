@@ -127,7 +127,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllInventoryActivities">
+  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllInventoryActivities"
+    [nzFooter]="tableFoot">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
         <th nzShowSort nzSortKey="transactionId">
@@ -261,3 +262,10 @@
   </tbody>
   </nz-table>
 </div>
+
+<ng-template #tableFoot>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>

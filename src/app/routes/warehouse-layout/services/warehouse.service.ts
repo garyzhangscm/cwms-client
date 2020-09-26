@@ -3,29 +3,34 @@ import { Warehouse } from '../models/warehouse';
 import { Observable } from 'rxjs';
 import { _HttpClient } from '@delon/theme';
 import { map } from 'rxjs/operators';
+import { CompanyService } from './company.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WarehouseService {
-  constructor(private http: _HttpClient) {}
+  constructor(private http: _HttpClient, private companyService: CompanyService) {}
 
   getWarehouses(): Observable<Warehouse[]> {
-    return this.http.get('layout/warehouses').pipe(map(res => res.data));
+    return this.http
+      .get(`layout/warehouses?companyId=${this.companyService.getCurrentCompany().id}`)
+      .pipe(map(res => res.data));
   }
 
   getWarehouse(id: number): Observable<Warehouse> {
     return this.http.get('layout/warehouses/' + id).pipe(map(res => res.data));
   }
 
-  getWarehouseByUser(username: string): Observable<Warehouse[]> {
-    const url = 'layout/warehouses/accessible/' + username;
+  getWarehouseByUser(companyCode: string, username: string): Observable<Warehouse[]> {
+    const url = `layout/warehouses/accessible/${companyCode}/${username}`;
     console.log(`start to get warehouse from ${url}`);
     return this.http.get(url).pipe(map(res => res.data));
   }
 
   addWarehouse(warehouse: Warehouse): Observable<Warehouse> {
-    return this.http.post('layout/warehouses', warehouse).pipe(map(res => res.data));
+    return this.http
+      .post(`layout/warehouses?companyId=${this.companyService.getCurrentCompany().id}`, warehouse)
+      .pipe(map(res => res.data));
   }
 
   changeWarehouse(warehouse: Warehouse): Observable<Warehouse> {

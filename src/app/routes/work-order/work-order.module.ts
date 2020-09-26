@@ -18,6 +18,7 @@ import { WorkOrderWorkOrderProduceByProductComponent } from './work-order-produc
 import { WorkOrderProductionPlanComponent } from './production-plan/production-plan.component';
 import { WorkOrderProductionPlanMaintenanceComponent } from './production-plan-maintenance/production-plan-maintenance.component';
 import { WorkOrderWorkOrderLineMaintenanceComponent } from './work-order-line-maintenance/work-order-line-maintenance.component';
+import { WorkOrderBillOfMaterialMaintenanceComponent } from './bill-of-material-maintenance/bill-of-material-maintenance.component';
 
 const COMPONENTS = [
   WorkOrderWorkOrderComponent,
@@ -36,6 +37,7 @@ const COMPONENTS = [
   WorkOrderProductionPlanComponent,
   WorkOrderProductionPlanMaintenanceComponent,
   WorkOrderWorkOrderLineMaintenanceComponent,
+  WorkOrderBillOfMaterialMaintenanceComponent,
 ];
 const COMPONENTS_NOROUNT = [];
 

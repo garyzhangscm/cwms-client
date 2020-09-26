@@ -3,6 +3,8 @@ import { _HttpClient } from '@delon/theme';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { IntegrationItemUnitOfMeasureData } from '../models/integration-item-unit-of-measure-data';
 import { IntegrationItemUnitOfMeasureDataService } from '../services/integration-item-unit-of-measure-data.service';
+import { I18NService } from '@core/i18n/i18n.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-integration-integration-data-item-unit-of-measure',
@@ -14,6 +16,7 @@ export class IntegrationIntegrationDataItemUnitOfMeasureComponent implements OnI
   searchForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllIntegrationItemUnitOfMeasureData: IntegrationItemUnitOfMeasureData[] = [];
@@ -35,6 +38,7 @@ export class IntegrationIntegrationDataItemUnitOfMeasureComponent implements OnI
   constructor(
     private fb: FormBuilder,
     private integrationItemUnitOfMeasureDataService: IntegrationItemUnitOfMeasureDataService,
+    private i18n: I18NService,
   ) {}
 
   resetForm(): void {
@@ -44,13 +48,22 @@ export class IntegrationIntegrationDataItemUnitOfMeasureComponent implements OnI
   }
   search(): void {
     this.searching = true;
-    this.integrationItemUnitOfMeasureDataService
-      .getItemUnitOfMeasureData()
-      .subscribe(integrationItemUnitOfMeasureDataRes => {
+    this.searchResult = '';
+    this.integrationItemUnitOfMeasureDataService.getItemUnitOfMeasureData().subscribe(
+      integrationItemUnitOfMeasureDataRes => {
         this.listOfAllIntegrationItemUnitOfMeasureData = integrationItemUnitOfMeasureDataRes;
         this.listOfDisplayIntegrationItemUnitOfMeasureData = integrationItemUnitOfMeasureDataRes;
         this.searching = false;
-      });
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: integrationItemUnitOfMeasureDataRes.length,
+        });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   currentPageDataChange($event: IntegrationItemUnitOfMeasureData[]): void {

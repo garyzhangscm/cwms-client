@@ -3,4 +3,5 @@ export interface ItemFamily {
   name: string;
   description: string;
   totalItemCount?: number;
+  warehouseId: number;
 }

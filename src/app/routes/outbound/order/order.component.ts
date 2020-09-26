@@ -15,6 +15,7 @@ import { Inventory } from '../../inventory/models/inventory';
 import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { OrderStatus } from '../models/order-status.enum';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-outbound-order',
@@ -39,7 +40,10 @@ export class OutboundOrderComponent implements OnInit {
   // Form related data and functions
   searchForm: FormGroup;
   unpickForm: FormGroup;
+
   searching = false;
+  searchResult = '';
+
   tabSelectedIndex = 0;
   // Table data for display
   listOfAllOrders: Order[] = [];
@@ -94,40 +98,56 @@ export class OutboundOrderComponent implements OnInit {
 
   search(expandedOrderId?: number, tabSelectedIndex?: number): void {
     this.searching = true;
-    this.orderService.getOrders(this.searchForm.controls.number.value).subscribe(orderRes => {
-      this.listOfAllOrders = this.calculateQuantities(orderRes);
-      this.listOfDisplayOrders = this.calculateQuantities(orderRes);
+    this.searchResult = '';
+    this.orderService.getOrders(this.searchForm.controls.number.value).subscribe(
+      orderRes => {
+        this.listOfAllOrders = this.calculateQuantities(orderRes);
+        this.listOfDisplayOrders = this.calculateQuantities(orderRes);
 
-      this.filtersByShipToCustomer = [];
-      this.filtersByBillToCustomer = [];
-      const existingShipToCustomer = new Set();
-      const existingBillToCustomer = new Set();
+        this.filtersByShipToCustomer = [];
+        this.filtersByBillToCustomer = [];
+        const existingShipToCustomer = new Set();
+        const existingBillToCustomer = new Set();
 
-      this.listOfAllOrders.forEach(order => {
-        const shipToCustomerName = order.shipToCustomer
-          ? order.shipToCustomer.name
-          : `${order.shipTocontactorFirstname} ${order.shipTocontactorLastname}`;
+        this.listOfAllOrders.forEach(order => {
+          // reset the allocation in process flag
+          this.mapOfAllocationInProcessId[order.id] = false;
 
-        if (!existingShipToCustomer.has(shipToCustomerName)) {
-          this.filtersByShipToCustomer.push({ text: shipToCustomerName, value: shipToCustomerName });
-          existingShipToCustomer.add(shipToCustomerName);
+          const shipToCustomerName = order.shipToCustomer
+            ? order.shipToCustomer.name
+            : `${order.shipTocontactorFirstname} ${order.shipTocontactorLastname}`;
+
+          if (!existingShipToCustomer.has(shipToCustomerName)) {
+            this.filtersByShipToCustomer.push({ text: shipToCustomerName, value: shipToCustomerName });
+            existingShipToCustomer.add(shipToCustomerName);
+          }
+          const billToCustomerName = order.billToCustomer
+            ? order.billToCustomer.name
+            : `${order.billTocontactorFirstname} ${order.billTocontactorLastname}`;
+
+          if (!existingBillToCustomer.has(billToCustomerName)) {
+            this.filtersByBillToCustomer.push({ text: billToCustomerName, value: billToCustomerName });
+            existingBillToCustomer.add(billToCustomerName);
+          }
+        });
+
+        this.collapseAllRecord(expandedOrderId);
+
+        this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: orderRes.length,
+        });
+
+        if (tabSelectedIndex) {
+          this.tabSelectedIndex = tabSelectedIndex;
         }
-        const billToCustomerName = order.billToCustomer
-          ? order.billToCustomer.name
-          : `${order.billTocontactorFirstname} ${order.billTocontactorLastname}`;
-
-        if (!existingBillToCustomer.has(billToCustomerName)) {
-          this.filtersByBillToCustomer.push({ text: billToCustomerName, value: billToCustomerName });
-          existingBillToCustomer.add(billToCustomerName);
-        }
-      });
-
-      this.collapseAllRecord(expandedOrderId);
-      this.searching = false;
-      if (tabSelectedIndex) {
-        this.tabSelectedIndex = tabSelectedIndex;
-      }
-    });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   collapseAllRecord(expandedOrderId?: number) {
@@ -295,7 +315,7 @@ export class OutboundOrderComponent implements OnInit {
   completeOrder(order: Order) {
     this.mapOfAllocationInProcessId[order.id] = true;
     this.orderService.completeOrder(order).subscribe(orderRes => {
-      this.messageService.success(this.i18n.fanyi('message.allocate.success'));
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
       this.mapOfAllocationInProcessId[order.id] = false;
       this.search();
     });

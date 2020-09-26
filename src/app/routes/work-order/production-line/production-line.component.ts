@@ -8,6 +8,7 @@ import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { LocationGroupType } from '../../warehouse-layout/models/location-group-type';
 import { ProductionLineService } from '../services/production-line.service';
 import { ProductionLine } from '../models/production-line';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-work-order-production-line',
@@ -30,6 +31,7 @@ export class WorkOrderProductionLineComponent implements OnInit {
   searchForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllProductionLine: ProductionLine[] = [];
@@ -54,14 +56,23 @@ export class WorkOrderProductionLineComponent implements OnInit {
 
   search(): void {
     this.searching = true;
-    this.productionLineService
-      .getProductionLinesByNameList(this.selectedProductionLine)
-      .subscribe(productionLineRes => {
+    this.searchResult = '';
+    this.productionLineService.getProductionLinesByNameList(this.selectedProductionLine).subscribe(
+      productionLineRes => {
         this.listOfAllProductionLine = productionLineRes;
         this.listOfDisplayProductionLine = productionLineRes;
 
         this.searching = false;
-      });
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: productionLineRes.length,
+        });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   refreshStatus(): void {

@@ -5,12 +5,21 @@ import { PutawayConfiguration } from '../models/putaway-configuration';
 import { map } from 'rxjs/operators';
 import { Inventory } from '../../inventory/models/inventory';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { I18NService } from '@core';
+import { PrintingService } from '../../common/services/printing.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PutawayConfigurationService {
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
+  private PUTAWAY_LINE_PER_PAGE = 20;
+
+  constructor(
+    private http: _HttpClient,
+    private warehouseService: WarehouseService,
+    private i18n: I18NService,
+    private printingService: PrintingService,
+  ) {}
 
   getPutawayConfigurations(
     sequence?: number,
@@ -74,5 +83,109 @@ export class PutawayConfigurationService {
   }
   reallocateLocation(inventory: Inventory): Observable<Inventory> {
     return this.http.post(`inbound/putaway-configuration/reallocate-location`, inventory).pipe(map(res => res.data));
+  }
+
+  printPutawaySheet(inventories: Inventory[]) {
+    const reportName = `Putaway Sheet`;
+    // Get the picks for the order
+    this.printingService.print(reportName, this.generatePutawayReport(reportName, inventories));
+  }
+
+  generatePutawayReport(reportName: string, inventories: Inventory[]): string[] {
+    // Total quantity and count of LPNs
+    let totalQuantity = 0;
+    const LPNs = new Set();
+    const locationIDs = new Set();
+    inventories.forEach(inventory => {
+      totalQuantity += inventory.quantity;
+      LPNs.add(inventory.lpn);
+      if (inventory.inventoryMovements !== null && inventory.inventoryMovements.length > 0) {
+        // calculate total location quantity based on the first location in the movement path
+        // of the inventory
+        locationIDs.add(inventory.inventoryMovements[0].locationId);
+      }
+    });
+    // Pages
+    const pages: string[] = [];
+
+    // Content in each page
+    const pageLines: string[] = [];
+
+    // Setup the page header for each pages
+    const pageHeader = `<h1>${reportName}</h1>
+    
+                      <table style="margin-bottom: 20px"> 
+                        <tr>
+                          <td colspan="3">${this.i18n.fanyi('Operator')}:</td>
+                          <td colspan="3">____________</td>
+                          <td colspan="3">${this.i18n.fanyi('Date')}:</td>
+                          <td colspan="3">____________</td>
+                        </tr>
+                        <tr>
+                          <td colspan="2">${this.i18n.fanyi('totalQuantity')}:</td><td colspan="2">${totalQuantity}</td>
+                          <td colspan="2">${this.i18n.fanyi('totalLPNCount')}:</td><td colspan="2">${LPNs.size}</td>
+                          <td colspan="2">${this.i18n.fanyi('totalLocationCount')}:</td><td colspan="2">${
+      locationIDs.size
+    }</td> 
+                        </tr>
+                        
+                      </table>`;
+
+    const tableHeader = `
+                    <table> 
+                      <tr>
+                      <th>${this.i18n.fanyi('lpn')}</th>
+                      <th>${this.i18n.fanyi('item')}</th>
+                      <th>${this.i18n.fanyi('item.description')}</th>
+                      <th>${this.i18n.fanyi('quantity')}</th>
+                      <th>${this.i18n.fanyi('inventory.status')}</th>
+                      <th>${this.i18n.fanyi('location')}</th>
+                      <th>${this.i18n.fanyi('nextLocation')}</th>
+                      <th>${this.i18n.fanyi('actualPutawayLocation')}</th>
+                      </tr>`;
+
+    inventories.forEach((inventory, index) => {
+      if (index % this.PUTAWAY_LINE_PER_PAGE === 0) {
+        // Add a page header
+        pageLines.push(pageHeader);
+        // Add a table header. The table
+        // will show all the picks
+        pageLines.push(tableHeader);
+      }
+      const nextLocation =
+        inventory.inventoryMovements !== null && inventory.inventoryMovements.length > 0
+          ? inventory.inventoryMovements[0].location.name
+          : '';
+
+      // table lines for each pick
+      pageLines.push(`
+                        <tr>
+                          <td>${inventory.lpn}</td>
+                          <td>${inventory.item.name}</td>
+                          <td>${inventory.item.description}</td>
+                          <td>${inventory.quantity}</td>
+                          <td>${inventory.inventoryStatus.name}</td>
+                          <td>${inventory.location.name}</td>
+                          <td>${nextLocation}</td>
+                          <td>____________</td>
+                        </tr>`);
+
+      if ((index + 1) % this.PUTAWAY_LINE_PER_PAGE === 0) {
+        // start a new page
+        pageLines.push(`</table>`);
+        pages.push(pageLines.join(''));
+        pageLines.length = 0;
+      }
+    });
+    // When inventories.length % this.PUTAWAY_LINE_PER_PAGE !== 0
+    // It means we haven't setup the last page correctly yet. Let's
+    // add the page end and add the last page to the page list
+    if (inventories.length % this.PUTAWAY_LINE_PER_PAGE !== 0) {
+      pageLines.push(`</table>`);
+      pages.push(pageLines.join(''));
+      pageLines.length = 0;
+    }
+
+    return pages;
   }
 }

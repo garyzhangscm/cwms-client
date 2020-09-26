@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { IntegrationOrderConfirmationService } from '../services/integration-order-confirmation.service';
 import { IntegrationOrderConfirmation } from '../models/integration-order-confirmation';
 import { IntegrationOrder } from '../models/integration-order';
+import { I18NService } from '@core/i18n/i18n.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-integration-integration-data-order-confirm',
@@ -11,14 +13,10 @@ import { IntegrationOrder } from '../models/integration-order';
   styleUrls: ['./integration-data-order-confirm.component.less'],
 })
 export class IntegrationIntegrationDataOrderConfirmComponent implements OnInit {
-  constructor(
-    private fb: FormBuilder,
-    private integrationOrderConfirmationService: IntegrationOrderConfirmationService,
-  ) {}
-
   searchForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllIntegrationOrderConfirmations: IntegrationOrderConfirmation[] = [];
@@ -33,6 +31,12 @@ export class IntegrationIntegrationDataOrderConfirmComponent implements OnInit {
   // list of expanded row
   mapOfExpandedId: { [key: string]: boolean } = {};
 
+  constructor(
+    private fb: FormBuilder,
+    private integrationOrderConfirmationService: IntegrationOrderConfirmationService,
+    private i18n: I18NService,
+  ) {}
+
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
   }
@@ -44,13 +48,24 @@ export class IntegrationIntegrationDataOrderConfirmComponent implements OnInit {
   }
   search(): void {
     this.searching = true;
-    this.integrationOrderConfirmationService.getData().subscribe(integrationOrderConfirmationRes => {
-      console.log(`integrationOrderConfirmationRes:${JSON.stringify(integrationOrderConfirmationRes)}`);
-      this.listOfAllIntegrationOrderConfirmations = integrationOrderConfirmationRes;
-      this.listOfDisplayIntegrationOrderConfirmations = integrationOrderConfirmationRes;
+    this.searchResult = '';
+    this.integrationOrderConfirmationService.getData().subscribe(
+      integrationOrderConfirmationRes => {
+        console.log(`integrationOrderConfirmationRes:${JSON.stringify(integrationOrderConfirmationRes)}`);
+        this.listOfAllIntegrationOrderConfirmations = integrationOrderConfirmationRes;
+        this.listOfDisplayIntegrationOrderConfirmations = integrationOrderConfirmationRes;
 
-      this.searching = false;
-    });
+        this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: integrationOrderConfirmationRes.length,
+        });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   currentPageDataChange($event: IntegrationOrderConfirmation[]): void {

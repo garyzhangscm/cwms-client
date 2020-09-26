@@ -161,10 +161,14 @@
   </ng-template>
   </tbody>
   </nz-table>
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+    <a nz-button routerLink="/auth/role/maintenance" routerLinkActive="active">{{ 'new' | translate }}</a>
+  </div>
 </div>
 
 <ng-template #tableFoot>
-  <div nz-row nzType="flex" nzJustify="start">
-    <a nz-button routerLink="/auth/role/maintenance" routerLinkActive="active">{{ 'new' | translate }}</a>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
   </div>
 </ng-template>

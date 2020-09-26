@@ -57,7 +57,6 @@
       <tr>
         <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
           (nzCheckedChange)="checkAll($event)"></th>
-        <th nzShowSort nzSortKey="id">{{ 'location.id' | translate }}</th>
         <th nzShowSort nzSortKey="name">
           {{ 'location.name' | translate }}
         </th>
@@ -105,7 +104,7 @@
         <th nzShowSort nzSortKey="reservedCode">
           {{ 'location.reservedCode' | translate }}
         </th>
-        <th>
+        <th nzWidth="62px">
           {{ 'action' | translate }}
         </th>
       </tr>
@@ -114,7 +113,7 @@
       <tr *ngFor="let data of rowSelectionTable.data">
         <ng-container *ngIf="!editCache[data.id].edit; else editTemplate">
           <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
-          <td>{{ data.id }}</td>
+
           <td>{{ data.name }}</td>
           <td>{{ data.locationGroup.description }}</td>
           <td>{{ data.aisle }}</td>
@@ -136,7 +135,6 @@
 
         <ng-template #editTemplate>
           <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
-          <td>{{ data.id }}</td>
           <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.name" /></td>
           <td>
 
@@ -178,10 +176,8 @@
       </tr>
     </tbody>
   </nz-table>
-</div>
 
-<ng-template #tableFoot>
-  <div nz-row nzType="flex" nzJustify="start">
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
     <button nz-button nzType="danger" (click)="removeSelectedLocations()">
       {{ 'delete' | translate }}
     </button>
@@ -189,4 +185,12 @@
       {{ 'file-upload' | translate }}
     </button>
   </div>
+</div>
+
+<ng-template #tableFoot>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+
 </ng-template>

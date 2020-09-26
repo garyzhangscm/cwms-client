@@ -137,6 +137,8 @@ export class WorkOrderWorkOrderProduceByProductComponent implements OnInit {
       itemPackageTypeId: null,
       itemPackageType: {
         id: null,
+        warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        description: null,
         name: '',
         itemUnitOfMeasures: null,
       },

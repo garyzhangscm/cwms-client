@@ -74,7 +74,7 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="inventories">
+  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="inventories" [nzFooter]="tableFoot">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
         <th nzShowSort nzSortKey="id">id</th>
@@ -139,6 +139,8 @@
           {{ 'inventory.status' | translate }}
         </th>
         <th>{{ 'inventory.locked-for-adjustment' | translate }}</th>
+        <th>{{ 'inventory.pick-id' | translate }}</th>
+        <th>{{ 'inventory.allocated-by-pick-id' | translate }}</th>
         <th>{{ 'action' | translate }}</th>
       </tr>
     </thead>
@@ -165,6 +167,8 @@
           <span *ngIf="data.lockedForAdjust === true"><a routerLink="/inventory/inventory-adjustment-request"
               routerLinkActive="active"
               [queryParams]="{inventoryId : data.id}">{{ (data.lockedForAdjust + '') | translate }}</a></span></td>
+        <td>{{ data.pick?.number }}</td>
+        <td>{{ data.allocatedByPick?.number }}</td>
         <td>
           <button nz-button routerLink="/inventory/inventory-quantity-change" routerLinkActive="active"
             [queryParams]="{id : data.id, by : 'inventory'}" [disabled]="data.lockedForAdjust === true"
@@ -216,6 +220,15 @@
   </tbody>
   </nz-table>
 </div>
+
+
+<ng-template #tableFoot>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>
+
 
 <!-- Modal for inventory remove warning -->
 <ng-template #tplInventoryRemovalModalTitle>

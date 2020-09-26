@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { IntegrationWorkOrderConfirmationService } from '../services/integration-work-order-confirmation.service';
 import { IntegrationWorkOrderConfirmation } from '../models/integration-work-order-confirmation';
 import { IntegrationOrderConfirmation } from '../models/integration-order-confirmation';
+import { formatDate } from '@angular/common';
+import { I18NService } from '@core/i18n/i18n.service';
 
 @Component({
   selector: 'app-integration-integration-data-work-order-confirm',
@@ -11,14 +13,10 @@ import { IntegrationOrderConfirmation } from '../models/integration-order-confir
   styleUrls: ['./integration-data-work-order-confirm.component.less'],
 })
 export class IntegrationIntegrationDataWorkOrderConfirmComponent implements OnInit {
-  constructor(
-    private fb: FormBuilder,
-    private integrationWorkOrderConfirmationService: IntegrationWorkOrderConfirmationService,
-  ) {}
-
   searchForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllIntegrationWorkOrderConfirmations: IntegrationWorkOrderConfirmation[] = [];
@@ -32,6 +30,11 @@ export class IntegrationIntegrationDataWorkOrderConfirmComponent implements OnIn
 
   // list of expanded row
   mapOfExpandedId: { [key: string]: boolean } = {};
+  constructor(
+    private fb: FormBuilder,
+    private integrationWorkOrderConfirmationService: IntegrationWorkOrderConfirmationService,
+    private i18n: I18NService,
+  ) {}
 
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
@@ -44,13 +47,24 @@ export class IntegrationIntegrationDataWorkOrderConfirmComponent implements OnIn
   }
   search(): void {
     this.searching = true;
-    this.integrationWorkOrderConfirmationService.getData().subscribe(integrationWorkOrderConfirmationRes => {
-      console.log(`integrationOrderConfirmationRes:${JSON.stringify(integrationWorkOrderConfirmationRes)}`);
-      this.listOfAllIntegrationWorkOrderConfirmations = integrationWorkOrderConfirmationRes;
-      this.listOfDisplayIntegrationWorkOrderConfirmations = integrationWorkOrderConfirmationRes;
+    this.searchResult = '';
+    this.integrationWorkOrderConfirmationService.getData().subscribe(
+      integrationWorkOrderConfirmationRes => {
+        console.log(`integrationOrderConfirmationRes:${JSON.stringify(integrationWorkOrderConfirmationRes)}`);
+        this.listOfAllIntegrationWorkOrderConfirmations = integrationWorkOrderConfirmationRes;
+        this.listOfDisplayIntegrationWorkOrderConfirmations = integrationWorkOrderConfirmationRes;
 
-      this.searching = false;
-    });
+        this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: integrationWorkOrderConfirmationRes.length,
+        });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   currentPageDataChange($event: IntegrationWorkOrderConfirmation[]): void {

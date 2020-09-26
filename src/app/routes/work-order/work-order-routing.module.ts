@@ -16,6 +16,7 @@ import { WorkOrderWorkOrderProduceByProductComponent } from './work-order-produc
 import { WorkOrderProductionPlanComponent } from './production-plan/production-plan.component';
 import { WorkOrderProductionPlanMaintenanceComponent } from './production-plan-maintenance/production-plan-maintenance.component';
 import { WorkOrderWorkOrderLineMaintenanceComponent } from './work-order-line-maintenance/work-order-line-maintenance.component';
+import { WorkOrderBillOfMaterialMaintenanceComponent } from './bill-of-material-maintenance/bill-of-material-maintenance.component';
 
 const routes: Routes = [
   { path: 'work-order', component: WorkOrderWorkOrderComponent },
@@ -34,6 +35,7 @@ const routes: Routes = [
   { path: 'production-plan', component: WorkOrderProductionPlanComponent },
   { path: 'production-plan/maintenance', component: WorkOrderProductionPlanMaintenanceComponent },
   { path: 'work-order/line/maintenance', component: WorkOrderWorkOrderLineMaintenanceComponent },
+  { path: 'bill-of-material/maintenance', component: WorkOrderBillOfMaterialMaintenanceComponent },
 ];
 
 @NgModule({

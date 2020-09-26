@@ -6,6 +6,7 @@ import { NzModalService, NzMessageService } from 'ng-zorro-antd';
 import { UserService } from '../services/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { User } from '../models/user';
+import { formatDate } from '@angular/common';
 
 interface ItemData {
   id: number;
@@ -43,6 +44,9 @@ export class AuthUserComponent implements OnInit {
 
   pageTitle: string;
 
+  searching = false;
+  searchResult = '';
+
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllUsers = [];
@@ -50,11 +54,25 @@ export class AuthUserComponent implements OnInit {
   }
 
   search(): void {
-    this.userService.getUsers(this.searchForm.controls.username.value).subscribe(userRes => {
-      //      console.log(`user:\n${JSON.stringify(userRes)}`);
-      this.listOfAllUsers = userRes;
-      this.listOfDisplayUsers = userRes;
-    });
+    this.searching = true;
+    this.searchResult = '';
+    this.userService.getUsers(this.searchForm.controls.username.value).subscribe(
+      userRes => {
+        //      console.log(`user:\n${JSON.stringify(userRes)}`);
+        this.listOfAllUsers = userRes;
+        this.listOfDisplayUsers = userRes;
+
+        this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: userRes.length,
+        });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   sort(sort: { key: string; value: string }): void {

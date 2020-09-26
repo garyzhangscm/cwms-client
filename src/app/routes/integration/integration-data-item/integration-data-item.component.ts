@@ -3,6 +3,8 @@ import { _HttpClient } from '@delon/theme';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { IntegrationItemData } from '../models/integration-item-data';
 import { IntegrationItemDataService } from '../services/integration-item-data.service';
+import { I18NService } from '@core';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-integration-integration-data-item',
@@ -14,6 +16,7 @@ export class IntegrationIntegrationDataItemComponent implements OnInit {
   searchForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllIntegrationItemData: IntegrationItemData[] = [];
@@ -32,7 +35,11 @@ export class IntegrationIntegrationDataItemComponent implements OnInit {
     this.isCollapse = !this.isCollapse;
   }
 
-  constructor(private fb: FormBuilder, private integrationItemDataService: IntegrationItemDataService) {}
+  constructor(
+    private fb: FormBuilder,
+    private integrationItemDataService: IntegrationItemDataService,
+    private i18n: I18NService,
+  ) {}
 
   resetForm(): void {
     this.searchForm.reset();
@@ -41,12 +48,23 @@ export class IntegrationIntegrationDataItemComponent implements OnInit {
   }
   search(): void {
     this.searching = true;
-    this.integrationItemDataService.getItemData().subscribe(integrationItemDataRes => {
-      console.log(`integrationItemDataRes:\n${JSON.stringify(integrationItemDataRes)}`);
-      this.listOfAllIntegrationItemData = integrationItemDataRes;
-      this.listOfDisplayIntegrationItemData = integrationItemDataRes;
-      this.searching = false;
-    });
+    this.searchResult = '';
+    this.integrationItemDataService.getItemData().subscribe(
+      integrationItemDataRes => {
+        console.log(`integrationItemDataRes:\n${JSON.stringify(integrationItemDataRes)}`);
+        this.listOfAllIntegrationItemData = integrationItemDataRes;
+        this.listOfDisplayIntegrationItemData = integrationItemDataRes;
+        this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: integrationItemDataRes.length,
+        });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   currentPageDataChange($event: IntegrationItemData[]): void {

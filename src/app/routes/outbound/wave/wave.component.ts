@@ -18,6 +18,7 @@ import { PickService } from '../services/pick.service';
 import { ShortAllocationService } from '../services/short-allocation.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-outbound-wave',
@@ -44,6 +45,7 @@ export class OutboundWaveComponent implements OnInit {
   searchForm: FormGroup;
   unpickForm: FormGroup;
   searching = false;
+  searchResult = '';
   tabSelectedIndex = 0;
 
   // Table data for display
@@ -88,16 +90,27 @@ export class OutboundWaveComponent implements OnInit {
 
   search(expandedWaveId?: number, tabSelectedIndex?: number): void {
     this.searching = true;
-    this.waveService.getWaves(this.searchForm.controls.number.value).subscribe(waveRes => {
-      this.listOfAllWaves = this.calculateQuantities(waveRes);
-      this.listOfDisplayWaves = this.calculateQuantities(waveRes);
+    this.searchResult = '';
+    this.waveService.getWaves(this.searchForm.controls.number.value).subscribe(
+      waveRes => {
+        this.listOfAllWaves = this.calculateQuantities(waveRes);
+        this.listOfDisplayWaves = this.calculateQuantities(waveRes);
 
-      this.collapseAllRecord(expandedWaveId);
-      this.searching = false;
-      if (tabSelectedIndex) {
-        this.tabSelectedIndex = tabSelectedIndex;
-      }
-    });
+        this.collapseAllRecord(expandedWaveId);
+        this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: waveRes.length,
+        });
+        if (tabSelectedIndex) {
+          this.tabSelectedIndex = tabSelectedIndex;
+        }
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   collapseAllRecord(expandedWaveId?: number) {

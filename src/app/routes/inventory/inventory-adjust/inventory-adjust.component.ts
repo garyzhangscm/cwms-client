@@ -19,6 +19,7 @@ import { InventoryStatus } from '../models/inventory-status';
 import { InventoryStatusService } from '../services/inventory-status.service';
 import { ItemService } from '../services/item.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-inventory-inventory-adjust',
@@ -57,6 +58,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   availableInventoryStatuses: InventoryStatus[];
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllLocations: WarehouseLocation[] = [];
@@ -127,35 +129,46 @@ export class InventoryInventoryAdjustComponent implements OnInit {
 
   search(expand?: boolean): void {
     this.searching = true;
+    this.searchResult = '';
     this.locationService
       .getLocations(
         this.searchForm.controls.taggedLocationGroupTypes.value,
         this.searchForm.controls.taggedLocationGroups.value,
         this.searchForm.controls.location.value,
       )
-      .subscribe(locationRes => {
-        this.listOfAllLocations = locationRes;
-        this.listOfDisplayLocations = locationRes;
-        if (expand) {
-          // expand all the result
-          this.listOfDisplayLocations.forEach(location => {
-            this.mapOfExpandedId[location.id] = true;
-            this.showInventoryDetails(location);
-          });
-        }
-
-        this.filtersByLocationGroup = [];
-        const existingLocationGroupId = new Set();
-
-        this.listOfAllLocations.forEach(location => {
-          if (!existingLocationGroupId.has(location.locationGroup.id)) {
-            this.filtersByLocationGroup.push({ text: location.locationGroup.name, value: location.locationGroup.id });
-            existingLocationGroupId.add(location.locationGroup.id);
+      .subscribe(
+        locationRes => {
+          this.listOfAllLocations = locationRes;
+          this.listOfDisplayLocations = locationRes;
+          if (expand) {
+            // expand all the result
+            this.listOfDisplayLocations.forEach(location => {
+              this.mapOfExpandedId[location.id] = true;
+              this.showInventoryDetails(location);
+            });
           }
-        });
 
-        this.searching = false;
-      });
+          this.filtersByLocationGroup = [];
+          const existingLocationGroupId = new Set();
+
+          this.listOfAllLocations.forEach(location => {
+            if (!existingLocationGroupId.has(location.locationGroup.id)) {
+              this.filtersByLocationGroup.push({ text: location.locationGroup.name, value: location.locationGroup.id });
+              existingLocationGroupId.add(location.locationGroup.id);
+            }
+          });
+
+          this.searching = false;
+          this.searchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: locationRes.length,
+          });
+        },
+        () => {
+          this.searching = false;
+          this.searchResult = '';
+        },
+      );
   }
 
   currentPageDataChange($event: WarehouseLocation[]): void {

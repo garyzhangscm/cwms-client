@@ -7,6 +7,8 @@ import { IntegrationOrderService } from '../services/integration-order.service';
 import { IntegrationOrder } from '../models/integration-order';
 import { IntegrationItemUnitOfMeasureDataService } from '../services/integration-item-unit-of-measure-data.service';
 import { IntegrationItemUnitOfMeasureData } from '../models/integration-item-unit-of-measure-data';
+import { formatDate } from '@angular/common';
+import { I18NService } from '@core';
 
 @Component({
   selector: 'app-integration-integration-data-order',
@@ -14,11 +16,10 @@ import { IntegrationItemUnitOfMeasureData } from '../models/integration-item-uni
   styleUrls: ['./integration-data-order.component.less'],
 })
 export class IntegrationIntegrationDataOrderComponent implements OnInit {
-  constructor(private fb: FormBuilder, private integrationOrderService: IntegrationOrderService) {}
-
   searchForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllIntegrationOrders: IntegrationOrder[] = [];
@@ -40,6 +41,11 @@ export class IntegrationIntegrationDataOrderComponent implements OnInit {
   // list of expanded row
   mapOfExpandedId: { [key: string]: boolean } = {};
 
+  constructor(
+    private fb: FormBuilder,
+    private integrationOrderService: IntegrationOrderService,
+    private i18n: I18NService,
+  ) {}
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
   }
@@ -56,36 +62,47 @@ export class IntegrationIntegrationDataOrderComponent implements OnInit {
   }
   search(): void {
     this.searching = true;
-    this.integrationOrderService.getData().subscribe(integrationOrderRes => {
-      this.listOfAllIntegrationOrders = integrationOrderRes;
-      this.listOfDisplayIntegrationOrders = integrationOrderRes;
+    this.searchResult = '';
+    this.integrationOrderService.getData().subscribe(
+      integrationOrderRes => {
+        this.listOfAllIntegrationOrders = integrationOrderRes;
+        this.listOfDisplayIntegrationOrders = integrationOrderRes;
 
-      this.filtersByShipToCustomer = [];
-      this.filtersByBillToCustomer = [];
-      const existingShipToCustomer = new Set();
-      const existingBillToCustomer = new Set();
+        this.filtersByShipToCustomer = [];
+        this.filtersByBillToCustomer = [];
+        const existingShipToCustomer = new Set();
+        const existingBillToCustomer = new Set();
 
-      this.listOfAllIntegrationOrders.forEach(order => {
-        const shipToCustomerName = order.shipToCustomerName
-          ? order.shipToCustomerName
-          : `${order.shipToContactorFirstname} ${order.shipToContactorLastname}`;
+        this.listOfAllIntegrationOrders.forEach(order => {
+          const shipToCustomerName = order.shipToCustomerName
+            ? order.shipToCustomerName
+            : `${order.shipToContactorFirstname} ${order.shipToContactorLastname}`;
 
-        if (!existingShipToCustomer.has(shipToCustomerName)) {
-          this.filtersByShipToCustomer.push({ text: shipToCustomerName, value: shipToCustomerName });
-          existingShipToCustomer.add(shipToCustomerName);
-        }
-        const billToCustomerName = order.billToCustomerName
-          ? order.billToCustomerName
-          : `${order.billToContactorFirstname} ${order.billToContactorLastname}`;
+          if (!existingShipToCustomer.has(shipToCustomerName)) {
+            this.filtersByShipToCustomer.push({ text: shipToCustomerName, value: shipToCustomerName });
+            existingShipToCustomer.add(shipToCustomerName);
+          }
+          const billToCustomerName = order.billToCustomerName
+            ? order.billToCustomerName
+            : `${order.billToContactorFirstname} ${order.billToContactorLastname}`;
 
-        if (!existingBillToCustomer.has(billToCustomerName)) {
-          this.filtersByBillToCustomer.push({ text: billToCustomerName, value: billToCustomerName });
-          existingBillToCustomer.add(billToCustomerName);
-        }
-      });
+          if (!existingBillToCustomer.has(billToCustomerName)) {
+            this.filtersByBillToCustomer.push({ text: billToCustomerName, value: billToCustomerName });
+            existingBillToCustomer.add(billToCustomerName);
+          }
+        });
 
-      this.searching = false;
-    });
+        this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: integrationOrderRes.length,
+        });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   currentPageDataChange($event: IntegrationOrder[]): void {

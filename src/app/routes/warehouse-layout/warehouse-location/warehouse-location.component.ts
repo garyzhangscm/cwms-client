@@ -9,6 +9,7 @@ import { I18NService } from '@core';
 import { NzModalService, NzMessageService } from 'ng-zorro-antd';
 import { LocationGroupType } from '../models/location-group-type';
 import { LocationGroup } from '../models/location-group';
+import { formatDate } from '@angular/common';
 
 interface ItemData {
   id: number;
@@ -31,6 +32,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   searchForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllLocations: WarehouseLocation[] = [];
@@ -85,10 +87,6 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   }
 
   search(): void {
-    console.log(`search with \n 
-    this.searchForm.controls.taggedLocationGroupTypes.value: ${this.searchForm.controls.taggedLocationGroupTypes.value}\n
-    this.searchForm.controls.taggedLocationGroups.value: ${this.searchForm.controls.taggedLocationGroups.value}`);
-
     this.searching = true;
     this.locationService
       .getLocations(
@@ -96,23 +94,33 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
         this.searchForm.controls.taggedLocationGroups.value,
         this.searchForm.controls.locationName.value,
       )
-      .subscribe(locationRes => {
-        this.listOfAllLocations = locationRes;
-        this.listOfDisplayLocations = locationRes;
-        this.updateEditCache();
+      .subscribe(
+        locationRes => {
+          this.listOfAllLocations = locationRes;
+          this.listOfDisplayLocations = locationRes;
+          this.updateEditCache();
 
-        this.filtersByLocationGroup = [];
-        const existingLocationGroupId = new Set();
+          this.filtersByLocationGroup = [];
+          const existingLocationGroupId = new Set();
 
-        this.listOfAllLocations.forEach(location => {
-          if (!existingLocationGroupId.has(location.locationGroup.id)) {
-            this.filtersByLocationGroup.push({ text: location.locationGroup.name, value: location.locationGroup.id });
-            existingLocationGroupId.add(location.locationGroup.id);
-          }
-        });
+          this.listOfAllLocations.forEach(location => {
+            if (!existingLocationGroupId.has(location.locationGroup.id)) {
+              this.filtersByLocationGroup.push({ text: location.locationGroup.name, value: location.locationGroup.id });
+              existingLocationGroupId.add(location.locationGroup.id);
+            }
+          });
 
-        this.searching = false;
-      });
+          this.searching = false;
+          this.searchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: locationRes.length,
+          });
+        },
+        () => {
+          this.searching = false;
+          this.searchResult = '';
+        },
+      );
   }
 
   currentPageDataChange($event: WarehouseLocation[]): void {

@@ -17,9 +17,7 @@ import { Router } from '@angular/router';
       />
       <nz-autocomplete #auto>
         <nz-auto-option class="global-search-item" *ngFor="let menu of filteredMenus" [nzValue]="menu.text">
-          <a class="global-search-item-desc" (click)="openMenu(menu)" rel="noopener noreferrer">
-            {{ menu.text }}
-          </a>
+          <a class="global-search-item-desc" [href]="'#' + menu.link"> {{ menu.text }} </a>
         </nz-auto-option>
       </nz-autocomplete>
     </nz-input-group>
@@ -63,7 +61,7 @@ export class HeaderSearchComponent implements AfterViewInit {
 
   onChange(value: string): void {
     this.filteredMenus = [];
-    // console.log(`Start to list from menu \n ${JSON.stringify(this.menuService.menus)} \n ${value}`);
+    // console.log(`Start to list from menu   \n ${value}`);
     this.menuService.menus.forEach(menu => {
       this.addFilterMenu(value, menu);
     });

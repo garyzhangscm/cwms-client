@@ -1,15 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { _HttpClient, TitleService } from '@delon/theme';
 import { AuditCountResult } from '../models/audit-count-result';
-import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
-import { InventoryStatus } from '../models/inventory-status';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { AuditCountResultService } from '../services/audit-count-result.service';
-import { LocationService } from '../../warehouse-layout/services/location.service';
-import { InventoryStatusService } from '../services/inventory-status.service';
-import { ItemService } from '../services/item.service';
-import { InventoryService } from '../services/inventory.service';
 
 @Component({
   selector: 'app-inventory-audit-count-confirm',

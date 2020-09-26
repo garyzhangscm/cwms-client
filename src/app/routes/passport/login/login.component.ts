@@ -9,6 +9,7 @@ import { environment } from '@env/environment';
 import { StartupService } from '@core';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 
 @Component({
   selector: 'passport-login',
@@ -17,6 +18,8 @@ import { WarehouseService } from '../../warehouse-layout/services/warehouse.serv
   providers: [SocialService],
 })
 export class UserLoginComponent implements OnInit, OnDestroy {
+  singleCompanySystem = true;
+  defaultCompanyCode = '';
   constructor(
     fb: FormBuilder,
     modalSrv: NzModalService,
@@ -31,8 +34,10 @@ export class UserLoginComponent implements OnInit, OnDestroy {
     public http: _HttpClient,
     public msg: NzMessageService,
     private warehouseService: WarehouseService,
+    private companyService: CompanyService,
   ) {
     this.form = fb.group({
+      companyCode: [null, [Validators.required, Validators.minLength(1)]],
       userName: [null, [Validators.required, Validators.minLength(1)]],
       password: [null, Validators.required],
       warehouseId: [{ value: '', disabled: true }, Validators.required],
@@ -45,6 +50,9 @@ export class UserLoginComponent implements OnInit, OnDestroy {
   }
   // #region fields
 
+  get companyCode() {
+    return this.form.controls.companyCode;
+  }
   get userName() {
     return this.form.controls.userName;
   }
@@ -71,7 +79,15 @@ export class UserLoginComponent implements OnInit, OnDestroy {
   warehouses: Warehouse[];
 
   ngOnInit() {
-    console.log(`Welcome, please login first!`);
+    this.singleCompanySystem = this.companyService.isSingleCompanyServer();
+    if (this.singleCompanySystem === true) {
+      this.defaultCompanyCode = this.companyService.getDefaultCompanyCode();
+      this.form.controls.companyCode.disable();
+    } else {
+      this.defaultCompanyCode = '';
+      this.form.controls.companyCode.enable();
+    }
+    this.form.controls.companyCode.setValue(this.defaultCompanyCode);
   }
 
   // #endregion
@@ -142,6 +158,13 @@ export class UserLoginComponent implements OnInit, OnDestroy {
         // 设置用户Token信息
         this.tokenService.set(res.user);
 
+        // get the company information
+        this.companyService.getCompanies(this.companyService.getDefaultCompanyCode()).subscribe(companiesRes => {
+          if (companiesRes.length === 1) {
+            this.companyService.setCurrentCompany(companiesRes[0]);
+          }
+        });
+
         this.warehouseService.getWarehouse(this.warehouseId.value).subscribe((warehouse: Warehouse) => {
           this.warehouseService.setCurrentWarehouse(warehouse);
           // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
@@ -206,20 +229,32 @@ export class UserLoginComponent implements OnInit, OnDestroy {
       });
     }
   }
+  onCompanyCodeBlur() {
+    // load the company
+    this.companyService.getCompanies(this.companyCode.value).subscribe(companiesRes => {
+      if (companiesRes.length === 1) {
+        this.companyService.setCurrentCompany(companiesRes[0]);
+      }
+    });
 
+    // Load all valid warehouses in this company, assigned to the user
+    this.loadWarehouses();
+  }
   loadWarehouses() {
     console.log(`Start to load warehouse ${this.userName.value}`);
-    if (this.userName.value === '') {
+    if (this.userName.value === '' || this.companyCode.value === '') {
       this.warehouses = [];
       this.warehouseId.disable();
     } else {
-      this.warehouseService.getWarehouseByUser(this.userName.value).subscribe((warehouses: Warehouse[]) => {
-        this.warehouses = warehouses;
-        if (warehouses.length >= 1) {
-          this.warehouseId.setValue(warehouses[0].id);
-        }
-        warehouses.length > 1 ? this.warehouseId.enable() : this.warehouseId.disable();
-      });
+      this.warehouseService
+        .getWarehouseByUser(this.companyCode.value, this.userName.value)
+        .subscribe((warehouses: Warehouse[]) => {
+          this.warehouses = warehouses;
+          if (warehouses.length >= 1) {
+            this.warehouseId.setValue(warehouses[0].id);
+          }
+          warehouses.length > 1 ? this.warehouseId.enable() : this.warehouseId.disable();
+        });
     }
   }
   // #endregion

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { TitleService, _HttpClient } from '@delon/theme';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { NzModalService, NzMessageService } from 'ng-zorro-antd';
@@ -8,6 +8,8 @@ import { ReceiptService } from '../services/receipt.service';
 import { Client } from '../../common/models/client';
 import { Supplier } from '../../common/models/supplier';
 import { ReceiptStatus } from '../models/receipt-status.enum';
+import { ActivatedRoute } from '@angular/router';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-inbound-receipt',
@@ -16,17 +18,11 @@ import { ReceiptStatus } from '../models/receipt-status.enum';
 })
 export class InboundReceiptComponent implements OnInit {
   receiptStatus = ReceiptStatus;
-  constructor(
-    private fb: FormBuilder,
-    private i18n: I18NService,
-    private modalService: NzModalService,
-    private receiptService: ReceiptService,
-    private message: NzMessageService,
-  ) {}
 
   // Form related data and functions
   searchForm: FormGroup;
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllReceipts: Receipt[] = [];
@@ -51,6 +47,29 @@ export class InboundReceiptComponent implements OnInit {
   // list of checked checkbox
   mapOfCheckedId: { [key: string]: boolean } = {};
 
+  constructor(
+    private fb: FormBuilder,
+    private i18n: I18NService,
+    private modalService: NzModalService,
+    private receiptService: ReceiptService,
+    private message: NzMessageService,
+    private activatedRoute: ActivatedRoute,
+    private titleService: TitleService,
+  ) {}
+  ngOnInit() {
+    this.titleService.setTitle(this.i18n.fanyi('menu.main.inbound.receipt'));
+    // initiate the search form
+    this.searchForm = this.fb.group({
+      number: [null],
+    });
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.number) {
+        this.searchForm.controls.number.setValue(params.number);
+        this.search();
+      }
+    });
+  }
+
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllReceipts = [];
@@ -63,34 +82,45 @@ export class InboundReceiptComponent implements OnInit {
 
   search(): void {
     this.searching = true;
-    this.receiptService.getReceipts(this.searchForm.controls.number.value).subscribe(receiptRes => {
-      this.listOfAllReceipts = this.calculateQuantities(receiptRes);
-      this.listOfDisplayReceipts = this.calculateQuantities(receiptRes);
+    this.searchResult = '';
+    this.receiptService.getReceipts(this.searchForm.controls.number.value).subscribe(
+      receiptRes => {
+        this.listOfAllReceipts = this.calculateQuantities(receiptRes);
+        this.listOfDisplayReceipts = this.calculateQuantities(receiptRes);
 
-      this.filtersByClient = [];
-      this.filtersBySupplier = [];
-      this.filtersByStatus = [];
-      const existingClientId = new Set();
-      const existingSupplierId = new Set();
-      const existingStatus = new Set();
+        this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: receiptRes.length,
+        });
 
-      this.listOfAllReceipts.forEach(receipt => {
-        if (receipt.client && !existingClientId.has(receipt.client.id)) {
-          this.filtersByClient.push({ text: receipt.client.name, value: receipt.client.id });
-          existingClientId.add(receipt.client.id);
-        }
-        if (receipt.supplier && !existingSupplierId.has(receipt.supplier.id)) {
-          this.filtersBySupplier.push({ text: receipt.supplier.name, value: receipt.supplier.id });
-          existingSupplierId.add(receipt.supplier.id);
-        }
-        if (!existingStatus.has(receipt.receiptStatus)) {
-          this.filtersByStatus.push({ text: receipt.receiptStatus, value: receipt.receiptStatus });
-          existingStatus.add(receipt.receiptStatus);
-        }
-      });
+        this.filtersByClient = [];
+        this.filtersBySupplier = [];
+        this.filtersByStatus = [];
+        const existingClientId = new Set();
+        const existingSupplierId = new Set();
+        const existingStatus = new Set();
 
-      this.searching = false;
-    });
+        this.listOfAllReceipts.forEach(receipt => {
+          if (receipt.client && !existingClientId.has(receipt.client.id)) {
+            this.filtersByClient.push({ text: receipt.client.name, value: receipt.client.id });
+            existingClientId.add(receipt.client.id);
+          }
+          if (receipt.supplier && !existingSupplierId.has(receipt.supplier.id)) {
+            this.filtersBySupplier.push({ text: receipt.supplier.name, value: receipt.supplier.id });
+            existingSupplierId.add(receipt.supplier.id);
+          }
+          if (!existingStatus.has(receipt.receiptStatus)) {
+            this.filtersByStatus.push({ text: receipt.receiptStatus, value: receipt.receiptStatus });
+            existingStatus.add(receipt.receiptStatus);
+          }
+        });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   calculateQuantities(receipts: Receipt[]): Receipt[] {
@@ -194,13 +224,6 @@ export class InboundReceiptComponent implements OnInit {
       }
     });
     return selectedReceipts;
-  }
-
-  ngOnInit() {
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      number: [null],
-    });
   }
 
   checkInReceipt(receipt: Receipt) {

@@ -4,6 +4,8 @@ import { IntegrationInventoryAdjustmentConfirmationService } from '../services/i
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IntegrationInventoryAdjustmentConfirmation } from '../models/integration-inventory-adjustment-confirmation';
 import { IntegrationOrderConfirmation } from '../models/integration-order-confirmation';
+import { formatDate } from '@angular/common';
+import { I18NService } from '@core';
 
 @Component({
   selector: 'app-integration-integration-data-inventory-adjust',
@@ -11,14 +13,10 @@ import { IntegrationOrderConfirmation } from '../models/integration-order-confir
   styleUrls: ['./integration-data-inventory-adjust.component.less'],
 })
 export class IntegrationIntegrationDataInventoryAdjustComponent implements OnInit {
-  constructor(
-    private fb: FormBuilder,
-    private integrationInventoryAdjustmentConfirmationService: IntegrationInventoryAdjustmentConfirmationService,
-  ) {}
-
   searchForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllIntegrationInventoryAdjustmentConfirmations: IntegrationInventoryAdjustmentConfirmation[] = [];
@@ -33,6 +31,12 @@ export class IntegrationIntegrationDataInventoryAdjustComponent implements OnIni
   // list of expanded row
   mapOfExpandedId: { [key: string]: boolean } = {};
 
+  constructor(
+    private fb: FormBuilder,
+    private integrationInventoryAdjustmentConfirmationService: IntegrationInventoryAdjustmentConfirmationService,
+    private i18n: I18NService,
+  ) {}
+
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
   }
@@ -44,6 +48,7 @@ export class IntegrationIntegrationDataInventoryAdjustComponent implements OnIni
   }
   search(): void {
     this.searching = true;
+    this.searchResult = '';
     this.integrationInventoryAdjustmentConfirmationService
       .getData()
       .subscribe(integrationInventoryAdjustmentConfirmationRes => {
@@ -51,6 +56,10 @@ export class IntegrationIntegrationDataInventoryAdjustComponent implements OnIni
         this.listOfDisplayIntegrationInventoryAdjustmentConfirmations = integrationInventoryAdjustmentConfirmationRes;
 
         this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: integrationInventoryAdjustmentConfirmationRes.length,
+        });
       });
   }
 

@@ -174,10 +174,13 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
   getEmptyWorkOrderProducedInventory(): WorkOrderProducedInventory {
     return {
       id: null,
+
       lpn: '',
       itemPackageTypeId: null,
       itemPackageType: {
         id: null,
+        warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        description: '',
         name: '',
         itemUnitOfMeasures: null,
       },

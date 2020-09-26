@@ -40,11 +40,19 @@ export class UtilTestDataInitComponent implements OnInit {
 
     this.currentStep = index;
     if (index < this.dataNames.length) {
-      this.testDataUploadService.loadTestData(this.dataNames[index]).subscribe(res => {
-        console.log('#' + index + ' - ' + this.dataNames[index] + ' is done!');
-        console.log('>> Result: ' + JSON.stringify(res));
-        this.loadData(index + 1);
-      });
+      this.testDataUploadService.loadTestData(this.dataNames[index]).subscribe(
+        res => {
+          console.log('#' + index + ' - ' + this.dataNames[index] + ' is done!');
+          console.log('>> Result: ' + JSON.stringify(res));
+          this.loadData(index + 1);
+        },
+        () => {
+          this.loadButtonDisabled = false;
+          this.loadButtonLoading = false;
+          this.clearButtonDisabled = false;
+          this.clearButtonLoading = false;
+        },
+      );
     } else {
       this.loadButtonDisabled = false;
       this.loadButtonLoading = false;
@@ -58,12 +66,20 @@ export class UtilTestDataInitComponent implements OnInit {
     this.loadButtonLoading = true;
     this.clearButtonDisabled = true;
     this.clearButtonLoading = true;
-    this.testDataUploadService.clearAll().subscribe(res => {
-      console.log('>> clear test data is cleared');
-      this.loadButtonDisabled = false;
-      this.loadButtonLoading = false;
-      this.clearButtonDisabled = false;
-      this.clearButtonLoading = false;
-    });
+    this.testDataUploadService.clearAll().subscribe(
+      res => {
+        console.log('>> clear test data is cleared');
+        this.loadButtonDisabled = false;
+        this.loadButtonLoading = false;
+        this.clearButtonDisabled = false;
+        this.clearButtonLoading = false;
+      },
+      () => {
+        this.loadButtonDisabled = false;
+        this.loadButtonLoading = false;
+        this.clearButtonDisabled = false;
+        this.clearButtonLoading = false;
+      },
+    );
   }
 }

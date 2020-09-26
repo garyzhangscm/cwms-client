@@ -3,6 +3,8 @@ import { _HttpClient } from '@delon/theme';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { IntegrationItemFamilyData } from '../models/integration-item-family-data';
 import { IntegrationItemFamilyDataService } from '../services/integration-item-family-data.service';
+import { formatDate } from '@angular/common';
+import { I18NService } from '@core/i18n/i18n.service';
 
 @Component({
   selector: 'app-integration-integration-data-item-family',
@@ -14,6 +16,7 @@ export class IntegrationIntegrationDataItemFamilyComponent implements OnInit {
   searchForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllIntegrationItemFamilyData: IntegrationItemFamilyData[] = [];
@@ -32,7 +35,11 @@ export class IntegrationIntegrationDataItemFamilyComponent implements OnInit {
     this.isCollapse = !this.isCollapse;
   }
 
-  constructor(private fb: FormBuilder, private integrationItemFamilyDataService: IntegrationItemFamilyDataService) {}
+  constructor(
+    private fb: FormBuilder,
+    private integrationItemFamilyDataService: IntegrationItemFamilyDataService,
+    private i18n: I18NService,
+  ) {}
 
   resetForm(): void {
     this.searchForm.reset();
@@ -41,11 +48,22 @@ export class IntegrationIntegrationDataItemFamilyComponent implements OnInit {
   }
   search(): void {
     this.searching = true;
-    this.integrationItemFamilyDataService.getItemFamilyData().subscribe(integrationItemFamilyDataRes => {
-      this.listOfAllIntegrationItemFamilyData = integrationItemFamilyDataRes;
-      this.listOfDisplayIntegrationItemFamilyData = integrationItemFamilyDataRes;
-      this.searching = false;
-    });
+    this.searchResult = '';
+    this.integrationItemFamilyDataService.getItemFamilyData().subscribe(
+      integrationItemFamilyDataRes => {
+        this.listOfAllIntegrationItemFamilyData = integrationItemFamilyDataRes;
+        this.listOfDisplayIntegrationItemFamilyData = integrationItemFamilyDataRes;
+        this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: integrationItemFamilyDataRes.length,
+        });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   currentPageDataChange($event: IntegrationItemFamilyData[]): void {

@@ -17,6 +17,7 @@ import { Client } from '../../common/models/client';
 import { ItemFamily } from '../models/item-family';
 import { InventoryActivityType } from '../models/inventory-activity-type.enum';
 import * as setHours from 'date-fns/set_hours';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-inventory-inventory-activity',
@@ -33,6 +34,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
   searchForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllInventoryActivities: InventoryActivity[] = [];
@@ -83,6 +85,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
   }
   search(): void {
     this.searching = true;
+    this.searchResult = '';
     this.inventoryActivityService
       .getInventoryActivities(
         this.searchForm.value.taggedClients,
@@ -96,10 +99,20 @@ export class InventoryInventoryActivityComponent implements OnInit {
         this.searchForm.value.activityDate,
         this.searchForm.value.username,
       )
-      .subscribe(inventoryActivityRes => {
-        this.processInventoryActivityQueryResult(inventoryActivityRes);
-        this.searching = false;
-      });
+      .subscribe(
+        inventoryActivityRes => {
+          this.processInventoryActivityQueryResult(inventoryActivityRes);
+          this.searching = false;
+          this.searchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: inventoryActivityRes.length,
+          });
+        },
+        () => {
+          this.searching = false;
+          this.searchResult = '';
+        },
+      );
   }
 
   processInventoryActivityQueryResult(inventoryActivities: InventoryActivity[]) {

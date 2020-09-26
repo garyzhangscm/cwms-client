@@ -5,11 +5,12 @@ import { LocationGroupType } from '../models/location-group-type';
 import { LocationGroup } from '../models/location-group';
 import { LocationGroupService } from '../services/location-group.service';
 import { I18NService } from '@core';
-import { NzInputDirective, NzModalService, NzMessageService } from 'ng-zorro-antd';
+import { NzInputDirective, NzModalService, NzMessageService, NzModalRef } from 'ng-zorro-antd';
 import { LocationVolumeTrackingPolicy } from '../models/location-volume-tracking-policy.enum';
 import { InventoryConsolidationStrategy } from '../models/inventory-consolidation-strategy.enum';
 import { ActivatedRoute } from '@angular/router';
 import { TitleService } from '@delon/theme';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-warehouse-layout-location-group',
@@ -19,11 +20,13 @@ import { TitleService } from '@delon/theme';
 export class WarehouseLayoutLocationGroupComponent implements OnInit {
   // Select control for Location Group Types
   // locationGroupTypes: Array<{ label: string; value: string }> = [];
-  locationGroupTypes: LocationGroupType[];
+  locationGroupTypes: LocationGroupType[] = [];
+  locationGroups: LocationGroup[] = [];
   locationVolumeTrackingPolicy = LocationVolumeTrackingPolicy;
   inventoryConsolidationStrategy = InventoryConsolidationStrategy;
+  selectedLocationGroupTypes = [];
+  selectedLocationGroups = [];
   // Form related data and functions
-  searchForm: FormGroup;
 
   editCache: { [key: string]: { edit: boolean; data: LocationGroup; locationGroupTypeName: string } } = {};
 
@@ -43,12 +46,9 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
   selectedFiltersByDescription: string[] = [];
   selectedFiltersByLocationGroupType: string[] = [];
 
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
+  searchResult = '';
+  searching = false;
+  operationInProcess = false;
 
   constructor(
     private fb: FormBuilder,
@@ -64,42 +64,52 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
   ngOnInit() {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.layout.location.group'));
     // initiate the search form
-    this.searchForm = this.fb.group({
-      taggedLocationGroupTypes: [null],
-    });
-
-    this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
-        this.search(params.id);
-      }
-    });
-
     // initiate the select control
     this.locationGroupTypeService.loadLocationGroupTypes().subscribe((locationGroupTypeList: LocationGroupType[]) => {
       this.locationGroupTypes = locationGroupTypeList;
     });
+    this.locationGroupService.loadLocationGroups().subscribe((locationGroupList: LocationGroup[]) => {
+      this.locationGroups = locationGroupList;
+
+      // after we load all the valid location groups, if the URL has a specific parameter,
+      // let's query by this id
+      this.activatedRoute.queryParams.subscribe(params => {
+        if (params.id) {
+          this.selectedLocationGroups = [params.id];
+          this.search();
+        }
+      });
+    });
   }
 
   resetForm(): void {
-    this.searchForm.reset();
+    this.selectedLocationGroupTypes = [];
+    this.selectedLocationGroups = [];
     this.listOfAllLocationGroups = [];
     this.listOfDisplayLocationGroups = [];
     this.filtersByName = [];
     this.filtersByDescription = [];
     this.filtersByLocationGroupType = [];
+
+    this.searchResult = '';
   }
-  search(id?: string): void {
-    if (id) {
-      this.locationGroupService.getLocationGroup(id).subscribe(locationGroupsRes => {
-        this.setupLocationGroupRes([locationGroupsRes]);
-      });
-    } else {
-      this.locationGroupService
-        .getLocationGroups(this.searchForm.controls.taggedLocationGroupTypes.value)
-        .subscribe(locationGroupsRes => {
-          this.setupLocationGroupRes(locationGroupsRes);
+  search(): void {
+    this.searchResult = '';
+    this.searching = true;
+    this.locationGroupService.getLocationGroups(this.selectedLocationGroupTypes, this.selectedLocationGroups).subscribe(
+      locationGroupsRes => {
+        this.setupLocationGroupRes(locationGroupsRes);
+        this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: locationGroupsRes.length,
         });
-    }
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
   setupLocationGroupRes(locationGroupsRes: LocationGroup[]) {
     this.listOfAllLocationGroups = locationGroupsRes;
@@ -128,18 +138,6 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
   currentPageDataChange($event: LocationGroup[]): void {
     // this.locationGroups = $event;
     this.listOfDisplayLocationGroups = $event;
-    this.refreshStatus();
-  }
-
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayLocationGroups.every(item => this.mapOfCheckedId[item.id]);
-    this.indeterminate =
-      this.listOfDisplayLocationGroups.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
-  }
-
-  checkAll(value: boolean): void {
-    this.listOfDisplayLocationGroups.forEach(item => (this.mapOfCheckedId[item.id] = value));
-    this.refreshStatus();
   }
 
   sort(sort: { key: string; value: string }): void {
@@ -194,50 +192,42 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
     }
   }
 
-  removeSelectedLocationGroups(): void {
+  removeLocationGroup(id: number): void {
     // make sure we have at least one checkbox checked
-    const selectedLocationGroups = this.getSelectedLocationGroups();
-    if (selectedLocationGroups.length > 0) {
-      this.modalService.confirm({
-        nzTitle: this.i18n.fanyi('page.location-group.modal.delete.header.title'),
-        nzContent: this.i18n.fanyi('page.location-group.modal.delete.content'),
-        nzOkText: this.i18n.fanyi('confirm'),
-        nzOkType: 'danger',
-        nzOnOk: () => {
-          this.locationGroupService.removeLocationGroups(selectedLocationGroups).subscribe(res => {
+    this.operationInProcess = true;
+    const modal: NzModalRef = this.modalService.confirm({
+      nzTitle: this.i18n.fanyi('page.location-group.modal.delete.header.title'),
+      nzContent: this.i18n.fanyi('page.location-group.modal.delete.content'),
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzOkType: 'danger',
+      nzOnOk: () => {
+        this.locationGroupService.removeLocationGroupById(id).subscribe(
+          res => {
             this.messageService.success(this.i18n.fanyi('message.action.success'));
+            this.operationInProcess = false;
             this.search();
-          });
-        },
-        nzCancelText: this.i18n.fanyi('cancel'),
-        nzOnCancel: () => console.log('Cancel'),
-      });
-    }
-  }
+          },
 
-  getSelectedLocationGroups(): LocationGroup[] {
-    const selectedLocationGroups: LocationGroup[] = [];
-    this.listOfAllLocationGroups.forEach((locationGroup: LocationGroup) => {
-      if (this.mapOfCheckedId[locationGroup.id] === true) {
-        selectedLocationGroups.push(locationGroup);
-      }
+          () => (this.operationInProcess = false),
+        );
+      },
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzOnCancel: () => {
+        modal.close();
+        this.operationInProcess = false;
+      },
     });
-    return selectedLocationGroups;
-  }
-
-  changeLocationGroupType(locationGroup: LocationGroup, locationGroupTypeId: string) {
-    this.locationGroupTypeService
-      .getLocationGroupType(+locationGroupTypeId)
-      .subscribe((locationGroupType: LocationGroupType) => {
-        locationGroup.locationGroupType = locationGroupType;
-        this.changeLocationGroup(locationGroup);
-      });
   }
 
   changeLocationGroup(locationGroup: LocationGroup) {
-    this.locationGroupService
-      .changeLocationGroup(locationGroup)
-      .subscribe(res => this.messageService.success(this.i18n.fanyi('message.action.success')));
+    this.operationInProcess = true;
+    this.locationGroupService.changeLocationGroup(locationGroup).subscribe(
+      res => {
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+      },
+      () => {},
+      () => (this.operationInProcess = false),
+    );
   }
 
   startEdit(id: string): void {

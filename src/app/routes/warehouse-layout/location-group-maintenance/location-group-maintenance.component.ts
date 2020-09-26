@@ -39,13 +39,14 @@ export class WarehouseLayoutLocationGroupMaintenanceComponent implements OnInit 
     this.locationGroupForm = this.fb.group({
       name: new FormControl('', Validators.required),
       description: new FormControl('', Validators.required),
-      type: new FormControl('', Validators.required),
+      type: new FormControl(null, Validators.required),
       storable: new FormControl(false, Validators.required),
       pickable: new FormControl(false, Validators.required),
       countable: new FormControl(false, Validators.required),
+      adjustable: new FormControl(false, Validators.required),
       trackingVolume: new FormControl(false, Validators.required),
-      volumeTrackingPolicy: new FormControl('', Validators.required),
-      inventoryConsolidationStrategy: new FormControl('', Validators.required),
+      volumeTrackingPolicy: new FormControl(null),
+      inventoryConsolidationStrategy: new FormControl(null, Validators.required),
     });
     this.locationGroupTypeService.loadLocationGroupTypes().subscribe((locationGroupTypeList: LocationGroupType[]) => {
       locationGroupTypeList.forEach(locationGroupType =>

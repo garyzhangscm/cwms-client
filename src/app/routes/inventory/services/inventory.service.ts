@@ -134,4 +134,9 @@ export class InventoryService {
     }
     return this.http.post(url).pipe(map(res => res.data));
   }
+
+  reverseReceivedInventory(inventory: Inventory) {
+    const url = `inventory/inventory/${inventory.id}/reverse-receiving`;
+    return this.http.delete(url).pipe(map(res => res.data));
+  }
 }

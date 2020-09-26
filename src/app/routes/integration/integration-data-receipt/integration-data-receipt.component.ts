@@ -3,6 +3,8 @@ import { _HttpClient } from '@delon/theme';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { IntegrationReceiptService } from '../services/integration-receipt.service';
 import { IntegrationReceipt } from '../models/integration-receipt';
+import { I18NService } from '@core';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-integration-integration-data-receipt',
@@ -10,11 +12,10 @@ import { IntegrationReceipt } from '../models/integration-receipt';
   styleUrls: ['./integration-data-receipt.component.less'],
 })
 export class IntegrationIntegrationDataReceiptComponent implements OnInit {
-  constructor(private fb: FormBuilder, private integrationReceiptService: IntegrationReceiptService) {}
-
   searchForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllIntegrationReceipts: IntegrationReceipt[] = [];
@@ -29,6 +30,12 @@ export class IntegrationIntegrationDataReceiptComponent implements OnInit {
   // list of expanded row
   mapOfExpandedId: { [key: string]: boolean } = {};
 
+  constructor(
+    private fb: FormBuilder,
+    private integrationReceiptService: IntegrationReceiptService,
+    private i18n: I18NService,
+  ) {}
+
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
   }
@@ -40,12 +47,23 @@ export class IntegrationIntegrationDataReceiptComponent implements OnInit {
   }
   search(): void {
     this.searching = true;
-    this.integrationReceiptService.getData().subscribe(integrationReceiptRes => {
-      this.listOfAllIntegrationReceipts = integrationReceiptRes;
-      this.listOfDisplayIntegrationReceipts = integrationReceiptRes;
+    this.searchResult = '';
+    this.integrationReceiptService.getData().subscribe(
+      integrationReceiptRes => {
+        this.listOfAllIntegrationReceipts = integrationReceiptRes;
+        this.listOfDisplayIntegrationReceipts = integrationReceiptRes;
 
-      this.searching = false;
-    });
+        this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: integrationReceiptRes.length,
+        });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   currentPageDataChange($event: IntegrationReceipt[]): void {

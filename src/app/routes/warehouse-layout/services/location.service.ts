@@ -48,8 +48,10 @@ export class LocationService {
       locationIds.push(location.id);
     });
     const params = {
-      location_ids: locationIds.join(','),
+      locationIds: locationIds.join(','),
     };
-    return this.http.delete('layout/locations', params).pipe(map(res => res.data));
+    return this.http
+      .delete(`layout/locations?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`, params)
+      .pipe(map(res => res.data));
   }
 }

@@ -3,6 +3,7 @@ import { _HttpClient, TitleService } from '@delon/theme';
 import { ItemFamily } from '../models/item-family';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Component({
   selector: 'app-inventory-item-family-maintenance',
@@ -17,9 +18,16 @@ export class InventoryItemFamilyMaintenanceComponent implements OnInit {
     name: '',
     description: '',
     totalItemCount: 0,
+
+    warehouseId: this.warehouseService.getCurrentWarehouse().id,
   };
 
-  constructor(private router: Router, private i18n: I18NService, private titleService: TitleService) {}
+  constructor(
+    private router: Router,
+    private i18n: I18NService,
+    private titleService: TitleService,
+    private warehouseService: WarehouseService,
+  ) {}
 
   ngOnInit() {
     this.loadItemFamilyFromSessionStorage();

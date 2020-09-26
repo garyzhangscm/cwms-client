@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { IntegrationReceiptConfirmationService } from '../services/integration-receipt-confirmation.service';
 import { IntegrationReceiptConfirmation } from '../models/integration-receipt-confirmation';
 import { IntegrationReceipt } from '../models/integration-receipt';
+import { formatDate } from '@angular/common';
+import { I18NService } from '@core';
 
 @Component({
   selector: 'app-integration-integration-data-receipt-confirm',
@@ -11,14 +13,10 @@ import { IntegrationReceipt } from '../models/integration-receipt';
   styleUrls: ['./integration-data-receipt-confirm.component.less'],
 })
 export class IntegrationIntegrationDataReceiptConfirmComponent implements OnInit {
-  constructor(
-    private fb: FormBuilder,
-    private integrationReceiptConfirmationService: IntegrationReceiptConfirmationService,
-  ) {}
-
   searchForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllIntegrationReceiptConfirmations: IntegrationReceiptConfirmation[] = [];
@@ -33,6 +31,12 @@ export class IntegrationIntegrationDataReceiptConfirmComponent implements OnInit
   // list of expanded row
   mapOfExpandedId: { [key: string]: boolean } = {};
 
+  constructor(
+    private fb: FormBuilder,
+    private integrationReceiptConfirmationService: IntegrationReceiptConfirmationService,
+    private i18n: I18NService,
+  ) {}
+
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
   }
@@ -44,12 +48,23 @@ export class IntegrationIntegrationDataReceiptConfirmComponent implements OnInit
   }
   search(): void {
     this.searching = true;
-    this.integrationReceiptConfirmationService.getData().subscribe(integrationReceiptConfirmationRes => {
-      this.listOfAllIntegrationReceiptConfirmations = integrationReceiptConfirmationRes;
-      this.listOfDisplayIntegrationReceiptConfirmations = integrationReceiptConfirmationRes;
+    this.searchResult = '';
+    this.integrationReceiptConfirmationService.getData().subscribe(
+      integrationReceiptConfirmationRes => {
+        this.listOfAllIntegrationReceiptConfirmations = integrationReceiptConfirmationRes;
+        this.listOfDisplayIntegrationReceiptConfirmations = integrationReceiptConfirmationRes;
 
-      this.searching = false;
-    });
+        this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: integrationReceiptConfirmationRes.length,
+        });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   currentPageDataChange($event: IntegrationReceiptConfirmation[]): void {

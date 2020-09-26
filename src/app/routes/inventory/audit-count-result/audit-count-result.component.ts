@@ -142,18 +142,39 @@ export class InventoryAuditCountResultComponent implements OnInit {
         virtual: false, // default to NON virtual inventory. It make no sense to adjust virtual inventory
         item: {
           id: null,
+          warehouseId: this.warehouseService.getCurrentWarehouse().id,
           name: '',
           description: '',
+          allowCartonization: null,
           itemPackageTypes: [
             {
               id: null,
+              warehouseId: this.warehouseService.getCurrentWarehouse().id,
+              description: null,
               name: '',
               itemUnitOfMeasures: null,
             },
           ],
+
+          client: null,
+          itemFamily: null,
+          unitCost: null,
+
+          allowAllocationByLPN: null,
+          allocationRoundUpStrategyType: null,
+
+          allocationRoundUpStrategyValue: null,
+
+          trackingVolumeFlag: null,
+          trackingLotNumberFlag: null,
+          trackingManufactureDateFlag: null,
+          shelfLifeDays: null,
+          trackingExpirationDateFlag: null,
         },
         itemPackageType: {
+          description: null,
           id: null,
+          warehouseId: this.warehouseService.getCurrentWarehouse().id,
           name: '',
           itemUnitOfMeasures: null,
         },
@@ -169,15 +190,34 @@ export class InventoryAuditCountResultComponent implements OnInit {
       lpn: '',
       item: {
         id: null,
+        warehouseId: this.warehouseService.getCurrentWarehouse().id,
         name: '',
         description: '',
+        allowCartonization: null,
         itemPackageTypes: [
           {
             id: null,
+            warehouseId: this.warehouseService.getCurrentWarehouse().id,
+            description: null,
             name: '',
             itemUnitOfMeasures: null,
           },
         ],
+
+        client: null,
+        itemFamily: null,
+        unitCost: null,
+
+        allowAllocationByLPN: null,
+        allocationRoundUpStrategyType: null,
+
+        allocationRoundUpStrategyValue: null,
+
+        trackingVolumeFlag: null,
+        trackingLotNumberFlag: null,
+        trackingManufactureDateFlag: null,
+        shelfLifeDays: null,
+        trackingExpirationDateFlag: null,
       },
     };
   }

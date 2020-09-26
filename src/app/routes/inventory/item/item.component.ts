@@ -1,15 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { TitleService, _HttpClient } from '@delon/theme';
 import { FormGroup, FormBuilder, FormControl, NgForm } from '@angular/forms';
 import { Item } from '../models/item';
 import { ItemService } from '../services/item.service';
 import { ClientService } from '../../common/services/client.service';
 import { ItemFamilyService } from '../services/item-family.service';
 import { I18NService } from '@core';
-import { NzModalService } from 'ng-zorro-antd';
+import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { STReq } from '@delon/abc';
 import { Client } from '../../common/models/client';
 import { ItemFamily } from '../models/item-family';
+import { formatDate } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-inventory-item',
@@ -47,6 +49,7 @@ export class InventoryItemComponent implements OnInit {
   editCol: string | null;
 
   searching = false;
+  searchResult = '';
 
   constructor(
     private fb: FormBuilder,
@@ -55,7 +58,37 @@ export class InventoryItemComponent implements OnInit {
     private itemFamilyService: ItemFamilyService,
     private i18n: I18NService,
     private modalService: NzModalService,
+    private messageService: NzMessageService,
+    private titleService: TitleService,
+    private activatedRoute: ActivatedRoute,
   ) {}
+
+  ngOnInit() {
+    this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.item'));
+    // initiate the search form
+    this.searchForm = this.fb.group({
+      taggedClients: [null],
+      taggedItemFamilies: [null],
+      itemName: [null],
+    });
+
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.name) {
+        this.searchForm.controls.itemName.setValue(params.name);
+        this.search();
+      }
+    });
+
+    // initiate the select control
+    this.clientService.loadClients().subscribe((clientList: Client[]) => {
+      clientList.forEach(client => this.clients.push({ label: client.description, value: client.id.toString() }));
+    });
+    this.itemFamilyService.loadItemFamilies().subscribe((itemFamilyList: ItemFamily[]) => {
+      itemFamilyList.forEach(itemFamily =>
+        this.itemFamilies.push({ label: itemFamily.description, value: itemFamily.id.toString() }),
+      );
+    });
+  }
 
   resetForm(): void {
     this.searchForm.reset();
@@ -73,38 +106,49 @@ export class InventoryItemComponent implements OnInit {
         this.searchForm.value.taggedClients,
         this.searchForm.value.taggedItemFamilies,
       )
-      .subscribe(itemRes => {
-        this.items = itemRes;
-        this.listOfDisplayItems = itemRes;
+      .subscribe(
+        itemRes => {
+          this.items = itemRes;
+          this.listOfDisplayItems = itemRes;
 
-        this.filtersByName = [];
-        this.filtersByClient = [];
-        this.filtersByItemFamily = [];
+          this.filtersByName = [];
+          this.filtersByClient = [];
+          this.filtersByItemFamily = [];
 
-        const existingClientId = new Set();
-        const existingItemFamilyId = new Set();
+          const existingClientId = new Set();
+          const existingItemFamilyId = new Set();
 
-        this.items.forEach(item => {
-          this.filtersByName.push({ text: item.name, value: item.name });
+          this.items.forEach(item => {
+            this.filtersByName.push({ text: item.name, value: item.name });
 
-          if (item.client && !existingClientId.has(item.client.id)) {
-            this.filtersByClient.push({
-              text: item.client.description,
-              value: item.client.id,
-            });
-            existingClientId.add(item.client.id);
-          }
-          if (item.itemFamily && !existingItemFamilyId.has(item.itemFamily.id)) {
-            this.filtersByItemFamily.push({
-              text: item.itemFamily.description,
-              value: item.itemFamily.id,
-            });
-            existingItemFamilyId.add(item.itemFamily.id);
-          }
-        });
+            if (item.client && !existingClientId.has(item.client.id)) {
+              this.filtersByClient.push({
+                text: item.client.description,
+                value: item.client.id,
+              });
+              existingClientId.add(item.client.id);
+            }
+            if (item.itemFamily && !existingItemFamilyId.has(item.itemFamily.id)) {
+              this.filtersByItemFamily.push({
+                text: item.itemFamily.description,
+                value: item.itemFamily.id,
+              });
+              existingItemFamilyId.add(item.itemFamily.id);
+            }
+          });
 
-        this.searching = false;
-      });
+          this.searching = false;
+
+          this.searchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: itemRes.length,
+          });
+        },
+        () => {
+          this.searching = false;
+          this.searchResult = '';
+        },
+      );
   }
 
   currentPageDataChange($event: Item[]): void {
@@ -161,26 +205,26 @@ export class InventoryItemComponent implements OnInit {
     this.editCol = col;
   }
 
-  ngOnInit() {
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      taggedClients: [null],
-      taggedItemFamilies: [null],
-      itemName: [null],
-    });
-
-    // initiate the select control
-    this.clientService.loadClients().subscribe((clientList: Client[]) => {
-      clientList.forEach(client => this.clients.push({ label: client.description, value: client.id.toString() }));
-    });
-    this.itemFamilyService.loadItemFamilies().subscribe((itemFamilyList: ItemFamily[]) => {
-      itemFamilyList.forEach(itemFamily =>
-        this.itemFamilies.push({ label: itemFamily.description, value: itemFamily.id.toString() }),
-      );
-    });
-  }
-
   showItemPackageType(item: Item) {
     // When we expand to show the item package type, load the details of the item package type
+  }
+
+  removeItem(item: Item): void {
+    // make sure we have at least one checkbox checked
+
+    this.modalService.confirm({
+      nzTitle: this.i18n.fanyi('modal.delete.header.title'),
+      nzContent: this.i18n.fanyi('modal.delete.content'),
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzOkType: 'danger',
+      nzOnOk: () => {
+        this.itemService.removeItem(item).subscribe(res => {
+          this.messageService.success(this.i18n.fanyi('message.remove.success'));
+          this.search();
+        });
+      },
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzOnCancel: () => console.log('Cancel'),
+    });
   }
 }

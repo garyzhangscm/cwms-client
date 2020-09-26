@@ -9,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../services/user.service';
 import { MenuService } from '../services/menu.service';
 import { MenuGroup } from '../models/menu-group';
+import { formatDate } from '@angular/common';
 
 interface ItemData {
   id: number;
@@ -24,6 +25,8 @@ interface ItemData {
 })
 export class AuthRoleComponent implements OnInit {
   searching = false;
+  searchResult = '';
+
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -66,18 +69,31 @@ export class AuthRoleComponent implements OnInit {
   // 1: display the menu tab under the role record
   search(tabIndex: number = 0): void {
     this.searching = true;
-    this.roleService.getRoles(this.searchForm.controls.name.value).subscribe(roleRes => {
-      this.listOfAllRoles = roleRes;
-      this.listOfDisplayRoles = roleRes;
-      this.searching = false;
-      // check if we have any role with details expanded. If we find those roles, let's
-      // refresh the content as well
-      this.listOfAllRoles.forEach(role => {
-        if (this.mapOfExpandedId[role.id] === true) {
-          this.loadUserAndMenu(this.mapOfExpandedId[role.id], role, tabIndex);
-        }
-      });
-    });
+    this.searchResult = '';
+    this.roleService.getRoles(this.searchForm.controls.name.value).subscribe(
+      roleRes => {
+        this.listOfAllRoles = roleRes;
+        this.listOfDisplayRoles = roleRes;
+
+        this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: roleRes.length,
+        });
+
+        // check if we have any role with details expanded. If we find those roles, let's
+        // refresh the content as well
+        this.listOfAllRoles.forEach(role => {
+          if (this.mapOfExpandedId[role.id] === true) {
+            this.loadUserAndMenu(this.mapOfExpandedId[role.id], role, tabIndex);
+          }
+        });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   sort(sort: { key: string; value: string }): void {

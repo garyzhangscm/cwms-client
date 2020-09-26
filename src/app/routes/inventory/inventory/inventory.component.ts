@@ -18,6 +18,7 @@ import { ReasonCodeType } from '../../common/models/reason-code-type.enum';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { Router, ActivatedRoute } from '@angular/router';
 import { LocationService } from '../../warehouse-layout/services/location.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-inventory-inventory',
@@ -33,6 +34,7 @@ export class InventoryInventoryComponent implements OnInit {
   inventoryMovementForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   inventories: Inventory[] = [];
@@ -113,11 +115,22 @@ export class InventoryInventoryComponent implements OnInit {
   }
   search(id?: number): void {
     this.searching = true;
+    this.searchResult = '';
     if (id) {
-      this.inventoryService.getInventoryById(id).subscribe(inventoryRes => {
-        this.processInventoryQueryResult([inventoryRes]);
-        this.searching = false;
-      });
+      this.inventoryService.getInventoryById(id).subscribe(
+        inventoryRes => {
+          this.processInventoryQueryResult([inventoryRes]);
+          this.searching = false;
+          this.searchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: 1,
+          });
+        },
+        () => {
+          this.searching = false;
+          this.searchResult = '';
+        },
+      );
     } else {
       this.inventoryService
         .getInventories(
@@ -127,10 +140,20 @@ export class InventoryInventoryComponent implements OnInit {
           this.searchForm.value.location,
           this.searchForm.value.lpn,
         )
-        .subscribe(inventoryRes => {
-          this.processInventoryQueryResult(inventoryRes);
-          this.searching = false;
-        });
+        .subscribe(
+          inventoryRes => {
+            this.processInventoryQueryResult(inventoryRes);
+            this.searching = false;
+            this.searchResult = this.i18n.fanyi('search_result_analysis', {
+              currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+              rowCount: inventoryRes.length,
+            });
+          },
+          () => {
+            this.searching = false;
+            this.searchResult = '';
+          },
+        );
     }
   }
 
@@ -291,15 +314,21 @@ export class InventoryInventoryComponent implements OnInit {
   }
 
   removeInventory(inventory: Inventory) {
-    this.inventoryService.adjustDownInventory(inventory, this.documentNumber, this.comment).subscribe(inventoryRes => {
-      this.mapOfInprocessInventoryId[inventory.id] = false;
-      if (inventoryRes.lockedForAdjust === true) {
-        this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.request-success'));
-      } else {
-        this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.adjust-success'));
-      }
-      this.search();
-    });
+    this.inventoryService.adjustDownInventory(inventory, this.documentNumber, this.comment).subscribe(
+      inventoryRes => {
+        this.mapOfInprocessInventoryId[inventory.id] = false;
+        if (inventoryRes.lockedForAdjust === true) {
+          this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.request-success'));
+        } else {
+          this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.adjust-success'));
+        }
+        this.search();
+      },
+      () => {
+        this.mapOfInprocessInventoryId[inventory.id] = false;
+        this.messageService.error(this.i18n.fanyi('message.action.fail'));
+      },
+    );
 
     this.inventoryRemovalModal.destroy();
   }
@@ -367,12 +396,21 @@ export class InventoryInventoryComponent implements OnInit {
   }
   moveInventory(inventory: Inventory, destinationLocationName: string, immediateMove: boolean) {
     this.locationService.getLocations(null, null, destinationLocationName).subscribe(location => {
-      this.inventoryService.move(inventory, location[0], immediateMove).subscribe(inventoryRes => {
-        this.messageService.success(this.i18n.fanyi('message.action.success'));
+      this.inventoryService.move(inventory, location[0], immediateMove).subscribe(
+        inventoryRes => {
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
 
-        this.mapOfInprocessInventoryId[inventory.id] = false;
-        this.search();
-      });
+          this.mapOfInprocessInventoryId[inventory.id] = false;
+          // refresh with LPN
+          this.searchForm.controls.lpn.setValue(inventory.lpn);
+          this.search();
+        },
+        () => {
+          this.messageService.error(this.i18n.fanyi('message.action.fail'));
+
+          this.mapOfInprocessInventoryId[inventory.id] = false;
+        },
+      );
     });
   }
 }

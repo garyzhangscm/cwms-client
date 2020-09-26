@@ -5,12 +5,17 @@ import { Observable, of } from 'rxjs';
 import { ReasonCode } from '../models/reason-code';
 import { map, tap } from 'rxjs/operators';
 import { ReasonCodeType } from '../models/reason-code-type.enum';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ReasonCodeService {
-  constructor(private http: _HttpClient, private gzLocalStorageService: GzLocalStorageServiceService) {}
+  constructor(
+    private http: _HttpClient,
+    private gzLocalStorageService: GzLocalStorageServiceService,
+    private warehouseService: WarehouseService,
+  ) {}
 
   loadReasonCodeByType(type: ReasonCodeType, refresh: boolean = false): Observable<ReasonCode[]> {
     console.log('load reason code by type: ' + 'common/reason-code/' + ReasonCodeType[type]);
@@ -23,7 +28,11 @@ export class ReasonCodeService {
       }
     }
     return this.http
-      .get(`common/reason-codes?type=${ReasonCodeType[type]}`)
+      .get(
+        `common/reason-codes?type=${ReasonCodeType[type]}&warehouseId=${
+          this.warehouseService.getCurrentWarehouse().id
+        }`,
+      )
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem('common.reason-code.' + ReasonCodeType[type], res)));
   }

@@ -8,6 +8,7 @@ import { NzMessageService } from 'ng-zorro-antd';
 import { I18NService } from '@core';
 import { WorkingTeam } from '../models/working-team';
 import { Role } from '../models/role';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-auth-working-team',
@@ -16,6 +17,8 @@ import { Role } from '../models/role';
 })
 export class AuthWorkingTeamComponent implements OnInit {
   searching = false;
+  searchResult = '';
+
   constructor(
     private fb: FormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -55,12 +58,23 @@ export class AuthWorkingTeamComponent implements OnInit {
 
   search(): void {
     this.searching = true;
-    this.workingTeamService.getWorkingTeams(this.searchForm.controls.name.value).subscribe(workingTeamRes => {
-      this.listOfAllWorkingTeams = workingTeamRes;
-      this.listOfDisplayWorkingTeams = workingTeamRes;
-      this.searching = false;
-      this.loadDetails();
-    });
+    this.searchResult = '';
+    this.workingTeamService.getWorkingTeams(this.searchForm.controls.name.value).subscribe(
+      workingTeamRes => {
+        this.listOfAllWorkingTeams = workingTeamRes;
+        this.listOfDisplayWorkingTeams = workingTeamRes;
+        this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: workingTeamRes.length,
+        });
+        this.loadDetails();
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
   loadDetails() {
     this.listOfAllWorkingTeams.forEach(workingTeam => {

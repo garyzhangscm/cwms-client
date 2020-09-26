@@ -8,6 +8,7 @@ import { CustomerService } from '../../common/services/customer.service';
 import { I18NService } from '@core';
 import { Customer } from '../../common/models/customer';
 import { IntegrationClientData } from '../models/integration-client-data';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-integration-integration-data-customer',
@@ -22,6 +23,7 @@ export class IntegrationIntegrationDataCustomerComponent implements OnInit {
   searchForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllIntegrationCustomerData: IntegrationCustomerData[] = [];
@@ -56,13 +58,22 @@ export class IntegrationIntegrationDataCustomerComponent implements OnInit {
   }
   search(integrationCustomerDataId?: number): void {
     this.searching = true;
-    this.integrationCustomerDataService
-      .getCustomerData(integrationCustomerDataId)
-      .subscribe(integrationCustomerDataRes => {
+    this.searchResult = '';
+    this.integrationCustomerDataService.getCustomerData(integrationCustomerDataId).subscribe(
+      integrationCustomerDataRes => {
         this.listOfAllIntegrationCustomerData = integrationCustomerDataRes;
         this.listOfDisplayIntegrationCustomerData = integrationCustomerDataRes;
         this.searching = false;
-      });
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: integrationCustomerDataRes.length,
+        });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   currentPageDataChange($event: IntegrationCustomerData[]): void {

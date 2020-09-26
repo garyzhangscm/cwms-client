@@ -37,7 +37,7 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllWorkOrder">
+  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllWorkOrder" [nzFooter]="tableFoot">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
         <th nzShowExpand></th>
@@ -187,6 +187,8 @@
                       {{ 'work-order.line.returnedQuantity' | translate }}</th>
                     <th>
                       {{ 'inventory.status' | translate }}</th>
+                    <th>
+                      {{ 'allocationStrategyType' | translate }}</th>
                   </thead>
     <tbody>
 
@@ -202,6 +204,7 @@
         <td>{{ workOrderLine.scrappedQuantity }}</td>
         <td>{{ workOrderLine.returnedQuantity }}</td>
         <td>{{ 'INVENTORY-STATUS-' + workOrderLine.inventoryStatus.name | translate}}</td>
+        <td>{{ 'ALLOCATION-STRATEGY-TYPE-' + workOrderLine.allocationStrategyType | translate}}</td>
       </tr>
     </tbody>
   </nz-table>
@@ -730,6 +733,11 @@
 </div>
 
 
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>
 
 
 <!-- Modal for unpick -->

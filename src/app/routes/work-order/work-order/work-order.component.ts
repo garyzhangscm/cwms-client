@@ -16,6 +16,7 @@ import { InventoryService } from '../../inventory/services/inventory.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { WorkOrderKpi } from '../models/work-order-kpi';
 import { WorkOrderKpiTransaction } from '../models/work-order-kpi-transaction';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-work-order-work-order',
@@ -42,6 +43,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   // Form related data and functions
   searchForm: FormGroup;
   searching = false;
+  searchResult = '';
   allocating = false;
   unpickForm: FormGroup;
   unpickModal: NzModalRef;
@@ -103,20 +105,41 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
   search(id?: number): void {
     this.searching = true;
+    this.searchResult = '';
     if (id) {
-      this.workOrderService.getWorkOrder(id).subscribe(workOrderRes => {
-        this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities([workOrderRes]);
-        this.listOfDisplayWorkOrder = this.listOfAllWorkOrder;
-        this.searching = false;
-      });
+      this.workOrderService.getWorkOrder(id).subscribe(
+        workOrderRes => {
+          this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities([workOrderRes]);
+          this.listOfDisplayWorkOrder = this.listOfAllWorkOrder;
+          this.searching = false;
+          this.searchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: 1,
+          });
+        },
+        () => {
+          this.searching = false;
+          this.searchResult = '';
+        },
+      );
     } else {
       this.workOrderService
         .getWorkOrders(this.searchForm.controls.number.value, this.searchForm.controls.item.value)
-        .subscribe(workOrderRes => {
-          this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities(workOrderRes);
-          this.listOfDisplayWorkOrder = this.listOfAllWorkOrder;
-          this.searching = false;
-        });
+        .subscribe(
+          workOrderRes => {
+            this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities(workOrderRes);
+            this.listOfDisplayWorkOrder = this.listOfAllWorkOrder;
+            this.searching = false;
+            this.searchResult = this.i18n.fanyi('search_result_analysis', {
+              currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+              rowCount: workOrderRes.length,
+            });
+          },
+          () => {
+            this.searching = false;
+            this.searchResult = '';
+          },
+        );
     }
     this.loadAvailableProductionLine();
   }

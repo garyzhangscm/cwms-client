@@ -36,7 +36,7 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllProductionPlans">
+  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllProductionPlans" [nzFooter]="tableFoot">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
         <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
@@ -202,14 +202,19 @@
   </ng-template>
   </tbody>
   </nz-table>
+  <div nz-row nzType="flex" nzJustify="start" style="margin-top: 15px ">
+    <button nz-button nzType="primary" routerLink="/work-order/production-plan/maintenance" routerLinkActive="active">
+      {{ 'add' | translate }}
+    </button>
+  </div>
 </div>
 
-<div nz-row nzType="flex" nzJustify="start" style="margin-top: 15px ">
-  <button nz-button nzType="primary" routerLink="/work-order/production-plan/maintenance" routerLinkActive="active">
-    {{ 'add' | translate }}
-  </button>
-</div>
 
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>
 <!-- Modal for create work order from BOM -->
 <ng-template #tplCreatingWorkOrderModalTitle>
   <span>{{ 'page.modal.production-plan.create-work-order' | translate}}</span>

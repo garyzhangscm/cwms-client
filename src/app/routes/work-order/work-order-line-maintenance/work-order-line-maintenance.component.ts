@@ -12,6 +12,7 @@ import { KpiMeasurement } from '../models/kpi-measurement.enum';
 import { WorkOrderLine } from '../models/work-order-line';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Component({
   selector: 'app-work-order-work-order-line-maintenance',
@@ -37,6 +38,7 @@ export class WorkOrderWorkOrderLineMaintenanceComponent implements OnInit {
     private messageService: NzMessageService,
     private itemService: ItemService,
     private inventoryStatusService: InventoryStatusService,
+    private warehouseService: WarehouseService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.work-order.line.maintenance');
   }
@@ -89,9 +91,26 @@ export class WorkOrderWorkOrderLineMaintenanceComponent implements OnInit {
       itemId: null,
       item: {
         id: null,
+        warehouseId: this.warehouseService.getCurrentWarehouse().id,
         name: '',
         description: '',
         itemPackageTypes: [],
+
+        client: null,
+        itemFamily: null,
+        unitCost: null,
+        allowCartonization: null,
+
+        allowAllocationByLPN: null,
+        allocationRoundUpStrategyType: null,
+
+        allocationRoundUpStrategyValue: null,
+
+        trackingVolumeFlag: null,
+        trackingLotNumberFlag: null,
+        trackingManufactureDateFlag: null,
+        shelfLifeDays: null,
+        trackingExpirationDateFlag: null,
       },
 
       expectedQuantity: 0,
@@ -112,7 +131,7 @@ export class WorkOrderWorkOrderLineMaintenanceComponent implements OnInit {
   getNextWorkOrderLineNumber(): string {
     let maxLineNumber = 0;
     this.currentWorkOrder.workOrderLines.forEach(workOrderLine => {
-      if (!isNaN(Number(workOrderLine.number))) {
+      if (!isNaN(Number(workOrderLine.number)) && maxLineNumber <= Number(workOrderLine.number)) {
         maxLineNumber = Number(workOrderLine.number) + 1;
       }
     });
@@ -129,11 +148,6 @@ export class WorkOrderWorkOrderLineMaintenanceComponent implements OnInit {
   }
 
   inventoryStatusChange(newInventoryStatusName, workOrderLine: WorkOrderLine) {
-    console.log(
-      `inventory status was changed to ${JSON.stringify(newInventoryStatusName)} for work order line ${
-        workOrderLine.number
-      }`,
-    );
     this.availableInventoryStatuses.forEach(inventoryStatus => {
       if (inventoryStatus.name === newInventoryStatusName) {
         workOrderLine.inventoryStatus = inventoryStatus;

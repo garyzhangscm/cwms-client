@@ -9,6 +9,7 @@ import { InventoryStatusService } from '../../inventory/services/inventory-statu
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { Item } from '../../inventory/models/item';
 import { ItemService } from '../../inventory/services/item.service';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-inbound-putaway-configuration',
@@ -44,6 +45,9 @@ export class InboundPutawayConfigurationComponent implements OnInit {
 
   lookupCriteria: string;
 
+  searching = false;
+  searchResult = '';
+
   constructor(
     private fb: FormBuilder,
     private putawayConfigurationService: PutawayConfigurationService,
@@ -72,6 +76,8 @@ export class InboundPutawayConfigurationComponent implements OnInit {
     this.listOfDisplayPutawayConfiguration = [];
   }
   search(): void {
+    this.searching = true;
+    this.searchResult = '';
     this.putawayConfigurationService
       .getPutawayConfigurations(
         null,
@@ -79,11 +85,23 @@ export class InboundPutawayConfigurationComponent implements OnInit {
         this.searchForm.controls.itemFamilyName.value,
         this.searchForm.controls.inventoryStatus.value,
       )
-      .subscribe(putawayConfigurationRes => {
-        this.listOfAllPutawayConfiguration = putawayConfigurationRes;
-        this.listOfDisplayPutawayConfiguration = putawayConfigurationRes;
-        console.log(`putawayConfigurationRes: ${JSON.stringify(putawayConfigurationRes)}`);
-      });
+      .subscribe(
+        putawayConfigurationRes => {
+          this.listOfAllPutawayConfiguration = putawayConfigurationRes;
+          this.listOfDisplayPutawayConfiguration = putawayConfigurationRes;
+          console.log(`putawayConfigurationRes: ${JSON.stringify(putawayConfigurationRes)}`);
+
+          this.searching = false;
+          this.searchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: putawayConfigurationRes.length,
+          });
+        },
+        () => {
+          this.searching = false;
+          this.searchResult = '';
+        },
+      );
   }
 
   currentPageDataChange($event: PutawayConfiguration[]): void {

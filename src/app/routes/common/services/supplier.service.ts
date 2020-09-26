@@ -3,13 +3,18 @@ import { _HttpClient } from '@delon/theme';
 import { GzLocalStorageServiceService } from '@shared/service/gz-local-storage-service.service';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Supplier } from '../models/supplier';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SupplierService {
-  constructor(private http: _HttpClient, private gzLocalStorageService: GzLocalStorageServiceService) {}
+  constructor(
+    private http: _HttpClient,
+    private gzLocalStorageService: GzLocalStorageServiceService,
+    private warehouseService: WarehouseService,
+  ) {}
 
   loadSuppliers(refresh: boolean = false): Observable<Supplier[]> {
     // if we can find the value in local storage, we get it from their.
@@ -21,7 +26,7 @@ export class SupplierService {
       }
     }
     return this.http
-      .get('common/suppliers')
+      .get(`common/suppliers?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem('common.supplier', res)));
   }

@@ -20,4 +20,6 @@ export interface PickWork {
 
   pickListNumber?: string;
   cartonizationNumber?: string;
+
+  lpn?: string;
 }

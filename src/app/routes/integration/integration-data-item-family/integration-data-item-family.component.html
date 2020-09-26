@@ -44,7 +44,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationItemFamilyData">
+  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationItemFamilyData"
+    [nzFooter]="tableFoot">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
 

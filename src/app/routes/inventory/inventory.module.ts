@@ -29,6 +29,7 @@ import { InventoryInventoryAdjustmentRequestComponent } from './inventory-adjust
 import { InventoryInventoryAdjustmentThresholdComponent } from './inventory-adjustment-threshold/inventory-adjustment-threshold.component';
 import { InventoryInventoryAdjustmentThresholdMaintenanceComponent } from './inventory-adjustment-threshold-maintenance/inventory-adjustment-threshold-maintenance.component';
 import { InventoryInventoryAdjustmentThresholdConfirmComponent } from './inventory-adjustment-threshold-confirm/inventory-adjustment-threshold-confirm.component';
+import { InventoryItemMaintenanceComponent } from './item-maintenance/item-maintenance.component';
 
 const COMPONENTS = [
   InventoryInventoryComponent,
@@ -58,6 +59,7 @@ const COMPONENTS = [
   InventoryInventoryAdjustmentThresholdComponent,
   InventoryInventoryAdjustmentThresholdMaintenanceComponent,
   InventoryInventoryAdjustmentThresholdConfirmComponent,
+  InventoryItemMaintenanceComponent,
 ];
 const COMPONENTS_NOROUNT = [];
 

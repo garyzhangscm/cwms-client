@@ -5,12 +5,17 @@ import { Observable, of } from 'rxjs';
 import { Supplier } from '../models/supplier';
 import { map, tap } from 'rxjs/operators';
 import { Customer } from '../models/customer';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CustomerService {
-  constructor(private http: _HttpClient, private gzLocalStorageService: GzLocalStorageServiceService) {}
+  constructor(
+    private http: _HttpClient,
+    private gzLocalStorageService: GzLocalStorageServiceService,
+    private warehouseService: WarehouseService,
+  ) {}
 
   loadCustomers(refresh: boolean = false): Observable<Customer[]> {
     // if we can find the value in local storage, we get it from their.
@@ -22,7 +27,7 @@ export class CustomerService {
       }
     }
     return this.http
-      .get('common/customers')
+      .get(`common/customers?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem('common.customer', res)));
   }

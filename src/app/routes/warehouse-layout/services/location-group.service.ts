@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { _HttpClient } from '@delon/theme';
 import { map } from 'rxjs/operators';
 import { WarehouseService } from './warehouse.service';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -19,16 +20,16 @@ export class LocationGroupService {
   getLocationGroup(id: string): Observable<LocationGroup> {
     return this.http.get(`layout/locationgroups/${id}`).pipe(map(res => res.data));
   }
-  getLocationGroups(locationGroupTypes: string[]): Observable<LocationGroup[]> {
-    const url = `layout/locationgroups?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    if (locationGroupTypes != null) {
-      const params = {
-        locationGroupTypes: locationGroupTypes.join(','),
-      };
-      return this.http.get(url, params).pipe(map(res => res.data));
-    } else {
-      return this.loadLocationGroups();
+  getLocationGroups(locationGroupTypes: number[], locationGroups: number[]): Observable<LocationGroup[]> {
+    let url = `layout/locationgroups?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+
+    if (locationGroupTypes != null && locationGroupTypes.length > 0) {
+      url = `${url}&locationGroupTypes=${locationGroupTypes.join(',')}`;
     }
+    if (locationGroups != null && locationGroups.length > 0) {
+      url = `${url}&locationGroups=${locationGroups.join(',')}`;
+    }
+    return this.http.get(url).pipe(map(res => res.data));
   }
 
   addLocationGroup(locationGroup: LocationGroup): Observable<LocationGroup> {
@@ -46,6 +47,11 @@ export class LocationGroupService {
 
   removeLocationGroup(locationGroup: LocationGroup): Observable<LocationGroup> {
     const url = 'layout/locationgroups/' + locationGroup.id;
+    return this.http.delete(url).pipe(map(res => res.data));
+  }
+
+  removeLocationGroupById(locationGroupId: number): Observable<LocationGroup> {
+    const url = `layout/locationgroups/${locationGroupId}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 

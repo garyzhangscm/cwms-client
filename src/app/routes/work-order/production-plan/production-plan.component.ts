@@ -10,6 +10,7 @@ import { ProductionPlan } from '../models/production-plan';
 import { WorkOrderService } from '../services/work-order.service';
 import { ActivatedRoute } from '@angular/router';
 import { ProductionPlanLine } from '../models/production-plan-line';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-work-order-production-plan',
@@ -49,6 +50,7 @@ export class WorkOrderProductionPlanComponent implements OnInit {
     status: WorkOrderStatus.PENDING,
   };
   searching = false;
+  searchResult = '';
 
   newWorkOrderModal: NzModalRef;
 
@@ -78,18 +80,29 @@ export class WorkOrderProductionPlanComponent implements OnInit {
 
   search(): void {
     this.searching = true;
+    this.searchResult = '';
     this.productionPlanService
       .getProductionPlans(this.searchForm.controls.number.value, this.searchForm.controls.item.value)
-      .subscribe(productionPlanRes => {
-        this.listOfAllProductionPlans = productionPlanRes;
-        this.listOfDisplayProductionPlans = productionPlanRes;
-        productionPlanRes.forEach(productionPlan => {
-          this.calculateProductionPlanTotalQuantity(productionPlan);
-          this.showProductionPlanDetails(productionPlan);
-        });
+      .subscribe(
+        productionPlanRes => {
+          this.listOfAllProductionPlans = productionPlanRes;
+          this.listOfDisplayProductionPlans = productionPlanRes;
+          productionPlanRes.forEach(productionPlan => {
+            this.calculateProductionPlanTotalQuantity(productionPlan);
+            this.showProductionPlanDetails(productionPlan);
+          });
 
-        this.searching = false;
-      });
+          this.searching = false;
+          this.searchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: productionPlanRes.length,
+          });
+        },
+        () => {
+          this.searching = false;
+          this.searchResult = '';
+        },
+      );
   }
 
   refreshStatus(): void {

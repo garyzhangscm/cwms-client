@@ -6,6 +6,7 @@ import { NzModalService, NzMessageService } from 'ng-zorro-antd';
 import { PickWork } from '../models/pick-work';
 import { PickService } from '../services/pick.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-outbound-pick',
@@ -35,6 +36,9 @@ export class OutboundPickComponent implements OnInit {
   sortKey: string | null = null;
   sortValue: string | null = null;
 
+  searching = false;
+  searchResult = '';
+
   // checkbox - select all
   allChecked = false;
   indeterminate = false;
@@ -49,6 +53,9 @@ export class OutboundPickComponent implements OnInit {
   }
 
   search(shortAllocationId?: number): void {
+    this.searching = true;
+    this.searchResult = '';
+
     this.pickService
       .queryPicks(
         this.searchForm.controls.number.value,
@@ -58,10 +65,22 @@ export class OutboundPickComponent implements OnInit {
         this.searchForm.controls.destinationLocation.value,
         shortAllocationId,
       )
-      .subscribe(pickRes => {
-        this.listOfAllPicks = pickRes;
-        this.listOfDisplayPicks = pickRes;
-      });
+      .subscribe(
+        pickRes => {
+          this.listOfAllPicks = pickRes;
+          this.listOfDisplayPicks = pickRes;
+
+          this.searching = false;
+          this.searchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: pickRes.length,
+          });
+        },
+        () => {
+          this.searching = false;
+          this.searchResult = '';
+        },
+      );
   }
 
   refreshStatus(): void {

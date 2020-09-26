@@ -16,6 +16,7 @@ import { AuditCountResultService } from '../services/audit-count-result.service'
 import { NzModalRef, NzModalService, NzMessageService } from 'ng-zorro-antd';
 import { Item } from '../models/item';
 import { ItemService } from '../services/item.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Component({
   selector: 'app-inventory-cycle-count-maintenance',
@@ -80,6 +81,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     private modalService: NzModalService,
     private itemService: ItemService,
     private message: NzMessageService,
+    private warehouseService: WarehouseService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inventory.cycle-count-request.title');
   }
@@ -405,12 +407,25 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   getEmptyItem(): Item {
     return {
       id: null,
+      warehouseId: this.warehouseService.getCurrentWarehouse().id,
       name: '',
       description: '',
       client: null,
       itemFamily: null,
-      itemPackageTypes: null,
+      itemPackageTypes: [],
       unitCost: null,
+      allowCartonization: null,
+
+      allowAllocationByLPN: null,
+      allocationRoundUpStrategyType: null,
+
+      allocationRoundUpStrategyValue: null,
+
+      trackingVolumeFlag: null,
+      trackingLotNumberFlag: null,
+      trackingManufactureDateFlag: null,
+      shelfLifeDays: null,
+      trackingExpirationDateFlag: null,
     };
   }
 
@@ -418,7 +433,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     return {
       id: null,
       batchId: null,
-      warehouseId: null,
+      warehouseId: this.warehouseService.getCurrentWarehouse().id,
       location: null,
       item: null,
       quantity: 0,

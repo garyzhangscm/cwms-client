@@ -13,6 +13,7 @@ import { InventoryAdjustmentRequestStatus } from '../models/inventory-adjustment
 import { Inventory } from '../models/inventory';
 import { NzModalRef, NzModalService, NzMessageService } from 'ng-zorro-antd';
 import { ActivatedRoute } from '@angular/router';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-inventory-inventory-adjustment-request',
@@ -27,6 +28,7 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
   searchForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllInventoryAdjustmentRequests: InventoryAdjustmentRequest[] = [];
@@ -94,6 +96,7 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
   }
   search(inventoryId?: number): void {
     this.searching = true;
+    this.searchResult = '';
     this.inventoryAdjustmentRequestService
       .getInventoryAdjustmentRequests(
         this.searchForm.value.status,
@@ -102,10 +105,20 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
         this.searchForm.value.inventoryQuantityChangeType,
         inventoryId,
       )
-      .subscribe(inventoryAdjustmentRequestRes => {
-        this.processInventoryAdjustmentRequestQueryResult(inventoryAdjustmentRequestRes);
-        this.searching = false;
-      });
+      .subscribe(
+        inventoryAdjustmentRequestRes => {
+          this.processInventoryAdjustmentRequestQueryResult(inventoryAdjustmentRequestRes);
+          this.searching = false;
+          this.searchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: inventoryAdjustmentRequestRes.length,
+          });
+        },
+        () => {
+          this.searching = false;
+          this.searchResult = '';
+        },
+      );
   }
 
   processInventoryAdjustmentRequestQueryResult(inventoryAdjustmentRequestRes: InventoryAdjustmentRequest[]) {

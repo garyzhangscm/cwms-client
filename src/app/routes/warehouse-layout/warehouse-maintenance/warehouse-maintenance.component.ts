@@ -33,7 +33,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
       size: ['', Validators.required],
       addressCountry: [''],
       addressState: ['', Validators.required],
-      addressCounty: ['', Validators.required],
+      addressCounty: [''],
       addressCity: ['', Validators.required],
       addressDistrict: [''],
       addressLine1: ['', Validators.required],

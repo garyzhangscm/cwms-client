@@ -32,18 +32,21 @@ export class ItemService {
 
     return this.http.get(url).pipe(map(res => res.data));
   }
+  getItem(itemId: number): Observable<Item> {
+    return this.http.get(`inventory/items/${itemId}`).pipe(map(res => res.data));
+  }
 
   addItem(item: Item): Observable<Item> {
-    return this.http.post('inventory/item', item).pipe(map(res => res.data));
+    return this.http.post('inventory/items', item).pipe(map(res => res.data));
   }
 
   changeItem(item: Item): Observable<Item> {
-    const url = 'inventory/item/' + item.id;
+    const url = 'inventory/items/' + item.id;
     return this.http.put(url, item).pipe(map(res => res.data));
   }
 
   removeItem(item: Item): Observable<Item> {
-    const url = 'inventory/item/' + item.id;
+    const url = 'inventory/items/' + item.id;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 
@@ -55,6 +58,6 @@ export class ItemService {
     const params = {
       item_ids: itemIds.join(','),
     };
-    return this.http.delete('inventory/item', params).pipe(map(res => res.data));
+    return this.http.delete('inventory/items', params).pipe(map(res => res.data));
   }
 }

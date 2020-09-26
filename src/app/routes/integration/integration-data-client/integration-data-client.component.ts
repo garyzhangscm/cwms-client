@@ -7,6 +7,7 @@ import { ClientService } from '../../common/services/client.service';
 import { I18NService } from '@core';
 import { NzModalService, NzModalRef } from 'ng-zorro-antd';
 import { Client } from '../../common/models/client';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-integration-integration-data-client',
@@ -21,6 +22,7 @@ export class IntegrationIntegrationDataClientComponent implements OnInit {
   searchForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllIntegrationClientData: IntegrationClientData[] = [];
@@ -55,11 +57,22 @@ export class IntegrationIntegrationDataClientComponent implements OnInit {
   }
   search(integrationClientDataId?: number): void {
     this.searching = true;
-    this.integrationClientDataService.getClientData(integrationClientDataId).subscribe(integrationClientDataRes => {
-      this.listOfAllIntegrationClientData = integrationClientDataRes;
-      this.listOfDisplayIntegrationClientData = integrationClientDataRes;
-      this.searching = false;
-    });
+    this.searchResult = '';
+    this.integrationClientDataService.getClientData(integrationClientDataId).subscribe(
+      integrationClientDataRes => {
+        this.listOfAllIntegrationClientData = integrationClientDataRes;
+        this.listOfDisplayIntegrationClientData = integrationClientDataRes;
+        this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: integrationClientDataRes.length,
+        });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   currentPageDataChange($event: IntegrationClientData[]): void {

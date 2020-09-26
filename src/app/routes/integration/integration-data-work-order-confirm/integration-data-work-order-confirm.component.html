@@ -43,7 +43,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationWorkOrderConfirmations" #nestedTable>
+  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationWorkOrderConfirmations" #nestedTable
+    [nzFooter]="tableFoot">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
 
@@ -224,3 +225,10 @@
   </tbody>
   </nz-table>
 </div>
+
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>

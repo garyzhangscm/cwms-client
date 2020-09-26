@@ -7,6 +7,7 @@ import { IntegrationSupplierDataService } from '../services/integration-supplier
 import { SupplierService } from '../../common/services/supplier.service';
 import { I18NService } from '@core';
 import { Supplier } from '../../common/models/supplier';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-integration-integration-data-supplier',
@@ -21,6 +22,7 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
   searchForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllIntegrationSupplierData: IntegrationSupplierData[] = [];
@@ -55,13 +57,22 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
   }
   search(integrationSupplierDataId?: number): void {
     this.searching = true;
+    this.searchResult = '';
     this.integrationSupplierDataService
       .getSupplierData(integrationSupplierDataId)
       .subscribe(integrationSupplierDataRes => {
         this.listOfAllIntegrationSupplierData = integrationSupplierDataRes;
         this.listOfDisplayIntegrationSupplierData = integrationSupplierDataRes;
         this.searching = false;
-      });
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: integrationSupplierDataRes.length,
+        });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },);
   }
 
   currentPageDataChange($event: IntegrationSupplierData[]): void {

@@ -5,11 +5,14 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { FileUploadOperationService } from '../services/file-upload-operation.service';
 import { FileUploadType } from '../models/file-upload-type';
 import { I18NService } from '@core';
-import { TitleService } from '@delon/theme';
+import { TitleService, _HttpClient } from '@delon/theme';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { UploadChangeParam } from 'ng-zorro-antd/upload';
 
 @Component({
   selector: 'app-util-file-upload',
   templateUrl: './file-upload.component.html',
+  styleUrls: ['./file-upload.component.less'],
 })
 export class UtilFileUploadComponent implements OnInit {
   constructor(
@@ -19,12 +22,20 @@ export class UtilFileUploadComponent implements OnInit {
     private webLocation: Location,
     private i18n: I18NService,
     private titleService: TitleService,
+    private msg: NzMessageService,
   ) {}
+  // Following 2 fields are used for
+  // downloading the template
+  data = {
+    otherdata: 1,
+    time: new Date(),
+  };
+  fileTypes = ['.csv'];
 
   loadFileForm: FormGroup;
   fromMenu: boolean;
   pageTitle: string;
-  fileUploadUrl: string;
+  selectedFileUploadType: FileUploadType;
   fileUploadDisabled: boolean;
 
   allowedFileTypes: Array<{ label: string; value: string }> = [];
@@ -35,6 +46,7 @@ export class UtilFileUploadComponent implements OnInit {
     });
 
     this.fileUploadDisabled = true;
+    this.selectedFileUploadType = null;
 
     this.fileUploadOperationService.getFileUploadTypes().subscribe((fileUploadTypes: FileUploadType[]) => {
       fileUploadTypes.forEach(fileUploadType =>
@@ -61,7 +73,9 @@ export class UtilFileUploadComponent implements OnInit {
       this.fileUploadOperationService.getFileUploadTypes().subscribe((fileUploadTypes: FileUploadType[]) => {
         fileUploadTypes
           .filter(item => item.name === this.loadFileForm.value.fileTypeSelector)
-          .forEach(fileUploadType => (this.fileUploadUrl = fileUploadType.destinationUrl));
+          .forEach(fileUploadType => {
+            this.selectedFileUploadType = fileUploadType;
+          });
       });
     }
   }
@@ -72,5 +86,17 @@ export class UtilFileUploadComponent implements OnInit {
   selectedFileTypeChanged(fileType: string) {
     this.setupFileUploadUrl();
     this.fileUploadDisabled = false;
+  }
+
+  handleChange(info: UploadChangeParam): void {
+    console.log('START TO HANDLE CHANGE');
+    if (info.file.status !== 'uploading') {
+      console.log(info.file, info.fileList);
+    }
+    if (info.file.status === 'done') {
+      this.msg.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === 'error') {
+      this.msg.error(`${info.file.name} file upload failed.`);
+    }
   }
 }

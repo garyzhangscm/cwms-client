@@ -13,6 +13,7 @@ import { NzIconService } from 'ng-zorro-antd/icon';
 import { ICONS_AUTO } from '../../../style-icons-auto';
 import { ICONS } from '../../../style-icons';
 import { NzNotificationService } from 'ng-zorro-antd';
+import { CompanyService } from 'src/app/routes/warehouse-layout/services/company.service';
 
 /**
  * Used for application startup
@@ -30,6 +31,7 @@ export class StartupService {
     private titleService: TitleService,
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
     private httpClient: HttpClient,
+    private companyService: CompanyService,
 
     private injector: Injector,
   ) {
@@ -51,7 +53,7 @@ export class StartupService {
 
   private viaHttp(resolve: any, reject: any) {
     let siteInformationUrl = `resource/site-information`;
-    console.log(`this.tokenService.get().token: ${this.tokenService.get().token}`);
+
     if (!this.tokenService.get().token) {
       // If the user has not been login, get the default
       // site information
@@ -106,6 +108,13 @@ export class StartupService {
           this.menuService.add(res.menu);
           // Can be set page suffix title, https://ng-alain.com/theme/title
           this.titleService.suffix = res.app.name;
+
+          this.companyService.setSingleCompanyServerFlag(res.singleCompanySite);
+          if (res.singleCompanySite === true) {
+            this.companyService.setDefaultCompanyCode(res.defaultCompanyCode);
+          } else {
+            this.companyService.setDefaultCompanyCode(null);
+          }
         },
         () => {
           console.log(`error while loading infromation`);

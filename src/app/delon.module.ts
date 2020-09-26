@@ -61,7 +61,7 @@ export function fnDelonAuthConfig(): DelonAuthConfig {
       /passport/,
       /layout\/warehouses\/accessible\//,
       /resource\/site-information\/default/,
-      /resource\/assets\/i18n\//,
+      /resource\/assets/,
     ],
   };
 }

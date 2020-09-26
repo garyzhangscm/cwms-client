@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { _HttpClient, TitleService } from '@delon/theme';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { NzModalRef, NzModalService, NzMessageService } from 'ng-zorro-antd';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -21,6 +21,9 @@ import { ReceiptStatus } from '../models/receipt-status.enum';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { PutawayConfigurationService } from '../services/putaway-configuration.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { ItemPackageType } from '../../inventory/models/item-package-type';
+import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { zip } from 'rxjs';
 
 @Component({
   selector: 'app-inbound-receipt-maintenance',
@@ -72,12 +75,15 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   availableInventoryStatuses: InventoryStatus[];
 
   currentReceiptLine: ReceiptLine;
+  currentReceivingLine: ReceiptLine;
 
   receiptStatus = ReceiptStatus;
 
   selectedTabIndex = 0;
   printingInProcess = false;
   printingPutawayWork = false;
+  displayItemPackageType: ItemPackageType;
+  receivingInProcess = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -266,7 +272,6 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.receiptService.getReceivedInventory(receipt).subscribe(inventories => {
       this.listOfAllReceivedInventory = inventories;
       this.listOfDisplayReceivedInventory = inventories;
-      console.log(`this.listOfAllReceivedInventory:\n${JSON.stringify(this.listOfAllReceivedInventory)}`);
     });
   }
 
@@ -348,52 +353,85 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     return selectedReceivedInventory;
   }
 
-  printSelectedPutawayWork() {}
+  printSelectedPutawayWork() {
+    this.printingInProcess = true;
 
-  printAllPutawayWork() {}
+    this.putawayConfigurationService.printPutawaySheet(this.getSelectedInventory());
+    // purposely to show the 'loading' status of the print button
+    // for at least 1 second. The above printReceipt will
+    // return immediately but the print job(or print preview page)
+    // will start with some delay. During the delay, we will
+    // display the 'print' button as 'Loading' status
+    setTimeout(() => {
+      this.printingInProcess = false;
+    }, 1000);
+  }
+
+  printAllPutawayWork() {
+    this.printingInProcess = true;
+    this.putawayConfigurationService.printPutawaySheet(this.listOfAllReceivedInventory);
+    // purposely to show the 'loading' status of the print button
+    // for at least 1 second. The above printReceipt will
+    // return immediately but the print job(or print preview page)
+    // will start with some delay. During the delay, we will
+    // display the 'print' button as 'Loading' status
+    setTimeout(() => {
+      this.printingInProcess = false;
+    }, 1000);
+  }
+
+  getSelectedInventory(): Inventory[] {
+    const selectedInventories: Inventory[] = [];
+    this.listOfAllReceivedInventory.forEach((inventory: Inventory) => {
+      if (this.receivedInventoryTableMapOfCheckedId[inventory.id] === true) {
+        selectedInventories.push(inventory);
+      }
+    });
+    return selectedInventories;
+  }
 
   openReceivingModal(
     receiptLine: ReceiptLine,
     tplReceivingModalTitle: TemplateRef<{}>,
     tplReceivingModalContent: TemplateRef<{}>,
+    tplReceivingModalFooter: TemplateRef<{}>,
   ) {
-    this.currentInventory = {
-      id: null,
-      lpn: '',
-      location: null,
-      locationName: '',
-      item: receiptLine.item,
-      itemPackageType: null,
-      quantity: null,
-      inventoryStatus: null,
-    };
-    // Load the location
+    this.createReceivingForm(receiptLine);
+    this.receivingInProcess = false;
 
-    this.locationService.getLocations(null, null, this.currentReceipt.number).subscribe(locations => {
-      if (locations.length > 0) {
-        this.currentInventory.location = locations[0];
+    // show the model
+    this.receivingModal = this.modalService.create({
+      nzTitle: tplReceivingModalTitle,
+      nzContent: tplReceivingModalContent,
+      nzFooter: tplReceivingModalFooter,
 
-        // show the model
-        this.receivingModal = this.modalService.create({
-          nzTitle: tplReceivingModalTitle,
-          nzContent: tplReceivingModalContent,
-          nzOkText: this.i18n.fanyi('confirm'),
-          nzCancelText: this.i18n.fanyi('cancel'),
-          nzMaskClosable: false,
-          nzOnCancel: () => {
-            this.receivingModal.destroy();
-            this.refreshReceiptResults();
-          },
-          nzOnOk: () => {
-            this.receivingInventory(this.currentReceipt.id, receiptLine.id, this.currentInventory);
-          },
-          nzWidth: 1000,
-        });
-        this.receivingModal.afterOpen.subscribe(() => this.setupDefaultInventoryValue());
-      }
+      nzWidth: 1000,
     });
+    this.receivingModal.afterOpen.subscribe(() => this.setupDefaultInventoryValue());
+  }
+  closeReceivingModal() {
+    this.receivingModal.destroy();
+    this.refreshReceiptResults();
+  }
+  confirmReceiving() {
+    this.receivingInProcess = true;
+    this.receivingInventory();
   }
 
+  createReceivingForm(receiptLine: ReceiptLine) {
+    // reset the displayed item package type
+    this.displayItemPackageType = null;
+    this.currentReceivingLine = receiptLine;
+    this.receivingForm = this.fb.group({
+      itemNumber: new FormControl({ value: receiptLine.item.name, disabled: true }),
+      itemDescription: new FormControl({ value: receiptLine.item.description, disabled: true }),
+      lpn: ['', Validators.required],
+      inventoryStatus: ['', Validators.required],
+      itemPackageType: ['', Validators.required],
+      quantity: ['', Validators.required],
+      locationName: [''],
+    });
+  }
   openManualPutawayModal(
     inventory: Inventory,
     tplManualPutawayModalTitle: TemplateRef<{}>,
@@ -436,25 +474,18 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
 
   receivingLPNChanged(lpn: string) {
-    this.currentInventory.lpn = lpn;
+    this.receivingForm.controls.lpn.setValue(lpn);
   }
   setupDefaultInventoryValue() {
-    if (this.currentInventory.item.itemPackageTypes.length === 1) {
-      this.currentInventory.itemPackageType = this.currentInventory.item.itemPackageTypes[0];
+    if (this.currentReceivingLine.item.itemPackageTypes.length === 1) {
+      this.receivingForm.controls.itemPackageType.setValue(this.currentReceivingLine.item.itemPackageTypes[0].id);
+      this.displayItemPackageType = this.currentReceivingLine.item.itemPackageTypes[0];
     }
     if (this.availableInventoryStatuses.length === 1) {
-      this.currentInventory.inventoryStatus = this.availableInventoryStatuses[0];
+      this.receivingForm.controls.inventoryStatus.setValue(this.availableInventoryStatuses[0].id);
     }
   }
 
-  itemPackageTypeChange(newItemPackageTypeName) {
-    const itemPackageTypes = this.currentInventory.item.itemPackageTypes.filter(
-      itemPackageType => itemPackageType.name === newItemPackageTypeName,
-    );
-    if (itemPackageTypes.length === 1) {
-      this.currentInventory.itemPackageType = itemPackageTypes[0];
-    }
-  }
   inventoryStatusChange(newInventoryStatusName) {
     this.availableInventoryStatuses.forEach(inventoryStatus => {
       if (inventoryStatus.name === newInventoryStatusName) {
@@ -463,32 +494,71 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     });
   }
 
-  receivingInventory(receiptId: number, receiptLineId: number, inventory: Inventory) {
-    if (inventory.locationName) {
-      // Location name is setup
-      // Let's find the location by name and assign it to the inventory
-      // that will be received
-      console.log(`Will setup received inventory's location to ${inventory.locationName}`);
-      this.locationService.getLocations(null, null, inventory.locationName).subscribe(locations => {
-        inventory.location = locations[0];
-        this.receiptLineService.receiveInventory(receiptId, receiptLineId, inventory).subscribe(receivedInventory => {
-          this.message.success(this.i18n.fanyi('message.receiving.success'));
-          this.refreshReceiptResults();
-        });
+  receivingInventory() {
+    if (this.receivingForm.valid) {
+      // check if the location name is input. If so, we receive into that location
+      // otherwise, we receive into the reciept location
+      const locationName =
+        this.receivingForm.controls.locationName.value === ''
+          ? this.currentReceipt.number
+          : this.receivingForm.controls.locationName.value;
+      this.locationService.getLocations(null, null, locationName).subscribe(locations => {
+        this.receiptLineService
+          .receiveInventory(
+            this.currentReceipt.id,
+            this.currentReceivingLine.id,
+            this.createReceivingInventory(this.currentReceivingLine, locations[0]),
+          )
+          .subscribe(
+            () => {
+              this.message.success(this.i18n.fanyi('message.receiving.success'));
+
+              this.receivingModal.destroy();
+              this.receivingInProcess = false;
+
+              this.refreshReceiptResults();
+            },
+            () => (this.receivingInProcess = false),
+          );
       });
     } else {
-      this.receiptLineService.receiveInventory(receiptId, receiptLineId, inventory).subscribe(receivedInventory => {
-        this.message.success(this.i18n.fanyi('message.receiving.success'));
-        this.refreshReceiptResults();
-      });
+      this.displayReceivingFormError(this.receivingForm);
+      this.receivingInProcess = false;
+    }
+  }
+  displayReceivingFormError(fromGroup: FormGroup) {
+    // tslint:disable-next-line: forin
+    for (const i in fromGroup.controls) {
+      fromGroup.controls[i].markAsDirty();
+      fromGroup.controls[i].updateValueAndValidity();
     }
   }
 
+  createReceivingInventory(receiptLine: ReceiptLine, receiptLocation: WarehouseLocation): Inventory {
+    const inventoryStatus = this.availableInventoryStatuses
+      .filter(
+        availableInventoryStatus => availableInventoryStatus.id === this.receivingForm.controls.inventoryStatus.value,
+      )
+      .pop();
+    const itemPackageType = receiptLine.item.itemPackageTypes
+      .filter(
+        existingItemPackageType => existingItemPackageType.id === this.receivingForm.controls.itemPackageType.value,
+      )
+      .pop();
+
+    return {
+      id: null,
+      lpn: this.receivingForm.controls.lpn.value,
+      location: receiptLocation,
+      locationName: receiptLocation.name,
+      item: receiptLine.item,
+      itemPackageType,
+      quantity: this.receivingForm.controls.quantity.value,
+      inventoryStatus,
+    };
+  }
+
   showAddReceiptLineModal(tplReceiptLineModalTitle: TemplateRef<{}>, tplReceiptLineModalContent: TemplateRef<{}>) {
-    if (!this.currentReceipt.id) {
-      this.message.error(this.i18n.fanyi('message.error.saveReceiptFirst'));
-      return;
-    }
     this.currentReceiptLine = {
       id: null,
       number: null,
@@ -580,11 +650,6 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
 
   confirmPutaway(index: number, receivedInventory: Inventory) {
-    console.log(`confirm putaway with movement index ${index}, inventory: ${receivedInventory.lpn}`);
-    console.log(
-      `confirm putaway with movement index ${receivedInventory.inventoryMovements[index].location.name}, inventory: ${receivedInventory.lpn}`,
-    );
-
     this.inventoryService
       .move(receivedInventory, receivedInventory.inventoryMovements[index].location)
       .subscribe(inventory => this.refreshReceiptResults(1));
@@ -601,5 +666,22 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     setTimeout(() => {
       this.printingInProcess = false;
     }, 1000);
+  }
+
+  // Allow reserve inventory now
+  isInventoryReversible(inventory: Inventory): boolean {
+    return this.currentReceipt.receiptStatus !== ReceiptStatus.CLOSED;
+  }
+  // reserve inventory
+  reverseInventory(inventory: Inventory) {
+    this.inventoryService.reverseReceivedInventory(inventory).subscribe(removedInventoryRes => {
+      // reload the receipt inventory
+      this.loadReceipt(this.currentReceipt.number);
+      this.message.success(this.i18n.fanyi('message.action.success'));
+    });
+  }
+
+  get lpnControl() {
+    return this.receivingForm.get('lpn');
   }
 }

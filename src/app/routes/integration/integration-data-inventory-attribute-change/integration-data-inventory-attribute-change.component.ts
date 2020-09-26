@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { IntegrationInventoryAttributeChangeConfirmationService } from '../services/integration-inventory-attribute-change-confirmation.service';
 import { IntegrationInventoryAttributeChangeConfirmation } from '../models/integration-inventory-attribute-change-confirmation';
 import { IntegrationInventoryAdjustmentConfirmation } from '../models/integration-inventory-adjustment-confirmation';
+import { formatDate } from '@angular/common';
+import { I18NService } from '@core';
 
 @Component({
   selector: 'app-integration-integration-data-inventory-attribute-change',
@@ -11,14 +13,10 @@ import { IntegrationInventoryAdjustmentConfirmation } from '../models/integratio
   styleUrls: ['./integration-data-inventory-attribute-change.component.less'],
 })
 export class IntegrationIntegrationDataInventoryAttributeChangeComponent implements OnInit {
-  constructor(
-    private fb: FormBuilder,
-    private integrationInventoryAdjustmentConfirmationService: IntegrationInventoryAttributeChangeConfirmationService,
-  ) {}
-
   searchForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllIntegrationInventoryAttributeChangeConfirmations: IntegrationInventoryAttributeChangeConfirmation[] = [];
@@ -33,6 +31,12 @@ export class IntegrationIntegrationDataInventoryAttributeChangeComponent impleme
   // list of expanded row
   mapOfExpandedId: { [key: string]: boolean } = {};
 
+  constructor(
+    private fb: FormBuilder,
+    private integrationInventoryAdjustmentConfirmationService: IntegrationInventoryAttributeChangeConfirmationService,
+    private i18n: I18NService,
+  ) {}
+
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
   }
@@ -44,14 +48,23 @@ export class IntegrationIntegrationDataInventoryAttributeChangeComponent impleme
   }
   search(): void {
     this.searching = true;
-    this.integrationInventoryAdjustmentConfirmationService
-      .getData()
-      .subscribe(integrationInventoryAdjustmentConfirmationRes => {
+    this.searchResult = '';
+    this.integrationInventoryAdjustmentConfirmationService.getData().subscribe(
+      integrationInventoryAdjustmentConfirmationRes => {
         this.listOfAllIntegrationInventoryAttributeChangeConfirmations = integrationInventoryAdjustmentConfirmationRes;
         this.listOfDisplayIntegrationInventoryAttributeChangeConfirmations = integrationInventoryAdjustmentConfirmationRes;
 
         this.searching = false;
-      });
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: integrationInventoryAdjustmentConfirmationRes.length,
+        });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   currentPageDataChange($event: IntegrationInventoryAttributeChangeConfirmation[]): void {

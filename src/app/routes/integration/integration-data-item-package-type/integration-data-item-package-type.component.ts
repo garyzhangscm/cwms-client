@@ -3,6 +3,8 @@ import { _HttpClient } from '@delon/theme';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { IntegrationItemPackageTypeData } from '../models/integration-item-package-type-data';
 import { IntegrationItemPackageTypeDataService } from '../services/integration-item-package-type-data.service';
+import { formatDate } from '@angular/common';
+import { I18NService } from '@core';
 
 @Component({
   selector: 'app-integration-integration-data-item-package-type',
@@ -14,6 +16,7 @@ export class IntegrationIntegrationDataItemPackageTypeComponent implements OnIni
   searchForm: FormGroup;
 
   searching = false;
+  searchResult = '';
 
   // Table data for display
   listOfAllIntegrationItemPackageTypeData: IntegrationItemPackageTypeData[] = [];
@@ -35,6 +38,7 @@ export class IntegrationIntegrationDataItemPackageTypeComponent implements OnIni
   constructor(
     private fb: FormBuilder,
     private integrationItemPackageTypeDataService: IntegrationItemPackageTypeDataService,
+    private i18n: I18NService,
   ) {}
 
   resetForm(): void {
@@ -44,11 +48,22 @@ export class IntegrationIntegrationDataItemPackageTypeComponent implements OnIni
   }
   search(): void {
     this.searching = true;
-    this.integrationItemPackageTypeDataService.getItemPackageTypeData().subscribe(integrationItemPackageTypeDataRes => {
-      this.listOfAllIntegrationItemPackageTypeData = integrationItemPackageTypeDataRes;
-      this.listOfDisplayIntegrationItemPackageTypeData = integrationItemPackageTypeDataRes;
-      this.searching = false;
-    });
+    this.searchResult = '';
+    this.integrationItemPackageTypeDataService.getItemPackageTypeData().subscribe(
+      integrationItemPackageTypeDataRes => {
+        this.listOfAllIntegrationItemPackageTypeData = integrationItemPackageTypeDataRes;
+        this.listOfDisplayIntegrationItemPackageTypeData = integrationItemPackageTypeDataRes;
+        this.searching = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: integrationItemPackageTypeDataRes.length,
+        });
+      },
+      () => {
+        this.searching = false;
+        this.searchResult = '';
+      },
+    );
   }
 
   currentPageDataChange($event: IntegrationItemPackageTypeData[]): void {

@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { _HttpClient, TitleService } from '@delon/theme';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { BillOfMaterialService } from '../services/bill-of-material.service';
 import { I18NService } from '@core';
@@ -11,6 +11,8 @@ import { WorkOrder } from '../models/work-order';
 import { ProductionLine } from '../models/production-line';
 import { ProductionLineService } from '../services/production-line.service';
 import { WorkOrderStatus } from '../models/work-order-status.enum';
+import { ActivatedRoute, Router } from '@angular/router';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-work-order-bill-of-material',
@@ -18,15 +20,6 @@ import { WorkOrderStatus } from '../models/work-order-status.enum';
   styleUrls: ['./bill-of-material.component.less'],
 })
 export class WorkOrderBillOfMaterialComponent implements OnInit {
-  constructor(
-    private fb: FormBuilder,
-    private i18n: I18NService,
-    private modalService: NzModalService,
-    private billOfMaterialService: BillOfMaterialService,
-    private message: NzMessageService,
-    private productionLineService: ProductionLineService,
-  ) {}
-
   // Form related data and functions
   searchForm: FormGroup;
   newWorkOrder: WorkOrder = {
@@ -48,6 +41,7 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
     status: WorkOrderStatus.PENDING,
   };
   searching = false;
+  searchResult = '';
 
   availableProductionLines: ProductionLine[] = [];
 
@@ -70,6 +64,37 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
   // list of expanded row
   mapOfExpandedId: { [key: string]: boolean } = {};
 
+  constructor(
+    private fb: FormBuilder,
+    private i18n: I18NService,
+    private titleService: TitleService,
+    private modalService: NzModalService,
+    private billOfMaterialService: BillOfMaterialService,
+    private message: NzMessageService,
+    private productionLineService: ProductionLineService,
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
+  ) {}
+  ngOnInit() {
+    this.titleService.setTitle(this.i18n.fanyi('bill-of-material'));
+    // initiate the search form
+    this.searchForm = this.fb.group({
+      number: [null],
+      item: [null],
+    });
+
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.number) {
+        this.searchForm.controls.number.setValue(params.number);
+        this.search();
+      }
+    });
+
+    this.productionLineService
+      .getProductionLines('')
+      .subscribe(productionLineRes => (this.availableProductionLines = productionLineRes));
+  }
+
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllBillOfMaterial = [];
@@ -78,13 +103,24 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
 
   search(): void {
     this.searching = true;
+    this.searchResult = '';
     this.billOfMaterialService
       .getBillOfMaterials(this.searchForm.controls.number.value, this.searchForm.controls.item.value)
-      .subscribe(billOfMaterailRes => {
-        this.listOfAllBillOfMaterial = billOfMaterailRes;
-        this.listOfDisplayBillOfMaterial = billOfMaterailRes;
-        this.searching = false;
-      });
+      .subscribe(
+        billOfMaterailRes => {
+          this.listOfAllBillOfMaterial = billOfMaterailRes;
+          this.listOfDisplayBillOfMaterial = billOfMaterailRes;
+          this.searching = false;
+          this.searchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: billOfMaterailRes.length,
+          });
+        },
+        () => {
+          this.searching = false;
+          this.searchResult = '';
+        },
+      );
   }
 
   refreshStatus(): void {
@@ -149,17 +185,6 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
     return selectedBillOfMaterials;
   }
 
-  ngOnInit() {
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      number: [null],
-      item: [null],
-    });
-    this.productionLineService
-      .getProductionLines('')
-      .subscribe(productionLineRes => (this.availableProductionLines = productionLineRes));
-  }
-
   openNewWorkOrderModal(
     billOfMaterial: BillOfMaterial,
     tplCreatingWorkOrderModalTitle: TemplateRef<{}>,
@@ -217,5 +242,9 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
 
   workOrderNumberOnBlur(workOrderNumber: string) {
     this.newWorkOrder.number = workOrderNumber;
+  }
+
+  modifyBillOfMaterial(billOfMaterial: BillOfMaterial) {
+    this.router.navigateByUrl(`/work-order/bill-of-material/maintenance?id=${billOfMaterial.id}`);
   }
 }

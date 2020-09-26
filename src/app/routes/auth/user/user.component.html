@@ -17,7 +17,7 @@
   </div>
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
-      <button nz-button [nzType]="'primary'" (click)="search()">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
         {{ 'search' | translate }}
       </button>
       <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
@@ -73,10 +73,15 @@
       </tr>
     </tbody>
   </nz-table>
+
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+    <a nz-button routerLink="/auth/user/maintenance" routerLinkActive="active">{{ 'new' | translate }}</a>
+  </div>
 </div>
 
 <ng-template #tableFoot>
-  <div nz-row nzType="flex" nzJustify="start">
-    <a nz-button routerLink="/auth/user/maintenance" routerLinkActive="active">{{ 'new' | translate }}</a>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
   </div>
 </ng-template>

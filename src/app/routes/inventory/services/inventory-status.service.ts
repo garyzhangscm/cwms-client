@@ -39,4 +39,7 @@ export class InventoryStatusService {
         ),
       );
   }
+  getInventoryStatus(id: number): Observable<InventoryStatus> {
+    return this.http.get(`inventory/inventory-status/${id}`).pipe(map(res => res.data));
+  }
 }

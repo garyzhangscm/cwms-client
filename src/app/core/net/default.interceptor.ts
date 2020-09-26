@@ -15,6 +15,7 @@ import { NzMessageService, NzNotificationService } from 'ng-zorro-antd';
 import { _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
+import { I18NService } from '@core';
 
 const CODEMESSAGE = {
   200: '服务器成功返回请求的数据。',
@@ -39,7 +40,7 @@ const CODEMESSAGE = {
  */
 @Injectable()
 export class DefaultInterceptor implements HttpInterceptor {
-  constructor(private injector: Injector, private messageService: NzMessageService) {}
+  constructor(private injector: Injector, private messageService: NzMessageService, private i18n: I18NService) {}
 
   private get notification(): NzNotificationService {
     return this.injector.get(NzNotificationService);
@@ -136,10 +137,10 @@ export class DefaultInterceptor implements HttpInterceptor {
       ),
        */
       catchError((err: HttpErrorResponse) => {
-        console.log(`!! Get error ${err.status} while call ${url}`);
+        console.log(`!! Get error ${err.status} while call ${url}, \n statusText: ${err.statusText}`);
         const errortext = CODEMESSAGE[err.status] || err.statusText;
         // this.notification.error(`请求错误 ${ev.status}: ${ev.url}`, errortext);
-        this.notification.error(`${err.status}: ${err.url}`, errortext);
+        this.notification.error(`${err.status}: ${err.url}`, this.i18n.fanyi(errortext));
         console.log(`!! will throw error ${err.status}`);
 
         return throwError(err);

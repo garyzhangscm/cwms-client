@@ -83,15 +83,18 @@
       </tr>
     </tbody>
   </nz-table>
-</div>
-
-<ng-template #tableFoot>
-  <div nz-row nzType="flex" nzJustify="start">
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
     <button nz-button nzType="danger" (click)="removeSelectedReceipts()">
       {{ 'delete' | translate }}
     </button>
     <button nz-button nzType="primary" routerLink="/inbound/receipt-maintenance" routerLinkActive="active">
       {{ 'add' | translate }}
     </button>
+  </div>
+</div>
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
   </div>
 </ng-template>

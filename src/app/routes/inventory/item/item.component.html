@@ -71,6 +71,32 @@
         <th nzShowSort nzSortKey="unitCost">
           {{ 'unit-cost' | translate }}
         </th>
+        <th>
+          {{ 'allowAllocationByLPN' | translate }}
+        </th>
+        <th>
+          {{ 'allocationRoundUpStrategyType' | translate }}
+        </th>
+        <th>
+          {{ 'allocationRoundUpStrategyValue' | translate }}
+        </th>
+
+        <th>
+          {{ 'trackingVolumeFlag' | translate }}
+        </th>
+        <th>
+          {{ 'trackingLotNumberFlag' | translate }}
+        </th>
+        <th>
+          {{ 'trackingManufactureDateFlag' | translate }}
+        </th>
+        <th>
+          {{ 'shelfLifeDays' | translate }}
+        </th>
+        <th>
+          {{ 'trackingExpirationDateFlag' | translate }}
+        </th>
+        <th>{{'action' | translate}}</th>
       </tr>
     </thead>
     <tbody>
@@ -82,13 +108,35 @@
           <td>{{ data.name }}</td>
           <td>{{ data.description }}</td>
           <td>{{ data.client?.name}}</td>
-          <td>{{ data.itemFamily?.name }}</td>
+          <td>{{ data.itemFamily?.description }}</td>
           <td>{{ data.unitCost }}</td>
+          <td>{{ data.allowAllocationByLPN + '' | translate}}</td>
+          <td><span *ngIf="data.allocationRoundUpStrategyType != null">
+              {{ 'ALLOCATION-ROUND-UP-STRATEGY-TYPE-' + data.allocationRoundUpStrategyType | translate}}
+            </span></td>
+          <td>{{ data.allocationRoundUpStrategyValue }}</td>
+          <td>{{ data.trackingVolumeFlag  + '' | translate}}</td>
+          <td>{{ data.trackingLotNumberFlag  + '' | translate}}</td>
+          <td>{{ data.trackingManufactureDateFlag  + '' | translate}}</td>
+          <td>{{ data.shelfLifeDays }}</td>
+          <td>{{ data.trackingExpirationDateFlag  + '' | translate}}</td>
+          <td>
+
+            <button nz-button nzType="primary" routerLink="/inventory/item/maintenance" routerLinkActive="active"
+              [queryParams]="{id : data.id}">
+              {{ 'modify' | translate }}
+            </button>
+            <nz-divider nzType="vertical"></nz-divider>
+            <button nz-button nzType="danger" (click)='removeItem(data)'>
+              {{ 'delete' | translate }}
+            </button>
+
+          </td>
         </tr>
         <tr [nzExpand]="mapOfExpandedId[data.id]" *ngIf="data.itemPackageTypes?.length > 0"
           (nzExpandChange)="showItemPackageType(data)">
           <td></td>
-          <td colspan="4">
+          <td colspan="13">
             <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
               <nz-tab *ngFor="let itemPackageType of data.itemPackageTypes" [nzTitle]="itemPackageType.name">
                 <nz-table #innerTable [nzData]="itemPackageType.itemUnitOfMeasures" nzSize="middle"
@@ -98,6 +146,9 @@
                       <th>{{'unit-of-measure' | translate}}</th>
                       <th>{{'quantity' | translate}}</th>
                       <th>{{'weight' | translate}}</th>
+                      <th>{{'length' | translate}}</th>
+                      <th>{{'width' | translate}}</th>
+                      <th>{{'height' | translate}}</th>
                     </tr>
                   </thead>
     <tbody>
@@ -105,6 +156,9 @@
         <td>{{ data.unitOfMeasure?.name }}</td>
         <td>{{ data.quantity }}</td>
         <td>{{ data.weight }}</td>
+        <td>{{ data.length }}</td>
+        <td>{{ data.width }}</td>
+        <td>{{ data.height }}</td>
       </tr>
     </tbody>
   </nz-table>
@@ -117,12 +171,21 @@
   </ng-template>
   </tbody>
   </nz-table>
-</div>
 
-<ng-template #tableFoot>
-  <div nz-row nzType="flex" nzJustify="start">
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
     <button nz-button nzType="primary" routerLink="/util/file-upload/items" routerLinkActive="active">
       {{ 'file-upload' | translate }}
     </button>
+    <nz-divider nzType="vertical"></nz-divider>
+    <button nz-button nzType="primary" routerLink="/inventory/item/maintenance" routerLinkActive="active">
+      {{ 'add' | translate }}
+    </button>
+  </div>
+</div>
+
+<ng-template #tableFoot>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
   </div>
 </ng-template>

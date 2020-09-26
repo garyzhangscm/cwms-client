@@ -103,16 +103,19 @@
       </tr>
     </tbody>
   </nz-table>
-</div>
-
-
-<ng-template #tableFoot>
-  <div nz-row nzType="flex" nzJustify="start">
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
     <a nz-button nzType="primary" routerLink="/inbound/putaway-configuration-maintenance" routerLinkActive="active">
       {{'add' | translate}}
     </a>
 
     <button nz-button nzType="danger" (click)="removeSelectedPutawayConfigurations()">{{'delete' | translate}}</button>
+  </div>
+</div>
+
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
   </div>
 </ng-template>
 

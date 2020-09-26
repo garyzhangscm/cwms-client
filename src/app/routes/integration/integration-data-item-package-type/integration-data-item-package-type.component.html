@@ -44,7 +44,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationItemPackageTypeData">
+  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationItemPackageTypeData"
+    [nzFooter]="tableFoot">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
         <th nzShowExpand></th>
@@ -208,3 +209,9 @@
   </tbody>
   </nz-table>
 </div>
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>

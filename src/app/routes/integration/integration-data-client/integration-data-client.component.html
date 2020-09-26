@@ -143,11 +143,19 @@
 </div>
 
 <ng-template #tableFoot>
+  <!--
+
   <div nz-row nzType="flex" nzJustify="start">
     <button nz-button
       (click)="openAddIntegrationDataModal(tplIntegrationDataModalTitle, tplIntegrationDataModalContent )">
       {{ 'add' | translate }}
     </button>
+  </div>
+  
+
+  -->
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
   </div>
 </ng-template>
 
