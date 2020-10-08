@@ -45,7 +45,7 @@ export class CommonUnitOfMeasureComponent implements OnInit {
   editId: string | null;
   editCol: string | null;
 
-  @ViewChild(NzInputDirective, { static: false, read: ElementRef }) inputElement: ElementRef;
+  @ViewChild(NzInputDirective, { read: ElementRef }) inputElement: ElementRef;
 
   constructor(
     private unitOfMeasureService: UnitOfMeasureService,

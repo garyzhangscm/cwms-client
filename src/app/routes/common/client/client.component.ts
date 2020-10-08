@@ -49,7 +49,7 @@ export class CommonClientComponent implements OnInit {
   editId: string | null;
   editCol: string | null;
 
-  @ViewChild(NzInputDirective, { static: false, read: ElementRef }) inputElement: ElementRef;
+  @ViewChild(NzInputDirective, { read: ElementRef }) inputElement: ElementRef;
 
   constructor(private clientService: ClientService, private i18n: I18NService, private modalService: NzModalService) {}
 
