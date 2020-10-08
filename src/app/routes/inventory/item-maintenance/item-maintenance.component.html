@@ -1,6 +1,7 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
-  <a routerLink="/inventory/item" routerLinkActive="active">{{ 'return' | translate }}</a>
+  <a routerLink="/inventory/item" routerLinkActive="active"
+    [queryParams]="{name:currentItem?.name}">{{ 'return' | translate }}</a>
 </ng-template>
 <ng-template #breadcrumb>
   <nz-breadcrumb>
@@ -8,9 +9,8 @@
       <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
     </nz-breadcrumb-item>
     <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
-    <nz-breadcrumb-item><a routerLink="/inventory/item" routerLinkActive="active">{{
-        'inventory' | translate
-      }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/inventory/item" routerLinkActive="active">{{ 'inventory' | translate }}</a>
+    </nz-breadcrumb-item>
     <nz-breadcrumb-item><a>{{ 'item' | translate }}</a></nz-breadcrumb-item>
   </nz-breadcrumb>
 </ng-template>
@@ -22,16 +22,39 @@
 </nz-steps>
 
 <!-- Show basic item information -->
-<div class="small-card" *ngIf="stepIndex === 0">
+<div class="small-card" *ngIf="stepIndex === 0 && currentItem != undefined">
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item>
         <nz-form-label [nzSm]="6" [nzXs]="24">
           {{ 'item.name' | translate }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-          nzErrorTip="{{ 'error.form.field.required' | translate }}">
-          <input nz-input [(ngModel)]="currentItem.name" required />
+        <nz-form-control *ngIf="currentItem.id === null" [nzSm]="14" [nzXs]="24" nzHasFeedback
+          [nzErrorTip]="itemNumberErrorTpl">
+
+          <!--
+
+          <input *ngIf="currentItem.id !== null" nz-input [(ngModel)]="currentItem.name" required disabled />
+
+          -->
+
+          <input #itemNumberControl="ngModel" variable="item-name" nz-input [(ngModel)]="currentItem.name" required
+            appNewNumberValidator [ngModelOptions]="{updateOn: 'blur'}" />
+          <ng-template #itemNumberErrorTpl let-control>
+            <div *ngIf="itemNumberControl.invalid && (itemNumberControl.dirty || itemNumberControl.touched)">
+              <ng-container *ngIf="itemNumberControl.errors.errorCode">
+                {{ itemNumberControl.errors.errorCode | translate }}</ng-container>
+              <ng-container *ngIf="control.hasError('required')">{{ 'error.form.field.required' | translate }}
+              </ng-container>
+            </div>
+          </ng-template>
+        </nz-form-control>
+
+        <nz-form-control *ngIf="currentItem.id !== null" [nzSm]="14" [nzXs]="24">
+
+
+          <input *ngIf="currentItem.id !== null" nz-input [(ngModel)]="currentItem.name" required disabled />
+
         </nz-form-control>
       </nz-form-item>
     </div>
@@ -48,7 +71,6 @@
       </nz-form-item>
     </div>
 
-
     <div nz-col [nzSpan]="8">
       <nz-form-item>
         <nz-form-label [nzSm]="6" [nzXs]="24">
@@ -57,7 +79,6 @@
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
           <nz-select nzAllowClear (ngModelChange)="itemFamilySelected($event)" style="width: 200px;">
-
             <nz-option *ngFor="let validItemFamily of validItemFamilies" [nzValue]="validItemFamily.id"
               [nzLabel]="validItemFamily.description">
             </nz-option>
@@ -66,7 +87,6 @@
       </nz-form-item>
     </div>
   </div>
-
 
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
@@ -91,7 +111,6 @@
       </nz-form-item>
     </div>
 
-
     <div nz-col [nzSpan]="8">
       <nz-form-item>
         <nz-form-control>
@@ -103,7 +122,6 @@
       </nz-form-item>
     </div>
   </div>
-
 
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
@@ -129,7 +147,6 @@
       </nz-form-item>
     </div>
 
-
     <div nz-col [nzSpan]="8">
       <nz-form-item>
         <nz-form-control>
@@ -142,9 +159,7 @@
     </div>
   </div>
 
-
   <div nz-row [nzGutter]="24">
-
     <div nz-col [nzSpan]="8">
       <nz-form-item>
         <nz-form-control>
@@ -157,7 +172,6 @@
     </div>
 
     <div nz-col [nzSpan]="8">
-
       <nz-form-item>
         <nz-form-label [nzSm]="6" [nzXs]="24">
           {{ 'allocationRoundUpStrategyType' | translate }}
@@ -181,16 +195,11 @@
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
-          <nz-input-number [(ngModel)]="currentItem.allocationRoundUpStrategyValue" [nzStep]="0.01">
-          </nz-input-number>
+          <nz-input-number [(ngModel)]="currentItem.allocationRoundUpStrategyValue" [nzStep]="0.01"> </nz-input-number>
         </nz-form-control>
       </nz-form-item>
-
     </div>
-
   </div>
-
-
 
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
@@ -199,22 +208,18 @@
           {{ 'unit-cost' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24">
-          <nz-input-number [(ngModel)]="currentItem.unitCost" [nzStep]="0.01">
-          </nz-input-number>
+          <nz-input-number [(ngModel)]="currentItem.unitCost" [nzStep]="0.01"> </nz-input-number>
         </nz-form-control>
       </nz-form-item>
     </div>
-
   </div>
 </div>
 
 <!-- Maintain package type -->
 <div *ngIf="stepIndex === 1" class="small-card">
-
   <div class="search-result-list">
     <nz-table #nestedTable [nzData]="currentItem.itemPackageTypes" [nzShowPagination]="false">
       <thead>
-
         <tr>
           <th nzShowExpand></th>
           <th>
@@ -227,55 +232,50 @@
             {{ 'action' | translate }}
           </th>
         </tr>
-
       </thead>
 
       <tbody>
         <ng-container *ngFor="let data of nestedTable.data; let recordIndex = index">
-
           <tr>
-
             <td nzShowExpand [(nzExpand)]="mapOfExpandedItemPackageTypes[recordIndex]"
-              [nzDisabled]="data.itemUnitOfMeasures?.size === 0">
+              [nzDisabled]="data.itemUnitOfMeasures?.size === 0"></td>
+
+            <td>
+              <input nz-input [(ngModel)]="data.name" required />
             </td>
-
             <td>
-
-              <input nz-input [(ngModel)]="data.name" required /> </td>
-            <td>
-
-              <input nz-input [(ngModel)]="data.description" required /> </td>
+              <input nz-input [(ngModel)]="data.description" required />
+            </td>
 
             <td>
               <button nz-button
-                (click)="openAddingItemUnitOfMeasureModal(data, tplItemUOMModalTitle, tplItemUOMModalContent)">
-                {{ 'add' | translate }}{{'unit-of-measure' | translate}}
+                (click)="openAddingItemUnitOfMeasureModal(data, tplItemUOMModalTitle, tplItemUOMModalContent, tplItemUOMModalFooter)">
+                {{ 'add' | translate }}{{ 'unit-of-measure' | translate }}
               </button>
               <nz-divider nzType="nz-divider.vertical"></nz-divider>
 
-              <button nz-button (click)="removeItemPackageType(recordIndex)">
+              <button (click)="removeItemPackageType(recordIndex)" [disabled]="!isItemPackageTypeRemovable(data)"
+                nzTooltipTitle="Removable when there's no inventory related to this package type"
+                nzTooltipPlacement="top" nz-button nz-tooltip>
                 {{ 'remove' | translate }}
               </button>
             </td>
-
           </tr>
 
           <tr [nzExpand]="mapOfExpandedItemPackageTypes[recordIndex]">
             <td colspan="1"></td>
             <td colspan="2">
-
               <nz-tabset>
-
                 <nz-tab nzTitle=" {{ 'unit-of-measure' | translate }}">
                   <nz-table [nzData]="data.itemUnitOfMeasures" nzSize="middle" [nzShowPagination]="false">
                     <thead>
-                      <th>{{'unit-of-measure' | translate}}</th>
-                      <th>{{'quantity' | translate}}</th>
-                      <th>{{'weight' | translate}}</th>
-                      <th>{{'length' | translate}}</th>
-                      <th>{{'width' | translate}}</th>
-                      <th>{{'height' | translate}}</th>
-                      <th>{{'action' | translate}}</th>
+                      <th>{{ 'unit-of-measure' | translate }}</th>
+                      <th>{{ 'quantity' | translate }}</th>
+                      <th>{{ 'weight' | translate }}</th>
+                      <th>{{ 'length' | translate }}</th>
+                      <th>{{ 'width' | translate }}</th>
+                      <th>{{ 'height' | translate }}</th>
+                      <th>{{ 'action' | translate }}</th>
                     </thead>
       <tbody>
         <tr *ngFor="let itemUnitOfMeasure of data.itemUnitOfMeasures">
@@ -295,14 +295,11 @@
       </tbody>
     </nz-table>
     </nz-tab>
-
     </nz-tabset>
-
     </td>
     </tr>
     </ng-container>
     </tbody>
-
     </nz-table>
 
     <div nz-row nzType="flex" nzJustify="start" style="padding: 10px;">
@@ -317,58 +314,55 @@
 <div class="small-card" *ngIf="stepIndex === 2">
   <nz-card>
     <nz-descriptions nzBordered="true">
-      <nz-descriptions-item nzTitle="{{ 'name' | translate}}">{{currentItem.name}}
+      <nz-descriptions-item nzTitle="{{ 'name' | translate }}">{{ currentItem.name }} </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description' | translate }}">{{ currentItem.description }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'description' | translate}}">{{currentItem.description}}
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'item-family' | translate}}">{{currentItem.itemFamily?.name}}
+      <nz-descriptions-item nzTitle="{{ 'item-family' | translate }}">{{ currentItem.itemFamily?.name }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'trackingVolumeFlag' | translate }}">
-        {{currentItem.trackingVolumeFlag + '' | translate }}
+        {{ currentItem.trackingVolumeFlag + '' | translate }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'trackingLotNumberFlag' | translate }}">
-        {{currentItem.trackingLotNumberFlag + '' | translate }}
+        {{ currentItem.trackingLotNumberFlag + '' | translate }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'allowCartonization' | translate }}">
-        {{currentItem.allowCartonization + '' | translate }}
+        {{ currentItem.allowCartonization + '' | translate }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'trackingManufactureDateFlag' | translate }}">
-        {{currentItem.trackingManufactureDateFlag + '' | translate }}
+        {{ currentItem.trackingManufactureDateFlag + '' | translate }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'shelfLifeDays' | translate }}">{{currentItem.shelfLifeDays}}
+      <nz-descriptions-item nzTitle="{{ 'shelfLifeDays' | translate }}">{{ currentItem.shelfLifeDays }}
       </nz-descriptions-item>
 
       <nz-descriptions-item nzTitle="{{ 'trackingExpirationDateFlag' | translate }}">
-        {{currentItem.trackingExpirationDateFlag + '' | translate }}
+        {{ currentItem.trackingExpirationDateFlag + '' | translate }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'allowAllocationByLPN' | translate }}">
-        {{currentItem.allowAllocationByLPN + '' | translate }}
+        {{ currentItem.allowAllocationByLPN + '' | translate }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'allocationRoundUpStrategyType' | translate }}"><span
           *ngIf="currentItem.allocationRoundUpStrategyType != null">
-          {{ 'ALLOCATION-ROUND-UP-STRATEGY-TYPE-' + currentItem.allocationRoundUpStrategyType | translate}}
+          {{ 'ALLOCATION-ROUND-UP-STRATEGY-TYPE-' + currentItem.allocationRoundUpStrategyType | translate }}
         </span>
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'allocationRoundUpStrategyValue' | translate }}">
-        {{currentItem.allocationRoundUpStrategyValue}}
+        {{ currentItem.allocationRoundUpStrategyValue }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'unit-cost' | translate }}">{{currentItem.unitCost}}
-      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'unit-cost' | translate }}">{{ currentItem.unitCost }} </nz-descriptions-item>
     </nz-descriptions>
   </nz-card>
   <nz-card>
-
     <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
       <nz-tab *ngFor="let itemPackageType of currentItem.itemPackageTypes" [nzTitle]="itemPackageType.name">
         <nz-table #innerTable [nzData]="itemPackageType.itemUnitOfMeasures" nzSize="middle" [nzShowPagination]="false">
           <thead>
             <tr>
-              <th>{{'unit-of-measure' | translate}}</th>
-              <th>{{'quantity' | translate}}</th>
-              <th>{{'weight' | translate}}</th>
-              <th>{{'length' | translate}}</th>
-              <th>{{'width' | translate}}</th>
-              <th>{{'height' | translate}}</th>
+              <th>{{ 'unit-of-measure' | translate }}</th>
+              <th nzShowSort="true">{{ 'quantity' | translate }}</th>
+              <th>{{ 'weight' | translate }}</th>
+              <th>{{ 'length' | translate }}</th>
+              <th>{{ 'width' | translate }}</th>
+              <th>{{ 'height' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -384,9 +378,7 @@
         </nz-table>
       </nz-tab>
     </nz-tabset>
-
   </nz-card>
-
 </div>
 
 <div class="steps-action">
@@ -403,12 +395,9 @@
   </button>
 </div>
 
-
-
-
 <!-- Modal for adding item unit of measure -->
 <ng-template #tplItemUOMModalTitle>
-  <span>{{ 'unit-of-measure' | translate}}</span>
+  <span>{{ 'unit-of-measure' | translate }}</span>
 </ng-template>
 
 <ng-template #tplItemUOMModalContent>
@@ -435,16 +424,14 @@
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <nz-input-group nzSize="large">
               <nz-select formControlName="unitOfMeasure" name="unitOfMeasure" style="width: 100px;">
-                <nz-option *ngFor="let unitOfMeasure of availableUnitOfMeasures" [nzLabel]="unitOfMeasure.description"
-                  [nzValue]="unitOfMeasure.name">
+                <nz-option *ngFor="let unitOfMeasure of availableUnitOfMeasuresForAdding"
+                  [nzLabel]="unitOfMeasure.description" [nzValue]="unitOfMeasure.name">
                 </nz-option>
-
               </nz-select>
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>
       </div>
-
     </div>
 
     <div nz-row [nzGutter]="24">
@@ -453,10 +440,23 @@
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="quantity">
             {{ 'quantity' | translate }}
           </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24">
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback [nzErrorTip]="itemUOMQuantityErrorTpl">
             <nz-input-group nzSize="large">
               <nz-input-number [nzMin]="1" [nzStep]="1" formControlName="quantity" name="quantity"></nz-input-number>
             </nz-input-group>
+
+            <ng-template #itemUOMQuantityErrorTpl let-control>
+              <div
+                *ngIf="itemUOMQuantityControl.invalid && (itemUOMQuantityControl.dirty || itemUOMQuantityControl.touched)">
+                <ng-container *ngIf="itemUOMQuantityControl.errors.errorCode">
+                  {{'ERROR-NEW-ITEM-UOM-QUANTITY-' + itemUOMQuantityControl.errors.errorCode | translate}}
+                </ng-container>
+
+                <ng-container *ngIf="control.hasError('required')">{{ 'error.form.field.required' | translate }}
+                </ng-container>
+              </div>
+            </ng-template>
+
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -475,8 +475,6 @@
     </div>
 
     <div nz-row [nzGutter]="24">
-
-
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="length">
@@ -513,8 +511,14 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-
-
     </div>
   </form>
+</ng-template>
+
+<ng-template #tplItemUOMModalFooter>
+  <button nz-button nzType="default" (click)="closeItemUOMModal()"
+    [nzLoading]="creatingItemUOMInProcess">{{ 'cancel' | translate}}</button>
+  <button nz-button nzType="primary" (click)="confirmItemUOM()"
+    [nzLoading]="creatingItemUOMInProcess">{{ 'confirm' | translate}}</button>
+
 </ng-template>

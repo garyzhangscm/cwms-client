@@ -8,6 +8,7 @@ import { WarehouseLayoutWarehouseMaintenanceConfirmComponent } from './warehouse
 import { WarehouseLayoutLocationGroupMaintenanceComponent } from './location-group-maintenance/location-group-maintenance.component';
 import { WarehouseLayoutLocationGroupMaintenanceConfirmComponent } from './location-group-maintenance-confirm/location-group-maintenance-confirm.component';
 import { WarehouseLayoutWarehouseLocationComponent } from './warehouse-location/warehouse-location.component';
+import { WarehouseLayoutLocationQueryPopupComponent } from './location-query-popup/location-query-popup.component';
 
 const COMPONENTS = [
   WarehouseLayoutWarehouseComponent,
@@ -16,7 +17,8 @@ const COMPONENTS = [
   WarehouseLayoutWarehouseMaintenanceConfirmComponent,
   WarehouseLayoutLocationGroupMaintenanceComponent,
   WarehouseLayoutLocationGroupMaintenanceConfirmComponent,
-  WarehouseLayoutWarehouseLocationComponent];
+  WarehouseLayoutWarehouseLocationComponent,
+  WarehouseLayoutLocationQueryPopupComponent];
 const COMPONENTS_NOROUNT = [];
 
 @NgModule({

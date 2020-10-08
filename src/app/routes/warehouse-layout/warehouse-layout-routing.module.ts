@@ -7,6 +7,7 @@ import { WarehouseLayoutWarehouseMaintenanceConfirmComponent } from './warehouse
 import { WarehouseLayoutLocationGroupMaintenanceComponent } from './location-group-maintenance/location-group-maintenance.component';
 import { WarehouseLayoutLocationGroupMaintenanceConfirmComponent } from './location-group-maintenance-confirm/location-group-maintenance-confirm.component';
 import { WarehouseLayoutWarehouseLocationComponent } from './warehouse-location/warehouse-location.component';
+import { WarehouseLayoutLocationQueryPopupComponent } from './location-query-popup/location-query-popup.component';
 
 const routes: Routes = [
   { path: 'warehouse', component: WarehouseLayoutWarehouseComponent },
@@ -25,6 +26,7 @@ const routes: Routes = [
     component: WarehouseLayoutLocationGroupMaintenanceConfirmComponent,
   },
   { path: 'warehouse-location', component: WarehouseLayoutWarehouseLocationComponent },
+  { path: 'location-query-popup', component: WarehouseLayoutLocationQueryPopupComponent },
 ];
 
 @NgModule({

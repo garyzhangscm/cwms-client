@@ -32,6 +32,7 @@ const routes: Routes = [
       { path: 'work-order', loadChildren: './work-order/work-order.module#WorkOrderModule' },
       { path: 'integration', loadChildren: './integration/integration.module#IntegrationModule' },
       { path: 'common', loadChildren: './common/common.module#CommonModule' },
+      { path: 'work-task', loadChildren: './work-task/work-task.module#WorkTaskModule' },
       { path: 'util', loadChildren: './util/util.module#UtilModule' },
       { path: 'exception', loadChildren: () => import('./exception/exception.module').then(m => m.ExceptionModule) },
       // 业务子模块

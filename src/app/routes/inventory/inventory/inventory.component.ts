@@ -369,7 +369,7 @@ export class InventoryInventoryComponent implements OnInit {
       quantity: new FormControl({ value: inventory.quantity, disabled: true }),
       locationName: new FormControl({ value: inventory.location.name, disabled: true }),
       destinationLocation: [null],
-      immediateMove: [null],
+      immediateMove: [false],
     });
 
     // Load the location

@@ -4,6 +4,7 @@ export interface Warehouse {
   id: number;
   name: string;
   size: string;
+  companyId: number;
 
   addressLine1: string;
   addressLine2?: string;

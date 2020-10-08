@@ -12,9 +12,9 @@ export class WorkingTeamService {
   constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
   getWorkingTeams(name?: string, enabled?: boolean): Observable<WorkingTeam[]> {
-    let url = `resource/working-teams`;
+    let url = `resource/working-teams?companyId=${this.warehouseService.getCurrentWarehouse().companyId}`;
     if (name) {
-      url = `${url}?name=${name}`;
+      url = `${url}&name=${name}`;
     }
 
     return this.http.get(url).pipe(map(res => res.data));

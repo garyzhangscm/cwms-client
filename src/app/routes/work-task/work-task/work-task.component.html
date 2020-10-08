@@ -1,0 +1,294 @@
+<page-header [title]="'page.work-task.title' | translate"> </page-header>
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="6">
+      <nz-form-item nzFlex>
+        <nz-form-label for="number" [nzSm]="6" [nzXs]="6">
+          {{ 'work-task.number' | translate }}
+        </nz-form-label>
+        <input nz-input name="number" id="number" formControlName="number" />
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="6">
+      <nz-form-item nzFlex>
+        <nz-form-label for="type" [nzSm]="6" [nzXs]="6">
+          {{ 'work-task.type' | translate }}
+        </nz-form-label>
+        <nz-select formControlName="type">
+          <nz-option *ngFor="let workType of workTypes | keys" [nzValue]="workType.key"
+            nzLabel="{{ 'WORK-TASK-TYPE-' + workType.key | translate }}"></nz-option>
+        </nz-select>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="6">
+      <nz-form-item nzFlex>
+        <nz-form-label for="status" [nzSm]="6" [nzXs]="6">
+          {{ 'work-task.status' | translate }}
+        </nz-form-label>
+        <nz-select formControlName="status">
+          <nz-option *ngFor="let workStatus of workStatuses | keys" [nzValue]="workStatus.key"
+            nzLabel="{{ 'WORK-TASK-STATUS-' + workStatus.key | translate }}"></nz-option>
+        </nz-select>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="6">
+      <nz-form-item nzFlex>
+        <nz-form-label for="lpn" [nzSm]="6" [nzXs]="6">
+          {{ 'lpn' | translate }}
+        </nz-form-label>
+        <input nz-input name="lpn" id="lpn" formControlName="lpn" />
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row [nzGutter]="24">
+
+
+    <div nz-col [nzSpan]="6">
+      <nz-form-item nzFlex>
+        <nz-form-label for="sourceLocation" [nzSm]="6" [nzXs]="6">
+          {{ 'sourceLocation' | translate }}
+        </nz-form-label>
+        <input nz-input name="sourceLocation" id="sourceLocation" formControlName="sourceLocation" />
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="6">
+      <nz-form-item nzFlex>
+        <nz-form-label for="destinationLocation" [nzSm]="6" [nzXs]="6">
+          {{ 'destinationLocation' | translate }}
+        </nz-form-label>
+        <input nz-input name="destinationLocation" id="destinationLocation" formControlName="destinationLocation" />
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="6">
+      <nz-form-item nzFlex>
+        <nz-form-label for="assignedUser" [nzSm]="6" [nzXs]="6">
+          {{ 'assignedUser' | translate }}
+        </nz-form-label>
+        <input nz-input name="assignedUser" id="assignedUser" formControlName="assignedUser" />
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="6">
+      <nz-form-item nzFlex>
+        <nz-form-label for="assignedRole" [nzSm]="6" [nzXs]="6">
+          {{ 'assignedRole' | translate }}
+        </nz-form-label>
+        <input nz-input name="assignedRole" id="assignedRole" formControlName="assignedRole" />
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row [nzGutter]="24">
+
+    <div nz-col [nzSpan]="6">
+      <nz-form-item nzFlex>
+        <nz-form-label for="assignedWorkingTeam" [nzSm]="6" [nzXs]="6">
+          {{ 'assignedWorkingTeam' | translate }}
+        </nz-form-label>
+        <input nz-input name="assignedWorkingTeam" id="assignedWorkingTeam" formControlName="assignedWorkingTeam" />
+      </nz-form-item>
+    </div>
+
+
+    <div nz-col [nzSpan]="6">
+      <nz-form-item nzFlex>
+        <nz-form-label for="currentUser" [nzSm]="6" [nzXs]="6">
+          {{ 'currentUser' | translate }}
+        </nz-form-label>
+        <input nz-input name="currentUser" id="currentUser" formControlName="currentUser" />
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="6">
+      <nz-form-item nzFlex>
+        <nz-form-label for="completeUser" [nzSm]="6" [nzXs]="6">
+          {{ 'completeUser' | translate }}
+        </nz-form-label>
+        <input nz-input name="completeUser" id="completeUser" formControlName="completeUser" />
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        {{ 'search' | translate }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllWorkTasks"
+    (nzCurrentPageDataChange)="currentPageDataChange($event)" [nzFooter]="tableFoot" nzTableLayout="true">
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="checkAll($event)"></th>
+        <th nzShowSort nzSortKey="number">
+          {{ 'work-task.number' | translate }}
+        </th>
+        <th>
+          {{'work-task.type' | translate}}</th>
+        <th nzShowSort nzSortKey="aisle">
+          {{ 'work-task.status' | translate }}
+        </th>
+        <th>
+          {{ 'sourceLocation' | translate }}
+        </th>
+        <th>
+          {{ 'destinationLocation' | translate }}
+        </th>
+        <th>
+          {{ 'lpn' | translate }}
+        </th>
+        <th>
+          {{ 'assignedUser' | translate }}
+        </th>
+        <th>
+          {{ 'assignedRole' | translate }}
+        </th>
+        <th>
+          {{ 'assignedWorkingTeam' | translate }}
+        </th>
+        <th>
+          {{ 'currentUser' | translate }}
+        </th>
+        <th>
+          {{ 'completeUser' | translate }}
+        </th>
+        <th>
+          {{ 'startTime' | translate }}
+        </th>
+        <th>
+          {{ 'completeTime' | translate }}
+        </th>
+        <th nzWidth="62px">
+          {{ 'action' | translate }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data">
+        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
+
+        <td>{{ data.number }}</td>
+        <td>{{ 'WORK-TASK-TYPE-' + data.workType | translate }}</td>
+        <td>{{ 'WORK-TASK-STATUS-' + data.workStatus | translate }}</td>
+        <td>{{ data.sourceLocation?.name }}</td>
+        <td>{{ data.destinationLocation?.name }}</td>
+        <td>{{ data.inventory?.lpn }}</td>
+        <td>{{ data.assignedUser?.username }}</td>
+        <td>{{ data.assignedRole?.username }}</td>
+        <td>{{ data.assignedWorkingTeam?.username }}</td>
+        <td>{{ data.currentUser?.username }}</td>
+        <td>{{ data.completeUser?.username }}</td>
+        <td>
+          <span *ngIf="data.startTime !== null">
+            {{ data.startTime[1] }}/{{ data.startTime[2] }}/{{ data.startTime[0] }} {{ data.startTime[3] }}:{{
+                      data.startTime[4]
+                    }}:{{ data.startTime[5] }}
+          </span>
+        </td>
+        <td>
+          <span *ngIf="data.completeTime !== null">
+            {{ data.completeTime[1] }}/{{ data.completeTime[2] }}/{{ data.completeTime[0] }} {{ data.completeTime[3] }}:{{
+                      data.completeTime[4]
+                    }}:{{ data.completeTime[5] }}
+          </span></td>
+        <td><button nz-button
+            (click)="openAssignWorkTaskModalForSingleWorkTask(data, tplAssignWorkTaskModalTitle, tplAssignWorkTaskModalContent, tplAssignWorkTaskModalFooter)">
+            {{ 'work-task.assign' | translate }}</button>
+          <nz-divider nzType="vertical"></nz-divider>
+          <button nz-button (click)="deassignWorkTask(data)">
+            {{ 'work-task.de-assign' | translate }}</button>
+        </td>
+
+
+      </tr>
+    </tbody>
+
+  </nz-table>
+
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+    <button nz-button nzType="danger"
+      (click)="openAssignWorkTaskModalForMultipleTasks(tplAssignWorkTaskModalTitle, tplAssignWorkTaskModalContent, tplAssignWorkTaskModalFooter)">
+      {{ 'work-task.assign' | translate }}
+    </button>
+    <nz-divider nzType="vertical"></nz-divider>
+    <button nz-button (click)="deassignMultipleTasks()">
+      {{ 'work-task.de-assign' | translate }}</button>
+  </div>
+</div>
+
+<ng-template #tableFoot>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+
+</ng-template>
+
+
+
+<!-- Modal for assigning work task to user / role / working team -->
+<ng-template #tplAssignWorkTaskModalTitle>
+  <span>{{ 'work-task.assign' | translate}}</span>
+</ng-template>
+<ng-template #tplAssignWorkTaskModalContent>
+  <form nz-form [formGroup]="assignWorkTaskForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="username">
+            {{ 'user.username' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="username" [nzAutocomplete]="usernameList" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="rolename">
+            {{ 'role.name' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="rolename" [nzAutocomplete]="rolenameList" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="workingTeamName">
+            {{ 'working-team.name' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="workingTeamName" [nzAutocomplete]="workingTeamList" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+
+  <nz-autocomplete [nzDataSource]="validUsernames" #usernameList></nz-autocomplete>
+  <nz-autocomplete [nzDataSource]="validRolenames" #rolenameList></nz-autocomplete>
+  <nz-autocomplete [nzDataSource]="validWorkingTeamNames" #workingTeamList></nz-autocomplete>
+</ng-template>
+<ng-template #tplAssignWorkTaskModalFooter>
+  <button nz-button nzType="default" (click)="closeAssignWorkTaskModal()"
+    [nzLoading]="assigningInProcess">{{ 'cancel' | translate}}</button>
+  <button nz-button nzType="primary" (click)="confirmWorkTaskAssignment()"
+    [nzLoading]="assigningInProcess">{{ 'confirm' | translate}}</button>
+</ng-template>

@@ -141,6 +141,7 @@
         <th>{{ 'inventory.locked-for-adjustment' | translate }}</th>
         <th>{{ 'inventory.pick-id' | translate }}</th>
         <th>{{ 'inventory.allocated-by-pick-id' | translate }}</th>
+        <th>{{ 'movement-path' | translate }}</th>
         <th>{{ 'action' | translate }}</th>
       </tr>
     </thead>
@@ -170,26 +171,38 @@
         <td>{{ data.pick?.number }}</td>
         <td>{{ data.allocatedByPick?.number }}</td>
         <td>
-          <button nz-button routerLink="/inventory/inventory-quantity-change" routerLinkActive="active"
-            [queryParams]="{id : data.id, by : 'inventory'}" [disabled]="data.lockedForAdjust === true"
-            [nzLoading]="mapOfInprocessInventoryId[data.id]">
-            {{ 'adjustInventory' | translate }}</button>
-          <nz-divider nzType="vertical"></nz-divider>
+          <ol *ngIf="data.inventoryMovements?.length > 0">
+            <li *ngFor="let movement of data.inventoryMovements">
+              <span>{{ movement.location?.name}}</span>
+            </li>
+          </ol>
+        </td>
+        <td>
+          <button nz-button nz-dropdown [nzDropdownMenu]="actions" [nzLoading]="mapOfInprocessInventoryId[data.id]"
+            *ngIf="data.lockedForAdjust === false">{{ 'action' | translate }}<i nz-icon nzType="down"></i></button>
+          <nz-dropdown-menu #actions="nzDropdownMenu">
+            <ul nz-menu>
+              <li nz-menu-item>
+                <a routerLink="/inventory/inventory-quantity-change" routerLinkActive="active"
+                  [queryParams]="{id : data.id, by : 'inventory'}">
+                  {{ 'adjustInventory' | translate }}</a>
+              </li>
+              <li nz-menu-item>
+                <a routerLink="/inventory/inventory-attribute-change" routerLinkActive="active"
+                  [queryParams]="{id : data.id}">
+                  {{ 'inventory.attributeChange' | translate }}</a>
+              </li>
+              <li nz-menu-item>
+                <a (click)="openMoveInventoryModal(data, tplInventoryMoveModalTitle, tplInventoryMoveModalContent )">
+                  {{ 'moveInventory' | translate }}</a>
+              </li>
+              <li nz-menu-item><a
+                  (click)="openRemoveInventoryModal(data, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
+                  nzType="danger">{{ 'removeInventory' | translate }}</a></li>
+            </ul>
+          </nz-dropdown-menu>
 
-          <button nz-button routerLink="/inventory/inventory-attribute-change" routerLinkActive="active"
-            [queryParams]="{id : data.id}" [disabled]="data.lockedForAdjust === true"
-            [nzLoading]="mapOfInprocessInventoryId[data.id]">
-            {{ 'inventory.attributeChange' | translate }}</button>
-          <nz-divider nzType="vertical"></nz-divider>
-          <button nz-button
-            (click)="openMoveInventoryModal(data, tplInventoryMoveModalTitle, tplInventoryMoveModalContent )"
-            [nzLoading]="mapOfInprocessInventoryId[data.id]" [disabled]="data.lockedForAdjust === true">
-            {{ 'moveInventory' | translate }}</button>
-          <nz-divider nzType="vertical"></nz-divider>
-          <button nz-button
-            (click)="openRemoveInventoryModal(data, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
-            nzType="danger" [nzLoading]="mapOfInprocessInventoryId[data.id]"
-            [disabled]="data.lockedForAdjust === true">{{ 'removeInventory' | translate }}</button>
+
         </td>
         <ng-template #itemPackageTypeDetails>
           <nz-table #itemPackageTypeDetailTable [nzData]="data.itemPackageType.itemUnitOfMeasures" nzSize="middle"

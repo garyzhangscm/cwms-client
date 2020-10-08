@@ -15,9 +15,9 @@ export class RoleService {
   constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
   getRoles(name?: string, enabled?: boolean): Observable<Role[]> {
-    let url = `resource/roles`;
+    let url = `resource/roles?companyId=${this.warehouseService.getCurrentWarehouse().companyId}`;
     if (name) {
-      url = `${url}?name=${name}`;
+      url = `${url}&name=${name}`;
     }
 
     return this.http.get(url).pipe(map(res => res.data));

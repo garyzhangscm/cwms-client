@@ -254,4 +254,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       .changeLocation(location)
       .subscribe(res => this.messageService.success(this.i18n.fanyi('message.action.success')));
   }
+  processLocationQueryResult(selectedLocationName: any) {
+    console.log(`start to query with location name ${selectedLocationName}`);
+  }
 }

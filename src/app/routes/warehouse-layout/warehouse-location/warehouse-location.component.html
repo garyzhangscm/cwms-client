@@ -34,7 +34,13 @@
           {{ 'location' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
-          <input nz-input name="locationName" id="locationName" formControlName="locationName" />
+          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+            <input nz-input name="locationName" id="locationName" formControlName="locationName" />
+          </nz-input-group>
+          <ng-template #suffixIconButton>
+            <app-warehouse-layout-location-query-popup (recordSelected)="processLocationQueryResult($event)">
+            </app-warehouse-layout-location-query-popup>
+          </ng-template>
         </nz-form-control>
       </nz-form-item>
     </div>
