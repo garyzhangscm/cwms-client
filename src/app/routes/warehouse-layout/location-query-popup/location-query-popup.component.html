@@ -61,7 +61,7 @@
   <!-- Table to Display the result  -->
   <div class="search-result-list">
     <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllLocations"
-      (nzCurrentPageDataChange)="currentPageDataChange($event)" nzScroll="{ x: '400px', y: '400px' }">
+      (nzCurrentPageDataChange)="currentPageDataChange($event)" >
       <thead (nzSortChange)="sort($event)" nzSingleSort>
         <tr>
           <th nzWidth="62px"></th>
