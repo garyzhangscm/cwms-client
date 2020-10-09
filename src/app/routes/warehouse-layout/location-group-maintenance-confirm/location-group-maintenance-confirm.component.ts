@@ -4,7 +4,7 @@ import { LocationGroup } from '../models/location-group';
 import { I18NService } from '@core';
 import { Router } from '@angular/router';
 import { LocationGroupService } from '../services/location-group.service';
-import { NzMessageService } from 'ng-zorro-antd';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-warehouse-layout-location-group-maintenance-confirm',

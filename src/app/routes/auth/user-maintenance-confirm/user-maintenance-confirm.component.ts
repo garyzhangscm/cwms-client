@@ -3,7 +3,7 @@ import { _HttpClient, TitleService } from '@delon/theme';
 import { I18NService } from '@core';
 import { UserService } from '../services/user.service';
 import { Router } from '@angular/router';
-import { NzMessageService } from 'ng-zorro-antd';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { User } from '../models/user';
 
 @Component({

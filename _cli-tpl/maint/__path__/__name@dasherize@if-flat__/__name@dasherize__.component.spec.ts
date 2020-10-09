@@ -1,5 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-  import { <%= componentName %> } from './<%= dasherize(name) %>.component';
+  import {  as %= componentName %> } from './<%= dasherize(name) %>.component';
 
   describe('<%= componentName %>', () => {
     let component: <%= componentName %>;
@@ -7,13 +7,13 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
     beforeEach(async(() => {
       TestBed.configureTestingModule({
-        declarations: [ <%= componentName %> ]
+        declarations: [  as %= componentName %> ]
       })
       .compileComponents();
     }));
 
     beforeEach(() => {
-      fixture = TestBed.createComponent(<%= componentName %>);
+      fixture = TestBed.createComponent( as %= componentName %>);
       component = fixture.componentInstance;
       fixture.detectChanges();
     });

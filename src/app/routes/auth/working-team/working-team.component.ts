@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { WorkingTeamService } from '../services/working-team.service';
 import { UserService } from '../services/user.service';
-import { NzMessageService } from 'ng-zorro-antd';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { I18NService } from '@core';
 import { WorkingTeam } from '../models/working-team';
 import { Role } from '../models/role';

@@ -4,7 +4,7 @@ import { WorkingTeam } from '../models/working-team';
 import { I18NService } from '@core';
 import { WorkingTeamService } from '../services/working-team.service';
 import { Router } from '@angular/router';
-import { NzMessageService } from 'ng-zorro-antd';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Component({
   selector: 'app-auth-working-team-maintenance-confirm',

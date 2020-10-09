@@ -4,7 +4,7 @@ import { TestScenarioSuit } from '../models/test-scenario-suit';
 import { TestScenarioSuitService } from '../services/test-scenario-suit.service';
 import { TestScenarioStatus } from '../models/test-scenario-status.enum';
 import { TestScenarioSuitStatus } from '../models/test-scenario-suit-status.enum';
-import { NzMessageService } from 'ng-zorro-antd';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { I18NService } from '@core';
 
 @Component({

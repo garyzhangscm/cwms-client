@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { _HttpClient, TitleService } from '@delon/theme';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
-import { NzMessageService } from 'ng-zorro-antd';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { Role } from '../models/role';
 import { RoleService } from '../services/role.service';
 import { ActivatedRoute } from '@angular/router';

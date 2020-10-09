@@ -6,7 +6,7 @@ import { InventoryService } from '../../inventory/services/inventory.service';
 import { Router } from '@angular/router';
 import { RoleService } from '../services/role.service';
 import { Message } from '@angular/compiler/src/i18n/i18n_ast';
-import { NzMessageService } from 'ng-zorro-antd';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 interface MenuTreeNode {
   title: string;

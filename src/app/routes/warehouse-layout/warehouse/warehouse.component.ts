@@ -2,7 +2,7 @@ import { Component, OnInit, TemplateRef, ViewChild, ElementRef } from '@angular/
 import { _HttpClient } from '@delon/theme';
 import { Warehouse } from '../models/warehouse';
 import { WarehouseService } from '../services/warehouse.service';
-import { NzModalService } from 'ng-zorro-antd';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { I18NService } from '@core';
 
 @Component({

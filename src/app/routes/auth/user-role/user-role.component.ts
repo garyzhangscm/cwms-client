@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { _HttpClient, TitleService, MenuService } from '@delon/theme';
-import { TransferItem, NzMessageService } from 'ng-zorro-antd';
+import { TransferItem } from 'ng-zorro-antd/transfer';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { Role } from '../models/role';
 import { MenuGroup } from '../models/menu-group';
 import { ActivatedRoute, Router } from '@angular/router';

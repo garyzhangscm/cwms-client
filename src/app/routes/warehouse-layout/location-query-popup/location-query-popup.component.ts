@@ -3,7 +3,7 @@ import { Component, EventEmitter, OnInit, Output, TemplateRef } from '@angular/c
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { LocationGroup } from '../models/location-group';
 import { LocationGroupType } from '../models/location-group-type';
 import { WarehouseLocation } from '../models/warehouse-location';

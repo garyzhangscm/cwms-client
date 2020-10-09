@@ -8,7 +8,7 @@ import { EmergencyReplenishmentConfigurationService } from '../services/emergenc
 import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
 import { ItemFamilyService } from '../services/item-family.service';
 import { I18NService } from '@core';
-import { NzModalService } from 'ng-zorro-antd';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { InventoryActivity } from '../models/inventory-activity';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { Item } from '../models/item';
