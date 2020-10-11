@@ -1,0 +1,99 @@
+<page-header></page-header>
+
+
+<nz-spin [nzSpinning]="workInProgress" [nzSize]="'large'">
+  <nz-card>
+    <form nz-form [formGroup]="shippingCartonizationQueryForm" class="query-form">
+
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="5">
+          <nz-form-item nzFlex>
+            <nz-form-label>
+              id
+            </nz-form-label>
+            <nz-form-control>
+              <input type="text" #inventoryIdTextBox nz-input formControlName="inventoryId"
+                (blur)="onUserInputInventoryIdBlur()" (keyup.enter)="onUserInputInventoryIdEnter()" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label>
+              {{ 'carton.name' | translate }}
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              <nz-select formControlName="cartonName">
+                <nz-option *ngFor="let shippingCarton of avaiableShippingCartons" [nzLabel]="shippingCarton.name"
+                  [nzValue]="shippingCarton.id">
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="5">
+          <nz-form-item nzFlex>
+            <nz-form-label>
+              {{ 'item' | translate }}
+            </nz-form-label>
+            <nz-form-control>
+              <input type="text" nz-input #itemNameTextBox formControlName="itemName"
+                (keyup.enter)="onUserInputItemNameEvent()" #itemNameTextBox />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+
+    </form>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <!--<button nz-button (click)="onUserInputInventoryIdEvent()">{{'search' | translate}}</button>-->
+        <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
+        <button nz-button (click)="confirm()">{{ 'confirm' | translate }}</button>
+        <button nz-button (click)="complete()" [disabled]="totalProgress === 0">{{ 'complete' | translate }}</button>
+      </div>
+    </div>
+  </nz-card>
+
+
+  <nz-table #rowSelectionTable nzShowSizeChanger [nzTitle]="progressTemplate" [nzData]="listOfPackingItems">
+    <thead>
+      <tr>
+        <th>
+          {{ 'item' | translate }}
+        </th>
+        <th>
+          {{ 'quantity' | translate }}
+        </th>
+        <th>
+          {{ 'shipping-cartonization.packed-quantity' | translate }}
+        </th>
+        <th>
+          {{ 'progress' | translate }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data" [class.active]="data.itemName === lastConfirmedItemName">
+        <td>{{ data.itemName }}</td>
+        <td>{{ data.quantity }}</td>
+        <td>{{ data.packedQuantity }}</td>
+        <td>
+          <nz-progress [nzPercent]="data.progress"></nz-progress>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+
+  <ng-template #progressTemplate>
+
+    <nz-progress [nzPercent]="totalProgress"></nz-progress>
+  </ng-template>
+</nz-spin>

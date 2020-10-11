@@ -1,0 +1,97 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/inventory/inventory" routerLinkActive="active">{{
+    'return' | translate
+  }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.inventory' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/inventory/inventory" routerLinkActive="active">{{
+        'breadcrumb.inventory' | translate
+      }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<ng-container>
+  <nz-card [nzActions]="[actionConfirm]">
+    <nz-descriptions nzBordered>
+      <nz-descriptions-item nzTitle="{{'lpn' | translate}}">
+        {{currentInventory.lpn}}
+      </nz-descriptions-item>
+
+      <nz-descriptions-item nzTitle="{{'location' | translate}}" nzSpan="2">
+        {{currentInventory.location.name}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'item' | translate}}">
+        {{currentInventory.item.name}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'item.description' | translate}}" nzSpan="2">
+        {{currentInventory.item.description}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'item.package-type' | translate}}" nzSpan="3">
+        <nz-card nzTitle="{{currentInventory.itemPackageType.name}}">
+          <nz-table #itemPackageTypeDetailTable [nzData]="currentInventory.itemPackageType.itemUnitOfMeasures"
+            nzSize="middle" [nzShowPagination]="false" nzBordered>
+            <thead>
+              <tr>
+                <th>{{ 'unitOfMeasure' | translate}}</th>
+                <th>{{ 'quantity' | translate }}</th>
+                <th>{{ 'weight' | translate }}</th>
+                <th>{{ 'length' | translate }}</th>
+                <th>{{ 'width' | translate }}</th>
+                <th>{{ 'height' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let itemUnitOfMeasure of itemPackageTypeDetailTable.data">
+                <td>{{ itemUnitOfMeasure.unitOfMeasure.name }}</td>
+                <td>{{ itemUnitOfMeasure.quantity }}</td>
+                <td>{{ itemUnitOfMeasure.weight }}</td>
+                <td>{{ itemUnitOfMeasure.length }}</td>
+                <td>{{ itemUnitOfMeasure.width }}</td>
+                <td>{{ itemUnitOfMeasure.height }}</td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </nz-card>
+
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'inventory.status' | translate}}">
+        {{currentInventory.inventoryStatus.name}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'quantity' | translate}}" nzSpan="2">
+        <span
+          *ngIf='currentInventory !== undefined && currentInventory.quantity === originalInventoryQuantity else quantityChangedTpl'>
+          {{currentInventory.quantity}}
+        </span>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'document-number' | translate}}">
+
+        <input nz-input [(ngModel)]="documentNumber" style="width: 250px;" />
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'comment' | translate}}">
+
+        <input nz-input [(ngModel)]="comment" style="width: 250px;" />
+      </nz-descriptions-item>
+    </nz-descriptions>
+
+    <ng-template #quantityChangedTpl>
+      <span>{{ 'originalValue' | translate}} :
+        {{ originalInventoryQuantity }}</span>
+      <nz-divider nzType="vertical"></nz-divider>
+      <span>{{ 'newValue' | translate}} : {{  currentInventory.quantity }}</span>
+    </ng-template>
+
+
+    <ng-template #actionConfirm>
+      <button nz-button nzType="primary" (click)="confirmInventoryAdjust()">
+        {{ 'steps.confirm.title' | translate }}</button>
+    </ng-template>
+  </nz-card>
+</ng-container>

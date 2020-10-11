@@ -1,0 +1,105 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/work-order/work-order" routerLinkActive="active"
+    [queryParams]="{ number: currentWorkOrder?.number }">{{ 'return' | translate }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/work-order" routerLinkActive="active">{{
+        'breadcrumb.work-order' | translate
+      }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+
+<div nz-row style="padding: 10px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="1" [nzSize]="'small'" (nzIndexChange)="onStepsIndexChange($event)">
+      <nz-step nzTitle="{{ 'steps.work-order-complete.info.title' | translate }}"
+        nzDescription="{{ 'steps.work-order-complete.info.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.work-order-complete.user-kpi.title' | translate }}"
+        nzDescription="{{ 'steps.work-order-complete.user-kpi.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.work-order-complete.confirm.title' | translate }}"
+        nzDescription="{{ 'steps.work-order-complete.confirm.description' | translate }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+
+
+<!-- Table to show users and kpi  -->
+<div class="search-result-list">
+  <nz-table [nzData]="workOrderCompleteTransaction.workOrderKPITransactions" [nzFooter]="KPITableFoot"
+    nzShowPagination="false" #KPITable>
+    <thead>
+      <tr>
+        <th>{{ 'username' | translate }}</th>
+        <th>{{ 'working-team' | translate }}</th>
+        <th>{{ 'amount' | translate }}</th>
+        <th>{{ 'KPIMeasure' | translate }}</th>
+        <th>{{ 'action' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let workOrderKPI of KPITable.data">
+        <td>
+          <nz-input-group nzCompact>
+            <input nz-input [(ngModel)]="workOrderKPI.username" [nzAutocomplete]="usernameList" style="width: 50%;" />
+
+          </nz-input-group>
+
+        </td>
+        <td>
+          <nz-input-group nzCompact>
+            <input nz-input [(ngModel)]="workOrderKPI.workingTeamName" [nzAutocomplete]="workingTeamList"
+              style="width: 50%;" />
+
+          </nz-input-group>
+
+        </td>
+        <td>
+          <nz-input-group nzCompact>
+            <input nz-input [(ngModel)]="workOrderKPI.amount" style="width: 20%;" />
+          </nz-input-group>
+        </td>
+        <td>
+
+          <nz-input-group nzCompact>
+            <nz-select [(ngModel)]="workOrderKPI.kpiMeasurement" style="width: 75%;">
+              <nz-option *ngFor="let kpiMeasurement of kpiMeasurements | keys" [nzValue]="kpiMeasurement.key"
+                nzLabel="{{ 'KPI-MEASUREMENT-' + kpiMeasurement.key | translate }}"></nz-option>
+            </nz-select>
+          </nz-input-group>
+
+        </td>
+        <td>
+          <button nz-button nzType="danger" (click)="removeKPI(workOrderKPI)">
+            {{ 'remove' | translate }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <nz-autocomplete [nzDataSource]="validUsernames" #usernameList></nz-autocomplete>
+  <nz-autocomplete [nzDataSource]="validWorkingTeamNames" #workingTeamList></nz-autocomplete>
+</div>
+
+<ng-template #KPITableFoot>
+  <div nz-row nzType="flex" nzJustify="start">
+    <button nz-button nzType="primary" (click)="addExtraKPI()">
+      {{ 'add' | translate }}
+    </button>
+    <button nz-button nzType="primary" routerLink="/work-order/work-order/produce/confirm" routerLinkActive="active"
+      [queryParams]="{ id: currentWorkOrder?.id }" (click)="saveCurrentWorkOrderResults()">
+      {{ 'steps.work-order-complete.confirm.title' | translate }}
+    </button>
+  </div>
+</ng-template>

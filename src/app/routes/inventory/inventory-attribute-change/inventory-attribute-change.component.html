@@ -1,0 +1,100 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/inventory/inventory" routerLinkActive="active">{{
+    'return' | translate
+  }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/inventory/inventory" routerLinkActive="active">{{
+        'breadcrumb.inventory' | translate
+      }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<ng-container>
+  <nz-card [nzActions]="[actionConfirm]">
+    <nz-descriptions nzBordered>
+
+      <nz-descriptions-item nzTitle="{{'lpn' | translate}}">
+        {{currentInventory?.lpn}}
+      </nz-descriptions-item>
+
+      <nz-descriptions-item nzTitle="{{'location' | translate}}" nzSpan="2">
+        {{currentInventory?.location.name}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'item' | translate}}">
+        {{currentInventory?.item.name}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'item.description' | translate}}" nzSpan="2">
+        {{currentInventory?.item.description}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'item.package-type' | translate}}" nzSpan="3">
+        <nz-card *ngIf='currentInventory !== undefined' [nzTitle]="inventoryPackageTypes">
+          <nz-table #itemPackageTypeDetailTable [nzData]="currentInventory.itemPackageType.itemUnitOfMeasures"
+            nzSize="middle" [nzShowPagination]="false" nzBordered>
+            <thead>
+              <tr>
+                <th>{{ 'unitOfMeasure' | translate}}</th>
+                <th>{{ 'quantity' | translate }}</th>
+                <th>{{ 'weight' | translate }}</th>
+                <th>{{ 'length' | translate }}</th>
+                <th>{{ 'width' | translate }}</th>
+                <th>{{ 'height' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let itemUnitOfMeasure of itemPackageTypeDetailTable.data">
+                <td>{{ itemUnitOfMeasure.unitOfMeasure.name }}</td>
+                <td>{{ itemUnitOfMeasure.quantity }}</td>
+                <td>{{ itemUnitOfMeasure.weight }}</td>
+                <td>{{ itemUnitOfMeasure.length }}</td>
+                <td>{{ itemUnitOfMeasure.width }}</td>
+                <td>{{ itemUnitOfMeasure.height }}</td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </nz-card>
+
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'inventory.status' | translate}}">
+
+        <nz-select *ngIf='currentInventory !== undefined' nz-input [ngModel]="currentInventory.inventoryStatus.name"
+          (ngModelChange)="inventoryStatusChange($event)" style="width: 250px">
+          <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
+            nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | translate}}" [nzValue]="inventoryStatus.name">
+          </nz-option>
+        </nz-select>
+
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'quantity' | translate}}">
+        {{currentInventory?.quantity}}
+
+      </nz-descriptions-item>
+
+
+      <ng-template #inventoryPackageTypes>
+
+        <nz-select nz-input [ngModel]="currentInventory.itemPackageType.name"
+          (ngModelChange)="itemPackageTypeChange($event)" style="width: 250px">
+          <nz-option *ngFor="let availableItemPackageType of currentInventory.item.itemPackageTypes"
+            [nzLabel]="availableItemPackageType.name" [nzValue]="availableItemPackageType.name">
+          </nz-option>
+        </nz-select>
+      </ng-template>
+    </nz-descriptions>
+  </nz-card>
+</ng-container>
+
+
+<ng-template #actionConfirm>
+  <a nz-button nzType="primary" routerLink="/inventory/inventory-attribute-change/confirm" routerLinkActive="active"
+    (click)="saveCurrentInventory()">
+    {{ 'steps.next' | translate }} :
+    {{ 'steps.confirm.title' | translate }}</a>
+</ng-template>

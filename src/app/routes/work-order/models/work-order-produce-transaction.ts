@@ -1,0 +1,17 @@
+import { BillOfMaterial } from './bill-of-material';
+import { WorkOrder } from './work-order';
+import { WorkOrderByProductProduceTransaction } from './work-order-by-product-produce-transaction';
+import { WorkOrderKpiTransaction } from './work-order-kpi-transaction';
+import { WorkOrderLineConsumeTransaction } from './work-order-line-consume-transaction';
+import { WorkOrderProducedInventory } from './work-order-produced-inventory';
+
+export interface WorkOrderProduceTransaction {
+  id?: number;
+  workOrder?: WorkOrder;
+  workOrderLineConsumeTransactions: WorkOrderLineConsumeTransaction[];
+  workOrderProducedInventories: WorkOrderProducedInventory[];
+  consumeByBomQuantity?: boolean;
+  matchedBillOfMaterial?: BillOfMaterial;
+  workOrderByProductProduceTransactions: WorkOrderByProductProduceTransaction[];
+  workOrderKPITransactions: WorkOrderKpiTransaction[];
+}

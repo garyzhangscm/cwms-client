@@ -7,6 +7,9 @@ import { DA_SERVICE_TOKEN, ITokenService, SocialOpenType, SocialService } from '
 import { SettingsService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { Warehouse } from '../../warehouse-layout/models/warehouse';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Component({
   selector: 'passport-login',
@@ -15,6 +18,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
   providers: [SocialService],
 })
 export class UserLoginComponent implements OnDestroy {
+  singleCompanySystem = true;
+  defaultCompanyCode = '';
+
   constructor(
     fb: FormBuilder,
     private router: Router,
@@ -27,10 +33,16 @@ export class UserLoginComponent implements OnDestroy {
     private startupSrv: StartupService,
     public http: _HttpClient,
     public msg: NzMessageService,
+    private warehouseService: WarehouseService,
+    private companyService: CompanyService,
   ) {
     this.form = fb.group({
-      userName: [null, [Validators.required, Validators.pattern(/^(admin|user)$/)]],
-      password: [null, [Validators.required, Validators.pattern(/^(ng\-alain\.com)$/)]],
+      companyCode: [null, [Validators.required, Validators.minLength(1)]],
+      // userName: [null, [Validators.required, Validators.pattern(/^(admin|user)$/)]],
+      // password: [null, [Validators.required, Validators.pattern(/^(ng\-alain\.com)$/)]],
+      userName: [null, [Validators.required, Validators.minLength(1)]],
+      password: [null, Validators.required],
+      warehouseId: [{ value: '', disabled: true }, Validators.required],
       mobile: [null, [Validators.required, Validators.pattern(/^1\d{10}$/)]],
       captcha: [null, [Validators.required]],
       remember: [true],
@@ -38,7 +50,9 @@ export class UserLoginComponent implements OnDestroy {
   }
 
   // #region fields
-
+  get companyCode(): AbstractControl{
+    return this.form.controls.companyCode;
+  }
   get userName(): AbstractControl {
     return this.form.controls.userName;
   }
@@ -51,6 +65,9 @@ export class UserLoginComponent implements OnDestroy {
   get captcha(): AbstractControl {
     return this.form.controls.captcha;
   }
+  get warehouseId(): AbstractControl{
+    return this.form.controls.warehouseId;
+  }
   form: FormGroup;
   error = '';
   type = 0;
@@ -59,8 +76,20 @@ export class UserLoginComponent implements OnDestroy {
 
   count = 0;
   interval$: any;
+  warehouses: Warehouse[] | undefined;
 
   // #endregion
+  ngOnInit() {
+    this.singleCompanySystem = this.companyService.isSingleCompanyServer();
+    if (this.singleCompanySystem === true) {
+      this.defaultCompanyCode = this.companyService.getDefaultCompanyCode()!;
+      this.form.controls.companyCode.disable();
+    } else {
+      this.defaultCompanyCode = '';
+      this.form.controls.companyCode.enable();
+    }
+    this.form.controls.companyCode.setValue(this.defaultCompanyCode);
+  }
 
   switch({ index }: { index: number }): void {
     this.type = index;
@@ -103,12 +132,16 @@ export class UserLoginComponent implements OnDestroy {
       }
     }
 
+    // dev / aws-dev / etc
+    const loginURL = 'auth/login?_allow_anonymous=true';
+
     // 默认配置中对所有HTTP请求都会强制 [校验](https://ng-alain.com/auth/getting-started) 用户 Token
     // 然一般来说登录请求不需要校验，因此可以在请求URL加上：`/login?_allow_anonymous=true` 表示不触发用户 Token 校验
     this.http
-      .post('/login/account?_allow_anonymous=true', {
+      .post(loginURL, {
         type: this.type,
         userName: this.userName.value,
+        username: this.userName.value,
         password: this.password.value,
       })
       .subscribe((res) => {
@@ -122,7 +155,34 @@ export class UserLoginComponent implements OnDestroy {
         // TODO: Mock expired value
         res.user.expired = +new Date() + 1000 * 60 * 5;
         this.tokenService.set(res.user);
+
+        // get the company information
+        this.companyService.getCompanies(this.companyService.getDefaultCompanyCode()!).subscribe(companiesRes => {
+          if (companiesRes.length === 1) {
+            this.companyService.setCurrentCompany(companiesRes[0]);
+          }
+        });
+
+        this.warehouseService.getWarehouse(this.warehouseId.value).subscribe((warehouse: Warehouse) => {
+          this.warehouseService.setCurrentWarehouse(warehouse);
+          // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
+          this.startupSrv.load().then(() => {
+            /***
+             * 
+            let url = this.tokenService.referrer!.url || '/';
+            if (url.includes('/passport')) {
+              url = '/';
+            }
+            this.router.navigateByUrl(url);
+             * 
+             */
+            this.router.navigateByUrl('/');
+          });
+        });
+
         // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
+        /***
+         * 
         this.startupSrv.load().then(() => {
           let url = this.tokenService.referrer!.url || '/';
           if (url.includes('/passport')) {
@@ -130,6 +190,8 @@ export class UserLoginComponent implements OnDestroy {
           }
           this.router.navigateByUrl(url);
         });
+         * 
+         */
       });
   }
 
@@ -172,6 +234,34 @@ export class UserLoginComponent implements OnDestroy {
       this.socialService.login(url, '/', {
         type: 'href',
       });
+    }
+  }
+  onCompanyCodeBlur(): void{
+    // load the company
+    this.companyService.getCompanies(this.companyCode.value).subscribe(companiesRes => {
+      if (companiesRes.length === 1) {
+        this.companyService.setCurrentCompany(companiesRes[0]);
+      }
+    });
+
+    // Load all valid warehouses in this company, assigned to the user
+    this.loadWarehouses();
+  }
+  loadWarehouses(): void {
+    console.log(`Start to load warehouse ${this.userName.value}`);
+    if (this.userName.value === '' || this.companyCode.value === '') {
+      this.warehouses = [];
+      this.warehouseId.disable();
+    } else {
+      this.warehouseService
+        .getWarehouseByUser(this.companyCode.value, this.userName.value)
+        .subscribe((warehouses: Warehouse[]) => {
+          this.warehouses = warehouses;
+          if (warehouses.length >= 1) {
+            this.warehouseId.setValue(warehouses[0].id);
+          }
+          warehouses.length > 1 ? this.warehouseId.enable() : this.warehouseId.disable();
+        });
     }
   }
 

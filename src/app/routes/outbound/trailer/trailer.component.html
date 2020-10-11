@@ -1,0 +1,112 @@
+<page-header></page-header>
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="number" [nzSm]="3" [nzXs]="3">
+          {{ 'order.number' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="number" id="number" formControlName="number" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()">
+        {{ 'search' | translate }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+
+  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllTrailers" [nzFooter]="tableFoot" #rowSelectionTable>
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="checkAll($event)"></th>
+
+        <th nzShowSort nzSortKey="id">id</th>
+        <th nzShowSort nzSortKey="number">
+          {{ 'trailer.number' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="status">
+          {{ 'trailer.status' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="carrier">
+          {{ 'carrier' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="carrierServiceLevel">
+          {{ 'carrier.serviceLevel' | translate }}
+        </th>
+        <th>
+          {{ 'trailer.driverFirstName' | translate }}
+        </th>
+        <th>
+          {{ 'trailer.driverLastName' | translate }}
+        </th>
+        <th>
+          {{ 'trailer.licensePlateNumber' | translate }}
+        </th>
+        <th>
+          {{ 'trailer.size' | translate }}
+        </th>
+        <th>
+          {{ 'trailer.type' | translate }}
+        </th>
+        <th>
+          {{ 'trailer.location' | translate }}
+        </th>
+        <th>
+          {{ 'action' | translate }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data">
+        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
+
+
+        <td>{{ data.id }}</td>
+        <td>{{ data.number }}</td>
+        <td>{{ data.status }}</td>
+        <td>{{ data.carrier?.name }}</td>
+        <td>{{ data.carrierServiceLevel?.name }}</td>
+
+        <td>{{ data.driverFirstName }}</td>
+        <td>{{ data.driverLastName }}</td>
+        <td>{{ data.driverPhone }}</td>
+        <td>{{ data.licensePlateNumber }}</td>
+        <td>{{ data.size }}</td>
+        <td>{{ data.type }}</td>
+        <td>{{ data.location?.name }}</td>
+        <td>
+
+          <button nz-button (click)="checkInTrailer(data)">
+            {{ 'trailer.checkin' | translate }}
+          </button>
+          <nz-divider nzType="vertical"></nz-divider>
+          <button nz-button nzType="primary" (click)="dispatchTrailer(data)">
+            {{ 'trailer.dispatch' | translate }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start">
+    <button nz-button nzType="danger" (click)="cancelSelectedTrailers()">
+      {{ 'cancel' | translate }}
+    </button>
+  </div>
+</ng-template>

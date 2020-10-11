@@ -1,0 +1,171 @@
+<page-header></page-header>
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="name" [nzSm]="3" [nzXs]="3">
+          {{ 'role.name' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="name" id="name" formControlName="name" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        {{ 'search' | translate }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllRoles" [nzFooter]="tableFoot">
+    <thead>
+      <tr>
+        <th nzWidth="60px"></th>
+        <th
+        *ngFor="let column of listOfColumns"
+        [nzSortOrder]="column.sortOrder"
+        [nzSortFn]="column.sortFn"
+        [nzSortDirections]="column.sortDirections"
+        [nzFilterMultiple]="column.filterMultiple"
+        [nzFilters]="column.listOfFilter"
+        [nzFilterFn]="column.filterFn"
+      >
+        {{ column.name | translate }}
+      </th> 
+      
+      
+
+        <th>{{ 'action' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-template ngFor let-data [ngForOf]="nestedTable.data">
+        <tr>
+          <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td> 
+          <td>
+            {{ data.name }}</td>
+          <td>{{ data.description }}</td>
+          <td>{{ data.enabled + '' | translate }}</td>
+          <td>
+            <a nz-button routerLink="/auth/role-menu" routerLinkActive="active"
+              [queryParams]="{roleId : data.id}">{{ 'assign-menu' | translate }}</a>
+            <nz-divider nzType="vertical"></nz-divider>
+            <a nz-button routerLink="/auth/role-user" routerLinkActive="active"
+              [queryParams]="{roleId : data.id}">{{ 'assign-user' | translate }}</a>
+            <nz-divider nzType="vertical"></nz-divider>
+            <button nz-button nzType="danger" *ngIf="data.enabled === true"
+              (click)="disableRole(data.id)">{{ 'disable' | translate }}</button>
+            <button nz-button nzType="primary" *ngIf="data.enabled === false"
+              (click)="enableRole(data.id)">{{ 'enable' | translate }}</button>
+          </td>
+        </tr>
+        <tr [nzExpand]="expandSet.has(data.id)">
+          <td></td>
+          <td colspan="4">
+            <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" [nzSelectedIndex]="tabIndex">
+              <nz-tab nzTitle="{{'menu.main.auth.user' | translate}}">
+                <nz-table #userTable [nzData]="data.users" nzSize="middle" [nzShowPagination]="false">
+                  <thead>
+                    <tr>
+                      
+                      <th
+                      *ngFor="let column of listOfSubTableColumns"
+                      [nzSortOrder]="column.sortOrder"
+                      [nzSortFn]="column.sortFn"
+                      [nzSortDirections]="column.sortDirections"
+                      [nzFilterMultiple]="column.filterMultiple"
+                      [nzFilters]="column.listOfFilter"
+                      [nzFilterFn]="column.filterFn"
+                    >
+                      {{ column.name | translate }}
+                    </th> 
+ 
+                      <th>{{ 'action' | translate }}</th>
+                    </tr>
+                  </thead>
+    <tbody>
+      <tr *ngFor="let user of userTable.data">
+        <td>
+          {{ user.username }}</td>
+        <td>{{ user.firstname }}</td>
+        <td>{{ user.lastname }}</td>
+        <td>{{ user.email }} </td>
+        <td>{{ user.enabled + '' | translate }}</td>
+        <td>{{ user.locked  + '' | translate}}</td>
+        <td>
+          <button nz-button (click)="deassignUser(data.id, user.id)">{{ 'role.unassign-user' | translate }}</button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  </nz-tab>
+  <nz-tab nzTitle="{{'menu.main.auth.menu' | translate}}">
+    <nz-table #menuTable [nzData]="data.menus" nzSize="middle" [nzShowPagination]="true">
+      <thead>
+        <tr>
+          <th nzShowSort nzSortKey="menuGroup">
+            {{ 'menuGroup' | translate }}
+          </th>
+          <th nzShowSort nzSortKey="menuSubGroup">
+            {{ 'menuSubGroup' | translate }}
+          </th>
+          <th nzShowSort nzSortKey="name">
+            {{ 'name' | translate }}
+          </th>
+          <th nzShowSort nzSortKey="sequence">
+            {{ 'sequence' | translate }}
+          </th>
+          <th nzShowSort nzSortKey="i18n">
+            {{ 'menu.i18n' | translate }}
+          </th>
+          <th nzShowSort nzSortKey="link">
+            {{ 'link' | translate }}
+          </th>
+          <th>{{ 'action' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let menu of menuTable.data">
+          <td>
+            {{ menu.menuGroup }}</td>
+          <td>{{ menu.menuSubGroup }}</td>
+          <td>{{ menu.i18n | translate }}</td>
+          <td>{{ menu.sequence }} </td>
+          <td>{{ menu.i18n }}</td>
+          <td>{{ menu.link }}</td>
+          <td>
+            <button nz-button (click)="deassignMenu(data.id, menu.id)">{{ 'role.unassign-menu' | translate }}</button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+  </nz-tabset>
+
+
+  </td>
+  </tr>
+  </ng-template>
+  </tbody>
+  </nz-table>
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+    <a nz-button routerLink="/auth/role/maintenance" routerLinkActive="active">{{ 'new' | translate }}</a>
+  </div>
+</div>
+
+<ng-template #tableFoot>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>

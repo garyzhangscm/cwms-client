@@ -1,0 +1,129 @@
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="integrationDateTimeRanger">
+          {{ 'integration.date-time' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-range-picker [nzShowTime]="{ nzHideDisabledOptions: true }" nzFormat="yyyy-MM-dd HH:mm:ss"
+            formControlName="integrationDateTimeRanger" name="integrationDateTimeRanger">
+          </nz-range-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="integrationDate">
+          {{ 'integration.date' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-date-picker formControlName="integrationDate" name="integrationDate"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        {{ 'search' | translate }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
+      <a class="collapse" (click)="toggleCollapse()">
+        {{ 'collapse' | translate }}
+
+        <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
+      </a>
+    </div>
+  </div>
+</form>
+
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination
+    [nzData]="listOfAllIntegrationInventoryAdjustmentConfirmations" [nzFooter]="tableFoot">
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th nzShowSort nzSortKey="id">id</th>
+        <th nzShowSort nzSortKey="warehouseId">
+          {{ 'warehouse.id' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="warehouseName">
+          {{ 'warehouse.name' | translate }}
+        </th>
+        <th>
+          {{ 'client.id' | translate }}
+        </th>
+        <th>
+          {{ 'client.name' | translate }}
+        </th>
+        <th>
+          {{ 'item.id' | translate }}
+        </th>
+        <th>
+          {{ 'item.name' | translate }}
+        </th>
+        <th>
+          {{ 'inventory-status.id' | translate }}
+        </th>
+        <th>
+          {{ 'inventory-status.name' | translate }}
+        </th>
+
+        <th>
+          {{ 'adjustQuantity' | translate }}
+        </th>
+        <th>
+          {{ 'integration.status' | translate }}
+        </th>
+        <th>
+          {{ 'integration.insertTime' | translate }}
+        </th>
+        <th>
+          {{ 'integration.lastUpdateTime' | translate }}
+        </th>
+        <th>
+          {{ 'integration.errorMessage' | translate }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data">
+        <td>{{ data.id }}</td>
+        <td>{{ data.warehouseId }}</td>
+        <td>{{ data.warehouseName }}</td>
+        <td>{{ data.clientId }}</td>
+        <td>{{ data.clientName }}</td>
+        <td>{{ data.itemId }}</td>
+        <td>{{ data.itemName }}</td>
+        <td>{{ data.inventoryStatusId }}</td>
+        <td>{{ data.inventoryStatusName }}</td>
+        <td>{{ data.adjustQuantity }}</td>
+
+        <td>{{ data.status }}</td>
+        <td>
+          {{ data.insertTime[1] }}/{{ data.insertTime[2] }}/{{ data.insertTime[0] }} {{ data.insertTime[3] }}:{{
+                  data.insertTime[4]
+                }}:{{ data.insertTime[5] }}
+        </td>
+        <td>
+          {{ data.lastUpdateTime[1] }}/{{ data.lastUpdateTime[2] }}/{{ data.lastUpdateTime[0] }}
+          {{ data.lastUpdateTime[3] }}:{{ data.lastUpdateTime[4] }}:{{ data.lastUpdateTime[5] }}
+        </td>
+        <td>{{ data.errorMessage }}</td>
+
+
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>

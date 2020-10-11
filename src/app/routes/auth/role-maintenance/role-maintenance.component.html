@@ -1,0 +1,79 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/auth/role" routerLinkActive="active">{{
+    'return' | translate
+  }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.auth' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/auth/role" routerLinkActive="active">{{
+        'breadcrumb.role' | translate
+      }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<div nz-row style="padding: 50px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="0" [nzSize]="'default'">
+      <nz-step nzTitle="{{ 'steps.basic-info.title' | translate }}"
+        nzDescription="{{ 'steps.role.basic-info.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.role.assign-users.title' | translate }}"
+        nzDescription="{{ 'steps.role.assign-users.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.role.assign-menus.title' | translate }}"
+        nzDescription="{{ 'steps.role.assign-menus.description' | translate }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.confirm.title' | translate }}"
+        nzDescription="{{ 'steps.confirm.description' | translate }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+
+<nz-card [nzActions]="[cardFoot]">
+  <form nz-form>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name">
+            {{ 'role.name' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <input nz-input [(ngModel)]="currentRole.name" id="name" name="name" required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="16">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="description">
+            {{ 'role.description' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <input nz-input [(ngModel)]="currentRole.description" id="description" name="description" required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+  </form>
+
+</nz-card>
+
+<ng-template #cardFoot>
+  <div nz-row nzType="flex" nzJustify="center" style='padding-left: 20px;'>
+    <button nz-button nzType="primary" (click)="goToNextPage()">
+      {{ 'steps.next' | translate }} :
+      {{ 'steps.role.assign-users.title' | translate }}
+    </button>
+  </div>
+</ng-template>

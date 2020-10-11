@@ -1,0 +1,90 @@
+<page-header [title]="'page.production-line.header.title' | translate"> </page-header>
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="location_group_type" [nzSm]="3" [nzXs]="3">
+          {{ 'location-group-type' | translate }}
+        </nz-form-label>
+        <nz-select nzMode="tags" formControlName="taggedProductionLine" [(ngModel)]="selectedProductionLine">
+          <nz-option *ngFor="let productionLine of availableProductionLines" [nzLabel]="productionLine.label"
+            [nzValue]="productionLine.value"></nz-option>
+        </nz-select>
+      </nz-form-item>
+    </div>
+
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        {{ 'search' | translate }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllProductionLine"
+    [nzFooter]="tableFoot">
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="checkAll($event)"></th>
+        <th nzShowSort nzSortKey="id">id</th>
+        <th nzShowSort nzSortKey="name">
+          {{ 'production-line.name' | translate }}
+        </th>
+        <th>
+          {{ 'production-line.location' | translate }}
+        </th>
+        <th>
+          {{ 'production-line.inbound-stage-location' | translate }}
+        </th>
+        <th>
+          {{ 'production-line.outbound-stage-location' | translate }}
+        </th>
+        <th>
+          {{ 'production-line.single-work-order-only' | translate }}
+        </th>
+        <th>
+          {{ 'enabled' | translate }}
+        </th>
+        <th>
+          {{ 'action' | translate }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data">
+        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
+        <td>{{ data.id }}</td>
+        <td>{{ data.name }}</td>
+        <td>{{ data.productionLineLocation?.name }}</td>
+        <td>{{ data.inboundStageLocation?.name }}</td>
+        <td>{{ data.outboundStageLocation?.name }}</td>
+        <td>{{ data.workOrderExclusiveFlag }}</td>
+        <td>{{ data.enabled }}</td>
+        <td>
+          <button nz-button nzType="primary" (click)="disableProductionLine(data, true)" *ngIf="data.enabled">
+            {{ 'disable' | translate }}
+          </button>
+          <button nz-button nzType="primary" (click)="disableProductionLine(data, false)" *ngIf="!data.enabled">
+            {{ 'enable' | translate }}
+          </button>
+        </td>
+
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>

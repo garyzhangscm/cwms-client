@@ -1,0 +1,262 @@
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="integrationDateTimeRanger">
+          {{ 'integration.date-time' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-range-picker [nzShowTime]="{ nzHideDisabledOptions: true }" nzFormat="yyyy-MM-dd HH:mm:ss"
+            formControlName="integrationDateTimeRanger" name="integrationDateTimeRanger">
+          </nz-range-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="integrationDate">
+          {{ 'integration.date' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-date-picker formControlName="integrationDate" name="integrationDate"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        {{ 'search' | translate }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
+      <a class="collapse" (click)="toggleCollapse()">
+        {{ 'collapse' | translate }}
+
+        <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
+      </a>
+    </div>
+  </div>
+</form>
+
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationOrders" #nestedTable
+    [nzFooter]="tableFoot">
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+
+
+        <th nzShowExpand></th>
+        <th nzShowSort nzSortKey="id">id</th>
+        <th nzShowSort nzSortKey="number">
+          {{ 'order.number' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="warehouseId">
+          {{ 'warehouse.id' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="warehouseName">
+          {{ 'warehouse.name' | translate }}
+        </th>
+        <th nzShowFilter [nzFilters]="filtersByShipToCustomer"
+          (nzFilterChange)="filter($event, selectedFiltersByBillToCustomer)">
+          {{ 'shipToCustomer' | translate }}
+        </th>
+        <th nzShowFilter [nzFilters]="filtersByBillToCustomer"
+          (nzFilterChange)="filter(selectedFiltersByShipToCustomer, $event)">
+          {{ 'order.billToCustomer' | translate }}
+        </th>
+        <th>
+          {{ 'integration.status' | translate }}
+        </th>
+        <th>
+          {{ 'integration.insertTime' | translate }}
+        </th>
+        <th>
+          {{ 'integration.lastUpdateTime' | translate }}
+        </th>
+        <th>
+          {{ 'integration.errorMessage' | translate }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-template ngFor let-data [ngForOf]="nestedTable.data">
+        <tr>
+
+          <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]"></td>
+          <td>{{ data.id }}</td>
+          <td>{{ data.number }}</td>
+          <td>{{ data.warehouseId }}</td>
+          <td>{{ data.warehouseName }}</td>
+          <td>
+            <div *ngIf="data.shipToCustomer != null">
+              <a nz-tooltip [nzTooltipTitle]="shipToCustomerTooltipTpl">
+                {{ data.shipToCustomer.name }}
+              </a>
+              <ng-template #shipToCustomerTooltipTpl>
+                <div>{{ data.shipToCustomer.contactor.firstname }} {{ data.shipToCustomer.contactor.lastname }}</div>
+                <div>
+                  {{ data.shipToCustomer.addressLine1 }}
+                </div>
+                <div *ngIf="data.shipToCustomer.addressLine2 != null">
+                  {{ data.shipToCustomer.addressLine2 }}
+                </div>
+                <div>
+                  {{ data.shipToCustomer.addressCity }}, {{ data.shipToCustomer.addressState }}
+                  {{ data.shipToCustomer.addressPostcode }}
+                </div>
+              </ng-template>
+            </div>
+            <div *ngIf="data.shipToCustomer === null">
+              <a nz-tooltip [nzTooltipTitle]="shipToAddressTooltipTpl">
+                {{ data.shipTocontactor.firstname }} {{ data.shipTocontactor.lastname }}
+              </a>
+              <ng-template #shipToAddressTooltipTpl>
+                <div>
+                  {{ data.shipToAddressLine1 }}
+                </div>
+                <div *ngIf="data.shipToAddressLine2 != null">
+                  {{ data.shipToAddressLine2 }}
+                </div>
+                <div>
+                  {{ data.shipToAddressCity }}, {{ data.shipToAddressState }}
+                  {{ data.shipToAddressPostcode }}
+                </div>
+              </ng-template>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="data.billToCustomer != null">
+              <a nz-tooltip [nzTooltipTitle]="billToCustomerTooltipTpl">
+                {{ data.billToCustomer.name }}
+              </a>
+              <ng-template #billToCustomerTooltipTpl>
+                <div>{{ data.billToCustomer.contactor.firstname }} {{ data.billToCustomer.contactor.lastname }}</div>
+                <div>
+                  {{ data.billToCustomer.addressLine1 }}
+                </div>
+                <div *ngIf="data.billToCustomer.addressLine2 != null">
+                  {{ data.billToCustomer.addressLine2 }}
+                </div>
+                <div>
+                  {{ data.billToCustomer.addressCity }}, {{ data.billToCustomer.addressState }}
+                  {{ data.billToCustomer.addressPostcode }}
+                </div>
+              </ng-template>
+            </div>
+            <div *ngIf="data.billToCustomer === null">
+              <a nz-tooltip [nzTooltipTitle]="billToAddressTooltipTpl">
+                {{ data.billTocontactor.firstname }} {{ data.billTocontactor.lastname }}
+              </a>
+              <ng-template #billToAddressTooltipTpl>
+                <div>
+                  {{ data.billToAddressLine1 }}
+                </div>
+                <div *ngIf="data.billToAddressLine2 != null">
+                  {{ data.billToAddressLine2 }}
+                </div>
+                <div>
+                  {{ data.billToAddressCity }}, {{ data.billToAddressState }}
+                  {{ data.billToAddressPostcode }}
+                </div>
+              </ng-template>
+            </div>
+          </td>
+          <td>{{ data.status }}</td>
+          <td>
+            {{ data.insertTime[1] }}/{{ data.insertTime[2] }}/{{ data.insertTime[0] }} {{ data.insertTime[3] }}:{{
+                data.insertTime[4]
+              }}:{{ data.insertTime[5] }}
+          </td>
+          <td>
+            {{ data.lastUpdateTime[1] }}/{{ data.lastUpdateTime[2] }}/{{ data.lastUpdateTime[0] }}
+            {{ data.lastUpdateTime[3] }}:{{ data.lastUpdateTime[4] }}:{{ data.lastUpdateTime[5] }}
+          </td>
+          <td>{{ data.errorMessage }}</td>
+
+        </tr>
+        <tr [nzExpand]="mapOfExpandedId[data.id]" class="inner-table">
+          <td colspan="1"></td>
+          <td colspan="8">
+            <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
+              <nz-tab nzTitle=" {{ 'order.line' | translate }}">
+                <nz-table #innerTable [nzData]="data.orderLines" nzSize="middle" [nzShowPagination]="false">
+
+                  <thead>
+                    <th>
+                      {{ 'order.line.number' | translate }}
+                    </th>
+                    <th>
+                      {{ 'item.id' | translate }}
+                    </th>
+                    <th>
+                      {{ 'item.name' | translate }}
+                    </th>
+                    <th>
+                      {{ 'inventory-status.id' | translate }}
+                    </th>
+                    <th>
+                      {{ 'inventory-status.name' | translate }}
+                    </th>
+                    <th>
+                      {{ 'carrier.id' | translate }}
+                    </th>
+                    <th>
+                      {{ 'carrier.name' | translate }}
+                    </th>
+                    <th>
+                      {{ 'carrier.service-level.id' | translate }}
+                    </th>
+                    <th>
+                      {{ 'carrier.service-level.name' | translate }}
+                    </th>
+                    <th>
+                      {{ 'order.line.expectedQuantity' | translate }}
+                    </th>
+                    <th>
+                      {{ 'order.line.openQuantity' | translate }}
+                    </th>
+                    <th>
+                      {{ 'order.line.inprocessQuantity' | translate }}
+                    </th>
+                    <th>
+                      {{ 'order.line.shippedQuantity' | translate }}
+                    </th>
+                  </thead>
+    <tbody>
+      <tr *ngFor="let orderLine of data.orderLines">
+        <td>{{ orderLine.number }}</td>
+        <td>{{ orderLine.itemId }}</td>
+        <td>{{ orderLine.itemName }}</td>
+        <td>{{ orderLine.inventoryStatusId }}</td>
+        <td>{{ orderLine.inventoryStatusName }}</td>
+        <td>{{ orderLine.carrierId }}</td>
+        <td>{{ orderLine.carrierName }}</td>
+        <td>{{ orderLine.carrierServiceLevelId }}</td>
+        <td>{{ orderLine.carrierServiceLevelName }}</td>
+        <td>{{ orderLine.expectedQuantity }}</td>
+        <td>{{ orderLine.openQuantity }}</td>
+        <td>{{ orderLine.inprocessQuantity }}</td>
+        <td>{{ orderLine.shippedQuantity }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+  </nz-tab>
+
+
+  </nz-tabset>
+  </td>
+  </tr>
+  </ng-template>
+  </tbody>
+  </nz-table>
+</div>
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>

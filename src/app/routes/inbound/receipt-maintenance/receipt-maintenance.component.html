@@ -1,0 +1,737 @@
+nz-select<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/inbound/receipt" routerLinkActive="active" [queryParams]="{number : currentReceipt?.number}">{{
+    'return' | translate
+  }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.inbound' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/inbound/receipt" routerLinkActive="active">{{
+        'breadcrumb.receipt' | translate
+      }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-card [nzActions]="[cardFoot]">
+  <form nz-form [formGroup]="receiptForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="batchId">
+            id
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <input nz-input formControlName="receiptId" id="receiptId" name="receiptId" required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="batchId">
+            {{ 'receipt.number' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <input appFkey variable="receipt-number" nz-input formControlName="receiptNumber" id="receiptNumber"
+              name="receiptNumber" (blur)="receiptNumberOnBlur($event.target.value)" required #receiptNumberInput />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="client">
+            {{ 'client' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <nz-input-group nzSize="large" [nzSuffix]="searchIcon">
+              <input nz-input formControlName="client" id="client" name="client"
+                [nzAutocomplete]="clientAutoCompleteTpl" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="supplier">
+            {{ 'supplier' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <nz-input-group nzSize="large" [nzSuffix]="searchIcon">
+              <input nz-input formControlName="supplier" id="supplier" name="supplier"
+                [nzAutocomplete]="supplierAutoCompleteTpl" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-control>
+            <label nz-checkbox formControlName="allowUnexpectedItem">
+              <span>
+                {{ 'receipt.allowUnexpectedItem' | translate }}</span>
+            </label>
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <ng-template #searchIcon>
+        <i nz-icon nzType="search"></i>
+      </ng-template>
+      <nz-autocomplete #clientAutoCompleteTpl>
+        <nz-auto-option *ngFor="let client of validClients" [nzLabel]="client.name" [nzValue]="client.name">
+          {{ client.name }}
+        </nz-auto-option>
+      </nz-autocomplete>
+      <nz-autocomplete #supplierAutoCompleteTpl>
+        <nz-auto-option *ngFor="let supplier of validSuppliers" [nzLabel]="supplier.name" [nzValue]="supplier.name">
+          {{ supplier.name }}
+        </nz-auto-option>
+      </nz-autocomplete>
+    </div>
+
+  </form>
+</nz-card>
+
+<ng-template #cardFoot>
+  <div nz-row nzType="flex" nzJustify="left" style='padding-left: 20px;'>
+    <button nz-button nzType="primary" (click)="saveReceipt()" [disabled]="!receiptForm.valid">
+      {{ 'confirm' | translate }}
+    </button>
+    <button nz-button (click)="printReceipt()" [disabled]="currentReceipt.id === null" [nzLoading]="printingInProcess">
+      {{ 'print' | translate }}
+    </button>
+  </div>
+</ng-template>
+
+<nz-tabset [nzSelectedIndex]="selectedTabIndex">
+  <nz-tab nzTitle="{{ 'receipt.line' | translate }}">
+    <!-- Table to Display the result  -->
+    <div>
+      <nz-table nzShowPagination [nzData]="listOfAllReceiptLines"
+        (nzCurrentPageDataChange)="receiptLinesCurrentPageDataChange($event)" [nzFooter]="receiptLinesTableFoot"
+        #receiptLinesTable>
+        <thead (nzSortChange)="sortReceiptLinesTable($event)" nzSingleSort>
+          <tr>
+            <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="receiptLinesTableAllChecked"
+              [nzIndeterminate]="receiptLinesTableIndeterminate" (nzCheckedChange)="receiptLinesTableCheckAll($event)">
+            </th>
+            <th nzShowSort nzSortKey="number">
+              {{ 'receipt.line.number' | translate }}
+            </th>
+            <th nzShowSort nzSortKey="item">
+              {{'item' | translate}}</th>
+            <th>
+              {{'item.description' | translate}}</th>
+            <th>
+              {{'receipt.line.expectedQuantity' | translate}}</th>
+            <th>
+              {{'receipt.line.receivedQuantity' | translate}}</th>
+            <th>
+              {{'receipt.line.overReceivingQuantity' | translate}}</th>
+            <th>
+              {{'receipt.line.overReceivingPercent' | translate}}</th>
+            <th>{{ 'action' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of receiptLinesTable.data">
+            <td nzShowCheckbox [(nzChecked)]="receiptLinesTableMapOfCheckedId[data.id]"
+              (nzCheckedChange)="receiptLinesTableRefreshStatus()"></td>
+            <td>{{ data.number }}</td>
+            <td>{{ data.item?.name }}</td>
+            <td>{{ data.item?.description }}</td>
+            <td>{{ data.expectedQuantity }}</td>
+            <td>{{ data.receivedQuantity }}</td>
+            <td>{{ data.overReceivingQuantity }}</td>
+            <td>{{ data.overReceivingPercent }}</td>
+            <td>
+              <!-- Only if the receipt is already checked in -->
+              <button nz-button [disabled]="currentReceipt?.receiptStatus === receiptStatus.OPEN"
+                (click)="openReceivingModal(data, tplReceivingModalTitle, tplReceivingModalContent, tplReceivingModalFooter)"
+                nzType="primary">{{ 'receiving' | translate }}</button>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+
+    <ng-template #receiptLinesTableFoot>
+      <div nz-row nzType="flex" nzJustify="left" style='padding-left: 10px;'>
+        <button nz-button nzType="primary"
+          (click)="showAddReceiptLineModal(tplReceiptLineModalTitle, tplReceiptLineModalContent)">
+          {{ 'add' | translate }}
+        </button>
+        <button nz-button nzType="danger" (click)="removeSelectedReceiptLines()">
+          {{ 'remove' | translate }}
+        </button>
+
+      </div>
+    </ng-template>
+
+  </nz-tab>
+
+  <nz-tab nzTitle="{{ 'receipt.receivedInventory' | translate }}">
+    <!-- Table to Display the result  -->
+    <div>
+      <nz-table nzShowPagination [nzData]="listOfAllReceivedInventory"
+        (nzCurrentPageDataChange)="receivedInventoryCurrentPageDataChange($event)"
+        [nzFooter]="receivedInventoryTableFoot" #receivedInventoryTable>
+        <thead (nzSortChange)="sortReceivedInventoryTable($event)" nzSingleSort>
+          <tr>
+            <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="receivedInventoryTableAllChecked"
+              [nzIndeterminate]="receivedInventoryTableIndeterminate"
+              (nzCheckedChange)="receivedInventoryTableCheckAll($event)">
+            </th>
+            <th nzShowSort nzSortKey="lpn">
+              {{ 'lpn' | translate }}
+            </th>
+            <th nzShowSort nzSortKey="item">
+              {{'item' | translate}}</th>
+            <th>
+              {{'item.description' | translate}}</th>
+            <th>
+              {{'quantity' | translate}}</th>
+            <th>
+              {{'inventory.status' | translate}}</th>
+            <th>
+              {{'location' | translate}}</th>
+            <th>
+              {{'nextLocation' | translate}}</th>
+            <th>{{ 'action' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of receivedInventoryTable.data">
+            <td nzShowCheckbox [(nzChecked)]="receivedInventoryTableMapOfCheckedId[data.id]"
+              (nzCheckedChange)="receivedInventoryTableRefreshStatus()"></td>
+            <td>{{ data.lpn }}</td>
+            <td>{{ data.item?.name }}</td>
+            <td>{{ data.item?.description }}</td>
+            <td>{{ data.quantity }}</td>
+            <td>{{ 'INVENTORY-STATUS-' +  data.inventoryStatus.name | translate}}</td>
+            <td>{{ data.location.name }}</td>
+            <td>
+              <p *ngFor="let inventoryMovement of data.inventoryMovements; let i = index">
+                {{ i+1 }} - {{ inventoryMovement.location?.name}}
+              </p>
+            </td>
+            <td>
+              <button nz-button nz-dropdown [nzDropdownMenu]="receivedInventoryActionTpl">
+                {{ 'action' | translate }}<i nz-icon nzType="down"></i>
+              </button>
+
+              <nz-dropdown-menu #receivedInventoryActionTpl="nzDropdownMenu">
+                <ul nz-menu>
+                  <li nz-menu-item
+                    *ngIf="data.location.name === currentReceipt.number && data.inventoryMovements.length === 0">
+                    <a (click)="allocateLocation(data)">{{ 'allocateLocation' | translate }}</a>
+                  </li>
+                  <li nz-menu-item *ngIf="isInventoryReversible(data)">
+                    <a (click)="reverseInventory(data)">{{ 'receipt.reverseInventory' | translate }}</a>
+                  </li>
+                  <li nz-menu-item
+                    *ngIf="data.inventoryMovements.length > 0 && data.location.name === currentReceipt.number">
+                    <a (click)="reallocateLocation(data)">{{ 'reallocateLocation' | translate }}</a>
+                  </li>
+                  <li nz-menu-item *ngIf="data.inventoryMovements.length ===1">
+                    <a (click)="confirmPutaway(0, data)">{{ 'putaway' | translate }}</a>
+                  </li>
+                  <li nz-submenu nzTitle="{{ 'putaway' | translate }}" *ngIf="data.inventoryMovements.length > 1">
+                    <ul>
+                      <li nz-menu-item *ngFor="let inventoryMovement of data.inventoryMovements; let i=index">
+                        <a (click)="confirmPutaway(i, data)">
+                          {{ i+1 }} - {{ inventoryMovement.location?.name}}</a>
+                      </li>
+                    </ul>
+                  </li>
+
+                  <li nz-menu-item
+                    *ngIf="data.location.name === currentReceipt.number || data.location.locationGroup?.locationGroupType?.receivingStage === true">
+                    <a
+                      (click)="openManualPutawayModal(data, tplManualPutawayModalTitle, tplManualPutawayModalContent)">{{ 'putaway.manual' | translate }}</a>
+                  </li>
+                </ul>
+              </nz-dropdown-menu>
+
+              <!--
+
+              <button nz-button nzType="primary"
+                *ngIf="data.location.name === currentReceipt.number && data.inventoryMovements.length === 0"
+                (click)="allocateLocation(data)">{{ 'allocateLocation' | translate }}</button>
+
+              <button nz-button nzType="primary" *ngIf="isInventoryReversible(data)"
+                (click)="reverseInventory(data)">{{ 'receipt.reverseInventory' | translate }}</button>
+
+              <div *ngIf="data.inventoryMovements.length > 0">
+                <button nz-button nzType="primary" *ngIf="data.location.name === currentReceipt.number"
+                  (click)="reallocateLocation(data)">{{ 'reallocateLocation' | translate }}</button>
+                <nz-divider nzType="vertical" *ngIf="data.location.name === currentReceipt.number"></nz-divider>
+                <button nz-button nzType="primary" *ngIf="data.inventoryMovements.length === 1"
+                  (click)="confirmPutaway(0, data)">{{ 'putaway' | translate }}</button>
+
+                <button nz-button nz-dropdown [nzDropdownMenu]="putawayDestinationTpl"
+                  *ngIf="data.inventoryMovements.length > 1">
+                  {{ 'putaway' | translate }}<i nz-icon nzType="down"></i></button>
+                <nz-dropdown-menu #putawayDestinationTpl="nzDropdownMenu">
+                  <ul nz-menu>
+                    <li nz-menu-item *ngFor="let inventoryMovement of data.inventoryMovements; let i=index">
+                      <a (click)="confirmPutaway(i, data)">
+                        {{ i+1 }} - {{ inventoryMovement.location?.name}}</a>
+                    </li>
+                  </ul>
+                </nz-dropdown-menu>
+
+
+
+    </div>
+    <button nz-button nzType="primary"
+      *ngIf="data.location.name === currentReceipt.number || data.location.locationGroup?.locationGroupType?.receivingStage === true "
+      (click)="openManualPutawayModal(data, tplManualPutawayModalTitle, tplManualPutawayModalContent)">
+      {{ 'putaway.manual' | translate }}</button>
+              -->
+
+
+
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+
+    <ng-template #receivedInventoryTableFoot>
+      <div nz-row nzType="flex" nzJustify="left" style='padding-left: 10px;'>
+        <button nz-button nzType="primary"
+          (click)="showAddReceiptLineModal(tplReceiptLineModalTitle, tplReceiptLineModalContent)">
+          {{ 'allocateLocation' | translate }}
+        </button>
+        <button nz-button nz-dropdown [nzDropdownMenu]="printSelectionTpl" [nzLoading]="printingPutawayWork">
+          {{ 'print' | translate }}<i nz-icon nzType="down"></i>
+        </button>
+        <nz-dropdown-menu #printSelectionTpl="nzDropdownMenu">
+          <ul nz-menu>
+            <li nz-menu-item>
+              <a (click)="printSelectedPutawayWork()">{{ 'printSelected' | translate }}</a>
+            </li>
+            <li nz-menu-item>
+              <a (click)="printAllPutawayWork()">{{ 'printAll' | translate }}</a>
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+
+      </div>
+    </ng-template>
+
+  </nz-tab>
+
+</nz-tabset>
+
+
+
+
+<!-- Modal for receiving inventory -->
+<ng-template #tplReceivingModalTitle>
+  <span>{{ 'page.modal.receipt.line.receiving' | translate}}</span>
+</ng-template>
+<ng-template #tplReceivingModalContent>
+  <form nz-form [formGroup]="receivingForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNumber">
+            {{ 'item' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="itemNumber" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="16">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemDescription">
+            {{ 'item.description' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="itemDescription" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
+            {{ 'lpn' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback [nzErrorTip]="lpnErrorTpl">
+            <nz-input-group nzSize="large">
+              <!--
+                
+              <input appFkey variable="lpn" nz-input [ngModel]="currentInventory.lpn"
+                (blur)="receivingLPNChanged($event.target.value)" id="lpn" name="lpn" required #receivingInventoryLpn />
+              -->
+              <input appFkey appNewNumberValidator variable="lpn" (blur)="receivingLPNChanged($event.target.value)"
+                nz-input formControlName="lpn" required id="lpn" />
+            </nz-input-group>
+
+            <ng-template #lpnErrorTpl let-control>
+              <div *ngIf="lpnControl.invalid && (lpnControl.dirty || lpnControl.touched)">
+                <ng-container *ngIf="lpnControl.errors.errorCode">
+                  {{ 'ERROR-NEW-LPN-' + lpnControl.errors.errorCode | translate }}</ng-container>
+                <ng-container *ngIf="control.hasError('required')">{{ 'error.form.field.required' | translate }}
+                </ng-container>
+              </div>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="16">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="inventoryStatus">
+            {{ 'inventory.status' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <!--
+
+              
+            <nz-select nz-input [ngModel]="currentInventory.inventoryStatus?.name"
+              (ngModelChange)="inventoryStatusChange($event)" style="width: 250px">
+            -->
+            <nz-select nz-input formControlName="inventoryStatus" style="width: 250px" required>
+              <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
+                nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | translate}}" [nzValue]="inventoryStatus.id">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemPackageType">
+            {{ 'item.package-type' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+
+            <nz-select nz-input formControlName="itemPackageType" required>
+              <nz-option *ngFor=" let availableItemPackageType of currentReceivingLine.item.itemPackageTypes"
+                [nzLabel]="availableItemPackageType.name" [nzValue]="availableItemPackageType.id">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="quantity">
+            {{ 'quantity' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <input nz-input formControlName="quantity" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationName">
+            {{ 'location' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="locationName" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>
+    <div nz-col [nzSpan]="24" *ngIf="displayItemPackageType !== null">
+      <nz-table #itemPackageTypeDetailTable [nzData]="displayItemPackageType.itemUnitOfMeasures" nzSize="middle"
+        [nzShowPagination]="false" nzBordered>
+        <thead>
+          <tr>
+            <th>{{ 'unitOfMeasure' | translate}}</th>
+            <th>{{ 'quantity' | translate }}</th>
+            <th>{{ 'weight' | translate }}</th>
+            <th>{{ 'length' | translate }}</th>
+            <th>{{ 'width' | translate }}</th>
+            <th>{{ 'height' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let itemUnitOfMeasure of itemPackageTypeDetailTable.data">
+            <td>{{ itemUnitOfMeasure.unitOfMeasure.name }}</td>
+            <td>{{ itemUnitOfMeasure.quantity }}</td>
+            <td>{{ itemUnitOfMeasure.weight }}</td>
+            <td>{{ itemUnitOfMeasure.length }}</td>
+            <td>{{ itemUnitOfMeasure.width }}</td>
+            <td>{{ itemUnitOfMeasure.height }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </form>
+</ng-template>
+
+<ng-template #tplReceivingModalFooter>
+  <button nz-button nzType="default" (click)="closeReceivingModal()"
+    [nzLoading]="receivingInProcess">{{ 'cancel' | translate}}</button>
+  <button nz-button nzType="primary" (click)="confirmReceiving()"
+    [nzLoading]="receivingInProcess">{{ 'confirm' | translate}}</button>
+
+</ng-template>
+
+<!-- Modal for creating receipt line -->
+<ng-template #tplReceiptLineModalTitle>
+  <span>{{ 'page.modal.receipt.line' | translate}}</span>
+</ng-template>
+<ng-template #tplReceiptLineModalContent>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="receiptLineNumber">
+          {{ 'receipt.line.number' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <nz-input-group nzSize="large">
+            <input nz-input [ngModel]="currentReceiptLine?.number" id="receiptLineNumber" name="receiptLineNumber"
+              [disabled]="true" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNumber">
+          {{ 'item' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <nz-input-group nzSize="large">
+            <input nz-input [ngModel]="currentReceiptLine.item?.name"
+              (blur)="currentReceiptLineItemNumberChanged($event.target.value)" id="itemNumber" name="itemNumber" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="16">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemDescription">
+          {{ 'item.description' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input [ngModel]="currentReceiptLine.item?.description" style="width: 250px" id="itemDescription"
+            name="itemDescription" [disabled]="true" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="expectedQuantity">
+          {{ 'receipt.line.expectedQuantity' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input [(ngModel)]="currentReceiptLine.expectedQuantity" id="expectedQuantity"
+            name="expectedQuantity" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="overReceivingQuantity">
+          {{ 'receipt.line.overReceivingQuantity' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input [(ngModel)]="currentReceiptLine.overReceivingQuantity" id="overReceivingQuantity"
+            name="overReceivingQuantity" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="overReceivingPercent">
+          {{ 'receipt.line.overReceivingPercent' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input [(ngModel)]="currentReceiptLine.overReceivingPercent" id="overReceivingPercent"
+            name="overReceivingPercent" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+
+</ng-template>
+
+
+
+<!-- Modal for manual putaway -->
+<ng-template #tplManualPutawayModalTitle>
+  <span>{{ 'page.modal.putaway.manual' | translate}}</span>
+</ng-template>
+<ng-template #tplManualPutawayModalContent>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNumber">
+          {{ 'item' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <nz-input-group nzSize="large">
+            <input nz-input [ngModel]="currentInventory?.item!.name" disabled />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="16">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemDescription">
+          {{ 'item.description' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <nz-input-group nzSize="large">
+            <input nz-input [ngModel]="currentInventory?.item!.description" disabled />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
+          {{ 'lpn' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <nz-input-group nzSize="large">
+            <input nz-input [ngModel]="currentInventory.lpn" disabled />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="16">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
+          {{ 'inventory.status' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input [ngModel]="currentInventory.inventoryStatus?.name" disabled />
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemPackageType">
+          {{ 'item.package-type' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+
+          <input nz-input [ngModel]="currentInventory.itemPackageType?.name" disabled />
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="quantity">
+          {{ 'quantity' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <nz-input-group nzSize="large">
+            <input nz-input [ngModel]="currentInventory.quantity" disabled />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationName">
+          {{ 'location' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <nz-input-group nzSize="large">
+            <input nz-input [(ngModel)]="currentInventory.locationName" id="locationName" name="locationName" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+  <div nz-col [nzSpan]="24" *ngIf="currentInventory.itemPackageType">
+    <nz-table #itemPackageTypeDetailTable2 [nzData]="currentInventory.itemPackageType?.itemUnitOfMeasures"
+      nzSize="middle" [nzShowPagination]="false" nzBordered>
+      <thead>
+        <tr>
+          <th>{{ 'unitOfMeasure' | translate}}</th>
+          <th>{{ 'quantity' | translate }}</th>
+          <th>{{ 'weight' | translate }}</th>
+          <th>{{ 'length' | translate }}</th>
+          <th>{{ 'width' | translate }}</th>
+          <th>{{ 'height' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let itemUnitOfMeasure of itemPackageTypeDetailTable2.data">
+          <td>{{ itemUnitOfMeasure.unitOfMeasure.name }}</td>
+          <td>{{ itemUnitOfMeasure.quantity }}</td>
+          <td>{{ itemUnitOfMeasure.weight }}</td>
+          <td>{{ itemUnitOfMeasure.length }}</td>
+          <td>{{ itemUnitOfMeasure.width }}</td>
+          <td>{{ itemUnitOfMeasure.height }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+
+</ng-template>

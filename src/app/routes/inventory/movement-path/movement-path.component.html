@@ -1,0 +1,158 @@
+<page-header> </page-header>
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+
+    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="fromLocation">
+          {{ 'from-location' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="fromLocation" id="fromLocation" formControlName="fromLocation" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="toLocation">
+          {{ 'to-location' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="toLocation" id="toLocation" formControlName="toLocation" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="fromLocationGroup">
+          {{ 'from-location-group' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-select nzShowSearch nzAllowClear formControlName="fromLocationGroup">
+            <nz-option *ngFor="let locationGroup of availableLocationGroups" [nzLabel]="locationGroup.name"
+              [nzValue]="locationGroup.id"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="toLocationGroup">
+          {{ 'to-location-group' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-select nzShowSearch nzAllowClear formControlName="toLocationGroup">
+            <nz-option *ngFor="let locationGroup of availableLocationGroups" [nzLabel]="locationGroup.name"
+              [nzValue]="locationGroup.id"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()">
+        {{ 'search' | translate }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
+      <a class="collapse" (click)="toggleCollapse()">
+        {{ 'collapse' | translate }}
+
+        <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
+      </a>
+    </div>
+  </div>
+</form>
+
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllMovementPath" [nzFooter]="tableFoot" #nestedTable>
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="checkAll($event)"></th>
+
+        <th nzShowExpand></th>
+        <th nzShowSort nzSortKey="id">id</th>
+        <th nzShowSort nzSortKey="sequence">
+          {{ 'sequence' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="fromLocation">
+          {{ 'from-location' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="toLocation">
+          {{ 'to-location' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="fromLocationGroup">
+          {{ 'from-location-group' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="toLocationGroup">
+          {{ 'to-location-group' | translate }}
+        </th>
+        <th>
+          {{ 'action' | translate }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-template ngFor let-data [ngForOf]="nestedTable.data">
+        <tr>
+          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
+
+          <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]"></td>
+          <td>{{ data.id }}</td>
+          <td>{{ data.sequence }}</td>
+          <td>{{ data.fromLocation?.name }}</td>
+          <td>{{ data.fromLocationGroup?.name }}</td>
+          <td>{{ data.toLocation?.name }}</td>
+          <td>{{ data.toLocationGroup?.name }}</td>
+          <td></td>
+        </tr>
+        <tr [nzExpand]="mapOfExpandedId[data.id]">
+
+          <td colspan="3"></td>
+          <td colspan="5">
+            <nz-table #innerTable [nzData]="data.movementPathDetails" nzSize="middle" [nzShowPagination]="false">
+
+              <thead>
+                <th>
+                  {{ 'sequence' | translate }}</th>
+                <th>
+                  {{ 'movement-path.detail.hop-location' | translate }}</th>
+                <th>
+                  {{ 'movement-path.detail.hop-location-group' | translate }}</th>
+                <th>
+                  {{ 'strategy' | translate }}</th>
+              </thead>
+    <tbody>
+      <tr *ngFor="let movementPathDetail of data.movementPathDetails">
+        <td>{{ movementPathDetail.sequence }}</td>
+        <td>{{ movementPathDetail.hopLocation?.name }}</td>
+        <td>{{ movementPathDetail.hopLocationGroup?.name }}</td>
+        <td>{{ movementPathDetail.strategy }}</td>
+      </tr>
+
+    </tbody>
+  </nz-table>
+  </td>
+  </tr>
+  </ng-template>
+  </tbody>
+  </nz-table>
+</div>
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start">
+    <button nz-button nzType="danger" (click)="removeSelectedMovementPaths()">
+      {{ 'delete' | translate }}
+    </button>
+    <button nz-button nzType="primary" routerLink="/util/file-upload/movement-path" routerLinkActive="active">
+      {{ 'file-upload' | translate }}
+    </button>
+  </div>
+</ng-template>

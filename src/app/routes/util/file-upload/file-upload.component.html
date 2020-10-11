@@ -1,0 +1,132 @@
+<page-header *ngIf="!fromMenu" [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnTpl"></page-header>
+<page-header *ngIf="fromMenu"></page-header>
+
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item
+      ><a>{{ 'menu.main' | translate }}</a></nz-breadcrumb-item
+    >
+    <nz-breadcrumb-item
+      ><a>{{ 'menu.main.util' | translate }}</a></nz-breadcrumb-item
+    >
+    <nz-breadcrumb-item
+      ><a routerLink="/util/file-upload" routerLinkActive="active">{{
+        'menu.main.util.file-upload' | translate
+      }}</a></nz-breadcrumb-item
+    >
+  </nz-breadcrumb>
+</ng-template>
+
+<ng-template #returnTpl>
+  <a (click)="back()">
+    {{ 'return' | translate }}
+  </a>
+</ng-template>
+
+<ng-container>
+  <nz-card>
+    <form nz-form [formGroup]="loadFileForm">
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item nzFlex>
+            <nz-form-label for="fileType" [nzSm]="3" [nzXs]="3" nzRequired="true">
+              {{ 'file-upload.filetype' | translate }}
+            </nz-form-label>
+            <nz-select
+              nzPlaceHolder="{{ 'placeholder.file-upload.filetype' | translate }}"
+              name="Type"
+              formControlName="fileTypeSelector"
+              (ngModelChange)="selectedFileTypeChanged($event)"
+              [nzDisabled]="!fromMenu"
+            >
+              <nz-option
+                *ngFor="let fileType of allowedFileTypes"
+                [nzLabel]="fileType.label"
+                [nzValue]="fileType.value"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-upload [nzAction]="selectedFileUploadType?.destinationUrl" (nzChange)="handleChange($event)">
+              <button nz-button [disabled]="fileUploadDisabled">
+                <i nz-icon nzType="upload"></i>
+                {{ 'file-upload' | translate }}
+              </button>
+            </nz-upload>
+
+            <!--
+
+            <nz-upload nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+              [nzHeaders]="{ authorization: 'authorization-text' }" (nzChange)="handleChange($event)">
+              <button nz-button><i nz-icon nzType="upload"></i>Click to Upload</button>
+            </nz-upload>
+            -->
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item nzFlex>
+            <nz-form-label for="fileType" [nzSpan]="3"> {{ 'file-upload.template-file' | translate }} </nz-form-label
+            ><button
+              down-file
+              [http-data]="data"
+              [http-url]="selectedFileUploadType?.templateFileUrl"
+              nz-button
+              [file-name]="selectedFileUploadType?.name + '.csv'"
+              [disabled]="selectedFileUploadType === null || selectedFileUploadType.templateFileUrl === ''"
+            >
+              {{ 'download' | translate }}
+            </button>
+          </nz-form-item>
+        </div>
+      </div>
+    </form>
+  </nz-card>
+
+  <div class="search-result-list" *ngIf="selectedFileUploadType !== null">
+    <nz-table
+      #rowSelectionTable
+      nzShowSizeChanger
+      [nzData]="selectedFileUploadType?.columns"
+      nzShowPagination="false"
+      nzFrontPagination="false"
+    >
+      <thead>
+        <tr>
+          <td>
+            {{ 'file-upload.template-file.column-name' | translate }}
+          </td>
+          <td>
+            {{ 'description' | translate }}
+          </td>
+          <td>
+            {{ 'file-upload.template-file.column-type' | translate }}
+          </td>
+          <td>
+            {{ 'file-upload.template-file.column-max-length' | translate }}
+          </td>
+          <td>
+            {{ 'file-upload.template-file.column-nullable' | translate }}
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of rowSelectionTable.data">
+          <td>{{ data.name }}</td>
+          <td>{{ data.description }}</td>
+          <td>{{ data.type }}</td>
+          <td>{{ data.maxLength }}</td>
+          <td>{{ data.nullable + '' | translate }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</ng-container>

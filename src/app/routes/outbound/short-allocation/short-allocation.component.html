@@ -1,0 +1,137 @@
+<page-header></page-header>
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+
+
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="orderNumber" [nzSm]="3" [nzXs]="3">
+          {{ 'order.number' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="orderNumber" id="orderNumber" formControlName="orderNumber" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="itemNumber" [nzSm]="3" [nzXs]="3">
+          {{ 'item' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="itemNumber" id="itemNumber" formControlName="itemNumber" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()">
+        {{ 'search' | translate }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+
+  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllShortAllocations" [nzFooter]="tableFoot"
+    #shortAllocationTable>
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="checkAll($event)"></th>
+        <th nzShowSort nzSortKey="orderNumber">
+          {{ 'order.number' | translate }}</th>
+
+        <th nzShowSort nzSortKey="workOrderNumber">
+          {{ 'work-order.number' | translate }}</th>
+
+        <th>
+          {{ 'item' | translate }}
+        </th>
+        <th>
+          {{ 'item.description' | translate }}
+        </th>
+        <th>
+          {{ 'short-allocation.quantity' | translate }}
+        </th>
+        <th>
+          {{ 'short-allocation.openQuantity' | translate }}
+        </th>
+        <th>
+          {{ 'short-allocation.inprocessQuantity' | translate }}
+        </th>
+        <th>
+          {{ 'short-allocation.deliveredQuantity' | translate }}
+        </th>
+        <th>
+          {{ 'short-allocation.status' | translate }}
+        </th>
+        <th>
+          {{ 'short-allocation.allocationCount' | translate }}
+        </th>
+        <th>
+          {{ 'short-allocation.lastAllocationDatetime' | translate }}
+        </th>
+        <th>
+          {{ 'action' | translate }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let shortAllocation of shortAllocationTable.data">
+        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[shortAllocation.id]" (nzCheckedChange)="refreshStatus()"></td>
+
+        <td>{{ shortAllocation.orderNumber }}</td>
+        <td>{{ shortAllocation.orderNumber }}</td>
+        <td>{{ shortAllocation.item?.name }}</td>
+        <td>{{ shortAllocation.item?.description }}</td>
+        <td>{{ shortAllocation.quantity }}</td>
+        <td>{{ shortAllocation.openQuantity }}</td>
+        <td><a routerLink="/outbound/pick" routerLinkActive="active"
+            [queryParams]="{shortAllocationId : shortAllocation.id}">
+            {{ shortAllocation.inprocessQuantity }}
+          </a></td>
+        <td>{{ shortAllocation.deliveredQuantity }}</td>
+        <td>{{ 'SHORT-ALLOCATION-STATUS-' +shortAllocation.status | translate}}</td>
+        <td>{{ shortAllocation.allocationCount }}</td>
+
+        <td>
+          <span *ngIf="shortAllocation.lastAllocationDatetime">
+            {{ shortAllocation.lastAllocationDatetime[1] }}/{{ shortAllocation.lastAllocationDatetime[2] }}/{{ shortAllocation.lastAllocationDatetime[0] }}
+            {{ shortAllocation.lastAllocationDatetime[3] }}:{{ shortAllocation.lastAllocationDatetime[4] }}:{{ shortAllocation.lastAllocationDatetime[5] }}
+          </span>
+        </td>
+        <td>
+          <button nz-button (click)="cancelShortAllocation(shortAllocation)"
+            [disabled]="shortAllocation.status !== shortAllocationStatus.PENDING">
+            {{ 'cancel' | translate }}
+          </button>
+
+          <nz-divider nzType="vertical"></nz-divider>
+          <button nz-button (click)="allocateShortAllocation(shortAllocation)"
+            [disabled]="!isShortAllocationAllocatable(shortAllocation)">
+            {{ 'allocate' | translate }}
+          </button>
+
+        </td>
+      </tr>
+
+    </tbody>
+  </nz-table>
+</div>
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start">
+    <button nz-button nzType="danger" (click)="cancelSelectedShortAllocations()">
+      {{ 'delete' | translate }}
+    </button>
+  </div>
+</ng-template>

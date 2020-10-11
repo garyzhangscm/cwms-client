@@ -1,0 +1,139 @@
+<page-header></page-header>
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="12">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label for="number" [nzSm]="6" [nzXs]="14">
+          {{ 'pick.number' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="number" id="number" formControlName="number" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label for="orderNumber" [nzSm]="6" [nzXs]="14">
+          {{ 'order.number' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="orderNumber" id="orderNumber" formControlName="orderNumber" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label for="itemNumber" [nzSm]="6" [nzXs]="14">
+          {{ 'item' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="itemNumber" id="itemNumber" formControlName="itemNumber" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row [nzGutter]="12">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label for="sourceLocation" [nzSm]="6" [nzXs]="14">
+          {{ 'sourceLocation' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="sourceLocation" id="sourceLocation" formControlName="sourceLocation" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label for="destinationLocation" [nzSm]="6" [nzXs]="14">
+          {{ 'destinationLocation' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="destinationLocation" id="destinationLocation" formControlName="destinationLocation" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()">
+        {{ 'search' | translate }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+
+  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllPicks" [nzFooter]="tableFoot" #pickTable>
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="checkAll($event)"></th>
+
+
+        <th nzShowSort nzSortKey="number">
+          {{ 'pick.number' | translate }}</th>
+        <th nzShowSort nzSortKey="pickType">
+          {{ 'pick.type' | translate }}</th>
+        <th nzShowSort nzSortKey="orderNumber">
+          {{ 'order.number' | translate }}</th>
+        <th nzShowSort nzSortKey="sourceLocation">
+          {{ 'sourceLocation' | translate }}</th>
+        <th nzShowSort nzSortKey="destinationLocation">
+          {{ 'destinationLocation' | translate }}</th>
+        <th nzShowSort nzSortKey="item">
+          {{ 'item' | translate }}</th>
+        <th>
+          {{ 'item.description' | translate }}</th>
+        <th nzShowSort nzSortKey="quantity">
+          {{ 'pick.quantity' | translate }}</th>
+        <th nzShowSort nzSortKey="pickedQuantity">
+          {{ 'pick.pickedQuantity' | translate }}</th>
+
+        <th>
+          {{ 'action' | translate }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of pickTable.data">
+        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
+
+        <td>{{ data.number }}</td>
+        <td>{{ 'PICK-TYPE-' + data.pickType | translate}}</td>
+        <td>{{ data.orderNumber }}</td>
+        <td>{{ data.sourceLocation?.name }}</td>
+        <td>{{ data.destinationLocation?.name }}</td>
+        <td>{{ data.item?.name }}</td>
+        <td>{{ data.item?.description }}</td>
+        <td>{{ data.quantity }}</td>
+        <td>{{ data.pickedQuantity }}</td>
+        <td></td>
+      </tr>
+
+    </tbody>
+  </nz-table>
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+    <button nz-button nzType="danger" (click)="cancelSelectedPicks()">
+      {{ 'delete' | translate }}
+    </button>
+    <button nz-button nzType="primary" (click)="confirmSelectedPicks()">
+      {{ 'confirm' | translate }}
+    </button>
+  </div>
+</div>
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>

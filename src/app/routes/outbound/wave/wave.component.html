@@ -1,0 +1,445 @@
+<page-header></page-header>
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="number" [nzSm]="3" [nzXs]="3">
+          {{ 'wave.number' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="number" id="number" formControlName="number" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        {{ 'search' | translate }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+
+  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllWaves" [nzFooter]="tableFoot" #nestedTable>
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="checkAll($event)"></th>
+
+        <th nzShowExpand></th>
+        <th nzShowSort nzSortKey="id">id</th>
+        <th nzShowSort nzSortKey="number">
+          {{ 'wave.number' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="status">
+          {{ 'wave.status' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="totalOrderCount">
+          {{ 'wave.totalOrderCount' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="totalOrderLineCount">
+          {{ 'wave.totalOrderLineCount' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="totalItemCount">
+          {{ 'wave.totalItemCount' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="totalQuantity">
+          {{ 'wave.totalQuantity' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="totalOpenQuantity">
+          {{ 'wave.totalOpenQuantity' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="totalInprocessQuantity">
+          {{ 'wave.totalInprocessQuantity' | translate }}
+        </th>
+
+
+        <th nzShowSort nzSortKey="totalStagedQuantity">
+          {{ 'wave.totalStagedQuantity' | translate }}
+        </th>
+        <th nzShowSort nzSortKey="totalShippedQuantity">
+          {{ 'wave.totalShippedQuantity' | translate }}
+        </th>
+        <th>
+          {{ 'action' | translate }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-template ngFor let-data [ngForOf]="nestedTable.data">
+        <tr>
+          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
+
+          <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]" (nzExpandChange)="showWaveDetails(data)"></td>
+          <td>{{ data.id }}</td>
+          <td> <a routerLink="/outbound/wave-maintenance" routerLinkActive="active"
+              [queryParams]="{id : data.id}">{{ data.number }}</a></td>
+          <td>{{ 'WAVE-STATUS-' + data.status | translate}}</td>
+          <td>{{ data.totalOrderCount }}</td>
+          <td>{{ data.totalOrderLineCount }}</td>
+          <td>{{ data.totalItemCount }}</td>
+          <td>{{ data.totalQuantity }}</td>
+          <td>{{ data.totalOpenQuantity }}</td>
+          <td>{{ data.totalInprocessQuantity }}</td>
+          <td>{{ data.totalStagedQuantity }}</td>
+          <td>{{ data.totalShippedQuantity }}</td>
+          <td>
+            <button nz-button nzType="primary" (click)="allocateWave(data)" [disabled]="!isWaveAllocatable(data)">
+              {{ 'wave.allocate' | translate }}
+            </button></td>
+        </tr>
+        <tr [nzExpand]="mapOfExpandedId[data.id]">
+          <td colspan="1"></td>
+          <td colspan="13">
+            <nz-tabset>
+              <nz-tab nzTitle="{{ 'shipment' | translate }}">
+
+                <nz-table [nzData]="mapOfShipmentLines[data.id]" nzSize="middle" [nzShowPagination]="false">
+
+                  <thead>
+                    <th>
+                      {{ 'shipment.number' | translate }}</th>
+                    <th>
+                      {{ 'shipment.line.number' | translate }}</th>
+                    <th>
+                      {{ 'order.number' | translate }}</th>
+                    <th>
+                      {{ 'order.line.number' | translate }}</th>
+                    <th>
+                      {{ 'item' | translate }}</th>
+                    <th>
+                      {{ 'shipment.line.quantity' | translate }}</th>
+                    <th>
+                      {{ 'shipment.line.shippedQuantity' | translate }}</th>
+                  </thead>
+    <tbody>
+      <tr *ngFor="let shipmentLine of mapOfShipmentLines[data.id]">
+        <td>{{ shipmentLine.shipmentNumber }}</td>
+        <td>{{ shipmentLine.number }}</td>
+        <td>{{ shipmentLine.orderNumber }}</td>
+        <td>{{ shipmentLine.orderLine?.number }}</td>
+        <td>{{ shipmentLine.orderLine?.item?.name }}</td>
+        <td>{{ shipmentLine.quantity }}</td>
+        <td>{{ shipmentLine.shippedQuantity }}</td>
+      </tr>
+
+    </tbody>
+  </nz-table>
+  </nz-tab>
+
+  <nz-tab nzTitle=" {{ 'pick' | translate }}">
+    <nz-table nzSize="middle" [nzShowPagination]="false" [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[data.id]">
+      <thead>
+        <th>
+          {{ 'pick.number' | translate }}
+        </th>
+        <th>
+          {{ 'sourceLocation' | translate }}
+        </th>
+        <th>
+          {{ 'destinationLocation' | translate }}
+        </th>
+        <th>
+          {{ 'item' | translate }}
+        </th>
+        <th>
+          {{ 'item.description' | translate }}
+        </th>
+        <th>
+          {{ 'pick.quantity' | translate }}
+        </th>
+        <th>
+          {{ 'pick.pickedQuantity' | translate }}
+        </th>
+        <th>
+          {{ 'action' | translate }}
+        </th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pick of mapOfPicks[data.id]">
+          <td>{{ pick.number }}</td>
+          <td>{{ pick.sourceLocation?.name }}</td>
+          <td>{{ pick.destinationLocation?.name }}</td>
+          <td>{{ pick.item?.name }}</td>
+          <td>{{ pick.item?.description }}</td>
+          <td>{{ pick.quantity }}</td>
+          <td>{{ pick.pickedQuantity }}</td>
+          <td>
+            <button nz-button (click)="cancelPick(data, pick)" [disabled]="pick.quantity === pick.pickedQuantity">
+              {{ 'cancel' | translate }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+
+    <ng-template #pickTableFoot>
+      <div nz-row nzType="flex" nzJustify="start">
+        <button nz-button nzType="primary" (click)="printPickSheets(data)"
+          [nzLoading]="mapOfPrintingInProcessId[data.id]" [disabled]="mapOfPicks[data.id]?.length === 0">
+          {{ 'print' | translate }}
+        </button>
+        <button nz-button (click)="confirmPicks(data)" [disabled]="mapOfPicks[data.id]?.length === 0">
+          {{ 'confirm' | translate }}
+        </button>
+      </div>
+    </ng-template>
+  </nz-tab>
+
+  <nz-tab nzTitle=" {{ 'picked-inventory' | translate }}">
+    <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfPickedInventory[data.id]">
+      <thead>
+        <th>
+          {{ 'pick.number' | translate }}
+        </th>
+        <th>
+          {{ 'location' | translate }}
+        </th>
+        <th>
+          {{ 'lpn' | translate }}
+        </th>
+        <th>
+          {{ 'item' | translate }}
+        </th>
+        <th>
+          {{ 'item.description' | translate }}
+        </th>
+        <th>
+          {{ 'item.package-type' | translate }}
+        </th>
+        <th>
+          {{ 'quantity' | translate }}
+        </th>
+        <th>
+          {{ 'inventory.status' | translate }}
+        </th>
+        <th>
+          {{ 'action' | translate }}
+        </th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let inventory of mapOfPickedInventory[data.id]">
+          <td>{{ inventory.pick?.number }}</td>
+          <td>{{ inventory.location?.name }}</td>
+          <td>{{ inventory.lpn }}</td>
+          <td>{{ inventory.item?.name }}</td>
+          <td>{{ inventory.item?.description }}</td>
+          <td>{{ inventory.itemPackageType?.name }}</td>
+          <td>{{ inventory.quantity }}</td>
+          <td>{{ inventory.pickedQuantity }}</td>
+          <td>
+            <button nz-button (click)="openUnpickModal(data, inventory, tplUnpickModalTitle, tplUnpickModalContent)">
+              {{ 'unpick' | translate }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+
+  <nz-tab nzTitle=" {{ 'short-allocation' | translate }}">
+    <nz-table [nzData]="mapOfShortAllocations[data.id]" nzSize="middle" [nzShowPagination]="false">
+      <thead>
+        <th>
+          {{ 'item' | translate }}
+        </th>
+        <th>
+          {{ 'item.description' | translate }}
+        </th>
+        <th>
+          {{ 'short-allocation.quantity' | translate }}
+        </th>
+        <th>
+          {{ 'short-allocation.openQuantity' | translate }}
+        </th>
+        <th>
+          {{ 'short-allocation.inprocessQuantity' | translate }}
+        </th>
+        <th>
+          {{ 'short-allocation.deliveredQuantity' | translate }}
+        </th>
+        <th>
+          {{ 'short-allocation.status' | translate }}
+        </th>
+        <th>
+          {{ 'short-allocation.allocationCount' | translate }}
+        </th>
+        <th>
+          {{ 'action' | translate }}
+        </th>
+      </thead>
+      <tbody *ngFor="let shortAllocation of mapOfShortAllocations[data.id]">
+        <tr *ngIf="shortAllocation.status !== shortAllocationStatus.CANCELLED">
+          <td>{{ shortAllocation.item?.name }}</td>
+          <td>{{ shortAllocation.item?.description }}</td>
+          <td>{{ shortAllocation.quantity }}</td>
+          <td>{{ shortAllocation.openQuantity }}</td>
+          <td>{{ shortAllocation.inprocessQuantity }}</td>
+          <td>{{ shortAllocation.deliveredQuantity }}</td>
+          <td>{{ shortAllocation.status }}</td>
+          <td>{{ shortAllocation.allocationCount }}</td>
+          <td>
+            <button nz-button (click)="cancelShortAllocation(data, shortAllocation)"
+              *ngIf="shortAllocation.status !== shortAllocationStatus.COMPLETED">
+              {{ 'cancel' | translate }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+  </nz-tabset>
+  </td>
+  </tr>
+  </ng-template>
+  </tbody>
+  </nz-table>
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+    <button nz-button nzType="danger" (click)="removeSelectedWaves()">
+      {{ 'delete' | translate }}
+    </button>
+    <button nz-button nzType="primary" routerLink="/outbound/wave-maintenance" routerLinkActive="active">
+      {{ 'add' | translate }}
+    </button>
+  </div>
+</div>
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>
+
+
+
+<!-- Modal for unpick -->
+<ng-template #tplUnpickModalTitle>
+  <span>{{ 'page.modal.unpick' | translate }}</span>
+</ng-template>
+
+<ng-template #tplUnpickModalContent>
+  <form nz-form [formGroup]="unpickForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
+            {{ 'lpn' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="lpn" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNumber">
+            {{ 'item' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="itemNumber" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemDescription">
+            {{ 'item.description' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="itemDescription" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'inventory.status' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input nz-input formControlName="inventoryStatus" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemPackageType">
+            {{ 'item.package-type' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input nz-input formControlName="itemPackageType" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="quantity">
+            {{ 'quantity' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="quantity" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationName">
+            {{ 'location' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="locationName" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="destinationLocation">
+            {{ 'unpick.destination-location' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="destinationLocation" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-control [nzSpan]="14" [nzOffset]="6">
+            <label nz-checkbox formControlName="immediateMove">
+              <span>{{ 'unpick.immediately-putaway' | translate }}</span>
+            </label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+</ng-template>

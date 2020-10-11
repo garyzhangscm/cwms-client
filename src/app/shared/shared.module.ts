@@ -19,7 +19,8 @@ const THIRDMODULES = [CountdownModule, UEditorModule, NgxTinymceModule];
 // #endregion
 
 // #region your componets & directives
-const COMPONENTS: Type<any>[] = [];
+const COMPONENTS: Type<any>[] = [
+  ] ;
 const DIRECTIVES: Type<any>[] = [];
 // #endregion
 
