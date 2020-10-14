@@ -39,6 +39,7 @@
         [nzFilterMultiple]="column.filterMultiple"
         [nzFilters]="column.listOfFilter"
         [nzFilterFn]="column.filterFn"
+        [nzShowFilter]="column.showFilter"
       >
         {{ column.name | translate }}
       </th> 
@@ -86,6 +87,7 @@
                       [nzFilterMultiple]="column.filterMultiple"
                       [nzFilters]="column.listOfFilter"
                       [nzFilterFn]="column.filterFn"
+                      [nzShowFilter]="column.showFilter"
                     >
                       {{ column.name | translate }}
                     </th> 
@@ -113,24 +115,20 @@
     <nz-table #menuTable [nzData]="data.menus" nzSize="middle" [nzShowPagination]="true">
       <thead>
         <tr>
-          <th nzShowSort nzSortKey="menuGroup">
-            {{ 'menuGroup' | translate }}
-          </th>
-          <th nzShowSort nzSortKey="menuSubGroup">
-            {{ 'menuSubGroup' | translate }}
-          </th>
-          <th nzShowSort nzSortKey="name">
-            {{ 'name' | translate }}
-          </th>
-          <th nzShowSort nzSortKey="sequence">
-            {{ 'sequence' | translate }}
-          </th>
-          <th nzShowSort nzSortKey="i18n">
-            {{ 'menu.i18n' | translate }}
-          </th>
-          <th nzShowSort nzSortKey="link">
-            {{ 'link' | translate }}
-          </th>
+          
+                      
+          <th
+          *ngFor="let column of listOfMenuTableColumns"
+          [nzSortOrder]="column.sortOrder"
+          [nzSortFn]="column.sortFn"
+          [nzSortDirections]="column.sortDirections"
+          [nzFilterMultiple]="column.filterMultiple"
+          [nzFilters]="column.listOfFilter"
+          [nzFilterFn]="column.filterFn"
+          [nzShowFilter]="column.showFilter"
+        >
+          {{ column.name | translate }}
+        </th> 
           <th>{{ 'action' | translate }}</th>
         </tr>
       </thead>

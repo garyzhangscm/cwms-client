@@ -17,6 +17,10 @@ export interface IntegrationInventoryAttributeChangeConfirmation {
   clientId: number;
   clientName: string;
 
+  attributeName: string;
+  originalValue: string;
+  newValue: string;
+
   status: IntegrationStatus;
   insertTime: number[];
   lastUpdateTime: number[];

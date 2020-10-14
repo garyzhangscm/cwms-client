@@ -3,6 +3,9 @@ import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
+import { User } from '../models/user';
 import { WorkingTeam } from '../models/working-team';
 import { WorkingTeamService } from '../services/working-team.service';
 
@@ -11,6 +14,76 @@ import { WorkingTeamService } from '../services/working-team.service';
   templateUrl: './working-team-maintenance-confirm.component.html',
 })
 export class AuthWorkingTeamMaintenanceConfirmComponent implements OnInit {
+  
+  listOfUserTableColumns: ColumnItem[] = [
+    {
+      name: 'username',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => a.username.localeCompare(b.username),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'firstname',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => a.firstname.localeCompare(b.firstname),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'lastname',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => a.lastname.localeCompare(b.lastname),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'email',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => a.email.localeCompare(b.email),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'enabled',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => this.utilService.compareBoolean(a.enabled, b.enabled),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false },
+      ],
+      filterFn: (list: boolean[], user: User) => list.some(enabled => user.enabled === enabled), 
+      showFilter: true
+    },
+    {
+      name: 'locked',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => this.utilService.compareBoolean(a.locked, b.locked),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false },
+      ],
+      filterFn: (list: boolean[], user: User) => list.some(locked => user.locked === locked), 
+      showFilter: true
+    }
+    ];
+    
   currentWorkingTeam: WorkingTeam | undefined;
   pageTitle: string;
 
@@ -20,6 +93,7 @@ export class AuthWorkingTeamMaintenanceConfirmComponent implements OnInit {
     private workingTeamService: WorkingTeamService,
     private router: Router,
     private messageService: NzMessageService,
+    private utilService: UtilService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.working-team.confirm.title');
   }

@@ -8,6 +8,7 @@ import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { Item } from '../../inventory/models/item';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { ItemService } from '../../inventory/services/item.service';
+import { ColumnItem } from '../../util/models/column-item';
 import { PutawayConfiguration } from '../models/putaway-configuration';
 import { PutawayConfigurationService } from '../services/putaway-configuration.service';
 
@@ -17,6 +18,100 @@ import { PutawayConfigurationService } from '../services/putaway-configuration.s
   styleUrls: ['./putaway-configuration.component.less'],
 })
 export class InboundPutawayConfigurationComponent implements OnInit {
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'sequence',
+          sortOrder: null,
+          sortFn: (a: PutawayConfiguration, b: PutawayConfiguration) => a.sequence - b.sequence,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+              name: 'item',
+              sortOrder: null,
+              sortFn: (a: PutawayConfiguration, b: PutawayConfiguration) => a.item!.name.localeCompare(b.item!.name),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+        },
+        {
+              name: 'item-family',
+              sortOrder: null,
+              sortFn: (a: PutawayConfiguration, b: PutawayConfiguration) => a.itemFamily!.name.localeCompare(b.itemFamily!.name),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+        },
+        {
+              name: 'inventory.status',
+              sortOrder: null,
+              sortFn: (a: PutawayConfiguration, b: PutawayConfiguration) => a.inventoryStatus!.name.localeCompare(b.inventoryStatus!.name),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+        },
+        {
+              name: 'location',
+              sortOrder: null,
+              sortFn: (a: PutawayConfiguration, b: PutawayConfiguration) => a.location!.name.localeCompare(b.location!.name),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+        },
+        {
+              name: 'location-group',
+              sortOrder: null,
+              sortFn: (a: PutawayConfiguration, b: PutawayConfiguration) => a.locationGroup!.name.localeCompare(b.locationGroup!.name),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+        },
+        {
+              name: 'location-group-type',
+              sortOrder: null,
+              sortFn: (a: PutawayConfiguration, b: PutawayConfiguration) => a.locationGroupType!.name.localeCompare(b.locationGroupType!.name),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+        },
+        {
+              name: 'putaway-configuration.strategy',
+              sortOrder: null,
+              sortFn: null,
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+        },
+        ];
+  
+  listOfSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onAllChecked(true);
+            }
+          },    
+        ];
+      setOfCheckedId = new Set<number>();
+      checked = false;
+      indeterminate = false;
   // Form related data and functions
   searchForm: FormGroup | undefined;
 
@@ -26,18 +121,8 @@ export class InboundPutawayConfigurationComponent implements OnInit {
 
   listOfAllItems: Item[] = [];
   listOfDisplayItems: Item[] = [];
-
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
+  
+  
 
   availableInventoryStatuses: InventoryStatus[] = [];
 
@@ -104,36 +189,35 @@ export class InboundPutawayConfigurationComponent implements OnInit {
       );
   }
 
+
+  updateCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(id);
+    } else {
+      this.setOfCheckedId.delete(id);
+    }
+  }
+
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked);
+    this.refreshCheckedStatus();
+  }
+
+  onAllChecked(value: boolean): void {
+    this.listOfDisplayPutawayConfiguration!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.refreshCheckedStatus();
+  }
+
   currentPageDataChange($event: PutawayConfiguration[]): void {
-    // this.locationGroups = $event;
-    this.listOfDisplayPutawayConfiguration = $event;
-    this.refreshStatus();
+    this.listOfDisplayPutawayConfiguration! = $event;
+    this.refreshCheckedStatus();
   }
 
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayPutawayConfiguration.every(item => this.mapOfCheckedId[item.id]);
-    this.indeterminate =
-      this.listOfDisplayPutawayConfiguration.some(item => this.mapOfCheckedId[item.id]) &&
-      !this.isAllDisplayDataChecked;
+  refreshCheckedStatus(): void {
+    this.checked = this.listOfDisplayPutawayConfiguration!.every(item => this.setOfCheckedId.has(item.id));
+    this.indeterminate = this.listOfDisplayPutawayConfiguration!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
   }
 
-  checkAll(value: boolean): void {
-    this.listOfDisplayPutawayConfiguration.forEach(item => (this.mapOfCheckedId[item.id] = value));
-    this.refreshStatus();
-  }
-
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    this.sortAndFilter();
-  }
-
-  sortAndFilter(): void {
-    const data = this.listOfAllPutawayConfiguration;
-
-    // sort data
-    
-  }
 
   removeSelectedPutawayConfigurations(): void {
     // make sure we have at least one checkbox checked
@@ -159,7 +243,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
   getSelectedPutawayConfigurations(): PutawayConfiguration[] {
     const selectedPutawayConfigurations: PutawayConfiguration[] = [];
     this.listOfAllPutawayConfiguration.forEach((putawayConfiguration: PutawayConfiguration) => {
-      if (this.mapOfCheckedId[putawayConfiguration.id] === true) {
+      if (this.setOfCheckedId.has(putawayConfiguration.id)) {
         selectedPutawayConfigurations.push(putawayConfiguration);
       }
     });
@@ -193,9 +277,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
     this.listOfDisplayItems = $event;
   }
 
-  sortItem(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
+  sortItem(sort: { key: string; value: string }): void { 
     
   }
   lookupSelect(itemName: string): void {

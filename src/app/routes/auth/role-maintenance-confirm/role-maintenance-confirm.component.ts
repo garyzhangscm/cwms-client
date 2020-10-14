@@ -3,7 +3,10 @@ import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { Role } from '../models/role';
+import { User } from '../models/user';
 import { RoleService } from '../services/role.service';
 
 interface MenuTreeNode {
@@ -19,6 +22,75 @@ interface MenuTreeNode {
   templateUrl: './role-maintenance-confirm.component.html',
 })
 export class AuthRoleMaintenanceConfirmComponent implements OnInit {
+  listOfUserTableColumns: ColumnItem[] = [
+    {
+      name: 'username',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => a.username.localeCompare(b.username),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'firstname',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => a.firstname.localeCompare(b.firstname),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'lastname',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => a.lastname.localeCompare(b.lastname),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'email',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => a.email!.localeCompare(b.email!),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'enabled',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => this.utilService.compareBoolean(a.enabled, b.enabled),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false },
+      ],
+      filterFn: (list: boolean[], user: User) => list.some(enabled => user.enabled === enabled), 
+      showFilter: true
+    },
+    {
+      name: 'locked',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => this.utilService.compareBoolean(a.locked, b.locked),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false },
+      ],
+      filterFn: (list: boolean[], user: User) => list.some(locked => user.locked === locked), 
+      showFilter: true
+    }
+    ];
+
   currentRole: Role | undefined;
   pageTitle: string;
   menuTree: MenuTreeNode[] | undefined;
@@ -29,6 +101,7 @@ export class AuthRoleMaintenanceConfirmComponent implements OnInit {
     private roleService: RoleService,
     private router: Router,
     private messageService: NzMessageService,
+    private utilService: UtilService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.role.confirm.title');
   }

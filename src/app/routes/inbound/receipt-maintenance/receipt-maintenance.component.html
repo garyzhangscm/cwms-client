@@ -120,35 +120,40 @@ nz-select<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="re
     <!-- Table to Display the result  -->
     <div>
       <nz-table nzShowPagination [nzData]="listOfAllReceiptLines"
-        (nzCurrentPageDataChange)="receiptLinesCurrentPageDataChange($event)" [nzFooter]="receiptLinesTableFoot"
+        (nzCurrentPageDataChange)="receiptLinesTableCurrentPageDataChange($event)" [nzFooter]="receiptLinesTableFoot"
         #receiptLinesTable>
-        <thead (nzSortChange)="sortReceiptLinesTable($event)" nzSingleSort>
+        <thead>
           <tr>
-            <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="receiptLinesTableAllChecked"
-              [nzIndeterminate]="receiptLinesTableIndeterminate" (nzCheckedChange)="receiptLinesTableCheckAll($event)">
-            </th>
-            <th nzShowSort nzSortKey="number">
-              {{ 'receipt.line.number' | translate }}
-            </th>
-            <th nzShowSort nzSortKey="item">
-              {{'item' | translate}}</th>
-            <th>
-              {{'item.description' | translate}}</th>
-            <th>
-              {{'receipt.line.expectedQuantity' | translate}}</th>
-            <th>
-              {{'receipt.line.receivedQuantity' | translate}}</th>
-            <th>
-              {{'receipt.line.overReceivingQuantity' | translate}}</th>
-            <th>
-              {{'receipt.line.overReceivingPercent' | translate}}</th>
+            <th
+            [nzSelections]="listOfReceiptLinesTableSelection"
+            [(nzChecked)]="receiptLinesTableChecked"
+            [nzIndeterminate]="receiptLinesTableIndeterminate"
+            (nzCheckedChange)="onReceiptLinesTableAllChecked($event)"
+            nzWidth="60px"
+          ></th>
+        <th
+            *ngFor="let column of listOfReceiptLineTableColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+          
             <th>{{ 'action' | translate }}</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let data of receiptLinesTable.data">
-            <td nzShowCheckbox [(nzChecked)]="receiptLinesTableMapOfCheckedId[data.id]"
-              (nzCheckedChange)="receiptLinesTableRefreshStatus()"></td>
+            <td
+            [nzChecked]="setOfReceiptLinesTableCheckedId.has(data.id)" 
+            (nzCheckedChange)="onReceiptLinesTableItemChecked(data.id, $event)"
+          ></td>
             <td>{{ data.number }}</td>
             <td>{{ data.item?.name }}</td>
             <td>{{ data.item?.description }}</td>
@@ -186,36 +191,40 @@ nz-select<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="re
     <!-- Table to Display the result  -->
     <div>
       <nz-table nzShowPagination [nzData]="listOfAllReceivedInventory"
-        (nzCurrentPageDataChange)="receivedInventoryCurrentPageDataChange($event)"
+        (nzCurrentPageDataChange)="receivedInventoryTableCurrentPageDataChange($event)"
         [nzFooter]="receivedInventoryTableFoot" #receivedInventoryTable>
-        <thead (nzSortChange)="sortReceivedInventoryTable($event)" nzSingleSort>
+        <thead  >
           <tr>
-            <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="receivedInventoryTableAllChecked"
-              [nzIndeterminate]="receivedInventoryTableIndeterminate"
-              (nzCheckedChange)="receivedInventoryTableCheckAll($event)">
-            </th>
-            <th nzShowSort nzSortKey="lpn">
-              {{ 'lpn' | translate }}
-            </th>
-            <th nzShowSort nzSortKey="item">
-              {{'item' | translate}}</th>
-            <th>
-              {{'item.description' | translate}}</th>
-            <th>
-              {{'quantity' | translate}}</th>
-            <th>
-              {{'inventory.status' | translate}}</th>
-            <th>
-              {{'location' | translate}}</th>
-            <th>
-              {{'nextLocation' | translate}}</th>
+            <th
+            [nzSelections]="listOfReceivedInventoryTableSelection"
+            [(nzChecked)]="receivedInventoryTableChecked"
+            [nzIndeterminate]="receivedInventoryTableIndeterminate"
+            (nzCheckedChange)="onReceivedInventoryTableAllChecked($event)"
+            nzWidth="60px"
+          ></th>
+        <th
+            *ngFor="let column of listOfReceivedInventoryTableColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+          
             <th>{{ 'action' | translate }}</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let data of receivedInventoryTable.data">
-            <td nzShowCheckbox [(nzChecked)]="receivedInventoryTableMapOfCheckedId[data.id]"
-              (nzCheckedChange)="receivedInventoryTableRefreshStatus()"></td>
+            <td
+              [nzChecked]="setOfReceivedInventoryTableCheckedId.has(data.id)"
+              (nzCheckedChange)="onReceivedInventoryTableItemChecked(data.id, $event)"
+            ></td>
             <td>{{ data.lpn }}</td>
             <td>{{ data.item?.name }}</td>
             <td>{{ data.item?.description }}</td>

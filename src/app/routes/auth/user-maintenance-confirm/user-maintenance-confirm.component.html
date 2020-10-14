@@ -61,15 +61,20 @@
   <nz-table #roleTable [nzData]="currentUser.roles">
     <thead>
       <tr>
-        <th nzShowSort nzSortKey="name">
-          {{ 'name' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="description">
-          {{ 'description' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="enabled">
-          {{ 'enabled' | translate }}
-        </th>
+        <th
+            *ngFor="let column of listOfRoleTableColumns"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+
+          
       </tr>
     </thead>
     <tbody>

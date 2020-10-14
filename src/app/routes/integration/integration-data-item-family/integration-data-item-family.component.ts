@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { IntegrationItemFamilyData } from '../models/integration-item-family-data';
 import { IntegrationItemFamilyDataService } from '../services/integration-item-family-data.service';
 
@@ -12,6 +14,109 @@ import { IntegrationItemFamilyDataService } from '../services/integration-item-f
   styleUrls: ['./integration-data-item-family.component.less'],
 })
 export class IntegrationIntegrationDataItemFamilyComponent implements OnInit {
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemFamilyData, b: IntegrationItemFamilyData) => a.id - b.id,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemFamilyData, b: IntegrationItemFamilyData) => a.name.localeCompare(b.name),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'description',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemFamilyData, b: IntegrationItemFamilyData) => a.description.localeCompare(b.description),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'warehouse-id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemFamilyData, b: IntegrationItemFamilyData) => a.warehouseId - b.warehouseId,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'warehouse-name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemFamilyData, b: IntegrationItemFamilyData) => a.warehouseName.localeCompare(b.warehouseName),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'integration.status',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemFamilyData, b: IntegrationItemFamilyData) => a.status.localeCompare(b.status),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'integration.insertTime',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemFamilyData, b: IntegrationItemFamilyData) => this.utilService.compareDateTime(a.insertTime, b.insertTime),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'integration.lastUpdateTime',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemFamilyData, b: IntegrationItemFamilyData) => this.utilService.compareDateTime(a.lastUpdateTime, b.lastUpdateTime),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'integration.errorMessage',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemFamilyData, b: IntegrationItemFamilyData) => a.errorMessage.localeCompare(b.errorMessage),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        ];
+        
+
   // Form related data and functions
   // Form related data and functions
   searchForm!: FormGroup;
@@ -21,16 +126,9 @@ export class IntegrationIntegrationDataItemFamilyComponent implements OnInit {
 
   // Table data for display
   listOfAllIntegrationItemFamilyData: IntegrationItemFamilyData[] = [];
-  listOfDisplayIntegrationItemFamilyData: IntegrationItemFamilyData[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
+  listOfDisplayIntegrationItemFamilyData: IntegrationItemFamilyData[] = []; 
 
-  isCollapse = false;
-
-  // list of expanded row
-  mapOfExpandedId: { [key: string]: boolean } = {};
+  isCollapse = false; 
 
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
@@ -40,6 +138,7 @@ export class IntegrationIntegrationDataItemFamilyComponent implements OnInit {
     private fb: FormBuilder,
     private integrationItemFamilyDataService: IntegrationItemFamilyDataService,
     private i18n: I18NService,
+    private utilService: UtilService,
   ) {}
 
   resetForm(): void {
@@ -70,11 +169,7 @@ export class IntegrationIntegrationDataItemFamilyComponent implements OnInit {
   currentPageDataChange($event: IntegrationItemFamilyData[]): void {
     this.listOfDisplayIntegrationItemFamilyData = $event;
   }
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    
-  }
+   
 
   ngOnInit(): void {
     this.initSearchForm();

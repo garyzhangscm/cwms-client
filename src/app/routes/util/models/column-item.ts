@@ -2,10 +2,12 @@ import { NzTableFilterFn, NzTableFilterList, NzTableSortFn, NzTableSortOrder } f
 
 export interface ColumnItem {
   name: string;
+  showSort: boolean;
   sortOrder: NzTableSortOrder | null;
   sortFn: NzTableSortFn | null;
   listOfFilter: NzTableFilterList;
   filterFn: NzTableFilterFn | null;
   filterMultiple: boolean;
   sortDirections: NzTableSortOrder[];
+  showFilter: boolean;
 }

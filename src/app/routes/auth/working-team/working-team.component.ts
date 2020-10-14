@@ -5,7 +5,10 @@ import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { Role } from '../models/role';
+import { User } from '../models/user';
 import { WorkingTeam } from '../models/working-team';
 import { UserService } from '../services/user.service';
 import { WorkingTeamService } from '../services/working-team.service';
@@ -16,6 +19,112 @@ import { WorkingTeamService } from '../services/working-team.service';
   styleUrls: ['./working-team.component.less'],
 })
 export class AuthWorkingTeamComponent implements OnInit {
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'name',
+          sortOrder: null,
+          sortFn: (a: WorkingTeam, b: WorkingTeam) => a.name.localeCompare(b.name),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'description',
+          sortOrder: null,
+          sortFn: (a: WorkingTeam, b: WorkingTeam) => a.description.localeCompare(b.description),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'enabled',
+          sortOrder: null,
+          sortFn: (a: WorkingTeam, b: WorkingTeam) => this.utilService.compareBoolean(a.enabled, b.enabled),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [
+            { text: this.i18n.fanyi('true'), value: true },
+            { text: this.i18n.fanyi('false'), value: false },
+          ],
+          filterFn: (list: boolean[], workingTeam: WorkingTeam) => list.some(enabled => workingTeam.enabled === enabled), 
+          showFilter: true
+        },
+        ];
+
+        
+  listOfUserTableColumns: ColumnItem[] = [
+    {
+      name: 'username',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => a.username.localeCompare(b.username),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'firstname',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => a.firstname.localeCompare(b.firstname),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'lastname',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => a.lastname.localeCompare(b.lastname),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'email',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => a.email.localeCompare(b.email),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'enabled',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => this.utilService.compareBoolean(a.enabled, b.enabled),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false },
+      ],
+      filterFn: (list: boolean[], user: User) => list.some(enabled => user.enabled === enabled), 
+      showFilter: true
+    },
+    {
+      name: 'locked',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => this.utilService.compareBoolean(a.locked, b.locked),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false },
+      ],
+      filterFn: (list: boolean[], user: User) => list.some(locked => user.locked === locked), 
+      showFilter: true
+    }
+    ];
+        
   searching = false;
   searchResult = '';
 
@@ -27,6 +136,7 @@ export class AuthWorkingTeamComponent implements OnInit {
     private messageService: NzMessageService,
     private i18n: I18NService,
     private titleService: TitleService,
+    private utilService: UtilService,
   ) {}
 
   // Form related data and functions
@@ -36,12 +146,7 @@ export class AuthWorkingTeamComponent implements OnInit {
   listOfAllWorkingTeams: WorkingTeam[] = [];
   listOfDisplayWorkingTeams: WorkingTeam[] = [];
 
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-  // list of expanded row
-  mapOfExpandedId: { [key: string]: boolean } = {};
+  expandSet = new Set<number>();
 
   tabIndex = 0;
 
@@ -78,17 +183,20 @@ export class AuthWorkingTeamComponent implements OnInit {
   }
   loadDetails(): void {
     this.listOfAllWorkingTeams.forEach(workingTeam => {
-      if (this.mapOfExpandedId[workingTeam.id] === true) {
-        this.showWorkingTeamDetails(this.mapOfExpandedId[workingTeam.id], workingTeam);
+      if (this.expandSet.has(workingTeam.id)) {
+        this.showWorkingTeamDetails(workingTeam);
       }
     });
   }
-
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    
+  onExpandChange(id: number, checked: boolean): void {
+    if (checked) {
+      this.expandSet.add(id);
+    } else {
+      this.expandSet.delete(id);
+    }
   }
+
+  
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.auth.working-team'));
@@ -124,8 +232,7 @@ export class AuthWorkingTeamComponent implements OnInit {
     });
   }
 
-  showWorkingTeamDetails(expanded: boolean, workingTeam: WorkingTeam): void {
-    this.mapOfExpandedId[workingTeam.id] = expanded;
+  showWorkingTeamDetails(workingTeam: WorkingTeam): void { 
 
     this.userService.getUsers('', '', workingTeam.name).subscribe(userRes => {
       workingTeam.users = userRes;

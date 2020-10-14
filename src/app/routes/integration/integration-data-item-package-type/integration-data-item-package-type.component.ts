@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { IntegrationItemPackageTypeData } from '../models/integration-item-package-type-data';
 import { IntegrationItemPackageTypeDataService } from '../services/integration-item-package-type-data.service';
 
@@ -12,6 +14,180 @@ import { IntegrationItemPackageTypeDataService } from '../services/integration-i
   styleUrls: ['./integration-data-item-package-type.component.less'],
 })
 export class IntegrationIntegrationDataItemPackageTypeComponent implements OnInit {
+
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => a.id - b.id,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+    
+        {
+          name: 'item.id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => a.itemId - b.itemId, 
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'item.name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => a.itemName.localeCompare(b.itemName),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => a.name.localeCompare(b.name),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'description',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => a.description.localeCompare(b.description),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+
+        {
+          name: 'client.id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => a.clientId - b.clientId,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+              name: 'client.name',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => a.clientName.localeCompare(b.clientName),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            
+        {
+          name: 'supplier-id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => a.supplierId - b.supplierId,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+              name: 'supplier-name',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => a.supplierName.localeCompare(b.supplierName),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+    {
+          name: 'warehouse.id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData)  => a.warehouseId - b.warehouseId,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        
+    {
+      name: 'warehouse.name',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => a.warehouseName.localeCompare(b.warehouseName),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },   
+            {
+              name: 'integration.status',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => a.status.localeCompare(b.status),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'integration.insertTime',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => this.utilService.compareDateTime(a.insertTime, b.insertTime),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'integration.lastUpdateTime',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => this.utilService.compareDateTime(a.lastUpdateTime, b.lastUpdateTime),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'integration.errorMessage',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => a.errorMessage.localeCompare(b.errorMessage),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+        ];
+        expandSet = new Set<number>();
+
   // Form related data and functions
   // Form related data and functions
   searchForm!: FormGroup;
@@ -21,16 +197,10 @@ export class IntegrationIntegrationDataItemPackageTypeComponent implements OnIni
 
   // Table data for display
   listOfAllIntegrationItemPackageTypeData: IntegrationItemPackageTypeData[] = [];
-  listOfDisplayIntegrationItemPackageTypeData: IntegrationItemPackageTypeData[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
+  listOfDisplayIntegrationItemPackageTypeData: IntegrationItemPackageTypeData[] = []; 
 
   isCollapse = false;
-
-  // list of expanded row
-  mapOfExpandedId: { [key: string]: boolean } = {};
+ 
 
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
@@ -40,6 +210,7 @@ export class IntegrationIntegrationDataItemPackageTypeComponent implements OnIni
     private fb: FormBuilder,
     private integrationItemPackageTypeDataService: IntegrationItemPackageTypeDataService,
     private i18n: I18NService,
+    private utilService: UtilService,
   ) {}
 
   resetForm(): void {
@@ -69,12 +240,7 @@ export class IntegrationIntegrationDataItemPackageTypeComponent implements OnIni
 
   currentPageDataChange($event: IntegrationItemPackageTypeData[]): void {
     this.listOfDisplayIntegrationItemPackageTypeData = $event;
-  }
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value; 
-  }
-
+  } 
   ngOnInit(): void {
     this.initSearchForm();
   }
@@ -85,5 +251,12 @@ export class IntegrationIntegrationDataItemPackageTypeComponent implements OnIni
       integrationDateTimeRanger: [null],
       integrationDate: [null],
     });
+  }
+  onExpandChange(id: number, checked: boolean): void {
+    if (checked) {
+      this.expandSet.add(id);
+    } else {
+      this.expandSet.delete(id);
+    }
   }
 }

@@ -58,7 +58,8 @@ export class WorkTaskWorkTaskComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'work-task.type',
@@ -67,7 +68,8 @@ export class WorkTaskWorkTaskComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'work-task.status',
@@ -76,7 +78,8 @@ export class WorkTaskWorkTaskComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'sourceLocation',
@@ -85,7 +88,8 @@ export class WorkTaskWorkTaskComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'destinationLocation',
@@ -94,7 +98,8 @@ export class WorkTaskWorkTaskComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'lpn',
@@ -103,7 +108,8 @@ export class WorkTaskWorkTaskComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'assignedUser',
@@ -112,7 +118,8 @@ export class WorkTaskWorkTaskComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'assignedRole',
@@ -121,7 +128,8 @@ export class WorkTaskWorkTaskComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'assignedWorkingTeam',
@@ -130,7 +138,8 @@ export class WorkTaskWorkTaskComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'currentUser',
@@ -139,7 +148,8 @@ export class WorkTaskWorkTaskComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'completeUser',
@@ -148,7 +158,8 @@ export class WorkTaskWorkTaskComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'startTime',
@@ -157,7 +168,8 @@ export class WorkTaskWorkTaskComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'completeTime',
@@ -166,7 +178,8 @@ export class WorkTaskWorkTaskComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     }
   ];
   searchForm: FormGroup | undefined;

@@ -6,6 +6,8 @@ import { I18NService } from '@core';
 import { TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { User } from '../models/user';
 import { UserService } from '../services/user.service';
  
@@ -21,10 +23,80 @@ export class AuthUserComponent implements OnInit {
     private userService: UserService,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
+    private utilService: UtilService,
   ) {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.auth.user'));
   }
 
+  listOfColumns: ColumnItem[] = [
+    {
+      name: 'username',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => a.username.localeCompare(b.username),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'firstname',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => a.firstname.localeCompare(b.firstname),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'lastname',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => a.lastname.localeCompare(b.lastname),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'email',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => a.email.localeCompare(b.email),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'enabled',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => this.utilService.compareBoolean(a.enabled, b.enabled),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false },
+      ],
+      filterFn: (list: boolean[], user: User) => list.some(enabled => user.enabled === enabled), 
+      showFilter: true
+    },
+    {
+      name: 'locked',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => this.utilService.compareBoolean(a.locked, b.locked),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false },
+      ],
+      filterFn: (list: boolean[], user: User) => list.some(locked => user.locked === locked), 
+      showFilter: true
+    }
+    ];
+    
   // Form related data and functions
   searchForm: FormGroup | undefined;
 

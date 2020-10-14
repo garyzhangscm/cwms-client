@@ -28,39 +28,42 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
   <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllReceipts" [nzFooter]="tableFoot">
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <thead>
       <tr>
-        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
-          (nzCheckedChange)="checkAll($event)"></th>
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="number">
-          {{ 'receipt.number' | translate }}
-        </th>
-        <th nzShowFilter [nzFilters]="filtersByClient"
-          (nzFilterChange)="filter($event, selectedFiltersBySupplier, selectedFiltersByStatus)">
-          {{'client' | translate}}</th>
+        <th
+            [nzSelections]="listOfSelection"
+            [(nzChecked)]="checked"
+            [nzIndeterminate]="indeterminate"
+            (nzCheckedChange)="onAllChecked($event)"
+            nzWidth="60px"
+          ></th>
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
 
-        <th nzShowFilter [nzFilters]="filtersBySupplier"
-          (nzFilterChange)="filter(selectedFiltersByClient, $event, selectedFiltersByStatus)">
-          {{'supplier' | translate}}</th>
-        <th nzShowFilter [nzFilters]="filtersByStatus"
-          (nzFilterChange)="filter(selectedFiltersByClient, selectedFiltersBySupplier,  $event)">
-          {{'status' | translate}}</th>
-        <th nzShowSort nzSortKey="totalLineCount">{{ 'receipt.totalLineCount' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="totalItemCount">{{ 'receipt.totalItemCount' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="totalExpectedQuantity">
-          {{ 'receipt.totalExpectedQuantity' | translate }}</th>
-        <th nzShowSort nzSortKey="totalReceivedQuantity">
-          {{ 'receipt.totalReceivedQuantity' | translate }}</th>
+          
         <th>{{ 'action' | translate }}</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let data of rowSelectionTable.data">
-        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
-        <td>{{ data.id }}</td>
+        
+        <td
+        [nzChecked]="setOfCheckedId.has(data.id)"
+        [nzDisabled]="data.disabled"
+        (nzCheckedChange)="onItemChecked(data.id, $event)"
+      ></td>
+      
         <td><a routerLink="/inbound/receipt-maintenance" routerLinkActive="active"
             [queryParams]="{receiptNumber : data.number}">
             {{ data.number }}</a></td>

@@ -15,6 +15,8 @@ import { ItemPackageType } from '../../inventory/models/item-package-type';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ItemService } from '../../inventory/services/item.service';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -30,6 +32,193 @@ import { ReceiptService } from '../services/receipt.service';
   templateUrl: './receipt-maintenance.component.html',
 })
 export class InboundReceiptMaintenanceComponent implements OnInit {
+  listOfReceiptLineTableColumns: ColumnItem[] = [    
+    {
+          name: 'receipt.line.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableString(a.number, b.number),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'item',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'item.description',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'receipt.line.expectedQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableNumber(a.expectedQuantity, b.expectedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'receipt.line.receivedQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableNumber(a.receivedQuantity, b.receivedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'receipt.line.overReceivingQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableNumber(a.overReceivingQuantity, b.overReceivingQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'receipt.line.overReceivingPercent',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableNumber(a.overReceivingPercent, b.overReceivingPercent),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        ];
+
+        listOfReceivedInventoryTableColumns: ColumnItem[] = [    
+          {
+                name: 'lpn',
+                showSort: true,
+                sortOrder: null,
+                sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.lpn, b.lpn),
+                sortDirections: ['ascend', 'descend'],
+                filterMultiple: true,
+                listOfFilter: [],
+                filterFn: null, 
+                showFilter: false
+              },
+              {
+                name: 'item',
+                showSort: true,
+                sortOrder: null,
+                sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+                sortDirections: ['ascend', 'descend'],
+                filterMultiple: true,
+                listOfFilter: [],
+                filterFn: null, 
+                showFilter: false
+              },
+              {
+                name: 'item.description',
+                showSort: true,
+                sortOrder: null,
+                sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+                sortDirections: ['ascend', 'descend'],
+                filterMultiple: true,
+                listOfFilter: [],
+                filterFn: null, 
+                showFilter: false
+              },
+              {
+                name: 'quantity',
+                showSort: true,
+                sortOrder: null,
+                sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
+                sortDirections: ['ascend', 'descend'],
+                filterMultiple: true,
+                listOfFilter: [],
+                filterFn: null, 
+                showFilter: false
+              },
+              {
+                name: 'inventory.status',
+                showSort: true,
+                sortOrder: null,
+                sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.inventoryStatus, b.inventoryStatus, 'name'),
+                sortDirections: ['ascend', 'descend'],
+                filterMultiple: true,
+                listOfFilter: [],
+                filterFn: null, 
+                showFilter: false
+              },
+              {
+                name: 'location',
+                showSort: true,
+                sortOrder: null,
+                sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
+                sortDirections: ['ascend', 'descend'],
+                filterMultiple: true,
+                listOfFilter: [],
+                filterFn: null, 
+                showFilter: false
+              },
+              {
+                name: 'nextLocation',
+                showSort: false,
+                sortOrder: null,
+                sortFn: null,
+                sortDirections: ['ascend', 'descend'],
+                filterMultiple: true,
+                listOfFilter: [],
+                filterFn: null, 
+                showFilter: false
+              },
+              ];
+
+              listOfReceiptLinesTableSelection = [
+                {
+                  text: this.i18n.fanyi(`select-all-rows`),
+                  onSelect: () => {
+                    this.onReceiptLinesTableAllChecked(true);
+                  }
+                },    
+              ];
+
+              listOfReceivedInventoryTableSelection = [
+                {
+                  text: this.i18n.fanyi(`select-all-rows`),
+                  onSelect: () => {
+                    this.onReceivedInventoryTableAllChecked(true);
+                  }
+                },    
+              ];
+            
+  setOfReceiptLinesTableCheckedId  = new Set<number>();
+  receiptLinesTableChecked = false;
+  receiptLinesTableIndeterminate = false;       
+  
+  
+  setOfReceivedInventoryTableCheckedId  = new Set<number>();
+  receivedInventoryTableChecked = false;
+  receivedInventoryTableIndeterminate = false;     
+
   receiptForm!: FormGroup;
   receivingForm!: FormGroup;
   pageTitle: string;
@@ -54,18 +243,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
   listOfAllReceivedInventory: Inventory[] = [];
   listOfDisplayReceivedInventory: Inventory[] = [];
-
-  // control for table of receipt line
-  // checkbox - select all
-  receiptLinesTableAllChecked = false;
-  receiptLinesTableIndeterminate = false;
-  // list of checked checkbox
-  receiptLinesTableMapOfCheckedId: { [key: string]: boolean } = {};
-
-  receivedInventoryTableAllChecked = false;
-  receivedInventoryTableIndeterminate = false;
-  // list of checked checkbox
-  receivedInventoryTableMapOfCheckedId: { [key: string]: boolean } = {};
+ 
 
   receivingModal!: NzModalRef;
   addReceiptLineModal!: NzModalRef;
@@ -102,6 +280,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     private inventoryService: InventoryService,
     private message: NzMessageService,
     private warehouseService: WarehouseService,
+    private utilService: UtilService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inbound.receipt.title');
   }
@@ -275,64 +454,82 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     });
   }
 
-  receiptLinesCurrentPageDataChange($event: ReceiptLine[]): void {
-    this.listOfDisplayReceiptLines = $event;
-    this.receiptLinesTableRefreshStatus();
+  updateReceiptLinesTableCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfReceiptLinesTableCheckedId.add(id);
+    } else {
+      this.setOfReceiptLinesTableCheckedId.delete(id);
+    }
   }
 
-  receiptLinesTableRefreshStatus(): void {
-    this.receiptLinesTableAllChecked = this.listOfDisplayReceiptLines.every(
-      item => this.receiptLinesTableMapOfCheckedId[item.id!],
-    );
-    this.receiptLinesTableIndeterminate =
-      this.listOfDisplayReceiptLines.some(item => this.receiptLinesTableMapOfCheckedId[item.id!]) &&
-      !this.receiptLinesTableAllChecked;
+  onReceiptLinesTableItemChecked(id: number, checked: boolean): void {
+    this.updateReceiptLinesTableCheckedSet(id, checked);
+    this.refreshReceiptLinesTableCheckedStatus();
   }
 
-  receiptLinesTableCheckAll(value: boolean): void {
-    this.listOfDisplayReceiptLines.forEach(item => (this.receiptLinesTableMapOfCheckedId[item.id!] = value));
-    this.receiptLinesTableRefreshStatus();
+  onReceiptLinesTableAllChecked(value: boolean): void {
+    this.listOfDisplayReceivedInventory!.forEach(item => this.updateReceiptLinesTableCheckedSet(item.id!, value));
+    this.refreshReceiptLinesTableCheckedStatus();
   }
 
-  sortReceiptLinesTable(sort: { key: string; value: string }): void { 
+  receiptLinesTableCurrentPageDataChange($event: ReceiptLine[]): void {
+    this.listOfDisplayReceivedInventory! = $event;
+    this.refreshReceiptLinesTableCheckedStatus();
   }
 
+  refreshReceiptLinesTableCheckedStatus(): void {
+    this.receiptLinesTableChecked = 
+        this.listOfDisplayReceivedInventory!.every(item => this.setOfReceiptLinesTableCheckedId.has(item.id!));
+    this.receiptLinesTableIndeterminate = 
+        this.listOfDisplayReceivedInventory!.some(item => this.setOfReceiptLinesTableCheckedId.has(item.id!)) && !this.receiptLinesTableChecked;
+  }
+
+  updateReceivedInventoryTableCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfReceivedInventoryTableCheckedId.add(id);
+    } else {
+      this.setOfReceivedInventoryTableCheckedId.delete(id);
+    }
+  }
+
+  onReceivedInventoryTableItemChecked(id: number, checked: boolean): void {
+    this.updateReceivedInventoryTableCheckedSet(id, checked);
+    this.refreshReceivedInventoryTableCheckedStatus();
+  }
+
+  onReceivedInventoryTableAllChecked(value: boolean): void {
+    this.listOfDisplayReceivedInventory!.forEach(item => this.updateReceivedInventoryTableCheckedSet(item.id!, value));
+    this.refreshReceivedInventoryTableCheckedStatus();
+  }
+
+  receivedInventoryTableCurrentPageDataChange($event: ReceiptLine[]): void {
+    this.listOfDisplayReceivedInventory! = $event;
+    this.refreshReceivedInventoryTableCheckedStatus();
+  }
+
+  refreshReceivedInventoryTableCheckedStatus(): void {
+    this.receivedInventoryTableChecked = 
+        this.listOfDisplayReceivedInventory!.every(item => this.setOfReceivedInventoryTableCheckedId.has(item.id!));
+    this.receivedInventoryTableIndeterminate = 
+        this.listOfDisplayReceivedInventory!.some(item => this.setOfReceivedInventoryTableCheckedId.has(item.id!)) && !this.receiptLinesTableChecked;
+  }
+
+
+  
   getSelectedReceiptLines(): ReceiptLine[] {
     const selectedReceiptLines: ReceiptLine[] = [];
     this.listOfAllReceiptLines.forEach((receiptLine: ReceiptLine) => {
-      if (this.receiptLinesTableMapOfCheckedId[receiptLine.id!] === true) {
+      if (this.setOfReceiptLinesTableCheckedId.has(receiptLine.id!)) {
         selectedReceiptLines.push(receiptLine);
       }
     });
     return selectedReceiptLines;
   }
-
-  receivedInventoryCurrentPageDataChange($event: Inventory[]): void {
-    this.listOfDisplayReceivedInventory = $event;
-    this.receivedInventoryTableRefreshStatus();
-  }
-
-  receivedInventoryTableRefreshStatus(): void {
-    this.receivedInventoryTableAllChecked = this.listOfDisplayReceivedInventory.every(
-      item => this.receivedInventoryTableMapOfCheckedId[item.id!],
-    );
-    this.receivedInventoryTableIndeterminate =
-      this.listOfDisplayReceivedInventory.some(item => this.receivedInventoryTableMapOfCheckedId[item.id!]) &&
-      !this.receivedInventoryTableAllChecked;
-  }
-
-  receivedInventoryTableCheckAll(value: boolean): void {
-    this.listOfDisplayReceivedInventory.forEach(item => (this.receivedInventoryTableMapOfCheckedId[item.id!] = value));
-    this.receivedInventoryTableRefreshStatus();
-  }
-
-  sortReceivedInventoryTable(sort: { key: string; value: string }): void { 
-  }
-
+  
   getSelectedReceivedInventory(): Inventory[] {
     const selectedReceivedInventory: Inventory[] = [];
     this.listOfDisplayReceivedInventory.forEach((inventory: Inventory) => {
-      if (this.receivedInventoryTableMapOfCheckedId[inventory.id!] === true) {
+      if (this.setOfReceivedInventoryTableCheckedId.has(inventory.id!)) {
         selectedReceivedInventory.push(inventory);
       }
     });
@@ -369,7 +566,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   getSelectedInventory(): Inventory[] {
     const selectedInventories: Inventory[] = [];
     this.listOfAllReceivedInventory.forEach((inventory: Inventory) => {
-      if (this.receivedInventoryTableMapOfCheckedId[inventory.id!] === true) {
+      if (this.setOfReceivedInventoryTableCheckedId.has(inventory.id!)) {
         selectedInventories.push(inventory);
       }
     });

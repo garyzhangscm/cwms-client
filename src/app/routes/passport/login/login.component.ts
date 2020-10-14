@@ -79,7 +79,7 @@ export class UserLoginComponent implements OnDestroy {
   warehouses: Warehouse[] | undefined;
 
   // #endregion
-  ngOnInit() {
+  ngOnInit(): void {
     this.singleCompanySystem = this.companyService.isSingleCompanyServer();
     if (this.singleCompanySystem === true) {
       this.defaultCompanyCode = this.companyService.getDefaultCompanyCode()!;
@@ -153,7 +153,7 @@ export class UserLoginComponent implements OnDestroy {
         this.reuseTabService.clear();
         // 设置用户Token信息
         // TODO: Mock expired value
-        res.user.expired = +new Date() + 1000 * 60 * 5;
+        res.user.expired = +new Date() + 1000 * 60 * 1000;
         this.tokenService.set(res.user);
 
         // get the company information

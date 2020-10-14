@@ -4,6 +4,7 @@ import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { ColumnItem } from '../../util/models/column-item';
 import { Customer } from '../models/customer';
 import { Supplier } from '../models/supplier';
 import { CustomerService } from '../services/customer.service';
@@ -18,31 +19,147 @@ import { SupplierService } from '../services/supplier.service';
   styleUrls: ['./customer.component.less'],
 })
 export class CommonCustomerComponent implements OnInit {
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'name',
+          sortOrder: null,
+          sortFn: (a: Customer, b: Customer) => a.name.localeCompare(b.name),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'description',
+          sortOrder: null,
+          sortFn: (a: Customer, b: Customer) => a.description.localeCompare(b.description),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'contactor.firstname',
+          sortOrder: null,
+          sortFn: (a: Customer, b: Customer) => a.contactorFirstname.localeCompare(b.contactorFirstname),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'contactor.lastname',
+          sortOrder: null,
+          sortFn: (a: Customer, b: Customer) => a.contactorLastname.localeCompare(b.contactorLastname),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'country',
+          sortOrder: null,
+          sortFn: (a: Customer, b: Customer) => a.addressCountry.localeCompare(b.addressCountry),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'state',
+          sortOrder: null,
+          sortFn: (a: Customer, b: Customer) => a.addressState.localeCompare(b.addressState),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'county',
+          sortOrder: null,
+          sortFn: (a: Customer, b: Customer) => a.addressCounty!.localeCompare(b.addressCounty!),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'city',
+          sortOrder: null,
+          sortFn: (a: Customer, b: Customer) => a.addressCity.localeCompare(b.addressCity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'district',
+          sortOrder: null,
+          sortFn: (a: Customer, b: Customer) => a.addressDistrict!.localeCompare(b.addressDistrict!),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'line1',
+          sortOrder: null,
+          sortFn: (a: Customer, b: Customer) => a.addressLine1.localeCompare(b.addressLine1),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'line2',
+          sortOrder: null,
+          sortFn: (a: Customer, b: Customer) => a.addressLine2!.localeCompare(b.addressLine2!),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'postcode',
+          sortOrder: null,
+          sortFn: (a: Customer, b: Customer) => a.addressPostcode.localeCompare(b.addressPostcode),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        ];
+        
+  listOfSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onAllChecked(true);
+            }
+          },    
+        ];
+      setOfCheckedId = new Set<number>();
+      checked = false;
+      indeterminate = false;
+
   // Table data for display
   listOfAllCustomers: Customer[] = [];
   listOfDisplayCustomers: Customer[] = [];
 
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-  // Filters meta data
-  filtersByName = [];
-  filtersByDescription = [];
-  filtersByAddressCountry = [];
-  filtersByAddressState = [];
-  // Save filters that already selected
-  selectedFiltersByName: string[] = [];
-  selectedFiltersByDescription: string[] = [];
-  selectedFiltersByCountry: string[] = [];
-  selectedFiltersByState: string[] = [];
-
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
+  
+  
 
   // editable cell
   editId = '';
@@ -60,77 +177,40 @@ export class CommonCustomerComponent implements OnInit {
     this.customerService.loadCustomers(refresh).subscribe(customerRes => {
       this.listOfAllCustomers = customerRes;
       this.listOfDisplayCustomers = customerRes;
-
-      this.filtersByName = [];
-      this.filtersByDescription = [];
-      this.filtersByAddressCountry = [];
-      this.filtersByAddressState = [];
-
-      const existingCountries = new Set();
-      const existingStates = new Set();
+ 
 
       
       
     });
   }
 
+   
+  updateCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(id);
+    } else {
+      this.setOfCheckedId.delete(id);
+    }
+  }
+
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked);
+    this.refreshCheckedStatus();
+  }
+
+  onAllChecked(value: boolean): void {
+    this.listOfDisplayCustomers!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.refreshCheckedStatus();
+  }
+
   currentPageDataChange($event: Customer[]): void {
-    this.listOfDisplayCustomers = $event;
-    this.refreshStatus();
-  }
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayCustomers.every(item => this.mapOfCheckedId[item.id]);
-    this.indeterminate =
-      this.listOfDisplayCustomers.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+    this.listOfDisplayCustomers! = $event;
+    this.refreshCheckedStatus();
   }
 
-  checkAll(value: boolean): void {
-    this.listOfDisplayCustomers.forEach(item => (this.mapOfCheckedId[item.id] = value));
-    this.refreshStatus();
-  }
-
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    this.sortAndFilter();
-  }
-
-  filter(
-    selectedFiltersByName: string[],
-    selectedFiltersByDescription: string[],
-    selectedFiltersByCountry: string[],
-    selectedFiltersByState: string[],
-  ): void {
-    this.selectedFiltersByName = selectedFiltersByName;
-    this.selectedFiltersByDescription = selectedFiltersByDescription;
-    this.selectedFiltersByCountry = selectedFiltersByCountry;
-    this.selectedFiltersByState = selectedFiltersByState;
-    this.sortAndFilter();
-  }
-  sortAndFilter(): void {
-    // filter data
-    const filterFunc = (item: {
-      id: number;
-      name: string;
-      description: string;
-      addressCountry: string;
-      addressState: string;
-    }) =>
-      (this.selectedFiltersByName.length
-        ? this.selectedFiltersByName.some(name => item.name.indexOf(name) !== -1)
-        : true) &&
-      (this.selectedFiltersByDescription.length
-        ? this.selectedFiltersByDescription.some(description => item.description.indexOf(description) !== -1)
-        : true) &&
-      (this.selectedFiltersByCountry.length
-        ? this.selectedFiltersByCountry.some(addressCountry => item.addressCountry.indexOf(addressCountry) !== -1)
-        : true) &&
-      (this.selectedFiltersByState.length
-        ? this.selectedFiltersByState.some(addressState => item.addressState.indexOf(addressState) !== -1)
-        : true);
-
-    const data = this.listOfAllCustomers.filter(item => filterFunc(item));
- 
+  refreshCheckedStatus(): void {
+    this.checked = this.listOfDisplayCustomers!.every(item => this.setOfCheckedId.has(item.id));
+    this.indeterminate = this.listOfDisplayCustomers!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
   }
 
   removeSelectedCustomers(): void {
@@ -157,7 +237,7 @@ export class CommonCustomerComponent implements OnInit {
   getSelectedCustomers(): Customer[] {
     const selectedCustomers: Customer[] = [];
     this.listOfAllCustomers.forEach((customer: Customer) => {
-      if (this.mapOfCheckedId[customer.id] === true) {
+      if (this.setOfCheckedId.has(customer.id)) {
         selectedCustomers.push(customer);
       }
     });

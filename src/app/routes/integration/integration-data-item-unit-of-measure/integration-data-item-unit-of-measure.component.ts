@@ -1,8 +1,10 @@
 import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { I18NService } from '@core/i18n/i18n.service';
+import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { IntegrationItemUnitOfMeasureData } from '../models/integration-item-unit-of-measure-data';
 import { IntegrationItemUnitOfMeasureDataService } from '../services/integration-item-unit-of-measure-data.service';
 
@@ -12,6 +14,213 @@ import { IntegrationItemUnitOfMeasureDataService } from '../services/integration
   styleUrls: ['./integration-data-item-unit-of-measure.component.less'],
 })
 export class IntegrationIntegrationDataItemUnitOfMeasureComponent implements OnInit {
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => a.id - b.id,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+    
+        {
+          name: 'item.id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => a.itemId - b.itemId, 
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'item.name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => a.itemName.localeCompare(b.itemName),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+    
+        {
+          name: 'item-package-type-id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => a.itemPackageTypeId - b.itemPackageTypeId, 
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'item-package-type-name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => a.itemPackageTypeName.localeCompare(b.itemPackageTypeName),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => a.unitOfMeasureId - b.unitOfMeasureId,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'description',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => a.unitOfMeasureName.localeCompare(b.unitOfMeasureName),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+
+        {
+          name: 'quantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => a.quantity - b.quantity,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'weight',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => a.weight - b.weight,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'length',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => a.length - b.length,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'width',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => a.width - b.width,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'height',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => a.height - b.height,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+         
+         
+    {
+          name: 'warehouse.id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData)  => a.warehouseId - b.warehouseId,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        
+    {
+      name: 'warehouse.name',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => a.warehouseName.localeCompare(b.warehouseName),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },   
+            {
+              name: 'integration.status',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => a.status.localeCompare(b.status),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'integration.insertTime',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => this.utilService.compareDateTime(a.insertTime, b.insertTime),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'integration.lastUpdateTime',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => this.utilService.compareDateTime(a.lastUpdateTime, b.lastUpdateTime),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'integration.errorMessage',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => a.errorMessage.localeCompare(b.errorMessage),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+        ];
+
   // Form related data and functions
   // Form related data and functions
   searchForm!: FormGroup;
@@ -40,6 +249,7 @@ export class IntegrationIntegrationDataItemUnitOfMeasureComponent implements OnI
     private fb: FormBuilder,
     private integrationItemUnitOfMeasureDataService: IntegrationItemUnitOfMeasureDataService,
     private i18n: I18NService,
+    private utilService: UtilService,
   ) {}
 
   resetForm(): void {

@@ -8,6 +8,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { Client } from '../../common/models/client';
 import { Supplier } from '../../common/models/supplier';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { Receipt } from '../models/receipt';
 import { ReceiptStatus } from '../models/receipt-status.enum';
 import { ReceiptService } from '../services/receipt.service';
@@ -18,6 +20,109 @@ import { ReceiptService } from '../services/receipt.service';
   styleUrls: ['./receipt.component.less'],
 })
 export class InboundReceiptComponent implements OnInit {
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'receipt.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Receipt, b: Receipt) => a.number.localeCompare(b.number),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'client',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Receipt, b: Receipt) => this.utilService.compareNullableObjField(a.client, b.client, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'supplier',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Receipt, b: Receipt) => this.utilService.compareNullableObjField(a.supplier, b.supplier, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'status',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Receipt, b: Receipt) => a.receiptStatus.localeCompare(b.receiptStatus),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'receipt.totalLineCount',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Receipt, b: Receipt) => this.utilService.compareNullableNumber(a.totalLineCount, b.totalLineCount),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'receipt.totalItemCount',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Receipt, b: Receipt) => this.utilService.compareNullableNumber(a.totalItemCount, b.totalItemCount),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'receipt.totalExpectedQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Receipt, b: Receipt) => this.utilService.compareNullableNumber(a.totalExpectedQuantity, b.totalExpectedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'receipt.totalReceivedQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Receipt, b: Receipt) => this.utilService.compareNullableNumber(a.totalReceivedQuantity, b.totalReceivedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        ];
+        
+  listOfSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onAllChecked(true);
+            }
+          },    
+        ];
+      setOfCheckedId = new Set<number>();
+      checked = false;
+      indeterminate = false;
+
   receiptStatus = ReceiptStatus;
 
   // Form related data and functions
@@ -28,25 +133,8 @@ export class InboundReceiptComponent implements OnInit {
   // Table data for display
   listOfAllReceipts: Receipt[] = [];
   listOfDisplayReceipts: Receipt[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-  // Filters meta data
-  filtersByClient = [];
-  filtersBySupplier = [];
-  filtersByStatus = [];
-  // Save filters that already selected
-  selectedFiltersByClient: string[] = [];
-  selectedFiltersBySupplier: string[] = [];
-  selectedFiltersByStatus: string[] = [];
-
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
+  
+  
 
   constructor(
     private fb: FormBuilder,
@@ -56,6 +144,7 @@ export class InboundReceiptComponent implements OnInit {
     private message: NzMessageService,
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
+    private utilService: UtilService,
   ) {}
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inbound.receipt'));
@@ -75,10 +164,7 @@ export class InboundReceiptComponent implements OnInit {
     this.searchForm!.reset();
     this.listOfAllReceipts = [];
     this.listOfDisplayReceipts = [];
-    this.filtersByClient = [];
-    this.filtersBySupplier = [];
-    this.selectedFiltersByClient = [];
-    this.selectedFiltersBySupplier = [];
+    
   }
 
   search(): void {
@@ -95,13 +181,7 @@ export class InboundReceiptComponent implements OnInit {
           rowCount: receiptRes.length,
         });
 
-        this.filtersByClient = [];
-        this.filtersBySupplier = [];
-        this.filtersByStatus = [];
-        const existingClientId = new Set();
-        const existingSupplierId = new Set();
-        const existingStatus = new Set();
-
+        
          
       },
       () => {
@@ -130,44 +210,36 @@ export class InboundReceiptComponent implements OnInit {
     return receipts;
   }
 
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayReceipts.every(item => this.mapOfCheckedId[item.id!]);
-    this.indeterminate =
-      this.listOfDisplayReceipts.some(item => this.mapOfCheckedId[item.id!]) && !this.isAllDisplayDataChecked;
-  }
-
-  checkAll(value: boolean): void {
-    this.listOfDisplayReceipts.forEach(item => (this.mapOfCheckedId[item.id!] = value));
-    this.refreshStatus();
-  }
-
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    this.sortAndFilter();
-  }
-
-  filter(selectedFiltersByClient: string[], selectedFiltersBySupplier: string[], selectedFiltersByStatus: string[]): void {
-    this.selectedFiltersByClient = selectedFiltersByClient;
-    this.selectedFiltersBySupplier = selectedFiltersBySupplier;
-    this.selectedFiltersByStatus = selectedFiltersByStatus;
-    this.sortAndFilter();
-  }
-
-  sortAndFilter(): void {
-    // filter data
-    const filterFunc = (item: { client: Client; supplier: Supplier; receiptStatus: ReceiptStatus }) =>
-      this.selectedFiltersByClient.length
-        ? this.selectedFiltersByClient.some(id => item.client.id === +id)
-        : true && this.selectedFiltersBySupplier.length
-        ? this.selectedFiltersBySupplier.some(id => item.supplier.id === +id)
-        : true && this.selectedFiltersByStatus.length
-        ? this.selectedFiltersByStatus.some(status => item.receiptStatus === status)
-        : true;
  
-
-    // sort data 
+  
+  updateCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(id);
+    } else {
+      this.setOfCheckedId.delete(id);
+    }
   }
+
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked);
+    this.refreshCheckedStatus();
+  }
+
+  onAllChecked(value: boolean): void {
+    this.listOfDisplayReceipts!.forEach(item => this.updateCheckedSet(item.id!, value));
+    this.refreshCheckedStatus();
+  }
+
+  currentPageDataChange($event: Receipt[]): void {
+    this.listOfDisplayReceipts! = $event;
+    this.refreshCheckedStatus();
+  }
+
+  refreshCheckedStatus(): void {
+    this.checked = this.listOfDisplayReceipts!.every(item => this.setOfCheckedId.has(item.id!));
+    this.indeterminate = this.listOfDisplayReceipts!.some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
+  }
+
 
   removeSelectedReceipts(): void {
     // make sure we have at least one checkbox checked
@@ -193,7 +265,7 @@ export class InboundReceiptComponent implements OnInit {
   getSelectedReceipts(): Receipt[] {
     const selectedReceipts: Receipt[] = [];
     this.listOfAllReceipts.forEach((receipt: Receipt) => {
-      if (this.mapOfCheckedId[receipt.id!] === true) {
+      if (this.setOfCheckedId.has(receipt.id!)) {
         selectedReceipts.push(receipt);
       }
     });

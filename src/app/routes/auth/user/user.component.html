@@ -29,32 +29,24 @@
 <div class="search-result-list">
   <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllUsers" [nzFooter]="tableFoot">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
-      <tr>
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="username">
-          {{ 'username' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="firstname">
-          {{ 'firstname' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="lastname">
-          {{ 'lastname' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="email">
-          {{ 'email' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="enabled">
-          {{ 'enabled' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="locked">
-          {{ 'locked' | translate }}
-        </th>
+      <tr> 
+        <th
+        *ngFor="let column of listOfColumns"
+        [nzSortOrder]="column.sortOrder"
+        [nzSortFn]="column.sortFn"
+        [nzSortDirections]="column.sortDirections"
+        [nzFilterMultiple]="column.filterMultiple"
+        [nzFilters]="column.listOfFilter"
+        [nzFilterFn]="column.filterFn"
+        [nzShowFilter]="column.showFilter"
+      >
+        {{ column.name | translate }}
+      </th> 
         <th>{{ 'action' | translate }}</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of rowSelectionTable.data">
-        <td>{{ data.id }}</td>
+      <tr *ngFor="let data of rowSelectionTable.data"> 
         <td>
           {{ data.username }}</td>
         <td>{{ data.firstname }}</td>

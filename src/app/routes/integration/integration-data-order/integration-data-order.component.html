@@ -45,48 +45,29 @@
 <div class="search-result-list">
   <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationOrders" #nestedTable
     [nzFooter]="tableFoot">
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
-      <tr>
-
-
-        <th nzShowExpand></th>
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="number">
-          {{ 'order.number' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="warehouseId">
-          {{ 'warehouse.id' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="warehouseName">
-          {{ 'warehouse.name' | translate }}
-        </th>
-        <th nzShowFilter [nzFilters]="filtersByShipToCustomer"
-          (nzFilterChange)="filter($event, selectedFiltersByBillToCustomer)">
-          {{ 'shipToCustomer' | translate }}
-        </th>
-        <th nzShowFilter [nzFilters]="filtersByBillToCustomer"
-          (nzFilterChange)="filter(selectedFiltersByShipToCustomer, $event)">
-          {{ 'order.billToCustomer' | translate }}
-        </th>
-        <th>
-          {{ 'integration.status' | translate }}
-        </th>
-        <th>
-          {{ 'integration.insertTime' | translate }}
-        </th>
-        <th>
-          {{ 'integration.lastUpdateTime' | translate }}
-        </th>
-        <th>
-          {{ 'integration.errorMessage' | translate }}
-        </th>
+    <thead  >
+      <tr><th nzWidth="40px"></th>
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+ 
       </tr>
     </thead>
     <tbody>
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <tr>
 
-          <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]"></td>
+          <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
           <td>{{ data.id }}</td>
           <td>{{ data.number }}</td>
           <td>{{ data.warehouseId }}</td>
@@ -178,7 +159,7 @@
           <td>{{ data.errorMessage }}</td>
 
         </tr>
-        <tr [nzExpand]="mapOfExpandedId[data.id]" class="inner-table">
+        <tr  [nzExpand]="expandSet.has(data.id)" class="inner-table">
           <td colspan="1"></td>
           <td colspan="8">
             <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">

@@ -39,4 +39,55 @@ export class UtilService {
       return -1;
     }
    }
+   compareNullableObjField(a: any, b: any, fieldName: string): number {
+     if (a === undefined || a === null) {
+       return -1;
+     }
+     else  if (b === undefined || b === null) {
+       return 1;
+     }
+     else {
+       let aValue = null;
+       let bValue = null;
+       Object.keys(a).filter(keyName => keyName === fieldName).forEach(keyName => aValue = a[keyName]);
+       Object.keys(b).filter(keyName => keyName === fieldName).forEach(keyName => bValue = b[keyName]);
+       if (aValue === null) {
+         return -1;
+       }
+       else if (bValue === null) {
+         return 1;
+       }
+       else {
+         // convert to string and compare
+         aValue = aValue + '';
+         bValue = bValue + '';
+         return aValue.localeCompare(bValue);
+       }
+
+     }
+   }
+   
+   compareNullableNumber(a?: number, b?: number): number {
+     if (a === undefined || a === null) {
+       return -1;
+     }
+     else if (b === undefined || b === null)  {
+       return 1;
+     }
+     else {
+       return a - b; 
+     }
+   }
+   
+   compareNullableString(a?: string, b?: string): number {
+    if (a === undefined || a === null) {
+      return -1;
+    }
+    else if (b === undefined || b === null)  {
+      return 1;
+    }
+    else {
+      return a.localeCompare(b);
+    }
+  }
 }

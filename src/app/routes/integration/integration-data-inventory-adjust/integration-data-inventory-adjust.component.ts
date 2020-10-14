@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { IntegrationInventoryAdjustmentConfirmation } from '../models/integration-inventory-adjustment-confirmation';
 import { IntegrationOrderConfirmation } from '../models/integration-order-confirmation';
 import { IntegrationInventoryAdjustmentConfirmationService } from '../services/integration-inventory-adjustment-confirmation.service';
@@ -13,6 +15,165 @@ import { IntegrationInventoryAdjustmentConfirmationService } from '../services/i
   styleUrls: ['./integration-data-inventory-adjust.component.less'],
 })
 export class IntegrationIntegrationDataInventoryAdjustComponent implements OnInit {
+
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationInventoryAdjustmentConfirmation, b: IntegrationInventoryAdjustmentConfirmation) => a.id - b.id,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+    {
+          name: 'warehouse.id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationInventoryAdjustmentConfirmation, b: IntegrationInventoryAdjustmentConfirmation)  => a.warehouseId - b.warehouseId,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        
+    {
+      name: 'warehouse.name',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: IntegrationInventoryAdjustmentConfirmation, b: IntegrationInventoryAdjustmentConfirmation) => a.warehouseName.localeCompare(b.warehouseName),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+          name: 'client.id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationInventoryAdjustmentConfirmation, b: IntegrationInventoryAdjustmentConfirmation) => a.clientId - b.clientId,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+              name: 'client.name',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationInventoryAdjustmentConfirmation, b: IntegrationInventoryAdjustmentConfirmation) => a.clientName.localeCompare(b.clientName),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'item.id',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationInventoryAdjustmentConfirmation, b: IntegrationInventoryAdjustmentConfirmation) => a.itemId - b.itemId, 
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'item.name',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationInventoryAdjustmentConfirmation, b: IntegrationInventoryAdjustmentConfirmation) => a.itemName.localeCompare(b.itemName),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'inventory-status.id',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationInventoryAdjustmentConfirmation, b: IntegrationInventoryAdjustmentConfirmation) => a.inventoryStatusId - b.inventoryStatusId,
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'inventory-status.name',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationInventoryAdjustmentConfirmation, b: IntegrationInventoryAdjustmentConfirmation) => a.inventoryStatusName.localeCompare(b.inventoryStatusName),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'adjustQuantity',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationInventoryAdjustmentConfirmation, b: IntegrationInventoryAdjustmentConfirmation) => a.adjustQuantity - b.adjustQuantity,
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },   
+            {
+              name: 'integration.status',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationInventoryAdjustmentConfirmation, b: IntegrationInventoryAdjustmentConfirmation) => a.status.localeCompare(b.status),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'integration.insertTime',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationInventoryAdjustmentConfirmation, b: IntegrationInventoryAdjustmentConfirmation) => this.utilService.compareDateTime(a.insertTime, b.insertTime),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'integration.lastUpdateTime',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationInventoryAdjustmentConfirmation, b: IntegrationInventoryAdjustmentConfirmation) => this.utilService.compareDateTime(a.lastUpdateTime, b.lastUpdateTime),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'integration.errorMessage',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationInventoryAdjustmentConfirmation, b: IntegrationInventoryAdjustmentConfirmation) => a.errorMessage.localeCompare(b.errorMessage),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+        ];
+
   searchForm!: FormGroup;
 
   searching = false;
@@ -20,12 +181,7 @@ export class IntegrationIntegrationDataInventoryAdjustComponent implements OnIni
 
   // Table data for display
   listOfAllIntegrationInventoryAdjustmentConfirmations: IntegrationInventoryAdjustmentConfirmation[] = [];
-  listOfDisplayIntegrationInventoryAdjustmentConfirmations: IntegrationInventoryAdjustmentConfirmation[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-
+  listOfDisplayIntegrationInventoryAdjustmentConfirmations: IntegrationInventoryAdjustmentConfirmation[] = []; 
   isCollapse = false;
 
   // list of expanded row
@@ -35,6 +191,7 @@ export class IntegrationIntegrationDataInventoryAdjustComponent implements OnIni
     private fb: FormBuilder,
     private integrationInventoryAdjustmentConfirmationService: IntegrationInventoryAdjustmentConfirmationService,
     private i18n: I18NService,
+    private utilService: UtilService,
   ) {}
 
   toggleCollapse(): void {
@@ -66,12 +223,7 @@ export class IntegrationIntegrationDataInventoryAdjustComponent implements OnIni
   currentPageDataChange($event: IntegrationInventoryAdjustmentConfirmation[]): void {
     this.listOfDisplayIntegrationInventoryAdjustmentConfirmations = $event;
   }
-
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    // sort data 
-  }
+  
 
   ngOnInit(): void {
     this.initSearchForm();

@@ -73,6 +73,7 @@ export class DefaultInterceptor implements HttpInterceptor {
    * 刷新 Token 请求
    */
   private refreshTokenRequest(): Observable<any> {
+    
     const model = this.tokenSrv.get();
     return this.http.post(`/api/auth/refresh`, null, null, { headers: { refresh_token: model?.refresh_token || '' } });
   }

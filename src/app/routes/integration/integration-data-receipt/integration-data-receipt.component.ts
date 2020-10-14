@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { IntegrationReceipt } from '../models/integration-receipt';
 import { IntegrationReceiptService } from '../services/integration-receipt.service';
 
@@ -12,6 +14,155 @@ import { IntegrationReceiptService } from '../services/integration-receipt.servi
   styleUrls: ['./integration-data-receipt.component.less'],
 })
 export class IntegrationIntegrationDataReceiptComponent implements OnInit {
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationReceipt, b: IntegrationReceipt) => a.id - b.id,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'receipt.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationReceipt, b: IntegrationReceipt) => a.number.localeCompare(b.number),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+         
+        {
+              name: 'warehouse.id',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationReceipt, b: IntegrationReceipt)  => a.warehouseId - b.warehouseId,
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            
+        {
+          name: 'warehouse.name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationReceipt, b: IntegrationReceipt) => a.warehouseName.localeCompare(b.warehouseName),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, 
+        {
+              name: 'client.id',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationReceipt, b: IntegrationReceipt)  => a.clientId - b.clientId,
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            
+        {
+          name: 'client.name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationReceipt, b: IntegrationReceipt) => a.clientName.localeCompare(b.clientName),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, 
+        {
+              name: 'supplier.id',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationReceipt, b: IntegrationReceipt)  => a.supplierId - b.supplierId,
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            
+        {
+          name: 'supplier.name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationReceipt, b: IntegrationReceipt) => a.supplierName.localeCompare(b.supplierName),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'receipt.allowUnexpectedItem',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationReceipt, b: IntegrationReceipt) => this.utilService.compareBoolean(a.allowUnexpectedItem, b.allowUnexpectedItem),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },  
+                {
+                  name: 'integration.status',
+                  showSort: true,
+                  sortOrder: null,
+                  sortFn: (a: IntegrationReceipt, b: IntegrationReceipt) => a.status.localeCompare(b.status),
+                  sortDirections: ['ascend', 'descend'],
+                  filterMultiple: true,
+                  listOfFilter: [],
+                  filterFn: null, 
+                  showFilter: false
+                },
+                {
+                  name: 'integration.insertTime',
+                  showSort: true,
+                  sortOrder: null,
+                  sortFn: (a: IntegrationReceipt, b: IntegrationReceipt) => this.utilService.compareDateTime(a.insertTime, b.insertTime),
+                  sortDirections: ['ascend', 'descend'],
+                  filterMultiple: true,
+                  listOfFilter: [],
+                  filterFn: null, 
+                  showFilter: false
+                },
+                {
+                  name: 'integration.lastUpdateTime',
+                  showSort: true,
+                  sortOrder: null,
+                  sortFn: (a: IntegrationReceipt, b: IntegrationReceipt) => this.utilService.compareDateTime(a.lastUpdateTime, b.lastUpdateTime),
+                  sortDirections: ['ascend', 'descend'],
+                  filterMultiple: true,
+                  listOfFilter: [],
+                  filterFn: null, 
+                  showFilter: false
+                },
+                {
+                  name: 'integration.errorMessage',
+                  showSort: true,
+                  sortOrder: null,
+                  sortFn: (a: IntegrationReceipt, b: IntegrationReceipt) => a.errorMessage.localeCompare(b.errorMessage),
+                  sortDirections: ['ascend', 'descend'],
+                  filterMultiple: true,
+                  listOfFilter: [],
+                  filterFn: null, 
+                  showFilter: false
+                },
+        ];
+        expandSet = new Set<number>();
+
   searchForm!: FormGroup;
 
   searching = false;
@@ -19,21 +170,16 @@ export class IntegrationIntegrationDataReceiptComponent implements OnInit {
 
   // Table data for display
   listOfAllIntegrationReceipts: IntegrationReceipt[] = [];
-  listOfDisplayIntegrationReceipts: IntegrationReceipt[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
+  listOfDisplayIntegrationReceipts: IntegrationReceipt[] = []; 
 
   isCollapse = false;
-
-  // list of expanded row
-  mapOfExpandedId: { [key: string]: boolean } = {};
+ 
 
   constructor(
     private fb: FormBuilder,
     private integrationReceiptService: IntegrationReceiptService,
     private i18n: I18NService,
+    private utilService: UtilService,
   ) {}
 
   toggleCollapse(): void {
@@ -69,14 +215,13 @@ export class IntegrationIntegrationDataReceiptComponent implements OnInit {
   currentPageDataChange($event: IntegrationReceipt[]): void {
     this.listOfDisplayIntegrationReceipts = $event;
   }
-
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-
-    // sort data 
+  onExpandChange(id: number, checked: boolean): void {
+    if (checked) {
+      this.expandSet.add(id);
+    } else {
+      this.expandSet.delete(id);
+    }
   }
-
   ngOnInit(): void {
     this.initSearchForm();
   }

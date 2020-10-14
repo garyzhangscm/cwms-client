@@ -46,50 +46,31 @@
 <div class="search-result-list">
   <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationItemData"
     [nzFooter]="tableFoot">
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <thead >
       <tr>
-        <th nzShowExpand></th>
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="name">
-          {{ 'name' | translate }}
-        </th>
-        <th nzShowFilter>
-          {{ 'item.description' | translate }}
-        </th>
-        <th>
-          {{ 'client-id' | translate }}
-        </th>
+        <th nzWidth="40px"></th>
 
-        <th>
-          {{ 'client-name' | translate }}
-        </th>
-        <th>
-          {{ 'item.item-family' | translate }}
-        </th>
-        <th>
-          {{ 'unit-cost' | translate }}
-        </th>
-        <th>
-          {{ 'warehouse-id' | translate }}
-        </th>
-        <th>
-          {{ 'warehouse-name' | translate }}
-        </th>
-        <th>
-          {{ 'integration.status' | translate }}
-        </th>
-        <th>
-          {{ 'integration.insertTime' | translate }}
-        </th>
-        <th>
-          {{ 'integration.lastUpdateTime' | translate }}
-        </th>
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+
+       
       </tr>
     </thead>
     <tbody>
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <tr>
-          <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]"></td>
+          <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
           <td>{{ data.id }}</td>
 
           <td>{{ data.name }}</td>
@@ -112,7 +93,7 @@
             {{ data.lastUpdateTime[3] }}:{{ data.lastUpdateTime[4] }}:{{ data.lastUpdateTime[5] }}
           </td>
         </tr>
-        <tr [nzExpand]="mapOfExpandedId[data.id]" *ngIf="data.itemPackageTypes?.length > 0">
+        <tr  [nzExpand]="expandSet.has(data.id)" *ngIf="data.itemPackageTypes?.length > 0">
           <td></td>
           <td colspan="12">
             <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">

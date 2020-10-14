@@ -189,7 +189,7 @@
 
           <td>
             <a (click)="saveRecord(data.id)" class="save">{{'save' | translate }}</a>
-            <a nz-popconfirm nzTitle="{{ 'sure-to-cancel' | translate }}"
+            <a nz-popconfirm 
               (nzOnConfirm)="cancelEdit(data.id)">{{'cancel' | translate }}</a>
           </td>
         </ng-template>

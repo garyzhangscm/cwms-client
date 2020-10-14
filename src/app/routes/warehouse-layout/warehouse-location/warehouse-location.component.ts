@@ -231,5 +231,6 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   }
   processLocationQueryResult(selectedLocationName: any): void {
     console.log(`start to query with location name ${selectedLocationName}`);
+    this.searchForm.controls.locationName.setValue(selectedLocationName); 
   }
 }

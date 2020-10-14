@@ -3,6 +3,9 @@ import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
+import { Role } from '../models/role';
 import { User } from '../models/user';
 import { UserService } from '../services/user.service';
 
@@ -11,6 +14,42 @@ import { UserService } from '../services/user.service';
   templateUrl: './user-maintenance-confirm.component.html',
 })
 export class AuthUserMaintenanceConfirmComponent implements OnInit {
+  listOfRoleTableColumns: ColumnItem[] = [    
+    {
+          name: 'name',
+          sortOrder: null,
+          sortFn: (a: Role, b: Role) => a.name.localeCompare(b.name),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+              name: 'description',
+              sortOrder: null,
+              sortFn: (a: Role, b: Role) => a.description.localeCompare(b.description),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+        {
+          name: 'enabled',
+          sortOrder: null,
+          sortFn: (a: Role, b: Role) => this.utilService.compareBoolean(a.enabled, b.enabled),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [
+            { text: this.i18n.fanyi('true'), value: true },
+            { text: this.i18n.fanyi('false'), value: false },
+          ],
+          filterFn: (list: boolean[], role: Role) => list.some(enabled => role.enabled === enabled), 
+          showFilter: true
+        },
+        ]
+
   currentUser: User | undefined;
   pageTitle: string;
 
@@ -20,6 +59,7 @@ export class AuthUserMaintenanceConfirmComponent implements OnInit {
     private userService: UserService,
     private router: Router,
     private messageService: NzMessageService,
+    private utilService: UtilService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.user.confirm.title');
   }

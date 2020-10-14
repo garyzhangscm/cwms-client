@@ -26,8 +26,7 @@ const routes: Routes = [
     component: WarehouseLayoutLocationGroupMaintenanceConfirmComponent,
   },
   { path: 'warehouse-location', component: WarehouseLayoutWarehouseLocationComponent },
-  { path: 'location-query-popup', component: WarehouseLayoutLocationQueryPopupComponent },
-];
+  { path: 'location-query-popup', component: WarehouseLayoutLocationQueryPopupComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

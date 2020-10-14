@@ -6,6 +6,8 @@ import { _HttpClient } from '@delon/theme';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Customer } from '../../common/models/customer';
 import { CustomerService } from '../../common/services/customer.service';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { IntegrationClientData } from '../models/integration-client-data';
 import { IntegrationCustomerData } from '../models/integration-customer-data';
 import { IntegrationCustomerDataService } from '../services/integration-customer-data.service';
@@ -16,6 +18,197 @@ import { IntegrationCustomerDataService } from '../services/integration-customer
   styleUrls: ['./integration-data-customer.component.less'],
 })
 export class IntegrationIntegrationDataCustomerComponent implements OnInit {
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => a.id - b.id,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+    {
+          name: 'name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => a.name.localeCompare(b.name),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        
+    {
+      name: 'description',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => a.description.localeCompare(b.description),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+          name: 'contactor.firstname',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => a.contactorFirstname.localeCompare(b.contactorFirstname),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+              name: 'contactor.lastname',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => a.contactorLastname.localeCompare(b.contactorLastname),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'country',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => a.addressCountry.localeCompare(b.addressCountry),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'state',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => a.addressState.localeCompare(b.addressState),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'county',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => a.addressCounty!.localeCompare(b.addressCounty!),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'city',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => a.addressCity.localeCompare(b.addressCity),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'district',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => a.addressDistrict!.localeCompare(b.addressDistrict!),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'line1',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => a.addressLine1.localeCompare(b.addressLine1),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'line2',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => a.addressLine2!.localeCompare(b.addressLine2!),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'postcode',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => a.addressPostcode.localeCompare(b.addressPostcode),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'integration.status',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => a.status.localeCompare(b.status),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'integration.insertTime',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => this.utilService.compareDateTime(a.insertTime, b.insertTime),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'integration.lastUpdateTime',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => this.utilService.compareDateTime(a.lastUpdateTime, b.lastUpdateTime),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'integration.errorMessage',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => a.errorMessage.localeCompare(b.errorMessage),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+        ];
+
   // Select control for clients and item families
   customers: Array<{ label: string; value: string }> = [];
 
@@ -28,11 +221,7 @@ export class IntegrationIntegrationDataCustomerComponent implements OnInit {
 
   // Table data for display
   listOfAllIntegrationCustomerData: IntegrationCustomerData[] = [];
-  listOfDisplayIntegrationCustomerData: IntegrationCustomerData[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
+  listOfDisplayIntegrationCustomerData: IntegrationCustomerData[] = []; 
 
   isCollapse = false;
 
@@ -50,6 +239,7 @@ export class IntegrationIntegrationDataCustomerComponent implements OnInit {
 
     private i18n: I18NService,
     private modalService: NzModalService,
+    private utilService: UtilService,
   ) {}
 
   resetForm(): void {
@@ -79,12 +269,7 @@ export class IntegrationIntegrationDataCustomerComponent implements OnInit {
 
   currentPageDataChange($event: IntegrationCustomerData[]): void {
     this.listOfDisplayIntegrationCustomerData = $event;
-  }
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value; 
-  }
-
+  } 
   ngOnInit(): void {
     this.initSearchForm();
   }

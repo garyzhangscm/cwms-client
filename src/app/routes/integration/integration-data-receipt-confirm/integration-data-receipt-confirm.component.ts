@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { IntegrationReceipt } from '../models/integration-receipt';
 import { IntegrationReceiptConfirmation } from '../models/integration-receipt-confirmation';
 import { IntegrationReceiptConfirmationService } from '../services/integration-receipt-confirmation.service';
@@ -13,6 +15,155 @@ import { IntegrationReceiptConfirmationService } from '../services/integration-r
   styleUrls: ['./integration-data-receipt-confirm.component.less'],
 })
 export class IntegrationIntegrationDataReceiptConfirmComponent implements OnInit {
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationReceiptConfirmation, b: IntegrationReceiptConfirmation) => a.id - b.id,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'receipt.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationReceiptConfirmation, b: IntegrationReceiptConfirmation) => a.number.localeCompare(b.number),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+         
+        {
+              name: 'warehouse.id',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationReceiptConfirmation, b: IntegrationReceiptConfirmation)  => a.warehouseId - b.warehouseId,
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            
+        {
+          name: 'warehouse.name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationReceiptConfirmation, b: IntegrationReceiptConfirmation) => a.warehouseName.localeCompare(b.warehouseName),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, 
+        {
+              name: 'client.id',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationReceiptConfirmation, b: IntegrationReceiptConfirmation)  => a.clientId - b.clientId,
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            
+        {
+          name: 'client.name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationReceiptConfirmation, b: IntegrationReceiptConfirmation) => a.clientName.localeCompare(b.clientName),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, 
+        {
+              name: 'supplier.id',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationReceiptConfirmation, b: IntegrationReceiptConfirmation)  => a.supplierId - b.supplierId,
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            
+        {
+          name: 'supplier.name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationReceiptConfirmation, b: IntegrationReceiptConfirmation) => a.supplierName.localeCompare(b.supplierName),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'receipt.allowUnexpectedItem',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationReceiptConfirmation, b: IntegrationReceiptConfirmation) => this.utilService.compareBoolean(a.allowUnexpectedItem, b.allowUnexpectedItem),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },  
+                {
+                  name: 'integration.status',
+                  showSort: true,
+                  sortOrder: null,
+                  sortFn: (a: IntegrationReceiptConfirmation, b: IntegrationReceiptConfirmation) => a.status.localeCompare(b.status),
+                  sortDirections: ['ascend', 'descend'],
+                  filterMultiple: true,
+                  listOfFilter: [],
+                  filterFn: null, 
+                  showFilter: false
+                },
+                {
+                  name: 'integration.insertTime',
+                  showSort: true,
+                  sortOrder: null,
+                  sortFn: (a: IntegrationReceiptConfirmation, b: IntegrationReceiptConfirmation) => this.utilService.compareDateTime(a.insertTime, b.insertTime),
+                  sortDirections: ['ascend', 'descend'],
+                  filterMultiple: true,
+                  listOfFilter: [],
+                  filterFn: null, 
+                  showFilter: false
+                },
+                {
+                  name: 'integration.lastUpdateTime',
+                  showSort: true,
+                  sortOrder: null,
+                  sortFn: (a: IntegrationReceiptConfirmation, b: IntegrationReceiptConfirmation) => this.utilService.compareDateTime(a.lastUpdateTime, b.lastUpdateTime),
+                  sortDirections: ['ascend', 'descend'],
+                  filterMultiple: true,
+                  listOfFilter: [],
+                  filterFn: null, 
+                  showFilter: false
+                },
+                {
+                  name: 'integration.errorMessage',
+                  showSort: true,
+                  sortOrder: null,
+                  sortFn: (a: IntegrationReceiptConfirmation, b: IntegrationReceiptConfirmation) => a.errorMessage.localeCompare(b.errorMessage),
+                  sortDirections: ['ascend', 'descend'],
+                  filterMultiple: true,
+                  listOfFilter: [],
+                  filterFn: null, 
+                  showFilter: false
+                },
+        ];
+        expandSet = new Set<number>();
+
   searchForm!: FormGroup;
 
   searching = false;
@@ -20,21 +171,16 @@ export class IntegrationIntegrationDataReceiptConfirmComponent implements OnInit
 
   // Table data for display
   listOfAllIntegrationReceiptConfirmations: IntegrationReceiptConfirmation[] = [];
-  listOfDisplayIntegrationReceiptConfirmations: IntegrationReceiptConfirmation[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
+  listOfDisplayIntegrationReceiptConfirmations: IntegrationReceiptConfirmation[] = []; 
 
   isCollapse = false;
-
-  // list of expanded row
-  mapOfExpandedId: { [key: string]: boolean } = {};
+ 
 
   constructor(
     private fb: FormBuilder,
     private integrationReceiptConfirmationService: IntegrationReceiptConfirmationService,
     private i18n: I18NService,
+    private utilService: UtilService,
   ) {}
 
   toggleCollapse(): void {
@@ -70,12 +216,12 @@ export class IntegrationIntegrationDataReceiptConfirmComponent implements OnInit
   currentPageDataChange($event: IntegrationReceiptConfirmation[]): void {
     this.listOfDisplayIntegrationReceiptConfirmations = $event;
   }
-
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-
-    // sort data 
+  onExpandChange(id: number, checked: boolean): void {
+    if (checked) {
+      this.expandSet.add(id);
+    } else {
+      this.expandSet.delete(id);
+    }
   }
 
   ngOnInit(): void {

@@ -51,24 +51,20 @@
   <nz-table #userTable [nzData]="currentRole.users">
     <thead>
       <tr>
-        <th nzShowSort nzSortKey="username">
-          {{ 'username' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="firstname">
-          {{ 'firstname' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="lastname">
-          {{ 'lastname' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="email">
-          {{ 'email' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="enabled">
-          {{ 'enabled' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="locked">
-          {{ 'locked' | translate }}
-        </th>
+        <th
+        *ngFor="let column of listOfUserTableColumns"
+        [nzSortOrder]="column.sortOrder"
+        [nzSortFn]="column.sortFn"
+        [nzSortDirections]="column.sortDirections"
+        [nzFilterMultiple]="column.filterMultiple"
+        [nzFilters]="column.listOfFilter"
+        [nzFilterFn]="column.filterFn"        
+        [nzShowFilter]="column.showFilter"
+      >
+
+      {{ column.name | translate }}
+    </th> 
+      
       </tr>
     </thead>
     <tbody>

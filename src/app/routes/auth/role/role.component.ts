@@ -3,11 +3,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import {  TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { ColumnItem } from '../../util/models/column-item';
-import { UtilService } from '../../util/services/util.service';
-import { WorkTask } from '../../work-task/models/work-task';
+import { UtilService } from '../../util/services/util.service'; 
+import { Menu } from '../models/menu';
 import { MenuGroup } from '../models/menu-group';
 import { Role } from '../models/role';
 import { User } from '../models/user';
@@ -31,7 +31,8 @@ export class AuthRoleComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'description',
@@ -40,7 +41,8 @@ export class AuthRoleComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'enabled',
@@ -49,7 +51,8 @@ export class AuthRoleComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
   ];
   listOfSubTableColumns: ColumnItem[] = [
@@ -60,7 +63,8 @@ export class AuthRoleComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'firstname',
@@ -69,7 +73,8 @@ export class AuthRoleComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'lastname',
@@ -78,7 +83,8 @@ export class AuthRoleComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'email',
@@ -87,7 +93,8 @@ export class AuthRoleComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'enabled',
@@ -96,7 +103,8 @@ export class AuthRoleComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
     {
       name: 'locked',
@@ -105,10 +113,74 @@ export class AuthRoleComponent implements OnInit {
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null
+      filterFn: null, 
+      showFilter: false
     },
   ];
 
+  
+  listOfMenuTableColumns: ColumnItem[] = [
+    {
+      name: 'menuGroup',
+      sortOrder: null,
+      sortFn: (a: Menu, b: Menu) => a.menuGroup!.localeCompare(b.menuGroup!),
+      sortDirections: ['ascend', 'descend', null],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'menuSubGroup',
+      sortOrder: null,
+      sortFn: (a: Menu, b: Menu) => a.menuSubGroup!.localeCompare(b.menuSubGroup!),
+      sortDirections: ['ascend', 'descend', null],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'name',
+      sortOrder: null,
+      sortFn: (a: Menu, b: Menu) => a.i18n!.localeCompare(b.i18n!),
+      sortDirections: ['ascend', 'descend', null],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'sequence',
+      sortOrder: null,
+      sortFn: (a: Menu, b: Menu) => a.sequence - b.sequence,
+      sortDirections: ['ascend', 'descend', null],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'menu.i18n',
+      sortOrder: null,
+      sortFn: (a: Menu, b: Menu) => a.i18n!.localeCompare(b.i18n!),
+      sortDirections: ['ascend', 'descend', null],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+      name: 'link',
+      sortOrder: null,
+      sortFn: (a: Menu, b: Menu) => a.link!.localeCompare(b.link!),
+      sortDirections: ['ascend', 'descend', null],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+  ];
   searching = false;
   searchResult = '';
 
