@@ -35,29 +35,27 @@
 <div class="search-result-list">
   <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfDisplayCycleCountBatches" [nzFooter]="tableFoot"
     #rowSelectionTable>
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <thead  >
       <tr>
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="batchId">
-          {{ 'cycle-count.batchId' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="requestLocationCount">
-          {{'cycle-count-request.count' | translate}}</th>
-        <th nzShowSort nzSortKey="openLocationCount">
-          {{'cycle-count-request.open.count' | translate}}</th>
-        <th nzShowSort nzSortKey="finishedLocationCount">
-          {{'cycle-count-request.finished.count' | translate}}</th>
-        <th nzShowSort nzSortKey="cancelledLocationCount">
-          {{'cycle-count-request.cancelled.count' | translate}}</th>
-        <th nzShowSort nzSortKey="openAuditLocationCount">
-          {{'audit-count-request.count' | translate}}</th>
-        <th nzShowSort nzSortKey="finishedAuditLocationCount">
-          {{'audit-count-result.count' | translate}}</th>
+
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+          
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of rowSelectionTable.data">
-        <td>{{ data.id }}</td>
+      <tr *ngFor="let data of rowSelectionTable.data"> 
         <td><a routerLink="/inventory/count/cycle-count-maintenance" routerLinkActive="active"
             [queryParams]="{batchId : data.batchId}">{{ data.batchId }}</a></td>
         <td>{{ data.requestLocationCount }}</td>

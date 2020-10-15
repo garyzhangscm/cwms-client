@@ -127,25 +127,39 @@
       <nz-table nzShowPagination [nzData]="listOfAllOpenCycleCountRequests"
         (nzCurrentPageDataChange)="openCycleCountCurrentPageDataChange($event)" [nzFooter]="openCycleCountTableFoot"
         #openCycleCountTable>
-        <thead (nzSortChange)="sortOpenCycleCountRequestTable($event)" nzSingleSort>
+        <thead >
           <tr>
-            <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="openCycleCountTableAllChecked"
-              [nzIndeterminate]="openCycleCountTableIndeterminate"
-              (nzCheckedChange)="openCycleCountTableCheckAll($event)"></th>
-            <th nzShowSort nzSortKey="id">id</th>
-            <th nzShowSort nzSortKey="batchId">
-              {{ 'cycle-count.batchId' | translate }}
-            </th>
-            <th nzShowSort nzSortKey="location">
-              {{'location' | translate}}</th>
+            <th
+            [nzSelections]="listOfOpenCycleCountTableSelection"
+            [(nzChecked)]="openCycleCountTableChecked"
+            [nzIndeterminate]="openCycleCountTableIndeterminate"
+            (nzCheckedChange)="onOpenCycleCountTableAllChecked($event)"
+            nzWidth="60px"
+          ></th>
+        <th
+            *ngFor="let column of listOfOpenCycleCountTableColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+
+              
             <th>{{ 'action' | translate }}</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let data of openCycleCountTable.data">
-            <td nzShowCheckbox [(nzChecked)]="openCycleCountTableMapOfCheckedId[data.id]"
-              (nzCheckedChange)="openCycleCountTableRefreshStatus()"></td>
-            <td>{{ data.id }}</td>
+            <td
+            [nzChecked]="setOfOpenCycleCountTableCheckedId.has(data.id)"
+            (nzCheckedChange)="onOpenCycleCountTableItemChecked(data.id, $event)"
+          ></td>
             <td>{{ data.batchId }}</td>
             <td>{{ data.location?.name }}</td>
             <td>
@@ -200,27 +214,25 @@
     <div class="search-result-list">
       <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllCycleCountResults"
         (nzCurrentPageDataChange)="cycleCountResultPageDataChange($event)" #cycleCountResultTable>
-        <thead (nzSortChange)="sortCycleCountResultTable($event)" nzSingleSort>
+        <thead  >
           <tr>
-            <th nzShowSort nzSortKey="id">id</th>
-            <th nzShowSort nzSortKey="batchId">
-              {{ 'cycle-count.batchId' | translate }}
-            </th>
-            <th nzShowSort nzSortKey="location">
-              {{'location' | translate}}</th>
-            <th>
-              {{'item' | translate}}</th>
-            <th>
-              {{'item.description' | translate}}</th>
-            <th>
-              {{'quantity' | translate}}</th>
-            <th>
-              {{'count-quantity' | translate}}</th>
+            <th
+            *ngFor="let column of listOfCycleCountResultTableColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let data of cycleCountResultTable.data">
-            <td>{{ data.id }}</td>
+          <tr *ngFor="let data of cycleCountResultTable.data"> 
             <td>{{ data.batchId }}</td>
             <td>{{ data.location?.name }}</td>
             <td>{{ data.item?.name }}</td>
@@ -241,24 +253,40 @@
       <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllCancelledCycleCountRequests"
         (nzCurrentPageDataChange)="cancelledCycleCountCurrentPageDataChange($event)"
         [nzFooter]="cancelledCycleCountTableFoot" #cancelledCycleCountTable>
-        <thead (nzSortChange)="sortCancelledCycleCountRequestTable($event)" nzSingleSort>
+        <thead>
           <tr>
-            <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="cancelledCycleCountTableAllChecked"
-              [nzIndeterminate]="cancelledCycleCountTableIndeterminate"
-              (nzCheckedChange)="cancelledCycleCountTableCheckAll($event)"></th>
-            <th nzShowSort nzSortKey="id">id</th>
-            <th nzShowSort nzSortKey="batchId">
-              {{ 'cycle-count.batchId' | translate }}
-            </th>
-            <th nzShowSort nzSortKey="location">
-              {{'location' | translate}}</th>
+            
+            <th
+            [nzSelections]="listOfCancelledCycleCountTableSelection"
+            [(nzChecked)]="cancelledCycleCountTableChecked"
+            [nzIndeterminate]="cancelledCycleCountTableIndeterminate"
+            (nzCheckedChange)="onCancelledCycleCountTableAllChecked($event)"
+            nzWidth="60px"
+          ></th>
+        <th
+            *ngFor="let column of listOfCancelledCycleCountTableColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+          
+          
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let data of cancelledCycleCountTable.data">
-            <td nzShowCheckbox [(nzChecked)]="cancelledCycleCountTableMapOfCheckedId[data.id]"
-              (nzCheckedChange)="cancelledCycleCountTableRefreshStatus()"></td>
-            <td>{{ data.id }}</td>
+            
+            <td
+            [nzChecked]="setOfCancelledCycleCountTableCheckedId.has(data.id)"
+            (nzCheckedChange)="onCancelledCycleCountTableItemChecked(data.id, $event)"
+          ></td>
             <td>{{ data.batchId }}</td>
             <td>{{ data.location?.name }}</td>
           </tr>
@@ -282,25 +310,42 @@
       <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllOpenAuditCountRequests"
         (nzCurrentPageDataChange)="openAuditCountCurrentPageDataChange($event)" [nzFooter]="openAuditCountTableFoot"
         #openAuditCountTable>
-        <thead (nzSortChange)="sortOpenAuditCountRequestTable($event)" nzSingleSort>
+        <thead  >
           <tr>
-            <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="openAuditCountTableAllChecked"
-              [nzIndeterminate]="openAuditCountTableIndeterminate"
-              (nzCheckedChange)="openAuditCountTableCheckAll($event)"></th>
-            <th nzShowSort nzSortKey="id">id</th>
-            <th nzShowSort nzSortKey="batchId">
-              {{ 'cycle-count.batchId' | translate }}
-            </th>
-            <th nzShowSort nzSortKey="location">
-              {{'location' | translate}}</th>
+            
+            <th
+            [nzSelections]="listOfOpenAuditCountTableSelection"
+            [(nzChecked)]="openAuditCountTableChecked"
+            [nzIndeterminate]="openAuditCountTableIndeterminate"
+            (nzCheckedChange)="onOpenAuditCountTableAllChecked($event)"
+            nzWidth="60px"
+          ></th>
+        <th
+            *ngFor="let column of listOfOpenAuditCountTableColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+
+          
             <th>{{ 'action' | translate }}</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let data of openAuditCountTable.data">
-            <td nzShowCheckbox [(nzChecked)]="openAuditCountTableMapOfCheckedId[data.id]"
-              (nzCheckedChange)="openAuditCountTableRefreshStatus()"></td>
-            <td>{{ data.id }}</td>
+            
+            <td
+            [nzChecked]="setOfOpenAuditCountTableCheckedId.has(data.id)"
+            (nzCheckedChange)="onOpenAuditCountTableItemChecked(data.id, $event)"
+          ></td>
+
             <td>{{ data.batchId }}</td>
             <td>{{ data.location?.name }}</td>
             <td>
@@ -354,24 +399,22 @@
     <div class="search-result-list">
       <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllAuditCountResults"
         (nzCurrentPageDataChange)="auditCountResultsCurrentPageDataChange($event)" #auditCountResultsTable>
-        <thead (nzSortChange)="sortAuditCountResultsTable($event)" nzSingleSort>
+        <thead >
           <tr>
-            <th nzShowSort nzSortKey="id">id</th>
-            <th nzShowSort nzSortKey="batchId">
-              {{ 'cycle-count.batchId' | translate }}
-            </th>
-            <th nzShowSort nzSortKey="location">
-              {{'location' | translate}}</th>
-            <th>
-              {{'lpn' | translate}}</th>
-            <th>
-              {{'item' | translate}}</th>
-            <th>
-              {{'item.description' | translate}}</th>
-            <th>
-              {{'quantity' | translate}}</th>
-            <th>
-              {{'count-quantity' | translate}}</th>
+            <th
+            *ngFor="let column of listOfAuditCountResultsTableColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+          
           </tr>
         </thead>
         <tbody>

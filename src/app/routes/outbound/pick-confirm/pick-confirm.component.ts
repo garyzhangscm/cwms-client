@@ -5,6 +5,8 @@ import { I18NService } from '@core';
 import { TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { WorkOrder } from '../../work-order/models/work-order';
 import { WorkOrderService } from '../../work-order/services/work-order.service';
 import { Cartonization } from '../models/cartonization';
@@ -26,6 +28,105 @@ import { WaveService } from '../services/wave.service';
   styleUrls: ['./pick-confirm.component.less'],
 })
 export class OutboundPickConfirmComponent implements OnInit {
+
+  
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'pick.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableNumber(a.number, b.number),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },    {
+          name: 'sourceLocation',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableObjField(a.sourceLocation, b.sourceLocation, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'destinationLocation',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableObjField(a.destinationLocation, b.destinationLocation, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'item',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'item.description',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableObjField(a.item, b.item, 'description'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'pick.quantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'pick.pickedQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableNumber(a.pickedQuantity, b.pickedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'pick.confirmQuantity',
+          showSort: false,
+          sortOrder: null,
+          sortFn: null,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        ];
+
+        listOfSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onAllChecked(true);
+            }
+          },    
+        ];
+      setOfCheckedId = new Set<number>();
+      checked = false;
+      indeterminate = false;
+
+        
   pageTitle = '';
   lastPageUrl = '';
   type = 'NONE';
@@ -43,18 +144,8 @@ export class OutboundPickConfirmComponent implements OnInit {
   // Table data for display
   listOfAllPicks: PickWork[] = [];
   listOfDisplayPicks: PickWork[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
-  // confirmed quantity for each picks
+  
+  
 
   // If all picks displayed are fully confirmed
   // we will disable the cancel button, confirm button
@@ -82,6 +173,7 @@ export class OutboundPickConfirmComponent implements OnInit {
     private cartonizationService: CartonizationService,
     private router: Router,
     private fb: FormBuilder,
+    private utilService: UtilService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.outbound.pick-confirm.title');
   }
@@ -182,7 +274,7 @@ export class OutboundPickConfirmComponent implements OnInit {
         this.listOfAllPicks = pickRes;
         this.listOfDisplayPicks = pickRes;
         this.setupConfirmedQuantity(this.listOfAllPicks);
-        this.refreshStatus(true);
+        this.refreshCheckedStatus(true);
       } else {
         // Show error
       }
@@ -197,7 +289,7 @@ export class OutboundPickConfirmComponent implements OnInit {
       this.listOfAllPicks = pickRes;
       this.listOfDisplayPicks = pickRes;
       this.setupConfirmedQuantity(this.listOfAllPicks);
-      this.refreshStatus();
+      this.refreshCheckedStatus();
     });
   }
   displayWorkOrder(workOrderId: number): void {
@@ -213,7 +305,7 @@ export class OutboundPickConfirmComponent implements OnInit {
         this.listOfAllPicks = pickRes;
         this.listOfDisplayPicks = pickRes;
         this.setupConfirmedQuantity(this.listOfAllPicks);
-        this.refreshStatus();
+        this.refreshCheckedStatus();
       });
     });
   }
@@ -227,7 +319,7 @@ export class OutboundPickConfirmComponent implements OnInit {
         this.listOfAllPicks = pickRes;
         this.listOfDisplayPicks = pickRes;
         this.setupConfirmedQuantity(this.listOfAllPicks);
-        this.refreshStatus();
+        this.refreshCheckedStatus();
       });
     });
   }
@@ -241,7 +333,7 @@ export class OutboundPickConfirmComponent implements OnInit {
         this.listOfAllPicks = pickRes;
         this.listOfDisplayPicks = pickRes;
         this.setupConfirmedQuantity(this.listOfAllPicks);
-        this.refreshStatus();
+        this.refreshCheckedStatus();
       });
     });
   }
@@ -255,7 +347,7 @@ export class OutboundPickConfirmComponent implements OnInit {
         this.listOfAllPicks = pickRes;
         this.listOfDisplayPicks = pickRes;
         this.setupConfirmedQuantity(this.listOfAllPicks);
-        this.refreshStatus();
+        this.refreshCheckedStatus();
       });
     });
   }
@@ -269,7 +361,7 @@ export class OutboundPickConfirmComponent implements OnInit {
         this.listOfAllPicks = pickRes;
         this.listOfDisplayPicks = pickRes;
         this.setupConfirmedQuantity(this.listOfAllPicks);
-        this.refreshStatus();
+        this.refreshCheckedStatus();
       });
     });
   }
@@ -283,7 +375,7 @@ export class OutboundPickConfirmComponent implements OnInit {
         this.listOfAllPicks = pickRes;
         this.listOfDisplayPicks = pickRes;
         this.setupConfirmedQuantity(this.listOfAllPicks);
-        this.refreshStatus();
+        this.refreshCheckedStatus();
       });
     });
   }
@@ -294,26 +386,39 @@ export class OutboundPickConfirmComponent implements OnInit {
     });
   }
 
-  refreshStatus(checkAll?: boolean): void {
-    if (checkAll) {
-      this.listOfDisplayPicks.every(item => (this.mapOfCheckedId[item.id] = true));
+  updateCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(id);
+    } else {
+      this.setOfCheckedId.delete(id);
     }
-    this.allChecked = this.listOfDisplayPicks.every(item => this.mapOfCheckedId[item.id]);
-    this.indeterminate = this.listOfDisplayPicks.some(item => this.mapOfCheckedId[item.id]) && !this.allChecked;
-
-    this.allPicksFullyConfirmed = this.listOfDisplayPicks.every(item => item.pickedQuantity >= item.quantity);
   }
 
-  checkAll(value: boolean): void {
-    this.listOfDisplayPicks.forEach(item => (this.mapOfCheckedId[item.id] = value));
-    this.refreshStatus();
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked);
+    this.refreshCheckedStatus();
   }
 
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    // sort data 
+  onAllChecked(value: boolean): void {
+    this.listOfDisplayPicks!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.refreshCheckedStatus();
   }
+
+  currentPageDataChange($event: PickWork[]): void {
+    this.listOfDisplayPicks! = $event;
+    this.refreshCheckedStatus();
+  }
+
+  refreshCheckedStatus(checkAll?: boolean): void {
+    if (checkAll) {
+      this.listOfDisplayPicks.every(item => (this.setOfCheckedId.add(item.id)));
+    }
+
+    this.checked = this.listOfDisplayPicks!.every(item => this.setOfCheckedId.has(item.id));
+    this.indeterminate = this.listOfDisplayPicks!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
+  }
+
+   
 
   cancelSelectedPicks(): void {
     // make sure we have at least one checkbox checked
@@ -364,7 +469,7 @@ export class OutboundPickConfirmComponent implements OnInit {
   getSelectedPicks(): PickWork[] {
     const selectedPicks: PickWork[] = [];
     this.listOfAllPicks.forEach((pick: PickWork) => {
-      if (this.mapOfCheckedId[pick.id] === true && pick.quantity > pick.pickedQuantity) {
+      if (this.setOfCheckedId.has(pick.id) && pick.quantity > pick.pickedQuantity) {
         selectedPicks.push(pick);
       }
     });

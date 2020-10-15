@@ -221,7 +221,7 @@
     <nz-table #nestedTable [nzData]="currentItem.itemPackageTypes" [nzShowPagination]="false">
       <thead>
         <tr>
-          <th nzShowExpand></th>
+          <th nzWidth="40px"></th>
           <th>
             {{ 'name' | translate }}
           </th>
@@ -237,7 +237,8 @@
       <tbody>
         <ng-container *ngFor="let data of nestedTable.data; let recordIndex = index">
           <tr>
-            <td nzShowExpand [(nzExpand)]="mapOfExpandedItemPackageTypes[recordIndex]"
+            
+              <td [nzExpand]="itemPackageTypesExpandSet.has(recordIndex)" (nzExpandChange)="onItemPackageTypesExpandChange(recordIndex, $event)"
               [nzDisabled]="data.itemUnitOfMeasures?.size === 0"></td>
 
             <td>
@@ -262,7 +263,7 @@
             </td>
           </tr>
 
-          <tr [nzExpand]="mapOfExpandedItemPackageTypes[recordIndex]">
+          <tr  [nzExpand]="itemPackageTypesExpandSet.has(recordIndex)">
             <td colspan="1"></td>
             <td colspan="2">
               <nz-tabset>
@@ -320,29 +321,29 @@
       <nz-descriptions-item nzTitle="{{ 'item-family' | translate }}">{{ currentItem.itemFamily?.name }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'trackingVolumeFlag' | translate }}">
-        {{ currentItem.trackingVolumeFlag + '' | translate }}
+        {{ currentItem.trackingVolumeFlag! + '' | translate }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'trackingLotNumberFlag' | translate }}">
-        {{ currentItem.trackingLotNumberFlag + '' | translate }}
+        {{ currentItem.trackingLotNumberFlag! + '' | translate }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'allowCartonization' | translate }}">
-        {{ currentItem.allowCartonization + '' | translate }}
+        {{ currentItem.allowCartonization! + '' | translate }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'trackingManufactureDateFlag' | translate }}">
-        {{ currentItem.trackingManufactureDateFlag + '' | translate }}
+        {{ currentItem.trackingManufactureDateFlag! + '' | translate }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'shelfLifeDays' | translate }}">{{ currentItem.shelfLifeDays }}
       </nz-descriptions-item>
 
       <nz-descriptions-item nzTitle="{{ 'trackingExpirationDateFlag' | translate }}">
-        {{ currentItem.trackingExpirationDateFlag + '' | translate }}
+        {{ currentItem.trackingExpirationDateFlag! + '' | translate }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'allowAllocationByLPN' | translate }}">
-        {{ currentItem.allowAllocationByLPN + '' | translate }}
+        {{ currentItem.allowAllocationByLPN! + '' | translate }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'allocationRoundUpStrategyType' | translate }}"><span
           *ngIf="currentItem.allocationRoundUpStrategyType != null">
-          {{ 'ALLOCATION-ROUND-UP-STRATEGY-TYPE-' + currentItem.allocationRoundUpStrategyType | translate }}
+          {{ 'ALLOCATION-ROUND-UP-STRATEGY-TYPE-' + currentItem.allocationRoundUpStrategyType! | translate }}
         </span>
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'allocationRoundUpStrategyValue' | translate }}">
@@ -358,7 +359,7 @@
           <thead>
             <tr>
               <th>{{ 'unit-of-measure' | translate }}</th>
-              <th nzShowSort="true">{{ 'quantity' | translate }}</th>
+              <th>{{ 'quantity' | translate }}</th>
               <th>{{ 'weight' | translate }}</th>
               <th>{{ 'length' | translate }}</th>
               <th>{{ 'width' | translate }}</th>

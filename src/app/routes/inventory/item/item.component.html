@@ -50,61 +50,31 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
   <nz-table nzShowSizeChanger nzShowPagination [nzData]="items" [nzFooter]="tableFoot" #nestedTable>
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
-      <tr>
-        <th nzShowExpand></th>
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="name" [nzFilters]="filtersByName"
-          (nzFilterChange)="filter($event, selectedFiltersByClient, selectedFiltersItemFamily)">
-          {{ 'name' | translate }}
-        </th>
-        <th>
-          {{'description' | translate}}</th>
-        <th nzShowSort nzSortKey="client" [nzFilters]="filtersByClient"
-          (nzFilterChange)="filter(selectedFiltersByName, $event, selectedFiltersItemFamily)">
-          {{ 'client' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="itemFamily" [nzFilters]="filtersByItemFamily"
-          (nzFilterChange)="filter(selectedFiltersByName, selectedFiltersByClient, $event)">
-          {{ 'item-family' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="unitCost">
-          {{ 'unit-cost' | translate }}
-        </th>
-        <th>
-          {{ 'allowAllocationByLPN' | translate }}
-        </th>
-        <th>
-          {{ 'allocationRoundUpStrategyType' | translate }}
-        </th>
-        <th>
-          {{ 'allocationRoundUpStrategyValue' | translate }}
-        </th>
+    <thead  >
+      <tr><th nzWidth="40px"></th>
 
-        <th>
-          {{ 'trackingVolumeFlag' | translate }}
-        </th>
-        <th>
-          {{ 'trackingLotNumberFlag' | translate }}
-        </th>
-        <th>
-          {{ 'trackingManufactureDateFlag' | translate }}
-        </th>
-        <th>
-          {{ 'shelfLifeDays' | translate }}
-        </th>
-        <th>
-          {{ 'trackingExpirationDateFlag' | translate }}
-        </th>
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+            
+ 
         <th>{{'action' | translate}}</th>
       </tr>
     </thead>
     <tbody>
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <!--<tr *ngFor="let data of rowSelectionTable.data">-->
-        <tr>
-          <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]"></td>
-          <td>{{ data.id }}</td>
+        <tr><td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
           <td>{{ data.name }}</td>
           <td>{{ data.description }}</td>
           <td>{{ data.client?.name}}</td>
@@ -133,7 +103,7 @@
 
           </td>
         </tr>
-        <tr [nzExpand]="mapOfExpandedId[data.id]" *ngIf="data.itemPackageTypes?.length > 0"
+        <tr  [nzExpand]="expandSet.has(data.id)" *ngIf="data.itemPackageTypes?.length > 0"
           (nzExpandChange)="showItemPackageType(data)">
           <td></td>
           <td colspan="13">

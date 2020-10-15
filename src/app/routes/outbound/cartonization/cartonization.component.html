@@ -48,38 +48,26 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
   <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllCartonization" #nestedTable>
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <thead>
       <tr>
-        <th nzShowExpand></th>
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="number">
-          {{ 'cartonization.number' | translate }}
-        </th>
+        <th nzWidth="40px"></th>
+        
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
 
-        <th nzShowSort nzSortKey="groupKey">
-          {{ 'cartonization.group-key' | translate }}
-        </th>
-
-
-        <th nzShowSort nzSortKey="status">
-          {{ 'status' | translate }}
-        </th>
-
-        <th>
-          {{ 'cartonization.totalPickCount' | translate }}
-        </th>
-        <th>
-          {{ 'cartonization.totalItemCount' | translate }}
-        </th>
-        <th>
-          {{ 'cartonization.totalLocationCount' | translate }}
-        </th>
-        <th>
-          {{ 'cartonization.totalQuantity' | translate }}
-        </th>
-        <th>
-          {{ 'cartonization.totalPickedQuantity' | translate }}
-        </th>
+          
+        
 
         <th>
           {{ 'action' | translate }}
@@ -89,9 +77,8 @@
     <tbody>
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <tr>
-          <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]" (nzExpandChange)="showCartonizationDetails(data)">
-          </td>
-          <td>{{ data.id }}</td>
+          <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
+    
           <td>{{ data.number }}</td>
           <td>{{ data.groupKey }}</td>
           <td>{{ 'CARTONIZATION-STATUS-' + data.status | translate }}</td>
@@ -111,8 +98,8 @@
 
 
         </tr>
-        <tr [nzExpand]="mapOfExpandedId[data.id]" class="inner-table">
-          <td colspan="2"></td>
+        <tr [nzExpand]="expandSet.has(data.id)" class="inner-table">
+          <td colspan="1"></td>
           <td colspan="8">
             <nz-tabset [nzSelectedIndex]="tabSelectedIndex">
 

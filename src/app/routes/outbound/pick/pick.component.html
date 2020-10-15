@@ -73,31 +73,35 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
 
-  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllPicks" [nzFooter]="tableFoot" #pickTable>
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllPicks" [nzFooter]="tableFoot"
+  (nzCurrentPageDataChange)="currentPageDataChange($event)" #pickTable>
+    <thead >
       <tr>
-        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
-          (nzCheckedChange)="checkAll($event)"></th>
+        
+
+          <th
+            [nzSelections]="listOfSelection"
+            [(nzChecked)]="checked"
+            [nzIndeterminate]="indeterminate"
+            (nzCheckedChange)="onAllChecked($event)"
+            nzWidth="60px"
+          ></th>
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
 
 
-        <th nzShowSort nzSortKey="number">
-          {{ 'pick.number' | translate }}</th>
-        <th nzShowSort nzSortKey="pickType">
-          {{ 'pick.type' | translate }}</th>
-        <th nzShowSort nzSortKey="orderNumber">
-          {{ 'order.number' | translate }}</th>
-        <th nzShowSort nzSortKey="sourceLocation">
-          {{ 'sourceLocation' | translate }}</th>
-        <th nzShowSort nzSortKey="destinationLocation">
-          {{ 'destinationLocation' | translate }}</th>
-        <th nzShowSort nzSortKey="item">
-          {{ 'item' | translate }}</th>
-        <th>
-          {{ 'item.description' | translate }}</th>
-        <th nzShowSort nzSortKey="quantity">
-          {{ 'pick.quantity' | translate }}</th>
-        <th nzShowSort nzSortKey="pickedQuantity">
-          {{ 'pick.pickedQuantity' | translate }}</th>
+          
 
         <th>
           {{ 'action' | translate }}
@@ -106,7 +110,12 @@
     </thead>
     <tbody>
       <tr *ngFor="let data of pickTable.data">
-        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
+        
+
+        <td
+        [nzChecked]="setOfCheckedId.has(data.id)"
+        (nzCheckedChange)="onItemChecked(data.id, $event)"
+      ></td>
 
         <td>{{ data.number }}</td>
         <td>{{ 'PICK-TYPE-' + data.pickType | translate}}</td>

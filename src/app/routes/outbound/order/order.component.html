@@ -26,45 +26,35 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllOrders" [nzFooter]="tableFoot" #nestedTable>
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllOrders" [nzFooter]="tableFoot" #nestedTable
+  (nzCurrentPageDataChange)="currentPageDataChange($event)">
+    <thead>
       <tr>
-        <th rowspan="2" nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
-          (nzCheckedChange)="checkAll($event)"></th>
+        <th rowspan="2" [nzSelections]="listOfSelection"
+        [(nzChecked)]="checked"
+        [nzIndeterminate]="indeterminate"
+        (nzCheckedChange)="onAllChecked($event)"
+        nzWidth="60px"></th>
 
-        <th rowspan="2" nzShowExpand></th>
-        <th rowspan="2" nzShowSort nzSortKey="id">id</th>
-        <th rowspan="2" nzShowSort nzSortKey="number">
-          {{ 'order.number' | translate }}
-        </th>
-
-        <th rowspan="2">
-          {{ 'status' | translate }}</th>
-        <th rowspan="2" nzShowFilter [nzFilters]="filtersByShipToCustomer"
-          (nzFilterChange)="filter($event, selectedFiltersByBillToCustomer)">
-          {{ 'shipToCustomer' | translate }}
-        </th>
-        <th rowspan="2" nzShowFilter [nzFilters]="filtersByBillToCustomer"
-          (nzFilterChange)="filter(selectedFiltersByShipToCustomer, $event)">
-          {{ 'order.billToCustomer' | translate }}
-        </th>
-        <th rowspan="2" nzShowSort nzSortKey="totalItemCount">
-          {{ 'order.totalItemCount' | translate }}
-        </th>
-        <th rowspan="2" nzShowSort nzSortKey="totalOrderQuantity">
-          {{ 'order.totalOrderQuantity' | translate }}
-        </th>
-        <th rowspan="2" nzShowSort nzSortKey="totalOpenQuantity">
-          {{ 'order.totalOpenQuantity' | translate }}
-        </th>
-
-        <th colspan="3" nzShowSort nzSortKey="totalInprocessQuantity">
-          {{ 'order.totalInprocessQuantity' | translate }}
-        </th>
-
-        <th rowspan="2" nzShowSort nzSortKey="totalShippedQuantity">
-          {{ 'order.totalShippedQuantity' | translate }}
-        </th>
+        <th rowspan="2" nzWidth="40px"></th>
+        
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+            [rowspan]="column.rowspan"
+            [colspan]="column.colspan"
+          >
+            {{ column.name | translate }}
+          </th> 
+          
+ 
         <th rowspan="2">
           {{ 'action' | translate }}
         </th>
@@ -82,10 +72,12 @@
     <tbody>
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <tr>
-          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
-
-          <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]" (nzExpandChange)="showOrderDetails(data)"></td>
-          <td>{{ data.id }}</td>
+          <td
+            [nzChecked]="setOfCheckedId.has(data.id)"
+            (nzCheckedChange)="onItemChecked(data.id, $event)"
+          ></td>
+          <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
+          
           <td>{{ data.number }}</td>
           <td>{{ 'ORDER-STATUS-' + data.status | translate}}</td>
           <td>
@@ -209,8 +201,8 @@
             -->
           </td>
         </tr>
-        <tr [nzExpand]="mapOfExpandedId[data.id]" class="inner-table">
-          <td colspan="2"></td>
+        <tr [nzExpand]="expandSet.has(data.id)" class="inner-table">
+          <td colspan="1"></td>
           <td colspan="12">
             <nz-tabset [nzSelectedIndex]="tabSelectedIndex">
               <nz-tab nzTitle=" {{ 'order.line' | translate }}">

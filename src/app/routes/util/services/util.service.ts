@@ -27,8 +27,14 @@ export class UtilService {
     }
     return 0;  
   }
-  compareBoolean(a: boolean, b: boolean): number{
+  compareBoolean(a?: boolean, b?: boolean): number{
 
+    if (a === null || a === undefined) {
+      a = false;
+    }
+    if (b === null || b === undefined) {
+      b = false;
+    }
     if (a === b) {
       return 0;
     }

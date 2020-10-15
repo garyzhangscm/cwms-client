@@ -6,6 +6,8 @@ import { _HttpClient } from '@delon/theme';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Supplier } from '../../common/models/supplier';
 import { SupplierService } from '../../common/services/supplier.service';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { IntegrationSupplierData } from '../models/integration-supplier-data';
 import { IntegrationSupplierDataService } from '../services/integration-supplier-data.service';
 
@@ -15,6 +17,198 @@ import { IntegrationSupplierDataService } from '../services/integration-supplier
   styleUrls: ['./integration-data-supplier.component.less'],
 })
 export class IntegrationIntegrationDataSupplierComponent implements OnInit {
+  
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => a.id - b.id,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+    {
+          name: 'name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => a.name.localeCompare(b.name),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        
+    {
+      name: 'description',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => a.description.localeCompare(b.description),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+          name: 'contactor.firstname',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => a.contactorFirstname.localeCompare(b.contactorFirstname),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+              name: 'contactor.lastname',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => a.contactorLastname.localeCompare(b.contactorLastname),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'country',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => a.addressCountry.localeCompare(b.addressCountry),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'state',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => a.addressState.localeCompare(b.addressState),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'county',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => a.addressCounty!.localeCompare(b.addressCounty!),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'city',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => a.addressCity.localeCompare(b.addressCity),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'district',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => a.addressDistrict!.localeCompare(b.addressDistrict!),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'line1',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => a.addressLine1.localeCompare(b.addressLine1),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'line2',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => a.addressLine2!.localeCompare(b.addressLine2!),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'postcode',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => a.addressPostcode.localeCompare(b.addressPostcode),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'integration.status',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => a.status.localeCompare(b.status),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'integration.insertTime',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => this.utilService.compareDateTime(a.insertTime, b.insertTime),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'integration.lastUpdateTime',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => this.utilService.compareDateTime(a.lastUpdateTime, b.lastUpdateTime),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            {
+              name: 'integration.errorMessage',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => a.errorMessage.localeCompare(b.errorMessage),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+        ];
+
   // Select control for clients and item families
   suppliers: Array<{ label: string; value: string }> = [];
 
@@ -27,12 +221,7 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
 
   // Table data for display
   listOfAllIntegrationSupplierData: IntegrationSupplierData[] = [];
-  listOfDisplayIntegrationSupplierData: IntegrationSupplierData[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-
+  listOfDisplayIntegrationSupplierData: IntegrationSupplierData[] = []; 
   isCollapse = false;
 
   integrationDataModal!: NzModalRef;
@@ -47,6 +236,7 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
     private integrationSupplierDataService: IntegrationSupplierDataService,
     private supplierService: SupplierService,
 
+    private utilService: UtilService,
     private i18n: I18NService,
     private modalService: NzModalService,
   ) {}
@@ -79,10 +269,7 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
   currentPageDataChange($event: IntegrationSupplierData[]): void {
     this.listOfDisplayIntegrationSupplierData = $event;
   }
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value; 
-  }
+  
 
   ngOnInit(): void {
     this.initSearchForm();

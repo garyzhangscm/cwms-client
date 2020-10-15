@@ -7,6 +7,8 @@ import { Client } from '../../common/models/client';
 import { ClientService } from '../../common/services/client.service';
 import { PutawayConfiguration } from '../../inbound/models/putaway-configuration';
 import { Item } from '../../inventory/models/item';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { CartonizationConfiguration } from '../models/cartonization-configuration';
 import { CartonizationConfigurationService } from '../services/cartonization-configuration.service';
 
@@ -16,6 +18,65 @@ import { CartonizationConfigurationService } from '../services/cartonization-con
   styleUrls: ['./cartonization-configuration.component.less'],
 })
 export class OutboundCartonizationConfigurationComponent implements OnInit {
+
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'sequence',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: CartonizationConfiguration, b: CartonizationConfiguration) => this.utilService.compareNullableNumber(a.sequence, b.sequence),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'client',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: CartonizationConfiguration, b: CartonizationConfiguration) => this.utilService.compareNullableObjField(a.client, b.client, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'pick.type',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: CartonizationConfiguration, b: CartonizationConfiguration) => this.utilService.compareNullableString(a.pickType?.toString(), b.pickType?.toString()),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'cartonization.group-key',
+          showSort: false,
+          sortOrder: null,
+          sortFn: null,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'enabled',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: CartonizationConfiguration, b: CartonizationConfiguration) => this.utilService.compareBoolean(a.enabled, b.enabled),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [
+            { text: this.i18n.fanyi('true'), value: true },
+            { text: this.i18n.fanyi('false'), value: false },
+          ],
+          filterFn: (list: boolean[], cartonizationConfiguration: CartonizationConfiguration) => list.some(enabled => cartonizationConfiguration.enabled === enabled), 
+          showFilter: true
+        },
+        ];
+        
   // Form related data and functions
   searchForm!: FormGroup;
   clients: Array<{ label: string; value: string }> = [];
@@ -24,10 +85,7 @@ export class OutboundCartonizationConfigurationComponent implements OnInit {
   listOfAllCartonizationConfiguration: CartonizationConfiguration[] = [];
   listOfDisplayCartonizationConfiguration: CartonizationConfiguration[] = [];
 
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
+  
   searchByEnabledIndeterminate = false;
 
   constructor(
@@ -38,6 +96,7 @@ export class OutboundCartonizationConfigurationComponent implements OnInit {
     private i18n: I18NService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
+    private utilService: UtilService,
   ) {}
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.cartonization-configuration'));
@@ -84,13 +143,7 @@ export class OutboundCartonizationConfigurationComponent implements OnInit {
     // this.locationGroups = $event;
     this.listOfDisplayCartonizationConfiguration = $event;
   }
-
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    // sort data 
-  }
-
+ 
   change(cartonizationConfiguration: CartonizationConfiguration): void {
     this.router.navigateByUrl(`/outbound/cartonization-configuration/maintenance?id=${cartonizationConfiguration.id}`);
   }

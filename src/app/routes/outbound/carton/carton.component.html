@@ -33,29 +33,31 @@
 <div class="search-result-list">
   <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfAllCartons"
     (nzCurrentPageDataChange)="currentPageDataChange($event)" [nzFooter]="tableFoot">
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <thead>
       <tr>
 
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="name">
-          {{'name' | translate}}</th>
-        <th>
-          {{'length' | translate}}</th>
-        <th>
-          {{'width' | translate}}</th>
-        <th>
-          {{'height' | translate}}</th>
-        <th>
-          {{'fill-rate' | translate}}</th>
-        <th>
-          {{'enabled' | translate}}</th>
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+           
+          
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let data of rowSelectionTable.data">
 
 
-        <td>{{ data.id }}</td>
+        
         <td>
           <div class="editable-cell" *ngIf="editId !== data.id|| editCol != 'name'; else editNameTpl">
             <div class="editable-cell-value-wrap" (click)="startEdit(data.id, 'name', $event)">

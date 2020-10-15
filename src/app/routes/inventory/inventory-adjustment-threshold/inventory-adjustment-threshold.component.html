@@ -101,31 +101,29 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
   <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllInventoryAdjustmentThresholds">
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <thead>
       <tr>
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="item">
-          {{ 'item' | translate }}
-        </th>
-
-        <th>
-          {{ 'item-family' | translate }}
-        </th>
-        <th>
-          {{ 'client' | translate }}
-        </th>
-        <th>{{ 'inventory-quantity-change-type' | translate }}</th>
-        <th>{{ 'user' | translate }}</th>
-        <th>{{ 'role.name' | translate }}</th>
-        <th>{{ 'inventory-adjustment-threshold.quantity-threshold' | translate }}</th>
-        <th>{{ 'inventory-adjustment-threshold.cost-threshold' | translate }}</th>
-        <th>{{ 'enabled' | translate }}</th>
+        
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+          
+ 
         <th>{{ 'action' | translate }}</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of rowSelectionTable.data">
-        <td>{{ data.id }}</td>
+      <tr *ngFor="let data of rowSelectionTable.data"> 
         <td>{{ data.item?.name }}</td>
         <td>{{ data.itemFamily?.name }}</td>
         <td>{{ data.client?.name }}</td>

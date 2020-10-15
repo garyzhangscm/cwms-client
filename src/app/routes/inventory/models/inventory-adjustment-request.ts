@@ -1,9 +1,9 @@
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { InventoryAdjustmentRequestStatus } from './inventory-adjustment-request-status.enum';
 import { InventoryQuantityChangeType } from './inventory-quantity-change-type.enum';
+import { InventoryStatus } from './inventory-status';
 import { Item } from './item';
 import { ItemPackageType } from './item-package-type';
-import { InventoryStatus } from './inventory-status';
 
 export interface InventoryAdjustmentRequest {
   id: number;
@@ -29,6 +29,6 @@ export interface InventoryAdjustmentRequest {
   requestedByDateTime: number[];
   processedByUsername: string;
   processedByDateTime: number[];
-  documentNumber: true;
+  documentNumber: string;
   comment: string;
 }

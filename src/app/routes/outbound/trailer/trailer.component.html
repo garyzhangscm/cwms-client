@@ -28,43 +28,33 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
 
-  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllTrailers" [nzFooter]="tableFoot" #rowSelectionTable>
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllTrailers" [nzFooter]="tableFoot" 
+  (nzCurrentPageDataChange)="currentPageDataChange($event)"
+  #rowSelectionTable>
+    <thead >
       <tr>
-        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
-          (nzCheckedChange)="checkAll($event)"></th>
-
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="number">
-          {{ 'trailer.number' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="status">
-          {{ 'trailer.status' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="carrier">
-          {{ 'carrier' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="carrierServiceLevel">
-          {{ 'carrier.serviceLevel' | translate }}
-        </th>
-        <th>
-          {{ 'trailer.driverFirstName' | translate }}
-        </th>
-        <th>
-          {{ 'trailer.driverLastName' | translate }}
-        </th>
-        <th>
-          {{ 'trailer.licensePlateNumber' | translate }}
-        </th>
-        <th>
-          {{ 'trailer.size' | translate }}
-        </th>
-        <th>
-          {{ 'trailer.type' | translate }}
-        </th>
-        <th>
-          {{ 'trailer.location' | translate }}
-        </th>
+        
+        <th
+            [nzSelections]="listOfSelection"
+            [(nzChecked)]="checked"
+            [nzIndeterminate]="indeterminate"
+            (nzCheckedChange)="onAllChecked($event)"
+            nzWidth="60px"
+          ></th>
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+ 
         <th>
           {{ 'action' | translate }}
         </th>
@@ -72,10 +62,12 @@
     </thead>
     <tbody>
       <tr *ngFor="let data of rowSelectionTable.data">
-        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
-
-
-        <td>{{ data.id }}</td>
+        
+        <td
+        [nzChecked]="setOfCheckedId.has(data.id)"
+        (nzCheckedChange)="onItemChecked(data.id, $event)"
+      ></td>
+ 
         <td>{{ data.number }}</td>
         <td>{{ data.status }}</td>
         <td>{{ data.carrier?.name }}</td>

@@ -5,6 +5,8 @@ import { _HttpClient } from '@delon/theme';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { ItemFamily } from '../models/item-family';
 import { ItemFamilyService } from '../services/item-family.service';
 
@@ -14,27 +16,58 @@ import { ItemFamilyService } from '../services/item-family.service';
   styleUrls: ['./item-family.component.less'],
 })
 export class InventoryItemFamilyComponent implements OnInit {
+
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'item-family.name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ItemFamily, b: ItemFamily) => this.utilService.compareNullableString(a.name, b.name),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'item-family.description',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ItemFamily, b: ItemFamily) => this.utilService.compareNullableString(a.description, b.description),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'item-family.item-count',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ItemFamily, b: ItemFamily) => this.utilService.compareNullableNumber(a.totalItemCount, b.totalItemCount),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        ];
+
+  listOfSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onAllChecked(true);
+            }
+          },    
+        ];
+      setOfCheckedId = new Set<number>();
+      checked = false;
+      indeterminate = false;
+
   // Table data for display
   itemFamilies: ItemFamily[] = [];
   listOfDisplayItemFamilies: ItemFamily[] = [];
 
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-  // Filters meta data
-  filtersByName = [];
-  filtersByDescription = [];
-  // Save filters that already selected
-  selectedFiltersByName: string[] = [];
-  selectedFiltersByDescription: string[] = [];
-
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
+   
 
   // editable cell
   editId!: string | null;
@@ -47,60 +80,47 @@ export class InventoryItemFamilyComponent implements OnInit {
     private i18n: I18NService,
     private modalService: NzModalService,
     private messageService: NzMessageService,
+    private utilService: UtilService,
   ) {}
 
   search(refresh: boolean = false): void {
     this.itemFamilyService.loadItemFamilies(refresh).subscribe(itemFamilyRes => {
       this.itemFamilies = itemFamilyRes;
       this.listOfDisplayItemFamilies = itemFamilyRes;
-
-      this.filtersByName = [];
-      this.filtersByDescription = [];
+ 
  
     });
   }
 
+  updateCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(id);
+    } else {
+      this.setOfCheckedId.delete(id);
+    }
+  }
+
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked);
+    this.refreshCheckedStatus();
+  }
+
+  onAllChecked(value: boolean): void {
+    this.listOfDisplayItemFamilies!.forEach(item => this.updateCheckedSet(item.id!, value));
+    this.refreshCheckedStatus();
+  }
+
   currentPageDataChange($event: ItemFamily[]): void {
-    this.listOfDisplayItemFamilies = $event;
-    this.refreshStatus();
-  }
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayItemFamilies.every(item => this.mapOfCheckedId[item.id!]);
-    this.indeterminate =
-      this.listOfDisplayItemFamilies.some(item => this.mapOfCheckedId[item.id!]) && !this.isAllDisplayDataChecked;
+    this.listOfDisplayItemFamilies! = $event;
+    this.refreshCheckedStatus();
   }
 
-  checkAll(value: boolean): void {
-    this.listOfDisplayItemFamilies.forEach(item => (this.mapOfCheckedId[item.id!] = value));
-    this.refreshStatus();
+  refreshCheckedStatus(): void {
+    this.checked = this.listOfDisplayItemFamilies!.every(item => this.setOfCheckedId.has(item.id!));
+    this.indeterminate = this.listOfDisplayItemFamilies!.some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
   }
-
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    this.sortAndFilter();
-  }
-
-  filter(selectedFiltersByName: string[], selectedFiltersByDescription: string[]): void {
-    this.selectedFiltersByName = selectedFiltersByName;
-    this.selectedFiltersByDescription = selectedFiltersByDescription;
-    this.sortAndFilter();
-  }
-  sortAndFilter(): void {
-    // filter data
-    const filterFunc = (item: { name: string; description: string }) =>
-      (this.selectedFiltersByName.length
-        ? this.selectedFiltersByName.some(name => item.name.indexOf(name) !== -1)
-        : true) &&
-      (this.selectedFiltersByDescription.length
-        ? this.selectedFiltersByDescription.some(description => item.description.indexOf(description) !== -1)
-        : true);
-
-    const data = this.itemFamilies.filter(item => filterFunc(item));
-
-    // sort data 
-  }
-
+  
+  
   removeSelectedItemFamilies(): void {
     // make sure we have at least one checkbox checked
     const selectedItemFamilies = this.getSelectedItemFamilies();
@@ -125,7 +145,7 @@ export class InventoryItemFamilyComponent implements OnInit {
   getSelectedItemFamilies(): ItemFamily[] {
     const selectedItemFamilies: ItemFamily[] = [];
     this.itemFamilies.forEach((itemFamily: ItemFamily) => {
-      if (this.mapOfCheckedId[itemFamily.id!] === true) {
+      if (this.setOfCheckedId.has(itemFamily.id!)) {
         selectedItemFamilies.push(itemFamily);
       }
     });

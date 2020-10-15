@@ -8,6 +8,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { Order } from '../models/order';
 import { PickWork } from '../models/pick-work';
 import { Shipment } from '../models/shipment';
@@ -27,6 +29,123 @@ import { WaveService } from '../services/wave.service';
   styleUrls: ['./wave.component.less'],
 })
 export class OutboundWaveComponent implements OnInit {
+
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'wave.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableString(a.number, b.number),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'wave.status',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableString(a.status?.toString(), b.status?.toString()),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'wave.totalOrderCount',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableNumber(a.totalOrderCount, b.totalOrderCount),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'wave.totalOrderLineCount',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableNumber(a.totalOrderLineCount, b.totalOrderLineCount),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'wave.totalItemCount',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableNumber(a.totalItemCount, b.totalItemCount),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'wave.totalQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableNumber(a.totalQuantity, b.totalQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'wave.totalOpenQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableNumber(a.totalOpenQuantity, b.totalOpenQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'wave.totalInprocessQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableNumber(a.totalInprocessQuantity, b.totalInprocessQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'wave.totalStagedQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableNumber(a.totalStagedQuantity, b.totalStagedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'wave.totalShippedQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableNumber(a.totalShippedQuantity, b.totalShippedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        ];
+  
+        listOfSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onAllChecked(true);
+            }
+          },    
+        ];
+      setOfCheckedId = new Set<number>();
+      checked = false;
+      indeterminate = false;
+      expandSet = new Set<number>();
   constructor(
     private fb: FormBuilder,
     private i18n: I18NService,
@@ -40,6 +159,7 @@ export class OutboundWaveComponent implements OnInit {
     private messageService: NzMessageService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
+    private utilService: UtilService,
   ) {}
 
   // Form related data and functions
@@ -52,19 +172,8 @@ export class OutboundWaveComponent implements OnInit {
   // Table data for display
   listOfAllWaves: Wave[] = [];
   listOfDisplayWaves: Wave[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
-  // list of expanded row
-  mapOfExpandedId: { [key: string]: boolean } = {};
+  
+  
 
   // list of record with allocation in process
   mapOfAllocationInProcessId: { [key: string]: boolean } = {};
@@ -115,9 +224,9 @@ export class OutboundWaveComponent implements OnInit {
   }
 
   collapseAllRecord(expandedWaveId?: number): void {
-    this.listOfDisplayWaves.forEach(item => (this.mapOfExpandedId[item.id!] = false));
+    this.listOfDisplayWaves.forEach(item => (this.expandSet.delete(item.id!)));
     if (expandedWaveId) {
-      this.mapOfExpandedId[expandedWaveId] = true;
+      this.expandSet.add(expandedWaveId);
       this.listOfDisplayWaves.forEach(wave => {
         if (wave.id === expandedWaveId) {
           this.showWaveDetails(wave);
@@ -158,7 +267,7 @@ export class OutboundWaveComponent implements OnInit {
 
   showWaveDetails(wave: Wave): void {
     // When we expand the details for the order, load the picks and short allocation from the server
-    if (this.mapOfExpandedId[wave.id!] === true) {
+    if (this.expandSet.has(wave.id!)) {
       this.showShipmentLines(wave);
       this.showPicks(wave);
       this.showShortAllocations(wave);
@@ -256,22 +365,43 @@ export class OutboundWaveComponent implements OnInit {
       this.search(wave.id, 3);
     });
   }
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayWaves.every(item => this.mapOfCheckedId[item.id!]);
-    this.indeterminate =
-      this.listOfDisplayWaves.some(item => this.mapOfCheckedId[item.id!]) && !this.isAllDisplayDataChecked;
+
+  updateCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(id);
+    } else {
+      this.setOfCheckedId.delete(id);
+    }
   }
 
-  checkAll(value: boolean): void {
-    this.listOfDisplayWaves.forEach(item => (this.mapOfCheckedId[item.id!] = value));
-    this.refreshStatus();
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked);
+    this.refreshCheckedStatus();
   }
 
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    // sort data 
+  onAllChecked(value: boolean): void {
+    this.listOfDisplayWaves!.forEach(item => this.updateCheckedSet(item.id!, value));
+    this.refreshCheckedStatus();
   }
+
+  currentPageDataChange($event: Wave[]): void {
+    this.listOfDisplayWaves! = $event;
+    this.refreshCheckedStatus();
+  }
+
+  refreshCheckedStatus(): void {
+    this.checked = this.listOfDisplayWaves!.every(item => this.setOfCheckedId.has(item.id!));
+    this.indeterminate = this.listOfDisplayWaves!.some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
+  }
+
+  onExpandChange(id: number, checked: boolean): void {
+    if (checked) {
+      this.expandSet.add(id);
+    } else {
+      this.expandSet.delete(id);
+    }
+  }
+  
 
   removeSelectedWaves(): void {
     // make sure we have at least one checkbox checked
@@ -297,7 +427,7 @@ export class OutboundWaveComponent implements OnInit {
   getSelectedWaves(): Wave[] {
     const selectedWaves: Wave[] = [];
     this.listOfAllWaves.forEach((wave: Wave) => {
-      if (this.mapOfCheckedId[wave.id!] === true) {
+      if (this.setOfCheckedId.has(wave.id!)) {
         selectedWaves.push(wave);
       }
     });

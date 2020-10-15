@@ -10,4 +10,6 @@ export interface ColumnItem {
   filterMultiple: boolean;
   sortDirections: NzTableSortOrder[];
   showFilter: boolean;
+  rowspan?: number;
+  colspan?: number;
 }

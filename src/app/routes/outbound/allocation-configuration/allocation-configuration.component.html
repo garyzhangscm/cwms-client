@@ -47,29 +47,23 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
   <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllConfigurations">
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <thead >
       <tr>
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="sequence">
-          {{ 'sequence' | translate }}</th>
-        <th nzShowSort nzSortKey="type">
-          {{ 'type' | translate }}</th>
-        <th nzShowSort nzSortKey="itemId">
-          {{ 'item' | translate }}</th>
-        <th nzShowSort nzSortKey="itemFamilyId">
-          {{ 'item.item-family' | translate }}</th>
-        <th nzShowSort nzSortKey="locationId">
-          {{ 'location' | translate }}</th>
-        <th nzShowSort nzSortKey="locationGroupId">
-          {{ 'location-group' | translate }}</th>
-
-        <th nzShowSort nzSortKey="locationGroupTypeId">
-          {{ 'location-group-type' | translate }}</th>
-        <th nzShowSort nzSortKey="allocationStrategy">
-          {{ 'allocation-strategy' | translate }}</th>
-
-        <th nzShowSort nzSortKey="unitOfMeasureId">
-          {{ 'unit-of-measure' | translate }}</th>
+        
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+          
       </tr>
     </thead>
     <tbody>

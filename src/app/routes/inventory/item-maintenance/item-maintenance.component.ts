@@ -30,7 +30,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
   validItemFamilies: ItemFamily[] = [];
   allocationRoundUpStrategyTypes = AllocationRoundUpStrategyType;
 
-  mapOfExpandedItemPackageTypes: { [key: number]: boolean } = {};
+  itemPackageTypesExpandSet = new Set<number>();
   mapOfRemovableItemPackageTypes: { [key: number]: boolean } = {};
 
   // All UOM maintained in the system
@@ -291,6 +291,13 @@ export class InventoryItemMaintenanceComponent implements OnInit {
       return true;
     } else {
       return this.mapOfRemovableItemPackageTypes[itemPackageType.id!];
+    }
+  }
+  onItemPackageTypesExpandChange(id: number, checked: boolean): void {
+    if (checked) {
+      this.itemPackageTypesExpandSet.add(id);
+    } else {
+      this.itemPackageTypesExpandSet.delete(id);
     }
   }
 }

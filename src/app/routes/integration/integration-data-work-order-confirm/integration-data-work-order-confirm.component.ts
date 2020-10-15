@@ -1,8 +1,10 @@
 import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { I18NService } from '@core/i18n/i18n.service';
+import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { IntegrationOrderConfirmation } from '../models/integration-order-confirmation';
 import { IntegrationWorkOrderConfirmation } from '../models/integration-work-order-confirmation';
 import { IntegrationWorkOrderConfirmationService } from '../services/integration-work-order-confirmation.service';
@@ -13,6 +15,168 @@ import { IntegrationWorkOrderConfirmationService } from '../services/integration
   styleUrls: ['./integration-data-work-order-confirm.component.less'],
 })
 export class IntegrationIntegrationDataWorkOrderConfirmComponent implements OnInit {
+
+  
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation) => a.id - b.id,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'work-order.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation) => a.number.localeCompare(b.number),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+         
+        {
+              name: 'warehouse.id',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation)  => a.warehouseId - b.warehouseId,
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            
+        {
+          name: 'warehouse.name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation) => a.warehouseName.localeCompare(b.warehouseName),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },   
+        
+        {
+          name: 'item.id',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation) => a.itemId - b.itemId, 
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'item.name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation) => a.itemName.localeCompare(b.itemName),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'production-line.name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation) => a.productionLineName.localeCompare(b.productionLineName),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'bill-of-material.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation) => a.billOfMaterialName.localeCompare(b.billOfMaterialName),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'work-order.expected-quantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation) => a.expectedQuantity - b.expectedQuantity, 
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'work-order.produced-quantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation) => a.producedQuantity - b.producedQuantity,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+                {
+                  name: 'integration.status',
+                  showSort: true,
+                  sortOrder: null,
+                  sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation) => a.status.localeCompare(b.status),
+                  sortDirections: ['ascend', 'descend'],
+                  filterMultiple: true,
+                  listOfFilter: [],
+                  filterFn: null, 
+                  showFilter: false
+                },
+                {
+                  name: 'integration.insertTime',
+                  showSort: true,
+                  sortOrder: null,
+                  sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation) => this.utilService.compareDateTime(a.insertTime, b.insertTime),
+                  sortDirections: ['ascend', 'descend'],
+                  filterMultiple: true,
+                  listOfFilter: [],
+                  filterFn: null, 
+                  showFilter: false
+                },
+                {
+                  name: 'integration.lastUpdateTime',
+                  showSort: true,
+                  sortOrder: null,
+                  sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation) => this.utilService.compareDateTime(a.lastUpdateTime, b.lastUpdateTime),
+                  sortDirections: ['ascend', 'descend'],
+                  filterMultiple: true,
+                  listOfFilter: [],
+                  filterFn: null, 
+                  showFilter: false
+                },
+                {
+                  name: 'integration.errorMessage',
+                  showSort: true,
+                  sortOrder: null,
+                  sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation) => a.errorMessage.localeCompare(b.errorMessage),
+                  sortDirections: ['ascend', 'descend'],
+                  filterMultiple: true,
+                  listOfFilter: [],
+                  filterFn: null, 
+                  showFilter: false
+                },
+        ];
+        expandSet = new Set<number>();
+        
   searchForm!: FormGroup;
 
   searching = false;
@@ -20,20 +184,15 @@ export class IntegrationIntegrationDataWorkOrderConfirmComponent implements OnIn
 
   // Table data for display
   listOfAllIntegrationWorkOrderConfirmations: IntegrationWorkOrderConfirmation[] = [];
-  listOfDisplayIntegrationWorkOrderConfirmations: IntegrationWorkOrderConfirmation[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
+  listOfDisplayIntegrationWorkOrderConfirmations: IntegrationWorkOrderConfirmation[] = []; 
 
   isCollapse = false;
-
-  // list of expanded row
-  mapOfExpandedId: { [key: string]: boolean } = {};
+ 
   constructor(
     private fb: FormBuilder,
     private integrationWorkOrderConfirmationService: IntegrationWorkOrderConfirmationService,
     private i18n: I18NService,
+    private utilService: UtilService,
   ) {}
 
   toggleCollapse(): void {
@@ -70,11 +229,12 @@ export class IntegrationIntegrationDataWorkOrderConfirmComponent implements OnIn
   currentPageDataChange($event: IntegrationWorkOrderConfirmation[]): void {
     this.listOfDisplayIntegrationWorkOrderConfirmations = $event;
   }
-
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    // sort data 
+  onExpandChange(id: number, checked: boolean): void {
+    if (checked) {
+      this.expandSet.add(id);
+    } else {
+      this.expandSet.delete(id);
+    }
   }
 
   ngOnInit(): void {

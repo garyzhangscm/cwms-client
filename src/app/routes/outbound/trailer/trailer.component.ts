@@ -4,16 +4,12 @@ import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { Trailer } from '../models/trailer';
 import { TrailerStatus } from '../models/trailer-status.enum';
 import { TrailerService } from '../services/trailer.service';
-
-interface ItemData {
-  id: number;
-  name: string;
-  age: number;
-  address: string;
-}
+ 
 
 @Component({
   selector: 'app-outbound-trailer',
@@ -21,12 +17,131 @@ interface ItemData {
   styleUrls: ['./trailer.component.less'],
 })
 export class OutboundTrailerComponent implements OnInit {
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'trailer.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Trailer, b: Trailer) => this.utilService.compareNullableString(a.number, b.number),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'trailer.status',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Trailer, b: Trailer) => this.utilService.compareNullableString(a.status.toString(), b.status.toString()),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'carrier',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Trailer, b: Trailer) => this.utilService.compareNullableObjField(a.carrier, b.carrier, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'carrier.serviceLevel',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Trailer, b: Trailer) => this.utilService.compareNullableObjField(a.carrierServiceLevel, b.carrierServiceLevel, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'trailer.driverFirstName',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Trailer, b: Trailer) => this.utilService.compareNullableString(a.driverFirstName, b.driverFirstName),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'trailer.driverLastName',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Trailer, b: Trailer) => this.utilService.compareNullableString(a.driverLastName, b.driverLastName),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'trailer.licensePlateNumber',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Trailer, b: Trailer) => this.utilService.compareNullableString(a.licensePlateNumber, b.licensePlateNumber),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'trailer.size',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Trailer, b: Trailer) => this.utilService.compareNullableString(a.size, b.size),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'trailer.type',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Trailer, b: Trailer) => this.utilService.compareNullableString(a.type.toString(), b.type.toString()),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+         }, {
+          name: 'trailer.location',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Trailer, b: Trailer) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        
+        
+        ];
+  
+        listOfSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onAllChecked(true);
+            }
+          },    
+        ];
+      setOfCheckedId = new Set<number>();
+      checked = false;
+      indeterminate = false;
+
   constructor(
     private fb: FormBuilder,
     private i18n: I18NService,
     private modalService: NzModalService,
     private trailerService: TrailerService,
     private message: NzMessageService,
+    private utilService: UtilService,
   ) {}
 
   // Form related data and functions
@@ -35,17 +150,7 @@ export class OutboundTrailerComponent implements OnInit {
   // Table data for display
   listOfAllTrailers: Trailer[] = [];
   listOfDisplayTrailers: Trailer[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
+  
 
   resetForm(): void {
     this.searchForm.reset();
@@ -60,22 +165,37 @@ export class OutboundTrailerComponent implements OnInit {
     });
   }
 
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayTrailers.every(item => this.mapOfCheckedId[item.id]);
-    this.indeterminate =
-      this.listOfDisplayTrailers.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+  updateCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(id);
+    } else {
+      this.setOfCheckedId.delete(id);
+    }
   }
 
-  checkAll(value: boolean): void {
-    this.listOfDisplayTrailers.forEach(item => (this.mapOfCheckedId[item.id] = value));
-    this.refreshStatus();
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked);
+    this.refreshCheckedStatus();
   }
 
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    // sort data 
+  onAllChecked(value: boolean): void {
+    this.listOfDisplayTrailers!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.refreshCheckedStatus();
   }
+
+  currentPageDataChange($event: Trailer[]): void {
+    this.listOfDisplayTrailers! = $event;
+    this.refreshCheckedStatus();
+  }
+
+  refreshCheckedStatus(): void {
+    this.checked = this.listOfDisplayTrailers!.every(item => this.setOfCheckedId.has(item.id));
+    this.indeterminate = this.listOfDisplayTrailers!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
+  }
+
+
+ 
+ 
   checkInTrailer(trailer: Trailer): void {
     this.trailerService.checkinTrailer(trailer, undefined).subscribe(res => {
       this.message.success(this.i18n.fanyi('message.trailer.checkedin'));
@@ -114,7 +234,7 @@ export class OutboundTrailerComponent implements OnInit {
   getSelectedTrailers(): Trailer[] {
     const selectedShipments: Trailer[] = [];
     this.listOfAllTrailers.forEach((trailer: Trailer) => {
-      if (this.mapOfCheckedId[trailer.id] === true) {
+      if (this.setOfCheckedId.has(trailer.id)) {
         selectedShipments.push(trailer);
       }
     });

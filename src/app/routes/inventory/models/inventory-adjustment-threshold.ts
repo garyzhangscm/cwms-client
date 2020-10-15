@@ -1,8 +1,8 @@
-import { Item } from './item';
 import { Client } from '../../common/models/client';
-import { ItemFamily } from './item-family';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { InventoryQuantityChangeType } from './inventory-quantity-change-type.enum';
+import { Item } from './item';
+import { ItemFamily } from './item-family';
 
 import { Role } from '../../auth/models/role';
 import { User } from '../../auth/models/user';

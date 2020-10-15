@@ -6,6 +6,8 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { EmergencyReplenishmentConfiguration } from '../../inventory/models/emergency-replenishment-configuration';
 import { ItemFamily } from '../../inventory/models/item-family';
 import { ItemFamilyService } from '../../inventory/services/item-family.service';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { AllocationConfiguration } from '../models/allocation-configuration';
 import { AllocationConfigurationService } from '../services/allocation-configuration.service';
 
@@ -15,6 +17,101 @@ import { AllocationConfigurationService } from '../services/allocation-configura
   styleUrls: ['./allocation-configuration.component.less'],
 })
 export class OutboundAllocationConfigurationComponent implements OnInit {
+
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'sequence',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: AllocationConfiguration, b: AllocationConfiguration) => this.utilService.compareNullableNumber(a.sequence, b.sequence),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'type',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: AllocationConfiguration, b: AllocationConfiguration) => this.utilService.compareNullableString(a.type.toString(), b.type.toString()),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'item',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: AllocationConfiguration, b: AllocationConfiguration) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'item.item-family',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: AllocationConfiguration, b: AllocationConfiguration) => this.utilService.compareNullableObjField(a.itemFamily, b.itemFamily, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: AllocationConfiguration, b: AllocationConfiguration) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location-group',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: AllocationConfiguration, b: AllocationConfiguration) => this.utilService.compareNullableObjField(a.locationGroup, b.locationGroup, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location-group-type',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: AllocationConfiguration, b: AllocationConfiguration) => this.utilService.compareNullableObjField(a.locationGroupType, b.locationGroupType, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'allocation-strategy',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: AllocationConfiguration, b: AllocationConfiguration) => this.utilService.compareNullableString(a.allocationStrategy, b.allocationStrategy),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'unit-of-measure',
+          showSort: false,
+          sortOrder: null,
+          sortFn: null,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }
+        ];
+
   // Select control for clients and item families
 
   itemFamilies: ItemFamily[] = [];
@@ -27,10 +124,7 @@ export class OutboundAllocationConfigurationComponent implements OnInit {
   // Table data for display
   listOfAllConfigurations: AllocationConfiguration[] = [];
   listOfDisplayConfigurations: AllocationConfiguration[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
+  
 
   isCollapse = false;
 
@@ -46,6 +140,7 @@ export class OutboundAllocationConfigurationComponent implements OnInit {
     private i18n: I18NService,
     private modalService: NzModalService,
     private titleService: TitleService,
+    private utilService: UtilService,
   ) {}
 
   resetForm(): void {
@@ -65,11 +160,7 @@ export class OutboundAllocationConfigurationComponent implements OnInit {
   currentPageDataChange($event: AllocationConfiguration[]): void {
     this.listOfDisplayConfigurations = $event;
   }
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
- 
-  }
+  
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.allocation-configuration'));

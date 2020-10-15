@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { Carton } from '../models/carton';
 import { CartonService } from '../services/carton.service';
 
@@ -12,6 +14,74 @@ import { CartonService } from '../services/carton.service';
   styleUrls: ['./carton.component.less'],
 })
 export class OutboundCartonComponent implements OnInit {
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Carton, b: Carton) => this.utilService.compareNullableString(a.name, b.name),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'length',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Carton, b: Carton) => this.utilService.compareNullableNumber(a.length, b.length),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'width',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Carton, b: Carton) => this.utilService.compareNullableNumber(a.width, b.width),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'height',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Carton, b: Carton) => this.utilService.compareNullableNumber(a.height, b.height),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'fill-rate',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Carton, b: Carton) => this.utilService.compareNullableNumber(a.fillRate, b.fillRate),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'enabled',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Carton, b: Carton) => this.utilService.compareBoolean(a.enabled, b.enabled),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [
+            { text: this.i18n.fanyi('true'), value: true },
+            { text: this.i18n.fanyi('false'), value: false },
+          ],
+          filterFn: (list: boolean[], carton: Carton) => list.some(enabled => carton.enabled === enabled), 
+          showFilter: true
+        },
+        ];
+        
   // Form related data and functions
   searchForm!: FormGroup;
 
@@ -19,10 +89,7 @@ export class OutboundCartonComponent implements OnInit {
   // Table data for display
   listOfAllCartons: Carton[] = [];
   listOfDisplayCartons: Carton[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
+  
 
   searchByEnabledIndeterminate = true;
   creatingCartonModalVisible = false;
@@ -37,6 +104,7 @@ export class OutboundCartonComponent implements OnInit {
     private i18n: I18NService,
 
     private messageService: NzMessageService,
+    private utilService: UtilService,
   ) {}
 
   ngOnInit(): void {
@@ -74,11 +142,7 @@ export class OutboundCartonComponent implements OnInit {
     // this.locationGroups = $event;
     this.listOfDisplayCartons = $event;
   }
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    // sort data 
-  }
+  
 
   stopEdit(): void {
     this.editId = null;

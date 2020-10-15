@@ -71,86 +71,25 @@
     [nzFooter]="tableFoot">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr>
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="inventoryId">
-          {{ 'inventory-adjustment-request.inventory-id' | translate }}</th>
-        <th nzShowSort nzSortKey="lpn" [nzFilters]="filtersByLpn" (nzFilterChange)="
-            filter(
-              $event,
-              selectedFiltersByItem,
-              selectedFiltersByItemPackageType,
-              selectedFiltersByLocation,
-              selectedFiltersByInventoryStatus
-            )
-          ">
-          {{ 'lpn' | translate }}
-        </th>
-
-        <th nzShowSort nzSortKey="item" [nzFilters]="filtersByItem" (nzFilterChange)="
-            filter(
-              selectedFiltersByLpn,
-              $event,
-              selectedFiltersByItemPackageType,
-              selectedFiltersByLocation,
-              selectedFiltersByInventoryStatus
-            )
-          ">
-          {{ 'item' | translate }}
-        </th>
-
-        <th [nzFilters]="filtersByItemPackageType" (nzFilterChange)="
-            filter(
-              selectedFiltersByLpn,
-              selectedFiltersByItem,
-              $event,
-              selectedFiltersByLocation,
-              selectedFiltersByInventoryStatus
-            )
-          ">
-          {{ 'item.package-type' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="location" [nzFilters]="filtersByLocation" (nzFilterChange)="
-            filter(
-              selectedFiltersByLpn,
-              selectedFiltersByItem,
-              selectedFiltersByItemPackageType,
-              $event,
-              selectedFiltersByInventoryStatus
-            )
-          ">
-          {{ 'location' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="quantity">
-          {{ 'quantity' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="newQuantity">
-          {{ 'inventory-adjustment-request.new-quantity' | translate }}
-        </th>
-        <th [nzFilters]="filtersByInventoryStatus" (nzFilterChange)="
-            filter(
-              selectedFiltersByLpn,
-              selectedFiltersByItem,
-              selectedFiltersByItemPackageType,
-              selectedFiltersByLocation,
-              $event
-            )
-          ">
-          {{ 'inventory.status' | translate }}
-        </th>
-        <th>{{ 'inventory-quantity-change-type' | translate }}</th>
-        <th>{{ 'inventory-adjustment-request.status' | translate }}</th>
-        <th>{{ 'inventory-adjustment-request.requested-by-username' | translate }}</th>
-        <th>{{ 'inventory-adjustment-request.requested-by-datetime' | translate }}</th>
-        <th>{{ 'inventory-adjustment-request.processed-by-username' | translate }}</th>
-        <th>{{ 'inventory-adjustment-request.processed-by-datetime' | translate }}</th>
-        <th>{{ 'inventory-adjustment-request.document-number' | translate }}</th>
-        <th>{{ 'inventory-adjustment-request.comment' | translate }}</th>
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th>  
+ 
         <th>{{ 'action' | translate }}</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of rowSelectionTable.data">
-        <td>{{ data.id }}</td>
+      <tr *ngFor="let data of rowSelectionTable.data"> 
         <td>{{ data.inventoryId }}</td>
         <td><a routerLink="/inventory/inventory" routerLinkActive="active"
             [queryParams]="{lpn : data.lpn, refresh: true}">

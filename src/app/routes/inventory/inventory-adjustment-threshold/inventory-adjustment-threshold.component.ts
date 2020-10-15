@@ -9,6 +9,8 @@ import { ClientService } from '../../common/services/client.service';
 import { ItemFamilyService } from '../services/item-family.service';
 
 import { Client } from '../../common/models/client';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { InventoryAdjustmentThreshold } from '../models/inventory-adjustment-threshold';
 import { InventoryQuantityChangeType } from '../models/inventory-quantity-change-type.enum';
 import { ItemFamily } from '../models/item-family';
@@ -20,6 +22,104 @@ import { InventoryAdjustmentThresholdService } from '../services/inventory-adjus
   styleUrls: ['./inventory-adjustment-threshold.component.less'],
 })
 export class InventoryInventoryAdjustmentThresholdComponent implements OnInit {
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'item',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryAdjustmentThreshold, b: InventoryAdjustmentThreshold) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'item-family',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryAdjustmentThreshold, b: InventoryAdjustmentThreshold) => this.utilService.compareNullableObjField(a.itemFamily, b.itemFamily, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'client',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryAdjustmentThreshold, b: InventoryAdjustmentThreshold) => this.utilService.compareNullableObjField(a.client, b.client, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'inventory-quantity-change-type',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryAdjustmentThreshold, b: InventoryAdjustmentThreshold) => this.utilService.compareNullableString(a.type, b.type),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'user',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryAdjustmentThreshold, b: InventoryAdjustmentThreshold) => this.utilService.compareNullableObjField(a.user, b.user, 'username'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'role.name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryAdjustmentThreshold, b: InventoryAdjustmentThreshold) => this.utilService.compareNullableObjField(a.role, b.role, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'inventory-adjustment-threshold.quantity-threshold',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryAdjustmentThreshold, b: InventoryAdjustmentThreshold) => this.utilService.compareNullableNumber(a.quantityThreshold, b.quantityThreshold),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'inventory-adjustment-threshold.cost-threshold',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryAdjustmentThreshold, b: InventoryAdjustmentThreshold) => this.utilService.compareNullableNumber(a.costThreshold, b.costThreshold),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'enabled',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryAdjustmentThreshold, b: InventoryAdjustmentThreshold) => this.utilService.compareBoolean(a.enabled, b.enabled),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [
+            { text: this.i18n.fanyi('true'), value: true },
+            { text: this.i18n.fanyi('false'), value: false },
+          ],
+          filterFn: (list: boolean[], inventoryAdjustmentThreshold: InventoryAdjustmentThreshold) => list.some(enabled => inventoryAdjustmentThreshold.enabled === enabled), 
+          showFilter: true
+        },
+        ];
+
   // Select control for clients and item families
   clients: Array<{ label: string; value: string }> = [];
   itemFamilies: Array<{ label: string; value: string }> = [];
@@ -33,10 +133,7 @@ export class InventoryInventoryAdjustmentThresholdComponent implements OnInit {
   // Table data for display
   listOfAllInventoryAdjustmentThresholds: InventoryAdjustmentThreshold[] = [];
   listOfDisplayInventoryAdjustmentThresholds: InventoryAdjustmentThreshold[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
+  
 
   isCollapse = false;
 
@@ -52,6 +149,7 @@ export class InventoryInventoryAdjustmentThresholdComponent implements OnInit {
     private i18n: I18NService,
     private modalService: NzModalService,
     private titleService: TitleService,
+    private utilService: UtilService,
   ) {}
 
   resetForm(): void {
@@ -81,11 +179,7 @@ export class InventoryInventoryAdjustmentThresholdComponent implements OnInit {
   currentPageDataChange($event: InventoryAdjustmentThreshold[]): void {
     this.listOfDisplayInventoryAdjustmentThresholds = $event;
   }
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    // sort data 
-  }
+  
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.inventory-adjustment-threshold'));

@@ -9,6 +9,8 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Customer } from '../../common/models/customer';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { Order } from '../models/order';
 import { OrderStatus } from '../models/order-status.enum';
 import { PickWork } from '../models/pick-work';
@@ -24,6 +26,132 @@ import { ShortAllocationService } from '../services/short-allocation.service';
   styleUrls: ['./order.component.less'],
 })
 export class OutboundOrderComponent implements OnInit {
+
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'order.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Order, b: Order) => this.utilService.compareNullableString(a.number, b.number),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false,
+          rowspan: 2,
+          colspan: 1,
+        }, {
+          name: 'status',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Order, b: Order) => this.utilService.compareNullableString(a.status.toString(), b.status.toString()),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false,
+          rowspan: 2 ,
+          colspan: 1,
+        }, {
+          name: 'shipToCustomer',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Order, b: Order) => this.utilService.compareNullableObjField(a.shipToCustomer, b.shipToCustomer, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false,
+          rowspan: 2 ,
+          colspan: 1,
+        }, {
+          name: 'order.billToCustomer',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Order, b: Order) => this.utilService.compareNullableObjField(a.billToCustomer, b.billToCustomer, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false,
+          rowspan: 2 ,
+          colspan: 1,
+        }, {
+          name: 'order.totalItemCount',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalItemCount, b.totalItemCount),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false,
+          rowspan: 2 ,
+          colspan: 1,
+        }, {
+          name: 'order.totalOrderQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalExpectedQuantity, b.totalExpectedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false,
+          rowspan: 2 ,
+          colspan: 1,
+        }, {
+          name: 'order.totalOpenQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalOpenQuantity, b.totalOpenQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false,
+          rowspan: 2,
+          colspan: 1,
+        }, {
+          name: 'order.totalInprocessQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalInprocessQuantity, b.totalInprocessQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false,
+          rowspan: 1,
+          colspan: 3,
+        }, {
+          name: 'order.totalShippedQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalShippedQuantity, b.totalShippedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false,
+          rowspan: 2 ,
+          colspan: 1,
+        },
+        
+        ];
+        expandSet = new Set<number>();
+        listOfSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onAllChecked(true);
+            }
+          },    
+        ];
+      setOfCheckedId = new Set<number>();
+      checked = false;
+      indeterminate = false;
+
   constructor(
     private fb: FormBuilder,
     private i18n: I18NService,
@@ -36,6 +164,7 @@ export class OutboundOrderComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
     private inventoryService: InventoryService,
+    private utilService: UtilService,
   ) {}
 
   // Form related data and functions
@@ -49,26 +178,9 @@ export class OutboundOrderComponent implements OnInit {
   // Table data for display
   listOfAllOrders: Order[] = [];
   listOfDisplayOrders: Order[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-  // Filters meta data
-  filtersByShipToCustomer = [];
-  filtersByBillToCustomer = [];
-  // Save filters that already selected
-  selectedFiltersByBillToCustomer: string[] = [];
-  selectedFiltersByShipToCustomer: string[] = [];
-
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
-  // list of expanded row
-  mapOfExpandedId: { [key: string]: boolean } = {};
-
+  
+  
+  
   // list of record with allocation in process
   mapOfAllocationInProcessId: { [key: string]: boolean } = {};
 
@@ -91,10 +203,7 @@ export class OutboundOrderComponent implements OnInit {
     this.searchForm.reset();
     this.listOfAllOrders = [];
     this.listOfDisplayOrders = [];
-    this.filtersByShipToCustomer = [];
-    this.filtersByBillToCustomer = [];
-    this.selectedFiltersByBillToCustomer = [];
-    this.selectedFiltersByShipToCustomer = [];
+    
   }
 
   search(expandedOrderId?: number, tabSelectedIndex?: number): void {
@@ -105,11 +214,7 @@ export class OutboundOrderComponent implements OnInit {
         this.listOfAllOrders = this.calculateQuantities(orderRes);
         this.listOfDisplayOrders = this.calculateQuantities(orderRes);
 
-        this.filtersByShipToCustomer = [];
-        this.filtersByBillToCustomer = [];
-        const existingShipToCustomer = new Set();
-        const existingBillToCustomer = new Set();
-
+        
         this.listOfAllOrders.forEach(order => {
           // reset the allocation in process flag
           this.mapOfAllocationInProcessId[order.id] = false;
@@ -136,9 +241,9 @@ export class OutboundOrderComponent implements OnInit {
   }
 
   collapseAllRecord(expandedOrderId?: number): void {
-    this.listOfDisplayOrders.forEach(item => (this.mapOfExpandedId[item.id] = false));
+    this.listOfDisplayOrders.forEach(item => this.expandSet.delete(item.id));
     if (expandedOrderId) {
-      this.mapOfExpandedId[expandedOrderId] = true;
+      this.expandSet.add(expandedOrderId);
       this.listOfDisplayOrders.forEach(order => {
         if (order.id === expandedOrderId) {
           this.showOrderDetails(order);
@@ -172,61 +277,41 @@ export class OutboundOrderComponent implements OnInit {
     return orders;
   }
 
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayOrders.every(item => this.mapOfCheckedId[item.id]);
-    this.indeterminate =
-      this.listOfDisplayOrders.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+  updateCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(id);
+    } else {
+      this.setOfCheckedId.delete(id);
+    }
   }
 
-  checkAll(value: boolean): void {
-    this.listOfDisplayOrders.forEach(item => (this.mapOfCheckedId[item.id] = value));
-    this.refreshStatus();
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked);
+    this.refreshCheckedStatus();
   }
 
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    this.sortAndFilter();
+  onAllChecked(value: boolean): void {
+    this.listOfDisplayOrders!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.refreshCheckedStatus();
   }
 
-  filter(selectedFiltersByBillToCustomer: string[], selectedFiltersByShipToCustomer: string[]): void {
-    this.selectedFiltersByShipToCustomer = selectedFiltersByShipToCustomer;
-    this.selectedFiltersByBillToCustomer = selectedFiltersByBillToCustomer;
-    this.sortAndFilter();
+  currentPageDataChange($event: Order[]): void {
+    this.listOfDisplayOrders! = $event;
+    this.refreshCheckedStatus();
   }
 
-  sortAndFilter(): void {
-    // filter data
-    const filterFunc = (item: {
-      shipToCustomer: Customer;
-      billToCustomer: Customer;
-      shipTocontactorFirstname: string;
-      shipTocontactorLastname: string;
-      billTocontactorFirstname: string;
-      billTocontactorLastname: string;
-    }) =>
-      this.selectedFiltersByShipToCustomer.length
-        ? this.selectedFiltersByShipToCustomer.some(shipToCustomerName => {
-            if (item.shipToCustomer) {
-              return item.shipToCustomer.name === shipToCustomerName;
-            } else {
-              return item.shipTocontactorFirstname + ' ' + item.shipTocontactorLastname === shipToCustomerName;
-            }
-          })
-        : true && this.selectedFiltersByBillToCustomer.length
-        ? this.selectedFiltersByBillToCustomer.some(billToCustomerName => {
-            if (item.billToCustomer) {
-              return item.billToCustomer.name === billToCustomerName;
-            } else {
-              return item.billTocontactorFirstname + ' ' + item.billTocontactorLastname === billToCustomerName;
-            }
-          })
-        : true;
-
-    const data = this.listOfAllOrders.filter(item => filterFunc(item));
-
-    // sort data 
+  refreshCheckedStatus(): void {
+    this.checked = this.listOfDisplayOrders!.every(item => this.setOfCheckedId.has(item.id));
+    this.indeterminate = this.listOfDisplayOrders!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
   }
+  onExpandChange(id: number, checked: boolean): void {
+    if (checked) {
+      this.expandSet.add(id);
+    } else {
+      this.expandSet.delete(id);
+    }
+  }
+   
 
   cancelSelectedOrders(): void {
     // make sure we have at least one checkbox checked
@@ -251,7 +336,7 @@ export class OutboundOrderComponent implements OnInit {
   getSelectedOrders(): Order[] {
     const selectedOrders: Order[] = [];
     this.listOfAllOrders.forEach((order: Order) => {
-      if (this.mapOfCheckedId[order.id] === true) {
+      if (this.setOfCheckedId.has(order.id)) {
         selectedOrders.push(order);
       }
     });
@@ -316,7 +401,7 @@ export class OutboundOrderComponent implements OnInit {
   }
   showOrderDetails(order: Order): void {
     // When we expand the details for the order, load the picks and short allocation from the server
-    if (this.mapOfExpandedId[order.id] === true) {
+    if (this.expandSet.has(order.id)) {
       this.showPicks(order);
       this.showShortAllocations(order);
       this.showPickedInventory(order);

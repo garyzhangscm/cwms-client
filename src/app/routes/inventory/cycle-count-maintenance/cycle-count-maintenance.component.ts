@@ -5,6 +5,8 @@ import { I18NService } from '@core';
 import { TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { AuditCountRequest } from '../models/audit-count-request';
 import { AuditCountResult } from '../models/audit-count-result';
@@ -24,6 +26,271 @@ import { ItemService } from '../services/item.service';
   templateUrl: './cycle-count-maintenance.component.html',
 })
 export class InventoryCycleCountMaintenanceComponent implements OnInit {
+
+  listOfOpenCycleCountTableColumns: ColumnItem[] = [    
+    {
+          name: 'cycle-count.batchId',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: CycleCountRequest, b: CycleCountRequest) => a.batchId.localeCompare(b.batchId),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'location',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: CycleCountRequest, b: CycleCountRequest) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        ];
+
+  listOfOpenCycleCountTableSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onOpenCycleCountTableAllChecked(true);
+            }
+          },    
+        ];
+      setOfOpenCycleCountTableCheckedId = new Set<number>();
+      openCycleCountTableChecked = false;
+      openCycleCountTableIndeterminate = false;
+
+  listOfCycleCountResultTableColumns: ColumnItem[] = [    
+        {
+              name: 'cycle-count.batchId',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: CycleCountResult, b: CycleCountResult) => this.utilService.compareNullableString(a.batchId, b.batchId),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            
+        {
+          name: 'location',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: CycleCountResult, b: CycleCountResult) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'item',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: CycleCountResult, b: CycleCountResult) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'item.description',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: CycleCountResult, b: CycleCountResult) => this.utilService.compareNullableObjField(a.item, b.item, 'description'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'quantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: CycleCountResult, b: CycleCountResult) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'count-quantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: CycleCountResult, b: CycleCountResult) => this.utilService.compareNullableNumber(a.countQuantity, b.countQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+            ];
+
+    listOfCancelledCycleCountTableColumns: ColumnItem[] = [    
+              {
+                    name: 'cycle-count.batchId',
+                    showSort: true,
+                    sortOrder: null,
+                    sortFn: (a: CycleCountRequest, b: CycleCountRequest) => a.batchId.localeCompare(b.batchId),
+                    sortDirections: ['ascend', 'descend'],
+                    filterMultiple: true,
+                    listOfFilter: [],
+                    filterFn: null, 
+                    showFilter: false
+                  },
+                  {
+                    name: 'location',
+                    showSort: true,
+                    sortOrder: null,
+                    sortFn: (a: CycleCountRequest, b: CycleCountRequest) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
+                    sortDirections: ['ascend', 'descend'],
+                    filterMultiple: true,
+                    listOfFilter: [],
+                    filterFn: null, 
+                    showFilter: false
+                  },
+                  ];
+          
+    listOfCancelledCycleCountTableSelection = [
+                    {
+                      text: this.i18n.fanyi(`select-all-rows`),
+                      onSelect: () => {
+                        this.onCancelledCycleCountTableAllChecked(true);
+                      }
+                    },    
+                  ];
+                setOfCancelledCycleCountTableCheckedId = new Set<number>();
+                cancelledCycleCountTableChecked = false;
+                cancelledCycleCountTableIndeterminate = false;
+
+
+    listOfOpenAuditCountTableColumns: ColumnItem[] = [    
+      {
+            name: 'cycle-count.batchId',
+            showSort: true,
+            sortOrder: null,
+            sortFn: (a: AuditCountRequest, b: AuditCountRequest) => a.batchId.localeCompare(b.batchId),
+            sortDirections: ['ascend', 'descend'],
+            filterMultiple: true,
+            listOfFilter: [],
+            filterFn: null, 
+            showFilter: false
+          },
+          {
+            name: 'location',
+            showSort: true,
+            sortOrder: null,
+            sortFn: (a: AuditCountRequest, b: AuditCountRequest) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
+            sortDirections: ['ascend', 'descend'],
+            filterMultiple: true,
+            listOfFilter: [],
+            filterFn: null, 
+            showFilter: false
+          },
+          ];
+  
+          listOfOpenAuditCountTableSelection = [
+            {
+              text: this.i18n.fanyi(`select-all-rows`),
+              onSelect: () => {
+                this.onOpenAuditCountTableAllChecked(true);
+              }
+            },    
+          ];
+        setOfOpenAuditCountTableCheckedId = new Set<number>();
+        openAuditCountTableChecked = false;
+        openAuditCountTableIndeterminate = false;
+
+  listOfAuditCountResultsTableColumns: ColumnItem[] = [    
+          {
+                name: 'cycle-count.batchId',
+                showSort: true,
+                sortOrder: null,
+                sortFn: (a: AuditCountResult, b: AuditCountResult) => this.utilService.compareNullableString(a.batchId, b.batchId),
+                sortDirections: ['ascend', 'descend'],
+                filterMultiple: true,
+                listOfFilter: [],
+                filterFn: null, 
+                showFilter: false
+              },
+              
+          {
+            name: 'location',
+            showSort: true,
+            sortOrder: null,
+            sortFn: (a: AuditCountResult, b: AuditCountResult) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
+            sortDirections: ['ascend', 'descend'],
+            filterMultiple: true,
+            listOfFilter: [],
+            filterFn: null, 
+            showFilter: false
+          },
+          {
+            name: 'lpn',
+            showSort: true,
+            sortOrder: null,
+            sortFn: (a: AuditCountResult, b: AuditCountResult) => this.utilService.compareNullableString(a.lpn, b.lpn),
+            sortDirections: ['ascend', 'descend'],
+            filterMultiple: true,
+            listOfFilter: [],
+            filterFn: null, 
+            showFilter: false
+          },
+          {
+            name: 'item',
+            showSort: true,
+            sortOrder: null,
+            sortFn: (a: AuditCountResult, b: AuditCountResult) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+            sortDirections: ['ascend', 'descend'],
+            filterMultiple: true,
+            listOfFilter: [],
+            filterFn: null, 
+            showFilter: false
+          },
+          {
+            name: 'item.description',
+            showSort: true,
+            sortOrder: null,
+            sortFn: (a: AuditCountResult, b: AuditCountResult) => this.utilService.compareNullableObjField(a.item, b.item, 'description'),
+            sortDirections: ['ascend', 'descend'],
+            filterMultiple: true,
+            listOfFilter: [],
+            filterFn: null, 
+            showFilter: false
+          },
+          {
+            name: 'quantity',
+            showSort: true,
+            sortOrder: null,
+            sortFn: (a: AuditCountResult, b: AuditCountResult) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
+            sortDirections: ['ascend', 'descend'],
+            filterMultiple: true,
+            listOfFilter: [],
+            filterFn: null, 
+            showFilter: false
+          },
+          {
+            name: 'count-quantity',
+            showSort: true,
+            sortOrder: null,
+            sortFn: (a: AuditCountResult, b: AuditCountResult) => this.utilService.compareNullableNumber(a.countQuantity, b.countQuantity),
+            sortDirections: ['ascend', 'descend'],
+            filterMultiple: true,
+            listOfFilter: [],
+            filterFn: null, 
+            showFilter: false
+          },
+              ];
+  
+
   requestForm!: FormGroup;
   pageTitle: string;
 
@@ -41,31 +308,15 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   listOfDisplayAuditCountResults: AuditCountResult[] = [];
   listOfAllAuditCountResults: AuditCountResult[] = [];
 
-  // control for table of open cycle count request
-  // checkbox - select all
-  openCycleCountTableAllChecked = false;
-  openCycleCountTableIndeterminate = false;
-  // list of checked checkbox
-  openCycleCountTableMapOfCheckedId: { [key: string]: boolean } = {};
+  
 
   // Model to let the user input cycle count result
   inventoriesToBeCount: CycleCountResult[] = [];
 
   cycleCountRequestConfirmModal!: NzModalRef;
   tabSelectedIndex = 0;
-  // control for table of cancelled cycle count request
-  // checkbox - select all
-  cancelledCycleCountTableAllChecked = false;
-  cancelledCycleCountTableIndeterminate = false;
-  // list of checked checkbox
-  cancelledCycleCountTableMapOfCheckedId: { [key: string]: boolean } = {};
-
-  // control for table of open audit count request
-  // checkbox - select all
-  openAuditCountTableAllChecked = false;
-  openAuditCountTableIndeterminate = false;
-  // list of checked checkbox
-  openAuditCountTableMapOfCheckedId: { [key: string]: boolean } = {};
+   
+ 
 
   printingCycleCountRequest = false;
 
@@ -83,6 +334,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     private itemService: ItemService,
     private message: NzMessageService,
     private warehouseService: WarehouseService,
+    private utilService: UtilService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inventory.cycle-count-request.title');
   }
@@ -210,31 +462,38 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
 
   openCycleCountCurrentPageDataChange($event: CycleCountRequest[]): void {
     this.listOfDisplayOpenCycleCountRequests = $event;
-    this.openCycleCountTableRefreshStatus();
+    this.refreshOpenCycleCountTableCheckedStatus();
   }
 
-  openCycleCountTableRefreshStatus(): void {
-    this.openCycleCountTableAllChecked = this.listOfDisplayOpenCycleCountRequests.every(
-      item => this.openCycleCountTableMapOfCheckedId[item.id],
-    );
-    this.openCycleCountTableIndeterminate =
-      this.listOfDisplayOpenCycleCountRequests.some(item => this.openCycleCountTableMapOfCheckedId[item.id]) &&
-      !this.openCycleCountTableAllChecked;
+  updateOpenCycleCountTableCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfOpenCycleCountTableCheckedId.add(id);
+    } else {
+      this.setOfOpenCycleCountTableCheckedId.delete(id);
+    }
   }
 
-  openCycleCountTableCheckAll(value: boolean): void {
-    this.listOfDisplayOpenCycleCountRequests.forEach(item => (this.openCycleCountTableMapOfCheckedId[item.id] = value));
-    this.openCycleCountTableRefreshStatus();
+  onOpenCycleCountTableItemChecked(id: number, checked: boolean): void {
+    this.updateOpenCycleCountTableCheckedSet(id, checked);
+    this.refreshOpenCycleCountTableCheckedStatus();
   }
 
-  sortOpenCycleCountRequestTable(sort: { key: string; value: string }): void {
-    
+  onOpenCycleCountTableAllChecked(value: boolean): void {
+    this.listOfDisplayOpenCycleCountRequests!.forEach(item => this.updateOpenCycleCountTableCheckedSet(item.id, value));
+    this.refreshOpenCycleCountTableCheckedStatus();
+  }
+
+  
+  refreshOpenCycleCountTableCheckedStatus(): void {
+    this.openCycleCountTableChecked = this.listOfDisplayOpenCycleCountRequests!.every(item => this.setOfOpenCycleCountTableCheckedId.has(item.id));
+    this.openCycleCountTableIndeterminate = this.listOfDisplayOpenCycleCountRequests!.some(item => this.setOfOpenCycleCountTableCheckedId.has(item.id))
+         && !this.openCycleCountTableChecked;
   }
 
   getSelectedOpenCycleCounts(): CycleCountRequest[] {
     const selectedOpenCycleCounts: CycleCountRequest[] = [];
     this.listOfAllOpenCycleCountRequests.forEach((cycleCountRequest: CycleCountRequest) => {
-      if (this.openCycleCountTableMapOfCheckedId[cycleCountRequest.id] === true) {
+      if ( this.setOfOpenCycleCountTableCheckedId.has(cycleCountRequest.id)) {
         selectedOpenCycleCounts.push(cycleCountRequest);
       }
     });
@@ -456,33 +715,38 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
 
   cancelledCycleCountCurrentPageDataChange($event: CycleCountRequest[]): void {
     this.listOfDisplayCancelledCycleCountRequests = $event;
-    this.cancelledCycleCountTableRefreshStatus();
+    this.refreshCancelledCycleCountTableCheckedStatus();
   }
 
-  cancelledCycleCountTableRefreshStatus(): void {
-    this.cancelledCycleCountTableAllChecked = this.listOfDisplayCancelledCycleCountRequests.every(
-      item => this.cancelledCycleCountTableMapOfCheckedId[item.id],
-    );
-    this.cancelledCycleCountTableIndeterminate =
-      this.listOfDisplayCancelledCycleCountRequests.some(
-        item => this.cancelledCycleCountTableMapOfCheckedId[item.id],
-      ) && !this.cancelledCycleCountTableAllChecked;
+  updateCancelledCycleCountTableCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfCancelledCycleCountTableCheckedId.add(id);
+    } else {
+      this.setOfCancelledCycleCountTableCheckedId.delete(id);
+    }
   }
 
-  cancelledCycleCountTableCheckAll(value: boolean): void {
-    this.listOfDisplayCancelledCycleCountRequests.forEach(
-      item => (this.cancelledCycleCountTableMapOfCheckedId[item.id] = value),
-    );
-    this.cancelledCycleCountTableRefreshStatus();
+  onCancelledCycleCountTableItemChecked(id: number, checked: boolean): void {
+    this.updateCancelledCycleCountTableCheckedSet(id, checked);
+    this.refreshCancelledCycleCountTableCheckedStatus();
   }
 
-  sortCancelledCycleCountRequestTable(sort: { key: string; value: string }): void { 
+  onCancelledCycleCountTableAllChecked(value: boolean): void {
+    this.listOfDisplayCancelledCycleCountRequests!.forEach(item => this.updateCancelledCycleCountTableCheckedSet(item.id, value));
+    this.refreshCancelledCycleCountTableCheckedStatus();
+  }
+
+  
+  refreshCancelledCycleCountTableCheckedStatus(): void {
+    this.cancelledCycleCountTableChecked = this.listOfDisplayCancelledCycleCountRequests!.every(item => this.setOfCancelledCycleCountTableCheckedId.has(item.id));
+    this.cancelledCycleCountTableIndeterminate = this.listOfDisplayCancelledCycleCountRequests!.some(item => this.setOfCancelledCycleCountTableCheckedId.has(item.id))
+         && !this.cancelledCycleCountTableChecked;
   }
 
   getSelectedCancelledCycleCounts(): CycleCountRequest[] {
     const selectedCancelledCycleCounts: CycleCountRequest[] = [];
     this.listOfAllCancelledCycleCountRequests.forEach((cycleCountRequest: CycleCountRequest) => {
-      if (this.cancelledCycleCountTableMapOfCheckedId[cycleCountRequest.id] === true) {
+      if (this.setOfCancelledCycleCountTableCheckedId.has(cycleCountRequest.id)) {
         selectedCancelledCycleCounts.push(cycleCountRequest);
       }
     });
@@ -504,30 +768,39 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
 
   openAuditCountCurrentPageDataChange($event: AuditCountRequest[]): void {
     this.listOfDisplayOpenAuditCountRequests = $event;
-    this.openAuditCountTableRefreshStatus();
+    this.refreshOpenAuditCountTableCheckedStatus();
   }
 
-  openAuditCountTableRefreshStatus(): void {
-    this.openAuditCountTableAllChecked = this.listOfDisplayOpenAuditCountRequests.every(
-      item => this.openAuditCountTableMapOfCheckedId[item.id],
-    );
-    this.openAuditCountTableIndeterminate =
-      this.listOfDisplayOpenAuditCountRequests.some(item => this.openAuditCountTableMapOfCheckedId[item.id]) &&
-      !this.openAuditCountTableAllChecked;
+  updateOpenAuditCountTableCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfOpenAuditCountTableCheckedId.add(id);
+    } else {
+      this.setOfOpenAuditCountTableCheckedId.delete(id);
+    }
   }
 
-  openAuditCountTableCheckAll(value: boolean): void {
-    this.listOfDisplayOpenAuditCountRequests.forEach(item => (this.openAuditCountTableMapOfCheckedId[item.id] = value));
-    this.openAuditCountTableRefreshStatus();
+  onOpenAuditCountTableItemChecked(id: number, checked: boolean): void {
+    this.updateOpenAuditCountTableCheckedSet(id, checked);
+    this.refreshOpenAuditCountTableCheckedStatus();
   }
 
-  sortOpenAuditCountRequestTable(sort: { key: string; value: string }): void { 
+  onOpenAuditCountTableAllChecked(value: boolean): void {
+    this.listOfDisplayOpenAuditCountRequests!.forEach(item => this.updateOpenAuditCountTableCheckedSet(item.id, value));
+    this.refreshOpenAuditCountTableCheckedStatus();
   }
+
+  
+  refreshOpenAuditCountTableCheckedStatus(): void {
+    this.openAuditCountTableChecked = this.listOfDisplayOpenAuditCountRequests!.every(item => this.setOfOpenAuditCountTableCheckedId.has(item.id));
+    this.openAuditCountTableIndeterminate = this.listOfDisplayOpenAuditCountRequests!.some(item => this.setOfOpenAuditCountTableCheckedId.has(item.id))
+         && !this.openAuditCountTableChecked;
+  }
+
 
   getSelectedOpenAuditCounts(): AuditCountRequest[] {
     const selectedOpenAuditCounts: AuditCountRequest[] = [];
     this.listOfAllOpenAuditCountRequests.forEach((auditCountRequest: AuditCountRequest) => {
-      if (this.openAuditCountTableMapOfCheckedId[auditCountRequest.id] === true) {
+      if (this.setOfOpenAuditCountTableCheckedId.has(auditCountRequest.id)) {
         selectedOpenAuditCounts.push(auditCountRequest);
       }
     });
@@ -571,4 +844,8 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   sortAuditCountResultsTable(sort: { key: string; value: string }): void {
     
   }
+
+
+
+  
 }

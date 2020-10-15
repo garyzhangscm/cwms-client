@@ -3,6 +3,8 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { MovementPath } from '../models/movement-path';
@@ -15,26 +17,85 @@ import { MovementPathService } from '../services/movement-path.service';
   styleUrls: ['./movement-path.component.less'],
 })
 export class InventoryMovementPathComponent implements OnInit {
+
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'sequence',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: MovementPath, b: MovementPath) => this.utilService.compareNullableNumber(a.sequence, b.sequence),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'from-location',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: MovementPath, b: MovementPath) => this.utilService.compareNullableObjField(a.fromLocation, b.fromLocation, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },  {
+          name: 'to-location',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: MovementPath, b: MovementPath) => this.utilService.compareNullableObjField(a.toLocation, b.toLocation, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'from-location-group',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: MovementPath, b: MovementPath) => this.utilService.compareNullableObjField(a.fromLocationGroup, b.fromLocationGroup, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'to-location-group',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: MovementPath, b: MovementPath) => this.utilService.compareNullableObjField(a.toLocationGroup, b.toLocationGroup, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        
+        ];
+
+        listOfSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onAllChecked(true);
+            }
+          },    
+        ];
+      setOfCheckedId = new Set<number>();
+      checked = false;
+      indeterminate = false;        
+
+      expandSet = new Set<number>();
+
+
   // Form related data and functions
   searchForm!: FormGroup;
 
   // Table data for display
   listOfAllMovementPath: MovementPath[] = [];
   listOfDisplayMovementPath: MovementPath[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
-  // list of expanded row
-  mapOfExpandedId: { [key: string]: boolean } = {};
-
+  
+  
   isCollapse = false;
 
   availableLocationGroups: LocationGroup[] = [];
@@ -49,6 +110,7 @@ export class InventoryMovementPathComponent implements OnInit {
     private locationGroupService: LocationGroupService,
     private i18n: I18NService,
     private modalService: NzModalService,
+    private utilService: UtilService,
   ) {}
 
   resetForm(): void {
@@ -73,26 +135,33 @@ export class InventoryMovementPathComponent implements OnInit {
 
   currentPageDataChange($event: MovementPath[]): void {
     this.listOfDisplayMovementPath = $event;
-    this.refreshStatus();
+    this.refreshCheckedStatus();
+  }
+  updateCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(id);
+    } else {
+      this.setOfCheckedId.delete(id);
+    }
   }
 
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayMovementPath.every(item => this.mapOfCheckedId[item.id]);
-    this.indeterminate =
-      this.listOfDisplayMovementPath.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked);
+    this.refreshCheckedStatus();
   }
 
-  checkAll(value: boolean): void {
-    this.listOfDisplayMovementPath.forEach(item => (this.mapOfCheckedId[item.id] = value));
-    this.refreshStatus();
+  onAllChecked(value: boolean): void {
+    this.listOfDisplayMovementPath!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.refreshCheckedStatus();
   }
 
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    // sort data 
+  
+  refreshCheckedStatus(): void {
+    this.checked = this.listOfDisplayMovementPath!.every(item => this.setOfCheckedId.has(item.id));
+    this.indeterminate = this.listOfDisplayMovementPath!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
   }
 
+  
   removeSelectedMovementPaths(): void {
     // make sure we have at least one checkbox checked
     const selectedMovementPaths = this.getSelectedMovementPaths();
@@ -117,14 +186,14 @@ export class InventoryMovementPathComponent implements OnInit {
   getSelectedMovementPaths(): MovementPath[] {
     const selectedMovementPaths: MovementPath[] = [];
     this.listOfAllMovementPath.forEach((movementPath: MovementPath) => {
-      if (this.mapOfCheckedId[movementPath.id] === true) {
+      if (this.setOfCheckedId.has(movementPath.id)) {
         selectedMovementPaths.push(movementPath);
       }
     });
     return selectedMovementPaths;
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     // initiate the search form
     this.searchForm = this.fb.group({
       fromLocation: [null],
@@ -136,5 +205,12 @@ export class InventoryMovementPathComponent implements OnInit {
     this.locationGroupService
       .loadLocationGroups()
       .subscribe(locationGroups => (this.availableLocationGroups = locationGroups));
+  }
+  onExpandChange(id: number, checked: boolean): void {
+    if (checked) {
+      this.expandSet.add(id);
+    } else {
+      this.expandSet.delete(id);
+    }
   }
 }

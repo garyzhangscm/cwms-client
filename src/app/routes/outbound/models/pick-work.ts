@@ -1,5 +1,5 @@
-import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { Item } from '../../inventory/models/item';
+import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { PickType } from './pick-type.enum';
 
 export interface PickWork {
@@ -20,6 +20,7 @@ export interface PickWork {
 
   pickListNumber?: string;
   cartonizationNumber?: string;
+  orderNumber?: string;
 
   lpn?: string;
 }

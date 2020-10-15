@@ -6,6 +6,8 @@ import { I18NService } from '@core';
 import { TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { PickWork } from '../models/pick-work';
 import { PickService } from '../services/pick.service';
 
@@ -15,6 +17,113 @@ import { PickService } from '../services/pick.service';
   styleUrls: ['./pick.component.less'],
 })
 export class OutboundPickComponent implements OnInit {
+
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'pick.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableNumber(a.number, b.number),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'pick.type',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableString(a.pickType, b.pickType),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'order.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableString(a.orderNumber, b.orderNumber),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'sourceLocation',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableObjField(a.sourceLocation, b.sourceLocation, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'destinationLocation',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableObjField(a.destinationLocation, b.destinationLocation, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'item',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'item.description',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableObjField(a.item, b.item, 'description'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'pick.quantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'pick.pickedQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableNumber(a.pickedQuantity, b.pickedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        ];
+
+        listOfSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onAllChecked(true);
+            }
+          },    
+        ];
+      setOfCheckedId = new Set<number>();
+      checked = false;
+      indeterminate = false;
+
   constructor(
     private fb: FormBuilder,
     private i18n: I18NService,
@@ -24,6 +133,7 @@ export class OutboundPickComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
     private router: Router,
+    private utilService: UtilService,
   ) {}
 
   // Form related data and functions
@@ -32,20 +142,11 @@ export class OutboundPickComponent implements OnInit {
   // Table data for display
   listOfAllPicks: PickWork[] = [];
   listOfDisplayPicks: PickWork[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-
+  
   searching = false;
   searchResult = '';
 
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
+  
 
   resetForm(): void {
     this.searchForm.reset();
@@ -84,23 +185,36 @@ export class OutboundPickComponent implements OnInit {
       );
   }
 
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayPicks.every(item => this.mapOfCheckedId[item.id]);
-    this.indeterminate =
-      this.listOfDisplayPicks.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+  updateCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(id);
+    } else {
+      this.setOfCheckedId.delete(id);
+    }
   }
 
-  checkAll(value: boolean): void {
-    this.listOfDisplayPicks.forEach(item => (this.mapOfCheckedId[item.id] = value));
-    this.refreshStatus();
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked);
+    this.refreshCheckedStatus();
   }
 
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    // sort data 
+  onAllChecked(value: boolean): void {
+    this.listOfDisplayPicks!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.refreshCheckedStatus();
   }
 
+  currentPageDataChange($event: PickWork[]): void {
+    this.listOfDisplayPicks! = $event;
+    this.refreshCheckedStatus();
+  }
+
+  refreshCheckedStatus(): void {
+    this.checked = this.listOfDisplayPicks!.every(item => this.setOfCheckedId.has(item.id));
+    this.indeterminate = this.listOfDisplayPicks!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
+  }
+
+
+  
   cancelSelectedPicks(): void {
     // make sure we have at least one checkbox checked
     const selectedPicks = this.getSelectedPicks();
@@ -134,7 +248,7 @@ export class OutboundPickComponent implements OnInit {
   getSelectedPicks(): PickWork[] {
     const selectedPicks: PickWork[] = [];
     this.listOfAllPicks.forEach((pick: PickWork) => {
-      if (this.mapOfCheckedId[pick.id] === true) {
+      if (this.setOfCheckedId.has(pick.id)) {
         selectedPicks.push(pick);
       }
     });

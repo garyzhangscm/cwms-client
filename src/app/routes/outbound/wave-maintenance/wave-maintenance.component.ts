@@ -6,6 +6,8 @@ import { TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { Customer } from '../../common/models/customer';
 import { Item } from '../../inventory/models/item';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { Order } from '../models/order';
 import { OrderLine } from '../models/order-line';
 import { Wave } from '../models/wave';
@@ -16,6 +18,210 @@ import { WaveService } from '../services/wave.service';
   templateUrl: './wave-maintenance.component.html',
 })
 export class OutboundWaveMaintenanceComponent implements OnInit {
+
+  listOfOrderTableColumns: ColumnItem[] = [    
+    {
+          name: 'order.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Order, b: Order) => this.utilService.compareNullableString(a.number, b.number),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'shipToCustomer',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Order, b: Order) => this.utilService.compareNullableObjField(a.shipToCustomer, b.shipToCustomer, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'order.billToCustomer',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Order, b: Order) => this.utilService.compareNullableObjField(a.billToCustomer, b.billToCustomer, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'order.totalItemCount',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalItemCount, b.totalItemCount),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'order.totalOrderQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalExpectedQuantity, b.totalExpectedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'order.totalOpenQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalOpenQuantity, b.totalOpenQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'order.totalInprocessQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalInprocessQuantity, b.totalInprocessQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'order.totalShippedQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalShippedQuantity, b.totalShippedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        ];
+        listOfOrderTableSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onOrderTableAllChecked(true);
+            }
+          },    
+        ];
+      setOfOrderTableCheckedId = new Set<number>();
+      orderTableChecked = false;
+      orderTableIndeterminate = false;
+
+      listOfOrderLineTableColumns: ColumnItem[] = [    
+        {
+              name: 'order.number',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableString(a.orderNumber, b.orderNumber),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            }, {
+              name: 'order.line.number',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableString(a.number, b.number),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            }, {
+              name: 'item',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            }, {
+              name: 'item.description',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableObjField(a.item, b.item, 'description'),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            }, {
+              name: 'order.line.expectedQuantity',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableNumber(a.expectedQuantity, b.expectedQuantity),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            }, {
+              name: 'order.line.openQuantity',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableNumber(a.openQuantity, b.openQuantity),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            }, {
+              name: 'order.line.inprocessQuantity',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableNumber(a.inprocessQuantity, b.inprocessQuantity),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            }, {
+              name: 'order.line.shippedQuantity',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableNumber(a.shippedQuantity, b.shippedQuantity),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            }, {
+              name: 'inventory.status',
+              showSort: true,
+              sortOrder: null,
+              sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableObjField(a.inventoryStatus, b.inventoryStatus, 'name'),
+              sortDirections: ['ascend', 'descend'],
+              filterMultiple: true,
+              listOfFilter: [],
+              filterFn: null, 
+              showFilter: false
+            },
+            
+            ];
+
+            listOfOrderLineTableSelection = [
+              {
+                text: this.i18n.fanyi(`select-all-rows`),
+                onSelect: () => {
+                  this.onOrderLineTableAllChecked(true);
+                }
+              },    
+            ];
+          setOfOrderLineTableCheckedId = new Set<number>();
+          orderLineTableChecked = false;
+          orderLineTableIndeterminate = false;
+
+          
   searchForm!: FormGroup;
 
   newWave = true;
@@ -43,31 +249,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   listOfAllOrderLines: OrderLine[] = [];
   listOfDisplayOrderLines: OrderLine[] = [];
 
-  // control for table of order and order line
-  // checkbox - select all
-  orderTableAllChecked = false;
-  orderTableIndeterminate = false;
-  orderLineTableAllChecked = false;
-  orderLineTableIndeterminate = false;
-  // list of checked checkbox
-  orderTableMapOfCheckedId: { [key: string]: boolean } = {};
-  orderLineTableMapOfCheckedId: { [key: string]: boolean } = {};
-
-  // Filters meta data
-  filtersByShipToCustomer = [];
-  filtersByBillToCustomer = [];
-  filtersByItem = [];
-  // Save filters that already selected
-  selectedFiltersByBillToCustomer: string[] = [];
-  selectedFiltersByShipToCustomer: string[] = [];
-  selectedFiltersByItem: string[] = [];
-
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  orderTableSortKey: string | null = null;
-  orderTableSortValue: string | null = null;
-  orderLineTableSortKey: string | null = null;
-  orderLineTableSortValue: string | null = null;
+  
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -77,6 +259,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     private waveService: WaveService,
     private message: NzMessageService,
     private router: Router,
+    private utilService: UtilService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.outbound.wave.title');
   }
@@ -162,15 +345,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
       .subscribe(wavableOrders => {
         this.listOfAllOrders = this.calculateQuantities(wavableOrders);
         this.listOfDisplayOrders = this.calculateQuantities(wavableOrders);
-
-        this.filtersByShipToCustomer = [];
-        this.filtersByBillToCustomer = [];
-        this.filtersByItem = [];
-
-        const existingItemId = new Set();
-        const existingShipToCustomerId = new Set();
-        const existingBillToCustomerId = new Set();
- 
+  
 
         this.listOfAllOrderLines = this.getWavableOrderLines(wavableOrders);
         this.listOfDisplayOrderLines = this.getWavableOrderLines(wavableOrders);
@@ -218,90 +393,70 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     this.listOfDisplayOrders = [];
     this.listOfAllOrderLines = [];
     this.listOfDisplayOrderLines = [];
-
-    this.filtersByShipToCustomer = [];
-    this.filtersByBillToCustomer = [];
-    this.filtersByItem = [];
-    // Save filters that already selected
-    this.selectedFiltersByBillToCustomer = [];
-    this.selectedFiltersByShipToCustomer = [];
-    this.selectedFiltersByItem = [];
+ 
 
     if (!this.newWave) {
       this.searchForm.controls.waveNumber.setValue(this.currentWave.number);
     }
   }
 
-  sortOrderTable(sort: { key: string; value: string }): void {
-    this.orderTableSortKey = sort.key;
-    this.orderTableSortValue = sort.value;
-    this.sortAndFilterOrderTable();
-  }
-  sortOrderLineTable(sort: { key: string; value: string }): void {
-    this.orderLineTableSortKey = sort.key;
-    this.orderLineTableSortValue = sort.value;
-    this.sortAndFilterOrderLineTable();
+  updateOrderTableCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfOrderTableCheckedId.add(id);
+    } else {
+      this.setOfOrderTableCheckedId.delete(id);
+    }
   }
 
-  filterOrderTable(selectedFiltersByBillToCustomer: string[], selectedFiltersByShipToCustomer: string[]): void {
-    this.selectedFiltersByShipToCustomer = selectedFiltersByShipToCustomer;
-    this.selectedFiltersByBillToCustomer = selectedFiltersByBillToCustomer;
-    this.sortAndFilterOrderTable();
-  }
-  filterOrderLineTable(selectedFiltersByItem: string[]): void {
-    this.selectedFiltersByItem = selectedFiltersByItem;
-    this.sortAndFilterOrderLineTable();
+  onOrderTableItemChecked(id: number, checked: boolean): void {
+    this.updateOrderTableCheckedSet(id, checked);
+    this.refreshOrderTableCheckedStatus();
   }
 
-  sortAndFilterOrderTable(): void {
-    // filter data
-    const filterFunc = (order: { shipToCustomer: Customer; billToCustomer: Customer }) =>
-      (this.selectedFiltersByShipToCustomer.length
-        ? this.selectedFiltersByShipToCustomer.some(customerId => order.shipToCustomer.id === +customerId)
-        : true) &&
-      (this.selectedFiltersByBillToCustomer.length
-        ? this.selectedFiltersByBillToCustomer.some(customerId => order.billToCustomer.id === +customerId)
-        : true);
-    const data = this.listOfAllOrders.filter(order => filterFunc(order));
-
-    // sort data 
+  onOrderTableAllChecked(value: boolean): void {
+    this.listOfDisplayOrders!.forEach(item => this.updateOrderTableCheckedSet(item.id, value));
+    this.refreshOrderTableCheckedStatus();
   }
 
-  sortAndFilterOrderLineTable(): void {
-    // filter data
-    const filterFunc = (orderLine: { item: Item }) =>
-      this.selectedFiltersByItem.length
-        ? this.selectedFiltersByItem.some(itemId => orderLine.item.id === +itemId)
-        : true;
-    const data = this.listOfAllOrderLines.filter(orderLine => filterFunc(orderLine));
-
-    // sort data 
+  orderTableCurrentPageDataChange($event: Order[]): void {
+    this.listOfDisplayOrders! = $event;
+    this.refreshOrderTableCheckedStatus();
   }
 
-  orderTableCheckAll(value: boolean): void {
-    this.listOfDisplayOrders.forEach(item => (this.orderTableMapOfCheckedId[item.id] = value));
-    this.refreshOrderTableStatus();
+  refreshOrderTableCheckedStatus(): void {
+    this.orderTableChecked = this.listOfDisplayOrders!.every(item => this.setOfOrderTableCheckedId.has(item.id));
+    this.orderTableIndeterminate = this.listOfDisplayOrders!.some(item => this.setOfOrderTableCheckedId.has(item.id)) && !this.orderTableChecked;
+  }
+ 
+   
+  updateOrderLineTableCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfOrderLineTableCheckedId.add(id);
+    } else {
+      this.setOfOrderLineTableCheckedId.delete(id);
+    }
   }
 
-  refreshOrderTableStatus(): void {
-    this.orderTableAllChecked = this.listOfDisplayOrders.every(item => this.orderTableMapOfCheckedId[item.id]);
-    this.orderTableIndeterminate =
-      this.listOfDisplayOrders.some(item => this.orderTableMapOfCheckedId[item.id]) && !this.orderTableAllChecked;
+  onOrderLineTableItemChecked(id: number, checked: boolean): void {
+    this.updateOrderLineTableCheckedSet(id, checked);
+    this.refreshOrderLineTableCheckedStatus();
   }
 
-  orderLineTableCheckAll(value: boolean): void {
-    this.listOfDisplayOrderLines.forEach(item => (this.orderLineTableMapOfCheckedId[item.id] = value));
-    this.refreshOrderLineTableStatus();
+  onOrderLineTableAllChecked(value: boolean): void {
+    this.listOfDisplayOrderLines!.forEach(item => this.updateOrderLineTableCheckedSet(item.id, value));
+    this.refreshOrderLineTableCheckedStatus();
   }
 
-  refreshOrderLineTableStatus(): void {
-    this.orderLineTableAllChecked = this.listOfDisplayOrderLines.every(
-      item => this.orderLineTableMapOfCheckedId[item.id],
-    );
-    this.orderLineTableIndeterminate =
-      this.listOfDisplayOrderLines.some(item => this.orderLineTableMapOfCheckedId[item.id]) &&
-      !this.orderLineTableAllChecked;
+  orderLineTableCurrentPageDataChange($event: OrderLine[]): void {
+    this.listOfDisplayOrderLines! = $event;
+    this.refreshOrderLineTableCheckedStatus();
   }
+
+  refreshOrderLineTableCheckedStatus(): void {
+    this.orderLineTableChecked = this.listOfDisplayOrderLines!.every(item => this.setOfOrderLineTableCheckedId.has(item.id));
+    this.orderLineTableIndeterminate = this.listOfDisplayOrderLines!.some(item => this.setOfOrderLineTableCheckedId.has(item.id)) && !this.orderLineTableChecked;
+  }
+  
 
   createWaveWithOrders(): void {
     const wavableOrderLines = this.getWavableOrderLines(this.getSelectedOrders());
@@ -317,7 +472,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   getSelectedOrders(): Order[] {
     const selectedOrders: Order[] = [];
     this.listOfDisplayOrders.forEach((order: Order) => {
-      if (this.orderTableMapOfCheckedId[order.id] === true) {
+      if (this.setOfOrderTableCheckedId.has(order.id)) {
         selectedOrders.push(order);
       }
     });
@@ -338,7 +493,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   getSelectedOrderLines(): OrderLine[] {
     const selectedOrderLines: OrderLine[] = [];
     this.listOfDisplayOrderLines.forEach((orderLine: OrderLine) => {
-      if (this.orderLineTableMapOfCheckedId[orderLine.id] === true) {
+      if (this.setOfOrderLineTableCheckedId.has(orderLine.id)) {
         selectedOrderLines.push(orderLine);
       }
     });

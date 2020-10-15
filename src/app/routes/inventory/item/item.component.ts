@@ -9,6 +9,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { Client } from '../../common/models/client';
 import { ClientService } from '../../common/services/client.service';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { Item } from '../models/item';
 import { ItemFamily } from '../models/item-family';
 import { ItemFamilyService } from '../services/item-family.service';
@@ -20,6 +22,162 @@ import { ItemService } from '../services/item.service';
   styleUrls: ['./item.component.less'],
 })
 export class InventoryItemComponent implements OnInit {
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Item, b: Item) => this.utilService.compareNullableString(a.name, b.name),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'description',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Item, b: Item) => this.utilService.compareNullableString(a.description, b.description),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'client',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Item, b: Item) => this.utilService.compareNullableObjField(a.client, b.client, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'item-family',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Item, b: Item) => this.utilService.compareNullableObjField(a.itemFamily, b.itemFamily, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'unit-cost',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Item, b: Item) => this.utilService.compareNullableNumber(a.unitCost, b.unitCost),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'allowAllocationByLPN',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Item, b: Item) => this.utilService.compareBoolean(a.allowAllocationByLPN, b.allowAllocationByLPN),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [
+            { text: this.i18n.fanyi('true'), value: true },
+            { text: this.i18n.fanyi('false'), value: false },
+          ],
+          filterFn: (list: boolean[], item: Item) => list.some(allowAllocationByLPN => item.allowAllocationByLPN === allowAllocationByLPN), 
+          showFilter: true
+        },
+        {
+          name: 'allocationRoundUpStrategyType',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Item, b: Item) => this.utilService.compareNullableString(a.allocationRoundUpStrategyType?.toString(), b.allocationRoundUpStrategyType?.toString()),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'allocationRoundUpStrategyValue',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Item, b: Item) => this.utilService.compareNullableNumber(a.allocationRoundUpStrategyValue, b.allocationRoundUpStrategyValue),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'trackingVolumeFlag',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Item, b: Item) => this.utilService.compareBoolean(a.trackingVolumeFlag, b.trackingVolumeFlag),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [
+            { text: this.i18n.fanyi('true'), value: true },
+            { text: this.i18n.fanyi('false'), value: false },
+          ],
+          filterFn: (list: boolean[], item: Item) => list.some(trackingVolumeFlag => item.trackingVolumeFlag === trackingVolumeFlag), 
+          showFilter: true
+        },
+        {
+          name: 'trackingLotNumberFlag',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Item, b: Item) => this.utilService.compareBoolean(a.trackingLotNumberFlag, b.trackingLotNumberFlag),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [
+            { text: this.i18n.fanyi('true'), value: true },
+            { text: this.i18n.fanyi('false'), value: false },
+          ],
+          filterFn: (list: boolean[], item: Item) => list.some(trackingLotNumberFlag => item.trackingLotNumberFlag === trackingLotNumberFlag), 
+          showFilter: true
+        },
+        {
+          name: 'trackingManufactureDateFlag',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Item, b: Item) => this.utilService.compareBoolean(a.trackingManufactureDateFlag, b.trackingManufactureDateFlag),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [
+            { text: this.i18n.fanyi('true'), value: true },
+            { text: this.i18n.fanyi('false'), value: false },
+          ],
+          filterFn: (list: boolean[], item: Item) => list.some(trackingManufactureDateFlag => item.trackingManufactureDateFlag === trackingManufactureDateFlag), 
+          showFilter: true
+        }, {
+          name: 'shelfLifeDays',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Item, b: Item) => this.utilService.compareNullableNumber(a.shelfLifeDays, b.shelfLifeDays),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, 
+        {
+          name: 'trackingExpirationDateFlag',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Item, b: Item) => this.utilService.compareBoolean(a.trackingExpirationDateFlag, b.trackingExpirationDateFlag),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [
+            { text: this.i18n.fanyi('true'), value: true },
+            { text: this.i18n.fanyi('false'), value: false },
+          ],
+          filterFn: (list: boolean[], item: Item) => list.some(trackingExpirationDateFlag => item.trackingExpirationDateFlag === trackingExpirationDateFlag), 
+          showFilter: true
+        }, 
+        ];
+        expandSet = new Set<number>();
   // Select control for clients and item families
   clients: Array<{ label: string; value: string }> = [];
   itemFamilies: Array<{ label: string; value: string }> = [];
@@ -29,22 +187,8 @@ export class InventoryItemComponent implements OnInit {
   // Table data for display
   items: Item[] = [];
   listOfDisplayItems: Item[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-  // Filters meta data
-  filtersByName = [];
-  filtersByClient = [];
-  filtersByItemFamily = [];
-  // Save filters that already selected
-  selectedFiltersByName: string[] = [];
-  selectedFiltersByClient: string[] = [];
-  selectedFiltersItemFamily: string[] = [];
-
-  // list of expanded row
-  mapOfExpandedId: { [key: string]: boolean } = {};
-
+  
+  
   // editable cell
   editId!: string | null;
   editCol!: string | null;
@@ -62,6 +206,7 @@ export class InventoryItemComponent implements OnInit {
     private messageService: NzMessageService,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
+    private utilService: UtilService,
   ) {}
 
   ngOnInit(): void {
@@ -94,10 +239,7 @@ export class InventoryItemComponent implements OnInit {
   resetForm(): void {
     this.searchForm.reset();
     this.items = [];
-    this.listOfDisplayItems = [];
-    this.filtersByName = [];
-    this.filtersByClient = [];
-    this.filtersByItemFamily = [];
+    this.listOfDisplayItems = []; 
   }
   search(): void {
     this.searching = true;
@@ -110,15 +252,7 @@ export class InventoryItemComponent implements OnInit {
       .subscribe(
         itemRes => {
           this.items = itemRes;
-          this.listOfDisplayItems = itemRes;
-
-          this.filtersByName = [];
-          this.filtersByClient = [];
-          this.filtersByItemFamily = [];
-
-          const existingClientId = new Set();
-          const existingItemFamilyId = new Set();
- 
+          this.listOfDisplayItems = itemRes; 
 
           this.searching = false;
 
@@ -138,25 +272,8 @@ export class InventoryItemComponent implements OnInit {
     this.listOfDisplayItems = $event;
   }
 
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    this.sortAndFilter();
-  }
-
-  filter(selectedFiltersByName: string[], selectedFiltersByClient: string[], selectedFiltersItemFamily: string[]): void {
-    this.selectedFiltersByName = selectedFiltersByName;
-    this.selectedFiltersByClient = selectedFiltersByClient;
-    this.selectedFiltersItemFamily = selectedFiltersItemFamily;
-    this.sortAndFilter();
-  }
-
-  sortAndFilter(): void {
-    // filter data
-     
-
-    // sort data 
-  }
+   
+ 
 
   startEdit(id: string, col: string, event: MouseEvent): void {
     event.preventDefault();
@@ -186,5 +303,12 @@ export class InventoryItemComponent implements OnInit {
       nzCancelText: this.i18n.fanyi('cancel'),
       nzOnCancel: () => console.log('Cancel'),
     });
+  }
+  onExpandChange(id: number, checked: boolean): void {
+    if (checked) {
+      this.expandSet.add(id);
+    } else {
+      this.expandSet.delete(id);
+    }
   }
 }

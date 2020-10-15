@@ -4,6 +4,8 @@ import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { PickWork } from '../models/pick-work';
 import { ShortAllocation } from '../models/short-allocation';
 import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
@@ -16,12 +18,138 @@ import { ShortAllocationService } from '../services/short-allocation.service';
   styleUrls: ['./short-allocation.component.less'],
 })
 export class OutboundShortAllocationComponent implements OnInit {
+
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'order.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ShortAllocation, b: ShortAllocation) => this.utilService.compareNullableString(a.orderNumber, b.orderNumber),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'work-order.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ShortAllocation, b: ShortAllocation) => this.utilService.compareNullableString(a.workOrderNumber, b.workOrderNumber),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'item',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ShortAllocation, b: ShortAllocation) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'item.description',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ShortAllocation, b: ShortAllocation) => this.utilService.compareNullableObjField(a.item, b.item, 'description'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'short-allocation.quantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ShortAllocation, b: ShortAllocation) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'short-allocation.openQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ShortAllocation, b: ShortAllocation) => this.utilService.compareNullableNumber(a.openQuantity, b.openQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'short-allocation.inprocessQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ShortAllocation, b: ShortAllocation) => this.utilService.compareNullableNumber(a.inprocessQuantity, b.inprocessQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'short-allocation.deliveredQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ShortAllocation, b: ShortAllocation) => this.utilService.compareNullableNumber(a.deliveredQuantity, b.deliveredQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'short-allocation.status',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ShortAllocation, b: ShortAllocation) => this.utilService.compareNullableString(a.status, b.status),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'short-allocation.allocationCount',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ShortAllocation, b: ShortAllocation) => this.utilService.compareNullableNumber(a.allocationCount, b.allocationCount),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'short-allocation.lastAllocationDatetime',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ShortAllocation, b: ShortAllocation) => this.utilService.compareDateTime(a.lastAllocationDatetime, b.lastAllocationDatetime),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        ];
+        listOfSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onAllChecked(true);
+            }
+          },    
+        ];
+      setOfCheckedId = new Set<number>();
+      checked = false;
+      indeterminate = false;    
   constructor(
     private fb: FormBuilder,
     private i18n: I18NService,
     private modalService: NzModalService,
     private shortAllocationService: ShortAllocationService,
     private messageService: NzMessageService,
+    private utilService: UtilService,
   ) {}
 
   // Form related data and functions
@@ -30,17 +158,7 @@ export class OutboundShortAllocationComponent implements OnInit {
   // Table data for display
   listOfAllShortAllocations: ShortAllocation[] = [];
   listOfDisplayShortAllocations: ShortAllocation[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
+  
 
   shortAllocationStatus = ShortAllocationStatus;
 
@@ -58,23 +176,34 @@ export class OutboundShortAllocationComponent implements OnInit {
         this.listOfDisplayShortAllocations = shortAllocationRes;
       });
   }
-
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayShortAllocations.every(item => this.mapOfCheckedId[item.id]);
-    this.indeterminate =
-      this.listOfDisplayShortAllocations.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+  updateCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(id);
+    } else {
+      this.setOfCheckedId.delete(id);
+    }
   }
 
-  checkAll(value: boolean): void {
-    this.listOfDisplayShortAllocations.forEach(item => (this.mapOfCheckedId[item.id] = value));
-    this.refreshStatus();
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked);
+    this.refreshCheckedStatus();
   }
 
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    // sort data 
+  onAllChecked(value: boolean): void {
+    this.listOfDisplayShortAllocations!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.refreshCheckedStatus();
   }
+
+  currentPageDataChange($event: ShortAllocation[]): void {
+    this.listOfDisplayShortAllocations! = $event;
+    this.refreshCheckedStatus();
+  }
+
+  refreshCheckedStatus(): void {
+    this.checked = this.listOfDisplayShortAllocations!.every(item => this.setOfCheckedId.has(item.id));
+    this.indeterminate = this.listOfDisplayShortAllocations!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
+  }
+
 
   cancelSelectedShortAllocations(): void {
     // make sure we have at least one checkbox checked
@@ -100,7 +229,7 @@ export class OutboundShortAllocationComponent implements OnInit {
   getSelectedShortAllocations(): ShortAllocation[] {
     const selectedShortAllocations: ShortAllocation[] = [];
     this.listOfAllShortAllocations.forEach((shortAllocation: ShortAllocation) => {
-      if (this.mapOfCheckedId[shortAllocation.id] === true) {
+      if (this.setOfCheckedId.has(shortAllocation.id)) {
         selectedShortAllocations.push(shortAllocation);
       }
     });

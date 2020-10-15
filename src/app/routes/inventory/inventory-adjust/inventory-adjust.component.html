@@ -52,50 +52,24 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
   <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllLocations" #nestedTable [nzFooter]="tableFoot">
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <thead>
       <tr>
-        <th nzShowExpand></th>
-        <th nzShowSort nzSortKey="name">
-          {{ 'location.name' | translate }}
-        </th>
-        <th nzShowFilter [nzFilters]="filtersByLocationGroup" (nzFilterChange)="filter($event)">
-          {{'location-group' | translate}}</th>
-        <th nzShowSort nzSortKey="aisle">
-          {{ 'location.aisle' | translate }}
-        </th>
-        <th>
-          {{ 'location.length' | translate }}
-        </th>
-        <th>
-          {{ 'location.width' | translate }}
-        </th>
-        <th>
-          {{ 'location.height' | translate }}
-        </th>
-        <th>
-          {{ 'location.capacity' | translate }}
-        </th>
-        <th>
-          {{ 'location.fillPercentage' | translate }}
-        </th>
-        <th>
-          {{ 'location.currentVolume' | translate }}
-        </th>
-        <th>
-          {{ 'location.pendingVolume' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="putawaySequence">
-          {{ 'location.putawaySequence' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="pickSequence">
-          {{ 'location.pickSequence' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="countSequence">
-          {{ 'location.countSequence' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="locked">
-          {{ 'location.locked' | translate }}
-        </th>
+        <th nzWidth="40px"></th>
+
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+          
         <th>
           {{ 'action' | translate }}
         </th>
@@ -104,7 +78,7 @@
     <tbody>
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <tr>
-          <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]" (nzExpandChange)="showInventoryDetails(data)"></td>
+          <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
           <td>{{ data.name }}</td>
           <td>{{ data.locationGroup.description }}</td>
           <td>{{ data.aisle }}</td>
@@ -134,7 +108,7 @@
 
         </tr>
 
-        <tr [nzExpand]="mapOfExpandedId[data.id]" class="inner-table">
+        <tr [nzExpand]="expandSet.has(data.id)" class="inner-table">
           <td colspan="1"></td>
           <td colspan="13">
             <nz-tabset>

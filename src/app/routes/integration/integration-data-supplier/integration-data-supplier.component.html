@@ -56,54 +56,24 @@
 <div class="search-result-list">
   <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationSupplierData"
     [nzFooter]="tableFoot">
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <thead  >
       <tr>
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="name">
-          {{ 'name' | translate }}
-        </th>
-        <th nzShowFilter>
-          {{ 'description' | translate }}
-        </th>
-        <th>
-          {{ 'contactor.firstname' | translate }}
-        </th>
-        <th>
-          {{ 'contactor.lastname' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="addressCountry">
-          {{ 'country' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="addressState">
-          {{ 'state' | translate }}
-        </th>
-        <th>
-          {{ 'county' | translate }}
-        </th>
-        <th>
-          {{ 'city' | translate }}
-        </th>
-        <th>
-          {{ 'district' | translate }}
-        </th>
-        <th>
-          {{ 'address.line1' | translate }}
-        </th>
-        <th>
-          {{ 'address.line2' | translate }}
-        </th>
-        <th>
-          {{ 'postcode' | translate }}
-        </th>
-        <th>
-          {{ 'integration.status' | translate }}
-        </th>
-        <th>
-          {{ 'integration.insertTime' | translate }}
-        </th>
-        <th>
-          {{ 'integration.lastUpdateTime' | translate }}
-        </th>
+        
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+
+     
       </tr>
     </thead>
     <tbody>

@@ -9,6 +9,8 @@ import { formatDate } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { Order } from '../models/order';
 import { OrderLine } from '../models/order-line';
 import { PickWork } from '../models/pick-work';
@@ -27,6 +29,133 @@ import { ShortAllocationService } from '../services/short-allocation.service';
   styleUrls: ['./shipment.component.less'],
 })
 export class OutboundShipmentComponent implements OnInit {
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'shipment.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Shipment, b: Shipment) => this.utilService.compareNullableString(a.number, b.number),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'shipment.status',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Shipment, b: Shipment) => this.utilService.compareNullableString(a.status.toString(), b.status.toString()),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'carrier',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Shipment, b: Shipment) => this.utilService.compareNullableObjField(a.carrier, b.carrier, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'carrier.serviceLevel',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Shipment, b: Shipment) => this.utilService.compareNullableObjField(a.carrierServiceLevel, b.carrierServiceLevel, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'shipment.totalLineCount',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Shipment, b: Shipment) => this.utilService.compareNullableNumber(a.totalLineCount, b.totalLineCount),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'shipment.totalItemCount',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Shipment, b: Shipment) => this.utilService.compareNullableNumber(a.totalItemCount, b.totalItemCount),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'shipment.totalQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Shipment, b: Shipment) => this.utilService.compareNullableNumber(a.totalQuantity, b.totalQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'shipment.totalOpenQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Shipment, b: Shipment) => this.utilService.compareNullableNumber(a.totalOpenQuantity, b.totalOpenQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'shipment.totalInprocessQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Shipment, b: Shipment) => this.utilService.compareNullableNumber(a.totalInprocessQuantity, b.totalInprocessQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'shipment.totalLoadedQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Shipment, b: Shipment) => this.utilService.compareNullableNumber(a.totalLoadedQuantity, b.totalLoadedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'shipment.totalShippedQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Shipment, b: Shipment) => this.utilService.compareNullableNumber(a.totalShippedQuantity, b.totalShippedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        
+        ];
+
+        listOfSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onAllChecked(true);
+            }
+          },    
+        ];
+      setOfCheckedId = new Set<number>();
+      checked = false;
+      indeterminate = false;
+      expandSet = new Set<number>();
   constructor(
     private fb: FormBuilder,
     private i18n: I18NService,
@@ -41,6 +170,7 @@ export class OutboundShipmentComponent implements OnInit {
     private titleService: TitleService,
     private inventoryService: InventoryService,
     private activatedRoute: ActivatedRoute,
+    private utilService: UtilService,
   ) {}
 
   // Form related data and functions
@@ -53,19 +183,8 @@ export class OutboundShipmentComponent implements OnInit {
   // Table data for display
   listOfAllShipments: Shipment[] = [];
   listOfDisplayShipments: Shipment[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
-  // list of expanded row
-  mapOfExpandedId: { [key: string]: boolean } = {};
+  
+  
 
   // list of record with allocation in process
   mapOfAllocationInProcessId: { [key: string]: boolean } = {};
@@ -145,9 +264,9 @@ export class OutboundShipmentComponent implements OnInit {
   }
 
   collapseAllRecord(expandedShipmentId?: number): void {
-    this.listOfDisplayShipments.forEach(item => (this.mapOfExpandedId[item.id] = false));
+    this.listOfDisplayShipments.forEach(item => (this.expandSet.delete(item.id)));
     if (expandedShipmentId) {
-      this.mapOfExpandedId[expandedShipmentId] = true;
+      this.expandSet.add(expandedShipmentId);
       this.listOfDisplayShipments.forEach(shipment => {
         if (shipment.id === expandedShipmentId) {
           this.showShipmentDetails(shipment);
@@ -158,30 +277,50 @@ export class OutboundShipmentComponent implements OnInit {
 
   showShipmentDetails(shipment: Shipment): void {
     // When we expand the details for the order, load the picks and short allocation from the server
-    if (this.mapOfExpandedId[shipment.id] === true) {
+    if (this.expandSet.has(shipment.id)) {
       this.showOrderLines(shipment);
       this.showPicks(shipment);
       this.showShortAllocations(shipment);
       this.showPickedInventory(shipment);
     }
   }
-
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayShipments.every(item => this.mapOfCheckedId[item.id]);
-    this.indeterminate =
-      this.listOfDisplayShipments.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+  updateCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(id);
+    } else {
+      this.setOfCheckedId.delete(id);
+    }
   }
 
-  checkAll(value: boolean): void {
-    this.listOfDisplayShipments.forEach(item => (this.mapOfCheckedId[item.id] = value));
-    this.refreshStatus();
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked);
+    this.refreshCheckedStatus();
   }
 
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value; 
+  onAllChecked(value: boolean): void {
+    this.listOfDisplayShipments!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.refreshCheckedStatus();
   }
 
+  currentPageDataChange($event: Shipment[]): void {
+    this.listOfDisplayShipments! = $event;
+    this.refreshCheckedStatus();
+  }
+
+  refreshCheckedStatus(): void {
+    this.checked = this.listOfDisplayShipments!.every(item => this.setOfCheckedId.has(item.id));
+    this.indeterminate = this.listOfDisplayShipments!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
+  }
+
+  onExpandChange(id: number, checked: boolean): void {
+    if (checked) {
+      this.expandSet.add(id);
+    } else {
+      this.expandSet.delete(id);
+    }
+  }
+
+  
   cancelSelectedShipments(): void {
     // make sure we have at least one checkbox checked
     const selectedShipments = this.getSelectedShipments();
@@ -207,7 +346,7 @@ export class OutboundShipmentComponent implements OnInit {
   getSelectedShipments(): Shipment[] {
     const selectedShipments: Shipment[] = [];
     this.listOfAllShipments.forEach((shipment: Shipment) => {
-      if (this.mapOfCheckedId[shipment.id] === true) {
+      if (this.setOfCheckedId.has(shipment.id)) {
         selectedShipments.push(shipment);
       }
     });

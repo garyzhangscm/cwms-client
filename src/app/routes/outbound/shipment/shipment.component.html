@@ -26,50 +26,33 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllShipments" [nzFooter]="tableFoot" #nestedTable>
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllShipments" [nzFooter]="tableFoot" 
+  (nzCurrentPageDataChange)="currentPageDataChange($event)"
+  #nestedTable>
+    <thead>
       <tr>
-        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
-          (nzCheckedChange)="checkAll($event)"></th>
-        <th rowspan="2" nzShowExpand></th>
-
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="number">
-          {{ 'shipment.number' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="status">
-          {{ 'shipment.status' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="carrier">
-          {{ 'carrier' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="carrierServiceLevel">
-          {{ 'carrier.serviceLevel' | translate }}
-        </th>
-
-        <th nzShowSort nzSortKey="totalLineCount">
-          {{ 'shipment.totalLineCount' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="totalItemCount">
-          {{ 'shipment.totalItemCount' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="totalQuantity">
-          {{ 'shipment.totalQuantity' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="totalOpenQuantity">
-          {{ 'shipment.totalOpenQuantity' | translate }}
-        </th>
-
-        <th nzShowSort nzSortKey="totalInprocessQuantity">
-          {{ 'shipment.totalInprocessQuantity' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="totalLoadedQuantity">
-          {{ 'shipment.totalLoadedQuantity' | translate }}
-        </th>
-
-        <th nzShowSort nzSortKey="totalShippedQuantity">
-          {{ 'shipment.totalShippedQuantity' | translate }}
-        </th>
+        <th
+        [nzSelections]="listOfSelection"
+        [(nzChecked)]="checked"
+        [nzIndeterminate]="indeterminate"
+        (nzCheckedChange)="onAllChecked($event)"
+        nzWidth="60px"
+      ></th>
+      <th nzWidth="40px"></th>
+    <th
+        *ngFor="let column of listOfColumns"
+        [nzShowSort]="column.showSort"
+        [nzSortOrder]="column.sortOrder"
+        [nzSortFn]="column.sortFn"
+        [nzSortDirections]="column.sortDirections"
+        [nzFilterMultiple]="column.filterMultiple"
+        [nzFilters]="column.listOfFilter"
+        [nzFilterFn]="column.filterFn"        
+        [nzShowFilter]="column.showFilter"
+      >
+        {{ column.name | translate }}
+      </th> 
+         
 
         <th>
           {{ 'action' | translate }}
@@ -79,10 +62,14 @@
     <tbody>
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <tr>
-          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
+          
+          <td
+          [nzChecked]="setOfCheckedId.has(data.id)"
+          (nzCheckedChange)="onItemChecked(data.id, $event)"
+        ></td>
 
-          <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]" (nzExpandChange)="showShipmentDetails(data)"></td>
-          <td>{{ data.id }}</td>
+        <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
+        
           <td>{{ data.number }}</td>
           <td>{{ 'SHIPMENT-STATUS-' + data.status | translate }}</td>
           <td>{{ data.carrier?.name }}</td>
@@ -124,7 +111,7 @@
           </td>
         </tr>
 
-        <tr [nzExpand]="mapOfExpandedId[data.id]" class="inner-table">
+        <tr [nzExpand]="expandSet.has(data.id)" class="inner-table">
           <td colspan="2"></td>
           <td colspan="12">
             <nz-tabset [nzSelectedIndex]="tabSelectedIndex">

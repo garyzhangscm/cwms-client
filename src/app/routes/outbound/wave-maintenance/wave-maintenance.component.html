@@ -90,48 +90,43 @@
 
       <!-- Table to Display the result  -->
       <div class="search-result-list">
-        <nz-table #orderTable [nzShowPagination]="'false'" [nzData]="listOfAllOrders" [nzFooter]="orderTableFoot">
-          <thead (nzSortChange)="sortOrderTable($event)" nzSingleSort>
+        <nz-table #orderTable [nzShowPagination]="'false'" [nzData]="listOfAllOrders" [nzFooter]="orderTableFoot"
+        (nzCurrentPageDataChange)="orderTableCurrentPageDataChange($event)"
+        >
+          <thead  >
             <tr>
-              <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="orderTableAllChecked"
-                [nzIndeterminate]="orderTableIndeterminate" (nzCheckedChange)="orderTableCheckAll($event)"></th>
-              <th nzShowSort nzSortKey="id">id</th>
-
-              <th nzShowSort nzSortKey="number">
-                {{ 'order.number' | translate }}
-              </th>
-              <th nzShowFilter [nzFilters]="filtersByShipToCustomer"
-                (nzFilterChange)="filterOrderTable($event, selectedFiltersByBillToCustomer)">
-                {{ 'shipToCustomer' | translate }}
-              </th>
-              <th nzShowFilter [nzFilters]="filtersByBillToCustomer"
-                (nzFilterChange)="filterOrderTable(selectedFiltersByShipToCustomer, $event)">
-                {{ 'order.billToCustomer' | translate }}
-              </th>
-              <th nzShowSort nzSortKey="totalItemCount">
-                {{ 'order.totalItemCount' | translate }}
-              </th>
-              <th nzShowSort nzSortKey="totalOrderQuantity">
-                {{ 'order.totalOrderQuantity' | translate }}
-              </th>
-              <th nzShowSort nzSortKey="totalOpenQuantity">
-                {{ 'order.totalOpenQuantity' | translate }}
-              </th>
-
-              <th nzShowSort nzSortKey="totalInprocessQuantity">
-                {{ 'order.totalInprocessQuantity' | translate }}
-              </th>
-
-              <th nzShowSort nzSortKey="totalShippedQuantity">
-                {{ 'order.totalShippedQuantity' | translate }}
-              </th>
+              <th
+            [nzSelections]="listOfOrderTableSelection"
+            [(nzChecked)]="orderTableChecked"
+            [nzIndeterminate]="orderTableIndeterminate"
+            (nzCheckedChange)="onOrderTableAllChecked($event)"
+            nzWidth="60px"
+          ></th>
+        <th
+            *ngFor="let column of listOfOrderTableColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+          
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let data of orderTable.data">
-              <td nzShowCheckbox [(nzChecked)]="orderTableMapOfCheckedId[data.id]"
-                (nzCheckedChange)="refreshOrderTableStatus()"></td>
-              <td>{{ data.id }}</td>
+             
+              
+          <td
+          [nzChecked]="setOfOrderTableCheckedId.has(data.id)"
+          (nzCheckedChange)="onOrderTableItemChecked(data.id, $event)"
+        ></td>
+
               <td>{{ data.number }}</td>
               <td>
                 <div *ngIf="data.shipToCustomer != null">
@@ -236,46 +231,40 @@
       <!-- Table to Display the result  -->
       <div class="search-result-list">
         <nz-table #orderLineTable [nzShowPagination]="'false'" [nzData]="listOfDisplayOrderLines"
-          [nzFooter]="orderLineTableFoot">
-          <thead (nzSortChange)="sortOrderLineTable($event)" nzSingleSort>
+          [nzFooter]="orderLineTableFoot" (nzCurrentPageDataChange)="orderLineTableCurrentPageDataChange($event)">
+          <thead  >
             <tr>
-              <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="orderLineTableAllChecked"
-                [nzIndeterminate]="orderLineTableIndeterminate" (nzCheckedChange)="orderLineTableCheckAll($event)"></th>
+              <th
+            [nzSelections]="listOfOrderLineTableSelection"
+            [(nzChecked)]="orderLineTableChecked"
+            [nzIndeterminate]="orderLineTableIndeterminate"
+            (nzCheckedChange)="onOrderLineTableAllChecked($event)"
+            nzWidth="60px"
+          ></th>
+        <th
+            *ngFor="let column of listOfOrderLineTableColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
 
-              <th nzShowSort nzSortKey="orderNumber">
-                {{ 'order.number' | translate }}
-              </th>
-              <th nzShowSort nzSortKey="lineNumber">
-                {{ 'order.line.number' | translate }}
-              </th>
-              <th nzShowSort nzSortKey="item" nzShowFilter [nzFilters]="filtersByItem"
-                (nzFilterChange)="filterOrderLineTable($event)">
-                {{ 'item' | translate }}
-              </th>
-              <th>
-                {{ 'item.description' | translate }}
-              </th>
-              <th nzShowSort nzSortKey="expectedQuantity">
-                {{ 'order.line.expectedQuantity' | translate }}
-              </th>
-              <th nzShowSort nzSortKey="openQuantity">
-                {{ 'order.line.openQuantity' | translate }}
-              </th>
-              <th nzShowSort nzSortKey="inprocessQuantity">
-                {{ 'order.line.inprocessQuantity' | translate }}
-              </th>
-              <th nzShowSort nzSortKey="shippedQuantity">
-                {{ 'order.line.shippedQuantity' | translate }}
-              </th>
-              <th nzShowSort nzSortKey="inventoryStatus">
-                {{ 'inventory.status' | translate }}
-              </th>
+              
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let data of orderLineTable.data">
-              <td nzShowCheckbox [(nzChecked)]="orderLineTableMapOfCheckedId[data.id]"
-                (nzCheckedChange)="refreshOrderLineTableStatus()"></td>
+              
+              <td
+            [nzChecked]="setOfOrderLineTableCheckedId.has(data.id)"
+            (nzCheckedChange)="onOrderLineTableItemChecked(data.id, $event)"
+          ></td>
               <td>{{ data.orderNumber }}</td>
               <td>{{ data.number }}</td>
               <td>{{ data.item?.name }}</td>

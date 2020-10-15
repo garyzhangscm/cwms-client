@@ -29,45 +29,31 @@
 <div class="search-result-list">
 
   <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllWaves" [nzFooter]="tableFoot" #nestedTable>
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <thead >
       <tr>
-        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
-          (nzCheckedChange)="checkAll($event)"></th>
+        <th
+            [nzSelections]="listOfSelection"
+            [(nzChecked)]="checked"
+            [nzIndeterminate]="indeterminate"
+            (nzCheckedChange)="onAllChecked($event)"
+            nzWidth="60px"
+          ></th>
+          <th nzWidth="40px"></th>
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
 
-        <th nzShowExpand></th>
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="number">
-          {{ 'wave.number' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="status">
-          {{ 'wave.status' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="totalOrderCount">
-          {{ 'wave.totalOrderCount' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="totalOrderLineCount">
-          {{ 'wave.totalOrderLineCount' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="totalItemCount">
-          {{ 'wave.totalItemCount' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="totalQuantity">
-          {{ 'wave.totalQuantity' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="totalOpenQuantity">
-          {{ 'wave.totalOpenQuantity' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="totalInprocessQuantity">
-          {{ 'wave.totalInprocessQuantity' | translate }}
-        </th>
-
-
-        <th nzShowSort nzSortKey="totalStagedQuantity">
-          {{ 'wave.totalStagedQuantity' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="totalShippedQuantity">
-          {{ 'wave.totalShippedQuantity' | translate }}
-        </th>
+     
         <th>
           {{ 'action' | translate }}
         </th>
@@ -76,10 +62,11 @@
     <tbody>
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <tr>
-          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
-
-          <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]" (nzExpandChange)="showWaveDetails(data)"></td>
-          <td>{{ data.id }}</td>
+          <td
+            [nzChecked]="setOfCheckedId.has(data.id)"
+            (nzCheckedChange)="onItemChecked(data.id, $event)"
+          ></td>
+          <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
           <td> <a routerLink="/outbound/wave-maintenance" routerLinkActive="active"
               [queryParams]="{id : data.id}">{{ data.number }}</a></td>
           <td>{{ 'WAVE-STATUS-' + data.status | translate}}</td>
@@ -96,7 +83,7 @@
               {{ 'wave.allocate' | translate }}
             </button></td>
         </tr>
-        <tr [nzExpand]="mapOfExpandedId[data.id]">
+        <tr [nzExpand]="expandSet.has(data.id)">
           <td colspan="1"></td>
           <td colspan="13">
             <nz-tabset>

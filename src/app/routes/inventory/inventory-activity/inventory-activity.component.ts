@@ -15,6 +15,8 @@ import { ItemPackageType } from '../models/item-package-type';
 
 import { formatDate } from '@angular/common'; 
 import { Client } from '../../common/models/client';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { InventoryActivityType } from '../models/inventory-activity-type.enum';
 import { ItemFamily } from '../models/item-family';
 
@@ -24,6 +26,186 @@ import { ItemFamily } from '../models/item-family';
   styleUrls: ['./inventory-activity.component.less'],
 })
 export class InventoryInventoryActivityComponent implements OnInit {
+
+  
+  listOfColumns: ColumnItem[] = [    
+    {
+      name: 'inventory-activity.transaction-id',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.transactionId, b.transactionId),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    }, {
+      name: 'inventory-activity.transaction-group-id',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.transactionGroupId, b.transactionGroupId),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },
+    {
+          name: 'lpn',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.lpn, b.lpn),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'item',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'item.package-type',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableObjField(a.itemPackageType, b.itemPackageType, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'location',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'quantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'inventory.status',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableObjField(a.inventoryStatus, b.inventoryStatus, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'inventory-activity.type',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.type.toLocaleString(), b.type.toLocaleString()),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'inventory-activity.date-time',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareDateTime(a.activityDateTime, b.activityDateTime),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'inventory-activity.username',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.username, b.username),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, 
+        {
+          name: 'inventory-activity.value-type',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.valueType, b.valueType),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, 
+        {
+          name: 'inventory-activity.from-value',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.fromValue, b.fromValue),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, 
+        {
+          name: 'inventory-activity.to-value',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.toValue, b.toValue),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, 
+        {
+          name: 'inventory-activity.document-number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.documentNumber, b.documentNumber),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, 
+        {
+          name: 'inventory-activity.comment',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.comment, b.comment),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, 
+      ];
+
   // Select control for clients and item families
   clients: Array<{ label: string; value: string }> = [];
   itemFamilies: Array<{ label: string; value: string }> = [];
@@ -36,23 +218,8 @@ export class InventoryInventoryActivityComponent implements OnInit {
 
   // Table data for display
   listOfAllInventoryActivities: InventoryActivity[] = [];
-  listOfDisplayInventoryActivities: InventoryActivity[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-  // Filters meta data
-  filtersByLpn = [];
-  filtersByItem = [];
-  filtersByItemPackageType = [];
-  filtersByLocation = [];
-  filtersByInventoryStatus = [];
-  // Save filters that already selected
-  selectedFiltersByLpn: string[] = [];
-  selectedFiltersByItem: string[] = [];
-  selectedFiltersByItemPackageType: string[] = [];
-  selectedFiltersByLocation: string[] = [];
-  selectedFiltersByInventoryStatus: string[] = [];
+  listOfDisplayInventoryActivities: InventoryActivity[] = []; 
+  
 
   isCollapse = false;
 
@@ -68,18 +235,14 @@ export class InventoryInventoryActivityComponent implements OnInit {
     private i18n: I18NService,
     private modalService: NzModalService,
     private titleService: TitleService,
+    private utilService: UtilService,
   ) {}
 
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllInventoryActivities = [];
     this.listOfDisplayInventoryActivities = [];
-
-    this.filtersByLpn = [];
-    this.filtersByItem = [];
-    this.filtersByItemPackageType = [];
-    this.filtersByLocation = [];
-    this.filtersByInventoryStatus = [];
+ 
   }
   search(): void {
     this.searching = true;
@@ -113,82 +276,18 @@ export class InventoryInventoryActivityComponent implements OnInit {
       );
   }
 
-  processInventoryActivityQueryResult(inventoryActivities: InventoryActivity[]) {
+  processInventoryActivityQueryResult(inventoryActivities: InventoryActivity[]): void {
     this.listOfAllInventoryActivities = inventoryActivities;
     this.listOfDisplayInventoryActivities = inventoryActivities;
-
-    this.filtersByLpn = [];
-    this.filtersByItem = [];
-    this.filtersByItemPackageType = [];
-    this.filtersByLocation = [];
-    this.filtersByInventoryStatus = [];
-
-    const existingLpn = new Set();
-    const existingItemId = new Set();
-    const existingItemPackageTypeId = new Set();
-    const existingLocation = new Set();
-    const existingInventoryStatusId = new Set();
+ 
+ 
  
   }
 
   currentPageDataChange($event: InventoryActivity[]): void {
     this.listOfDisplayInventoryActivities = $event;
-  }
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    this.sortAndFilter();
-  }
-
-  filter(
-    selectedFiltersByLpn: string[],
-    selectedFiltersByItem: string[],
-    selectedFiltersByItemPackageType: string[],
-    selectedFiltersByLocation: string[],
-    selectedFiltersByInventoryStatus: string[],
-  ): void {
-    this.selectedFiltersByLpn = selectedFiltersByLpn;
-    this.selectedFiltersByItem = selectedFiltersByItem;
-    this.selectedFiltersByItemPackageType = selectedFiltersByItemPackageType;
-    this.selectedFiltersByLocation = selectedFiltersByLocation;
-    this.selectedFiltersByInventoryStatus = selectedFiltersByInventoryStatus;
-    this.sortAndFilter();
-  }
-
-  sortAndFilter(): void {
-    // filter data
-    const filterFunc = (inventoryActivity: {
-      id: number;
-      lpn: string;
-      location: WarehouseLocation;
-      item: Item;
-      itemPackageType: ItemPackageType;
-      inventoryStatus: InventoryStatus;
-    }) =>
-      (this.selectedFiltersByLpn.length
-        ? this.selectedFiltersByLpn.some(lpn => inventoryActivity.lpn.indexOf(lpn) !== -1)
-        : true) &&
-      (this.selectedFiltersByItem.length
-        ? this.selectedFiltersByItem.some(id => inventoryActivity.item !== null && inventoryActivity.item.id === +id)
-        : true) &&
-      (this.selectedFiltersByItemPackageType.length
-        ? this.selectedFiltersByItemPackageType.some(
-            id => inventoryActivity.itemPackageType !== null && inventoryActivity.itemPackageType.id === +id,
-          )
-        : true) &&
-      (this.selectedFiltersByLocation.length
-        ? this.selectedFiltersByLocation.some(location => inventoryActivity.location.name.indexOf(location) !== -1)
-        : true) &&
-      (this.selectedFiltersByInventoryStatus.length
-        ? this.selectedFiltersByInventoryStatus.some(
-            id => inventoryActivity.inventoryStatus !== null && inventoryActivity.inventoryStatus.id === +id,
-          )
-        : true);
-    const data = this.listOfAllInventoryActivities.filter(inventoryActivity => filterFunc(inventoryActivity));
-
-    // sort data 
-  }
-
+  } 
+  
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.inventory-activity'));
     this.initSearchForm();
