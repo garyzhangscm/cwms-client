@@ -1,5 +1,6 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { DirectivesModule } from '../directives/directives.module';
 import { WarehouseLayoutLocationGroupMaintenanceConfirmComponent } from './location-group-maintenance-confirm/location-group-maintenance-confirm.component';
 import { WarehouseLayoutLocationGroupMaintenanceComponent } from './location-group-maintenance/location-group-maintenance.component';
@@ -27,7 +28,8 @@ const COMPONENTS_NOROUNT: Type<void>[] = [];
   imports: [
     SharedModule,
     WarehouseLayoutRoutingModule, 
-    DirectivesModule
+    DirectivesModule, 
+    NzDescriptionsModule
   ],
   declarations: [
     ...COMPONENTS,

@@ -36,22 +36,34 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllBillOfMaterial" [nzFooter]="tableFoot">
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllBillOfMaterial" [nzFooter]="tableFoot"
+  (nzCurrentPageDataChange)="currentPageDataChange($event)">
+    <thead  >
       <tr>
-        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
-          (nzCheckedChange)="checkAll($event)"></th>
-        <th nzShowExpand></th>
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="number">
-          {{ 'bill-of-material.number' | translate }}
-        </th>
-        <th>
-          {{ 'item' | translate }}
-        </th>
-        <th>
-          {{ 'bill-of-material.expectedQuantity' | translate }}
-        </th>
+        
+        <th
+            [nzSelections]="listOfSelection"
+            [(nzChecked)]="checked"
+            [nzIndeterminate]="indeterminate"
+            (nzCheckedChange)="onAllChecked($event)"
+            nzWidth="60px"
+          ></th>
+          <th nzWidth="40px"></th>
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+           
+          
         <th>
           {{ 'action' | translate }}
         </th>
@@ -60,10 +72,14 @@
     <tbody>
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <tr>
-          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
+          
+          <td
+            [nzChecked]="setOfCheckedId.has(data.id)"
+            (nzCheckedChange)="onItemChecked(data.id, $event)"
+          ></td>
 
-          <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]"></td>
-          <td>{{ data.id }}</td>
+          <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
+          
           <td>{{ data.number }}</td>
           <td>{{ data.item?.name }}</td>
           <td>{{ data.expectedQuantity }}</td>
@@ -78,9 +94,8 @@
             </button>
           </td>
         </tr>
-        <tr [nzExpand]="mapOfExpandedId[data.id]">
-          <td colspan="1"></td>
-          <td colspan="5">
+        <tr [nzExpand]="expandSet.has(data.id)">
+           
             <nz-tabset>
               <nz-tab nzTitle=" {{ 'bill-of-material.line' | translate }}">
                 <nz-table [nzData]="data.billOfMaterialLines" nzSize="middle" [nzShowPagination]="false">
@@ -160,7 +175,7 @@
   </nz-tab>
 
   </nz-tabset>
-  </td>
+   
   </tr>
   </ng-template>
   </tbody>

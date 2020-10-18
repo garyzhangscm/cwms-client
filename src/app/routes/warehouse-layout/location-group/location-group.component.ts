@@ -6,6 +6,8 @@ import { I18NService } from '@core';
 import { TitleService } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { InventoryConsolidationStrategy } from '../models/inventory-consolidation-strategy.enum';
 import { LocationGroup } from '../models/location-group';
 import { LocationGroupType } from '../models/location-group-type';
@@ -19,6 +21,102 @@ import { LocationGroupService } from '../services/location-group.service';
   styleUrls: ['./location-group.component.less'],
 })
 export class WarehouseLayoutLocationGroupComponent implements OnInit {
+
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareNullableString(a.name, b.name),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'description',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareNullableString(a.description, b.description),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location-group.pickable',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareBoolean(a.pickable, b.pickable),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'location-group.storable',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareBoolean(a.storable, b.storable),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location-group.countable',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareBoolean(a.countable, b.countable),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location-group.adjustable',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareBoolean(a.adjustable, b.adjustable),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location-group.tracking-volume',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareBoolean(a.trackingVolume, b.trackingVolume),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location-group.volume-tracking-policy',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareNullableString(a.volumeTrackingPolicy.toString(), b.volumeTrackingPolicy.toString()),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location-group.inventory-consolidation-strategy',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareNullableString(a.inventoryConsolidationStrategy.toString(), b.inventoryConsolidationStrategy.toString()),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        ];
+
   // Select control for Location Group Types
   // locationGroupTypes: Array<{ label: string; value: string }> = [];
   locationGroupTypes: LocationGroupType[] = [];
@@ -33,19 +131,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
 
   // Table data for display
   listOfAllLocationGroups: LocationGroup[] = [];
-  listOfDisplayLocationGroups: LocationGroup[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-  // Filters meta data
-  filtersByName = [];
-  filtersByDescription = [];
-  filtersByLocationGroupType = [];
-  // Save filters that already selected
-  selectedFiltersByName: string[] = [];
-  selectedFiltersByDescription: string[] = [];
-  selectedFiltersByLocationGroupType: string[] = [];
+  listOfDisplayLocationGroups: LocationGroup[] = []; 
 
   searchResult = '';
   searching = false;
@@ -60,6 +146,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
     private messageService: NzMessageService,
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
+    private utilService: UtilService,
   ) {}
 
   ngOnInit(): void {
@@ -88,10 +175,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
     this.selectedLocationGroups = [];
     this.listOfAllLocationGroups = [];
     this.listOfDisplayLocationGroups = [];
-    this.filtersByName = [];
-    this.filtersByDescription = [];
-    this.filtersByLocationGroupType = [];
-
+    
     this.searchResult = '';
   }
   search(): void {
@@ -116,13 +200,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
     this.listOfAllLocationGroups = locationGroupsRes;
     this.listOfDisplayLocationGroups = locationGroupsRes;
     this.updateEditCache();
-
-    this.filtersByName = [];
-    this.filtersByDescription = [];
-    this.filtersByLocationGroupType = [];
-
-    const existingLocationGroupTypeId = new Set();
- 
+  
   }
 
   currentPageDataChange($event: LocationGroup[]): void {
@@ -130,45 +208,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
     this.listOfDisplayLocationGroups = $event;
   }
 
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    this.sortAndFilter();
-  }
-
-  filter(
-    selectedFiltersByName: string[],
-    selectedFiltersByDescription: string[],
-    selectedFiltersByLocationGroupType: string[],
-  ): void {
-    this.selectedFiltersByName = selectedFiltersByName;
-    this.selectedFiltersByDescription = selectedFiltersByDescription;
-    this.selectedFiltersByLocationGroupType = selectedFiltersByLocationGroupType;
-    this.sortAndFilter();
-  }
-
-  sortAndFilter(): void {
-    // filter data
-    const filterFunc = (item: {
-      id: number;
-      name: string;
-      description: string;
-      locationGroupType: LocationGroupType;
-    }) =>
-      (this.selectedFiltersByName.length
-        ? this.selectedFiltersByName.some(name => item.name.indexOf(name) !== -1)
-        : true) &&
-      (this.selectedFiltersByDescription.length
-        ? this.selectedFiltersByDescription.some(description => item.description.indexOf(description) !== -1)
-        : true) &&
-      (this.selectedFiltersByLocationGroupType.length
-        ? this.selectedFiltersByLocationGroupType.some(id => item.locationGroupType.id === +id)
-        : true);
-    const data = this.listOfAllLocationGroups.filter(item => filterFunc(item));
-
-    // sort data 
-  }
-
+  
   removeLocationGroup(id: number): void {
     // make sure we have at least one checkbox checked
     this.operationInProcess = true;

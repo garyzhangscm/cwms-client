@@ -5,6 +5,8 @@ import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { LocationGroupType } from '../../warehouse-layout/models/location-group-type';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
@@ -17,11 +19,96 @@ import { ProductionLineService } from '../services/production-line.service';
   styleUrls: ['./production-line.component.less'],
 })
 export class WorkOrderProductionLineComponent implements OnInit {
+
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'production-line.name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ProductionLine, b: ProductionLine) => this.utilService.compareNullableString(a.name, b.name),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'production-line.location',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ProductionLine, b: ProductionLine) => this.utilService.compareNullableObjField(a.productionLineLocation, b.productionLineLocation, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'production-line.inbound-stage-location',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ProductionLine, b: ProductionLine) => this.utilService.compareNullableObjField(a.inboundStageLocation, b.inboundStageLocation, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'production-line.outbound-stage-location',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ProductionLine, b: ProductionLine) => this.utilService.compareNullableObjField(a.outboundStageLocation, b.outboundStageLocation, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        {
+          name: 'single-work-order-only',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ProductionLine, b: ProductionLine) => this.utilService.compareBoolean(a.workOrderExclusiveFlag, b.workOrderExclusiveFlag),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [
+            { text: this.i18n.fanyi('true'), value: true },
+            { text: this.i18n.fanyi('false'), value: false },
+          ],
+          filterFn: (list: boolean[], productionLine: ProductionLine) => list.some(workOrderExclusiveFlag => productionLine.workOrderExclusiveFlag === workOrderExclusiveFlag), 
+          showFilter: true
+        },
+        {
+          name: 'enabled',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ProductionLine, b: ProductionLine) => this.utilService.compareBoolean(a.enabled, b.enabled),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [
+            { text: this.i18n.fanyi('true'), value: true },
+            { text: this.i18n.fanyi('false'), value: false },
+          ],
+          filterFn: (list: boolean[], productionLine: ProductionLine) => list.some(enabled => productionLine.enabled === enabled), 
+          showFilter: true
+        },
+        ];
+        listOfSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onAllChecked(true);
+            }
+          },    
+        ];
+      setOfCheckedId = new Set<number>();
+      checked = false;
+      indeterminate = false;
+      
   constructor(
     private fb: FormBuilder,
     private productionLineService: ProductionLineService,
     private i18n: I18NService,
     private messageService: NzMessageService,
+    private utilService: UtilService,
   ) {}
 
   // Select control for Location Group Types
@@ -37,17 +124,7 @@ export class WorkOrderProductionLineComponent implements OnInit {
   // Table data for display
   listOfAllProductionLine: ProductionLine[] = [];
   listOfDisplayProductionLine: ProductionLine[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
+  
 
   resetForm(): void {
     this.searchForm.reset();
@@ -75,25 +152,36 @@ export class WorkOrderProductionLineComponent implements OnInit {
       },
     );
   }
-
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayProductionLine.every(item => this.mapOfCheckedId[item.id]);
-    this.indeterminate =
-      this.listOfDisplayProductionLine.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+  updateCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(id);
+    } else {
+      this.setOfCheckedId.delete(id);
+    }
   }
 
-  checkAll(value: boolean): void {
-    this.listOfDisplayProductionLine.forEach(item => (this.mapOfCheckedId[item.id] = value));
-    this.refreshStatus();
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked);
+    this.refreshCheckedStatus();
   }
 
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-
-    // sort data 
+  onAllChecked(value: boolean): void {
+    this.listOfDisplayProductionLine!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.refreshCheckedStatus();
   }
 
+  currentPageDataChange($event: ProductionLine[]): void {
+    this.listOfDisplayProductionLine! = $event;
+    this.refreshCheckedStatus();
+  }
+
+  refreshCheckedStatus(): void {
+    this.checked = this.listOfDisplayProductionLine!.every(item => this.setOfCheckedId.has(item.id));
+    this.indeterminate = this.listOfDisplayProductionLine!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
+  }
+
+
+    
   ngOnInit(): void {
     // initiate the search form
     this.searchForm = this.fb.group({

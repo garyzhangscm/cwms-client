@@ -1,5 +1,5 @@
-import { LocationGroupType } from './location-group-type';
 import { InventoryConsolidationStrategy } from './inventory-consolidation-strategy.enum';
+import { LocationGroupType } from './location-group-type';
 import { LocationVolumeTrackingPolicy } from './location-volume-tracking-policy.enum';
 import { Warehouse } from './warehouse';
 

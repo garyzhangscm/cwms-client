@@ -104,9 +104,7 @@
           </td>
         </tr>
         <tr  [nzExpand]="expandSet.has(data.id)" *ngIf="data.itemPackageTypes?.length > 0"
-          (nzExpandChange)="showItemPackageType(data)">
-          <td></td>
-          <td colspan="13">
+          (nzExpandChange)="showItemPackageType(data)"> 
             <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
               <nz-tab *ngFor="let itemPackageType of data.itemPackageTypes" [nzTitle]="itemPackageType.name">
                 <nz-table #innerTable [nzData]="itemPackageType.itemUnitOfMeasures" nzSize="middle"
@@ -135,8 +133,7 @@
   </nz-tab>
   </nz-tabset>
 
-
-  </td>
+ 
   </tr>
   </ng-template>
   </tbody>

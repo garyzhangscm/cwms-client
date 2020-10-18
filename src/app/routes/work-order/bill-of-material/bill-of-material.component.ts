@@ -8,6 +8,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Customer } from '../../common/models/customer';
 import { Order } from '../../outbound/models/order';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { BillOfMaterial } from '../models/bill-of-material';
 import { ProductionLine } from '../models/production-line';
 import { WorkOrder } from '../models/work-order';
@@ -21,6 +23,53 @@ import { ProductionLineService } from '../services/production-line.service';
   styleUrls: ['./bill-of-material.component.less'],
 })
 export class WorkOrderBillOfMaterialComponent implements OnInit {
+
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'bill-of-material.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: BillOfMaterial, b: BillOfMaterial) => this.utilService.compareNullableString(a.number, b.number),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'item',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: BillOfMaterial, b: BillOfMaterial) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'bill-of-material.expectedQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: BillOfMaterial, b: BillOfMaterial) => this.utilService.compareNullableNumber(a.expectedQuantity, b.expectedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        ];
+        listOfSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onAllChecked(true);
+            }
+          },    
+        ];
+      setOfCheckedId = new Set<number>();
+      checked = false;
+      indeterminate = false;
+      expandSet = new Set<number>();
+
   // Form related data and functions
   searchForm!: FormGroup;
   newWorkOrder: WorkOrder = {
@@ -51,19 +100,8 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
   // Table data for display
   listOfAllBillOfMaterial: BillOfMaterial[] = [];
   listOfDisplayBillOfMaterial: BillOfMaterial[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
-  // list of expanded row
-  mapOfExpandedId: { [key: string]: boolean } = {};
+  
+  
 
   constructor(
     private fb: FormBuilder,
@@ -75,6 +113,7 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
     private productionLineService: ProductionLineService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
+    private utilService: UtilService,
   ) {}
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('bill-of-material'));
@@ -124,23 +163,42 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
       );
   }
 
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayBillOfMaterial.every(item => this.mapOfCheckedId[item.id!]);
-    this.indeterminate =
-      this.listOfDisplayBillOfMaterial.some(item => this.mapOfCheckedId[item.id!]) && !this.isAllDisplayDataChecked;
+  updateCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(id);
+    } else {
+      this.setOfCheckedId.delete(id);
+    }
   }
 
-  checkAll(value: boolean): void {
-    this.listOfDisplayBillOfMaterial.forEach(item => (this.mapOfCheckedId[item.id!] = value));
-    this.refreshStatus();
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked);
+    this.refreshCheckedStatus();
   }
 
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-
-    // sort data 
+  onAllChecked(value: boolean): void {
+    this.listOfDisplayBillOfMaterial!.forEach(item => this.updateCheckedSet(item.id!, value));
+    this.refreshCheckedStatus();
   }
+
+  currentPageDataChange($event: BillOfMaterial[]): void {
+    this.listOfDisplayBillOfMaterial! = $event;
+    this.refreshCheckedStatus();
+  }
+
+  refreshCheckedStatus(): void {
+    this.checked = this.listOfDisplayBillOfMaterial!.every(item => this.setOfCheckedId.has(item.id!));
+    this.indeterminate = this.listOfDisplayBillOfMaterial!.some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
+  }
+  onExpandChange(id: number, checked: boolean): void {
+    if (checked) {
+      this.expandSet.add(id);
+    } else {
+      this.expandSet.delete(id);
+    }
+  }
+
+  
 
   removeSelectedBillOfMaterials(): void {
     // make sure we have at least one checkbox checked
@@ -166,7 +224,7 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
   getSelectedBillOfMaterials(): BillOfMaterial[] {
     const selectedBillOfMaterials: BillOfMaterial[] = [];
     this.listOfAllBillOfMaterial.forEach((billOfMaterial: BillOfMaterial) => {
-      if (this.mapOfCheckedId[billOfMaterial.id!] === true) {
+      if (this.setOfCheckedId.has(billOfMaterial.id!)) {
         selectedBillOfMaterials.push(billOfMaterial);
       }
     });

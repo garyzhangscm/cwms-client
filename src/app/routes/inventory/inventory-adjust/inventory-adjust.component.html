@@ -109,8 +109,7 @@
         </tr>
 
         <tr [nzExpand]="expandSet.has(data.id)" class="inner-table">
-          <td colspan="1"></td>
-          <td colspan="13">
+           
             <nz-tabset>
               <nz-tab nzTitle=" {{ 'inventory' | translate }}">
                 <nz-table #innerTable [nzData]="mapOfInventories[data.id]" nzSize="middle" [nzShowPagination]="false">
@@ -158,7 +157,7 @@
   </nz-table>
   </nz-tab>
   </nz-tabset>
-  </td>
+   
   </tr>
   </ng-template>
   </tbody>

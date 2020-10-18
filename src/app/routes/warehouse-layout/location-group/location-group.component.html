@@ -41,36 +41,29 @@
 <div class="search-result-list">
   <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfAllLocationGroups"
     (nzCurrentPageDataChange)="currentPageDataChange($event)" [nzFooter]="tableFoot">
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <thead>
       <tr>
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="name" nzShowFilter [nzFilters]="filtersByName"
-          (nzFilterChange)="filter($event, selectedFiltersByDescription, selectedFiltersByLocationGroupType)">
-          {{'name' | translate}}</th>
-        <th nzShowFilter [nzFilters]="filtersByDescription"
-          (nzFilterChange)="filter(selectedFiltersByName, $event, selectedFiltersByLocationGroupType)">
-          {{'description' | translate}}</th>
-        <th nzShowSort nzSortKey="locationGroupType" nzShowFilter [nzFilters]="filtersByLocationGroupType"
-          (nzFilterChange)="filter(selectedFiltersByName, selectedFiltersByDescription, $event)">
-          {{'type' | translate}}</th>
-
-        <th nzShowSort nzSortKey="pickable">{{ 'location-group.pickable' | translate}}</th>
-
-        <th nzShowSort nzSortKey="storable">{{ 'location-group.storable' | translate}}</th>
-        <th nzShowSort nzSortKey="countable">{{ 'location-group.countable' | translate}}</th>
-        <th nzShowSort nzSortKey="adjustable">{{ 'location-group.adjustable' | translate}}</th>
-        <th nzShowSort nzSortKey="trackingVolume">{{ 'location-group.tracking-volume' | translate}}</th>
-        <th nzShowSort nzSortKey="volumeTrackingPolicy">{{ 'location-group.volume-tracking-policy' | translate}}</th>
-        <th nzShowSort nzSortKey="inventoryConsolidationStrategy">
-          {{ 'location-group.inventory-consolidation-strategy' | translate}}</th>
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+ 
 
         <th>{{'action' | translate}}</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let data of rowSelectionTable.data">
-        <ng-container *ngIf="!editCache[data.id].edit; else editTemplate">
-          <td>{{ data.id }}</td>
+        <ng-container *ngIf="!editCache[data.id].edit; else editTemplate"> 
           <td>{{ data.name }}</td>
           <td>{{ data.description }}</td>
 

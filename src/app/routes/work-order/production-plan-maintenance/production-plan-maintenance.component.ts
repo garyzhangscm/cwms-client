@@ -10,6 +10,8 @@ import { ItemService } from '../../inventory/services/item.service';
 import { OrderLine } from '../../outbound/models/order-line';
 import { OrderLineService } from '../../outbound/services/order-line.service';
 import { OrderService } from '../../outbound/services/order.service';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { BillOfMaterial } from '../models/bill-of-material';
 import { ProductionPlan } from '../models/production-plan';
@@ -23,6 +25,113 @@ import { ProductionPlanService } from '../services/production-plan.service';
   styleUrls: ['./production-plan-maintenance.component.less'],
 })
 export class WorkOrderProductionPlanMaintenanceComponent implements OnInit {
+
+  listOfOrderLineTableColumns: ColumnItem[] = [    
+    {
+          name: 'order.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableString(a.orderNumber, b.orderNumber),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'order.line.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableString(a.number, b.number),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'item',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'order.line.expectedQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableNumber(a.expectedQuantity, b.expectedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'order.line.openQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableNumber(a.openQuantity, b.openQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'order.line.inprocessQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableNumber(a.inprocessQuantity, b.inprocessQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'order.line.shippedQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableNumber(a.shippedQuantity, b.shippedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'production-plan.line.inprocessQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableNumber(a.productionPlanInprocessQuantity, b.productionPlanInprocessQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'production-plan.line.producedQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableNumber(a.productionPlanProducedQuantity, b.productionPlanProducedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'inventory.status',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: OrderLine, b: OrderLine) => this.utilService.compareNullableObjField(a.inventoryStatus, b.inventoryStatus, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        ];
+
+        
+
   pageTitle: string;
   stepIndex = 0;
   currentProductionPlan!: ProductionPlan;
@@ -51,6 +160,7 @@ export class WorkOrderProductionPlanMaintenanceComponent implements OnInit {
     private warehouseService: WarehouseService,
     private billOfMeasureService: BillOfMaterialService,
     private inventoryStatusService: InventoryStatusService,
+    private utilService: UtilService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.production-plan.new');
   }

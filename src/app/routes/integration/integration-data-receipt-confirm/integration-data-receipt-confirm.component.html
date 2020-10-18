@@ -95,8 +95,7 @@
 
         </tr>
         <tr [nzExpand]="expandSet.has(data.id)" class="inner-table">
-          <td colspan="2"></td>
-          <td colspan="8">
+          
             <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
               <nz-tab nzTitle=" {{ 'receipt.line' | translate }}">
                 <nz-table #innerTable [nzData]="data.receiptLines" nzSize="middle" [nzShowPagination]="false">
@@ -139,7 +138,7 @@
 
 
   </nz-tabset>
-  </td>
+   
   </tr>
   </ng-template>
   </tbody>

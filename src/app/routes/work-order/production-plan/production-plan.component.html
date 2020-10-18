@@ -36,28 +36,34 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllProductionPlans" [nzFooter]="tableFoot">
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllProductionPlans"
+  (nzCurrentPageDataChange)="currentPageDataChange($event)"
+   [nzFooter]="tableFoot">
+    <thead>
       <tr>
-        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
-          (nzCheckedChange)="checkAll($event)"></th>
-        <th nzShowExpand></th>
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="number">
-          {{ 'production-plan.number' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="description">
-          {{ 'production-plan.description' | translate }}
-        </th>
-        <th>
-          {{ 'production-plan.expectedQuantity' | translate }}
-        </th>
-        <th>
-          {{ 'production-plan.inprocessQuantity' | translate }}
-        </th>
-        <th>
-          {{ 'production-plan.producedQuantity' | translate }}
-        </th>
+        <th
+        [nzSelections]="listOfSelection"
+        [(nzChecked)]="checked"
+        [nzIndeterminate]="indeterminate"
+        (nzCheckedChange)="onAllChecked($event)"
+        nzWidth="60px"
+      ></th>
+      <th nzWidth="40px"></th>
+    <th
+        *ngFor="let column of listOfColumns"
+        [nzShowSort]="column.showSort"
+        [nzSortOrder]="column.sortOrder"
+        [nzSortFn]="column.sortFn"
+        [nzSortDirections]="column.sortDirections"
+        [nzFilterMultiple]="column.filterMultiple"
+        [nzFilters]="column.listOfFilter"
+        [nzFilterFn]="column.filterFn"        
+        [nzShowFilter]="column.showFilter"
+      >
+        {{ column.name | translate }}
+      </th> 
+
+      
 
 
       </tr>
@@ -65,10 +71,13 @@
     <tbody>
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <tr>
-          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
-
-          <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]" (nzExpandChange)="showProductionPlanDetails(data)">
-          </td>
+          
+          <td
+            [nzChecked]="setOfCheckedId.has(data.id)"
+            (nzCheckedChange)="onItemChecked(data.id, $event)"
+          ></td>
+          <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
+     
           <td>{{ data.id }}</td>
           <td>{{ data.number }}</td>
           <td>{{ data.description }}</td>
@@ -77,9 +86,8 @@
           <td>{{ data.producedQuantity }}</td>
 
         </tr>
-        <tr [nzExpand]="mapOfExpandedId[data.id]">
-          <td colspan="1"></td>
-          <td colspan="11">
+        <tr [nzExpand]="expandSet.has(data.id)">
+           
             <nz-tabset>
               <nz-tab nzTitle=" {{ 'production-plan.line' | translate }}">
 
@@ -197,7 +205,7 @@
   </nz-tab>
 
   </nz-tabset>
-  </td>
+   
   </tr>
   </ng-template>
   </tbody>

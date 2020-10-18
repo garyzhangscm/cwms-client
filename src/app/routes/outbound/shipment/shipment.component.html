@@ -112,8 +112,7 @@
         </tr>
 
         <tr [nzExpand]="expandSet.has(data.id)" class="inner-table">
-          <td colspan="2"></td>
-          <td colspan="12">
+          
             <nz-tabset [nzSelectedIndex]="tabSelectedIndex">
               <nz-tab nzTitle=" {{ 'order.line' | translate }}">
                 <nz-table [nzData]="mapOfOrderLines[data.id]" nzSize="middle" [nzShowPagination]="false">
@@ -316,7 +315,7 @@
     </nz-table>
   </nz-tab>
   </nz-tabset>
-  </td>
+   
   </tr>
   </ng-template>
   </tbody>

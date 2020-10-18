@@ -264,8 +264,7 @@
           </tr>
 
           <tr  [nzExpand]="itemPackageTypesExpandSet.has(recordIndex)">
-            <td colspan="1"></td>
-            <td colspan="2">
+             
               <nz-tabset>
                 <nz-tab nzTitle=" {{ 'unit-of-measure' | translate }}">
                   <nz-table [nzData]="data.itemUnitOfMeasures" nzSize="middle" [nzShowPagination]="false">
@@ -297,7 +296,7 @@
     </nz-table>
     </nz-tab>
     </nz-tabset>
-    </td>
+     
     </tr>
     </ng-container>
     </tbody>

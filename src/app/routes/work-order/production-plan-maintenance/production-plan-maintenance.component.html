@@ -91,7 +91,29 @@
       <thead>
         <th nzShowCheckbox [(nzChecked)]="allOrderLinesChecked" [nzIndeterminate]="allOrderLinesCheckedIndeterminate"
           (nzCheckedChange)="onAllOrderLineChecked($event)" nzAlign="center"
-          [nzDisabled]="validOrderLines.length === 0"></th>
+          ></th>
+
+          <th
+            [nzSelections]="listOfOrderLineTableSelection"
+            [(nzChecked)]="orderLineTableChecked"
+            [nzIndeterminate]="orderLineTableIndeterminate"
+            (nzCheckedChange)="onOrderLineTableAllChecked($event)"
+            nzWidth="60px" [nzDisabled]="validOrderLines.length === 0"
+          ></th>
+        <th
+            *ngFor="let column of listOfOrderLineTableColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+
         <th>
           {{ 'order.number' | translate }}
         </th>
@@ -278,8 +300,7 @@
           </tr>
 
           <tr [nzExpand]="mapOfExpandedBOMId[recordIndex]">
-            <td colspan="1"></td>
-            <td colspan="11">
+             
 
               <nz-tabset>
 
@@ -340,7 +361,7 @@
 
     </nz-tabset>
 
-    </td>
+     
     </tr>
     </ng-container>
     </tbody>

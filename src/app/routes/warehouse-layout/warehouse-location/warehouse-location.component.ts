@@ -5,6 +5,8 @@ import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { LocationGroup } from '../models/location-group';
 import { LocationGroupType } from '../models/location-group-type';
 import { WarehouseLocation } from '../models/warehouse-location';
@@ -19,6 +21,190 @@ import { LocationService } from '../services/location.service';
   styleUrls: ['./warehouse-location.component.less'],
 })
 export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
+
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'location.name',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareNullableString(a.name, b.name),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location-group',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareNullableObjField(a.locationGroup, b.locationGroup, 'name'),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location.aisle',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareNullableString(a.aisle, b.aisle),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location.length',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareNullableNumber(a.length, b.length),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location.width',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareNullableNumber(a.width, b.width),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location.height',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareNullableNumber(a.height, b.height),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location.capacity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareNullableNumber(a.capacity, b.capacity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location.fillPercentage',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareNullableNumber(a.fillPercentage, b.fillPercentage),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location.currentVolume',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareNullableNumber(a.currentVolume, b.currentVolume),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location.pendingVolume',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareNullableNumber(a.pendingVolume, b.pendingVolume),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location.putawaySequence',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareNullableNumber(a.putawaySequence, b.putawaySequence),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location.pickSequence',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareNullableNumber(a.pickSequence, b.pickSequence),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'location.countSequence',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareNullableNumber(a.countSequence, b.countSequence),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, 
+        {
+          name: 'enabled',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareBoolean(a.enabled, b.enabled),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [
+            { text: this.i18n.fanyi('true'), value: true },
+            { text: this.i18n.fanyi('false'), value: false },
+          ],
+          filterFn: (list: boolean[], warehouseLocation: WarehouseLocation) => list.some(enabled => warehouseLocation.enabled === enabled), 
+          showFilter: true
+        },
+        {
+          name: 'locked',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareBoolean(a.locked, b.locked),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [
+            { text: this.i18n.fanyi('true'), value: true },
+            { text: this.i18n.fanyi('false'), value: false },
+          ],
+          filterFn: (list: boolean[], warehouseLocation: WarehouseLocation) => list.some(locked => warehouseLocation.locked === locked), 
+          showFilter: true
+        }, {
+          name: 'location.reservedCode',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareNullableString(a.reservedCode, b.reservedCode),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, 
+        ];
+        listOfSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onAllChecked(true);
+            }
+          },    
+        ];
+      setOfCheckedId = new Set<number>();
+      checked = false;
+      indeterminate = false;
+
   editCache: { [key: string]: { edit: boolean; data: WarehouseLocation; locationGroupName: string } } = {};
   // Select control for Location Group Types
   locationGroupTypes: LocationGroupType[] = [];
@@ -32,21 +218,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   // Table data for display
   listOfAllLocations: WarehouseLocation[] = [];
   listOfDisplayLocations: WarehouseLocation[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-  // Filters meta data
-  filtersByLocationGroup = [];
-  // Save filters that already selected
-  selectedFiltersByLocationGroup: string[] = [];
-
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
+  
+  
 
   constructor(
     private fb: FormBuilder,
@@ -56,6 +229,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
     private i18n: I18NService,
     private modalService: NzModalService,
     private messageService: NzMessageService,
+    private utilService: UtilService,
   ) {}
   ngOnInit(): void {
     // initiate the search form
@@ -78,7 +252,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
     this.searchForm.reset();
     this.listOfAllLocations = [];
     this.listOfDisplayLocations = [];
-    this.filtersByLocationGroup = [];
+    
   }
 
   search(): void {
@@ -94,9 +268,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
           this.listOfAllLocations = locationRes;
           this.listOfDisplayLocations = locationRes;
           this.updateEditCache();
-
-          this.filtersByLocationGroup = [];
-          const existingLocationGroupId = new Set();
+          
  
           this.searching = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
@@ -111,45 +283,34 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       );
   }
 
+  updateCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(id);
+    } else {
+      this.setOfCheckedId.delete(id);
+    }
+  }
+
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked);
+    this.refreshCheckedStatus();
+  }
+
+  onAllChecked(value: boolean): void {
+    this.listOfDisplayLocations!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.refreshCheckedStatus();
+  }
+
   currentPageDataChange($event: WarehouseLocation[]): void {
-    // this.locationGroups = $event;
-    this.listOfDisplayLocations = $event;
-    this.refreshStatus();
+    this.listOfDisplayLocations! = $event;
+    this.refreshCheckedStatus();
   }
 
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayLocations.every(item => this.mapOfCheckedId[item.id]);
-    this.indeterminate =
-      this.listOfDisplayLocations.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+  refreshCheckedStatus(): void {
+    this.checked = this.listOfDisplayLocations!.every(item => this.setOfCheckedId.has(item.id));
+    this.indeterminate = this.listOfDisplayLocations!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
   }
-
-  checkAll(value: boolean): void {
-    this.listOfDisplayLocations.forEach(item => (this.mapOfCheckedId[item.id] = value));
-    this.refreshStatus();
-  }
-
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    this.sortAndFilter();
-  }
-
-  filter(selectedFiltersByLocationGroup: string[]): void {
-    this.selectedFiltersByLocationGroup = selectedFiltersByLocationGroup;
-    this.sortAndFilter();
-  }
-
-  sortAndFilter(): void {
-    // filter data
-    const filterFunc = (item: { locationGroup: LocationGroup }) =>
-      this.selectedFiltersByLocationGroup.length
-        ? this.selectedFiltersByLocationGroup.some(id => item.locationGroup.id === +id)
-        : true;
-
-    const data = this.listOfAllLocations.filter(item => filterFunc(item));
-
-    // sort data 
-  }
+  
 
   removeSelectedLocations(): void {
     // make sure we have at least one checkbox checked
@@ -175,7 +336,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   getSelectedLocations(): WarehouseLocation[] {
     const selectedLocations: WarehouseLocation[] = [];
     this.listOfAllLocations.forEach((location: WarehouseLocation) => {
-      if (this.mapOfCheckedId[location.id] === true) {
+      if (this.setOfCheckedId.has(location.id)) {
         selectedLocations.push(location);
       }
     });

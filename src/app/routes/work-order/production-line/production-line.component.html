@@ -28,31 +28,34 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllProductionLine"
+  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination 
+  (nzCurrentPageDataChange)="currentPageDataChange($event)"
+  [nzData]="listOfAllProductionLine"
     [nzFooter]="tableFoot">
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <thead>
       <tr>
-        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
-          (nzCheckedChange)="checkAll($event)"></th>
-        <th nzShowSort nzSortKey="id">id</th>
-        <th nzShowSort nzSortKey="name">
-          {{ 'production-line.name' | translate }}
-        </th>
-        <th>
-          {{ 'production-line.location' | translate }}
-        </th>
-        <th>
-          {{ 'production-line.inbound-stage-location' | translate }}
-        </th>
-        <th>
-          {{ 'production-line.outbound-stage-location' | translate }}
-        </th>
-        <th>
-          {{ 'production-line.single-work-order-only' | translate }}
-        </th>
-        <th>
-          {{ 'enabled' | translate }}
-        </th>
+        <th
+            [nzSelections]="listOfSelection"
+            [(nzChecked)]="checked"
+            [nzIndeterminate]="indeterminate"
+            (nzCheckedChange)="onAllChecked($event)"
+            nzWidth="60px"
+          ></th>
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+
+          
         <th>
           {{ 'action' | translate }}
         </th>
@@ -60,8 +63,11 @@
     </thead>
     <tbody>
       <tr *ngFor="let data of rowSelectionTable.data">
-        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
-        <td>{{ data.id }}</td>
+        
+        <td
+        [nzChecked]="setOfCheckedId.has(data.id)"
+        (nzCheckedChange)="onItemChecked(data.id, $event)"
+      ></td>
         <td>{{ data.name }}</td>
         <td>{{ data.productionLineLocation?.name }}</td>
         <td>{{ data.inboundStageLocation?.name }}</td>

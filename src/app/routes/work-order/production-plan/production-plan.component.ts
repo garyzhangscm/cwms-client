@@ -6,6 +6,8 @@ import { I18NService } from '@core';
 import { TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { ProductionPlan } from '../models/production-plan';
 import { ProductionPlanLine } from '../models/production-plan-line';
 import { WorkOrder } from '../models/work-order';
@@ -19,6 +21,72 @@ import { WorkOrderService } from '../services/work-order.service';
   styleUrls: ['./production-plan.component.less'],
 })
 export class WorkOrderProductionPlanComponent implements OnInit {
+  listOfColumns: ColumnItem[] = [    
+    {
+          name: 'production-plan.number',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ProductionPlan, b: ProductionPlan) => this.utilService.compareNullableString(a.number, b.number),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'production-plan.description',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ProductionPlan, b: ProductionPlan) => this.utilService.compareNullableString(a.description, b.description),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'production-plan.expectedQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ProductionPlan, b: ProductionPlan) => this.utilService.compareNullableNumber(a.expectedQuantity, b.expectedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'production-plan.inprocessQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ProductionPlan, b: ProductionPlan) => this.utilService.compareNullableNumber(a.inprocessQuantity, b.inprocessQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
+          name: 'production-plan.producedQuantity',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ProductionPlan, b: ProductionPlan) => this.utilService.compareNullableNumber(a.producedQuantity, b.producedQuantity),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },
+        ];
+        listOfSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onAllChecked(true);
+            }
+          },    
+        ];
+      setOfCheckedId = new Set<number>();
+      checked = false;
+      indeterminate = false;
+      expandSet = new Set<number>();
+      
   constructor(
     private fb: FormBuilder,
     private i18n: I18NService,
@@ -28,6 +96,7 @@ export class WorkOrderProductionPlanComponent implements OnInit {
     private productionPlanService: ProductionPlanService,
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
+    private utilService: UtilService,
   ) {}
 
   // Form related data and functions
@@ -58,19 +127,8 @@ export class WorkOrderProductionPlanComponent implements OnInit {
   // Table data for display
   listOfAllProductionPlans: ProductionPlan[] = [];
   listOfDisplayProductionPlans: ProductionPlan[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-
-  // checkbox - select all
-  allChecked = false;
-  indeterminate = false;
-  isAllDisplayDataChecked = false;
-  // list of checked checkbox
-  mapOfCheckedId: { [key: string]: boolean } = {};
-  // list of expanded row
-  mapOfExpandedId: { [key: string]: boolean } = {};
+  
+  
   mapOfWorkOrders: { [key: string]: WorkOrder[] } = {};
 
   resetForm(): void {
@@ -106,23 +164,42 @@ export class WorkOrderProductionPlanComponent implements OnInit {
       );
   }
 
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayProductionPlans.every(item => this.mapOfCheckedId[item.id!]);
-    this.indeterminate =
-      this.listOfDisplayProductionPlans.some(item => this.mapOfCheckedId[item.id!]) && !this.isAllDisplayDataChecked;
+  updateCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(id);
+    } else {
+      this.setOfCheckedId.delete(id);
+    }
   }
 
-  checkAll(value: boolean): void {
-    this.listOfDisplayProductionPlans.forEach(item => (this.mapOfCheckedId[item.id!] = value));
-    this.refreshStatus();
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked);
+    this.refreshCheckedStatus();
   }
 
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-
-    // sort data 
+  onAllChecked(value: boolean): void {
+    this.listOfDisplayProductionPlans!.forEach(item => this.updateCheckedSet(item.id!, value));
+    this.refreshCheckedStatus();
   }
+
+  currentPageDataChange($event: ProductionPlan[]): void {
+    this.listOfDisplayProductionPlans! = $event;
+    this.refreshCheckedStatus();
+  }
+
+  refreshCheckedStatus(): void {
+    this.checked = this.listOfDisplayProductionPlans!.every(item => this.setOfCheckedId.has(item.id!));
+    this.indeterminate = this.listOfDisplayProductionPlans!.some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
+  }
+  onExpandChange(id: number, checked: boolean): void {
+    if (checked) {
+      this.expandSet.add(id);
+    } else {
+      this.expandSet.delete(id);
+    }
+  }
+
+   
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.work-order.production-plan'));
@@ -199,7 +276,7 @@ export class WorkOrderProductionPlanComponent implements OnInit {
   }
   createWorkOrderFromProductionPlanLine(productionPlan: ProductionPlan): void {}
   showProductionPlanDetails(productionPlan: ProductionPlan): void {
-    if (this.mapOfExpandedId[productionPlan.id!] === true) {
+    if (this.expandSet.has(productionPlan.id!)) {
       this.showWorkOrders(productionPlan);
     }
   }

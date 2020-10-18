@@ -63,57 +63,31 @@
 <div class="search-result-list">
   <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllLocations"
     (nzCurrentPageDataChange)="currentPageDataChange($event)" [nzFooter]="tableFoot" nzTableLayout="true">
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <thead>
       <tr>
-        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
-          (nzCheckedChange)="checkAll($event)"></th>
-        <th nzShowSort nzSortKey="name">
-          {{ 'location.name' | translate }}
-        </th>
-        <th nzShowFilter [nzFilters]="filtersByLocationGroup" (nzFilterChange)="filter($event)">
-          {{'location-group' | translate}}</th>
-        <th nzShowSort nzSortKey="aisle">
-          {{ 'location.aisle' | translate }}
-        </th>
-        <th>
-          {{ 'location.length' | translate }}
-        </th>
-        <th>
-          {{ 'location.width' | translate }}
-        </th>
-        <th>
-          {{ 'location.height' | translate }}
-        </th>
-        <th>
-          {{ 'location.capacity' | translate }}
-        </th>
-        <th>
-          {{ 'location.fillPercentage' | translate }}
-        </th>
-        <th>
-          {{ 'location.currentVolume' | translate }}
-        </th>
-        <th>
-          {{ 'location.pendingVolume' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="putawaySequence">
-          {{ 'location.putawaySequence' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="pickSequence">
-          {{ 'location.pickSequence' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="countSequence">
-          {{ 'location.countSequence' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="enabled">
-          {{ 'location.enabled' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="locked">
-          {{ 'location.locked' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="reservedCode">
-          {{ 'location.reservedCode' | translate }}
-        </th>
+        
+
+          <th
+            [nzSelections]="listOfSelection"
+            [(nzChecked)]="checked"
+            [nzIndeterminate]="indeterminate"
+            (nzCheckedChange)="onAllChecked($event)"
+            nzWidth="60px"
+          ></th>
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+ 
         <th nzWidth="62px">
           {{ 'action' | translate }}
         </th>
@@ -122,7 +96,12 @@
     <tbody>
       <tr *ngFor="let data of rowSelectionTable.data">
         <ng-container *ngIf="!editCache[data.id].edit; else editTemplate">
-          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
+          
+          
+          <td
+            [nzChecked]="setOfCheckedId.has(data.id)"
+            (nzCheckedChange)="onItemChecked(data.id, $event)"
+          ></td>
 
           <td>{{ data.name }}</td>
           <td>{{ data.locationGroup.description }}</td>
@@ -144,7 +123,11 @@
         </ng-container>
 
         <ng-template #editTemplate>
-          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id]" (nzCheckedChange)="refreshStatus()"></td>
+          
+          <td
+            [nzChecked]="setOfCheckedId.has(data.id)"
+            (nzCheckedChange)="onItemChecked(data.id, $event)"
+          ></td>
           <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.name" /></td>
           <td>
 

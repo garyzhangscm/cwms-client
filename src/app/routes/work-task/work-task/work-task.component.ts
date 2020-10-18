@@ -54,6 +54,7 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     {
       name: 'work-task.number',
       sortOrder: null,
+      showSort:true,
       sortFn: (a: WorkTask, b: WorkTask) => a.number.localeCompare(b.number),
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
@@ -64,6 +65,7 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     {
       name: 'work-task.type',
       sortOrder: null,
+      showSort:true,
       sortFn: (a: WorkTask, b: WorkTask) => a.workType.localeCompare(b.workType),
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
@@ -74,6 +76,7 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     {
       name: 'work-task.status',
       sortOrder: null,
+      showSort:true,
       sortFn: (a: WorkTask, b: WorkTask) => a.workStatus.localeCompare(b.workStatus),
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
@@ -84,6 +87,7 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     {
       name: 'sourceLocation',
       sortOrder: null,
+      showSort:true,
       sortFn: (a: WorkTask, b: WorkTask) => a.sourceLocationId - a.sourceLocationId,
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
@@ -94,6 +98,7 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     {
       name: 'destinationLocation',
       sortOrder: null,
+      showSort:true,
       sortFn: (a: WorkTask, b: WorkTask) => a.destinationLocationId - b.destinationLocationId,
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
@@ -104,6 +109,7 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     {
       name: 'lpn',
       sortOrder: null,
+      showSort:true,
       sortFn: (a: WorkTask, b: WorkTask) => a.inventory?.lpn!.localeCompare(b.inventory?.lpn!),
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
@@ -113,6 +119,7 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     },
     {
       name: 'assignedUser',
+      showSort:true,
       sortOrder: null,
       sortFn: (a: WorkTask, b: WorkTask) => a.assignedUserId - b.assignedUserId,
       sortDirections: ['ascend', 'descend', null],
@@ -123,6 +130,7 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     },
     {
       name: 'assignedRole',
+      showSort:true,
       sortOrder: null,
       sortFn: (a: WorkTask, b: WorkTask) => a.assignedRoleId - b.assignedRoleId,
       sortDirections: ['ascend', 'descend', null],
@@ -133,6 +141,7 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     },
     {
       name: 'assignedWorkingTeam',
+      showSort:true,
       sortOrder: null,
       sortFn: (a: WorkTask, b: WorkTask) => a.assignedWorkingTeamId - b.assignedWorkingTeamId,
       sortDirections: ['ascend', 'descend', null],
@@ -143,6 +152,7 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     },
     {
       name: 'currentUser',
+      showSort:true,
       sortOrder: null,
       sortFn: (a: WorkTask, b: WorkTask) => a.currentUserId - b.currentUserId,
       sortDirections: ['ascend', 'descend', null],
@@ -153,6 +163,7 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     },
     {
       name: 'completeUser',
+      showSort:true,
       sortOrder: null,
       sortFn: (a: WorkTask, b: WorkTask) => a.completeUserId - b.completeUserId,
       sortDirections: ['ascend', 'descend', null],
@@ -163,6 +174,7 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     },
     {
       name: 'startTime',
+      showSort:true,
       sortOrder: null,
       sortFn: (a: WorkTask, b: WorkTask) => this.utilService.compareDateTime(a.startTime, b.startTime),
       sortDirections: ['ascend', 'descend', null],
@@ -173,6 +185,7 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     },
     {
       name: 'completeTime',
+      showSort:true,
       sortOrder: null,
       sortFn: (a: WorkTask, b: WorkTask) => this.utilService.compareDateTime(a.completeTime, b.completeTime),
       sortDirections: ['ascend', 'descend', null],

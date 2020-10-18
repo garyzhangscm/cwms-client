@@ -70,9 +70,7 @@
               (click)="enableRole(data.id)">{{ 'enable' | translate }}</button>
           </td>
         </tr>
-        <tr [nzExpand]="expandSet.has(data.id)">
-          <td></td>
-          <td colspan="4">
+        <tr [nzExpand]="expandSet.has(data.id)"> 
             <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" [nzSelectedIndex]="tabIndex">
               <nz-tab nzTitle="{{'menu.main.auth.user' | translate}}">
                 <nz-table #userTable [nzData]="data.users" nzSize="middle" [nzShowPagination]="false">
@@ -150,8 +148,7 @@
   </nz-tab>
   </nz-tabset>
 
-
-  </td>
+ 
   </tr>
   </ng-template>
   </tbody>

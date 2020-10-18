@@ -2,7 +2,7 @@ import { NzTableFilterFn, NzTableFilterList, NzTableSortFn, NzTableSortOrder } f
 
 export interface ColumnItem {
   name: string;
-  showSort: boolean;
+  showSort?: boolean;
   sortOrder: NzTableSortOrder | null;
   sortFn: NzTableSortFn | null;
   listOfFilter: NzTableFilterList;
