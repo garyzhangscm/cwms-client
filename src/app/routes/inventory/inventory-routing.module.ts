@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from '../auth/guard/auth.guard';
 import { InventoryAuditCountConfirmComponent } from './audit-count-confirm/audit-count-confirm.component';
 import { InventoryAuditCountResultComponent } from './audit-count-result/audit-count-result.component';
 import { InventoryCountConfigComponent } from './count-config/count-config.component';
@@ -30,31 +31,31 @@ import { InventoryReplenishmentComponent } from './replenishment/replenishment.c
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
 
 const routes: Routes = [
-  { path: 'inventory', component: InventoryInventoryComponent },
+  { path: 'inventory', component: InventoryInventoryComponent, canActivate: [AuthGuard] },
   { path: 'count/config', component: InventoryCountConfigComponent },
-  { path: 'count/cycle-count', component: InventoryCycleCountComponent },
-  { path: 'replenishment/emergency/config', component: InventoryEmergencyReplenishmentConfigComponent },
-  { path: 'replenishment/trigger/config', component: InventoryTriggerReplenishmentConfigComponent },
-  { path: 'replenishment', component: InventoryReplenishmentComponent },
-  { path: 'item', component: InventoryItemComponent },
-  { path: 'item-family', component: InventoryItemFamilyComponent },
+  { path: 'count/cycle-count', component: InventoryCycleCountComponent, canActivate: [AuthGuard]  },
+  { path: 'replenishment/emergency/config', component: InventoryEmergencyReplenishmentConfigComponent, canActivate: [AuthGuard]  },
+  { path: 'replenishment/trigger/config', component: InventoryTriggerReplenishmentConfigComponent, canActivate: [AuthGuard]  },
+  { path: 'replenishment', component: InventoryReplenishmentComponent, canActivate: [AuthGuard]  },
+  { path: 'item', component: InventoryItemComponent, canActivate: [AuthGuard] },
+  { path: 'item-family', component: InventoryItemFamilyComponent, canActivate: [AuthGuard] },
   { path: 'item-family-maintenance', component: InventoryItemFamilyMaintenanceComponent },
   { path: 'item-family-maintenance/confirm', component: InventoryItemFamilyMaintenanceConfirmComponent },
-  { path: 'inventory-adjust', component: InventoryInventoryAdjustComponent },
+  { path: 'inventory-adjust', component: InventoryInventoryAdjustComponent, canActivate: [AuthGuard] },
   { path: 'inventory-attribute-change', component: InventoryInventoryAttributeChangeComponent },
   { path: 'inventory-attribute-change/confirm', component: InventoryInventoryAttributeChangeConfirmComponent },
   { path: 'count/cycle-count-maintenance', component: InventoryCycleCountMaintenanceComponent },
   { path: 'count/audit-count-result', component: InventoryAuditCountResultComponent },
   { path: 'count/audit-count-confirm', component: InventoryAuditCountConfirmComponent },
-  { path: 'movement-path', component: InventoryMovementPathComponent },
+  { path: 'movement-path', component: InventoryMovementPathComponent, canActivate: [AuthGuard]  },
   { path: 'movement-path-maintenance', component: InventoryMovementPathMaintenanceComponent },
   { path: 'movement-path-confirm', component: InventoryMovementPathConfirmComponent },
   { path: 'inventory-quantity-change', component: InventoryInventoryQuantityChangeComponent },
   { path: 'inventory-quantity-change/confirm', component: InventoryInventoryQuantityChangeConfirmComponent },
-  { path: 'inventory-activity', component: InventoryInventoryActivityComponent },
+  { path: 'inventory-activity', component: InventoryInventoryActivityComponent, canActivate: [AuthGuard]  },
   { path: 'inventory-move', component: InventoryInventoryMoveComponent },
-  { path: 'inventory-adjustment-request', component: InventoryInventoryAdjustmentRequestComponent },
-  { path: 'inventory-adjustment-threshold', component: InventoryInventoryAdjustmentThresholdComponent },
+  { path: 'inventory-adjustment-request', component: InventoryInventoryAdjustmentRequestComponent, canActivate: [AuthGuard]  },
+  { path: 'inventory-adjustment-threshold', component: InventoryInventoryAdjustmentThresholdComponent, canActivate: [AuthGuard]  },
   {
     path: 'inventory-adjustment-threshold-maintenance',
     component: InventoryInventoryAdjustmentThresholdMaintenanceComponent,

@@ -1,5 +1,6 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { DirectivesModule } from '../directives/directives.module';
 import { WorkOrderBillOfMaterialMaintenanceComponent } from './bill-of-material-maintenance/bill-of-material-maintenance.component';
@@ -46,7 +47,8 @@ const COMPONENTS_NOROUNT: Type<void>[] = [];
   imports: [
     SharedModule,
     WorkOrderRoutingModule, DirectivesModule, 
-    NzLayoutModule
+    NzLayoutModule,
+    NzDescriptionsModule
   ],
   declarations: [
     ...COMPONENTS,

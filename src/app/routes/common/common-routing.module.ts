@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from '../auth/guard/auth.guard';
 import { CommonClientAddressMaintenanceComponent } from './client-address-maintenance/client-address-maintenance.component';
 import { CommonClientMaintenanceConfimComponent } from './client-maintenance-confim/client-maintenance-confim.component';
 import { CommonClientMaintenanceComponent } from './client-maintenance/client-maintenance.component';
@@ -17,18 +18,18 @@ import { CommonUnitOfMeasureMaintenanceComponent } from './unit-of-measure-maint
 import { CommonUnitOfMeasureComponent } from './unit-of-measure/unit-of-measure.component';
 
 const routes: Routes = [
-  { path: 'client', component: CommonClientComponent },
+  { path: 'client', component: CommonClientComponent, canActivate: [AuthGuard] },
   { path: 'client-maintenance', component: CommonClientMaintenanceComponent },
   { path: 'client-maintenance/address', component: CommonClientAddressMaintenanceComponent },
   { path: 'client-maintenance/confirm', component: CommonClientMaintenanceConfimComponent },
-  { path: 'unit-of-measure', component: CommonUnitOfMeasureComponent },
+  { path: 'unit-of-measure', component: CommonUnitOfMeasureComponent, canActivate: [AuthGuard] },
   { path: 'unit-of-measure-maintenance', component: CommonUnitOfMeasureMaintenanceComponent },
   { path: 'unit-of-measure/confirm', component: CommonUnitOfMeasureConfirmComponent },
-  { path: 'supplier', component: CommonSupplierComponent },
+  { path: 'supplier', component: CommonSupplierComponent, canActivate: [AuthGuard] },
   { path: 'supplier-maintenance', component: CommonSupplierMaintenanceComponent },
   { path: 'supplier-maintenance/address', component: CommonSupplierAddressMaintenanceComponent },
   { path: 'supplier-maintenance/confirm', component: CommonSupplierMaintenanceConfirmComponent },
-  { path: 'customer', component: CommonCustomerComponent },
+  { path: 'customer', component: CommonCustomerComponent, canActivate: [AuthGuard] },
   { path: 'customer-maintenance', component: CommonCustomerMaintenanceComponent },
   { path: 'customer-maintenance/confirm', component: CommonCustomerMaintenanceConfirmComponent },
   { path: 'customer-maintenance/address', component: CommonCustomerAddressMaintenanceComponent },

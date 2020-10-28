@@ -13,20 +13,20 @@ export class NewNumberValidator implements AsyncValidator {
   @Input() variable: string | undefined;
 
   constructor(private validatorServiceService: ValidatorServiceService) {
-    console.log(`NewNumberValidator created for ${this.variable}`);
+    // console.log(`NewNumberValidator created for ${this.variable}`);
   }
 
   validate(ctrl: AbstractControl): Promise<ValidationErrors | null> | Observable<ValidationErrors | null> {
     if (ctrl.value === null) {
       return of(null);
     }
-    console.log(`start validating! ${this.variable} with value: ${ctrl.value}`);
+    // console.log(`start validating! ${this.variable} with value: ${ctrl.value}`);
     return this.validatorServiceService.validateNewNumber(this.variable!, ctrl.value).pipe(
       map(errorCode => {
         return errorCode !== '' ? { errorCode } : null;
       }),
       catchError(() => {
-        console.log(`not able to validate ${this.variable} with value: ${ctrl.value}, assume it is valid`);
+        // console.log(`not able to validate ${this.variable} with value: ${ctrl.value}, assume it is valid`);
         return of(null);
       }),
     );

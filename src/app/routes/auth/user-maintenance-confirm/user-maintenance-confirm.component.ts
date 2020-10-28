@@ -48,7 +48,7 @@ export class AuthUserMaintenanceConfirmComponent implements OnInit {
           filterFn: (list: boolean[], role: Role) => list.some(enabled => role.enabled === enabled), 
           showFilter: true
         },
-        ]
+        ];
 
   currentUser: User | undefined;
   pageTitle: string;
@@ -70,10 +70,21 @@ export class AuthUserMaintenanceConfirmComponent implements OnInit {
   }
 
   confirm(): void {
-    this.userService.addUser(this.currentUser!).subscribe(userRes => {
-      this.messageService.success(this.i18n.fanyi('message.action.success'));
-      setTimeout(() => this.goToNextPage(), 2000);
-    });
+    if (this.currentUser!.id) {
+
+      this.userService.changeUser(this.currentUser!).subscribe(userRes => {
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        setTimeout(() => this.goToNextPage(), 2000);
+      });
+    }
+    else 
+    {
+
+      this.userService.addUser(this.currentUser!).subscribe(userRes => {
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        setTimeout(() => this.goToNextPage(), 2000);
+      });
+    }
   }
 
   goToNextPage(): void {

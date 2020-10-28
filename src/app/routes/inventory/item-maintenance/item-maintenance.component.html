@@ -74,13 +74,12 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item>
         <nz-form-label [nzSm]="6" [nzXs]="24">
-          {{ 'item-family' | translate }}
+          {{ 'item-family' | translate }} - {{currentItem?.itemFamily!.id}}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-          nzErrorTip="{{ 'error.form.field.required' | translate }}">
-          <nz-select nzAllowClear (ngModelChange)="itemFamilySelected($event)" style="width: 200px;">
+        <nz-form-control [nzSm]="14" [nzXs]="24" >
+          <nz-select nzAllowClear [(ngModel)]="currentItem?.itemFamily!.id" (ngModelChange)="itemFamilySelected($event)" style="width: 200px;">
             <nz-option *ngFor="let validItemFamily of validItemFamilies" [nzValue]="validItemFamily.id"
-              [nzLabel]="validItemFamily.description">
+              [nzLabel]="validItemFamily.id" >
             </nz-option>
           </nz-select>
         </nz-form-control>
@@ -91,32 +90,32 @@
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item>
-        <nz-form-control>
           <nz-form-label [nzSm]="6" [nzXs]="24">
             {{ 'trackingVolumeFlag' | translate }}
           </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" >
           <label nz-checkbox [(ngModel)]="currentItem.trackingVolumeFlag"></label>
         </nz-form-control>
       </nz-form-item>
     </div>
 
     <div nz-col [nzSpan]="8">
-      <nz-form-item>
-        <nz-form-control>
+      <nz-form-item> 
           <nz-form-label [nzSm]="6" [nzXs]="24">
             {{ 'trackingLotNumberFlag' | translate }}
           </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" >
           <label nz-checkbox [(ngModel)]="currentItem.trackingLotNumberFlag"></label>
         </nz-form-control>
       </nz-form-item>
     </div>
 
     <div nz-col [nzSpan]="8">
-      <nz-form-item>
-        <nz-form-control>
+      <nz-form-item> 
           <nz-form-label [nzSm]="6" [nzXs]="24">
             {{ 'allowCartonization' | translate }}
           </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" >
           <label nz-checkbox [(ngModel)]="currentItem.allowCartonization"></label>
         </nz-form-control>
       </nz-form-item>
@@ -125,11 +124,11 @@
 
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
-      <nz-form-item>
-        <nz-form-control>
+      <nz-form-item> 
           <nz-form-label [nzSm]="6" [nzXs]="24">
             {{ 'trackingManufactureDateFlag' | translate }}
           </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" >
           <label nz-checkbox [(ngModel)]="currentItem.trackingManufactureDateFlag"></label>
         </nz-form-control>
       </nz-form-item>
@@ -148,11 +147,11 @@
     </div>
 
     <div nz-col [nzSpan]="8">
-      <nz-form-item>
-        <nz-form-control>
+      <nz-form-item> 
           <nz-form-label [nzSm]="6" [nzXs]="24">
             {{ 'trackingExpirationDateFlag' | translate }}
           </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" >
           <label nz-checkbox [(ngModel)]="currentItem.trackingExpirationDateFlag"></label>
         </nz-form-control>
       </nz-form-item>
@@ -161,11 +160,11 @@
 
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
-      <nz-form-item>
-        <nz-form-control>
+      <nz-form-item> 
           <nz-form-label [nzSm]="6" [nzXs]="24">
             {{ 'allowAllocationByLPN' | translate }}
           </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" >
           <label nz-checkbox [(ngModel)]="currentItem.allowAllocationByLPN"></label>
         </nz-form-control>
       </nz-form-item>
@@ -176,9 +175,9 @@
         <nz-form-label [nzSm]="6" [nzXs]="24">
           {{ 'allocationRoundUpStrategyType' | translate }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-          nzErrorTip="{{ 'error.form.field.required' | translate }}">
-          <nz-select nzAllowClear (ngModelChange)="allocationRoundUpStrategyTypeChanged($event)" style="width: 200px;">
+        <nz-form-control [nzSm]="14" [nzXs]="24" >
+          <nz-select nzAllowClear [(ngModel)]="currentItem.allocationRoundUpStrategyType"
+          (ngModelChange)="allocationRoundUpStrategyTypeChanged($event)" style="width: 200px;">
             <nz-option *ngFor="let allocationRoundUpStrategyType of allocationRoundUpStrategyTypes | keys"
               nzValue="{{ allocationRoundUpStrategyType.key }}"
               nzLabel="{{ 'ALLOCATION-ROUND-UP-STRATEGY-TYPE-' + allocationRoundUpStrategyType.key | translate }}">

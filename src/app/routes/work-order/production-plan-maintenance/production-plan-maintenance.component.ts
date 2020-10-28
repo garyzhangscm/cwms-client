@@ -131,12 +131,22 @@ export class WorkOrderProductionPlanMaintenanceComponent implements OnInit {
         ];
 
         
+        listOfOrderLineTableSelection = [
+          {
+            text: this.i18n.fanyi(`select-all-rows`),
+            onSelect: () => {
+              this.onOrderLineTableAllChecked(true);
+            }
+          },    
+        ];
+      setOfOrderLineTableCheckedId = new Set<number>();
+      orderLineTableChecked = false;
+      orderLineTableIndeterminate = false;
 
   pageTitle: string;
   stepIndex = 0;
   currentProductionPlan!: ProductionPlan;
-  allOrderLinesChecked = false;
-  allOrderLinesCheckedIndeterminate = false;
+  
 
   mapOfExpandedId: { [key: string]: boolean } = {};
   mapOfExpandedBOMId: { [key: string]: boolean } = {};
@@ -212,14 +222,38 @@ export class WorkOrderProductionPlanMaintenanceComponent implements OnInit {
         this.selectedOrderLineChange(checked, orderLine);
       }
     });
-    this.orderLineTableRefreshStatus();
+    this.refreshOrderLineTableCheckedStatus();
   }
 
-  orderLineTableRefreshStatus(): void {
-    this.allOrderLinesChecked = this.validOrderLines.every(item => this.mapOfCheckedId[item.id]);
-    this.allOrderLinesCheckedIndeterminate =
-      this.validOrderLines.some(item => this.mapOfCheckedId[item.id]) && !this.allOrderLinesChecked;
+  updateOrderLineTableCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfOrderLineTableCheckedId.add(id);
+    } else {
+      this.setOfOrderLineTableCheckedId.delete(id);
+    }
   }
+
+  onOrderLineTableItemChecked(id: number, checked: boolean): void {
+    this.updateOrderLineTableCheckedSet(id, checked);
+    this.refreshOrderLineTableCheckedStatus();
+  }
+
+  onOrderLineTableAllChecked(value: boolean): void {
+    this.validOrderLines!.forEach(item => this.updateOrderLineTableCheckedSet(item.id, value));
+    this.refreshOrderLineTableCheckedStatus();
+  }
+
+  orderLineTableCurrentPageDataChange($event: OrderLine[]): void {
+    this.validOrderLines! = $event;
+    this.refreshOrderLineTableCheckedStatus();
+  }
+
+  refreshOrderLineTableCheckedStatus(): void {
+    this.orderLineTableChecked = this.validOrderLines!.every(item => this.setOfOrderLineTableCheckedId.has(item.id));
+    this.orderLineTableIndeterminate = this.validOrderLines!.some(item => this.setOfOrderLineTableCheckedId.has(item.id)) && !this.orderLineTableChecked;
+  }
+
+  
   onStepIndexChange(event: number): void {
     this.stepIndex = event;
   }

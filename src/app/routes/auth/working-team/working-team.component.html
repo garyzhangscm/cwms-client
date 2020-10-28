@@ -52,7 +52,7 @@
     <tbody>
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <tr>
-          <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
+          <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data, $event)"></td>
           
           <td>
             {{ data.name }}</td>

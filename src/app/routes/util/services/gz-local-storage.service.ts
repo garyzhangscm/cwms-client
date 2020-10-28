@@ -26,4 +26,5 @@ export class GzLocalStorageService {
     };
     localStorage.setItem(key, JSON.stringify(storedData));
   }
+
 }

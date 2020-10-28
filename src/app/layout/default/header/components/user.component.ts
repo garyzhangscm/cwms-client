@@ -26,9 +26,13 @@ import { SettingsService, User } from '@delon/theme';
           <i nz-icon nzType="close-circle" class="mr-sm"></i>
           {{ 'menu.account.trigger' | translate }}
         </div>
-
+        <div nz-menu-item (click)="clearCache()">
+          <i nz-icon nzType="setting"  class="mr-sm"></i>
+          {{ 'menu.account.settings' | translate }}
+        </div>
         <li nz-menu-divider></li>
         -->
+
         <div nz-menu-item (click)="logout()">
           <i nz-icon nzType="logout" class="mr-sm"></i>
           {{ 'menu.account.logout' | translate }}

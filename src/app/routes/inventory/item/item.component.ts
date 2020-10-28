@@ -32,7 +32,8 @@ export class InventoryItemComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          width: '120px',
         }, {
           name: 'description',
           showSort: true,
@@ -42,7 +43,8 @@ export class InventoryItemComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          width: '120px',
         }, {
           name: 'client',
           showSort: true,
@@ -52,7 +54,8 @@ export class InventoryItemComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          width: '120px',
         }, {
           name: 'item-family',
           showSort: true,
@@ -62,7 +65,8 @@ export class InventoryItemComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          width: '120px',
         }, {
           name: 'unit-cost',
           showSort: true,
@@ -72,7 +76,8 @@ export class InventoryItemComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          width: '120px',
         },
         {
           name: 'allowAllocationByLPN',
@@ -86,7 +91,8 @@ export class InventoryItemComponent implements OnInit {
             { text: this.i18n.fanyi('false'), value: false },
           ],
           filterFn: (list: boolean[], item: Item) => list.some(allowAllocationByLPN => item.allowAllocationByLPN === allowAllocationByLPN), 
-          showFilter: true
+          showFilter: true,
+          width: '150px',
         },
         {
           name: 'allocationRoundUpStrategyType',
@@ -97,7 +103,8 @@ export class InventoryItemComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          width: '150px',
         },
         {
           name: 'allocationRoundUpStrategyValue',
@@ -108,7 +115,8 @@ export class InventoryItemComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          width: '150px',
         },
         {
           name: 'trackingVolumeFlag',
@@ -122,7 +130,8 @@ export class InventoryItemComponent implements OnInit {
             { text: this.i18n.fanyi('false'), value: false },
           ],
           filterFn: (list: boolean[], item: Item) => list.some(trackingVolumeFlag => item.trackingVolumeFlag === trackingVolumeFlag), 
-          showFilter: true
+          showFilter: true,
+          width: '150px',
         },
         {
           name: 'trackingLotNumberFlag',
@@ -136,7 +145,8 @@ export class InventoryItemComponent implements OnInit {
             { text: this.i18n.fanyi('false'), value: false },
           ],
           filterFn: (list: boolean[], item: Item) => list.some(trackingLotNumberFlag => item.trackingLotNumberFlag === trackingLotNumberFlag), 
-          showFilter: true
+          showFilter: true,
+          width: '150px',
         },
         {
           name: 'trackingManufactureDateFlag',
@@ -150,7 +160,8 @@ export class InventoryItemComponent implements OnInit {
             { text: this.i18n.fanyi('false'), value: false },
           ],
           filterFn: (list: boolean[], item: Item) => list.some(trackingManufactureDateFlag => item.trackingManufactureDateFlag === trackingManufactureDateFlag), 
-          showFilter: true
+          showFilter: true,
+          width: '150px',
         }, {
           name: 'shelfLifeDays',
           showSort: true,
@@ -160,7 +171,8 @@ export class InventoryItemComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          width: '150px',
         }, 
         {
           name: 'trackingExpirationDateFlag',
@@ -174,10 +186,14 @@ export class InventoryItemComponent implements OnInit {
             { text: this.i18n.fanyi('false'), value: false },
           ],
           filterFn: (list: boolean[], item: Item) => list.some(trackingExpirationDateFlag => item.trackingExpirationDateFlag === trackingExpirationDateFlag), 
-          showFilter: true
+          showFilter: true,
+          width: '150px',
         }, 
         ];
-        expandSet = new Set<number>();
+  expandSet = new Set<number>();
+
+  scrollX = '100vw';   
+  
   // Select control for clients and item families
   clients: Array<{ label: string; value: string }> = [];
   itemFamilies: Array<{ label: string; value: string }> = [];

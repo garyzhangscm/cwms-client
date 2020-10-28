@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes  } from '@angular/router';
+import { AuthGuard } from './guard/auth.guard';
 import { AuthRoleMaintenanceConfirmComponent } from './role-maintenance-confirm/role-maintenance-confirm.component';
 import { AuthRoleMaintenanceComponent } from './role-maintenance/role-maintenance.component';
 import { AuthRoleMenuComponent } from './role-menu/role-menu.component';
@@ -15,16 +16,16 @@ import { AuthWorkingTeamUserComponent } from './working-team-user/working-team-u
 import { AuthWorkingTeamComponent } from './working-team/working-team.component';
 
 const routes: Routes = [
-  { path: 'user', component: AuthUserComponent },
-  { path: 'role', component: AuthRoleComponent },
-  { path: 'role-menu', component: AuthRoleMenuComponent },
+  { path: 'user', component: AuthUserComponent, canActivate: [AuthGuard] },
+  { path: 'role', component: AuthRoleComponent, canActivate: [AuthGuard] },
+  { path: 'role-menu', component: AuthRoleMenuComponent},
   { path: 'user-role', component: AuthUserRoleComponent },
   { path: 'role-user', component: AuthRoleUserComponent },
   { path: 'role/maintenance', component: AuthRoleMaintenanceComponent },
   { path: 'user/maintenance', component: AuthUserMaintenanceComponent },
   { path: 'role/maintenance/confirm', component: AuthRoleMaintenanceConfirmComponent },
   { path: 'user/maintenance/confirm', component: AuthUserMaintenanceConfirmComponent },
-  { path: 'working-team', component: AuthWorkingTeamComponent },
+  { path: 'working-team', component: AuthWorkingTeamComponent, canActivate: [AuthGuard]  },
   { path: 'working-team/maintenance', component: AuthWorkingTeamMaintenanceComponent },
   { path: 'working-team/maintenance/confirm', component: AuthWorkingTeamMaintenanceConfirmComponent },
   { path: 'working-team/user', component: AuthWorkingTeamUserComponent },

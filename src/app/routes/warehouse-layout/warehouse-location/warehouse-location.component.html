@@ -61,8 +61,9 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllLocations"
-    (nzCurrentPageDataChange)="currentPageDataChange($event)" [nzFooter]="tableFoot" nzTableLayout="true">
+  <nz-table #rowSelectionTable  nzShowPagination [nzData]="listOfAllLocations"
+    (nzCurrentPageDataChange)="currentPageDataChange($event)" [nzFooter]="tableFoot"
+    [nzScroll]="{ x: scrollX }" >
     <thead>
       <tr>
         
@@ -84,11 +85,12 @@
             [nzFilters]="column.listOfFilter"
             [nzFilterFn]="column.filterFn"        
             [nzShowFilter]="column.showFilter"
+            [nzWidth]="column.width"
           >
             {{ column.name | translate }}
           </th> 
  
-        <th nzWidth="62px">
+        <th nzWidth="62px" nzRight>
           {{ 'action' | translate }}
         </th>
       </tr>
@@ -119,7 +121,7 @@
           <td>{{ data.enabled + ''| translate}}</td>
           <td>{{ data.locked + '' | translate}}</td>
           <td>{{ data.reservedCode }}</td>
-          <td><a (click)="startEdit(data.id)"> {{ 'modify' | translate }}</a></td>
+          <td nzRight><a (click)="startEdit(data.id)"> {{ 'modify' | translate }}</a></td>
         </ng-container>
 
         <ng-template #editTemplate>
@@ -160,7 +162,7 @@
           <td>{{ data.locked + '' | translate}}</td>
           <td>{{ data.reservedCode }}</td>
 
-          <td>
+          <td nzRight>
             <a (click)="saveRecord(data.id)" class="save">{{'save' | translate }}</a>
             <a nz-popconfirm
               (nzOnConfirm)="cancelEdit(data.id)">{{'cancel' | translate }}</a>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { MenuService, _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -9,7 +9,8 @@ import { User } from '../models/user';
   providedIn: 'root',
 })
 export class UserService {
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
+  constructor(private http: _HttpClient, private warehouseService: WarehouseService, 
+              private menuService: MenuService) {}
 
   getUsers(username?: string, rolename?: string, workingTeamName?: string): Observable<User[]> {
     let url = `resource/users?companyId=${this.warehouseService.getCurrentWarehouse().companyId}`;
@@ -28,8 +29,11 @@ export class UserService {
   getUser(id: number): Observable<User> {
     return this.http.get(`resource/users/${id}`).pipe(map(res => res.data));
   }
-  addUser(user: User) {
+  addUser(user: User): Observable<User> {
     return this.http.put(`resource/users`, user).pipe(map(res => res.data));
+  }
+  changeUser(user: User): Observable<User> {
+    return this.http.post(`resource/users/${user.id}`, user).pipe(map(res => res.data));
   }
 
   processRoles(userId: number, assignedRoleIds: number[], deassignedRoleIds: number[]) {
@@ -62,4 +66,12 @@ export class UserService {
   unlockUser(userId: number): Observable<User[]> {
     return this.http.post(`resource/users/unlock?userIds=${userId}`).pipe(map(res => res.data));
   }
+  
+  isCurrentUserAccessibleToMenu(menuUrl: string): boolean {
+    // get all accssible menu 
+    return this.menuService.getPathByUrl(menuUrl).length > 0;
+    
+    
+  }
+
 }

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from '../auth/guard/auth.guard';
 import { OutboundAllocationConfigurationComponent } from './allocation-configuration/allocation-configuration.component';
 import { OutboundCartonComponent } from './carton/carton.component';
 import { OutboundCartonizationConfigurationConfirmComponent } from './cartonization-configuration-confirm/cartonization-configuration-confirm.component';
@@ -23,30 +24,30 @@ import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-mainte
 import { OutboundWaveComponent } from './wave/wave.component';
 
 const routes: Routes = [
-  { path: 'order', component: OutboundOrderComponent },
-  { path: 'wave', component: OutboundWaveComponent },
-  { path: 'shipment', component: OutboundShipmentComponent },
+  { path: 'order', component: OutboundOrderComponent, canActivate: [AuthGuard]  },
+  { path: 'wave', component: OutboundWaveComponent, canActivate: [AuthGuard]  },
+  { path: 'shipment', component: OutboundShipmentComponent, canActivate: [AuthGuard]  },
   { path: 'order-maintenance', component: OutboundOrderMaintenanceComponent },
   { path: 'shipment-display', component: OutboundShipmentDisplayComponent },
   { path: 'wave-maintenance', component: OutboundWaveMaintenanceComponent },
-  { path: 'pick', component: OutboundPickComponent },
-  { path: 'short-allocation', component: OutboundShortAllocationComponent },
+  { path: 'pick', component: OutboundPickComponent, canActivate: [AuthGuard]  },
+  { path: 'short-allocation', component: OutboundShortAllocationComponent, canActivate: [AuthGuard]  },
   { path: 'stop', component: OutboundStopComponent },
-  { path: 'trailer', component: OutboundTrailerComponent },
-  { path: 'pick/confirm', component: OutboundPickConfirmComponent },
-  { path: 'pick-list', component: OutboundPickListComponent },
-  { path: 'carton', component: OutboundCartonComponent },
-  { path: 'cartonization', component: OutboundCartonizationComponent },
-  { path: 'cartonization-configuration', component: OutboundCartonizationConfigurationComponent },
+  { path: 'trailer', component: OutboundTrailerComponent, canActivate: [AuthGuard]  },
+  { path: 'pick/confirm', component: OutboundPickConfirmComponent, canActivate: [AuthGuard]  },
+  { path: 'pick-list', component: OutboundPickListComponent, canActivate: [AuthGuard]  },
+  { path: 'carton', component: OutboundCartonComponent, canActivate: [AuthGuard]  },
+  { path: 'cartonization', component: OutboundCartonizationComponent, canActivate: [AuthGuard]  },
+  { path: 'cartonization-configuration', component: OutboundCartonizationConfigurationComponent, canActivate: [AuthGuard]  },
   {
     path: 'cartonization-configuration/maintenance',
     component: OutboundCartonizationConfigurationMaintenanceComponent,
   },
   { path: 'cartonization-configuration/confirm', component: OutboundCartonizationConfigurationConfirmComponent },
-  { path: 'grid', component: OutboundGridComponent },
+  { path: 'grid', component: OutboundGridComponent, canActivate: [AuthGuard]  },
   { path: 'grid-maintenance', component: OutboundGridMaintenanceComponent },
-  { path: 'shipping-cartonization', component: OutboundShippingCartonizationComponent },
-  { path: 'allocation-configuration', component: OutboundAllocationConfigurationComponent },
+  { path: 'shipping-cartonization', component: OutboundShippingCartonizationComponent, canActivate: [AuthGuard]  },
+  { path: 'allocation-configuration', component: OutboundAllocationConfigurationComponent, canActivate: [AuthGuard]  },
 ];
 
 @NgModule({

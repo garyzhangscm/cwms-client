@@ -62,6 +62,7 @@ export class StartupService {
         this.goToLoginForm();
       }
     }
+    siteInformationUrl = `${siteInformationUrl}?companyId=${this.companyService.getCurrentCompany()?.id}`;
 
     // only works with promises
     // https://github.com/angular/angular/issues/15088

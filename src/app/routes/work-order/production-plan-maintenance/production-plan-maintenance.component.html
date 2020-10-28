@@ -89,9 +89,6 @@
   <div class="search-result-list">
     <nz-table #basicTable [nzData]="validOrderLines">
       <thead>
-        <th nzShowCheckbox [(nzChecked)]="allOrderLinesChecked" [nzIndeterminate]="allOrderLinesCheckedIndeterminate"
-          (nzCheckedChange)="onAllOrderLineChecked($event)" nzAlign="center"
-          ></th>
 
           <th
             [nzSelections]="listOfOrderLineTableSelection"
@@ -114,42 +111,15 @@
             {{ column.name | translate }}
           </th> 
 
-        <th>
-          {{ 'order.number' | translate }}
-        </th>
-        <th>
-          {{ 'order.line.number' | translate }}
-        </th>
-        <th>
-          {{ 'item' | translate }}
-        </th>
-        <th>
-          {{ 'order.line.expectedQuantity' | translate }}
-        </th>
-        <th>
-          {{ 'order.line.openQuantity' | translate }}
-        </th>
-        <th>
-          {{ 'order.line.inprocessQuantity' | translate }}
-        </th>
-        <th>
-          {{ 'order.line.shippedQuantity' | translate }}
-        </th>
-
-        <th>
-          {{ 'production-plan.line.inprocessQuantity' | translate }}
-        </th>
-        <th>
-          {{ 'production-plan.line.producedQuantity' | translate }}
-        </th>
-        <th>
-          {{ 'inventory.status' | translate }}
-        </th>
+       
       </thead>
       <tbody>
         <tr *ngFor="let orderLine of basicTable.data">
-          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[orderLine.id]"
-            (nzCheckedChange)="selectedOrderLineChange($event, orderLine)"></td>
+          <td
+            [nzChecked]="setOfOrderLineTableCheckedId.has(orderLine.id)"
+            (nzCheckedChange)="onOrderLineTableItemChecked(orderLine.id, $event)"
+          ></td>
+
           <td>{{ orderLine.orderNumber }}</td>
           <td>{{ orderLine.number }}</td>
           <td>{{ orderLine.item?.name }}</td>

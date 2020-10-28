@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from '../auth/guard/auth.guard';
 import { WorkOrderBillOfMaterialMaintenanceComponent } from './bill-of-material-maintenance/bill-of-material-maintenance.component';
 import { WorkOrderBillOfMaterialComponent } from './bill-of-material/bill-of-material.component';
 import { WorkOrderProductionLineComponent } from './production-line/production-line.component';
@@ -19,9 +20,9 @@ import { WorkOrderWorkOrderProduceComponent } from './work-order-produce/work-or
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
 
 const routes: Routes = [
-  { path: 'work-order', component: WorkOrderWorkOrderComponent },
-  { path: 'production-line', component: WorkOrderProductionLineComponent },
-  { path: 'bill-of-material', component: WorkOrderBillOfMaterialComponent },
+  { path: 'work-order', component: WorkOrderWorkOrderComponent, canActivate: [AuthGuard]  },
+  { path: 'production-line', component: WorkOrderProductionLineComponent, canActivate: [AuthGuard]  },
+  { path: 'bill-of-material', component: WorkOrderBillOfMaterialComponent, canActivate: [AuthGuard]  },
   { path: 'work-order/produce', component: WorkOrderWorkOrderProduceComponent },
   { path: 'work-order/produce/by-product', component: WorkOrderWorkOrderProduceByProductComponent },
   { path: 'work-order/produce/kpi', component: WorkOrderWorkOrderProduceKpiComponent },
@@ -32,7 +33,7 @@ const routes: Routes = [
   { path: 'work-order/complete/by-product', component: WorkOrderWorkOrderCompleteByProductComponent },
   { path: 'work-order/complete/kpi', component: WorkOrderWorkOrderCompleteKpiComponent },
   { path: 'work-order/complete/confirm', component: WorkOrderWorkOrderCompleteConfirmComponent },
-  { path: 'production-plan', component: WorkOrderProductionPlanComponent },
+  { path: 'production-plan', component: WorkOrderProductionPlanComponent, canActivate: [AuthGuard]  },
   { path: 'production-plan/maintenance', component: WorkOrderProductionPlanMaintenanceComponent },
   { path: 'work-order/line/maintenance', component: WorkOrderWorkOrderLineMaintenanceComponent },
   { path: 'bill-of-material/maintenance', component: WorkOrderBillOfMaterialMaintenanceComponent },

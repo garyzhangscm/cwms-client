@@ -12,4 +12,8 @@ export interface ColumnItem {
   showFilter: boolean;
   rowspan?: number;
   colspan?: number;
+  width?: string;
+  fixToTheLeft?: boolean;
+  fixToTheRight?: boolean;
+
 }

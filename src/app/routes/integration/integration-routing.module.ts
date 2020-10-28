@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from '../auth/guard/auth.guard';
 import { IntegrationIntegrationDataClientComponent } from './integration-data-client/integration-data-client.component';
 import { IntegrationIntegrationDataCustomerComponent } from './integration-data-customer/integration-data-customer.component';
 import { IntegrationIntegrationDataInventoryAdjustComponent } from './integration-data-inventory-adjust/integration-data-inventory-adjust.component';
@@ -17,7 +18,7 @@ import { IntegrationIntegrationDataWorkOrderConfirmComponent } from './integrati
 import { IntegrationIntegrationDataComponent } from './integration-data/integration-data.component';
 
 const routes: Routes = [
-  { path: 'integration-data', component: IntegrationIntegrationDataComponent },
+  { path: 'integration-data', component: IntegrationIntegrationDataComponent , canActivate: [AuthGuard] },
   { path: 'integration-data-client', component: IntegrationIntegrationDataClientComponent },
   { path: 'integration-data-customer', component: IntegrationIntegrationDataCustomerComponent },
   { path: 'integration-data-item', component: IntegrationIntegrationDataItemComponent },

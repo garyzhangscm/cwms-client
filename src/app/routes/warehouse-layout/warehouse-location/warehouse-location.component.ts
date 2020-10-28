@@ -32,7 +32,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          fixToTheLeft: true,
         }, {
           name: 'location-group',
           showSort: true,
@@ -42,7 +43,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          width: '200px'
         }, {
           name: 'location.aisle',
           showSort: true,
@@ -204,7 +206,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       setOfCheckedId = new Set<number>();
       checked = false;
       indeterminate = false;
-
+      scrollX = '100vw';   
+      
   editCache: { [key: string]: { edit: boolean; data: WarehouseLocation; locationGroupName: string } } = {};
   // Select control for Location Group Types
   locationGroupTypes: LocationGroupType[] = [];
@@ -218,6 +221,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   // Table data for display
   listOfAllLocations: WarehouseLocation[] = [];
   listOfDisplayLocations: WarehouseLocation[] = [];
+  
   
   
 

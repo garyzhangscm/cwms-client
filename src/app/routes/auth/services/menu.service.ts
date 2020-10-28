@@ -9,7 +9,9 @@ import { MenuGroup } from '../models/menu-group';
   providedIn: 'root',
 })
 export class MenuService {
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
+  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {
+       
+     }
 
   getMenus(): Observable<MenuGroup[]> {
     return this.http.get(`resource/menus`).pipe(map(res => res.data));

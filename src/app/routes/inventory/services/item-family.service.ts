@@ -19,12 +19,16 @@ export class ItemFamilyService {
   loadItemFamilies(refresh: boolean = false): Observable<ItemFamily[]> {
     // if we can find the value in local storage, we get it from their.
     // otherwise we get from server
+    /***
+     * 
+     * 
     if (!refresh) {
       const data = this.gzLocalStorageService.getItem('inventory.ItemFamily');
       if (data !== null) {
         return of(data);
       }
     }
+     */
     return this.http
       .get(`inventory/item-families?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`)
       .pipe(map(res => res.data))

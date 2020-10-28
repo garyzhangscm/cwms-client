@@ -38,45 +38,24 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
   <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllWorkOrder" [nzFooter]="tableFoot">
-    <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <thead>
       <tr>
-        <th nzShowExpand></th>
-        <th nzShowSort nzSortKey="number">
-          {{ 'work-order.number' | translate }}
-        </th>
-        <th nzShowSort nzSortKey="status">
-          {{ 'status' | translate }}
-        </th>
-        <th>
-          {{ 'item' | translate }}
-        </th>
-        <th>
-          {{ 'work-order.expected-quantity' | translate }}
-        </th>
-        <th>
-          {{ 'work-order.produced-quantity' | translate }}
-        </th>
+        <th nzWidth="40px"></th>
 
-        <th>
-          {{ 'work-order.totalLineExpectedQuantity' | translate }}</th>
-        <th>
-          {{ 'work-order.totalLineOpenQuantity' | translate }}</th>
-        <th>
-          {{ 'work-order.totalLineInprocessQuantity' | translate }}</th>
-        <th>
-          {{ 'work-order.totalLineDeliveredQuantity' | translate }}</th>
-        <th>
-          {{ 'work-order.totalLineConsumedQuantity' | translate }}</th>
-
-        <th>
-          {{ 'production-line' | translate }}
-        </th>
-        <!--
-
-        <th>
-          {{ 'work-order.assigned-user-count' | translate }}
-        </th>
-        -->
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | translate }}
+          </th> 
+  
         <th>
           {{ 'action' | translate }}
         </th>
@@ -87,7 +66,9 @@
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <tr>
 
-          <td nzShowExpand [(nzExpand)]="mapOfExpandedId[data.id]" (nzExpandChange)="showWorkOrderDetails(data)"></td>
+          
+          <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
+
           <td>{{ data.number }}</td>
           <td>{{ 'WORK-ORDER-STATUS-' + data.status | translate}}</td>
           <td>{{ data.item?.name }}</td>
@@ -133,30 +114,11 @@
                 </li>
               </ul>
             </nz-dropdown-menu>
-            <!--
-
-
-            <button nz-button nzType="primary" (click)="allocateWorkOrder(data)"
-              [nzLoading]="mapOfAllocationInProcessId[data.id]" [disabled]="!isWorkOrderAllocatable(data)">
-              {{ 'allocate' | translate }}
-            </button>
-            <nz-divider nzType="vertical"></nz-divider>
-
-            <button nz-button nzType="primary" (click)="produceFromWorkOrder(data)"
-              [nzLoading]="mapOfAllocationInProcessId[data.id]" [disabled]="!isWorkOrderReadyForProduce(data)">
-              {{ 'work-order.produce' | translate }}
-            </button>
-            <nz-divider nzType="vertical"></nz-divider>
-
-            <button nz-button nzType="primary" (click)="completeWorkOrder(data)"
-              [nzLoading]="mapOfAllocationInProcessId[data.id]" [disabled]="!isWorkOrderReadyForComplete(data)">
-              {{ 'complete' | translate }}
-            </button>
--->
+            
           </td>
 
         </tr>
-        <tr [nzExpand]="mapOfExpandedId[data.id]" class="inner-table">
+        <tr [nzExpand]="expandSet.has(data.id)" class="inner-table">
 
            
             <nz-tabset>

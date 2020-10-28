@@ -188,11 +188,12 @@ export class AuthWorkingTeamComponent implements OnInit {
       }
     });
   }
-  onExpandChange(id: number, checked: boolean): void {
+  onExpandChange(workingTeam: WorkingTeam, checked: boolean): void {
     if (checked) {
-      this.expandSet.add(id);
+      this.expandSet.add(workingTeam.id);
+      this.showWorkingTeamDetails(workingTeam);
     } else {
-      this.expandSet.delete(id);
+      this.expandSet.delete(workingTeam.id);
     }
   }
 

@@ -1,6 +1,7 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { DirectivesModule } from '../directives/directives.module';
 import { OutboundAllocationConfigurationComponent } from './allocation-configuration/allocation-configuration.component';
 import { OutboundCartonComponent } from './carton/carton.component';
@@ -24,7 +25,6 @@ import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
-import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 
 const COMPONENTS: Type<void>[] = [
   OutboundOrderComponent,

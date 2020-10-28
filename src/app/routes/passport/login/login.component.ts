@@ -1,12 +1,13 @@
-import { Component, Inject, OnDestroy, Optional } from '@angular/core';
+import { Component, Inject, Injector, OnDestroy, Optional } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { StartupService } from '@core';
+import { I18NService, StartupService } from '@core';
 import { ReuseTabService } from '@delon/abc/reuse-tab';
 import { DA_SERVICE_TOKEN, ITokenService, SocialOpenType, SocialService } from '@delon/auth';
 import { SettingsService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -35,6 +36,8 @@ export class UserLoginComponent implements OnDestroy {
     public msg: NzMessageService,
     private warehouseService: WarehouseService,
     private companyService: CompanyService,
+    private i18n: I18NService,
+    private injector: Injector,
   ) {
     this.form = fb.group({
       companyCode: [null, [Validators.required, Validators.minLength(1)]],
@@ -89,6 +92,10 @@ export class UserLoginComponent implements OnDestroy {
       this.form.controls.companyCode.enable();
     }
     this.form.controls.companyCode.setValue(this.defaultCompanyCode);
+  }
+  
+  private get notification(): NzNotificationService {
+    return this.injector.get(NzNotificationService);
   }
 
   switch({ index }: { index: number }): void {
@@ -145,8 +152,10 @@ export class UserLoginComponent implements OnDestroy {
         password: this.password.value,
       })
       .subscribe((res) => {
-        if (res.msg !== 'ok') {
+        if (res.result !== 0) {
           this.error = res.msg;
+          console.log(`we got error: ${res.msg}`); ;
+          this.notification.error(`${res.result}`, this.i18n.fanyi(res.msg));
           return;
         }
         // 清空路由复用信息

@@ -45,9 +45,19 @@
             {{ 'user.username' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          [nzErrorTip]="usernameErrorTpl">
             <input nz-input [(ngModel)]="currentUser.username" id="username" name="username" required
-              [disabled]="modifying" />
+              [disabled]="modifying" variable="username" appNewNumberValidator  #username="ngModel"
+              [ngModelOptions]="{updateOn: 'blur'}"/>
+
+              <ng-template #usernameErrorTpl let-control>
+                <div *ngIf="username.invalid && (username.dirty || username.touched)">
+                  <ng-container *ngIf="username.errors.errorCode">
+                    {{username.errors.errorCode | translate}}</ng-container>
+                  <ng-container *ngIf="control.hasError('required')">{{ 'error.form.field.required' | translate }}</ng-container>
+                </div>
+              </ng-template>
+
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -96,7 +106,7 @@
       </div>
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="email">
+          <nz-form-label [nzSm]="7" [nzXs]="24" nzFor="email">
             {{ 'email' | translate }}
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
@@ -109,10 +119,12 @@
     <div nz-row [nzGutter]="24">
 
       <div nz-col [nzSpan]="8">
-        <nz-form-item>
-          <nz-form-control>
-            <label nz-checkbox [(ngModel)]="currentUser.enabled" name="enabled">
-              <span>{{ 'enabled'  | translate }}</span>
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="email">
+            {{ 'enabled' | translate }}
+          </nz-form-label>
+          <nz-form-control  [nzSm]="14" [nzXs]="24" >
+            <label nz-checkbox [(ngModel)]="currentUser.enabled" name="enabled"> 
 
 
             </label>
@@ -120,18 +132,23 @@
         </nz-form-item>
       </div>
       <div nz-col [nzSpan]="8">
-        <nz-form-item>
-          <nz-form-control>
-            <label nz-checkbox [(ngModel)]="currentUser.locked" name="locked">
-              <span>{{ 'locked'  | translate }}</span></label>
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="email">
+            {{ 'locked' | translate }}
+          </nz-form-label>
+          <nz-form-control  [nzSm]="14" [nzXs]="24" >
+            <label nz-checkbox [(ngModel)]="currentUser.locked" name="locked"> </label>
           </nz-form-control>
         </nz-form-item>
       </div>
       <div nz-col [nzSpan]="8">
-        <nz-form-item>
-          <nz-form-control>
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="7" [nzXs]="26" nzFor="email">
+            {{ 'user.change-password-at-next-logon' | translate }}
+          </nz-form-label>
+          <nz-form-control  [nzSm]="14" [nzXs]="24" >
             <label nz-checkbox [(ngModel)]="currentUser.changePasswordAtNextLogon" name="changePasswordAtNextLogon">
-              <span>{{ 'user.change-password-at-next-logon' | translate }}</span>
+              
             </label>
           </nz-form-control>
         </nz-form-item>

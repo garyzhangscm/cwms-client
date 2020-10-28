@@ -3,6 +3,7 @@ import { WorkingTeam } from './working-team';
 
 export interface User {
   id?: number;
+  companyId?:number;
   username: string;
   password: string;
   firstname: string;

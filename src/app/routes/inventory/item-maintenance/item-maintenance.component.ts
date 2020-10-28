@@ -245,19 +245,22 @@ export class InventoryItemMaintenanceComponent implements OnInit {
       .filter(unitOfMeasure => unitOfMeasure.name === unitOfMeasureName)
       .forEach(
         unitOfMeasure =>
-          (itemPackageType.itemUnitOfMeasures = [
-            ...itemPackageType.itemUnitOfMeasures,
-            {
-              unitOfMeasure,
-              warehouseId: this.warehouseService.getCurrentWarehouse().id,
-              unitOfMeasureId: unitOfMeasure === null ? undefined : unitOfMeasure.id,
-              quantity,
-              weight,
-              length: length === null ? 0 : length,
-              width: width === null ? 0 : width,
-              height: height === null ? 0 : height,
-            },
-          ]),
+          {
+            itemPackageType.itemUnitOfMeasures = [
+              ...itemPackageType.itemUnitOfMeasures,
+              {
+                unitOfMeasure,
+                warehouseId: this.warehouseService.getCurrentWarehouse().id,
+                unitOfMeasureId: unitOfMeasure === null ? undefined : unitOfMeasure.id,
+                quantity,
+                weight,
+                length: length === null ? 0 : length,
+                width: width === null ? 0 : width,
+                height: height === null ? 0 : height,
+              },
+            ];
+            itemPackageType.itemUnitOfMeasures.sort((a, b) => a.quantity! - b.quantity!);
+        }
       );
   }
 

@@ -332,11 +332,14 @@ export class AuthRoleComponent implements OnInit {
       this.search(1);
     });
   }
-  onExpandChange(id: number, checked: boolean): void {
+  onExpandChange(role: Role, checked: boolean): void {
     if (checked) {
-      this.expandSet.add(id);
+      this.expandSet.add(role.id);
+      this.loadUserAndMenu(true, role);
     } else {
-      this.expandSet.delete(id);
+      this.expandSet.delete(role.id);
     }
+
+  
   }
 }
