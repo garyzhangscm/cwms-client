@@ -8,9 +8,11 @@
         <nz-form-label for="client" [nzSm]="3" [nzXs]="3">
           {{ 'client' | translate }}
         </nz-form-label>
-        <nz-select nzMode="tags" formControlName="taggedClients">
-          <nz-option *ngFor="let client of clients" [nzLabel]="client.label" [nzValue]="client.value"></nz-option>
-        </nz-select>
+        <nz-form-control [nzSpan]="14">
+          <nz-select nzMode="tags" formControlName="taggedClients">
+            <nz-option *ngFor="let client of clients" [nzLabel]="client.label" [nzValue]="client.value"></nz-option>
+          </nz-select>
+        </nz-form-control>
       </nz-form-item>
     </div>
 
@@ -19,19 +21,32 @@
         <nz-form-label for="item-family" [nzSm]="3" [nzXs]="3">
           {{ 'item-family' | translate }}
         </nz-form-label>
-        <nz-select nzMode="tags" formControlName="taggedItemFamilies">
-          <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.label" [nzValue]="itemFamily.value">
-          </nz-option>
-        </nz-select>
+        
+        <nz-form-control [nzSpan]="14">
+          <nz-select nzMode="tags" formControlName="taggedItemFamilies">
+            <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.label" [nzValue]="itemFamily.value">
+            </nz-option>
+
+          </nz-select>
+        </nz-form-control>
       </nz-form-item>
     </div>
+  </div>
+  <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
       <nz-form-item nzFlex>
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="name">
           {{ 'item' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
-          <input nz-input name="itemName" id="itemName" formControlName="itemName" />
+
+          <nz-input-group nzSearch [nzAddOnAfter]="itemSuffixIconButton">
+            <input nz-input name="itemName" id="itemName" formControlName="itemName" />
+          </nz-input-group>
+          <ng-template #itemSuffixIconButton>
+            <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
+            </app-inventory-item-query-popup>
+          </ng-template> 
         </nz-form-control>
       </nz-form-item>
     </div>
@@ -41,7 +56,14 @@
           {{ 'location' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
-          <input nz-input name="location" id="location" formControlName="location" />
+
+          <nz-input-group nzSearch [nzAddOnAfter]="locationSuffixIconButton">
+            <input nz-input name="location" id="location" formControlName="location" />
+          </nz-input-group>
+          <ng-template #locationSuffixIconButton>
+            <app-warehouse-layout-location-query-popup (recordSelected)="processLocationQueryResult($event)">
+            </app-warehouse-layout-location-query-popup>
+          </ng-template> 
         </nz-form-control>
       </nz-form-item>
     </div>

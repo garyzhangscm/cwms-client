@@ -25,6 +25,10 @@
       "@core/*": [
         "src/app/core/*"
       ],
+      "typeRoots": [
+        "node_modules/@types",
+        "src/typings.d.ts"
+      ],
       "@env/*": ["src/environments/*"]
     }
   },

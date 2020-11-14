@@ -23,6 +23,7 @@ import { InventoryItemFamilyMaintenanceConfirmComponent } from './item-family-ma
 import { InventoryItemFamilyMaintenanceComponent } from './item-family-maintenance/item-family-maintenance.component';
 import { InventoryItemFamilyComponent } from './item-family/item-family.component';
 import { InventoryItemMaintenanceComponent } from './item-maintenance/item-maintenance.component';
+import { InventoryItemQueryPopupComponent } from './item-query-popup/item-query-popup.component';
 import { InventoryItemComponent } from './item/item.component';
 import { InventoryMovementPathConfirmComponent } from './movement-path-confirm/movement-path-confirm.component';
 import { InventoryMovementPathMaintenanceComponent } from './movement-path-maintenance/movement-path-maintenance.component';
@@ -62,7 +63,7 @@ const routes: Routes = [
   },
   { path: 'inventory-adjustment-threshold-confirm', component: InventoryInventoryAdjustmentThresholdConfirmComponent },
   { path: 'item/maintenance', component: InventoryItemMaintenanceComponent },
-];
+  { path: 'item-query-popup', component: InventoryItemQueryPopupComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

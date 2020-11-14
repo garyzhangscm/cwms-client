@@ -22,17 +22,20 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
 
   scrollX = '100vw';  
 
+  locationNameColumn: ColumnItem = 
+    {
+      name: 'location.name',
+      sortOrder: null,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.name.localeCompare(b.name),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false,
+      
+    };
+
   listOfColumns: ColumnItem[] = [    
-        {
-          name: 'location.name',
-          sortOrder: null,
-          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.name.localeCompare(b.name),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
         {
               name: 'location-group',
               sortOrder: null,
@@ -332,5 +335,16 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
       this.recordSelected.emit('');
     }
     this.queryModal.destroy();
+  }
+  
+  rowClicked(location: WarehouseLocation): void {
+    // WHen the user click the row, if 
+    // toggle the check box for this row
+    if (this.setOfCheckedId.has(location.id!)) {
+      this.updateCheckedSet(location.id!, false); 
+    }
+    else {      
+      this.updateCheckedSet(location.id!, true); 
+    }
   }
 }

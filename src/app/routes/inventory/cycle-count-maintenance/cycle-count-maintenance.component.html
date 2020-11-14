@@ -64,37 +64,107 @@
     </div>
 
     <div nz-row [nzGutter]="24" *ngIf='requestTypeSelect.value'>
-      <div nz-col [nzSpan]="8">
-        <nz-form-item nzFlex>
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="startValue" [ngSwitch]="requestTypeSelect.value">
-            <span *ngSwitchCase="'BY_LOCATION_RANGE'">
-              {{ 'cycle-count-request.start-location' | translate }}</span>
-            <span *ngSwitchCase="'BY_ITEM_RANGE'">
-              {{ 'cycle-count-request.start-item' | translate }}</span>
-            <span *ngSwitchCase="'BY_AISLE_RANGE'">
-              {{ 'cycle-count-request.start-aisle' | translate }}</span>
+      <div nz-col [nzSpan]="8" [ngSwitch]="requestTypeSelect.value">
+        <nz-form-item nzFlex *ngSwitchCase="'BY_LOCATION_RANGE'" >
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="startValue" >
+                {{ 'cycle-count-request.start-location' | translate }}
+                
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-            nzErrorTip="{{ 'error.form.field.required' | translate }}">
-            <input nz-input formControlName="startValue" id="startValue" name="startValue" required />
+                  nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <nz-input-group nzSearch [nzAddOnAfter]="startLocationSuffixIconButton"> 
+               <input nz-input formControlName="startValue" id="startValue" name="startValue" required />
+            </nz-input-group>
+            <ng-template #startLocationSuffixIconButton>
+               <app-warehouse-layout-location-query-popup (recordSelected)="processStartValueQueryResult($event)">
+               </app-warehouse-layout-location-query-popup>
+            </ng-template> 
           </nz-form-control>
         </nz-form-item>
-      </div>
 
-      <div nz-col [nzSpan]="8">
-        <nz-form-item nzFlex>
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="endValue" [ngSwitch]="requestTypeSelect.value">
-            <span *ngSwitchCase="'BY_LOCATION_RANGE'">
-              {{ 'cycle-count-request.end-location' | translate }}</span>
-            <span *ngSwitchCase="'BY_ITEM_RANGE'">
-              {{ 'cycle-count-request.end-item' | translate }}</span>
-            <span *ngSwitchCase="'BY_AISLE_RANGE'">
-              {{ 'cycle-count-request.end-aisle' | translate }}</span>
-
+        
+        <nz-form-item nzFlex *ngSwitchCase="'BY_ITEM_RANGE'" >
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="startValue" >
+                {{ 'cycle-count-request.start-item' | translate }}
+                
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-            nzErrorTip="{{ 'error.form.field.required' | translate }}">
-            <input nz-input formControlName="endValue" id="endValue" name="endValue" required />
+                  nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <nz-input-group nzSearch [nzAddOnAfter]="startItemSuffixIconButton"> 
+              <input nz-input formControlName="startValue" id="startValue" name="startValue" required />
+            </nz-input-group>
+            <ng-template #startItemSuffixIconButton>
+              <app-inventory-item-query-popup (recordSelected)="processStartValueQueryResult($event)">
+              </app-inventory-item-query-popup>
+            </ng-template> 
+          </nz-form-control>
+        </nz-form-item>
+
+        
+        <nz-form-item nzFlex *ngSwitchCase="'BY_AISLE_RANGE'" >
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="startValue" >
+                {{ 'cycle-count-request.start-aisle' | translate }}
+                
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+                  nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <nz-input-group> 
+              <input nz-input formControlName="startValue" id="startValue" name="startValue" required />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        
+      </div>
+
+      <div nz-col [nzSpan]="8" [ngSwitch]="requestTypeSelect.value">
+
+        
+        <nz-form-item nzFlex *ngSwitchCase="'BY_LOCATION_RANGE'" >
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="endValue" >
+                {{ 'cycle-count-request.end-location' | translate }}
+                
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+                  nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <nz-input-group nzSearch [nzAddOnAfter]="endLocationSuffixIconButton"> 
+               <input nz-input formControlName="endValue" id="endValue" name="endValue" required />
+            </nz-input-group>
+            <ng-template #endLocationSuffixIconButton>
+               <app-warehouse-layout-location-query-popup (recordSelected)="processEndValueQueryResult($event)">
+               </app-warehouse-layout-location-query-popup>
+            </ng-template> 
+          </nz-form-control>
+        </nz-form-item>
+
+        
+        <nz-form-item nzFlex *ngSwitchCase="'BY_ITEM_RANGE'" >
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="endValue" >
+                {{ 'cycle-count-request.end-item' | translate }}
+                
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+                  nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <nz-input-group nzSearch [nzAddOnAfter]="endItemSuffixIconButton"> 
+              <input nz-input formControlName="endValue" id="endValue" name="endValue" required />
+            </nz-input-group>
+            <ng-template #endItemSuffixIconButton>
+              <app-inventory-item-query-popup (recordSelected)="processEndValueQueryResult($event)">
+              </app-inventory-item-query-popup>
+            </ng-template> 
+          </nz-form-control>
+        </nz-form-item>
+
+        
+        <nz-form-item nzFlex *ngSwitchCase="'BY_AISLE_RANGE'" >
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="endValue" >
+                {{ 'cycle-count-request.end-aisle' | translate }}
+                
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+                  nzErrorTip="{{ 'error.form.field.required' | translate }}">
+            <nz-input-group> 
+              <input nz-input formControlName="endValue" id="endValue" name="endValue" required />
+            </nz-input-group>
           </nz-form-control>
         </nz-form-item>
       </div>

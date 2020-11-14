@@ -1,5 +1,4 @@
 import { LocationGroup } from './location-group';
-import { Inventory } from '../../inventory/models/inventory';
 
 export interface WarehouseLocation {
   id: number;

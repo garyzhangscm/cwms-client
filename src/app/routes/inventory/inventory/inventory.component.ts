@@ -1,25 +1,19 @@
 import { formatDate } from '@angular/common';
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Client } from '../../common/models/client';
-import { ReasonCode } from '../../common/models/reason-code';
-import { ReasonCodeType } from '../../common/models/reason-code-type.enum';
+
 import { ClientService } from '../../common/services/client.service';
-import { ReasonCodeService } from '../../common/services/reason-code.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
-import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { Inventory } from '../models/inventory';
-import { InventoryStatus } from '../models/inventory-status';
-import { Item } from '../models/item';
 import { ItemFamily } from '../models/item-family';
-import { ItemPackageType } from '../models/item-package-type';
 import { InventoryService } from '../services/inventory.service';
 import { ItemFamilyService } from '../services/item-family.service';
 
@@ -396,5 +390,14 @@ export class InventoryInventoryComponent implements OnInit {
         },
       );
     });
+  }
+
+  processItemQueryResult(selectedItemName: any): void {
+    console.log(`start to query with item name ${selectedItemName}`);
+    this.searchForm.controls.itemName.setValue(selectedItemName); 
+  }
+  processLocationQueryResult(selectedLocationName: any): void {
+    console.log(`start to query with location name ${selectedLocationName}`);
+    this.inventoryMovementForm.controls.destinationLocation.setValue(selectedLocationName); 
   }
 }

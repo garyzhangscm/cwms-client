@@ -69,7 +69,21 @@
       >
       <thead>
         <tr>
-          <th nzWidth="62px"></th>
+          <th nzWidth="62px" nzLeft></th>
+
+          <th
+          
+            [nzSortOrder]="locationNameColumn.sortOrder"
+            [nzSortFn]="locationNameColumn.sortFn"
+            [nzSortDirections]="locationNameColumn.sortDirections"
+            [nzFilterMultiple]="locationNameColumn.filterMultiple"
+            [nzFilters]="locationNameColumn.listOfFilter"
+            [nzFilterFn]="locationNameColumn.filterFn"        
+            [nzShowFilter]="locationNameColumn.showFilter"            
+            nzLeft
+          >
+            {{ locationNameColumn.name | translate }}
+          </th> 
 
           <th
             *ngFor="let column of listOfColumns"
@@ -79,20 +93,22 @@
             [nzFilterMultiple]="column.filterMultiple"
             [nzFilters]="column.listOfFilter"
             [nzFilterFn]="column.filterFn"        
-            [nzShowFilter]="column.showFilter"
+            [nzShowFilter]="column.showFilter"   
+            
           >
             {{ column.name | translate }}
           </th> 
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let data of rowSelectionTable.data">
+        <tr *ngFor="let data of rowSelectionTable.data" (click)="rowClicked(data)">
           <td
             [nzChecked]="setOfCheckedId.has(data.id)" 
-            (nzCheckedChange)="onItemChecked(data.id, $event)"
+            (nzCheckedChange)="onItemChecked(data.id, $event)" nzLeft
           ></td>
 
-          <td>{{ data.name }}</td>
+<!-- Display the result -->
+          <td nzLeft>{{ data.name }}</td>
           <td>{{ data.locationGroup.description }}</td>
           <td>{{ data.aisle }}</td>
           <td>{{ data.length }}</td>

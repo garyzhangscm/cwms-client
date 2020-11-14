@@ -198,25 +198,13 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
   searching = false;
   searchResult = '';
 
+  requestInProcess = false;
+  readyForProcessingRequest = false;
+
   // Table data for display
   listOfAllInventoryAdjustmentRequests: InventoryAdjustmentRequest[] = [];
   listOfDisplayInventoryAdjustmentRequests: InventoryAdjustmentRequest[] = [];
-  // Sort key: field's nzSortKey value
-  // sort value: ascend / descend
-  sortKey: string | null = null;
-  sortValue: string | null = null;
-  // Filters meta data
-  filtersByLpn = [];
-  filtersByItem = [];
-  filtersByItemPackageType = [];
-  filtersByLocation = [];
-  filtersByInventoryStatus = [];
-  // Save filters that already selected
-  selectedFiltersByLpn: string[] = [];
-  selectedFiltersByItem: string[] = [];
-  selectedFiltersByItemPackageType: string[] = [];
-  selectedFiltersByLocation: string[] = [];
-  selectedFiltersByInventoryStatus: string[] = [];
+  currentProcessingRequest: InventoryAdjustmentRequest | undefined = undefined;
 
   inventoryAdjustmentRequestProcessForm!: FormGroup;
 
@@ -256,12 +244,6 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
     this.searchForm.reset();
     this.listOfAllInventoryAdjustmentRequests = [];
     this.listOfDisplayInventoryAdjustmentRequests = [];
-
-    this.filtersByLpn = [];
-    this.filtersByItem = [];
-    this.filtersByItemPackageType = [];
-    this.filtersByLocation = [];
-    this.filtersByInventoryStatus = [];
   }
   search(inventoryId?: number): void {
     this.searching = true;
@@ -294,78 +276,14 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
     this.listOfAllInventoryAdjustmentRequests = inventoryAdjustmentRequestRes;
     this.listOfDisplayInventoryAdjustmentRequests = inventoryAdjustmentRequestRes;
 
-    this.filtersByLpn = [];
-    this.filtersByItem = [];
-    this.filtersByItemPackageType = [];
-    this.filtersByLocation = [];
-    this.filtersByInventoryStatus = [];
-
-    const existingLpn = new Set();
-    const existingItemId = new Set();
-    const existingItemPackageTypeId = new Set();
-    const existingLocation = new Set();
-    const existingInventoryStatusId = new Set();
-
     
   }
 
   currentPageDataChange($event: InventoryAdjustmentRequest[]): void {
     this.listOfDisplayInventoryAdjustmentRequests = $event;
   }
-  sort(sort: { key: string; value: string }): void {
-    this.sortKey = sort.key;
-    this.sortValue = sort.value;
-    this.sortAndFilter();
-  }
-
-  filter(
-    selectedFiltersByLpn: string[],
-    selectedFiltersByItem: string[],
-    selectedFiltersByItemPackageType: string[],
-    selectedFiltersByLocation: string[],
-    selectedFiltersByInventoryStatus: string[],
-  ): void {
-    this.selectedFiltersByLpn = selectedFiltersByLpn;
-    this.selectedFiltersByItem = selectedFiltersByItem;
-    this.selectedFiltersByItemPackageType = selectedFiltersByItemPackageType;
-    this.selectedFiltersByLocation = selectedFiltersByLocation;
-    this.selectedFiltersByInventoryStatus = selectedFiltersByInventoryStatus;
-    this.sortAndFilter();
-  }
-
-  sortAndFilter(): void {
-    // filter data
-    const filterFunc = (inventoryActivity: {
-      id: number;
-      lpn: string;
-      location: WarehouseLocation;
-      item: Item;
-      itemPackageType: ItemPackageType;
-      inventoryStatus: InventoryStatus;
-    }) =>
-      (this.selectedFiltersByLpn.length
-        ? this.selectedFiltersByLpn.some(lpn => inventoryActivity.lpn.indexOf(lpn) !== -1)
-        : true) &&
-      (this.selectedFiltersByItem.length
-        ? this.selectedFiltersByItem.some(id => inventoryActivity.item !== null && inventoryActivity.item.id === +id)
-        : true) &&
-      (this.selectedFiltersByItemPackageType.length
-        ? this.selectedFiltersByItemPackageType.some(
-            id => inventoryActivity.itemPackageType !== null && inventoryActivity.itemPackageType.id === +id,
-          )
-        : true) &&
-      (this.selectedFiltersByLocation.length
-        ? this.selectedFiltersByLocation.some(location => inventoryActivity.location.name.indexOf(location) !== -1)
-        : true) &&
-      (this.selectedFiltersByInventoryStatus.length
-        ? this.selectedFiltersByInventoryStatus.some(
-            id => inventoryActivity.inventoryStatus !== null && inventoryActivity.inventoryStatus.id === +id,
-          )
-        : true);
-    const data = this.listOfAllInventoryAdjustmentRequests.filter(inventoryActivity => filterFunc(inventoryActivity));
-
-    
-  }
+  
+  
 
   initSearchForm(): void {
     // initiate the search form
@@ -381,6 +299,7 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
     inventoryAdjustmentRequest: InventoryAdjustmentRequest,
     tplRequestProcessModalTitle: TemplateRef<{}>,
     tplRequestProcessModalContent: TemplateRef<{}>,
+    tplRequestProcessModalFooter: TemplateRef<{}>,
   ): void {
     this.inventoryAdjustmentRequestProcessForm = this.fb.group({
       lpn: new FormControl({ value: inventoryAdjustmentRequest.lpn, disabled: true }),
@@ -395,27 +314,41 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
       approved: new FormControl({ value: true, disabled: false }),
       comment: new FormControl({ value: inventoryAdjustmentRequest.comment, disabled: true }),
     });
+    this.requestInProcess = false;
+    this.readyForProcessingRequest = false;
+    this.currentProcessingRequest = inventoryAdjustmentRequest;
+
 
     this.inventoryAdjustmentRequestModal = this.modalService.create({
       nzTitle: tplRequestProcessModalTitle,
       nzContent: tplRequestProcessModalContent,
-      nzOkText: this.i18n.fanyi('confirm'),
-      nzCancelText: this.i18n.fanyi('cancel'),
-      nzMaskClosable: false,
-      nzOnCancel: () => {
-        this.inventoryAdjustmentRequestModal.destroy();
-        // this.refreshReceiptResults();
-      },
-      nzOnOk: () => {
-        this.processInventoryAdjustmentRequest(
-          inventoryAdjustmentRequest,
-          this.inventoryAdjustmentRequestProcessForm.controls.approved.value,
-          this.inventoryAdjustmentRequestProcessForm.controls.comment.value,
-        );
-      },
+      nzFooter: tplRequestProcessModalFooter,
+
       nzWidth: 1000,
     });
+
+
+   
   }
+ 
+
+  closeRequestProcessModal(): void{
+    this.requestInProcess = false;
+    this.currentProcessingRequest = undefined;
+    this.inventoryAdjustmentRequestModal.destroy();
+
+  }
+  
+  confirmRequest(): void {
+    this.requestInProcess = true;
+    this.processInventoryAdjustmentRequest(
+      this.currentProcessingRequest!,
+      this.inventoryAdjustmentRequestProcessForm.controls.approved.value,
+      this.inventoryAdjustmentRequestProcessForm.controls.comment.value,
+    );
+  }
+  
+
   processInventoryAdjustmentRequest(
     inventoryAdjustmentRequest: InventoryAdjustmentRequest,
     approved: boolean,
@@ -424,10 +357,14 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
     console.log(`approved: ${approved}, comment: ${comment}`);
     this.inventoryAdjustmentRequestService
       .processInventoryAdjustmentRequest(inventoryAdjustmentRequest, approved, comment)
-      .subscribe(inventoryAdjustmentRequestRes => {
+      .subscribe(() => {
         this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.inventoryAdjustmentRequestModal.destroy();
+        this.requestInProcess = false;
+        this.currentProcessingRequest = undefined;
         this.refresh();
-      });
+      },
+      () => (this.requestInProcess = false));
   }
   refresh(): void {
     this.activatedRoute.queryParams.subscribe(params => {

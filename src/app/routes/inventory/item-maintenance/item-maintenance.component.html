@@ -29,7 +29,7 @@
         <nz-form-label [nzSm]="6" [nzXs]="24">
           {{ 'item.name' | translate }}
         </nz-form-label>
-        <nz-form-control *ngIf="currentItem.id === null" [nzSm]="14" [nzXs]="24" nzHasFeedback
+        <nz-form-control *ngIf="currentItem.id === undefined" [nzSm]="14" [nzXs]="24" nzHasFeedback
           [nzErrorTip]="itemNumberErrorTpl">
 
           <!--
@@ -50,10 +50,10 @@
           </ng-template>
         </nz-form-control>
 
-        <nz-form-control *ngIf="currentItem.id !== null" [nzSm]="14" [nzXs]="24">
+        <nz-form-control *ngIf="currentItem.id !== undefined" [nzSm]="14" [nzXs]="24">
 
 
-          <input *ngIf="currentItem.id !== null" nz-input [(ngModel)]="currentItem.name" required disabled />
+          <input  nz-input [(ngModel)]="currentItem.name" required disabled />
 
         </nz-form-control>
       </nz-form-item>
@@ -74,12 +74,12 @@
     <div nz-col [nzSpan]="8">
       <nz-form-item>
         <nz-form-label [nzSm]="6" [nzXs]="24">
-          {{ 'item-family' | translate }} - {{currentItem?.itemFamily!.id}}
+          {{ 'item-family' | translate }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" >
           <nz-select nzAllowClear [(ngModel)]="currentItem?.itemFamily!.id" (ngModelChange)="itemFamilySelected($event)" style="width: 200px;">
             <nz-option *ngFor="let validItemFamily of validItemFamilies" [nzValue]="validItemFamily.id"
-              [nzLabel]="validItemFamily.id" >
+              [nzLabel]="validItemFamily.description" >
             </nz-option>
           </nz-select>
         </nz-form-control>

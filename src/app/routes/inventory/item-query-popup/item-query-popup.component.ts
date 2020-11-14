@@ -1,26 +1,30 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder,  FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { I18NService } from '@core'; 
-import { TitleService, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
-import { Client } from '../../common/models/client';
-import { ClientService } from '../../common/services/client.service';
+import { Component, EventEmitter, OnInit, Output, TemplateRef } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { I18NService } from '@core';
+import { _HttpClient } from '@delon/theme';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
+import { LocationGroup } from '../../warehouse-layout/models/location-group';
+import { LocationGroupType } from '../../warehouse-layout/models/location-group-type';
+import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
+import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
+import { LocationService } from '../../warehouse-layout/services/location.service';
 import { Item } from '../models/item';
 import { ItemFamily } from '../models/item-family';
 import { ItemFamilyService } from '../services/item-family.service';
 import { ItemService } from '../services/item.service';
 
 @Component({
-  selector: 'app-inventory-item',
-  templateUrl: './item.component.html',
-  styleUrls: ['./item.component.less'],
+  selector: 'app-inventory-item-query-popup',
+  templateUrl: './item-query-popup.component.html',
+  styleUrls: ['./item-query-popup.component.less'],
 })
-export class InventoryItemComponent implements OnInit {
+export class InventoryItemQueryPopupComponent implements OnInit {
+  scrollX = '100vw';  
+
   listOfColumns: ColumnItem[] = [    
     {
           name: 'name',
@@ -189,89 +193,63 @@ export class InventoryItemComponent implements OnInit {
           width: '150px',
         }, 
         ];
-  expandSet = new Set<number>();
 
-  scrollX = '100vw';   
-  
-  // Select control for clients and item families
-  clients: Array<{ label: string; value: string }> = [];
+        
   itemFamilies: Array<{ label: string; value: string }> = [];
+  
+
   // Form related data and functions
+  queryModal!: NzModalRef;
   searchForm!: FormGroup;
 
+  searching = false;
+  queryInProcess = false;
+  searchResult = '';
+
+  
   // Table data for display
-  items: Item[] = [];
+  listOfAllItems: Item[] = [];
   listOfDisplayItems: Item[] = [];
   
-  
-  // editable cell
-  editId!: string | null;
-  editCol!: string | null;
+  // list of checked checkbox
+  setOfCheckedId  = new Set<number>();
 
-  searching = false;
-  searchResult = '';
+  @Output() recordSelected: EventEmitter<any> = new EventEmitter();
 
   constructor(
     private fb: FormBuilder,
     private itemService: ItemService,
-    private clientService: ClientService,
     private itemFamilyService: ItemFamilyService,
     private i18n: I18NService,
     private modalService: NzModalService,
-    private messageService: NzMessageService,
-    private titleService: TitleService,
-    private activatedRoute: ActivatedRoute,
     private utilService: UtilService,
   ) {}
 
   ngOnInit(): void {
-    this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.item'));
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      taggedClients: [null],
-      taggedItemFamilies: [null],
-      itemName: [null],
-    });
-
-    this.activatedRoute.queryParams.subscribe(params => {
-      if (params.name) {
-        this.searchForm.controls.itemName.setValue(params.name);
-        this.search();
-      }
-    });
-
-    // initiate the select control
-    this.clientService.loadClients().subscribe((clientList: Client[]) => {
-      clientList.forEach(client => this.clients.push({ label: client.description, value: client.id.toString() }));
-    });
-    this.itemFamilyService.loadItemFamilies().subscribe((itemFamilyList: ItemFamily[]) => {
-      itemFamilyList.forEach(itemFamily =>
-        this.itemFamilies.push({ label: itemFamily.description, value: itemFamily.id!.toString() }),
-      );
-    });
+    
   }
 
   resetForm(): void {
     this.searchForm.reset();
-    this.items = [];
+    this.listOfAllItems = [];
     this.listOfDisplayItems = []; 
   }
+
   search(): void {
     this.searching = true;
-    console.log(`Start to search with item ${this.searchForm.value.itemName}`);
     this.itemService
       .getItems(
         this.searchForm.value.itemName,
-        this.searchForm.value.taggedClients,
+        undefined,
         this.searchForm.value.taggedItemFamilies,
       )
       .subscribe(
-        itemRes => {
-          this.items = itemRes;
-          this.listOfDisplayItems = itemRes; 
+        itemRes => { 
+          this.listOfAllItems = itemRes;
+          this.listOfDisplayItems = itemRes;
+          this.setOfCheckedId.clear();
 
           this.searching = false;
-
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
             rowCount: itemRes.length,
@@ -283,48 +261,89 @@ export class InventoryItemComponent implements OnInit {
         },
       );
   }
-
-  currentPageDataChange($event: Item[]): void {
-    this.listOfDisplayItems = $event;
-  }
-
-   
  
+  
 
-  startEdit(id: string, col: string, event: MouseEvent): void {
-    event.preventDefault();
-    event.stopPropagation();
-    this.editId = id;
-    this.editCol = col;
-  }
-
-  showItemPackageType(item: Item): void {
-    // When we expand to show the item package type, load the details of the item package type
-  }
-
-  removeItem(item: Item): void {
-    // make sure we have at least one checkbox checked
-
-    this.modalService.confirm({
-      nzTitle: this.i18n.fanyi('modal.delete.header.title'),
-      nzContent: this.i18n.fanyi('modal.delete.content'),
-      nzOkText: this.i18n.fanyi('confirm'),
-      nzOkType: 'danger',
-      nzOnOk: () => {
-        this.itemService.removeItem(item).subscribe(res => {
-          this.messageService.success(this.i18n.fanyi('message.remove.success'));
-          this.search();
-        });
-      },
-      nzCancelText: this.i18n.fanyi('cancel'),
-      nzOnCancel: () => console.log('Cancel'),
-    });
-  }
-  onExpandChange(id: number, checked: boolean): void {
+  updateCheckedSet(id: number, checked: boolean): void {
     if (checked) {
-      this.expandSet.add(id);
+      this.setOfCheckedId.clear();
+      this.setOfCheckedId.add(id);
     } else {
-      this.expandSet.delete(id);
+      this.setOfCheckedId.delete(id);
     }
   }
+
+  currentPageDataChange(listOfDisplayItems: Item[]): void {
+    this.listOfDisplayItems = listOfDisplayItems; 
+  }
+ 
+
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked); 
+  }
+
+
+  isAnyRecordChecked(): boolean {
+    return this.listOfDisplayItems.some(item => this.setOfCheckedId.has(item.id!));
+  }
+
+  openQueryModal(
+    tplQueryModalTitle: TemplateRef<{}>,
+    tplQueryModalContent: TemplateRef<{}>,
+    tplQueryModalFooter: TemplateRef<{}>,
+  ): void {
+    
+    this.listOfAllItems = [];
+    this.listOfDisplayItems = [];
+    this.createQueryForm();
+
+    // show the model
+    this.queryModal = this.modalService.create({
+      nzTitle: tplQueryModalTitle,
+      nzContent: tplQueryModalContent,
+      nzFooter: tplQueryModalFooter,
+
+      nzWidth: 1000,
+    });
+  }
+  createQueryForm(): void {
+    // initiate the search form
+    this.searchForm = this.fb.group({
+      taggedItemFamilies: [null],
+      itemName: [null],
+    });
+
+    // initiate the select control
+    this.itemFamilyService.loadItemFamilies().subscribe((itemFamilyList: ItemFamily[]) => {
+      itemFamilyList.forEach(itemFamily =>
+        this.itemFamilies.push({ label: itemFamily.description, value: itemFamily.id!.toString() }),
+      );
+    });
+  }
+  closeQueryModal(): void {
+    this.queryModal.destroy();
+  }
+  returnResult(): void {
+    // get the selected record
+    if (this.isAnyRecordChecked()) {
+      this.recordSelected.emit(
+        this.listOfDisplayItems.filter(item => (this.setOfCheckedId.has(item.id!)))[0].name,
+      );
+    } else {
+      this.recordSelected.emit('');
+    }
+    this.queryModal.destroy();
+
+  }
+  rowClicked(item: Item): void {
+    // WHen the user click the row, if 
+    // toggle the check box for this row
+    if (this.setOfCheckedId.has(item.id!)) {
+      this.updateCheckedSet(item.id!, false); 
+    }
+    else {      
+      this.updateCheckedSet(item.id!, true); 
+    }
+  }
+
 }

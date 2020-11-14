@@ -1,4 +1,4 @@
-import { HttpResponse } from '@angular/common/http';
+import { HttpResponse, HttpUrlEncodingCodec } from '@angular/common/http';
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponseBase } from '@angular/common/http';
 import { Injectable, Injector } from '@angular/core';
 import { Router } from '@angular/router';
@@ -38,7 +38,7 @@ export class DefaultInterceptor implements HttpInterceptor {
   private refreshToking = false;
   private refreshToken$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-  constructor(private injector: Injector, private messageService: NzMessageService, private i18n: I18NService) {
+  constructor(private injector: Injector, private messageService: NzMessageService, private i18n: I18NService ) {
     if (this.refreshTokenType === 'auth-refresh') {
       this.buildAuthRefresh();
     }
@@ -243,6 +243,8 @@ export class DefaultInterceptor implements HttpInterceptor {
     if (!url.startsWith('https://') && !url.startsWith('http://')) {
       url = environment.SERVER_URL + url;
     }
+
+    
 
     const newReq = req.clone({ url });
     return next.handle(newReq).pipe(

@@ -458,4 +458,17 @@ export class InventoryInventoryAdjustComponent implements OnInit {
       }
     });
   }
+  processLocationQueryResult(selectedLocationName: any): void {
+    
+    this.searchForm.controls.location.setValue(selectedLocationName); 
+  }
+  processItemQueryResult(selectedItemName: any): void {
+    this.itemService.getItems(selectedItemName).subscribe(itemRes => {
+      if (itemRes.length > 0) {
+        // with a name, we should only get one item information
+        this.currentInventory.item = itemRes[0];
+      }
+    });
+
+  }
 }

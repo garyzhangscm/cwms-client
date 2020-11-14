@@ -35,5 +35,6 @@ const COMPONENTS_NOROUNT: Type<void>[] = [];
     ...COMPONENTS,
     ...COMPONENTS_NOROUNT
   ],
+  exports: [WarehouseLayoutLocationQueryPopupComponent]
 })
 export class WarehouseLayoutModule { }

@@ -1,3 +1,4 @@
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -19,9 +20,12 @@ export class ItemService {
   ) {}
 
   getItems(name?: string, clients?: Client[], itemFamilies?: ItemFamily[]): Observable<Item[]> {
+    
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+
     let url = `inventory/items?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (name) {
-      url = `${url}&name=${name}`;
+      url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name)}`;
     }
     if (clients && clients.length > 0) {
       url = `${url}&clientIds=${clients.join(',')}`;
@@ -30,6 +34,8 @@ export class ItemService {
       url = `${url}&itemFamilyIds=${itemFamilies.join(',')}`;
     }
 
+    console.log(`start to get item by url\n ${url}`);
+    
     return this.http.get(url).pipe(map(res => res.data));
   }
   getItem(itemId: number): Observable<Item> {

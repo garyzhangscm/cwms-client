@@ -2,6 +2,7 @@ import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { DirectivesModule } from '../directives/directives.module';
+import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module';
 import { InventoryAuditCountConfirmComponent } from './audit-count-confirm/audit-count-confirm.component';
 import { InventoryAuditCountResultComponent } from './audit-count-result/audit-count-result.component';
 import { InventoryCountConfigComponent } from './count-config/count-config.component';
@@ -25,6 +26,7 @@ import { InventoryItemFamilyMaintenanceConfirmComponent } from './item-family-ma
 import { InventoryItemFamilyMaintenanceComponent } from './item-family-maintenance/item-family-maintenance.component';
 import { InventoryItemFamilyComponent } from './item-family/item-family.component';
 import { InventoryItemMaintenanceComponent } from './item-maintenance/item-maintenance.component';
+import { InventoryItemQueryPopupComponent } from './item-query-popup/item-query-popup.component';
 import { InventoryItemComponent } from './item/item.component';
 import { InventoryMovementPathConfirmComponent } from './movement-path-confirm/movement-path-confirm.component';
 import { InventoryMovementPathMaintenanceComponent } from './movement-path-maintenance/movement-path-maintenance.component';
@@ -61,7 +63,7 @@ const COMPONENTS: Type<void>[] = [
   InventoryInventoryAdjustmentThresholdMaintenanceComponent,
   InventoryInventoryAdjustmentThresholdConfirmComponent,
   InventoryItemMaintenanceComponent,
-];
+  InventoryItemQueryPopupComponent];
 const COMPONENTS_NOROUNT: Type<void>[] = [];
 
 @NgModule({
@@ -69,7 +71,8 @@ const COMPONENTS_NOROUNT: Type<void>[] = [];
     SharedModule,
     InventoryRoutingModule, 
     DirectivesModule,
-    NzDescriptionsModule
+    NzDescriptionsModule,
+    WarehouseLayoutModule
   ],
   declarations: [
     ...COMPONENTS,

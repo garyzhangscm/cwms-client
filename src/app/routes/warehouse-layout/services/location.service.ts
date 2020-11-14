@@ -1,3 +1,4 @@
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -12,6 +13,9 @@ export class LocationService {
   constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
   getLocations(locationGroupTypes?: string, locationGroups?: string, name?: string): Observable<WarehouseLocation[]> {
+    
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+
     let url = `layout/locations?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (locationGroupTypes) {
       url = `${url}&locationGroupTypeIds=${locationGroupTypes}`;
@@ -20,7 +24,7 @@ export class LocationService {
       url = `${url}&locationGroupIds=${locationGroups}`;
     }
     if (name) {
-      url = `${url}&name=${name}`;
+      url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name)}`;
     }
     return this.http.get(url).pipe(map(res => res.data));
   }

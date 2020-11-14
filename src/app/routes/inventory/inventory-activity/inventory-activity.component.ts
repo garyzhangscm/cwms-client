@@ -317,4 +317,11 @@ export class InventoryInventoryActivityComponent implements OnInit {
       );
     });
   }
+
+  processLocationQueryResult(selectedLocationName: any): void { 
+    this.searchForm.controls.location.setValue(selectedLocationName); 
+  }
+  processItemQueryResult(selectedItemName: any): void { 
+    this.searchForm.controls.itemName.setValue(selectedItemName); 
+  }
 }

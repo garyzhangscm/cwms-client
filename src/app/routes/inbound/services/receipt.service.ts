@@ -68,7 +68,7 @@ export class ReceiptService {
     return this.http.get(`inbound/receipts/${receipt.id}/inventories`).pipe(map(res => res.data));
   }
 
-  printReceipt(receipt: Receipt) {
+  printReceipt(receipt: Receipt): void {
     const reportName = `Inbound Receipt Sheet`;
     // Get the picks for the order
     this.printingService.print(reportName, this.generateReceiptReport(reportName, receipt));

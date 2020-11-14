@@ -18,4 +18,12 @@ export class ValidatorServiceService {
     }`;
     return this.http.post(url).pipe(map(res => res.data));
   }
+  validateExistingNumber(numberType: string, value: string): Observable<string> {
+    const url = `common/validator/validate-existing-number/${numberType}/${value}?warehouseId=${
+      this.warehouseService.getCurrentWarehouse().id
+    }&companyId=${
+      this.companyService.getCurrentCompany()?.id
+    }`;
+    return this.http.post(url).pipe(map(res => res.data));
+  }
 }

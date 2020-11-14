@@ -7,10 +7,12 @@
         <nz-form-label for="location_group_type" [nzSm]="3" [nzXs]="3">
           {{ 'location-group-type' | translate }}
         </nz-form-label>
-        <nz-select nzMode="tags" formControlName="taggedLocationGroupTypes">
-          <nz-option *ngFor="let locationGroupType of locationGroupTypes" [nzLabel]="locationGroupType.label"
-            [nzValue]="locationGroupType.value"></nz-option>
-        </nz-select>
+        <nz-form-control [nzSpan]="14">
+          <nz-select nzMode="tags" formControlName="taggedLocationGroupTypes">
+            <nz-option *ngFor="let locationGroupType of locationGroupTypes" [nzLabel]="locationGroupType.label"
+              [nzValue]="locationGroupType.value"></nz-option>
+          </nz-select>
+        </nz-form-control>
       </nz-form-item>
     </div>
 
@@ -19,10 +21,13 @@
         <nz-form-label for="location_group" [nzSm]="3" [nzXs]="3">
           {{ 'location-group' | translate }}
         </nz-form-label>
-        <nz-select nzMode="tags" formControlName="taggedLocationGroups">
-          <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.label"
-            [nzValue]="locationGroup.value"></nz-option>
-        </nz-select>
+        
+        <nz-form-control [nzSpan]="14">
+          <nz-select nzMode="tags" formControlName="taggedLocationGroups">
+            <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.label"
+              [nzValue]="locationGroup.value"></nz-option>
+          </nz-select>
+        </nz-form-control>
       </nz-form-item>
     </div>
   </div>
@@ -34,7 +39,13 @@
           {{ 'location' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
-          <input nz-input name="location" id="location" formControlName="location" />
+          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+            <input nz-input name="location" id="location" formControlName="location" />
+          </nz-input-group>
+          <ng-template #suffixIconButton>
+            <app-warehouse-layout-location-query-popup (recordSelected)="processLocationQueryResult($event)">
+            </app-warehouse-layout-location-query-popup>
+          </ng-template> 
         </nz-form-control>
       </nz-form-item>
     </div>
@@ -200,11 +211,30 @@
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNumber">
           {{ 'item' | translate }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-          nzErrorTip="{{ 'error.form.field.required' | translate }}">
-          <nz-input-group nzSize="large">
-            <input nz-input (blur)="itemNumberChanged($event.target.value)" id="itemNumber" name="itemNumber" />
+        <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="itemNumberErrorTpl">
+          <nz-input-group nzSearch [nzAddOnAfter]="itemSuffixIconButton">
+            <input variable="item-name" appExistingNumberValidator 
+            nz-input (blur)="itemNumberChanged($event.target.value)" 
+            [ngModel]="currentInventory.item?.name" id="itemNumber" name="itemNumber" 
+            required [ngModelOptions]="{updateOn: 'blur'}" #itemNumberModel="ngModel"/>
           </nz-input-group>
+
+          <ng-template #itemSuffixIconButton>
+            <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
+            </app-inventory-item-query-popup>
+          </ng-template> 
+
+          <ng-template #itemNumberErrorTpl let-control>
+            <div *ngIf="itemNumberModel.invalid && (itemNumberModel.dirty || itemNumberModel.touched)">
+              <ng-container *ngIf="itemNumberModel.errors.errorCode">
+                {{itemNumberModel.errors.errorCode | translate}}</ng-container>
+              <ng-container *ngIf="control.hasError('required')">
+                {{ 'error.form.field.required' | translate }}
+
+              </ng-container>
+            </div>
+          </ng-template>
+
         </nz-form-control>
       </nz-form-item>
     </div>
@@ -215,7 +245,7 @@
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
-          <nz-input-group nzSize="large">
+          <nz-input-group>
             <input nz-input [ngModel]="currentInventory?.item?.description" id="itemDescription" name="itemDescription"
               disabled />
           </nz-input-group>

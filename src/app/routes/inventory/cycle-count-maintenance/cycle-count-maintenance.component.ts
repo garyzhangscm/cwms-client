@@ -21,11 +21,13 @@ import { CycleCountRequestService } from '../services/cycle-count-request.servic
 import { CycleCountResultService } from '../services/cycle-count-result.service';
 import { ItemService } from '../services/item.service';
 
+
 @Component({
   selector: 'app-inventory-cycle-count-maintenance',
   templateUrl: './cycle-count-maintenance.component.html',
 })
 export class InventoryCycleCountMaintenanceComponent implements OnInit {
+
 
   listOfOpenCycleCountTableColumns: ColumnItem[] = [    
     {
@@ -340,6 +342,8 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    
+    
     this.titleService.setTitle(this.i18n.fanyi('page.inventory.cycle-count-request.title'));
 
     this.requestForm = this.fb.group({
@@ -844,8 +848,13 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   sortAuditCountResultsTable(sort: { key: string; value: string }): void {
     
   }
-
-
+ 
+  processStartValueQueryResult(selectedStartValue: any): void { 
+    this.requestForm.controls.startValue.setValue(selectedStartValue); 
+  }
+  processEndValueQueryResult(selectedEndValue: any): void { 
+    this.requestForm.controls.endValue.setValue(selectedEndValue); 
+  }
 
   
 }
