@@ -25,6 +25,10 @@ export class CompanyService {
   getCompany(id: number): Observable<Company> {
     return this.http.get(`layout/companies/${id}`).pipe(map(res => res.data));
   }
+  
+  validateCompanyCode(companyCode: string): Observable<number> {
+    return this.http.get(`layout/companies/validate?code=${companyCode}`).pipe(map(res => res.data));
+  }
 
   isSingleCompanyServer(): boolean {
     return localStorage.getItem('single_company_server') === 'true';

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { I18NService } from '@core/i18n/i18n.service';
 import { _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
@@ -16,6 +17,7 @@ export class AuditCountRequestService {
     private http: _HttpClient,
     private gzLocalStorageService: GzLocalStorageService,
     private printingService: PrintingService,
+    private i18n: I18NService,
   ) {}
 
   getAuditCountRequestDetails(batchId: string, refresh: boolean = false): Observable<AuditCountRequest[]> {
@@ -60,8 +62,11 @@ export class AuditCountRequestService {
 
     const pageLines: string[] = [];
 
+    console.log(`get : ${auditCountRequests.length} of audit count request`);
     auditCountRequests.forEach((auditCountRequest, index) => {
       if (index % this.COUNT_REQUEST_PER_PAGE === 0) {
+        
+        console.log(`audit count reuqest: add table header`);
         // Add a page header
         pageLines.push(`<h1>${reportName}</h1>
                         <h2>${batchId}</h2>
@@ -94,6 +99,62 @@ export class AuditCountRequestService {
       }
     });
 
+    // When auditCountRequests.length % this.COUNT_REQUEST_PER_PAGE !== 0
+    // It means we haven't setup the last page correctly yet. Let's
+    // add the page end and add the last page to the page list
+    if (auditCountRequests.length % this.COUNT_REQUEST_PER_PAGE !== 0) {
+      pageLines.push(`</table>`); 
+      if (this.COUNT_REQUEST_PER_PAGE - 
+        (auditCountRequests.length % this.COUNT_REQUEST_PER_PAGE) > 2) {
+
+          // we have enough room to print the summary
+          
+          pageLines.push(this.generateAuditCountRequestReportFooter(auditCountRequests.length)); 
+          pages.push(pageLines.join(''));
+          pageLines.length = 0;       
+      }
+      else {
+        // we don't have enough room in current page to print the summary,
+        // let's start a new page        
+        pages.push(pageLines.join(''));
+        pageLines.length = 0;       
+
+        pages.push(this.generateAuditCountRequestReportFooter(auditCountRequests.length));
+      }
+
+    }
+    else {
+      pages.push(this.generateAuditCountRequestReportFooter(auditCountRequests.length));
+    }
+    console.log(`will print audit count request: ${pages}`);
     return pages;
+  }
+
+  
+  generateAuditCountRequestReportFooter(totalLocationNumbers: number): string{
+
+    return `
+    <h2  style="text-align: left">${this.i18n.fanyi('summary')}</h2>
+        <table style="margin-top: 25px"> 
+            <tr> 
+                <td >${this.i18n.fanyi('count_user')}</td>
+                <td >_____________________</td>
+                <td >${this.i18n.fanyi('count_date')}</td>
+                <td >_____________________</td>                
+            </tr> 
+            <tr> 
+                <td >${this.i18n.fanyi('total_locations')}</td>
+                <td >${totalLocationNumbers}</td>
+                <td >${this.i18n.fanyi('counted_locations')}</td>
+                <td >_____________________</td>           
+            </tr> 
+            <tr> 
+                <td >${this.i18n.fanyi('discrepancy_locations')}</td>
+                <td >_____________________</td>
+                <td >${this.i18n.fanyi('comment')}</td>
+                <td >_____________________</td>
+            </tr>
+        </table>
+    `;
   }
 }

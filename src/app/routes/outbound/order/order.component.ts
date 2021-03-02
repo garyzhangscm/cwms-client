@@ -310,6 +310,7 @@ export class OutboundOrderComponent implements OnInit {
     } else {
       this.expandSet.delete(id);
     }
+    this.showAllOrderDetails();
   }
    
 
@@ -406,6 +407,17 @@ export class OutboundOrderComponent implements OnInit {
       this.showShortAllocations(order);
       this.showPickedInventory(order);
     }
+  }
+  
+  showAllOrderDetails(): void {
+    
+    this.listOfDisplayOrders.forEach(order => {
+      if (this.expandSet.has(order.id)) {
+        this.showPicks(order);
+        this.showShortAllocations(order);
+        this.showPickedInventory(order);
+      }
+    });
   }
   showPicks(order: Order): void {
     this.pickService.getPicksByOrder(order.id).subscribe(pickRes => {

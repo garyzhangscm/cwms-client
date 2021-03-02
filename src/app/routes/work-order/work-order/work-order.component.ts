@@ -60,16 +60,6 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           filterFn: null, 
           showFilter: false
         }, {
-          name: 'status',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableString(a.status?.toString(), b.status?.toString()),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
           name: 'work-order.expected-quantity',
           showSort: true,
           sortOrder: null,

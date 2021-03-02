@@ -23,6 +23,7 @@ const alainConfig: AlainConfig = {
     ignores: [
       /\/login/,
       /assets/,
+      /layout\/companies\/validate/,
       /passport/,
       /layout\/warehouses\/accessible\//,
       /resource\/site-information\/default/,

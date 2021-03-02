@@ -3,6 +3,7 @@ import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -88,7 +89,7 @@ export class PutawayConfigurationService {
   printPutawaySheet(inventories: Inventory[]) {
     const reportName = `Putaway Sheet`;
     // Get the picks for the order
-    this.printingService.print(reportName, this.generatePutawayReport(reportName, inventories));
+    this.printingService.print(reportName, this.generatePutawayReport(reportName, inventories), PrintPageOrientation.Landscape);
   }
 
   generatePutawayReport(reportName: string, inventories: Inventory[]): string[] {

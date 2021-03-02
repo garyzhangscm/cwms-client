@@ -44,6 +44,16 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
           filterFn: null, 
           showFilter: false
         }, {
+          name: 'location-group-type',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareNullableString(a.locationGroupType.description, b.locationGroupType.description),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        },{
           name: 'location-group.pickable',
           showSort: true,
           sortOrder: null,

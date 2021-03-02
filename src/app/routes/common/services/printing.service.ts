@@ -43,7 +43,6 @@ export class PrintingService {
 
     pages.forEach((page, index) => {
       // print the content
-      console.log(`start to print \n ${page}`);
       LODOP.ADD_PRINT_HTM(20, 10, '90%', '95%', this.addDefaultReportStyle(page));
       // If we will need to print any barcode in the page
       const currentPageBarcodes = this.getCucurrentPageBarcodes(barcodes, index);

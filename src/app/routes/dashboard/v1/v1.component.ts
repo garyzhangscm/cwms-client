@@ -71,7 +71,7 @@ export class DashboardV1Component implements OnInit {
     if (!this.platform.isBrowser || localStorage.getItem(KEY) === '1') {
       return;
     }
-    this.http.get(`./assets/tmp/on-boarding.json`).subscribe((res) => {
+    this.http.get(`./resource/assets/tmp/on-boarding.json`).subscribe((res) => {
       this.obSrv.start(res);
       localStorage.setItem(KEY, '1');
     });

@@ -51,7 +51,7 @@ export class ProductionPlanService {
     // Begin assigning parameters
     params = params.append('workOrderNumber', workOrder.number!);
     params = params.append('expectedQuantity', workOrder.expectedQuantity!.toString());
-    if (workOrder.productionLine !== null) {
+    if (workOrder.productionLine  && workOrder.productionLine.id) {
       params = params.append('productionLineId', workOrder.productionLine!.id.toString());
     }
     return this.http.post(url, params).pipe(map(res => res.data));

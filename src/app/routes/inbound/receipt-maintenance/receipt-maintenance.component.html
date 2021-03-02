@@ -325,7 +325,7 @@ nz-select<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="re
           (click)="showAddReceiptLineModal(tplReceiptLineModalTitle, tplReceiptLineModalContent)">
           {{ 'allocateLocation' | translate }}
         </button>
-        <button nz-button nz-dropdown [nzDropdownMenu]="printSelectionTpl" [nzLoading]="printingPutawayWork">
+        <button nz-button nz-dropdown [nzDropdownMenu]="printSelectionTpl" [nzLoading]="printingInProcess">
           {{ 'print' | translate }}<i nz-icon nzType="down"></i>
         </button>
         <nz-dropdown-menu #printSelectionTpl="nzDropdownMenu">

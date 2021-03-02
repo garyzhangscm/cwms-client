@@ -236,6 +236,10 @@ export class WorkOrderProductionPlanMaintenanceComponent implements OnInit {
   onOrderLineTableItemChecked(id: number, checked: boolean): void {
     this.updateOrderLineTableCheckedSet(id, checked);
     this.refreshOrderLineTableCheckedStatus();
+    
+    // refresh the production line structure that associated with the selected order lines
+    this.validOrderLines!.forEach(orderLine => this.selectedOrderLineChange(checked, orderLine));
+    
   }
 
   onOrderLineTableAllChecked(value: boolean): void {

@@ -240,7 +240,7 @@ export class WorkOrderProductionPlanComponent implements OnInit {
       producedQuantity: undefined,
       assignments:  [],
       status: WorkOrderStatus.PENDING,
-    };
+    }; 
     // show the model
     this.newWorkOrderModal = this.modalService.create({
       nzTitle: tplCreatingWorkOrderModalTitle,
@@ -252,13 +252,13 @@ export class WorkOrderProductionPlanComponent implements OnInit {
         this.newWorkOrderModal.destroy();
         this.search();
       },
-      nzOnOk: () => {
+      nzOnOk: () => { 
         this.createWorkOrder(productionPlanLine, this.newWorkOrder);
       },
       nzWidth: 1000,
     });
   }
-  createWorkOrder(productionPlanLine: ProductionPlanLine, workOrder: WorkOrder): void {
+  createWorkOrder(productionPlanLine: ProductionPlanLine, workOrder: WorkOrder): void { 
     this.productionPlanService.createWorkOrder(productionPlanLine, workOrder).subscribe(res => {
       this.message.success(this.i18n.fanyi('message.action.success'));
       this.search();

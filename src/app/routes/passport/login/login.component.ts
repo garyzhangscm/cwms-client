@@ -86,12 +86,15 @@ export class UserLoginComponent implements OnDestroy {
     this.singleCompanySystem = this.companyService.isSingleCompanyServer();
     if (this.singleCompanySystem === true) {
       this.defaultCompanyCode = this.companyService.getDefaultCompanyCode()!;
+      this.form.controls.companyCode.setValue(this.defaultCompanyCode);
       this.form.controls.companyCode.disable();
     } else {
       this.defaultCompanyCode = '';
-      this.form.controls.companyCode.enable();
+      this.form.controls.companyCode.enable(); 
+
+        this.form.controls.companyCode.setValue(this.companyService.getCurrentCompany()?.code);
+       
     }
-    this.form.controls.companyCode.setValue(this.defaultCompanyCode);
   }
   
   private get notification(): NzNotificationService {
@@ -140,13 +143,14 @@ export class UserLoginComponent implements OnDestroy {
     }
 
     // dev / aws-dev / etc
-    const loginURL = 'auth/login?_allow_anonymous=true';
+    const loginURL = `auth/login?_allow_anonymous=true`;
 
     // 默认配置中对所有HTTP请求都会强制 [校验](https://ng-alain.com/auth/getting-started) 用户 Token
     // 然一般来说登录请求不需要校验，因此可以在请求URL加上：`/login?_allow_anonymous=true` 表示不触发用户 Token 校验
     this.http
       .post(loginURL, {
         type: this.type,
+        companyId: this.companyService.getCurrentCompany()?.id,
         userName: this.userName.value,
         username: this.userName.value,
         password: this.password.value,
@@ -166,8 +170,9 @@ export class UserLoginComponent implements OnDestroy {
         this.tokenService.set(res.user);
 
         // get the company information
-        this.companyService.getCompanies(this.companyService.getDefaultCompanyCode()!).subscribe(companiesRes => {
-          if (companiesRes.length === 1) {
+        this.companyService.getCompanies(this.companyCode.value).subscribe(companiesRes => {
+          console.log(`company res length: ${companiesRes.length}`);
+          if (companiesRes.length === 1) { 
             this.companyService.setCurrentCompany(companiesRes[0]);
           }
         });
@@ -247,10 +252,32 @@ export class UserLoginComponent implements OnDestroy {
   }
   onCompanyCodeBlur(): void{
     // load the company
-    this.companyService.getCompanies(this.companyCode.value).subscribe(companiesRes => {
-      if (companiesRes.length === 1) {
-        this.companyService.setCurrentCompany(companiesRes[0]);
+    this.companyService.validateCompanyCode(this.companyCode.value).subscribe(companyId => {
+      if (companyId) {
+        this.companyService.setCurrentCompany({
+          id: companyId,
+          code: this.companyCode.value,
+          name: this.companyCode.value,
+          description: this.companyCode.value,
+          contactorFirstname: '',
+          contactorLastname:  '',
+          addressCountry:  '',
+          addressState:  '',
+          addressCounty:  '',
+          addressCity:  '',
+          addressDistrict: '',
+          addressLine1:  '',
+          addressLine2:  '',
+          addressPostcode:  '',
+        })
+        
+      //  this.companyService.setCurrentCompany(this.companyCode.value);
       }
+      else {
+          // the command code is not a valid company code
+          console.log(`company code ${this.companyCode.value} is wrong`)
+      }
+
     });
 
     // Load all valid warehouses in this company, assigned to the user
