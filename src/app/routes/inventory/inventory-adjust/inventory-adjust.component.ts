@@ -308,11 +308,12 @@ export class InventoryInventoryAdjustComponent implements OnInit {
       );
   }
 
-  onExpandChange(id: number, checked: boolean): void {
+  onExpandChange(location: WarehouseLocation, checked: boolean): void {
     if (checked) {
-      this.expandSet.add(id);
+      this.expandSet.add(location.id);
+      this.showInventoryDetails(location);
     } else {
-      this.expandSet.delete(id);
+      this.expandSet.delete(location.id);
     }
   }
 
@@ -327,7 +328,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.inventoryService.getInventoriesByLocationId(location.id).subscribe(inventories => {
       this.mapOfInventories[location.id] = [...inventories];
     });
-  }
+  } 
 
   openRemoveInventoryModal(
     inventory: Inventory,

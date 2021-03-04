@@ -26,17 +26,17 @@
       </nz-descriptions-item>
 
       <nz-descriptions-item nzTitle="{{'location' | translate}}" nzSpan="2">
-        {{currentInventory.location.name}}
+        {{currentInventory.location?.name}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'item' | translate}}">
-        {{currentInventory.item.name}}
+        {{currentInventory.item?.name}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'item.description' | translate}}" nzSpan="2">
-        {{currentInventory.item.description}}
+        {{currentInventory.item?.description}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'item.package-type' | translate}}" nzSpan="3">
-        <nz-card nzTitle="{{currentInventory.itemPackageType.name}}">
-          <nz-table #itemPackageTypeDetailTable [nzData]="currentInventory.itemPackageType.itemUnitOfMeasures"
+        <nz-card nzTitle="{{currentInventory.itemPackageType?.name}}">
+          <nz-table #itemPackageTypeDetailTable [nzData]="currentInventory.itemPackageType?.itemUnitOfMeasures"
             nzSize="middle" [nzShowPagination]="false" nzBordered>
             <thead>
               <tr>
@@ -63,7 +63,7 @@
 
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'inventory.status' | translate}}">
-        {{currentInventory.inventoryStatus.name}}
+        {{currentInventory.inventoryStatus?.name}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'quantity' | translate}}" nzSpan="2">
         <span

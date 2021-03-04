@@ -37,40 +37,40 @@
 
 
 <ng-container>
-  <nz-card nzTitle="{{ currentSupplier.name }}" [nzActions]="[actionSave]">
+  <nz-card nzTitle="{{ currentSupplier?.name }}" [nzActions]="[actionSave]">
     <nz-descriptions nzBordered>
 
-      <nz-descriptions-item nzTitle="{{'name' | translate}}">{{currentSupplier.name}}
+      <nz-descriptions-item nzTitle="{{'name' | translate}}">{{currentSupplier?.name}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'description' | translate}}" nzSpan="2">
-        {{currentSupplier.description}}
+        {{currentSupplier?.description}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'contactor.firstname' | translate}}">
-        {{currentSupplier.contactorFirstname}}
+        {{currentSupplier?.contactorFirstname}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'contactor.lastname' | translate}}" nzSpan="2">
-        {{currentSupplier.contactorLastname}}
+        {{currentSupplier?.contactorLastname}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'country' | translate }}">
-        {{ currentSupplier.addressCountry }}
+        {{ currentSupplier?.addressCountry }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'state' | translate }}">
-        {{ currentSupplier.addressState }}
+        {{ currentSupplier?.addressState }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'county' | translate }}">
-        {{ currentSupplier.addressCounty }}
+        {{ currentSupplier?.addressCounty }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'city' | translate }}">
-        {{ currentSupplier.addressCity }}
+        {{ currentSupplier?.addressCity }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'postcode' | translate }}" nzSpan="2">
-        {{ currentSupplier.addressPostcode }}
+        {{ currentSupplier?.addressPostcode }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'address.line1' | translate }}" nzSpan="2">
-        {{ currentSupplier.addressLine1 }}
+        {{ currentSupplier?.addressLine1 }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'address.line2' | translate }}">
-        {{ currentSupplier.addressLine2 }}
+        {{ currentSupplier?.addressLine2 }}
       </nz-descriptions-item>
     </nz-descriptions>
   </nz-card>

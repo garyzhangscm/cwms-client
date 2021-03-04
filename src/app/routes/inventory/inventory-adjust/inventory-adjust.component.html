@@ -89,7 +89,7 @@
     <tbody>
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <tr>
-          <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
+          <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data, $event)"></td>
           <td>{{ data.name }}</td>
           <td>{{ data.locationGroup.description }}</td>
           <td>{{ data.aisle }}</td>
@@ -120,55 +120,56 @@
         </tr>
 
         <tr [nzExpand]="expandSet.has(data.id)" class="inner-table">
-           
-            <nz-tabset>
-              <nz-tab nzTitle=" {{ 'inventory' | translate }}">
-                <nz-table #innerTable [nzData]="mapOfInventories[data.id]" nzSize="middle" [nzShowPagination]="false">
-                  <thead>
-                    <th>
-                      {{ 'lpn' | translate }}
-                    </th>
-                    <th>
-                      {{ 'item' | translate }}
-                    </th>
-                    <th>
-                      {{ 'item.package-type' | translate }}
-                    </th>
-                    <th>
-                      {{ 'quantity' | translate }}
-                    </th>
-                    <th>
-                      {{ 'inventory.status' | translate }}
-                    </th>
-                    <th>{{ 'action' | translate }}</th>
-                  </thead>
-    <tbody>
-      <tr *ngFor="let inventory of mapOfInventories[data.id]">
-        <td>{{ inventory.lpn }}</td>
-        <td>{{ inventory.item.name }}</td>
-        <td>{{ inventory.itemPackageType.name }}</td>
-        <td>{{ inventory.quantity }}</td>
-        <td>{{ inventory.inventoryStatus.name }}</td>
-        <td>
-          <a nz-button routerLink="/inventory/inventory-quantity-change" routerLinkActive="active"
-            [queryParams]="{id : inventory.id, by : 'inventory-adjust'}">
-            {{ 'adjustInventory' | translate }}</a>
-          <nz-divider nzType="vertical"></nz-divider>
+          
 
-          <a nz-button routerLink="/inventory/inventory-attribute-change" routerLinkActive="active"
-            [queryParams]="{id : inventory.id}">
-            {{ 'inventory.attributeChange' | translate }}</a>
-          <nz-divider nzType="vertical"></nz-divider>
-          <button nz-button
-            (click)="openRemoveInventoryModal(inventory, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
-            nzType="danger">{{ 'removeInventory' | translate }}</button>
-        </td>
-      </tr>
-    </tbody>
-  </nz-table>
-  </nz-tab>
-  </nz-tabset>
-   
+                      <nz-tabset>
+                        <nz-tab nzTitle=" {{ 'inventory' | translate }}">
+                          <nz-table #innerTable [nzData]="mapOfInventories[data.id]" nzSize="middle" [nzShowPagination]="false">
+                            <thead>
+                              <th>
+                                {{ 'lpn' | translate }}
+                              </th>
+                              <th>
+                                {{ 'item' | translate }}
+                              </th>
+                              <th>
+                                {{ 'item.package-type' | translate }}
+                              </th>
+                              <th>
+                                {{ 'quantity' | translate }}
+                              </th>
+                              <th>
+                                {{ 'inventory.status' | translate }}
+                              </th>
+                              <th>{{ 'action' | translate }}</th>
+                            </thead>
+              <tbody>
+                <tr *ngFor="let inventory of mapOfInventories[data.id]">
+                  <td>{{ inventory.lpn }}</td>
+                  <td>{{ inventory.item.name }}</td>
+                  <td>{{ inventory.itemPackageType.name }}</td>
+                  <td>{{ inventory.quantity }}</td>
+                  <td>{{ inventory.inventoryStatus.name }}</td>
+                  <td>
+                    <a nz-button routerLink="/inventory/inventory-quantity-change" routerLinkActive="active"
+                      [queryParams]="{id : inventory.id, by : 'inventory-adjust'}">
+                      {{ 'adjustInventory' | translate }}</a>
+                    <nz-divider nzType="vertical"></nz-divider>
+
+                    <a nz-button routerLink="/inventory/inventory-attribute-change" routerLinkActive="active"
+                      [queryParams]="{id : inventory.id}">
+                      {{ 'inventory.attributeChange' | translate }}</a>
+                    <nz-divider nzType="vertical"></nz-divider>
+                    <button nz-button
+                      (click)="openRemoveInventoryModal(inventory, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
+                      nzType="danger">{{ 'removeInventory' | translate }}</button>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+            </nz-tab>
+            </nz-tabset>
+    
   </tr>
   </ng-template>
   </tbody>

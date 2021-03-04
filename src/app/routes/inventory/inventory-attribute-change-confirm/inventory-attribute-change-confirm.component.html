@@ -26,24 +26,24 @@
       </nz-descriptions-item>
 
       <nz-descriptions-item nzTitle="{{'location' | translate}}" nzSpan="2">
-        {{currentInventory.location.name}}
+        {{currentInventory.location?.name}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'item' | translate}}">
-        {{currentInventory.item.name}}
+        {{currentInventory.item?.name}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'item.description' | translate}}" nzSpan="2">
-        {{currentInventory.item.description}}
+        {{currentInventory.item?.description}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'item.package-type' | translate}}" nzSpan="3">
-        <div *ngIf="currentInventory.itemPackageType.name !== originalInventoryItemPackageTypeName">
+        <div *ngIf="currentInventory.itemPackageType?.name !== originalInventoryItemPackageTypeName">
           <span>{{ 'originalValue' | translate}} :
             {{ originalInventoryItemPackageTypeName }}</span>
           <nz-divider nzType="vertical"></nz-divider>
           <span>{{ 'newValue' | translate}} :
             {{  currentInventory.itemPackageType.name }}</span>
         </div>
-        <nz-card [nzTitle]="currentInventory.itemPackageType.name">
-          <nz-table #itemPackageTypeDetailTable [nzData]="currentInventory.itemPackageType.itemUnitOfMeasures"
+        <nz-card [nzTitle]="currentInventory.itemPackageType?.name">
+          <nz-table #itemPackageTypeDetailTable [nzData]="currentInventory.itemPackageType?.itemUnitOfMeasures"
             nzSize="middle" [nzShowPagination]="false" nzBordered>
             <thead>
               <tr>
@@ -72,7 +72,7 @@
       <nz-descriptions-item nzTitle="{{'inventory.status' | translate}}">
 
         <div
-          *ngIf="currentInventory !== undefined && currentInventory.inventoryStatus.name !== originalInventoryStatusName else inventoryStatusTpl">
+          *ngIf="currentInventory !== undefined && currentInventory.inventoryStatus?.name !== originalInventoryStatusName else inventoryStatusTpl">
           <span>{{ 'originalValue' | translate}} :
             {{ 'INVENTORY-STATUS-' + originalInventoryStatusName | translate}}</span>
           <nz-divider nzType="vertical"></nz-divider>

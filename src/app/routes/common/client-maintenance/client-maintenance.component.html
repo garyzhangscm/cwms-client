@@ -44,7 +44,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.clientName.required' | translate }}">
-            <input nz-input [(ngModel)]="currentClient.name" id="clientName" name="name" required />
+            <input nz-input [(ngModel)]="currentClient!.name" id="clientName" name="name" required />
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -55,7 +55,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.clientDescription.required' | translate }}">
-            <input nz-input [(ngModel)]="currentClient.description" id="clientDescription" name="description"
+            <input nz-input [(ngModel)]="currentClient!.description" id="clientDescription" name="description"
               required />
           </nz-form-control>
         </nz-form-item>
@@ -67,7 +67,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.contactor.firstname.required' | translate }}">
-            <input nz-input [(ngModel)]="currentClient.contactorFirstname" id="contactor.firstname" name="firstname"
+            <input nz-input [(ngModel)]="currentClient!.contactorFirstname" id="contactor.firstname" name="firstname"
               required />
           </nz-form-control>
         </nz-form-item>
@@ -79,7 +79,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.contactor.lastname.required' | translate }}">
-            <input nz-input [(ngModel)]="currentClient.contactorLastname" id="contactor.lastname" name="lastname"
+            <input nz-input [(ngModel)]="currentClient!.contactorLastname" id="contactor.lastname" name="lastname"
               required />
           </nz-form-control>
         </nz-form-item>

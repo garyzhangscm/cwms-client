@@ -41,7 +41,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
-            <input nz-input [(ngModel)]="currentUnitOfMeasure.name" id="name" name="name" required />
+            <input nz-input [(ngModel)]="currentUnitOfMeasure!.name" id="name" name="name" required />
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -52,7 +52,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
-            <input nz-input [(ngModel)]="currentUnitOfMeasure.description" id="description" name="description"
+            <input nz-input [(ngModel)]="currentUnitOfMeasure!.description" id="description" name="description"
               required />
           </nz-form-control>
         </nz-form-item>
