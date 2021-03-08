@@ -25,4 +25,9 @@ export interface Item {
   trackingExpirationDateFlag?: boolean;
 
   warehouseId?: number;
+
+  imageUrl?: string;
+  thumbnailUrl?: string;
+
+
 }

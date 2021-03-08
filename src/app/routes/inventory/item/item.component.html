@@ -83,6 +83,14 @@
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <!--<tr *ngFor="let data of rowSelectionTable.data">-->
         <tr><td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
+          <td><img
+            nz-image
+            width="40px"
+            height="40px"
+            [nzSrc]="data.thumbnailUrl"
+            nzFallback="../../resource/assets/images/image_missing.png"
+            alt="" (click)="openImageViewer(data, tplUploadImagesModalTitle, tplUploadImagesModalContent)"
+          /></td>
           <td>{{ data.name }}</td>
           <td>{{ data.description }}</td>
           <td>{{ data.client?.name}}</td>
@@ -163,4 +171,46 @@
   <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
     {{searchResult}}
   </div>
+</ng-template>
+
+
+
+
+<!-- Modal for upload images -->
+<ng-template #tplUploadImagesModalTitle>
+  <span>{{ 'item.image.upload' | translate}}</span>
+</ng-template>
+<ng-template #tplUploadImagesModalContent>
+
+  
+  
+  <form nz-form [formGroup]="loadFileForm">
+    <div nz-row [nzGutter]="24" style="margin-bottom: 10px">
+      <div nz-col [nzSpan]="24" nzOffset="8">
+        <img nz-image width="200px" height="200px"
+        [nzSrc]="uploadingImageItem?.thumbnailUrl" [nzFallback]="fallbackImage" alt="" />
+        </div>
+    </div>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="6">
+        <nz-form-item nzFlex>
+          <nz-form-label   [nzSm]="6" [nzXs]="6" nzRequired="true">
+            {{ 'item.image.upload.url' | translate }}
+          </nz-form-label>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="18">
+        <nz-form-item>
+          <nz-upload [nzAction]="imageUploadDestination" 
+          (nzChange)="handleChange($event)">
+            <button nz-button>
+              <i nz-icon nzType="upload"></i>
+              {{ 'file-upload' | translate }}
+            </button>
+          </nz-upload>
+        </nz-form-item>
+      </div>
+      </div>
+      </form>
+
 </ng-template>
