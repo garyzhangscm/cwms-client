@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { OutboundGridMaintenanceComponent } from './grid-maintenance.component';
 
 describe('OutboundGridMaintenanceComponent', () => {
   let component: OutboundGridMaintenanceComponent;
   let fixture: ComponentFixture<OutboundGridMaintenanceComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ OutboundGridMaintenanceComponent ]
     })

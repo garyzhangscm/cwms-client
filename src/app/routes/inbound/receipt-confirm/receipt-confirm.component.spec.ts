@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { InboundReceiptConfirmComponent } from './receipt-confirm.component';
 
 describe('InboundReceiptConfirmComponent', () => {
   let component: InboundReceiptConfirmComponent;
   let fixture: ComponentFixture<InboundReceiptConfirmComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ InboundReceiptConfirmComponent ]
     })

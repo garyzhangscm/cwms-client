@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { InventoryInventoryAdjustmentThresholdMaintenanceComponent } from './inventory-adjustment-threshold-maintenance.component';
 
 describe('InventoryInventoryAdjustmentThresholdMaintenanceComponent', () => {
   let component: InventoryInventoryAdjustmentThresholdMaintenanceComponent;
   let fixture: ComponentFixture<InventoryInventoryAdjustmentThresholdMaintenanceComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ InventoryInventoryAdjustmentThresholdMaintenanceComponent ]
     })

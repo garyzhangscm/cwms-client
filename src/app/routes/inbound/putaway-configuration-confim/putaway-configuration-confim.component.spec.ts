@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { InboundPutawayConfigurationConfimComponent } from './putaway-configuration-confim.component';
 
 describe('InboundPutawayConfigurationConfimComponent', () => {
   let component: InboundPutawayConfigurationConfimComponent;
   let fixture: ComponentFixture<InboundPutawayConfigurationConfimComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ InboundPutawayConfigurationConfimComponent ]
     })

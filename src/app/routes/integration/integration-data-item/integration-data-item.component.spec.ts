@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IntegrationIntegrationDataItemComponent } from './integration-data-item.component';
 
 describe('IntegrationIntegrationDataItemComponent', () => {
   let component: IntegrationIntegrationDataItemComponent;
   let fixture: ComponentFixture<IntegrationIntegrationDataItemComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ IntegrationIntegrationDataItemComponent ]
     })

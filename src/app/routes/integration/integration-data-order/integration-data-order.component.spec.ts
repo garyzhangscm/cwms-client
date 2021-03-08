@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IntegrationIntegrationDataOrderComponent } from './integration-data-order.component';
 
 describe('IntegrationIntegrationDataOrderComponent', () => {
   let component: IntegrationIntegrationDataOrderComponent;
   let fixture: ComponentFixture<IntegrationIntegrationDataOrderComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ IntegrationIntegrationDataOrderComponent ]
     })

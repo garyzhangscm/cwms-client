@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { OutboundPickListComponent } from './pick-list.component';
 
 describe('OutboundPickListComponent', () => {
   let component: OutboundPickListComponent;
   let fixture: ComponentFixture<OutboundPickListComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ OutboundPickListComponent ]
     })

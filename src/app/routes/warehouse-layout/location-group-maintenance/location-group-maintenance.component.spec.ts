@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { WarehouseLayoutLocationGroupMaintenanceComponent } from './location-group-maintenance.component';
 
 describe('WarehouseLayoutLocationGroupMaintenanceComponent', () => {
   let component: WarehouseLayoutLocationGroupMaintenanceComponent;
   let fixture: ComponentFixture<WarehouseLayoutLocationGroupMaintenanceComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ WarehouseLayoutLocationGroupMaintenanceComponent ]
     })

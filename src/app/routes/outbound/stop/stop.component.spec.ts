@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
   import { OutboundStopComponent } from './stop.component';
 
   describe('OutboundStopComponent', () => {
     let component: OutboundStopComponent;
     let fixture: ComponentFixture<OutboundStopComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       TestBed.configureTestingModule({
         declarations: [ OutboundStopComponent ]
       })

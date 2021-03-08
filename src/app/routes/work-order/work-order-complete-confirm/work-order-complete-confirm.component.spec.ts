@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { WorkOrderWorkOrderCompleteConfirmComponent } from './work-order-complete-confirm.component';
 
 describe('WorkOrderWorkOrderCompleteConfirmComponent', () => {
   let component: WorkOrderWorkOrderCompleteConfirmComponent;
   let fixture: ComponentFixture<WorkOrderWorkOrderCompleteConfirmComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ WorkOrderWorkOrderCompleteConfirmComponent ]
     })

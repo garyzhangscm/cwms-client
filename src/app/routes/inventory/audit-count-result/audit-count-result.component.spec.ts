@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { InventoryAuditCountResultComponent } from './audit-count-result.component';
 
 describe('InventoryAuditCountResultComponent', () => {
   let component: InventoryAuditCountResultComponent;
   let fixture: ComponentFixture<InventoryAuditCountResultComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ InventoryAuditCountResultComponent ]
     })

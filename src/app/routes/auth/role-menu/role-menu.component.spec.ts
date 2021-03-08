@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { AuthRoleMenuComponent } from './role-menu.component';
 
 describe('AuthRoleMenuComponent', () => {
   let component: AuthRoleMenuComponent;
   let fixture: ComponentFixture<AuthRoleMenuComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ AuthRoleMenuComponent ]
     })

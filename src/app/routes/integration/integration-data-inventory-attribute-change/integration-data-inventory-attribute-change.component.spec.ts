@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IntegrationIntegrationDataInventoryAttributeChangeComponent } from './integration-data-inventory-attribute-change.component';
 
 describe('IntegrationIntegrationDataInventoryAttributeChangeComponent', () => {
   let component: IntegrationIntegrationDataInventoryAttributeChangeComponent;
   let fixture: ComponentFixture<IntegrationIntegrationDataInventoryAttributeChangeComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ IntegrationIntegrationDataInventoryAttributeChangeComponent ]
     })

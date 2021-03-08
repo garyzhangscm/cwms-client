@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { InventoryInventoryAttributeChangeConfirmComponent } from './inventory-attribute-change-confirm.component';
 
 describe('InventoryInventoryAttributeChangeConfirmComponent', () => {
   let component: InventoryInventoryAttributeChangeConfirmComponent;
   let fixture: ComponentFixture<InventoryInventoryAttributeChangeConfirmComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ InventoryInventoryAttributeChangeConfirmComponent ]
     })

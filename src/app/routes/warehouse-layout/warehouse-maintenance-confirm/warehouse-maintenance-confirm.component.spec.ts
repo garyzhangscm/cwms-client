@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { WarehouseLayoutWarehouseMaintenanceConfirmComponent } from './warehouse-maintenance-confirm.component';
 
 describe('WarehouseLayoutWarehouseMaintenanceConfirmComponent', () => {
   let component: WarehouseLayoutWarehouseMaintenanceConfirmComponent;
   let fixture: ComponentFixture<WarehouseLayoutWarehouseMaintenanceConfirmComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ WarehouseLayoutWarehouseMaintenanceConfirmComponent ]
     })

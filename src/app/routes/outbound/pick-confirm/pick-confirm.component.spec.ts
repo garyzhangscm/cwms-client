@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { OutboundPickConfirmComponent } from './pick-confirm.component';
 
 describe('OutboundPickConfirmComponent', () => {
   let component: OutboundPickConfirmComponent;
   let fixture: ComponentFixture<OutboundPickConfirmComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ OutboundPickConfirmComponent ]
     })

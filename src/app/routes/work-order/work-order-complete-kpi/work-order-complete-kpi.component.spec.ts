@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { WorkOrderWorkOrderCompleteKpiComponent } from './work-order-complete-kpi.component';
 
 describe('WorkOrderWorkOrderCompleteKpiComponent', () => {
   let component: WorkOrderWorkOrderCompleteKpiComponent;
   let fixture: ComponentFixture<WorkOrderWorkOrderCompleteKpiComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ WorkOrderWorkOrderCompleteKpiComponent ]
     })

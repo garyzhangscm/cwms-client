@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { OutboundCartonizationConfigurationConfirmComponent } from './cartonization-configuration-confirm.component';
 
 describe('OutboundCartonizationConfigurationConfirmComponent', () => {
   let component: OutboundCartonizationConfigurationConfirmComponent;
   let fixture: ComponentFixture<OutboundCartonizationConfigurationConfirmComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ OutboundCartonizationConfigurationConfirmComponent ]
     })

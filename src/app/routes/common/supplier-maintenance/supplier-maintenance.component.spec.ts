@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { CommonSupplierMaintenanceComponent } from './supplier-maintenance.component';
 
 describe('CommonSupplierMaintenanceComponent', () => {
   let component: CommonSupplierMaintenanceComponent;
   let fixture: ComponentFixture<CommonSupplierMaintenanceComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ CommonSupplierMaintenanceComponent ]
     })

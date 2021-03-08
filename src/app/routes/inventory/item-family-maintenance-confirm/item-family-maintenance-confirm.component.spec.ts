@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { InventoryItemFamilyMaintenanceConfirmComponent } from './item-family-maintenance-confirm.component';
 
 describe('InventoryItemFamilyMaintenanceConfirmComponent', () => {
   let component: InventoryItemFamilyMaintenanceConfirmComponent;
   let fixture: ComponentFixture<InventoryItemFamilyMaintenanceConfirmComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ InventoryItemFamilyMaintenanceConfirmComponent ]
     })

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import {} from 'jasmine';
 import { WorkOrderWorkOrderProduceConfirmComponent } from './work-order-produce-confirm.component';
 
@@ -6,7 +6,7 @@ describe('WorkOrderWorkOrderProduceConfirmComponent', () => {
   let component: WorkOrderWorkOrderProduceConfirmComponent;
   let fixture: ComponentFixture<WorkOrderWorkOrderProduceConfirmComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ WorkOrderWorkOrderProduceConfirmComponent ]
     })

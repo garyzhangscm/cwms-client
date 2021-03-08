@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { WarehouseLayoutLocationQueryPopupComponent } from './location-query-popup.component';
 
 describe('WarehouseLayoutLocationQueryPopupComponent', () => {
   let component: WarehouseLayoutLocationQueryPopupComponent;
   let fixture: ComponentFixture<WarehouseLayoutLocationQueryPopupComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ WarehouseLayoutLocationQueryPopupComponent ]
     })

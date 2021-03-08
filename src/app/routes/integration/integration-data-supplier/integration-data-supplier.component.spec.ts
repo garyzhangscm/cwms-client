@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IntegrationIntegrationDataSupplierComponent } from './integration-data-supplier.component';
 
 describe('IntegrationIntegrationDataSupplierComponent', () => {
   let component: IntegrationIntegrationDataSupplierComponent;
   let fixture: ComponentFixture<IntegrationIntegrationDataSupplierComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ IntegrationIntegrationDataSupplierComponent ]
     })

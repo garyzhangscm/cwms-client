@@ -1,11 +1,11 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
   import { OutboundWaveComponent } from './wave.component';
 
   describe('OutboundWaveComponent', () => {
     let component: OutboundWaveComponent;
     let fixture: ComponentFixture<OutboundWaveComponent>;
 
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
       TestBed.configureTestingModule({
         declarations: [ OutboundWaveComponent ]
       })
