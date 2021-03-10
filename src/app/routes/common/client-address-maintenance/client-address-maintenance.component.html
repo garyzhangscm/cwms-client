@@ -43,7 +43,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.clientAddress.required' | translate }}">
-            <input nz-input [(ngModel)]="currentClient.addressCountry" id="clientAddressCountry" name="addressCountry"
+            <input nz-input [(ngModel)]="currentClient!.addressCountry" id="clientAddressCountry" name="addressCountry"
               required />
           </nz-form-control>
         </nz-form-item>
@@ -55,7 +55,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.clientAddress.required' | translate }}">
-            <input nz-input [(ngModel)]="currentClient.addressState" id="clientAddressState" name="addressState"
+            <input nz-input [(ngModel)]="currentClient!.addressState" id="clientAddressState" name="addressState"
               required />
           </nz-form-control>
         </nz-form-item>
@@ -67,7 +67,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.clientAddress.required' | translate }}">
-            <input nz-input [(ngModel)]="currentClient.addressCounty" id="clientAddresscounty" name="addressCounty"
+            <input nz-input [(ngModel)]="currentClient!.addressCounty" id="clientAddresscounty" name="addressCounty"
               required />
           </nz-form-control>
         </nz-form-item>
@@ -82,7 +82,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.clientAddress.required' | translate }}">
-            <input nz-input [(ngModel)]="currentClient.addressCity" id="clientAddressCity" name="addressCity"
+            <input nz-input [(ngModel)]="currentClient!.addressCity" id="clientAddressCity" name="addressCity"
               required />
           </nz-form-control>
         </nz-form-item>
@@ -94,7 +94,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.clientAddress.required' | translate }}">
-            <input nz-input [(ngModel)]="currentClient.addressDistrict" id="clientAddressDistrict"
+            <input nz-input [(ngModel)]="currentClient!.addressDistrict" id="clientAddressDistrict"
               name="addressDistrict" required />
           </nz-form-control>
         </nz-form-item>
@@ -109,7 +109,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.clientAddress.required' | translate }}">
-            <input nz-input [(ngModel)]="currentClient.addressLine1" id="clientAddressLine1" name="addressLine1"
+            <input nz-input [(ngModel)]="currentClient!.addressLine1" id="clientAddressLine1" name="addressLine1"
               required />
           </nz-form-control>
         </nz-form-item>
@@ -121,7 +121,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.clientAddress.required' | translate }}">
-            <input nz-input [(ngModel)]="currentClient.addressLine2" id="clientAddressLine2" name="addressLine2"
+            <input nz-input [(ngModel)]="currentClient!.addressLine2" id="clientAddressLine2" name="addressLine2"
               required />
           </nz-form-control>
         </nz-form-item>
@@ -133,7 +133,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.clientAddress.required' | translate }}">
-            <input nz-input [(ngModel)]="currentClient.addressPostcode" id="clientAddressPostcode"
+            <input nz-input [(ngModel)]="currentClient!.addressPostcode" id="clientAddressPostcode"
               name="addressPostcode" required />
           </nz-form-control>
         </nz-form-item>

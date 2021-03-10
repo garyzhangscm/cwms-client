@@ -83,14 +83,24 @@
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <!--<tr *ngFor="let data of rowSelectionTable.data">-->
         <tr><td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
-          <td>{{data.thumbnailUrl}} - <img
-            nz-image
-            width="40px"
-            height="40px"
-            [nzSrc]="testImageSource"
-            [nzFallback]="fallbackImage"
-            alt="" (click)="openImageViewer(data, tplUploadImagesModalTitle, tplUploadImagesModalContent)"
-          /></td>
+          <td> 
+            <img *ngIf="data.thumbnailUrl"
+                  nz-image
+                  width="40px"
+                  height="40px"
+                  [nzSrc]='imageServerUrl + "inventory/" + data.thumbnailUrl'
+                  [nzFallback]="fallbackImage" nzDisablePreview="true"
+                  alt="" (click)="openImageViewer(data, tplUploadImagesModalTitle, tplUploadImagesModalContent)"
+                />
+            <img *ngIf="!data.thumbnailUrl"
+                nz-image
+                width="40px"
+                height="40px"
+                [nzSrc]='fallbackImage'
+                [nzFallback]="fallbackImage" nzDisablePreview="true"
+                alt="" (click)="openImageViewer(data, tplUploadImagesModalTitle, tplUploadImagesModalContent)"
+              />
+          </td>
           <td>{{ data.name }}</td>
           <td>{{ data.description }}</td>
           <td>{{ data.client?.name}}</td>
@@ -183,37 +193,45 @@
 <ng-template #tplUploadImagesModalContent>
 
   
-  
-  <form nz-form [formGroup]="loadFileForm">
+   
     <div nz-row [nzGutter]="24" style="margin-bottom: 10px">
       <div nz-col [nzSpan]="24" nzOffset="8">
-        <img nz-image width="160px" height="90px"
-         [nzSrc]="testImageSource" [nzFallback]="fallbackImage" alt="" />
-        </div>
+        <img *ngIf="uploadedImage" 
+            nz-image
+                  width="300px"
+                  height="300px"
+                  [nzSrc]="uploadedImage" nzDisablePreview="true" />
+        <img *ngIf="!uploadedImage && uploadingImageItem?.imageUrl"
+                  nz-image
+                  width="300px"
+                  height="300px"
+                  [nzSrc]='imageServerUrl + "inventory/" + uploadingImageItem?.imageUrl'
+                  [nzFallback]="fallbackImage" nzDisablePreview="true"
+                  alt="" 
+                />
+            <img *ngIf="!uploadedImage && !uploadingImageItem?.imageUrl"
+                nz-image
+                width="300px"
+                height="300px"
+                [nzSrc]='fallbackImage'
+                [nzFallback]="fallbackImage" nzDisablePreview="true"
+                alt="" 
+              />
+            </div>
     </div>
     <div nz-row [nzGutter]="24">
-      image url: {{uploadingImageItem?.thumbnailUrl}}
-    </div>
-    <div nz-row [nzGutter]="24">
-      <div nz-col [nzSpan]="6">
-        <nz-form-item nzFlex>
-          <nz-form-label   [nzSm]="6" [nzXs]="6" nzRequired="true">
-            {{ 'item.image.upload.url' | translate }}
-          </nz-form-label>
-        </nz-form-item>
-      </div>
-      <div nz-col [nzSpan]="18">
+      <div nz-col [nzSpan]="24" nzOffset="8">
         <nz-form-item>
           <nz-upload [nzAction]="imageUploadDestination" 
-          (nzChange)="handleChange($event)">
+          [nzBeforeUpload]="beforeUpload"
+      (nzChange)="handleChange($event)">
             <button nz-button>
               <i nz-icon nzType="upload"></i>
-              {{ 'file-upload' | translate }}
+              {{ 'image-upload' | translate }}
             </button>
           </nz-upload>
         </nz-form-item>
       </div>
-      </div>
-      </form>
+      </div> 
 
 </ng-template>

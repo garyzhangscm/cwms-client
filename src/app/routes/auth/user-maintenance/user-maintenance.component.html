@@ -46,7 +46,8 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           [nzErrorTip]="usernameErrorTpl">
-            <input nz-input [(ngModel)]="currentUser.username" id="username" name="username" required
+            <input nz-input [(ngModel)]="currentUser!.username" 
+            id="username" name="username" required
               [disabled]="modifying" variable="username" appNewNumberValidator  #username="ngModel"
               [ngModelOptions]="{updateOn: 'blur'}"/>
 
@@ -69,7 +70,8 @@
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
             <nz-input-group [nzSuffix]="suffixTemplate">
-              <input [type]="passwordVisible ? 'text' : 'password'" nz-input [(ngModel)]="currentUser.password"
+              <input [type]="passwordVisible ? 'text' : 'password'" nz-input 
+              [(ngModel)]="currentUser!.password"
                 id="password" name="password" required />
             </nz-input-group>
             <ng-template #suffixTemplate>
@@ -89,7 +91,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
-            <input nz-input [(ngModel)]="currentUser.firstname" id="firstname" name="firstname" required />
+            <input nz-input [(ngModel)]="currentUser!.firstname" id="firstname" name="firstname" required />
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -100,7 +102,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
-            <input nz-input [(ngModel)]="currentUser.lastname" id="lastname" name="lastname" required />
+            <input nz-input [(ngModel)]="currentUser!.lastname" id="lastname" name="lastname" required />
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -111,7 +113,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
-            <input nz-input [(ngModel)]="currentUser.email" id="email" name="email" required />
+            <input nz-input [(ngModel)]="currentUser!.email" id="email" name="email" required />
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -124,7 +126,7 @@
             {{ 'enabled' | translate }}
           </nz-form-label>
           <nz-form-control  [nzSm]="14" [nzXs]="24" >
-            <label nz-checkbox [(ngModel)]="currentUser.enabled" name="enabled"> 
+            <label nz-checkbox [(ngModel)]="currentUser!.enabled" name="enabled"> 
 
 
             </label>
@@ -137,7 +139,7 @@
             {{ 'locked' | translate }}
           </nz-form-label>
           <nz-form-control  [nzSm]="14" [nzXs]="24" >
-            <label nz-checkbox [(ngModel)]="currentUser.locked" name="locked"> </label>
+            <label nz-checkbox [(ngModel)]="currentUser!.locked" name="locked"> </label>
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -147,7 +149,7 @@
             {{ 'user.change-password-at-next-logon' | translate }}
           </nz-form-label>
           <nz-form-control  [nzSm]="14" [nzXs]="24" >
-            <label nz-checkbox [(ngModel)]="currentUser.changePasswordAtNextLogon" name="changePasswordAtNextLogon">
+            <label nz-checkbox [(ngModel)]="currentUser!.changePasswordAtNextLogon" name="changePasswordAtNextLogon">
               
             </label>
           </nz-form-control>

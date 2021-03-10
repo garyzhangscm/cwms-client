@@ -91,9 +91,9 @@ export class AuthRoleMaintenanceConfirmComponent implements OnInit {
     }
     ];
 
-  currentRole: Role | undefined;
+  currentRole!: Role;
   pageTitle: string;
-  menuTree: MenuTreeNode[] | undefined;
+  menuTree: MenuTreeNode[] = [];
 
   constructor(
     private i18n: I18NService,

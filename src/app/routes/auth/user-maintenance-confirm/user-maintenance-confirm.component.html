@@ -44,21 +44,26 @@
       ******
     </nz-descriptions-item>
 
-    <nz-descriptions-item nzTitle="{{ 'firstname' | translate}}">{{currentUser.firstname}}
+    <nz-descriptions-item nzTitle="{{ 'firstname' | translate}}">
+      {{currentUser!.firstname}}
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'lastname' | translate}}">{{currentUser.lastname}}
+    <nz-descriptions-item nzTitle="{{ 'lastname' | translate}}">
+      {{currentUser!.lastname}}
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'email' | translate}}">{{currentUser.email}}
+    <nz-descriptions-item nzTitle="{{ 'email' | translate}}">
+      {{currentUser!.email}}
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'enabled' | translate}}">{{currentUser.enabled}}
+    <nz-descriptions-item nzTitle="{{ 'enabled' | translate}}">
+      {{currentUser!.enabled}}
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'locked' | translate}}">{{currentUser.locked}}
+    <nz-descriptions-item nzTitle="{{ 'locked' | translate}}">
+      {{currentUser!.locked}}
     </nz-descriptions-item>
   </nz-descriptions>
 </nz-card>
 
 <nz-card nzTitle="{{ 'steps.role.assign-roles.title' | translate }}" [nzActions]="[cardFoot]">
-  <nz-table #roleTable [nzData]="currentUser.roles">
+  <nz-table #roleTable [nzData]="currentUser!.roles">
     <thead>
       <tr>
         <th

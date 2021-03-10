@@ -50,7 +50,7 @@ export class AuthUserMaintenanceConfirmComponent implements OnInit {
         },
         ];
 
-  currentUser: User | undefined;
+  currentUser!: User;
   pageTitle: string;
 
   constructor(

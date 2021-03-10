@@ -9,7 +9,7 @@ import { WorkingTeam } from '../models/working-team';
   templateUrl: './working-team-maintenance.component.html',
 })
 export class AuthWorkingTeamMaintenanceComponent implements OnInit {
-  currentWorkingTeam: WorkingTeam | undefined;
+  currentWorkingTeam!: WorkingTeam;
   pageTitle = '';
 
   emptyWorkingTeam: WorkingTeam = {

@@ -30,12 +30,9 @@
               "src/styles.less"
             ],
             "scripts": [
-              "node_modules/ajv/dist/ajv.bundle.js",
-              "node_modules/qrious/dist/qrious.min.js",
               "src/app/src/JsBarcode.all.min.js"
             ],
             "allowedCommonJsDependencies": [
-              "@angularclass/hmr",
               "@ant-design/colors",
               "@antv/adjust",
               "@antv/attr",
@@ -47,7 +44,8 @@
               "@antv/path-util",
               "@antv/util",
               "file-saver",
-              "hammerjs"
+              "hammerjs",
+              "ajv"
             ]
           },
           "configurations": {
@@ -78,14 +76,6 @@
                   "maximumError": "10kb"
                 }
               ]
-            },
-            "hmr": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.hmr.ts"
-                }
-              ]
             }
           }
         },
@@ -98,10 +88,6 @@
           "configurations": {
             "production": {
               "browserTarget": "ng-alain:build:production"
-            },
-            "hmr": {
-              "browserTarget": "ng-alain:build:hmr",
-              "hmr": true
             }
           }
         },
@@ -119,8 +105,6 @@
             "karmaConfig": "karma.conf.js",
             "tsConfig": "tsconfig.spec.json",
             "scripts": [
-              "node_modules/ajv/dist/ajv.bundle.js",
-              "node_modules/qrious/dist/qrious.min.js"
             ],
             "styles": [],
             "assets": [

@@ -60,7 +60,7 @@
             nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}"
           >
-            <input nz-input [(ngModel)]="currentSupplier.name" id="name" name="name" required />
+            <input nz-input [(ngModel)]="currentSupplier!.name" id="name" name="name" required />
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -75,7 +75,7 @@
             nzHasFeedback
             nzErrorTip="{{ 'error.form.field.clientDescription.required' | translate }}"
           >
-            <input nz-input [(ngModel)]="currentSupplier.description" id="description" name="description" required />
+            <input nz-input [(ngModel)]="currentSupplier!.description" id="description" name="description" required />
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -90,7 +90,7 @@
             nzHasFeedback
             nzErrorTip="{{ 'error.form.field.contactor.firstname.required' | translate }}"
           >
-            <input nz-input [(ngModel)]="currentSupplier.contactorFirstname" id="firstname" name="firstname" required />
+            <input nz-input [(ngModel)]="currentSupplier!.contactorFirstname" id="firstname" name="firstname" required />
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -105,7 +105,7 @@
             nzHasFeedback
             nzErrorTip="{{ 'error.form.field.contactor.lastname.required' | translate }}"
           >
-            <input nz-input [(ngModel)]="currentSupplier.contactorLastname" id="lastname" name="lastname" required />
+            <input nz-input [(ngModel)]="currentSupplier!.contactorLastname" id="lastname" name="lastname" required />
           </nz-form-control>
         </nz-form-item>
       </div>
