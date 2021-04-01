@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { PrintableBarcode } from '../../common/models/printable-barcode';
 import { PrintingService } from '../../common/services/printing.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Order } from '../models/order';
@@ -63,13 +64,28 @@ export class OrderService {
     return this.http.post(`outbound/orders/${order.id}/complete`).pipe(map(res => res.data));
   }
 
-  printOrderPickSheet(order: Order) {
+  printOrderPickSheet(order: Order) : Observable<string>{
+    /****
+     * 
     const reportName = `Outbound Order Pick Sheet`;
     // Get the picks for the order
     this.pickService.getPicks(undefined, order.id).subscribe(pickRes => {
-      this.printingService.print(reportName, this.generateOrderPickSheet(reportName, order, pickRes));
+      const pages: string[] = 
+          this.generateOrderPickSheet(reportName, order, pickRes);
+      this.printingService.print(
+        reportName, 
+        pages,         
+        undefined, 
+        undefined,
+        this.generateOrderNumberBarcodes(order.number, pages.length)
+        );
     });
+     * 
+     */
+    
+    return this.http.post(`outbound/orders/${order.id}/pick-report`).pipe(map(res => res.data));
   }
+  
   generateOrderPickSheet(reportName: string, order: Order, picks: PickWork[]): string[] {
     // Pages
     const pages: string[] = [];
@@ -80,7 +96,7 @@ export class OrderService {
     // Setup the page header for each pages
     const pageHeader = `<h1>${reportName}</h1>
                         <h2>${order.number}</h2>
-                      <table style="margin-bottom: 20px"> 
+                      <table style="margin-bottom: 20px; margin-top: 75px"> 
                         <tr>
                           <td>Customer:</td><td>${order.shipToCustomer == null ? '' : order.shipToCustomer.name}</td>
                           <td>First Name:</td><td>${
@@ -185,5 +201,30 @@ export class OrderService {
 
   dispatchTrailer(order: Order): Observable<Order> {
     return this.http.post(`outbound/orders/${order.id}/dispatch`).pipe(map(res => res.data));
+  }
+
+  generateOrderNumberBarcodes(
+    orderNumber: string,
+    pageCount: number
+  ): PrintableBarcode[] {
+
+    const barcodes: PrintableBarcode[] = [];
+
+    for (let i = 0; i < pageCount; i++) {
+      barcodes.push(
+        {
+          pageNumber: i,
+          top: 120,
+          left: 250, 
+          width: 206,
+          height: 50,
+          barCodeType: '128B',
+          barCodeValue: orderNumber,
+        }
+      );
+    }
+    
+    return barcodes;
+
   }
 }

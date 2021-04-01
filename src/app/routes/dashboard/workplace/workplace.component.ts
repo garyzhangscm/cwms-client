@@ -79,6 +79,9 @@ export class DashboardWorkplaceComponent implements OnInit {
   constructor(private http: _HttpClient, public msg: NzMessageService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
+    /**
+     * 
+     * 
     zip(this.http.get('/chart'), this.http.get('/api/notice'), this.http.get('/api/activities')).subscribe(
       ([chart, notice, activities]: [any, any, any]) => {
         this.radarData = chart.radarData;
@@ -96,5 +99,6 @@ export class DashboardWorkplaceComponent implements OnInit {
         this.cdr.detectChanges();
       },
     );
+     */
   }
 }

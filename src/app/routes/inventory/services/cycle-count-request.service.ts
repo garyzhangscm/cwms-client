@@ -168,10 +168,7 @@ export class CycleCountRequestService {
         }
       );
     }
- 
-
-
-
+    
     return barcodes;
 
   }

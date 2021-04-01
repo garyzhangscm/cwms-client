@@ -238,7 +238,12 @@ export class WorkOrderProductionPlanMaintenanceComponent implements OnInit {
     this.refreshOrderLineTableCheckedStatus();
     
     // refresh the production line structure that associated with the selected order lines
-    this.validOrderLines!.forEach(orderLine => this.selectedOrderLineChange(checked, orderLine));
+    this.validOrderLines!
+      .filter(orderLine => orderLine.id === id)
+      .forEach(
+        orderLine => 
+            this.selectedOrderLineChange(
+              checked, orderLine));
     
   }
 

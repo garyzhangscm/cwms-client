@@ -40,15 +40,17 @@
 
 <nz-card nzTitle="{{ 'steps.basic-info.title' | translate }}">
   <nz-descriptions nzBordered>
-    <nz-descriptions-item nzTitle="{{ 'name' | translate}}">{{currentRole.name}}
+    <nz-descriptions-item nzTitle="{{ 'name' | translate}}">
+      {{currentRole!.name}}
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'description' | translate}}">{{currentRole.description}}
+    <nz-descriptions-item nzTitle="{{ 'description' | translate}}">
+      {{currentRole!.description}}
     </nz-descriptions-item>
   </nz-descriptions>
 </nz-card>
 
 <nz-card nzTitle="{{ 'steps.role.assign-users.title' | translate }}">
-  <nz-table #userTable [nzData]="currentRole.users">
+  <nz-table #userTable [nzData]="currentRole!.users">
     <thead>
       <tr>
         <th

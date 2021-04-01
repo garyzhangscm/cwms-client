@@ -145,6 +145,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         expandSet = new Set<number>();
         
 
+
   constructor(
     private fb: FormBuilder,
     private i18n: I18NService,
@@ -190,6 +191,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   mapOfProducedByProduct: { [key: string]: Inventory[] } = {};
   mapOfKPIs: { [key: string]: WorkOrderKpi[] } = {};
   mapOfKPITransactions: { [key: string]: WorkOrderKpiTransaction[] } = {};
+
+
+  printingInProcess = false;
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.work-order.work-order'));
@@ -281,11 +285,12 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   }
 
   
-  onExpandChange(id: number, checked: boolean): void {
-    if (checked) {
-      this.expandSet.add(id);
+  onExpandChange(workOrder: WorkOrder, expanded: boolean): void {
+    if (expanded) {
+      this.expandSet.add(workOrder.id!);
+      this.showWorkOrderDetails(workOrder);
     } else {
-      this.expandSet.delete(id);
+      this.expandSet.delete(workOrder.id!);
     }
   }
 
@@ -423,12 +428,12 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
   showWorkOrderDetails(workOrder: WorkOrder): void {
     // When we expand the details for the order, load the picks and short allocation from the server
-    if (this.expandSet.has(workOrder.id!)) {
-      this.showDeliveredInventory(workOrder);
-      this.showProducedInventory(workOrder);
-      this.showProducedByProduct(workOrder);
-      this.showReturnedInventory(workOrder);
-      this.showKPITransactions(workOrder);
+    if (this.expandSet.has(workOrder.id!)) { 
+      this.showDeliveredInventory(workOrder); 
+      this.showProducedInventory(workOrder); 
+      this.showProducedByProduct(workOrder); 
+      this.showReturnedInventory(workOrder); 
+      this.showKPITransactions(workOrder); 
       this.showKPIs(workOrder);
     }
   }
@@ -600,4 +605,41 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   changeWorkOrderLine(workOrder: WorkOrder): void {
     this.router.navigateByUrl(`/work-order/work-order/line/maintenance?id=${workOrder.id}`);
   }
+
+
+  
+  printSelectedPutawayWork(workOrder: WorkOrder): void  {
+    /***
+     * 
+    this.printingInProcess = true;
+
+    this.putawayConfigurationService.printPutawaySheet(this.getSelectedProducedInventory(workOrder));
+    // purposely to show the 'loading' status of the print button
+    // for at least 1 second. The above printReceipt will
+    // return immediately but the print job(or print preview page)
+    // will start with some delay. During the delay, we will
+    // display the 'print' button as 'Loading' status
+    setTimeout(() => {
+      this.printingInProcess = false;
+    }, 1000);
+     * 
+     */
+    this.printAllPutawayWork(this.mapOfProducedInventory[workOrder.id!]);
+  }
+
+  printAllPutawayWork(inventories: Inventory[]): void  {
+    this.printingInProcess = true;
+    this.putawayConfigurationService.printPutawaySheet(inventories);
+    // purposely to show the 'loading' status of the print button
+    // for at least 1 second. The above printReceipt will
+    // return immediately but the print job(or print preview page)
+    // will start with some delay. During the delay, we will
+    // display the 'print' button as 'Loading' status
+    setTimeout(() => {
+      this.printingInProcess = false;
+    }, 1000);
+  }
+
+  
+
 }

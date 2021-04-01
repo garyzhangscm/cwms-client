@@ -64,6 +64,9 @@ export class DashboardAnalysisComponent implements OnInit {
   offlineIdx = 0;
 
   ngOnInit(): void {
+    /**
+     * 
+
     this.http.get('/chart').subscribe((res) => {
       res.offlineData.forEach((item: any, idx: number) => {
         item.show = idx === 0;
@@ -73,6 +76,7 @@ export class DashboardAnalysisComponent implements OnInit {
       this.loading = false;
       this.changeSaleType();
     });
+     */
   }
 
   setDate(type: 'today' | 'week' | 'month' | 'year'): void {

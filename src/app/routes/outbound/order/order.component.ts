@@ -387,7 +387,9 @@ export class OutboundOrderComponent implements OnInit {
 
   printPickSheets(order: Order): void {
     this.mapOfPrintingInProcessId[order.id] = true;
-    this.orderService.printOrderPickSheet(order);
+    this.orderService.printOrderPickSheet(order).subscribe(printResult=> {
+      console.log(`Print success! result: ${printResult}`);
+    });
     // purposely to show the 'loading' status of the print button
     // for at least 1 second. The above printWorkOrderPickSheet will
     // return immediately but the print job(or print preview page)
