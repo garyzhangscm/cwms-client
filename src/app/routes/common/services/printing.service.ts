@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Lodop, LodopService } from '@delon/abc';
+import { Lodop, LodopService } from '@delon/abc/lodop';
 import { PrintPageOrientation } from '../models/print-page-orientation.enum';
 import { PrintPageSize } from '../models/print-page-size.enum';
 import { PrintableBarcode } from '../models/printable-barcode';
