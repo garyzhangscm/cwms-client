@@ -92,7 +92,7 @@
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
     "mockjs": "^1.1.0",
-    "ng-alain": "^11.7.1",
+    "ng-alain": "^11.8.1",
     "ng-alain-codelyzer": "^0.0.1",
     "ng-alain-plugin-theme": "^11.0.1",
     "nz-tslint-rules": "^0.901.2",
