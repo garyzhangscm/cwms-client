@@ -1,0 +1,159 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/report/report" routerLinkActive="active"
+    [queryParams]="{name:currentReport?.name}">{{ 'return' | translate }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/report/report" routerLinkActive="active">{{ 'report' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'report' | translate }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex" style="padding: 15px">
+  <nz-step nzTitle="{{ 'steps.report.info' | translate }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.report.confirm' | translate }}"> </nz-step>
+</nz-steps>
+
+<!-- Show basic item information -->
+<div class="small-card" *ngIf="stepIndex === 0 && currentReport != undefined">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'report.name' | translate }}
+        </nz-form-label>
+        <nz-form-control *ngIf="currentReport.id === undefined" [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input [(ngModel)]="currentItem.description" required />
+        </nz-form-control>
+        <nz-form-control *ngIf="currentReport.id !== undefined" [nzSm]="14" [nzXs]="24">
+          <input  nz-input [(ngModel)]="currentReport.name" required disabled />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'description' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input [(ngModel)]="currentReport.description" required />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    
+
+    <div nz-col [nzSpan]="8">
+        <nz-form-item> 
+            <nz-form-label [nzSm]="6" [nzXs]="24">
+              {{ 'report.companySpecific' | translate }}
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" >
+            <label nz-checkbox [(ngModel)]="companySpecific"></label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+ 
+      <div nz-col [nzSpan]="8">
+        <nz-form-item> 
+            <nz-form-label [nzSm]="6" [nzXs]="24">
+              {{ 'report.warehouseSpecific' | translate }}
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" >
+            <label nz-checkbox [(ngModel)]="warehouseSpecific"></label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      
+  </div>
+
+  <div nz-row [nzGutter]="24">
+    
+    <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'report.type' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" >
+            <nz-select nzAllowClear [(ngModel)]="currentReport.type"
+             style="width: 200px;">
+              <nz-option *ngFor="let reportType of reportTypes | keys"
+                nzValue="{{ reportType.key }}"
+                nzLabel="{{ 'REPORT-TYPE-' + reportType.key | translate }}">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+  
+  </div>
+
+  <div nz-row [nzGutter]="24">
+     
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'fileName' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          nzErrorTip="{{ 'error.form.field.required' | translate }}">
+          <input nz-input [(ngModel)]="currentReport.fileName" required />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+ 
+  </div>
+  
+</div>
+
+
+<!-- Confirm the change -->
+<div class="small-card" *ngIf="stepIndex === 1">
+  <nz-card>
+    <nz-descriptions nzBordered="true">
+      <nz-descriptions-item nzTitle="{{ 'report.name' | translate }}">{{ currentReport.name }} </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description' | translate }}">{{ currentReport.description }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'company.name' | translate }}">{{ currentReport.company?.name }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'warehouse.name' | translate }}">
+        {{ currentReport.warehouse?.name }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'type' | translate }}">
+        {{ currentReport.type }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'fileName' | translate }}">
+        {{ currentReport.fileName}}
+      </nz-descriptions-item>
+       
+    </nz-descriptions>
+  </nz-card>
+</div>
+
+
+<div class="steps-action" *ngIf="stepIndex === 0">
+  <button nz-button nzType="default" (click)="nextStep()" >
+    <span>{{ 'steps.next' | translate }}</span>
+  </button> 
+  </div>
+<div class="steps-action" *ngIf="stepIndex === 1">
+  
+  <button nz-button nzType="default" (click)="previousStep()" >
+    <span>{{ 'steps.previous' | translate }}</span>
+  </button>   
+  <nz-divider nzType="vertical"  ></nz-divider>
+  <button nz-button nzType="primary" (click)="confirmReport()"  >
+    <span> {{ 'confirm' | translate }}</span>
+  </button>
+</div>
+

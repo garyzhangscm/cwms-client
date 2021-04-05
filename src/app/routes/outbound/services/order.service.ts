@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -18,8 +19,7 @@ export class OrderService {
   constructor(
     private http: _HttpClient,
     private warehouseService: WarehouseService,
-    private printingService: PrintingService,
-    private pickService: PickService,
+    private i18n: I18NService,
   ) {}
 
   getOrders(number: string): Observable<Order[]> {
@@ -64,7 +64,7 @@ export class OrderService {
     return this.http.post(`outbound/orders/${order.id}/complete`).pipe(map(res => res.data));
   }
 
-  printOrderPickSheet(order: Order) : Observable<string>{
+  printOrderPickSheet(order: Order, locale?: string) : Observable<string>{
     /****
      * 
     const reportName = `Outbound Order Pick Sheet`;
@@ -82,8 +82,11 @@ export class OrderService {
     });
      * 
      */
+    if (!locale) {
+      locale = this.i18n.defaultLang;
+    }
     
-    return this.http.post(`outbound/orders/${order.id}/pick-report`).pipe(map(res => res.data));
+    return this.http.post(`outbound/orders/${order.id}/pick-report?locale=${locale}`).pipe(map(res => res.data));
   }
   
   generateOrderPickSheet(reportName: string, order: Order, picks: PickWork[]): string[] {

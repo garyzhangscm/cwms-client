@@ -1,26 +1,27 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
-import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
-import { NzStatisticModule } from 'ng-zorro-antd/statistic';
-import { DirectivesModule } from '../directives/directives.module';
 import { ReportRoutingModule } from './report-routing.module';
-import { ReportComponent } from './report/report.component';
+import { ReportReportComponent } from './report/report.component';
+import { ReportReportHistoryComponent } from './report-history/report-history.component';
+import { ReportReportPreviewComponent } from './report-preview/report-preview.component';
+import { ReportReportMaintenanceComponent } from './report-maintenance/report-maintenance.component';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 const COMPONENTS: Type<void>[] = [
-  ReportComponent];
+  ReportReportComponent,
+  ReportReportHistoryComponent,
+  ReportReportPreviewComponent,
+  ReportReportMaintenanceComponent];
 
-const COMPONENTS_NOROUNT: Type<void>[] = [];
 @NgModule({
   imports: [
     SharedModule,
+    NzDescriptionsModule,
     ReportRoutingModule,
-    DirectivesModule,
-    NzDescriptionsModule, 
-    NzStatisticModule,
+    PdfViewerModule
   ],
-  declarations: [
-    ...COMPONENTS,
-    ...COMPONENTS_NOROUNT
-  ],
+  declarations: COMPONENTS,
 })
 export class ReportModule { }

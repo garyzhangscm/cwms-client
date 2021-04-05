@@ -1,13 +1,18 @@
+import { Company } from "../../warehouse-layout/models/company";
+import { Warehouse } from "../../warehouse-layout/models/warehouse";
 import { ReportType } from "./report-type.enum";
 
 export interface Report {
-  id: number;
+    id?: number;
   name: string;
   
-  companyId: number;
-  warehouseId: number;
+  companyId?: number;
+  company?: Company;
+  warehouseId?: number;
+  warehouse?: Warehouse;
 
   description: string;
   type: ReportType;
   fileName: string;
+
 }

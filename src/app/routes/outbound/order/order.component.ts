@@ -386,8 +386,9 @@ export class OutboundOrderComponent implements OnInit {
   }
 
   printPickSheets(order: Order): void {
+    console.log(`start to print order pick sheet with locale ${this.i18n.currentLang}`);
     this.mapOfPrintingInProcessId[order.id] = true;
-    this.orderService.printOrderPickSheet(order).subscribe(printResult=> {
+    this.orderService.printOrderPickSheet(order, this.i18n.currentLang).subscribe(printResult=> {
       console.log(`Print success! result: ${printResult}`);
     });
     // purposely to show the 'loading' status of the print button

@@ -1,6 +1,5 @@
-import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { _HttpClient } from '@delon/theme/src/services/http/http.client';
+import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -10,7 +9,6 @@ import { Report } from '../models/report';
   providedIn: 'root'
 })
 export class ReportService {
-
   constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
   getAll(
@@ -32,4 +30,19 @@ export class ReportService {
 
     return this.http.get(url).pipe(map(res => res.data));
   }
+
+  
+  getReport(reportId: number): Observable<Report> {
+    return this.http.get(`resource/reports/${reportId}`).pipe(map(res => res.data));
+  }
+
+  addReport(report: Report): Observable<Report> {
+    return this.http.put('resource/reports', report).pipe(map(res => res.data));
+  }
+
+  changeReport(report: Report): Observable<Report> {
+    const url = 'resource/reports/' + report.id;
+    return this.http.post(url, report).pipe(map(res => res.data));
+  }
+
 }

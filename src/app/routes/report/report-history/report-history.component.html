@@ -13,26 +13,7 @@
         </nz-form-control>
       </nz-form-item>
     </div>
-
-    <div nz-col [nzSpan]="8">
-      <nz-form-item nzFlex>
-        <label nz-checkbox formControlName="companySpecific">
-          <span> {{ 'report.companySpecific' | translate }}</span>
-        </label>
-
-        
-      </nz-form-item>
-    </div>
     
-    <div nz-col [nzSpan]="8">
-      <nz-form-item nzFlex>
-        
-        <label nz-checkbox formControlName="warehouseSpecific">
-          <span> {{ 'report.warehouseSpecific' | translate }}</span>
-        </label>
-
-      </nz-form-item>
-    </div>
   </div>
   
 
@@ -49,8 +30,8 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
 
-  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllReports"  
-  (nzCurrentPageDataChange)="currentPageDataChange($event)" #reportTable>
+  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllReportHistories"  
+  (nzCurrentPageDataChange)="currentPageDataChange($event)" #reportHistoryTable>
     <thead >
       <tr>
          
@@ -77,21 +58,20 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of reportTable.data"> 
+      <tr *ngFor="let data of reportHistoryTable.data"> 
         <td>{{ data.name }}</td>
         <td>{{ data.description }}</td>
-        <td>{{ data.companyId}}</td>
-        <td>{{ data.warehouseId }}</td>
+        <td> {{ data.printedDate[1] }}/{{ data.printedDate[2] }}/{{ data.printedDate[0] }}
+            {{ data.printedDate[3] }}:{{ data.printedDate[4] }}:{{ data.printedDate[5] }}
+          </td>
+        <td>{{ data.printedUsername }}</td>
         <td>{{ data.type }}</td>
-        <td>{{ data.fileName }}</td>
-        <td nzRight>
-
-          <button nz-button nzType="primary" routerLink="/report/report-maintenance" routerLinkActive="active"
-            [queryParams]="{id : data.id}">
-            {{ 'modify' | translate }}
-          </button>
-
-        </td>
+        <td>
+          <a   routerLink="/report/report-preview" routerLinkActive="active"
+          [queryParams]="{fileName : data.fileName, type: data.type}"
+          >{{ data.fileName }}</a>
+          </td>
+        <td></td>
       </tr>
 
     </tbody>

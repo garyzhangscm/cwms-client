@@ -52,7 +52,7 @@ const routes: Routes = [
       { path: 'common', loadChildren: './common/common.module#CommonModule' },
       { path: 'work-task', loadChildren: './work-task/work-task.module#WorkTaskModule' },
       { path: 'util', loadChildren: './util/util.module#UtilModule' },
-    ],
+    { path: 'report', loadChildren: () => import('./report/report.module').then((m) => m.ReportModule) },],
   },
   // 全屏布局
   {

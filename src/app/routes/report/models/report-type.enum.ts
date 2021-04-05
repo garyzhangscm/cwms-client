@@ -1,5 +1,4 @@
 export enum ReportType {
-    
-  PDF = 'PDF',
-  HTML = 'HTML',
+    PDF = 'PDF',
+ //  HTML = 'HTML',
 }

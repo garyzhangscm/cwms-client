@@ -1,0 +1,9 @@
+<page-header></page-header>
+<div [innerHTML]="htmlContent" *ngIf="type=== 'HTML'"></div>
+
+
+
+<div class="container" *ngIf="type=== 'PDF'">
+  <p>display PDF</p>
+    <pdf-viewer [src]="pdfUrl" style="height: 300px"></pdf-viewer>
+</div>
