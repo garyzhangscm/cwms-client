@@ -8,6 +8,7 @@ import { ReportReportMaintenanceComponent } from './report-maintenance/report-ma
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { CommonModule } from '../common/common.module';
 
 const COMPONENTS: Type<void>[] = [
   ReportReportComponent,
@@ -20,7 +21,8 @@ const COMPONENTS: Type<void>[] = [
     SharedModule,
     NzDescriptionsModule,
     ReportRoutingModule,
-    PdfViewerModule
+    PdfViewerModule,    
+    CommonModule
   ],
   declarations: COMPONENTS,
 })

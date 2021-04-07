@@ -23,11 +23,58 @@ export class PrintingService {
     });
   }
 
+  isLodopInstalled() : boolean {
+    return this.lodop !== null;
+  }
+
+  getLocalPrinterCount(): number {
+    if (!this.isLodopInstalled()) {
+
+      return 0;
+    }
+    return this.lodop!.GET_PRINTER_COUNT();
+  }
+
+  getAllLocalPrinter() : string[] {
+    var allLocalPrinters: string[] = [];
+    const localPrinterCount = this.getLocalPrinterCount();
+    if (localPrinterCount === 0) {
+      return allLocalPrinters;
+    }
+    for (var i = 0; i < localPrinterCount; i++) {
+      console.log(`printer index: ${i}, name: ${this.lodop!.GET_PRINTER_NAME(i)}`);
+      allLocalPrinters.push(this.lodop!.GET_PRINTER_NAME(i));
+    }
+    return allLocalPrinters;
+  }
+
+  printRemoteFile(
+    name: string,
+    remoteFileUrl: string, 
+    printerIndex: number, 
+    physicalCopyCount: number,    
+    pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
+    pageSize: PrintPageSize = PrintPageSize.A4,
+  ) : void {
+    console.log(`start to print remote file in orientation: ${pageOrientation}`);
+    console.log(`START TO PRINT ${remoteFileUrl}`);
+    const LODOP = this.lodop!;
+    //LODOP.PRINT_INITA(0, 0, 810, 610, name);
+    LODOP.PRINT_INIT(name);
+    LODOP.SET_PRINT_PAGESIZE(pageOrientation, 2100, 2970, pageSize);
+    LODOP.SET_PRINTER_INDEX(printerIndex);
+    LODOP.ADD_PRINT_PDF(-30 ,0, "100%","100%",remoteFileUrl); 
+    // LODOP.ADD_PRINT_PDF(0,0,"100%","100%","http://localhost:8000/CLodopDemos/PDFDemo.pdf");
+    // LODOP.ADD_PRINT_PDF(-30,0,"100%","100%","e:\\AAA.pdf");
+    LODOP.SET_PRINT_COPIES(physicalCopyCount);
+    LODOP.PRINT();
+  }
+
   print(
     name: string,
     pages: string[],
     pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
-    pageSize: PrintPageSize = PrintPageSize.A4Small,
+    pageSize: PrintPageSize = PrintPageSize.A4,
     barcodes: PrintableBarcode[] = []
   ): void {
     const LODOP = this.lodop!;

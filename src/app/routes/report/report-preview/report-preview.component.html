@@ -1,9 +1,19 @@
 <page-header></page-header>
-<div [innerHTML]="htmlContent" *ngIf="type=== 'HTML'"></div>
 
 
 
 <div class="container" *ngIf="type=== 'PDF'">
-  <p>display PDF</p>
-    <pdf-viewer [src]="pdfUrl" style="height: 300px"></pdf-viewer>
+    <pdf-viewer [src]="pdfUrl" style="height: 300px"></pdf-viewer> 
+    <div nz-row nzType="flex" nzJustify="center">  
+
+      <cwms-common-print-button 
+      [printingInProcess]="printingInProcess" 
+      (print)="printReport($event)"
+      (preview)="previewReport(data)"> 
+    </cwms-common-print-button> 
+    <nz-divider nzType="vertical"></nz-divider>
+    <a [href]="pdfUrl" target="_blank" rel="noopener noreferrer">
+      {{ 'report.download' | translate}}
+    </a>
+    </div>
 </div>

@@ -18,6 +18,7 @@ import { CommonSupplierComponent } from './supplier/supplier.component';
 import { CommonUnitOfMeasureConfirmComponent } from './unit-of-measure-confirm/unit-of-measure-confirm.component';
 import { CommonUnitOfMeasureMaintenanceComponent } from './unit-of-measure-maintenance/unit-of-measure-maintenance.component';
 import { CommonUnitOfMeasureComponent } from './unit-of-measure/unit-of-measure.component';
+import { CommonPrintButtonComponent } from './print-button/print-button.component';
 
 const COMPONENTS: Type<void>[] =  [
   CommonClientComponent,
@@ -34,7 +35,8 @@ const COMPONENTS: Type<void>[] =  [
   CommonCustomerComponent,
   CommonCustomerMaintenanceComponent,
   CommonCustomerMaintenanceConfirmComponent,
-  CommonCustomerAddressMaintenanceComponent];
+  CommonCustomerAddressMaintenanceComponent,
+  CommonPrintButtonComponent];
 
 
 const COMPONENTS_NOROUNT: Type<void>[] = [];
@@ -50,6 +52,7 @@ const COMPONENTS_NOROUNT: Type<void>[] = [];
     ...COMPONENTS,
     ...COMPONENTS_NOROUNT
   ],
+  exports: [CommonPrintButtonComponent],
   entryComponents: COMPONENTS_NOROUNT
 })
 export class CommonModule { }

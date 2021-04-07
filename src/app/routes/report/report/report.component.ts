@@ -71,6 +71,16 @@ export class ReportReportComponent implements OnInit {
           filterFn: null, 
           showFilter: false
         }, {
+          name: 'report.orientation',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: Report, b: Report) => this.utilService.compareNullableString(a.reportOrientation, b.reportOrientation),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false
+        }, {
           name: 'fileName',
           showSort: true,
           sortOrder: null,

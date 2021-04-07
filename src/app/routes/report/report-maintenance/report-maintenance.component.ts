@@ -3,8 +3,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Report } from '../models/report';
+import { ReportOrientation } from '../models/report-orientation.enum';
 import { ReportType } from '../models/report-type.enum';
 import { ReportService } from '../services/report.service';
 
@@ -60,6 +62,7 @@ export class ReportReportMaintenanceComponent implements OnInit {
       description: '',
       type: ReportType.PDF,
       fileName: '',
+      reportOrientation: ReportOrientation.LANDSCAPE 
     };
   }
   previousStep(): void {

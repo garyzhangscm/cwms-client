@@ -7,6 +7,8 @@ import { TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Customer } from '../../common/models/customer';
+import { Printer } from '../../common/models/printer';
+import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ColumnItem } from '../../util/models/column-item';
@@ -19,6 +21,8 @@ import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
 import { OrderService } from '../services/order.service';
 import { PickService } from '../services/pick.service';
 import { ShortAllocationService } from '../services/short-allocation.service';
+import { environment } from '@env/environment'; 
+import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 
 @Component({
   selector: 'app-outbound-order',
@@ -165,7 +169,12 @@ export class OutboundOrderComponent implements OnInit {
     private titleService: TitleService,
     private inventoryService: InventoryService,
     private utilService: UtilService,
+    private printingService: PrintingService,
   ) {}
+
+  printerModal!: NzModalRef;
+  printerForm!: FormGroup;
+  availablePrinters: Printer[] = [];
 
   // Form related data and functions
   searchForm!: FormGroup;
@@ -384,22 +393,7 @@ export class OutboundOrderComponent implements OnInit {
   isOrderReadyForComplete(order: Order): boolean {
     return order.status === OrderStatus.OPEN;
   }
-
-  printPickSheets(order: Order): void {
-    console.log(`start to print order pick sheet with locale ${this.i18n.currentLang}`);
-    this.mapOfPrintingInProcessId[order.id] = true;
-    this.orderService.printOrderPickSheet(order, this.i18n.currentLang).subscribe(printResult=> {
-      console.log(`Print success! result: ${printResult}`);
-    });
-    // purposely to show the 'loading' status of the print button
-    // for at least 1 second. The above printWorkOrderPickSheet will
-    // return immediately but the print job(or print preview page)
-    // will start with some delay. During the delay, we will
-    // display the 'print' button as 'Loading' status
-    setTimeout(() => {
-      this.mapOfPrintingInProcessId[order.id] = false;
-    }, 1000);
-  }
+ 
   confirmPicks(order: Order): void {
     this.router.navigateByUrl(`/outbound/pick/confirm?type=order&id=${order.id}`);
   }
@@ -550,6 +544,36 @@ export class OutboundOrderComponent implements OnInit {
     this.shortAllocationService.allocateShortAllocation(shortAllocation).subscribe(shortAllocationRes => {
       this.messageService.success(this.i18n.fanyi('message.action.success'));
       this.search(order.id, 3);
+    });
+  }
+  
+  printPickSheets(order: Order, event: any) : void {
+
+    console.log(`start to print ${order.number} from ${JSON.stringify(event)}`);
+
+    this.orderService
+      .printOrderPickSheet(order, this.i18n.currentLang)
+      .subscribe(printResult=> {
+      console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+      // send the result to the printer
+      const printFileUrl 
+        = `${environment.SERVER_URL}/resource/report-histories/download/${printResult.fileName}`;
+      this.printingService.printRemoteFile(
+        "order pick sheet", 
+        printFileUrl, 
+        event.printerIndex, 
+        event.physicalCopyCount, PrintPageOrientation.Landscape);
+       this.messageService.success(this.i18n.fanyi("report.print.printed"));
+    });
+    
+  }
+  previewReport(order: Order) : void{
+    console.log(`start to preview ${order.number}`);
+    this.orderService.printOrderPickSheet(order, this.i18n.currentLang).subscribe(printResult=> {
+      console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+       
+      this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}`);
+      
     });
   }
 }

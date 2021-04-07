@@ -2,6 +2,7 @@ import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
+import { CommonModule } from '../common/common.module';
 import { DirectivesModule } from '../directives/directives.module';
 import { OutboundAllocationConfigurationComponent } from './allocation-configuration/allocation-configuration.component';
 import { OutboundCartonComponent } from './carton/carton.component';
@@ -57,7 +58,8 @@ const COMPONENTS_NOROUNT: Type<void>[] = [];
     OutboundRoutingModule, 
     DirectivesModule,
     NzDescriptionsModule, 
-    NzStatisticModule
+    NzStatisticModule, 
+    CommonModule
   ],
   declarations: [
     ...COMPONENTS,

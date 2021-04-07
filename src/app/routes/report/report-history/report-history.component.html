@@ -66,9 +66,11 @@
           </td>
         <td>{{ data.printedUsername }}</td>
         <td>{{ data.type }}</td>
+        <td>{{ 'REPORT-ORIENTATION_' + data.reportOrientation | translate }}</td>
+        
         <td>
           <a   routerLink="/report/report-preview" routerLinkActive="active"
-          [queryParams]="{fileName : data.fileName, type: data.type}"
+          [queryParams]="{fileName : data.fileName, type: data.type, orientation: data.reportOrientation}"
           >{{ data.fileName }}</a>
           </td>
         <td></td>

@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PrintableBarcode } from '../../common/models/printable-barcode';
 import { PrintingService } from '../../common/services/printing.service';
+import { ReportHistory } from '../../report/models/report-history';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Order } from '../models/order';
 import { OrderLine } from '../models/order-line';
@@ -64,7 +65,7 @@ export class OrderService {
     return this.http.post(`outbound/orders/${order.id}/complete`).pipe(map(res => res.data));
   }
 
-  printOrderPickSheet(order: Order, locale?: string) : Observable<string>{
+  printOrderPickSheet(order: Order, locale?: string) : Observable<ReportHistory>{
     /****
      * 
     const reportName = `Outbound Order Pick Sheet`;

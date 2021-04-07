@@ -1,4 +1,5 @@
 export enum PrintPageOrientation {
-  Portrait = 1,
-  Landscape = 2,
+  Landscape = 1,
+  Portrait = 2,
+  
 }
