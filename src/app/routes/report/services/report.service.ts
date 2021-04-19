@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { UserService } from '../../auth/services/user.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Report } from '../models/report';
 
@@ -9,7 +10,9 @@ import { Report } from '../models/report';
   providedIn: 'root'
 })
 export class ReportService {
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
+  constructor(private http: _HttpClient, 
+    private warehouseService: WarehouseService, 
+    private userService: UserService) {}
 
   getAll(
     name?: string,
@@ -36,8 +39,9 @@ export class ReportService {
     return this.http.get(`resource/reports/${reportId}`).pipe(map(res => res.data));
   }
 
-  addReport(report: Report): Observable<Report> {
-    return this.http.put('resource/reports', report).pipe(map(res => res.data));
+  addReport(report: Report, companySpecific: boolean, warehouseSpecific: boolean): Observable<Report> {
+    let url = `resource/reports?warehouseId=${this.warehouseService.getCurrentWarehouse().id.toString()}&username=${this.userService.getCurrentUsername()}&companySpecific=${companySpecific}&warehouseSpecific=${warehouseSpecific}`; 
+    return this.http.put(url, report).pipe(map(res => res.data));
   }
 
   changeReport(report: Report): Observable<Report> {

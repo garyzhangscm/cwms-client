@@ -1,6 +1,28 @@
-<page-header></page-header>
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnTpl"></page-header>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item
+      ><a>{{ 'menu.main' | translate }}</a></nz-breadcrumb-item
+    >
+    <nz-breadcrumb-item
+      ><a>{{ 'menu.main.report' | translate }}</a></nz-breadcrumb-item
+    >
+    <nz-breadcrumb-item
+      ><a routerLink="/report/report" routerLinkActive="active">{{
+        'menu.main.report.report' | translate
+      }}</a></nz-breadcrumb-item
+    >
+  </nz-breadcrumb>
+</ng-template>
 
-
+<ng-template #returnTpl>
+  <a (click)="back()">
+    {{ 'return' | translate }}
+  </a>
+</ng-template>
 
 <div class="container" *ngIf="type=== 'PDF'">
     <pdf-viewer [src]="pdfUrl" style="height: 300px"></pdf-viewer> 

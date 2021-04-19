@@ -4,13 +4,16 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { User } from '../models/user';
+import { SettingsService } from '@delon/theme';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService, 
-              private menuService: MenuService) {}
+  constructor(private http: _HttpClient, 
+    private warehouseService: WarehouseService, 
+              private menuService: MenuService, 
+              private settings: SettingsService) {}
 
   getUsers(username?: string, rolename?: string, workingTeamName?: string): Observable<User[]> {
     let url = `resource/users?companyId=${this.warehouseService.getCurrentWarehouse().companyId}`;
@@ -72,6 +75,10 @@ export class UserService {
     return this.menuService.getPathByUrl(menuUrl).length > 0;
     
     
+  }
+
+  getCurrentUsername() : string {
+     return this.settings.user.name!;
   }
 
 }

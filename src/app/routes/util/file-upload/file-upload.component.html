@@ -81,7 +81,7 @@
               [http-url]="selectedFileUploadType?.templateFileUrl"
               nz-button
               [file-name]="selectedFileUploadType?.name + '.csv'"
-              [disabled]="selectedFileUploadType === null || selectedFileUploadType.templateFileUrl === ''"
+              [disabled]="selectedFileUploadType === null || selectedFileUploadType?.templateFileUrl === ''"
             >
               {{ 'download' | translate }}
             </button>

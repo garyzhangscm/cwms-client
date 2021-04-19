@@ -16,6 +16,9 @@ export interface Report {
   description: string;
   type: ReportType;
   fileName: string;
+  fileUrl?: string;
   reportOrientation: ReportOrientation;
+
+
 
 }

@@ -8,10 +8,13 @@ import { PrintingService } from '../../common/services/printing.service';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { I18NService } from '@core';
 import { ReportOrientation } from '../models/report-orientation.enum';
+import { TitleService } from '@delon/theme';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-report-report-preview',
   templateUrl: './report-preview.component.html',
+  styleUrls: ['./report-preview.component.less'],
 })
 export class ReportReportPreviewComponent implements OnInit {
 
@@ -23,11 +26,15 @@ export class ReportReportPreviewComponent implements OnInit {
   printingOrientation : PrintPageOrientation = PrintPageOrientation.Portrait;
   reportOrientation : ReportOrientation = ReportOrientation.LANDSCAPE;
 
+  pageTitle = '';
+
   constructor(private http: _HttpClient, 
     private activatedRoute: ActivatedRoute,
     private reportHistoryService: ReportHistoryService,
     private messageService: NzMessageService,
     private printingService: PrintingService,
+    private titleService: TitleService,
+    private webLocation: Location,
     private i18n: I18NService,) { }
 
   ngOnInit(): void { 
@@ -59,6 +66,9 @@ export class ReportReportPreviewComponent implements OnInit {
         console.log(`currently we are only support PDF file report`);
           }
     });
+    this.pageTitle = this.i18n.fanyi('report.preview');
+    this.titleService.setTitle(this.i18n.fanyi('report.preview'));
+          
 
   }
 
@@ -81,6 +91,9 @@ export class ReportReportPreviewComponent implements OnInit {
 
   }
   
+  back(): void {
+    this.webLocation.back();
+  }
   
 
 }

@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { TitleService, _HttpClient } from '@delon/theme';
+import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { ColumnItem } from '../../util/models/column-item';
@@ -115,6 +116,8 @@ export class ReportReportComponent implements OnInit {
   searching = false;
   searchResult = '';
 
+  isSpinning = false;
+
   
 
   resetForm(): void {
@@ -135,6 +138,7 @@ export class ReportReportComponent implements OnInit {
       )
       .subscribe(
         reportRes => {
+          this.setupReportUrl(reportRes)
           this.listOfAllReports = reportRes;
           this.listOfDisplayReports = reportRes;
 
@@ -151,7 +155,19 @@ export class ReportReportComponent implements OnInit {
       );
   }
  
-  
+  setupReportUrl(reports: Report[]) : void {
+
+    reports.forEach(report => {
+
+      let fileUrl = `${environment.SERVER_URL}/resource/reports/templates?fileName=${report.fileName}`;
+      if (report.companyId) {
+        fileUrl = `${fileUrl}&companyId=${report.companyId}`;
+      }if (report.warehouseId) {
+        fileUrl = `${fileUrl}&warehouseId=${report.warehouseId}`;
+      }
+      report.fileUrl = fileUrl;
+    });
+  }
 
   currentPageDataChange($event: Report[]): void {
     this.listOfDisplayReports! = $event; 
@@ -177,5 +193,7 @@ export class ReportReportComponent implements OnInit {
     });
     
   }
+
+  removeCustomizedReport() : void{}
 
 }

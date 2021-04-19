@@ -15,13 +15,16 @@
   </nz-breadcrumb>
 </ng-template>
 
-<nz-steps nzType="navigation" [nzCurrent]="stepIndex" style="padding: 15px">
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex" 
+  nzStatus="wait" style="padding: 15px">
   <nz-step nzTitle="{{ 'steps.report.info' | translate }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.report.template' | translate }}"> </nz-step>
   <nz-step nzTitle="{{ 'steps.report.confirm' | translate }}"> </nz-step>
 </nz-steps>
 
 <!-- Show basic item information -->
-<div class="small-card" *ngIf="stepIndex === 0 && currentReport != undefined">
+<div class="small-card" *ngIf="stepIndex === 0 
+    && currentReport != undefined">
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item>
@@ -30,10 +33,8 @@
         </nz-form-label>
         <nz-form-control *ngIf="currentReport.id === undefined" [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
-          <input nz-input [(ngModel)]="currentItem.description" required />
-        </nz-form-control>
-        <nz-form-control *ngIf="currentReport.id !== undefined" [nzSm]="14" [nzXs]="24">
-          <input  nz-input [(ngModel)]="currentReport.name" required disabled />
+          <input nz-input [(ngModel)]="currentReport.name" required
+           [disabled]="currentReport.id !== undefined || standardReport" />
         </nz-form-control>
       </nz-form-item>
     </div>
@@ -45,7 +46,8 @@
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
           nzErrorTip="{{ 'error.form.field.required' | translate }}">
-          <input nz-input [(ngModel)]="currentReport.description" required />
+          <input nz-input [(ngModel)]="currentReport.description" required 
+          [disabled]="standardReport" />
         </nz-form-control>
       </nz-form-item>
     </div>
@@ -57,26 +59,26 @@
               {{ 'report.companySpecific' | translate }}
             </nz-form-label>
             <nz-form-control [nzSm]="14" [nzXs]="24" >
-            <label nz-checkbox [(ngModel)]="companySpecific"></label>
+            <label nz-checkbox [(ngModel)]="companySpecific" nzDisabled ></label>
           </nz-form-control>
         </nz-form-item>
       </div>
  
+    </div>
+
+    <div nz-row [nzGutter]="24">
       <div nz-col [nzSpan]="8">
         <nz-form-item> 
             <nz-form-label [nzSm]="6" [nzXs]="24">
               {{ 'report.warehouseSpecific' | translate }}
             </nz-form-label>
             <nz-form-control [nzSm]="14" [nzXs]="24" >
-            <label nz-checkbox [(ngModel)]="warehouseSpecific"></label>
+            <label nz-checkbox [(ngModel)]="warehouseSpecific"  [disabled]="standardReport" ></label>
           </nz-form-control>
         </nz-form-item>
       </div>
 
       
-  </div>
-
-  <div nz-row [nzGutter]="24">
     
     <div nz-col [nzSpan]="8">
         <nz-form-item>
@@ -85,7 +87,7 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" >
             <nz-select nzAllowClear [(ngModel)]="currentReport.type"
-             style="width: 200px;">
+             style="width: 200px;"  [disabled]="standardReport" >
               <nz-option *ngFor="let reportType of reportTypes | keys"
                 nzValue="{{ reportType.key }}"
                 nzLabel="{{ 'REPORT-TYPE-' + reportType.key | translate }}">
@@ -97,24 +99,40 @@
   
   </div>
 
+<!-- upload the template file -->
   <div nz-row [nzGutter]="24">
      
-
+      
     <div nz-col [nzSpan]="8">
-      <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24">
-          {{ 'fileName' | translate }}
-        </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-          nzErrorTip="{{ 'error.form.field.required' | translate }}">
-          <input nz-input [(ngModel)]="currentReport.fileName" required />
-        </nz-form-control>
-      </nz-form-item>
+    <div nz-row *ngIf="!standardReport">
+      <nz-upload
+      [nzAction]="templateFileUploadUrl"
+      [nzHeaders]="{ authorization: 'authorization-text' }"
+      [nzFileList]="fileList"
+      [nzAccept]="acceptUploadedFileTypes"
+      (nzChange)="handleUploadChange($event)"
+    >
+      <button nz-button [disabled]="standardReport" >
+        <i nz-icon nzType="upload"></i>
+      
+        {{ 'file-upload' | translate }}
+      </button>
+      <!--
+      <nz-divider nzType="vertical"  ></nz-divider>
+
+      <a  routerLink="resource/reports/templates/temp"  target="_blank"
+         rel="noopener noreferrer" [queryParams]="{fileName : currentReport.fileName}">
+          {{ currentReport.fileName | translate}}
+      </a>
+
+      -->
+    </nz-upload>
     </div>
- 
+    </div>
   </div>
   
 </div>
+
 
 
 <!-- Confirm the change -->
@@ -146,6 +164,7 @@
     <span>{{ 'steps.next' | translate }}</span>
   </button> 
   </div>
+  
 <div class="steps-action" *ngIf="stepIndex === 1">
   
   <button nz-button nzType="default" (click)="previousStep()" >

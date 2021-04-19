@@ -23,6 +23,7 @@ import { PickService } from '../services/pick.service';
 import { ShortAllocationService } from '../services/short-allocation.service';
 import { environment } from '@env/environment'; 
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
+import { ReportOrientation } from '../../report/models/report-orientation.enum';
 
 @Component({
   selector: 'app-outbound-order',
@@ -207,6 +208,8 @@ export class OutboundOrderComponent implements OnInit {
   unpickModal!: NzModalRef;
 
   orderStatusEnum = OrderStatus;
+
+  isSpinning = false;
 
   resetForm(): void {
     this.searchForm.reset();
@@ -548,14 +551,14 @@ export class OutboundOrderComponent implements OnInit {
   }
   
   printPickSheets(order: Order, event: any) : void {
-
+    this.isSpinning = true;
     console.log(`start to print ${order.number} from ${JSON.stringify(event)}`);
 
     this.orderService
       .printOrderPickSheet(order, this.i18n.currentLang)
       .subscribe(printResult=> {
-      console.log(`Print success! result: ${JSON.stringify(printResult)}`);
-      // send the result to the printer
+      
+        // send the result to the printer
       const printFileUrl 
         = `${environment.SERVER_URL}/resource/report-histories/download/${printResult.fileName}`;
       this.printingService.printRemoteFile(
@@ -563,16 +566,18 @@ export class OutboundOrderComponent implements OnInit {
         printFileUrl, 
         event.printerIndex, 
         event.physicalCopyCount, PrintPageOrientation.Landscape);
+       this.isSpinning = false;
        this.messageService.success(this.i18n.fanyi("report.print.printed"));
     });
     
   }
   previewReport(order: Order) : void{
+    this.isSpinning = true;
     console.log(`start to preview ${order.number}`);
     this.orderService.printOrderPickSheet(order, this.i18n.currentLang).subscribe(printResult=> {
-      console.log(`Print success! result: ${JSON.stringify(printResult)}`);
-       
-      this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}`);
+      // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+      this.isSpinning = false;
+      this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
       
     });
   }
