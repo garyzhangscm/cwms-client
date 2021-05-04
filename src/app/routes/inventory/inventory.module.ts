@@ -34,6 +34,7 @@ import { InventoryMovementPathComponent } from './movement-path/movement-path.co
 import { InventoryReplenishmentComponent } from './replenishment/replenishment.component';
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
 import { NzImageModule } from 'ng-zorro-antd/image';
+import { CommonModule } from '../common/common.module';
 
 const COMPONENTS: Type<void>[] = [
   InventoryInventoryComponent,
@@ -74,7 +75,8 @@ const COMPONENTS_NOROUNT: Type<void>[] = [];
     DirectivesModule,
     NzDescriptionsModule,
     WarehouseLayoutModule, 
-    NzImageModule
+    NzImageModule,
+    CommonModule
   ],
   declarations: [
     ...COMPONENTS,

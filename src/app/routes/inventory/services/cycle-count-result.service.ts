@@ -4,12 +4,16 @@ import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { CycleCountResult } from '../models/cycle-count-result';
 import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CycleCountResultService {
-  constructor(private http: _HttpClient, private gzLocalStorageService: GzLocalStorageService) {}
+  constructor(private http: _HttpClient, 
+    private gzLocalStorageService: GzLocalStorageService, 
+    
+    private warehouseService: WarehouseService,) {}
 
   getCycleCountResultDetails(batchId: string, refresh: boolean = false): Observable<CycleCountResult[]> {
     // if we can find the value in local storage, we get it from their.
@@ -21,7 +25,7 @@ export class CycleCountResultService {
       }
     }
     return this.http
-      .get(`inventory/cycle-count-result/${batchId}`)
+      .get(`inventory/cycle-count-result/${this.warehouseService.getCurrentWarehouse().id}/${batchId}`)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem(`inventory.cycle-count-result.${batchId}`, res)));
   }

@@ -10,6 +10,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { Report } from '../models/report';
+import { ReportType } from '../models/report-type.enum';
 import { ReportService } from '../services/report.service';
 
 @Component({
@@ -21,16 +22,16 @@ export class ReportReportComponent implements OnInit {
 
   listOfColumns: ColumnItem[] = [    
     {
-          name: 'report.name',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Report, b: Report) => this.utilService.compareNullableString(a.name, b.name),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },{
+      name: 'type',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Report, b: Report) => this.utilService.compareNullableString(a.type, b.type),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    }, {
           name: 'description',
           showSort: true,
           sortOrder: null,
@@ -62,16 +63,6 @@ export class ReportReportComponent implements OnInit {
           filterFn: null, 
           showFilter: false
         },  {
-          name: 'type',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Report, b: Report) => this.utilService.compareNullableString(a.type, b.type),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
           name: 'report.orientation',
           showSort: true,
           sortOrder: null,
@@ -117,6 +108,7 @@ export class ReportReportComponent implements OnInit {
   searchResult = '';
 
   isSpinning = false;
+  reportTypes = ReportType;
 
   
 
@@ -132,7 +124,7 @@ export class ReportReportComponent implements OnInit {
 
     this.reportService
       .getAll(
-        this.searchForm.controls.name.value,
+        this.searchForm.controls.type.value,
         this.searchForm.controls.companySpecific.value,
         this.searchForm.controls.warehouseSpecific.value,
       )
@@ -179,15 +171,15 @@ export class ReportReportComponent implements OnInit {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.report.report'));
     // initiate the search form
     this.searchForm = this.fb.group({
-      name: [null],
+      type: [null],
       companySpecific: [null],
       warehouseSpecific: [null],
     });
 
     
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.name) {
-        this.searchForm.controls.name.setValue(params.name);
+      if (params.type) {
+        this.searchForm.controls.type.setValue(params.type);
         this.search();
       }
     });

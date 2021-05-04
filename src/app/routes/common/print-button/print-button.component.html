@@ -10,7 +10,7 @@
                   {{ 'report.print.default' | translate }}</a>
               </li>
               
-            <li nz-menu-item>
+            <li nz-menu-item *ngIf="allowPreview">
               <a (click)="previewReport()">
                 {{ 'report.preview' | translate }}</a>
             </li>

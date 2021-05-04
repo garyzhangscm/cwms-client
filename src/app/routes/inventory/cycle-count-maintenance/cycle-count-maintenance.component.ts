@@ -5,6 +5,11 @@ import { I18NService } from '@core';
 import { TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
+import { PrintingService } from '../../common/services/printing.service';
+import { Receipt } from '../../inbound/models/receipt';
+import { ReportOrientation } from '../../report/models/report-orientation.enum';
+import { ReportType } from '../../report/models/report-type.enum';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -25,6 +30,7 @@ import { ItemService } from '../services/item.service';
 @Component({
   selector: 'app-inventory-cycle-count-maintenance',
   templateUrl: './cycle-count-maintenance.component.html',
+  styleUrls: ['./cycle-count-maintenance.component.less'],
 })
 export class InventoryCycleCountMaintenanceComponent implements OnInit {
 
@@ -321,6 +327,11 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
  
 
   printingCycleCountRequest = false;
+  
+  printCycleCountType = "all";
+  printAuditCountType = "all";
+
+  isSpinning = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -337,6 +348,8 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     private message: NzMessageService,
     private warehouseService: WarehouseService,
     private utilService: UtilService,
+    private printingService: PrintingService,
+    private router: Router,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inventory.cycle-count-request.title');
   }
@@ -515,6 +528,8 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
       this.refreshCountBatchResults();
     });
   }
+/***
+ * 
 
   printSelectedCycleCounts(): void {
     this.cycleCountRequestService.printCycleCountRequestReport(
@@ -533,6 +548,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
       this.printingCycleCountRequest = false;
     }, 1000);
   }
+ */
 
   cancelSelectedCycleCounts(): void {
     this.cycleCountRequestService.cancelCycleCountRequests(this.getSelectedOpenCycleCounts()).subscribe(res => {
@@ -823,20 +839,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     });
   }
 
-  printSelectedAuditCounts(): void {
-    this.auditCountRequestService.printAuditCountRequestReport(
-      this.requestForm.controls.batchId.value,
-      this.getSelectedOpenAuditCounts(),
-    );
-  }
-
-  printAllAuditCounts(): void {
-    this.auditCountRequestService.printAuditCountRequestReport(
-      this.requestForm.controls.batchId.value,
-      this.listOfAllOpenAuditCountRequests,
-    );
-  }
-
+  
   /**
    * Cycle count result event and attribute
    * > Sort
@@ -856,5 +859,221 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     this.requestForm.controls.endValue.setValue(selectedEndValue); 
   }
 
+  /**
+   * Print or preview cycle count sheet
+   * 
+   */
+  printCycleCounts(event: any) {
+
+    switch(this.printCycleCountType) {
+      case "all":
+        this.printAllCycleCount(event);
+        break;
+        
+      case "selected":
+        this.printSelectedCycleCount(event);
+        break;
+      default:
+        this.printAllCycleCount(event);
+        break;
+    }
+  }
   
+  previewCycleCounts() {
+
+    switch(this.printCycleCountType) {
+      case "all":
+        this.previewAllCycleCount();
+        break;
+        
+      case "selected":
+        this.previewSelectedCycleCount();
+        break;
+      default:
+        this.previewAllCycleCount();
+        break;
+    }
+  }
+  
+  printCycleCountSheet(event: any, cycleCountRequestIds: number[]) : void {
+      this.isSpinning = true;
+      console.log(`start to print cycle count sheet for batch: ${this.requestForm.controls.batchId} `);
+  
+      this.cycleCountRequestService.printCycleCountSheet(
+        this.requestForm.controls.batchId.value,
+        cycleCountRequestIds,
+          this.i18n.currentLang)
+        .subscribe(printResult=> {
+        
+            // send the result to the printer
+          this.printingService.printRemoteFileByName(
+            "Cycle Count Sheet", 
+            printResult.fileName, 
+            ReportType.CYCLE_COUNT_SHEET,
+            event.printerIndex, 
+            event.physicalCopyCount, PrintPageOrientation.Landscape);
+          this.isSpinning = false;
+          this.message.success(this.i18n.fanyi("report.print.printed"));
+        }, 
+        () => {
+          this.isSpinning = false;
+        }, 
+        
+      );
+  }
+   
+  previewCycleCountSheet(cycleCountRequestIds: number[]) : void {
+
+    this.isSpinning = true;
+      console.log(`start to preview cycle count sheet for batch: ${this.requestForm.controls.batchId} `);
+  
+      this.cycleCountRequestService.printCycleCountSheet(
+        this.requestForm.controls.batchId.value,
+        cycleCountRequestIds,
+          this.i18n.currentLang)
+        .subscribe(printResult=> {
+          this.isSpinning = false;
+          sessionStorage.setItem("report_previous_page", `inventory/count/cycle-count-maintenance?batchId=${this.requestForm.controls.batchId}`);
+          this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
+          
+        }, 
+        () => {
+          this.isSpinning = false;
+        }, 
+        
+      );
+    
+  }
+
+  
+  printSelectedCycleCount(event: any): void  { 
+    let selectedCycleCount = this.getSelectedOpenCycleCounts().map(
+      cycleCount => cycleCount.id!
+    );
+    this.printCycleCountSheet(event, selectedCycleCount);
+  }
+  previewSelectedCycleCount(): void  { 
+    let selectedCycleCount = this.getSelectedOpenCycleCounts().map(
+      cycleCount => cycleCount.id!
+    );
+    this.previewCycleCountSheet(selectedCycleCount);
+  }
+  
+  printAllCycleCount(event: any): void{
+    this.printCycleCountSheet(event, []);
+
+  }
+  previewAllCycleCount(): void{
+    this.previewCycleCountSheet([]);
+  }
+
+  
+  /**
+   * Print or preview audit count sheet
+   * 
+   */
+  printAuditCounts(event: any) {
+
+    switch(this.printAuditCountType) {
+      case "all":
+        this.printAllAuditCount(event);
+        break;
+        
+      case "selected":
+        this.printSelectedAuditCount(event);
+        break;
+      default:
+        this.printAllAuditCount(event);
+        break;
+    }
+  }
+  
+  previewAuditCounts() {
+
+    switch(this.printAuditCountType) {
+      case "all":
+        this.previewAllAuditCount();
+        break;
+        
+      case "selected":
+        this.previewSelectedAuditCount();
+        break;
+      default:
+        this.previewAllAuditCount();
+        break;
+    }
+  }
+  
+  printAuditCountSheet(event: any, auditCountRequestIds: number[]) : void {
+      this.isSpinning = true;
+      console.log(`start to print Audit count sheet for batch: ${this.requestForm.controls.batchId} `);
+  
+      this.auditCountRequestService.printAuditCountSheet(
+        this.requestForm.controls.batchId.value,
+        auditCountRequestIds,
+          this.i18n.currentLang)
+        .subscribe(printResult=> {
+        
+            // send the result to the printer
+          this.printingService.printRemoteFileByName(
+            "Audit Count Sheet", 
+            printResult.fileName, 
+            ReportType.AUDIT_COUNT_SHEET,
+            event.printerIndex, 
+            event.physicalCopyCount, PrintPageOrientation.Landscape);
+          this.isSpinning = false;
+          this.message.success(this.i18n.fanyi("report.print.printed"));
+        }, 
+        () => {
+          this.isSpinning = false;
+        }, 
+        
+      );
+  }
+   
+  previewAuditCountSheet(auditCountRequestIds: number[]) : void {
+
+    this.isSpinning = true;
+      console.log(`start to preview audit count sheet for batch: ${this.requestForm.controls.batchId} `);
+  
+      this.auditCountRequestService.printAuditCountSheet(
+        this.requestForm.controls.batchId.value,
+        auditCountRequestIds,
+          this.i18n.currentLang)
+        .subscribe(printResult=> {
+          this.isSpinning = false;
+          sessionStorage.setItem("report_previous_page", `inventory/count/cycle-count-maintenance?batchId=${this.requestForm.controls.batchId.value}`);
+          this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
+          
+        }, 
+        () => {
+          this.isSpinning = false;
+        }, 
+        
+      );
+    
+  }
+
+  
+  printSelectedAuditCount(event: any): void  { 
+    let selectedAuditCount = this.getSelectedOpenAuditCounts().map(
+      auditCount =>  auditCount.id!
+    );
+    this.printAuditCountSheet(event, selectedAuditCount);
+  }
+  previewSelectedAuditCount(): void  { 
+    let selectedAuditCount = this.getSelectedOpenAuditCounts().map(
+      auditCount => auditCount.id!
+    );
+    this.previewAuditCountSheet(selectedAuditCount);
+  }
+  
+  printAllAuditCount(event: any): void{
+    this.printAuditCountSheet(event, []);
+
+  }
+  previewAllAuditCount(): void{
+    this.previewAuditCountSheet([]);
+  }
+
 }

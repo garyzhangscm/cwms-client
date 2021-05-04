@@ -3,11 +3,14 @@ import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { TitleService, _HttpClient } from '@delon/theme';
+import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Client } from '../../common/models/client';
+import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { Supplier } from '../../common/models/supplier';
 import { ClientService } from '../../common/services/client.service';
+import { PrintingService } from '../../common/services/printing.service';
 import { SupplierService } from '../../common/services/supplier.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
@@ -15,6 +18,8 @@ import { ItemPackageType } from '../../inventory/models/item-package-type';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ItemService } from '../../inventory/services/item.service';
+import { ReportOrientation } from '../../report/models/report-orientation.enum';
+import { ReportType } from '../../report/models/report-type.enum';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
@@ -263,6 +268,12 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   displayItemPackageType: ItemPackageType | undefined;
   receivingInProcess = false;
 
+  isSpinning = false;
+  // how to print putaway work
+  // all: print everything recevied, include the one that already in stock
+  // allReceived: print everything that is received and still not putaway yet
+  // selected: print only selected record
+  printPutawayWorkType = "all";
   constructor(
     private activatedRoute: ActivatedRoute,
     private i18n: I18NService,
@@ -281,6 +292,9 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     private message: NzMessageService,
     private warehouseService: WarehouseService,
     private utilService: UtilService,
+    private router: Router,
+    private printingService: PrintingService,
+    private messageService: NzMessageService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inbound.receipt.title');
   }
@@ -536,33 +550,134 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     return selectedReceivedInventory;
   }
 
-  printSelectedPutawayWork(): void  {
-    this.printingInProcess = true;
+  printPutawayWork(event: any) {
 
-    this.putawayConfigurationService.printPutawaySheet(this.getSelectedInventory());
-    // purposely to show the 'loading' status of the print button
-    // for at least 1 second. The above printReceipt will
-    // return immediately but the print job(or print preview page)
-    // will start with some delay. During the delay, we will
-    // display the 'print' button as 'Loading' status
-    setTimeout(() => {
-      this.printingInProcess = false;
-    }, 1000);
+    switch(this.printPutawayWorkType) {
+      case "all":
+        this.printAllPutawayWork(event);
+        break;
+      case "allReceived":
+        this.printAllReceivedPutawayWork(event);
+        break;
+      case "selected":
+        this.printSelectedPutawayWork(event);
+        break;
+      default:
+        this.printAllPutawayWork(event);
+        break;
+    }
+
+  }
+  previewPutawayReport() {
+
+    switch(this.printPutawayWorkType) {
+      case "all":
+        this.previewAllPutawayWork(event);
+        break;
+      case "allReceived":
+        this.previewAllReceivedPutawayWork(event);
+        break;
+      case "selected":
+        this.previewSelectedPutawayWork(event);
+        break;
+      default:
+        this.previewAllPutawayWork(event);
+        break;
+    }
+
+  }
+  printPutawayDocument(event: any, 
+    receipt: Receipt, inventoryIds: number[], 
+    notPutawayInventoryOnly = false) : void {
+    
+    
+      this.isSpinning = true;
+      console.log(`start to print ${this.currentReceipt.number} `);
+  
+      this.receiptService.printPutawayDocument(
+        receipt, inventoryIds, notPutawayInventoryOnly, 
+          this.i18n.currentLang)
+        .subscribe(printResult=> {
+        
+            // send the result to the printer
+          this.printingService.printRemoteFileByName(
+            "Putaway Document", 
+            printResult.fileName, 
+            ReportType.PUTAWAY_DOCUMENT,
+            event.printerIndex, 
+            event.physicalCopyCount, PrintPageOrientation.Landscape);
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi("report.print.printed"));
+        }, 
+        () => {
+          this.isSpinning = false;
+        }, 
+        
+      );
+  }
+   
+  previewPutawayDocument(event: any, 
+    receipt: Receipt, inventoryIds: number[], 
+    notPutawayInventoryOnly = false) : void {
+
+    this.isSpinning = true;
+    console.log(`start to preview putaway document for ${this.currentReceipt.number}`);
+    
+        
+    this.receiptService.printPutawayDocument(
+      receipt, inventoryIds, notPutawayInventoryOnly, 
+        this.i18n.currentLang)
+      .subscribe(printResult=> {
+        // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+        this.isSpinning = false;
+        this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
+        
+      },
+      () => {
+        this.isSpinning = false;
+      }, 
+    );
+    
+  }
+  printSelectedPutawayWork(event: any): void  { 
+    let selectedInventory = this.getSelectedInventory().map(
+      inventory => inventory.id!
+    );
+    this.printPutawayDocument(event, this.currentReceipt,
+      selectedInventory);
+  }
+  previewSelectedPutawayWork(event: any): void  { 
+    let selectedInventory = this.getSelectedInventory().map(
+      inventory => inventory.id!
+    );
+    this.previewPutawayDocument(event, this.currentReceipt,
+      selectedInventory);
   }
 
-  printAllPutawayWork(): void  {
-    this.printingInProcess = true;
-    this.putawayConfigurationService.printPutawaySheet(this.listOfAllReceivedInventory);
-    // purposely to show the 'loading' status of the print button
-    // for at least 1 second. The above printReceipt will
-    // return immediately but the print job(or print preview page)
-    // will start with some delay. During the delay, we will
-    // display the 'print' button as 'Loading' status
-    setTimeout(() => {
-      this.printingInProcess = false;
-    }, 1000);
+
+  
+  printAllReceivedPutawayWork(event: any): void{
+    this.printPutawayDocument(event, this.currentReceipt,
+      [], true);
+
+  }
+  previewAllReceivedPutawayWork(event: any): void{
+    this.previewPutawayDocument(event, this.currentReceipt,
+      [], true);
+
   }
 
+  printAllPutawayWork(event: any): void  {
+    
+    this.printPutawayDocument(event, this.currentReceipt,
+      []);
+  }
+
+  previewAllPutawayWork(event: any): void  {
+    
+    this.previewPutawayDocument(event, this.currentReceipt,
+      []);
+  }
   getSelectedInventory(): Inventory[] {
     const selectedInventories: Inventory[] = [];
     this.listOfAllReceivedInventory.forEach((inventory: Inventory) => {
@@ -838,17 +953,34 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       .subscribe(inventory => this.refreshReceiptResults(1));
   }
   manualPutaway(receivedInventory: Inventory): void {}
-  printReceipt(): void {
-    this.printingInProcess = true;
-    this.receiptService.printReceipt(this.calculateQuantities(this.currentReceipt));
-    // purposely to show the 'loading' status of the print button
-    // for at least 1 second. The above printReceipt will
-    // return immediately but the print job(or print preview page)
-    // will start with some delay. During the delay, we will
-    // display the 'print' button as 'Loading' status
-    setTimeout(() => {
-      this.printingInProcess = false;
-    }, 1000);
+  printReceipt(event: any): void {
+    
+    this.isSpinning = true;
+    console.log(`start to print receiving document: ${this.currentReceipt.number} `);
+    
+    this.receiptService.printReceivingDocument(
+      this.currentReceipt, this.i18n.currentLang)
+      .subscribe(printResult=> {
+        
+            // send the result to the printer
+          const printFileUrl 
+            = `${environment.SERVER_URL}/resource/report-histories/download/${printResult.fileName}`;
+          console.log(`will print file: ${printFileUrl}`);
+            this.printingService.printRemoteFileByName(
+            "Receiving Document", 
+            printResult.fileName, 
+            ReportType.RECEIVING_DOCUMENT,
+            event.printerIndex, 
+            event.physicalCopyCount, PrintPageOrientation.Landscape);
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi("report.print.printed"));
+        }, 
+        () => {
+          this.isSpinning = false;
+        }, 
+        
+      );
+
   }
 
   // Allow reserve inventory now
@@ -867,4 +999,23 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   get lpnControl(): AbstractControl | null {
     return this.receivingForm.get('lpn');
   }
+
+  previewReport() : void{
+    
+    
+    this.isSpinning = true;
+    console.log(`start to preview ${this.currentReceipt.number}`);
+    this.receiptService.printReceivingDocument(this.currentReceipt, this.i18n.currentLang)
+    .subscribe(printResult=> {
+      // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+      this.isSpinning = false;
+      this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
+      
+    },
+    () => {
+      this.isSpinning = false;
+    }, 
+    );
+  }
+  
 }

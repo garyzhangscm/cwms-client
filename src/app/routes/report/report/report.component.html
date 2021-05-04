@@ -3,13 +3,21 @@
 <!-- Form to query the result  -->
 <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
   <div nz-row [nzGutter]="12">
+    
     <div nz-col [nzSpan]="8">
-      <nz-form-item nzFlex>
-        <nz-form-label for="name" [nzSm]="6" [nzXs]="14">
-          {{ 'report.name' | translate }}
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'report.type' | translate }}
         </nz-form-label>
-        <nz-form-control [nzSpan]="14">
-          <input nz-input name="name" id="name" formControlName="name" />
+        <nz-form-control [nzSm]="14" [nzXs]="24" >
+          <nz-select nzAllowClear formControlName="type"
+          
+           style="width: 200px;"   >
+            <nz-option *ngFor="let reportType of reportTypes | keys"
+              nzValue="{{ reportType.key }}"
+              nzLabel="{{ 'REPORT-TYPE-' + reportType.key | translate }}">
+            </nz-option>
+          </nz-select>
         </nz-form-control>
       </nz-form-item>
     </div>
@@ -79,11 +87,12 @@
       </thead>
       <tbody>
         <tr *ngFor="let data of reportTable.data"> 
-          <td>{{ data.name }}</td>
+          <td>
+            {{ 'REPORT-TYPE-' + data.type | translate }}
+             </td>
           <td>{{ data.description }}</td>
           <td>{{ data.companyId}}</td>
           <td>{{ data.warehouseId }}</td>
-          <td>{{ data.type }}</td>
           <td>{{ 'REPORT-ORIENTATION_' + data.reportOrientation | translate }}</td>
           <td>
             <a [href]="data.fileUrl" target="_blank" rel="noopener noreferrer">

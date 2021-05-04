@@ -21,16 +21,16 @@ import { ReportService } from '../services/report.service';
 export class ReportReportHistoryComponent implements OnInit {
   listOfColumns: ColumnItem[] = [    
     {
-          name: 'report.name',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: ReportHistory, b: ReportHistory) => this.utilService.compareNullableString(a.name, b.name),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },{
+      name: 'type',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: ReportHistory, b: ReportHistory) => this.utilService.compareNullableString(a.type, b.type),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    },{
           name: 'description',
           showSort: true,
           sortOrder: null,
@@ -62,16 +62,6 @@ export class ReportReportHistoryComponent implements OnInit {
           filterFn: null, 
           showFilter: false
         },  {
-          name: 'type',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: ReportHistory, b: ReportHistory) => this.utilService.compareNullableString(a.type, b.type),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
           name: 'report.orientation',
           showSort: true,
           sortOrder: null,

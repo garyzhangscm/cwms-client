@@ -24,14 +24,15 @@
   </a>
 </ng-template>
 
-<div class="container" *ngIf="type=== 'PDF'">
+<div class="container">
     <pdf-viewer [src]="pdfUrl" style="height: 300px"></pdf-viewer> 
     <div nz-row nzType="flex" nzJustify="center">  
 
       <cwms-common-print-button 
       [printingInProcess]="printingInProcess" 
+      allowPreview="false"
       (print)="printReport($event)"
-      (preview)="previewReport(data)"> 
+      (preview)="previewReport()"> 
     </cwms-common-print-button> 
     <nz-divider nzType="vertical"></nz-divider>
     <a [href]="pdfUrl" target="_blank" rel="noopener noreferrer">

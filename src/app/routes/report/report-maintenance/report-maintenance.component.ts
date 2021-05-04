@@ -10,6 +10,7 @@ import { Report } from '../models/report';
 import { ReportOrientation } from '../models/report-orientation.enum';
 import { ReportType } from '../models/report-type.enum';
 import { ReportService } from '../services/report.service';
+import { UserService } from '../../auth/services/user.service';
 
 @Component({
   selector: 'app-report-report-maintenance',
@@ -26,12 +27,13 @@ export class ReportReportMaintenanceComponent implements OnInit {
   warehouseSpecific = false;
   fileList: NzUploadFile[] = [];
   templateFileUploadUrl = "";
-  acceptUploadedFileTypes= ".jrxml";
+  acceptUploadedFileTypes= ".jrxml,.properties";
 
   constructor(private http: _HttpClient,
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
     private warehouseService: WarehouseService,
+    private userService: UserService,
     private i18n: I18NService,
     private reportService: ReportService, 
     private messageService: NzMessageService,
@@ -39,7 +41,7 @@ export class ReportReportMaintenanceComponent implements OnInit {
 
   ngOnInit(): void {
     
-
+    this.fileList = [];
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.id) {
         this.reportService.getReport(params.id).subscribe(reportRes => {
@@ -99,13 +101,13 @@ export class ReportReportMaintenanceComponent implements OnInit {
   getEmptyReport(): Report {
     return {
       id: undefined,      
-      name: '',      
+      
       companyId: this.warehouseService.getCurrentWarehouse().companyId,
       company: undefined,
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
       warehouse: this.warehouseService.getCurrentWarehouse(),    
       description: '',
-      type: ReportType.PDF,
+      type: undefined,
       fileName: '',
       reportOrientation: ReportOrientation.LANDSCAPE 
     };
@@ -123,7 +125,7 @@ export class ReportReportMaintenanceComponent implements OnInit {
       this.reportService.changeReport(this.currentReport).subscribe(reportRes =>{
         this.messageService.success(this.i18n.fanyi('message.report.changed'));
         setTimeout(() => {
-          this.router.navigateByUrl(`/report/report?name=${reportRes.name}`);
+          this.router.navigateByUrl(`/report/report?type=${reportRes.type}`);
         }, 2500);
       })
     }
@@ -133,7 +135,7 @@ export class ReportReportMaintenanceComponent implements OnInit {
       .subscribe(reportRes =>{
         this.messageService.success(this.i18n.fanyi('message.report.added'));
         setTimeout(() => {
-          this.router.navigateByUrl(`/report/report?name=${reportRes.name}`);
+          this.router.navigateByUrl(`/report/report?type=${reportRes.type}`);
         }, 2500);
       })
     }
@@ -146,19 +148,28 @@ export class ReportReportMaintenanceComponent implements OnInit {
     if (info.file.status === 'done') {
       this.messageService.success(`${info.file.name} ${this.i18n.fanyi('file.upload.success')}`);
 
-      if (this.currentReport.fileName.length === 0) {
+      if (info.file.name.endsWith(".jrxml")) {
 
         this.currentReport.fileName = info.file.name;
       }
+      let url =`${environment.SERVER_URL}/resource/reports/templates/upload`; 
+    
+      url = `${url}/${this.warehouseService.getCurrentWarehouse().id}`;
+      url = `${url}/${this.userService.getCurrentUsername()}`;
+      url = `${url}/${info.file.response.data}`;
+
+      console.log(`will download file from ${url}`);
+
       
-      this.fileList = [
+      this.fileList=[...this.fileList, 
         {
           uid: info.file.uid,
           name: info.file.name,
           status: info.file.status,
           response: "", // custom error message to show
-          url: `${environment.SERVER_URL}/resource/reports/templates/upload/${info.file.response.data}`
-        }];
+          url: url
+        }
+      ];
     } else if (info.file.status === 'error') {
       this.messageService.error(`${info.file.name} ${this.i18n.fanyi('file.upload.fail')}`);
     }

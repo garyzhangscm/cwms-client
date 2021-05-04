@@ -17,6 +17,7 @@ import { PrintingService } from '../services/printing.service';
 export class CommonPrintButtonComponent implements OnInit {
 
   @Input() printingInProcess : boolean = false;
+  @Input() allowPreview : boolean = true;
   @Input() printButtonDisabled: boolean = false;
   @Output() print: EventEmitter<{printerIndex: number, physicalCopyCount: number}> = new EventEmitter();
   @Output() preview: EventEmitter<any> = new EventEmitter();
@@ -29,12 +30,10 @@ export class CommonPrintButtonComponent implements OnInit {
     private fb: FormBuilder,
     private i18n: I18NService,
     private modalService: NzModalService,
-    private messageService: NzMessageService,
-    private printingService: PrintingService,
-    private router: Router,) { }
+    private printingService: PrintingService) { }
 
   ngOnInit(): void { 
-    console.log(`init cwms-common-print-button`)
+    
   }
 
   

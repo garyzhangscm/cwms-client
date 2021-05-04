@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core'; 
 import { Lodop, LodopService } from '@delon/abc/lodop';
+import { environment } from '@env/environment';
+import { ReportType } from '../../report/models/report-type.enum';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { PrintPageOrientation } from '../models/print-page-orientation.enum';
 import { PrintPageSize } from '../models/print-page-size.enum';
 import { PrintableBarcode } from '../models/printable-barcode';
@@ -11,7 +14,8 @@ export class PrintingService {
   // printer related
   private lodop: Lodop | null = null;
 
-  constructor(public lodopService: LodopService) {
+  constructor(public lodopService: LodopService,     
+    private warehouseService: WarehouseService)  {
     this.lodopService.cog.url = 'http://localhost:18000/CLodopfuncs.js';
     this.lodopService.lodop.subscribe(({ lodop, ok }) => {
       if (!ok) {
@@ -48,7 +52,36 @@ export class PrintingService {
     return allLocalPrinters;
   }
 
-  printRemoteFile(
+  printRemoteFileByName(
+    name: string,
+    fileName: string, 
+    type: ReportType,
+    printerIndex: number, 
+    physicalCopyCount: number,    
+    pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
+    pageSize: PrintPageSize = PrintPageSize.A4,
+  ) : void {
+
+
+    
+    let url  = `${environment.SERVER_URL}/resource/report-histories/download`;
+
+    url = `${url}/${this.warehouseService.getCurrentWarehouse().companyId}`;
+    url = `${url}/${this.warehouseService.getCurrentWarehouse().id}`;
+    url = `${url}/${type}`;
+    url = `${url}/${fileName}`;
+    
+    this.printRemoteFileByPath(
+      name, 
+      url, 
+      printerIndex, 
+      physicalCopyCount, 
+      pageOrientation, 
+      pageSize
+    )
+  }
+
+  printRemoteFileByPath(
     name: string,
     remoteFileUrl: string, 
     printerIndex: number, 

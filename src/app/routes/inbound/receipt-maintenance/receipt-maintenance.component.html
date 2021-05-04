@@ -1,4 +1,5 @@
-nz-select<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
   <a routerLink="/inbound/receipt" routerLinkActive="active" [queryParams]="{number : currentReceipt?.number}">{{
     'return' | translate
@@ -18,6 +19,7 @@ nz-select<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="re
   </nz-breadcrumb>
 </ng-template>
 
+<nz-spin [nzSpinning]="isSpinning">
 <nz-card [nzActions]="[cardFoot]">
   <form nz-form [formGroup]="receiptForm">
     <div nz-row [nzGutter]="24">
@@ -109,9 +111,14 @@ nz-select<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="re
     <button nz-button nzType="primary" (click)="saveReceipt()" [disabled]="!receiptForm.valid">
       {{ 'confirm' | translate }}
     </button>
-    <button nz-button (click)="printReceipt()" [disabled]="currentReceipt.id === null" [nzLoading]="printingInProcess">
-      {{ 'print' | translate }}
-    </button>
+    <cwms-common-print-button  style='padding-left: 20px;'
+    
+          [printButtonDisabled]="currentReceipt.id === null"
+          (print)="printReceipt($event)"
+          (preview)="previewReport()"> 
+        </cwms-common-print-button> 
+
+        
   </div>
 </ng-template>
 
@@ -320,11 +327,24 @@ nz-select<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="re
     </div>
 
     <ng-template #receivedInventoryTableFoot>
-      <div nz-row nzType="flex" nzJustify="left" style='padding-left: 10px;'>
-        <button nz-button nzType="primary"
-          (click)="showAddReceiptLineModal(tplReceiptLineModalTitle, tplReceiptLineModalContent)">
-          {{ 'allocateLocation' | translate }}
-        </button>
+      <div nz-row nzType="flex" nzJustify="left" style=' padding-left: 10px'>
+        
+        
+
+        <nz-select [(ngModel)]="printPutawayWorkType"  style='width: 150px;'>
+          <nz-option nzValue="all" nzLabel="{{ 'PUTAWAY-PRINTING-ALL' | translate }}"></nz-option>
+          <nz-option nzValue="allReceived" nzLabel="{{ 'PUTAWAY-PRINTING-ALL-RECEIVED' | translate }}"></nz-option>
+          <nz-option nzValue="selected" nzLabel="{{ 'PUTAWAY-PRINTING-SELECTED' | translate }}"></nz-option>
+        </nz-select>
+
+        
+          <cwms-common-print-button style="padding-left: 20px;"
+          
+          (print)="printPutawayWork( $event)"
+          (preview)="previewPutawayReport()"> 
+        </cwms-common-print-button> 
+  <!--
+
         <button nz-button nz-dropdown [nzDropdownMenu]="printSelectionTpl" [nzLoading]="printingInProcess">
           {{ 'print' | translate }}<i nz-icon nzType="down"></i>
         </button>
@@ -339,6 +359,8 @@ nz-select<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="re
           </ul>
         </nz-dropdown-menu>
 
+  -->
+
       </div>
     </ng-template>
 
@@ -346,7 +368,7 @@ nz-select<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="re
 
 </nz-tabset>
 
-
+</nz-spin>
 
 
 <!-- Modal for receiving inventory -->

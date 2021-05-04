@@ -24,6 +24,7 @@ import { ShortAllocationService } from '../services/short-allocation.service';
 import { environment } from '@env/environment'; 
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
+import { ReportType } from '../../report/models/report-type.enum';
 
 @Component({
   selector: 'app-outbound-order',
@@ -559,11 +560,10 @@ export class OutboundOrderComponent implements OnInit {
       .subscribe(printResult=> {
       
         // send the result to the printer
-      const printFileUrl 
-        = `${environment.SERVER_URL}/resource/report-histories/download/${printResult.fileName}`;
-      this.printingService.printRemoteFile(
+      this.printingService.printRemoteFileByName(
         "order pick sheet", 
-        printFileUrl, 
+        printResult.fileName, 
+        ReportType.ORDER_PICK_SHEET,
         event.printerIndex, 
         event.physicalCopyCount, PrintPageOrientation.Landscape);
        this.isSpinning = false;

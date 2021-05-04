@@ -15,14 +15,14 @@ export class ReportService {
     private userService: UserService) {}
 
   getAll(
-    name?: string,
+    type?: string,
     companySpecific?: boolean,
     warehouseSpecific?: boolean,
   ): Observable<Report[]> {
     let url = `resource/reports?`; 
     
-    if (name) {
-      url = `${url}&name=${name}`;
+    if (type) {
+      url = `${url}&type=${type}`;
     }
     if (companySpecific) {
       url = `${url}&companyId=${this.warehouseService.getCurrentWarehouse().companyId.toString()}`; 

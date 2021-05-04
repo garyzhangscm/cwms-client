@@ -59,13 +59,12 @@
     </thead>
     <tbody>
       <tr *ngFor="let data of reportHistoryTable.data"> 
-        <td>{{ data.name }}</td>
+        <td>{{ data.type }}</td>
         <td>{{ data.description }}</td>
         <td> {{ data.printedDate[1] }}/{{ data.printedDate[2] }}/{{ data.printedDate[0] }}
             {{ data.printedDate[3] }}:{{ data.printedDate[4] }}:{{ data.printedDate[5] }}
           </td>
         <td>{{ data.printedUsername }}</td>
-        <td>{{ data.type }}</td>
         <td>{{ 'REPORT-ORIENTATION_' + data.reportOrientation | translate }}</td>
         
         <td>

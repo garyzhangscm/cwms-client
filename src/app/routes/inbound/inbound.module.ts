@@ -1,5 +1,6 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
+import { CommonModule } from '../common/common.module';
 import { DirectivesModule } from '../directives/directives.module';
 import { InboundRoutingModule } from './inbound-routing.module';
 import { InboundPutawayConfigurationConfimComponent } from './putaway-configuration-confim/putaway-configuration-confim.component';
@@ -20,7 +21,8 @@ const COMPONENTS_NOROUNT: Type<void>[] = [];
   imports: [
     SharedModule,
     InboundRoutingModule, 
-    DirectivesModule
+    DirectivesModule,
+    CommonModule
   ],
   declarations: [
     ...COMPONENTS,

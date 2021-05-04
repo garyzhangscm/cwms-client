@@ -18,7 +18,6 @@
 <nz-steps nzType="navigation" [nzCurrent]="stepIndex" 
   nzStatus="wait" style="padding: 15px">
   <nz-step nzTitle="{{ 'steps.report.info' | translate }}"> </nz-step>
-  <nz-step nzTitle="{{ 'steps.report.template' | translate }}"> </nz-step>
   <nz-step nzTitle="{{ 'steps.report.confirm' | translate }}"> </nz-step>
 </nz-steps>
 
@@ -26,15 +25,21 @@
 <div class="small-card" *ngIf="stepIndex === 0 
     && currentReport != undefined">
   <div nz-row [nzGutter]="24">
+    
+    
     <div nz-col [nzSpan]="8">
       <nz-form-item>
         <nz-form-label [nzSm]="6" [nzXs]="24">
-          {{ 'report.name' | translate }}
+          {{ 'report.type' | translate }}
         </nz-form-label>
-        <nz-form-control *ngIf="currentReport.id === undefined" [nzSm]="14" [nzXs]="24" nzHasFeedback
-            nzErrorTip="{{ 'error.form.field.required' | translate }}">
-          <input nz-input [(ngModel)]="currentReport.name" required
-           [disabled]="currentReport.id !== undefined || standardReport" />
+        <nz-form-control [nzSm]="14" [nzXs]="24" >
+          <nz-select nzAllowClear [(ngModel)]="currentReport.type"
+           style="width: 200px;"  [disabled]="standardReport" >
+            <nz-option *ngFor="let reportType of reportTypes | keys"
+              nzValue="{{ reportType.key }}"
+              nzLabel="{{ 'REPORT-TYPE-' + reportType.key | translate }}">
+            </nz-option>
+          </nz-select>
         </nz-form-control>
       </nz-form-item>
     </div>
@@ -79,23 +84,6 @@
       </div>
 
       
-    
-    <div nz-col [nzSpan]="8">
-        <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="24">
-            {{ 'report.type' | translate }}
-          </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24" >
-            <nz-select nzAllowClear [(ngModel)]="currentReport.type"
-             style="width: 200px;"  [disabled]="standardReport" >
-              <nz-option *ngFor="let reportType of reportTypes | keys"
-                nzValue="{{ reportType.key }}"
-                nzLabel="{{ 'REPORT-TYPE-' + reportType.key | translate }}">
-              </nz-option>
-            </nz-select>
-          </nz-form-control>
-        </nz-form-item>
-      </div>
   
   </div>
 
@@ -139,16 +127,17 @@
 <div class="small-card" *ngIf="stepIndex === 1">
   <nz-card>
     <nz-descriptions nzBordered="true">
-      <nz-descriptions-item nzTitle="{{ 'report.name' | translate }}">{{ currentReport.name }} </nz-descriptions-item>
+      
+      <nz-descriptions-item nzTitle="{{ 'type' | translate }}">
+        
+        {{ 'REPORT-TYPE-' + currentReport.type | translate }}
+      </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'description' | translate }}">{{ currentReport.description }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'company.name' | translate }}">{{ currentReport.company?.name }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'warehouse.name' | translate }}">
         {{ currentReport.warehouse?.name }}
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'type' | translate }}">
-        {{ currentReport.type }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'fileName' | translate }}">
         {{ currentReport.fileName}}

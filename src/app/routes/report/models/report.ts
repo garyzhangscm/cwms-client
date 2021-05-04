@@ -6,7 +6,6 @@ import { ReportOrientation } from "./report-orientation.enum";
 
 export interface Report {
     id?: number;
-  name: string;
   
   companyId?: number;
   company?: Company;
@@ -14,7 +13,7 @@ export interface Report {
   warehouse?: Warehouse;
 
   description: string;
-  type: ReportType;
+  type?: ReportType;
   fileName: string;
   fileUrl?: string;
   reportOrientation: ReportOrientation;

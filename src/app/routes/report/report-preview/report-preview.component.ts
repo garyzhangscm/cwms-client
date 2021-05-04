@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { _HttpClient } from '@delon/theme';
 import { ReportHistoryService } from '../services/report-history.service';
 import { environment } from '@env/environment'; 
@@ -10,6 +10,7 @@ import { I18NService } from '@core';
 import { ReportOrientation } from '../models/report-orientation.enum';
 import { TitleService } from '@delon/theme';
 import { Location } from '@angular/common';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Component({
   selector: 'app-report-report-preview',
@@ -18,33 +19,28 @@ import { Location } from '@angular/common';
 })
 export class ReportReportPreviewComponent implements OnInit {
 
-  htmlContent = '';
-  type = 'HTML';
-  pdfUrl = environment.SERVER_URL;
   printingInProcess = false;
-  fileName = 'CWMS';
   printingOrientation : PrintPageOrientation = PrintPageOrientation.Portrait;
   reportOrientation : ReportOrientation = ReportOrientation.LANDSCAPE;
 
-  pageTitle = '';
+  pageTitle = ''; 
+  pdfUrl = '';
+  fileName = '';
 
   constructor(private http: _HttpClient, 
-    private activatedRoute: ActivatedRoute,
-    private reportHistoryService: ReportHistoryService,
+    private activatedRoute: ActivatedRoute, 
+    private warehouseService: WarehouseService, 
     private messageService: NzMessageService,
     private printingService: PrintingService,
     private titleService: TitleService,
     private webLocation: Location,
-    private i18n: I18NService,) { }
+    private i18n: I18NService,
+    private router: Router,) { }
 
   ngOnInit(): void { 
     
     this.activatedRoute.queryParams.subscribe(params => {
-      
-      this.type = params.type;
-      if (params.fileName) {
-        this.fileName = params.fileName;
-      }
+        
       if (params.orientation) {
         console.log(`params.orientation: ${params.orientation}`);
         //this.orientation = params.orientation;
@@ -55,16 +51,18 @@ export class ReportReportPreviewComponent implements OnInit {
         else {
           this.printingOrientation = PrintPageOrientation.Portrait;
         }
-      }
-      if (params.type === 'PDF') {
-        this.pdfUrl = `${environment.SERVER_URL}/resource/report-histories/download/${params.fileName}`;
-        //this.pdfUrl = "https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf";
-        // this.pdfUrl = `${environment.SERVER_URL}/resource/assets/testpdf.pdf`;
-        console.log(`start to get pdf from ${this.pdfUrl}`)
-      }
-      else{
-        console.log(`currently we are only support PDF file report`);
-          }
+      } 
+      
+      let url  = `${environment.SERVER_URL}/resource/report-histories/download`;
+
+      url = `${url}/${this.warehouseService.getCurrentWarehouse().companyId}`;
+      url = `${url}/${this.warehouseService.getCurrentWarehouse().id}`;
+      url = `${url}/${params.type}`;
+      url = `${url}/${params.fileName}`;
+
+      this.pdfUrl = url;
+      this.fileName = params.fileName;
+      console.log(`start to get pdf from ${this.pdfUrl}`) 
     });
     this.pageTitle = this.i18n.fanyi('report.preview');
     this.titleService.setTitle(this.i18n.fanyi('report.preview'));
@@ -73,7 +71,7 @@ export class ReportReportPreviewComponent implements OnInit {
   }
 
   printReport(event: any) :void{
-    this.printingService.printRemoteFile(
+    this.printingService.printRemoteFileByPath(
         this.fileName, 
         this.pdfUrl, 
         event.printerIndex, 
@@ -92,7 +90,17 @@ export class ReportReportPreviewComponent implements OnInit {
   }
   
   back(): void {
-    this.webLocation.back();
+  
+    if (sessionStorage.getItem("report_previous_page")) {
+      const previewPageUrl = sessionStorage.getItem("report_previous_page")!.toString();
+      
+      sessionStorage.setItem("report_previous_page", "");
+      this.router.navigateByUrl(previewPageUrl);
+    }
+    else {
+
+      this.webLocation.back();
+    }
   }
   
 

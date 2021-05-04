@@ -13,7 +13,7 @@ export interface ReportHistory {
     printedDate: number[];
     printedUsername: string;
 
-    name: string;
+    
     description: string;
 
 

@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { PrintableBarcode } from '../../common/models/printable-barcode';
 import { PrintingService } from '../../common/services/printing.service';
+import { ReportHistory } from '../../report/models/report-history';
 import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { CycleCountRequest } from '../models/cycle-count-request';
@@ -56,7 +57,7 @@ export class CycleCountRequestService {
       }
     }
     return this.http
-      .get(`inventory/cycle-count-request/batch/${batchId}`)
+      .get(`inventory/cycle-count-request/batch/${this.warehouseService.getCurrentWarehouse().id}/${batchId}`)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem(`inventory.cycle-count-request.${batchId}`, res)));
   }
@@ -70,7 +71,7 @@ export class CycleCountRequestService {
       }
     }
     return this.http
-      .get(`inventory/cycle-count-request/batch/${batchId}/open`)
+      .get(`inventory/cycle-count-request/batch/${this.warehouseService.getCurrentWarehouse().id}/${batchId}/open`)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem(`inventory.cycle-count-request.${batchId}.open`, res)));
   }
@@ -84,7 +85,7 @@ export class CycleCountRequestService {
       }
     }
     return this.http
-      .get(`inventory/cycle-count-request/batch/${batchId}/cancelled`)
+      .get(`inventory/cycle-count-request/batch/${this.warehouseService.getCurrentWarehouse().id}/${batchId}/cancelled`)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem(`inventory.cycle-count-request.${batchId}.cancelled`, res)));
   }
@@ -133,141 +134,8 @@ export class CycleCountRequestService {
     };
     return this.http.post('inventory/cycle-count-request/reopen', null, params).pipe(map(res => res.data));
   }
-
-  printCycleCountRequestReport(batchId: string, cycleCountRequests: CycleCountRequest[]): void {
-    const reportName = `cycle count request report`;
-    this.getInventorySummariesForCounts(cycleCountRequests).subscribe(cycleCountResults => {
-      const pages: string[] = this.generateCycleCountRequestReport(reportName, batchId, cycleCountResults);
-      this.printingService.print(
-        reportName,
-        pages,
-        undefined, 
-        undefined,
-        this.generateBarcodes(batchId, pages.length)
-      );
-    });
-  }
-
-  generateBarcodes(
-    batchId: string,
-    pageCount: number
-  ): PrintableBarcode[] {
-
-    const barcodes: PrintableBarcode[] = [];
-
-    for (let i = 0; i < pageCount; i++) {
-      barcodes.push(
-        {
-          pageNumber: i,
-          top: 120,
-          left: 250, 
-          width: 206,
-          height: 50,
-          barCodeType: '128B',
-          barCodeValue: batchId,
-        }
-      );
-    }
-    
-    return barcodes;
-
-  }
-  generateCycleCountRequestReport(
-    reportName: string,
-    batchId: string,
-    cycleCountResults: CycleCountResult[],
-  ): string[] {
-    const pages: string[] = [];
-
-    const pageLines: string[] = [];
  
-
-    cycleCountResults.forEach((cycleCountResult, index) => {
-      if (index % this.COUNT_REQUEST_PER_PAGE === 0) {
-        // Add a page header
-        pageLines.push(`<h1>${reportName}</h1>
-                        <h2>${batchId}</h2>
-                       <table style="margin-top: 75px"> 
-                         <tr>
-                           <th>${this.i18n.fanyi('location')}</th>
-                           <th>${this.i18n.fanyi('item')}</th>
-                           <th>${this.i18n.fanyi('quantity')}</th>
-                           <th>${this.i18n.fanyi('verify_quantity')}</th>
-                          </tr>`);
-      }
-
-      pageLines.push(`
-                      <tr>
-                        <td>${cycleCountResult.location!.name}</td>
-                        <td>${cycleCountResult.item ? cycleCountResult.item.name : '_______________'}</td>
-                        <td>${cycleCountResult.quantity}</td>
-                        <td>_____________________</td>
-                      </tr>`);
-
-      if ((index + 1) % this.COUNT_REQUEST_PER_PAGE === 0) {
-        // start a new page
-        pageLines.push(`</table>`);
-        pages.push(pageLines.join(''));
-        pageLines.length = 0;
-      }
-    });
-    // When cycleCountResults.length % this.COUNT_REQUEST_PER_PAGE !== 0
-    // It means we haven't setup the last page correctly yet. Let's
-    // add the page end and add the last page to the page list
-    if (cycleCountResults.length % this.COUNT_REQUEST_PER_PAGE !== 0) {
-      pageLines.push(`</table>`); 
-      if (this.COUNT_REQUEST_PER_PAGE - 
-        (cycleCountResults.length % this.COUNT_REQUEST_PER_PAGE) > 2) {
-
-          // we have enough room to print the summary
-          
-          pageLines.push(this.generateCycleCountRequestReportFooter(cycleCountResults.length)); 
-          pages.push(pageLines.join(''));
-          pageLines.length = 0;       
-      }
-      else {
-        // we don't have enough room in current page to print the summary,
-        // let's start a new page        
-        pages.push(pageLines.join(''));
-        pageLines.length = 0;       
-
-        pages.push(this.generateCycleCountRequestReportFooter(cycleCountResults.length));
-      }
-
-    }
-    else {
-      pages.push(this.generateCycleCountRequestReportFooter(cycleCountResults.length));
-    }
-    return pages;
-  }
-
-  generateCycleCountRequestReportFooter(totalLocationNumbers: number): string{
-
-    return `
-    <h2  style="text-align: left">${this.i18n.fanyi('summary')}</h2>
-        <table style="margin-top: 25px"> 
-            <tr> 
-                <td >${this.i18n.fanyi('count_user')}</td>
-                <td >_____________________</td>
-                <td >${this.i18n.fanyi('count_date')}</td>
-                <td >_____________________</td>                
-            </tr> 
-            <tr> 
-                <td >${this.i18n.fanyi('total_locations')}</td>
-                <td >${totalLocationNumbers}</td>
-                <td >${this.i18n.fanyi('counted_locations')}</td>
-                <td >_____________________</td>           
-            </tr> 
-            <tr> 
-                <td >${this.i18n.fanyi('discrepancy_locations')}</td>
-                <td >_____________________</td>
-                <td >${this.i18n.fanyi('comment')}</td>
-                <td >_____________________</td>
-            </tr>
-        </table>
-    `;
-  }
-
+ 
   getInventorySummariesForCount(cycleCountRequest: CycleCountRequest): Observable<CycleCountResult[]> {
     const url = `inventory/cycle-count-request/${cycleCountRequest.id}/inventory-summary`;
     return this.http.get(url).pipe(map(res => res.data));
@@ -282,5 +150,22 @@ export class CycleCountRequestService {
       ',',
     )}`;
     return this.http.get(url).pipe(map(res => res.data));
+  }
+
+  
+  
+  printCycleCountSheet(batchId: string, cycleCountRequestIds: number[], locale?: string) : Observable<ReportHistory>{
+   
+    
+    if (!locale) {
+      locale = this.i18n.defaultLang;
+    }
+    let url = `inventory/cycle-count-request/${this.warehouseService.getCurrentWarehouse().id}/${batchId}/cycle-count-sheet?`
+    url = `${url}locale=${locale}`;
+    if (cycleCountRequestIds.length > 0) {
+
+      url = `${url}&cycle_count_request_ids=${cycleCountRequestIds.join(',')}`;
+    }
+    return this.http.post(url).pipe(map(res => res.data));
   }
 }

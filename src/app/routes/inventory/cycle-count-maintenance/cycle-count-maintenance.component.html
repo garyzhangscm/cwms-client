@@ -18,6 +18,7 @@
   </nz-breadcrumb>
 </ng-template>
 
+<nz-spin [nzSpinning]="isSpinning">
 <nz-card [nzActions]="[cardFoot]">
   <form nz-form [formGroup]="requestForm">
     <div nz-row [nzGutter]="24">
@@ -191,7 +192,7 @@
 </ng-template>
 
 <nz-tabset [nzSelectedIndex]="tabSelectedIndex">
-  <nz-tab nzTitle="{{ 'cycle-count-request.open' | translate}}">
+  <nz-tab  [nzTitle]="openCycleCountRequestTabHeader">
     <!-- Table to Display the result  -->
     <div>
       <nz-table nzShowPagination [nzData]="listOfAllOpenCycleCountRequests"
@@ -241,28 +242,38 @@
         </tbody>
       </nz-table>
     </div>
-
+    <ng-template #openCycleCountRequestTabHeader>
+      {{ 'cycle-count-request.open' | translate}}
+      <nz-badge [nzCount]="listOfAllOpenCycleCountRequests.length"
+      nzShowZero="true">
+        <a class="head-example"></a>
+      </nz-badge>
+    </ng-template>
     <ng-template #openCycleCountTableFoot>
       <div nz-row nzType="flex" nzJustify="left" style='padding-left: 10px;'>
         <button nz-button nzType="primary" nz-dropdown [nzDropdownMenu]="confirmSelectionTpl">
           {{ 'confirm' | translate }}<i nz-icon nzType="down"></i>
         </button>
-        <button nz-button nz-dropdown [nzDropdownMenu]="printSelectionTpl" [nzLoading]="printingCycleCountRequest">
-          {{ 'print' | translate }}<i nz-icon nzType="down"></i>
-        </button>
+        <nz-divider nzType="vertical"></nz-divider>
         <button nz-button nzType="danger" (click)="cancelSelectedCycleCounts()">
           {{ 'cancel' | translate }}
         </button>
-        <nz-dropdown-menu #printSelectionTpl="nzDropdownMenu">
-          <ul nz-menu>
-            <li nz-menu-item>
-              <a (click)="printSelectedCycleCounts()">{{ 'printSelected' | translate }}</a>
-            </li>
-            <li nz-menu-item>
-              <a (click)="printAllCycleCounts()">{{ 'printAll' | translate }}</a>
-            </li>
-          </ul>
-        </nz-dropdown-menu>
+        <nz-divider nzType="vertical"></nz-divider>
+        
+        <nz-select [(ngModel)]="printCycleCountType"  style='width: 150px;'>
+          <nz-option nzValue="all" nzLabel="{{ 'PRINTING-ALL' | translate }}"></nz-option>
+          <nz-option nzValue="selected" nzLabel="{{ 'PRINTING-SELECTED' | translate }}"></nz-option>
+        </nz-select>
+
+        
+        <cwms-common-print-button style="padding-left: 20px;"
+          
+          (print)="printCycleCounts( $event)"
+          (preview)="previewCycleCounts()"> 
+        </cwms-common-print-button> 
+
+
+
         <nz-dropdown-menu #confirmSelectionTpl="nzDropdownMenu">
           <ul nz-menu>
             <li nz-menu-item>
@@ -278,7 +289,7 @@
 
   </nz-tab>
 
-  <nz-tab nzTitle="{{ 'cycle-count-request.finished' | translate}}">
+  <nz-tab [nzTitle]="finishedCycleCountRequestTabHeader">
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
@@ -313,14 +324,23 @@
         </tbody>
       </nz-table>
     </div>
+    <ng-template #finishedCycleCountRequestTabHeader>
+      {{ 'cycle-count-request.finished' | translate}}
+      <nz-badge [nzCount]="listOfAllCycleCountResults.length"
+      [nzStyle]="{ backgroundColor: '#52c41a' }"
+      nzShowZero="true">
+        <a class="head-example"></a>
+      </nz-badge>
+    </ng-template>
 
   </nz-tab>
 
-  <nz-tab nzTitle="{{ 'cycle-count-request.cancelled' | translate}}">
+  <nz-tab [nzTitle]="cancelledCycleCountRequestTabHeader">
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
-      <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllCancelledCycleCountRequests"
+      <nz-table nzShowSizeChanger nzShowPagination 
+      [nzData]="listOfAllCancelledCycleCountRequests"
         (nzCurrentPageDataChange)="cancelledCycleCountCurrentPageDataChange($event)"
         [nzFooter]="cancelledCycleCountTableFoot" #cancelledCycleCountTable>
         <thead>
@@ -364,6 +384,14 @@
       </nz-table>
     </div>
 
+    <ng-template #cancelledCycleCountRequestTabHeader>
+      {{ 'cycle-count-request.cancelled' | translate}}
+      <nz-badge [nzCount]="listOfAllCancelledCycleCountRequests.length"
+      nzShowZero="true"
+      [nzStyle]="{ backgroundColor: '#808080' }">
+        <a class="head-example"></a>
+      </nz-badge>
+    </ng-template>
     <ng-template #cancelledCycleCountTableFoot>
       <div nz-row nzType="flex" nzJustify="left" style='padding-left: 10px;'>
         <button nz-button nzType="primary" (click)="reopenCancelledCycleCountRequest()">
@@ -373,11 +401,12 @@
     </ng-template>
   </nz-tab>
 
-  <nz-tab nzTitle="{{ 'audit-count-request' | translate}}">
+  <nz-tab [nzTitle]="openAuditCountRequestTabHeader">
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
-      <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllOpenAuditCountRequests"
+      <nz-table nzShowSizeChanger nzShowPagination 
+      [nzData]="listOfAllOpenAuditCountRequests"
         (nzCurrentPageDataChange)="openAuditCountCurrentPageDataChange($event)" [nzFooter]="openAuditCountTableFoot"
         #openAuditCountTable>
         <thead  >
@@ -428,25 +457,34 @@
       </nz-table>
     </div>
 
+    <ng-template #openAuditCountRequestTabHeader>
+      {{ 'audit-count-request' | translate}}
+      <nz-badge [nzCount]="listOfAllOpenAuditCountRequests.length"
+      nzShowZero="true">
+        <a class="head-example"></a>
+      </nz-badge>
+    </ng-template>
     <ng-template #openAuditCountTableFoot>
       <div nz-row nzType="flex" nzJustify="left" style='padding-left: 10px;'>
         <button nz-button nzType="primary" nz-dropdown [nzDropdownMenu]="confirmSelectedAuditCountTpl">
           {{ 'confirm' | translate }}<i nz-icon nzType="down"></i>
         </button>
-        <button nz-button nz-dropdown [nzDropdownMenu]="printSelectedAuditCountTpl">
-          {{ 'print' | translate }}<i nz-icon nzType="down"></i>
-        </button>
+        
+        
+        <nz-divider nzType="vertical"></nz-divider>
+        
+        <nz-select [(ngModel)]="printAuditCountType"  style='width: 150px;'>
+          <nz-option nzValue="all" nzLabel="{{ 'PRINTING-ALL' | translate }}"></nz-option>
+          <nz-option nzValue="selected" nzLabel="{{ 'PRINTING-SELECTED' | translate }}"></nz-option>
+        </nz-select>
 
-        <nz-dropdown-menu #printSelectedAuditCountTpl="nzDropdownMenu">
-          <ul nz-menu>
-            <li nz-menu-item>
-              <a (click)="printSelectedAuditCounts()">{{ 'printSelected' | translate }}</a>
-            </li>
-            <li nz-menu-item>
-              <a (click)="printAllAuditCounts()">{{ 'printAll' | translate }}</a>
-            </li>
-          </ul>
-        </nz-dropdown-menu>
+        
+        <cwms-common-print-button style="padding-left: 20px;"
+          
+          (print)="printAuditCounts( $event)"
+          (preview)="previewAuditCounts()"> 
+        </cwms-common-print-button> 
+
         <nz-dropdown-menu #confirmSelectedAuditCountTpl="nzDropdownMenu">
           <ul nz-menu>
             <li nz-menu-item>
@@ -463,7 +501,7 @@
 
   </nz-tab>
 
-  <nz-tab nzTitle="{{ 'audit-count-result' | translate}}">
+  <nz-tab [nzTitle]="auditCountResultTabHeader">
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
@@ -501,12 +539,20 @@
       </nz-table>
     </div>
 
+    <ng-template #auditCountResultTabHeader>
+      {{ 'audit-count-result' | translate}}
+      <nz-badge [nzCount]="listOfAllAuditCountResults.length"
+      nzShowZero="true"
+      [nzStyle]="{ backgroundColor: '#52c41a' }">
+        <a class="head-example"></a>
+      </nz-badge>
+    </ng-template>
 
   </nz-tab>
 
 </nz-tabset>
 
-
+</nz-spin>
 
 
 <!-- Modal for confirm cycle count result -->
