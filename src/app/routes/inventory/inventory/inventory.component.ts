@@ -400,4 +400,10 @@ export class InventoryInventoryComponent implements OnInit {
     console.log(`start to query with location name ${selectedLocationName}`);
     this.inventoryMovementForm.controls.destinationLocation.setValue(selectedLocationName); 
   }
+
+  
+  processQueryLocationQueryResult(selectedLocationName: any): void { 
+    console.log(`start to query with location name ${selectedLocationName}`);
+    this.searchForm.controls.location.setValue(selectedLocationName); 
+  }
 }

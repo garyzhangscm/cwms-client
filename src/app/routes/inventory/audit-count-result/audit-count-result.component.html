@@ -39,9 +39,9 @@
     </thead>
     <tbody>
       <tr *ngFor="let data of inventoryTable.data; let i = index">
-        <td>{{ data.inventory?.id }}</td>
+        <td>{{ data.inventory?.id }} </td>
         <td>
-          <div *ngIf="data.inventory?.id === null">
+          <div *ngIf="data.inventory?.id === undefined">
             <div class="row">
               <input appFkey variable="lpn" type="text" [ngModel]="data.inventory?.lpn"
                 (blur)="lpnChanged($event.target.value, data)" name="lpn-{{ i }}" id="lpn-{{ i }}" />
@@ -54,7 +54,7 @@
         </td>
         <td>
           <input type="text" [ngModel]="data.inventory?.item.name" (blur)="itemChanged($event.target.value, data)"
-            *ngIf="data.inventory?.id === null" name="item-{{ i }}" />
+            *ngIf="data.inventory?.id === undefined" name="item-{{ i }}" />
           <span *ngIf="data.inventory?.id">
             {{ data.inventory?.item?.name }}
           </span>
@@ -63,7 +63,7 @@
           {{ data.inventory?.item?.description }}
         </td>
         <td>
-          <nz-select style="width: 150px" *ngIf="data.inventory?.id === null"
+          <nz-select style="width: 150px" *ngIf="data.inventory?.id === undefined"
             [ngModel]="data.inventory.itemPackageType.name" (ngModelChange)="itemPackageTypeChanged($event, data)"
             nzShowSearch nzAllowClear>
             <nz-option *ngFor="let itemPackageType of data.inventory?.item?.itemPackageTypes"
@@ -76,7 +76,7 @@
         <td>{{ data.location?.name }}</td>
         <td>{{ data.quantity }}</td>
         <td>
-          <nz-select style="width: 150px" *ngIf="data.inventory?.id === null"
+          <nz-select style="width: 150px" *ngIf="data.inventory?.id === undefined"
             [ngModel]="data.inventory.inventoryStatus.id" (ngModelChange)="inventoryStatusChanged($event, data)"
             nzShowSearch nzAllowClear>
             <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
@@ -85,7 +85,7 @@
           </nz-select>
 
           <span *ngIf="data.inventory?.id">
-            {{ data.inventory?.inventoryStatus?.description }}
+            {{ 'INVENTORY-STATUS-' + data.inventory?.inventoryStatus?.name | translate }}
           </span>
         </td>
         <td><input type="text" [(ngModel)]="data.countQuantity" name="result-{{ i }}" /></td>

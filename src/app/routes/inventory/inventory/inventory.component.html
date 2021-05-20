@@ -54,9 +54,16 @@
         <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="location">
           {{ 'location' | translate }}
         </nz-form-label>
-        <nz-form-control [nzSpan]="14">
-          <input nz-input name="location" id="location" formControlName="location" />
+        <nz-form-control [nzSm]="14" [nzXs]="24" >
+          <nz-input-group nzSearch [nzAddOnAfter]="locationSuffixIconButton"> 
+            <input nz-input formControlName="location" id="location" name="location"  />
+          </nz-input-group>
+          <ng-template #locationSuffixIconButton>
+            <app-warehouse-layout-location-query-popup (recordSelected)="processQueryLocationQueryResult($event)">
+            </app-warehouse-layout-location-query-popup>
+          </ng-template> 
         </nz-form-control>
+
       </nz-form-item>
     </div>
 
@@ -345,9 +352,15 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
-            <nz-input-group  >
-              <input nz-input formControlName="locationName" />
-            </nz-input-group>
+
+            <nz-input-group nzSearch [nzAddOnAfter]="locationSuffixIconButton"> 
+              <input nz-input formControlName="locationName" id="locationName" name="locationName" required />
+           </nz-input-group>
+           <ng-template #locationSuffixIconButton>
+              <app-warehouse-layout-location-query-popup (recordSelected)="processLocationValueQueryResult($event)">
+              </app-warehouse-layout-location-query-popup>
+           </ng-template> 
+
           </nz-form-control>
         </nz-form-item>
       </div>

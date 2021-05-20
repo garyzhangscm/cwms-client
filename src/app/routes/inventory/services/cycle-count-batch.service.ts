@@ -4,20 +4,22 @@ import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SystemControlledNumberService } from '../../common/services/system-controlled-number.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CycleCountBatchService {
-  constructor(private http: _HttpClient, private systemControlledNumberService: SystemControlledNumberService) {}
+  constructor(private http: _HttpClient,     
+    private warehouseService: WarehouseService,
+    private systemControlledNumberService: SystemControlledNumberService) {}
 
   getCycleCountBatches(batchId?: string): Observable<CycleCountBatch[]> {
-    let params = '';
+    let url = `inventory/cycle-count-batches?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (batchId) {
-      params = `batchId=${batchId}`;
+      url = `${url}&batchId=${batchId}`;
     }
 
-    const url = 'inventory/cycle-count-batches' + (params.length > 0 ? '?' + params : '');
     return this.http.get(url).pipe(map(res => res.data));
   }
 

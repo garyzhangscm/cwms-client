@@ -317,6 +317,12 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   listOfAllAuditCountResults: AuditCountResult[] = [];
 
   
+  // indicator for detail informaiton loading in process
+  // we will load 5 different detail informations asyncronize
+  // during loading, we will show the loading controller(isSpinning = true)
+  // once we finished loading, we will hide the loading indicator contorller
+  // and return the control to the user
+  loadingInProcess: number[] = [];
 
   // Model to let the user input cycle count result
   inventoriesToBeCount: CycleCountResult[] = [];
@@ -401,6 +407,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   }
 
   generateCountRequest(): void {
+    this.isSpinning = true;
     this.cycleCountRequestService
       .generateCycleCountRequests(
         this.requestForm.controls.batchId.value,
@@ -416,7 +423,9 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
         this.message.info(this.i18n.fanyi('message.new.complete'));
         this.refreshCountBatchResults();
         this.requestForm.controls.batchId.disable();
-      });
+        this.isSpinning = false;
+      }, 
+      () => {this.isSpinning = true});
   }
   batchIdOnBlur(batchId?: string): void {
     // When we use the 'fkey' to automatically generate the next cycle count id
@@ -427,8 +436,15 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   }
 
   refreshCountBatchResults(): void {
+    
+    // we have 5 tables to load, init all fo them to 0 means
+    // we haven't load them yet
+    // once we finished one table, the correpondent 0 will 
+    // be set to 1
     const batchId = this.requestForm.controls.batchId.value;
     if (batchId) {
+      this.isSpinning = true;
+      this.loadingInProcess = [0, 0 , 0, 0, 0]; 
       this.loadOpenCycleCountRequest(batchId);
       this.loadFinishedCycleCountRequest(batchId);
       this.loadCancelledCycleCountRequest(batchId);
@@ -437,35 +453,66 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     }
   }
 
+  tableLoadingComplete(index: number) {
+ 
+    this.loadingInProcess[index] = 1;
+    if (this.loadingInProcess.indexOf(0) < 0) {
+
+      // all tables are either loaded , or errored
+      // let's hide the loading in process controller
+      
+        this.isSpinning = false;
+    } 
+  }
   loadOpenCycleCountRequest(batchId: string): void {
+    this.loadingInProcess[0] = 0;
+     
     this.cycleCountRequestService.getOpenCycleCountRequestDetails(batchId, true).subscribe(res => {
       this.listOfAllOpenCycleCountRequests = res;
       this.listOfDisplayOpenCycleCountRequests = res;
-    });
+      this.tableLoadingComplete(0); 
+    }, 
+    () => {
+      this.tableLoadingComplete(0);});
   }
   loadFinishedCycleCountRequest(batchId: string): void {
     this.cycleCountResulttService.getCycleCountResultDetails(batchId, true).subscribe(res => {
       this.listOfAllCycleCountResults = res;
       this.listOfDisplayCycleCountResults = res;
-    });
+      this.tableLoadingComplete(1);
+    }, 
+    () => {
+      this.tableLoadingComplete(1);});
   }
   loadCancelledCycleCountRequest(batchId: string): void {
     this.cycleCountRequestService.getCancelledCycleCountRequestDetails(batchId, true).subscribe(res => {
       this.listOfAllCancelledCycleCountRequests = res;
       this.listOfDisplayCancelledCycleCountRequests = res;
-    });
+      
+      this.tableLoadingComplete(2);
+    }, 
+    () => {
+      this.tableLoadingComplete(2);});
   }
   loadOpenAuditCountRequest(batchId: string): void {
     this.auditCountRequestService.getAuditCountRequestDetails(batchId, true).subscribe(res => {
       this.listOfAllOpenAuditCountRequests = res;
       this.listOfDisplayOpenAuditCountRequests = res;
-    });
+      
+      this.tableLoadingComplete(3);
+    }, 
+    () => {
+      this.tableLoadingComplete(3);});
   }
   loadAuditCountResult(batchId: string): void {
     this.auditCountResultService.getAuditCountResultDetails(batchId, true).subscribe(res => {
       this.listOfAllAuditCountResults = res;
       this.listOfDisplayAuditCountResults = res;
-    });
+      
+      this.tableLoadingComplete(4);
+    }, 
+    () => {
+      this.tableLoadingComplete(4);});
   }
 
   /**
@@ -551,9 +598,13 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
  */
 
   cancelSelectedCycleCounts(): void {
-    this.cycleCountRequestService.cancelCycleCountRequests(this.getSelectedOpenCycleCounts()).subscribe(res => {
-      this.refreshCountBatchResults();
-    });
+    this.isSpinning = true;
+    this.cycleCountRequestService
+        .cancelCycleCountRequests(this.getSelectedOpenCycleCounts())
+        .subscribe(res => {
+          this.refreshCountBatchResults();
+        }, 
+        () => {this.isSpinning = false;});
   }
   openCountResultModal(
     cycleCountRequest: CycleCountRequest,
