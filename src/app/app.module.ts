@@ -10,6 +10,15 @@ import { default as ngLang } from '@angular/common/locales/zh';
 import { DELON_LOCALE, zh_CN as delonLang } from '@delon/theme';
 import { zhCN as dateLang } from 'date-fns/locale';
 import { NZ_DATE_LOCALE, NZ_I18N, zh_CN as zorroLang } from 'ng-zorro-antd/i18n';
+
+import { IconDefinition } from '@ant-design/icons-angular';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+
+// 引入你需要的图标，比如你需要 fill 主题的 AccountBook Alert 和 outline 主题的 Alert，推荐 ✔️
+import { QuestionOutline } from '@ant-design/icons-angular/icons';
+
+const icons: IconDefinition[] = [ QuestionOutline];
+
 const LANG = {
   abbr: 'zh',
   ng: ngLang,
@@ -113,6 +122,7 @@ import { STWidgetModule } from './shared/st-widget/st-widget.module';
     ...I18NSERVICE_MODULES,
     // ...GLOBAL_THIRD_MODULES,
     ...FORM_MODULES,
+    NzIconModule.forRoot(icons),
   ],
   providers: [...LANG_PROVIDES, ...INTERCEPTOR_PROVIDES, ...I18NSERVICE_PROVIDES, ...APPINIT_PROVIDES],
   bootstrap: [AppComponent],

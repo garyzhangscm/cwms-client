@@ -58,7 +58,8 @@
 <div class="search-result-list">
   <nz-table [nzScroll]="{ x: scrollX }"  nzShowPagination [nzData]="items" [nzFooter]="tableFoot" #nestedTable>
     <thead  >
-      <tr><th nzWidth="40px"></th>
+      <tr>
+        <th nzWidth="40px"></th>
 
         <th
             *ngFor="let column of listOfColumns"
@@ -82,7 +83,8 @@
     <tbody>
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <!--<tr *ngFor="let data of rowSelectionTable.data">-->
-        <tr><td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
+        <tr>
+          <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
           <td> 
             <img *ngIf="data.thumbnailUrl"
                   nz-image

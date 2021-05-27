@@ -30,6 +30,9 @@ import { InventoryMovementPathMaintenanceComponent } from './movement-path-maint
 import { InventoryMovementPathComponent } from './movement-path/movement-path.component';
 import { InventoryReplenishmentComponent } from './replenishment/replenishment.component';
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
+import { InventoryInventoryConfigurationComponent } from './inventory-configuration/inventory-configuration.component';
+import { InventoryInventorySnapshotComponent } from './inventory-snapshot/inventory-snapshot.component';
+import { InventoryInventorySnapshotConfigurationComponent } from './inventory-snapshot-configuration/inventory-snapshot-configuration.component';
 
 const routes: Routes = [
   { path: 'inventory', component: InventoryInventoryComponent, canActivate: [AuthGuard] },
@@ -63,7 +66,10 @@ const routes: Routes = [
   },
   { path: 'inventory-adjustment-threshold-confirm', component: InventoryInventoryAdjustmentThresholdConfirmComponent },
   { path: 'item/maintenance', component: InventoryItemMaintenanceComponent },
-  { path: 'item-query-popup', component: InventoryItemQueryPopupComponent }];
+  { path: 'item-query-popup', component: InventoryItemQueryPopupComponent },
+  { path: 'configuration', component: InventoryInventoryConfigurationComponent },
+  { path: 'snapshot', component: InventoryInventorySnapshotComponent },
+  { path: 'inventory-snapshot-configuration', component: InventoryInventorySnapshotConfigurationComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

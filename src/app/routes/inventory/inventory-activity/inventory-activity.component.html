@@ -196,8 +196,8 @@
             nzTooltipTitle="{{ 'INVENTORY-STATUS-' + data.inventoryStatus.name | translate }}">{{ 'INVENTORY-STATUS-' + data.inventoryStatus.name | translate}}</a>
         </td>
         <td> {{ 'INVENTORY-ACTIVITY-TYPE-' + data.type | translate}} </td>
-        <td> {{ data.activityDateTime[1] }}/{{ data.activityDateTime[2] }}/{{ data.activityDateTime[0] }}
-          {{ data.activityDateTime[3] }}:{{ data.activityDateTime[4] }}:{{ data.activityDateTime[5] }}
+        <td> {{ data.activityDateTime[1] |  number: '2.0-0' }}/{{ data.activityDateTime[2] |  number: '2.0-0' }}/{{ data.activityDateTime[0] }}
+          {{ data.activityDateTime[3] |  number: '2.0-0' }}:{{ data.activityDateTime[4] |  number: '2.0-0' }}:{{ data.activityDateTime[5] |  number: '2.0-0' }}
         </td>
         <td> {{ data.username }} </td>
         <td> {{ data.valueType }} </td>

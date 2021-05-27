@@ -39,7 +39,7 @@ export class StartupService {
   load(): Promise<void> {
 
     let siteInformationUrl = `resource/site-information`;
-
+ 
     if (!this.tokenService.get()?.token) {
       // If the user has not been login, get the default
       // site information
@@ -47,14 +47,11 @@ export class StartupService {
       siteInformationUrl = `${siteInformationUrl}/default`;
     } else {
       const currentDateTime = new Date().getTime();
+ 
 
-      const expiredDateTime = new Date(this.tokenService.get()?.time);
+      const expiredDateTime = new Date(this.tokenService.get()?.expired!); 
 
-      expiredDateTime.setSeconds(expiredDateTime.getSeconds() + this.tokenService.get()?.refreshIn);
-      // expiredDateTime.setSeconds(expiredDateTime.getSeconds() + 10);
-
-      if (currentDateTime >= expiredDateTime.getTime()) {
-        console.log(`Login expired! current token was expired at ${expiredDateTime}`);
+      if (currentDateTime >= expiredDateTime.getTime()) { 
         // OK, the current authrization is already expired. let's go back to the login form
         // clear token and go back to the login form
         (this.injector.get(DA_SERVICE_TOKEN) as ITokenService).clear();

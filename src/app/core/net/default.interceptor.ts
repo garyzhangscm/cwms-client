@@ -211,9 +211,14 @@ export class DefaultInterceptor implements HttpInterceptor {
         }
         break;
       case 401:
+        console.log(`reloging required!`);
+        /**
+         * redirect the user to login. disable the refresh token for now
+         * 
         if (this.refreshTokenType === 're-request') {
           return this.tryRefreshToken(ev, req, next);
         }
+         */
         this.toLogin();
         break;
       case 403:
@@ -266,10 +271,17 @@ export class DefaultInterceptor implements HttpInterceptor {
         console.log(`!! Get error ${err.status} while call ${url}, \n statusText: ${err.statusText}`);
         const errortext = CODEMESSAGE[err.status] || err.statusText;
         // this.notification.error(`请求错误 ${ev.status}: ${ev.url}`, errortext);
-        this.notification.error(`${err.status}: ${err.url}`, this.i18n.fanyi(errortext));
         console.log(`!! will throw error ${err.status}`);
+        if (err.status === 401) {
+           console.log('reloging required')
+           this.toLogin();
+        }
+        else {
 
+          this.notification.error(`${err.status}: ${err.url}`, this.i18n.fanyi(errortext));
+        }
         return throwError(err);
+
       }),
 
       // catchError((err: HttpErrorResponse) => this.handleData(err, newReq, next)),

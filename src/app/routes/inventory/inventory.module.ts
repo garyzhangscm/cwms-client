@@ -35,6 +35,9 @@ import { InventoryReplenishmentComponent } from './replenishment/replenishment.c
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
 import { NzImageModule } from 'ng-zorro-antd/image';
 import { CommonModule } from '../common/common.module';
+import { InventoryInventoryConfigurationComponent } from './inventory-configuration/inventory-configuration.component';
+import { InventoryInventorySnapshotComponent } from './inventory-snapshot/inventory-snapshot.component';
+import { InventoryInventorySnapshotConfigurationComponent } from './inventory-snapshot-configuration/inventory-snapshot-configuration.component';
 
 const COMPONENTS: Type<void>[] = [
   InventoryInventoryComponent,
@@ -65,7 +68,10 @@ const COMPONENTS: Type<void>[] = [
   InventoryInventoryAdjustmentThresholdMaintenanceComponent,
   InventoryInventoryAdjustmentThresholdConfirmComponent,
   InventoryItemMaintenanceComponent,
-  InventoryItemQueryPopupComponent];
+  InventoryItemQueryPopupComponent,
+  InventoryInventoryConfigurationComponent,
+  InventoryInventorySnapshotComponent,
+  InventoryInventorySnapshotConfigurationComponent];
 const COMPONENTS_NOROUNT: Type<void>[] = [];
 
 @NgModule({
