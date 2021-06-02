@@ -13,13 +13,14 @@ import { WorkOrderAssignment } from './work-order-assignment';
 import { WorkOrderByProduct } from './work-order-by-product';
 import { WorkOrderKpi } from './work-order-kpi';
 import { WorkOrderStatus } from './work-order-status.enum';
+import { ProductionLineAssignment } from './production-line-assignment';
 
 export interface WorkOrder {
   id?: number;
   number?: string;
   workOrderLines: WorkOrderLine[];
   workOrderInstructions: WorkOrderInstruction[];
-  productionLine?: ProductionLine;
+  productionLineAssignments?: ProductionLineAssignment[];
   itemId?: number;
   item?: Item;
   productionPlanLine?: ProductionPlanLine; // When we create a work order from a production line

@@ -8,10 +8,13 @@
         <nz-form-label for="location_group_type" [nzSm]="3" [nzXs]="3">
           {{'location-group-type' | translate}}
         </nz-form-label>
-        <nz-select nzMode="tags" [(ngModel)]="selectedLocationGroupTypes" name="selectedLocationGroupTypes">
-          <nz-option *ngFor="let locationGroupType of locationGroupTypes" [nzLabel]="locationGroupType.description"
-            [nzValue]="locationGroupType.id"></nz-option>
-        </nz-select>
+        <nz-form-control [nzSpan]="14">
+
+          <nz-select nzMode="tags" [(ngModel)]="selectedLocationGroupTypes" name="selectedLocationGroupTypes">
+            <nz-option *ngFor="let locationGroupType of locationGroupTypes" [nzLabel]="locationGroupType.description"
+              [nzValue]="locationGroupType.id"></nz-option>
+          </nz-select>
+        </nz-form-control>
       </nz-form-item>
     </div>
 
@@ -20,10 +23,12 @@
         <nz-form-label for="location_group" [nzSm]="3" [nzXs]="3">
           {{ 'location-group' | translate }}
         </nz-form-label>
-        <nz-select nzMode="tags" [(ngModel)]="selectedLocationGroups" name="selectedLocationGroups">
-          <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description"
-            [nzValue]="locationGroup.id"></nz-option>
-        </nz-select>
+        <nz-form-control [nzSpan]="14">
+            <nz-select nzMode="tags" [(ngModel)]="selectedLocationGroups" name="selectedLocationGroups">
+              <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description"
+                [nzValue]="locationGroup.id"></nz-option>
+            </nz-select>
+        </nz-form-control>
       </nz-form-item>
     </div>
   </div>
@@ -97,7 +102,6 @@
         </ng-container>
 
         <ng-template #editTemplate>
-          <td>{{ data.id }}</td>
           <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.name" /></td>
           <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.description" /></td>
 
@@ -182,7 +186,7 @@
 
           <td>
             <a (click)="saveRecord(data.id)" class="save">{{'save' | translate }}</a>
-            <a nz-popconfirm 
+            <a nz-popconfirm  nzPopconfirmTitle="Sure to cancel?"
               (nzOnConfirm)="cancelEdit(data.id)">{{'cancel' | translate }}</a>
           </td>
         </ng-template>

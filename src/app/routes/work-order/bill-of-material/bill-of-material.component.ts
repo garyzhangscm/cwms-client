@@ -76,8 +76,7 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
     id: undefined,
     number: undefined,
     workOrderLines: [],
-    workOrderInstructions: [],
-    productionLine: undefined,
+    workOrderInstructions: [], 
     itemId: undefined,
     item: undefined,
     workOrderKPIs: [],
@@ -240,8 +239,7 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
       id: undefined,
       number: undefined,
       workOrderLines:  [],
-      workOrderInstructions:  [],
-      productionLine: undefined,
+      workOrderInstructions:  [], 
       itemId: undefined,
       item: undefined,
       workOrderKPIs: [],
@@ -281,9 +279,7 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
     const productionLines = this.availableProductionLines.filter(
       productionLine => productionLine.id === newProductionLineId,
     );
-    if (productionLines.length === 1) {
-      this.newWorkOrder.productionLine = productionLines[0];
-    }
+    
   }
 
   workOrderNumberOnBlur(workOrderNumber: string): void {

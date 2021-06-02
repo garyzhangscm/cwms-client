@@ -20,7 +20,7 @@
 </ng-template>
 
 <nz-spin [nzSpinning]="isSpinning">
-<nz-card [nzActions]="[cardFoot]">
+<nz-card [nzActions]="[cardFoot]" [nzExtra]="refreshTemplate">
   <form nz-form [formGroup]="requestForm">
     <div nz-row [nzGutter]="24">
       <div nz-col [nzSpan]="8">
@@ -183,7 +183,10 @@
   </form>
 
 </nz-card>
-
+<ng-template #refreshTemplate>
+  <button [disabled]="newBatch===true" nz-button nzType="text" (click)="refreshCountBatchResults($event)">
+    {{'Refresh' | translate}}</button>
+</ng-template>
 <ng-template #cardFoot>
   <div nz-row nzType="flex" nzJustify="left" style='padding-left: 20px;'>
     <button nz-button nzType="primary" (click)="generateCountRequest()" [disabled]="!requestForm.valid">
@@ -529,8 +532,21 @@
         <tbody>
           <tr *ngFor="let data of auditCountResultsTable.data">
             <td>{{ data.batchId }}</td>
-            <td>{{ data.location?.name }}</td>
-            <td>{{ data.lpn }}</td>
+            <td>
+              <a *ngIf="data.location !== null"
+                routerLink="/inventory/inventory" 
+                [queryParams]="{refresh : true, location: data.location.name}"
+                routerLinkActive="active">  
+                {{ data.location.name }}
+              </a>
+            </td>
+            <td>
+              
+              <a *ngIf="data.location !== null"
+                routerLink="/inventory/inventory" 
+                [queryParams]="{refresh : true, lpn: data.lpn}"
+                routerLinkActive="active">  
+              {{ data.lpn }}</a></td>
             <td>{{ data.item?.name }}</td>
             <td>{{ data.item?.description }}</td>
             <td>{{ data.quantity }}</td>

@@ -35,20 +35,23 @@
             <nz-form-label for="fileType" [nzSm]="3" [nzXs]="3" nzRequired="true">
               {{ 'file-upload.filetype' | translate }}
             </nz-form-label>
-            <nz-select
-              nzPlaceHolder="{{ 'placeholder.file-upload.filetype' | translate }}"
-              name="Type"
-              formControlName="fileTypeSelector"
-              (ngModelChange)="selectedFileTypeChanged($event)"
-              [nzDisabled]="!fromMenu"
-            >
-              <nz-option
-                *ngFor="let fileType of allowedFileTypes"
-                [nzLabel]="fileType.label"
-                [nzValue]="fileType.value"
+            
+            <nz-form-control [nzSpan]="14">
+              <nz-select
+                nzPlaceHolder="{{ 'placeholder.file-upload.filetype' | translate }}"
+                name="Type"
+                formControlName="fileTypeSelector"
+                (ngModelChange)="selectedFileTypeChanged($event)"
+                [nzDisabled]="!fromMenu"
               >
-              </nz-option>
-            </nz-select>
+                <nz-option
+                  *ngFor="let fileType of allowedFileTypes"
+                  [nzLabel]="fileType.label"
+                  [nzValue]="fileType.value"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
           </nz-form-item>
         </div>
         <div nz-col [nzSpan]="12">

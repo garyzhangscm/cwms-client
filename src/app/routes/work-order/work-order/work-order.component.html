@@ -79,6 +79,8 @@
           <td>{{ data.totalLineInprocessQuantity }}</td>
           <td>{{ data.totalLineDeliveredQuantity }}</td>
           <td>{{ data.totalLineConsumedQuantity }}</td>
+          <!--
+
           <td>
             <a nz-dropdown [nzDropdownMenu]="productionLineMenu" [nzDisabled]="!isProductionLineChangable(data)">
               {{ data.productionLine?.name }}
@@ -93,12 +95,21 @@
               </ul>
             </nz-dropdown-menu>
           </td>
+
+          -->
           <td>
             <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary"
               [nzLoading]="mapOfAllocationInProcessId[data.id]" *ngIf="workOrderHasAnyAction(data)">
               {{ 'action' | translate }} <i nz-icon nzType="down"></i></button>
             <nz-dropdown-menu #menu="nzDropdownMenu">
               <ul nz-menu>
+                <!--  allow the user to assign the production line only when
+                   the work order is not start yet
+                  -->
+                <li nz-menu-item *ngIf="data.status === 'PENDING'">
+                  <a  routerLink="/work-order/work-order/assign-production-line" routerLinkActive="active"
+                      [queryParams]="{workOrderId : data.id}">{{ 'work-order.assign-production-line' | translate }}</a>
+                </li>
                 <li nz-menu-item *ngIf="isWorkOrderChangable(data)">
                   <a (click)="changeWorkOrderLine(data)">{{ 'work-order.modify-line' | translate }}</a>
                 </li>
@@ -194,6 +205,26 @@
           <td>{{ workOrderByProduct.expectedQuantity }}</td>
           <td>{{ workOrderByProduct.producedQuantity }}</td>
           <td>{{ 'INVENTORY-STATUS-' + workOrderByProduct.inventoryStatus.name | translate}}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+
+  <nz-tab nzTitle=" {{ 'production-line' | translate }}">
+    <nz-table [nzData]="data.productionLineAssignments" nzSize="middle" [nzShowPagination]="false">
+
+      <thead>
+        <th [nzAlign]="'center'">
+          {{ 'production-line' | translate }}</th>
+        <th [nzAlign]="'center'">
+          {{ 'quantity' | translate }}</th>
+          
+      </thead>
+      <tbody>
+
+        <tr *ngFor="let productionLineAssignment of data.productionLineAssignments">
+          <td [nzAlign]="'center'">{{ productionLineAssignment.productionLine?.name }}</td> 
+          <td [nzAlign]="'center'">{{ productionLineAssignment.quantity }}</td> 
         </tr>
       </tbody>
     </nz-table>

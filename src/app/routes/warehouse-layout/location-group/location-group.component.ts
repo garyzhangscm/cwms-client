@@ -263,6 +263,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
 
   cancelEdit(id: string): void {
     const index = this.listOfAllLocationGroups.findIndex(item => item.id === +id);
+    console.log(`start to cancel edit for id: ${id} and index: ${index}`);
     this.editCache[id] = {
       data: { ...this.listOfAllLocationGroups[index] },
       edit: false,

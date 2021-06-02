@@ -191,7 +191,7 @@ export class DefaultInterceptor implements HttpInterceptor {
         //   }
         // }
         if (ev instanceof HttpResponse) {
-          const body: any = ev.body;
+          const body: any = ev.body; 
           if (body && body.result && body.result !== 0) {
             // this.messageService.error(body.message);
             // 继续抛出错误中断后续所有 Pipe、subscribe 操作，因此：
@@ -252,6 +252,7 @@ export class DefaultInterceptor implements HttpInterceptor {
     
 
     const newReq = req.clone({ url });
+
     return next.handle(newReq).pipe(
       mergeMap((ev) => {
         // 允许统一对请求错误处理

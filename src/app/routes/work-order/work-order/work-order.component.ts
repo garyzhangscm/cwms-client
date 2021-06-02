@@ -129,7 +129,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           listOfFilter: [],
           filterFn: null, 
           showFilter: false
-        }, {
+        }, 
+        /***{
           name: 'production-line',
           showSort: true,
           sortOrder: null,
@@ -140,6 +141,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           filterFn: null, 
           showFilter: false
         }, 
+        **/
         ];
 
         expandSet = new Set<number>();
@@ -341,26 +343,14 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     );
   }
   isWorkOrderAllocatable(workOrder: WorkOrder): boolean {
-    return workOrder.productionLine != null && workOrder.totalLineOpenQuantity! > 0;
+    return workOrder.productionLineAssignments!.length > 0;
   }
   // The user is allowed to change the production line only when
   // the work order is in pending status
   isProductionLineChangable(workOrder: WorkOrder): boolean {
     return workOrder.status === WorkOrderStatus.PENDING;
   }
-
-  printPickSheets(workOrder: WorkOrder): void {
-    this.mapOfPrintingInProcessId[workOrder.id!] = true;
-    this.workOrderService.printWorkOrderPickSheet(workOrder);
-    // purposely to show the 'loading' status of the print button
-    // for at least 1 second. The above printWorkOrderPickSheet will
-    // return immediately but the print job(or print preview page)
-    // will start with some delay. During the delay, we will
-    // display the 'print' button as 'Loading' status
-    setTimeout(() => {
-      this.mapOfPrintingInProcessId[workOrder.id!] = false;
-    }, 1000);
-  }
+ 
   confirmPicks(workOrder: WorkOrder): void {
     this.router.navigateByUrl(`/outbound/pick/confirm?type=workOrder&id=${workOrder.id}`);
   }
@@ -374,12 +364,14 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
   isWorkOrderReadyForProduce(workOrder: WorkOrder): boolean {
     return (
-      workOrder.productionLine != null &&
+      workOrder.productionLineAssignments!.length > 0 &&
       workOrder.totalLineInprocessQuantity! > 0 &&
       workOrder.totalLineDeliveredQuantity! - workOrder.totalLineConsumedQuantity! > 0 &&
       workOrder.status === WorkOrderStatus.INPROCESS
     );
   }
+
+  
   produceFromWorkOrder(workOrder: WorkOrder): void {
     this.router.navigateByUrl(`/work-order/work-order/produce?id=${workOrder.id}`);
   }
@@ -526,10 +518,12 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   }
 
   inventoryReadyForPutaway(workOrder: WorkOrder, inventory: Inventory): boolean {
-    if (workOrder.productionLine === null || workOrder.productionLine === undefined) {
+    if (workOrder.productionLineAssignments!.length  === 0) {
       return false;
     }
-    return inventory.location!.id === workOrder.productionLine.outboundStageLocationId;
+    return workOrder.productionLineAssignments!.some(productionLineAssignment => {
+      inventory.location!.id ===  productionLineAssignment.productionLine.outboundStageLocationId 
+    });
   }
 
   allocateLocation(workOrder: WorkOrder, inventory: Inventory): void {

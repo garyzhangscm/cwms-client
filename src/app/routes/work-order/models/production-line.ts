@@ -1,6 +1,7 @@
 import { WorkOrder } from './work-order';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
+import { ProductionLineAssignment } from './production-line-assignment';
 
 export interface ProductionLine {
   id: number;
@@ -16,7 +17,7 @@ export interface ProductionLine {
   productionLineLocationId: number;
   productionLineLocation?: WarehouseLocation;
 
-  workOrders: WorkOrder[];
+  productionLineAssignments: ProductionLineAssignment[];
   workOrderExclusiveFlag: boolean;
   enabled: boolean;
 }

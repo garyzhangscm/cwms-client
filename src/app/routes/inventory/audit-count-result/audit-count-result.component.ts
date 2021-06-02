@@ -22,7 +22,7 @@ export class InventoryAuditCountResultComponent implements OnInit {
 
   batchId: string | undefined;
   location: WarehouseLocation | undefined;
-  warehouseId: number | undefined;
+  warehouseId: number | undefined; 
 
   validInventoryStatuses: InventoryStatus[] = [];
 
@@ -39,6 +39,7 @@ export class InventoryAuditCountResultComponent implements OnInit {
     private warehouseService: WarehouseService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inventory.audit-count-result.title');
+    
   }
 
   ngOnInit(): void {
@@ -47,7 +48,7 @@ export class InventoryAuditCountResultComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.batchId && params.locationId) {
         this.batchId = params.batchId;
-
+        
         this.locationService.getLocation(params.locationId).subscribe(location => (this.location = location));
 
         this.auditCountResultService

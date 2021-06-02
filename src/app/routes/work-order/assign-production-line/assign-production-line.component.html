@@ -1,0 +1,120 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+    <a routerLink="/work-order/work-order" routerLinkActive="active" [queryParams]="{number: workOrder.number}">{{ 'return' | translate }}</a>
+  </ng-template>
+  <ng-template #breadcrumb>
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a routerLink="/work-order/work-order" routerLinkActive="active">{{
+          'breadcrumb.work-order' | translate
+        }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </ng-template>
+
+  <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+    <nz-step nzTitle="{{ 'steps.work-order.assign-production-line.production-line' | translate }}"> </nz-step>
+    <nz-step nzTitle="{{ 'steps.work-order.assign-production-line.quantity' | translate }}"> </nz-step>
+    <nz-step nzTitle="{{ 'steps.confirm' | translate }}"> </nz-step>
+  </nz-steps>
+
+  <nz-card>
+    <nz-descriptions nzTitle="{{ 'work-order' | translate}}" nzBordered>
+        <nz-descriptions-item nzTitle="{{ 'work-order.number' | translate}}">{{workOrder?.number}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'item' | translate}}">{{workOrder?.item?.name}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'work-order.expected-quantity' | translate}}">{{workOrder?.expectedQuantity}}</nz-descriptions-item>
+        </nz-descriptions>
+  </nz-card>
+  
+
+<!-- Step 1: basic information 
+  1. BOM number / description
+  2. BOM item information
+  -->
+  <div class="steps-content" *ngIf="stepIndex === 0">
+    
+    <div nz-row style="padding: 10px">
+      <div nz-col nzSpan="12" nzOffset="6">
+        <nz-transfer [nzDataSource]="productionLineList" nzShowSearch [nzFilterOption]="transferListFilterOption"
+          (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
+          (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
+          [nzTitles]="[ unassignedProductionLineText, assignedProductionLineText]">
+        </nz-transfer>
+      </div>
+    </div>
+  </div>
+
+
+  
+<div class="small-card" *ngIf="stepIndex === 1">
+  
+  <div class="search-result-list">
+    <nz-table [nzData]="currentProductionLineAssignment" nzSize="middle" [nzShowPagination]="false">
+      <thead>
+        <th [nzAlign]="'center'">
+          {{ 'production-line' | translate }}
+        </th>
+        <th [nzAlign]="'center'">
+          {{ 'quantity' | translate }}
+        </th>
+        
+      </thead>
+      <tbody>
+        <tr *ngFor="let productionLineAssignment of currentProductionLineAssignment">
+          <td [nzAlign]="'center'">{{ productionLineAssignment.productionLine?.name }}</td>
+          <td [nzAlign]="'center'">
+            <!-- Allow the user to change the quantity of an existing work order line-->
+            <nz-input-group nzCompact>
+              <input nz-input [(ngModel)]="productionLineAssignment.quantity"
+                style="width: 50%;" />
+            </nz-input-group>
+          </td> 
+        </tr>
+      </tbody>
+    </nz-table> 
+  </div> 
+</div>
+
+
+<div class="small-card" *ngIf="stepIndex === 2">
+  
+  <div class="search-result-list">
+    <nz-table [nzData]="currentProductionLineAssignment" nzSize="middle" [nzShowPagination]="false">
+      <thead>
+        <th [nzAlign]="'center'">
+          {{ 'production-line' | translate }}
+        </th>
+        <th [nzAlign]="'center'">
+          {{ 'quantity' | translate }}
+        </th>
+        
+      </thead>
+      <tbody>
+        <tr *ngFor="let productionLineAssignment of currentProductionLineAssignment">
+          <td [nzAlign]="'center'">{{ productionLineAssignment.productionLine.name }}</td>
+          <td [nzAlign]="'center'">
+            {{ productionLineAssignment.quantity }}
+          </td> 
+        </tr>
+      </tbody>
+    </nz-table> 
+  </div> 
+</div>
+
+<div class="steps-action">
+  <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+    <span>{{ 'steps.previous' | translate }}</span>
+  </button>
+  <nz-divider nzType="vertical" *ngIf="stepIndex < 2"></nz-divider>
+  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 2">
+    <span>{{ 'steps.next' | translate }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 2">
+    <span> {{ 'confirm' | translate }}</span>
+  </button>
+</div>

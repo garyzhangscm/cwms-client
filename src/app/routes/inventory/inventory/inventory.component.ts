@@ -191,6 +191,9 @@ export class InventoryInventoryComponent implements OnInit {
         } else if (params.lpn) {
           this.searchForm.controls.lpn.setValue(params.lpn);
           this.search();
+        }else if (params.location) {
+          this.searchForm.controls.location.setValue(params.location);
+          this.search();
         } else {
           this.search();
         }

@@ -73,10 +73,7 @@ export class BillOfMaterialService {
     // Begin assigning parameters
     params = params.append('billOfMaterialId', billOfMaterial.id!.toString());
     params = params.append('workOrderNumber', workOrder.number!);
-    params = params.append('expectedQuantity', workOrder.expectedQuantity!.toString());
-    if (workOrder.productionLine !== null) {
-      params = params.append('productionLineId', workOrder.productionLine!.id.toString());
-    }
+    params = params.append('expectedQuantity', workOrder.expectedQuantity!.toString()); 
     return this.http.post('workorder/work-orders/create-from-bom', params).pipe(map(res => res.data));
   }
 }

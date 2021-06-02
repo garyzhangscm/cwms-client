@@ -329,6 +329,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
 
   cycleCountRequestConfirmModal!: NzModalRef;
   tabSelectedIndex = 0;
+  newBatch = false;
    
  
 
@@ -377,6 +378,10 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
       if (params.batchId) {
         this.requestForm.controls.batchId.setValue(params.batchId);
         this.requestForm.controls.batchId.disable();
+        this.newBatch = false;
+      }
+      else {
+        this.newBatch = true;
       }
       this.refreshCountBatchResults();
 
@@ -421,9 +426,17 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
         this.requestForm.controls.endValue.reset();
         this.requestForm.controls.includeEmptyLocation.reset();
         this.message.info(this.i18n.fanyi('message.new.complete'));
-        this.refreshCountBatchResults();
-        this.requestForm.controls.batchId.disable();
-        this.isSpinning = false;
+        if (this.newBatch) {
+          // refresh the page by going to the same page, with
+          // batch id in the parameter
+          this.router.navigateByUrl(`/inventory/count/cycle-count-maintenance?batchId=${this.requestForm.controls.batchId.value}`);
+        }
+        else {
+
+          this.refreshCountBatchResults();
+          this.requestForm.controls.batchId.disable();
+          this.isSpinning = false;
+        }
       }, 
       () => {this.isSpinning = true});
   }
