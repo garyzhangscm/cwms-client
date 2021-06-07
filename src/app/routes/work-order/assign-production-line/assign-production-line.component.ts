@@ -73,7 +73,7 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
     this.workOrder.productionLineAssignments?.forEach(
       productionLineAssignment => {
         this.productionLineList = [...this.productionLineList, {
-          key: productionLineAssignment.productionLine.id.toString(),
+          key: productionLineAssignment.productionLine.id!.toString(),
           title: productionLineAssignment.productionLine.name,
           description: productionLineAssignment.productionLine.name,
           direction: 'right'
@@ -87,10 +87,10 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
       productionLines.forEach(productionLine => {
         
         this.productionLineList = [...this.productionLineList, {
-          key: productionLine.id.toString(),
+          key: productionLine.id!.toString(),
           title: productionLine.name,
           description: productionLine.name,
-          direction: this.workOrder.productionLineAssignments?.some(productionLineAssignment => +productionLineAssignment.productionLine.id === +productionLine.id) ? 'right' : undefined,
+          direction: this.workOrder.productionLineAssignments?.some(productionLineAssignment => +productionLineAssignment.productionLine.id! === +productionLine.id!) ? 'right' : undefined,
         
         }];
 
@@ -130,7 +130,7 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
   getProductionLineById(id:number): ProductionLine | undefined {
  
     var productionLine =  this.availableProductionLines.find(productionLine => { 
-      return +productionLine.id === +id
+      return +productionLine.id! === +id
     });  
 
 

@@ -4,17 +4,17 @@ import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { ProductionLineAssignment } from './production-line-assignment';
 
 export interface ProductionLine {
-  id: number;
+  id?: number;
   name: string;
 
   warehouseId: number;
   warehouse?: Warehouse;
 
-  inboundStageLocationId: number;
+  inboundStageLocationId?: number;
   inboundStageLocation?: WarehouseLocation;
-  outboundStageLocationId: number;
+  outboundStageLocationId?: number;
   outboundStageLocation?: WarehouseLocation;
-  productionLineLocationId: number;
+  productionLineLocationId?: number;
   productionLineLocation?: WarehouseLocation;
 
   productionLineAssignments: ProductionLineAssignment[];

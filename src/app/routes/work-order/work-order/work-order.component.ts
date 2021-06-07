@@ -20,6 +20,10 @@ import { WorkOrderKpi } from '../models/work-order-kpi';
 import { WorkOrderKpiTransaction } from '../models/work-order-kpi-transaction';
 import { WorkOrderStatus } from '../models/work-order-status.enum';
 import { ProductionLineService } from '../services/production-line.service';
+import { PrintingService } from '../../common/services/printing.service';
+import { ReportType } from '../../report/models/report-type.enum';
+import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
+import { ReportOrientation } from '../../report/models/report-orientation.enum';
 
 @Component({
   selector: 'app-work-order-work-order',
@@ -163,6 +167,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     private inventoryService: InventoryService,
     private locationService: LocationService,
     private utilService: UtilService,
+    private printingService: PrintingService,
   ) {}
   workOrderStatus = WorkOrderStatus;
   // Form related data and functions
@@ -196,7 +201,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
 
   printingInProcess = false;
-
+  isSpinning = false;
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.work-order.work-order'));
     // initiate the search form
@@ -303,17 +308,20 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     // load all available production lines
     this.productionLineService.getAvailableProductionLines().subscribe(productionLineRes => {
       productionLineRes.forEach(productionLine =>
-        this.availableProductionLines.push({ label: productionLine.name, value: productionLine.id.toString() }),
+        this.availableProductionLines.push({ label: productionLine.name, value: productionLine.id!.toString() }),
       );
     });
   }
   allocateWorkOrder(workOrder: WorkOrder): void {
+    this.isSpinning = true;
     this.mapOfAllocationInProcessId[workOrder.id!] = true;
     this.workOrderService.allocateWorkOrder(workOrder).subscribe(workOrderRes => {
       this.messageService.success(this.i18n.fanyi('message.allocate.success'));
       this.mapOfAllocationInProcessId[workOrder.id!] = false;
       this.search();
-    });
+      this.isSpinning = false;
+    }, 
+    () => this.isSpinning = false);
   }
   workOrderHasAnyAction(workOrder: WorkOrder): boolean {
     return (
@@ -634,6 +642,37 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     }, 1000);
   }
 
+  
+  printPickSheets(workOrder: WorkOrder, event: any) : void {
+    this.isSpinning = true;
+    console.log(`start to print ${workOrder.number} from ${JSON.stringify(event)}`);
+
+    this.workOrderService
+      .printOrderPickSheet(workOrder, this.i18n.currentLang)
+      .subscribe(printResult=> {
+      
+        // send the result to the printer
+      this.printingService.printRemoteFileByName(
+        "work order pick sheet", 
+        printResult.fileName, 
+        ReportType.ORDER_PICK_SHEET,
+        event.printerIndex, 
+        event.physicalCopyCount, PrintPageOrientation.Landscape);
+       this.isSpinning = false;
+       this.messageService.success(this.i18n.fanyi("report.print.printed"));
+    });
+    
+  }
+  previewReport(workOrder: WorkOrder) : void{
+    this.isSpinning = true;
+    console.log(`start to preview ${workOrder.number}`);
+    this.workOrderService.printOrderPickSheet(workOrder, this.i18n.currentLang).subscribe(printResult=> {
+      // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+      this.isSpinning = false;
+      this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
+      
+    });
+  }
   
 
 }

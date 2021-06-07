@@ -23,6 +23,9 @@ import { WorkOrderRoutingModule } from './work-order-routing.module';
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
 import { WorkOrderAssignProductionLineComponent } from './assign-production-line/assign-production-line.component';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
+import { CommonModule } from '../common/common.module';
+import { WorkOrderProductionLineMaintenanceComponent } from './production-line-maintenance/production-line-maintenance.component';
+import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module';
 
 const COMPONENTS: Type<void>[] = [
   WorkOrderWorkOrderComponent,
@@ -42,7 +45,8 @@ const COMPONENTS: Type<void>[] = [
   WorkOrderProductionPlanMaintenanceComponent,
   WorkOrderWorkOrderLineMaintenanceComponent,
   WorkOrderBillOfMaterialMaintenanceComponent,
-  WorkOrderAssignProductionLineComponent];
+  WorkOrderAssignProductionLineComponent,
+  WorkOrderProductionLineMaintenanceComponent];
 const COMPONENTS_NOROUNT: Type<void>[] = [];
 
 @NgModule({
@@ -51,7 +55,9 @@ const COMPONENTS_NOROUNT: Type<void>[] = [];
     WorkOrderRoutingModule, DirectivesModule, 
     NzLayoutModule,
     NzDescriptionsModule,
-    NzTransferModule
+    NzTransferModule,
+    CommonModule, 
+    WarehouseLayoutModule, 
   ],
   declarations: [
     ...COMPONENTS,

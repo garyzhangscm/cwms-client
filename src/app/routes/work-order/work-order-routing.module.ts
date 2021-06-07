@@ -19,6 +19,7 @@ import { WorkOrderWorkOrderProduceKpiComponent } from './work-order-produce-kpi/
 import { WorkOrderWorkOrderProduceComponent } from './work-order-produce/work-order-produce.component';
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
 import { WorkOrderAssignProductionLineComponent } from './assign-production-line/assign-production-line.component';
+import { WorkOrderProductionLineMaintenanceComponent } from './production-line-maintenance/production-line-maintenance.component';
 
 const routes: Routes = [
   { path: 'work-order', component: WorkOrderWorkOrderComponent, canActivate: [AuthGuard]  },
@@ -38,7 +39,8 @@ const routes: Routes = [
   { path: 'production-plan/maintenance', component: WorkOrderProductionPlanMaintenanceComponent },
   { path: 'work-order/line/maintenance', component: WorkOrderWorkOrderLineMaintenanceComponent },
   { path: 'bill-of-material/maintenance', component: WorkOrderBillOfMaterialMaintenanceComponent },
-  { path: 'work-order/assign-production-line', component: WorkOrderAssignProductionLineComponent }];
+  { path: 'work-order/assign-production-line', component: WorkOrderAssignProductionLineComponent },
+  { path: 'production-line-maintenance', component: WorkOrderProductionLineMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

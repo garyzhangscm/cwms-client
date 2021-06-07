@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
+import { I18NService } from '@core/i18n/i18n.service';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { PickWork } from '../../outbound/models/pick-work';
+import { ReportHistory } from '../../report/models/report-history';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { WorkOrder } from '../models/work-order';
 import { WorkOrderKpi } from '../models/work-order-kpi';
@@ -20,6 +22,7 @@ export class WorkOrderService {
     private http: _HttpClient,
     private warehouseService: WarehouseService,
     private printingService: PrintingService,
+    private i18n: I18NService,
   ) {}
 
   getWorkOrders(number?: string, itemName?: string, productionPlanId?: number): Observable<WorkOrder[]> {
@@ -132,4 +135,14 @@ export class WorkOrderService {
     return this.http.post(url, inventory).pipe(map(res => res.data));
   }
  
+
+  
+  printOrderPickSheet(workOrder: WorkOrder, locale?: string) : Observable<ReportHistory>{ 
+    if (!locale) {
+      locale = this.i18n.defaultLang;
+    }
+    
+    return this.http.post(`workorder/work-orders/${workOrder.id}/pick-report?locale=${locale}`).pipe(map(res => res.data));
+  }
+  
 }

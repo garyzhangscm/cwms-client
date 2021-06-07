@@ -1,5 +1,6 @@
 <page-header [title]="'page.work-order.header.title' | translate"> </page-header>
 
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 <!-- Form to query the result  -->
 <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
   <div nz-row [nzGutter]="24">
@@ -337,7 +338,11 @@
         <th>
           {{ 'pick.number' | translate }}</th>
         <th>
+            {{ 'sourceLocationGroup' | translate }}</th>
+        <th>
           {{ 'sourceLocation' | translate }}</th>
+        <th>
+            {{ 'destinationLocationGroup' | translate }}</th>
         <th>
           {{ 'destinationLocation' | translate }}</th>
         <th>
@@ -353,7 +358,9 @@
 
         <tr *ngFor="let pick of workOrderLine.picks">
           <td>{{ pick.number }}</td>
+          <td>{{ pick.sourceLocation?.locationGroup?.name }}</td>
           <td>{{ pick.sourceLocation?.name }}</td>
+          <td>{{ pick.destinationLocation?.locationGroup?.name }}</td>
           <td>{{ pick.destinationLocation?.name }}</td>
           <td>{{ pick.item?.name }}</td>
           <td>{{ pick.item?.description }}</td>
@@ -365,10 +372,13 @@
 
     <ng-template #pickTableFoot>
       <div nz-row nzType="flex" nzJustify="start">
-        <button nz-button nzType="primary" (click)="printPickSheets(data)"
-          [nzLoading]="mapOfPrintingInProcessId[data.id]">
-          {{ 'print' | translate }}
-        </button>
+        
+        <cwms-common-print-button 
+          [printingInProcess]="mapOfPrintingInProcessId[data.id]" 
+          (print)="printPickSheets(data, $event)"
+          (preview)="previewReport(data)"> 
+        </cwms-common-print-button> 
+        
         <button nz-button (click)="confirmPicks(data)" [disabled]="!isWorkOrderPickable(data)">
           {{ 'confirm' | translate }}
         </button>
@@ -799,6 +809,7 @@
   </nz-table>
 </div>
 
+</nz-spin>
 
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">

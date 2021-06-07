@@ -1,6 +1,7 @@
 import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -10,6 +11,7 @@ import { UtilService } from '../../util/services/util.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { LocationGroupType } from '../../warehouse-layout/models/location-group-type';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { LocationService } from '../../warehouse-layout/services/location.service';
 import { ProductionLine } from '../models/production-line';
 import { ProductionLineService } from '../services/production-line.service';
 
@@ -109,11 +111,12 @@ export class WorkOrderProductionLineComponent implements OnInit {
     private i18n: I18NService,
     private messageService: NzMessageService,
     private utilService: UtilService,
+    private locationService: LocationService,
+    private activatedRoute: ActivatedRoute,
   ) {}
 
-  // Select control for Location Group Types
-  availableProductionLines: Array<{ label: string; value: string }> = [];
-  selectedProductionLine = [];
+  
+  
 
   // Form related data and functions
   searchForm!: FormGroup;
@@ -121,24 +124,28 @@ export class WorkOrderProductionLineComponent implements OnInit {
   searching = false;
   searchResult = '';
 
+  isSpinning = false;
   // Table data for display
   listOfAllProductionLine: ProductionLine[] = [];
   listOfDisplayProductionLine: ProductionLine[] = [];
   
+  editCache: { [key: string]: { edit: boolean; data: ProductionLine } } = {};
 
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllProductionLine = [];
     this.listOfDisplayProductionLine = [];
+    
   }
 
   search(): void {
     this.searching = true;
     this.searchResult = '';
-    this.productionLineService.getProductionLinesByNameList(this.selectedProductionLine).subscribe(
+    this.productionLineService.getProductionLines(this.searchForm.controls.name.value).subscribe(
       productionLineRes => {
         this.listOfAllProductionLine = productionLineRes;
         this.listOfDisplayProductionLine = productionLineRes;
+        this.updateEditCache();
 
         this.searching = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
@@ -166,7 +173,7 @@ export class WorkOrderProductionLineComponent implements OnInit {
   }
 
   onAllChecked(value: boolean): void {
-    this.listOfDisplayProductionLine!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.listOfDisplayProductionLine!.forEach(item => this.updateCheckedSet(item.id!, value));
     this.refreshCheckedStatus();
   }
 
@@ -176,8 +183,8 @@ export class WorkOrderProductionLineComponent implements OnInit {
   }
 
   refreshCheckedStatus(): void {
-    this.checked = this.listOfDisplayProductionLine!.every(item => this.setOfCheckedId.has(item.id));
-    this.indeterminate = this.listOfDisplayProductionLine!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
+    this.checked = this.listOfDisplayProductionLine!.every(item => this.setOfCheckedId.has(item.id!));
+    this.indeterminate = this.listOfDisplayProductionLine!.some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
   }
 
 
@@ -185,15 +192,17 @@ export class WorkOrderProductionLineComponent implements OnInit {
   ngOnInit(): void {
     // initiate the search form
     this.searchForm = this.fb.group({
-      taggedProductionLine: [null],
+      name: [null],
     });
 
-    // initiate the select control
-    this.productionLineService.getProductionLines(undefined).subscribe(productionLineRes => {
-      productionLineRes.forEach(productionLine =>
-        this.availableProductionLines.push({ label: productionLine.name, value: productionLine.id.toString() }),
-      );
+    
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.name) {
+        this.searchForm.controls.name.setValue(params.name);
+        this.search();
+      }
     });
+ 
   }
   disableProductionLine(productionLine: ProductionLine, disabled: boolean): void {
     this.productionLineService.disableProductionLine(productionLine, disabled).subscribe(() => {
@@ -201,4 +210,138 @@ export class WorkOrderProductionLineComponent implements OnInit {
       this.search();
     });
   }
+  removeProductionLine(productionLine: ProductionLine): void {
+    this.productionLineService.removeProductionLine(productionLine).subscribe(() => {
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      this.search();
+    });
+  }
+
+
+  
+  startEdit(id: string): void {
+    this.editCache[id].edit = true;
+  }
+
+  cancelEdit(id: string): void {
+    const index = this.listOfAllProductionLine.findIndex(item => item.id === +id);
+    console.log(`start to cancel edit for id: ${id} and index: ${index}`);
+    this.editCache[id] = {
+      data: { ...this.listOfAllProductionLine[index] },
+      edit: false,
+    };
+  }
+
+  saveRecord(id: string): void {
+    const index = this.listOfAllProductionLine.findIndex(item => item.id === +id);
+
+    console.log(`will save record with index: ${index}`);
+    this.isSpinning = true;
+    
+    this.productionLineService.changeProductionLine(this.editCache[id].data)
+        .subscribe(res => {
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          this.searchForm.controls.name.setValue(res.name);
+          this.search();
+ 
+          this.editCache[id].edit = false;
+          this.isSpinning = false;
+        }, 
+        () => {
+          this.isSpinning = true;});
+  }
+
+  updateEditCache(): void {
+    this.listOfAllProductionLine.forEach(item => {
+      this.editCache[item.id!] = {
+        edit: false,
+        data: { ...item }
+      };
+    });
+ 
+  }
+  
+  processProductionLineLocationQueryResult(selectedLocationName: any, cachedRowId: number): void {
+    console.log(`start to query with location name ${selectedLocationName} for id ${cachedRowId}`);
+    this.locationService.getLocations("", "", selectedLocationName).subscribe(res => {
+
+      // we should only get one location by the name
+      if (res.length == 1) {
+
+        this.editCache[cachedRowId].data.productionLineLocation = res[0];
+        this.editCache[cachedRowId].data.productionLineLocationId = res[0].id;
+      }
+
+    });
+  }
+  
+  processProductionLineInboundLocationQueryResult(selectedLocationName: any, cachedRowId: number): void {
+    console.log(`start to query with inbound location name ${selectedLocationName} for id ${cachedRowId}`);
+    this.locationService.getLocations("", "", selectedLocationName).subscribe(res => {
+
+      // we should only get one location by the name
+      if (res.length == 1) {
+
+        this.editCache[cachedRowId].data.inboundStageLocation = res[0];
+        this.editCache[cachedRowId].data.inboundStageLocationId = res[0].id;
+      }
+      
+    });
+  }
+  
+  processProductionLineOutboundLocationQueryResult(selectedLocationName: any, cachedRowId: number): void {
+    console.log(`start to query with outbound location name ${selectedLocationName} for id ${cachedRowId}`);
+    this.locationService.getLocations("", "", selectedLocationName).subscribe(res => {
+
+      // we should only get one location by the name
+      if (res.length == 1) {
+
+        this.editCache[cachedRowId].data.outboundStageLocation = res[0];
+        this.editCache[cachedRowId].data.outboundStageLocationId = res[0].id;
+      }
+      
+    });
+  }
+
+
+  onProductionLineLocationChanged(name: string, id: number){
+    this.locationService.getLocations("", "", name).subscribe(res => {
+
+      // we should only get one location by the name
+      if (res.length == 1) {
+
+        this.editCache[id].data.productionLineLocation = res[0];
+        this.editCache[id].data.productionLineLocationId = res[0].id;
+      }
+      
+    });
+
+  }
+  onProductionLineInboundLocationChanged(name: string, id: number){
+    
+    this.locationService.getLocations("", "", name).subscribe(res => {
+
+      // we should only get one location by the name
+      if (res.length == 1) {
+
+        this.editCache[id].data.inboundStageLocation = res[0];
+        this.editCache[id].data.inboundStageLocationId = res[0].id;
+      }
+      
+    });
+
+  }
+  onProductionLineOutboundLocationChanged(name: string, id: number){
+    this.locationService.getLocations("", "", name).subscribe(res => {
+
+      // we should only get one location by the name
+      if (res.length == 1) {
+
+        this.editCache[id].data.outboundStageLocation = res[0];
+        this.editCache[id].data.outboundStageLocationId = res[0].id;
+      }
+      
+    });
+  }
+
 }

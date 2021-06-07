@@ -23,7 +23,7 @@ export class ProductionLineService {
 
     return this.http.get(url).pipe(map(res => res.data));
   }
-  getProductionLinesByNameList(productionLineIds: string[]): Observable<ProductionLine[]> {
+  getProductionLinesByIdList(productionLineIds: string[]): Observable<ProductionLine[]> {
     const idList = productionLineIds.join(',');
     const url =
       productionLineIds.length > 0
@@ -57,7 +57,7 @@ export class ProductionLineService {
   removeProductionLines(productionLines: ProductionLine[]): Observable<ProductionLine[]> {
     const productionLineIds: number[] = [];
     productionLines.forEach(productionLine => {
-      productionLineIds.push(productionLine.id);
+      productionLineIds.push(productionLine.id!);
     });
     const params = {
       productionLineIds: productionLineIds.join(','),

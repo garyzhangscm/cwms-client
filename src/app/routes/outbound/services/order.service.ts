@@ -66,23 +66,6 @@ export class OrderService {
   }
 
   printOrderPickSheet(order: Order, locale?: string) : Observable<ReportHistory>{
-    /****
-     * 
-    const reportName = `Outbound Order Pick Sheet`;
-    // Get the picks for the order
-    this.pickService.getPicks(undefined, order.id).subscribe(pickRes => {
-      const pages: string[] = 
-          this.generateOrderPickSheet(reportName, order, pickRes);
-      this.printingService.print(
-        reportName, 
-        pages,         
-        undefined, 
-        undefined,
-        this.generateOrderNumberBarcodes(order.number, pages.length)
-        );
-    });
-     * 
-     */
     if (!locale) {
       locale = this.i18n.defaultLang;
     }

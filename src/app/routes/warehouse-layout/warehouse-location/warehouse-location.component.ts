@@ -356,7 +356,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
     this.editCache[id] = {
       data: { ...this.listOfAllLocations[index] },
       edit: false,
-      locationGroupName: this.listOfAllLocations[index].locationGroup.name,
+      locationGroupName: this.listOfAllLocations[index].locationGroup!.name,
     };
   }
 
@@ -364,7 +364,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
     const index = this.listOfAllLocations.findIndex(item => item.id === +id);
 
     // setup the location group type if the type is changed
-    if (this.editCache[id].data.locationGroup.name !== this.editCache[id].locationGroupName) {
+    if (this.editCache[id].data.locationGroup!.name !== this.editCache[id].locationGroupName) {
       const matchedLocationGroup = this.locationGroups.filter(locationGroup => {
         return locationGroup.name === this.editCache[id].locationGroupName;
       });
@@ -384,7 +384,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       this.editCache[item.id] = {
         edit: false,
         data: { ...item },
-        locationGroupName: item.locationGroup.name,
+        locationGroupName: item.locationGroup!.name,
       };
     });
   }

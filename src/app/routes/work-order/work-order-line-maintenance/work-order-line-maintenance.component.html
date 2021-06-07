@@ -77,9 +77,9 @@
 
         <tr *ngFor="let workOrderLine of currentWorkOrder?.workOrderLines">
           <td>{{ workOrderLine.number }}</td>
-          <td><span *ngIf="workOrderLine.id !== null">{{ workOrderLine.item.name }}</span>
+          <td><span *ngIf="workOrderLine.id !== undefined">{{ workOrderLine.item.name }}</span>
 
-            <nz-input-group nzCompact *ngIf="workOrderLine.id === null">
+            <nz-input-group nzCompact *ngIf="workOrderLine.id === undefined">
               <input nz-input [(ngModel)]="workOrderLine.item.name" [nzAutocomplete]="itemList" style="width: 100%;"
                 (blur)="itemNameChanged($event.target.value, workOrderLine)" />
 
@@ -94,9 +94,9 @@
           <td>{{ workOrderLine.scrappedQuantity }}</td>
           <td>{{ workOrderLine.returnedQuantity }}</td>
           <td><span
-              *ngIf="workOrderLine.id !== null">{{ 'INVENTORY-STATUS-' + workOrderLine.inventoryStatus?.name | translate}}</span>
+              *ngIf="workOrderLine.id !== undefined">{{ 'INVENTORY-STATUS-' + workOrderLine.inventoryStatus?.name | translate}}</span>
 
-            <nz-input-group nzCompact *ngIf="workOrderLine.id === null">
+            <nz-input-group nzCompact *ngIf="workOrderLine.id === undefined">
               <nz-select nz-input [ngModel]="workOrderLine.inventoryStatus?.name"
                 (ngModelChange)="inventoryStatusChange($event, workOrderLine)" style="width: 150px">
                 <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
@@ -166,7 +166,7 @@
 
       <tr *ngFor="let workOrderLine of currentWorkOrder?.workOrderLines">
         <td>{{ workOrderLine.number }}</td>
-        <td> {{ workOrderLine.item.name }}
+        <td> {{ workOrderLine.item?.name }}
 
         </td>
         <td>{{ workOrderLine.item?.description }}</td>

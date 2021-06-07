@@ -39,7 +39,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
         {
               name: 'location-group',
               sortOrder: null,
-              sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.locationGroup?.name.localeCompare(b.locationGroup?.name),
+              sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.locationGroup!.name.localeCompare(b.locationGroup!.name),
               sortDirections: ['ascend', 'descend'],
               filterMultiple: true,
               listOfFilter: [],

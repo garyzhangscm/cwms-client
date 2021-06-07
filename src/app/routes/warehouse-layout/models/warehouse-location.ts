@@ -17,7 +17,7 @@ export interface WarehouseLocation {
   fillPercentage: number;
   currentVolume: number;
   pendingVolume: number;
-  locationGroup: LocationGroup;
+  locationGroup?: LocationGroup;
   enabled: boolean;
   locked: boolean;
   reservedCode: string;

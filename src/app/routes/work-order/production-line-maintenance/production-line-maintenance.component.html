@@ -1,0 +1,171 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+    <a routerLink="/work-order/production-line" routerLinkActive="active" >{{ 'return' | translate }}</a>
+  </ng-template>
+  <ng-template #breadcrumb>
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a routerLink="/work-order/production-line" routerLinkActive="active">{{
+          'breadcrumb.production-line' | translate
+        }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </ng-template>
+
+  <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+    <nz-step nzTitle="{{ 'steps.production-line.info' | translate }}"> </nz-step> 
+    <nz-step nzTitle="{{ 'steps.confirm' | translate }}"> </nz-step>
+  </nz-steps> 
+  
+
+<!-- Step 1: basic information  
+  --> 
+
+
+  
+<div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
+    
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'name' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+
+            <input type="text" nz-input [(ngModel)]="currentProductionLine.name"   />
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'single-work-order-only' | translate }}
+          </nz-form-label>
+          
+          <label nz-checkbox [(ngModel)]="currentProductionLine.workOrderExclusiveFlag"> </label>
+        </nz-form-item>
+      </div>
+      
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'enabled' | translate }}
+          </nz-form-label>
+          <label nz-checkbox [(ngModel)]="currentProductionLine.enabled"> </label>
+        </nz-form-item>
+      </div>
+    </div>
+       
+    <div nz-row [nzGutter]="24">
+      
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'name' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+
+            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" >            
+                <input type="text" nz-input [(ngModel)]="currentProductionLine.productionLineLocation.name" 
+                (ngModelChange)="onProductionLineLocationChanged($event)" />
+              </nz-input-group>
+              
+              <ng-template #suffixIconButton>
+                <app-warehouse-layout-location-query-popup (recordSelected)="processProductionLineLocationQueryResult($event)">
+                </app-warehouse-layout-location-query-popup>
+              </ng-template> 
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'name' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+
+            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton2" >            
+                <input type="text" nz-input [(ngModel)]="currentProductionLine.inboundStageLocation.name" 
+                (ngModelChange)="onProductionLineInboundLocationChanged($event)" />
+              </nz-input-group>
+              
+              <ng-template #suffixIconButton2>
+                <app-warehouse-layout-location-query-popup (recordSelected)="processProductionLineInboundLocationQueryResult($event)">
+                </app-warehouse-layout-location-query-popup>
+              </ng-template> 
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'name' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+
+            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton3" >            
+                <input type="text" nz-input [(ngModel)]="currentProductionLine.outboundStageLocation.name" 
+                (ngModelChange)="onProductionLineOutboundLocationChanged($event)" />
+              </nz-input-group>
+              
+              <ng-template #suffixIconButton3>
+                <app-warehouse-layout-location-query-popup (recordSelected)="processProductionLineOutboundLocationQueryResult($event)">
+                </app-warehouse-layout-location-query-popup>
+              </ng-template> 
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>
+     
+</div>
+
+
+<div class="small-card" *ngIf="stepIndex === 1"  style="padding-top: 20px;">
+   
+    <nz-descriptions nzTitle="{{ 'production-line' | translate}}" nzBordered>
+        <nz-descriptions-item nzTitle="{{ 'production-line.name' | translate}}">
+            {{currentProductionLine.name}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'production-line.location' | translate}}">
+            {{currentProductionLine.productionLineLocation?.name}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'production-line.inbound-stage-location' | translate}}">
+            {{currentProductionLine.inboundStageLocation?.name}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'production-line.outbound-stage-location' | translate}}">
+            {{currentProductionLine.outboundStageLocation?.name}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'single-work-order-only' | translate}}">
+            {{currentProductionLine.workOrderExclusiveFlag + ""| translate}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'enabled' | translate}}">
+            {{currentProductionLine.enabled + ""| translate}}</nz-descriptions-item>
+        </nz-descriptions>
+</div>
+
+<div class="steps-action"  style="padding-top: 20px;">
+  <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+    <span>{{ 'steps.previous' | translate }}</span>
+  </button>
+  <nz-divider nzType="vertical" *ngIf="stepIndex < 2"></nz-divider>
+  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1">
+    <span>{{ 'steps.next' | translate }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 1">
+    <span> {{ 'confirm' | translate }}</span>
+  </button>
+</div>
