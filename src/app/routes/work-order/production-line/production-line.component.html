@@ -35,6 +35,8 @@
     [nzFooter]="tableFoot">
     <thead>
       <tr>
+        <th nzWidth="40px"></th>
+
         <!--
 
         <th
@@ -67,103 +69,65 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of rowSelectionTable.data">
-        
-        <ng-container *ngIf="!editCache[data.id].edit; else editTemplate"> 
-        <!--
+      <ng-template ngFor let-data [ngForOf]="rowSelectionTable.data">
+        <tr>
 
-
-        <td
-        [nzChecked]="setOfCheckedId.has(data.id)"
-        (nzCheckedChange)="onItemChecked(data.id, $event)"
-      ></td>
-          -->
+          
+          <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data, $event)"></td> 
+         
           <td>{{ data.name }}</td>
           <td>{{ data.productionLineLocation?.name }}</td>
           <td>{{ data.inboundStageLocation?.name }}</td>
           <td>{{ data.outboundStageLocation?.name }}</td>
           <td>{{ data.workOrderExclusiveFlag + ""| translate }}</td>
           <td>{{ data.enabled + "" | translate }}</td>
+          <td>{{ data.genericPurpose + "" | translate }}</td>
           <td>
-            <a (click)="startEdit(data.id)" *ngIf="!searching && !operationInProcess"> {{ 'modify' | translate }}</a> 
+            <a routerLink="/work-order/production-line-maintenance"
+            [queryParams]="{id: data.id}"
+            routerLinkActive="active"> {{ 'modify' | translate }}</a> 
             
             <nz-divider nzType="vertical"></nz-divider>
             <button nz-button nzType="danger" (click)="removeProductionLine(data)" >
               {{'delete' | translate}}
             </button>
           </td>
-        </ng-container>
-      <ng-template #editTemplate>
+         
+ 
+           
+         
 
-        
-        <td>{{ editCache[data.id].data.name }}</td>
-        <td>
-          
-          
-          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" >            
-            <input type="text" nz-input [(ngModel)]="editCache[data.id].data.productionLineLocation.name" 
-            (ngModelChange)="onProductionLineLocationChanged($event, data.id)" />
-          </nz-input-group>
-          
-          <ng-template #suffixIconButton>
-            <app-warehouse-layout-location-query-popup (recordSelected)="processProductionLineLocationQueryResult($event, data.id)">
-            </app-warehouse-layout-location-query-popup>
-          </ng-template> 
-        </td>
-        
-        <td>
-            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton2" >            
-              <input  type="text" nz-input [(ngModel)]="editCache[data.id].data.inboundStageLocation.name" 
-            (ngModelChange)="onProductionLineInboundLocationChanged($event, data.id)" />
-            </nz-input-group>
+        </tr>
+        <tr [nzExpand]="expandSet.has(data.id)" class="inner-table">
             
-            <ng-template #suffixIconButton2>
-              <app-warehouse-layout-location-query-popup (recordSelected)="processProductionLineInboundLocationQueryResult($event, data.id)">
-              </app-warehouse-layout-location-query-popup>
-            </ng-template> 
-          
-          
-          </td>
-        
-        <td>
-          
-          
-          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton3" >            
-            
-            <input type="text"  nz-input [(ngModel)]="editCache[data.id].data.outboundStageLocation.name" 
-            (ngModelChange)="onProductionLineOutboundLocationChanged($event, data.id)" />
-          </nz-input-group>
-          
-          <ng-template #suffixIconButton3>
-            <app-warehouse-layout-location-query-popup (recordSelected)="processProductionLineOutboundLocationQueryResult($event, data.id)">
-            </app-warehouse-layout-location-query-popup>
-          </ng-template> 
-        
-        </td>
-        
-        <td>
-          <nz-select [(ngModel)]="editCache[data.id].data.workOrderExclusiveFlag">
-            <nz-option nzLabel="{{ 'true' | translate }} " [nzValue]="true"></nz-option>
-            <nz-option nzLabel="{{ 'false' | translate }}" [nzValue]="false"></nz-option>
-          </nz-select>
-        </td>
-        
-        <td>
-          <nz-select [(ngModel)]="editCache[data.id].data.enabled">
-            <nz-option nzLabel="{{ 'true' | translate }} " [nzValue]="true"></nz-option>
-            <nz-option nzLabel="{{ 'false' | translate }}" [nzValue]="false"></nz-option>
-          </nz-select>
-    
-        </td>
-              
-        <td>
-            <a (click)="saveRecord(data.id)" class="save">{{'save' | translate }}</a>
-            <a nz-popconfirm  nzPopconfirmTitle="Sure to cancel?"
-              (nzOnConfirm)="cancelEdit(data.id)">{{'cancel' | translate }}</a>
-        </td>
+          <nz-tabset>
+            <nz-tab nzTitle=" {{ 'production-line.capacity' | translate }}">
+              <nz-table [nzData]="data.productionLineCapacities" nzSize="middle" [nzShowPagination]="false">
+
+                <thead>
+                  
+                  <th nzWidth="30%">{{"item" | translate}}</th>
+                  <th>{{"production-line.capacity" | translate}}</th>
+                  <th>{{"unit-of-measure" | translate}}</th>
+                  <th>{{"time-unit" | translate}}</th> 
+                </thead>
+                <tbody>
+                  <tr *ngFor="let productionLineCapacity of data.productionLineCapacities"> 
+                      
+                      <td>{{ productionLineCapacity.item.name }}</td>
+                      <td>{{ productionLineCapacity.capacity }}</td>
+                      <td>
+                        {{ productionLineCapacity.unitOfMeasure.description }}</td>
+                      <td>{{ productionLineCapacity.capacityUnit }}</td> 
+
+                  </tr>
+                  
+                </tbody>
+              </nz-table>
+            </nz-tab>
+          </nz-tabset>
+        </tr>
       </ng-template>
-
-      </tr>
     </tbody>
   </nz-table>
 

@@ -2,6 +2,7 @@ import { WorkOrder } from './work-order';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { ProductionLineAssignment } from './production-line-assignment';
+import { ProductionLineCapacity } from './production-line-capacity';
 
 export interface ProductionLine {
   id?: number;
@@ -20,4 +21,10 @@ export interface ProductionLine {
   productionLineAssignments: ProductionLineAssignment[];
   workOrderExclusiveFlag: boolean;
   enabled: boolean;
+  genericPurpose: boolean;
+
+  productionLineCapacities: ProductionLineCapacity[];
+  
+  model: string;
+  staffCount: number;
 }

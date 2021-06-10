@@ -18,6 +18,7 @@
 
   <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
     <nz-step nzTitle="{{ 'steps.production-line.info' | translate }}"> </nz-step> 
+    <nz-step nzTitle="{{ 'production-line.capacity' | translate }}"> </nz-step> 
     <nz-step nzTitle="{{ 'steps.confirm' | translate }}"> </nz-step>
   </nz-steps> 
   
@@ -33,10 +34,10 @@
     <div nz-row [nzGutter]="24">
       <div nz-col [nzSpan]="8">
         <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="24">
+          <nz-form-label [nzSpan]="6">
             {{ 'name' | translate }}
           </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          <nz-form-control [nzSpan]="12" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
 
             <input type="text" nz-input [(ngModel)]="currentProductionLine.name"   />
@@ -47,17 +48,17 @@
       
       <div nz-col [nzSpan]="8">
         <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="24">
+          <nz-form-label [nzSpan]="8">
             {{ 'single-work-order-only' | translate }}
           </nz-form-label>
           
-          <label nz-checkbox [(ngModel)]="currentProductionLine.workOrderExclusiveFlag"> </label>
+          <label nz-checkbox   [(ngModel)]="currentProductionLine.workOrderExclusiveFlag"> </label>
         </nz-form-item>
       </div>
       
       <div nz-col [nzSpan]="8">
         <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="24">
+          <nz-form-label [nzSpan]="8">
             {{ 'enabled' | translate }}
           </nz-form-label>
           <label nz-checkbox [(ngModel)]="currentProductionLine.enabled"> </label>
@@ -69,10 +70,10 @@
       
       <div nz-col [nzSpan]="8">
         <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="24">
-            {{ 'name' | translate }}
+          <nz-form-label [nzSpan]="6">
+            {{ 'production-line.location' | translate }}
           </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          <nz-form-control   nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
 
             <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" >            
@@ -91,10 +92,10 @@
       
       <div nz-col [nzSpan]="8">
         <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="24">
-            {{ 'name' | translate }}
+          <nz-form-label [nzSpan]="8">
+            {{ 'production-line.inbound-stage-location' | translate }}
           </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          <nz-form-control  nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
 
             <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton2" >            
@@ -113,10 +114,10 @@
       
       <div nz-col [nzSpan]="8">
         <nz-form-item>
-          <nz-form-label [nzSm]="6" [nzXs]="24">
-            {{ 'name' | translate }}
+          <nz-form-label [nzSpan]="8">
+            {{ 'production-line.outbound-stage-location' | translate }}
           </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          <nz-form-control   nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
 
             <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton3" >            
@@ -135,25 +136,166 @@
 
     </div>
      
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'production-line.model' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="4"   nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+
+            <input type="text" nz-input [(ngModel)]="currentProductionLine.model"   />
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="8">
+            {{ 'production-line.staff-count' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="4"  nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+
+            <nz-input-number [nzMin]="1" [nzMax]="999999" [nzStep]="1"  [(ngModel)]="currentProductionLine.staffCount"  >
+            </nz-input-number>
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="8">
+            {{ 'production-line.generic-purpose' | translate }}
+          </nz-form-label>
+          <label nz-checkbox [(ngModel)]="currentProductionLine.genericPurpose"> </label>
+        </nz-form-item>
+      </div>
+
+    </div>
+
 </div>
 
-
+<!--  Assign item to this production line , along with the capacity-->
 <div class="small-card" *ngIf="stepIndex === 1"  style="padding-top: 20px;">
-   
+  <nz-card *ngIf="currentProductionLine.genericPurpose">
+
+    {{ "production-line.generic-purpose.no-capacity-message" | translate}}  
+
+  </nz-card> 
+  <nz-table #editRowTable nzBordered [nzData]="listOfProductionLineCapacityItemData"  [nzFooter]="tableFoot" *ngIf="currentProductionLine.genericPurpose === false">
+    <thead>
+      <tr> 
+        <th nzWidth="30%">{{"item" | translate}}</th>
+        <th>{{"production-line.capacity" | translate}}</th>
+        <th>{{"unit-of-measure" | translate}}</th>
+        <th>{{"time-unit" | translate}}</th>
+        <th>{{"action" | translate}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      <tr *ngFor="let productionLineCapacityItem of editRowTable.data"> 
+          <td><input type="text" nz-input [ngModel]="productionLineCapacityItem.productionLineCapacity.item.name"
+            (ngModelChange)="itemNameChanged($event, productionLineCapacityItem.productionLineCapacity)" /></td>
+          <td><input type="text" nz-input 
+            [(ngModel)]="productionLineCapacityItem.productionLineCapacity.capacity"   /></td>
+          <td>
+            <nz-input-group nzSize="large">
+              <nz-select  style="width: 100px;"
+                  [ngModel]="productionLineCapacityItem.productionLineCapacity.unitOfMeasure.name"
+                     (ngModelChange)="unitOfMeasureChanged($event, productionLineCapacityItem.productionLineCapacity)">
+                <nz-option *ngFor="let unitOfMeasure of availableUnitOfMeasures"
+                  [nzLabel]="unitOfMeasure.description" [nzValue]="unitOfMeasure.name">
+                </nz-option>
+              </nz-select>
+            </nz-input-group>
+
+            
+          <td>
+              <nz-select style="width: 100px;"
+                  [ngModel]="productionLineCapacityItem.productionLineCapacity.capacityUnit"
+                  (ngModelChange)="capacityUnitChanged($event, productionLineCapacityItem.productionLineCapacity)">
+                <nz-option
+                  *ngFor="let timeUnit of timeUnits | keys"
+                  [nzValue]="timeUnit.key"
+                  [nzLabel]="timeUnit.key"
+                ></nz-option>
+              </nz-select>
+            </td>
+            
+          <td nzRight>
+            <a (click)="deleteRecord(productionLineCapacityItem.id)" class="save">{{'delete' | translate }}</a> 
+ 
+          </td>
+           
+      </tr>
+    </tbody>
+  </nz-table>
+  
+  <ng-template #tableFoot>
+    <div nz-row nzType="flex" nzJustify="start"  >
+      <button nz-button (click)="addEmptyProductionLineCapacityItemData()" nzType="primary">{{"add" | translate}}</button>
+    </div>
+  </ng-template>
+</div>
+
+<div class="small-card" *ngIf="stepIndex === 2"  style="padding-top: 20px;">
+  <nz-card>
+
     <nz-descriptions nzTitle="{{ 'production-line' | translate}}" nzBordered>
-        <nz-descriptions-item nzTitle="{{ 'production-line.name' | translate}}">
-            {{currentProductionLine.name}}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="{{'production-line.location' | translate}}">
-            {{currentProductionLine.productionLineLocation?.name}}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="{{'production-line.inbound-stage-location' | translate}}">
-            {{currentProductionLine.inboundStageLocation?.name}}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="{{'production-line.outbound-stage-location' | translate}}">
-            {{currentProductionLine.outboundStageLocation?.name}}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="{{'single-work-order-only' | translate}}">
-            {{currentProductionLine.workOrderExclusiveFlag + ""| translate}}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="{{'enabled' | translate}}">
-            {{currentProductionLine.enabled + ""| translate}}</nz-descriptions-item>
-        </nz-descriptions>
+      <nz-descriptions-item nzTitle="{{ 'production-line.name' | translate}}">
+          {{currentProductionLine.name}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'single-work-order-only' | translate}}">
+              {{currentProductionLine.workOrderExclusiveFlag + ""| translate}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'enabled' | translate}}">
+              {{currentProductionLine.enabled + ""| translate}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'production-line.location' | translate}}">
+          {{currentProductionLine.productionLineLocation?.name}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'production-line.inbound-stage-location' | translate}}">
+          {{currentProductionLine.inboundStageLocation?.name}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'production-line.outbound-stage-location' | translate}}">
+          {{currentProductionLine.outboundStageLocation?.name}}</nz-descriptions-item>
+
+          
+      <nz-descriptions-item nzTitle="{{'production-line.model' | translate}}">
+        {{currentProductionLine.model + ""| translate}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'production-line.staff-count' | translate}}">
+          {{currentProductionLine.staffCount + ""| translate}}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="{{ 'production-line.generic-purpose' | translate }}">
+              {{currentProductionLine.genericPurpose + ""| translate}}</nz-descriptions-item>
+      </nz-descriptions>
+      
+
+
+  </nz-card>
+  
+  <nz-card>
+    
+    <nz-table #editRowTable nzBordered [nzData]="listOfProductionLineCapacityItemData"  [nzFooter]="tableFoot">
+      <thead>
+        <tr> 
+          <th nzWidth="30%">{{"item" | translate}}</th>
+          <th>{{"production-line.capacity" | translate}}</th>
+          <th>{{"unit-of-measure" | translate}}</th>
+          <th>{{"time-unit" | translate}}</th> 
+        </tr>
+      </thead>
+      <tbody>
+          <tr *ngFor="let productionLineCapacityItem of editRowTable.data">
+          
+            <td>{{ productionLineCapacityItem.productionLineCapacity.item.name }}</td>
+            <td>{{ productionLineCapacityItem.productionLineCapacity.capacity }}</td>
+            <td>
+              {{ productionLineCapacityItem.productionLineCapacity.unitOfMeasure.description }}</td>
+            <td>{{ productionLineCapacityItem.productionLineCapacity.capacityUnit }}</td> 
+            </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
 </div>
 
 <div class="steps-action"  style="padding-top: 20px;">
@@ -161,11 +303,11 @@
     <span>{{ 'steps.previous' | translate }}</span>
   </button>
   <nz-divider nzType="vertical" *ngIf="stepIndex < 2"></nz-divider>
-  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1">
+  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 2">
     <span>{{ 'steps.next' | translate }}</span>
   </button>
   <nz-divider nzType="vertical"></nz-divider>
-  <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 1">
+  <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 2">
     <span> {{ 'confirm' | translate }}</span>
   </button>
 </div>

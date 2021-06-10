@@ -92,6 +92,20 @@ export class WorkOrderProductionLineComponent implements OnInit {
           filterFn: (list: boolean[], productionLine: ProductionLine) => list.some(enabled => productionLine.enabled === enabled), 
           showFilter: true
         },
+        {
+          name: 'production-line.generic-purpose',
+          showSort: true,
+          sortOrder: null,
+          sortFn: (a: ProductionLine, b: ProductionLine) => this.utilService.compareBoolean(a.genericPurpose, b.genericPurpose),
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [
+            { text: this.i18n.fanyi('true'), value: true },
+            { text: this.i18n.fanyi('false'), value: false },
+          ],
+          filterFn: (list: boolean[], productionLine: ProductionLine) => list.some(enabled => productionLine.enabled === enabled), 
+          showFilter: true
+        },
         ];
         listOfSelection = [
           {
@@ -104,6 +118,9 @@ export class WorkOrderProductionLineComponent implements OnInit {
       setOfCheckedId = new Set<number>();
       checked = false;
       indeterminate = false;
+      
+      expandSet = new Set<number>();
+        
       
   constructor(
     private fb: FormBuilder,
@@ -137,6 +154,17 @@ export class WorkOrderProductionLineComponent implements OnInit {
     this.listOfDisplayProductionLine = [];
     
   }
+
+  onExpandChange(productionLine: ProductionLine, expanded: boolean): void {
+    if (expanded) {
+      this.expandSet.add(productionLine.id!);
+      // this.showProductionLineDetails(productionLine);
+    } else {
+      this.expandSet.delete(productionLine.id!);
+    }
+  }
+
+   
 
   search(): void {
     this.searching = true;

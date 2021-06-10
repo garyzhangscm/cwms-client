@@ -82,7 +82,7 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
       }
     )
     // Get all menus and accessible menus by role
-    this.productionLineService.getAvailableProductionLines().subscribe(productionLines => {
+    this.productionLineService.getAvailableProductionLines(this.workOrder.itemId).subscribe(productionLines => {
       this.availableProductionLines = productionLines; 
       productionLines.forEach(productionLine => {
         

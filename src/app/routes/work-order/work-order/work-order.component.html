@@ -41,7 +41,7 @@
   <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllWorkOrder" [nzFooter]="tableFoot">
     <thead>
       <tr>
-        <th nzWidth="40px"></th>
+        <th rowspan="2" nzWidth="40px"></th>
 
         <th
             *ngFor="let column of listOfColumns"
@@ -53,13 +53,33 @@
             [nzFilters]="column.listOfFilter"
             [nzFilterFn]="column.filterFn"        
             [nzShowFilter]="column.showFilter"
+            [rowspan]="column.rowspan"
+            [colspan]="column.colspan"
           >
             {{ column.name | translate }}
           </th> 
-  
-        <th>
+        <th rowspan="2" >
           {{ 'action' | translate }}
         </th>
+      </tr>
+      
+      <tr>
+
+        <th
+            *ngFor="let column of listOfStatisticsColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+            [rowspan]="column.rowspan"
+            [colspan]="column.colspan"
+          >
+            {{ column.name | translate }}
+          </th> 
       </tr>
     </thead>
     <tbody>
@@ -79,25 +99,7 @@
           <td>{{ data.totalLineOpenQuantity }}</td>
           <td>{{ data.totalLineInprocessQuantity }}</td>
           <td>{{ data.totalLineDeliveredQuantity }}</td>
-          <td>{{ data.totalLineConsumedQuantity }}</td>
-          <!--
-
-          <td>
-            <a nz-dropdown [nzDropdownMenu]="productionLineMenu" [nzDisabled]="!isProductionLineChangable(data)">
-              {{ data.productionLine?.name }}
-              <i nz-icon nzType="down"></i>
-            </a>
-            <nz-dropdown-menu #productionLineMenu="nzDropdownMenu">
-              <ul nz-menu nzSelectable>
-                <li nz-menu-item *ngFor="let productionLine of availableProductionLines"
-                  (click)="changeProductionLine(data, productionLine.value)">
-                  {{productionLine.label}}
-                </li>
-              </ul>
-            </nz-dropdown-menu>
-          </td>
-
-          -->
+          <td>{{ data.totalLineConsumedQuantity }}</td> 
           <td>
             <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary"
               [nzLoading]="mapOfAllocationInProcessId[data.id]" *ngIf="workOrderHasAnyAction(data)">

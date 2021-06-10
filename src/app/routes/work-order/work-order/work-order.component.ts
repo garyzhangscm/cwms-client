@@ -42,7 +42,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          rowspan: 2,
+          colspan: 1,
         }, {
           name: 'status',
           showSort: true,
@@ -52,9 +54,11 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          rowspan: 2,
+          colspan: 1,
         }, {
-          name: 'item',
+          name: 'work-order.item',
           showSort: true,
           sortOrder: null,
           sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
@@ -62,7 +66,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          rowspan: 2,
+          colspan: 1,
         }, {
           name: 'work-order.expected-quantity',
           showSort: true,
@@ -72,7 +78,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          rowspan: 2,
+          colspan: 1,
         }, {
           name: 'work-order.produced-quantity',
           showSort: true,
@@ -82,8 +90,23 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
-        }, {
+          showFilter: false,
+          rowspan: 2,
+          colspan: 1,
+        },{
+          name: 'work-order.totalInprocessQuantity',
+          showSort: false,
+          sortOrder: null,
+          sortFn: null,
+          sortDirections: ['ascend', 'descend'],
+          filterMultiple: true,
+          listOfFilter: [],
+          filterFn: null, 
+          showFilter: false,
+          rowspan: 1,
+          colspan: 5,
+        }];
+    listOfStatisticsColumns : ColumnItem[] = [ {
           name: 'work-order.totalLineExpectedQuantity',
           showSort: true,
           sortOrder: null,
@@ -92,7 +115,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          rowspan: 1,
+          colspan: 1,
         }, {
           name: 'work-order.totalLineOpenQuantity',
           showSort: true,
@@ -102,7 +127,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          rowspan: 1,
+          colspan: 1,
         }, {
           name: 'work-order.totalLineInprocessQuantity',
           showSort: true,
@@ -112,7 +139,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          rowspan: 1,
+          colspan: 1,
         }, {
           name: 'work-order.totalLineDeliveredQuantity',
           showSort: true,
@@ -122,7 +151,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          rowspan: 1,
+          colspan: 1,
         }, {
           name: 'work-order.totalLineConsumedQuantity',
           showSort: true,
@@ -132,7 +163,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           filterMultiple: true,
           listOfFilter: [],
           filterFn: null, 
-          showFilter: false
+          showFilter: false,
+          rowspan: 1,
+          colspan: 1,
         }, 
         /***{
           name: 'production-line',

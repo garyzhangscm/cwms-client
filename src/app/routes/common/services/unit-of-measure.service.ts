@@ -16,7 +16,7 @@ export class UnitOfMeasureService {
     private warehouseService: WarehouseService,
   ) {}
 
-  loadUnitOfMeasures(refresh: boolean = false): Observable<UnitOfMeasure[]> {
+  loadUnitOfMeasures(refresh: boolean = true): Observable<UnitOfMeasure[]> {
     // if we can find the value in local storage, we get it from their.
     // otherwise we get from server
     if (!refresh) {
