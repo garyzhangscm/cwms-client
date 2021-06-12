@@ -18,7 +18,7 @@
 
 <div nz-row style="padding: 10px">
   <div nz-col nzSpan="12" nzOffset="6">
-    <nz-steps nzType="navigation" [nzCurrent]="0" [nzSize]="'small'" (nzIndexChange)="onIndexChange($event)">
+    <nz-steps nzType="navigation" [nzCurrent]="0" [nzSize]="'small'" (nzIndexChange)="onIndexChange($event)"> 
       <nz-step nzTitle="{{ 'steps.work-order-produce.produce.title' | translate }}"
         nzDescription="{{ 'steps.work-order-produce.produce.description' | translate }}">
       </nz-step>
@@ -35,6 +35,25 @@
   </div>
 </div>
 
+<nz-card>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label  [nzSpan]="4">
+          {{ 'production-line' | translate }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-select style="width: 150px" [ngModel]="workOrderProduceTransaction?.productionLine?.name"
+            (ngModelChange)="productionLineChanged($event)" nzShowSearch nzAllowClear>
+            <nz-option *ngFor="let productionLineAssignment of currentWorkOrder?.productionLineAssignments"
+              [nzLabel]="productionLineAssignment.productionLine.name" [nzValue]="productionLineAssignment.productionLine.name"></nz-option>
+          </nz-select>
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    </div>
+</nz-card>
 <!-- Table to show inventory  -->
 <div class="search-result-list">
   <nz-table [nzData]="workOrderProduceTransaction?.workOrderProducedInventories" [nzFooter]="inventoryTableFoot"

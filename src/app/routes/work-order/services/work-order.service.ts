@@ -8,6 +8,7 @@ import { Inventory } from '../../inventory/models/inventory';
 import { PickWork } from '../../outbound/models/pick-work';
 import { ReportHistory } from '../../report/models/report-history';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { ProductionLineAssignment } from '../models/production-line-assignment';
 import { WorkOrder } from '../models/work-order';
 import { WorkOrderKpi } from '../models/work-order-kpi';
 import { WorkOrderKpiTransaction } from '../models/work-order-kpi-transaction';
@@ -105,9 +106,9 @@ export class WorkOrderService {
       .pipe(map(res => res.data));
   }
   
-  assignProductionLine(workOrderId: number, productionLineIds: string, quantities: string) {
+  assignProductionLine(workOrderId: number, productionLineAssignments: ProductionLineAssignment[]) {
     return this.http
-      .post(`workorder/production-line-assignments?workOrderId=${workOrderId}&productionLineIds=${productionLineIds}&quantities=${quantities}`)
+      .post(`workorder/production-line-assignments?workOrderId=${workOrderId}`, productionLineAssignments)
       .pipe(map(res => res.data));
   }
   unpick(

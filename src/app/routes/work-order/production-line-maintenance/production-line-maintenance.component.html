@@ -150,20 +150,6 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col [nzSpan]="8">
-        <nz-form-item>
-          <nz-form-label [nzSpan]="8">
-            {{ 'production-line.staff-count' | translate }}
-          </nz-form-label>
-          <nz-form-control [nzSpan]="4"  nzHasFeedback
-            nzErrorTip="{{ 'error.form.field.required' | translate }}">
-
-            <nz-input-number [nzMin]="1" [nzMax]="999999" [nzStep]="1"  [(ngModel)]="currentProductionLine.staffCount"  >
-            </nz-input-number>
-
-          </nz-form-control>
-        </nz-form-item>
-      </div>
 
       
       <div nz-col [nzSpan]="8">
@@ -186,13 +172,17 @@
     {{ "production-line.generic-purpose.no-capacity-message" | translate}}  
 
   </nz-card> 
+ 
+
   <nz-table #editRowTable nzBordered [nzData]="listOfProductionLineCapacityItemData"  [nzFooter]="tableFoot" *ngIf="currentProductionLine.genericPurpose === false">
     <thead>
       <tr> 
-        <th nzWidth="30%">{{"item" | translate}}</th>
+        <th  >{{"item" | translate}}</th>
+        <th  >{{"mould" | translate}}</th>
         <th>{{"production-line.capacity" | translate}}</th>
         <th>{{"unit-of-measure" | translate}}</th>
         <th>{{"time-unit" | translate}}</th>
+        <th>{{ 'production-line.staff-count' | translate }}</th>
         <th>{{"action" | translate}}</th>
       </tr>
     </thead>
@@ -201,6 +191,19 @@
       <tr *ngFor="let productionLineCapacityItem of editRowTable.data"> 
           <td><input type="text" nz-input [ngModel]="productionLineCapacityItem.productionLineCapacity.item.name"
             (ngModelChange)="itemNameChanged($event, productionLineCapacityItem.productionLineCapacity)" /></td>
+            
+          <td>
+            <nz-input-group nzSize="large">
+              <nz-select  style="width: 200px;"
+                  [ngModel]="productionLineCapacityItem.productionLineCapacity.mould.name"
+                     (ngModelChange)="mouldChanged($event, productionLineCapacityItem.productionLineCapacity)">
+                <nz-option *ngFor="let mould of availableMoulds"
+                  [nzLabel]="mould.description" [nzValue]="mould.name">
+                </nz-option>
+              </nz-select>
+            </nz-input-group>
+            </td>
+
           <td><input type="text" nz-input 
             [(ngModel)]="productionLineCapacityItem.productionLineCapacity.capacity"   /></td>
           <td>
@@ -213,6 +216,7 @@
                 </nz-option>
               </nz-select>
             </nz-input-group>
+            </td>
 
             
           <td>
@@ -226,7 +230,8 @@
                 ></nz-option>
               </nz-select>
             </td>
-            
+            <td><input type="text" nz-input 
+              [(ngModel)]="productionLineCapacityItem.productionLineCapacity.staffCount"   /></td>
           <td nzRight>
             <a (click)="deleteRecord(productionLineCapacityItem.id)" class="save">{{'delete' | translate }}</a> 
  
@@ -278,20 +283,24 @@
     <nz-table #editRowTable nzBordered [nzData]="listOfProductionLineCapacityItemData"  [nzFooter]="tableFoot">
       <thead>
         <tr> 
-          <th nzWidth="30%">{{"item" | translate}}</th>
+          <th  >{{"item" | translate}}</th>
+          <th  >{{"mould" | translate}}</th>
           <th>{{"production-line.capacity" | translate}}</th>
           <th>{{"unit-of-measure" | translate}}</th>
-          <th>{{"time-unit" | translate}}</th> 
+          <th>{{"time-unit" | translate}}</th>
+          <th>{{ 'production-line.staff-count' | translate }}</th>
         </tr>
       </thead>
       <tbody>
           <tr *ngFor="let productionLineCapacityItem of editRowTable.data">
           
             <td>{{ productionLineCapacityItem.productionLineCapacity.item.name }}</td>
+            <td>{{ productionLineCapacityItem.productionLineCapacity.mould?.name }}</td>
             <td>{{ productionLineCapacityItem.productionLineCapacity.capacity }}</td>
             <td>
               {{ productionLineCapacityItem.productionLineCapacity.unitOfMeasure.description }}</td>
             <td>{{ productionLineCapacityItem.productionLineCapacity.capacityUnit }}</td> 
+            <td>{{ productionLineCapacityItem.productionLineCapacity.staffCount }}</td> 
             </tr>
       </tbody>
     </nz-table>

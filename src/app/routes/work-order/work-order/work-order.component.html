@@ -219,15 +219,24 @@
       <thead>
         <th [nzAlign]="'center'">
           {{ 'production-line' | translate }}</th>
+        <th [nzAlign]="'center'" >{{"mould" | translate}}</th> 
         <th [nzAlign]="'center'">
-          {{ 'quantity' | translate }}</th>
+          {{ 'quantity' | translate }}</th>  
+          
+          <th  [nzAlign]="'center'">
+            {{ 'production-line.assignment.duration' | translate }}
+          </th>
           
       </thead>
       <tbody>
 
         <tr *ngFor="let productionLineAssignment of data.productionLineAssignments">
           <td [nzAlign]="'center'">{{ productionLineAssignment.productionLine?.name }}</td> 
+          <td [nzAlign]="'center'">{{ productionLineAssignment.mould?.name }}</td> 
           <td [nzAlign]="'center'">{{ productionLineAssignment.quantity }}</td> 
+          <td [nzAlign]="'center'">{{ productionLineAssignment.startTime | date}}
+            - {{ productionLineAssignment.endTime | date}}
+          </td> 
         </tr>
       </tbody>
     </nz-table>
@@ -539,7 +548,7 @@
                 </li>
 
                 <li nz-menu-item
-                  *ngIf="inventory.location.name === data.productionLine?.outboundStageLocation?.name">
+                  *ngIf="inventoryReadyForPutaway(data, inventory)">
                   <a
                     (click)="openManualPutawayModal(data, inventory, tplManualPutawayModalTitle, tplManualPutawayModalContent)">{{ 'putaway.manual' | translate }}</a>
                 </li>

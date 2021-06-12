@@ -1,4 +1,5 @@
 import { BillOfMaterial } from './bill-of-material';
+import { ProductionLine } from './production-line';
 import { WorkOrder } from './work-order';
 import { WorkOrderByProductProduceTransaction } from './work-order-by-product-produce-transaction';
 import { WorkOrderKpiTransaction } from './work-order-kpi-transaction';
@@ -14,4 +15,5 @@ export interface WorkOrderProduceTransaction {
   matchedBillOfMaterial?: BillOfMaterial;
   workOrderByProductProduceTransactions: WorkOrderByProductProduceTransaction[];
   workOrderKPITransactions: WorkOrderKpiTransaction[];
+  productionLine?: ProductionLine;
 }

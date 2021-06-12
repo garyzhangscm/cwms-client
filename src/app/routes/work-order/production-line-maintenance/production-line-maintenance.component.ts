@@ -11,8 +11,10 @@ import { ItemService } from '../../inventory/services/item.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { Mould } from '../models/mould';
 import { ProductionLine } from '../models/production-line';
 import { ProductionLineCapacity } from '../models/production-line-capacity';
+import { MouldService } from '../services/mould.service';
 import { ProductionLineService } from '../services/production-line.service';
 
 
@@ -39,6 +41,7 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
   
   // All UOM maintained in the system
   availableUnitOfMeasures: UnitOfMeasure[] = [];
+  availableMoulds: Mould[] = [];
    
   listOfProductionLineCapacityItemData: ProductionLineCapacityItemData[] = [];
   productionLineCapacityItemDataIndex = 0;
@@ -55,7 +58,8 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
     private i18n: I18NService,
     private activatedRoute: ActivatedRoute,
     private unitOfMeasureService: UnitOfMeasureService, 
-    private itemService: ItemService) { 
+    private itemService: ItemService, 
+    private mouldService: MouldService) { 
       this.pageTitle = this.i18n.fanyi('menu.main.production-line.maintenance');  
       
       this.currentProductionLine = this.createEmptyProductionLine();
@@ -83,7 +87,6 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
       genericPurpose: false,
           
       productionLineCapacities: [],
-      
       model: "",
       staffCount: 0
     }
@@ -139,6 +142,10 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
     this.unitOfMeasureService
       .loadUnitOfMeasures()
       .subscribe(unitOfMeasureRes => (this.availableUnitOfMeasures = unitOfMeasureRes));
+
+    // Load all moulds
+    this.mouldService.getMoulds().subscribe(mouldsRes =>
+      this.availableMoulds = mouldsRes);
   }
 
   refreshListOfProductionLineCapacityItemData() {
@@ -302,6 +309,11 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
         unitOfMeasure: this.availableUnitOfMeasures.length > 0 ? this.availableUnitOfMeasures[0] : undefined,
         unitOfMeasureId: this.availableUnitOfMeasures.length > 0 ? this.availableUnitOfMeasures[0].id : undefined,
 
+        mould: {
+          name: "",
+          description:"",
+          warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        },
         capacityUnit: TimeUnit.HOUR,
       },
        true
@@ -332,6 +344,17 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
         if (items.length == 1) {
           productionLineCapacity.itemId = items[0].id;
           productionLineCapacity.item = items[0];
+        }
+       
+      }
+    )
+
+  }
+  mouldChanged(mouldName: string, productionLineCapacity: ProductionLineCapacity) : void { 
+    this.mouldService.getMoulds(mouldName).subscribe(
+      moulds => {
+        if (moulds.length == 1) { 
+          productionLineCapacity.mould = moulds[0];
         }
        
       }

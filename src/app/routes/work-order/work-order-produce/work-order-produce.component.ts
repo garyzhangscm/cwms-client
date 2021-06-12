@@ -10,6 +10,8 @@ import { InventoryService } from '../../inventory/services/inventory.service';
 import { ItemService } from '../../inventory/services/item.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { ProductionLine } from '../models/production-line';
+import { ProductionLineAssignment } from '../models/production-line-assignment';
 import { WorkOrder } from '../models/work-order';
 import { WorkOrderLineConsumeTransaction } from '../models/work-order-line-consume-transaction';
 import { WorkOrderProduceTransaction } from '../models/work-order-produce-transaction';
@@ -42,6 +44,7 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
   pageLoading = false;
 
   validInventoryStatuses: InventoryStatus[] = [];
+  assignedProductionLines: ProductionLine[] = [];
   isCollapse = true;
 
   pageTitle: string;
@@ -87,7 +90,11 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
           matchedBillOfMaterial: bomRes,
           workOrderByProductProduceTransactions: [],
           workOrderKPITransactions: [],
+          productionLine: undefined,
         };
+        // hide the consume quantity table so by default we will 
+        // consume by BOM
+        this.isCollapse = true;
       } else {
         this.findMatchedBOM = false;
         this.consumeByBomQuantity = 'false';
@@ -100,10 +107,11 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
           matchedBillOfMaterial: undefined,
           workOrderByProductProduceTransactions: [],
           workOrderKPITransactions: [],
+          productionLine: undefined,
         };
+        this.isCollapse = false;
       }
 
-      this.pageLoading = false;
     });
   }
 
@@ -223,6 +231,20 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
           `/work-order/work-order/produce/confirm?id=${this.workOrderProduceTransaction.workOrder!.id}`,
         );
         break;
+    }
+  }
+
+  productionLineChanged(productionLineName: string) {
+    console.log(`setup current work order produce transaction's production line to ${productionLineName}`);
+    const productionLineAssignments: ProductionLineAssignment[] | undefined  = 
+        this.currentWorkOrder.productionLineAssignments?.filter(
+          productionLineAssignment => productionLineAssignment.productionLine.name === productionLineName
+        );
+    if (productionLineAssignments != undefined &&
+        productionLineAssignments.length > 0) {
+
+      this.workOrderProduceTransaction.productionLine = productionLineAssignments[0].productionLine;
+      console.log(`set production line to ${this.workOrderProduceTransaction.productionLine.name}`);
     }
   }
 }

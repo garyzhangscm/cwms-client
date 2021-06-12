@@ -16,6 +16,9 @@
   </nz-breadcrumb>
 </ng-template>
 
+<nz-spin [nzSpinning]="isSpinning" >
+
+  
 
 <div nz-row style="padding: 10px">
   <div nz-col nzSpan="12" nzOffset="6">
@@ -298,3 +301,7 @@
     <i nz-icon [nzType]="isWorkOrderKPICollapse ? 'down' : 'up'"></i>
   </a>
 </ng-template>
+
+
+
+</nz-spin>

@@ -1,0 +1,91 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+    <a routerLink="/work-order/mould" routerLinkActive="active" >{{ 'return' | translate }}</a>
+  </ng-template>
+  <ng-template #breadcrumb>
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | translate }}</a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | translate }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a routerLink="/work-order/mould" routerLinkActive="active">{{
+          'mould' | translate
+        }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </ng-template>
+
+  <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+    <nz-step nzTitle="{{ 'steps.mould.info' | translate }}"> </nz-step>  
+    <nz-step nzTitle="{{ 'steps.confirm' | translate }}"> </nz-step>
+  </nz-steps> 
+  
+
+<!-- Step 1: basic information  
+  --> 
+
+
+  
+<div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
+    
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'name' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+
+            <input type="text" nz-input [(ngModel)]="currentMould.name"   />
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'description' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.required' | translate }}">
+
+            <input type="text" nz-input [(ngModel)]="currentMould.description"   />
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+       
+    </div> 
+
+</div>
+ 
+<div class="small-card" *ngIf="stepIndex === 1"  style="padding-top: 20px;">
+  <nz-card>
+
+    <nz-descriptions nzTitle="{{ 'mould' | translate}}" nzBordered>
+      <nz-descriptions-item nzTitle="{{ 'name' | translate}}">
+          {{currentMould.name}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description' | translate}}">
+             {{currentMould.description}}</nz-descriptions-item>
+    </nz-descriptions>
+
+  </nz-card>
+   
+</div>
+
+<div class="steps-action"  style="padding-top: 20px;">
+  <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+    <span>{{ 'steps.previous' | translate }}</span>
+  </button>
+  <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1">
+    <span>{{ 'steps.next' | translate }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 1">
+    <span> {{ 'confirm' | translate }}</span>
+  </button>
+</div>

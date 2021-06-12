@@ -106,19 +106,23 @@
 
                 <thead>
                   
-                  <th nzWidth="30%">{{"item" | translate}}</th>
-                  <th>{{"production-line.capacity" | translate}}</th>
-                  <th>{{"unit-of-measure" | translate}}</th>
-                  <th>{{"time-unit" | translate}}</th> 
+                    <th  >{{"item" | translate}}</th>
+                    <th  >{{"mould" | translate}}</th>
+                    <th>{{"production-line.capacity" | translate}}</th>
+                    <th>{{"unit-of-measure" | translate}}</th>
+                    <th>{{"time-unit" | translate}}</th>
+                    <th>{{ 'production-line.staff-count' | translate }}</th>
                 </thead>
                 <tbody>
                   <tr *ngFor="let productionLineCapacity of data.productionLineCapacities"> 
                       
                       <td>{{ productionLineCapacity.item.name }}</td>
+                      <td>{{ productionLineCapacity.mould?.name }}</td>
                       <td>{{ productionLineCapacity.capacity }}</td>
                       <td>
                         {{ productionLineCapacity.unitOfMeasure.description }}</td>
                       <td>{{ productionLineCapacity.capacityUnit }}</td> 
+                      <td>{{ productionLineCapacity.staffCount }}</td> 
 
                   </tr>
                   

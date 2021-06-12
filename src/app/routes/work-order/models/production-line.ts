@@ -26,5 +26,4 @@ export interface ProductionLine {
   productionLineCapacities: ProductionLineCapacity[];
   
   model: string;
-  staffCount: number;
 }

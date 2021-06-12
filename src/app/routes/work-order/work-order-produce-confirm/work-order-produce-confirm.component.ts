@@ -33,6 +33,7 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
   isWorkOrderKPICollapse = true;
 
   savingInProcess = false;
+  isSpinning = false;
 
   pageTitle: string;
   constructor(
@@ -86,17 +87,20 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
 
   saveWorkOrderProduceResults(): void {
     this.savingInProcess = true;
+    this.isSpinning = true;
     this.workOrderProduceTransactionService.saveWorkOrderProduceTransaction(this.workOrderProduceTransaction).subscribe(
       workOrderProduceTransactionRes => {
         this.messageService.success(this.i18n.fanyi('message.work-order.produced-success'));
         setTimeout(() => {
           this.savingInProcess = false;
+          this.isSpinning = false;
           this.router.navigateByUrl(`/work-order/work-order?number=${workOrderProduceTransactionRes.workOrder!.number}`);
         }, 2500);
       },
       error => {
         console.log(`error: ${JSON.stringify(error)}`);
         this.savingInProcess = false;
+        this.isSpinning = false;
       },
     );
   }

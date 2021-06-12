@@ -559,13 +559,16 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   }
 
   inventoryReadyForPutaway(workOrder: WorkOrder, inventory: Inventory): boolean {
+    console.log(`workOrder.productionLineAssignments!.length:${workOrder.productionLineAssignments!.length}`);
     if (workOrder.productionLineAssignments!.length  === 0) {
       return false;
     }
-    return workOrder.productionLineAssignments!.some(productionLineAssignment => {
-      inventory.location!.id ===  productionLineAssignment.productionLine.outboundStageLocationId 
-    });
+    return workOrder.productionLineAssignments!.some(productionLineAssignment =>
+      inventory.location!.id ==  productionLineAssignment.productionLine.outboundStageLocationId 
+     );
   }
+ 
+
 
   allocateLocation(workOrder: WorkOrder, inventory: Inventory): void {
     this.putawayConfigurationService.allocateLocation(inventory).subscribe(allocatedInventory => {
