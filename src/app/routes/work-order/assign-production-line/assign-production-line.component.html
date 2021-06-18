@@ -132,8 +132,8 @@
           <td [nzAlign]="'center'">{{ productionLineAssignment.mould?.name }}</td>
           <td [nzAlign]="'center'">{{ productionLineAssignment.quantity }}</td>
           <td [nzAlign]="'center'">
-            {{ productionLineAssignment.startTime | date }} - 
-            {{ productionLineAssignment.endTime  | date}}
+            {{ productionLineAssignment.startTime | date : 'shortDate' : 'en-US' }} - 
+            {{ productionLineAssignment.endTime  | date : 'shortDate' : 'en-US'}}
           </td> 
         </tr>
       </tbody>
@@ -141,7 +141,7 @@
   </div> 
 </div>
 
-<div class="steps-action">
+<div class="steps-action" style="padding-top: 20px;">
   <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
     <span>{{ 'steps.previous' | translate }}</span>
   </button>

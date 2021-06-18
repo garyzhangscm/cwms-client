@@ -8,6 +8,7 @@ import { ItemFamily } from '../models/item-family';
 import { SystemControlledNumberService } from '../../common/services/system-controlled-number.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { ReportHistory } from '../../report/models/report-history';
 
 @Injectable({
   providedIn: 'root',
@@ -137,5 +138,11 @@ export class InventoryService {
   reverseReceivedInventory(inventory: Inventory) {
     const url = `inventory/inventory/${inventory.id}/reverse-receiving`;
     return this.http.delete(url).pipe(map(res => res.data));
+  }
+
+  
+  generateEcotechLPNLabel(lpn: string) : Observable<ReportHistory>{
+    const url = `inventory/inventories/${this.warehouseService.getCurrentWarehouse().id}/${lpn}/lpn-label/ecotech`;
+    return this.http.post(url).pipe(map(res => res.data));
   }
 }

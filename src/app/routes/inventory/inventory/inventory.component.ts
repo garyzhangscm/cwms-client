@@ -1,14 +1,19 @@
 import { formatDate } from '@angular/common';
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { TitleService, _HttpClient } from '@delon/theme';
+import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Client } from '../../common/models/client';
+import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 
 import { ClientService } from '../../common/services/client.service';
+import { PrintingService } from '../../common/services/printing.service';
+import { ReportOrientation } from '../../report/models/report-orientation.enum';
+import { ReportType } from '../../report/models/report-type.enum';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
@@ -158,6 +163,7 @@ export class InventoryInventoryComponent implements OnInit {
   comment = '';
 
   isCollapse = false;
+  isSpinning = false;
 
   inventoryMoveModal!: NzModalRef;
 
@@ -179,6 +185,8 @@ export class InventoryInventoryComponent implements OnInit {
     private locationService: LocationService,
     private messageService: NzMessageService,
     private utilService: UtilService,
+    private printingService: PrintingService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -408,5 +416,50 @@ export class InventoryInventoryComponent implements OnInit {
   processQueryLocationQueryResult(selectedLocationName: any): void { 
     console.log(`start to query with location name ${selectedLocationName}`);
     this.searchForm.controls.location.setValue(selectedLocationName); 
+  }
+
+  printLPNReport(event: any, inventory: Inventory) {
+    
+    this.isSpinning = true;
+
+    this.inventoryService.generateEcotechLPNLabel(
+      inventory.lpn!)
+      .subscribe(printResult=> {
+        
+            // send the result to the printer
+          const printFileUrl 
+            = `${environment.SERVER_URL}/resource/report-histories/download/${printResult.fileName}`;
+          console.log(`will print file: ${printFileUrl}`);
+            this.printingService.printRemoteFileByName(
+            "LPN Label", 
+            printResult.fileName, 
+            ReportType.RECEIVING_DOCUMENT,
+            event.printerIndex, 
+            event.physicalCopyCount, PrintPageOrientation.Landscape);
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi("report.print.printed"));
+        }, 
+        () => {
+          this.isSpinning = false;
+        }, 
+        
+      );
+
+  }
+  previewLPNReport(inventory: Inventory) : void{
+    
+    
+    this.isSpinning = true; 
+    this.inventoryService.generateEcotechLPNLabel(inventory.lpn!)
+    .subscribe(printResult=> {
+      // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+      this.isSpinning = false;
+      this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
+      
+    },
+    () => {
+      this.isSpinning = false;
+    }, 
+    );
   }
 }
