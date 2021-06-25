@@ -136,7 +136,8 @@
 
            
             <nz-tabset>
-              <nz-tab nzTitle=" {{ 'work-order.line' | translate }}">
+              <nz-tab nzTitle=" {{ 'work-order.line' | translate }}" 
+                  *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.delivered-inventory')"> 
                 <nz-table [nzData]="data.workOrderLines" nzSize="middle" [nzShowPagination]="false">
 
                   <thead>
@@ -185,7 +186,8 @@
   </nz-table>
   </nz-tab>
 
-  <nz-tab nzTitle=" {{ 'work-order.by-product' | translate }}">
+  <nz-tab nzTitle=" {{ 'work-order.by-product' | translate }}"
+    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.by-product')">
     <nz-table [nzData]="data.workOrderByProducts" nzSize="middle" [nzShowPagination]="false">
 
       <thead>
@@ -213,7 +215,10 @@
     </nz-table>
   </nz-tab>
 
-  <nz-tab nzTitle=" {{ 'production-line' | translate }}">
+  <nz-tab nzTitle=" {{ 'production-line' | translate }}"
+  
+    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.production-line')"
+  >
     <nz-table [nzData]="data.productionLineAssignments" nzSize="middle" [nzShowPagination]="false">
 
       <thead>
@@ -234,8 +239,8 @@
           <td [nzAlign]="'center'">{{ productionLineAssignment.productionLine?.name }}</td> 
           <td [nzAlign]="'center'">{{ productionLineAssignment.mould?.name }}</td> 
           <td [nzAlign]="'center'">{{ productionLineAssignment.quantity }}</td> 
-          <td [nzAlign]="'center'">{{ productionLineAssignment.startTime | date}}
-            - {{ productionLineAssignment.endTime | date}}
+          <td [nzAlign]="'center'">{{ productionLineAssignment.startTime | date:'MM/dd/yyyy'}}
+            - {{ productionLineAssignment.endTime | date:'MM/dd/yyyy'}}
           </td> 
         </tr>
       </tbody>
@@ -243,7 +248,10 @@
   </nz-tab>
 
 
-  <nz-tab nzTitle=" {{ 'work-order.kpi' | translate }}">
+  <nz-tab nzTitle=" {{ 'work-order.kpi' | translate }}"
+  
+    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.kpi')"
+  >
     <nz-table [nzData]="mapOfKPIs[data.id]" nzSize="middle" [nzShowPagination]="false">
 
       <thead>
@@ -265,7 +273,9 @@
     </nz-table>
   </nz-tab>
 
-  <nz-tab nzTitle=" {{ 'work-order.kpi-transaction' | translate }}">
+  <nz-tab nzTitle=" {{ 'work-order.kpi-transaction' | translate }}"
+    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.kpi-transaction')"
+  >
     <nz-table [nzData]="mapOfKPITransactions[data.id]" nzSize="middle" [nzShowPagination]="false">
 
       <thead>
@@ -299,7 +309,10 @@
     </nz-table>
   </nz-tab>
 
-  <nz-tab nzTitle=" {{ 'work-order-instruction' | translate }}">
+  <nz-tab nzTitle=" {{ 'work-order-instruction' | translate }}"
+  
+      *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order-instruction')"
+  >
     <nz-table [nzData]="data.workOrderInstructions" nzSize="middle" [nzShowPagination]="false">
 
       <thead>
@@ -320,7 +333,10 @@
       </tbody>
     </nz-table>
   </nz-tab>
-  <nz-tab nzTitle=" {{ 'work-order.assigned-users' | translate }}">
+  <nz-tab nzTitle=" {{ 'work-order.assigned-users' | translate }}"
+  
+    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.assigned-users')"
+  >
     <nz-table [nzData]="data.assignments" nzSize="middle" [nzShowPagination]="false">
 
       <thead>
@@ -342,7 +358,10 @@
     </nz-table>
   </nz-tab>
 
-  <nz-tab nzTitle=" {{ 'pick' | translate }}">
+  <nz-tab nzTitle=" {{ 'pick' | translate }}"
+  
+    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.pick')"
+  >
     <nz-table [nzData]="data.workOrderLines" nzSize="middle" [nzShowPagination]="false" [nzFooter]="pickTableFoot">
 
       <thead>
@@ -398,7 +417,10 @@
   </nz-tab>
 
 
-  <nz-tab nzTitle=" {{ 'short-allocation' | translate }}">
+  <nz-tab nzTitle=" {{ 'short-allocation' | translate }}"
+  
+    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.short-allocation')"
+  >
     <nz-table [nzData]="data.workOrderLines" nzSize="middle" [nzShowPagination]="false">
 
       <thead>
@@ -420,7 +442,10 @@
     </nz-table>
   </nz-tab>
 
-  <nz-tab nzTitle=" {{ 'work-order.delivered-inventory' | translate }}">
+  <nz-tab nzTitle=" {{ 'work-order.delivered-inventory' | translate }}"
+  
+    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.delivered-inventory')"
+  >
 
     <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfDeliveredInventory[data.id]">
       <thead>
@@ -469,7 +494,10 @@
     </nz-table>
   </nz-tab>
 
-  <nz-tab nzTitle=" {{ 'work-order.produced-inventory' | translate }}">
+  <nz-tab nzTitle=" {{ 'work-order.produced-inventory' | translate }}"
+  
+    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.produced-inventory')"
+  >
 
     <nz-table nzSize="middle" [nzShowPagination]="false" 
       [nzData]="mapOfProducedInventory[data.id]" [nzFooter]="receivedInventoryTableFoot">
@@ -634,7 +662,10 @@
     </ng-template>
   </nz-tab>
 
-  <nz-tab nzTitle=" {{ 'work-order.by-product.produced' | translate }}">
+  <nz-tab nzTitle=" {{ 'work-order.by-product.produced' | translate }}"
+  
+    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.by-product.produced')">
+
 
     <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfProducedByProduct[data.id]">
       <thead>
@@ -724,7 +755,10 @@
     </nz-table>
   </nz-tab>
 
-  <nz-tab nzTitle=" {{ 'work-order.returned-inventory' | translate }}">
+  <nz-tab nzTitle=" {{ 'work-order.returned-inventory' | translate }}"
+  
+    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.returned-inventory')">
+  >
 
     <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfReturnedInventory[data.id]">
       <thead>

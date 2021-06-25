@@ -9,6 +9,7 @@ import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzIconService } from 'ng-zorro-antd/icon';
 import { zip } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { WebClientConfigurationService } from 'src/app/routes/util/services/web-client-configuration.service';
 import { CompanyService } from 'src/app/routes/warehouse-layout/services/company.service';
 import { ICONS } from '../../../style-icons';
 import { ICONS_AUTO } from '../../../style-icons-auto';
@@ -26,6 +27,7 @@ export class StartupService {
     private translate: TranslateService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private settingService: SettingsService,
+    private webClientConfigurationService: WebClientConfigurationService,
     private aclService: ACLService,
     private titleService: TitleService,
     private httpClient: HttpClient,
@@ -36,7 +38,7 @@ export class StartupService {
     iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
   }
 
-  load(): Promise<void> {
+  load(warehouseId? : number): Promise<void> {
 
     let siteInformationUrl = `resource/site-information`;
  
@@ -60,6 +62,9 @@ export class StartupService {
       }
     }
     siteInformationUrl = `${siteInformationUrl}?companyId=${this.companyService.getCurrentCompany()?.id}`;
+    if (warehouseId) {      
+        siteInformationUrl = `${siteInformationUrl}&warehouseId=${warehouseId}`;
+    }
 
     // only works with promises
     // https://github.com/angular/angular/issues/15088
@@ -94,6 +99,8 @@ export class StartupService {
             this.aclService.setFull(true);
             // 初始化菜单 
             this.menuService.add(res.menu); 
+            console.log(`res.webClientConfiguration: ${JSON.stringify(res.webClientConfiguration)}`);
+            this.webClientConfigurationService.setWebClientConfiguration(res.webClientConfiguration);
             // 设置页面标题的后缀
             this.titleService.default = '';
             this.titleService.suffix = res.app.name;

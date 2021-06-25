@@ -111,8 +111,9 @@ export class WorkOrderWorkOrderCompleteComponent implements OnInit {
         workOrder: workOrderKPI.workOrder,
         workOrderCompleteTransaction: undefined,
         workOrderProduceTransaction: undefined,
+        workOrderKPI: workOrderKPI,
         username: workOrderKPI.username,
-        type: WorkOrderKpiTransactionType.OVERRIDE,
+        type: WorkOrderKpiTransactionType.UNCHANGED,
         workingTeamName: workOrderKPI.workingTeamName,
         kpiMeasurement: workOrderKPI.kpiMeasurement,
         amount: workOrderKPI.amount,
@@ -214,6 +215,21 @@ export class WorkOrderWorkOrderCompleteComponent implements OnInit {
       ];
       this.resetWorkOrderLineStatus(workOrderLineCompleteTransaction);
     }
+  }
+  onStepsIndexChange(index: number): void {
+    
+    switch (index) {
+      case 0:
+        this.router.navigateByUrl('/work-order/work-order/complete?refresh');
+        break;
+      case 1:        
+        this.router.navigateByUrl(`/work-order/work-order/complete/kpi?id=${this.currentWorkOrder.id}`);
+        break;
+      case 2:
+        this.router.navigateByUrl(`/work-order/work-order/complete/confirm?id=${this.currentWorkOrder.id}`);
+        break;
+    }
+
   }
 
   returningMaterialLPNChanged(lpn: string): void {

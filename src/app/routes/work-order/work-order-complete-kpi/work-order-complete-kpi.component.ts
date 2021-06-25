@@ -68,7 +68,6 @@ export class WorkOrderWorkOrderCompleteKpiComponent implements OnInit {
       workingTeamsRes.forEach(workingTeam => {
         this.validWorkingTeamNames.push(workingTeam.name);
       });
-      console.log(`this.validWorkingTeamNames: ${this.validWorkingTeamNames}`);
     });
   }
   onStepsIndexChange(index: number): void {
@@ -81,9 +80,22 @@ export class WorkOrderWorkOrderCompleteKpiComponent implements OnInit {
         break;
     }
   }
-  removeKPI(workOrderKpiTransaction: WorkOrderKpi): void {
+  removeKPI(workOrderKpiTransaction: WorkOrderKpiTransaction): void {
+    console.log(`will remove work order kpi transaction ${JSON.stringify(workOrderKpiTransaction)}`)
     this.workOrderCompleteTransaction.workOrderKPITransactions = this.workOrderCompleteTransaction.workOrderKPITransactions.filter(
-      existingWorkOrderKpiTransaction => existingWorkOrderKpiTransaction.username !== workOrderKpiTransaction.username,
+      existingWorkOrderKpiTransaction => {
+        console.log(`check if we will need to remove ${JSON.stringify(existingWorkOrderKpiTransaction)}`)
+        console.log(`workOrderKpiTransaction.workOrderKPI !== undefined: ${workOrderKpiTransaction.workOrderKPI !== undefined}`)
+        if (workOrderKpiTransaction.workOrderKPI !== undefined) {
+          return workOrderKpiTransaction.workOrderKPI!.id !== existingWorkOrderKpiTransaction.workOrderKPI?.id;
+
+        }
+        else {
+          // if this is a new KPI transaction, then we will only allow one user per new transaction
+          return existingWorkOrderKpiTransaction.workOrderKPI !== undefined ||
+                existingWorkOrderKpiTransaction.username !== workOrderKpiTransaction.username;
+        }
+      }
     );
   }
   addExtraKPI(): void {
@@ -98,7 +110,8 @@ export class WorkOrderWorkOrderCompleteKpiComponent implements OnInit {
       workOrder: this.currentWorkOrder,
       workOrderCompleteTransaction: undefined,
       workOrderProduceTransaction: undefined,
-      type: WorkOrderKpiTransactionType.OVERRIDE,
+      workOrderKPI: undefined,
+      type: WorkOrderKpiTransactionType.ADD,
       username: '',
       workingTeamName: '',
       kpiMeasurement: KpiMeasurement.BY_QUANTITY,

@@ -24,6 +24,7 @@ import { PrintingService } from '../../common/services/printing.service';
 import { ReportType } from '../../report/models/report-type.enum';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
+import { WebClientConfigurationService } from '../../util/services/web-client-configuration.service';
 
 @Component({
   selector: 'app-work-order-work-order',
@@ -201,6 +202,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     private locationService: LocationService,
     private utilService: UtilService,
     private printingService: PrintingService,
+    private webClientConfigurationService: WebClientConfigurationService
   ) {}
   workOrderStatus = WorkOrderStatus;
   // Form related data and functions
@@ -236,6 +238,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   printingInProcess = false;
   isSpinning = false;
   ngOnInit(): void {
+    console.log(`webClientConfigurationService.getWebClientConfiguration().tabDisplayConfiguration: 
+       ${JSON.stringify(this.webClientConfigurationService.getWebClientConfiguration().tabDisplayConfiguration["work-order.work-order.work-order.delivered-inventory"])}`);
     this.titleService.setTitle(this.i18n.fanyi('menu.main.work-order.work-order'));
     // initiate the search form
     this.searchForm = this.fb.group({
@@ -384,7 +388,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     );
   }
   isWorkOrderAllocatable(workOrder: WorkOrder): boolean {
-    return workOrder.productionLineAssignments!.length > 0;
+    return workOrder.status !== WorkOrderStatus.COMPLETED &&
+           workOrder.productionLineAssignments!.length > 0;
   }
   // The user is allowed to change the production line only when
   // the work order is in pending status

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { TestDataUploadService } from '../services/test-data-upload.service';
+import { WebClientConfigurationService } from '../services/web-client-configuration.service';
 
 @Component({
   selector: 'app-util-test-data-init',
@@ -14,7 +15,9 @@ export class UtilTestDataInitComponent implements OnInit {
   clearButtonDisabled: boolean;
   clearButtonLoading: boolean;
 
-  constructor(private http: _HttpClient, private testDataUploadService: TestDataUploadService) {
+  constructor(private http: _HttpClient, 
+    private testDataUploadService: TestDataUploadService, 
+    private webClientConfigurationService: WebClientConfigurationService) {
     this.loadButtonDisabled = true;
     this.loadButtonLoading = false;
     this.clearButtonDisabled = true;
@@ -54,10 +57,23 @@ export class UtilTestDataInitComponent implements OnInit {
         },
       );
     } else {
+      // all data is loaded
       this.loadButtonDisabled = false;
       this.loadButtonLoading = false;
       this.clearButtonDisabled = false;
       this.clearButtonLoading = false;
+
+      // refresh the client cache
+      console.log("=======     Test Data Loaded   =======");
+      this.webClientConfigurationService.loadWebClientConfiguration().subscribe(
+        configuration =>{
+          console.log(`get web configuration: ${JSON.stringify(configuration)}`);
+          
+          this.webClientConfigurationService.setWebClientConfiguration(configuration);
+          console.log(`webClientConfigurationService saved!: ${JSON.stringify(this.webClientConfigurationService.getWebClientConfiguration())}`);
+        }
+      );
+
     }
   }
 

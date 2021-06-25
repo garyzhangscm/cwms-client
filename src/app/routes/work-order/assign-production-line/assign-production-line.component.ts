@@ -5,6 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { TransferItem } from 'ng-zorro-antd/transfer';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Mould } from '../models/mould';
@@ -46,7 +47,8 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService, 
-    private mouldService: MouldService
+    private mouldService: MouldService, 
+    private modal: NzModalService
     ) { 
       this.pageTitle = this.i18n.fanyi('menu.main.work-order.assign-production-line');
       this.unassignedProductionLineText = this.i18n.fanyi('production-line.unassigned');
@@ -136,8 +138,75 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
         });
       // average the work quantity into assigned production line, evenly
       this.setupDefaultProductionLineQuantity();
+
+      this.stepIndex += 1;
     }
-    this.stepIndex += 1;
+    else if(this.stepIndex === 1) {
+      // flow to the next step becased on the result
+      // of the quantity valication
+      this.validateProductionLineQuantity();
+      
+    }
+    else {
+
+      this.stepIndex += 1;
+    }
+
+  }
+  // make sure the total quantity of the production line assignment match with the
+  // work order's quantity
+  validateProductionLineQuantity(){
+    var totalAsisgnedQuantity: number = 0; 
+
+    this.currentProductionLineAssignments.forEach(
+      productionLineAssignment => {
+        totalAsisgnedQuantity = totalAsisgnedQuantity + +productionLineAssignment.quantity;
+      }
+    )
+    // we will allow the user to assign less than the work order's total quantity
+    // but raise a warning message for it 
+    if (totalAsisgnedQuantity !== this.workOrder.expectedQuantity!) {
+      this.modal.error({
+        nzTitle: this.i18n.fanyi("error"),
+        nzContent: this.i18n.fanyi("error.work-order.production-line-assignment.quantity-not-match")
+      });
+      // we won't flow the next step as the validation fail
+      
+
+    }
+    /***
+     * 
+     * 
+    if (totalAsisgnedQuantity > this.workOrder.expectedQuantity!) {
+      this.modal.error({
+        nzTitle: this.i18n.fanyi("error"),
+        nzContent: this.i18n.fanyi("error.work-order.production-line-assignment.quantity-exceed")
+      });
+      // we won't flow the next step as the validation fail
+      
+
+    }
+    else if (totalAsisgnedQuantity < this.workOrder.expectedQuantity!){
+      
+      this.modal.confirm({
+        nzTitle: this.i18n.fanyi("warning"),
+        nzContent: this.i18n.fanyi("warning.work-order.production-line-assignment.quantity-below"),
+        nzOkText: this.i18n.fanyi("confirm"),
+        nzOkType: 'primary',
+        nzOkDanger: true,
+        nzOnOk: () => this.stepIndex += 1,
+        nzCancelText: this.i18n.fanyi("cancel"),
+        // do nothing if the user choose to cancel
+
+        // nzOnCancel: () => result = false,
+      });
+    }
+     */
+    else {
+      // total quantity matches, flow to the next step
+      this.stepIndex += 1;
+    }
+    
 
   }
   getProductionLineAssignment(productionLine: ProductionLine) : ProductionLineAssignment{
@@ -163,11 +232,7 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
       productionLine: productionLine,
       workOrder: this.workOrder,
       quantity: 0,
-      mould: {
-        name: "",
-        description: "",
-        warehouseId: this.warehouseService.getCurrentWarehouse().id
-      }, 
+      mould: undefined, 
       dateRange: []
     };
   }

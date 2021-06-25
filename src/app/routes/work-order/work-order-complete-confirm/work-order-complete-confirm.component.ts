@@ -11,6 +11,7 @@ import { KpiMeasurement } from '../models/kpi-measurement.enum';
 import { WorkOrder } from '../models/work-order';
 import { WorkOrderCompleteTransaction } from '../models/work-order-complete-transaction';
 import { WorkOrderKpi } from '../models/work-order-kpi';
+import { WorkOrderKpiTransactionType } from '../models/work-order-kpi-transaction-type.enum';
 import { WorkOrderLineCompleteTransaction } from '../models/work-order-line-complete-transaction';
 import { WorkOrderCompleteTransactionService } from '../services/work-order-complete-transaction.service';
 import { WorkOrderService } from '../services/work-order.service';
@@ -80,9 +81,7 @@ export class WorkOrderWorkOrderCompleteConfirmComponent implements OnInit {
         // We should only have one matched work order KPI
         console.log(`Start to process workOrderKPItransaction: ${JSON.stringify(workOrderKPItransaction)}`);
         const matchedWorkOrderKPIs = existingWorkOrderKpis.filter(
-          workOrderKPI =>
-            workOrderKPItransaction.username === workOrderKPI.username ||
-            workOrderKPItransaction.workingTeamName === workOrderKPI.workingTeamName,
+          workOrderKPI =>  workOrderKPI.id === workOrderKPItransaction.workOrderKPI?.id
         );
 
         console.log(`matchedWorkOrderKPIs KPIs: ${JSON.stringify(matchedWorkOrderKPIs)}`);
@@ -103,14 +102,15 @@ export class WorkOrderWorkOrderCompleteConfirmComponent implements OnInit {
                 workOrderKPItransaction.amount !== matchedWorkOrderKPIs[0].amount,
             },
           ];
+
+          // update the type to OVERRIDE 
+          workOrderKPItransaction.type = WorkOrderKpiTransactionType.OVERRIDE;
           console.log(`changed: ${workOrderKPItransaction.amount === matchedWorkOrderKPIs[0].amount}`);
           console.log(`workOrderKPItransaction.amount: ${workOrderKPItransaction.amount}`);
           console.log(`matchedWorkOrderKPIs[0].amount: ${matchedWorkOrderKPIs[0].amount}`);
           // let's remove the matched KPIs from the original ist
           existingWorkOrderKpis = existingWorkOrderKpis.filter(
-            workOrderKPI =>
-              workOrderKPItransaction.username !== workOrderKPI.username &&
-              workOrderKPItransaction.workingTeamName !== workOrderKPI.workingTeamName,
+            workOrderKPI =>  workOrderKPI.id !== workOrderKPItransaction.workOrderKPI?.id
           );
         } else {
           // we are adding new KPI
@@ -145,6 +145,19 @@ export class WorkOrderWorkOrderCompleteConfirmComponent implements OnInit {
               changed: true,
             },
           ];
+          // add the information to the transaction and mark it as 'REMOVED'
+          this.workOrderCompleteTransaction.workOrderKPITransactions.push({
+            id: undefined,
+            workOrder: workOrderKPI.workOrder,
+            workOrderCompleteTransaction: undefined,
+            workOrderProduceTransaction: undefined,
+            workOrderKPI: workOrderKPI,
+            username: workOrderKPI.username,
+            type: WorkOrderKpiTransactionType.REMOVED,
+            workingTeamName: workOrderKPI.workingTeamName,
+            kpiMeasurement: workOrderKPI.kpiMeasurement,
+            amount: workOrderKPI.amount,
+          });
         });
       }
 
@@ -160,7 +173,21 @@ export class WorkOrderWorkOrderCompleteConfirmComponent implements OnInit {
       return null;
     }
   }
-  onStepsIndexChange(index: number): void {}
+  onStepsIndexChange(index: number): void {
+    
+    switch (index) {
+      case 0:
+        this.router.navigateByUrl('/work-order/work-order/complete?refresh');
+        break;
+      case 1:        
+        this.router.navigateByUrl(`/work-order/work-order/complete/kpi?id=${this.currentWorkOrder.id}`);
+        break;
+      case 2:
+        this.router.navigateByUrl(`/work-order/work-order/complete/confirm?id=${this.currentWorkOrder.id}`);
+        break;
+    }
+
+  }
   confirmWorkOrderComplete(): void {
     this.savingInProcess = true;
     this.workOrderCompleteTransactionService

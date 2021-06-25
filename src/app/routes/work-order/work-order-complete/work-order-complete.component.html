@@ -19,7 +19,7 @@
 
 <div nz-row style="padding: 10px">
   <div nz-col nzSpan="12" nzOffset="6">
-    <nz-steps [nzCurrent]="0" [nzSize]="'small'">
+    <nz-steps [nzCurrent]="0" [nzSize]="'small'" (nzIndexChange)="onStepsIndexChange($event)">
       <nz-step nzTitle="{{ 'steps.work-order-complete.info.title' | translate }}"
         nzDescription="{{ 'steps.work-order-complete.info.description' | translate }}">
       </nz-step>
