@@ -15,7 +15,7 @@ export const environment = {
   //SERVER_URL: `http://kxxxx.us-west-1.elb.amazonaws.com:5555/api/`,
 
   // AWS K8S load balancer
-  SERVER_URL: `http://k8s-staging-zuulserv-707034e5d3-86457190.us-west-1.elb.amazonaws.com/api/`,
+  SERVER_URL: `http://k8s-staging-zuulserv-707034e5d3-883475506.us-west-1.elb.amazonaws.com/api/`,
 
   production: false,
   useHash: true,

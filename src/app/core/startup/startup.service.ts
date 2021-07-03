@@ -11,6 +11,7 @@ import { zip } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { WebClientConfigurationService } from 'src/app/routes/util/services/web-client-configuration.service';
 import { CompanyService } from 'src/app/routes/warehouse-layout/services/company.service';
+import { WarehouseService } from 'src/app/routes/warehouse-layout/services/warehouse.service';
 import { ICONS } from '../../../style-icons';
 import { ICONS_AUTO } from '../../../style-icons-auto';
 import { I18NService } from '../i18n/i18n.service';
@@ -34,6 +35,7 @@ export class StartupService {
     private injector: Injector, 
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
     private companyService: CompanyService,
+    private warehouseService: WarehouseService,
   ) {
     iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
   }
@@ -109,9 +111,10 @@ export class StartupService {
             this.companyService.setSingleCompanyServerFlag(res.singleCompanySite);
             if (res.singleCompanySite === true) {
             this.companyService.setDefaultCompanyCode(res.defaultCompanyCode);
-          } else {
-            this.companyService.setDefaultCompanyCode('');
-          }
+            } else {
+              this.companyService.setDefaultCompanyCode('');
+            }
+            this.warehouseService.setServerSidePrintingFlag(res.serverSidePrinting);
           },
           () => {console.log(`error while loading infromation`);
                  (this.injector.get(DA_SERVICE_TOKEN) as ITokenService).clear();

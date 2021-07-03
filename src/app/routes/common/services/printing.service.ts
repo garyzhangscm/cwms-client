@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core'; 
 import { Lodop, LodopService } from '@delon/abc/lodop';
+import { _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
+import { map } from 'rxjs/operators';
 import { ReportType } from '../../report/models/report-type.enum';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { PrintPageOrientation } from '../models/print-page-orientation.enum';
 import { PrintPageSize } from '../models/print-page-size.enum';
@@ -15,7 +18,9 @@ export class PrintingService {
   private lodop: Lodop | null = null;
 
   constructor(public lodopService: LodopService,     
-    private warehouseService: WarehouseService)  {
+    private warehouseService: WarehouseService, 
+    private http: _HttpClient, 
+    private companyService: CompanyService)  {
     this.lodopService.cog.url = 'http://localhost:18000/CLodopfuncs.js';
     this.lodopService.lodop.subscribe(({ lodop, ok }) => {
       if (!ok) {
@@ -70,18 +75,36 @@ export class PrintingService {
     url = `${url}/${this.warehouseService.getCurrentWarehouse().id}`;
     url = `${url}/${type}`;
     url = `${url}/${fileName}`;
+
+    if (this.warehouseService.getServerSidePrintingFlag()) {
+      console.log(`will print from the server side`);
+      this.http
+        .post(`/resource/report-histories/print/${this.companyService.getCurrentCompany()?.id}/${this.warehouseService.getCurrentWarehouse().id}/${type}/${fileName}`)
+        .pipe(map(res => res.data)).subscribe(res => {
+          console.log(` file printed!`);
+        });
+
+    }
+    else {
+
+      console.log(`will print from the client side`);
+      this.printRemoteFileFromClientSide(
+        name, 
+        url, 
+        printerIndex, 
+        physicalCopyCount, 
+        pageOrientation, 
+        pageSize
+      )
+    }
     
-    this.printRemoteFileByPath(
-      name, 
-      url, 
-      printerIndex, 
-      physicalCopyCount, 
-      pageOrientation, 
-      pageSize
-    )
   }
 
-  printRemoteFileByPath(
+  printRemoteFileFromServerSide() {
+
+  }
+
+  printRemoteFileFromClientSide(
     name: string,
     remoteFileUrl: string, 
     printerIndex: number, 

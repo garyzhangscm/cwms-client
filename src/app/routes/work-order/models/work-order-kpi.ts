@@ -8,7 +8,10 @@ export interface WorkOrderKpi {
 
   username: string;
   workingTeamName: string;
+  workingTeamMemberCount: number;
 
   kpiMeasurement: KpiMeasurement;
   amount: number;
+
+
 }

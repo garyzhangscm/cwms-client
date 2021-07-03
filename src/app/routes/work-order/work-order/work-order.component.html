@@ -257,6 +257,7 @@
       <thead>
         <th>{{ 'username' | translate }}</th>
         <th>{{ 'working-team' | translate }}</th>
+        <th>{{ 'working-team.member-count' | translate }}</th>
         <th>{{ 'amount' | translate }}</th>
         <th>{{ 'KPIMeasure' | translate }}</th>
       </thead>
@@ -266,6 +267,7 @@
         <tr *ngFor="let workOrderKPI of mapOfKPIs[data.id]">
           <td>{{ workOrderKPI.username }}</td>
           <td>{{ workOrderKPI.workingTeamName }}</td>
+          <td>{{ workOrderKPI.workingTeamMemberCount }}</td>
           <td>{{ workOrderKPI.amount }}</td>
           <td>{{  'KPI-MEASUREMENT-' + workOrderKPI.kpiMeasurement | translate }}</td>
         </tr>
