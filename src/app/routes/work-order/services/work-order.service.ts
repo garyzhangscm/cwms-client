@@ -24,7 +24,7 @@ export class WorkOrderService {
     private warehouseService: WarehouseService,
     private printingService: PrintingService,
     private i18n: I18NService,
-  ) {}
+  ) { }
 
   getWorkOrders(number?: string, itemName?: string, productionPlanId?: number): Observable<WorkOrder[]> {
     let url = `workorder/work-orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
@@ -105,7 +105,7 @@ export class WorkOrderService {
       .post(`workorder/work-orders/${workOrder.id}/change-production-line?productionLineId=${productionLineId}`)
       .pipe(map(res => res.data));
   }
-  
+
   assignProductionLine(workOrderId: number, productionLineAssignments: ProductionLineAssignment[]) {
     return this.http
       .post(`workorder/production-line-assignments?workOrderId=${workOrderId}`, productionLineAssignments)
@@ -119,9 +119,8 @@ export class WorkOrderService {
     destinationLocationName?: string,
     immediateMove?: boolean,
   ): Observable<Inventory[]> {
-    let url = `workorder/work-orders/${workOrder.id}/unpick-inventory?warehouseId=${
-      this.warehouseService.getCurrentWarehouse().id
-    }`;
+    let url = `workorder/work-orders/${workOrder.id}/unpick-inventory?warehouseId=${this.warehouseService.getCurrentWarehouse().id
+      }`;
 
     if (overrideConsumedQuantity === true) {
       url = url + `&overrideConsumedQuantity=${overrideConsumedQuantity}&consumedQuantity=${consumedQuantity}`;
@@ -135,15 +134,15 @@ export class WorkOrderService {
     }
     return this.http.post(url, inventory).pipe(map(res => res.data));
   }
- 
 
-  
-  printOrderPickSheet(workOrder: WorkOrder, locale?: string) : Observable<ReportHistory>{ 
+
+
+  printOrderPickSheet(workOrder: WorkOrder, locale?: string): Observable<ReportHistory> {
     if (!locale) {
       locale = this.i18n.defaultLang;
     }
-    
+
     return this.http.post(`workorder/work-orders/${workOrder.id}/pick-report?locale=${locale}`).pipe(map(res => res.data));
   }
-  
+
 }

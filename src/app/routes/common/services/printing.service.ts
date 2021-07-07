@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core'; 
+import { Injectable } from '@angular/core';
 import { Lodop, LodopService } from '@delon/abc/lodop';
 import { _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
@@ -17,10 +17,10 @@ export class PrintingService {
   // printer related
   private lodop: Lodop | null = null;
 
-  constructor(public lodopService: LodopService,     
-    private warehouseService: WarehouseService, 
-    private http: _HttpClient, 
-    private companyService: CompanyService)  {
+  constructor(public lodopService: LodopService,
+    private warehouseService: WarehouseService,
+    private http: _HttpClient,
+    private companyService: CompanyService) {
     this.lodopService.cog.url = 'http://localhost:18000/CLodopfuncs.js';
     this.lodopService.lodop.subscribe(({ lodop, ok }) => {
       if (!ok) {
@@ -32,7 +32,7 @@ export class PrintingService {
     });
   }
 
-  isLodopInstalled() : boolean {
+  isLodopInstalled(): boolean {
     return this.lodop !== null;
   }
 
@@ -44,7 +44,7 @@ export class PrintingService {
     return this.lodop!.GET_PRINTER_COUNT();
   }
 
-  getAllLocalPrinter() : string[] {
+  getAllLocalPrinter(): string[] {
     var allLocalPrinters: string[] = [];
     const localPrinterCount = this.getLocalPrinterCount();
     if (localPrinterCount === 0) {
@@ -59,17 +59,17 @@ export class PrintingService {
 
   printRemoteFileByName(
     name: string,
-    fileName: string, 
+    fileName: string,
     type: ReportType,
-    printerIndex: number, 
-    physicalCopyCount: number,    
+    printerIndex: number,
+    physicalCopyCount: number,
     pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
     pageSize: PrintPageSize = PrintPageSize.A4,
-  ) : void {
+  ): void {
 
 
-    
-    let url  = `${environment.SERVER_URL}/resource/report-histories/download`;
+
+    let url = `${environment.SERVER_URL}/resource/report-histories/download`;
 
     url = `${url}/${this.warehouseService.getCurrentWarehouse().companyId}`;
     url = `${url}/${this.warehouseService.getCurrentWarehouse().id}`;
@@ -88,30 +88,27 @@ export class PrintingService {
     else {
 
       console.log(`will print from the client side`);
-      this.printRemoteFileFromClientSide(
-        name, 
-        url, 
-        printerIndex, 
-        physicalCopyCount, 
-        pageOrientation, 
+      this.printRemoteFileByPath(
+        name,
+        url,
+        printerIndex,
+        physicalCopyCount,
+        pageOrientation,
         pageSize
       )
     }
-    
-  }
-
-  printRemoteFileFromServerSide() {
 
   }
 
-  printRemoteFileFromClientSide(
+
+  printRemoteFileByPath(
     name: string,
-    remoteFileUrl: string, 
-    printerIndex: number, 
-    physicalCopyCount: number,    
+    remoteFileUrl: string,
+    printerIndex: number,
+    physicalCopyCount: number,
     pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
     pageSize: PrintPageSize = PrintPageSize.A4,
-  ) : void {
+  ): void {
     console.log(`start to print remote file in orientation: ${pageOrientation}`);
     console.log(`START TO PRINT ${remoteFileUrl}`);
     const LODOP = this.lodop!;
@@ -119,7 +116,7 @@ export class PrintingService {
     LODOP.PRINT_INIT(name);
     LODOP.SET_PRINT_PAGESIZE(pageOrientation, 2100, 2970, pageSize);
     LODOP.SET_PRINTER_INDEX(printerIndex);
-    LODOP.ADD_PRINT_PDF(-30 ,0, "100%","100%",remoteFileUrl); 
+    LODOP.ADD_PRINT_PDF(-30, 0, "100%", "100%", remoteFileUrl);
     // LODOP.ADD_PRINT_PDF(0,0,"100%","100%","http://localhost:8000/CLodopDemos/PDFDemo.pdf");
     // LODOP.ADD_PRINT_PDF(-30,0,"100%","100%","e:\\AAA.pdf");
     LODOP.SET_PRINT_COPIES(physicalCopyCount);
@@ -151,7 +148,7 @@ export class PrintingService {
       const currentPageBarcodes = this.getCucurrentPageBarcodes(barcodes, index);
       currentPageBarcodes.forEach(barcode =>
         LODOP.ADD_PRINT_BARCODE(
-          barcode.top, barcode.left, 
+          barcode.top, barcode.left,
           barcode.width, barcode.height,
           barcode.barCodeType, barcode.barCodeValue)
       );
@@ -160,17 +157,17 @@ export class PrintingService {
       // print page foot, which is always 
       if (index < pages.length - 1) { LODOP.NEWPAGE(); }
     });
-    
+
     LODOP.PREVIEW();
     // LODOP.PRINT();
   }
 
-  getCucurrentPageBarcodes(barcodes: PrintableBarcode[], pageNumber: number): PrintableBarcode[]{
+  getCucurrentPageBarcodes(barcodes: PrintableBarcode[], pageNumber: number): PrintableBarcode[] {
     return barcodes.filter(barcode => barcode.pageNumber === pageNumber);
 
   }
 
-  addDefaultReportStyle(html: string): string{
+  addDefaultReportStyle(html: string): string {
     return `<style>
             h1, h2, h3, h4, h5, h6 {
               text-align:center

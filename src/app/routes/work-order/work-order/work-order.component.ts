@@ -33,157 +33,157 @@ import { WebClientConfigurationService } from '../../util/services/web-client-co
 })
 export class WorkOrderWorkOrderComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: ColumnItem[] = [
     {
-          name: 'work-order.number',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableString(a.number, b.number),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 2,
-          colspan: 1,
-        }, {
-          name: 'status',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableString(a.status?.toString(), b.status?.toString()),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 2,
-          colspan: 1,
-        }, {
-          name: 'work-order.item',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 2,
-          colspan: 1,
-        }, {
-          name: 'work-order.expected-quantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableNumber(a.expectedQuantity, b.expectedQuantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 2,
-          colspan: 1,
-        }, {
-          name: 'work-order.produced-quantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableNumber(a.producedQuantity, b.producedQuantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 2,
-          colspan: 1,
-        },{
-          name: 'work-order.totalInprocessQuantity',
-          showSort: false,
-          sortOrder: null,
-          sortFn: null,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 1,
-          colspan: 5,
-        }];
-    listOfStatisticsColumns : ColumnItem[] = [ {
-          name: 'work-order.totalLineExpectedQuantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableNumber(a.totalLineExpectedQuantity, b.totalLineExpectedQuantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 1,
-          colspan: 1,
-        }, {
-          name: 'work-order.totalLineOpenQuantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableNumber(a.totalLineOpenQuantity, b.totalLineOpenQuantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 1,
-          colspan: 1,
-        }, {
-          name: 'work-order.totalLineInprocessQuantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableNumber(a.totalLineInprocessQuantity,  b.totalLineInprocessQuantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 1,
-          colspan: 1,
-        }, {
-          name: 'work-order.totalLineDeliveredQuantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableNumber(a.totalLineDeliveredQuantity, b.totalLineDeliveredQuantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 1,
-          colspan: 1,
-        }, {
-          name: 'work-order.totalLineConsumedQuantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableNumber(a.totalLineConsumedQuantity, b.totalLineConsumedQuantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 1,
-          colspan: 1,
-        }, 
-        /***{
-          name: 'production-line',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableObjField(a.productionPlanLine, b.productionPlanLine, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, 
-        **/
-        ];
+      name: 'work-order.number',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableString(a.number, b.number),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 2,
+      colspan: 1,
+    }, {
+      name: 'status',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableString(a.status?.toString(), b.status?.toString()),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 2,
+      colspan: 1,
+    }, {
+      name: 'work-order.item',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 2,
+      colspan: 1,
+    }, {
+      name: 'work-order.expected-quantity',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableNumber(a.expectedQuantity, b.expectedQuantity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 2,
+      colspan: 1,
+    }, {
+      name: 'work-order.produced-quantity',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableNumber(a.producedQuantity, b.producedQuantity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 2,
+      colspan: 1,
+    }, {
+      name: 'work-order.totalInprocessQuantity',
+      showSort: false,
+      sortOrder: null,
+      sortFn: null,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 1,
+      colspan: 5,
+    }];
+  listOfStatisticsColumns: ColumnItem[] = [{
+    name: 'work-order.totalLineExpectedQuantity',
+    showSort: true,
+    sortOrder: null,
+    sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableNumber(a.totalLineExpectedQuantity, b.totalLineExpectedQuantity),
+    sortDirections: ['ascend', 'descend'],
+    filterMultiple: true,
+    listOfFilter: [],
+    filterFn: null,
+    showFilter: false,
+    rowspan: 1,
+    colspan: 1,
+  }, {
+    name: 'work-order.totalLineOpenQuantity',
+    showSort: true,
+    sortOrder: null,
+    sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableNumber(a.totalLineOpenQuantity, b.totalLineOpenQuantity),
+    sortDirections: ['ascend', 'descend'],
+    filterMultiple: true,
+    listOfFilter: [],
+    filterFn: null,
+    showFilter: false,
+    rowspan: 1,
+    colspan: 1,
+  }, {
+    name: 'work-order.totalLineInprocessQuantity',
+    showSort: true,
+    sortOrder: null,
+    sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableNumber(a.totalLineInprocessQuantity, b.totalLineInprocessQuantity),
+    sortDirections: ['ascend', 'descend'],
+    filterMultiple: true,
+    listOfFilter: [],
+    filterFn: null,
+    showFilter: false,
+    rowspan: 1,
+    colspan: 1,
+  }, {
+    name: 'work-order.totalLineDeliveredQuantity',
+    showSort: true,
+    sortOrder: null,
+    sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableNumber(a.totalLineDeliveredQuantity, b.totalLineDeliveredQuantity),
+    sortDirections: ['ascend', 'descend'],
+    filterMultiple: true,
+    listOfFilter: [],
+    filterFn: null,
+    showFilter: false,
+    rowspan: 1,
+    colspan: 1,
+  }, {
+    name: 'work-order.totalLineConsumedQuantity',
+    showSort: true,
+    sortOrder: null,
+    sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableNumber(a.totalLineConsumedQuantity, b.totalLineConsumedQuantity),
+    sortDirections: ['ascend', 'descend'],
+    filterMultiple: true,
+    listOfFilter: [],
+    filterFn: null,
+    showFilter: false,
+    rowspan: 1,
+    colspan: 1,
+  },
+    /***{
+      name: 'production-line',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableObjField(a.productionPlanLine, b.productionPlanLine, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null, 
+      showFilter: false
+    }, 
+    **/
+  ];
 
-        expandSet = new Set<number>();
-        
+  expandSet = new Set<number>();
+
 
 
   constructor(
@@ -203,7 +203,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     private utilService: UtilService,
     private printingService: PrintingService,
     private webClientConfigurationService: WebClientConfigurationService
-  ) {}
+  ) { }
   workOrderStatus = WorkOrderStatus;
   // Form related data and functions
   searchForm!: FormGroup;
@@ -219,8 +219,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
   // Table data for display
   listOfAllWorkOrder: WorkOrder[] = [];
-  listOfDisplayWorkOrder: WorkOrder[] = []; 
-  
+  listOfDisplayWorkOrder: WorkOrder[] = [];
+
   // list of record with allocation in process
   mapOfAllocationInProcessId: { [key: string]: boolean } = {};
 
@@ -328,7 +328,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     return workOrder;
   }
 
-  
+
   onExpandChange(workOrder: WorkOrder, expanded: boolean): void {
     if (expanded) {
       this.expandSet.add(workOrder.id!);
@@ -338,8 +338,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     }
   }
 
-   
-  
+
+
   loadAvailableProductionLine(): void {
     this.availableProductionLines = [];
     // load all available production lines
@@ -357,8 +357,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       this.mapOfAllocationInProcessId[workOrder.id!] = false;
       this.search();
       this.isSpinning = false;
-    }, 
-    () => this.isSpinning = false);
+    },
+      () => this.isSpinning = false);
   }
   workOrderHasAnyAction(workOrder: WorkOrder): boolean {
     return (
@@ -389,14 +389,14 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   }
   isWorkOrderAllocatable(workOrder: WorkOrder): boolean {
     return workOrder.status !== WorkOrderStatus.COMPLETED &&
-           workOrder.productionLineAssignments!.length > 0;
+      workOrder.productionLineAssignments!.length > 0;
   }
   // The user is allowed to change the production line only when
   // the work order is in pending status
   isProductionLineChangable(workOrder: WorkOrder): boolean {
     return workOrder.status === WorkOrderStatus.PENDING;
   }
- 
+
   confirmPicks(workOrder: WorkOrder): void {
     this.router.navigateByUrl(`/outbound/pick/confirm?type=workOrder&id=${workOrder.id}`);
   }
@@ -412,12 +412,12 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     return (
       workOrder.productionLineAssignments!.length > 0 &&
       workOrder.totalLineInprocessQuantity! > 0 &&
-      workOrder.totalLineDeliveredQuantity! - workOrder.totalLineConsumedQuantity! > 0 &&
+      workOrder.totalLineDeliveredQuantity! > 0 &&
       workOrder.status === WorkOrderStatus.INPROCESS
     );
   }
 
-  
+
   produceFromWorkOrder(workOrder: WorkOrder): void {
     this.router.navigateByUrl(`/work-order/work-order/produce?id=${workOrder.id}`);
   }
@@ -466,12 +466,12 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
   showWorkOrderDetails(workOrder: WorkOrder): void {
     // When we expand the details for the order, load the picks and short allocation from the server
-    if (this.expandSet.has(workOrder.id!)) { 
-      this.showDeliveredInventory(workOrder); 
-      this.showProducedInventory(workOrder); 
-      this.showProducedByProduct(workOrder); 
-      this.showReturnedInventory(workOrder); 
-      this.showKPITransactions(workOrder); 
+    if (this.expandSet.has(workOrder.id!)) {
+      this.showDeliveredInventory(workOrder);
+      this.showProducedInventory(workOrder);
+      this.showProducedByProduct(workOrder);
+      this.showReturnedInventory(workOrder);
+      this.showKPITransactions(workOrder);
       this.showKPIs(workOrder);
     }
   }
@@ -565,14 +565,14 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
   inventoryReadyForPutaway(workOrder: WorkOrder, inventory: Inventory): boolean {
     console.log(`workOrder.productionLineAssignments!.length:${workOrder.productionLineAssignments!.length}`);
-    if (workOrder.productionLineAssignments!.length  === 0) {
+    if (workOrder.productionLineAssignments!.length === 0) {
       return false;
     }
     return workOrder.productionLineAssignments!.some(productionLineAssignment =>
-      inventory.location!.id ==  productionLineAssignment.productionLine.outboundStageLocationId 
-     );
+      inventory.location!.id == productionLineAssignment.productionLine.outboundStageLocationId
+    );
   }
- 
+
 
 
   allocateLocation(workOrder: WorkOrder, inventory: Inventory): void {
@@ -650,8 +650,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   }
 
 
-  
-  printSelectedPutawayWork(workOrder: WorkOrder): void  {
+
+  printSelectedPutawayWork(workOrder: WorkOrder): void {
     /***
      * 
     this.printingInProcess = true;
@@ -670,7 +670,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     this.printAllPutawayWork(this.mapOfProducedInventory[workOrder.id!]);
   }
 
-  printAllPutawayWork(inventories: Inventory[]): void  {
+  printAllPutawayWork(inventories: Inventory[]): void {
     this.printingInProcess = true;
     this.putawayConfigurationService.printPutawaySheet(inventories);
     // purposely to show the 'loading' status of the print button
@@ -683,37 +683,39 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     }, 1000);
   }
 
-  
-  printPickSheets(workOrder: WorkOrder, event: any) : void {
+
+  printPickSheets(workOrder: WorkOrder, event: any): void {
     this.isSpinning = true;
     console.log(`start to print ${workOrder.number} from ${JSON.stringify(event)}`);
 
     this.workOrderService
       .printOrderPickSheet(workOrder, this.i18n.currentLang)
-      .subscribe(printResult=> {
-      
+      .subscribe(printResult => {
+
+        console.log(` PDF file generated, will try to print it`);
         // send the result to the printer
-      this.printingService.printRemoteFileByName(
-        "work order pick sheet", 
-        printResult.fileName, 
-        ReportType.ORDER_PICK_SHEET,
-        event.printerIndex, 
-        event.physicalCopyCount, PrintPageOrientation.Landscape);
-       this.isSpinning = false;
-       this.messageService.success(this.i18n.fanyi("report.print.printed"));
-    });
-    
+        this.printingService.printRemoteFileByName(
+          "work order pick sheet",
+          printResult.fileName,
+          ReportType.ORDER_PICK_SHEET,
+          event.printerIndex,
+          event.physicalCopyCount, PrintPageOrientation.Landscape);
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi("report.print.printed"));
+      },
+        () => this.isSpinning = false);
+
   }
-  previewReport(workOrder: WorkOrder) : void{
+  previewReport(workOrder: WorkOrder): void {
     this.isSpinning = true;
     console.log(`start to preview ${workOrder.number}`);
-    this.workOrderService.printOrderPickSheet(workOrder, this.i18n.currentLang).subscribe(printResult=> {
+    this.workOrderService.printOrderPickSheet(workOrder, this.i18n.currentLang).subscribe(printResult => {
       // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
       this.isSpinning = false;
       this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
-      
+
     });
   }
-  
+
 
 }
