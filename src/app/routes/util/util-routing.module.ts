@@ -5,6 +5,7 @@ import { UtilFileUploadComponent } from './file-upload/file-upload.component';
 import { UtilIconListComponent } from './icon-list/icon-list.component';
 import { UtilTestDataInitComponent } from './test-data-init/test-data-init.component';
 import { UtilTesterComponent } from './tester/tester.component';
+import { UtilSystemConfigurationComponent } from './system-configuration/system-configuration.component';
 
 const routes: Routes = [
   { path: 'file-upload', component: UtilFileUploadComponent, canActivate: [AuthGuard] },
@@ -12,7 +13,7 @@ const routes: Routes = [
   { path: 'test-data-init', component: UtilTestDataInitComponent, canActivate: [AuthGuard] },
   { path: 'icon-list', component: UtilIconListComponent, canActivate: [AuthGuard] },
   { path: 'tester', component: UtilTesterComponent, canActivate: [AuthGuard] },
-];
+  { path: 'system-configuration', component: UtilSystemConfigurationComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

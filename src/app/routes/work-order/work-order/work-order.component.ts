@@ -26,6 +26,14 @@ import { PrintPageOrientation } from '../../common/models/print-page-orientation
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { WebClientConfigurationService } from '../../util/services/web-client-configuration.service';
 
+interface ProductionLineAllocationRequest {
+  productionLineId: number;
+  productionLineName: string;
+  totalQuantity: number; // total assigned quantity, read from production line assignment
+  openQuantity: number;  // total open quantity, read from production line assignment
+  allocateingQuantity: number; // quantity to be allocated 
+}
+
 @Component({
   selector: 'app-work-order-work-order',
   templateUrl: './work-order.component.html',
@@ -237,6 +245,10 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
   printingInProcess = false;
   isSpinning = false;
+
+  productionLineAllocationRequests: ProductionLineAllocationRequest[] = [];
+  productionLineAllocationRequestModal!: NzModalRef;
+
   ngOnInit(): void {
     console.log(`webClientConfigurationService.getWebClientConfiguration().tabDisplayConfiguration: 
        ${JSON.stringify(this.webClientConfigurationService.getWebClientConfiguration().tabDisplayConfiguration["work-order.work-order.work-order.delivered-inventory"])}`);
@@ -717,5 +729,69 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     });
   }
 
+  generateEmptyProductionLineAllocationRequests(workOrder: WorkOrder): ProductionLineAllocationRequest[] {
+    let productionLineAllocationRequests: ProductionLineAllocationRequest[] = [];
+    if (workOrder.productionLineAssignments) {
+      workOrder.productionLineAssignments.forEach(
+        productionLineAssignment => {
+          productionLineAllocationRequests.push({
+            productionLineId: productionLineAssignment.productionLine.id!,
+            productionLineName: productionLineAssignment.productionLine.name,
+            totalQuantity: productionLineAssignment.quantity,
+            openQuantity: productionLineAssignment.openQuantity,
+            allocateingQuantity: productionLineAssignment.openQuantity, // by default, we will allocate the whole open quantity
+          });
+        }
+      )
+    }
+    return productionLineAllocationRequests;
+
+  }
+
+  openAllocateByProductionLineModal(
+    workOrder: WorkOrder,
+    tplAllocateByProductionLineModalTitle: TemplateRef<{}>,
+    tplAllocateByProductionLineModalContent: TemplateRef<{}>,
+  ): void {
+    this.productionLineAllocationRequests = this.generateEmptyProductionLineAllocationRequests(workOrder);
+
+    // Load the location
+    this.productionLineAllocationRequestModal = this.modalService.create({
+      nzTitle: tplAllocateByProductionLineModalTitle,
+      nzContent: tplAllocateByProductionLineModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.productionLineAllocationRequestModal.destroy();
+      },
+      nzOnOk: () => {
+        this.allocateWorkOrderByProductionLine(
+          workOrder, this.productionLineAllocationRequests
+        );
+      },
+
+      nzWidth: 1000,
+    });
+  }
+
+  allocateWorkOrderByProductionLine(workOrder: WorkOrder, productionLineAllocationRequests: ProductionLineAllocationRequest[]) {
+
+    this.isSpinning = true;
+    let productionLineIds =
+      productionLineAllocationRequests.map(request => request.productionLineId).join(',');
+    let quantities =
+      productionLineAllocationRequests.map(request => request.allocateingQuantity).join(',');
+
+    this.workOrderService.allocateWorkOrder(workOrder, productionLineIds, quantities)
+      .subscribe(res => {
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+
+      },
+        () => this.isSpinning = false);
+
+
+  }
 
 }

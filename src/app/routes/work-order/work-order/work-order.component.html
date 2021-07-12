@@ -1,143 +1,130 @@
 <page-header [title]="'page.work-order.header.title' | translate"> </page-header>
 
 <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
-<!-- Form to query the result  -->
-<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
-  <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="12">
-      <nz-form-item nzFlex>
-        <nz-form-label for="number" [nzSm]="3" [nzXs]="3">
-          {{ 'work-order.number' | translate }}
-        </nz-form-label>
-        <nz-form-control [nzSpan]="14">
-          <input nz-input name="number" id="number" formControlName="number" />
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-    <div nz-col [nzSpan]="12">
-      <nz-form-item nzFlex>
-        <nz-form-label for="item" [nzSm]="3" [nzXs]="3">
-          {{ 'item' | translate }}
-        </nz-form-label>
-        <nz-form-control [nzSpan]="14">
-          <input nz-input name="item" id="item" formControlName="item" />
-        </nz-form-control>
-      </nz-form-item>
-    </div>
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label for="number" [nzSm]="3" [nzXs]="3">
+            {{ 'work-order.number' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <input nz-input name="number" id="number" formControlName="number" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label for="item" [nzSm]="3" [nzXs]="3">
+            {{ 'item' | translate }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <input nz-input name="item" id="item" formControlName="item" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
 
-  </div>
-  <div nz-row>
-    <div nz-col [nzSpan]="24" class="search-area">
-      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
-        {{ 'search' | translate }}
-      </button>
-      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
     </div>
-  </div>
-</form>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+          {{ 'search' | translate }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
+      </div>
+    </div>
+  </form>
 
-<!-- Table to Display the result  -->
-<div class="search-result-list">
-  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllWorkOrder" [nzFooter]="tableFoot">
-    <thead>
-      <tr>
-        <th rowspan="2" nzWidth="40px"></th>
+  <!-- Table to Display the result  -->
+  <div class="search-result-list">
+    <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllWorkOrder" [nzFooter]="tableFoot">
+      <thead>
+        <tr>
+          <th rowspan="2" nzWidth="40px"></th>
 
-        <th
-            *ngFor="let column of listOfColumns"
-            [nzShowSort]="column.showSort"
-            [nzSortOrder]="column.sortOrder"
-            [nzSortFn]="column.sortFn"
-            [nzSortDirections]="column.sortDirections"
-            [nzFilterMultiple]="column.filterMultiple"
-            [nzFilters]="column.listOfFilter"
-            [nzFilterFn]="column.filterFn"        
-            [nzShowFilter]="column.showFilter"
-            [rowspan]="column.rowspan"
-            [colspan]="column.colspan"
-          >
+          <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+            [nzShowFilter]="column.showFilter" [rowspan]="column.rowspan" [colspan]="column.colspan">
             {{ column.name | translate }}
-          </th> 
-        <th rowspan="2" >
-          {{ 'action' | translate }}
-        </th>
-      </tr>
-      
-      <tr>
+          </th>
+          <th rowspan="2">
+            {{ 'action' | translate }}
+          </th>
+        </tr>
 
-        <th
-            *ngFor="let column of listOfStatisticsColumns"
-            [nzShowSort]="column.showSort"
-            [nzSortOrder]="column.sortOrder"
-            [nzSortFn]="column.sortFn"
-            [nzSortDirections]="column.sortDirections"
-            [nzFilterMultiple]="column.filterMultiple"
-            [nzFilters]="column.listOfFilter"
-            [nzFilterFn]="column.filterFn"        
-            [nzShowFilter]="column.showFilter"
-            [rowspan]="column.rowspan"
-            [colspan]="column.colspan"
-          >
-            {{ column.name | translate }}
-          </th> 
-      </tr>
-    </thead>
-    <tbody>
-
-      <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <tr>
 
-          
-          <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data, $event)"></td>
+          <th *ngFor="let column of listOfStatisticsColumns" [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+            [nzShowFilter]="column.showFilter" [rowspan]="column.rowspan" [colspan]="column.colspan">
+            {{ column.name | translate }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
 
-          <td>{{ data.number }}</td>
-          <td>{{ 'WORK-ORDER-STATUS-' + data.status | translate}}</td>
-          <td>{{ data.item?.name }}</td>
-          <td>{{ data.expectedQuantity }}</td>
-          <td>{{ data.producedQuantity }}</td>
-          <td>{{ data.totalLineExpectedQuantity }}</td>
-          <td>{{ data.totalLineOpenQuantity }}</td>
-          <td>{{ data.totalLineInprocessQuantity }}</td>
-          <td>{{ data.totalLineDeliveredQuantity }}</td>
-          <td>{{ data.totalLineConsumedQuantity }}</td> 
-          <td>
-            <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary"
-              [nzLoading]="mapOfAllocationInProcessId[data.id]" *ngIf="workOrderHasAnyAction(data)">
-              {{ 'action' | translate }} <i nz-icon nzType="down"></i></button>
-            <nz-dropdown-menu #menu="nzDropdownMenu">
-              <ul nz-menu>
-                <!--  allow the user to assign the production line only when
+        <ng-template ngFor let-data [ngForOf]="nestedTable.data">
+          <tr>
+
+
+            <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data, $event)"></td>
+
+            <td>{{ data.number }}</td>
+            <td>{{ 'WORK-ORDER-STATUS-' + data.status | translate}}</td>
+            <td>{{ data.item?.name }}</td>
+            <td>{{ data.expectedQuantity }}</td>
+            <td>{{ data.producedQuantity }}</td>
+            <td>{{ data.totalLineExpectedQuantity }}</td>
+            <td>{{ data.totalLineOpenQuantity }}</td>
+            <td>{{ data.totalLineInprocessQuantity }}</td>
+            <td>{{ data.totalLineDeliveredQuantity }}</td>
+            <td>{{ data.totalLineConsumedQuantity }}</td>
+            <td>
+              <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary"
+                [nzLoading]="mapOfAllocationInProcessId[data.id]" *ngIf="workOrderHasAnyAction(data)">
+                {{ 'action' | translate }} <i nz-icon nzType="down"></i></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu>
+                  <!--  allow the user to assign the production line only when
                    the work order is not start yet
                   -->
-                <li nz-menu-item *ngIf="data.status === 'PENDING'">
-                  <a  routerLink="/work-order/work-order/assign-production-line" routerLinkActive="active"
+                  <li nz-menu-item *ngIf="data.status === 'PENDING'">
+                    <a routerLink="/work-order/work-order/assign-production-line" routerLinkActive="active"
                       [queryParams]="{workOrderId : data.id}">{{ 'work-order.assign-production-line' | translate }}</a>
-                </li>
-                <li nz-menu-item *ngIf="isWorkOrderChangable(data)">
-                  <a (click)="changeWorkOrderLine(data)">{{ 'work-order.modify-line' | translate }}</a>
-                </li>
-                <li nz-menu-item *ngIf="isWorkOrderAllocatable(data)">
-                  <a (click)="allocateWorkOrder(data)">
-                    {{ 'allocate' | translate }}</a>
-                </li>
-                <li nz-menu-item *ngIf="isWorkOrderReadyForProduce(data)">
-                  <a (click)="produceFromWorkOrder(data)">{{ 'work-order.produce' | translate }}</a>
-                </li>
-                <li nz-menu-item *ngIf="isWorkOrderReadyForComplete(data)">
-                  <a (click)="completeWorkOrder(data)">{{ 'complete' | translate }}</a>
-                </li>
-              </ul>
-            </nz-dropdown-menu>
-            
-          </td>
+                  </li>
+                  <li nz-menu-item *ngIf="isWorkOrderChangable(data)">
+                    <a (click)="changeWorkOrderLine(data)">{{ 'work-order.modify-line' | translate }}</a>
+                  </li>
+                  <li nz-menu-item *ngIf="isWorkOrderAllocatable(data)">
+                    <a (click)="allocateWorkOrder(data)">
+                      {{ 'work-order.allocate-whole-work-order' | translate }}</a>
+                  </li>
+                  <li nz-menu-item *ngIf="isWorkOrderAllocatable(data)">
+                    <a
+                      (click)="openAllocateByProductionLineModal(data, tplAllocateByProductionLineModalTitle, tplAllocateByProductionLineModalContent )">
+                      {{ 'work-order.allocate-by-production-line' | translate }}</a>
+                  </li>
+                  <li nz-menu-item *ngIf="isWorkOrderReadyForProduce(data)">
+                    <a (click)="produceFromWorkOrder(data)">{{ 'work-order.produce' | translate }}</a>
+                  </li>
+                  <li nz-menu-item *ngIf="isWorkOrderReadyForComplete(data)">
+                    <a (click)="completeWorkOrder(data)">{{ 'complete' | translate }}</a>
+                  </li>
+                </ul>
+              </nz-dropdown-menu>
 
-        </tr>
-        <tr [nzExpand]="expandSet.has(data.id)" class="inner-table">
+            </td>
 
-           
+          </tr>
+          <tr [nzExpand]="expandSet.has(data.id)" class="inner-table">
+
+
             <nz-tabset>
-              <nz-tab nzTitle=" {{ 'work-order.line' | translate }}" 
-                  *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.delivered-inventory')"> 
+              <nz-tab nzTitle=" {{ 'work-order.line' | translate }}"
+                *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.delivered-inventory')">
                 <nz-table [nzData]="data.workOrderLines" nzSize="middle" [nzShowPagination]="false">
 
                   <thead>
@@ -166,425 +153,409 @@
                     <th>
                       {{ 'allocationStrategyType' | translate }}</th>
                   </thead>
-    <tbody>
-
-      <tr *ngFor="let workOrderLine of data.workOrderLines">
-        <td>{{ workOrderLine.number }}</td>
-        <td>{{ workOrderLine.item.name }}</td>
-        <td>{{ workOrderLine.item.description }}</td>
-        <td>{{ workOrderLine.expectedQuantity }}</td>
-        <td>{{ workOrderLine.openQuantity }}</td>
-        <td>{{ workOrderLine.inprocessQuantity }}</td>
-        <td>{{ workOrderLine.deliveredQuantity }}</td>
-        <td>{{ workOrderLine.consumedQuantity }}</td>
-        <td>{{ workOrderLine.scrappedQuantity }}</td>
-        <td>{{ workOrderLine.returnedQuantity }}</td>
-        <td>{{ 'INVENTORY-STATUS-' + workOrderLine.inventoryStatus.name | translate}}</td>
-        <td>{{ 'ALLOCATION-STRATEGY-TYPE-' + workOrderLine.allocationStrategyType | translate}}</td>
-      </tr>
-    </tbody>
-  </nz-table>
-  </nz-tab>
-
-  <nz-tab nzTitle=" {{ 'work-order.by-product' | translate }}"
-    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.by-product')">
-    <nz-table [nzData]="data.workOrderByProducts" nzSize="middle" [nzShowPagination]="false">
-
-      <thead>
-        <th>
-          {{ 'item' | translate }}</th>
-        <th>
-          {{ 'item.description' | translate }}</th>
-        <th>
-          {{ 'work-order.by-product.expectedQuantity' | translate }}</th>
-        <th>
-          {{ 'work-order.by-product.producedQuantity' | translate }}</th>
-        <th>
-          {{ 'inventory.status' | translate }}</th>
-      </thead>
       <tbody>
 
-        <tr *ngFor="let workOrderByProduct of data.workOrderByProducts">
-          <td>{{ workOrderByProduct.item?.name }}</td>
-          <td>{{ workOrderByProduct.item?.description }}</td>
-          <td>{{ workOrderByProduct.expectedQuantity }}</td>
-          <td>{{ workOrderByProduct.producedQuantity }}</td>
-          <td>{{ 'INVENTORY-STATUS-' + workOrderByProduct.inventoryStatus.name | translate}}</td>
+        <tr *ngFor="let workOrderLine of data.workOrderLines">
+          <td>{{ workOrderLine.number }}</td>
+          <td>{{ workOrderLine.item.name }}</td>
+          <td>{{ workOrderLine.item.description }}</td>
+          <td>{{ workOrderLine.expectedQuantity }}</td>
+          <td>{{ workOrderLine.openQuantity }}</td>
+          <td>{{ workOrderLine.inprocessQuantity }}</td>
+          <td>{{ workOrderLine.deliveredQuantity }}</td>
+          <td>{{ workOrderLine.consumedQuantity }}</td>
+          <td>{{ workOrderLine.scrappedQuantity }}</td>
+          <td>{{ workOrderLine.returnedQuantity }}</td>
+          <td>{{ 'INVENTORY-STATUS-' + workOrderLine.inventoryStatus.name | translate}}</td>
+          <td>{{ 'ALLOCATION-STRATEGY-TYPE-' + workOrderLine.allocationStrategyType | translate}}</td>
         </tr>
       </tbody>
     </nz-table>
-  </nz-tab>
+    </nz-tab>
 
-  <nz-tab nzTitle=" {{ 'production-line' | translate }}"
-  
-    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.production-line')"
-  >
-    <nz-table [nzData]="data.productionLineAssignments" nzSize="middle" [nzShowPagination]="false">
+    <nz-tab nzTitle=" {{ 'work-order.by-product' | translate }}"
+      *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.by-product')">
+      <nz-table [nzData]="data.workOrderByProducts" nzSize="middle" [nzShowPagination]="false">
 
-      <thead>
-        <th [nzAlign]="'center'">
-          {{ 'production-line' | translate }}</th>
-        <th [nzAlign]="'center'" >{{"mould" | translate}}</th> 
-        <th [nzAlign]="'center'">
-          {{ 'quantity' | translate }}</th>  
-          
-          <th  [nzAlign]="'center'">
+        <thead>
+          <th>
+            {{ 'item' | translate }}</th>
+          <th>
+            {{ 'item.description' | translate }}</th>
+          <th>
+            {{ 'work-order.by-product.expectedQuantity' | translate }}</th>
+          <th>
+            {{ 'work-order.by-product.producedQuantity' | translate }}</th>
+          <th>
+            {{ 'inventory.status' | translate }}</th>
+        </thead>
+        <tbody>
+
+          <tr *ngFor="let workOrderByProduct of data.workOrderByProducts">
+            <td>{{ workOrderByProduct.item?.name }}</td>
+            <td>{{ workOrderByProduct.item?.description }}</td>
+            <td>{{ workOrderByProduct.expectedQuantity }}</td>
+            <td>{{ workOrderByProduct.producedQuantity }}</td>
+            <td>{{ 'INVENTORY-STATUS-' + workOrderByProduct.inventoryStatus.name | translate}}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-tab>
+
+    <nz-tab nzTitle=" {{ 'production-line' | translate }}"
+      *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.production-line')">
+      <nz-table [nzData]="data.productionLineAssignments" nzSize="middle" [nzShowPagination]="false">
+
+        <thead>
+          <th [nzAlign]="'center'">
+            {{ 'production-line' | translate }}</th>
+          <th [nzAlign]="'center'">{{"mould" | translate}}</th>
+          <th [nzAlign]="'center'">
+            {{ 'production-line-assignment.assigned-quantity' | translate }}</th>
+          <th [nzAlign]="'center'">
+            {{ 'production-line-assignment.open-quantity' | translate }}</th>
+
+          <th [nzAlign]="'center'">
             {{ 'production-line.assignment.duration' | translate }}
           </th>
-          
-      </thead>
-      <tbody>
 
-        <tr *ngFor="let productionLineAssignment of data.productionLineAssignments">
-          <td [nzAlign]="'center'">{{ productionLineAssignment.productionLine?.name }}</td> 
-          <td [nzAlign]="'center'">{{ productionLineAssignment.mould?.name }}</td> 
-          <td [nzAlign]="'center'">{{ productionLineAssignment.quantity }}</td> 
-          <td [nzAlign]="'center'">{{ productionLineAssignment.startTime | date:'MM/dd/yyyy'}}
-            - {{ productionLineAssignment.endTime | date:'MM/dd/yyyy'}}
-          </td> 
-        </tr>
-      </tbody>
-    </nz-table>
-  </nz-tab>
+        </thead>
+        <tbody>
 
-
-  <nz-tab nzTitle=" {{ 'work-order.kpi' | translate }}"
-  
-    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.kpi')"
-  >
-    <nz-table [nzData]="mapOfKPIs[data.id]" nzSize="middle" [nzShowPagination]="false">
-
-      <thead>
-        <th>{{ 'username' | translate }}</th>
-        <th>{{ 'working-team' | translate }}</th>
-        <th>{{ 'working-team.member-count' | translate }}</th>
-        <th>{{ 'amount' | translate }}</th>
-        <th>{{ 'KPIMeasure' | translate }}</th>
-      </thead>
-      <tbody>
+          <tr *ngFor="let productionLineAssignment of data.productionLineAssignments">
+            <td [nzAlign]="'center'">{{ productionLineAssignment.productionLine?.name }}</td>
+            <td [nzAlign]="'center'">{{ productionLineAssignment.mould?.name }}</td>
+            <td [nzAlign]="'center'">{{ productionLineAssignment.quantity }}</td>
+            <td [nzAlign]="'center'">{{ productionLineAssignment.openQuantity }}</td>
+            <td [nzAlign]="'center'">{{ productionLineAssignment.startTime | date:'MM/dd/yyyy'}}
+              - {{ productionLineAssignment.endTime | date:'MM/dd/yyyy'}}
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-tab>
 
 
-        <tr *ngFor="let workOrderKPI of mapOfKPIs[data.id]">
-          <td>{{ workOrderKPI.username }}</td>
-          <td>{{ workOrderKPI.workingTeamName }}</td>
-          <td>{{ workOrderKPI.workingTeamMemberCount }}</td>
-          <td>{{ workOrderKPI.amount }}</td>
-          <td>{{  'KPI-MEASUREMENT-' + workOrderKPI.kpiMeasurement | translate }}</td>
-        </tr>
-      </tbody>
-    </nz-table>
-  </nz-tab>
+    <nz-tab nzTitle=" {{ 'work-order.kpi' | translate }}"
+      *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.kpi')">
+      <nz-table [nzData]="mapOfKPIs[data.id]" nzSize="middle" [nzShowPagination]="false">
 
-  <nz-tab nzTitle=" {{ 'work-order.kpi-transaction' | translate }}"
-    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.kpi-transaction')"
-  >
-    <nz-table [nzData]="mapOfKPITransactions[data.id]" nzSize="middle" [nzShowPagination]="false">
-
-      <thead>
-        <th>{{ 'username' | translate }}</th>
-        <th>{{ 'working-team' | translate }}</th>
-        <th>{{ 'amount' | translate }}</th>
-        <th>{{ 'KPIMeasure' | translate }}</th>
-        <th>{{ 'work-order.kpi-transaction.type' | translate }}</th>
-        <th>{{ 'insert-date' | translate }}</th>
-      </thead>
-      <tbody>
+        <thead>
+          <th>{{ 'username' | translate }}</th>
+          <th>{{ 'working-team' | translate }}</th>
+          <th>{{ 'working-team.member-count' | translate }}</th>
+          <th>{{ 'amount' | translate }}</th>
+          <th>{{ 'KPIMeasure' | translate }}</th>
+        </thead>
+        <tbody>
 
 
-        <tr *ngFor="let workOrderKPITransaction of mapOfKPITransactions[data.id]">
-          <td>{{ workOrderKPITransaction.username }}</td>
-          <td>{{ workOrderKPITransaction.workingTeamName }}</td>
-          <td>{{ workOrderKPITransaction.amount }}</td>
+          <tr *ngFor="let workOrderKPI of mapOfKPIs[data.id]">
+            <td>{{ workOrderKPI.username }}</td>
+            <td>{{ workOrderKPI.workingTeamName }}</td>
+            <td>{{ workOrderKPI.workingTeamMemberCount }}</td>
+            <td>{{ workOrderKPI.amount }}</td>
+            <td>{{ 'KPI-MEASUREMENT-' + workOrderKPI.kpiMeasurement | translate }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-tab>
 
-          <td>{{  'KPI-MEASUREMENT-' + workOrderKPITransaction.kpiMeasurement | translate }}</td>
-          <td>{{ 'WORK-ORDER-KPI-TRANSACTION-TYPE-' + workOrderKPITransaction.type | translate }}</td>
-          <td>
+    <nz-tab nzTitle=" {{ 'work-order.kpi-transaction' | translate }}"
+      *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.kpi-transaction')">
+      <nz-table [nzData]="mapOfKPITransactions[data.id]" nzSize="middle" [nzShowPagination]="false">
 
-            {{ workOrderKPITransaction.createdTime[1] }}/{{ workOrderKPITransaction.createdTime[2] }}/{{ workOrderKPITransaction.createdTime[0] }}
-            {{ workOrderKPITransaction.createdTime[3] }}:{{
+        <thead>
+          <th>{{ 'username' | translate }}</th>
+          <th>{{ 'working-team' | translate }}</th>
+          <th>{{ 'amount' | translate }}</th>
+          <th>{{ 'KPIMeasure' | translate }}</th>
+          <th>{{ 'work-order.kpi-transaction.type' | translate }}</th>
+          <th>{{ 'insert-date' | translate }}</th>
+        </thead>
+        <tbody>
+
+
+          <tr *ngFor="let workOrderKPITransaction of mapOfKPITransactions[data.id]">
+            <td>{{ workOrderKPITransaction.username }}</td>
+            <td>{{ workOrderKPITransaction.workingTeamName }}</td>
+            <td>{{ workOrderKPITransaction.amount }}</td>
+
+            <td>{{ 'KPI-MEASUREMENT-' + workOrderKPITransaction.kpiMeasurement | translate }}</td>
+            <td>{{ 'WORK-ORDER-KPI-TRANSACTION-TYPE-' + workOrderKPITransaction.type | translate }}</td>
+            <td>
+
+              {{ workOrderKPITransaction.createdTime[1] }}/{{ workOrderKPITransaction.createdTime[2] }}/{{
+              workOrderKPITransaction.createdTime[0] }}
+              {{ workOrderKPITransaction.createdTime[3] }}:{{
               workOrderKPITransaction.createdTime[4]
-            }}:{{ workOrderKPITransaction.createdTime[5] }}
+              }}:{{ workOrderKPITransaction.createdTime[5] }}
 
-          </td>
-        </tr>
-      </tbody>
-    </nz-table>
-  </nz-tab>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-tab>
 
-  <nz-tab nzTitle=" {{ 'work-order-instruction' | translate }}"
-  
-      *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order-instruction')"
-  >
-    <nz-table [nzData]="data.workOrderInstructions" nzSize="middle" [nzShowPagination]="false">
+    <nz-tab nzTitle=" {{ 'work-order-instruction' | translate }}"
+      *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order-instruction')">
+      <nz-table [nzData]="data.workOrderInstructions" nzSize="middle" [nzShowPagination]="false">
 
-      <thead>
-        <th>
-          id</th>
-        <th>
-          {{ 'work-order-instruction.sequence' | translate }}</th>
-        <th>
-          {{ 'work-order-instruction.instruction' | translate }}</th>
-      </thead>
-      <tbody>
+        <thead>
+          <th>
+            id</th>
+          <th>
+            {{ 'work-order-instruction.sequence' | translate }}</th>
+          <th>
+            {{ 'work-order-instruction.instruction' | translate }}</th>
+        </thead>
+        <tbody>
 
-        <tr *ngFor="let workOrderInstruction of data.workOrderInstructions">
-          <td>{{ workOrderInstruction.id }}</td>
-          <td>{{ workOrderInstruction.sequence }}</td>
-          <td>{{ workOrderInstruction.instruction }}</td>
-        </tr>
-      </tbody>
-    </nz-table>
-  </nz-tab>
-  <nz-tab nzTitle=" {{ 'work-order.assigned-users' | translate }}"
-  
-    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.assigned-users')"
-  >
-    <nz-table [nzData]="data.assignments" nzSize="middle" [nzShowPagination]="false">
+          <tr *ngFor="let workOrderInstruction of data.workOrderInstructions">
+            <td>{{ workOrderInstruction.id }}</td>
+            <td>{{ workOrderInstruction.sequence }}</td>
+            <td>{{ workOrderInstruction.instruction }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-tab>
+    <nz-tab nzTitle=" {{ 'work-order.assigned-users' | translate }}"
+      *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.assigned-users')">
+      <nz-table [nzData]="data.assignments" nzSize="middle" [nzShowPagination]="false">
 
-      <thead>
-        <th>
-          {{ 'user.username' | translate }}</th>
-        <th>
-          {{ 'firstname' | translate }}</th>
-        <th>
-          {{ 'lastname' | translate }}</th>
-      </thead>
-      <tbody>
+        <thead>
+          <th>
+            {{ 'user.username' | translate }}</th>
+          <th>
+            {{ 'firstname' | translate }}</th>
+          <th>
+            {{ 'lastname' | translate }}</th>
+        </thead>
+        <tbody>
 
-        <tr *ngFor="let assignment of data.assignments">
-          <td>{{ assignment.user?.username }}</td>
-          <td>{{ assignment.user?.firstname }}</td>
-          <td>{{ assignment.user?.lastname }}</td>
-        </tr>
-      </tbody>
-    </nz-table>
-  </nz-tab>
+          <tr *ngFor="let assignment of data.assignments">
+            <td>{{ assignment.user?.username }}</td>
+            <td>{{ assignment.user?.firstname }}</td>
+            <td>{{ assignment.user?.lastname }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-tab>
 
-  <nz-tab nzTitle=" {{ 'pick' | translate }}"
-  
-    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.pick')"
-  >
-    <nz-table [nzData]="data.workOrderLines" nzSize="middle" [nzShowPagination]="false" [nzFooter]="pickTableFoot">
+    <nz-tab nzTitle=" {{ 'pick' | translate }}"
+      *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.pick')">
+      <nz-table [nzData]="data.workOrderLines" nzSize="middle" [nzShowPagination]="false" [nzFooter]="pickTableFoot">
 
-      <thead>
-        <th>
-          {{ 'pick.number' | translate }}</th>
-        <th>
+        <thead>
+          <th>
+            {{ 'pick.number' | translate }}</th>
+          <th>
             {{ 'sourceLocationGroup' | translate }}</th>
-        <th>
-          {{ 'sourceLocation' | translate }}</th>
-        <th>
+          <th>
+            {{ 'sourceLocation' | translate }}</th>
+          <th>
             {{ 'destinationLocationGroup' | translate }}</th>
-        <th>
-          {{ 'destinationLocation' | translate }}</th>
-        <th>
-          {{ 'item' | translate }}</th>
-        <th>
-          {{ 'item.description' | translate }}</th>
-        <th>
-          {{ 'pick.quantity' | translate }}</th>
-        <th>
-          {{ 'pick.pickedQuantity' | translate }}</th>
-      </thead>
-      <tbody *ngFor="let workOrderLine of data.workOrderLines">
+          <th>
+            {{ 'destinationLocation' | translate }}</th>
+          <th>
+            {{ 'item' | translate }}</th>
+          <th>
+            {{ 'item.description' | translate }}</th>
+          <th>
+            {{ 'pick.quantity' | translate }}</th>
+          <th>
+            {{ 'pick.pickedQuantity' | translate }}</th>
+        </thead>
+        <tbody *ngFor="let workOrderLine of data.workOrderLines">
 
-        <tr *ngFor="let pick of workOrderLine.picks">
-          <td>{{ pick.number }}</td>
-          <td>{{ pick.sourceLocation?.locationGroup?.name }}</td>
-          <td>{{ pick.sourceLocation?.name }}</td>
-          <td>{{ pick.destinationLocation?.locationGroup?.name }}</td>
-          <td>{{ pick.destinationLocation?.name }}</td>
-          <td>{{ pick.item?.name }}</td>
-          <td>{{ pick.item?.description }}</td>
-          <td>{{ pick.quantity }}</td>
-          <td>{{ pick.pickedQuantity }}</td>
-        </tr>
-      </tbody>
-    </nz-table>
+          <tr *ngFor="let pick of workOrderLine.picks">
+            <td>{{ pick.number }}</td>
+            <td>{{ pick.sourceLocation?.locationGroup?.name }}</td>
+            <td>{{ pick.sourceLocation?.name }}</td>
+            <td>{{ pick.destinationLocation?.locationGroup?.name }}</td>
+            <td>{{ pick.destinationLocation?.name }}</td>
+            <td>{{ pick.item?.name }}</td>
+            <td>{{ pick.item?.description }}</td>
+            <td>{{ pick.quantity }}</td>
+            <td>{{ pick.pickedQuantity }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
 
-    <ng-template #pickTableFoot>
-      <div nz-row nzType="flex" nzJustify="start">
-        
-        <cwms-common-print-button 
-          [printingInProcess]="mapOfPrintingInProcessId[data.id]" 
-          (print)="printPickSheets(data, $event)"
-          (preview)="previewReport(data)"> 
-        </cwms-common-print-button> 
-        
-        <button nz-button (click)="confirmPicks(data)" [disabled]="!isWorkOrderPickable(data)">
-          {{ 'confirm' | translate }}
-        </button>
-      </div>
-    </ng-template>
-  </nz-tab>
+      <ng-template #pickTableFoot>
+        <div nz-row nzType="flex" nzJustify="start">
+
+          <cwms-common-print-button [printingInProcess]="mapOfPrintingInProcessId[data.id]"
+            (print)="printPickSheets(data, $event)" (preview)="previewReport(data)">
+          </cwms-common-print-button>
+
+          <button nz-button (click)="confirmPicks(data)" [disabled]="!isWorkOrderPickable(data)">
+            {{ 'confirm' | translate }}
+          </button>
+        </div>
+      </ng-template>
+    </nz-tab>
 
 
-  <nz-tab nzTitle=" {{ 'short-allocation' | translate }}"
-  
-    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.short-allocation')"
-  >
-    <nz-table [nzData]="data.workOrderLines" nzSize="middle" [nzShowPagination]="false">
+    <nz-tab nzTitle=" {{ 'short-allocation' | translate }}"
+      *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.short-allocation')">
+      <nz-table [nzData]="data.workOrderLines" nzSize="middle" [nzShowPagination]="false">
 
-      <thead>
-        <th>
-          {{ 'item' | translate }}</th>
-        <th>
-          {{ 'item.description' | translate }}</th>
-        <th>
-          {{ 'pick.quantity' | translate }}</th>
-      </thead>
-      <tbody *ngFor="let workOrderLine of data.workOrderLines">
+        <thead>
+          <th>
+            {{ 'item' | translate }}</th>
+          <th>
+            {{ 'item.description' | translate }}</th>
+          <th>
+            {{ 'pick.quantity' | translate }}</th>
+        </thead>
+        <tbody *ngFor="let workOrderLine of data.workOrderLines">
 
-        <tr *ngFor="let shortAllocation of workOrderLine.shortAllocations">
-          <td>{{ shortAllocation.item?.name }}</td>
-          <td>{{ shortAllocation.item?.description }}</td>
-          <td>{{ shortAllocation.quantity }}</td>
-        </tr>
-      </tbody>
-    </nz-table>
-  </nz-tab>
+          <tr *ngFor="let shortAllocation of workOrderLine.shortAllocations">
+            <td>{{ shortAllocation.item?.name }}</td>
+            <td>{{ shortAllocation.item?.description }}</td>
+            <td>{{ shortAllocation.quantity }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-tab>
 
-  <nz-tab nzTitle=" {{ 'work-order.delivered-inventory' | translate }}"
-  
-    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.delivered-inventory')"
-  >
+    <nz-tab nzTitle=" {{ 'work-order.delivered-inventory' | translate }}"
+      *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.delivered-inventory')">
 
-    <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfDeliveredInventory[data.id]">
-      <thead>
-        <th>
-          {{ 'location' | translate }}
-        </th>
-        <th>
-          {{ 'lpn' | translate }}
-        </th>
-        <th>
-          {{ 'item' | translate }}
-        </th>
-        <th>
-          {{ 'item.description' | translate }}
-        </th>
-        <th>
-          {{ 'item.package-type' | translate }}
-        </th>
-        <th>
-          {{ 'quantity' | translate }}
-        </th>
-        <th>
-          {{ 'inventory.status' | translate }}
-        </th>
-        <th>
-          {{ 'action' | translate }}
-        </th>
-      </thead>
-      <tbody>
-        <tr *ngFor="let inventory of mapOfDeliveredInventory[data.id]">
-          <td>{{ inventory.location?.name }}</td>
-          <td>{{ inventory.lpn }}</td>
-          <td>{{ inventory.item?.name }}</td>
-          <td>{{ inventory.item?.description }}</td>
-          <td>{{ inventory.itemPackageType?.name }}</td>
-          <td>{{ inventory.quantity }}</td>
-          <td>{{ 'INVENTORY-STATUS-' + inventory.inventoryStatus?.name | translate}}</td>
-          <td>
-            <button nz-button [disabled]="!isInventoryUnpickable(data, inventory)"
-              (click)="openUnpickModal(data, inventory, tplUnpickModalTitle, tplUnpickModalContent)">
-              {{ 'unpick' | translate }}
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </nz-table>
-  </nz-tab>
+      <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfDeliveredInventory[data.id]">
+        <thead>
+          <th>
+            {{ 'location' | translate }}
+          </th>
+          <th>
+            {{ 'lpn' | translate }}
+          </th>
+          <th>
+            {{ 'item' | translate }}
+          </th>
+          <th>
+            {{ 'item.description' | translate }}
+          </th>
+          <th>
+            {{ 'item.package-type' | translate }}
+          </th>
+          <th>
+            {{ 'quantity' | translate }}
+          </th>
+          <th>
+            {{ 'inventory.status' | translate }}
+          </th>
+          <th>
+            {{ 'action' | translate }}
+          </th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let inventory of mapOfDeliveredInventory[data.id]">
+            <td>{{ inventory.location?.name }}</td>
+            <td>{{ inventory.lpn }}</td>
+            <td>{{ inventory.item?.name }}</td>
+            <td>{{ inventory.item?.description }}</td>
+            <td>{{ inventory.itemPackageType?.name }}</td>
+            <td>{{ inventory.quantity }}</td>
+            <td>{{ 'INVENTORY-STATUS-' + inventory.inventoryStatus?.name | translate}}</td>
+            <td>
+              <button nz-button [disabled]="!isInventoryUnpickable(data, inventory)"
+                (click)="openUnpickModal(data, inventory, tplUnpickModalTitle, tplUnpickModalContent)">
+                {{ 'unpick' | translate }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-tab>
 
-  <nz-tab nzTitle=" {{ 'work-order.produced-inventory' | translate }}"
-  
-    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.produced-inventory')"
-  >
+    <nz-tab nzTitle=" {{ 'work-order.produced-inventory' | translate }}"
+      *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.produced-inventory')">
 
-    <nz-table nzSize="middle" [nzShowPagination]="false" 
-      [nzData]="mapOfProducedInventory[data.id]" [nzFooter]="receivedInventoryTableFoot">
-      <thead>
+      <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfProducedInventory[data.id]"
+        [nzFooter]="receivedInventoryTableFoot">
+        <thead>
 
-        <th>
-          {{ 'location' | translate }}
-        </th>
-        <th>
-          {{ 'lpn' | translate }}
-        </th>
-        <th>
-          {{ 'item' | translate }}
-        </th>
-        <th>
-          {{ 'item.description' | translate }}
-        </th>
-        <th>
-          {{ 'item.package-type' | translate }}
-        </th>
-        <th>
-          {{ 'quantity' | translate }}
-        </th>
-        <th>
-          {{ 'inventory.status' | translate }}
-        </th>
-        <th>
-          {{'nextLocation' | translate}}</th>
-        <th>
-          {{ 'action' | translate }}
-        </th>
-      </thead>
-      <tbody>
-        <tr *ngFor="let inventory of mapOfProducedInventory[data.id]">
-          <td>{{ inventory.location?.name }}</td>
-          <td>{{ inventory.lpn }}</td>
-          <td>{{ inventory.item?.name }}</td>
-          <td>{{ inventory.item?.description }}</td>
-          <td>{{ inventory.itemPackageType?.name }}</td>
-          <td>{{ inventory.quantity }}</td>
-          <td>{{ 'INVENTORY-STATUS-' + inventory.inventoryStatus?.name | translate}}</td>
+          <th>
+            {{ 'location' | translate }}
+          </th>
+          <th>
+            {{ 'lpn' | translate }}
+          </th>
+          <th>
+            {{ 'item' | translate }}
+          </th>
+          <th>
+            {{ 'item.description' | translate }}
+          </th>
+          <th>
+            {{ 'item.package-type' | translate }}
+          </th>
+          <th>
+            {{ 'quantity' | translate }}
+          </th>
+          <th>
+            {{ 'inventory.status' | translate }}
+          </th>
+          <th>
+            {{'nextLocation' | translate}}</th>
+          <th>
+            {{ 'action' | translate }}
+          </th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let inventory of mapOfProducedInventory[data.id]">
+            <td>{{ inventory.location?.name }}</td>
+            <td>{{ inventory.lpn }}</td>
+            <td>{{ inventory.item?.name }}</td>
+            <td>{{ inventory.item?.description }}</td>
+            <td>{{ inventory.itemPackageType?.name }}</td>
+            <td>{{ inventory.quantity }}</td>
+            <td>{{ 'INVENTORY-STATUS-' + inventory.inventoryStatus?.name | translate}}</td>
 
-          <td>
-            <p *ngFor="let inventoryMovement of inventory.inventoryMovements; let i = index">
-              {{ i+1 }} - {{ inventoryMovement.location?.name}}
-            </p>
-          </td>
-          <td>
+            <td>
+              <p *ngFor="let inventoryMovement of inventory.inventoryMovements; let i = index">
+                {{ i+1 }} - {{ inventoryMovement.location?.name}}
+              </p>
+            </td>
+            <td>
 
-            
-            <button nz-button nz-dropdown [nzDropdownMenu]="receivedInventoryActionTpl">
-              {{ 'action' | translate }}<i nz-icon nzType="down"></i>
-            </button>
 
-            <nz-dropdown-menu #receivedInventoryActionTpl="nzDropdownMenu">
-              <ul nz-menu>
-                <li nz-menu-item
-                  *ngIf="inventoryReadyForPutaway(data, inventory) && inventory.inventoryMovements?.length === 0">
-                  <a (click)="allocateLocation(data, inventory)">{{ 'allocateLocation' | translate }}</a>
-                </li>
-                
-                <li nz-menu-item
-                  *ngIf="inventory.location.name === data.productionLine?.outboundStageLocation?.name">
-                  <a (click)="reallocateLocation(data, inventory)">{{ 'reallocateLocation' | translate }}</a>
-                </li>
-                <li nz-menu-item *ngIf="inventory.inventoryMovements?.length === 1">
-                  <a (click)="confirmPutaway(data, 0, inventory)">{{ 'putaway' | translate }}</a>
-                </li>
-                <li nz-submenu nzTitle="{{ 'putaway' | translate }}" *ngIf="inventory.inventoryMovements?.length > 1">
-                  <ul>
-                    <li nz-menu-item *ngFor="let inventoryMovement of inventory.inventoryMovements; let i=index">
-                      <a (click)="confirmPutaway(data, i, inventory)">
-                        {{ i+1 }} - {{ inventoryMovement.location?.name}}</a>
-                    </li>
-                  </ul>
-                </li>
+              <button nz-button nz-dropdown [nzDropdownMenu]="receivedInventoryActionTpl">
+                {{ 'action' | translate }}<i nz-icon nzType="down"></i>
+              </button>
 
-                <li nz-menu-item
-                  *ngIf="inventoryReadyForPutaway(data, inventory)">
-                  <a
-                    (click)="openManualPutawayModal(data, inventory, tplManualPutawayModalTitle, tplManualPutawayModalContent)">{{ 'putaway.manual' | translate }}</a>
-                </li>
-              </ul>
-            </nz-dropdown-menu>
-<!--
+              <nz-dropdown-menu #receivedInventoryActionTpl="nzDropdownMenu">
+                <ul nz-menu>
+                  <li nz-menu-item
+                    *ngIf="inventoryReadyForPutaway(data, inventory) && inventory.inventoryMovements?.length === 0">
+                    <a (click)="allocateLocation(data, inventory)">{{ 'allocateLocation' | translate }}</a>
+                  </li>
+
+                  <li nz-menu-item *ngIf="inventory.location.name === data.productionLine?.outboundStageLocation?.name">
+                    <a (click)="reallocateLocation(data, inventory)">{{ 'reallocateLocation' | translate }}</a>
+                  </li>
+                  <li nz-menu-item *ngIf="inventory.inventoryMovements?.length === 1">
+                    <a (click)="confirmPutaway(data, 0, inventory)">{{ 'putaway' | translate }}</a>
+                  </li>
+                  <li nz-submenu nzTitle="{{ 'putaway' | translate }}" *ngIf="inventory.inventoryMovements?.length > 1">
+                    <ul>
+                      <li nz-menu-item *ngFor="let inventoryMovement of inventory.inventoryMovements; let i=index">
+                        <a (click)="confirmPutaway(data, i, inventory)">
+                          {{ i+1 }} - {{ inventoryMovement.location?.name}}</a>
+                      </li>
+                    </ul>
+                  </li>
+
+                  <li nz-menu-item *ngIf="inventoryReadyForPutaway(data, inventory)">
+                    <a
+                      (click)="openManualPutawayModal(data, inventory, tplManualPutawayModalTitle, tplManualPutawayModalContent)">{{
+                      'putaway.manual' | translate }}</a>
+                  </li>
+                </ul>
+              </nz-dropdown-menu>
+              <!--
 
 
             <button nz-button nzType="primary"
@@ -625,22 +596,22 @@
 -->
 
 
-          </td>
-        </tr>
-      </tbody>
-    </nz-table>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
 
-    
-    <ng-template #receivedInventoryTableFoot>
-      
-      <div nz-row nzType="flex" nzJustify="start">
-        <button nz-button nzType="primary" (click)="printAllPutawayWork(mapOfProducedInventory[data.id])"
-          [nzLoading]="mapOfPrintingInProcessId[data.id]">
-          {{ 'print' | translate }}
-        </button> 
-      </div>
 
-            <!--
+      <ng-template #receivedInventoryTableFoot>
+
+        <div nz-row nzType="flex" nzJustify="start">
+          <button nz-button nzType="primary" (click)="printAllPutawayWork(mapOfProducedInventory[data.id])"
+            [nzLoading]="mapOfPrintingInProcessId[data.id]">
+            {{ 'print' | translate }}
+          </button>
+        </div>
+
+        <!--
       <div nz-row nzType="flex" nzJustify="left" style='padding-left: 10px;'>
       
         <button nz-button nz-dropdown [nzDropdownMenu]="printSelectionTpl" [nzLoading]="printingInProcess">
@@ -661,200 +632,198 @@
       </div>
 
             -->
+      </ng-template>
+    </nz-tab>
+
+    <nz-tab nzTitle=" {{ 'work-order.by-product.produced' | translate }}"
+      *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.by-product.produced')">
+
+
+      <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfProducedByProduct[data.id]">
+        <thead>
+
+          <th>
+            {{ 'location' | translate }}
+          </th>
+          <th>
+            {{ 'lpn' | translate }}
+          </th>
+          <th>
+            {{ 'item' | translate }}
+          </th>
+          <th>
+            {{ 'item.description' | translate }}
+          </th>
+          <th>
+            {{ 'item.package-type' | translate }}
+          </th>
+          <th>
+            {{ 'quantity' | translate }}
+          </th>
+          <th>
+            {{ 'inventory.status' | translate }}
+          </th>
+          <th>
+            {{'nextLocation' | translate}}</th>
+          <th>
+            {{ 'action' | translate }}
+          </th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let inventory of mapOfProducedByProduct[data.id]">
+            <td>{{ inventory.location?.name }}</td>
+            <td>{{ inventory.lpn }}</td>
+            <td>{{ inventory.item?.name }}</td>
+            <td>{{ inventory.item?.description }}</td>
+            <td>{{ inventory.itemPackageType?.name }}</td>
+            <td>{{ inventory.quantity }}</td>
+            <td>{{ 'INVENTORY-STATUS-' + inventory.inventoryStatus?.name | translate}}</td>
+
+            <td>
+              <p *ngFor="let inventoryMovement of inventory.inventoryMovements; let i = index">
+                {{ i+1 }} - {{ inventoryMovement.location?.name}}
+              </p>
+            </td>
+            <td>
+
+              <button nz-button nzType="primary"
+                *ngIf="inventoryReadyForPutaway(data, inventory) && inventory.inventoryMovements?.length === 0"
+                (click)="allocateLocation(data, inventory)">{{ 'allocateLocation' | translate }}</button>
+
+
+              <div *ngIf="inventory.inventoryMovements?.length > 0">
+                <button nz-button nzType="primary"
+                  *ngIf="inventory.location.name === data.productionLine?.outboundStageLocation?.name"
+                  (click)="reallocateLocation(data, inventory)">{{ 'reallocateLocation' | translate }}</button>
+                <nz-divider nzType="vertical"
+                  *ngIf="inventory.location.name === data.productionLine?.outboundStageLocation?.name"></nz-divider>
+                <button nz-button nzType="primary" *ngIf="inventory.inventoryMovements?.length === 1"
+                  (click)="confirmPutaway(data, 0, inventory)">{{ 'putaway' | translate }}</button>
+
+                <button nz-button nz-dropdown [nzDropdownMenu]="putawayDestinationTpl"
+                  *ngIf="inventory.inventoryMovements?.length > 1">
+                  {{ 'putaway' | translate }}<i nz-icon nzType="down"></i></button>
+                <nz-dropdown-menu #putawayDestinationTpl="nzDropdownMenu">
+                  <ul nz-menu>
+                    <li nz-menu-item *ngFor="let inventoryMovement of inventory.inventoryMovements; let i=index">
+                      <a (click)="confirmPutaway(data, i, inventory)">
+                        {{ i+1 }} - {{ inventoryMovement.location?.name}}</a>
+                    </li>
+                  </ul>
+                </nz-dropdown-menu>
+
+
+              </div>
+
+
+              <button nz-button nzType="primary"
+                *ngIf="inventory.location.name === data.productionLine?.outboundStageLocation?.name"
+                (click)="openManualPutawayModal(data, inventory, tplManualPutawayModalTitle, tplManualPutawayModalContent)">
+                {{ 'putaway.manual' | translate }}</button>
+
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-tab>
+
+    <nz-tab nzTitle=" {{ 'work-order.returned-inventory' | translate }}"
+      *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.returned-inventory')">
+      >
+
+      <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfReturnedInventory[data.id]">
+        <thead>
+
+          <th>
+            {{ 'location' | translate }}
+          </th>
+          <th>
+            {{ 'lpn' | translate }}
+          </th>
+          <th>
+            {{ 'item' | translate }}
+          </th>
+          <th>
+            {{ 'item.description' | translate }}
+          </th>
+          <th>
+            {{ 'item.package-type' | translate }}
+          </th>
+          <th>
+            {{ 'quantity' | translate }}
+          </th>
+          <th>
+            {{ 'inventory.status' | translate }}
+          </th>
+          <th>
+            {{'nextLocation' | translate}}</th>
+          <th>
+            {{ 'action' | translate }}
+          </th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let inventory of mapOfReturnedInventory[data.id]">
+            <td>{{ inventory.location?.name }}</td>
+            <td>{{ inventory.lpn }}</td>
+            <td>{{ inventory.item?.name }}</td>
+            <td>{{ inventory.item?.description }}</td>
+            <td>{{ inventory.itemPackageType?.name }}</td>
+            <td>{{ inventory.quantity }}</td>
+            <td>{{ 'INVENTORY-STATUS-' + inventory.inventoryStatus?.name | translate}}</td>
+            <td>
+              <p *ngFor="let inventoryMovement of inventory.inventoryMovements; let i = index">
+                {{ i+1 }} - {{ inventoryMovement.location?.name}}
+              </p>
+            </td>
+            <td>
+
+              <button nz-button nzType="primary"
+                *ngIf="inventoryReadyForPutaway(data, inventory) && inventory.inventoryMovements?.length === 0"
+                (click)="allocateLocation(data, inventory)">{{ 'allocateLocation' | translate }}</button>
+
+
+              <div *ngIf="inventory.inventoryMovements?.length > 0">
+                <button nz-button nzType="primary"
+                  *ngIf="inventory.location.name === data.productionLine?.outboundStageLocation?.name"
+                  (click)="reallocateLocation(data, inventory)">{{ 'reallocateLocation' | translate }}</button>
+                <nz-divider nzType="vertical"
+                  *ngIf="inventory.location.name === data.productionLine?.outboundStageLocation?.name"></nz-divider>
+                <button nz-button nzType="primary" *ngIf="inventory.inventoryMovements?.length === 1"
+                  (click)="confirmPutaway(data, 0, inventory)">{{ 'putaway' | translate }}</button>
+
+                <button nz-button nz-dropdown [nzDropdownMenu]="putawayDestinationTpl"
+                  *ngIf="inventory.inventoryMovements?.length > 1">
+                  {{ 'putaway' | translate }}<i nz-icon nzType="down"></i></button>
+                <nz-dropdown-menu #putawayDestinationTpl="nzDropdownMenu">
+                  <ul nz-menu>
+                    <li nz-menu-item *ngFor="let inventoryMovement of inventory.inventoryMovements; let i=index">
+                      <a (click)="confirmPutaway(data, i, inventory)">
+                        {{ i+1 }} - {{ inventoryMovement.location?.name}}</a>
+                    </li>
+                  </ul>
+                </nz-dropdown-menu>
+
+
+              </div>
+
+
+              <button nz-button nzType="primary"
+                *ngIf="inventory.location.name === data.productionLine?.outboundStageLocation?.name"
+                (click)="openManualPutawayModal(data, inventory, tplManualPutawayModalTitle, tplManualPutawayModalContent)">
+                {{ 'putaway.manual' | translate }}</button>
+
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-tab>
+    </nz-tabset>
+
+    </tr>
     </ng-template>
-  </nz-tab>
-
-  <nz-tab nzTitle=" {{ 'work-order.by-product.produced' | translate }}"
-  
-    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.by-product.produced')">
-
-
-    <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfProducedByProduct[data.id]">
-      <thead>
-
-        <th>
-          {{ 'location' | translate }}
-        </th>
-        <th>
-          {{ 'lpn' | translate }}
-        </th>
-        <th>
-          {{ 'item' | translate }}
-        </th>
-        <th>
-          {{ 'item.description' | translate }}
-        </th>
-        <th>
-          {{ 'item.package-type' | translate }}
-        </th>
-        <th>
-          {{ 'quantity' | translate }}
-        </th>
-        <th>
-          {{ 'inventory.status' | translate }}
-        </th>
-        <th>
-          {{'nextLocation' | translate}}</th>
-        <th>
-          {{ 'action' | translate }}
-        </th>
-      </thead>
-      <tbody>
-        <tr *ngFor="let inventory of mapOfProducedByProduct[data.id]">
-          <td>{{ inventory.location?.name }}</td>
-          <td>{{ inventory.lpn }}</td>
-          <td>{{ inventory.item?.name }}</td>
-          <td>{{ inventory.item?.description }}</td>
-          <td>{{ inventory.itemPackageType?.name }}</td>
-          <td>{{ inventory.quantity }}</td>
-          <td>{{ 'INVENTORY-STATUS-' + inventory.inventoryStatus?.name | translate}}</td>
-
-          <td>
-            <p *ngFor="let inventoryMovement of inventory.inventoryMovements; let i = index">
-              {{ i+1 }} - {{ inventoryMovement.location?.name}}
-            </p>
-          </td>
-          <td>
-
-            <button nz-button nzType="primary"
-              *ngIf="inventoryReadyForPutaway(data, inventory) && inventory.inventoryMovements?.length === 0"
-              (click)="allocateLocation(data, inventory)">{{ 'allocateLocation' | translate }}</button>
-
-
-            <div *ngIf="inventory.inventoryMovements?.length > 0">
-              <button nz-button nzType="primary"
-                *ngIf="inventory.location.name === data.productionLine?.outboundStageLocation?.name"
-                (click)="reallocateLocation(data, inventory)">{{ 'reallocateLocation' | translate }}</button>
-              <nz-divider nzType="vertical"
-                *ngIf="inventory.location.name === data.productionLine?.outboundStageLocation?.name"></nz-divider>
-              <button nz-button nzType="primary" *ngIf="inventory.inventoryMovements?.length === 1"
-                (click)="confirmPutaway(data, 0, inventory)">{{ 'putaway' | translate }}</button>
-
-              <button nz-button nz-dropdown [nzDropdownMenu]="putawayDestinationTpl"
-                *ngIf="inventory.inventoryMovements?.length > 1">
-                {{ 'putaway' | translate }}<i nz-icon nzType="down"></i></button>
-              <nz-dropdown-menu #putawayDestinationTpl="nzDropdownMenu">
-                <ul nz-menu>
-                  <li nz-menu-item *ngFor="let inventoryMovement of inventory.inventoryMovements; let i=index">
-                    <a (click)="confirmPutaway(data, i, inventory)">
-                      {{ i+1 }} - {{ inventoryMovement.location?.name}}</a>
-                  </li>
-                </ul>
-              </nz-dropdown-menu>
-
-
-            </div>
-
-
-            <button nz-button nzType="primary"
-              *ngIf="inventory.location.name === data.productionLine?.outboundStageLocation?.name"
-              (click)="openManualPutawayModal(data, inventory, tplManualPutawayModalTitle, tplManualPutawayModalContent)">
-              {{ 'putaway.manual' | translate }}</button>
-
-          </td>
-        </tr>
-      </tbody>
+    </tbody>
     </nz-table>
-  </nz-tab>
-
-  <nz-tab nzTitle=" {{ 'work-order.returned-inventory' | translate }}"
-  
-    *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.returned-inventory')">
-  >
-
-    <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfReturnedInventory[data.id]">
-      <thead>
-
-        <th>
-          {{ 'location' | translate }}
-        </th>
-        <th>
-          {{ 'lpn' | translate }}
-        </th>
-        <th>
-          {{ 'item' | translate }}
-        </th>
-        <th>
-          {{ 'item.description' | translate }}
-        </th>
-        <th>
-          {{ 'item.package-type' | translate }}
-        </th>
-        <th>
-          {{ 'quantity' | translate }}
-        </th>
-        <th>
-          {{ 'inventory.status' | translate }}
-        </th>
-        <th>
-          {{'nextLocation' | translate}}</th>
-        <th>
-          {{ 'action' | translate }}
-        </th>
-      </thead>
-      <tbody>
-        <tr *ngFor="let inventory of mapOfReturnedInventory[data.id]">
-          <td>{{ inventory.location?.name }}</td>
-          <td>{{ inventory.lpn }}</td>
-          <td>{{ inventory.item?.name }}</td>
-          <td>{{ inventory.item?.description }}</td>
-          <td>{{ inventory.itemPackageType?.name }}</td>
-          <td>{{ inventory.quantity }}</td>
-          <td>{{ 'INVENTORY-STATUS-' + inventory.inventoryStatus?.name | translate}}</td>
-          <td>
-            <p *ngFor="let inventoryMovement of inventory.inventoryMovements; let i = index">
-              {{ i+1 }} - {{ inventoryMovement.location?.name}}
-            </p>
-          </td>
-          <td>
-
-            <button nz-button nzType="primary"
-              *ngIf="inventoryReadyForPutaway(data, inventory) && inventory.inventoryMovements?.length === 0"
-              (click)="allocateLocation(data, inventory)">{{ 'allocateLocation' | translate }}</button>
-
-
-            <div *ngIf="inventory.inventoryMovements?.length > 0">
-              <button nz-button nzType="primary"
-                *ngIf="inventory.location.name === data.productionLine?.outboundStageLocation?.name"
-                (click)="reallocateLocation(data, inventory)">{{ 'reallocateLocation' | translate }}</button>
-              <nz-divider nzType="vertical"
-                *ngIf="inventory.location.name === data.productionLine?.outboundStageLocation?.name"></nz-divider>
-              <button nz-button nzType="primary" *ngIf="inventory.inventoryMovements?.length === 1"
-                (click)="confirmPutaway(data, 0, inventory)">{{ 'putaway' | translate }}</button>
-
-              <button nz-button nz-dropdown [nzDropdownMenu]="putawayDestinationTpl"
-                *ngIf="inventory.inventoryMovements?.length > 1">
-                {{ 'putaway' | translate }}<i nz-icon nzType="down"></i></button>
-              <nz-dropdown-menu #putawayDestinationTpl="nzDropdownMenu">
-                <ul nz-menu>
-                  <li nz-menu-item *ngFor="let inventoryMovement of inventory.inventoryMovements; let i=index">
-                    <a (click)="confirmPutaway(data, i, inventory)">
-                      {{ i+1 }} - {{ inventoryMovement.location?.name}}</a>
-                  </li>
-                </ul>
-              </nz-dropdown-menu>
-
-
-            </div>
-
-
-            <button nz-button nzType="primary"
-              *ngIf="inventory.location.name === data.productionLine?.outboundStageLocation?.name"
-              (click)="openManualPutawayModal(data, inventory, tplManualPutawayModalTitle, tplManualPutawayModalContent)">
-              {{ 'putaway.manual' | translate }}</button>
-
-          </td>
-        </tr>
-      </tbody>
-    </nz-table>
-  </nz-tab>
-  </nz-tabset>
-  
-  </tr>
-  </ng-template>
-  </tbody>
-  </nz-table>
-</div>
+  </div>
 
 </nz-spin>
 
@@ -1167,4 +1136,35 @@
     </nz-table>
   </div>
 
+</ng-template>
+
+
+<!-- Modal for allocate work order by production line and quantity -->
+<ng-template #tplAllocateByProductionLineModalTitle>
+  <span>{{ 'work-order.allocate-by-production-line' | translate}}</span>
+</ng-template>
+<ng-template #tplAllocateByProductionLineModalContent>
+  <nz-table #productionLineAllocationRequestTable [nzData]="productionLineAllocationRequests" nzSize="middle"
+    [nzShowPagination]="false" nzBordered>
+    <thead>
+      <tr>
+        <th>{{ 'production-line.name' | translate}}</th>
+
+        <th>
+          {{ 'production-line-assignment.assigned-quantity' | translate }}</th>
+        <th>
+          {{ 'production-line-assignment.open-quantity' | translate }}</th>
+        <th>
+          {{ 'production-line-assignment.allocating-quantity' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let productionLineAllocationRequest of productionLineAllocationRequestTable.data">
+        <td>{{ productionLineAllocationRequest.productionLineName}}</td>
+        <td>{{ productionLineAllocationRequest.totalQuantity }}</td>
+        <td>{{ productionLineAllocationRequest.openQuantity }}</td>
+        <td><input nz-input nzSize="default" [(ngModel)]="productionLineAllocationRequest.allocateingQuantity" /></td>
+      </tr>
+    </tbody>
+  </nz-table>
 </ng-template>

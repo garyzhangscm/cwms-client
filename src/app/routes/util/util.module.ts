@@ -6,12 +6,14 @@ import { UtilIconListComponent } from './icon-list/icon-list.component';
 import { UtilTestDataInitComponent } from './test-data-init/test-data-init.component';
 import { UtilTesterComponent } from './tester/tester.component';
 import { UtilRoutingModule } from './util-routing.module';
+import { UtilSystemConfigurationComponent } from './system-configuration/system-configuration.component';
 
 const COMPONENTS: Type<void>[] = [
   UtilFileUploadComponent,  
   UtilTestDataInitComponent,
   UtilIconListComponent,
-  UtilTesterComponent];
+  UtilTesterComponent,
+  UtilSystemConfigurationComponent];
 
   
 

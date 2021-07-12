@@ -15,7 +15,7 @@ import { WorkOrder } from '../models/work-order';
 import { MouldService } from '../services/mould.service';
 import { ProductionLineService } from '../services/production-line.service';
 import { WorkOrderService } from '../services/work-order.service';
- 
+
 
 @Component({
   selector: 'app-work-order-assign-production-line',
@@ -28,39 +28,39 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
   currentProductionLineAssignments: ProductionLineAssignment[] = [];
   availableProductionLines: ProductionLine[] = [];
   availableMoulds: Mould[] = [];
-  
+
   unassignedProductionLineText: string;
   assignedProductionLineText: string;
 
-  workOrder!: WorkOrder; 
+  workOrder!: WorkOrder;
   stepIndex = 0;
 
   date = null;
 
   constructor(
     private fb: FormBuilder,
-    private i18n: I18NService, 
+    private i18n: I18NService,
     private workOrderService: WorkOrderService,
     private warehouseService: WarehouseService,
     private messageService: NzMessageService,
     private productionLineService: ProductionLineService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private titleService: TitleService, 
-    private mouldService: MouldService, 
+    private titleService: TitleService,
+    private mouldService: MouldService,
     private modal: NzModalService
-    ) { 
-      this.pageTitle = this.i18n.fanyi('menu.main.work-order.assign-production-line');
-      this.unassignedProductionLineText = this.i18n.fanyi('production-line.unassigned');
-      this.assignedProductionLineText = this.i18n.fanyi('production-line.assigned');
-    }
+  ) {
+    this.pageTitle = this.i18n.fanyi('menu.main.work-order.assign-production-line');
+    this.unassignedProductionLineText = this.i18n.fanyi('production-line.unassigned');
+    this.assignedProductionLineText = this.i18n.fanyi('production-line.assigned');
+  }
 
-  ngOnInit(): void { 
+  ngOnInit(): void {
 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.work-order.assign-production-line'));
-    
 
-    
+
+
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.workOrderId) {
@@ -73,12 +73,12 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
       }
     });
 
-    
+
     // Load all moulds
     this.mouldService.getMoulds().subscribe(mouldsRes =>
       this.availableMoulds = mouldsRes);
   }
-  
+
   initProductionLineAssignment(): void {
     // display the lines that already assigned to the current work order
     this.workOrder.productionLineAssignments?.forEach(
@@ -88,64 +88,65 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
           title: productionLineAssignment.productionLine.name,
           description: productionLineAssignment.productionLine.name,
           direction: 'right'
-        
+
         }];
       }
     )
-    
+
     this.productionLineService.getAvailableProductionLines(this.workOrder.itemId).subscribe(productionLines => {
-      this.availableProductionLines = productionLines; 
+      this.availableProductionLines = productionLines;
       productionLines.filter(productionLine => {
         // only return the production line that is not assigned to current work order yet
         console.log(`${productionLine.name}`)
         return !this.workOrder.productionLineAssignments?.some(
           assignedProductionLine => {
-            return assignedProductionLine.productionLine.id === productionLine.id}
+            return assignedProductionLine.productionLine.id === productionLine.id
+          }
         )
       })
-      .forEach(productionLine => {
-        
-        this.productionLineList = [...this.productionLineList, {
-          key: productionLine.id!.toString(),
-          title: productionLine.name,
-          description: productionLine.name,
-          direction: this.workOrder.productionLineAssignments?.some(productionLineAssignment => +productionLineAssignment.productionLine.id! === +productionLine.id!) ? 'right' : undefined,
-        
-        }];
+        .forEach(productionLine => {
 
-      })
+          this.productionLineList = [...this.productionLineList, {
+            key: productionLine.id!.toString(),
+            title: productionLine.name,
+            description: productionLine.name,
+            direction: this.workOrder.productionLineAssignments?.some(productionLineAssignment => +productionLineAssignment.productionLine.id! === +productionLine.id!) ? 'right' : undefined,
+
+          }];
+
+        })
 
     });
   }
 
 
-  
+
 
   previousStep(): void {
     this.stepIndex -= 1;
   }
   nextStep(): void {
     if (this.stepIndex === 0) {
- 
+
       // if we are in the first step, save the 
       // selected production line temporary
       this.currentProductionLineAssignments = [];
       this.productionLineList.filter(productionLine => productionLine.direction === 'right')
-        .forEach(productionLine => { 
+        .forEach(productionLine => {
           this.currentProductionLineAssignments = [...this.currentProductionLineAssignments,
-            this.getProductionLineAssignment(this.getProductionLineById(productionLine.key)!)
-            ];
+          this.getProductionLineAssignment(this.getProductionLineById(productionLine.key)!)
+          ];
         });
       // average the work quantity into assigned production line, evenly
       this.setupDefaultProductionLineQuantity();
 
       this.stepIndex += 1;
     }
-    else if(this.stepIndex === 1) {
+    else if (this.stepIndex === 1) {
       // flow to the next step becased on the result
       // of the quantity valication
       this.validateProductionLineQuantity();
-      
+
     }
     else {
 
@@ -155,8 +156,8 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
   }
   // make sure the total quantity of the production line assignment match with the
   // work order's quantity
-  validateProductionLineQuantity(){
-    var totalAsisgnedQuantity: number = 0; 
+  validateProductionLineQuantity() {
+    var totalAsisgnedQuantity: number = 0;
 
     this.currentProductionLineAssignments.forEach(
       productionLineAssignment => {
@@ -171,7 +172,7 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
         nzContent: this.i18n.fanyi("error.work-order.production-line-assignment.quantity-not-match")
       });
       // we won't flow the next step as the validation fail
-      
+
 
     }
     /***
@@ -206,49 +207,51 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
       // total quantity matches, flow to the next step
       this.stepIndex += 1;
     }
-    
+
 
   }
-  getProductionLineAssignment(productionLine: ProductionLine) : ProductionLineAssignment{
+  getProductionLineAssignment(productionLine: ProductionLine): ProductionLineAssignment {
 
-    const existsingProductionAssignments: ProductionLineAssignment[] | undefined = 
-        this.workOrder.productionLineAssignments?.filter(
-          productionLineAssignment => {
-            console.log(`productionLineAssignment.productionLine: ${JSON.stringify(productionLineAssignment.productionLine)}`);
-            console.log(`productionLine: ${JSON.stringify(productionLine)}`);
-            return productionLineAssignment.productionLine.id === productionLine.id}
-        );
-    
+    const existsingProductionAssignments: ProductionLineAssignment[] | undefined =
+      this.workOrder.productionLineAssignments?.filter(
+        productionLineAssignment => {
+          console.log(`productionLineAssignment.productionLine: ${JSON.stringify(productionLineAssignment.productionLine)}`);
+          console.log(`productionLine: ${JSON.stringify(productionLine)}`);
+          return productionLineAssignment.productionLine.id === productionLine.id
+        }
+      );
+
     // if we already assigned this production to the current work order, 
     // return it
     // otherwise, return an empty assignment
-    
+
     if (existsingProductionAssignments != undefined &&
-              existsingProductionAssignments.length >0) {
-          return existsingProductionAssignments[0];
+      existsingProductionAssignments.length > 0) {
+      return existsingProductionAssignments[0];
     }
-    
-    return  {
+
+    return {
       productionLine: productionLine,
       workOrder: this.workOrder,
       quantity: 0,
-      mould: undefined, 
+      openQuantity: 0,
+      mould: undefined,
       dateRange: []
     };
   }
 
-  getProductionLineById(id:number): ProductionLine | undefined {
- 
+  getProductionLineById(id: number): ProductionLine | undefined {
+
     console.log(`start to get production line by id: ${id}`);
-    var productionLine =  this.availableProductionLines.find(productionLine => { 
+    var productionLine = this.availableProductionLines.find(productionLine => {
       return +productionLine.id! === +id
-    });  
+    });
 
     if (productionLine === undefined) {
       // if we can't find it from available production line, it is probably already
       // assigned to current work order
-      productionLine =  this.workOrder.productionLineAssignments?.find(
-        productionLineAssignment =>  productionLineAssignment.productionLine.id == id
+      productionLine = this.workOrder.productionLineAssignments?.find(
+        productionLineAssignment => productionLineAssignment.productionLine.id == id
       )?.productionLine;
     }
 
@@ -256,7 +259,7 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
     return productionLine;
   }
 
-  setupDefaultProductionLineQuantity(){
+  setupDefaultProductionLineQuantity() {
     var defaultQuantityPerLine = Math.floor(
       this.workOrder.expectedQuantity! / this.currentProductionLineAssignments.length
     );
@@ -269,22 +272,22 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
   }
 
   confirm() {
-    const productionLineIds = 
-        this.currentProductionLineAssignments
-          .map(productionLineAssignment => productionLineAssignment.productionLine.id).join(",");
-    const quantites = 
-        this.currentProductionLineAssignments
-          .map(productionLineAssignment => productionLineAssignment.quantity).join(",");
-    
-      this.workOrderService.assignProductionLine(this.workOrder.id!, this.currentProductionLineAssignments)
-        .subscribe(productionLineAssignments => {
-          this.messageService.success(this.i18n.fanyi('message.save.complete'));
-          setTimeout(() => {
-            this.router.navigateByUrl(`/work-order/work-order?number=${this.workOrder.number}`);
-          }, 2500);
-      }); 
+    const productionLineIds =
+      this.currentProductionLineAssignments
+        .map(productionLineAssignment => productionLineAssignment.productionLine.id).join(",");
+    const quantites =
+      this.currentProductionLineAssignments
+        .map(productionLineAssignment => productionLineAssignment.quantity).join(",");
+
+    this.workOrderService.assignProductionLine(this.workOrder.id!, this.currentProductionLineAssignments)
+      .subscribe(productionLineAssignments => {
+        this.messageService.success(this.i18n.fanyi('message.save.complete'));
+        setTimeout(() => {
+          this.router.navigateByUrl(`/work-order/work-order?number=${this.workOrder.number}`);
+        }, 2500);
+      });
   }
-  
+
 
   transferListFilterOption(inputValue: string, item: any): boolean {
     return item.title.indexOf(inputValue) > -1;
@@ -302,22 +305,22 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
     console.log('nzChange', ret);
   }
 
-  
-  mouldChanged(mouldName: string, productionLineAssignment: ProductionLineAssignment) : void { 
+
+  mouldChanged(mouldName: string, productionLineAssignment: ProductionLineAssignment): void {
     this.mouldService.getMoulds(mouldName).subscribe(
       moulds => {
-        if (moulds.length == 1) { 
+        if (moulds.length == 1) {
           productionLineAssignment.mould = moulds[0];
           console.log(`change mould to ${productionLineAssignment.mould.name} for ${productionLineAssignment.productionLine.name}`);
         }
-       
+
       }
     )
 
   }
 
 
-  onDateRangeChange(dateRange: Date[], productionLineAssignment: ProductionLineAssignment) : void{
+  onDateRangeChange(dateRange: Date[], productionLineAssignment: ProductionLineAssignment): void {
     console.log(`onDateRangeChange size: ${dateRange.length}`);
     console.log(`dateRange[0]: ${JSON.stringify(dateRange[0])}`);
     console.log(`dateRange[1]: ${JSON.stringify(dateRange[1])}`);

@@ -72,9 +72,14 @@ export class WorkOrderService {
     return this.http.delete('workorder/work-orders', params).pipe(map(res => res.data));
   }
 
-  allocateWorkOrder(workOrder: WorkOrder): Observable<WorkOrder> {
-    return this.http.post(`workorder/work-orders/${workOrder.id}/allocate`).pipe(map(res => res.data));
+  allocateWorkOrder(workOrder: WorkOrder, productionLineIds?: string, quantities?: string): Observable<WorkOrder> {
+    let url = `workorder/work-orders/${workOrder.id}/allocate`;
+    if (productionLineIds && quantities) {
+      url = `${url}?productionLineIds=${productionLineIds}&quantities=${quantities}`;
+    }
+    return this.http.post(url).pipe(map(res => res.data));
   }
+
 
   getReturnedInventory(workOrder: WorkOrder): Observable<Inventory[]> {
     return this.http.get(`workorder/work-orders/${workOrder.id}/returned-inventory`).pipe(map(res => res.data));
