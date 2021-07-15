@@ -25,6 +25,7 @@ import { ReportType } from '../../report/models/report-type.enum';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { WebClientConfigurationService } from '../../util/services/web-client-configuration.service';
+import { PickWork } from '../../outbound/models/pick-work';
 
 interface ProductionLineAllocationRequest {
   productionLineId: number;
@@ -576,7 +577,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   }
 
   inventoryReadyForPutaway(workOrder: WorkOrder, inventory: Inventory): boolean {
-    console.log(`workOrder.productionLineAssignments!.length:${workOrder.productionLineAssignments!.length}`);
+    // console.log(`workOrder.productionLineAssignments!.length:${workOrder.productionLineAssignments!.length}`);
     if (workOrder.productionLineAssignments!.length === 0) {
       return false;
     }
@@ -792,6 +793,18 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         () => this.isSpinning = false);
 
 
+  }
+
+
+  cancelPick(workOrder: WorkOrder, pick: PickWork): void {
+    this.isSpinning = true;
+    this.pickService.cancelPick(pick).subscribe(pickRes => {
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      this.search(workOrder.id);
+      this.isSpinning = false;
+    },
+      () =>
+        this.isSpinning = true);
   }
 
 }

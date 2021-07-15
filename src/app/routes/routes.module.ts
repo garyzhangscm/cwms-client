@@ -4,6 +4,7 @@ import { SharedModule } from '@shared';
 import { CallbackComponent } from './callback/callback.component';
 import { DashboardAnalysisComponent } from './dashboard/analysis/analysis.component';
 import { DashboardMonitorComponent } from './dashboard/monitor/monitor.component';
+import { DashboardProductionKanbanComponent } from './dashboard/production-kanban/production-kanban.component';
 // dashboard pages
 import { DashboardV1Component } from './dashboard/v1/v1.component';
 import { DashboardWorkplaceComponent } from './dashboard/workplace/workplace.component';
@@ -20,6 +21,7 @@ const COMPONENTS = [
   DashboardAnalysisComponent,
   DashboardMonitorComponent,
   DashboardWorkplaceComponent,
+  DashboardProductionKanbanComponent,
   // passport pages
   UserLoginComponent,
   UserRegisterComponent,
@@ -33,4 +35,4 @@ const COMPONENTS = [
   imports: [SharedModule, RouteRoutingModule],
   declarations: [...COMPONENTS],
 })
-export class RoutesModule {}
+export class RoutesModule { }

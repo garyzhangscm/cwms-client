@@ -6,7 +6,7 @@
                 {{ 'system-configuration.allow-data-initial-flag' | translate }}
             </nz-form-label>
             <nz-form-control [nzSpan]="18">
-                <nz-switch [(ngModel)]="currentSystemConfiguration.allowDataInitialFlag"></nz-switch>
+                <nz-switch [(ngModel)]="currentSystemConfiguration!.allowDataInitialFlag"></nz-switch>
             </nz-form-control>
         </nz-form-item>
     </div>
@@ -18,7 +18,7 @@
                 {{ 'system-configuration.server-side-printing' | translate }}
             </nz-form-label>
             <nz-form-control [nzSpan]="18">
-                <nz-switch [(ngModel)]="currentSystemConfiguration.serverSidePrinting"></nz-switch>
+                <nz-switch [(ngModel)]="currentSystemConfiguration!.serverSidePrinting"></nz-switch>
             </nz-form-control>
         </nz-form-item>
     </div>
