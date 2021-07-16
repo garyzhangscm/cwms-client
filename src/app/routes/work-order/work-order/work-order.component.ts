@@ -717,6 +717,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           printResult.fileName,
           ReportType.ORDER_PICK_SHEET,
           event.printerIndex,
+          event.printerName,
           event.physicalCopyCount, PrintPageOrientation.Landscape);
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("report.print.printed"));

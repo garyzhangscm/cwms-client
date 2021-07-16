@@ -9,7 +9,7 @@ import { CompanyService } from './company.service';
   providedIn: 'root',
 })
 export class WarehouseService {
-  constructor(private http: _HttpClient, private companyService: CompanyService) {}
+  constructor(private http: _HttpClient, private companyService: CompanyService) { }
 
   getWarehouses(): Observable<Warehouse[]> {
     return this.http
@@ -53,14 +53,14 @@ export class WarehouseService {
     return JSON.parse(localStorage.getItem('current_warehouse')!);
   }
 
-  
-  setServerSidePrintingFlag(serverSidePrinting : boolean): void {
+
+  setServerSidePrintingFlag(serverSidePrinting: boolean): void {
     // We will save the current warehouse in local storage so that
     // different tab / web broswer session can share the same warehouse id
     // sessionStorage.setItem('current_warehouse', JSON.stringify(warehouse));
     localStorage.setItem('server_side_printing', JSON.stringify(serverSidePrinting));
   }
-  getServerSidePrintingFlag(): Warehouse {
+  getServerSidePrintingFlag(): boolean {
     return JSON.parse(localStorage.getItem('server_side_printing')!);
-  } 
+  }
 }

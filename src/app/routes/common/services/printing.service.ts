@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Lodop, LodopService } from '@delon/abc/lodop';
 import { _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ReportType } from '../../report/models/report-type.enum';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
@@ -44,7 +45,12 @@ export class PrintingService {
     return this.lodop!.GET_PRINTER_COUNT();
   }
 
-  getAllLocalPrinter(): string[] {
+  getAllServerPrinters(): Observable<string[]> {
+
+    const url = 'resource/printers';
+    return this.http.get(url).pipe(map(res => res.data));
+  }
+  getAllLocalPrinters(): string[] {
     var allLocalPrinters: string[] = [];
     const localPrinterCount = this.getLocalPrinterCount();
     if (localPrinterCount === 0) {
@@ -62,6 +68,7 @@ export class PrintingService {
     fileName: string,
     type: ReportType,
     printerIndex: number,
+    printerName: number,
     physicalCopyCount: number,
     pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
     pageSize: PrintPageSize = PrintPageSize.A4,
@@ -82,6 +89,10 @@ export class PrintingService {
       url = `/resource/report-histories/print/${this.companyService.getCurrentCompany()?.id}/${this.warehouseService.getCurrentWarehouse().id}/${type}/${fileName}`
       if (findPrinterBy) {
         url = `${url}?findPrinterBy=${findPrinterBy}`;
+      }
+      if (printerName) {
+
+        url = `${url}&printerName=${printerName}`;
       }
       this.http
         .post(url)

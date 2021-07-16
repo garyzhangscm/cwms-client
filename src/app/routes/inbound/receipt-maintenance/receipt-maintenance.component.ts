@@ -37,192 +37,192 @@ import { ReceiptService } from '../services/receipt.service';
   templateUrl: './receipt-maintenance.component.html',
 })
 export class InboundReceiptMaintenanceComponent implements OnInit {
-  listOfReceiptLineTableColumns: ColumnItem[] = [    
+  listOfReceiptLineTableColumns: ColumnItem[] = [
     {
-          name: 'receipt.line.number',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableString(a.number, b.number),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'item',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'item.description',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'receipt.line.expectedQuantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableNumber(a.expectedQuantity, b.expectedQuantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'receipt.line.receivedQuantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableNumber(a.receivedQuantity, b.receivedQuantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'receipt.line.overReceivingQuantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableNumber(a.overReceivingQuantity, b.overReceivingQuantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'receipt.line.overReceivingPercent',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableNumber(a.overReceivingPercent, b.overReceivingPercent),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        ];
+      name: 'receipt.line.number',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableString(a.number, b.number),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'item',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'item.description',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'receipt.line.expectedQuantity',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableNumber(a.expectedQuantity, b.expectedQuantity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'receipt.line.receivedQuantity',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableNumber(a.receivedQuantity, b.receivedQuantity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'receipt.line.overReceivingQuantity',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableNumber(a.overReceivingQuantity, b.overReceivingQuantity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'receipt.line.overReceivingPercent',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: ReceiptLine, b: ReceiptLine) => this.utilService.compareNullableNumber(a.overReceivingPercent, b.overReceivingPercent),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+  ];
 
-        listOfReceivedInventoryTableColumns: ColumnItem[] = [    
-          {
-                name: 'lpn',
-                showSort: true,
-                sortOrder: null,
-                sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.lpn, b.lpn),
-                sortDirections: ['ascend', 'descend'],
-                filterMultiple: true,
-                listOfFilter: [],
-                filterFn: null, 
-                showFilter: false
-              },
-              {
-                name: 'item',
-                showSort: true,
-                sortOrder: null,
-                sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
-                sortDirections: ['ascend', 'descend'],
-                filterMultiple: true,
-                listOfFilter: [],
-                filterFn: null, 
-                showFilter: false
-              },
-              {
-                name: 'item.description',
-                showSort: true,
-                sortOrder: null,
-                sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
-                sortDirections: ['ascend', 'descend'],
-                filterMultiple: true,
-                listOfFilter: [],
-                filterFn: null, 
-                showFilter: false
-              },
-              {
-                name: 'quantity',
-                showSort: true,
-                sortOrder: null,
-                sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
-                sortDirections: ['ascend', 'descend'],
-                filterMultiple: true,
-                listOfFilter: [],
-                filterFn: null, 
-                showFilter: false
-              },
-              {
-                name: 'inventory.status',
-                showSort: true,
-                sortOrder: null,
-                sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.inventoryStatus, b.inventoryStatus, 'name'),
-                sortDirections: ['ascend', 'descend'],
-                filterMultiple: true,
-                listOfFilter: [],
-                filterFn: null, 
-                showFilter: false
-              },
-              {
-                name: 'location',
-                showSort: true,
-                sortOrder: null,
-                sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
-                sortDirections: ['ascend', 'descend'],
-                filterMultiple: true,
-                listOfFilter: [],
-                filterFn: null, 
-                showFilter: false
-              },
-              {
-                name: 'nextLocation',
-                showSort: false,
-                sortOrder: null,
-                sortFn: null,
-                sortDirections: ['ascend', 'descend'],
-                filterMultiple: true,
-                listOfFilter: [],
-                filterFn: null, 
-                showFilter: false
-              },
-              ];
+  listOfReceivedInventoryTableColumns: ColumnItem[] = [
+    {
+      name: 'lpn',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.lpn, b.lpn),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'item',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'item.description',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'quantity',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'inventory.status',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.inventoryStatus, b.inventoryStatus, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'location',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'nextLocation',
+      showSort: false,
+      sortOrder: null,
+      sortFn: null,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+  ];
 
-              listOfReceiptLinesTableSelection = [
-                {
-                  text: this.i18n.fanyi(`select-all-rows`),
-                  onSelect: () => {
-                    this.onReceiptLinesTableAllChecked(true);
-                  }
-                },    
-              ];
+  listOfReceiptLinesTableSelection = [
+    {
+      text: this.i18n.fanyi(`select-all-rows`),
+      onSelect: () => {
+        this.onReceiptLinesTableAllChecked(true);
+      }
+    },
+  ];
 
-              listOfReceivedInventoryTableSelection = [
-                {
-                  text: this.i18n.fanyi(`select-all-rows`),
-                  onSelect: () => {
-                    this.onReceivedInventoryTableAllChecked(true);
-                  }
-                },    
-              ];
-            
-  setOfReceiptLinesTableCheckedId  = new Set<number>();
+  listOfReceivedInventoryTableSelection = [
+    {
+      text: this.i18n.fanyi(`select-all-rows`),
+      onSelect: () => {
+        this.onReceivedInventoryTableAllChecked(true);
+      }
+    },
+  ];
+
+  setOfReceiptLinesTableCheckedId = new Set<number>();
   receiptLinesTableChecked = false;
-  receiptLinesTableIndeterminate = false;       
-  
-  
-  setOfReceivedInventoryTableCheckedId  = new Set<number>();
+  receiptLinesTableIndeterminate = false;
+
+
+  setOfReceivedInventoryTableCheckedId = new Set<number>();
   receivedInventoryTableChecked = false;
-  receivedInventoryTableIndeterminate = false;     
+  receivedInventoryTableIndeterminate = false;
 
   receiptForm!: FormGroup;
   receivingForm!: FormGroup;
@@ -248,7 +248,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
   listOfAllReceivedInventory: Inventory[] = [];
   listOfDisplayReceivedInventory: Inventory[] = [];
- 
+
 
   receivingModal!: NzModalRef;
   addReceiptLineModal!: NzModalRef;
@@ -364,7 +364,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     }
   }
 
-  getClientByName(name: string): Client | null{
+  getClientByName(name: string): Client | null {
     const clients = this.validClients.filter(client => client.name === name);
     if (clients.length > 0) {
       return clients[0];
@@ -373,7 +373,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     }
   }
 
-  getSupplierByName(name: string): Supplier | null{
+  getSupplierByName(name: string): Supplier | null {
     const suppliers = this.validSuppliers.filter(supplier => supplier.name === name);
     if (suppliers.length > 0) {
       return suppliers[0];
@@ -397,7 +397,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     // this.receiptForm.controls.supplier.setValue('');
   }
 
-  setupDisplay(): void  {
+  setupDisplay(): void {
     this.listOfAllReceiptLines = this.currentReceipt.receiptLines;
     this.listOfDisplayReceiptLines = this.currentReceipt.receiptLines;
 
@@ -412,7 +412,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.loadReceivedInventory(this.currentReceipt);
   }
 
-  receiptNumberOnBlur(receiptNumber?: string): void  {
+  receiptNumberOnBlur(receiptNumber?: string): void {
     // When we use the 'fkey' to automatically generate the next receipt number
     // the reactive form control may not have the right value.Let's set
     // the number back to the bind control
@@ -420,7 +420,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.refreshReceiptResults();
   }
 
-  refreshReceiptResults(selectedTabIndex: number = 0): void  {
+  refreshReceiptResults(selectedTabIndex: number = 0): void {
     this.selectedTabIndex = selectedTabIndex;
     const receiptNumber = this.receiptForm!.controls.receiptNumber.value;
     if (receiptNumber) {
@@ -430,7 +430,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     }
   }
 
-  loadReceipt(receiptNumber: string): void  {
+  loadReceipt(receiptNumber: string): void {
     this.receiptService.getReceipts(receiptNumber).subscribe(receipts => {
       if (receipts.length > 0) {
         this.currentReceipt = receipts[0];
@@ -461,7 +461,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     return receipt;
   }
 
-  loadReceivedInventory(receipt: Receipt): void  {
+  loadReceivedInventory(receipt: Receipt): void {
     this.receiptService.getReceivedInventory(receipt).subscribe(inventories => {
       this.listOfAllReceivedInventory = inventories;
       this.listOfDisplayReceivedInventory = inventories;
@@ -492,10 +492,10 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
 
   refreshReceiptLinesTableCheckedStatus(): void {
-    this.receiptLinesTableChecked = 
-        this.listOfDisplayReceivedInventory!.every(item => this.setOfReceiptLinesTableCheckedId.has(item.id!));
-    this.receiptLinesTableIndeterminate = 
-        this.listOfDisplayReceivedInventory!.some(item => this.setOfReceiptLinesTableCheckedId.has(item.id!)) && !this.receiptLinesTableChecked;
+    this.receiptLinesTableChecked =
+      this.listOfDisplayReceivedInventory!.every(item => this.setOfReceiptLinesTableCheckedId.has(item.id!));
+    this.receiptLinesTableIndeterminate =
+      this.listOfDisplayReceivedInventory!.some(item => this.setOfReceiptLinesTableCheckedId.has(item.id!)) && !this.receiptLinesTableChecked;
   }
 
   updateReceivedInventoryTableCheckedSet(id: number, checked: boolean): void {
@@ -522,14 +522,14 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
 
   refreshReceivedInventoryTableCheckedStatus(): void {
-    this.receivedInventoryTableChecked = 
-        this.listOfDisplayReceivedInventory!.every(item => this.setOfReceivedInventoryTableCheckedId.has(item.id!));
-    this.receivedInventoryTableIndeterminate = 
-        this.listOfDisplayReceivedInventory!.some(item => this.setOfReceivedInventoryTableCheckedId.has(item.id!)) && !this.receiptLinesTableChecked;
+    this.receivedInventoryTableChecked =
+      this.listOfDisplayReceivedInventory!.every(item => this.setOfReceivedInventoryTableCheckedId.has(item.id!));
+    this.receivedInventoryTableIndeterminate =
+      this.listOfDisplayReceivedInventory!.some(item => this.setOfReceivedInventoryTableCheckedId.has(item.id!)) && !this.receiptLinesTableChecked;
   }
 
 
-  
+
   getSelectedReceiptLines(): ReceiptLine[] {
     const selectedReceiptLines: ReceiptLine[] = [];
     this.listOfAllReceiptLines.forEach((receiptLine: ReceiptLine) => {
@@ -539,7 +539,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     });
     return selectedReceiptLines;
   }
-  
+
   getSelectedReceivedInventory(): Inventory[] {
     const selectedReceivedInventory: Inventory[] = [];
     this.listOfDisplayReceivedInventory.forEach((inventory: Inventory) => {
@@ -552,7 +552,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
   printPutawayWork(event: any) {
 
-    switch(this.printPutawayWorkType) {
+    switch (this.printPutawayWorkType) {
       case "all":
         this.printAllPutawayWork(event);
         break;
@@ -570,7 +570,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
   previewPutawayReport() {
 
-    switch(this.printPutawayWorkType) {
+    switch (this.printPutawayWorkType) {
       case "all":
         this.previewAllPutawayWork(event);
         break;
@@ -586,67 +586,68 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     }
 
   }
-  printPutawayDocument(event: any, 
-    receipt: Receipt, inventoryIds: number[], 
-    notPutawayInventoryOnly = false) : void {
-    
-    
-      this.isSpinning = true;
-      console.log(`start to print ${this.currentReceipt.number} `);
-  
-      this.receiptService.printPutawayDocument(
-        receipt, inventoryIds, notPutawayInventoryOnly, 
-          this.i18n.currentLang)
-        .subscribe(printResult=> {
-        
-            // send the result to the printer
-          this.printingService.printRemoteFileByName(
-            "Putaway Document", 
-            printResult.fileName, 
-            ReportType.PUTAWAY_DOCUMENT,
-            event.printerIndex, 
-            event.physicalCopyCount, PrintPageOrientation.Landscape);
-          this.isSpinning = false;
-          this.messageService.success(this.i18n.fanyi("report.print.printed"));
-        }, 
+  printPutawayDocument(event: any,
+    receipt: Receipt, inventoryIds: number[],
+    notPutawayInventoryOnly = false): void {
+
+
+    this.isSpinning = true;
+    console.log(`start to print ${this.currentReceipt.number} `);
+
+    this.receiptService.printPutawayDocument(
+      receipt, inventoryIds, notPutawayInventoryOnly,
+      this.i18n.currentLang)
+      .subscribe(printResult => {
+
+        // send the result to the printer
+        this.printingService.printRemoteFileByName(
+          "Putaway Document",
+          printResult.fileName,
+          ReportType.PUTAWAY_DOCUMENT,
+          event.printerIndex,
+          event.printerName,
+          event.physicalCopyCount, PrintPageOrientation.Landscape);
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi("report.print.printed"));
+      },
         () => {
           this.isSpinning = false;
-        }, 
-        
+        },
+
       );
   }
-   
-  previewPutawayDocument(event: any, 
-    receipt: Receipt, inventoryIds: number[], 
-    notPutawayInventoryOnly = false) : void {
+
+  previewPutawayDocument(event: any,
+    receipt: Receipt, inventoryIds: number[],
+    notPutawayInventoryOnly = false): void {
 
     this.isSpinning = true;
     console.log(`start to preview putaway document for ${this.currentReceipt.number}`);
-    
-        
+
+
     this.receiptService.printPutawayDocument(
-      receipt, inventoryIds, notPutawayInventoryOnly, 
-        this.i18n.currentLang)
-      .subscribe(printResult=> {
+      receipt, inventoryIds, notPutawayInventoryOnly,
+      this.i18n.currentLang)
+      .subscribe(printResult => {
         // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
         this.isSpinning = false;
         this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
-        
+
       },
-      () => {
-        this.isSpinning = false;
-      }, 
-    );
-    
+        () => {
+          this.isSpinning = false;
+        },
+      );
+
   }
-  printSelectedPutawayWork(event: any): void  { 
+  printSelectedPutawayWork(event: any): void {
     let selectedInventory = this.getSelectedInventory().map(
       inventory => inventory.id!
     );
     this.printPutawayDocument(event, this.currentReceipt,
       selectedInventory);
   }
-  previewSelectedPutawayWork(event: any): void  { 
+  previewSelectedPutawayWork(event: any): void {
     let selectedInventory = this.getSelectedInventory().map(
       inventory => inventory.id!
     );
@@ -655,26 +656,26 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
 
 
-  
-  printAllReceivedPutawayWork(event: any): void{
+
+  printAllReceivedPutawayWork(event: any): void {
     this.printPutawayDocument(event, this.currentReceipt,
       [], true);
 
   }
-  previewAllReceivedPutawayWork(event: any): void{
+  previewAllReceivedPutawayWork(event: any): void {
     this.previewPutawayDocument(event, this.currentReceipt,
       [], true);
 
   }
 
-  printAllPutawayWork(event: any): void  {
-    
+  printAllPutawayWork(event: any): void {
+
     this.printPutawayDocument(event, this.currentReceipt,
       []);
   }
 
-  previewAllPutawayWork(event: any): void  {
-    
+  previewAllPutawayWork(event: any): void {
+
     this.previewPutawayDocument(event, this.currentReceipt,
       []);
   }
@@ -693,7 +694,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     tplReceivingModalTitle: TemplateRef<{}>,
     tplReceivingModalContent: TemplateRef<{}>,
     tplReceivingModalFooter: TemplateRef<{}>,
-  ): void  {
+  ): void {
     this.createReceivingForm(receiptLine);
     this.receivingInProcess = false;
 
@@ -707,16 +708,16 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     });
     this.receivingModal.afterOpen.subscribe(() => this.setupDefaultInventoryValue());
   }
-  closeReceivingModal(): void  {
+  closeReceivingModal(): void {
     this.receivingModal.destroy();
     this.refreshReceiptResults();
   }
-  confirmReceiving(): void  {
+  confirmReceiving(): void {
     this.receivingInProcess = true;
     this.receivingInventory();
   }
 
-  createReceivingForm(receiptLine: ReceiptLine): void  {
+  createReceivingForm(receiptLine: ReceiptLine): void {
     // reset the displayed item package type
     this.displayItemPackageType = undefined;
     this.currentReceivingLine = receiptLine;
@@ -734,7 +735,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     inventory: Inventory,
     tplManualPutawayModalTitle: TemplateRef<{}>,
     tplManualPutawayModalContent: TemplateRef<{}>,
-  ): void  {
+  ): void {
     this.currentInventory = inventory;
     // Load the location
     this.manualPutawayModal = this.modalService.create({
@@ -753,7 +754,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       nzWidth: 1000,
     });
   }
-  manualPutawayInventory(inventory: Inventory): void  {
+  manualPutawayInventory(inventory: Inventory): void {
     if (inventory.locationName) {
       // Location name is setup
       // Let's find the location by name and assign it to the inventory
@@ -952,33 +953,34 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       .move(receivedInventory, receivedInventory.inventoryMovements![index].location)
       .subscribe(inventory => this.refreshReceiptResults(1));
   }
-  manualPutaway(receivedInventory: Inventory): void {}
+  manualPutaway(receivedInventory: Inventory): void { }
   printReceipt(event: any): void {
-    
+
     this.isSpinning = true;
     console.log(`start to print receiving document: ${this.currentReceipt.number} `);
-    
+
     this.receiptService.printReceivingDocument(
       this.currentReceipt, this.i18n.currentLang)
-      .subscribe(printResult=> {
-        
-            // send the result to the printer
-          const printFileUrl 
-            = `${environment.SERVER_URL}/resource/report-histories/download/${printResult.fileName}`;
-          console.log(`will print file: ${printFileUrl}`);
-            this.printingService.printRemoteFileByName(
-            "Receiving Document", 
-            printResult.fileName, 
-            ReportType.RECEIVING_DOCUMENT,
-            event.printerIndex, 
-            event.physicalCopyCount, PrintPageOrientation.Landscape);
-          this.isSpinning = false;
-          this.messageService.success(this.i18n.fanyi("report.print.printed"));
-        }, 
+      .subscribe(printResult => {
+
+        // send the result to the printer
+        const printFileUrl
+          = `${environment.SERVER_URL}/resource/report-histories/download/${printResult.fileName}`;
+        console.log(`will print file: ${printFileUrl}`);
+        this.printingService.printRemoteFileByName(
+          "Receiving Document",
+          printResult.fileName,
+          ReportType.RECEIVING_DOCUMENT,
+          event.printerIndex,
+          event.printerName,
+          event.physicalCopyCount, PrintPageOrientation.Landscape);
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi("report.print.printed"));
+      },
         () => {
           this.isSpinning = false;
-        }, 
-        
+        },
+
       );
 
   }
@@ -1000,22 +1002,22 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     return this.receivingForm.get('lpn');
   }
 
-  previewReport() : void{
-    
-    
+  previewReport(): void {
+
+
     this.isSpinning = true;
     console.log(`start to preview ${this.currentReceipt.number}`);
     this.receiptService.printReceivingDocument(this.currentReceipt, this.i18n.currentLang)
-    .subscribe(printResult=> {
-      // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
-      this.isSpinning = false;
-      this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
-      
-    },
-    () => {
-      this.isSpinning = false;
-    }, 
-    );
+      .subscribe(printResult => {
+        // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+        this.isSpinning = false;
+        this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
+
+      },
+        () => {
+          this.isSpinning = false;
+        },
+      );
   }
-  
+
 }

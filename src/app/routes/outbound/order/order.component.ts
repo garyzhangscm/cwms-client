@@ -21,7 +21,7 @@ import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
 import { OrderService } from '../services/order.service';
 import { PickService } from '../services/pick.service';
 import { ShortAllocationService } from '../services/short-allocation.service';
-import { environment } from '@env/environment'; 
+import { environment } from '@env/environment';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { ReportType } from '../../report/models/report-type.enum';
@@ -33,130 +33,130 @@ import { ReportType } from '../../report/models/report-type.enum';
 })
 export class OutboundOrderComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: ColumnItem[] = [
     {
-          name: 'order.number',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Order, b: Order) => this.utilService.compareNullableString(a.number, b.number),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 2,
-          colspan: 1,
-        }, {
-          name: 'status',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Order, b: Order) => this.utilService.compareNullableString(a.status.toString(), b.status.toString()),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 2 ,
-          colspan: 1,
-        }, {
-          name: 'shipToCustomer',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Order, b: Order) => this.utilService.compareNullableObjField(a.shipToCustomer, b.shipToCustomer, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 2 ,
-          colspan: 1,
-        }, {
-          name: 'order.billToCustomer',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Order, b: Order) => this.utilService.compareNullableObjField(a.billToCustomer, b.billToCustomer, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 2 ,
-          colspan: 1,
-        }, {
-          name: 'order.totalItemCount',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalItemCount, b.totalItemCount),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 2 ,
-          colspan: 1,
-        }, {
-          name: 'order.totalOrderQuantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalExpectedQuantity, b.totalExpectedQuantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 2 ,
-          colspan: 1,
-        }, {
-          name: 'order.totalOpenQuantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalOpenQuantity, b.totalOpenQuantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 2,
-          colspan: 1,
-        }, {
-          name: 'order.totalInprocessQuantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalInprocessQuantity, b.totalInprocessQuantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 1,
-          colspan: 3,
-        }, {
-          name: 'order.totalShippedQuantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalShippedQuantity, b.totalShippedQuantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          rowspan: 2 ,
-          colspan: 1,
-        },
-        
-        ];
-        expandSet = new Set<number>();
-        listOfSelection = [
-          {
-            text: this.i18n.fanyi(`select-all-rows`),
-            onSelect: () => {
-              this.onAllChecked(true);
-            }
-          },    
-        ];
-      setOfCheckedId = new Set<number>();
-      checked = false;
-      indeterminate = false;
+      name: 'order.number',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Order, b: Order) => this.utilService.compareNullableString(a.number, b.number),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 2,
+      colspan: 1,
+    }, {
+      name: 'status',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Order, b: Order) => this.utilService.compareNullableString(a.status.toString(), b.status.toString()),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 2,
+      colspan: 1,
+    }, {
+      name: 'shipToCustomer',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Order, b: Order) => this.utilService.compareNullableObjField(a.shipToCustomer, b.shipToCustomer, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 2,
+      colspan: 1,
+    }, {
+      name: 'order.billToCustomer',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Order, b: Order) => this.utilService.compareNullableObjField(a.billToCustomer, b.billToCustomer, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 2,
+      colspan: 1,
+    }, {
+      name: 'order.totalItemCount',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalItemCount, b.totalItemCount),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 2,
+      colspan: 1,
+    }, {
+      name: 'order.totalOrderQuantity',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalExpectedQuantity, b.totalExpectedQuantity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 2,
+      colspan: 1,
+    }, {
+      name: 'order.totalOpenQuantity',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalOpenQuantity, b.totalOpenQuantity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 2,
+      colspan: 1,
+    }, {
+      name: 'order.totalInprocessQuantity',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalInprocessQuantity, b.totalInprocessQuantity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 1,
+      colspan: 3,
+    }, {
+      name: 'order.totalShippedQuantity',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalShippedQuantity, b.totalShippedQuantity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 2,
+      colspan: 1,
+    },
+
+  ];
+  expandSet = new Set<number>();
+  listOfSelection = [
+    {
+      text: this.i18n.fanyi(`select-all-rows`),
+      onSelect: () => {
+        this.onAllChecked(true);
+      }
+    },
+  ];
+  setOfCheckedId = new Set<number>();
+  checked = false;
+  indeterminate = false;
 
   constructor(
     private fb: FormBuilder,
@@ -172,7 +172,7 @@ export class OutboundOrderComponent implements OnInit {
     private inventoryService: InventoryService,
     private utilService: UtilService,
     private printingService: PrintingService,
-  ) {}
+  ) { }
 
   printerModal!: NzModalRef;
   printerForm!: FormGroup;
@@ -189,9 +189,9 @@ export class OutboundOrderComponent implements OnInit {
   // Table data for display
   listOfAllOrders: Order[] = [];
   listOfDisplayOrders: Order[] = [];
-  
-  
-  
+
+
+
   // list of record with allocation in process
   mapOfAllocationInProcessId: { [key: string]: boolean } = {};
 
@@ -216,7 +216,7 @@ export class OutboundOrderComponent implements OnInit {
     this.searchForm.reset();
     this.listOfAllOrders = [];
     this.listOfDisplayOrders = [];
-    
+
   }
 
   search(expandedOrderId?: number, tabSelectedIndex?: number): void {
@@ -227,11 +227,11 @@ export class OutboundOrderComponent implements OnInit {
         this.listOfAllOrders = this.calculateQuantities(orderRes);
         this.listOfDisplayOrders = this.calculateQuantities(orderRes);
 
-        
+
         this.listOfAllOrders.forEach(order => {
           // reset the allocation in process flag
           this.mapOfAllocationInProcessId[order.id] = false;
- 
+
         });
 
         this.collapseAllRecord(expandedOrderId);
@@ -325,7 +325,7 @@ export class OutboundOrderComponent implements OnInit {
     }
     this.showAllOrderDetails();
   }
-   
+
 
   cancelSelectedOrders(): void {
     // make sure we have at least one checkbox checked
@@ -397,7 +397,7 @@ export class OutboundOrderComponent implements OnInit {
   isOrderReadyForComplete(order: Order): boolean {
     return order.status === OrderStatus.OPEN;
   }
- 
+
   confirmPicks(order: Order): void {
     this.router.navigateByUrl(`/outbound/pick/confirm?type=order&id=${order.id}`);
   }
@@ -409,9 +409,9 @@ export class OutboundOrderComponent implements OnInit {
       this.showPickedInventory(order);
     }
   }
-  
+
   showAllOrderDetails(): void {
-    
+
     this.listOfDisplayOrders.forEach(order => {
       if (this.expandSet.has(order.id)) {
         this.showPicks(order);
@@ -550,35 +550,36 @@ export class OutboundOrderComponent implements OnInit {
       this.search(order.id, 3);
     });
   }
-  
-  printPickSheets(order: Order, event: any) : void {
+
+  printPickSheets(order: Order, event: any): void {
     this.isSpinning = true;
     console.log(`start to print ${order.number} from ${JSON.stringify(event)}`);
 
     this.orderService
       .printOrderPickSheet(order, this.i18n.currentLang)
-      .subscribe(printResult=> {
-      
+      .subscribe(printResult => {
+
         // send the result to the printer
-      this.printingService.printRemoteFileByName(
-        "order pick sheet", 
-        printResult.fileName, 
-        ReportType.ORDER_PICK_SHEET,
-        event.printerIndex, 
-        event.physicalCopyCount, PrintPageOrientation.Landscape);
-       this.isSpinning = false;
-       this.messageService.success(this.i18n.fanyi("report.print.printed"));
-    });
-    
+        this.printingService.printRemoteFileByName(
+          "order pick sheet",
+          printResult.fileName,
+          ReportType.ORDER_PICK_SHEET,
+          event.printerIndex,
+          event.printerName,
+          event.physicalCopyCount, PrintPageOrientation.Landscape);
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi("report.print.printed"));
+      });
+
   }
-  previewReport(order: Order) : void{
+  previewReport(order: Order): void {
     this.isSpinning = true;
     console.log(`start to preview ${order.number}`);
-    this.orderService.printOrderPickSheet(order, this.i18n.currentLang).subscribe(printResult=> {
+    this.orderService.printOrderPickSheet(order, this.i18n.currentLang).subscribe(printResult => {
       // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
       this.isSpinning = false;
       this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
-      
+
     });
   }
 }

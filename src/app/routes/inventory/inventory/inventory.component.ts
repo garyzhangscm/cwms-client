@@ -437,6 +437,7 @@ export class InventoryInventoryComponent implements OnInit {
           printResult.fileName,
           ReportType.LPN_REPORT,
           event.printerIndex,
+          event.printerName,
           event.physicalCopyCount,
           PrintPageOrientation.Landscape,
           PrintPageSize.A4,
