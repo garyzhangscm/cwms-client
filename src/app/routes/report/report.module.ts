@@ -9,12 +9,16 @@ import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { CommonModule } from '../common/common.module';
+import { ReportReportPrinterConfigurationComponent } from './report-printer-configuration/report-printer-configuration.component';
+import { ReportReportPrinterConfigurationMaintenanceComponent } from './report-printer-configuration-maintenance/report-printer-configuration-maintenance.component';
 
 const COMPONENTS: Type<void>[] = [
   ReportReportComponent,
   ReportReportHistoryComponent,
   ReportReportPreviewComponent,
-  ReportReportMaintenanceComponent];
+  ReportReportMaintenanceComponent,
+  ReportReportPrinterConfigurationComponent,
+  ReportReportPrinterConfigurationMaintenanceComponent];
 
 @NgModule({
   imports: [

@@ -1,0 +1,103 @@
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { I18NService } from '@core';
+import { TitleService, _HttpClient } from '@delon/theme';
+import { environment } from '@env/environment';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzUploadFile, NzUploadChangeParam } from 'ng-zorro-antd/upload';
+import { UserService } from '../../auth/services/user.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { Report } from '../models/report';
+import { ReportOrientation } from '../models/report-orientation.enum';
+import { ReportPrinterConfiguration } from '../models/report-printer-configuration';
+import { ReportType } from '../models/report-type.enum';
+import { ReportPrinterConfigurationService } from '../services/report-printer-configuration.service';
+import { ReportService } from '../services/report.service';
+
+@Component({
+  selector: 'app-report-report-printer-configuration-maintenance',
+  templateUrl: './report-printer-configuration-maintenance.component.html',
+})
+export class ReportReportPrinterConfigurationMaintenanceComponent implements OnInit {
+  pageTitle = '';
+  stepIndex = 0;
+  currentReportPrinterConfiguration!: ReportPrinterConfiguration;
+  reportTypes = ReportType;
+
+
+  constructor(private http: _HttpClient,
+    private activatedRoute: ActivatedRoute,
+    private titleService: TitleService,
+    private warehouseService: WarehouseService,
+    private userService: UserService,
+    private i18n: I18NService,
+    private reportPrinterConfigurationService: ReportPrinterConfigurationService,
+    private messageService: NzMessageService,
+    private router: Router,) { }
+
+  ngOnInit(): void {
+
+    this.titleService.setTitle(this.i18n.fanyi('page.report-printer-configuration.maintenance.modify'));
+    this.pageTitle = this.i18n.fanyi('page.report-printer-configuration.maintenance.modify');
+
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.id) {
+        this.reportPrinterConfigurationService.getReportPrinterConfiguration(params.id).subscribe(reportPrinterConfigurationRes => {
+          this.currentReportPrinterConfiguration = reportPrinterConfigurationRes;
+
+
+        });
+      } else {
+        this.currentReportPrinterConfiguration = this.getEmptyReportPrinterConfiguration();
+
+
+      }
+    });
+
+    this.stepIndex = 0;
+
+  }
+
+
+
+  getEmptyReportPrinterConfiguration(): ReportPrinterConfiguration {
+    return {
+      id: undefined,
+
+      warehouseId: this.warehouseService.getCurrentWarehouse().id,
+      reportType: undefined,
+      criteriaValue: "",
+      printerName: "",
+    };
+  }
+  previousStep(): void {
+    this.stepIndex -= 1;
+  }
+  nextStep(): void {
+    this.stepIndex += 1;
+  }
+
+  confirmReportPrinterConfiguration(): void {
+    if (this.currentReportPrinterConfiguration.id) {
+
+      this.reportPrinterConfigurationService.changeReportPrinterConfiguration(this.currentReportPrinterConfiguration)
+        .subscribe(reportPrinterConfigurationRes => {
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          setTimeout(() => {
+            this.router.navigateByUrl(`/report/report-printer-configuration`);
+          }, 2500);
+        })
+    }
+    else {
+
+      this.reportPrinterConfigurationService.addReportPrinterConfiguration(this.currentReportPrinterConfiguration)
+        .subscribe(reportPrinterConfigurationRes => {
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          setTimeout(() => {
+            this.router.navigateByUrl(`/report/report-printer-configuration`);
+          }, 2500);
+        })
+    }
+  }
+
+}

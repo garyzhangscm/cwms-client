@@ -65,6 +65,7 @@ export class PrintingService {
     physicalCopyCount: number,
     pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
     pageSize: PrintPageSize = PrintPageSize.A4,
+    findPrinterBy?: string
   ): void {
 
 
@@ -78,8 +79,12 @@ export class PrintingService {
 
     if (this.warehouseService.getServerSidePrintingFlag()) {
       console.log(`will print from the server side`);
+      url = `/resource/report-histories/print/${this.companyService.getCurrentCompany()?.id}/${this.warehouseService.getCurrentWarehouse().id}/${type}/${fileName}`
+      if (findPrinterBy) {
+        url = `${url}?findPrinterBy=${findPrinterBy}`;
+      }
       this.http
-        .post(`/resource/report-histories/print/${this.companyService.getCurrentCompany()?.id}/${this.warehouseService.getCurrentWarehouse().id}/${type}/${fileName}`)
+        .post(url)
         .pipe(map(res => res.data)).subscribe(res => {
           console.log(` file printed!`);
         });
@@ -168,25 +173,25 @@ export class PrintingService {
   }
 
   addDefaultReportStyle(html: string): string {
-    return `<style>
-            h1, h2, h3, h4, h5, h6 {
-              text-align:center
+    return `< style >
+        h1, h2, h3, h4, h5, h6 {
+          text- align: center
             }
-            table {
-              border-collapse: collapse;
-              width: 100%
+    table {
+      border - collapse: collapse;
+      width: 100 %
             }
-            
-            table, th, td {
-              border: 1px solid black;
-              text-align:center;
-              padding: 15px;
-            }
-            </style>
-            ${html}`;
+
+    table, th, td {
+      border: 1px solid black;
+      text - align: center;
+      padding: 15px;
+    }
+    </style>
+    ${html} `;
   }
 
   getCurrentPageNumberHtml(pageNumber: number, pageCount: number): string {
-    return `<div style="text-align: right">Page: ${pageNumber} / ${pageCount}</div>`;
+    return `< div style = "text-align: right" > Page: ${pageNumber} / ${pageCount}</div > `;
   }
 }

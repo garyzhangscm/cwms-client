@@ -275,21 +275,21 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   }
 
   search(id?: number): void {
-    this.searching = true;
+    this.isSpinning = true;
     this.searchResult = '';
     if (id) {
       this.workOrderService.getWorkOrder(id).subscribe(
         workOrderRes => {
           this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities([workOrderRes]);
           this.listOfDisplayWorkOrder = this.listOfAllWorkOrder;
-          this.searching = false;
+          this.isSpinning = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
             rowCount: 1,
           });
         },
         () => {
-          this.searching = false;
+          this.isSpinning = false;
           this.searchResult = '';
         },
       );
@@ -300,19 +300,24 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           workOrderRes => {
             this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities(workOrderRes);
             this.listOfDisplayWorkOrder = this.listOfAllWorkOrder;
-            this.searching = false;
+            this.isSpinning = false;
             this.searchResult = this.i18n.fanyi('search_result_analysis', {
               currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
               rowCount: workOrderRes.length,
             });
           },
           () => {
-            this.searching = false;
+            this.isSpinning = false;
             this.searchResult = '';
           },
         );
     }
     this.loadAvailableProductionLine();
+    this.collapseAll();
+  }
+
+  collapseAll() {
+    this.expandSet.clear();
   }
 
   calculateWorkOrderLineTotalQuantities(workOrders: WorkOrder[]): WorkOrder[] {

@@ -9,6 +9,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Client } from '../../common/models/client';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
+import { PrintPageSize } from '../../common/models/print-page-size.enum';
 
 import { ClientService } from '../../common/services/client.service';
 import { PrintingService } from '../../common/services/printing.service';
@@ -29,118 +30,118 @@ import { ItemFamilyService } from '../services/item-family.service';
 })
 export class InventoryInventoryComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: ColumnItem[] = [
     {
-          name: 'lpn',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.lpn, b.lpn),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'item',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'item.package-type',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.itemPackageType, b.itemPackageType, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'location',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'quantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'inventory.status',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.inventoryStatus, b.inventoryStatus, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'inventory.locked-for-adjustment',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Inventory, b: Inventory) => this.utilService.compareBoolean(a.lockedForAdjust, b.lockedForAdjust),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'inventory.pick-id',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableNumber(a.pickId, b.pickId),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'inventory.allocated-by-pick-id',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableNumber(a.allocatedByPickId, b.allocatedByPickId),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'movement-path',
-          showSort: false,
-          sortOrder: null,
-          sortFn: null,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-      ];
+      name: 'lpn',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.lpn, b.lpn),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'item',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'item.package-type',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.itemPackageType, b.itemPackageType, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'location',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'quantity',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'inventory.status',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.inventoryStatus, b.inventoryStatus, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'inventory.locked-for-adjustment',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareBoolean(a.lockedForAdjust, b.lockedForAdjust),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'inventory.pick-id',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableNumber(a.pickId, b.pickId),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'inventory.allocated-by-pick-id',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableNumber(a.allocatedByPickId, b.allocatedByPickId),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'movement-path',
+      showSort: false,
+      sortOrder: null,
+      sortFn: null,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+  ];
   // Select control for clients and item families
   clients: Array<{ label: string; value: string }> = [];
   itemFamilies: Array<{ label: string; value: string }> = [];
@@ -154,7 +155,7 @@ export class InventoryInventoryComponent implements OnInit {
   // Table data for display
   inventories: Inventory[] = [];
   listOfDisplayInventories: Inventory[] = [];
-  
+
 
   inventoryToBeRemoved!: Inventory;
   inventoryRemovalModal!: NzModalRef;
@@ -187,7 +188,7 @@ export class InventoryInventoryComponent implements OnInit {
     private utilService: UtilService,
     private printingService: PrintingService,
     private router: Router,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.inventory'));
@@ -199,7 +200,7 @@ export class InventoryInventoryComponent implements OnInit {
         } else if (params.lpn) {
           this.searchForm.controls.lpn.setValue(params.lpn);
           this.search();
-        }else if (params.location) {
+        } else if (params.location) {
           this.searchForm.controls.location.setValue(params.location);
           this.search();
         } else {
@@ -214,7 +215,7 @@ export class InventoryInventoryComponent implements OnInit {
     this.inventories = [];
     this.listOfDisplayInventories = [];
 
-    
+
   }
   search(id?: number): void {
     this.searching = true;
@@ -263,14 +264,14 @@ export class InventoryInventoryComponent implements OnInit {
   processInventoryQueryResult(inventories: Inventory[]): void {
     this.inventories = inventories;
     this.listOfDisplayInventories = inventories;
-  
+
   }
 
   currentPageDataChange($event: Inventory[]): void {
     this.listOfDisplayInventories = $event;
-  } 
-   
- 
+  }
+
+
   adjustInventory(inventory: Inventory): void {
     console.log('will adjust inventory: ' + JSON.stringify(inventory));
   }
@@ -405,61 +406,65 @@ export class InventoryInventoryComponent implements OnInit {
 
   processItemQueryResult(selectedItemName: any): void {
     console.log(`start to query with item name ${selectedItemName}`);
-    this.searchForm.controls.itemName.setValue(selectedItemName); 
+    this.searchForm.controls.itemName.setValue(selectedItemName);
   }
   processLocationQueryResult(selectedLocationName: any): void {
     console.log(`start to query with location name ${selectedLocationName}`);
-    this.inventoryMovementForm.controls.destinationLocation.setValue(selectedLocationName); 
+    this.inventoryMovementForm.controls.destinationLocation.setValue(selectedLocationName);
   }
 
-  
-  processQueryLocationQueryResult(selectedLocationName: any): void { 
+
+  processQueryLocationQueryResult(selectedLocationName: any): void {
     console.log(`start to query with location name ${selectedLocationName}`);
-    this.searchForm.controls.location.setValue(selectedLocationName); 
+    this.searchForm.controls.location.setValue(selectedLocationName);
   }
 
   printLPNReport(event: any, inventory: Inventory) {
-    
+
     this.isSpinning = true;
 
+    console.log(`start to print lPN label for inventory \n${inventory}`);
     this.inventoryService.generateEcotechLPNLabel(
       inventory.lpn!)
-      .subscribe(printResult=> {
-        
-            // send the result to the printer
-          const printFileUrl 
-            = `${environment.SERVER_URL}/resource/report-histories/download/${printResult.fileName}`;
-          console.log(`will print file: ${printFileUrl}`);
-            this.printingService.printRemoteFileByName(
-            "LPN Label", 
-            printResult.fileName, 
-            ReportType.RECEIVING_DOCUMENT,
-            event.printerIndex, 
-            event.physicalCopyCount, PrintPageOrientation.Landscape);
-          this.isSpinning = false;
-          this.messageService.success(this.i18n.fanyi("report.print.printed"));
-        }, 
+      .subscribe(printResult => {
+
+        // send the result to the printer
+        const printFileUrl
+          = `${environment.SERVER_URL}/resource/report-histories/download/${printResult.fileName}`;
+        console.log(`will print file: ${printFileUrl}`);
+        this.printingService.printRemoteFileByName(
+          "LPN Label",
+          printResult.fileName,
+          ReportType.LPN_REPORT,
+          event.printerIndex,
+          event.physicalCopyCount,
+          PrintPageOrientation.Landscape,
+          PrintPageSize.A4,
+          inventory.location?.locationGroup?.name);
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi("report.print.printed"));
+      },
         () => {
           this.isSpinning = false;
-        }, 
-        
+        },
+
       );
 
   }
-  previewLPNReport(inventory: Inventory) : void{
-    
-    
-    this.isSpinning = true; 
+  previewLPNReport(inventory: Inventory): void {
+
+
+    this.isSpinning = true;
     this.inventoryService.generateEcotechLPNLabel(inventory.lpn!)
-    .subscribe(printResult=> {
-      // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
-      this.isSpinning = false;
-      this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
-      
-    },
-    () => {
-      this.isSpinning = false;
-    }, 
-    );
+      .subscribe(printResult => {
+        // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+        this.isSpinning = false;
+        this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
+
+      },
+        () => {
+          this.isSpinning = false;
+        },
+      );
   }
 }
