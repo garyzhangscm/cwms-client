@@ -37,7 +37,8 @@
 
 <!-- Table to show users and kpi  -->
 <div class="search-result-list">
-  <nz-table [nzData]="workOrderCompleteTransaction.workOrderKPITransactions" [nzFooter]="KPITableFoot"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" [nzData]="workOrderCompleteTransaction.workOrderKPITransactions" [nzFooter]="KPITableFoot"
     nzShowPagination="false" #KPITable>
     <thead>
       <tr>

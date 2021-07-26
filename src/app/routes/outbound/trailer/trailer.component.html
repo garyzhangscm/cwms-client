@@ -28,7 +28,8 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
 
-  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllTrailers" [nzFooter]="tableFoot" 
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllTrailers" [nzFooter]="tableFoot" 
   (nzCurrentPageDataChange)="currentPageDataChange($event)"
   #rowSelectionTable>
     <thead >

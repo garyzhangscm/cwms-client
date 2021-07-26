@@ -53,7 +53,8 @@
 <div class="small-card" *ngIf="stepIndex === 1">
   
   <div class="search-result-list">
-    <nz-table [nzData]="currentProductionLineAssignments" nzSize="middle" [nzShowPagination]="false">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="currentProductionLineAssignments" nzSize="middle" [nzShowPagination]="false">
       <thead>
         <th  >
           {{ 'production-line' | translate }}
@@ -110,7 +111,8 @@
 <div class="small-card" *ngIf="stepIndex === 2">
   
   <div class="search-result-list">
-    <nz-table [nzData]="currentProductionLineAssignments" nzSize="middle" [nzShowPagination]="false">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="currentProductionLineAssignments" nzSize="middle" [nzShowPagination]="false">
       <thead>
          
 

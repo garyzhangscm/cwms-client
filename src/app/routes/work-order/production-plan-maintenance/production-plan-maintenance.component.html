@@ -87,7 +87,8 @@
   </div>
 
   <div class="search-result-list">
-    <nz-table #basicTable [nzData]="validOrderLines">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" #basicTable [nzData]="validOrderLines">
       <thead>
 
           <th
@@ -145,7 +146,8 @@
 
 <div *ngIf="stepIndex === 2" class="small-card">
   <div class="search-result-list">
-    <nz-table #nestedTable [nzData]="currentProductionPlan.productionPlanLines" [nzShowPagination]="false">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" #nestedTable [nzData]="currentProductionPlan.productionPlanLines" [nzShowPagination]="false">
       <thead>
 
         <tr>
@@ -275,7 +277,8 @@
               <nz-tabset>
 
                 <nz-tab nzTitle=" {{ 'bill-of-material.line' | translate }}">
-                  <nz-table [nzData]="data.billOfMaterial?.billOfMaterialLines" nzSize="middle"
+                  <nz-table 
+                  [nzScroll]="{ x: true, y: true }" [nzData]="data.billOfMaterial?.billOfMaterialLines" nzSize="middle"
                     [nzShowPagination]="false">
                     <thead>
                       <th>
@@ -306,7 +309,8 @@
     </nz-table>
     </nz-tab>
     <nz-tab nzTitle=" {{ 'work-order-instruction-template' | translate }}">
-      <nz-table [nzData]="data.billOfMaterial?.workOrderInstructionTemplates" nzSize="middle"
+      <nz-table 
+      [nzScroll]="{ x: true, y: true }" [nzData]="data.billOfMaterial?.workOrderInstructionTemplates" nzSize="middle"
         [nzShowPagination]="false">
         <thead>
           <th>
@@ -368,7 +372,8 @@
 
   <div class="search-result-list">
 
-    <nz-table #resultTable [nzData]="currentProductionPlan.productionPlanLines">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" #resultTable [nzData]="currentProductionPlan.productionPlanLines">
       <thead>
 
         <tr>

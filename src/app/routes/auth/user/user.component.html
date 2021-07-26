@@ -27,7 +27,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllUsers" [nzFooter]="tableFoot">
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }"#rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllUsers" [nzFooter]="tableFoot">
     <thead (nzSortChange)="sort($event)" nzSingleSort>
       <tr> 
         <th

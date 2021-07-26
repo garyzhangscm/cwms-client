@@ -3,8 +3,7 @@ import { NgModule } from '@angular/core';
 import { SharedModule } from '@shared';
 import { CallbackComponent } from './callback/callback.component';
 import { DashboardAnalysisComponent } from './dashboard/analysis/analysis.component';
-import { DashboardMonitorComponent } from './dashboard/monitor/monitor.component';
-import { DashboardProductionKanbanComponent } from './dashboard/production-kanban/production-kanban.component';
+import { DashboardMonitorComponent } from './dashboard/monitor/monitor.component'; 
 // dashboard pages
 import { DashboardV1Component } from './dashboard/v1/v1.component';
 import { DashboardWorkplaceComponent } from './dashboard/workplace/workplace.component';
@@ -20,8 +19,7 @@ const COMPONENTS = [
   DashboardV1Component,
   DashboardAnalysisComponent,
   DashboardMonitorComponent,
-  DashboardWorkplaceComponent,
-  DashboardProductionKanbanComponent,
+  DashboardWorkplaceComponent, 
   // passport pages
   UserLoginComponent,
   UserRegisterComponent,

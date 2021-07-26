@@ -63,7 +63,8 @@
   </nz-card>
 
 
-  <nz-table #rowSelectionTable nzShowSizeChanger [nzTitle]="progressTemplate" [nzData]="listOfPackingItems">
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #rowSelectionTable nzShowSizeChanger [nzTitle]="progressTemplate" [nzData]="listOfPackingItems">
     <thead>
       <tr>
         <th>

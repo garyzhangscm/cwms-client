@@ -47,7 +47,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfAllCartonizationConfiguration"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #rowSelectionTable nzShowSizeChanger [nzData]="listOfAllCartonizationConfiguration"
     (nzCurrentPageDataChange)="currentPageDataChange($event)" [nzFooter]="tableFoot">
     <thead >
       <tr>

@@ -41,7 +41,8 @@
 <!-- Table to show inventory  -->
 
 <div class="search-result-list">
-  <nz-table [nzData]="workOrderProduceTransaction?.workOrderByProductProduceTransactions"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" [nzData]="workOrderProduceTransaction?.workOrderByProductProduceTransactions"
     [nzFooter]="inventoryTableFoot" nzShowPagination="false" #inventoryTable>
     <thead>
       <tr>

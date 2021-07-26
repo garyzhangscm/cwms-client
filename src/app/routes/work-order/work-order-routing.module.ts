@@ -22,6 +22,7 @@ import { WorkOrderAssignProductionLineComponent } from './assign-production-line
 import { WorkOrderProductionLineMaintenanceComponent } from './production-line-maintenance/production-line-maintenance.component';
 import { WorkOrderMouldComponent } from './mould/mould.component';
 import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component';
+import { WorkOrderProductionKanbanComponent } from './production-kanban/production-kanban.component';
 
 const routes: Routes = [
   { path: 'work-order', component: WorkOrderWorkOrderComponent, canActivate: [AuthGuard]  },
@@ -44,7 +45,8 @@ const routes: Routes = [
   { path: 'work-order/assign-production-line', component: WorkOrderAssignProductionLineComponent },
   { path: 'production-line-maintenance', component: WorkOrderProductionLineMaintenanceComponent },
   { path: 'mould', component: WorkOrderMouldComponent },
-  { path: 'mould/maintenance', component: WorkOrderMouldMaintenanceComponent }];
+  { path: 'mould/maintenance', component: WorkOrderMouldMaintenanceComponent },
+  { path: 'production-kanban', component: WorkOrderProductionKanbanComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

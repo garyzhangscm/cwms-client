@@ -36,7 +36,8 @@
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'item.package-type' | translate}}" nzSpan="3">
         <nz-card nzTitle="{{currentInventory.itemPackageType?.name}}">
-          <nz-table #itemPackageTypeDetailTable [nzData]="currentInventory.itemPackageType?.itemUnitOfMeasures"
+          <nz-table 
+          [nzScroll]="{ x: true, y: true }" #itemPackageTypeDetailTable [nzData]="currentInventory.itemPackageType?.itemUnitOfMeasures"
             nzSize="middle" [nzShowPagination]="false" nzBordered>
             <thead>
               <tr>

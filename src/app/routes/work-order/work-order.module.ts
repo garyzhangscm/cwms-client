@@ -27,7 +27,9 @@ import { CommonModule } from '../common/common.module';
 import { WorkOrderProductionLineMaintenanceComponent } from './production-line-maintenance/production-line-maintenance.component';
 import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module';
 import { WorkOrderMouldComponent } from './mould/mould.component';
-import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component';
+import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component'; 
+import { WorkOrderProductionKanbanComponent } from './production-kanban/production-kanban.component';
+import { CountdownModule } from 'ngx-countdown';
 
 const COMPONENTS: Type<void>[] = [
   WorkOrderWorkOrderComponent,
@@ -50,7 +52,8 @@ const COMPONENTS: Type<void>[] = [
   WorkOrderAssignProductionLineComponent,
   WorkOrderProductionLineMaintenanceComponent,
   WorkOrderMouldComponent,
-  WorkOrderMouldMaintenanceComponent];
+  WorkOrderMouldMaintenanceComponent,
+  WorkOrderProductionKanbanComponent];
 const COMPONENTS_NOROUNT: Type<void>[] = [];
 
 @NgModule({
@@ -61,7 +64,7 @@ const COMPONENTS_NOROUNT: Type<void>[] = [];
     NzDescriptionsModule,
     NzTransferModule,
     CommonModule, 
-    WarehouseLayoutModule, 
+    WarehouseLayoutModule, CountdownModule 
   ],
   declarations: [
     ...COMPONENTS,

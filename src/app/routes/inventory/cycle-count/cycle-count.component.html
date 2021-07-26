@@ -33,7 +33,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfDisplayCycleCountBatches" [nzFooter]="tableFoot"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" nzShowSizeChanger nzShowPagination [nzData]="listOfDisplayCycleCountBatches" [nzFooter]="tableFoot"
     #rowSelectionTable>
     <thead  >
       <tr>

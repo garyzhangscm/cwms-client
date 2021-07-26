@@ -30,7 +30,8 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
 
-  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllReportHistories"  
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllReportHistories"  
   (nzCurrentPageDataChange)="currentPageDataChange($event)" #reportHistoryTable>
     <thead >
       <tr>

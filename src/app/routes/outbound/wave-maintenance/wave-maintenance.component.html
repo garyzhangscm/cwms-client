@@ -90,7 +90,8 @@
 
       <!-- Table to Display the result  -->
       <div class="search-result-list">
-        <nz-table #orderTable [nzShowPagination]="'false'" [nzData]="listOfAllOrders" [nzFooter]="orderTableFoot"
+        <nz-table 
+        [nzScroll]="{ x: true, y: true }" #orderTable [nzShowPagination]="'false'" [nzData]="listOfAllOrders" [nzFooter]="orderTableFoot"
         (nzCurrentPageDataChange)="orderTableCurrentPageDataChange($event)"
         >
           <thead  >
@@ -230,7 +231,8 @@
 
       <!-- Table to Display the result  -->
       <div class="search-result-list">
-        <nz-table #orderLineTable [nzShowPagination]="'false'" [nzData]="listOfDisplayOrderLines"
+        <nz-table 
+        [nzScroll]="{ x: true, y: true }" #orderLineTable [nzShowPagination]="'false'" [nzData]="listOfDisplayOrderLines"
           [nzFooter]="orderLineTableFoot" (nzCurrentPageDataChange)="orderLineTableCurrentPageDataChange($event)">
           <thead  >
             <tr>

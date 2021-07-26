@@ -174,7 +174,9 @@
   </nz-card> 
  
 
-  <nz-table #editRowTable nzBordered [nzData]="listOfProductionLineCapacityItemData"  [nzFooter]="tableFoot" *ngIf="currentProductionLine.genericPurpose === false">
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" 
+  #editRowTable nzBordered [nzData]="listOfProductionLineCapacityItemData"  [nzFooter]="tableFoot" *ngIf="currentProductionLine.genericPurpose === false">
     <thead>
       <tr> 
         <th  >{{"item" | translate}}</th>
@@ -280,7 +282,8 @@
   
   <nz-card>
     
-    <nz-table #editRowTable nzBordered [nzData]="listOfProductionLineCapacityItemData"  [nzFooter]="tableFoot">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" #editRowTable nzBordered [nzData]="listOfProductionLineCapacityItemData"  [nzFooter]="tableFoot">
       <thead>
         <tr> 
           <th  >{{"item" | translate}}</th>

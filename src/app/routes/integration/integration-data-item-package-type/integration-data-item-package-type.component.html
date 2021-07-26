@@ -44,7 +44,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationItemPackageTypeData"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationItemPackageTypeData"
     [nzFooter]="tableFoot">
     <thead >
       <tr>
@@ -97,7 +98,8 @@
         <tr [nzExpand]="expandSet.has(data.id)" *ngIf="data.itemUnitOfMeasures?.length > 0">
           <td></td>
           <td colspan="14">
-            <nz-table #innerTable [nzData]="data.itemUnitOfMeasures" nzSize="middle" [nzShowPagination]="false">
+            <nz-table 
+            [nzScroll]="{ x: true, y: true }" #innerTable [nzData]="data.itemUnitOfMeasures" nzSize="middle" [nzShowPagination]="false">
               <thead>
                 <tr>
 

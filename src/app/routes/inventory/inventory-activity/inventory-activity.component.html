@@ -155,7 +155,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllInventoryActivities"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllInventoryActivities"
     [nzFooter]="tableFoot">
     <thead >
       <tr>
@@ -206,7 +207,8 @@
         <td> {{ data.documentNumber }} </td>
         <td> {{ data.comment }} </td>
         <ng-template #itemPackageTypeDetails>
-          <nz-table #itemPackageTypeDetailTable [nzData]="data.itemPackageType.itemUnitOfMeasures" nzSize="middle"
+          <nz-table 
+          [nzScroll]="{ x: true, y: true }" #itemPackageTypeDetailTable [nzData]="data.itemPackageType.itemUnitOfMeasures" nzSize="middle"
             [nzShowPagination]="false" nzBordered>
             <thead>
               <tr>

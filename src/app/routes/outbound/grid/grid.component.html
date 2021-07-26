@@ -116,7 +116,8 @@
       </table>
     </div>
     <div nz-col [nzSpan]="8" *ngIf="listOfDistributionWork?.length > 0 && showDistributionWork">
-      <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfDistributionWork">
+      <nz-table 
+      [nzScroll]="{ x: true, y: true }" #rowSelectionTable nzShowSizeChanger [nzData]="listOfDistributionWork">
         <thead>
           <tr>
             <th>
@@ -145,7 +146,8 @@
 
 <nz-modal [(nzVisible)]="processedInventoryVisible" nzTitle="{{ 'processed' | translate }}"
   (nzOnCancel)="cancelProcessedInventoryModal()" (nzOnOk)="confirmProcessedInventoryModal()">
-  <nz-table #processedInventoryTable [nzData]="listOfProcessedInventory">
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #processedInventoryTable [nzData]="listOfProcessedInventory">
     <thead>
       <tr>
         <th>
@@ -169,7 +171,8 @@
 
 <nz-modal [(nzVisible)]="pendingInventoryVisible" nzTitle="{{ 'pending' | translate }}"
   (nzOnCancel)="cancelPendingInventoryModal()" (nzOnOk)="confirmPendingInventoryModal()">
-  <nz-table #pendingInventoryTable [nzData]="listOfPendingInventory">
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #pendingInventoryTable [nzData]="listOfPendingInventory">
     <thead>
       <tr>
         <th>

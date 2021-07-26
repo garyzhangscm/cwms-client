@@ -24,7 +24,8 @@
 <!-- Table to show inventory  -->
 
 <div class="search-result-list">
-  <nz-table nzShowPagination [nzData]="listOfAllAuditCountResult"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" nzShowPagination [nzData]="listOfAllAuditCountResult"
     (nzCurrentPageDataChange)="inventoryTableCurrentPageDataChange($event)" [nzFooter]="inventoryTableFoot"
     #inventoryTable>
     <thead>

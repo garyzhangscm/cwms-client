@@ -43,7 +43,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #rowSelectionTable nzShowSizeChanger nzShowPagination
     [nzData]="listOfAllIntegrationInventoryAdjustmentConfirmations" [nzFooter]="tableFoot">
     <thead  >
       <tr>

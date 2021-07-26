@@ -126,7 +126,8 @@
   <nz-tab nzTitle="{{ 'receipt.line' | translate }}">
     <!-- Table to Display the result  -->
     <div>
-      <nz-table nzShowPagination [nzData]="listOfAllReceiptLines"
+      <nz-table 
+      [nzScroll]="{ x: true, y: true }" nzShowPagination [nzData]="listOfAllReceiptLines"
         (nzCurrentPageDataChange)="receiptLinesTableCurrentPageDataChange($event)" [nzFooter]="receiptLinesTableFoot"
         #receiptLinesTable>
         <thead>
@@ -197,7 +198,8 @@
   <nz-tab nzTitle="{{ 'receipt.receivedInventory' | translate }}">
     <!-- Table to Display the result  -->
     <div>
-      <nz-table nzShowPagination [nzData]="listOfAllReceivedInventory"
+      <nz-table 
+      [nzScroll]="{ x: true, y: true }" nzShowPagination [nzData]="listOfAllReceivedInventory"
         (nzCurrentPageDataChange)="receivedInventoryTableCurrentPageDataChange($event)"
         [nzFooter]="receivedInventoryTableFoot" #receivedInventoryTable>
         <thead  >
@@ -504,7 +506,8 @@
 
     </div>
     <div nz-col [nzSpan]="24" *ngIf="displayItemPackageType !== null">
-      <nz-table #itemPackageTypeDetailTable [nzData]="displayItemPackageType.itemUnitOfMeasures" nzSize="middle"
+      <nz-table 
+      [nzScroll]="{ x: true, y: true }" #itemPackageTypeDetailTable [nzData]="displayItemPackageType.itemUnitOfMeasures" nzSize="middle"
         [nzShowPagination]="false" nzBordered>
         <thead>
           <tr>
@@ -740,7 +743,8 @@
 
   </div>
   <div nz-col [nzSpan]="24" *ngIf="currentInventory.itemPackageType">
-    <nz-table #itemPackageTypeDetailTable2 [nzData]="currentInventory.itemPackageType?.itemUnitOfMeasures"
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" #itemPackageTypeDetailTable2 [nzData]="currentInventory.itemPackageType?.itemUnitOfMeasures"
       nzSize="middle" [nzShowPagination]="false" nzBordered>
       <thead>
         <tr>

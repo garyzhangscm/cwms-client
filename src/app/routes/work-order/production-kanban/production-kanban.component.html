@@ -1,0 +1,61 @@
+<page-header [title]="'page.production-line.header.title' | translate"> </page-header>
+
+
+<div>
+  Count down: {{ countDownNumber }}
+</div>
+
+<div nz-row>
+  <div nz-col nzSpan="6">
+    <nz-list nzBordered nzHeader="Header" nzFooter="Footer">
+        <nz-list-item *ngFor="let productionLine of productionLines">
+          <span nz-typography><mark>[ITEM]</mark></span>
+          {{ item }}
+        </nz-list-item>
+      </nz-list>
+
+  </div>
+  <div nz-col nzSpan="18">
+            
+    <!-- Table to Display the result  -->
+    <div class="search-result-list">
+        <nz-table 
+        [nzScroll]="{ x: true, y: true }" #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="productionLineKanbanDataList">
+        <thead>
+            <tr>
+    
+            <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+                [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+                [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+                [nzShowFilter]="column.showFilter">
+                {{ column.name | translate }}
+            </th>
+    
+    
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of rowSelectionTable.data">
+            <td>{{ data.productionLineName }}</td>
+            <td>{{ data.workOrderNumber }}</td>
+            <td>{{ data.productionLineModel }}</td>
+            <td>{{ data.productionLineTargetOutput }}</td>
+            <td>{{ data.productionLineActualOutput }}</td>
+            <td>{{ data.productionLineTotalTargetOutput }}</td>
+            <td>{{ data.productionLineTotalActualOutput }}</td>
+            <td>{{ data.workOrderStatus }}</td>
+            <td>{{ data.shift }}</td> 
+    
+    
+    
+    
+    
+            </tr>
+        </tbody>
+        </nz-table>
+  
+  
+    </div>
+  </div>
+    
+</div>

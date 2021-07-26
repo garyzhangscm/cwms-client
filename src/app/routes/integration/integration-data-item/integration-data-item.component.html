@@ -44,7 +44,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationItemData"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationItemData"
     [nzFooter]="tableFoot">
     <thead >
       <tr>
@@ -97,7 +98,8 @@
           
             <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
               <nz-tab *ngFor="let itemPackageType of data.itemPackageTypes" [nzTitle]="itemPackageType.name">
-                <nz-table #innerTable [nzData]="itemPackageType.itemUnitOfMeasures" nzSize="middle"
+                <nz-table 
+                [nzScroll]="{ x: true, y: true }" #innerTable [nzData]="itemPackageType.itemUnitOfMeasures" nzSize="middle"
                   [nzShowPagination]="false">
                   <thead>
                     <tr>

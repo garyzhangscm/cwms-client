@@ -56,7 +56,8 @@
 
 <nz-card nzTitle="{{ 'work-order.line' | translate}}" *ngIf="workOrderCompleteTransaction !== undefined">
   <div class="search-result-list">
-    <nz-table [nzData]="workOrderCompleteTransaction?.workOrderLineCompleteTransactions" nzShowPagination="false"
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="workOrderCompleteTransaction?.workOrderLineCompleteTransactions" nzShowPagination="false"
       nzBordered="true" #workOrderLineTable>
 
       <thead>
@@ -150,7 +151,8 @@
 <!-- Table to show work order  kpi-->
 <nz-card nzTitle="{{ 'work-order.kpi' | translate}}" *ngIf="workOrderCompleteTransaction !== undefined">
   <div class="search-result-list">
-    <nz-table [nzData]="kpis" nzShowPagination="false" nzBordered="true" #kpiTable>
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="kpis" nzShowPagination="false" nzBordered="true" #kpiTable>
 
       <thead>
         <tr>

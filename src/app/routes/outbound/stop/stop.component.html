@@ -25,7 +25,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfAllData"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #rowSelectionTable nzShowSizeChanger [nzData]="listOfAllData"
     (nzCurrentPageDataChange)="currentPageDataChange($event)">
     <thead>
       <tr>

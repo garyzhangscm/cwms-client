@@ -36,7 +36,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllProductionPlans"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllProductionPlans"
   (nzCurrentPageDataChange)="currentPageDataChange($event)"
    [nzFooter]="tableFoot">
     <thead>
@@ -90,7 +91,8 @@
             <nz-tabset>
               <nz-tab nzTitle=" {{ 'production-plan.line' | translate }}">
 
-                <nz-table [nzData]="data.productionPlanLines" nzSize="middle" [nzShowPagination]="false">
+                <nz-table 
+                [nzScroll]="{ x: true, y: true }" [nzData]="data.productionPlanLines" nzSize="middle" [nzShowPagination]="false">
 
                   <thead>
                     <tr>
@@ -146,7 +148,8 @@
   </nz-table>
   </nz-tab>
   <nz-tab nzTitle=" {{ 'work-order' | translate }}">
-    <nz-table [nzData]="mapOfWorkOrders[data.id]" nzSize="middle" [nzShowPagination]="false">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="mapOfWorkOrders[data.id]" nzSize="middle" [nzShowPagination]="false">
 
       <thead>
         <th>

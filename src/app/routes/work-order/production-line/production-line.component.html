@@ -29,7 +29,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination 
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #rowSelectionTable nzShowSizeChanger nzShowPagination 
   (nzCurrentPageDataChange)="currentPageDataChange($event)"
   [nzData]="listOfAllProductionLine"
     [nzFooter]="tableFoot">
@@ -102,7 +103,8 @@
             
           <nz-tabset>
             <nz-tab nzTitle=" {{ 'production-line.capacity' | translate }}">
-              <nz-table [nzData]="data.productionLineCapacities" nzSize="middle" [nzShowPagination]="false">
+              <nz-table 
+              [nzScroll]="{ x: true, y: true }" [nzData]="data.productionLineCapacities" nzSize="middle" [nzShowPagination]="false">
 
                 <thead>
                   

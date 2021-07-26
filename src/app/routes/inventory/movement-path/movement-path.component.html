@@ -71,7 +71,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllMovementPath" [nzFooter]="tableFoot" #nestedTable>
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllMovementPath" [nzFooter]="tableFoot" #nestedTable>
     <thead>
       <tr> 
           <th
@@ -122,7 +123,8 @@
 
           <td colspan="1"></td>
           <td colspan="5">
-            <nz-table #innerTable [nzData]="data.movementPathDetails" nzSize="middle" [nzShowPagination]="false">
+            <nz-table 
+            [nzScroll]="{ x: true, y: true }" #innerTable [nzData]="data.movementPathDetails" nzSize="middle" [nzShowPagination]="false">
 
               <thead>
                 <th>

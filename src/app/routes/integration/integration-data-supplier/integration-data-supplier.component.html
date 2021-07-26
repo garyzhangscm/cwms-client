@@ -54,7 +54,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationSupplierData"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationSupplierData"
     [nzFooter]="tableFoot">
     <thead  >
       <tr>

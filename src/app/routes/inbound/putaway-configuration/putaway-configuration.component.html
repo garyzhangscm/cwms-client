@@ -59,7 +59,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfAllPutawayConfiguration"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #rowSelectionTable nzShowSizeChanger [nzData]="listOfAllPutawayConfiguration"
     (nzCurrentPageDataChange)="currentPageDataChange($event)" [nzFooter]="tableFoot">
     <thead >
       <tr>
@@ -136,7 +137,8 @@
   </ng-template>
 
 
-  <nz-table #itemTable nzShowSizeChanger [nzData]="listOfAllItems"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #itemTable nzShowSizeChanger [nzData]="listOfAllItems"
     (nzCurrentPageDataChange)="currentItemPageDataChange($event)">
     <thead (nzSortChange)="sortItem($event)" nzSingleSort>
       <tr>

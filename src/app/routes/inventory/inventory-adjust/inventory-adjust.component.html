@@ -62,7 +62,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllLocations" #nestedTable [nzFooter]="tableFoot">
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllLocations" #nestedTable [nzFooter]="tableFoot">
     <thead>
       <tr>
         <th nzWidth="40px"></th>
@@ -124,7 +125,8 @@
 
                       <nz-tabset>
                         <nz-tab nzTitle=" {{ 'inventory' | translate }}">
-                          <nz-table #innerTable [nzData]="mapOfInventories[data.id]" nzSize="middle" [nzShowPagination]="false">
+                          <nz-table 
+                          [nzScroll]="{ x: true, y: true }" #innerTable [nzData]="mapOfInventories[data.id]" nzSize="middle" [nzShowPagination]="false">
                             <thead>
                               <th>
                                 {{ 'lpn' | translate }}
@@ -356,7 +358,8 @@
   </div>
 
   <div nz-col [nzSpan]="24" *ngIf="currentInventory.itemPackageType">
-    <nz-table #itemPackageTypeDetailTable [nzData]="currentInventory.itemPackageType?.itemUnitOfMeasures"
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" #itemPackageTypeDetailTable [nzData]="currentInventory.itemPackageType?.itemUnitOfMeasures"
       nzSize="middle" [nzShowPagination]="false" nzBordered>
       <thead>
         <tr>

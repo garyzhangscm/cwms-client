@@ -14,7 +14,8 @@
 <nz-card nzTitle="压缩" *ngIf="instance">
   <button nz-button (click)="data.push({})" [nzType]="'primary'">new</button>
   <button nz-button (click)="download()" class="ml-sm">download</button>
-  <nz-table [nzData]="data" [nzFrontPagination]="false" [nzShowPagination]="false" class="mt-sm">
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" [nzData]="data" [nzFrontPagination]="false" [nzShowPagination]="false" class="mt-sm">
     <thead>
       <tr>
         <th>

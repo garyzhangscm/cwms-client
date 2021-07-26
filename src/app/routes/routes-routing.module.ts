@@ -9,8 +9,7 @@ import { LayoutPassportComponent } from '../layout/passport/passport.component';
 // single pages
 import { CallbackComponent } from './callback/callback.component';
 import { DashboardAnalysisComponent } from './dashboard/analysis/analysis.component';
-import { DashboardMonitorComponent } from './dashboard/monitor/monitor.component';
-import { DashboardProductionKanbanComponent } from './dashboard/production-kanban/production-kanban.component';
+import { DashboardMonitorComponent } from './dashboard/monitor/monitor.component'; 
 // dashboard pages
 import { DashboardV1Component } from './dashboard/v1/v1.component';
 import { DashboardWorkplaceComponent } from './dashboard/workplace/workplace.component';
@@ -32,8 +31,7 @@ const routes: Routes = [
       { path: 'dashboard/v1', component: DashboardV1Component },
       { path: 'dashboard/analysis', component: DashboardAnalysisComponent },
       { path: 'dashboard/monitor', component: DashboardMonitorComponent },
-      { path: 'dashboard/workplace', component: DashboardWorkplaceComponent },
-      { path: 'dashboard/production-kanban', component: DashboardProductionKanbanComponent },
+      { path: 'dashboard/workplace', component: DashboardWorkplaceComponent }, 
       {
         path: 'widgets',
         loadChildren: () => import('./widgets/widgets.module').then(m => m.WidgetsModule),

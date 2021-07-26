@@ -73,7 +73,8 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
 
-  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllPicks" [nzFooter]="tableFoot"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllPicks" [nzFooter]="tableFoot"
   (nzCurrentPageDataChange)="currentPageDataChange($event)" #pickTable>
     <thead >
       <tr>

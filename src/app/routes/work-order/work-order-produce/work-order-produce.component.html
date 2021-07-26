@@ -56,7 +56,8 @@
 </nz-card>
 <!-- Table to show inventory  -->
 <div class="search-result-list">
-  <nz-table [nzData]="workOrderProduceTransaction?.workOrderProducedInventories" [nzFooter]="inventoryTableFoot"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" [nzData]="workOrderProduceTransaction?.workOrderProducedInventories" [nzFooter]="inventoryTableFoot"
     nzShowPagination="false" #inventoryTable>
     <thead>
       <tr>
@@ -135,7 +136,8 @@
 <nz-card nzTitle="{{ 'work-order.line' | translate }}" [nzExtra]="workOrderLineActions"
   *ngIf="workOrderProduceTransaction != undefined">
   <div class="search-result-list" [hidden]="isCollapse">
-    <nz-table [nzData]="workOrderProduceTransaction.workOrderLineConsumeTransactions" nzShowPagination="false"
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="workOrderProduceTransaction.workOrderLineConsumeTransactions" nzShowPagination="false"
       #workOrderLineTable>
       <thead>
         <tr>
@@ -192,7 +194,8 @@
 </ng-template>
 
 <ng-template #bomDetails>
-  <nz-table #bomDetailTable [nzData]="workOrderProduceTransaction.matchedBillOfMaterial.billOfMaterialLines"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #bomDetailTable [nzData]="workOrderProduceTransaction.matchedBillOfMaterial.billOfMaterialLines"
     nzSize="middle" [nzShowPagination]="false" nzBordered>
     <thead>
       <th>

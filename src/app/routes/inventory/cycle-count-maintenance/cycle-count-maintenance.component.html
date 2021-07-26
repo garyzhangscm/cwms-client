@@ -199,7 +199,8 @@
   <nz-tab  [nzTitle]="openCycleCountRequestTabHeader">
     <!-- Table to Display the result  -->
     <div>
-      <nz-table nzShowPagination [nzData]="listOfAllOpenCycleCountRequests"
+      <nz-table 
+      [nzScroll]="{ x: true, y: true }" nzShowPagination [nzData]="listOfAllOpenCycleCountRequests"
         (nzCurrentPageDataChange)="openCycleCountCurrentPageDataChange($event)" [nzFooter]="openCycleCountTableFoot"
         #openCycleCountTable>
         <thead >
@@ -297,7 +298,8 @@
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
-      <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllCycleCountResults"
+      <nz-table 
+      [nzScroll]="{ x: true, y: true }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllCycleCountResults"
         (nzCurrentPageDataChange)="cycleCountResultPageDataChange($event)" #cycleCountResultTable>
         <thead  >
           <tr>
@@ -343,7 +345,8 @@
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
-      <nz-table nzShowSizeChanger nzShowPagination 
+      <nz-table 
+      [nzScroll]="{ x: true, y: true }" nzShowSizeChanger nzShowPagination 
       [nzData]="listOfAllCancelledCycleCountRequests"
         (nzCurrentPageDataChange)="cancelledCycleCountCurrentPageDataChange($event)"
         [nzFooter]="cancelledCycleCountTableFoot" #cancelledCycleCountTable>
@@ -409,7 +412,8 @@
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
-      <nz-table nzShowSizeChanger nzShowPagination 
+      <nz-table 
+      [nzScroll]="{ x: true, y: true }" nzShowSizeChanger nzShowPagination 
       [nzData]="listOfAllOpenAuditCountRequests"
         (nzCurrentPageDataChange)="openAuditCountCurrentPageDataChange($event)" [nzFooter]="openAuditCountTableFoot"
         #openAuditCountTable>
@@ -509,7 +513,8 @@
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
-      <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllAuditCountResults"
+      <nz-table 
+      [nzScroll]="{ x: true, y: true }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllAuditCountResults"
         (nzCurrentPageDataChange)="auditCountResultsCurrentPageDataChange($event)" #auditCountResultsTable>
         <thead >
           <tr>
@@ -578,7 +583,8 @@
 </ng-template>
 <ng-template #tplCycleCountRequestConfirmModalContent>
   <form>
-    <nz-table [nzData]="inventoriesToBeCount" #inventoriesTable nzShowPagination="false">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="inventoriesToBeCount" #inventoriesTable nzShowPagination="false">
       <thead>
         <tr>
           <th>{{ 'location' | translate}}</th>

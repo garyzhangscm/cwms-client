@@ -36,7 +36,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllBillOfMaterial" [nzFooter]="tableFoot"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllBillOfMaterial" [nzFooter]="tableFoot"
   (nzCurrentPageDataChange)="currentPageDataChange($event)">
     <thead  >
       <tr>
@@ -98,7 +99,8 @@
            
             <nz-tabset>
               <nz-tab nzTitle=" {{ 'bill-of-material.line' | translate }}">
-                <nz-table [nzData]="data.billOfMaterialLines" nzSize="middle" [nzShowPagination]="false">
+                <nz-table 
+                [nzScroll]="{ x: true, y: true }" [nzData]="data.billOfMaterialLines" nzSize="middle" [nzShowPagination]="false">
 
                   <thead>
                     <th>
@@ -125,7 +127,8 @@
   </nz-table>
   </nz-tab>
   <nz-tab nzTitle=" {{ 'work-order-instruction-template' | translate }}">
-    <nz-table [nzData]="data.workOrderInstructionTemplates" nzSize="middle" [nzShowPagination]="false">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="data.workOrderInstructionTemplates" nzSize="middle" [nzShowPagination]="false">
 
       <thead>
         <th>
@@ -148,7 +151,8 @@
 
 
   <nz-tab nzTitle=" {{ 'bill-of-material.by-product' | translate }}">
-    <nz-table [nzData]="data.billOfMaterialByProducts" nzSize="middle" [nzShowPagination]="false">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="data.billOfMaterialByProducts" nzSize="middle" [nzShowPagination]="false">
 
 
       <thead>

@@ -100,7 +100,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllInventoryAdjustmentThresholds">
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllInventoryAdjustmentThresholds">
     <thead>
       <tr>
         

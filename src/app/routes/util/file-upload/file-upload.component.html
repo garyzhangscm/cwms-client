@@ -96,6 +96,7 @@
 
   <div class="search-result-list" *ngIf="selectedFileUploadType !== null">
     <nz-table
+    [nzScroll]="{ x: true, y: true }" 
       #rowSelectionTable
       nzShowSizeChanger
       [nzData]="selectedFileUploadType?.columns"

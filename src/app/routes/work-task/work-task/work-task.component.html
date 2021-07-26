@@ -121,7 +121,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllWorkTasks"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllWorkTasks"
     (nzCurrentPageDataChange)="currentPageDataChange($event)" [nzFooter]="tableFoot" nzTableLayout="true">
     <thead>
       <tr>

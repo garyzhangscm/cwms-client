@@ -43,7 +43,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationWorkOrderConfirmations" #nestedTable
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationWorkOrderConfirmations" #nestedTable
     [nzFooter]="tableFoot">
     <thead >
       <tr>
@@ -105,7 +106,8 @@
           
             <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
               <nz-tab nzTitle=" {{ 'work-order.line' | translate }}">
-                <nz-table #innerTable [nzData]="data.workOrderLineConfirmations" nzSize="middle"
+                <nz-table 
+                [nzScroll]="{ x: true, y: true }" #innerTable [nzData]="data.workOrderLineConfirmations" nzSize="middle"
                   [nzShowPagination]="false">
                   <thead>
                     <th>
@@ -155,7 +157,8 @@
 
 
   <nz-tab nzTitle=" {{ 'work-order.by-product' | translate }}">
-    <nz-table #innerTable [nzData]="data.workOrderByProductConfirmations" nzSize="middle" [nzShowPagination]="false">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" #innerTable [nzData]="data.workOrderByProductConfirmations" nzSize="middle" [nzShowPagination]="false">
       <thead>
 
         <th>

@@ -45,7 +45,8 @@
   <div class="search-result-list">
 
 
-    <nz-table [nzData]="currentWorkOrder?.workOrderLines" nzSize="middle" [nzShowPagination]="false">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="currentWorkOrder?.workOrderLines" nzSize="middle" [nzShowPagination]="false">
 
       <thead>
         <th>
@@ -134,7 +135,8 @@
 <!-- Step 2: confirm the change -->
 <div class="steps-content" *ngIf="stepIndex === 1">
 
-  <nz-table [nzData]="currentWorkOrder?.workOrderLines" nzSize="middle" [nzShowPagination]="false">
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" [nzData]="currentWorkOrder?.workOrderLines" nzSize="middle" [nzShowPagination]="false">
 
     <thead>
       <th>

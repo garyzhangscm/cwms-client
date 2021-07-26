@@ -55,7 +55,8 @@
 <!-- Table to show work order  lines-->
 
 <div class="search-result-list">
-  <nz-table [nzData]="workOrderCompleteTransaction?.workOrderLineCompleteTransactions" nzShowPagination="false"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" [nzData]="workOrderCompleteTransaction?.workOrderLineCompleteTransactions" nzShowPagination="false"
     nzBordered="true" #workOrderLineTable>
 
     <thead>

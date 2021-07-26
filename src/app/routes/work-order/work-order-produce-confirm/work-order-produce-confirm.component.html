@@ -72,7 +72,8 @@
 
 <nz-card nzTitle="{{ 'work-order.producing-inventory' | translate}}" *ngIf="workOrderProduceTransaction !== undefined">
   <div class="search-result-list">
-    <nz-table [nzData]="workOrderProduceTransaction?.workOrderProducedInventories" nzShowPagination="false"
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="workOrderProduceTransaction?.workOrderProducedInventories" nzShowPagination="false"
       #inventoryTable>
       <thead>
         <tr>
@@ -124,7 +125,8 @@
 <nz-card nzTitle="{{ 'work-order.consuming-inventory' | translate}}" *ngIf="workOrderProduceTransaction !== undefined"
   [nzExtra]="consumeByUOM">
   <div class="search-result-list">
-    <nz-table [nzData]="workOrderProduceTransaction.workOrderLineConsumeTransactions" nzShowPagination="false"
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="workOrderProduceTransaction.workOrderLineConsumeTransactions" nzShowPagination="false"
       #workOrderLineTable>
       <thead>
         <tr>
@@ -174,7 +176,8 @@
 </ng-template>
 
 <ng-template #bomDetails>
-  <nz-table #bomDetailTable [nzData]="workOrderProduceTransaction.matchedBillOfMaterial.billOfMaterialLines"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #bomDetailTable [nzData]="workOrderProduceTransaction.matchedBillOfMaterial.billOfMaterialLines"
     nzSize="middle" [nzShowPagination]="false" nzBordered>
     <thead>
       <th>
@@ -204,7 +207,8 @@
 <nz-card nzTitle="{{ 'work-order.by-product' | translate}}" *ngIf="workOrderProduceTransaction !== undefined"
   [nzExtra]="toggleWorkOrderByProductInformation">
   <div class="search-result-list" [hidden]="isWorkOrderByProductCollapse">
-    <nz-table [nzData]="workOrderProduceTransaction?.workOrderByProductProduceTransactions" nzShowPagination="false"
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="workOrderProduceTransaction?.workOrderByProductProduceTransactions" nzShowPagination="false"
       #workOrderByProductProduceTransactionTable>
       <thead>
         <tr>
@@ -261,7 +265,8 @@
 <nz-card nzTitle="{{ 'work-order.kpi' | translate}}" *ngIf="workOrderProduceTransaction !== undefined"
   [nzExtra]="toggleWorkOrderKPIInformation">
   <div class="search-result-list" [hidden]="isWorkOrderKPICollapse">
-    <nz-table [nzData]="workOrderProduceTransaction?.workOrderKPITransactions" nzShowPagination="false"
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="workOrderProduceTransaction?.workOrderKPITransactions" nzShowPagination="false"
       #workOrderKPITransactionTable>
 
       <thead>

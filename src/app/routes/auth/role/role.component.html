@@ -27,7 +27,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllRoles" [nzFooter]="tableFoot">
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllRoles" [nzFooter]="tableFoot">
     <thead>
       <tr>
         <th nzWidth="60px"></th>
@@ -73,7 +74,8 @@
         <tr [nzExpand]="expandSet.has(data.id)"> 
             <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" [nzSelectedIndex]="tabIndex">
               <nz-tab nzTitle="{{'menu.main.auth.user' | translate}}">
-                <nz-table #userTable [nzData]="data.users" nzSize="middle" [nzShowPagination]="false">
+                <nz-table 
+                [nzScroll]="{ x: true, y: true }" #userTable [nzData]="data.users" nzSize="middle" [nzShowPagination]="false">
                   <thead>
                     <tr>
                       
@@ -110,7 +112,8 @@
   </nz-table>
   </nz-tab>
   <nz-tab nzTitle="{{'menu.main.auth.menu' | translate}}">
-    <nz-table #menuTable [nzData]="data.menus" nzSize="middle" [nzShowPagination]="true">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" #menuTable [nzData]="data.menus" nzSize="middle" [nzShowPagination]="true">
       <thead>
         <tr>
           

@@ -37,7 +37,8 @@
     <!-- Table to Display the result  -->
     <div class="search-result-list">
 
-        <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllReportPrinterConfiguration"
+        <nz-table 
+        [nzScroll]="{ x: true, y: true }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllReportPrinterConfiguration"
             (nzCurrentPageDataChange)="currentPageDataChange($event)" #reportPrinterConfigurationTable>
             <thead>
                 <tr>

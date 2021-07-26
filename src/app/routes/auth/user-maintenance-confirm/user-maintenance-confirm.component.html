@@ -63,7 +63,8 @@
 </nz-card>
 
 <nz-card nzTitle="{{ 'steps.role.assign-roles.title' | translate }}" [nzActions]="[cardFoot]">
-  <nz-table #roleTable [nzData]="currentUser!.roles">
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #roleTable [nzData]="currentUser!.roles">
     <thead>
       <tr>
         <th

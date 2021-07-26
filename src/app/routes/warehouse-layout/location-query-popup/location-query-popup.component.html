@@ -63,7 +63,8 @@
   <!-- Table to Display the result  -->
   <div class="search-result-list">
 
-    <nz-table #rowSelectionTable   nzShowPagination [nzData]="listOfAllLocations"
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" #rowSelectionTable   nzShowPagination [nzData]="listOfAllLocations"
       (nzCurrentPageDataChange)="currentPageDataChange($event)" 
       [nzScroll]="{ x: scrollX }" nzPageSize="5"
       >

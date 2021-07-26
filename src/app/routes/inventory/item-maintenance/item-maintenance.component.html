@@ -217,7 +217,8 @@
 <!-- Maintain package type -->
 <div *ngIf="stepIndex === 1" class="small-card">
   <div class="search-result-list">
-    <nz-table #nestedTable [nzData]="currentItem.itemPackageTypes" [nzShowPagination]="false">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" #nestedTable [nzData]="currentItem.itemPackageTypes" [nzShowPagination]="false">
       <thead>
         <tr>
           <th nzWidth="40px"></th>
@@ -266,7 +267,8 @@
              
               <nz-tabset>
                 <nz-tab nzTitle=" {{ 'unit-of-measure' | translate }}">
-                  <nz-table [nzData]="data.itemUnitOfMeasures" nzSize="middle" [nzShowPagination]="false">
+                  <nz-table 
+                  [nzScroll]="{ x: true, y: true }" [nzData]="data.itemUnitOfMeasures" nzSize="middle" [nzShowPagination]="false">
                     <thead>
                       <th>{{ 'unit-of-measure' | translate }}</th>
                       <th>{{ 'quantity' | translate }}</th>
@@ -353,7 +355,8 @@
   <nz-card>
     <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
       <nz-tab *ngFor="let itemPackageType of currentItem.itemPackageTypes" [nzTitle]="itemPackageType.name">
-        <nz-table #innerTable [nzData]="itemPackageType.itemUnitOfMeasures" nzSize="middle" [nzShowPagination]="false">
+        <nz-table 
+        [nzScroll]="{ x: true, y: true }" #innerTable [nzData]="itemPackageType.itemUnitOfMeasures" nzSize="middle" [nzShowPagination]="false">
           <thead>
             <tr>
               <th>{{ 'unit-of-measure' | translate }}</th>

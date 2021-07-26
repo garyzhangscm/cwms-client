@@ -28,7 +28,8 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
 
-  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllWaves" [nzFooter]="tableFoot" #nestedTable>
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllWaves" [nzFooter]="tableFoot" #nestedTable>
     <thead >
       <tr>
         <th
@@ -88,7 +89,8 @@
             <nz-tabset>
               <nz-tab nzTitle="{{ 'shipment' | translate }}">
 
-                <nz-table [nzData]="mapOfShipmentLines[data.id]" nzSize="middle" [nzShowPagination]="false">
+                <nz-table 
+                [nzScroll]="{ x: true, y: true }" [nzData]="mapOfShipmentLines[data.id]" nzSize="middle" [nzShowPagination]="false">
 
                   <thead>
                     <th>
@@ -122,7 +124,8 @@
   </nz-tab>
 
   <nz-tab nzTitle=" {{ 'pick' | translate }}">
-    <nz-table nzSize="middle" [nzShowPagination]="false" [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[data.id]">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" nzSize="middle" [nzShowPagination]="false" [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[data.id]">
       <thead>
         <th>
           {{ 'pick.number' | translate }}
@@ -181,7 +184,8 @@
   </nz-tab>
 
   <nz-tab nzTitle=" {{ 'picked-inventory' | translate }}">
-    <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfPickedInventory[data.id]">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfPickedInventory[data.id]">
       <thead>
         <th>
           {{ 'pick.number' | translate }}
@@ -232,7 +236,8 @@
   </nz-tab>
 
   <nz-tab nzTitle=" {{ 'short-allocation' | translate }}">
-    <nz-table [nzData]="mapOfShortAllocations[data.id]" nzSize="middle" [nzShowPagination]="false">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="mapOfShortAllocations[data.id]" nzSize="middle" [nzShowPagination]="false">
       <thead>
         <th>
           {{ 'item' | translate }}

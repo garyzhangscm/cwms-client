@@ -26,7 +26,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllPickLists" #nestedTable>
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllPickLists" #nestedTable>
     <thead >
       <tr>
         <th nzWidth="40px"></th>
@@ -79,7 +80,8 @@
             <nz-tabset [nzSelectedIndex]="tabSelectedIndex">
 
               <nz-tab nzTitle=" {{ 'pick' | translate }}">
-                <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfPicks[data.id]">
+                <nz-table 
+                [nzScroll]="{ x: true, y: true }" nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfPicks[data.id]">
                   <thead>
                     <th>
                       {{ 'pick.number' | translate }}
@@ -132,7 +134,8 @@
   </nz-tab>
 
   <nz-tab nzTitle=" {{ 'picked-inventory' | translate }}">
-    <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfPickedInventory[data.id]">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfPickedInventory[data.id]">
       <thead>
         <th>
           {{ 'pick.number' | translate }}

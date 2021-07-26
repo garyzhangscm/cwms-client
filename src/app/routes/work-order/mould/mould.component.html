@@ -37,7 +37,8 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllMoulds" [nzFooter]="tableFoot"
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllMoulds" [nzFooter]="tableFoot"
   (nzCurrentPageDataChange)="currentPageDataChange($event)">
     <thead  >
       <tr>

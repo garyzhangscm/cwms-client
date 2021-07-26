@@ -41,7 +41,8 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
 
-  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllShortAllocations" 
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllShortAllocations" 
   (nzCurrentPageDataChange)="currentPageDataChange($event)"
   [nzFooter]="tableFoot"
     #shortAllocationTable>

@@ -98,7 +98,8 @@
       3. add new lines
   -->
   <div class="search-result-list">
-    <nz-table [nzData]="currentBillOfMaterial?.billOfMaterialLines" nzSize="middle" [nzShowPagination]="false">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="currentBillOfMaterial?.billOfMaterialLines" nzSize="middle" [nzShowPagination]="false">
       <thead>
         <th>
           {{ 'bill-of-material.line.number' | translate }}
@@ -174,7 +175,8 @@
 <!-- Step 3: working instruction template -->
 <div class="small-card" *ngIf="stepIndex === 2">
   <div class="search-result-list">
-    <nz-table [nzData]="currentBillOfMaterial?.workOrderInstructionTemplates" nzSize="middle"
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="currentBillOfMaterial?.workOrderInstructionTemplates" nzSize="middle"
       [nzShowPagination]="false">
       <thead>
         <th>
@@ -215,7 +217,8 @@
 <!-- Step 4: by product -->
 <div class="small-card" *ngIf="stepIndex === 3">
   <div class="search-result-list">
-    <nz-table [nzData]="currentBillOfMaterial?.billOfMaterialByProducts" nzSize="middle" [nzShowPagination]="false">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="currentBillOfMaterial?.billOfMaterialByProducts" nzSize="middle" [nzShowPagination]="false">
       <thead>
         <th>
           {{ 'item' | translate }}
@@ -304,7 +307,8 @@
 
   <!-- Bill Of Material Line Information -->
   <nz-card nzTitle="{{ 'bill-of-material.line' | translate }}">
-    <nz-table [nzData]="currentBillOfMaterial.billOfMaterialLines" nzSize="middle" [nzShowPagination]="false">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="currentBillOfMaterial.billOfMaterialLines" nzSize="middle" [nzShowPagination]="false">
       <thead>
         <th>
           {{ 'bill-of-material.line.number' | translate }}
@@ -343,7 +347,8 @@
 
   <!-- Work Instruction Information -->
   <nz-card nzTitle="{{ 'work-order-instruction-template' | translate }}">
-    <nz-table [nzData]="currentBillOfMaterial.workOrderInstructionTemplates" nzSize="middle" [nzShowPagination]="false">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="currentBillOfMaterial.workOrderInstructionTemplates" nzSize="middle" [nzShowPagination]="false">
       <thead>
         <th>
           {{ 'id' | translate }}
@@ -367,7 +372,8 @@
 
   <!-- By Product Information -->
   <nz-card nzTitle="{{ 'bill-of-material.by-product' | translate }}">
-    <nz-table [nzData]="currentBillOfMaterial.billOfMaterialByProducts" nzSize="middle" [nzShowPagination]="false">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="currentBillOfMaterial.billOfMaterialByProducts" nzSize="middle" [nzShowPagination]="false">
       <thead>
         <th>
           {{ 'item' | translate }}

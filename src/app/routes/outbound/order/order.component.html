@@ -30,7 +30,8 @@
 
   
 <div class="search-result-list">
-  <nz-table nzShowSizeChanger nzShowPagination [nzData]="listOfAllOrders" [nzFooter]="tableFoot" #nestedTable
+  <nz-table 
+  [nzScroll]="{ x: true, y: true }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllOrders" [nzFooter]="tableFoot" #nestedTable
   (nzCurrentPageDataChange)="currentPageDataChange($event)">
     <thead>
       <tr>
@@ -209,7 +210,8 @@
            
             <nz-tabset [nzSelectedIndex]="tabSelectedIndex">
               <nz-tab nzTitle=" {{ 'order.line' | translate }}">
-                <nz-table #innerTable [nzData]="data.orderLines" nzSize="middle" [nzShowPagination]="false">
+                <nz-table 
+                [nzScroll]="{ x: true, y: true }" #innerTable [nzData]="data.orderLines" nzSize="middle" [nzShowPagination]="false">
                   <thead>
                     <th>
                       {{ 'order.line.number' | translate }}
@@ -260,7 +262,8 @@
   </nz-tab>
 
   <nz-tab nzTitle=" {{ 'pick' | translate }}">
-    <nz-table nzSize="middle" [nzShowPagination]="false" [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[data.id]">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" nzSize="middle" [nzShowPagination]="false" [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[data.id]">
       <thead>
         <th>
           {{ 'pick.number' | translate }}
@@ -337,7 +340,8 @@
   </nz-tab>
 
   <nz-tab nzTitle=" {{ 'picked-inventory' | translate }}">
-    <nz-table nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfPickedInventory[data.id]">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfPickedInventory[data.id]">
       <thead>
         <th>
           {{ 'pick.number' | translate }}
@@ -389,7 +393,8 @@
   </nz-tab>
 
   <nz-tab nzTitle=" {{ 'short-allocation' | translate }}">
-    <nz-table [nzData]="mapOfShortAllocations[data.id]" nzSize="middle" [nzShowPagination]="false">
+    <nz-table 
+    [nzScroll]="{ x: true, y: true }" [nzData]="mapOfShortAllocations[data.id]" nzSize="middle" [nzShowPagination]="false">
       <thead>
         <th>
           {{ 'item' | translate }}
