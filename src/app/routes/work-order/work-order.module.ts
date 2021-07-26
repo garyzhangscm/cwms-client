@@ -30,6 +30,8 @@ import { WorkOrderMouldComponent } from './mould/mould.component';
 import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component'; 
 import { WorkOrderProductionKanbanComponent } from './production-kanban/production-kanban.component';
 import { CountdownModule } from 'ngx-countdown';
+import {ScrollingModule} from '@angular/cdk/scrolling';
+
 
 const COMPONENTS: Type<void>[] = [
   WorkOrderWorkOrderComponent,
@@ -64,7 +66,8 @@ const COMPONENTS_NOROUNT: Type<void>[] = [];
     NzDescriptionsModule,
     NzTransferModule,
     CommonModule, 
-    WarehouseLayoutModule, CountdownModule 
+    WarehouseLayoutModule, CountdownModule ,
+    ScrollingModule
   ],
   declarations: [
     ...COMPONENTS,

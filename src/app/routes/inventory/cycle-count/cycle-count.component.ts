@@ -97,6 +97,7 @@ export class InventoryCycleCountComponent implements OnInit {
   // Form related data and functions
   searchForm!: FormGroup;
   searching = false;
+  isSpinning = false;
   searchResult = '';
 
   // Table data for display
@@ -121,20 +122,20 @@ export class InventoryCycleCountComponent implements OnInit {
     this.listOfDisplayCycleCountBatches = [];
   }
   search(): void {
-    this.searching = true;
+    this.isSpinning = true;
     this.searchResult = '';
     this.cycleCountBatchService.getCycleCountBatches(this.searchForm.value.batchId).subscribe(
       cycleCountBatchRes => {
         this.cycleCountBatches = cycleCountBatchRes;
         this.listOfDisplayCycleCountBatches = cycleCountBatchRes;
-        this.searching = false;
+        this.isSpinning = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
           rowCount: cycleCountBatchRes.length,
         });
       },
       () => {
-        this.searching = false;
+        this.isSpinning = false;
         this.searchResult = '';
       },
     );

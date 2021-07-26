@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChil
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { CountdownComponent, CountdownEvent } from 'ngx-countdown'; 
-import { interval } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { ProductionLineKanbanData } from '../../work-order/models/production-line-kanban-data'; 
@@ -21,7 +21,10 @@ import { ProductionLineService } from '../services/production-line.service';
 })
 export class WorkOrderProductionKanbanComponent implements OnInit {
   productionLineKanbanDataList: ProductionLineKanbanData[] = [];
+  displayProductionLineKanbanDataList: ProductionLineKanbanData[] = [];
   productionLines: ProductionLine[] = [];
+  
+  showProductionLineSet = new Set<string>();
 
 
   listOfColumns: ColumnItem[] = [
@@ -130,32 +133,57 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
   // endregion
 
   countDownNumber = 60;
+  countDownsubscription!: Subscription;
   constructor(private http: _HttpClient, public msg: NzMessageService, private cdr: ChangeDetectorRef,
 
     private utilService: UtilService,
     private productionLineKanbanService: ProductionLineKanbanService,
     private productionLineService: ProductionLineService) { 
+      this.loadProductionLines();
    }
 
-  ngOnInit(): void {
-    /**
-    this.productionLineKanbanDataList = [
-      {"productionLineName":"M1-JW-750T","workOrderNumber":"2021050024-01",
-      "productionLineModel":null,"productionLineTargetOutput":0,"productionLineActualOutput":0,"productionLineTotalTargetOutput":20961,
-      "productionLineTotalActualOutput":0,"workOrderStatus":null,"shift":null},
-      {"productionLineName":"M2-Borche-700T","workOrderNumber":"2021010072-01","productionLineModel":null,
-      "productionLineTargetOutput":0,"productionLineActualOutput":0,"productionLineTotalTargetOutput":30000,
-      "productionLineTotalActualOutput":0,"workOrderStatus":null,"shift":null}]
-       */ 
+  ngOnInit(): void { 
       this.resetCountDownNumber();
       this.loadKanbanData();
-      interval(1000).subscribe(x => {
+      this.countDownsubscription = interval(1000).subscribe(x => {
         this.handleCountDownEvent();
       })
 
   } 
-  handleCountDownEvent(): void {
-    console.log(`countdown: ${this.countDownNumber}`)
+  ngOnDestroy() {
+    this.countDownsubscription.unsubscribe();
+
+  }
+  loadProductionLines() {
+    this.productionLineService.getProductionLines()
+      .subscribe(productionLinesRes => { 
+        this.productionLines = productionLinesRes;
+        // by default, we will show all production lines
+        this.productionLines.forEach(productionLine => { 
+          this.showProductionLineSet.add(productionLine.name)}); 
+        this.refreshKanbanData();
+
+      });
+  }
+  refreshKanbanData() {
+      
+    this.displayProductionLineKanbanDataList = this.productionLineKanbanDataList.filter(
+      item =>  this.showProductionLineSet.has(item.productionLineName) 
+    ); 
+  }
+  // switch to add or remove the productione line from display
+  switchProductionLineDisplay(name: string) {
+    if (this.showProductionLineSet.has(name)) {
+      console.log(`remove production line ${name}`);
+      this.showProductionLineSet.delete(name);
+    }
+    else {
+      console.log(`add production line ${name}`);
+      this.showProductionLineSet.add(name);
+    }
+    this.refreshKanbanData();
+  }
+  handleCountDownEvent(): void { 
     this.countDownNumber --;
     if (this.countDownNumber <= 0) {
       this.resetCountDownNumber();
@@ -169,11 +197,9 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
 
 
     this.productionLineKanbanService.getProductionLineKanbanData()
-        .subscribe(productionLineKanbanDataRes => {
-
-          console.log(`get kanban data: \n${JSON.stringify(productionLineKanbanDataRes)}`);
-          console.log(`size:${productionLineKanbanDataRes.length}`)
+        .subscribe(productionLineKanbanDataRes => { 
           this.productionLineKanbanDataList = productionLineKanbanDataRes;
+          this.refreshKanbanData();
   });
 }
 }

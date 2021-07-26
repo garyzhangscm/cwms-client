@@ -23,12 +23,12 @@
 <nz-card [nzActions]="[cardFoot]" [nzExtra]="refreshTemplate">
   <form nz-form [formGroup]="requestForm">
     <div nz-row [nzGutter]="24">
-      <div nz-col [nzSpan]="8">
+      <div nz-col [nzSpan]="16">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="batchId">
+          <nz-form-label [nzSpan]="6" nzFor="batchId">
             {{ 'cycle-count.batchId' | translate }}
           </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          <nz-form-control [nzSpan]="12" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
             <input appFkey variable="cycle-count-batch-id" nz-input formControlName="batchId" id="batchId"
               name="batchId" required (blur)="batchIdOnBlur($event.target.value)" />
@@ -47,12 +47,12 @@
     </div>
 
     <div nz-row [nzGutter]="24">
-      <div nz-col [nzSpan]="8">
+      <div nz-col [nzSpan]="16">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="requestType">
+          <nz-form-label [nzSpan]="6" nzFor="requestType">
             {{ 'cycle-count.request-type' | translate }}
           </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          <nz-form-control [nzSpan]="12" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.required' | translate }}">
             <nz-select #requestTypeSelect formControlName="requestType" name="requestType"
               (ngModelChange)="requestTypeChange($event)">
@@ -584,7 +584,7 @@
 <ng-template #tplCycleCountRequestConfirmModalContent>
   <form>
     <nz-table 
-    [nzScroll]="{ x: true, y: true }" [nzData]="inventoriesToBeCount" #inventoriesTable nzShowPagination="false">
+    [nzScroll]="{ x: true, y: true }"  [nzData]="inventoriesToBeCount" #inventoriesTable nzShowPagination="false">
       <thead>
         <tr>
           <th>{{ 'location' | translate}}</th>

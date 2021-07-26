@@ -1,5 +1,6 @@
 <page-header> </page-header>
 
+<nz-spin [nzSpinning]="isSpinning"  [nzSize]="'large'">
 <!-- Form to query the result  -->
 <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
   <div nz-row [nzGutter]="24">
@@ -178,7 +179,7 @@
     </button>
   </div>
 </div>
-
+</nz-spin>
 <ng-template #tableFoot>
 
   <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">

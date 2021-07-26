@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Lodop, LodopService } from '@delon/abc/lodop';
 import { _HttpClient } from '@delon/theme';
@@ -68,7 +69,7 @@ export class PrintingService {
     fileName: string,
     type: ReportType,
     printerIndex: number,
-    printerName: number,
+    printerName: string,
     physicalCopyCount: number,
     pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
     pageSize: PrintPageSize = PrintPageSize.A4,
@@ -86,16 +87,17 @@ export class PrintingService {
 
     if (this.warehouseService.getServerSidePrintingFlag()) {
       console.log(`will print from the server side`);
+      let params = new HttpParams();
       url = `/resource/report-histories/print/${this.companyService.getCurrentCompany()?.id}/${this.warehouseService.getCurrentWarehouse().id}/${type}/${fileName}`
       if (findPrinterBy) {
-        url = `${url}?findPrinterBy=${findPrinterBy}`;
-      }
-      if (printerName) {
 
-        url = `${url}&printerName=${printerName}`;
+        params = params.append('findPrinterBy', findPrinterBy); 
+      }
+      if (printerName) { 
+        params = params.append('printerName', printerName);  
       }
       this.http
-        .post(url)
+        .post(url, params)
         .pipe(map(res => res.data)).subscribe(res => {
           console.log(` file printed!`);
         });

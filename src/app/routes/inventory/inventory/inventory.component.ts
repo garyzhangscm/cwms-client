@@ -218,20 +218,20 @@ export class InventoryInventoryComponent implements OnInit {
 
   }
   search(id?: number): void {
-    this.searching = true;
+    this.isSpinning = true;
     this.searchResult = '';
     if (id) {
       this.inventoryService.getInventoryById(id).subscribe(
         inventoryRes => {
           this.processInventoryQueryResult([inventoryRes]);
-          this.searching = false;
+          this.isSpinning = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
             rowCount: 1,
           });
         },
         () => {
-          this.searching = false;
+          this.isSpinning = false;
           this.searchResult = '';
         },
       );
@@ -247,14 +247,14 @@ export class InventoryInventoryComponent implements OnInit {
         .subscribe(
           inventoryRes => {
             this.processInventoryQueryResult(inventoryRes);
-            this.searching = false;
+            this.isSpinning = false;
             this.searchResult = this.i18n.fanyi('search_result_analysis', {
               currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
               rowCount: inventoryRes.length,
             });
           },
           () => {
-            this.searching = false;
+            this.isSpinning = false;
             this.searchResult = '';
           },
         );

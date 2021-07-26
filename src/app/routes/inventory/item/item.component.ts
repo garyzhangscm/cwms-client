@@ -208,6 +208,7 @@ export class InventoryItemComponent implements OnInit {
   expandSet = new Set<number>();
 
   scrollX = '100vw';
+  isSpinning = false;
 
   // Select control for clients and item families
   clients: Array<{ label: string; value: string }> = [];
@@ -284,7 +285,7 @@ export class InventoryItemComponent implements OnInit {
     this.listOfDisplayItems = [];
   }
   search(): void {
-    this.searching = true;
+    this.isSpinning = true;
     console.log(`Start to search with item ${this.searchForm.value.itemName}`);
     this.itemService
       .getItems(
@@ -297,7 +298,7 @@ export class InventoryItemComponent implements OnInit {
           this.items = itemRes;
           this.listOfDisplayItems = itemRes;
 
-          this.searching = false;
+          this.isSpinning = false;
 
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
@@ -305,7 +306,7 @@ export class InventoryItemComponent implements OnInit {
           });
         },
         () => {
-          this.searching = false;
+          this.isSpinning = false;
           this.searchResult = '';
         },
       );
