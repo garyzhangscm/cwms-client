@@ -9,6 +9,7 @@ import { WarehouseLayoutWarehouseLocationComponent } from './warehouse-location/
 import { WarehouseLayoutWarehouseMaintenanceConfirmComponent } from './warehouse-maintenance-confirm/warehouse-maintenance-confirm.component';
 import { WarehouseLayoutWarehouseMaintenanceComponent } from './warehouse-maintenance/warehouse-maintenance.component';
 import { WarehouseLayoutWarehouseComponent } from './warehouse/warehouse.component';
+import { WarehouseLayoutWarehouseLayoutMaintenanceComponent } from './warehouse-layout-maintenance/warehouse-layout-maintenance.component';
 
 const routes: Routes = [
   { path: 'warehouse', component: WarehouseLayoutWarehouseComponent, canActivate: [AuthGuard]  },
@@ -27,7 +28,8 @@ const routes: Routes = [
     component: WarehouseLayoutLocationGroupMaintenanceConfirmComponent,
   },
   { path: 'warehouse-location', component: WarehouseLayoutWarehouseLocationComponent, canActivate: [AuthGuard]  },
-  { path: 'location-query-popup', component: WarehouseLayoutLocationQueryPopupComponent }];
+  { path: 'location-query-popup', component: WarehouseLayoutLocationQueryPopupComponent },
+  { path: 'warehouse-layout-maintenance', component: WarehouseLayoutWarehouseLayoutMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
