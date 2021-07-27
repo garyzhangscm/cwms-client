@@ -96,6 +96,9 @@ export class PrintingService {
       if (printerName) { 
         params = params.append('printerName', printerName);  
       }
+      if (physicalCopyCount) { 
+        params = params.append('copies', physicalCopyCount.toString());  
+      }
       this.http
         .post(url, params)
         .pipe(map(res => res.data)).subscribe(res => {

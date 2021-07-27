@@ -54,22 +54,21 @@
             </nz-form-item>
         </div>
 
-
         <div nz-col [nzSpan]="8">
-            <nz-form-item>
-                <nz-form-label [nzSm]="6" [nzXs]="24">
-                    {{ 'report.type' | translate }}
-                </nz-form-label>
-                <nz-form-control [nzSm]="14" [nzXs]="24">
-                    <nz-select nzAllowClear [(ngModel)]="currentReportPrinterConfiguration.printerName"
-                        style="width: 200px;">
-                        <nz-option *ngFor="let reportType of reportTypes | keys" nzValue="{{ reportType.key }}"
-                            nzLabel="{{ 'REPORT-TYPE-' + reportType.key | translate }}">
-                        </nz-option>
-                    </nz-select>
-                </nz-form-control>
+            <nz-form-item nzFlex>
+              <nz-form-label [nzSm]="6" [nzXs]="24">
+                {{ 'printer' | translate }}
+              </nz-form-label>
+              <nz-form-control [nzSm]="14" [nzXs]="24">
+                <nz-select   nz-input [(ngModel)]="currentReportPrinterConfiguration.printerName"  style="width: 200px;">
+                  <nz-option *ngFor="let availablePrint of availablePrinters"
+                    [nzLabel]= "availablePrint.name" [nzValue]="availablePrint.id">
+                  </nz-option>
+                </nz-select>
+              </nz-form-control>
             </nz-form-item>
-        </div>
+          </div>
+ 
 
 
     </div>

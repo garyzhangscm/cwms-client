@@ -6,6 +6,8 @@ import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile, NzUploadChangeParam } from 'ng-zorro-antd/upload';
 import { UserService } from '../../auth/services/user.service';
+import { Printer } from '../../common/models/printer';
+import { PrintingService } from '../../common/services/printing.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Report } from '../models/report';
 import { ReportOrientation } from '../models/report-orientation.enum';
@@ -23,6 +25,7 @@ export class ReportReportPrinterConfigurationMaintenanceComponent implements OnI
   stepIndex = 0;
   currentReportPrinterConfiguration!: ReportPrinterConfiguration;
   reportTypes = ReportType;
+  availablePrinters: Printer[] = [];
 
 
   constructor(private http: _HttpClient,
@@ -33,6 +36,7 @@ export class ReportReportPrinterConfigurationMaintenanceComponent implements OnI
     private i18n: I18NService,
     private reportPrinterConfigurationService: ReportPrinterConfigurationService,
     private messageService: NzMessageService,
+    private printingService: PrintingService,
     private router: Router,) { }
 
   ngOnInit(): void {
@@ -55,6 +59,7 @@ export class ReportReportPrinterConfigurationMaintenanceComponent implements OnI
     });
 
     this.stepIndex = 0;
+    this.loadAvaiablePrinters();
 
   }
 
@@ -100,4 +105,34 @@ export class ReportReportPrinterConfigurationMaintenanceComponent implements OnI
     }
   }
 
+  loadAvaiablePrinters(): void {
+    console.log(`start to load avaiable printers`)
+    if (this.warehouseService.getServerSidePrintingFlag() == true) {
+      console.log(`will get printer from server`)
+      this.printingService.getAllServerPrinters().subscribe(printers => {
+        printers.forEach(
+          (printer, index) => {
+            this.availablePrinters.push({
+              id: index, name: printer
+            });
+
+          });
+      })
+
+    }
+    else {
+
+      console.log(`will get printer from local tools`)
+      this.printingService.getAllLocalPrinters().forEach(
+        (printer, index) => {
+          this.availablePrinters.push({
+            id: index, name: printer
+          });
+
+        });
+    }
+
+    //console.log(`availablePrinters: ${JSON.stringify(this.availablePrinters)}`);
+
+  }
 }
