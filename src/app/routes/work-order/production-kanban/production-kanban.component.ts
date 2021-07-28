@@ -2,29 +2,30 @@ import { ElementRef } from '@angular/core';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { CountdownComponent, CountdownEvent } from 'ngx-countdown'; 
+import { CountdownComponent, CountdownEvent } from 'ngx-countdown';
 import { interval, Subscription } from 'rxjs';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
-import { ProductionLineKanbanData } from '../../work-order/models/production-line-kanban-data'; 
+import { ProductionLineKanbanData } from '../../work-order/models/production-line-kanban-data';
 import { ProductionLineKanbanService } from '../../work-order/services/production-line-kanban.service';
 import { ProductionLine } from '../models/production-line';
 import { ProductionLineService } from '../services/production-line.service';
 
- 
+
 
 @Component({
   selector: 'app-dashboard-production-kanban',
   templateUrl: './production-kanban.component.html',
   styleUrls: ['./production-kanban.component.less'],
-//changeDetection: ChangeDetectionStrategy.OnPush,
+  //changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WorkOrderProductionKanbanComponent implements OnInit {
   productionLineKanbanDataList: ProductionLineKanbanData[] = [];
   displayProductionLineKanbanDataList: ProductionLineKanbanData[] = [];
   productionLines: ProductionLine[] = [];
-  
+
   showProductionLineSet = new Set<string>();
+  hideProductionLineSelection = true;
 
 
   listOfColumns: ColumnItem[] = [
@@ -126,10 +127,10 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
       listOfFilter: [],
       filterFn: null,
       showFilter: false,
-    }, ];
- 
-   //  @ViewChild('cd', { static: false }) private countdown!: CountdownComponent; 
-   // @ViewChild('countdown', { static: true }) private countdown!: CountdownComponent; 
+    },];
+
+  //  @ViewChild('cd', { static: false }) private countdown!: CountdownComponent; 
+  // @ViewChild('countdown', { static: true }) private countdown!: CountdownComponent; 
   // endregion
 
   countDownNumber = 60;
@@ -138,38 +139,39 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
 
     private utilService: UtilService,
     private productionLineKanbanService: ProductionLineKanbanService,
-    private productionLineService: ProductionLineService) { 
-      this.loadProductionLines();
-   }
+    private productionLineService: ProductionLineService) {
+    this.loadProductionLines();
+  }
 
-  ngOnInit(): void { 
-      this.resetCountDownNumber();
-      this.loadKanbanData();
-      this.countDownsubscription = interval(1000).subscribe(x => {
-        this.handleCountDownEvent();
-      })
+  ngOnInit(): void {
+    this.resetCountDownNumber();
+    this.loadKanbanData();
+    this.countDownsubscription = interval(1000).subscribe(x => {
+      this.handleCountDownEvent();
+    })
 
-  } 
+  }
   ngOnDestroy() {
     this.countDownsubscription.unsubscribe();
 
   }
   loadProductionLines() {
     this.productionLineService.getProductionLines()
-      .subscribe(productionLinesRes => { 
+      .subscribe(productionLinesRes => {
         this.productionLines = productionLinesRes;
         // by default, we will show all production lines
-        this.productionLines.forEach(productionLine => { 
-          this.showProductionLineSet.add(productionLine.name)}); 
+        this.productionLines.forEach(productionLine => {
+          this.showProductionLineSet.add(productionLine.name)
+        });
         this.refreshKanbanData();
 
       });
   }
   refreshKanbanData() {
-      
+
     this.displayProductionLineKanbanDataList = this.productionLineKanbanDataList.filter(
-      item =>  this.showProductionLineSet.has(item.productionLineName) 
-    ); 
+      item => this.showProductionLineSet.has(item.productionLineName)
+    );
   }
   // switch to add or remove the productione line from display
   switchProductionLineDisplay(name: string) {
@@ -183,23 +185,27 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
     }
     this.refreshKanbanData();
   }
-  handleCountDownEvent(): void { 
-    this.countDownNumber --;
+  handleCountDownEvent(): void {
+    this.countDownNumber--;
     if (this.countDownNumber <= 0) {
       this.resetCountDownNumber();
       this.loadKanbanData();
     }
   }
   resetCountDownNumber() {
-    this.countDownNumber= 60;
+    this.countDownNumber = 60;
   }
   loadKanbanData() {
 
 
     this.productionLineKanbanService.getProductionLineKanbanData()
-        .subscribe(productionLineKanbanDataRes => { 
-          this.productionLineKanbanDataList = productionLineKanbanDataRes;
-          this.refreshKanbanData();
-  });
-}
+      .subscribe(productionLineKanbanDataRes => {
+        this.productionLineKanbanDataList = productionLineKanbanDataRes;
+        this.refreshKanbanData();
+      });
+  }
+
+  toggleProductionLineDisplay() {
+    this.hideProductionLineSelection = !this.hideProductionLineSelection;
+  }
 }

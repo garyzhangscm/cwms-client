@@ -5,24 +5,28 @@
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="12" [hidden]="isCollapse">
       <nz-form-item nzFlex>
-        <nz-form-label for="client" [nzSm]="3" [nzXs]="3">
+        <nz-form-label for="client" [nzSpan]="6">
           {{ 'inventory-quantity-change-type' | translate }}
         </nz-form-label>
-        <nz-select nzMode="tags" formControlName="inventoryQuantityChangeType">
-          <nz-option *ngFor="let inventoryQuantityChangeType of inventoryQuantityChangeTypes | keyvalue"
-            [nzLabel]="inventoryQuantityChangeType.value" [nzValue]="inventoryQuantityChangeType.key"></nz-option>
-        </nz-select>
+        <nz-form-control [nzSpan]="14">
+          <nz-select nzMode="tags" formControlName="inventoryQuantityChangeType">
+            <nz-option *ngFor="let inventoryQuantityChangeType of inventoryQuantityChangeTypes | keyvalue"
+              [nzLabel]="inventoryQuantityChangeType.value" [nzValue]="inventoryQuantityChangeType.key"></nz-option>
+          </nz-select>
+        </nz-form-control>
       </nz-form-item>
     </div>
 
     <div nz-col [nzSpan]="12" [hidden]="isCollapse">
       <nz-form-item nzFlex>
-        <nz-form-label for="client" [nzSm]="3" [nzXs]="3">
+        <nz-form-label for="client" [nzSpan]="6">
           {{ 'client' | translate }}
         </nz-form-label>
-        <nz-select nzMode="tags" formControlName="taggedClients">
-          <nz-option *ngFor="let client of clients" [nzLabel]="client.label" [nzValue]="client.value"></nz-option>
-        </nz-select>
+        <nz-form-control [nzSpan]="14">
+          <nz-select nzMode="tags" formControlName="taggedClients">
+            <nz-option *ngFor="let client of clients" [nzLabel]="client.label" [nzValue]="client.value"></nz-option>
+          </nz-select>
+        </nz-form-control>
       </nz-form-item>
     </div>
   </div>
@@ -30,13 +34,16 @@
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="12" [hidden]="isCollapse">
       <nz-form-item nzFlex>
-        <nz-form-label for="item-family" [nzSm]="3" [nzXs]="3">
+        <nz-form-label for="item-family" [nzSpan]="6">
           {{ 'item-family' | translate }}
         </nz-form-label>
-        <nz-select nzMode="tags" formControlName="taggedItemFamilies">
-          <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.label" [nzValue]="itemFamily.value">
-          </nz-option>
-        </nz-select>
+        <nz-form-control [nzSpan]="14">
+          <nz-select nzMode="tags" formControlName="taggedItemFamilies">
+            <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.label"
+              [nzValue]="itemFamily.value">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
       </nz-form-item>
     </div>
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
@@ -81,50 +88,41 @@
 
 
 
-  <div nz-row [nzGutter]="24">
-    <div nz-row>
-      <div nz-col [nzSpan]="24" class="search-area">
-        <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
-          {{ 'search' | translate }}
-        </button>
-        <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
-        <a class="collapse" (click)="toggleCollapse()">
-          {{ 'collapse' | translate }}
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        {{ 'search' | translate }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | translate }}</button>
+      <a class="collapse" (click)="toggleCollapse()">
+        {{ 'collapse' | translate }}
 
-          <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
-        </a>
-      </div>
+        <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
+      </a>
     </div>
   </div>
 </form>
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table 
-  [nzScroll]="{ x: true, y: true }" #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllInventoryAdjustmentThresholds">
+  <nz-table [nzScroll]="{ x: true, y: true }" #rowSelectionTable nzShowSizeChanger nzShowPagination
+    [nzData]="listOfAllInventoryAdjustmentThresholds">
     <thead>
       <tr>
-        
-        <th
-            *ngFor="let column of listOfColumns"
-            [nzShowSort]="column.showSort"
-            [nzSortOrder]="column.sortOrder"
-            [nzSortFn]="column.sortFn"
-            [nzSortDirections]="column.sortDirections"
-            [nzFilterMultiple]="column.filterMultiple"
-            [nzFilters]="column.listOfFilter"
-            [nzFilterFn]="column.filterFn"        
-            [nzShowFilter]="column.showFilter"
-          >
-            {{ column.name | translate }}
-          </th> 
-          
- 
+
+        <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+          [nzShowFilter]="column.showFilter">
+          {{ column.name | translate }}
+        </th>
+
+
         <th>{{ 'action' | translate }}</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of rowSelectionTable.data"> 
+      <tr *ngFor="let data of rowSelectionTable.data">
         <td>{{ data.item?.name }}</td>
         <td>{{ data.itemFamily?.name }}</td>
         <td>{{ data.client?.name }}</td>

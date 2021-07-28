@@ -4,7 +4,7 @@
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
-        <nz-form-label for="location_group_type" [nzSm]="3" [nzXs]="3">
+        <nz-form-label for="location_group_type" [nzSpan]="6">
           {{ 'location-group-type' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
@@ -21,7 +21,7 @@
         <nz-form-label for="location_group" [nzSm]="3" [nzXs]="3">
           {{ 'location-group' | translate }}
         </nz-form-label>
-        
+
         <nz-form-control [nzSpan]="14">
           <nz-select nzMode="tags" formControlName="taggedLocationGroups">
             <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.label"
@@ -35,7 +35,7 @@
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="3" [nzXs]="3" nzFor="location">
+        <nz-form-label [nzSpan]="6" nzFor="location">
           {{ 'location' | translate }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
@@ -45,7 +45,7 @@
           <ng-template #suffixIconButton>
             <app-warehouse-layout-location-query-popup (recordSelected)="processLocationQueryResult($event)">
             </app-warehouse-layout-location-query-popup>
-          </ng-template> 
+          </ng-template>
         </nz-form-control>
       </nz-form-item>
     </div>
@@ -62,26 +62,19 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table 
-  [nzScroll]="{ x: true, y: true }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllLocations" #nestedTable [nzFooter]="tableFoot">
+  <nz-table [nzScroll]="{ x: true, y: true }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllLocations"
+    #nestedTable [nzFooter]="tableFoot">
     <thead>
       <tr>
         <th nzWidth="40px"></th>
 
-        <th
-            *ngFor="let column of listOfColumns"
-            [nzShowSort]="column.showSort"
-            [nzSortOrder]="column.sortOrder"
-            [nzSortFn]="column.sortFn"
-            [nzSortDirections]="column.sortDirections"
-            [nzFilterMultiple]="column.filterMultiple"
-            [nzFilters]="column.listOfFilter"
-            [nzFilterFn]="column.filterFn"        
-            [nzShowFilter]="column.showFilter"
-          >
-            {{ column.name | translate }}
-          </th> 
-          
+        <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+          [nzShowFilter]="column.showFilter">
+          {{ column.name | translate }}
+        </th>
+
         <th>
           {{ 'action' | translate }}
         </th>
@@ -107,8 +100,9 @@
           <td>
             <span *ngIf="data.locked === false">{{ (data.locked + '') | translate }}</span>
             <span *ngIf="data.locked === true"><a routerLink="/inventory/inventory-adjustment-request"
-                routerLinkActive="active"
-                [queryParams]="{locationName : data.name}">{{ (data.locked + '') | translate }}</a></span></td>
+                routerLinkActive="active" [queryParams]="{locationName : data.name}">{{ (data.locked + '') | translate
+                }}</a></span>
+          </td>
           <td>
 
             <button nz-button
@@ -121,57 +115,57 @@
         </tr>
 
         <tr [nzExpand]="expandSet.has(data.id)" class="inner-table">
-          
 
-                      <nz-tabset>
-                        <nz-tab nzTitle=" {{ 'inventory' | translate }}">
-                          <nz-table 
-                          [nzScroll]="{ x: true, y: true }" #innerTable [nzData]="mapOfInventories[data.id]" nzSize="middle" [nzShowPagination]="false">
-                            <thead>
-                              <th>
-                                {{ 'lpn' | translate }}
-                              </th>
-                              <th>
-                                {{ 'item' | translate }}
-                              </th>
-                              <th>
-                                {{ 'item.package-type' | translate }}
-                              </th>
-                              <th>
-                                {{ 'quantity' | translate }}
-                              </th>
-                              <th>
-                                {{ 'inventory.status' | translate }}
-                              </th>
-                              <th>{{ 'action' | translate }}</th>
-                            </thead>
-              <tbody>
-                <tr *ngFor="let inventory of mapOfInventories[data.id]">
-                  <td>{{ inventory.lpn }}</td>
-                  <td>{{ inventory.item.name }}</td>
-                  <td>{{ inventory.itemPackageType.name }}</td>
-                  <td>{{ inventory.quantity }}</td>
-                  <td>{{ inventory.inventoryStatus.name }}</td>
-                  <td>
-                    <a nz-button routerLink="/inventory/inventory-quantity-change" routerLinkActive="active"
-                      [queryParams]="{id : inventory.id, by : 'inventory-adjust'}">
-                      {{ 'adjustInventory' | translate }}</a>
-                    <nz-divider nzType="vertical"></nz-divider>
 
-                    <a nz-button routerLink="/inventory/inventory-attribute-change" routerLinkActive="active"
-                      [queryParams]="{id : inventory.id}">
-                      {{ 'inventory.attributeChange' | translate }}</a>
-                    <nz-divider nzType="vertical"></nz-divider>
-                    <button nz-button
-                      (click)="openRemoveInventoryModal(inventory, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
-                      nzType="danger">{{ 'removeInventory' | translate }}</button>
-                  </td>
-                </tr>
-              </tbody>
-            </nz-table>
-            </nz-tab>
-            </nz-tabset>
-    
+          <nz-tabset>
+            <nz-tab nzTitle=" {{ 'inventory' | translate }}">
+              <nz-table [nzScroll]="{ x: true, y: true }" #innerTable [nzData]="mapOfInventories[data.id]"
+                nzSize="middle" [nzShowPagination]="false">
+                <thead>
+                  <th>
+                    {{ 'lpn' | translate }}
+                  </th>
+                  <th>
+                    {{ 'item' | translate }}
+                  </th>
+                  <th>
+                    {{ 'item.package-type' | translate }}
+                  </th>
+                  <th>
+                    {{ 'quantity' | translate }}
+                  </th>
+                  <th>
+                    {{ 'inventory.status' | translate }}
+                  </th>
+                  <th>{{ 'action' | translate }}</th>
+                </thead>
+    <tbody>
+      <tr *ngFor="let inventory of mapOfInventories[data.id]">
+        <td>{{ inventory.lpn }}</td>
+        <td>{{ inventory.item.name }}</td>
+        <td>{{ inventory.itemPackageType.name }}</td>
+        <td>{{ inventory.quantity }}</td>
+        <td>{{ inventory.inventoryStatus.name }}</td>
+        <td>
+          <a nz-button routerLink="/inventory/inventory-quantity-change" routerLinkActive="active"
+            [queryParams]="{id : inventory.id, by : 'inventory-adjust'}">
+            {{ 'adjustInventory' | translate }}</a>
+          <nz-divider nzType="vertical"></nz-divider>
+
+          <a nz-button routerLink="/inventory/inventory-attribute-change" routerLinkActive="active"
+            [queryParams]="{id : inventory.id}">
+            {{ 'inventory.attributeChange' | translate }}</a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <button nz-button
+            (click)="openRemoveInventoryModal(inventory, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
+            nzType="danger">{{ 'removeInventory' | translate }}</button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  </nz-tab>
+  </nz-tabset>
+
   </tr>
   </ng-template>
   </tbody>
@@ -216,16 +210,15 @@
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="itemNumberErrorTpl">
           <nz-input-group nzSearch [nzAddOnAfter]="itemSuffixIconButton">
-            <input variable="item-name" appExistingNumberValidator 
-            nz-input (blur)="itemNumberChanged($event.target.value)" 
-            [ngModel]="currentInventory.item?.name" id="itemNumber" name="itemNumber" 
-            required [ngModelOptions]="{updateOn: 'blur'}" #itemNumberModel="ngModel"/>
+            <input variable="item-name" appExistingNumberValidator nz-input
+              (blur)="itemNumberChanged($event.target.value)" [ngModel]="currentInventory.item?.name" id="itemNumber"
+              name="itemNumber" required [ngModelOptions]="{updateOn: 'blur'}" #itemNumberModel="ngModel" />
           </nz-input-group>
 
           <ng-template #itemSuffixIconButton>
             <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
             </app-inventory-item-query-popup>
-          </ng-template> 
+          </ng-template>
 
           <ng-template #itemNumberErrorTpl let-control>
             <div *ngIf="itemNumberModel.invalid && (itemNumberModel.dirty || itemNumberModel.touched)">
@@ -358,9 +351,9 @@
   </div>
 
   <div nz-col [nzSpan]="24" *ngIf="currentInventory.itemPackageType">
-    <nz-table 
-    [nzScroll]="{ x: true, y: true }" #itemPackageTypeDetailTable [nzData]="currentInventory.itemPackageType?.itemUnitOfMeasures"
-      nzSize="middle" [nzShowPagination]="false" nzBordered>
+    <nz-table [nzScroll]="{ x: true, y: true }" #itemPackageTypeDetailTable
+      [nzData]="currentInventory.itemPackageType?.itemUnitOfMeasures" nzSize="middle" [nzShowPagination]="false"
+      nzBordered>
       <thead>
         <tr>
           <th>{{ 'unitOfMeasure' | translate}}</th>

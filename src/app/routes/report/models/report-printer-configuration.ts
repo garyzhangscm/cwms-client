@@ -9,4 +9,6 @@ export interface ReportPrinterConfiguration {
     criteriaValue: string;
     printerName: string;
 
+    copies: number;
+
 }

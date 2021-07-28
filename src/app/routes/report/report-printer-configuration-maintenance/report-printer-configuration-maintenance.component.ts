@@ -73,6 +73,7 @@ export class ReportReportPrinterConfigurationMaintenanceComponent implements OnI
       reportType: undefined,
       criteriaValue: "",
       printerName: "",
+      copies: 1,
     };
   }
   previousStep(): void {

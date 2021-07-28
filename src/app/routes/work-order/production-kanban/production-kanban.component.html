@@ -1,45 +1,51 @@
 <page-header [title]="'page.production-line.header.title' | translate"> </page-header>
 
 
-<div>
+<div nz-row>
   Count down: {{ countDownNumber }}
 </div>
 
-<div nz-row>
-  <div nz-col nzSpan="4" style="padding-right: 20px; padding-left: 20px; ">
-    <cdk-virtual-scroll-viewport itemSize="15" class="example-viewport">
-      <div *cdkVirtualFor="let productionLine of productionLines" class="example-item"> 
-          {{ productionLine.name }} 
-          <nz-switch [ngModel]="showProductionLineSet.has(productionLine.name)" (click)="switchProductionLineDisplay(productionLine.name)" >
+<div nz-row style="padding: 15px;">
+  <a (click)="toggleProductionLineDisplay()" *ngIf="!hideProductionLineSelection">hide << </a>
+      <a (click)="toggleProductionLineDisplay()" *ngIf="hideProductionLineSelection">show >> </a>
+</div>
 
-          </nz-switch>
-     
+<div nz-row>
+  <div nz-col nzSpan="4" style="padding-right: 20px; padding-left: 20px; " [hidden]="hideProductionLineSelection">
+    <cdk-virtual-scroll-viewport itemSize="15" class="example-viewport">
+      <div *cdkVirtualFor="let productionLine of productionLines" class="example-item">
+        {{ productionLine.name }}
+        <nz-switch [ngModel]="showProductionLineSet.has(productionLine.name)"
+          (click)="switchProductionLineDisplay(productionLine.name)">
+
+        </nz-switch>
+
       </div>
- 
+
     </cdk-virtual-scroll-viewport>
 
   </div>
   <div nz-col nzSpan="20">
-            
+
     <!-- Table to Display the result  -->
     <div class="search-result-list">
-        <nz-table 
-        [nzScroll]="{ x: true, y: true }" #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="displayProductionLineKanbanDataList">
+      <nz-table [nzScroll]="{ x: true, y: true }" #rowSelectionTable nzShowSizeChanger nzShowPagination
+        [nzData]="displayProductionLineKanbanDataList">
         <thead>
-            <tr>
-    
+          <tr>
+
             <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
-                [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
-                [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
-                [nzShowFilter]="column.showFilter">
-                {{ column.name | translate }}
+              [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+              [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
+              [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+              {{ column.name | translate }}
             </th>
-    
-    
-            </tr>
+
+
+          </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let data of rowSelectionTable.data">
+          <tr *ngFor="let data of rowSelectionTable.data">
             <td>{{ data.productionLineName }}</td>
             <td>{{ data.workOrderNumber }}</td>
             <td>{{ data.productionLineModel }}</td>
@@ -48,18 +54,18 @@
             <td>{{ data.productionLineTotalTargetOutput }}</td>
             <td>{{ data.productionLineTotalActualOutput }}</td>
             <td>{{ data.workOrderStatus }}</td>
-            <td>{{ data.shift }}</td> 
-    
-    
-    
-    
-    
-            </tr>
+            <td>{{ data.shift }}</td>
+
+
+
+
+
+          </tr>
         </tbody>
-        </nz-table>
-  
-  
+      </nz-table>
+
+
     </div>
   </div>
-    
+
 </div>
