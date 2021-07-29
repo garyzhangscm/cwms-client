@@ -25,12 +25,11 @@
     </cdk-virtual-scroll-viewport>
 
   </div>
-  <div nz-col nzSpan="20">
+  <div nz-col [nzSpan]="hideProductionLineSelection ? 24 : 20">
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
-      <nz-table [nzScroll]="{ x: true, y: true }" #rowSelectionTable nzShowSizeChanger nzShowPagination
-        [nzData]="displayProductionLineKanbanDataList">
+      <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="displayProductionLineKanbanDataList">
         <thead>
           <tr>
 
@@ -53,9 +52,10 @@
             <td>{{ data.productionLineActualOutput }}</td>
             <td>{{ data.productionLineTotalTargetOutput }}</td>
             <td>{{ data.productionLineTotalActualOutput }}</td>
-            <td>{{ data.workOrderStatus }}</td>
+            <td>{{ 'WORK-ORDER-STATUS-' + data.workOrderStatus | translate}}</td>
             <td>{{ data.shift }}</td>
 
+            <td>{{ data.percent.toFixed(2) + '%' }}</td>
 
 
 

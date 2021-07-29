@@ -127,6 +127,17 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
       listOfFilter: [],
       filterFn: null,
       showFilter: false,
+    },
+    {
+      name: 'finished-rate',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: ProductionLineKanbanData, b: ProductionLineKanbanData) => this.utilService.compareNullableNumber(a.percent!, b.percent!),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
     },];
 
   //  @ViewChild('cd', { static: false }) private countdown!: CountdownComponent; 
@@ -201,6 +212,12 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
     this.productionLineKanbanService.getProductionLineKanbanData()
       .subscribe(productionLineKanbanDataRes => {
         this.productionLineKanbanDataList = productionLineKanbanDataRes;
+        this.productionLineKanbanDataList.forEach(
+          productionLineKanbanData =>
+            productionLineKanbanData.percent = (
+              productionLineKanbanData.productionLineActualOutput * 100 / productionLineKanbanData.productionLineTargetOutput
+            )
+        )
         this.refreshKanbanData();
       });
   }
