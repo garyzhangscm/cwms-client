@@ -282,6 +282,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         workOrderRes => {
           this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities([workOrderRes]);
           this.listOfDisplayWorkOrder = this.listOfAllWorkOrder;
+          this.refreshDetailInformation([workOrderRes]);
           this.isSpinning = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
@@ -299,6 +300,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         .subscribe(
           workOrderRes => {
             this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities(workOrderRes);
+            this.refreshDetailInformation(workOrderRes);
             this.listOfDisplayWorkOrder = this.listOfAllWorkOrder;
             this.isSpinning = false;
             this.searchResult = this.i18n.fanyi('search_result_analysis', {
@@ -327,6 +329,16 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     });
 
     return workOrders;
+  }
+  refreshDetailInformation(workOrders: WorkOrder[]): void {
+    workOrders.forEach(workOrder => {
+      // only refresh the detail information if it is expanded already
+      if (this.expandSet.has(workOrder.id!)) {
+
+        this.showWorkOrderDetails(workOrder);
+      }
+    });
+
   }
 
   calculateWorkOrderLineTotalQuantity(workOrder: WorkOrder): WorkOrder {
@@ -791,9 +803,10 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       productionLineAllocationRequests.map(request => request.allocateingQuantity).join(',');
 
     this.workOrderService.allocateWorkOrder(workOrder, productionLineIds, quantities)
-      .subscribe(res => {
+      .subscribe(workOrderRes => {
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.search()
 
       },
         () => this.isSpinning = false);
