@@ -10,9 +10,11 @@ export interface ProductionLineKanbanData {
 
     productionLineTargetOutput: number;
     productionLineActualOutput: number;
+    productionLineActualPutawayOutput: number;
 
     productionLineTotalTargetOutput: number;
     productionLineTotalActualOutput: number;
+    productionLineTotalActualPutawayOutput: number;
 
     workOrderStatus: WorkOrderStatus | null;
     shift: string | null;
