@@ -6,6 +6,7 @@ export interface ProductionLineKanbanData {
     productionLineName: string;
     workOrderNumber: string;
     productionLineModel: string | null;
+    itemName: string;
 
     productionLineTargetOutput: number;
     productionLineActualOutput: number;

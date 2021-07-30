@@ -52,6 +52,17 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
       showFilter: false,
     },
     {
+      name: 'item.name',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: ProductionLineKanbanData, b: ProductionLineKanbanData) => this.utilService.compareNullableString(a.itemName, b.itemName),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+    },
+    {
       name: 'production-line.model',
       showSort: true,
       sortOrder: null,
