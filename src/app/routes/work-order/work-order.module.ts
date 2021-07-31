@@ -27,10 +27,12 @@ import { CommonModule } from '../common/common.module';
 import { WorkOrderProductionLineMaintenanceComponent } from './production-line-maintenance/production-line-maintenance.component';
 import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module';
 import { WorkOrderMouldComponent } from './mould/mould.component';
-import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component'; 
+import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component';
 import { WorkOrderProductionKanbanComponent } from './production-kanban/production-kanban.component';
 import { CountdownModule } from 'ngx-countdown';
-import {ScrollingModule} from '@angular/cdk/scrolling';
+import { ScrollingModule } from '@angular/cdk/scrolling';
+import { STModule } from '@delon/abc/st';
+import { NzModalService } from 'ng-zorro-antd/modal';
 
 
 const COMPONENTS: Type<void>[] = [
@@ -61,17 +63,18 @@ const COMPONENTS_NOROUNT: Type<void>[] = [];
 @NgModule({
   imports: [
     SharedModule,
-    WorkOrderRoutingModule, DirectivesModule, 
+    WorkOrderRoutingModule, DirectivesModule,
     NzLayoutModule,
     NzDescriptionsModule,
     NzTransferModule,
-    CommonModule, 
-    WarehouseLayoutModule, CountdownModule ,
-    ScrollingModule
+    CommonModule,
+    WarehouseLayoutModule, CountdownModule,
+    ScrollingModule, STModule,
   ],
   declarations: [
     ...COMPONENTS,
     ...COMPONENTS_NOROUNT
   ],
+  providers: [NzModalService]
 })
 export class WorkOrderModule { }

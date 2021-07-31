@@ -17,7 +17,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 // 引入你需要的图标，比如你需要 fill 主题的 AccountBook Alert 和 outline 主题的 Alert，推荐 ✔️
 import { QuestionOutline } from '@ant-design/icons-angular/icons';
 
-const icons: IconDefinition[] = [ QuestionOutline];
+const icons: IconDefinition[] = [QuestionOutline];
 
 const LANG = {
   abbr: 'zh',
@@ -106,7 +106,6 @@ import { LayoutModule } from './layout/layout.module';
 import { RoutesModule } from './routes/routes.module';
 import { SharedModule } from './shared/shared.module';
 import { STWidgetModule } from './shared/st-widget/st-widget.module';
-
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -127,4 +126,4 @@ import { STWidgetModule } from './shared/st-widget/st-widget.module';
   providers: [...LANG_PROVIDES, ...INTERCEPTOR_PROVIDES, ...I18NSERVICE_PROVIDES, ...APPINIT_PROVIDES],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

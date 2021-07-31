@@ -1,5 +1,6 @@
 import { ElementRef } from '@angular/core';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { STColumn, STData } from '@delon/abc/st';
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { CountdownComponent, CountdownEvent } from 'ngx-countdown';
@@ -10,6 +11,8 @@ import { ProductionLineKanbanData } from '../../work-order/models/production-lin
 import { ProductionLineKanbanService } from '../../work-order/services/production-line-kanban.service';
 import { ProductionLine } from '../models/production-line';
 import { ProductionLineService } from '../services/production-line.service';
+import { STModule } from '@delon/abc/st';
+import { NzModalService } from 'ng-zorro-antd/modal';
 
 
 
@@ -257,5 +260,35 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
 
   toggleProductionLineDisplay() {
     this.hideProductionLineSelection = !this.hideProductionLineSelection;
+  }
+
+  users: STData[] = Array(10)
+    .fill({})
+    .map((_, idx) => {
+      return {
+        id: idx + 1,
+        name: `name ${idx + 1}`,
+        age: Math.ceil(Math.random() * 10) + 20,
+      };
+    });
+  columns: STColumn[] = [
+    { title: '编号', index: 'id' },
+    { title: '姓名', index: 'name', iif: () => this.isChoose('name') },
+    { title: '年龄', index: 'age', iif: () => this.isChoose('age') },
+    {
+      title: '自定义',
+      renderTitle: 'customTitle',
+      render: 'custom',
+      iif: () => this.isChoose('custom'),
+    },
+  ];
+  customColumns = [
+    { label: '姓名', value: 'name', checked: true },
+    { label: '年龄', value: 'age', checked: true },
+    { label: '自定义', value: 'custom', checked: true },
+  ];
+
+  isChoose(key: string): boolean {
+    return !!this.customColumns.find(w => w.value === key && w.checked);
   }
 }

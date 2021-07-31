@@ -29,6 +29,9 @@
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
+      <!--
+
+
       <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="displayProductionLineKanbanDataList">
         <thead>
           <tr>
@@ -67,6 +70,14 @@
         </tbody>
       </nz-table>
 
+
+      <div class="mb-md">
+        <nz-checkbox-group [(ngModel)]="customColumns" name="customColumns"
+          (ngModelChange)="st.resetColumns({ emitReload: true })"></nz-checkbox-group>
+      </div>
+      -->
+      <st #st [data]="users" [columns]="columns">
+      </st>
 
     </div>
   </div>

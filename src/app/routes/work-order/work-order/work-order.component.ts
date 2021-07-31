@@ -237,7 +237,10 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   mapOfPrintingInProcessId: { [key: string]: boolean } = {};
 
   mapOfDeliveredInventory: { [key: string]: Inventory[] } = {};
+
   mapOfProducedInventory: { [key: string]: Inventory[] } = {};
+
+  producedInventoryPageSize = 10;
   mapOfReturnedInventory: { [key: string]: Inventory[] } = {};
   mapOfProducedByProduct: { [key: string]: Inventory[] } = {};
   mapOfKPIs: { [key: string]: WorkOrderKpi[] } = {};
@@ -467,6 +470,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   showProducedInventory(workOrder: WorkOrder): void {
     this.workOrderService.getProducedInventory(workOrder).subscribe(returnedInventoryRes => {
       this.mapOfProducedInventory[workOrder.id!] = [...returnedInventoryRes];
+
     });
   }
 
@@ -825,5 +829,6 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       () =>
         this.isSpinning = true);
   }
+
 
 }

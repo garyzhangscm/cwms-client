@@ -38,8 +38,8 @@
 
   <!-- Table to Display the result  -->
   <div class="search-result-list">
-    <nz-table 
-    [nzScroll]="{ x: true, y: true }" #nestedTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllWorkOrder" [nzFooter]="tableFoot">
+    <nz-table [nzScroll]="{ x: true, y: true }" #nestedTable nzShowSizeChanger nzShowPagination
+      [nzData]="listOfAllWorkOrder" [nzFooter]="tableFoot">
       <thead>
         <tr>
           <th rowspan="2" nzWidth="40px"></th>
@@ -126,8 +126,8 @@
             <nz-tabset>
               <nz-tab nzTitle=" {{ 'work-order.line' | translate }}"
                 *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.delivered-inventory')">
-                <nz-table 
-                [nzScroll]="{ x: true, y: true }" [nzData]="data.workOrderLines" nzSize="middle" [nzShowPagination]="false">
+                <nz-table [nzScroll]="{ x: true, y: true }" [nzData]="data.workOrderLines" nzSize="middle"
+                  [nzShowPagination]="false">
 
                   <thead>
                     <th>
@@ -177,8 +177,8 @@
 
     <nz-tab nzTitle=" {{ 'work-order.by-product' | translate }}"
       *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.by-product')">
-      <nz-table 
-      [nzScroll]="{ x: true, y: true }" [nzData]="data.workOrderByProducts" nzSize="middle" [nzShowPagination]="false">
+      <nz-table [nzScroll]="{ x: true, y: true }" [nzData]="data.workOrderByProducts" nzSize="middle"
+        [nzShowPagination]="false">
 
         <thead>
           <th>
@@ -207,8 +207,8 @@
 
     <nz-tab nzTitle=" {{ 'production-line' | translate }}"
       *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.production-line')">
-      <nz-table 
-      [nzScroll]="{ x: true, y: true }" [nzData]="data.productionLineAssignments" nzSize="middle" [nzShowPagination]="false">
+      <nz-table [nzScroll]="{ x: true, y: true }" [nzData]="data.productionLineAssignments" nzSize="middle"
+        [nzShowPagination]="false">
 
         <thead>
           <th [nzAlign]="'center'">
@@ -242,8 +242,8 @@
 
     <nz-tab nzTitle=" {{ 'work-order.kpi' | translate }}"
       *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.kpi')">
-      <nz-table 
-      [nzScroll]="{ x: true, y: true }" [nzData]="mapOfKPIs[data.id]" nzSize="middle" [nzShowPagination]="false">
+      <nz-table [nzScroll]="{ x: true, y: true }" [nzData]="mapOfKPIs[data.id]" nzSize="middle"
+        [nzShowPagination]="false">
 
         <thead>
           <th>{{ 'username' | translate }}</th>
@@ -268,8 +268,8 @@
 
     <nz-tab nzTitle=" {{ 'work-order.kpi-transaction' | translate }}"
       *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.kpi-transaction')">
-      <nz-table 
-      [nzScroll]="{ x: true, y: true }" [nzData]="mapOfKPITransactions[data.id]" nzSize="middle" [nzShowPagination]="false">
+      <nz-table [nzScroll]="{ x: true, y: true }" [nzData]="mapOfKPITransactions[data.id]" nzSize="middle"
+        [nzShowPagination]="false">
 
         <thead>
           <th>{{ 'username' | translate }}</th>
@@ -305,8 +305,8 @@
 
     <nz-tab nzTitle=" {{ 'work-order-instruction' | translate }}"
       *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order-instruction')">
-      <nz-table 
-      [nzScroll]="{ x: true, y: true }" [nzData]="data.workOrderInstructions" nzSize="middle" [nzShowPagination]="false">
+      <nz-table [nzScroll]="{ x: true, y: true }" [nzData]="data.workOrderInstructions" nzSize="middle"
+        [nzShowPagination]="false">
 
         <thead>
           <th>
@@ -328,8 +328,8 @@
     </nz-tab>
     <nz-tab nzTitle=" {{ 'work-order.assigned-users' | translate }}"
       *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.assigned-users')">
-      <nz-table 
-      [nzScroll]="{ x: true, y: true }" [nzData]="data.assignments" nzSize="middle" [nzShowPagination]="false">
+      <nz-table [nzScroll]="{ x: true, y: true }" [nzData]="data.assignments" nzSize="middle"
+        [nzShowPagination]="false">
 
         <thead>
           <th>
@@ -352,8 +352,8 @@
 
     <nz-tab nzTitle=" {{ 'pick' | translate }}"
       *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.pick')">
-      <nz-table 
-      [nzScroll]="{ x: true, y: true }" [nzData]="data.workOrderLines" nzSize="middle" [nzShowPagination]="false" [nzFooter]="pickTableFoot">
+      <nz-table [nzScroll]="{ x: true, y: true }" [nzData]="data.workOrderLines" nzSize="middle"
+        [nzShowPagination]="false" [nzFooter]="pickTableFoot">
 
         <thead>
           <th>
@@ -415,8 +415,8 @@
 
     <nz-tab nzTitle=" {{ 'short-allocation' | translate }}"
       *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.short-allocation')">
-      <nz-table 
-      [nzScroll]="{ x: true, y: true }" [nzData]="data.workOrderLines" nzSize="middle" [nzShowPagination]="false">
+      <nz-table [nzScroll]="{ x: true, y: true }" [nzData]="data.workOrderLines" nzSize="middle"
+        [nzShowPagination]="false">
 
         <thead>
           <th>
@@ -440,8 +440,8 @@
     <nz-tab nzTitle=" {{ 'work-order.delivered-inventory' | translate }}"
       *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.delivered-inventory')">
 
-      <nz-table 
-      [nzScroll]="{ x: true, y: true }" nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfDeliveredInventory[data.id]">
+      <nz-table [nzScroll]="{ x: true, y: true }" nzSize="middle" [nzShowPagination]="false"
+        [nzData]="mapOfDeliveredInventory[data.id]">
         <thead>
           <th>
             {{ 'location' | translate }}
@@ -491,9 +491,9 @@
     <nz-tab nzTitle=" {{ 'work-order.produced-inventory' | translate }}"
       *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.produced-inventory')">
 
-      <nz-table 
-      [nzScroll]="{ x: true, y: true }" nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfProducedInventory[data.id]"
-        [nzFooter]="receivedInventoryTableFoot">
+      <nz-table nzSize="middle" nzShowSizeChanger nzShowPagination [nzData]="mapOfProducedInventory[data.id]"
+        #producedInventoryTable>
+
         <thead>
 
           <th>
@@ -524,7 +524,7 @@
           </th>
         </thead>
         <tbody>
-          <tr *ngFor="let inventory of mapOfProducedInventory[data.id]">
+          <tr *ngFor="let inventory of producedInventoryTable.data">
             <td>{{ inventory.location?.name }}</td>
             <td>{{ inventory.lpn }}</td>
             <td>{{ inventory.item?.name }}</td>
@@ -658,8 +658,8 @@
       *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.by-product.produced')">
 
 
-      <nz-table 
-      [nzScroll]="{ x: true, y: true }" nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfProducedByProduct[data.id]">
+      <nz-table [nzScroll]="{ x: true, y: true }" nzSize="middle" [nzShowPagination]="false"
+        [nzData]="mapOfProducedByProduct[data.id]">
         <thead>
 
           <th>
@@ -751,8 +751,8 @@
       *ngIf="webClientConfigurationService.isTabVisible('work-order.work-order.work-order.returned-inventory')">
       >
 
-      <nz-table 
-      [nzScroll]="{ x: true, y: true }" nzSize="middle" [nzShowPagination]="false" [nzData]="mapOfReturnedInventory[data.id]">
+      <nz-table [nzScroll]="{ x: true, y: true }" nzSize="middle" [nzShowPagination]="false"
+        [nzData]="mapOfReturnedInventory[data.id]">
         <thead>
 
           <th>
@@ -1132,9 +1132,9 @@
 
   </div>
   <div nz-col [nzSpan]="24" *ngIf="currentInventory.itemPackageType">
-    <nz-table 
-    [nzScroll]="{ x: true, y: true }" #itemPackageTypeDetailTable2 [nzData]="currentInventory.itemPackageType?.itemUnitOfMeasures"
-      nzSize="middle" [nzShowPagination]="false" nzBordered>
+    <nz-table [nzScroll]="{ x: true, y: true }" #itemPackageTypeDetailTable2
+      [nzData]="currentInventory.itemPackageType?.itemUnitOfMeasures" nzSize="middle" [nzShowPagination]="false"
+      nzBordered>
       <thead>
         <tr>
           <th>{{ 'unitOfMeasure' | translate}}</th>
@@ -1166,9 +1166,8 @@
   <span>{{ 'work-order.allocate-by-production-line' | translate}}</span>
 </ng-template>
 <ng-template #tplAllocateByProductionLineModalContent>
-  <nz-table 
-  [nzScroll]="{ x: true, y: true }" #productionLineAllocationRequestTable [nzData]="productionLineAllocationRequests" nzSize="middle"
-    [nzShowPagination]="false" nzBordered>
+  <nz-table [nzScroll]="{ x: true, y: true }" #productionLineAllocationRequestTable
+    [nzData]="productionLineAllocationRequests" nzSize="middle" [nzShowPagination]="false" nzBordered>
     <thead>
       <tr>
         <th>{{ 'production-line.name' | translate}}</th>
