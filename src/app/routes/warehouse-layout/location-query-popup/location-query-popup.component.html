@@ -85,7 +85,8 @@
       </thead>
       <tbody>
         <tr *ngFor="let data of rowSelectionTable.data" (click)="rowClicked(data)">
-          <td [nzChecked]="setOfCheckedId.has(data.id)" (nzCheckedChange)="onItemChecked(data.id, $event)" nzLeft></td>
+          <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)" nzLeft>
+          </td>
 
           <!-- Display the result -->
           <td nzLeft>{{ data.name }}</td>

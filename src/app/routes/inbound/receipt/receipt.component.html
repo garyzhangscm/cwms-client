@@ -1,0 +1,88 @@
+<page-header></page-header>
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="receiptNumber" [nzSm]="3" [nzXs]="3">
+          {{ 'receipt.number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="number" id="number" formControlName="number" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #rowSelectionTable nzShowSizeChanger nzShowPagination
+    [nzData]="listOfAllReceipts" [nzFooter]="tableFoot">
+    <thead>
+      <tr>
+        <th [nzSelections]="listOfSelection" [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="onAllChecked($event)" nzWidth="60px"></th>
+        <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+          [nzShowFilter]="column.showFilter">
+          {{ column.name | i18n }}
+        </th>
+
+
+        <th>{{ 'action' | i18n }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data">
+
+        <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)"></td>
+
+        <td><a routerLink="/inbound/receipt-maintenance" routerLinkActive="active"
+            [queryParams]="{receiptNumber : data.number}">
+            {{ data.number }}</a></td>
+        <td>{{ data.client?.name }}</td>
+        <td>{{ data.supplier?.name }}</td>
+        <td>{{ 'RECEIPT-STATUS-' + data.receiptStatus | i18n}} </td>
+        <td>{{ data.totalLineCount }}</td>
+        <td>{{ data.totalItemCount }}</td>
+        <td>{{ data.totalExpectedQuantity }}</td>
+        <td>{{ data.totalReceivedQuantity }}</td>
+        <td>
+          <a nz-button nz-type="primary" (click)="checkInReceipt(data)"
+            *ngIf="data.receiptStatus === receiptStatus.OPEN">
+            {{ 'receipt.check-in' | i18n }}</a>
+          <nz-divider nzType="vertical" *ngIf="data.receiptStatus === receiptStatus.OPEN"></nz-divider>
+          <a nz-button nz-type="primary" (click)="closeReceipt(data)"
+            *ngIf="data.receiptStatus !== receiptStatus.CLOSED">
+            {{ 'complete' | i18n }}</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+    <button nz-button nzDanger (click)="removeSelectedReceipts()">
+      {{ 'delete' | i18n }}
+    </button>
+    <button nz-button nzType="primary" routerLink="/inbound/receipt-maintenance" routerLinkActive="active">
+      {{ 'add' | i18n }}
+    </button>
+  </div>
+</div>
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>

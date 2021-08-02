@@ -28,10 +28,7 @@ const routes: Routes = [
       { path: 'warehouse-layout', loadChildren: () => import('./warehouse-layout/warehouse-layout.module').then((m) => m.WarehouseLayoutModule) },
       { path: 'util', loadChildren: () => import('./util/util.module').then((m) => m.UtilModule) },
       { path: 'auth', loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule) },
-      { path: 'common', loadChildren: () => import('./common/common.module').then((m) => m.CommonModule) },
-      { path: 'directives', loadChildren: () => import('./directives/directives.module').then((m) => m.DirectivesModule) },
-      { path: 'work-order', loadChildren: () => import('./work-order/work-order.module').then((m) => m.WorkOrderModule) },
-      { path: 'work-task', loadChildren: () => import('./work-task/work-task.module').then((m) => m.WorkTaskModule) },]
+      { path: 'common', loadChildren: () => import('./common/common.module').then((m) => m.CommonModule) },{ path: 'report', loadChildren: () => import('./report/report.module').then((m) => m.ReportModule) },{ path: 'inbound', loadChildren: () => import('./inbound/inbound.module').then((m) => m.InboundModule) },{ path: 'inventory', loadChildren: () => import('./inventory/inventory.module').then((m) => m.InventoryModule) },{ path: 'outbound', loadChildren: () => import('./outbound/outbound.module').then((m) => m.OutboundModule) },{ path: 'work-order', loadChildren: () => import('./work-order/work-order.module').then((m) => m.WorkOrderModule) },]
   },
   // Blak Layout 空白布局
   {

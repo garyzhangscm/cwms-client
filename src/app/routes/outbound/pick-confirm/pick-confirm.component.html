@@ -1,0 +1,255 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a (click)="returnToPreviousPage()" *ngIf="type !== ''">{{
+    'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.outbound' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/outbound/pick" routerLinkActive="active">{{
+        'breadcrumb.pick' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a>
+    </nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<!-- Accept scan in list id / carton id / etc -->
+<nz-card *ngIf="type === ''" nzSize="small">
+  <form nz-form [formGroup]="queryForm" (ngSubmit)="searchPicks()">
+    <nz-form-item nz-row nzFlex>
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired>ID</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+        <input nz-input formControlName="containerId" id="containerId" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item nz-row nzFlex>
+      <nz-form-control [nzSpan]="14" [nzOffset]="6">
+        <label nz-checkbox formControlName="pickToContainerFlag">
+          <span>{{ 'pick-to-container' | i18n}}</span>
+        </label>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item nz-row nzFlex>
+      <nz-form-control [nzSpan]="14" [nzOffset]="6">
+        <button nz-button nzType="primary" [nzLoading]="searching">{{ 'search' | i18n }}</button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</nz-card>
+
+<!-- Display Work Order Informaiton -->
+<nz-card *ngIf="type === 'workOrder'">
+  <nz-descriptions nzTitle="{{'work-order' | i18n}}" nzBordered>
+    <nz-descriptions-item nzTitle="{{'work-order.number' | i18n}}">{{workOrder?.number}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'status' | i18n}}">{{workOrder?.status}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'production-line' | i18n}}">
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'item' | i18n}}">{{workOrder?.item?.name}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'item.description' | i18n}}">
+      {{workOrder?.item?.description}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'work-order.expected-quantity' | i18n}}">
+      {{workOrder?.expectedQuantity}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'work-order.produced-quantity' | i18n}}">
+      {{workOrder?.producedQuantity}}</nz-descriptions-item>
+  </nz-descriptions>
+</nz-card>
+
+
+<!-- Display Pick List Informaiton -->
+<nz-card *ngIf="type === 'pickList'">
+  <nz-descriptions nzTitle="{{'pick-list' | i18n}}" nzBordered>
+    <nz-descriptions-item nzTitle="{{'pick-list.number' | i18n}}">{{pickList?.number}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'status' | i18n}}">{{'PICK-LIST-STATUS-' + pickList?.status | i18n}}
+    </nz-descriptions-item>
+  </nz-descriptions>
+</nz-card>
+
+<!-- Display Cartonization Informaiton -->
+<nz-card *ngIf="type === 'cartonization'">
+  <nz-descriptions nzTitle="{{'cartonization' | i18n}}" nzBordered>
+    <nz-descriptions-item nzTitle="{{'cartonization.number' | i18n}}">{{cartonization?.number}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'status' | i18n}}">
+      {{'CARTONIZATION-STATUS-' + cartonization?.status | i18n}}
+    </nz-descriptions-item>
+  </nz-descriptions>
+</nz-card>
+<!-- Display Wave Informaiton -->
+<nz-card *ngIf="type === 'wave'">
+  <nz-descriptions nzTitle="{{'wave' | i18n}}" nzBordered>
+    <nz-descriptions-item nzTitle="{{'wave.number' | i18n}}">{{wave?.number}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'status' | i18n}}">{{'WAVE-STATUS-' + wave?.status! | i18n}}
+    </nz-descriptions-item>
+  </nz-descriptions>
+</nz-card>
+
+
+<!-- Display Order Informaiton -->
+<nz-card *ngIf="type === 'order'">
+  <nz-descriptions nzTitle="{{'order' | i18n}}" nzBordered>
+    <nz-descriptions-item nzTitle="{{'order.number' | i18n}}">
+      {{order?.number}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'shipToCustomer' | i18n}}">
+      {{ order?.shipToCustomer?.name}}
+    </nz-descriptions-item>
+
+    <nz-descriptions-item nzTitle="{{'shipToCustomer.name' | i18n}}">
+      <span *ngIf="order?.shipToCustomer !== null">
+        {{ order?.shipToCustomer?.contactorFirstname }} {{ order?.shipToCustomer?.contactorLastname }}
+      </span>
+      <span *ngIf="order?.shipToCustomer === null">
+        {{ order?.shipTocontactorFirstname }} {{ order?.shipTocontactorLastname }}
+      </span>
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'shipToCustomer?.address' | i18n}}">
+      <div *ngIf="order?.shipToCustomer !== null">
+        <span>
+          {{ order?.shipToCustomer?.addressLine1 }}
+        </span>
+        <span *ngIf="order?.shipToCustomer?.addressLine2 != null">
+          , {{ order?.shipToCustomer?.addressLine2 }}
+        </span>
+        <div>
+          {{ order?.shipToCustomer?.addressCity }}, {{ order?.shipToCustomer?.addressState }}
+          {{ order?.shipToCustomer?.addressPostcode }}
+        </div>
+      </div>
+      <div *ngIf="order?.shipToCustomer === null">
+        <span>
+          {{ order?.shipToAddressLine1 }}
+        </span>
+        <span *ngIf="order?.shipToAddressLine2 != null">
+          , {{ order?.shipToAddressLine2 }}
+        </span>
+        <div>
+          {{ order?.shipToAddressCity }}, {{ order?.shipToAddressState }}
+          {{ order?.shipToAddressPostcode }}
+        </div>
+      </div>
+    </nz-descriptions-item>
+  </nz-descriptions>
+</nz-card>
+
+<!-- Display Shipment Informaiton -->
+<nz-card *ngIf="type === 'shipment'">
+  <nz-descriptions nzTitle="{{'shipment' | i18n}}" nzBordered>
+    <nz-descriptions-item nzTitle="{{'shipment.number' | i18n}}">
+      {{shipment?.number}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'shipToCustomer' | i18n}}">
+      {{ shipment?.shipToCustomer?.name}}
+    </nz-descriptions-item>
+
+    <nz-descriptions-item nzTitle="{{'shipToCustomer.name' | i18n}}">
+      <span *ngIf="shipment?.shipToCustomer !== null">
+        {{ shipment?.shipToCustomer?.contactorFirstname }} {{ shipment?.shipToCustomer?.contactorLastname }}
+      </span>
+      <span *ngIf="order?.shipToCustomer === null">
+        {{ shipment?.shipTocontactorFirstname }} {{ shipment?.shipTocontactorLastname }}
+      </span>
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'shipToCustomer.address' | i18n}}">
+      <div *ngIf="shipment?.shipToCustomer !== null">
+        <span>
+          {{ shipment?.shipToCustomer?.addressLine1 }}
+        </span>
+        <span *ngIf="shipment?.shipToCustomer?.addressLine2 != null">
+          , {{ shipment?.shipToCustomer?.addressLine2 }}
+        </span>
+        <div>
+          {{ shipment?.shipToCustomer?.addressCity }}, {{ shipment?.shipToCustomer?.addressState }}
+          {{ shipment?.shipToCustomer?.addressPostcode }}
+        </div>
+      </div>
+      <div *ngIf="shipment?.shipToCustomer === null">
+        <span>
+          {{ shipment?.shipToAddressLine1 }}
+        </span>
+        <span *ngIf="shipment?.shipToAddressLine2 != null">
+          , {{ shipment?.shipToAddressLine2 }}
+        </span>
+        <div>
+          {{ shipment?.shipToAddressCity }}, {{ shipment?.shipToAddressState }}
+          {{ shipment?.shipToAddressPostcode }}
+        </div>
+      </div>
+    </nz-descriptions-item>
+  </nz-descriptions>
+</nz-card>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllPicks"
+    [nzFooter]="tableFoot" #pickTable>
+    <thead>
+      <tr>
+
+
+        <th [nzSelections]="listOfSelection" [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="onAllChecked($event)" nzWidth="60px"></th>
+        <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+          [nzShowFilter]="column.showFilter">
+          {{ column.name | i18n }}
+        </th>
+
+
+
+        <th>
+          {{ 'action' | i18n }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of pickTable.data">
+        <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)"
+          [nzDisabled]="mapOfConfirmedQuantity[data.number] === 0"></td>
+
+        <td>{{ data.number }}</td>
+        <td>{{ data.sourceLocation?.name }}</td>
+        <td>{{ data.destinationLocation?.name }}</td>
+        <td>{{ data.item?.name }}</td>
+        <td>{{ data.item?.description }}</td>
+        <td>{{ data.quantity }}</td>
+        <td>{{ data.pickedQuantity }}</td>
+        <td>
+          <input nz-input [(ngModel)]="mapOfConfirmedQuantity[data.number]"
+            [disabled]="mapOfConfirmedQuantity[data.number] === 0 || confirming === true" style="width: 250px;" />
+        </td>
+        <td>
+          <button nz-button nzType="primary" (click)="confirmPick(data)"
+            [disabled]="mapOfConfirmedQuantity[data.number] <= 0" [nzLoading]="confirming">
+            {{ 'confirm' | i18n }}
+          </button>
+        </td>
+      </tr>
+
+    </tbody>
+  </nz-table>
+</div>
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start">
+    <button nz-button nzDanger (click)="cancelSelectedPicks()" [disabled]="allPicksFullyConfirmed">
+      {{ 'cancel' | i18n }}
+    </button>
+    <button nz-button nzType="primary" (click)="confirmPicks()" [nzLoading]="confirming"
+      [disabled]="allPicksFullyConfirmed">
+      {{ 'confirm' | i18n }}
+    </button>
+  </div>
+</ng-template>

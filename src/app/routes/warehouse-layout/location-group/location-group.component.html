@@ -61,7 +61,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let data of rowSelectionTable.data">
-        <ng-container *ngIf="!editCache[data.id].edit; else editTemplate">
+        <ng-container *ngIf="!editCache[data.id!].edit; else editTemplate">
           <td>{{ data.name }}</td>
           <td>{{ data.description }}</td>
 
@@ -84,21 +84,21 @@
           <td>{{ 'INVENTORY-CONSOLIDATION-STRATEGY-' + data.inventoryConsolidationStrategy | i18n}}</td>
 
           <td>
-            <a (click)="startEdit(data.id)"
+            <a (click)="startEdit(data.id!)"
               *ngIf="!searching && !operationInProcess && data.locationGroupType?.virtual === false"> {{ 'modify' | i18n
               }}</a>
             <a *ngIf="searching || operationInProcess"> {{ 'modify' | i18n }}</a>
             <!-- Allow remove location group only if it is a virtual location group -->
             <nz-divider nzType="vertical" *ngIf="data.locationGroupType?.virtual === false"></nz-divider>
-            <button nz-button nzDanger (click)="removeLocationGroup(data.id)"
+            <button nz-button nzDanger (click)="removeLocationGroup(data.id!)"
               *ngIf="data.locationGroupType?.virtual === false" [nzLoading]="searching"
               [disabled]="operationInProcess">{{'delete' | i18n}}</button>
           </td>
         </ng-container>
 
         <ng-template #editTemplate>
-          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.name" /></td>
-          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.description" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id!].data.name" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id!].data.description" /></td>
 
           <td>
             <!--
@@ -118,14 +118,14 @@
             </nz-dropdown-menu>
 
             -->
-            <nz-select [(ngModel)]="editCache[data.id].locationGroupTypeName">
+            <nz-select [(ngModel)]="editCache[data.id!].locationGroupTypeName">
               <nz-option *ngFor="let locationGroupType of locationGroupTypes" [nzLabel]="locationGroupType.description"
                 [nzValue]="locationGroupType.name"></nz-option>
             </nz-select>
           </td>
 
           <td>
-            <nz-select [(ngModel)]="editCache[data.id].data.pickable">
+            <nz-select [(ngModel)]="editCache[data.id!].data.pickable">
               <nz-option nzLabel="{{ 'true' | i18n }} " [nzValue]="true"></nz-option>
               <nz-option nzLabel="{{ 'false' | i18n }}" [nzValue]="false"></nz-option>
             </nz-select>
@@ -133,22 +133,14 @@
 
           <td>
 
-            <nz-select [(ngModel)]="editCache[data.id].data.storable">
+            <nz-select [(ngModel)]="editCache[data.id!].data.storable">
               <nz-option nzLabel="{{ 'true' | i18n }} " [nzValue]="true"></nz-option>
               <nz-option nzLabel="{{ 'false' | i18n }}" [nzValue]="false"></nz-option>
             </nz-select>
           </td>
           <td>
 
-            <nz-select [(ngModel)]="editCache[data.id].data.countable">
-              <nz-option nzLabel="{{ 'true' | i18n }} " [nzValue]="true"></nz-option>
-              <nz-option nzLabel="{{ 'false' | i18n }}" [nzValue]="false"></nz-option>
-            </nz-select>
-
-          </td>
-          <td>
-
-            <nz-select [(ngModel)]="editCache[data.id].data.adjustable">
+            <nz-select [(ngModel)]="editCache[data.id!].data.countable">
               <nz-option nzLabel="{{ 'true' | i18n }} " [nzValue]="true"></nz-option>
               <nz-option nzLabel="{{ 'false' | i18n }}" [nzValue]="false"></nz-option>
             </nz-select>
@@ -156,7 +148,7 @@
           </td>
           <td>
 
-            <nz-select [(ngModel)]="editCache[data.id].data.trackingVolume">
+            <nz-select [(ngModel)]="editCache[data.id!].data.adjustable">
               <nz-option nzLabel="{{ 'true' | i18n }} " [nzValue]="true"></nz-option>
               <nz-option nzLabel="{{ 'false' | i18n }}" [nzValue]="false"></nz-option>
             </nz-select>
@@ -164,7 +156,15 @@
           </td>
           <td>
 
-            <nz-select [(ngModel)]="editCache[data.id].data.volumeTrackingPolicy">
+            <nz-select [(ngModel)]="editCache[data.id!].data.trackingVolume">
+              <nz-option nzLabel="{{ 'true' | i18n }} " [nzValue]="true"></nz-option>
+              <nz-option nzLabel="{{ 'false' | i18n }}" [nzValue]="false"></nz-option>
+            </nz-select>
+
+          </td>
+          <td>
+
+            <nz-select [(ngModel)]="editCache[data.id!].data.volumeTrackingPolicy">
               <nz-option *ngFor="let policy of locationVolumeTrackingPolicy | keys" [nzValue]="policy.key"
                 nzLabel="{{ 'LOCATION-VOLUME-TRACKING-POLICY-' + policy.key | i18n }}"></nz-option>
             </nz-select>
@@ -172,7 +172,7 @@
           </td>
           <td>
 
-            <nz-select [(ngModel)]="editCache[data.id].data.inventoryConsolidationStrategy">
+            <nz-select [(ngModel)]="editCache[data.id!].data.inventoryConsolidationStrategy">
               <nz-option *ngFor="let strategy of inventoryConsolidationStrategy | keys" [nzValue]="strategy.key"
                 nzLabel="{{ 'INVENTORY-CONSOLIDATION-STRATEGY-' + strategy.key | i18n }}"></nz-option>
             </nz-select>
@@ -180,8 +180,8 @@
           </td>
 
           <td>
-            <a (click)="saveRecord(data.id)" class="save">{{'save' | i18n }}</a>
-            <a nz-popconfirm nzPopconfirmTitle="Sure to cancel?" (nzOnConfirm)="cancelEdit(data.id)">{{'cancel' |
+            <a (click)="saveRecord(data.id!)" class="save">{{'save' | i18n }}</a>
+            <a nz-popconfirm nzPopconfirmTitle="Sure to cancel?" (nzOnConfirm)="cancelEdit(data.id!)">{{'cancel' |
               i18n }}</a>
           </td>
         </ng-template>
@@ -195,7 +195,7 @@
     </button>
     <!--
 
-    <button nz-button nzType="danger" (click)="removeSelectedLocationGroups()">{{'delete' | i18n}}</button>
+    <button nz-button nzDanger (click)="removeSelectedLocationGroups()">{{'delete' | i18n}}</button>
 
 -->
   </div>

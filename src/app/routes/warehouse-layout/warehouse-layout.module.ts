@@ -27,6 +27,7 @@ const COMPONENTS: Type<void>[] = [
 
 const COMPONENTS_NOROUNT: Type<void>[] = [];
 
+
 @NgModule({
   imports: [
     SharedModule,

@@ -86,6 +86,7 @@ import { RoutesModule } from './routes/routes.module';
 import { SharedModule } from './shared/shared.module';
 import { STWidgetModule } from './shared/st-widget/st-widget.module';
 import { Observable } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [AppComponent],
@@ -100,6 +101,7 @@ import { Observable } from 'rxjs';
     RoutesModule,
     STWidgetModule,
     NzNotificationModule,
+    FormsModule,
     ...GLOBAL_THIRD_MODULES,
     ...FORM_MODULES
   ],

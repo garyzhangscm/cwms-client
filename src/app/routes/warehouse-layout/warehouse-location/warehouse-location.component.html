@@ -84,10 +84,10 @@
     </thead>
     <tbody>
       <tr *ngFor="let data of rowSelectionTable.data">
-        <ng-container *ngIf="!editCache[data.id].edit; else editTemplate">
+        <ng-container *ngIf="!editCache[data.id!].edit; else editTemplate">
 
 
-          <td [nzChecked]="setOfCheckedId.has(data.id)" (nzCheckedChange)="onItemChecked(data.id, $event)"></td>
+          <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)"></td>
 
           <td>{{ data.name }}</td>
           <td>{{ data.locationGroup?.description }}</td>
@@ -105,36 +105,36 @@
           <td>{{ data.enabled + ''| i18n}}</td>
           <td>{{ data.locked + '' | i18n}}</td>
           <td>{{ data.reservedCode }}</td>
-          <td nzRight><a (click)="startEdit(data.id)"> {{ 'modify' | i18n }}</a></td>
+          <td nzRight><a (click)="startEdit(data.id!)"> {{ 'modify' | i18n }}</a></td>
         </ng-container>
 
         <ng-template #editTemplate>
 
-          <td [nzChecked]="setOfCheckedId.has(data.id)" (nzCheckedChange)="onItemChecked(data.id, $event)"></td>
-          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.name" /></td>
+          <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)"></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id!].data.name" /></td>
           <td>
 
-            <nz-select [(ngModel)]="editCache[data.id].locationGroupName">
+            <nz-select [(ngModel)]="editCache[data.id!].locationGroupName">
               <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description"
                 [nzValue]="locationGroup.name"></nz-option>
             </nz-select>
 
           </td>
 
-          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.aisle" /></td>
-          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.length" /></td>
-          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.width" /></td>
-          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.height" /></td>
-          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.capacity" /></td>
-          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.fillPercentage" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id!].data.aisle" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id!].data.length" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id!].data.width" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id!].data.height" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id!].data.capacity" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id!].data.fillPercentage" /></td>
           <td>{{ data.currentVolume }}</td>
           <td>{{ data.pendingVolume }}</td>
-          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.putawaySequence" /></td>
-          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.pickSequence" /></td>
-          <td><input type="text" nz-input [(ngModel)]="editCache[data.id].data.countSequence" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id!].data.putawaySequence" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id!].data.pickSequence" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id!].data.countSequence" /></td>
 
           <td>
-            <nz-select [(ngModel)]="editCache[data.id].data.enabled">
+            <nz-select [(ngModel)]="editCache[data.id!].data.enabled">
               <nz-option nzLabel="{{ 'true' | i18n }} " [nzValue]="true"></nz-option>
               <nz-option nzLabel="{{ 'false' | i18n }}" [nzValue]="false"></nz-option>
             </nz-select>
@@ -144,8 +144,8 @@
           <td>{{ data.reservedCode }}</td>
 
           <td nzRight>
-            <a (click)="saveRecord(data.id)" class="save">{{'save' | i18n }}</a>
-            <a nz-popconfirm (nzOnConfirm)="cancelEdit(data.id)">{{'cancel' | i18n }}</a>
+            <a (click)="saveRecord(data.id!)" class="save">{{'save' | i18n }}</a>
+            <a nz-popconfirm (nzOnConfirm)="cancelEdit(data.id!)">{{'cancel' | i18n }}</a>
           </td>
         </ng-template>
       </tr>
