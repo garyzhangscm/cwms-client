@@ -1,22 +1,17 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { SettingsService, User } from '@delon/theme';
 import { LayoutDefaultOptions } from '@delon/theme/layout-default';
 import { environment } from '@env/environment';
+import { Company } from 'src/app/routes/warehouse-layout/models/company';
+import { CompanyService } from 'src/app/routes/warehouse-layout/services/company.service';
+import { WarehouseService } from 'src/app/routes/warehouse-layout/services/warehouse.service';
 
 @Component({
   selector: 'layout-basic',
   template: `
     <layout-default [options]="options" [asideUser]="asideUserTpl" [content]="contentTpl">
-      <layout-default-header-item direction="left">
-        <a layout-default-header-item-trigger href="//github.com/ng-alain/ng-alain" target="_blank">
-          <i nz-icon nzType="github"></i>
-        </a>
-      </layout-default-header-item>
-      <layout-default-header-item direction="left" hidden="mobile">
-        <a layout-default-header-item-trigger routerLink="/passport/lock">
-          <i nz-icon nzType="lock"></i>
-        </a>
-      </layout-default-header-item>
+      
       <layout-default-header-item direction="left" hidden="pc">
         <div layout-default-header-item-trigger (click)="searchToggleStatus = !searchToggleStatus">
           <i nz-icon nzType="search"></i>
@@ -24,37 +19,7 @@ import { environment } from '@env/environment';
       </layout-default-header-item>
       <layout-default-header-item direction="middle">
         <header-search class="alain-default__search" [(toggleChange)]="searchToggleStatus"></header-search>
-      </layout-default-header-item>
-      <layout-default-header-item direction="right">
-        <header-notify></header-notify>
-      </layout-default-header-item>
-      <layout-default-header-item direction="right" hidden="mobile">
-        <header-task></header-task>
-      </layout-default-header-item>
-      <layout-default-header-item direction="right" hidden="mobile">
-        <header-icon></header-icon>
-      </layout-default-header-item>
-      <layout-default-header-item direction="right" hidden="mobile">
-        <div layout-default-header-item-trigger nz-dropdown [nzDropdownMenu]="settingsMenu" nzTrigger="click" nzPlacement="bottomRight">
-          <i nz-icon nzType="setting"></i>
-        </div>
-        <nz-dropdown-menu #settingsMenu="nzDropdownMenu">
-          <div nz-menu style="width: 200px;">
-            <div nz-menu-item>
-              <header-rtl></header-rtl>
-            </div>
-            <div nz-menu-item>
-              <header-fullscreen></header-fullscreen>
-            </div>
-            <div nz-menu-item>
-              <header-clear-storage></header-clear-storage>
-            </div>
-            <div nz-menu-item>
-              <header-i18n></header-i18n>
-            </div>
-          </div>
-        </nz-dropdown-menu>
-      </layout-default-header-item>
+      </layout-default-header-item>    
       <layout-default-header-item direction="right">
         <header-user></header-user>
       </layout-default-header-item>
@@ -89,9 +54,29 @@ export class LayoutBasicComponent {
   };
   searchToggleStatus = false;
   showSettingDrawer = !environment.production;
+  currentWarehouse: string | undefined;
+  currentCompany: Company | undefined;
   get user(): User {
     return this.settings.user;
   }
 
-  constructor(private settings: SettingsService) {}
+  constructor(private settings: SettingsService,
+
+    private warehouseService: WarehouseService,
+    private companyService: CompanyService,
+    private router: Router,) {
+
+    const warehouse = this.warehouseService.getCurrentWarehouse();
+    const company = this.companyService.getCurrentCompany();
+    if (company === null) {
+      console.log(`Not able to get current company, will force the user to log in again`);
+      router.navigateByUrl('passport/login');
+    } else if (warehouse === null) {
+      console.log(`Not able to get current warehouse, will force the user to log in again`);
+      router.navigateByUrl('passport/login');
+    } else {
+      this.currentWarehouse = warehouse.name;
+      this.currentCompany = company;
+    }
+  }
 }
