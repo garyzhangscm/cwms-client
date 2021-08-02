@@ -71,12 +71,12 @@
       </nz-table>
 
 
+      -->
       <div class="mb-md">
         <nz-checkbox-group [(ngModel)]="customColumns" name="customColumns"
           (ngModelChange)="st.resetColumns({ emitReload: true })"></nz-checkbox-group>
       </div>
-      -->
-      <st #st [data]="users" [columns]="columns">
+      <st #st [data]="productionLineKanbanDataList" [columns]="columns">
       </st>
 
     </div>
