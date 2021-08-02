@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -29,7 +29,7 @@ export class InventoryAuditCountResultComponent implements OnInit {
   pageTitle: string;
   constructor(
     private activatedRoute: ActivatedRoute,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private auditCountResultService: AuditCountResultService,
     private locationService: LocationService,

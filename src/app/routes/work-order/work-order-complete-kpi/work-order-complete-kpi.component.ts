@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { exists } from 'fs';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { UserService } from '../../auth/services/user.service';
@@ -33,11 +33,11 @@ export class WorkOrderWorkOrderCompleteKpiComponent implements OnInit {
   existingWorkOrderKpis: WorkOrderKpi[] = [];
 
   constructor(
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
-    private router: Router, 
+    private router: Router,
     private userService: UserService,
-    private workingTeamService: WorkingTeamService, 
+    private workingTeamService: WorkingTeamService,
   ) {
     this.pageTitle = this.i18n.fanyi('steps.work-order-complete.user-kpi.title');
   }
@@ -93,7 +93,7 @@ export class WorkOrderWorkOrderCompleteKpiComponent implements OnInit {
         else {
           // if this is a new KPI transaction, then we will only allow one user per new transaction
           return existingWorkOrderKpiTransaction.workOrderKPI !== undefined ||
-                existingWorkOrderKpiTransaction.username !== workOrderKpiTransaction.username;
+            existingWorkOrderKpiTransaction.username !== workOrderKpiTransaction.username;
         }
       }
     );

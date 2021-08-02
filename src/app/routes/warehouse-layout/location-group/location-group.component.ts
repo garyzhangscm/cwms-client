@@ -1,8 +1,8 @@
 import { formatDate } from '@angular/common';
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { TitleService } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { I18NService } from 'src/app/core/i18n/i18n.service';
@@ -151,7 +151,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
     private fb: FormBuilder,
     private locationGroupTypeService: LocationGroupTypeService,
     private locationGroupService: LocationGroupService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private messageService: NzMessageService,
     private activatedRoute: ActivatedRoute,

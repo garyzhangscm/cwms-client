@@ -1,8 +1,8 @@
 import { formatDate } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
-import { _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { Item } from '../../inventory/models/item';
@@ -139,7 +139,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
     private inventoryStatusService: InventoryStatusService,
     private itemService: ItemService,
     private modalService: NzModalService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
   ) { }
   ngOnInit(): void {
     // initiate the search form

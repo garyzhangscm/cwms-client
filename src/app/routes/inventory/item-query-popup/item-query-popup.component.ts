@@ -1,8 +1,8 @@
 import { formatDate } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, Inject, OnInit, Output, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
-import { _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
@@ -23,180 +23,180 @@ import { ItemService } from '../services/item.service';
   styleUrls: ['./item-query-popup.component.less'],
 })
 export class InventoryItemQueryPopupComponent implements OnInit {
-  scrollX = '100vw';  
+  scrollX = '100vw';
 
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: ColumnItem[] = [
     {
-          name: 'name',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Item, b: Item) => this.utilService.compareNullableString(a.name, b.name),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          width: '120px',
-        }, {
-          name: 'description',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Item, b: Item) => this.utilService.compareNullableString(a.description, b.description),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          width: '120px',
-        }, {
-          name: 'client',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Item, b: Item) => this.utilService.compareNullableObjField(a.client, b.client, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          width: '120px',
-        }, {
-          name: 'item-family',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Item, b: Item) => this.utilService.compareNullableObjField(a.itemFamily, b.itemFamily, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          width: '120px',
-        }, {
-          name: 'unit-cost',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Item, b: Item) => this.utilService.compareNullableNumber(a.unitCost, b.unitCost),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          width: '120px',
-        },
-        {
-          name: 'allowAllocationByLPN',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Item, b: Item) => this.utilService.compareBoolean(a.allowAllocationByLPN, b.allowAllocationByLPN),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [
-            { text: this.i18n.fanyi('true'), value: true },
-            { text: this.i18n.fanyi('false'), value: false },
-          ],
-          filterFn: (list: boolean[], item: Item) => list.some(allowAllocationByLPN => item.allowAllocationByLPN === allowAllocationByLPN), 
-          showFilter: true,
-          width: '150px',
-        },
-        {
-          name: 'allocationRoundUpStrategyType',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Item, b: Item) => this.utilService.compareNullableString(a.allocationRoundUpStrategyType?.toString(), b.allocationRoundUpStrategyType?.toString()),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          width: '150px',
-        },
-        {
-          name: 'allocationRoundUpStrategyValue',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Item, b: Item) => this.utilService.compareNullableNumber(a.allocationRoundUpStrategyValue, b.allocationRoundUpStrategyValue),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          width: '150px',
-        },
-        {
-          name: 'trackingVolumeFlag',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Item, b: Item) => this.utilService.compareBoolean(a.trackingVolumeFlag, b.trackingVolumeFlag),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [
-            { text: this.i18n.fanyi('true'), value: true },
-            { text: this.i18n.fanyi('false'), value: false },
-          ],
-          filterFn: (list: boolean[], item: Item) => list.some(trackingVolumeFlag => item.trackingVolumeFlag === trackingVolumeFlag), 
-          showFilter: true,
-          width: '150px',
-        },
-        {
-          name: 'trackingLotNumberFlag',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Item, b: Item) => this.utilService.compareBoolean(a.trackingLotNumberFlag, b.trackingLotNumberFlag),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [
-            { text: this.i18n.fanyi('true'), value: true },
-            { text: this.i18n.fanyi('false'), value: false },
-          ],
-          filterFn: (list: boolean[], item: Item) => list.some(trackingLotNumberFlag => item.trackingLotNumberFlag === trackingLotNumberFlag), 
-          showFilter: true,
-          width: '150px',
-        },
-        {
-          name: 'trackingManufactureDateFlag',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Item, b: Item) => this.utilService.compareBoolean(a.trackingManufactureDateFlag, b.trackingManufactureDateFlag),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [
-            { text: this.i18n.fanyi('true'), value: true },
-            { text: this.i18n.fanyi('false'), value: false },
-          ],
-          filterFn: (list: boolean[], item: Item) => list.some(trackingManufactureDateFlag => item.trackingManufactureDateFlag === trackingManufactureDateFlag), 
-          showFilter: true,
-          width: '150px',
-        }, {
-          name: 'shelfLifeDays',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Item, b: Item) => this.utilService.compareNullableNumber(a.shelfLifeDays, b.shelfLifeDays),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false,
-          width: '150px',
-        }, 
-        {
-          name: 'trackingExpirationDateFlag',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Item, b: Item) => this.utilService.compareBoolean(a.trackingExpirationDateFlag, b.trackingExpirationDateFlag),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [
-            { text: this.i18n.fanyi('true'), value: true },
-            { text: this.i18n.fanyi('false'), value: false },
-          ],
-          filterFn: (list: boolean[], item: Item) => list.some(trackingExpirationDateFlag => item.trackingExpirationDateFlag === trackingExpirationDateFlag), 
-          showFilter: true,
-          width: '150px',
-        }, 
-        ];
+      name: 'name',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) => this.utilService.compareNullableString(a.name, b.name),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      width: '120px',
+    }, {
+      name: 'description',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) => this.utilService.compareNullableString(a.description, b.description),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      width: '120px',
+    }, {
+      name: 'client',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) => this.utilService.compareNullableObjField(a.client, b.client, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      width: '120px',
+    }, {
+      name: 'item-family',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) => this.utilService.compareNullableObjField(a.itemFamily, b.itemFamily, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      width: '120px',
+    }, {
+      name: 'unit-cost',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) => this.utilService.compareNullableNumber(a.unitCost, b.unitCost),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      width: '120px',
+    },
+    {
+      name: 'allowAllocationByLPN',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) => this.utilService.compareBoolean(a.allowAllocationByLPN, b.allowAllocationByLPN),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false },
+      ],
+      filterFn: (list: boolean[], item: Item) => list.some(allowAllocationByLPN => item.allowAllocationByLPN === allowAllocationByLPN),
+      showFilter: true,
+      width: '150px',
+    },
+    {
+      name: 'allocationRoundUpStrategyType',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) => this.utilService.compareNullableString(a.allocationRoundUpStrategyType?.toString(), b.allocationRoundUpStrategyType?.toString()),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      width: '150px',
+    },
+    {
+      name: 'allocationRoundUpStrategyValue',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) => this.utilService.compareNullableNumber(a.allocationRoundUpStrategyValue, b.allocationRoundUpStrategyValue),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      width: '150px',
+    },
+    {
+      name: 'trackingVolumeFlag',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) => this.utilService.compareBoolean(a.trackingVolumeFlag, b.trackingVolumeFlag),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false },
+      ],
+      filterFn: (list: boolean[], item: Item) => list.some(trackingVolumeFlag => item.trackingVolumeFlag === trackingVolumeFlag),
+      showFilter: true,
+      width: '150px',
+    },
+    {
+      name: 'trackingLotNumberFlag',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) => this.utilService.compareBoolean(a.trackingLotNumberFlag, b.trackingLotNumberFlag),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false },
+      ],
+      filterFn: (list: boolean[], item: Item) => list.some(trackingLotNumberFlag => item.trackingLotNumberFlag === trackingLotNumberFlag),
+      showFilter: true,
+      width: '150px',
+    },
+    {
+      name: 'trackingManufactureDateFlag',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) => this.utilService.compareBoolean(a.trackingManufactureDateFlag, b.trackingManufactureDateFlag),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false },
+      ],
+      filterFn: (list: boolean[], item: Item) => list.some(trackingManufactureDateFlag => item.trackingManufactureDateFlag === trackingManufactureDateFlag),
+      showFilter: true,
+      width: '150px',
+    }, {
+      name: 'shelfLifeDays',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) => this.utilService.compareNullableNumber(a.shelfLifeDays, b.shelfLifeDays),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      width: '150px',
+    },
+    {
+      name: 'trackingExpirationDateFlag',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) => this.utilService.compareBoolean(a.trackingExpirationDateFlag, b.trackingExpirationDateFlag),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false },
+      ],
+      filterFn: (list: boolean[], item: Item) => list.some(trackingExpirationDateFlag => item.trackingExpirationDateFlag === trackingExpirationDateFlag),
+      showFilter: true,
+      width: '150px',
+    },
+  ];
 
-        
+
   itemFamilies: Array<{ label: string; value: string }> = [];
-  
+
 
   // Form related data and functions
   queryModal!: NzModalRef;
@@ -206,13 +206,13 @@ export class InventoryItemQueryPopupComponent implements OnInit {
   queryInProcess = false;
   searchResult = '';
 
-  
+
   // Table data for display
   listOfAllItems: Item[] = [];
   listOfDisplayItems: Item[] = [];
-  
+
   // list of checked checkbox
-  setOfCheckedId  = new Set<number>();
+  setOfCheckedId = new Set<number>();
 
   @Output() recordSelected: EventEmitter<any> = new EventEmitter();
 
@@ -220,19 +220,19 @@ export class InventoryItemQueryPopupComponent implements OnInit {
     private fb: FormBuilder,
     private itemService: ItemService,
     private itemFamilyService: ItemFamilyService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private utilService: UtilService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    
+
   }
 
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllItems = [];
-    this.listOfDisplayItems = []; 
+    this.listOfDisplayItems = [];
   }
 
   search(): void {
@@ -244,7 +244,7 @@ export class InventoryItemQueryPopupComponent implements OnInit {
         this.searchForm.value.taggedItemFamilies,
       )
       .subscribe(
-        itemRes => { 
+        itemRes => {
           this.listOfAllItems = itemRes;
           this.listOfDisplayItems = itemRes;
           this.setOfCheckedId.clear();
@@ -261,8 +261,8 @@ export class InventoryItemQueryPopupComponent implements OnInit {
         },
       );
   }
- 
-  
+
+
 
   updateCheckedSet(id: number, checked: boolean): void {
     if (checked) {
@@ -274,12 +274,12 @@ export class InventoryItemQueryPopupComponent implements OnInit {
   }
 
   currentPageDataChange(listOfDisplayItems: Item[]): void {
-    this.listOfDisplayItems = listOfDisplayItems; 
+    this.listOfDisplayItems = listOfDisplayItems;
   }
- 
+
 
   onItemChecked(id: number, checked: boolean): void {
-    this.updateCheckedSet(id, checked); 
+    this.updateCheckedSet(id, checked);
   }
 
 
@@ -292,7 +292,7 @@ export class InventoryItemQueryPopupComponent implements OnInit {
     tplQueryModalContent: TemplateRef<{}>,
     tplQueryModalFooter: TemplateRef<{}>,
   ): void {
-    
+
     this.listOfAllItems = [];
     this.listOfDisplayItems = [];
     this.createQueryForm();
@@ -339,10 +339,10 @@ export class InventoryItemQueryPopupComponent implements OnInit {
     // WHen the user click the row, if 
     // toggle the check box for this row
     if (this.setOfCheckedId.has(item.id!)) {
-      this.updateCheckedSet(item.id!, false); 
+      this.updateCheckedSet(item.id!, false);
     }
-    else {      
-      this.updateCheckedSet(item.id!, true); 
+    else {
+      this.updateCheckedSet(item.id!, true);
     }
   }
 

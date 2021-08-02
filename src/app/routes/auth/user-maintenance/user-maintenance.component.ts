@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { User } from '../models/user';
 import { UserService } from '../services/user.service';
@@ -33,12 +33,12 @@ export class AuthUserMaintenanceComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
     private userService: UserService,
     private companyService: CompanyService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.currentUser = this.emptyUser;
@@ -51,7 +51,7 @@ export class AuthUserMaintenanceComponent implements OnInit {
     this.loadUsers();
     this.setupPageTitle();
 
-    this.activatedRoute.queryParams.subscribe(params => {});
+    this.activatedRoute.queryParams.subscribe(params => { });
   }
 
   loadUsers(): void {

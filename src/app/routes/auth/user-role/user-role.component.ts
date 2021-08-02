@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { MenuService, TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, MenuService, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { TransferItem } from 'ng-zorro-antd/transfer';
 import { MenuGroup } from '../models/menu-group';
@@ -29,7 +29,7 @@ export class AuthUserRoleComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private fb: FormBuilder,
     private roleService: RoleService,
@@ -42,7 +42,7 @@ export class AuthUserRoleComponent implements OnInit {
     this.assignedRoleText = this.i18n.fanyi('role.assigned');
   }
 
-  ngOnInit(): void{
+  ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('page.auth.user.roles'));
 
     this.activatedRoute.queryParams.subscribe(params => {

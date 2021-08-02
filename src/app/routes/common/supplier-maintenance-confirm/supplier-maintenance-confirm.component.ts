@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { Supplier } from '../models/supplier';
 import { SupplierService } from '../services/supplier.service';
 
@@ -15,7 +15,7 @@ export class CommonSupplierMaintenanceConfirmComponent implements OnInit {
   pageTitle: string;
 
   constructor(
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private supplierService: SupplierService,
     private router: Router,

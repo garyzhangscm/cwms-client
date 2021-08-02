@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
@@ -30,7 +30,7 @@ export class AuthRoleMaintenanceConfirmComponent implements OnInit {
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null, 
+      filterFn: null,
       showFilter: false
     },
     {
@@ -40,7 +40,7 @@ export class AuthRoleMaintenanceConfirmComponent implements OnInit {
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null, 
+      filterFn: null,
       showFilter: false
     },
     {
@@ -50,7 +50,7 @@ export class AuthRoleMaintenanceConfirmComponent implements OnInit {
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null, 
+      filterFn: null,
       showFilter: false
     },
     {
@@ -60,7 +60,7 @@ export class AuthRoleMaintenanceConfirmComponent implements OnInit {
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null, 
+      filterFn: null,
       showFilter: false
     },
     {
@@ -73,7 +73,7 @@ export class AuthRoleMaintenanceConfirmComponent implements OnInit {
         { text: this.i18n.fanyi('true'), value: true },
         { text: this.i18n.fanyi('false'), value: false },
       ],
-      filterFn: (list: boolean[], user: User) => list.some(enabled => user.enabled === enabled), 
+      filterFn: (list: boolean[], user: User) => list.some(enabled => user.enabled === enabled),
       showFilter: true
     },
     {
@@ -86,17 +86,17 @@ export class AuthRoleMaintenanceConfirmComponent implements OnInit {
         { text: this.i18n.fanyi('true'), value: true },
         { text: this.i18n.fanyi('false'), value: false },
       ],
-      filterFn: (list: boolean[], user: User) => list.some(locked => user.locked === locked), 
+      filterFn: (list: boolean[], user: User) => list.some(locked => user.locked === locked),
       showFilter: true
     }
-    ];
+  ];
 
   currentRole!: Role;
   pageTitle: string;
   menuTree: MenuTreeNode[] = [];
 
   constructor(
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private roleService: RoleService,
     private router: Router,
@@ -113,7 +113,7 @@ export class AuthRoleMaintenanceConfirmComponent implements OnInit {
   }
 
   initMenuTree(): void {
-    this.menuTree = []; 
+    this.menuTree = [];
     this.currentRole!.menuGroups.forEach(menuGroup => {
       const menuGroupTreeNode: MenuTreeNode = {
         title: this.i18n.fanyi(menuGroup.i18n),

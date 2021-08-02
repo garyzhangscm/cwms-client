@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
-import { _HttpClient } from '@delon/theme'; 
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { PrintableBarcode } from '../../common/models/printable-barcode';
@@ -23,8 +23,8 @@ export class CycleCountRequestService {
     private gzLocalStorageService: GzLocalStorageService,
     private printingService: PrintingService,
     private warehouseService: WarehouseService,
-    private i18n: I18NService,
-  ) {}
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  ) { }
 
   generateCycleCountRequests(
     batchId: string,
@@ -134,8 +134,8 @@ export class CycleCountRequestService {
     };
     return this.http.post('inventory/cycle-count-request/reopen', null, params).pipe(map(res => res.data));
   }
- 
- 
+
+
   getInventorySummariesForCount(cycleCountRequest: CycleCountRequest): Observable<CycleCountResult[]> {
     const url = `inventory/cycle-count-request/${cycleCountRequest.id}/inventory-summary`;
     return this.http.get(url).pipe(map(res => res.data));
@@ -152,11 +152,11 @@ export class CycleCountRequestService {
     return this.http.get(url).pipe(map(res => res.data));
   }
 
-  
-  
-  printCycleCountSheet(batchId: string, cycleCountRequestIds: number[], locale?: string) : Observable<ReportHistory>{
-   
-    
+
+
+  printCycleCountSheet(batchId: string, cycleCountRequestIds: number[], locale?: string): Observable<ReportHistory> {
+
+
     if (!locale) {
       locale = this.i18n.defaultLang;
     }

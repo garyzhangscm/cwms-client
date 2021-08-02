@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
-import { _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
@@ -18,9 +18,9 @@ export class PutawayConfigurationService {
   constructor(
     private http: _HttpClient,
     private warehouseService: WarehouseService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private printingService: PrintingService,
-  ) {}
+  ) { }
 
   getPutawayConfigurations(
     sequence?: number,
@@ -125,9 +125,8 @@ export class PutawayConfigurationService {
                         <tr>
                           <td colspan="2">${this.i18n.fanyi('totalQuantity')}:</td><td colspan="2">${totalQuantity}</td>
                           <td colspan="2">${this.i18n.fanyi('totalLPNCount')}:</td><td colspan="2">${LPNs.size}</td>
-                          <td colspan="2">${this.i18n.fanyi('totalLocationCount')}:</td><td colspan="2">${
-      locationIDs.size
-    }</td> 
+                          <td colspan="2">${this.i18n.fanyi('totalLocationCount')}:</td><td colspan="2">${locationIDs.size
+      }</td> 
                         </tr>
                         
                       </table>`;

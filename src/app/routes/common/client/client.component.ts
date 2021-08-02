@@ -1,7 +1,7 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
-import { _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { ColumnItem } from '../../util/models/column-item';
@@ -162,7 +162,10 @@ export class CommonClientComponent implements OnInit {
 
   @ViewChild(NzInputDirective, { static: false, read: ElementRef }) inputElement: ElementRef | undefined;
 
-  constructor(private clientService: ClientService, private i18n: I18NService, private modalService: NzModalService) { }
+  constructor(private clientService: ClientService,
+
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private modalService: NzModalService) { }
 
   search(refresh: boolean = false): void {
     this.clientService.loadClients(refresh).subscribe(clientRes => {

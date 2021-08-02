@@ -1,8 +1,8 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { InventorySnapshot } from '../models/inventory-snapshot';
@@ -16,7 +16,7 @@ import { InventorySnapshotService } from '../services/inventory-snapshot.service
 })
 export class InventoryInventorySnapshotComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: ColumnItem[] = [
     {
       name: 'inventory-snapshot.batch-number',
       showSort: true,
@@ -25,7 +25,7 @@ export class InventoryInventorySnapshotComponent implements OnInit {
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null, 
+      filterFn: null,
       showFilter: false
     }, {
       name: 'inventory-snapshot.status',
@@ -35,9 +35,9 @@ export class InventoryInventorySnapshotComponent implements OnInit {
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null, 
+      filterFn: null,
       showFilter: false
-    },{
+    }, {
       name: 'start-time',
       showSort: true,
       sortOrder: null,
@@ -45,9 +45,9 @@ export class InventoryInventorySnapshotComponent implements OnInit {
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null, 
+      filterFn: null,
       showFilter: false
-    },{
+    }, {
       name: 'complete-time',
       showSort: true,
       sortOrder: null,
@@ -55,12 +55,12 @@ export class InventoryInventorySnapshotComponent implements OnInit {
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null, 
+      filterFn: null,
       showFilter: false
     },];
 
-      
-  inventorySnapshotStatuses!: InventorySnapshotStatus; 
+
+  inventorySnapshotStatuses!: InventorySnapshotStatus;
   // Form related data and functions
   searchForm!: FormGroup;
   expandSet = new Set<number>();
@@ -68,38 +68,38 @@ export class InventoryInventorySnapshotComponent implements OnInit {
   searching = false;
   searchResult = '';
 
-  
+
   // Table data for display
   listOfAllInventorySnapshots: InventorySnapshot[] = [];
-  listOfDisplayInventorySnapshots: InventorySnapshot[] = []; 
+  listOfDisplayInventorySnapshots: InventorySnapshot[] = [];
 
-  constructor(private http: _HttpClient, 
+  constructor(private http: _HttpClient,
     private fb: FormBuilder,
     private inventorySnapshotService: InventorySnapshotService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private utilService: UtilService,) { }
 
   ngOnInit(): void {
-      this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.snapshot'));
-      this.initSearchForm();
+    this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.snapshot'));
+    this.initSearchForm();
   }
-  
+
   initSearchForm(): void {
     // initiate the search form
     this.searchForm = this.fb.group({
       batchNumber: [null],
       status: [null],
     });
-  
-      
+
+
   }
 
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllInventorySnapshots = [];
     this.listOfDisplayInventorySnapshots = [];
- 
+
   }
   search(): void {
     this.searching = true;
@@ -126,7 +126,7 @@ export class InventoryInventorySnapshotComponent implements OnInit {
         },
       );
   }
-  
+
   onExpandChange(id: number, checked: boolean): void {
     if (checked) {
       this.expandSet.add(id);
@@ -135,7 +135,7 @@ export class InventoryInventorySnapshotComponent implements OnInit {
     }
   }
 
-  showInventorySnapshotDetails(inventorySnapshot : InventorySnapshot) {
+  showInventorySnapshotDetails(inventorySnapshot: InventorySnapshot) {
     console.log(`inventory snapshot details: ${JSON.stringify(inventorySnapshot.inventorySnapshotDetails)}`);
   }
 

@@ -1,8 +1,8 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
-import { _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { ColumnItem } from '../../util/models/column-item';
 import { CycleCountBatch } from '../models/cycle-count-batch';
 import { CycleCountBatchService } from '../services/cycle-count-batch.service';
@@ -14,86 +14,86 @@ import { CycleCountBatchService } from '../services/cycle-count-batch.service';
 })
 export class InventoryCycleCountComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: ColumnItem[] = [
     {
-          name: 'cycle-count.batchId',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: CycleCountBatch, b: CycleCountBatch) => a.batchId.localeCompare(b.batchId),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, 
-        {
-          name: 'cycle-count-request.count',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: CycleCountBatch, b: CycleCountBatch) => a.requestLocationCount - b.requestLocationCount,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'cycle-count-request.open.count',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: CycleCountBatch, b: CycleCountBatch) => a.openLocationCount - b.openLocationCount,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'cycle-count-request.finished.count',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: CycleCountBatch, b: CycleCountBatch) => a.finishedLocationCount - b.finishedLocationCount,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'cycle-count-request.cancelled.count',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: CycleCountBatch, b: CycleCountBatch) => a.cancelledLocationCount - b.cancelledLocationCount,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'audit-count-request.count',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: CycleCountBatch, b: CycleCountBatch) => a.openAuditLocationCount - b.openAuditLocationCount,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'audit-count-result.count',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: CycleCountBatch, b: CycleCountBatch) => a.finishedAuditLocationCount - b.finishedAuditLocationCount,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        ];
-        
+      name: 'cycle-count.batchId',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: CycleCountBatch, b: CycleCountBatch) => a.batchId.localeCompare(b.batchId),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'cycle-count-request.count',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: CycleCountBatch, b: CycleCountBatch) => a.requestLocationCount - b.requestLocationCount,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'cycle-count-request.open.count',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: CycleCountBatch, b: CycleCountBatch) => a.openLocationCount - b.openLocationCount,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'cycle-count-request.finished.count',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: CycleCountBatch, b: CycleCountBatch) => a.finishedLocationCount - b.finishedLocationCount,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'cycle-count-request.cancelled.count',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: CycleCountBatch, b: CycleCountBatch) => a.cancelledLocationCount - b.cancelledLocationCount,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'audit-count-request.count',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: CycleCountBatch, b: CycleCountBatch) => a.openAuditLocationCount - b.openAuditLocationCount,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'audit-count-result.count',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: CycleCountBatch, b: CycleCountBatch) => a.finishedAuditLocationCount - b.finishedAuditLocationCount,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+  ];
+
   // Form related data and functions
   searchForm!: FormGroup;
   searching = false;
@@ -103,7 +103,7 @@ export class InventoryCycleCountComponent implements OnInit {
   // Table data for display
   cycleCountBatches: CycleCountBatch[] = [];
   listOfDisplayCycleCountBatches: CycleCountBatch[] = [];
- 
+
   isCollapse = false;
 
   toggleCollapse(): void {
@@ -113,8 +113,8 @@ export class InventoryCycleCountComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private cycleCountBatchService: CycleCountBatchService,
-    private i18n: I18NService,
-  ) {}
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  ) { }
 
   resetForm(): void {
     this.searchForm.reset();
@@ -144,7 +144,7 @@ export class InventoryCycleCountComponent implements OnInit {
   currentPageDataChange($event: CycleCountBatch[]): void {
     this.listOfDisplayCycleCountBatches = $event;
   }
- 
+
 
   ngOnInit(): void {
     // initiate the search form

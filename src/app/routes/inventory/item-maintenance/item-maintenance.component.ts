@@ -1,8 +1,8 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { UnitOfMeasure } from '../../common/models/unit-of-measure';
@@ -50,7 +50,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private http: _HttpClient,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private messageService: NzMessageService,
     private router: Router,
@@ -61,7 +61,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     private modalService: NzModalService,
     private unitOfMeasureService: UnitOfMeasureService,
     private itemPackageTypeService: ItemPackageTypeService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
@@ -248,22 +248,21 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     this.availableUnitOfMeasures
       .filter(unitOfMeasure => unitOfMeasure.name === unitOfMeasureName)
       .forEach(
-        unitOfMeasure =>
-          {
-            itemPackageType.itemUnitOfMeasures = [
-              ...itemPackageType.itemUnitOfMeasures,
-              {
-                unitOfMeasure,
-                warehouseId: this.warehouseService.getCurrentWarehouse().id,
-                unitOfMeasureId: unitOfMeasure === null ? undefined : unitOfMeasure.id,
-                quantity,
-                weight,
-                length: length === null ? 0 : length,
-                width: width === null ? 0 : width,
-                height: height === null ? 0 : height,
-              },
-            ];
-            itemPackageType.itemUnitOfMeasures.sort((a, b) => a.quantity! - b.quantity!);
+        unitOfMeasure => {
+          itemPackageType.itemUnitOfMeasures = [
+            ...itemPackageType.itemUnitOfMeasures,
+            {
+              unitOfMeasure,
+              warehouseId: this.warehouseService.getCurrentWarehouse().id,
+              unitOfMeasureId: unitOfMeasure === null ? undefined : unitOfMeasure.id,
+              quantity,
+              weight,
+              length: length === null ? 0 : length,
+              width: width === null ? 0 : width,
+              height: height === null ? 0 : height,
+            },
+          ];
+          itemPackageType.itemUnitOfMeasures.sort((a, b) => a.quantity! - b.quantity!);
         }
       );
   }

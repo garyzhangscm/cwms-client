@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { Inject, Injectable } from '@angular/core';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { I18NService } from 'src/app/core/i18n/i18n.service';
@@ -23,7 +23,7 @@ export class WorkOrderService {
     private http: _HttpClient,
     private warehouseService: WarehouseService,
     private printingService: PrintingService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
   ) { }
 
   getWorkOrders(number?: string, itemName?: string, productionPlanId?: number): Observable<WorkOrder[]> {

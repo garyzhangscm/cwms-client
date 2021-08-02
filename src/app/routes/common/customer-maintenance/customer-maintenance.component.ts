@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { Customer } from '../models/customer';
 
 @Component({
@@ -28,7 +28,9 @@ export class CommonCustomerMaintenanceComponent implements OnInit {
     addressPostcode: '',
   };
 
-  constructor(private router: Router, private i18n: I18NService, private titleService: TitleService) {}
+  constructor(private router: Router,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private titleService: TitleService) { }
 
   ngOnInit(): void {
     this.loadCustomerFromSessionStorage();

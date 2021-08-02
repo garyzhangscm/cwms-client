@@ -1,9 +1,9 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { ColumnItem } from '../../util/models/column-item';
@@ -19,7 +19,7 @@ import { ReportService } from '../services/report.service';
   styleUrls: ['./report-history.component.less'],
 })
 export class ReportReportHistoryComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: ColumnItem[] = [
     {
       name: 'type',
       showSort: true,
@@ -28,65 +28,65 @@ export class ReportReportHistoryComponent implements OnInit {
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null, 
+      filterFn: null,
       showFilter: false
-    },{
-          name: 'description',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: ReportHistory, b: ReportHistory) => this.utilService.compareNullableString(a.description, b.description),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, 
-         {
-          name: 'report.printedDate',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: ReportHistory, b: ReportHistory) => this.utilService.compareDateTime(a.printedDate, b.printedDate),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'report.printedUsername',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: ReportHistory, b: ReportHistory) => this.utilService.compareNullableString(a.printedUsername, b.printedUsername),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },  {
-          name: 'report.orientation',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: ReportHistory, b: ReportHistory) => this.utilService.compareNullableString(a.reportOrientation, b.reportOrientation),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'fileName',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: ReportHistory, b: ReportHistory) => this.utilService.compareNullableString(a.fileName, b.fileName),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, 
-        ]; 
+    }, {
+      name: 'description',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: ReportHistory, b: ReportHistory) => this.utilService.compareNullableString(a.description, b.description),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'report.printedDate',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: ReportHistory, b: ReportHistory) => this.utilService.compareDateTime(a.printedDate, b.printedDate),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'report.printedUsername',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: ReportHistory, b: ReportHistory) => this.utilService.compareNullableString(a.printedUsername, b.printedUsername),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'report.orientation',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: ReportHistory, b: ReportHistory) => this.utilService.compareNullableString(a.reportOrientation, b.reportOrientation),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'fileName',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: ReportHistory, b: ReportHistory) => this.utilService.compareNullableString(a.fileName, b.fileName),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+  ];
 
   constructor(
     private fb: FormBuilder,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private reportHistoryService: ReportHistoryService,
     private message: NzMessageService,
@@ -94,7 +94,7 @@ export class ReportReportHistoryComponent implements OnInit {
     private titleService: TitleService,
     private router: Router,
     private utilService: UtilService,
-  ) {}
+  ) { }
 
   // Form related data and functions
   searchForm!: FormGroup;
@@ -102,11 +102,11 @@ export class ReportReportHistoryComponent implements OnInit {
   // Table data for display
   listOfAllReportHistories: ReportHistory[] = [];
   listOfDisplayReportHistories: ReportHistory[] = [];
-  
+
   searching = false;
   searchResult = '';
 
-  
+
 
   resetForm(): void {
     this.searchForm.reset();
@@ -139,31 +139,30 @@ export class ReportReportHistoryComponent implements OnInit {
         },
       );
   }
- 
-  
+
+
 
   currentPageDataChange($event: ReportHistory[]): void {
-    this.listOfDisplayReportHistories! = $event; 
+    this.listOfDisplayReportHistories! = $event;
   }
- 
 
-  
-  ngOnInit(): void{
+
+
+  ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.report.report-history'));
     // initiate the search form
     this.searchForm = this.fb.group({
       name: [null],
     });
 
-    
+
   }
 
-  getReportResultFile(reportHistory: ReportHistory) : void{
+  getReportResultFile(reportHistory: ReportHistory): void {
     console.log(`start to download file`);
-    this.reportHistoryService.download(reportHistory.fileName).subscribe(reportResultFile => 
-      {
-        console.log(`download file: ${JSON.stringify(reportResultFile)}`);
-      })
+    this.reportHistoryService.download(reportHistory.fileName).subscribe(reportResultFile => {
+      console.log(`download file: ${JSON.stringify(reportResultFile)}`);
+    })
   }
 
 }

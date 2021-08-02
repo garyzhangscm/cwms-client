@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { Inject, Injectable } from '@angular/core';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { I18NService } from 'src/app/core/i18n/i18n.service';
@@ -20,7 +20,7 @@ export class AuditCountRequestService {
     private gzLocalStorageService: GzLocalStorageService,
     private printingService: PrintingService,
     private warehouseService: WarehouseService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
   ) { }
 
   getAuditCountRequestDetails(batchId: string, refresh: boolean = false): Observable<AuditCountRequest[]> {

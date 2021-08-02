@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
@@ -14,7 +14,7 @@ import { ItemFamily } from '../models/item-family';
 import { ItemPackageType } from '../models/item-package-type';
 import { EmergencyReplenishmentConfigurationService } from '../services/emergency-replenishment-configuration.service';
 import { ItemFamilyService } from '../services/item-family.service';
- 
+
 
 @Component({
   selector: 'app-inventory-emergency-replenishment-config',
@@ -23,98 +23,98 @@ import { ItemFamilyService } from '../services/item-family.service';
 })
 export class InventoryEmergencyReplenishmentConfigComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: ColumnItem[] = [
     {
-          name: 'sequence',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: EmergencyReplenishmentConfiguration, b: EmergencyReplenishmentConfiguration) => a.sequence - b.sequence,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'unit-of-measure',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: EmergencyReplenishmentConfiguration, b: EmergencyReplenishmentConfiguration) => this.utilService.compareNullableObjField(a.unitOfMeasure, b.unitOfMeasure, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'item',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: EmergencyReplenishmentConfiguration, b: EmergencyReplenishmentConfiguration) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'item.item-family',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: EmergencyReplenishmentConfiguration, b: EmergencyReplenishmentConfiguration) => this.utilService.compareNullableObjField(a.itemFamily, b.itemFamily, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'sourceLocation',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: EmergencyReplenishmentConfiguration, b: EmergencyReplenishmentConfiguration) => this.utilService.compareNullableObjField(a.sourceLocation, b.sourceLocation, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'sourceLocationGroup',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: EmergencyReplenishmentConfiguration, b: EmergencyReplenishmentConfiguration) => this.utilService.compareNullableObjField(a.sourceLocationGroup, b.sourceLocationGroup, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'destinationLocation',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: EmergencyReplenishmentConfiguration, b: EmergencyReplenishmentConfiguration) => this.utilService.compareNullableObjField(a.destinationLocation, b.destinationLocation, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'destinationLocationGroup',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: EmergencyReplenishmentConfiguration, b: EmergencyReplenishmentConfiguration) => this.utilService.compareNullableObjField(a.destinationLocationGroup, b.destinationLocationGroup, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        ];
+      name: 'sequence',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: EmergencyReplenishmentConfiguration, b: EmergencyReplenishmentConfiguration) => a.sequence - b.sequence,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'unit-of-measure',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: EmergencyReplenishmentConfiguration, b: EmergencyReplenishmentConfiguration) => this.utilService.compareNullableObjField(a.unitOfMeasure, b.unitOfMeasure, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'item',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: EmergencyReplenishmentConfiguration, b: EmergencyReplenishmentConfiguration) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'item.item-family',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: EmergencyReplenishmentConfiguration, b: EmergencyReplenishmentConfiguration) => this.utilService.compareNullableObjField(a.itemFamily, b.itemFamily, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'sourceLocation',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: EmergencyReplenishmentConfiguration, b: EmergencyReplenishmentConfiguration) => this.utilService.compareNullableObjField(a.sourceLocation, b.sourceLocation, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'sourceLocationGroup',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: EmergencyReplenishmentConfiguration, b: EmergencyReplenishmentConfiguration) => this.utilService.compareNullableObjField(a.sourceLocationGroup, b.sourceLocationGroup, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'destinationLocation',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: EmergencyReplenishmentConfiguration, b: EmergencyReplenishmentConfiguration) => this.utilService.compareNullableObjField(a.destinationLocation, b.destinationLocation, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'destinationLocationGroup',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: EmergencyReplenishmentConfiguration, b: EmergencyReplenishmentConfiguration) => this.utilService.compareNullableObjField(a.destinationLocationGroup, b.destinationLocationGroup, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+  ];
 
-        
+
   // Select control for clients and item families
   unitOfMeasures: UnitOfMeasure[] = [];
 
@@ -128,7 +128,7 @@ export class InventoryEmergencyReplenishmentConfigComponent implements OnInit {
   // Table data for display
   listOfAllConfigurations: EmergencyReplenishmentConfiguration[] = [];
   listOfDisplayConfigurations: EmergencyReplenishmentConfiguration[] = [];
-  
+
 
   isCollapse = false;
 
@@ -141,11 +141,11 @@ export class InventoryEmergencyReplenishmentConfigComponent implements OnInit {
     private emergencyReplenishmentConfigurationService: EmergencyReplenishmentConfigurationService,
     private unitOfMeasureService: UnitOfMeasureService,
     private itemFamilyService: ItemFamilyService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private titleService: TitleService,
     private utilService: UtilService,
-  ) {}
+  ) { }
 
   resetForm(): void {
     this.searchForm.reset();
@@ -166,7 +166,7 @@ export class InventoryEmergencyReplenishmentConfigComponent implements OnInit {
   currentPageDataChange($event: EmergencyReplenishmentConfiguration[]): void {
     this.listOfDisplayConfigurations = $event;
   }
-  
+
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.replenishment.emergency.config'));

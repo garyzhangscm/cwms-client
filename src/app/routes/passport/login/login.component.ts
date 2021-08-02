@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { I18NService, StartupService } from '@core';
 import { ReuseTabService } from '@delon/abc/reuse-tab';
 import { DA_SERVICE_TOKEN, ITokenService, SocialOpenType, SocialService } from '@delon/auth';
-import { SettingsService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, SettingsService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
@@ -36,7 +36,7 @@ export class UserLoginComponent implements OnDestroy {
     public msg: NzMessageService,
     private warehouseService: WarehouseService,
     private companyService: CompanyService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private injector: Injector,
   ) {
     this.form = fb.group({

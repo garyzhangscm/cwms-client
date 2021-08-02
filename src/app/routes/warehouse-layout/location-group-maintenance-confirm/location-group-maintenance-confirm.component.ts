@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { I18NService } from '@core'; 
-import { TitleService, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message'; 
+import { I18NService } from '@core';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { LocationGroup } from '../models/location-group';
 import { LocationGroupService } from '../services/location-group.service';
 
@@ -15,7 +15,7 @@ export class WarehouseLayoutLocationGroupMaintenanceConfirmComponent implements 
 
   pageTitle: string;
   constructor(
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private locationGroupService: LocationGroupService,
     private router: Router,

@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { ItemFamily } from '../models/item-family';
 import { ItemFamilyService } from '../services/item-family.service';
 
@@ -15,7 +15,7 @@ export class InventoryItemFamilyMaintenanceConfirmComponent implements OnInit {
   pageTitle = '';
 
   constructor(
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private itemFamilyService: ItemFamilyService,
     private router: Router,

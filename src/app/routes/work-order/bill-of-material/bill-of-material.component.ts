@@ -1,9 +1,9 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Customer } from '../../common/models/customer';
@@ -104,7 +104,7 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private modalService: NzModalService,
     private billOfMaterialService: BillOfMaterialService,

@@ -1,8 +1,8 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Inventory } from '../../inventory/models/inventory';
@@ -23,89 +23,89 @@ import { ShortAllocationService } from '../services/short-allocation.service';
 })
 export class OutboundPickListComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: ColumnItem[] = [
     {
-          name: 'pick-list.number',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: PickList, b: PickList) => this.utilService.compareNullableString(a.number, b.number),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'pick-list.group-key',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: PickList, b: PickList) => this.utilService.compareNullableString(a.groupKey, b.groupKey),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'status',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: PickList, b: PickList) => this.utilService.compareNullableString(a.status.toString(), b.status.toString()),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-         }, {
-          name: 'pick-list.totalPickCount',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: PickList, b: PickList) => this.utilService.compareNullableNumber(a.totalPickCount, b.totalPickCount),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-         }, {
-          name: 'pick-list.totalItemCount',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: PickList, b: PickList) => this.utilService.compareNullableNumber(a.totalItemCount, b.totalItemCount),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-         }, {
-          name: 'pick-list.totalLocationCount',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: PickList, b: PickList) => this.utilService.compareNullableNumber(a.totalLocationCount, b.totalLocationCount),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-         }, {
-          name: 'pick-list.totalQuantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: PickList, b: PickList) => this.utilService.compareNullableNumber(a.totalQuantity, b.totalQuantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-         }, {
-          name: 'pick-list.totalPickedQuantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: PickList, b: PickList) => this.utilService.compareNullableNumber(a.totalPickedQuantity, b.totalPickedQuantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, ];
-        expandSet = new Set<number>();     
+      name: 'pick-list.number',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: PickList, b: PickList) => this.utilService.compareNullableString(a.number, b.number),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'pick-list.group-key',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: PickList, b: PickList) => this.utilService.compareNullableString(a.groupKey, b.groupKey),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'status',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: PickList, b: PickList) => this.utilService.compareNullableString(a.status.toString(), b.status.toString()),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'pick-list.totalPickCount',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: PickList, b: PickList) => this.utilService.compareNullableNumber(a.totalPickCount, b.totalPickCount),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'pick-list.totalItemCount',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: PickList, b: PickList) => this.utilService.compareNullableNumber(a.totalItemCount, b.totalItemCount),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'pick-list.totalLocationCount',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: PickList, b: PickList) => this.utilService.compareNullableNumber(a.totalLocationCount, b.totalLocationCount),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'pick-list.totalQuantity',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: PickList, b: PickList) => this.utilService.compareNullableNumber(a.totalQuantity, b.totalQuantity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'pick-list.totalPickedQuantity',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: PickList, b: PickList) => this.utilService.compareNullableNumber(a.totalPickedQuantity, b.totalPickedQuantity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },];
+  expandSet = new Set<number>();
   // Form related data and functions
   searchForm!: FormGroup;
   unpickForm!: FormGroup;
@@ -114,9 +114,9 @@ export class OutboundPickListComponent implements OnInit {
   // Table data for display
   listOfAllPickLists: PickList[] = [];
   listOfDisplayPickLists: PickList[] = [];
-  
 
-  
+
+
 
   // list of record with printing in process
   mapOfPrintingInProcessId: { [key: string]: boolean } = {};
@@ -131,7 +131,7 @@ export class OutboundPickListComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private messageService: NzMessageService,
     private router: Router,
@@ -141,7 +141,7 @@ export class OutboundPickListComponent implements OnInit {
     private inventoryService: InventoryService,
     private pickListService: PickListService,
     private utilService: UtilService,
-  ) {}
+  ) { }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.pick-list'));
     // initiate the search form
@@ -219,7 +219,7 @@ export class OutboundPickListComponent implements OnInit {
     });
     return pickLists;
   }
-  
+
   printPickSheets(pickList: PickList): void {
     this.mapOfPrintingInProcessId[pickList.id] = true;
     this.pickListService.printPickListPickSheet(pickList);
@@ -236,7 +236,7 @@ export class OutboundPickListComponent implements OnInit {
     this.router.navigateByUrl(`/outbound/pick/confirm?type=pickList&id=${pickList.id}`);
   }
   showPickListDetails(pickList: PickList): void {
-    
+
     // When we expand the details for the order, load the picks and short allocation from the server
     if (this.expandSet.has(pickList.id)) {
       this.showPicks(pickList);

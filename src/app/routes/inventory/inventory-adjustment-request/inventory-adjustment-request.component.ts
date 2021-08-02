@@ -1,9 +1,9 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { ColumnItem } from '../../util/models/column-item';
@@ -24,171 +24,171 @@ import { InventoryAdjustmentRequestService } from '../services/inventory-adjustm
   styleUrls: ['./inventory-adjustment-request.component.less'],
 })
 export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: ColumnItem[] = [
     {
-          name: 'inventory-adjustment-request.inventory-id',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableNumber(a.inventoryId, b.inventoryId),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'lpn',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableString(a.lpn, b.lpn),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'item',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'item.package-type',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableObjField(a.itemPackageType, b.itemPackageType, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'location',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'quantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'inventory-adjustment-request.new-quantity',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableNumber(a.newQuantity, b.newQuantity),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'inventory.status',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableObjField(a.inventoryStatus, b.inventoryStatus, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'inventory-quantity-change-type',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableString(a.inventoryQuantityChangeType.toString(), b.inventoryQuantityChangeType.toString()),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'inventory-adjustment-request.status',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableString(a.status.toString(), b.status.toString()),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'inventory-adjustment-request.requested-by-username',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableString(a.requestedByUsername, b.requestedByUsername),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'inventory-adjustment-request.requested-by-datetime',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareDateTime(a.requestedByDateTime, b.requestedByDateTime),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'inventory-adjustment-request.processed-by-username',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableString(a.processedByUsername, b.processedByUsername),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'inventory-adjustment-request.processed-by-datetime',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareDateTime(a.processedByDateTime, b.processedByDateTime),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'inventory-adjustment-request.document-number',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableString(a.documentNumber, b.documentNumber),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'inventory-adjustment-request.comment',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableString(a.comment, b.comment),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }
-        
-        ];
-        
+      name: 'inventory-adjustment-request.inventory-id',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableNumber(a.inventoryId, b.inventoryId),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'lpn',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableString(a.lpn, b.lpn),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'item',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'item.package-type',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableObjField(a.itemPackageType, b.itemPackageType, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'location',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'quantity',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'inventory-adjustment-request.new-quantity',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableNumber(a.newQuantity, b.newQuantity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'inventory.status',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableObjField(a.inventoryStatus, b.inventoryStatus, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'inventory-quantity-change-type',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableString(a.inventoryQuantityChangeType.toString(), b.inventoryQuantityChangeType.toString()),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'inventory-adjustment-request.status',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableString(a.status.toString(), b.status.toString()),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'inventory-adjustment-request.requested-by-username',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableString(a.requestedByUsername, b.requestedByUsername),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'inventory-adjustment-request.requested-by-datetime',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareDateTime(a.requestedByDateTime, b.requestedByDateTime),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'inventory-adjustment-request.processed-by-username',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableString(a.processedByUsername, b.processedByUsername),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'inventory-adjustment-request.processed-by-datetime',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareDateTime(a.processedByDateTime, b.processedByDateTime),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'inventory-adjustment-request.document-number',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableString(a.documentNumber, b.documentNumber),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'inventory-adjustment-request.comment',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryAdjustmentRequest, b: InventoryAdjustmentRequest) => this.utilService.compareNullableString(a.comment, b.comment),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }
+
+  ];
+
   // Select control for clients and item families
   inventoryQuantityChangeTypes = InventoryQuantityChangeType;
   inventoryAdjustmentRequestStatuses = InventoryAdjustmentRequestStatus;
@@ -219,13 +219,13 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private inventoryAdjustmentRequestService: InventoryAdjustmentRequestService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private messageService: NzMessageService,
     private modalService: NzModalService,
     private activatedRoute: ActivatedRoute,
     private utilService: UtilService,
-  ) {}
+  ) { }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.inventory-adjustment-request'));
     this.initSearchForm();
@@ -276,14 +276,14 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
     this.listOfAllInventoryAdjustmentRequests = inventoryAdjustmentRequestRes;
     this.listOfDisplayInventoryAdjustmentRequests = inventoryAdjustmentRequestRes;
 
-    
+
   }
 
   currentPageDataChange($event: InventoryAdjustmentRequest[]): void {
     this.listOfDisplayInventoryAdjustmentRequests = $event;
   }
-  
-  
+
+
 
   initSearchForm(): void {
     // initiate the search form
@@ -328,17 +328,17 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
     });
 
 
-   
-  }
- 
 
-  closeRequestProcessModal(): void{
+  }
+
+
+  closeRequestProcessModal(): void {
     this.requestInProcess = false;
     this.currentProcessingRequest = undefined;
     this.inventoryAdjustmentRequestModal.destroy();
 
   }
-  
+
   confirmRequest(): void {
     this.requestInProcess = true;
     this.processInventoryAdjustmentRequest(
@@ -347,7 +347,7 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
       this.inventoryAdjustmentRequestProcessForm.controls.comment.value,
     );
   }
-  
+
 
   processInventoryAdjustmentRequest(
     inventoryAdjustmentRequest: InventoryAdjustmentRequest,
@@ -364,7 +364,7 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
         this.currentProcessingRequest = undefined;
         this.refresh();
       },
-      () => (this.requestInProcess = false));
+        () => (this.requestInProcess = false));
   }
   refresh(): void {
     this.activatedRoute.queryParams.subscribe(params => {

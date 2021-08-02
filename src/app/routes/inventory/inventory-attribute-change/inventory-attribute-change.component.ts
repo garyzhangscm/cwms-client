@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { Inventory } from '../models/inventory';
 import { InventoryStatus } from '../models/inventory-status';
 import { InventoryStatusService } from '../services/inventory-status.service';
@@ -17,7 +17,7 @@ export class InventoryInventoryAttributeChangeComponent implements OnInit {
   availableInventoryStatuses: InventoryStatus[] = [];
   constructor(
     private activatedRoute: ActivatedRoute,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private inventoryService: InventoryService,
     private inventoryStatusService: InventoryStatusService,

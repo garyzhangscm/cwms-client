@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { TimeUnit } from '../../common/models/time-unit.enum';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
@@ -21,86 +21,86 @@ export class WorkOrderMouldMaintenanceComponent implements OnInit {
   stepIndex = 0;
   pageTitle: string;
   newMould = true;
-  
-   
-  
 
-  constructor(private http: _HttpClient, 
-    private warehouseService: WarehouseService, 
+
+
+
+  constructor(private http: _HttpClient,
+    private warehouseService: WarehouseService,
     private mouldService: MouldService,
     private messageService: NzMessageService,
     private router: Router,
-    private i18n: I18NService,
-    private activatedRoute: ActivatedRoute) { 
-      this.pageTitle = this.i18n.fanyi('menu.main.mould.maintenance');  
-      
-      this.currentMould = this.createEmptyMould();
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private activatedRoute: ActivatedRoute) {
+    this.pageTitle = this.i18n.fanyi('menu.main.mould.maintenance');
+
+    this.currentMould = this.createEmptyMould();
   }
 
-  createEmptyMould() : Mould{
-    return  {
-       
+  createEmptyMould(): Mould {
+    return {
+
       name: "",
 
       description: "",
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
-  
+
     }
   }
- 
+
 
   ngOnInit(): void {
 
-    
+
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.id) {
         // Get the production line by ID
         this.mouldService.getMould(params.id)
-            .subscribe(mould => {
-              this.currentMould = mould; 
-                
-              this.newMould = false;
-            });
+          .subscribe(mould => {
+            this.currentMould = mould;
+
+            this.newMould = false;
+          });
       }
       else {
         // this.currentProductionLine = this.createEmptyProductionLine(); 
         this.newMould = true;
       }
     });
- 
+
   }
-  
- 
+
+
   previousStep(): void {
     this.stepIndex -= 1;
   }
-  nextStep(): void { 
+  nextStep(): void {
     this.stepIndex += 1;
 
   }
 
-  confirm(): void{ 
+  confirm(): void {
     if (this.newMould) {
 
       this.mouldService.addMould(this.currentMould)
-      .subscribe(mouldRes => {
+        .subscribe(mouldRes => {
           this.messageService.success(this.i18n.fanyi('message.save.complete'));
           setTimeout(() => {
             this.router.navigateByUrl(`/work-order/mould?name=${this.currentMould.name}`);
           }, 2500);
-      }); 
+        });
     }
     else {
-      
+
       this.mouldService.changeMould(this.currentMould)
-      .subscribe(mouldRes => {
+        .subscribe(mouldRes => {
           this.messageService.success(this.i18n.fanyi('message.save.complete'));
           setTimeout(() => {
             this.router.navigateByUrl(`/work-order/mould?name=${this.currentMould.name}`);
           }, 2500);
-      }); 
+        });
     }
   }
-  
+
 
 }

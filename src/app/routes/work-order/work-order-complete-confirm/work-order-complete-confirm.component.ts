@@ -1,8 +1,8 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
@@ -44,7 +44,7 @@ export class WorkOrderWorkOrderCompleteConfirmComponent implements OnInit {
   kpis: KPI[] = [];
 
   constructor(
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private router: Router,
     private workOrderCompleteTransactionService: WorkOrderCompleteTransactionService,
@@ -81,7 +81,7 @@ export class WorkOrderWorkOrderCompleteConfirmComponent implements OnInit {
         // We should only have one matched work order KPI
         console.log(`Start to process workOrderKPItransaction: ${JSON.stringify(workOrderKPItransaction)}`);
         const matchedWorkOrderKPIs = existingWorkOrderKpis.filter(
-          workOrderKPI =>  workOrderKPI.id === workOrderKPItransaction.workOrderKPI?.id
+          workOrderKPI => workOrderKPI.id === workOrderKPItransaction.workOrderKPI?.id
         );
 
         console.log(`matchedWorkOrderKPIs KPIs: ${JSON.stringify(matchedWorkOrderKPIs)}`);
@@ -110,7 +110,7 @@ export class WorkOrderWorkOrderCompleteConfirmComponent implements OnInit {
           console.log(`matchedWorkOrderKPIs[0].amount: ${matchedWorkOrderKPIs[0].amount}`);
           // let's remove the matched KPIs from the original ist
           existingWorkOrderKpis = existingWorkOrderKpis.filter(
-            workOrderKPI =>  workOrderKPI.id !== workOrderKPItransaction.workOrderKPI?.id
+            workOrderKPI => workOrderKPI.id !== workOrderKPItransaction.workOrderKPI?.id
           );
         } else {
           // we are adding new KPI
@@ -165,7 +165,7 @@ export class WorkOrderWorkOrderCompleteConfirmComponent implements OnInit {
     });
   }
 
-  getKPIbyUsername(workOrderKpis: WorkOrderKpi[], username: string): WorkOrderKpi | null{
+  getKPIbyUsername(workOrderKpis: WorkOrderKpi[], username: string): WorkOrderKpi | null {
     const matchedWorkOrderKpis = workOrderKpis.filter(workOrderKpi => workOrderKpi.username === username);
     if (matchedWorkOrderKpis.length > 0) {
       return matchedWorkOrderKpis[0];
@@ -174,12 +174,12 @@ export class WorkOrderWorkOrderCompleteConfirmComponent implements OnInit {
     }
   }
   onStepsIndexChange(index: number): void {
-    
+
     switch (index) {
       case 0:
         this.router.navigateByUrl('/work-order/work-order/complete?refresh');
         break;
-      case 1:        
+      case 1:
         this.router.navigateByUrl(`/work-order/work-order/complete/kpi?id=${this.currentWorkOrder.id}`);
         break;
       case 2:

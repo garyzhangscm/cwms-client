@@ -112,11 +112,4 @@ export class I18NService extends AlainI18nBaseService {
   getLangs(): Array<{ code: string; text: string; abbr: string }> {
     return this._langs;
   }
-  /** 翻译 */
-  /**
-   * 
-  fanyi(key: string, interpolateParams?: {}): any {
-    return this.nzI18nService.translate(key, interpolateParams);
-  }
-   */
 }

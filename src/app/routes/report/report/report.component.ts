@@ -1,9 +1,9 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -20,7 +20,7 @@ import { ReportService } from '../services/report.service';
 })
 export class ReportReportComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: ColumnItem[] = [
     {
       name: 'type',
       showSort: true,
@@ -29,65 +29,65 @@ export class ReportReportComponent implements OnInit {
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null, 
+      filterFn: null,
       showFilter: false
     }, {
-          name: 'description',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Report, b: Report) => this.utilService.compareNullableString(a.description, b.description),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, 
-         {
-          name: 'company.name',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Report, b: Report) => this.utilService.compareNullableNumber(a.companyId, b.companyId),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'warehouse.name',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Report, b: Report) => this.utilService.compareNullableNumber(a.warehouseId, b.warehouseId),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },  {
-          name: 'report.orientation',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Report, b: Report) => this.utilService.compareNullableString(a.reportOrientation, b.reportOrientation),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'fileName',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Report, b: Report) => this.utilService.compareNullableString(a.fileName, b.fileName),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, 
-        ]; 
+      name: 'description',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Report, b: Report) => this.utilService.compareNullableString(a.description, b.description),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'company.name',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Report, b: Report) => this.utilService.compareNullableNumber(a.companyId, b.companyId),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'warehouse.name',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Report, b: Report) => this.utilService.compareNullableNumber(a.warehouseId, b.warehouseId),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'report.orientation',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Report, b: Report) => this.utilService.compareNullableString(a.reportOrientation, b.reportOrientation),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'fileName',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Report, b: Report) => this.utilService.compareNullableString(a.fileName, b.fileName),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+  ];
 
   constructor(
     private fb: FormBuilder,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private reportService: ReportService,
     private message: NzMessageService,
@@ -95,7 +95,7 @@ export class ReportReportComponent implements OnInit {
     private titleService: TitleService,
     private router: Router,
     private utilService: UtilService,
-  ) {}
+  ) { }
 
   // Form related data and functions
   searchForm!: FormGroup;
@@ -103,14 +103,14 @@ export class ReportReportComponent implements OnInit {
   // Table data for display
   listOfAllReports: Report[] = [];
   listOfDisplayReports: Report[] = [];
-  
+
   searching = false;
   searchResult = '';
 
   isSpinning = false;
   reportTypes = ReportType;
 
-  
+
 
   resetForm(): void {
     this.searchForm.reset();
@@ -146,15 +146,15 @@ export class ReportReportComponent implements OnInit {
         },
       );
   }
- 
-  setupReportUrl(reports: Report[]) : void {
+
+  setupReportUrl(reports: Report[]): void {
 
     reports.forEach(report => {
 
       let fileUrl = `${environment.SERVER_URL}/resource/reports/templates?fileName=${report.fileName}`;
       if (report.companyId) {
         fileUrl = `${fileUrl}&companyId=${report.companyId}`;
-      }if (report.warehouseId) {
+      } if (report.warehouseId) {
         fileUrl = `${fileUrl}&warehouseId=${report.warehouseId}`;
       }
       report.fileUrl = fileUrl;
@@ -162,12 +162,12 @@ export class ReportReportComponent implements OnInit {
   }
 
   currentPageDataChange($event: Report[]): void {
-    this.listOfDisplayReports! = $event; 
+    this.listOfDisplayReports! = $event;
   }
- 
 
-  
-  ngOnInit(): void{
+
+
+  ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.report.report'));
     // initiate the search form
     this.searchForm = this.fb.group({
@@ -176,16 +176,16 @@ export class ReportReportComponent implements OnInit {
       warehouseSpecific: [null],
     });
 
-    
+
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.type) {
         this.searchForm.controls.type.setValue(params.type);
         this.search();
       }
     });
-    
+
   }
 
-  removeCustomizedReport() : void{}
+  removeCustomizedReport(): void { }
 
 }

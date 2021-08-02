@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
-import { _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { TimeUnit } from '../../common/models/time-unit.enum';
 import { UnitOfMeasure } from '../../common/models/unit-of-measure';
@@ -55,7 +55,7 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
     private productionLineService: ProductionLineService,
     private messageService: NzMessageService,
     private router: Router,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private activatedRoute: ActivatedRoute,
     private unitOfMeasureService: UnitOfMeasureService,
     private itemService: ItemService,

@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
@@ -14,7 +14,7 @@ import { WorkingTeamService } from '../services/working-team.service';
   templateUrl: './working-team-maintenance-confirm.component.html',
 })
 export class AuthWorkingTeamMaintenanceConfirmComponent implements OnInit {
-  
+
   listOfUserTableColumns: ColumnItem[] = [
     {
       name: 'username',
@@ -23,7 +23,7 @@ export class AuthWorkingTeamMaintenanceConfirmComponent implements OnInit {
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null, 
+      filterFn: null,
       showFilter: false
     },
     {
@@ -33,7 +33,7 @@ export class AuthWorkingTeamMaintenanceConfirmComponent implements OnInit {
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null, 
+      filterFn: null,
       showFilter: false
     },
     {
@@ -43,7 +43,7 @@ export class AuthWorkingTeamMaintenanceConfirmComponent implements OnInit {
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null, 
+      filterFn: null,
       showFilter: false
     },
     {
@@ -53,7 +53,7 @@ export class AuthWorkingTeamMaintenanceConfirmComponent implements OnInit {
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null, 
+      filterFn: null,
       showFilter: false
     },
     {
@@ -66,7 +66,7 @@ export class AuthWorkingTeamMaintenanceConfirmComponent implements OnInit {
         { text: this.i18n.fanyi('true'), value: true },
         { text: this.i18n.fanyi('false'), value: false },
       ],
-      filterFn: (list: boolean[], user: User) => list.some(enabled => user.enabled === enabled), 
+      filterFn: (list: boolean[], user: User) => list.some(enabled => user.enabled === enabled),
       showFilter: true
     },
     {
@@ -79,16 +79,16 @@ export class AuthWorkingTeamMaintenanceConfirmComponent implements OnInit {
         { text: this.i18n.fanyi('true'), value: true },
         { text: this.i18n.fanyi('false'), value: false },
       ],
-      filterFn: (list: boolean[], user: User) => list.some(locked => user.locked === locked), 
+      filterFn: (list: boolean[], user: User) => list.some(locked => user.locked === locked),
       showFilter: true
     }
-    ];
-    
+  ];
+
   currentWorkingTeam: WorkingTeam | undefined;
   pageTitle: string;
 
   constructor(
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private workingTeamService: WorkingTeamService,
     private router: Router,

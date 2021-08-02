@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
-import { _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { PrintableBarcode } from '../../common/models/printable-barcode';
@@ -20,8 +20,8 @@ export class OrderService {
   constructor(
     private http: _HttpClient,
     private warehouseService: WarehouseService,
-    private i18n: I18NService,
-  ) {}
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  ) { }
 
   getOrders(number: string): Observable<Order[]> {
     let url = `outbound/orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
@@ -65,14 +65,14 @@ export class OrderService {
     return this.http.post(`outbound/orders/${order.id}/complete`).pipe(map(res => res.data));
   }
 
-  printOrderPickSheet(order: Order, locale?: string) : Observable<ReportHistory>{
+  printOrderPickSheet(order: Order, locale?: string): Observable<ReportHistory> {
     if (!locale) {
       locale = this.i18n.defaultLang;
     }
-    
+
     return this.http.post(`outbound/orders/${order.id}/pick-report?locale=${locale}`).pipe(map(res => res.data));
   }
-  
+
   generateOrderPickSheet(reportName: string, order: Order, picks: PickWork[]): string[] {
     // Pages
     const pages: string[] = [];
@@ -86,40 +86,37 @@ export class OrderService {
                       <table style="margin-bottom: 20px; margin-top: 75px"> 
                         <tr>
                           <td>Customer:</td><td>${order.shipToCustomer == null ? '' : order.shipToCustomer.name}</td>
-                          <td>First Name:</td><td>${
-                            order.shipToCustomer == null
-                              ? order.shipTocontactorFirstname
-                              : order.shipToCustomer.contactorFirstname
-                          }</td>
-                          <td>Last Name:</td><td>${
-                            order.shipToCustomer == null
-                              ? order.shipTocontactorLastname
-                              : order.shipToCustomer.contactorLastname
-                          }</td>
+                          <td>First Name:</td><td>${order.shipToCustomer == null
+        ? order.shipTocontactorFirstname
+        : order.shipToCustomer.contactorFirstname
+      }</td>
+                          <td>Last Name:</td><td>${order.shipToCustomer == null
+        ? order.shipTocontactorLastname
+        : order.shipToCustomer.contactorLastname
+      }</td>
                         </tr>
                         <tr>
                           <td>Address:</td>
-                          <td colspan="5">${
-                            order.shipToCustomer == null
-                              ? order.shipToAddressLine1 +
-                                ' ' +
-                                order.shipToAddressLine2 +
-                                ', ' +
-                                order.shipToAddressCity +
-                                ', ' +
-                                order.shipToAddressState +
-                                ' ' +
-                                order.shipToAddressPostcode
-                              : order.shipToCustomer.addressLine1 +
-                                ' ' +
-                                order.shipToCustomer.addressLine2 +
-                                ', ' +
-                                order.shipToCustomer.addressCity +
-                                ', ' +
-                                order.shipToCustomer.addressState +
-                                ' ' +
-                                order.shipToCustomer.addressPostcode
-                          }
+                          <td colspan="5">${order.shipToCustomer == null
+        ? order.shipToAddressLine1 +
+        ' ' +
+        order.shipToAddressLine2 +
+        ', ' +
+        order.shipToAddressCity +
+        ', ' +
+        order.shipToAddressState +
+        ' ' +
+        order.shipToAddressPostcode
+        : order.shipToCustomer.addressLine1 +
+        ' ' +
+        order.shipToCustomer.addressLine2 +
+        ', ' +
+        order.shipToCustomer.addressCity +
+        ', ' +
+        order.shipToCustomer.addressState +
+        ' ' +
+        order.shipToCustomer.addressPostcode
+      }
                           </td>
                         </tr>
                       </table>`;
@@ -202,7 +199,7 @@ export class OrderService {
         {
           pageNumber: i,
           top: 120,
-          left: 250, 
+          left: 250,
           width: 206,
           height: 50,
           barCodeType: '128B',
@@ -210,7 +207,7 @@ export class OrderService {
         }
       );
     }
-    
+
     return barcodes;
 
   }

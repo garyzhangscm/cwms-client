@@ -1,8 +1,8 @@
 import { formatDate } from '@angular/common';
-import { Component, EventEmitter, OnInit, Output, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, Inject, OnInit, Output, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
-import { _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
@@ -20,9 +20,9 @@ import { LocationService } from '../services/location.service';
 })
 export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
 
-  scrollX = '100vw';  
+  scrollX = '100vw';
 
-  locationNameColumn: ColumnItem = 
+  locationNameColumn: ColumnItem =
     {
       name: 'location.name',
       sortOrder: null,
@@ -30,169 +30,169 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
-      filterFn: null, 
+      filterFn: null,
       showFilter: false,
-      
+
     };
 
-  listOfColumns: ColumnItem[] = [    
-        {
-              name: 'location-group',
-              sortOrder: null,
-              sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.locationGroup!.name.localeCompare(b.locationGroup!.name),
-              sortDirections: ['ascend', 'descend'],
-              filterMultiple: true,
-              listOfFilter: [],
-              filterFn: null, 
-              showFilter: false
-        },
-        {
-          name: 'location.aisle',
-          sortOrder: null,
-          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.aisle.localeCompare(b.aisle),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'location.length',
-          sortOrder: null,
-          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.length - b.length,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'location.width',
-          sortOrder: null,
-          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.width - b.width,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'location.height',
-          sortOrder: null,
-          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.height - b.height,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'location.capacity',
-          sortOrder: null,
-          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.capacity - b.capacity,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'location.fillPercentage',
-          sortOrder: null,
-          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.fillPercentage - b.fillPercentage,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'location.currentVolume',
-          sortOrder: null,
-          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.currentVolume - b.currentVolume,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'location.pendingVolume',
-          sortOrder: null,
-          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.pendingVolume - b.pendingVolume,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'location.putawaySequence',
-          sortOrder: null,
-          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.putawaySequence - b.putawaySequence,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'location.pickSequence',
-          sortOrder: null,
-          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.pickSequence  - b.pickSequence,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'location.countSequence',
-          sortOrder: null,
-          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.countSequence - b.countSequence,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'location.enabled',
-          sortOrder: null,
-          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareBoolean(a.enabled, b.enabled),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [
-            { text: this.i18n.fanyi('true'), value: true },
-            { text: this.i18n.fanyi('false'), value: false },
-          ],
-          filterFn: (list: boolean[], location: WarehouseLocation) => list.some(enabled => location.enabled === enabled), 
-          showFilter: true
-        },
-        {
-          name: 'location.locked',
-          sortOrder: null,
-          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareBoolean(a.locked, b.locked),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [
-            { text: this.i18n.fanyi('true'), value: true },
-            { text: this.i18n.fanyi('false'), value: false },
-          ],
-          filterFn: (list: boolean[], location: WarehouseLocation) => list.some(locked => location.locked === locked), 
-          showFilter: true
-        },
-        {
-          name: 'location.reservedCode',
-          sortOrder: null,
-          sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.reservedCode.localeCompare(b.reservedCode),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        ];
+  listOfColumns: ColumnItem[] = [
+    {
+      name: 'location-group',
+      sortOrder: null,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.locationGroup!.name.localeCompare(b.locationGroup!.name),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'location.aisle',
+      sortOrder: null,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.aisle.localeCompare(b.aisle),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'location.length',
+      sortOrder: null,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.length - b.length,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'location.width',
+      sortOrder: null,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.width - b.width,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'location.height',
+      sortOrder: null,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.height - b.height,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'location.capacity',
+      sortOrder: null,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.capacity - b.capacity,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'location.fillPercentage',
+      sortOrder: null,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.fillPercentage - b.fillPercentage,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'location.currentVolume',
+      sortOrder: null,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.currentVolume - b.currentVolume,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'location.pendingVolume',
+      sortOrder: null,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.pendingVolume - b.pendingVolume,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'location.putawaySequence',
+      sortOrder: null,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.putawaySequence - b.putawaySequence,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'location.pickSequence',
+      sortOrder: null,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.pickSequence - b.pickSequence,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'location.countSequence',
+      sortOrder: null,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.countSequence - b.countSequence,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'location.enabled',
+      sortOrder: null,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareBoolean(a.enabled, b.enabled),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false },
+      ],
+      filterFn: (list: boolean[], location: WarehouseLocation) => list.some(enabled => location.enabled === enabled),
+      showFilter: true
+    },
+    {
+      name: 'location.locked',
+      sortOrder: null,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareBoolean(a.locked, b.locked),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false },
+      ],
+      filterFn: (list: boolean[], location: WarehouseLocation) => list.some(locked => location.locked === locked),
+      showFilter: true
+    },
+    {
+      name: 'location.reservedCode',
+      sortOrder: null,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.reservedCode.localeCompare(b.reservedCode),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+  ];
 
   locationGroupTypes: LocationGroupType[] = [];
   locationGroups: LocationGroup[] = [];
@@ -207,13 +207,13 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
   // Table data for display
   listOfAllLocations: WarehouseLocation[] = [];
   listOfDisplayLocations: WarehouseLocation[] = [];
-  
+
   // Save filters that already selected
   selectedFiltersByLocationGroup: string[] = [];
 
   // list of checked checkbox
-  
-  setOfCheckedId  = new Set<number>();
+
+  setOfCheckedId = new Set<number>();
 
   @Output() recordSelected: EventEmitter<any> = new EventEmitter();
 
@@ -222,17 +222,17 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     private locationService: LocationService,
     private locationGroupTypeService: LocationGroupTypeService,
     private locationGroupService: LocationGroupService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private utilService: UtilService,
-  ) {}
+  ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllLocations = [];
-    this.listOfDisplayLocations = []; 
+    this.listOfDisplayLocations = [];
   }
 
   search(): void {
@@ -244,7 +244,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
         this.searchForm.controls.locationName.value,
       )
       .subscribe(
-        locationRes => { 
+        locationRes => {
           this.listOfAllLocations = locationRes;
           this.listOfDisplayLocations = locationRes;
           this.setOfCheckedId.clear();
@@ -261,8 +261,8 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
         },
       );
   }
- 
-  
+
+
 
   updateCheckedSet(id: number, checked: boolean): void {
     if (checked) {
@@ -274,12 +274,12 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
   }
 
   currentPageDataChange(listOfDisplayLocations: WarehouseLocation[]): void {
-    this.listOfDisplayLocations = listOfDisplayLocations; 
+    this.listOfDisplayLocations = listOfDisplayLocations;
   }
- 
+
 
   onItemChecked(id: number, checked: boolean): void {
-    this.updateCheckedSet(id, checked); 
+    this.updateCheckedSet(id, checked);
   }
 
 
@@ -292,7 +292,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     tplQueryModalContent: TemplateRef<{}>,
     tplQueryModalFooter: TemplateRef<{}>,
   ): void {
-    
+
     this.listOfAllLocations = [];
     this.listOfDisplayLocations = [];
     this.createQueryForm();
@@ -336,15 +336,15 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     }
     this.queryModal.destroy();
   }
-  
+
   rowClicked(location: WarehouseLocation): void {
     // WHen the user click the row, if 
     // toggle the check box for this row
     if (this.setOfCheckedId.has(location.id!)) {
-      this.updateCheckedSet(location.id!, false); 
+      this.updateCheckedSet(location.id!, false);
     }
-    else {      
-      this.updateCheckedSet(location.id!, true); 
+    else {
+      this.updateCheckedSet(location.id!, true);
     }
   }
 }

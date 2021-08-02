@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile, NzUploadChangeParam } from 'ng-zorro-antd/upload';
@@ -33,7 +33,7 @@ export class ReportReportPrinterConfigurationMaintenanceComponent implements OnI
     private titleService: TitleService,
     private warehouseService: WarehouseService,
     private userService: UserService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private reportPrinterConfigurationService: ReportPrinterConfigurationService,
     private messageService: NzMessageService,
     private printingService: PrintingService,

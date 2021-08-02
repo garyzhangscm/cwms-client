@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { Client } from '../../common/models/client';
 import { ClientService } from '../../common/services/client.service';
 import { PutawayConfiguration } from '../../inbound/models/putaway-configuration';
@@ -19,64 +19,64 @@ import { CartonizationConfigurationService } from '../services/cartonization-con
 })
 export class OutboundCartonizationConfigurationComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: ColumnItem[] = [
     {
-          name: 'sequence',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: CartonizationConfiguration, b: CartonizationConfiguration) => this.utilService.compareNullableNumber(a.sequence, b.sequence),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'client',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: CartonizationConfiguration, b: CartonizationConfiguration) => this.utilService.compareNullableObjField(a.client, b.client, 'name'),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'pick.type',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: CartonizationConfiguration, b: CartonizationConfiguration) => this.utilService.compareNullableString(a.pickType?.toString(), b.pickType?.toString()),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, {
-          name: 'cartonization.group-key',
-          showSort: false,
-          sortOrder: null,
-          sortFn: null,
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
-        {
-          name: 'enabled',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: CartonizationConfiguration, b: CartonizationConfiguration) => this.utilService.compareBoolean(a.enabled, b.enabled),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [
-            { text: this.i18n.fanyi('true'), value: true },
-            { text: this.i18n.fanyi('false'), value: false },
-          ],
-          filterFn: (list: boolean[], cartonizationConfiguration: CartonizationConfiguration) => list.some(enabled => cartonizationConfiguration.enabled === enabled), 
-          showFilter: true
-        },
-        ];
-        
+      name: 'sequence',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: CartonizationConfiguration, b: CartonizationConfiguration) => this.utilService.compareNullableNumber(a.sequence, b.sequence),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'client',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: CartonizationConfiguration, b: CartonizationConfiguration) => this.utilService.compareNullableObjField(a.client, b.client, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'pick.type',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: CartonizationConfiguration, b: CartonizationConfiguration) => this.utilService.compareNullableString(a.pickType?.toString(), b.pickType?.toString()),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, {
+      name: 'cartonization.group-key',
+      showSort: false,
+      sortOrder: null,
+      sortFn: null,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'enabled',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: CartonizationConfiguration, b: CartonizationConfiguration) => this.utilService.compareBoolean(a.enabled, b.enabled),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false },
+      ],
+      filterFn: (list: boolean[], cartonizationConfiguration: CartonizationConfiguration) => list.some(enabled => cartonizationConfiguration.enabled === enabled),
+      showFilter: true
+    },
+  ];
+
   // Form related data and functions
   searchForm!: FormGroup;
   clients: Array<{ label: string; value: string }> = [];
@@ -85,7 +85,7 @@ export class OutboundCartonizationConfigurationComponent implements OnInit {
   listOfAllCartonizationConfiguration: CartonizationConfiguration[] = [];
   listOfDisplayCartonizationConfiguration: CartonizationConfiguration[] = [];
 
-  
+
   searchByEnabledIndeterminate = false;
 
   constructor(
@@ -93,11 +93,11 @@ export class OutboundCartonizationConfigurationComponent implements OnInit {
     private cartonizationConfigurationService: CartonizationConfigurationService,
     private clientService: ClientService,
     private titleService: TitleService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private utilService: UtilService,
-  ) {}
+  ) { }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.cartonization-configuration'));
     // initiate the search form
@@ -143,7 +143,7 @@ export class OutboundCartonizationConfigurationComponent implements OnInit {
     // this.locationGroups = $event;
     this.listOfDisplayCartonizationConfiguration = $event;
   }
- 
+
   change(cartonizationConfiguration: CartonizationConfiguration): void {
     this.router.navigateByUrl(`/outbound/cartonization-configuration/maintenance?id=${cartonizationConfiguration.id}`);
   }

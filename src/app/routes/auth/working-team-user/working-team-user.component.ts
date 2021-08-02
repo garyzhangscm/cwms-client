@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { TransferItem } from 'ng-zorro-antd/transfer';
 import { User } from '../models/user';
@@ -27,7 +27,7 @@ export class AuthWorkingTeamUserComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private workingTeamService: WorkingTeamService,
     private userService: UserService,
@@ -71,8 +71,8 @@ export class AuthWorkingTeamUserComponent implements OnInit {
         const userAssignedToWorkingTeam = this.newWorkingTeam
           ? this.currentWorkingTeam!.users.some(assignedUser => assignedUser.id === user.id)
           : user.workingTeams.some(workingTeam => workingTeam.id === this.currentWorkingTeam!.id)
-          ? true
-          : false;
+            ? true
+            : false;
         if (userAssignedToWorkingTeam) {
           this.assignedUserIds.push(user.id!);
         }

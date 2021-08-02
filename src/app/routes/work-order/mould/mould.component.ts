@@ -1,9 +1,9 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { Mould } from '../models/mould';
@@ -16,55 +16,55 @@ import { MouldService } from '../services/mould.service';
 })
 export class WorkOrderMouldComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: ColumnItem[] = [
     {
-          name: 'name',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: Mould, b: Mould) => this.utilService.compareNullableString(a.name, b.name),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        }, 
-        {
-              name: 'description',
-              showSort: true,
-              sortOrder: null,
-              sortFn: (a: Mould, b: Mould) => this.utilService.compareNullableString(a.description, b.description),
-              sortDirections: ['ascend', 'descend'],
-              filterMultiple: true,
-              listOfFilter: [],
-              filterFn: null, 
-              showFilter: false
-            }, 
-            
-          
-        ];
-        
+      name: 'name',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Mould, b: Mould) => this.utilService.compareNullableString(a.name, b.name),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'description',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Mould, b: Mould) => this.utilService.compareNullableString(a.description, b.description),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+
+
+  ];
+
 
   // Form related data and functions
-  searchForm!: FormGroup;  
+  searchForm!: FormGroup;
   searchResult = '';
- 
+
 
   // Table data for display
   listOfAllMoulds: Mould[] = [];
   listOfDisplayMoulds: Mould[] = [];
-  
+
   isSpinning = false;
-  
+
 
   constructor(
     private fb: FormBuilder,
-    private i18n: I18NService,
-    private titleService: TitleService,  
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private titleService: TitleService,
     private mouldService: MouldService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private utilService: UtilService,
-  ) {}
+  ) { }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('mould'));
     // initiate the search form
@@ -79,10 +79,10 @@ export class WorkOrderMouldComponent implements OnInit {
         this.search();
       }
     });
- 
+
   }
 
-  
+
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllMoulds = [];
@@ -111,17 +111,17 @@ export class WorkOrderMouldComponent implements OnInit {
       );
   }
 
-  
+
   currentPageDataChange($event: Mould[]): void {
-    this.listOfDisplayMoulds! = $event; 
+    this.listOfDisplayMoulds! = $event;
   }
 
-  removeMould(mould: Mould){
-    this.isSpinning = true; 
+  removeMould(mould: Mould) {
+    this.isSpinning = true;
     this.mouldService
       .removeMould(mould)
       .subscribe(
-        mouldRes => { 
+        mouldRes => {
           this.isSpinning = false;
           this.search();
         },

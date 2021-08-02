@@ -1,7 +1,7 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
-import { _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { GridConfiguration } from '../models/grid-configuration';
@@ -120,9 +120,9 @@ export class OutboundGridComponent implements OnInit {
     private gridLocationConfigurationService: GridLocationConfigurationService,
     private gridDistributionWorkService: GridDistributionWorkService,
     private messageService: NzMessageService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private inventoryService: InventoryService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // Let's get all grids defined in the system
