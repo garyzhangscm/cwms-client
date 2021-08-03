@@ -35,6 +35,7 @@ import { STModule } from '@delon/abc/st';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
+import { WorkOrderDeassignProductionLineComponent } from './deassign-production-line/deassign-production-line.component';
 
 
 const COMPONENTS: Type<void>[] = [
@@ -59,7 +60,8 @@ const COMPONENTS: Type<void>[] = [
   WorkOrderProductionLineMaintenanceComponent,
   WorkOrderMouldComponent,
   WorkOrderMouldMaintenanceComponent,
-  WorkOrderProductionKanbanComponent];
+  WorkOrderProductionKanbanComponent,
+  WorkOrderDeassignProductionLineComponent];
 const COMPONENTS_NOROUNT: Type<void>[] = [];
 
 @NgModule({

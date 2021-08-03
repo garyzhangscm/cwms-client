@@ -8,6 +8,7 @@ import { Inventory } from '../../inventory/models/inventory';
 import { PickWork } from '../../outbound/models/pick-work';
 import { ReportHistory } from '../../report/models/report-history';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { ProductionLine } from '../models/production-line';
 import { ProductionLineAssignment } from '../models/production-line-assignment';
 import { WorkOrder } from '../models/work-order';
 import { WorkOrderKpi } from '../models/work-order-kpi';
@@ -87,8 +88,13 @@ export class WorkOrderService {
   getProducedInventory(workOrder: WorkOrder): Observable<Inventory[]> {
     return this.http.get(`workorder/work-orders/${workOrder.id}/produced-inventory`).pipe(map(res => res.data));
   }
-  getDeliveredInventory(workOrder: WorkOrder): Observable<Inventory[]> {
-    return this.http.get(`workorder/work-orders/${workOrder.id}/delivered-inventory`).pipe(map(res => res.data));
+  getDeliveredInventory(workOrder: WorkOrder, productionLine?: ProductionLine): Observable<Inventory[]> {
+
+    let url = `workorder/work-orders/${workOrder.id}/delivered-inventory`;
+    if (productionLine) {
+      url = `${url}?productionLineId=${productionLine.id}`;
+    }
+    return this.http.get(url).pipe(map(res => res.data));
   }
   getProducedByProduct(workOrder: WorkOrder): Observable<Inventory[]> {
     return this.http.get(`workorder/work-orders/${workOrder.id}/produced-by-product`).pipe(map(res => res.data));
@@ -114,6 +120,12 @@ export class WorkOrderService {
   assignProductionLine(workOrderId: number, productionLineAssignments: ProductionLineAssignment[]) {
     return this.http
       .post(`workorder/production-line-assignments?workOrderId=${workOrderId}`, productionLineAssignments)
+      .pipe(map(res => res.data));
+  }
+
+  deassignProductionLine(workOrderId: number, productionLine: ProductionLine, returnableMaterial: Inventory[]) {
+    return this.http
+      .post(`workorder/production-line-assignments/deassign?workOrderId=${workOrderId}&productionLineId=${productionLine.id}`, returnableMaterial)
       .pipe(map(res => res.data));
   }
   unpick(

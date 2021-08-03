@@ -246,6 +246,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   mapOfKPIs: { [key: string]: WorkOrderKpi[] } = {};
   mapOfKPITransactions: { [key: string]: WorkOrderKpiTransaction[] } = {};
 
+  mapOfPicks: { [key: string]: PickWork[] } = {};
+
 
   printingInProcess = false;
   isSpinning = false;
@@ -497,6 +499,14 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       this.mapOfKPITransactions[workOrder.id!] = [...workOrderKPITransactions];
     });
   }
+  showPicks(workOrder: WorkOrder): void {
+    this.pickService.getPicksByWorkOrder(workOrder)
+      .subscribe({
+
+        next: (pickRes) => this.mapOfPicks[workOrder.id!] = [...pickRes]
+      });
+  }
+
 
   showWorkOrderDetails(workOrder: WorkOrder): void {
     // When we expand the details for the order, load the picks and short allocation from the server
@@ -507,6 +517,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       this.showReturnedInventory(workOrder);
       this.showKPITransactions(workOrder);
       this.showKPIs(workOrder);
+      this.showPicks(workOrder);
     }
   }
 

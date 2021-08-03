@@ -92,9 +92,14 @@
                   <!--  allow the user to assign the production line only when
                    the work order is not start yet
                   -->
-                  <li nz-menu-item *ngIf="data.status === 'PENDING'">
+                  <li nz-menu-item *ngIf="isWorkOrderChangable(data)">
                     <a routerLink="/work-order/work-order/assign-production-line" routerLinkActive="active"
                       [queryParams]="{workOrderId : data.id!}">{{ 'work-order.assign-production-line' | i18n }}</a>
+                  </li>
+                  <li nz-menu-item
+                    *ngIf="isWorkOrderChangable(data) && data.productionLineAssignments !== null && data.productionLineAssignments!.length > 0">
+                    <a routerLink="/work-order/work-order/deassign-production-line" routerLinkActive="active"
+                      [queryParams]="{workOrderId : data.id!}">{{ 'work-order.deassign-production-line' | i18n }}</a>
                   </li>
                   <li nz-menu-item *ngIf="isWorkOrderChangable(data)">
                     <a (click)="changeWorkOrderLine(data)">{{ 'work-order.modify-line' | i18n }}</a>
@@ -349,8 +354,8 @@
     </nz-tab>
 
     <nz-tab nzTitle=" {{ 'pick' | i18n }}" *ngIf="isTabVisible('work-order.work-order.pick')">
-      <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="data.workOrderLines" nzSize="middle"
-        [nzShowPagination]="false" [nzFooter]="pickTableFoot">
+      <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="mapOfPicks[data.id!!]" nzSize="middle"
+        [nzShowPagination]="true" [nzFooter]="pickTableFoot" #pickTable>
 
         <thead>
           <th>
@@ -374,9 +379,9 @@
           <th>
             {{ 'action' | i18n }}</th>
         </thead>
-        <tbody *ngFor="let workOrderLine of data.workOrderLines">
+        <tbody>
 
-          <tr *ngFor="let pick of workOrderLine.picks">
+          <tr *ngFor="let pick of pickTable.data">
             <td>{{ pick.number }}</td>
             <td>{{ pick.sourceLocation?.locationGroup?.name }}</td>
             <td>{{ pick.sourceLocation?.name }}</td>
