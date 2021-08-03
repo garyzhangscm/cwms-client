@@ -748,7 +748,6 @@
 
     <nz-tab nzTitle=" {{ 'work-order.returned-inventory' | i18n }}"
       *ngIf="isTabVisible('work-order.work-order.work-order.returned-inventory')">
-      >
 
       <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="false"
         [nzData]="mapOfReturnedInventory[data.id!!]">

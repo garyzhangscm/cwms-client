@@ -45,6 +45,7 @@
         <!-- Table to show inventory  -->
 
         <div class="search-result-list" *ngIf="selectedProductionLine !== undefined">
+            <h3>{{ 'work-order.returned-inventory' | i18n}}</h3>
             <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="listOfReturnableMaterial"
                 [nzFooter]="inventoryTableFoot" #inventoryTable>
                 <thead>
@@ -149,6 +150,7 @@
         <!-- Table to show inventory  -->
 
         <div class="search-result-list">
+            <h3>{{ 'work-order.returned-inventory' | i18n}}</h3>
             <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="inventoryResults"
                 #inventoryTable>
                 <thead>
@@ -184,6 +186,7 @@
         </div>
 
         <div class="search-result-list">
+            <h3>{{ 'pick-to-be-cancelled' | i18n}}</h3>
             <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="picksToBeCancelled" nzSize="middle"
                 [nzShowPagination]="true" #pickTable>
 

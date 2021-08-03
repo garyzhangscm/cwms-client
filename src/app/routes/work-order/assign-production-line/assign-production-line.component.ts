@@ -37,6 +37,7 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
 
   date = null;
 
+  isSpinning = false;
   constructor(
     private fb: FormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -87,7 +88,8 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
           key: productionLineAssignment.productionLine.id!.toString(),
           title: productionLineAssignment.productionLine.name,
           description: productionLineAssignment.productionLine.name,
-          direction: 'right'
+          direction: 'right',
+          disabled: true  // you can't un-assign from this form. You will need to de-assign from the work order page / deassign button
 
         }];
       }
@@ -96,8 +98,7 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
     this.productionLineService.getAvailableProductionLines(this.workOrder.itemId).subscribe(productionLines => {
       this.availableProductionLines = productionLines;
       productionLines.filter(productionLine => {
-        // only return the production line that is not assigned to current work order yet
-        console.log(`${productionLine.name}`)
+        // only return the production line that is not assigned to current work order yet 
         return !this.workOrder.productionLineAssignments?.some(
           assignedProductionLine => {
             return assignedProductionLine.productionLine.id === productionLine.id
@@ -215,8 +216,6 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
     const existsingProductionAssignments: ProductionLineAssignment[] | undefined =
       this.workOrder.productionLineAssignments?.filter(
         productionLineAssignment => {
-          console.log(`productionLineAssignment.productionLine: ${JSON.stringify(productionLineAssignment.productionLine)}`);
-          console.log(`productionLine: ${JSON.stringify(productionLine)}`);
           return productionLineAssignment.productionLine.id === productionLine.id
         }
       );
@@ -260,18 +259,50 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
   }
 
   setupDefaultProductionLineQuantity() {
-    var defaultQuantityPerLine = Math.floor(
-      this.workOrder.expectedQuantity! / this.currentProductionLineAssignments.length
-    );
-    var leftOverQuantity = this.workOrder.expectedQuantity! - (defaultQuantityPerLine * this.currentProductionLineAssignments.length);
-    this.currentProductionLineAssignments.forEach(productionLineAssignment => {
-      productionLineAssignment.quantity = defaultQuantityPerLine
-    });
-    this.currentProductionLineAssignments[this.currentProductionLineAssignments.length - 1].quantity = defaultQuantityPerLine + leftOverQuantity;
+    this.currentProductionLineAssignments.forEach(
+      productionLineAssignment => console.log(`production line: ${productionLineAssignment.productionLine.name}, already assigned? ${productionLineAssignment.id !== undefined}`)
+    )
+    var newProductionLineAssignment: ProductionLineAssignment[] = this.currentProductionLineAssignments
+      .filter(productionLineAssignment => productionLineAssignment.id === undefined)
+
+    console.log(`newProductionLineAssignment.length: ${newProductionLineAssignment.length} `)
+    newProductionLineAssignment.forEach(
+      productionLineAssignment => console.log(`production line: ${productionLineAssignment.productionLine.name} is newly assignment`)
+    )
+
+    // if we don't have any new assignment, then we don't have to anything. we can't change
+    // the existsing assign. we will need to deassign it first, then assign it again.
+
+    if (newProductionLineAssignment.length > 0) {
+
+      // we will keep the original quantity as is and split the
+      // remain quantity across the newly assigned production line
+      var totalQuantityAlreadyAssigned = this.workOrder.productionLineAssignments
+        ?.map(productionLineAssignment => productionLineAssignment.quantity)
+        .reduce((acc, cur) => acc + cur, 0);
+
+      console.log(`totalQuantityAlreadyAssigned: ${totalQuantityAlreadyAssigned} `)
+      if (!totalQuantityAlreadyAssigned) {
+        totalQuantityAlreadyAssigned = 0;
+      }
+
+      var defaultQuantityPerNewLine = Math.floor(
+        (this.workOrder.expectedQuantity! - totalQuantityAlreadyAssigned) / newProductionLineAssignment.length
+      );
+      console.log(`defaultQuantityPerNewLine: ${defaultQuantityPerNewLine} `)
+      var leftOverQuantity = (this.workOrder.expectedQuantity! - totalQuantityAlreadyAssigned)
+        - (defaultQuantityPerNewLine * newProductionLineAssignment.length);
+      console.log(`leftOverQuantity: ${leftOverQuantity} `)
+      newProductionLineAssignment.forEach(productionLineAssignment => {
+        productionLineAssignment.quantity = defaultQuantityPerNewLine
+      });
+      newProductionLineAssignment[newProductionLineAssignment.length - 1].quantity = defaultQuantityPerNewLine + leftOverQuantity;
+    }
 
   }
 
   confirm() {
+    this.isSpinning = true;
     const productionLineIds =
       this.currentProductionLineAssignments
         .map(productionLineAssignment => productionLineAssignment.productionLine.id).join(",");
@@ -281,10 +312,14 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
 
     this.workOrderService.assignProductionLine(this.workOrder.id!, this.currentProductionLineAssignments)
       .subscribe(productionLineAssignments => {
+        this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi('message.save.complete'));
         setTimeout(() => {
+
           this.router.navigateByUrl(`/work-order/work-order?number=${this.workOrder.number}`);
         }, 2500);
+      }, () => {
+        this.isSpinning = false;
       });
   }
 
