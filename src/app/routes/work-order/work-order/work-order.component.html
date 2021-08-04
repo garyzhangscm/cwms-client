@@ -226,6 +226,9 @@
           <th [nzAlign]="'center'">
             {{ 'production-line.assignment.duration' | i18n }}
           </th>
+          <th>
+            {{ 'action' | i18n }}
+          </th>
 
         </thead>
         <tbody>
@@ -237,6 +240,13 @@
             <td [nzAlign]="'center'">{{ productionLineAssignment.openQuantity }}</td>
             <td [nzAlign]="'center'">{{ productionLineAssignment.startTime | date:'MM/dd/yyyy'}}
               - {{ productionLineAssignment.endTime | date:'MM/dd/yyyy'}}
+            </td>
+            <td>
+
+              <cwms-common-print-button style='padding-left: 20px;'
+                (print)="printProductionLineAssignmentReport($event, productionLineAssignment)"
+                (preview)="previewProductionLineAssignmentReport(productionLineAssignment)">
+              </cwms-common-print-button>
             </td>
           </tr>
         </tbody>

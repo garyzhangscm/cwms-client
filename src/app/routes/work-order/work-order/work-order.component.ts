@@ -26,6 +26,10 @@ import { PrintPageOrientation } from '../../common/models/print-page-orientation
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { WebClientConfigurationService } from '../../util/services/web-client-configuration.service';
 import { PickWork } from '../../outbound/models/pick-work';
+import { ProductionLineAssignment } from '../models/production-line-assignment';
+import { ProductionLineAssignmentService } from '../services/production-line-assignment.service';
+import { environment } from '@env/environment';
+import { PrintPageSize } from '../../common/models/print-page-size.enum';
 
 interface ProductionLineAllocationRequest {
   productionLineId: number;
@@ -211,7 +215,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     private locationService: LocationService,
     private utilService: UtilService,
     private printingService: PrintingService,
-    private webClientConfigurationService: WebClientConfigurationService
+    private webClientConfigurationService: WebClientConfigurationService,
+    private productionLineAssignmentService: ProductionLineAssignmentService,
   ) { }
   workOrderStatus = WorkOrderStatus;
   // Form related data and functions
@@ -843,6 +848,57 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
   isTabVisible(tabName: string): boolean {
     return this.webClientConfigurationService.isTabVisible(tabName);
+  }
+
+
+  printProductionLineAssignmentReport(event: any, productionLineAssignment: ProductionLineAssignment) {
+
+    this.isSpinning = true;
+
+    this.productionLineAssignmentService.generateroductionLineAssignmentLabel(
+      productionLineAssignment.id!)
+      .subscribe(printResult => {
+
+        // send the result to the printer
+        const printFileUrl
+          = `${environment.SERVER_URL}/resource/report-histories/download/${printResult.fileName}`;
+        console.log(`will print file: ${printFileUrl}`);
+        this.printingService.printRemoteFileByName(
+          "LPN Label",
+          printResult.fileName,
+          ReportType.PRODUCTION_LINE_ASSIGNMENT_REPORT,
+          event.printerIndex,
+          event.printerName,
+          event.physicalCopyCount,
+          PrintPageOrientation.Portrait,
+          PrintPageSize.Letter,
+          productionLineAssignment.productionLine.name);
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi("report.print.printed"));
+      },
+        () => {
+          this.isSpinning = false;
+        },
+
+      );
+
+  }
+  previewProductionLineAssignmentReport(productionLineAssignment: ProductionLineAssignment): void {
+
+
+    this.isSpinning = true;
+    this.productionLineAssignmentService.generateroductionLineAssignmentLabel(
+      productionLineAssignment.id!)
+      .subscribe(printResult => {
+        // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+        this.isSpinning = false;
+        this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
+
+      },
+        () => {
+          this.isSpinning = false;
+        },
+      );
   }
 
 }
