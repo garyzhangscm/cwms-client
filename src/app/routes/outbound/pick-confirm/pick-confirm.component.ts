@@ -5,6 +5,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { WorkOrder } from '../../work-order/models/work-order';
@@ -144,7 +145,6 @@ export class OutboundPickConfirmComponent implements OnInit {
   // Table data for display
   listOfAllPicks: PickWork[] = [];
   listOfDisplayPicks: PickWork[] = [];
-
 
 
   // If all picks displayed are fully confirmed
@@ -315,7 +315,7 @@ export class OutboundPickConfirmComponent implements OnInit {
       this.order = orderRes;
       this.lastPageUrl = `/outbound/order?number=${this.order.number}`;
       // initial the picks array;
-      this.pickService.getPicksByOrder(this.order.id).subscribe(pickRes => {
+      this.pickService.getPicksByOrder(this.order.id!).subscribe(pickRes => {
         this.listOfAllPicks = pickRes;
         this.listOfDisplayPicks = pickRes;
         this.setupConfirmedQuantity(this.listOfAllPicks);
@@ -417,7 +417,6 @@ export class OutboundPickConfirmComponent implements OnInit {
     this.checked = this.listOfDisplayPicks!.every(item => this.setOfCheckedId.has(item.id));
     this.indeterminate = this.listOfDisplayPicks!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
   }
-
 
 
   cancelSelectedPicks(): void {

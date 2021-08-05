@@ -6,6 +6,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
@@ -132,9 +133,6 @@ export class WorkOrderProductionLineComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
   ) { }
 
-
-
-
   // Form related data and functions
   searchForm!: FormGroup;
 
@@ -163,7 +161,6 @@ export class WorkOrderProductionLineComponent implements OnInit {
       this.expandSet.delete(productionLine.id!);
     }
   }
-
 
 
   search(): void {
@@ -216,7 +213,6 @@ export class WorkOrderProductionLineComponent implements OnInit {
   }
 
 
-
   ngOnInit(): void {
     // initiate the search form
     this.searchForm = this.fb.group({
@@ -244,7 +240,6 @@ export class WorkOrderProductionLineComponent implements OnInit {
       this.search();
     });
   }
-
 
 
   startEdit(id: string): void {

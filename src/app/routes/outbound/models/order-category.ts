@@ -1,0 +1,4 @@
+export enum OrderCategory {
+    SALES_ORDER = 'SALES_ORDER',
+    WAREHOUSE_TRANSFER_ORDER =  'WAREHOUSE_TRANSFER_ORDER'
+}

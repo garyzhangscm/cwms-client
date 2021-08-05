@@ -1,5 +1,6 @@
 <page-header [title]="pageTitle"> </page-header>
 <!-- Form to query the result  -->
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="12">
@@ -172,6 +173,7 @@
   </nz-table>
 </div>
 
+</nz-spin>
 <ng-template #tableFoot>
 
   <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
@@ -189,10 +191,10 @@
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationName">
+        <nz-form-label [nzSpan]="6" nzFor="locationName">
           {{ 'location' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
           <nz-input-group nzSize="large">
             <input nz-input [(ngModel)]="currentInventory.locationName" id="locationName" name="locationName"
               disabled />
@@ -204,10 +206,10 @@
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNumber">
+        <nz-form-label [nzSpan]="6" nzFor="itemNumber">
           {{ 'item' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="itemNumberErrorTpl">
+        <nz-form-control [nzSpan]="18" [nzErrorTip]="itemNumberErrorTpl">
           <nz-input-group nzSearch [nzAddOnAfter]="itemSuffixIconButton">
             <input variable="item-name" appExistingNumberValidator nz-input (blur)="itemNumberChanged($event)"
               [ngModel]="currentInventory.item?.name" id="itemNumber" name="itemNumber" required
@@ -236,10 +238,10 @@
     </div>
     <div nz-col [nzSpan]="16">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemDescription">
+        <nz-form-label [nzSpan]="6" nzFor="itemDescription">
           {{ 'item.description' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+        <nz-form-control [nzSm]="18" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
           <nz-input-group>
             <input nz-input [ngModel]="currentInventory?.item?.description" id="itemDescription" name="itemDescription"
               disabled />
@@ -270,8 +272,8 @@
           {{ 'inventory.status' | i18n }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
-          <nz-select nz-input [ngModel]="currentInventory.inventoryStatus?.name"
-            (ngModelChange)="inventoryStatusChange($event)" style="width: 250px">
+          <nz-select nz-input [(ngModel)]="currentInventory.inventoryStatus!.name"
+            (ngModelChange)="inventoryStatusChange()" style="width: 250px">
             <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
               nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | i18n }}" [nzValue]="inventoryStatus.name">
             </nz-option>
@@ -282,15 +284,15 @@
   </div>
 
   <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="8">
+    <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemPackageType">
+        <nz-form-label [nzSpan]="7" nzFor="itemPackageType">
           {{ 'item.package-type' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+        <nz-form-control [nzSpan]="15" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
 
-          <nz-select nz-input [ngModel]="currentInventory.itemPackageType?.name"
-            (ngModelChange)="itemPackageTypeChange($event)">
+          <nz-select nz-input [(ngModel)]="currentInventory.itemPackageType!.name"
+            (ngModelChange)="itemPackageTypeChange()">
             <nz-option *ngFor="let availableItemPackageType of currentInventory.item?.itemPackageTypes"
               [nzLabel]="availableItemPackageType.name!" [nzValue]="availableItemPackageType.name!">
             </nz-option>
@@ -316,24 +318,26 @@
   </div>
 
   <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="8">
+    <div nz-col [nzSpan]="24">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="documentNumber">
+        <nz-form-label [nzSpan]="4" nzFor="documentNumber">
           {{'document-number' | i18n}}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+        <nz-form-control [nzSpan]="20" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
 
           <input nz-input [(ngModel)]="documentNumber" id="documentNumber" name="documentNumber" />
         </nz-form-control>
       </nz-form-item>
     </div>
+  </div>
 
-    <div nz-col [nzSpan]="8">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="24"> 
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="comment">
+        <nz-form-label [nzSpan]="4" nzFor="comment">
           {{'comment' | i18n}}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+        <nz-form-control  [nzSpan]="20" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
 
           <input nz-input [(ngModel)]="comment" id="comment" name="comment" />
         </nz-form-control>

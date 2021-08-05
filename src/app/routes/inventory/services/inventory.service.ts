@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
-import { Inventory } from '../models/inventory';
 import { map } from 'rxjs/operators';
+
 import { Client } from '../../common/models/client';
-import { ItemFamily } from '../models/item-family';
 import { SystemControlledNumberService } from '../../common/services/system-controlled-number.service';
+import { ReportHistory } from '../../report/models/report-history';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { ReportHistory } from '../../report/models/report-history';
+import { Inventory } from '../models/inventory';
+import { ItemFamily } from '../models/item-family';
 
 @Injectable({
   providedIn: 'root',
@@ -48,7 +49,7 @@ export class InventoryService {
       params = params.substring(1);
     }
 
-    const url = 'inventory/inventories' + (params.length > 0 ? '?' + params : '');
+    const url = `inventory/inventories${  params.length > 0 ? `?${  params}` : ''}`;
     return this.http.get(url).pipe(map(res => res.data));
   }
 
@@ -74,7 +75,7 @@ export class InventoryService {
     return this.http.get(url).pipe(map(res => res.data));
   }
   removeInventory(inventory: Inventory): Observable<Inventory> {
-    const url = 'inventory/inventory/' + inventory.id;
+    const url = `inventory/inventory/${  inventory.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
   adjustDownInventory(inventory: Inventory, documentNumber?: string, comment?: string): Observable<Inventory> {
@@ -127,10 +128,10 @@ export class InventoryService {
       this.warehouseService.getCurrentWarehouse().id
     }`;
     if (destinationLocationName) {
-      url = url + `&destinationLocationName=${destinationLocationName}`;
+      url = `${url}&destinationLocationName=${destinationLocationName}`;
     }
     if (immediateMove) {
-      url = url + `&immediateMove=${immediateMove}`;
+      url = `${url}&immediateMove=${immediateMove}`;
     }
     return this.http.post(url).pipe(map(res => res.data));
   }

@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
@@ -178,7 +179,6 @@ export class WorkOrderDeassignProductionLineComponent implements OnInit {
     )
 
 
-
   }
   displayPicksToBeCancelled() {
     this.pickService.getPicksByWorkOrder(this.currentWorkOrder!)
@@ -293,9 +293,6 @@ export class WorkOrderDeassignProductionLineComponent implements OnInit {
       .forEach(inventoryStatus => (inventory.inventoryStatus = inventoryStatus));
 
   }
-
-
-
 
 
 }

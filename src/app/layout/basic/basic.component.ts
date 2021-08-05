@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { StartupService } from '@core';
 import { SettingsService, User } from '@delon/theme';
 import { LayoutDefaultOptions } from '@delon/theme/layout-default';
 import { environment } from '@env/environment';
 import { Company } from 'src/app/routes/warehouse-layout/models/company';
+import { Warehouse } from 'src/app/routes/warehouse-layout/models/warehouse';
 import { CompanyService } from 'src/app/routes/warehouse-layout/services/company.service';
 import { WarehouseService } from 'src/app/routes/warehouse-layout/services/warehouse.service';
 
@@ -12,6 +14,13 @@ import { WarehouseService } from 'src/app/routes/warehouse-layout/services/wareh
   template: `
     <layout-default [options]="options" [asideUser]="asideUserTpl" [content]="contentTpl">
       
+    <layout-default-header-item direction="left"  >
+        <div  >
+        <nz-select [(ngModel)]="currentWarehouseId" (ngModelChange)="warehouseChanged()">
+          <nz-option *ngFor="let warehouse of warehouses" [nzValue]="warehouse.id" [nzLabel]="warehouse.name"></nz-option> 
+        </nz-select>
+        </div>
+      </layout-default-header-item>
       <layout-default-header-item direction="left" hidden="pc">
         <div layout-default-header-item-trigger (click)="searchToggleStatus = !searchToggleStatus">
           <i nz-icon nzType="search"></i>
@@ -55,17 +64,21 @@ export class LayoutBasicComponent {
   searchToggleStatus = false;
   showSettingDrawer = !environment.production;
   currentWarehouse: string | undefined;
+  currentWarehouseId: number | undefined;
   currentCompany: Company | undefined;
+  warehouses!: Warehouse[];
   get user(): User {
     return this.settings.user;
   }
 
   constructor(private settings: SettingsService,
-
+    private startupSrv: StartupService,
     private warehouseService: WarehouseService,
     private companyService: CompanyService,
     private router: Router,) {
 
+      // load all the warehouses so that the user can choose between them
+      this.warehouseService.getWarehouses().subscribe(warehouseRes => this.warehouses = warehouseRes)
     const warehouse = this.warehouseService.getCurrentWarehouse();
     const company = this.companyService.getCurrentCompany();
     if (company === null) {
@@ -76,7 +89,24 @@ export class LayoutBasicComponent {
       router.navigateByUrl('passport/login');
     } else {
       this.currentWarehouse = warehouse.name;
+      this.currentWarehouseId = warehouse.id;
       this.currentCompany = company;
     }
   }
+
+  warehouseChanged() {
+    // we will switch to other 
+    console.log(`warehouse is changed to ${this.currentWarehouseId}`);
+    
+    this.warehouseService.getWarehouse(this.currentWarehouseId!).subscribe((warehouse: Warehouse) => {
+      this.warehouseService.setCurrentWarehouse(warehouse);
+      // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
+      this.startupSrv.load(warehouse.id).subscribe(() => {
+        // refresh the current page
+        window.location.reload();
+      });
+    });
+ 
+  }
+
 }

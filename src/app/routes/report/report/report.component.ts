@@ -7,6 +7,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { Report } from '../models/report';
@@ -16,10 +17,9 @@ import { ReportService } from '../services/report.service';
 @Component({
   selector: 'app-report-report',
   templateUrl: './report.component.html',
-  styleUrls: ['./report.component.less'],
+  styleUrls: ['./report.component.less']
 })
 export class ReportReportComponent implements OnInit {
-
   listOfColumns: ColumnItem[] = [
     {
       name: 'type',
@@ -31,7 +31,8 @@ export class ReportReportComponent implements OnInit {
       listOfFilter: [],
       filterFn: null,
       showFilter: false
-    }, {
+    },
+    {
       name: 'description',
       showSort: true,
       sortOrder: null,
@@ -52,7 +53,8 @@ export class ReportReportComponent implements OnInit {
       listOfFilter: [],
       filterFn: null,
       showFilter: false
-    }, {
+    },
+    {
       name: 'warehouse.name',
       showSort: true,
       sortOrder: null,
@@ -62,7 +64,8 @@ export class ReportReportComponent implements OnInit {
       listOfFilter: [],
       filterFn: null,
       showFilter: false
-    }, {
+    },
+    {
       name: 'report.orientation',
       showSort: true,
       sortOrder: null,
@@ -72,7 +75,8 @@ export class ReportReportComponent implements OnInit {
       listOfFilter: [],
       filterFn: null,
       showFilter: false
-    }, {
+    },
+    {
       name: 'fileName',
       showSort: true,
       sortOrder: null,
@@ -82,7 +86,7 @@ export class ReportReportComponent implements OnInit {
       listOfFilter: [],
       filterFn: null,
       showFilter: false
-    },
+    }
   ];
 
   constructor(
@@ -94,8 +98,8 @@ export class ReportReportComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
     private router: Router,
-    private utilService: UtilService,
-  ) { }
+    private utilService: UtilService
+  ) {}
 
   // Form related data and functions
   searchForm!: FormGroup;
@@ -109,9 +113,6 @@ export class ReportReportComponent implements OnInit {
 
   isSpinning = false;
   reportTypes = ReportType;
-
-
-
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllReports = [];
@@ -126,35 +127,34 @@ export class ReportReportComponent implements OnInit {
       .getAll(
         this.searchForm.controls.type.value,
         this.searchForm.controls.companySpecific.value,
-        this.searchForm.controls.warehouseSpecific.value,
+        this.searchForm.controls.warehouseSpecific.value
       )
       .subscribe(
         reportRes => {
-          this.setupReportUrl(reportRes)
+          this.setupReportUrl(reportRes);
           this.listOfAllReports = reportRes;
           this.listOfDisplayReports = reportRes;
 
           this.searching = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
-            rowCount: reportRes.length,
+            rowCount: reportRes.length
           });
         },
         () => {
           this.searching = false;
           this.searchResult = '';
-        },
+        }
       );
   }
 
   setupReportUrl(reports: Report[]): void {
-
     reports.forEach(report => {
-
-      let fileUrl = `${environment.SERVER_URL}/resource/reports/templates?fileName=${report.fileName}`;
+      let fileUrl = `${environment.api.baseUrl}/resource/reports/templates?fileName=${report.fileName}`;
       if (report.companyId) {
         fileUrl = `${fileUrl}&companyId=${report.companyId}`;
-      } if (report.warehouseId) {
+      }
+      if (report.warehouseId) {
         fileUrl = `${fileUrl}&warehouseId=${report.warehouseId}`;
       }
       report.fileUrl = fileUrl;
@@ -165,17 +165,14 @@ export class ReportReportComponent implements OnInit {
     this.listOfDisplayReports! = $event;
   }
 
-
-
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.report.report'));
     // initiate the search form
     this.searchForm = this.fb.group({
       type: [null],
       companySpecific: [null],
-      warehouseSpecific: [null],
+      warehouseSpecific: [null]
     });
-
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.type) {
@@ -183,9 +180,7 @@ export class ReportReportComponent implements OnInit {
         this.search();
       }
     });
-
   }
 
-  removeCustomizedReport(): void { }
-
+  removeCustomizedReport(): void {}
 }

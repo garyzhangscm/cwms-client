@@ -1,9 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Router } from '@angular/router';
+import { ActivatedRoute , Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
 import { TimeUnit } from '../../common/models/time-unit.enum';
 import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
@@ -16,7 +16,6 @@ import { ProductionLine } from '../models/production-line';
 import { ProductionLineCapacity } from '../models/production-line-capacity';
 import { MouldService } from '../services/mould.service';
 import { ProductionLineService } from '../services/production-line.service';
-
 
 
 interface ProductionLineCapacityItemData {
@@ -245,7 +244,6 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
   }
 
 
-
   previousStep(): void {
     this.stepIndex -= 1;
   }
@@ -285,8 +283,6 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
         });
     }
   }
-
-
 
 
   addEmptyProductionLineCapacityItemData() {
@@ -375,7 +371,6 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
     productionLineCapacity.capacityUnit = TimeUnit[capacityUnit as keyof typeof TimeUnit];
 
   }
-
 
 
   deleteRecord(id: string): void {

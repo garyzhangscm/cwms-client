@@ -5,6 +5,7 @@ import { _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
 import { ReportType } from '../../report/models/report-type.enum';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -13,16 +14,18 @@ import { PrintPageSize } from '../models/print-page-size.enum';
 import { PrintableBarcode } from '../models/printable-barcode';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class PrintingService {
   // printer related
   private lodop: Lodop | null = null;
 
-  constructor(public lodopService: LodopService,
+  constructor(
+    public lodopService: LodopService,
     private warehouseService: WarehouseService,
     private http: _HttpClient,
-    private companyService: CompanyService) {
+    private companyService: CompanyService
+  ) {
     this.lodopService.cog.url = 'http://localhost:18000/CLodopfuncs.js';
     this.lodopService.lodop.subscribe(({ lodop, ok }) => {
       if (!ok) {
@@ -40,14 +43,12 @@ export class PrintingService {
 
   getLocalPrinterCount(): number {
     if (!this.isLodopInstalled()) {
-
       return 0;
     }
     return this.lodop!.GET_PRINTER_COUNT();
   }
 
   getAllServerPrinters(): Observable<string[]> {
-
     const url = 'resource/printers';
     return this.http.get(url).pipe(map(res => res.data));
   }
@@ -75,10 +76,7 @@ export class PrintingService {
     pageSize: PrintPageSize = PrintPageSize.A4,
     findPrinterBy?: string
   ): void {
-
-
-
-    let url = `${environment.SERVER_URL}/resource/report-histories/download`;
+    let url = `${environment.api.baseUrl}/resource/report-histories/download`;
 
     url = `${url}/${this.warehouseService.getCurrentWarehouse().companyId}`;
     url = `${url}/${this.warehouseService.getCurrentWarehouse().id}`;
@@ -88,9 +86,10 @@ export class PrintingService {
     if (this.warehouseService.getServerSidePrintingFlag()) {
       console.log(`will print from the server side`);
       let params = new HttpParams();
-      url = `/resource/report-histories/print/${this.companyService.getCurrentCompany()?.id}/${this.warehouseService.getCurrentWarehouse().id}/${type}/${fileName}`
+      url = `/resource/report-histories/print/${this.companyService.getCurrentCompany()?.id}/${
+        this.warehouseService.getCurrentWarehouse().id
+      }/${type}/${fileName}`;
       if (findPrinterBy) {
-
         params = params.append('findPrinterBy', findPrinterBy);
       }
       if (printerName) {
@@ -101,26 +100,15 @@ export class PrintingService {
       }
       this.http
         .post(url, params)
-        .pipe(map(res => res.data)).subscribe(res => {
+        .pipe(map(res => res.data))
+        .subscribe(res => {
           console.log(` file printed!`);
         });
-
-    }
-    else {
-
+    } else {
       console.log(`will print from the client side`);
-      this.printRemoteFileByPath(
-        name,
-        url,
-        printerIndex,
-        physicalCopyCount,
-        pageOrientation,
-        pageSize
-      )
+      this.printRemoteFileByPath(name, url, printerIndex, physicalCopyCount, pageOrientation, pageSize);
     }
-
   }
-
 
   printRemoteFileByPath(
     name: string,
@@ -128,7 +116,7 @@ export class PrintingService {
     printerIndex: number,
     physicalCopyCount: number,
     pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
-    pageSize: PrintPageSize = PrintPageSize.A4,
+    pageSize: PrintPageSize = PrintPageSize.A4
   ): void {
     console.log(`start to print remote file in orientation: ${pageOrientation}`);
     console.log(`START TO PRINT ${remoteFileUrl}`);
@@ -137,7 +125,7 @@ export class PrintingService {
     LODOP.PRINT_INIT(name);
     LODOP.SET_PRINT_PAGESIZE(pageOrientation, 2100, 2970, pageSize);
     LODOP.SET_PRINTER_INDEX(printerIndex);
-    LODOP.ADD_PRINT_PDF(-30, 0, "100%", "100%", remoteFileUrl);
+    LODOP.ADD_PRINT_PDF(-30, 0, '100%', '100%', remoteFileUrl);
     // LODOP.ADD_PRINT_PDF(0,0,"100%","100%","http://localhost:8000/CLodopDemos/PDFDemo.pdf");
     // LODOP.ADD_PRINT_PDF(-30,0,"100%","100%","e:\\AAA.pdf");
     LODOP.SET_PRINT_COPIES(physicalCopyCount);
@@ -168,15 +156,14 @@ export class PrintingService {
       // If we will need to print any barcode in the page
       const currentPageBarcodes = this.getCucurrentPageBarcodes(barcodes, index);
       currentPageBarcodes.forEach(barcode =>
-        LODOP.ADD_PRINT_BARCODE(
-          barcode.top, barcode.left,
-          barcode.width, barcode.height,
-          barcode.barCodeType, barcode.barCodeValue)
+        LODOP.ADD_PRINT_BARCODE(barcode.top, barcode.left, barcode.width, barcode.height, barcode.barCodeType, barcode.barCodeValue)
       );
       LODOP.ADD_PRINT_HTM(990, 0, '90%', '95%', this.getCurrentPageNumberHtml(index + 1, pages.length));
 
-      // print page foot, which is always 
-      if (index < pages.length - 1) { LODOP.NEWPAGE(); }
+      // print page foot, which is always
+      if (index < pages.length - 1) {
+        LODOP.NEWPAGE();
+      }
     });
 
     LODOP.PREVIEW();
@@ -185,7 +172,6 @@ export class PrintingService {
 
   getCucurrentPageBarcodes(barcodes: PrintableBarcode[], pageNumber: number): PrintableBarcode[] {
     return barcodes.filter(barcode => barcode.pageNumber === pageNumber);
-
   }
 
   addDefaultReportStyle(html: string): string {

@@ -8,6 +8,7 @@ import { ALAIN_I18N_TOKEN, SettingsService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -216,9 +217,9 @@ export class UserLoginComponent implements OnDestroy {
     let callback = ``;
     // tslint:disable-next-line: prefer-conditional-expression
     if (environment.production) {
-      callback = 'https://ng-alain.github.io/ng-alain/#/callback/' + type;
+      callback = `https://ng-alain.github.io/ng-alain/#/callback/${  type}`;
     } else {
-      callback = 'http://localhost:4200/#/callback/' + type;
+      callback = `http://localhost:4200/#/callback/${  type}`;
     }
     switch (type) {
       case 'auth0':

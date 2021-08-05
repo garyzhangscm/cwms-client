@@ -102,8 +102,8 @@
       </thead>
       <tbody>
         <tr *ngFor="let orderLine of basicTable.data">
-          <td [nzChecked]="setOfOrderLineTableCheckedId.has(orderLine.id)"
-            (nzCheckedChange)="onOrderLineTableItemChecked(orderLine.id, $event)"></td>
+          <td [nzChecked]="setOfOrderLineTableCheckedId.has(orderLine.id!)"
+            (nzCheckedChange)="onOrderLineTableItemChecked(orderLine.id!, $event)"></td>
 
           <td>{{ orderLine.orderNumber }}</td>
           <td>{{ orderLine.number }}</td>

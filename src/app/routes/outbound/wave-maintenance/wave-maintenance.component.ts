@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
 import { Customer } from '../../common/models/customer';
 import { Item } from '../../inventory/models/item';
 import { ColumnItem } from '../../util/models/column-item';
@@ -250,7 +251,6 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   listOfDisplayOrderLines: OrderLine[] = [];
 
 
-
   constructor(
     private activatedRoute: ActivatedRoute,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -368,8 +368,8 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
         order.totalOpenQuantity! += orderLine.openQuantity;
         order.totalInprocessQuantity! += orderLine.inprocessQuantity;
         order.totalShippedQuantity! += orderLine.shippedQuantity;
-        if (!existingItemIds.has(orderLine.item.id)) {
-          existingItemIds.add(orderLine.item.id);
+        if (!existingItemIds.has(orderLine.item!.id)) {
+          existingItemIds.add(orderLine.item!.id);
         }
       });
       order.totalItemCount = existingItemIds.size;
@@ -414,7 +414,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   }
 
   onOrderTableAllChecked(value: boolean): void {
-    this.listOfDisplayOrders!.forEach(item => this.updateOrderTableCheckedSet(item.id, value));
+    this.listOfDisplayOrders!.forEach(item => this.updateOrderTableCheckedSet(item.id!, value));
     this.refreshOrderTableCheckedStatus();
   }
 
@@ -424,8 +424,8 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   }
 
   refreshOrderTableCheckedStatus(): void {
-    this.orderTableChecked = this.listOfDisplayOrders!.every(item => this.setOfOrderTableCheckedId.has(item.id));
-    this.orderTableIndeterminate = this.listOfDisplayOrders!.some(item => this.setOfOrderTableCheckedId.has(item.id)) && !this.orderTableChecked;
+    this.orderTableChecked = this.listOfDisplayOrders!.every(item => this.setOfOrderTableCheckedId.has(item.id!));
+    this.orderTableIndeterminate = this.listOfDisplayOrders!.some(item => this.setOfOrderTableCheckedId.has(item.id!)) && !this.orderTableChecked;
   }
 
 
@@ -443,7 +443,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   }
 
   onOrderLineTableAllChecked(value: boolean): void {
-    this.listOfDisplayOrderLines!.forEach(item => this.updateOrderLineTableCheckedSet(item.id, value));
+    this.listOfDisplayOrderLines!.forEach(item => this.updateOrderLineTableCheckedSet(item.id!, value));
     this.refreshOrderLineTableCheckedStatus();
   }
 
@@ -453,8 +453,8 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   }
 
   refreshOrderLineTableCheckedStatus(): void {
-    this.orderLineTableChecked = this.listOfDisplayOrderLines!.every(item => this.setOfOrderLineTableCheckedId.has(item.id));
-    this.orderLineTableIndeterminate = this.listOfDisplayOrderLines!.some(item => this.setOfOrderLineTableCheckedId.has(item.id)) && !this.orderLineTableChecked;
+    this.orderLineTableChecked = this.listOfDisplayOrderLines!.every(item => this.setOfOrderLineTableCheckedId.has(item.id!));
+    this.orderLineTableIndeterminate = this.listOfDisplayOrderLines!.some(item => this.setOfOrderLineTableCheckedId.has(item.id!)) && !this.orderLineTableChecked;
   }
 
 
@@ -472,7 +472,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   getSelectedOrders(): Order[] {
     const selectedOrders: Order[] = [];
     this.listOfDisplayOrders.forEach((order: Order) => {
-      if (this.setOfOrderTableCheckedId.has(order.id)) {
+      if (this.setOfOrderTableCheckedId.has(order.id!)) {
         selectedOrders.push(order);
       }
     });
@@ -493,7 +493,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   getSelectedOrderLines(): OrderLine[] {
     const selectedOrderLines: OrderLine[] = [];
     this.listOfDisplayOrderLines.forEach((orderLine: OrderLine) => {
-      if (this.setOfOrderLineTableCheckedId.has(orderLine.id)) {
+      if (this.setOfOrderLineTableCheckedId.has(orderLine.id!)) {
         selectedOrderLines.push(orderLine);
       }
     });

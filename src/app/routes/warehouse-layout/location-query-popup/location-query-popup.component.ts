@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { LocationGroup } from '../models/location-group';
@@ -215,7 +216,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
 
   setOfCheckedId = new Set<number>();
 
-  @Output() recordSelected: EventEmitter<any> = new EventEmitter();
+  @Output() readonly recordSelected: EventEmitter<any> = new EventEmitter();
 
   constructor(
     private fb: FormBuilder,
@@ -227,6 +228,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     private utilService: UtilService,
   ) { }
 
+  // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void { }
 
   resetForm(): void {
@@ -261,7 +263,6 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
         },
       );
   }
-
 
 
   updateCheckedSet(id: number, checked: boolean): void {

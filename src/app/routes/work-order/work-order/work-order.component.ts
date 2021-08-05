@@ -861,7 +861,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
         // send the result to the printer
         const printFileUrl
-          = `${environment.SERVER_URL}/resource/report-histories/download/${printResult.fileName}`;
+          = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
         console.log(`will print file: ${printFileUrl}`);
         this.printingService.printRemoteFileByName(
           "LPN Label",

@@ -6,11 +6,15 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+
 import { Customer } from '../../common/models/customer';
+import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { Printer } from '../../common/models/printer';
 import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
+import { ReportOrientation } from '../../report/models/report-orientation.enum';
+import { ReportType } from '../../report/models/report-type.enum';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { Order } from '../models/order';
@@ -21,10 +25,7 @@ import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
 import { OrderService } from '../services/order.service';
 import { PickService } from '../services/pick.service';
 import { ShortAllocationService } from '../services/short-allocation.service';
-import { environment } from '@env/environment';
-import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
-import { ReportOrientation } from '../../report/models/report-orientation.enum';
-import { ReportType } from '../../report/models/report-type.enum';
+
 
 @Component({
   selector: 'app-outbound-order',
@@ -46,7 +47,19 @@ export class OutboundOrderComponent implements OnInit {
       showFilter: false,
       rowspan: 2,
       colspan: 1,
-    }, {
+    },{
+      name: 'order.category',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Order, b: Order) => this.utilService.compareNullableString(a.number, b.number),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 2,
+      colspan: 1,
+    },  {
       name: 'status',
       showSort: true,
       sortOrder: null,
@@ -190,8 +203,6 @@ export class OutboundOrderComponent implements OnInit {
   listOfAllOrders: Order[] = [];
   listOfDisplayOrders: Order[] = [];
 
-
-
   // list of record with allocation in process
   mapOfAllocationInProcessId: { [key: string]: boolean } = {};
 
@@ -230,7 +241,7 @@ export class OutboundOrderComponent implements OnInit {
 
         this.listOfAllOrders.forEach(order => {
           // reset the allocation in process flag
-          this.mapOfAllocationInProcessId[order.id] = false;
+          this.mapOfAllocationInProcessId[order.id!] = false;
 
         });
 
@@ -254,7 +265,7 @@ export class OutboundOrderComponent implements OnInit {
   }
 
   collapseAllRecord(expandedOrderId?: number): void {
-    this.listOfDisplayOrders.forEach(item => this.expandSet.delete(item.id));
+    this.listOfDisplayOrders.forEach(item => this.expandSet.delete(item.id!));
     if (expandedOrderId) {
       this.expandSet.add(expandedOrderId);
       this.listOfDisplayOrders.forEach(order => {
@@ -304,7 +315,7 @@ export class OutboundOrderComponent implements OnInit {
   }
 
   onAllChecked(value: boolean): void {
-    this.listOfDisplayOrders!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.listOfDisplayOrders!.forEach(item => this.updateCheckedSet(item.id!, value));
     this.refreshCheckedStatus();
   }
 
@@ -314,8 +325,8 @@ export class OutboundOrderComponent implements OnInit {
   }
 
   refreshCheckedStatus(): void {
-    this.checked = this.listOfDisplayOrders!.every(item => this.setOfCheckedId.has(item.id));
-    this.indeterminate = this.listOfDisplayOrders!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
+    this.checked = this.listOfDisplayOrders!.every(item => this.setOfCheckedId.has(item.id!));
+    this.indeterminate = this.listOfDisplayOrders!.some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
   }
   onExpandChange(id: number, checked: boolean): void {
     if (checked) {
@@ -350,7 +361,7 @@ export class OutboundOrderComponent implements OnInit {
   getSelectedOrders(): Order[] {
     const selectedOrders: Order[] = [];
     this.listOfAllOrders.forEach((order: Order) => {
-      if (this.setOfCheckedId.has(order.id)) {
+      if (this.setOfCheckedId.has(order.id!)) {
         selectedOrders.push(order);
       }
     });
@@ -375,21 +386,23 @@ export class OutboundOrderComponent implements OnInit {
   }
 
   allocateOrder(order: Order): void {
-    this.mapOfAllocationInProcessId[order.id] = true;
+    this.isSpinning = true;
     this.orderService.allocateOrder(order).subscribe(orderRes => {
       this.messageService.success(this.i18n.fanyi('message.allocate.success'));
-      this.mapOfAllocationInProcessId[order.id] = false;
+      this.isSpinning = false;
       this.search();
-    });
+    }, 
+    () =>  this.isSpinning = false);
   }
 
   completeOrder(order: Order): void {
-    this.mapOfAllocationInProcessId[order.id] = true;
+    this.isSpinning = true;
     this.orderService.completeOrder(order).subscribe(orderRes => {
       this.messageService.success(this.i18n.fanyi('message.action.success'));
-      this.mapOfAllocationInProcessId[order.id] = false;
+      this.isSpinning = false;
       this.search();
-    });
+    }, 
+    () =>  this.isSpinning = false);
   }
   isOrderAllocatable(order: Order): boolean {
     return order.totalOpenQuantity! > 0 || order.totalPendingAllocationQuantity! > 0;
@@ -403,7 +416,7 @@ export class OutboundOrderComponent implements OnInit {
   }
   showOrderDetails(order: Order): void {
     // When we expand the details for the order, load the picks and short allocation from the server
-    if (this.expandSet.has(order.id)) {
+    if (this.expandSet.has(order.id!)) {
       this.showPicks(order);
       this.showShortAllocations(order);
       this.showPickedInventory(order);
@@ -413,7 +426,7 @@ export class OutboundOrderComponent implements OnInit {
   showAllOrderDetails(): void {
 
     this.listOfDisplayOrders.forEach(order => {
-      if (this.expandSet.has(order.id)) {
+      if (this.expandSet.has(order.id!)) {
         this.showPicks(order);
         this.showShortAllocations(order);
         this.showPickedInventory(order);
@@ -421,23 +434,23 @@ export class OutboundOrderComponent implements OnInit {
     });
   }
   showPicks(order: Order): void {
-    this.pickService.getPicksByOrder(order.id).subscribe(pickRes => {
-      this.mapOfPicks[order.id] = [...pickRes];
+    this.pickService.getPicksByOrder(order.id!).subscribe(pickRes => {
+      this.mapOfPicks[order.id!] = [...pickRes];
     });
   }
   showShortAllocations(order: Order): void {
     this.shortAllocationService
-      .getShortAllocationsByOrder(order.id)
-      .subscribe(shortAllocationRes => (this.mapOfShortAllocations[order.id] = [...shortAllocationRes]));
+      .getShortAllocationsByOrder(order.id!)
+      .subscribe(shortAllocationRes => (this.mapOfShortAllocations[order.id!] = [...shortAllocationRes]));
   }
   showPickedInventory(order: Order): void {
     // Get all the picks and then load the pikced inventory
-    this.pickService.getPicksByOrder(order.id).subscribe(pickRes => {
+    this.pickService.getPicksByOrder(order.id!).subscribe(pickRes => {
       if (pickRes.length === 0) {
-        this.mapOfPickedInventory[order.id] = [];
+        this.mapOfPickedInventory[order.id!] = [];
       } else {
         this.pickService.getPickedInventories(pickRes).subscribe(pickedInventoryRes => {
-          this.mapOfPickedInventory[order.id] = [...pickedInventoryRes];
+          this.mapOfPickedInventory[order.id!] = [...pickedInventoryRes];
         });
       }
     });

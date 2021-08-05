@@ -5,6 +5,7 @@
   </a>
 </ng-template>
 
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 <ng-container *ngFor="let warehouse of warehouses">
   <nz-card nzTitle="{{ '#' + warehouse.id + '-' + warehouse.name }}" [nzActions]="[actionEdit, actionDelete]">
     <nz-descriptions nzBordered>
@@ -49,3 +50,4 @@
     <i nz-icon nzType="delete" (click)="removeWarehouse(warehouse)"></i>
   </ng-template>
 </ng-container>
+</nz-spin>

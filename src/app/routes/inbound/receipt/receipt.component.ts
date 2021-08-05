@@ -6,6 +6,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+
 import { Client } from '../../common/models/client';
 import { Supplier } from '../../common/models/supplier';
 import { ColumnItem } from '../../util/models/column-item';
@@ -135,7 +136,6 @@ export class InboundReceiptComponent implements OnInit {
   listOfDisplayReceipts: Receipt[] = [];
 
 
-
   constructor(
     private fb: FormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -182,7 +182,6 @@ export class InboundReceiptComponent implements OnInit {
         });
 
 
-
       },
       () => {
         this.searching = false;
@@ -209,7 +208,6 @@ export class InboundReceiptComponent implements OnInit {
     });
     return receipts;
   }
-
 
 
   updateCheckedSet(id: number, checked: boolean): void {

@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService } from '@delon/theme';
+
 import { Warehouse } from '../models/warehouse';
 import { WarehouseService } from '../services/warehouse.service';
 
@@ -13,6 +14,7 @@ export class WarehouseLayoutWarehouseMaintenanceConfirmComponent implements OnIn
   currentWarehouse!: Warehouse;
 
   pageTitle: string;
+  isSpinning = false;
 
   constructor(
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -29,20 +31,29 @@ export class WarehouseLayoutWarehouseMaintenanceConfirmComponent implements OnIn
   }
 
   saveWarehouse(): void {
+    this.isSpinning = true;
     if (this.currentWarehouse.id) {
       this.warehouseService
         .changeWarehouse(this.currentWarehouse)
-        .subscribe(res => this.router.navigateByUrl('/warehouse-layout/warehouse'));
+        .subscribe(res => {
+          this.isSpinning = false;
+          this.router.navigateByUrl('/warehouse-layout/warehouse')
+        }, 
+        () => this.isSpinning = false);
     } else {
       this.warehouseService
         .addWarehouse(this.currentWarehouse)
-        .subscribe(res => this.router.navigateByUrl('/warehouse-layout/warehouse'));
+        .subscribe(res => {
+          this.isSpinning = false;
+          this.router.navigateByUrl('/warehouse-layout/warehouse')
+        }, 
+        () => this.isSpinning = false);
     }
   }
   onStepIndexChange(): void {
     if (this.currentWarehouse.id) {
       this.router.navigateByUrl(
-        '/warehouse-layout/warehouse-maintenance/' + this.currentWarehouse.id + '?inprocess=true',
+        `/warehouse-layout/warehouse-maintenance/${  this.currentWarehouse.id  }?inprocess=true`,
       );
     } else {
       this.router.navigateByUrl('/warehouse-layout/warehouse-maintenance?inprocess=true');

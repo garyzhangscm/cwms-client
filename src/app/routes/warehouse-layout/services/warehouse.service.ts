@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
 import { Warehouse } from '../models/warehouse';
 import { CompanyService } from './company.service';
 
@@ -18,7 +19,7 @@ export class WarehouseService {
   }
 
   getWarehouse(id: number): Observable<Warehouse> {
-    return this.http.get('layout/warehouses/' + id).pipe(map(res => res.data));
+    return this.http.get(`layout/warehouses/${  id}`).pipe(map(res => res.data));
   }
 
   getWarehouseByUser(companyCode: string, username: string): Observable<Warehouse[]> {
@@ -34,12 +35,12 @@ export class WarehouseService {
   }
 
   changeWarehouse(warehouse: Warehouse): Observable<Warehouse> {
-    const url = 'layout/warehouses/' + warehouse.id;
+    const url = `layout/warehouses/${  warehouse.id}`;
     return this.http.put(url, warehouse).pipe(map(res => res.data));
   }
 
   removeWarehouse(warehouse: Warehouse): Observable<Warehouse> {
-    const url = 'layout/warehouses/' + warehouse.id;
+    const url = `layout/warehouses/${warehouse.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 
@@ -63,4 +64,5 @@ export class WarehouseService {
   getServerSidePrintingFlag(): boolean {
     return JSON.parse(localStorage.getItem('server_side_printing')!);
   }
+ 
 }

@@ -6,6 +6,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+
 import { Client } from '../../common/models/client';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { Supplier } from '../../common/models/supplier';
@@ -528,8 +529,6 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       this.listOfDisplayReceivedInventory!.some(item => this.setOfReceivedInventoryTableCheckedId.has(item.id!)) && !this.receiptLinesTableChecked;
   }
 
-
-
   getSelectedReceiptLines(): ReceiptLine[] {
     const selectedReceiptLines: ReceiptLine[] = [];
     this.listOfAllReceiptLines.forEach((receiptLine: ReceiptLine) => {
@@ -654,8 +653,6 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.previewPutawayDocument(event, this.currentReceipt,
       selectedInventory);
   }
-
-
 
   printAllReceivedPutawayWork(event: any): void {
     this.printPutawayDocument(event, this.currentReceipt,
@@ -966,7 +963,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
         // send the result to the printer
         const printFileUrl
-          = `${environment.SERVER_URL}/resource/report-histories/download/${printResult.fileName}`;
+          = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
         console.log(`will print file: ${printFileUrl}`);
         this.printingService.printRemoteFileByName(
           "Receiving Document",

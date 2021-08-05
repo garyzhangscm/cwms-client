@@ -18,6 +18,7 @@
   </nz-breadcrumb>
 </ng-template>
 
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 <div nz-row style="padding: 50px">
   <div nz-col nzSpan="12" nzOffset="6">
     <nz-steps [nzCurrent]="0" [nzSize]="'default'">
@@ -64,6 +65,22 @@
       </nz-form-item>
     </div>
   </div>
+  
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="24">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="2">
+          {{ 'address' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <input nz-input ngx-google-places-autocomplete (onAddressChange)="handleAddressChange($event)" formControlName="address"/>
+        </nz-form-control>
+      </nz-form-item>
+
+    </div>
+  </div>
+
+  <!--
 
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
@@ -153,6 +170,8 @@
       </nz-form-item>
     </div>
   </div>
+
+  -->
 </form>
 
 <div nz-row nzType="flex" nzJustify="center">
@@ -161,3 +180,4 @@
     {{ 'steps.warehouse-maintenance.confirm.title' | i18n }}
   </button>
 </div>
+</nz-spin>

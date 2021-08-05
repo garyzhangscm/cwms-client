@@ -6,6 +6,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+
 import { ReasonCode } from '../../common/models/reason-code';
 import { ReasonCodeType } from '../../common/models/reason-code-type.enum';
 import { ReasonCodeService } from '../../common/services/reason-code.service';
@@ -206,7 +207,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   // Form related data and functions
   searchForm!: FormGroup;
   pageTitle: string;
-
+  isSpinning = false;
   currentInventory!: Inventory;
   addInventoryModal!: NzModalRef;
   availableInventoryStatuses!: InventoryStatus[];
@@ -272,8 +273,8 @@ export class InventoryInventoryAdjustComponent implements OnInit {
 
   }
 
-  search(expand?: boolean): void {
-    this.searching = true;
+  search(expand?: boolean): void { 
+    this.isSpinning = true;
     this.searchResult = '';
     this.locationService
       .getLocations(
@@ -294,15 +295,14 @@ export class InventoryInventoryAdjustComponent implements OnInit {
           }
 
 
-
-          this.searching = false;
+          this.isSpinning = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
             rowCount: locationRes.length,
           });
         },
         () => {
-          this.searching = false;
+          this.isSpinning = false;
           this.searchResult = '';
         },
       );
@@ -375,17 +375,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     tplAddInventoryModalTitle: TemplateRef<{}>,
     tplAddInventoryModalContent: TemplateRef<{}>,
   ): void {
-    this.currentInventory = {
-      id: undefined,
-      lpn: '',
-      location,
-      locationName: location.name,
-      item: undefined,
-      itemPackageType: undefined,
-      quantity: undefined,
-      inventoryStatus: undefined,
-      warehouseId: this.warehouseService.getCurrentWarehouse().id,
-    };
+    this.currentInventory = this.getEmptyInventory(location);
     this.documentNumber = '';
     this.comment = '';
 
@@ -409,6 +399,64 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.addInventoryModal.afterOpen.subscribe(() => this.setupDefaultInventoryValue());
   }
 
+  
+  getEmptyInventory(
+    location: WarehouseLocation,): Inventory {
+    return {
+      id: undefined,
+      lpn: '',
+      warehouseId: this.warehouseService.getCurrentWarehouse().id,
+      location: location,
+      virtual: false, // default to NON virtual inventory. It make no sense to adjust virtual inventory
+      item: {
+        id: undefined,
+        warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        name: '',
+        description: '',
+        allowCartonization: undefined,
+        itemPackageTypes: [
+          {
+            id: undefined,
+            warehouseId: this.warehouseService.getCurrentWarehouse().id,
+            description: '',
+            name: '',
+            itemUnitOfMeasures: [],
+          },
+        ],
+
+        client: undefined,
+        itemFamily: undefined,
+        unitCost: undefined,
+
+        allowAllocationByLPN: undefined,
+        allocationRoundUpStrategyType: undefined,
+
+        allocationRoundUpStrategyValue: undefined,
+
+        trackingVolumeFlag: undefined,
+        trackingLotNumberFlag: undefined,
+        trackingManufactureDateFlag: undefined,
+        shelfLifeDays: undefined,
+        trackingExpirationDateFlag: undefined,
+      },
+      itemPackageType: {
+        description: '',
+        id: undefined,
+        warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        name: '',
+        itemUnitOfMeasures: [],
+      },
+      quantity: 0,
+      inventoryStatus: {
+        id: undefined,
+        name: '',
+        description: '',
+      },
+
+    };
+  }
+
+
   lpnChanged(event: Event): void {
     this.currentInventory.lpn = (event.target as HTMLInputElement).value;
   }
@@ -426,8 +474,8 @@ export class InventoryInventoryAdjustComponent implements OnInit {
       }
     });
   }
-  itemPackageTypeChange(event: Event): void {
-    const newItemPackageTypeName: string = (event.target as HTMLInputElement).value;
+  itemPackageTypeChange( ): void {
+    const newItemPackageTypeName: string = this.currentInventory.itemPackageType!.name!;
     const itemPackageTypes = this.currentInventory.item!.itemPackageTypes.filter(
       itemPackageType => itemPackageType.name === newItemPackageTypeName,
     );
@@ -435,8 +483,8 @@ export class InventoryInventoryAdjustComponent implements OnInit {
       this.currentInventory.itemPackageType = itemPackageTypes[0];
     }
   }
-  inventoryStatusChange(event: Event): void {
-    const newInventoryStatusName: string = (event.target as HTMLInputElement).value;
+  inventoryStatusChange( ): void {
+    const newInventoryStatusName: string = this.currentInventory.inventoryStatus!.name;
     console.log(`Inventory status name changed to ${JSON.stringify(newInventoryStatusName)}`);
     this.availableInventoryStatuses.forEach(inventoryStatus => {
       if (inventoryStatus.name === newInventoryStatusName) {
@@ -448,18 +496,23 @@ export class InventoryInventoryAdjustComponent implements OnInit {
 
   addInventory(inventory: Inventory): void {
     console.log(`Start to add inventory: ${JSON.stringify(inventory)}`);
+    this.isSpinning = true;
     this.inventoryService.addInventory(inventory, this.documentNumber, this.comment).subscribe(inventoryRes => {
       // display the newly added inventory
-      this.searchForm.controls.location.setValue(inventoryRes.location!.name);
+      this.searchForm.controls.location.setValue(inventory.location!.name);
 
       if (inventoryRes.lockedForAdjust === true) {
         this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.request-success'));
+        
+        this.isSpinning = false;
         this.search();
       } else {
         this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.adjust-success'));
+        this.isSpinning = false;
         this.search(true);
       }
-    });
+    }, 
+    () => this.isSpinning = false);
   }
   processLocationQueryResult(selectedLocationName: any): void {
 

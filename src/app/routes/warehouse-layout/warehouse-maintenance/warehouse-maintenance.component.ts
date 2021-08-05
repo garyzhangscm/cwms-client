@@ -3,6 +3,8 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService } from '@delon/theme';
+import { Address } from 'ngx-google-places-autocomplete/objects/address';
+
 import { Warehouse } from '../models/warehouse';
 import { WarehouseService } from '../services/warehouse.service';
 
@@ -13,6 +15,8 @@ import { WarehouseService } from '../services/warehouse.service';
 export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
   pageTitle: string;
   warehouseForm!: FormGroup;
+  isSpinning = false;
+  warehouseAddress?: Address;
 
   constructor(
     private fb: FormBuilder,
@@ -31,14 +35,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
       warehouseId: new FormControl({ value: '', disabled: true }),
       name: new FormControl('', Validators.required),
       size: ['', Validators.required],
-      addressCountry: [''],
-      addressState: ['', Validators.required],
-      addressCounty: [''],
-      addressCity: ['', Validators.required],
-      addressDistrict: [''],
-      addressLine1: ['', Validators.required],
-      addressLine2: [''],
-      addressPostcode: ['', Validators.required],
+      address: ['', Validators.required],
     });
     this.activatedRoute.queryParams.subscribe(params => {
       // We are in process of adding / changing a warehouse
@@ -92,17 +89,50 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
     }
   }
   goToConfirmPage(): void {
-    if (this.warehouseForm.valid) {
+    if (this.warehouseForm.valid && this.warehouseAddress != undefined) {
       const warehouse: Warehouse = this.warehouseForm.value;
-      warehouse.id = this.warehouseForm.controls.warehouseId.value;
+      warehouse.id = this.warehouseForm.controls.warehouseId.value; 
+      this.warehouseAddress!.address_components.forEach(
+        addressComponent => {
+          if (addressComponent.types[0] === 'street_number') {
+              warehouse.addressLine1 = `${addressComponent.long_name} ${warehouse.addressLine1}`;
+          }
+          else if  (addressComponent.types[0] === 'route') {
+            warehouse.addressLine1 = `${warehouse.addressLine1} ${addressComponent.long_name}`;
+          }
+          else if  (addressComponent.types[0] === 'locality') {
+            warehouse.addressCity = `${addressComponent.long_name}`;
+          }
+          else if  (addressComponent.types[0] === 'administrative_area_level_2') {
+            warehouse.addressCounty = `${addressComponent.long_name}`;
+          }
+          else if  (addressComponent.types[0] === 'administrative_area_level_1') {
+            warehouse.addressState = `${addressComponent.long_name}`;
+          }
+          else if  (addressComponent.types[0] === 'country') {
+            warehouse.addressCountry = `${addressComponent.long_name}`;
+          }
+          else if  (addressComponent.types[0] === 'postal_code') {
+            warehouse.addressPostcode = `${addressComponent.long_name}`;
+          }
+        }
+  
+      )
 
       sessionStorage.setItem('warehouse-maintenance.warehouse', JSON.stringify(warehouse));
       const url = this.warehouseForm.controls.warehouseId.value
-        ? '/warehouse-layout/warehouse-maintenance/' + this.warehouseForm.controls.warehouseId.value + '/confirm'
+        ? `/warehouse-layout/warehouse-maintenance/${  this.warehouseForm.controls.warehouseId.value  }/confirm`
         : '/warehouse-layout/warehouse-maintenance/confirm';
 
       this.router.navigateByUrl(url);
-    } else {
+    } else if (this.warehouseAddress === undefined) {
+ 
+      // clear the address control and show the error
+      this.warehouseForm.controls.address.reset();
+      this.displayFormError(this.warehouseForm);
+
+    }
+    else {
       this.displayFormError(this.warehouseForm);
     }
   }
@@ -114,5 +144,20 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
       fromGroup.controls[i].markAsDirty();
       fromGroup.controls[i].updateValueAndValidity();
     }
+  }
+
+  handleAddressChange(address: Address) { 
+    console.log(`address.formatted_address: ${address.formatted_address}`); 
+    this.warehouseAddress = address;
+    address.address_components.forEach(
+      addressComponent => {
+        console.log(`addressComponent.long_name: ${addressComponent.long_name}, short_name: ${addressComponent.short_name}, types: ${addressComponent.types}`)
+
+        if (addressComponent.types[0] === 'street_number') {
+
+        }
+      }
+
+    )
   }
 }

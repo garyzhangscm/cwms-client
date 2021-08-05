@@ -3,12 +3,13 @@ import { Item } from '../../inventory/models/item';
 import { AllocationStrategyType } from './allocation-strategy-type.enum';
 
 export interface OrderLine {
-  id: number;
+  id?: number;
   number: string;
-  orderNumber: string;
+  orderNumber?: string;
+  warehouseId?: number;
 
-  itemId: number;
-  item: Item;
+  itemId?: number;
+  item?: Item;
 
   expectedQuantity: number;
   openQuantity: number;
@@ -18,6 +19,6 @@ export interface OrderLine {
   productionPlanProducedQuantity: number;
   allocationStrategyType: AllocationStrategyType;
 
-  inventoryStatusId: number;
-  inventoryStatus: InventoryStatus;
+  inventoryStatusId?: number;
+  inventoryStatus?: InventoryStatus;
 }

@@ -7,10 +7,10 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+
 import { Client } from '../../common/models/client';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { PrintPageSize } from '../../common/models/print-page-size.enum';
-
 import { ClientService } from '../../common/services/client.service';
 import { PrintingService } from '../../common/services/printing.service';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
@@ -273,7 +273,7 @@ export class InventoryInventoryComponent implements OnInit {
 
 
   adjustInventory(inventory: Inventory): void {
-    console.log('will adjust inventory: ' + JSON.stringify(inventory));
+    console.log(`will adjust inventory: ${  JSON.stringify(inventory)}`);
   }
   openRemoveInventoryModal(
     inventory: Inventory,
@@ -430,7 +430,7 @@ export class InventoryInventoryComponent implements OnInit {
 
         // send the result to the printer
         const printFileUrl
-          = `${environment.SERVER_URL}/resource/report-histories/download/${printResult.fileName}`;
+          = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
         console.log(`will print file: ${printFileUrl}`);
         this.printingService.printRemoteFileByName(
           "LPN Label",

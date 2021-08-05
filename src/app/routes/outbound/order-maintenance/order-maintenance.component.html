@@ -1,1 +1,296 @@
-<page-header></page-header>
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+    <a routerLink="/outbound/order" routerLinkActive="active"
+        [queryParams]="{number: currentOrder?.number}">{{
+        'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+    <nz-breadcrumb>
+        <nz-breadcrumb-item>
+            <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+        <nz-breadcrumb-item><a routerLink="/outbound/order" routerLinkActive="active">{{
+                'breadcrumb.work-order' | i18n
+                }}</a></nz-breadcrumb-item>
+        <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+    <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+        <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+        <nz-step nzTitle="{{ 'order.line' | i18n }}"> </nz-step>
+        <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+    </nz-steps>
+
+    <!-- Let the user input the order information -->
+    <div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
+ 
+
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="6">
+                  {{ 'order.number' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="orderNumberErrorTpl" [nzValidateStatus]="orderNumberValidateStatus"
+                >
+        
+                  <input type="text" nz-input [(ngModel)]="currentOrder!.number" required (blur)="orderNumberChange()"/>
+                  <ng-template #orderNumberErrorTpl let-control>  
+                      <ng-container *ngIf="orderNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
+                      <ng-container *ngIf="orderNumberValidateStatus === 'numberExists'">Order Number already exists</ng-container>
+                              
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+        
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="8">
+                  {{ 'order.category' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+        
+                    <nz-select style="width: 250px"   [(ngModel)]="currentOrder!.category"
+                    (ngModelChange)="orderCategoryChanged()" >
+                    <nz-option
+                              *ngFor="let orderCategory of orderCategories  | keys"
+                              [nzValue]="orderCategory.key"
+                              nzLabel="{{ 'ORDER-CATEGORY-' + orderCategory.key |i18n}}"
+                            ></nz-option>
+                </nz-select>
+        
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <nz-card   nzTitle="{{ 'ORDER-CATEGORY-WAREHOUSE_TRANSFER_ORDER' | i18n}}" 
+          *ngIf="currentOrder!.category === orderCategories.WAREHOUSE_TRANSFER_ORDER">
+          
+            <div nz-row [nzGutter]="24">
+                <div nz-col [nzSpan]="24">
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="3">
+                        {{ 'order.transferReceiptWarehouseId' | i18n }}
+                      </nz-form-label>
+                      <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                        <nz-select style="width: 250px"   [(ngModel)]="currentOrder!.transferReceiptWarehouseId"
+                        (ngModelChange)="orderTransferWarehouseIdChanged()">
+                            <nz-option *ngFor="let warehouse of warehouses" [nzLabel]="warehouse.name" [nzValue]="warehouse.id">
+                            </nz-option>
+                        </nz-select>
+                      </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+            <div nz-row [nzGutter]="24">
+                <div nz-col [nzSpan]="24">
+                    
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="3">
+                          {{ 'order.transferReceiptNumber' | i18n }}
+                        </nz-form-label>
+                        <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                            
+                            <input type="text" nz-input [(ngModel)]="currentOrder!.transferReceiptNumber" />
+                        </nz-form-control>
+                      </nz-form-item>
+                      
+                </div>
+            </div>
+          </nz-card>
+         
+          
+        
+    </div>
+
+    <!-- Let the user input the order line information -->
+    <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+ 
+
+
+        <!-- Table to show inventory  -->
+
+        <div class="search-result-list" *ngIf="currentOrder" > 
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="currentOrder!.orderLines"
+                [nzFooter]="orderLineTableFoot" #orderLineTable>
+                <thead>
+                    <tr> 
+                        <th>
+                          {{ 'order.line.number' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'item' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'item.description' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'order.line.expectedQuantity' | i18n }}
+                        </th>  
+                        <th>
+                          {{ 'inventory.status' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'order.line.allocationStrategyType' | i18n }}
+                        </th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of orderLineTable.data; let i = index"> 
+                        <td>
+                            <div *ngIf="data.id === undefined">
+                                <div class="row">
+                                    <input   type="text" [(ngModel)]="data.number"/>
+                                </div>
+                            </div>
+                            <span *ngIf="data.id">
+                                {{ data.number }}
+                            </span>
+                        </td>
+                        <td>
+                            <div *ngIf="data.id === undefined">
+                                <div class="row">
+                                    <input  type="text" [ngModel]="data.item!.name"
+                                        (blur)="itemChanged($event, data)"  />
+                                </div>
+                            </div> 
+                            <span *ngIf="data.id">
+                                {{ data.item?.name }}
+                            </span>
+                        </td>
+                        <td>
+                            {{ data.item?.description }}
+                        </td>                        
+                        <td>
+                            <div class="row">
+                                <input  type="text" [(ngModel)]="data.expectedQuantity"  />
+                            </div>
+                        </td> 
+                        <td>
+                            <nz-select style="width: 150px" *ngIf="data.id === undefined"
+                                [(ngModel)]="data.inventoryStatus!.id" (ngModelChange)="inventoryStatusChanged(data)"
+                                >
+                                <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
+                                    nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | i18n }}"
+                                    [nzValue]="inventoryStatus?.id">
+                                </nz-option>
+                            </nz-select>
+
+                            <span *ngIf="data.id">
+                                {{ 'INVENTORY-STATUS-' + data.inventoryStatus?.name | i18n }}
+                            </span>
+                        </td>
+                        <td>
+                            <nz-select style="width: 150px" *ngIf="data.id === undefined"
+                                [(ngModel)]="data.allocationStrategyType" (ngModelChange)="allocationStratetyChanged(data)" >
+                                <nz-option *ngFor="let allocationStrategyType of allocationStrategies | keys"
+                                    nzLabel="{{ 'ALLOCATION-STRATEGY-TYPE-' + allocationStrategyType.key | i18n }}"
+                                    [nzValue]="allocationStrategyType.key">
+                                </nz-option>
+                            </nz-select>
+
+                            <span *ngIf="data.id">{{ 'ALLOCATION-STRATEGY-TYPE-' + data.allocationStrategyType | i18n }}
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+
+        <ng-template #orderLineTableFoot>
+            <div nz-row nzType="flex" nzJustify="start">
+                <button nz-button nzType="primary" (click)="addExtraOrderLine()">
+                    {{ 'add' | i18n }}
+                </button>
+            </div>
+        </ng-template>
+    </div>
+
+    <!-- Let the user confirm the result -->
+    <div class="small-card" *ngIf="stepIndex === 2" style="padding-top: 20px;">
+
+        <nz-descriptions nzTitle="{{ 'order' | i18n}} - {{  currentOrder?.number }}" nzBordered>
+            <nz-descriptions-item nzTitle="{{ 'order.category' | i18n}}"> 
+                {{ 'ORDER-CATEGORY-' + currentOrder?.category |i18n}}
+            </nz-descriptions-item> 
+        </nz-descriptions>
+        
+        <nz-descriptions nzTitle="{{ 'ORDER-CATEGORY-WAREHOUSE_TRANSFER_ORDER' | i18n}}" 
+        *ngIf="currentOrder!.category === orderCategories.WAREHOUSE_TRANSFER_ORDER" nzBordered> 
+            <nz-descriptions-item nzTitle="{{ 'order.transferReceiptWarehouseId' | i18n}}"> 
+
+                {{ currentOrder?.transferReceiptWarehouse?.name}}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'order.transferReceiptNumber' | i18n}}"> 
+
+                {{ currentOrder?.transferReceiptNumber}}
+            </nz-descriptions-item>
+        </nz-descriptions>
+
+
+        <!-- Table to show order line  -->
+
+        <div class="search-result-list">
+            <h3>{{ 'work-order.returned-inventory' | i18n}}</h3>
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="currentOrder!.orderLines"
+                #displayOrderLineTable>
+                <thead>
+                    <tr> 
+                        <th>
+                          {{ 'order.line.number' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'item' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'item.description' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'order.line.expectedQuantity' | i18n }}
+                        </th>  
+                        <th>
+                          {{ 'inventory.status' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'order.line.allocationStrategyType' | i18n }}
+                        </th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of displayOrderLineTable.data; let i = index">  
+                        <td>{{ data.number }} </td>
+                        <td>{{ data.item?.name }} </td>
+                        <td>{{ data.item?.description }} </td>
+                        <td>{{ data.expectedQuantity }} </td>
+                        <td>{{ data.inventoryStatus?.name }} </td>
+                        <td>{{ data.allocationStrategyType }} </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+ 
+    </div>
+
+
+
+    <div class="steps-action">
+        <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+            <span>{{ 'steps.previous' | i18n }}</span>
+        </button>
+        <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+        <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 2">
+            <span>{{ 'steps.next' | i18n }}</span>
+        </button>
+        <nz-divider nzType="vertical"></nz-divider>
+        <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 2">
+            <span> {{ 'confirm' | i18n }}</span>
+        </button>
+    </div>
+
+</nz-spin>

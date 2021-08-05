@@ -1,3 +1,4 @@
+ 
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
   <a routerLink="/inbound/receipt" routerLinkActive="active" [queryParams]="{number : currentReceipt?.number}">{{

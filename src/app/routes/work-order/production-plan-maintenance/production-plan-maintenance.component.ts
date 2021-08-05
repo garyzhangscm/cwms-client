@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { Item } from '../../inventory/models/item';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
@@ -212,8 +213,8 @@ export class WorkOrderProductionPlanMaintenanceComponent implements OnInit {
 
   onAllOrderLineChecked(checked: boolean): void {
     this.validOrderLines.forEach(orderLine => {
-      const originalStatus = this.mapOfCheckedId[orderLine.id];
-      this.mapOfCheckedId[orderLine.id] = checked;
+      const originalStatus = this.mapOfCheckedId[orderLine.id!];
+      this.mapOfCheckedId[orderLine.id!] = checked;
       if (originalStatus !== checked) {
         // checked status is changed. let's
         // call the function selectedOrderLineChange which will
@@ -248,7 +249,7 @@ export class WorkOrderProductionPlanMaintenanceComponent implements OnInit {
   }
 
   onOrderLineTableAllChecked(value: boolean): void {
-    this.validOrderLines!.forEach(item => this.updateOrderLineTableCheckedSet(item.id, value));
+    this.validOrderLines!.forEach(item => this.updateOrderLineTableCheckedSet(item.id!, value));
     this.refreshOrderLineTableCheckedStatus();
   }
 
@@ -258,8 +259,8 @@ export class WorkOrderProductionPlanMaintenanceComponent implements OnInit {
   }
 
   refreshOrderLineTableCheckedStatus(): void {
-    this.orderLineTableChecked = this.validOrderLines!.every(item => this.setOfOrderLineTableCheckedId.has(item.id));
-    this.orderLineTableIndeterminate = this.validOrderLines!.some(item => this.setOfOrderLineTableCheckedId.has(item.id)) && !this.orderLineTableChecked;
+    this.orderLineTableChecked = this.validOrderLines!.every(item => this.setOfOrderLineTableCheckedId.has(item.id!));
+    this.orderLineTableIndeterminate = this.validOrderLines!.some(item => this.setOfOrderLineTableCheckedId.has(item.id!)) && !this.orderLineTableChecked;
   }
 
 
@@ -268,14 +269,14 @@ export class WorkOrderProductionPlanMaintenanceComponent implements OnInit {
   }
 
   selectedOrderLineChange(checked: boolean, orderLine: OrderLine): void {
-    console.log(`order line ${orderLine.orderNumber} \ ${orderLine.item.name} selected? ${checked}`);
+    console.log(`order line ${orderLine.orderNumber} \ ${orderLine.item!.name} selected? ${checked}`);
     if (checked) {
-      this.billOfMeasureService.findMatchedBillOfMaterialByItemName(orderLine.item.name).subscribe(billOfMeasureRes => {
-        this.mapOfAvailableBillOfMaterial[orderLine.item.name] = billOfMeasureRes;
+      this.billOfMeasureService.findMatchedBillOfMaterialByItemName(orderLine.item!.name).subscribe(billOfMeasureRes => {
+        this.mapOfAvailableBillOfMaterial[orderLine.item!.name] = billOfMeasureRes;
         // If we only have one bom defined for the item, let's
         // setup it for the production plan lines that has not setup the BOM yet
         if (billOfMeasureRes.length === 1) {
-          this.setupDefaultBOMForOrderLine(orderLine.id, billOfMeasureRes[0]);
+          this.setupDefaultBOMForOrderLine(orderLine.id!, billOfMeasureRes[0]);
         }
       });
       this.currentProductionPlan.productionPlanLines.push({
@@ -355,7 +356,7 @@ export class WorkOrderProductionPlanMaintenanceComponent implements OnInit {
   addSelectedOrderLines(): void {
     this.currentProductionPlan.productionPlanLines = [];
     this.validOrderLines.forEach(orderLine => {
-      if (this.mapOfCheckedId[orderLine.id] === true) {
+      if (this.mapOfCheckedId[orderLine.id!] === true) {
         // If the order line is selected, add it to the
         // production line
         this.currentProductionPlan.productionPlanLines.push({

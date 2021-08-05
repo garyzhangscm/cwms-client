@@ -127,12 +127,12 @@
     <tbody>
       <tr *ngFor="let orderLine of mapOfOrderLines[data.id!]">
         <td>{{ orderLine.number }}</td>
-        <td>{{ orderLine.item.name }}</td>
+        <td>{{ orderLine.item?.name }}</td>
         <td>{{ orderLine.expectedQuantity }}</td>
         <td>{{ orderLine.openQuantity }}</td>
         <td>{{ orderLine.inprocessQuantity }}</td>
         <td>{{ orderLine.shippedQuantity }}</td>
-        <td>{{ orderLine.inventoryStatus.name }}</td>
+        <td>{{ orderLine.inventoryStatus?.name }}</td>
       </tr>
     </tbody>
   </nz-table>
