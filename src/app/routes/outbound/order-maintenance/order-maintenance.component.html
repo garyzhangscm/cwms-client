@@ -139,6 +139,7 @@
                         <th>
                           {{ 'order.line.allocationStrategyType' | i18n }}
                         </th> 
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -197,6 +198,12 @@
 
                             <span *ngIf="data.id">{{ 'ALLOCATION-STRATEGY-TYPE-' + data.allocationStrategyType | i18n }}
                             </span>
+                        </td>
+                        <td>
+                            <button nz-button nzDanger nzShape="circle" (click)="removeOrderLine(i)">
+                                <i nz-icon nzType="close"></i>
+                                
+                              </button>
                         </td>
                     </tr>
                 </tbody>

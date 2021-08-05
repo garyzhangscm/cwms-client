@@ -120,7 +120,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   itemChanged(event: Event, orderLine: OrderLine) {
     
     console.log(`item name is changed to ${(event.target as HTMLInputElement).value}`);
-    const itemName: string = (event.target as HTMLInputElement).value;
+    const itemName: string = (event.target as HTMLInputElement).value.trim();
     this.itemService.getItems(itemName).subscribe(
       itemRes => {
         if (itemRes.length > 0) {
@@ -271,5 +271,15 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     else {
       this.orderNumberValidateStatus = 'required'
     }
+  }
+
+  removeOrderLine(index: number) {
+
+    console.log(`remove index: ${index}`);
+    this.currentOrder!.orderLines.splice(index, 1);
+    console.log(`after splice, we still have ${this.currentOrder!.orderLines.length} lines`);
+
+    this.currentOrder!.orderLines = [...this.currentOrder!.orderLines];
+ 
   }
 }
