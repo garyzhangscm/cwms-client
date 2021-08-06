@@ -10,8 +10,6 @@ scripts/var.less
 # src/assets/style.dark.css
 # src/assets/style.compact.css
 
-/src/index.html
-
 # dependencies
 /node_modules
 /yarn.lock
