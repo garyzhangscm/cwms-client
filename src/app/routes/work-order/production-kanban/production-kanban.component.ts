@@ -1,15 +1,14 @@
-import { Inject } from '@angular/core';
-import { ChangeDetectorRef, Component, OnInit, } from '@angular/core';
+import { Inject , ChangeDetectorRef, Component, OnInit, } from '@angular/core';
+import { I18NService } from '@core';
 import { STColumn, } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { interval, Subscription } from 'rxjs';
+
 import { ProductionLineKanbanData } from '../../work-order/models/production-line-kanban-data';
 import { ProductionLineKanbanService } from '../../work-order/services/production-line-kanban.service';
 import { ProductionLine } from '../models/production-line';
 import { ProductionLineService } from '../services/production-line.service';
-import { I18NService } from '@core';
-
 
 
 @Component({

@@ -33,7 +33,7 @@
         <div nz-row [nzGutter]="24">
             <div nz-col [nzSpan]="8">
               <nz-form-item>
-                <nz-form-label [nzSpan]="6">
+                <nz-form-label [nzSpan]="8">
                   {{ 'order.number' | i18n }}
                 </nz-form-label>
                 <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="orderNumberErrorTpl" [nzValidateStatus]="orderNumberValidateStatus"
@@ -68,8 +68,40 @@
                 </nz-form-control>
               </nz-form-item>
             </div>
-          </div>
-          <nz-card   nzTitle="{{ 'ORDER-CATEGORY-WAREHOUSE_TRANSFER_ORDER' | i18n}}" 
+        </div>
+        
+       
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="10">
+                  {{ 'shipment.stage.locationGroup' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback  >
+                    <nz-select [(ngModel)]="currentOrder!.stageLocationGroupId" (ngModelChange)="stageLocationGroupChange()">
+                        <nz-option *ngFor="let loocationGroup of avaiableLocationGroups" [nzValue]="loocationGroup.id" [nzLabel]="loocationGroup.description"></nz-option>
+                      </nz-select>
+
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="8">
+                  {{ 'shipment.stage.location' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback  >
+                    
+                        <nz-select [(ngModel)]="currentOrder!.stageLocationId">
+                            <nz-option *ngFor="let location of avaiableLocations" [nzValue]="location.id" [nzLabel]="location.name"></nz-option>
+                        </nz-select>
+
+                      
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+        </div>
+        <nz-card   nzTitle="{{ 'ORDER-CATEGORY-WAREHOUSE_TRANSFER_ORDER' | i18n}}" 
           *ngIf="currentOrder!.category === orderCategories.WAREHOUSE_TRANSFER_ORDER">
           
             <div nz-row [nzGutter]="24">

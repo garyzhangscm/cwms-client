@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
 import { WarehouseLocation } from '../models/warehouse-location';
 import { WarehouseService } from './warehouse.service';
 
@@ -12,7 +13,7 @@ import { WarehouseService } from './warehouse.service';
 export class LocationService {
   constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
-  getLocations(locationGroupTypes?: string, locationGroups?: string, name?: string): Observable<WarehouseLocation[]> {
+  getLocations(locationGroupTypes?: string, locationGroupIds?: string, name?: string, emptyReservedCodeOnly?: boolean): Observable<WarehouseLocation[]> {
     
     const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
 
@@ -20,17 +21,20 @@ export class LocationService {
     if (locationGroupTypes) {
       url = `${url}&locationGroupTypeIds=${locationGroupTypes}`;
     }
-    if (locationGroups) {
-      url = `${url}&locationGroupIds=${locationGroups}`;
+    if (locationGroupIds) {
+      url = `${url}&locationGroupIds=${locationGroupIds}`;
     }
     if (name) {
       url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name)}`;
+    }
+    if (emptyReservedCodeOnly !== undefined) {
+      url = `${url}&emptyReservedCodeOnly=${emptyReservedCodeOnly}`;
     }
     return this.http.get(url).pipe(map(res => res.data));
   }
 
   getLocation(id: number): Observable<WarehouseLocation> {
-    return this.http.get('layout/locations/' + id).pipe(map(res => res.data));
+    return this.http.get(`layout/locations/${  id}`).pipe(map(res => res.data));
   }
 
   addLocation(location: WarehouseLocation): Observable<WarehouseLocation> {
@@ -38,12 +42,12 @@ export class LocationService {
   }
 
   changeLocation(location: WarehouseLocation): Observable<WarehouseLocation> {
-    const url = 'layout/locations/' + location.id;
+    const url = `layout/locations/${  location.id}`;
     return this.http.post(url, location).pipe(map(res => res.data));
   }
 
   removeLocation(location: WarehouseLocation): Observable<WarehouseLocation> {
-    const url = 'layout/locations/' + location.id;
+    const url = `layout/locations/${  location.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
   removeLocations(locations: WarehouseLocation[]): Observable<WarehouseLocation[]> {

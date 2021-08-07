@@ -2,14 +2,20 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+import { NzCascaderOption } from 'ng-zorro-antd/cascader';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { UserService } from '../../auth/services/user.service';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { ItemService } from '../../inventory/services/item.service';
+import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
+import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
+import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
+import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
+import { LocationService } from '../../warehouse-layout/services/location.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { AllocationStrategyType } from '../models/allocation-strategy-type.enum';
 import { Order } from '../models/order';
@@ -35,7 +41,11 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   validInventoryStatuses: InventoryStatus[] = [];
   warehouses: Warehouse[] | undefined;
 
-  orderNumberValidateStatus = 'warning';
+  avaiableLocationGroups: LocationGroup[] = [];
+
+  avaiableLocations: WarehouseLocation[] = [];
+  orderNumberValidateStatus = 'warning'; 
+
 
   stepIndex = 0; 
   isSpinning = false;
@@ -50,7 +60,10 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     private userService: UserService,
     private itemService: ItemService,
     private router: Router,
-    private inventoryStatusService: InventoryStatusService) { 
+    private inventoryStatusService: InventoryStatusService, 
+    private locationGroupService: LocationGroupService, 
+    private locationGroupTypeService: LocationGroupTypeService, 
+    private locationService: LocationService) { 
 
     this.pageTitle = this.i18n.fanyi('menu.main.outbound.order-maintenance');
   }
@@ -74,8 +87,30 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     });
     this.loadAvailableInventoryStatus();
     this.loadWarehouses();
+    this.loadShippingStageLocationGroups();
   }
 
+  loadShippingStageLocationGroups(): void {
+
+    this.locationGroupTypeService.loadLocationGroupTypes(true).subscribe(
+      {
+        next: (shippingStageTypesRes) => {
+          let locationGroupTypes: number[] = [];
+          shippingStageTypesRes.forEach(shippingStageType => {
+            locationGroupTypes.push(shippingStageType.id);
+          })
+          this.locationGroupService.getLocationGroups(locationGroupTypes, []).subscribe(
+            {
+              next: (locationGroupsRes) => {
+                this.avaiableLocationGroups = locationGroupsRes;
+              }
+            }
+          )
+        } , 
+        
+      }
+    )
+  }
   
   loadAvailableInventoryStatus(): void {
     if (this.validInventoryStatuses.length === 0) {
@@ -282,4 +317,17 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     this.currentOrder!.orderLines = [...this.currentOrder!.orderLines];
  
   }
+
+  stageLocationGroupChange(): void {
+      console.log( `location group id is changed to ${this.currentOrder!.stageLocationGroupId}`) ;
+
+      let locationGroupIds = this.avaiableLocationGroups.filter(
+        locationGroup => locationGroup.id === this.currentOrder!.stageLocationGroupId
+      ).map(locationGroup => locationGroup.id).join(",");
+      this.locationService.getLocations(undefined, locationGroupIds, undefined, true).subscribe(
+        {
+          next: (locationRes) => this.avaiableLocations = locationRes
+        }
+      )
+  } 
 }

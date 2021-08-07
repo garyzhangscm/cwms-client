@@ -55,6 +55,16 @@
       </div>
     </div>
   </form>
+  
+  <div class="search-result-list">
+    <div class="mb-md">
+      <nz-checkbox-group [(ngModel)]="customColumns" name="customColumns"
+        (ngModelChange)="st.resetColumns({ emitReload: true })"></nz-checkbox-group>
+    </div>
+    <st #st [data]="items" [columns]="columns">
+    </st>
+  
+  </div>
 
   <!-- Table to Display the result  -->
   <div class="search-result-list">

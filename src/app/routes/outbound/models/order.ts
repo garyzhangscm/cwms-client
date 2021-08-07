@@ -76,4 +76,8 @@ export interface Order {
   isReadyForStaging?: boolean;
   isReadyForLoading?: boolean;
   isReadyForDispatching?: boolean;
+
+  stageLocationGroupId?: number;
+  stageLocationId?: number;
+
 }

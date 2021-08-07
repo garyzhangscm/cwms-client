@@ -3,6 +3,7 @@ import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
+import { STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -291,8 +292,7 @@ export class InventoryItemComponent implements OnInit {
     this.listOfDisplayItems = [];
   }
   search(): void {
-    this.isSpinning = true;
-    console.log(`Start to search with item ${this.searchForm.value.itemName}`);
+    this.isSpinning = true; 
     this.itemService
       .getItems(this.searchForm.value.itemName, this.searchForm.value.taggedClients, this.searchForm.value.taggedItemFamilies)
       .subscribe(
@@ -423,5 +423,44 @@ export class InventoryItemComponent implements OnInit {
         this.imageUploading = false;
         break;
     }
+  }
+
+
+  columns: STColumn[] = [
+    { title: this.i18n.fanyi("thumbnail"), type: 'img',index: 'thumbnailUrl', iif: () => this.isChoose('thumbnail'), },
+    { title: this.i18n.fanyi("name"), index: 'name', iif: () => this.isChoose('name'), },
+    { title: this.i18n.fanyi("description"), index: 'description', iif: () => this.isChoose('description'), },
+    { title: this.i18n.fanyi("client"), index: 'client.name', iif: () => this.isChoose('client'), },
+    { title: this.i18n.fanyi("item-family"), index: 'itemFamily.name', iif: () => this.isChoose('item-family'), },
+    { title: this.i18n.fanyi("unit-cost"), index: 'unitCost', iif: () => this.isChoose('unit-cost'), },
+    { title: this.i18n.fanyi("allowAllocationByLPN"), index: 'allowAllocationByLPN', iif: () => this.isChoose('allowAllocationByLPN'), },
+    { title: this.i18n.fanyi("allocationRoundUpStrategyType"), index: 'allocationRoundUpStrategyType', iif: () => this.isChoose('allocationRoundUpStrategyType'), },
+    { title: this.i18n.fanyi("allocationRoundUpStrategyValue"), index: 'allocationRoundUpStrategyValue', iif: () => this.isChoose('allocationRoundUpStrategyValue'), },
+    { title: this.i18n.fanyi("trackingVolumeFlag"), index: 'trackingVolumeFlag', iif: () => this.isChoose('trackingVolumeFlag'), },
+    { title: this.i18n.fanyi("trackingLotNumberFlag"), index: 'trackingLotNumberFlag', iif: () => this.isChoose('trackingLotNumberFlag'), },
+    { title: this.i18n.fanyi("trackingManufactureDateFlag"), index: 'trackingManufactureDateFlag', iif: () => this.isChoose('trackingManufactureDateFlag'), },
+    { title: this.i18n.fanyi("shelfLifeDays"), index: 'shelfLifeDays', iif: () => this.isChoose('shelfLifeDays'), },
+    { title: this.i18n.fanyi("trackingExpirationDateFlag"), index: 'trackingExpirationDateFlag', iif: () => this.isChoose('trackingExpirationDateFlag'), },
+  ];
+  customColumns = [
+
+    { label: this.i18n.fanyi("thumbnail"), value: 'thumbnail', checked: true },
+    { label: this.i18n.fanyi("name"), value: 'name', checked: true },
+    { label: this.i18n.fanyi("description"), value: 'description', checked: true },
+    { label: this.i18n.fanyi("client"), value: 'client', checked: true },
+    { label: this.i18n.fanyi("item-family"), value: 'item-family', checked: true },
+    { label: this.i18n.fanyi("unit-cost"), value: 'unit-cost', checked: true },
+    { label: this.i18n.fanyi("allowAllocationByLPN"), value: 'allowAllocationByLPN', checked: true },
+    { label: this.i18n.fanyi("allocationRoundUpStrategyType"), value: 'allocationRoundUpStrategyType', checked: true },
+    { label: this.i18n.fanyi("allocationRoundUpStrategyValue"), value: 'allocationRoundUpStrategyValue', checked: true },
+    { label: this.i18n.fanyi("trackingVolumeFlag"), value: 'trackingVolumeFlag', checked: true },
+    { label: this.i18n.fanyi("trackingLotNumberFlag"), value: 'trackingLotNumberFlag', checked: true },
+    { label: this.i18n.fanyi("trackingManufactureDateFlag"), value: 'trackingManufactureDateFlag', checked: true },
+    { label: this.i18n.fanyi("shelfLifeDays"), value: 'shelfLifeDays', checked: true },
+    { label: this.i18n.fanyi("trackingExpirationDateFlag"), value: 'trackingExpirationDateFlag', checked: true },
+  ];
+
+  isChoose(key: string): boolean {
+    return !!this.customColumns.find(w => w.value === key && w.checked);
   }
 }

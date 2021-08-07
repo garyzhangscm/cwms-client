@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
-import { LocationGroup } from '../models/location-group';
-import { Observable } from 'rxjs';
-import { _HttpClient } from '@delon/theme';
-import { map } from 'rxjs/operators';
-import { WarehouseService } from './warehouse.service';
 import { HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { _HttpClient } from '@delon/theme';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+import { LocationGroup } from '../models/location-group';
+import { WarehouseService } from './warehouse.service';
 
 @Injectable({
   providedIn: 'root',
@@ -41,12 +42,12 @@ export class LocationGroupService {
   }
 
   changeLocationGroup(locationGroup: LocationGroup): Observable<LocationGroup> {
-    const url = 'layout/locationgroups/' + locationGroup.id;
+    const url = `layout/locationgroups/${  locationGroup.id}`;
     return this.http.put(url, locationGroup).pipe(map(res => res.data));
   }
 
   removeLocationGroup(locationGroup: LocationGroup): Observable<LocationGroup> {
-    const url = 'layout/locationgroups/' + locationGroup.id;
+    const url = `layout/locationgroups/${  locationGroup.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 
