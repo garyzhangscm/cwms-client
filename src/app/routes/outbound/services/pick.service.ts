@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
 import { Inventory } from '../../inventory/models/inventory';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { WorkOrder } from '../../work-order/models/work-order';

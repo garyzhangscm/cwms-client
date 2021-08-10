@@ -19,6 +19,7 @@
   </nz-breadcrumb>
 </ng-template>
 
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 <!-- Accept scan in list id / carton id / etc -->
 <nz-card *ngIf="type === ''" nzSize="small">
   <form nz-form [formGroup]="queryForm" (ngSubmit)="searchPicks()">
@@ -242,6 +243,7 @@
   </nz-table>
 </div>
 
+</nz-spin>
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start">
     <button nz-button nzDanger (click)="cancelSelectedPicks()" [disabled]="allPicksFullyConfirmed">

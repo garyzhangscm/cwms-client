@@ -2,7 +2,9 @@ import { Carrier } from '../../common/models/carrier';
 import { CarrierServiceLevel } from '../../common/models/carrier-service-level';
 import { Client } from '../../common/models/client';
 import { Customer } from '../../common/models/customer';
+import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
+import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { OrderCategory } from './order-category';
 import { OrderLine } from './order-line';
 import { OrderStatus } from './order-status.enum';
@@ -78,6 +80,8 @@ export interface Order {
   isReadyForDispatching?: boolean;
 
   stageLocationGroupId?: number;
+  stageLocationGroup?: LocationGroup;
   stageLocationId?: number;
+  stageLocation?: WarehouseLocation;
 
 }

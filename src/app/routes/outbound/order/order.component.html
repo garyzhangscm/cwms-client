@@ -27,6 +27,316 @@
 
   <!-- Table to Display the result  -->
 
+  <div class="search-result-list">
+    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+      <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+    </div>
+    
+    <st #st [data]="listOfAllOrders"  [columns]="columns" [expand]="expand" expandRowByClick expandAccordion
+    (change)="orderTableChanged($event)">
+      <!--   order details  -->
+      <ng-template #expand let-item let-index="index" let-column="column">
+        
+        <nz-tabset [nzSelectedIndex]="tabSelectedIndex">
+          <nz-tab nzTitle=" {{ 'order.line' | i18n }}">
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="item.orderLines" nzSize="middle"
+              [nzShowPagination]="false" #orderLineTable>
+              <thead>
+                <th>
+                  {{ 'order.line.number' | i18n }}
+                </th>
+                <th>
+                  {{ 'item' | i18n }}
+                </th>
+                <th>
+                  {{ 'order.line.expectedQuantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'order.line.openQuantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'order.line.inprocessQuantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'production-plan.line.inprocessQuantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'production-plan.line.producedQuantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'order.line.shippedQuantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'inventory.status' | i18n }}
+                </th>
+                <th>
+                  {{ 'order.line.allocationStrategyType' | i18n }}
+                </th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let orderLine of orderLineTable.data">
+                  <td>{{ orderLine.number }}</td>
+                  <td>{{ orderLine.item?.name }}</td>
+                  <td>{{ orderLine.expectedQuantity }}</td>
+                  <td>{{ orderLine.openQuantity }}</td>
+                  <td>{{ orderLine.inprocessQuantity }}</td>
+                  <td>{{ orderLine.productionPlanInprocessQuantity }}</td>
+                  <td>{{ orderLine.productionPlanProducedQuantity }}</td>
+                  <td>{{ orderLine.shippedQuantity }}</td>
+                  <td>{{ 'INVENTORY-STATUS-' + orderLine.inventoryStatus?.name | i18n}}</td>
+                  <td>{{ 'ALLOCATION-STRATEGY-TYPE-' + orderLine.allocationStrategyType | i18n}}</td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </nz-tab>
+
+          <nz-tab nzTitle=" {{ 'pick' | i18n }}">
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="true"
+              [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[item.id!]" #pickTable>
+              <thead>
+                <th>
+                  {{ 'pick.number' | i18n }}
+                </th>
+                <th>
+                  {{ 'list-pick.number' | i18n }}
+                </th>
+                <th>
+                  {{ 'cartonization.number' | i18n }}
+                </th>
+                <th>
+                  {{ 'sourceLocation' | i18n }}
+                </th>
+                <th>
+                  {{ 'destinationLocation' | i18n }}
+                </th>
+                <th>
+                  {{ 'item' | i18n }}
+                </th>
+                <th>
+                  {{ 'item.description' | i18n }}
+                </th>
+                <th>
+                  {{ 'pick.quantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'pick.pickedQuantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'pick.allocated-lpn' | i18n }}
+                </th>
+                <th>
+                  {{ 'action' | i18n }}
+                </th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let pick of pickTable.data">
+                  <td>{{ pick.number }}</td>
+                  <td><a routerLink="/outbound/pick-list" routerLinkActive="active"
+                      [queryParams]="{number : pick.pickListNumber}">{{ pick.pickListNumber }}</a></td>
+                  <td><a routerLink="/outbound/cartonization" routerLinkActive="active"
+                      [queryParams]="{number : pick.cartonizationNumber}">{{ pick.cartonizationNumber }}</a></td>
+                  <td>{{ pick.sourceLocation?.name }}</td>
+                  <td>{{ pick.destinationLocation?.name }}</td>
+                  <td>{{ pick.item?.name }}</td>
+                  <td>{{ pick.item?.description }}</td>
+                  <td>{{ pick.quantity }}</td>
+                  <td>{{ pick.pickedQuantity }}</td>
+                  <td>{{ pick.lpn }}</td>
+                  <td>
+                    <button nz-button (click)="cancelPick(item, pick)"
+                      [disabled]="pick.quantity === pick.pickedQuantity || item.status === orderStatusEnum.COMPLETE">
+                      {{ 'cancel' | i18n }}
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+
+            <ng-template #pickTableFoot>
+              <div nz-row nzType="flex" nzJustify="start">
+                <cwms-common-print-button [printingInProcess]="mapOfAllocationInProcessId[item.id!]"
+                  [printButtonDisabled]="!isOrderReadyForComplete(item)" (print)="printPickSheets(item, $event)"
+                  (preview)="previewReport(item)">
+                </cwms-common-print-button>
+                <button nz-button (click)="confirmPicks(item)"
+                  [disabled]="mapOfPicks[item.id!]?.length === 0 || item.status === orderStatusEnum.COMPLETE">
+                  {{ 'confirm' | i18n }}
+                </button>
+              </div>
+            </ng-template>
+          </nz-tab>
+
+          <nz-tab nzTitle=" {{ 'picked-inventory' | i18n }}">
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="true"
+              [nzData]="mapOfPickedInventory[item.id!]" #pickedInventoryTable>
+              <thead>
+                <th>
+                  {{ 'pick.number' | i18n }}
+                </th>
+                <th>
+                  {{ 'location' | i18n }}
+                </th>
+                <th>
+                  {{ 'lpn' | i18n }}
+                </th>
+                <th>
+                  {{ 'item' | i18n }}
+                </th>
+                <th>
+                  {{ 'item.description' | i18n }}
+                </th>
+                <th>
+                  {{ 'item.package-type' | i18n }}
+                </th>
+                <th>
+                  {{ 'quantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'inventory.status' | i18n }}
+                </th>
+                <th>
+                  {{ 'action' | i18n }}
+                </th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let inventory of pickedInventoryTable.data">
+                  <td>{{ inventory.pick?.number }}</td>
+                  <td>{{ inventory.location?.name }}</td>
+                  <td>{{ inventory.lpn }}</td>
+                  <td>{{ inventory.item?.name }}</td>
+                  <td>{{ inventory.item?.description }}</td>
+                  <td>{{ inventory.itemPackageType?.name }}</td>
+                  <td>{{ inventory.quantity }}</td>
+                  <td>{{ inventory.inventoryStatus?.name }}</td>
+                  <td>
+                    <button nz-button (click)="openUnpickModal(item, inventory, tplUnpickModalTitle, tplUnpickModalContent)"
+                      [disabled]="item.status === orderStatusEnum.COMPLETE">
+                      {{ 'unpick' | i18n }}
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </nz-tab>
+
+          <nz-tab nzTitle=" {{ 'short-allocation' | i18n }}">
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="mapOfShortAllocations[item.id!]" nzSize="middle"
+              [nzShowPagination]="true" #shortAllocationTable>
+              <thead>
+                <th>
+                  {{ 'item' | i18n }}
+                </th>
+                <th>
+                  {{ 'item.description' | i18n }}
+                </th>
+                <th>
+                  {{ 'short-allocation.quantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'short-allocation.openQuantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'short-allocation.inprocessQuantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'short-allocation.deliveredQuantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'short-allocation.status' | i18n }}
+                </th>
+                <th>
+                  {{ 'short-allocation.allocationCount' | i18n }}
+                </th>
+                <th>
+                  {{ 'short-allocation.lastAllocationDatetime' | i18n }}
+                </th>
+                <th>
+                  {{ 'action' | i18n }}
+                </th>
+              </thead>
+              <tbody *ngFor="let shortAllocation of shortAllocationTable.data">
+                <tr *ngIf="shortAllocation.status !== shortAllocationStatus.CANCELLED">
+
+                  <td>{{ shortAllocation.item?.name }}</td>
+                  <td>{{ shortAllocation.item?.description }}</td>
+                  <td>{{ shortAllocation.quantity }}</td>
+                  <td>{{ shortAllocation.openQuantity }}</td>
+                  <td><a routerLink="/outbound/pick" routerLinkActive="active"
+                      [queryParams]="{shortAllocationId : shortAllocation.id}">
+                      {{ shortAllocation.inprocessQuantity }}
+                    </a></td>
+                  <td>{{ shortAllocation.deliveredQuantity }}</td>
+                  <td>{{ 'SHORT-ALLOCATION-STATUS-' +shortAllocation.status | i18n}}</td>
+                  <td>{{ shortAllocation.allocationCount }}</td>
+
+                  <td>
+                    <span *ngIf="shortAllocation.lastAllocationDatetime">
+                      {{ shortAllocation.lastAllocationDatetime[1] }}/{{ shortAllocation.lastAllocationDatetime[2] }}/{{
+                      shortAllocation.lastAllocationDatetime[0] }}
+                      {{ shortAllocation.lastAllocationDatetime[3] }}:{{ shortAllocation.lastAllocationDatetime[4] }}:{{
+                      shortAllocation.lastAllocationDatetime[5] }}
+                    </span>
+                  </td>
+                  <td>
+                    <button nz-button (click)="cancelShortAllocation(item,shortAllocation)"
+                      [disabled]="shortAllocation.status !== shortAllocationStatus.PENDING || item.status === orderStatusEnum.COMPLETE">
+                      {{ 'cancel' | i18n }}
+                    </button>
+
+                    <nz-divider nzType="vertical"></nz-divider>
+                    <button nz-button (click)="allocateShortAllocation(item, shortAllocation)"
+                      [disabled]="!isShortAllocationAllocatable(shortAllocation) || item.status === orderStatusEnum.COMPLETE">
+                      {{ 'allocate' | i18n }}
+                    </button>
+
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </nz-tab>
+        </nz-tabset>
+      </ng-template>
+
+
+      <!--   action colummn  --> 
+      <ng-template st-row="actionColumnTitle" type="title" let-c>
+        {{ 'action' | i18n }}
+      </ng-template>
+      <ng-template st-row="actionColumn" let-item let-index="index"> 
+        
+        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+          {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu> 
+
+            <li nz-menu-item *ngIf="isOrderAllocatable(item)">
+              <a  (click)="allocateOrder(item)">{{ 'allocate' | i18n }}</a>
+            </li>
+            <li nz-menu-item *ngIf="item.totalInprocessQuantity === 0">
+              <a  (click)="openReassignStageLocationModel(item, tplOrderReassignShippingStageLocationModalTitle, tplOrderReassignShippingStageLocationModalContent)">
+                {{ 'order.assign-ship-stage-location' | i18n }}</a>
+            </li>
+
+            <li nz-menu-item *ngIf="isOrderReadyForComplete(item)">
+              <a  (click)="completeOrder(item)">{{ 'complete' | i18n }}</a>
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+
+      </ng-template>
+    </st>
+    
+  <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;"> 
+      <button nz-button nzType="primary" routerLink="/outbound/order-maintenance" routerLinkActive="active">
+        {{ 'add' | i18n }}
+      </button>
+    </div>
+  </div>
+<!--    
+
 
 
   <div class="search-result-list">
@@ -147,49 +457,38 @@
             <td>{{ data.totalItemCount }}</td>
             <td>{{ data.totalExpectedQuantity }}</td>
             <td>{{ data.totalOpenQuantity }}</td>
+
+            <td>{{ data.stageLocationGroup?.name }}</td>
+            <td>{{ data.stageLocation?.name }}</td>
+
             <td>{{ data.totalPendingAllocationQuantity }}</td>
             <td>{{ data.totalOpenPickQuantity }}</td>
             <td>{{ data.totalPickedQuantity }}</td>
             <td>{{ data.totalShippedQuantity }}</td>
             <td>
-              <button nz-button nzType="primary" (click)="allocateOrder(data)"
-                [nzLoading]="mapOfAllocationInProcessId[data.id!]" [disabled]="!isOrderAllocatable(data)">
-                {{ 'allocate' | i18n }}
-              </button>
 
-              <nz-divider nzType="vertical"></nz-divider>
+              
+            <td>
+              <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+                {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu> 
 
-              <button nz-button nzType="primary" (click)="completeOrder(data)"
-                [nzLoading]="mapOfAllocationInProcessId[data.id!]" [disabled]="!isOrderReadyForComplete(data)">
-                {{ 'complete' | i18n }}
-              </button>
-              <!--
+                  <li nz-menu-item *ngIf="isOrderAllocatable(data)">
+                    <a  (click)="allocateOrder(data)">{{ 'allocate' | i18n }}</a>
+                  </li>
+                  <li nz-menu-item *ngIf="data.totalInprocessQuantity === 0">
+                    <a  (click)="openReassignStageLocationModel(data, tplOrderReassignShippingStageLocationModalTitle, tplOrderReassignShippingStageLocationModalContent)">
+                      {{ 'order.assign-ship-stage-location' | i18n }}</a>
+                  </li>
 
-            <nz-divider nzType="vertical"></nz-divider>
-            <button nz-button nz-dropdown [nzDropdownMenu]="shippingOrderTpl"
-              [nzDisabled]="data.totalInprocessQuantity == 0">
-              {{ 'shipping' | i18n }}
-              <i nz-icon nzType="down"></i>
-            </button>
-            <nz-dropdown-menu #shippingOrderTpl="nzDropdownMenu">
-              <ul nz-menu>
-                <li nz-menu-item [nzDisabled]="!isReadyForStaging(data)">
-                  <a (click)="stageOrder(data)">{{ 'order.stage' | i18n }}</a>
-                </li>
-                <li nz-menu-item [nzDisabled]="!isReadyForLoading(data)">
-                  <a (click)="loadTrailer(data)">{{ 'order.load-trailer' | i18n }}</a>
-                </li>
-                <li nz-menu-item [nzDisabled]="!isReadyForDispatching(data)">
-                  <a (click)="dispatchTrailer(data)">{{
-                    'order.dispatch-trailer' | i18n
-                  }}</a>
-                </li>
-              </ul>
-            </nz-dropdown-menu>
+                  <li nz-menu-item *ngIf="isOrderReadyForComplete(data)">
+                    <a  (click)="completeOrder(data)">{{ 'complete' | i18n }}</a>
+                  </li>
+                </ul>
+              </nz-dropdown-menu>
 
-
-            -->
-            </td>
+            </td>  
           </tr>
           <tr [nzExpand]="expandSet.has(data.id!)" class="inner-table">
 
@@ -467,6 +766,8 @@
     </div>
   </div>
 
+-->
+
 </nz-spin>
 
 
@@ -643,6 +944,72 @@
 
             <input nz-input formControlName="physicalCopyCount" />
 
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+
+
+
+<!-- Modal for reassign ship stage location-->
+<ng-template #tplOrderReassignShippingStageLocationModalTitle>
+  <span>{{ 'order.assign-ship-stage-location' | i18n}}</span>
+</ng-template>
+<ng-template #tplOrderReassignShippingStageLocationModalContent>
+  <form nz-form [formGroup]="orderReassignShippingStageLocationForm">
+    
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="12">
+            {{ 'shipment.stage.locationGroup' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback  >
+            <input nz-input formControlName="currentStageLocationGroup" /> 
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="12">
+            {{ 'shipment.stage.location' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback  >
+            <input nz-input formControlName="currentStageLocation"> 
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="12">
+            {{ 'shipment.stage.locationGroup' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback  >
+              <nz-select (ngModelChange)="stageLocationGroupChange()" formControlName="stageLocationGroupId" >
+                  <nz-option *ngFor="let loocationGroup of avaiableLocationGroups" [nzValue]="loocationGroup.id" [nzLabel]="loocationGroup.description"></nz-option>
+                </nz-select>
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="12">
+            {{ 'shipment.stage.location' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback  >
+              
+                  <nz-select formControlName="stageLocationId" >
+                      <nz-option *ngFor="let location of avaiableLocations" [nzValue]="location.id" [nzLabel]="location.name"></nz-option>
+                  </nz-select>
+
+                
           </nz-form-control>
         </nz-form-item>
       </div>

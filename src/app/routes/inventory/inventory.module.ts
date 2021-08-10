@@ -1,7 +1,12 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
-import { DirectivesModule } from '../directives/directives.module';
+import { NzImageModule } from 'ng-zorro-antd/image';
+import { NzStepsModule } from 'ng-zorro-antd/steps';
+
+import { CommonModule } from '../common/common.module';
+import { DirectivesModule } from '../directives/directives.module'; 
+import { UtilModule } from '../util/util.module';
 import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module';
 import { InventoryAuditCountConfirmComponent } from './audit-count-confirm/audit-count-confirm.component';
 import { InventoryAuditCountResultComponent } from './audit-count-result/audit-count-result.component';
@@ -17,10 +22,13 @@ import { InventoryInventoryAdjustmentThresholdMaintenanceComponent } from './inv
 import { InventoryInventoryAdjustmentThresholdComponent } from './inventory-adjustment-threshold/inventory-adjustment-threshold.component';
 import { InventoryInventoryAttributeChangeConfirmComponent } from './inventory-attribute-change-confirm/inventory-attribute-change-confirm.component';
 import { InventoryInventoryAttributeChangeComponent } from './inventory-attribute-change/inventory-attribute-change.component';
+import { InventoryInventoryConfigurationComponent } from './inventory-configuration/inventory-configuration.component';
 import { InventoryInventoryMoveComponent } from './inventory-move/inventory-move.component';
 import { InventoryInventoryQuantityChangeConfirmComponent } from './inventory-quantity-change-confirm/inventory-quantity-change-confirm.component';
 import { InventoryInventoryQuantityChangeComponent } from './inventory-quantity-change/inventory-quantity-change.component';
 import { InventoryRoutingModule } from './inventory-routing.module';
+import { InventoryInventorySnapshotConfigurationComponent } from './inventory-snapshot-configuration/inventory-snapshot-configuration.component';
+import { InventoryInventorySnapshotComponent } from './inventory-snapshot/inventory-snapshot.component';
 import { InventoryInventoryComponent } from './inventory/inventory.component';
 import { InventoryItemFamilyMaintenanceConfirmComponent } from './item-family-maintenance-confirm/item-family-maintenance-confirm.component';
 import { InventoryItemFamilyMaintenanceComponent } from './item-family-maintenance/item-family-maintenance.component';
@@ -33,15 +41,9 @@ import { InventoryMovementPathMaintenanceComponent } from './movement-path-maint
 import { InventoryMovementPathComponent } from './movement-path/movement-path.component';
 import { InventoryReplenishmentComponent } from './replenishment/replenishment.component';
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
-import { NzImageModule } from 'ng-zorro-antd/image';
-import { CommonModule } from '../common/common.module';
-import { InventoryInventoryConfigurationComponent } from './inventory-configuration/inventory-configuration.component';
-import { InventoryInventorySnapshotComponent } from './inventory-snapshot/inventory-snapshot.component';
-import { InventoryInventorySnapshotConfigurationComponent } from './inventory-snapshot-configuration/inventory-snapshot-configuration.component';
 
-import { NzStepsModule } from 'ng-zorro-antd/steps';
 
-const COMPONENTS: Type<void>[] = [
+const COMPONENTS: Array<Type<void>> = [
   InventoryInventoryComponent,
   InventoryCycleCountComponent,
   InventoryCountConfigComponent,
@@ -74,7 +76,7 @@ const COMPONENTS: Type<void>[] = [
   InventoryInventoryConfigurationComponent,
   InventoryInventorySnapshotComponent,
   InventoryInventorySnapshotConfigurationComponent];
-const COMPONENTS_NOROUNT: Type<void>[] = [];
+const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
   imports: [
@@ -85,7 +87,8 @@ const COMPONENTS_NOROUNT: Type<void>[] = [];
     WarehouseLayoutModule,
     NzImageModule,
     CommonModule,
-    NzStepsModule
+    NzStepsModule, 
+    UtilModule
   ],
   declarations: [
     ...COMPONENTS,

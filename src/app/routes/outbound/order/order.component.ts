@@ -1,8 +1,9 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
+import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
@@ -17,6 +18,11 @@ import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { ReportType } from '../../report/models/report-type.enum';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
+import { LocationGroup } from '../../warehouse-layout/models/location-group';
+import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
+import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
+import { LocationService } from '../../warehouse-layout/services/location.service';
 import { Order } from '../models/order';
 import { OrderStatus } from '../models/order-status.enum';
 import { PickWork } from '../models/pick-work';
@@ -132,6 +138,30 @@ export class OutboundOrderComponent implements OnInit {
       rowspan: 2,
       colspan: 1,
     }, {
+      name: 'shipment.stage.locationGroup',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Order, b: Order) => this.utilService.compareNullableObjField(a.stageLocationGroup, b.stageLocationGroup, "name"),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 2,
+      colspan: 1,
+    }, {
+      name: 'shipment.stage.location',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Order, b: Order) => this.utilService.compareNullableObjField(a.stageLocation, b.stageLocation, "name"),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 2,
+      colspan: 1,
+    }, {
       name: 'order.totalInprocessQuantity',
       showSort: true,
       sortOrder: null,
@@ -171,6 +201,10 @@ export class OutboundOrderComponent implements OnInit {
   checked = false;
   indeterminate = false;
 
+  
+  orderReassignShippingStageLocationModal!: NzModalRef;
+  orderReassignShippingStageLocationForm!: FormGroup;
+
   constructor(
     private fb: FormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -185,6 +219,9 @@ export class OutboundOrderComponent implements OnInit {
     private inventoryService: InventoryService,
     private utilService: UtilService,
     private printingService: PrintingService,
+    private locationGroupTypeService: LocationGroupTypeService, 
+    private locationGroupService: LocationGroupService, 
+    private locationService: LocationService
   ) { }
 
   printerModal!: NzModalRef;
@@ -223,6 +260,11 @@ export class OutboundOrderComponent implements OnInit {
 
   isSpinning = false;
 
+  
+  avaiableLocationGroups: LocationGroup[] = [];
+
+  avaiableLocations: WarehouseLocation[] = [];
+
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllOrders = [];
@@ -231,7 +273,7 @@ export class OutboundOrderComponent implements OnInit {
   }
 
   search(expandedOrderId?: number, tabSelectedIndex?: number): void {
-    this.searching = true;
+    this.isSpinning = true;
     this.searchResult = '';
     this.orderService.getOrders(this.searchForm.controls.number.value).subscribe(
       orderRes => {
@@ -247,7 +289,7 @@ export class OutboundOrderComponent implements OnInit {
 
         this.collapseAllRecord(expandedOrderId);
 
-        this.searching = false;
+        this.isSpinning = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
           rowCount: orderRes.length,
@@ -258,7 +300,7 @@ export class OutboundOrderComponent implements OnInit {
         }
       },
       () => {
-        this.searching = false;
+        this.isSpinning = false;
         this.searchResult = '';
       },
     );
@@ -416,11 +458,11 @@ export class OutboundOrderComponent implements OnInit {
   }
   showOrderDetails(order: Order): void {
     // When we expand the details for the order, load the picks and short allocation from the server
-    if (this.expandSet.has(order.id!)) {
+    // if (this.expandSet.has(order.id!)) {
       this.showPicks(order);
       this.showShortAllocations(order);
       this.showPickedInventory(order);
-    }
+    // }
   }
 
   showAllOrderDetails(): void {
@@ -594,5 +636,163 @@ export class OutboundOrderComponent implements OnInit {
       this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
 
     });
+  }
+ 
+  
+  stageLocationGroupChange(): void {
+    console.log( `location group id is changed to ${this.orderReassignShippingStageLocationForm.controls.stageLocationGroupId.value}`) ;
+
+    let locationGroupIds = this.avaiableLocationGroups.filter(
+      locationGroup => locationGroup.id === +this.orderReassignShippingStageLocationForm.controls.stageLocationGroupId.value
+    ).map(locationGroup => locationGroup.id).join(",");
+    this.locationService.getLocations(undefined, locationGroupIds, undefined, true).subscribe(
+      {
+        next: (locationRes) => this.avaiableLocations = locationRes
+      }
+    )
+} 
+  
+  openReassignStageLocationModel(
+    order: Order,
+    tplOrderReassignShippingStageLocationModalTitle: TemplateRef<{}>,
+    tplOrderReassignShippingStageLocationModalContent: TemplateRef<{}>,
+  ): void { 
+    this.loadShippingStageLocationGroups();
+    this.orderReassignShippingStageLocationForm = this.fb.group({
+      currentStageLocationGroup: new FormControl({ value: order.stageLocationGroup?.description, disabled: true}),
+      currentStageLocation: new FormControl({ value:  order.stageLocation?.name, disabled: true}),
+      stageLocationGroupId: new FormControl({ value: order.stageLocationGroupId }),
+      stageLocationId: new FormControl({ value:  order.stageLocationGroupId }),
+    });
+
+    // Load the location
+    this.orderReassignShippingStageLocationModal = this.modalService.create({
+      nzTitle: tplOrderReassignShippingStageLocationModalTitle,
+      nzContent: tplOrderReassignShippingStageLocationModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.orderReassignShippingStageLocationModal.destroy();
+        
+      },
+      nzOnOk: () => {
+        this.isSpinning = true;
+        this.orderService.reassignShippingStageLocation(
+          order,
+          this.orderReassignShippingStageLocationForm.controls.stageLocationGroupId.value,
+          this.orderReassignShippingStageLocationForm.controls.stageLocationId.value,
+        ).subscribe({
+          next: (orderRes) => {
+            
+            this.messageService.success(this.i18n.fanyi('message.action.success')); 
+            this.search();
+            this.isSpinning = false;
+          }, 
+          error: () => {this.isSpinning = false}
+        });
+      },
+
+      nzWidth: 1000,
+    });
+  }
+
+  
+  loadShippingStageLocationGroups(): void {
+
+    this.locationGroupTypeService.loadLocationGroupTypes(true).subscribe(
+      {
+        next: (shippingStageTypesRes) => {
+          let locationGroupTypes: number[] = [];
+          shippingStageTypesRes.forEach(shippingStageType => {
+            locationGroupTypes.push(shippingStageType.id);
+          })
+          this.locationGroupService.getLocationGroups(locationGroupTypes, []).subscribe(
+            {
+              next: (locationGroupsRes) => {
+                this.avaiableLocationGroups = locationGroupsRes;
+              }
+            }
+          )
+        } , 
+        
+      }
+    )
+  } 
+
+
+  @ViewChild('st', { static: true })
+  st!: STComponent;
+  columns: STColumn[] = [
+    { title: this.i18n.fanyi("order.number"), index: 'number', iif: () => this.isChoose('number'), },
+    { title: this.i18n.fanyi("order.category"), 
+      index: 'category', 
+      format: (item, _col, index) => this.i18n.fanyi(`ORDER-CATEGORY-${ item.category}` ), 
+      
+      iif: () => this.isChoose('category'), },
+    { title: this.i18n.fanyi("status"), index: 'status', iif: () => this.isChoose('status'), },
+    { title: this.i18n.fanyi("shipToCustomer"), index: 'shipToCustomer?.name', iif: () => this.isChoose('shipToCustomer'), },
+    { title: this.i18n.fanyi("order.billToCustomer"), index: 'billToCustomer?.name', iif: () => this.isChoose('billToCustomer'), },
+    { title: this.i18n.fanyi("order.totalItemCount"), index: 'totalItemCount', iif: () => this.isChoose('totalItemCount'), },
+    { title: this.i18n.fanyi("order.totalOrderQuantity"), index: 'totalExpectedQuantity', iif: () => this.isChoose('totalExpectedQuantity'), },
+    { title: this.i18n.fanyi("order.totalOpenQuantity"), index: 'totalOpenQuantity', iif: () => this.isChoose('totalOpenQuantity'), },
+    { title: this.i18n.fanyi("shipment.stage.locationGroup"), index: 'stageLocationGroup.description', iif: () => this.isChoose('stageLocationGroup'), },
+    { title: this.i18n.fanyi("shipment.stage.location"), index: 'stageLocation.name', iif: () => this.isChoose('stageLocation'), },    
+    { title: this.i18n.fanyi("order.totalInprocessQuantity"), index: 'totalInprocessQuantity', iif: () => this.isChoose('totalInprocessQuantity'), },
+    {
+      title: this.i18n.fanyi('order.totalInprocessQuantity'),
+      iif: () => this.isChoose('totalInprocessQuantity'),
+      children: [
+        { title: this.i18n.fanyi("order.totalPendingAllocationQuantity"), index: 'totalPendingAllocationQuantity', iif: () => this.isChoose('totalPendingAllocationQuantity'), }, 
+        { title: this.i18n.fanyi("order.totalOpenPickQuantity"), index: 'totalOpenPickQuantity', iif: () => this.isChoose('totalOpenPickQuantity'), }, 
+        { title: this.i18n.fanyi("order.totalPickedQuantity"), index: 'totalPickedQuantity', iif: () => this.isChoose('totalPickedQuantity'), },    
+      ],
+    },
+    { title: this.i18n.fanyi("order.totalShippedQuantity"), index: 'totalShippedQuantity', iif: () => this.isChoose('totalShippedQuantity'), },
+    { title: this.i18n.fanyi("action"), index: 'totalShippedQuantity', iif: () => this.isChoose('totalShippedQuantity'), },
+    
+    {
+      title: 'action',
+      renderTitle: 'actionColumnTitle',
+      render: 'actionColumn',
+    },
+   
+  ];
+  customColumns = [
+
+    { label: this.i18n.fanyi("order.number"), value: 'number', checked: true },
+    { label: this.i18n.fanyi("order.category"), value: 'category', checked: true },
+    { label: this.i18n.fanyi("status"), value: 'status', checked: true },
+    { label: this.i18n.fanyi("shipToCustomer"), value: 'shipToCustomer', checked: true },
+    { label: this.i18n.fanyi("order.billToCustomer"), value: 'billToCustomer', checked: true },
+    { label: this.i18n.fanyi("order.totalItemCount"), value: 'totalItemCount', checked: true },
+    { label: this.i18n.fanyi("order.totalOrderQuantity"), value: 'totalExpectedQuantity', checked: true },
+    { label: this.i18n.fanyi("order.totalOpenQuantity"), value: 'totalOpenQuantity', checked: true },
+    { label: this.i18n.fanyi("shipment.stage.locationGroup"), value: 'stageLocationGroup', checked: true },
+    { label: this.i18n.fanyi("shipment.stage.location"), value: 'stageLocation', checked: true },
+    { label: this.i18n.fanyi("order.totalInprocessQuantity"), value: 'totalInprocessQuantity', checked: true },
+    { label: this.i18n.fanyi("order.totalPendingAllocationQuantity"), value: 'totalPendingAllocationQuantity', checked: true },
+    { label: this.i18n.fanyi("order.totalOpenPickQuantity"), value: 'totalOpenPickQuantity', checked: true },
+    { label: this.i18n.fanyi("order.totalPickedQuantity"), value: 'totalPickedQuantity', checked: true },
+    { label: this.i18n.fanyi("order.totalShippedQuantity"), value: 'totalShippedQuantity', checked: true },
+  ];
+
+  isChoose(key: string): boolean {
+    return !!this.customColumns.find(w => w.value === key && w.checked);
+  }
+
+  columnChoosingChanged(): void{ 
+    if (this.st !== undefined && this.st.columns !== undefined) {
+      this.st.resetColumns({ emitReload: true });
+
+    }
+  }
+
+  orderTableChanged(event: STChange) : void { 
+    if (event.type === 'expand' && event.expand.expand === true) {
+      
+      this.showOrderDetails(event.expand);
+    }
+
   }
 }

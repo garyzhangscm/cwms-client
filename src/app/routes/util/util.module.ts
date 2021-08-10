@@ -6,6 +6,7 @@ import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { UtilFileUploadComponent } from './file-upload/file-upload.component';
 import { UtilIconListComponent } from './icon-list/icon-list.component'; 
 import { UtilSystemConfigurationComponent } from './system-configuration/system-configuration.component';
+import { UtilTableColumnSelectionComponent } from './table-column-selection/table-column-selection.component';
 import { UtilTestDataInitComponent } from './test-data-init/test-data-init.component';
 import { UtilTesterComponent } from './tester/tester.component';
 import { UtilRoutingModule } from './util-routing.module';
@@ -15,7 +16,8 @@ const COMPONENTS: Array<Type<void>> = [
   UtilTestDataInitComponent,
   UtilIconListComponent,
   UtilTesterComponent,
-  UtilSystemConfigurationComponent];
+  UtilSystemConfigurationComponent,
+  UtilTableColumnSelectionComponent];
   
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
@@ -31,7 +33,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     ...COMPONENTS,
     ...COMPONENTS_NOROUNT
   ],
-  exports: [],
+  exports: [UtilTableColumnSelectionComponent],
 
 })
 export class UtilModule { }

@@ -2,8 +2,11 @@ import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
+import { NzStepsModule } from 'ng-zorro-antd/steps';
+
 import { CommonModule } from '../common/common.module';
 import { DirectivesModule } from '../directives/directives.module';
+import { UtilModule } from '../util/util.module';
 import { OutboundAllocationConfigurationComponent } from './allocation-configuration/allocation-configuration.component';
 import { OutboundCartonComponent } from './carton/carton.component';
 import { OutboundCartonizationConfigurationConfirmComponent } from './cartonization-configuration-confirm/cartonization-configuration-confirm.component';
@@ -26,9 +29,8 @@ import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
-import { NzStepsModule } from 'ng-zorro-antd/steps';
 
-const COMPONENTS: Type<void>[] = [
+const COMPONENTS: Array<Type<void>> = [
   OutboundOrderComponent,
   OutboundWaveComponent,
   OutboundShipmentComponent,
@@ -51,7 +53,7 @@ const COMPONENTS: Type<void>[] = [
   OutboundShippingCartonizationComponent,
   OutboundAllocationConfigurationComponent,
 ];
-const COMPONENTS_NOROUNT: Type<void>[] = [];
+const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
   imports: [
@@ -61,7 +63,8 @@ const COMPONENTS_NOROUNT: Type<void>[] = [];
     NzDescriptionsModule,
     NzStatisticModule,
     CommonModule,
-    NzStepsModule
+    NzStepsModule,
+    UtilModule
   ],
   declarations: [
     ...COMPONENTS,

@@ -1,9 +1,9 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { STColumn } from '@delon/abc/st';
+import { STColumn, STComponent } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -426,6 +426,8 @@ export class InventoryItemComponent implements OnInit {
   }
 
 
+  @ViewChild('st', { static: true })
+  st!: STComponent;
   columns: STColumn[] = [
     { title: this.i18n.fanyi("thumbnail"), type: 'img',index: 'thumbnailUrl', iif: () => this.isChoose('thumbnail'), },
     { title: this.i18n.fanyi("name"), index: 'name', iif: () => this.isChoose('name'), },
@@ -462,5 +464,13 @@ export class InventoryItemComponent implements OnInit {
 
   isChoose(key: string): boolean {
     return !!this.customColumns.find(w => w.value === key && w.checked);
+  }
+
+  columnChoosingChanged(): void{
+    console.log(`my model changed!\n ${JSON.stringify(this.customColumns)}`);
+    if (this.st.columns !== undefined) {
+      this.st.resetColumns({ emitReload: true });
+
+    }
   }
 }

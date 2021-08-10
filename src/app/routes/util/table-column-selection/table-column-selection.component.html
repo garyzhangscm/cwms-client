@@ -1,0 +1,17 @@
+<button nz-button (click)="openColumnChoosingModal(tplColumnChoosingModalTitle, tplColumnChoosingContent)"> 
+  change column
+    </button>
+
+    
+<!-- Modal for inventory movement-->
+<ng-template #tplColumnChoosingModalTitle>
+    <span>{{ 'page.modal.delete.header.title' | i18n}}</span>
+  </ng-template>
+  <ng-template #tplColumnChoosingContent>
+      
+  <div class="search-result-list">
+    <div class="mb-md">
+      <nz-checkbox-group [(ngModel)]="_myModel" (ngModelChange)="columnChanged()" name="customColumns" ></nz-checkbox-group>
+    </div>
+    </div>
+  </ng-template>

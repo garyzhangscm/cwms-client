@@ -30,7 +30,7 @@ import { WaveService } from '../services/wave.service';
 })
 export class OutboundPickConfirmComponent implements OnInit {
 
-
+  isSpinning = false;
   listOfColumns: ColumnItem[] = [
     {
       name: 'pick.number',
@@ -443,14 +443,41 @@ export class OutboundPickConfirmComponent implements OnInit {
     // make sure we have at least one checkbox checked
     const selectedPicks = this.getSelectedPicks();
     if (selectedPicks.length > 0) {
-      this.confirming = true;
+      this.isSpinning = true;
       this.totalPickCountToConfirm = selectedPicks.length;
+
+      // we will separate the picks into groups based on the
+      // item and source location. We will add picks from
+      // same source location / item into a queue so it will be 
+      // confirmed one by one to avoid concurrency problem
 
       let pickToContainer = false;
       if (this.queryForm) {
         pickToContainer = this.queryForm.controls.pickToContainerFlag.value;
       }
+      let pickMap = new Map();
+      
+      selectedPicks.forEach(pick => {
+        let key = `${pick.sourceLocationId}-${pick.itemId}`;
+        let pickList: PickWork[] = [];
+        if (pickMap.has(key)) {
+          pickList = pickMap.get(key);
+        }
+        pickList = [...pickList, pick];
+        pickMap.set(key, pickList);
+      })
+      console.log(`pickMap.size: ${pickMap.size}`);
 
+      for (let [key, value] of pickMap) {
+        let pickList: PickWork[] = value;
+        console.log(`process pickMap with key: ${key}, pickList's size is ${pickList.length}`);
+        this.confirmPickListByIndex(pickList, 0, pickToContainer, this.containerId);
+
+      } 
+
+      /***
+       * 
+       * 
       selectedPicks.forEach(pick => {
         this.pickService
           .confirmPick(pick, this.mapOfConfirmedQuantity[pick.number], pickToContainer, this.containerId)
@@ -459,10 +486,34 @@ export class OutboundPickConfirmComponent implements OnInit {
             this.totalPickCountToConfirm--;
             if (this.totalPickCountToConfirm === 0) {
               this.displayInformation(true);
-              this.confirming = false;
+              this.isSpinning = false;
             }
-          });
+          }, 
+          () => this.isSpinning = false);
       });
+       * 
+       */
+    }
+  }
+
+  confirmPickListByIndex(pickList: PickWork[], index: number, pickToContainer: boolean, containerId: string) {
+
+    // make sure the index is still within the list
+    if (index < pickList.length) {
+      this.pickService
+          .confirmPick(pickList[index], this.mapOfConfirmedQuantity[pickList[index].number], pickToContainer, containerId)
+          .subscribe(pickRes => {
+            // confirm next pick in the list
+            
+            this.message.success(`${pickRes.number}: ${this.i18n.fanyi('message.action.success')}`);
+            this.totalPickCountToConfirm--;
+            if (this.totalPickCountToConfirm === 0) {
+              this.displayInformation(true);
+              this.isSpinning = false;
+            }
+            this.confirmPickListByIndex(pickList, index + 1, pickToContainer, containerId);
+          }, 
+          () => this.isSpinning = false);
     }
   }
   getSelectedPicks(): PickWork[] {

@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -86,5 +87,20 @@ export class OrderService {
     return this.http.post(`outbound/orders/${order.id}/dispatch`).pipe(map(res => res.data));
   }
 
+  reassignShippingStageLocation(
+    order: Order,
+    locationGroupId?: number,
+    locationId?: number,
+  ) : Observable<Order> {
+    let params = new HttpParams();
+    if (locationGroupId) { 
+      params = params.append('locationGroupId', locationGroupId); 
+    }
+    if (locationId) { 
+      params = params.append('locationId', locationId); 
+    }
+    return this.http.post(`outbound/orders/${order.id}/change-stage-loctions`, null, params).pipe(map(res => res.data));
+
+  }
  
 }
