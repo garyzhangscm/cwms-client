@@ -3,12 +3,14 @@ import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { I18NService } from 'src/app/core/i18n/i18n.service';
+
 import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { PickWork } from '../../outbound/models/pick-work';
 import { ReportHistory } from '../../report/models/report-history';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ProductionLine } from '../models/production-line';
+import { ProductionLineAllocationRequest } from '../models/production-line-allocation-request';
 import { ProductionLineAssignment } from '../models/production-line-assignment';
 import { WorkOrder } from '../models/work-order';
 import { WorkOrderKpi } from '../models/work-order-kpi';
@@ -73,12 +75,15 @@ export class WorkOrderService {
     return this.http.delete('workorder/work-orders', params).pipe(map(res => res.data));
   }
 
-  allocateWorkOrder(workOrder: WorkOrder, productionLineIds?: string, quantities?: string): Observable<WorkOrder> {
+  allocateWorkOrder(workOrder: WorkOrder, productionLineAllocationRequests?: ProductionLineAllocationRequest[]): Observable<WorkOrder> {
     let url = `workorder/work-orders/${workOrder.id}/allocate`;
-    if (productionLineIds && quantities) {
-      url = `${url}?productionLineIds=${productionLineIds}&quantities=${quantities}`;
+    if (productionLineAllocationRequests && productionLineAllocationRequests.length > 0) {
+      return this.http.post(url, productionLineAllocationRequests).pipe(map(res => res.data));
     }
-    return this.http.post(url).pipe(map(res => res.data));
+    else {
+
+      return this.http.post(url).pipe(map(res => res.data));
+    }
   }
 
 
@@ -140,18 +145,17 @@ export class WorkOrderService {
       }`;
 
     if (overrideConsumedQuantity === true) {
-      url = url + `&overrideConsumedQuantity=${overrideConsumedQuantity}&consumedQuantity=${consumedQuantity}`;
+      url = `${url  }&overrideConsumedQuantity=${overrideConsumedQuantity}&consumedQuantity=${consumedQuantity}`;
     }
 
     if (destinationLocationName) {
-      url = url + `&destinationLocationName=${destinationLocationName}`;
+      url = `${url  }&destinationLocationName=${destinationLocationName}`;
     }
     if (immediateMove) {
-      url = url + `&immediateMove=${immediateMove}`;
+      url = `${url  }&immediateMove=${immediateMove}`;
     }
     return this.http.post(url, inventory).pipe(map(res => res.data));
   }
-
 
 
   printOrderPickSheet(workOrder: WorkOrder, locale?: string): Observable<ReportHistory> {

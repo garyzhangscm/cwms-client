@@ -1,5 +1,6 @@
 import { Mould } from "./mould";
 import { ProductionLine } from "./production-line";
+import { ProductionLineAssignmentLine } from "./production-line-assignment-line";
 import { WorkOrder } from "./work-order";
 
 export interface ProductionLineAssignment {
@@ -17,5 +18,6 @@ export interface ProductionLineAssignment {
     endTime?: Date;
     dateRange?: Date[]
 
+    lines: ProductionLineAssignmentLine[];
 
 }

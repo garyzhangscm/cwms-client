@@ -1,44 +1,38 @@
+import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { WorkOrder } from '../models/work-order';
-import { WorkOrderService } from '../services/work-order.service';
 
-import { formatDate } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
+import { PrintPageSize } from '../../common/models/print-page-size.enum';
+import { PrintingService } from '../../common/services/printing.service';
 import { PutawayConfigurationService } from '../../inbound/services/putaway-configuration.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
+import { PickWork } from '../../outbound/models/pick-work';
 import { PickService } from '../../outbound/services/pick.service';
+import { ReportOrientation } from '../../report/models/report-orientation.enum';
+import { ReportType } from '../../report/models/report-type.enum';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
+import { WebClientConfigurationService } from '../../util/services/web-client-configuration.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
+import { ProductionLineAllocationRequest } from '../models/production-line-allocation-request';
+import { ProductionLineAllocationRequestLine } from '../models/production-line-allocation-request-line';
+import { ProductionLineAssignment } from '../models/production-line-assignment';
+import { WorkOrder } from '../models/work-order';
 import { WorkOrderKpi } from '../models/work-order-kpi';
 import { WorkOrderKpiTransaction } from '../models/work-order-kpi-transaction';
 import { WorkOrderStatus } from '../models/work-order-status.enum';
-import { ProductionLineService } from '../services/production-line.service';
-import { PrintingService } from '../../common/services/printing.service';
-import { ReportType } from '../../report/models/report-type.enum';
-import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
-import { ReportOrientation } from '../../report/models/report-orientation.enum';
-import { WebClientConfigurationService } from '../../util/services/web-client-configuration.service';
-import { PickWork } from '../../outbound/models/pick-work';
-import { ProductionLineAssignment } from '../models/production-line-assignment';
 import { ProductionLineAssignmentService } from '../services/production-line-assignment.service';
-import { environment } from '@env/environment';
-import { PrintPageSize } from '../../common/models/print-page-size.enum';
-
-interface ProductionLineAllocationRequest {
-  productionLineId: number;
-  productionLineName: string;
-  totalQuantity: number; // total assigned quantity, read from production line assignment
-  openQuantity: number;  // total open quantity, read from production line assignment
-  allocateingQuantity: number; // quantity to be allocated 
-}
-
+import { ProductionLineService } from '../services/production-line.service';
+import { WorkOrderService } from '../services/work-order.service';
+ 
 @Component({
   selector: 'app-work-order-work-order',
   templateUrl: './work-order.component.html',
@@ -196,8 +190,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   ];
 
   expandSet = new Set<number>();
-
-
+  allocateByProductionLineOptions = "BY_WORK_ORDER";
 
   constructor(
     private fb: FormBuilder,
@@ -377,7 +370,6 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       this.expandSet.delete(workOrder.id!);
     }
   }
-
 
 
   loadAvailableProductionLine(): void {
@@ -624,7 +616,6 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   }
 
 
-
   allocateLocation(workOrder: WorkOrder, inventory: Inventory): void {
     this.putawayConfigurationService.allocateLocation(inventory).subscribe(allocatedInventory => {
       this.messageService.success(this.i18n.fanyi('message.allocate-location.success'));
@@ -699,8 +690,6 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     this.router.navigateByUrl(`/work-order/work-order/line/maintenance?id=${workOrder.id}`);
   }
 
-
-
   printSelectedPutawayWork(workOrder: WorkOrder): void {
     /***
      * 
@@ -773,12 +762,33 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     if (workOrder.productionLineAssignments) {
       workOrder.productionLineAssignments.forEach(
         productionLineAssignment => {
+          // construct the line allocation request, in case the user want to allocate by work order line.
+          // by default we will allocate by work order
+          let productionLineAllocationRequestLines: ProductionLineAllocationRequestLine[] = [];
+          productionLineAssignment.lines.forEach(
+            productionLineAssignmentLine => {
+              productionLineAllocationRequestLines.push({
+                
+                  workOrderLineId: productionLineAssignmentLine.workOrderLine.id!,
+                  totalQuantity: productionLineAssignmentLine.quantity,
+                  openQuantity: productionLineAssignmentLine.openQuantity,
+                  allocatingQuantity: productionLineAssignmentLine.openQuantity, // by default, we will allocate the whole open quantity
+                  
+                  itemName: productionLineAssignmentLine.workOrderLine.item!.name,
+                  workOrderLineNumber: productionLineAssignmentLine.workOrderLine.number!,
+                  itemDescription: productionLineAssignmentLine.workOrderLine.item?.description,
+              })
+            }
+          )
           productionLineAllocationRequests.push({
+            workOrderId: workOrder.id!,
             productionLineId: productionLineAssignment.productionLine.id!,
             productionLineName: productionLineAssignment.productionLine.name,
             totalQuantity: productionLineAssignment.quantity,
             openQuantity: productionLineAssignment.openQuantity,
-            allocateingQuantity: productionLineAssignment.openQuantity, // by default, we will allocate the whole open quantity
+            allocatingQuantity: productionLineAssignment.openQuantity, // by default, we will allocate the whole open quantity
+            allocateByLine: this.allocateByProductionLineOptions === 'BY_WORK_ORDER_LINE', 
+            lines: productionLineAllocationRequestLines,
           });
         }
       )
@@ -814,15 +824,25 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     });
   }
 
+  allocateByProductionLineOptionsChanged() {
+    if (this.allocateByProductionLineOptions === 'BY_WORK_ORDER') {
+
+      this.productionLineAllocationRequests.forEach(
+        productionLineAllocationRequest => productionLineAllocationRequest.allocateByLine = false
+      );
+    }
+    else {
+      this.productionLineAllocationRequests.forEach(
+        productionLineAllocationRequest => productionLineAllocationRequest.allocateByLine = true
+      );
+
+    }
+  }
   allocateWorkOrderByProductionLine(workOrder: WorkOrder, productionLineAllocationRequests: ProductionLineAllocationRequest[]) {
 
     this.isSpinning = true;
-    let productionLineIds =
-      productionLineAllocationRequests.map(request => request.productionLineId).join(',');
-    let quantities =
-      productionLineAllocationRequests.map(request => request.allocateingQuantity).join(',');
 
-    this.workOrderService.allocateWorkOrder(workOrder, productionLineIds, quantities)
+    this.workOrderService.allocateWorkOrder(workOrder, productionLineAllocationRequests)
       .subscribe(workOrderRes => {
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi('message.action.success'));

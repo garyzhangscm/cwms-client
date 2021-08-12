@@ -1168,8 +1168,14 @@
   <span>{{ 'work-order.allocate-by-production-line' | i18n}}</span>
 </ng-template>
 <ng-template #tplAllocateByProductionLineModalContent>
-  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #productionLineAllocationRequestTable
-    [nzData]="productionLineAllocationRequests" nzSize="middle" [nzShowPagination]="false" nzBordered>
+  <nz-radio-group [(ngModel)]="allocateByProductionLineOptions" (ngModelChange)="allocateByProductionLineOptionsChanged()">
+    <label nz-radio nzValue="BY_WORK_ORDER">{{ 'wor-order.allocate-by-production-line-and-work-order' | i18n}}</label>
+    <label nz-radio nzValue="BY_WORK_ORDER_LINE">{{ 'wor-order.allocate-by-production-line-and-work-order-line' | i18n}}</label>
+  </nz-radio-group>
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #productionLineAllocationByWorkOrderRequestTable
+    [nzData]="productionLineAllocationRequests" nzSize="middle" [nzShowPagination]="false" 
+    *ngIf="allocateByProductionLineOptions === 'BY_WORK_ORDER'"
+    nzBordered>
     <thead>
       <tr>
         <th>{{ 'production-line.name' | i18n}}</th>
@@ -1183,11 +1189,52 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let productionLineAllocationRequest of productionLineAllocationRequestTable.data">
+      <tr *ngFor="let productionLineAllocationRequest of productionLineAllocationByWorkOrderRequestTable.data">
         <td>{{ productionLineAllocationRequest.productionLineName}}</td>
         <td>{{ productionLineAllocationRequest.totalQuantity }}</td>
         <td>{{ productionLineAllocationRequest.openQuantity }}</td>
-        <td><input nz-input nzSize="default" [(ngModel)]="productionLineAllocationRequest.allocateingQuantity" /></td>
+        <td><input nz-input nzSize="default" [(ngModel)]="productionLineAllocationRequest.allocatingQuantity"  /></td>
+      </tr>
+    </tbody>
+  </nz-table>
+  
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #productionLineAllocationByWorkOrderLineRequestTable
+    [nzData]="productionLineAllocationRequests" nzSize="middle" [nzShowPagination]="false" 
+    *ngIf="allocateByProductionLineOptions === 'BY_WORK_ORDER_LINE'"
+    nzBordered>
+    <thead>
+      <tr>
+        <th>{{ 'production-line.name' | i18n}}</th>
+        <th>
+          {{ 'work-order.line' | i18n }}</th>
+          <th>
+            {{ 'item' | i18n }}</th>
+            <th>
+              {{ 'item.description' | i18n }}</th>
+
+        <th>
+          {{ 'production-line-assignment.assigned-quantity' | i18n }}</th>
+        <th>
+          {{ 'production-line-assignment.open-quantity' | i18n }}</th>
+          <th>
+            {{ 'production-line-assignment-line.assigned-quantity' | i18n }}</th>
+          <th>
+            {{ 'production-line-assignment-line.open-quantity' | i18n }}</th>
+        <th>
+          {{ 'production-line-assignment-line.allocating-quantity' | i18n }}</th>
+      </tr>
+    </thead>
+    <tbody *ngFor="let productionLineAllocationRequest of productionLineAllocationByWorkOrderLineRequestTable.data">
+      <tr *ngFor="let productionLineAllocationRequestLine of productionLineAllocationRequest.lines">
+        <td>{{ productionLineAllocationRequest.productionLineName}}</td>
+        <td>{{ productionLineAllocationRequestLine.workOrderLineNumber}}</td>
+        <td>{{ productionLineAllocationRequestLine.itemName}}</td>
+        <td>{{ productionLineAllocationRequestLine.itemDescription}}</td>
+        <td>{{ productionLineAllocationRequest.totalQuantity }}</td>
+        <td>{{ productionLineAllocationRequest.openQuantity }}</td>
+        <td>{{ productionLineAllocationRequestLine.totalQuantity }}</td>
+        <td>{{ productionLineAllocationRequestLine.openQuantity }}</td>
+        <td><input nz-input nzSize="default" [(ngModel)]="productionLineAllocationRequestLine.allocatingQuantity" /></td>
       </tr>
     </tbody>
   </nz-table>

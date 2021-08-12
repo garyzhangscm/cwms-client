@@ -269,7 +269,7 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
     { title: this.i18n.fanyi("production-line.actual-total-putaway-production"), index: 'productionLineTotalActualPutawayOutput', iif: () => this.isChoose('productionLineTotalActualPutawayOutput'), },
     { title: this.i18n.fanyi("status"), index: 'workOrderStatus', iif: () => this.isChoose('workOrderStatus'), },
     { title: this.i18n.fanyi("shift"), index: 'shift', iif: () => this.isChoose('shift'), },
-    { title: this.i18n.fanyi("finished-rate"), index: 'percent', iif: () => this.isChoose('percent'), },
+    { title: this.i18n.fanyi("finished-rate"), index: 'percent', iif: () => this.isChoose('percent'), type: 'number' },
   ];
   customColumns = [
 

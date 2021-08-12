@@ -76,7 +76,7 @@
         <nz-checkbox-group [(ngModel)]="customColumns" name="customColumns"
           (ngModelChange)="st.resetColumns({ emitReload: true })"></nz-checkbox-group>
       </div>
-      <st #st [data]="productionLineKanbanDataList" [columns]="columns">
+      <st #st [data]="displayProductionLineKanbanDataList" [columns]="columns">
       </st>
 
     </div>

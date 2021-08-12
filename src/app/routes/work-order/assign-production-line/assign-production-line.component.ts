@@ -1,12 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
-import { FormBuilder } from '@angular/forms';
+import { FormGroup , FormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { TransferItem } from 'ng-zorro-antd/transfer';
+
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Mould } from '../models/mould';
 import { ProductionLine } from '../models/production-line';
@@ -59,8 +59,6 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
   ngOnInit(): void {
 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.work-order.assign-production-line'));
-
-
 
 
     this.activatedRoute.queryParams.subscribe(params => {
@@ -119,8 +117,6 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
 
     });
   }
-
-
 
 
   previousStep(): void {
@@ -235,7 +231,8 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
       quantity: 0,
       openQuantity: 0,
       mould: undefined,
-      dateRange: []
+      dateRange: [], 
+      lines: [],
     };
   }
 
