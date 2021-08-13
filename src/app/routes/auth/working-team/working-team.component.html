@@ -80,25 +80,25 @@
                     <th>{{ 'action' | i18n }}</th>
                   </tr>
                 </thead>
-    <tbody>
-      <tr *ngFor="let user of userTable.data">
-        <td>
-          {{ user.username }}</td>
-        <td>{{ user.firstname }}</td>
-        <td>{{ user.lastname }}</td>
-        <td>{{ user.email }} </td>
-        <td>{{ user.enabled + '' | i18n }}</td>
-        <td>{{ user.locked + '' | i18n}}</td>
-        <td>
-          <button nz-button (click)="deassignUser(data.id!, user.id!)">{{ 'working-team.unassign-user' | i18n
-            }}</button>
-        </td>
-      </tr>
-    </tbody>
-  </nz-table>
-  </nz-tab>
+                <tbody>
+                  <tr *ngFor="let user of userTable.data">
+                    <td>
+                      {{ user.username }}</td>
+                    <td>{{ user.firstname }}</td>
+                    <td>{{ user.lastname }}</td>
+                    <td>{{ user.email }} </td>
+                    <td>{{ user.enabled + '' | i18n }}</td>
+                    <td>{{ user.locked + '' | i18n}}</td>
+                    <td>
+                      <button nz-button (click)="deassignUser(data.id!, user.id!)">{{ 'working-team.unassign-user' | i18n
+                        }}</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </nz-table>
+            </nz-tab>
 
-  </nz-tabset>
+          </nz-tabset>
 
 
   </tr>

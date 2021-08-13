@@ -36,6 +36,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { WorkOrderDeassignProductionLineComponent } from './deassign-production-line/deassign-production-line.component';
+import { WorkOrderWorkOrderConfigurationComponent } from './work-order-configuration/work-order-configuration.component';
 
 
 const COMPONENTS: Type<void>[] = [
@@ -61,7 +62,8 @@ const COMPONENTS: Type<void>[] = [
   WorkOrderMouldComponent,
   WorkOrderMouldMaintenanceComponent,
   WorkOrderProductionKanbanComponent,
-  WorkOrderDeassignProductionLineComponent];
+  WorkOrderDeassignProductionLineComponent,
+  WorkOrderWorkOrderConfigurationComponent];
 const COMPONENTS_NOROUNT: Type<void>[] = [];
 
 @NgModule({

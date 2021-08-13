@@ -3,6 +3,7 @@ import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
 import { NzTreeHigherOrderServiceToken } from 'ng-zorro-antd/core/tree';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { SystemConfiguration } from '../models/system-configuration';
@@ -37,6 +38,7 @@ export class UtilSystemConfigurationComponent implements OnInit {
     });
   }
 
+  // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void { }
 
   saveConfiguration(): void {

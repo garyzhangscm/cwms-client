@@ -2,9 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
-
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ItemService } from '../../inventory/services/item.service';
@@ -48,6 +48,10 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
   isCollapse = true;
 
   pageTitle: string;
+
+  
+  expandSet = new Set<number>(); 
+
   constructor(
     private activatedRoute: ActivatedRoute,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -122,6 +126,8 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
         id: undefined,
         workOrderLine,
         consumedQuantity: 0,
+        totalConsumedQuantity: 0,
+        workOrderLineConsumeLPNTransactions: [],
       };
       workOrderLineConsumeTransactions.push(workOrderLineConsumeTransaction);
     });
@@ -246,5 +252,78 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
       this.workOrderProduceTransaction.productionLine = productionLineAssignments[0].productionLine;
       console.log(`set production line to ${this.workOrderProduceTransaction.productionLine.name}`);
     }
+    else {
+      this.workOrderProduceTransaction.productionLine = undefined;
+    }
+  }
+  
+  loadNonpickedInventory(workOrderLineConsumeTransaction: WorkOrderLineConsumeTransaction) {
+
+    // only when we have the production line selected
+    if (this.workOrderProduceTransaction && this.workOrderProduceTransaction.productionLine) {
+      // get the inventory in the inbound stage location 
+
+      this.inventoryService.getInventoriesByLocationId(this.workOrderProduceTransaction.productionLine.inboundStageLocationId!)
+          .subscribe({
+            next: (inventories) => {
+              // only find the inventories without a pick and match with the work order line's item
+              let lpnList = new Map<string, number>();
+              inventories.filter(inventory => inventory.pickId === undefined || inventory.pickId === null)
+                  .filter(inventory => inventory.item!.id! === workOrderLineConsumeTransaction.workOrderLine!.itemId!)
+                  .forEach(inventory =>
+                      {
+                        if (lpnList.has(inventory.lpn!)) {
+                          let newQuantity = lpnList.get(inventory.lpn!)! + inventory.quantity!;
+                          lpnList.set(inventory.lpn!, newQuantity);
+                        }
+                        else {
+                          
+                          lpnList.set(inventory.lpn!, inventory.quantity!);
+                        }
+                      }  
+                  );
+                  lpnList.forEach((value: number, key: string) => {
+                    
+                    console.log(`we found inventory ${key} / ${value}`)
+                    workOrderLineConsumeTransaction.workOrderLineConsumeLPNTransactions?.push({
+                      lpn: key,
+                      quantity:value,
+                      consumedQuantity: 0
+                    })
+                });
+            }
+          })
+    }
+
+  }
+  
+  onExpandChange(workOrderLineConsumeTransaction : WorkOrderLineConsumeTransaction, checked: boolean): void {
+
+    if (checked) {
+      this.expandSet.add(workOrderLineConsumeTransaction.workOrderLine!.id!); 
+      console.log(`add ${workOrderLineConsumeTransaction.workOrderLine!.id!} to the expandset, now we have ${JSON.stringify(this.expandSet)}`);
+      this.loadNonpickedInventory(workOrderLineConsumeTransaction);
+
+    } else {
+      this.expandSet.delete(workOrderLineConsumeTransaction.workOrderLine!.id!);
+      console.log(`remove ${workOrderLineConsumeTransaction.workOrderLine!.id!} to the expandset, now we have ${JSON.stringify(this.expandSet)}`);
+    }
+  }
+  recalculateTotalConsumedQuantity(workOrderLineConsumeTransaction: WorkOrderLineConsumeTransaction) {
+    let totalConsumedQuantity = workOrderLineConsumeTransaction.consumedQuantity ?
+        +workOrderLineConsumeTransaction.consumedQuantity : 0;
+  
+    let consumedLPNQuantity = workOrderLineConsumeTransaction.workOrderLineConsumeLPNTransactions?.map(
+      workOrderLineConsumeLPNTransaction => +workOrderLineConsumeLPNTransaction.consumedQuantity
+    ).reduce((a, b) => a + b, 0);
+    if (consumedLPNQuantity) {
+      totalConsumedQuantity += +consumedLPNQuantity;
+    }
+    if (workOrderLineConsumeTransaction.consumeFromWorkOrder && workOrderLineConsumeTransaction.consumeFromWorkOrderQuantity) {
+      totalConsumedQuantity += +workOrderLineConsumeTransaction.consumeFromWorkOrderQuantity;
+    }
+    workOrderLineConsumeTransaction.totalConsumedQuantity = totalConsumedQuantity;
+
+
   }
 }

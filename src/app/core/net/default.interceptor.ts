@@ -5,9 +5,10 @@ import {
   HttpHeaders,
   HttpInterceptor,
   HttpRequest,
+  HttpResponse,
   HttpResponseBase
 } from '@angular/common/http';
-import { Injectable, Injector } from '@angular/core';
+import { Inject , Injectable, Injector } from '@angular/core';
 import { Router } from '@angular/router';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -15,6 +16,8 @@ import { environment } from '@env/environment';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, filter, mergeMap, switchMap, take } from 'rxjs/operators';
+
+import { I18NService } from '../i18n/i18n.service';
 
 const CODEMESSAGE: { [key: number]: string } = {
   200: '服务器成功返回请求的数据。',
@@ -44,7 +47,8 @@ export class DefaultInterceptor implements HttpInterceptor {
   private refreshToking = false;
   private refreshToken$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
-  constructor(private injector: Injector) {
+  constructor(private injector: Injector, 
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) {
     if (this.refreshTokenType === 'auth-refresh') {
       this.buildAuthRefresh();
     }
@@ -199,6 +203,25 @@ export class DefaultInterceptor implements HttpInterceptor {
         //     return of(ev);
         //   }
         // }
+        if (ev instanceof HttpResponse) {
+          const body: any = ev.body; 
+          if (body && body.result && body.result !== 0) {
+            // this.messageService.error(body.message);
+            // 继续抛出错误中断后续所有 Pipe、subscribe 操作，因此：
+            // this.http.get('/').subscribe() 并不会触发
+            // return throwError({});
+            return throwError({
+              status: body.result,
+              statusText: body.message,
+              url: '',
+            });
+          } else {
+            // 重新修改 `body` 内容为 `response` 内容，对于绝大多数场景已经无须再关心业务状态码
+            //        return of(new HttpResponse(Object.assign(event, { body: body.response })));
+            // 或者依然保持完整的格式
+            return of(ev);
+          }
+        }
         break;
       case 401:
         if (this.refreshTokenEnabled && this.refreshTokenType === 're-request') {
@@ -254,7 +277,24 @@ export class DefaultInterceptor implements HttpInterceptor {
         // 若一切都正常，则后续操作
         return of(ev);
       }),
-      catchError((err: HttpErrorResponse) => this.handleData(err, newReq, next))
+      // catchError((err: HttpErrorResponse) => this.handleData(err, newReq, next))
+      catchError((err: HttpErrorResponse) => {
+        console.log(`!! Get error ${err.status} while call ${url}, \n statusText: ${err.statusText}`);
+        const errortext = CODEMESSAGE[err.status] || err.statusText;
+        // this.notification.error(`请求错误 ${ev.status}: ${ev.url}`, errortext);
+        console.log(`!! will throw error ${err.status}`);
+        if (err.status === 401) {
+           console.log('reloging required')
+           this.toLogin();
+        }
+        else {
+
+          this.notification.error(`${err.status}: ${err.url}`, this.i18n.fanyi(errortext));
+        }
+        return throwError(err);
+
+      }),
+
     );
   }
 }

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
 import { Client } from '../../common/models/client';
 import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -47,12 +48,12 @@ export class ItemService {
   }
 
   changeItem(item: Item): Observable<Item> {
-    const url = 'inventory/items/' + item.id;
+    const url = `inventory/items/${  item.id}`;
     return this.http.put(url, item).pipe(map(res => res.data));
   }
 
   removeItem(item: Item): Observable<Item> {
-    const url = 'inventory/items/' + item.id;
+    const url = `inventory/items/${  item.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 

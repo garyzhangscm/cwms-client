@@ -126,6 +126,87 @@
     <div class="search-result-list">
       <nz-table [nzScroll]="{ x: 'true', y: 'true' }"
         [nzData]="workOrderProduceTransaction.workOrderLineConsumeTransactions" nzShowPagination="false"
+            #workOrderLineTable>
+        <thead>
+          <tr>
+            <th nzWidth="40px"></th>
+            <th>{{ 'work-order.line.number' | i18n }}</th>
+            <th>{{ 'item' | i18n }}</th>
+            <th>{{ 'item.description' | i18n }}</th>
+            <th>{{ 'work-order.line.expectedQuantity' | i18n }}</th>
+            <th>{{ 'work-order.line.inprocessQuantity' | i18n }}</th>
+            <th>{{ 'work-order.line.consumedQuantity' | i18n }}</th>
+            <th>{{ 'work-order.line.consumingQuantity' | i18n }}</th>
+            <th>{{ 'work-order.line.totalConsumingQuantity' | i18n }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <ng-template ngFor let-data [ngForOf]="workOrderLineTable.data">
+            <tr>
+              
+              <td [nzExpand]="expandSet.has(data.workOrderLine!.id!)" (nzExpandChange)="onExpandChange(data, $event)"></td>
+              <td>{{ data?.workOrderLine?.number }}</td>
+              <td>
+                {{ data?.workOrderLine?.item?.name }}
+              </td>
+              <td>
+                {{ data?.workOrderLine?.item?.description }}
+              </td>
+              <td>
+                {{ data?.workOrderLine?.expectedQuantity }}
+              </td>
+              <td>
+                {{ data?.workOrderLine?.inprocessQuantity }}
+              </td>
+              <td>
+                {{ data?.workOrderLine?.consumedQuantity }}
+              </td>
+              <td>
+                {{ data?.consumedQuantity }} 
+              </td>
+              <td>
+                {{ data?.totalConsumedQuantity }}
+              </td>
+            </tr>
+            <tr [nzExpand]="expandSet.has(data.workOrderLine!.id!)">
+              <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
+                <nz-tab nzTitle="{{'inventory' | i18n}}">
+                  
+                <div *ngIf="data.workOrderLineConsumeLPNTransactions === undefined || data.workOrderLineConsumeLPNTransactions.length === 0">
+                    {{ "work-order-line.no-consumable-lpn" | i18n}} 
+                </div>
+                  <nz-table [nzScroll]="{ x: 'true', y: 'true' }"  *ngIf="data.workOrderLineConsumeLPNTransactions && data.workOrderLineConsumeLPNTransactions.length > 0"
+                  [nzData]="data.workOrderLineConsumeLPNTransactions"
+                    nzSize="middle" [nzShowPagination]="true" #consumeByLPNTable>
+                    <thead>
+                      <tr>
+                        <th>{{'lpn' | i18n}}</th>
+                        <th>{{'quantity' | i18n}}</th> 
+                        <th>{{'consumingQuantity' | i18n}}</th> 
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let consumeByLPN of consumeByLPNTable.data">
+                        <td>
+                          {{ consumeByLPN.lpn }}</td> 
+                          <td>
+                            {{ consumeByLPN.quantity }}</td> 
+                          
+                        <td>
+                          {{ consumeByLPN.consumedQuantity }}</td> 
+                      </tr>
+                    </tbody>
+                  </nz-table>
+                </nz-tab>
+              </nz-tabset>
+            </tr>
+          </ng-template>
+        </tbody>
+        </nz-table>
+<!--   
+      <nz-table [nzScroll]="{ x: 'true', y: 'true' }"
+        [nzData]="workOrderProduceTransaction.workOrderLineConsumeTransactions" nzShowPagination="false"
         #workOrderLineTable>
         <thead>
           <tr>
@@ -161,7 +242,7 @@
             </td>
           </tr>
         </tbody>
-      </nz-table>
+      </nz-table> -->
     </div>
   </nz-card>
 

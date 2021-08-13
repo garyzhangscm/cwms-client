@@ -63,7 +63,39 @@
       <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
     </div>
     
-    <st #st [data]="items" [columns]="columns">
+    <st #st [data]="items" [columns]="columns" [footer]="tableFoot" [expand]="expand" expandRowByClick expandAccordion>
+      
+      <!--   order details  -->
+      <ng-template #expand let-item let-index="index" let-column="column">
+         
+        <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
+          <nz-tab *ngFor="let itemPackageType of item.itemPackageTypes" [nzTitle]="itemPackageType.name!">
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #itemPackageTypeTable
+              [nzData]="itemPackageType.itemUnitOfMeasures" nzSize="middle" [nzShowPagination]="false">
+              <thead>
+                <tr>
+                  <th>{{'unit-of-measure' | i18n}}</th>
+                  <th>{{'quantity' | i18n}}</th>
+                  <th>{{'weight' | i18n}}</th>
+                  <th>{{'length' | i18n}}</th>
+                  <th>{{'width' | i18n}}</th>
+                  <th>{{'height' | i18n}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of itemPackageTypeTable.data">
+                  <td>{{ data.unitOfMeasure?.name }}</td>
+                  <td>{{ data.quantity }}</td>
+                  <td>{{ data.weight }}</td>
+                  <td>{{ data.length }}</td>
+                  <td>{{ data.width }}</td>
+                  <td>{{ data.height }}</td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </nz-tab>
+        </nz-tabset>
+      </ng-template>
     </st>
   
   </div>
@@ -182,6 +214,16 @@
 
   <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
     {{searchResult}}
+  </div>
+  
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+    <button nz-button nzType="primary" routerLink="/util/file-upload/items" routerLinkActive="active">
+      {{ 'file-upload' | i18n }}
+    </button>
+    <nz-divider nzType="vertical"></nz-divider>
+    <button nz-button nzType="primary" routerLink="/inventory/item/maintenance" routerLinkActive="active">
+      {{ 'add' | i18n }}
+    </button>
   </div>
 </ng-template>
 

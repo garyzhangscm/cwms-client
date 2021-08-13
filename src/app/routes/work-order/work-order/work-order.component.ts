@@ -441,12 +441,24 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   }
 
   isWorkOrderReadyForProduce(workOrder: WorkOrder): boolean {
+    return workOrder.productionLineAssignments!.length > 0;
+    /**
+     * Note: 
+     * Currently we allow the user to receive from work order and consume
+     * the raw material in 3 ways
+     * 1. allocate and pick from the storage
+     * 2. move the raw material without any picking, into the production line's 
+     *    inbound stage location
+     * 3. raw material can be produced by any other work order, we will allow
+     *    the user to consume from other work order directly
+     * 
     return (
       workOrder.productionLineAssignments!.length > 0 &&
       workOrder.totalLineInprocessQuantity! > 0 &&
       workOrder.totalLineDeliveredQuantity! > 0 &&
       workOrder.status === WorkOrderStatus.INPROCESS
     );
+     */
   }
 
 
