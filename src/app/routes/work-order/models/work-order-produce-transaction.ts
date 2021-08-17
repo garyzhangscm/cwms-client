@@ -12,7 +12,7 @@ export interface WorkOrderProduceTransaction {
   workOrderLineConsumeTransactions: WorkOrderLineConsumeTransaction[];
   workOrderProducedInventories: WorkOrderProducedInventory[];
   consumeByBomQuantity?: boolean;
-  matchedBillOfMaterial?: BillOfMaterial;
+  consumeByBom?: BillOfMaterial;
   workOrderByProductProduceTransactions: WorkOrderByProductProduceTransaction[];
   workOrderKPITransactions: WorkOrderKpiTransaction[];
   productionLine?: ProductionLine;

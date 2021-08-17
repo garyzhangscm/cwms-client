@@ -82,7 +82,9 @@ export class WorkOrderService {
     }
     else {
 
-      return this.http.post(url).pipe(map(res => res.data));
+      // we will allocate the whole work order, pass in an empty
+      // production line list
+      return this.http.post(url, []).pipe(map(res => res.data));
     }
   }
 

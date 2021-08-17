@@ -1,9 +1,10 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
-import { _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+
 import { Supplier } from '../../common/models/supplier';
 import { SupplierService } from '../../common/services/supplier.service';
 import { ColumnItem } from '../../util/models/column-item';
@@ -218,6 +219,7 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
 
   searching = false;
   searchResult = '';
+  isSpinning = false;
 
   // Table data for display
   listOfAllIntegrationSupplierData: IntegrationSupplierData[] = [];
@@ -237,7 +239,7 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
     private supplierService: SupplierService,
 
     private utilService: UtilService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
   ) {}
 
@@ -249,12 +251,19 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
   search(integrationSupplierDataId?: number): void {
     this.searching = true;
     this.searchResult = '';
+    this.isSpinning = true;
+    let startTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
+        this.searchForm.controls.integrationDateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
+        this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.controls.integrationDate.value;
     this.integrationSupplierDataService
-      .getSupplierData(integrationSupplierDataId)
+      .getData(startTime, endTime, specificDate)
       .subscribe(integrationSupplierDataRes => {
         this.listOfAllIntegrationSupplierData = integrationSupplierDataRes;
         this.listOfDisplayIntegrationSupplierData = integrationSupplierDataRes;
         this.searching = false;
+        this.isSpinning = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
           rowCount: integrationSupplierDataRes.length,
@@ -262,6 +271,7 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
       },
       () => {
         this.searching = false;
+        this.isSpinning = false;
         this.searchResult = '';
       }, );
   }
@@ -292,6 +302,9 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
     });
   }
 
+  /***
+   * 
+   * 
   openAddIntegrationDataModal(
     tplIntegrationDataModalTitle: TemplateRef<{}>,
     tplIntegrationDataModalContent: TemplateRef<{}>,
@@ -334,4 +347,6 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
       this.search(integrationSupplierDataRes.id);
     });
   }
+   * 
+   */
 }

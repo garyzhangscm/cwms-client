@@ -1,8 +1,9 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
-import { _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { IntegrationItemUnitOfMeasureData } from '../models/integration-item-unit-of-measure-data';
@@ -226,6 +227,7 @@ export class IntegrationIntegrationDataItemUnitOfMeasureComponent implements OnI
   searchForm!: FormGroup;
 
   searching = false;
+  isSpinning = false;
   searchResult = '';
 
   // Table data for display
@@ -248,7 +250,7 @@ export class IntegrationIntegrationDataItemUnitOfMeasureComponent implements OnI
   constructor(
     private fb: FormBuilder,
     private integrationItemUnitOfMeasureDataService: IntegrationItemUnitOfMeasureDataService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private utilService: UtilService,
   ) {}
 
@@ -260,11 +262,19 @@ export class IntegrationIntegrationDataItemUnitOfMeasureComponent implements OnI
   search(): void {
     this.searching = true;
     this.searchResult = '';
-    this.integrationItemUnitOfMeasureDataService.getItemUnitOfMeasureData().subscribe(
+    this.isSpinning = true;
+
+    let startTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
+        this.searchForm.controls.integrationDateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
+        this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.controls.integrationDate.value;
+    this.integrationItemUnitOfMeasureDataService.getData(startTime, endTime, specificDate).subscribe(
       integrationItemUnitOfMeasureDataRes => {
         this.listOfAllIntegrationItemUnitOfMeasureData = integrationItemUnitOfMeasureDataRes;
         this.listOfDisplayIntegrationItemUnitOfMeasureData = integrationItemUnitOfMeasureDataRes;
         this.searching = false;
+        this.isSpinning = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
           rowCount: integrationItemUnitOfMeasureDataRes.length,
@@ -272,6 +282,7 @@ export class IntegrationIntegrationDataItemUnitOfMeasureComponent implements OnI
       },
       () => {
         this.searching = false;
+        this.isSpinning = false;
         this.searchResult = '';
       },
     );

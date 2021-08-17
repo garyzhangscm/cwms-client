@@ -1,24 +1,36 @@
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
-import { IntegrationSupplierData } from '../models/integration-supplier-data';
 import { map } from 'rxjs/operators';
+
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { IntegrationSupplierData } from '../models/integration-supplier-data';
+import { IntegrationDataService } from './integration-data.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class IntegrationSupplierDataService {
-  constructor(private http: _HttpClient) {}
-
-  getSupplierData(integrationSupplierDataId?: number): Observable<IntegrationSupplierData[]> {
-    let url = `integration/integration-data/suppliers`;
-    if (integrationSupplierDataId) {
-      url = `${url}/${integrationSupplierDataId}`;
+  
+  constructor(private http: _HttpClient, 
+    private warehouseService: WarehouseService, 
+    private integrationDataService: IntegrationDataService) {}
+    
+	
+  getData(startTime?: Date, endTime?:Date, date?: Date): Observable<IntegrationSupplierData[]> {
+    let url = `integration/integration-data/suppliers?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    
+    if (startTime) {
+      url = `${url}&startTime=${this.integrationDataService.getISODateTimeString(startTime)}`;
+    }
+    if (endTime) {
+      url = `${url}&endTime=${this.integrationDataService.getISODateTimeString(endTime)}`;
+    }
+    if (date) {
+      url = `${url}&date=${this.integrationDataService.getISODateString(date)}`;
     }
     return this.http.get(url).pipe(map(res => res.data));
   }
-  addSupplierData(supplierData: IntegrationSupplierData) {
-    const url = `integration/integration-data/suppliers`;
-    return this.http.put(url, supplierData).pipe(map(res => res.data));
-  }
+
+  
 }

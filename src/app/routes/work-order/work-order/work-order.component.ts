@@ -15,7 +15,10 @@ import { PutawayConfigurationService } from '../../inbound/services/putaway-conf
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { PickWork } from '../../outbound/models/pick-work';
+import { ShortAllocation } from '../../outbound/models/short-allocation';
+import { ShortAllocationStatus } from '../../outbound/models/short-allocation-status.enum';
 import { PickService } from '../../outbound/services/pick.service';
+import { ShortAllocationService } from '../../outbound/services/short-allocation.service';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { ReportType } from '../../report/models/report-type.enum';
 import { ColumnItem } from '../../util/models/column-item';
@@ -191,6 +194,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
   expandSet = new Set<number>();
   allocateByProductionLineOptions = "BY_WORK_ORDER";
+  
+  shortAllocationStatus = ShortAllocationStatus;
+
 
   constructor(
     private fb: FormBuilder,
@@ -203,6 +209,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
     private pickService: PickService,
+    private shortAllocationService: ShortAllocationService,
     private putawayConfigurationService: PutawayConfigurationService,
     private inventoryService: InventoryService,
     private locationService: LocationService,
@@ -245,6 +252,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   mapOfKPITransactions: { [key: string]: WorkOrderKpiTransaction[] } = {};
 
   mapOfPicks: { [key: string]: PickWork[] } = {};
+  mapOfShortAllocations: { [key: string]: ShortAllocation[] } = {};
 
 
   printingInProcess = false;
@@ -515,7 +523,14 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         next: (pickRes) => this.mapOfPicks[workOrder.id!] = [...pickRes]
       });
   }
+  
+  showShortAllocations(workOrder: WorkOrder): void {
+    this.shortAllocationService.getShortAllocationsByWorkOrder(workOrder)
+      .subscribe({
 
+        next: (shortAllocationRes) => this.mapOfShortAllocations[workOrder.id!] = [...shortAllocationRes]
+      });
+  }
 
   showWorkOrderDetails(workOrder: WorkOrder): void {
     // When we expand the details for the order, load the picks and short allocation from the server
@@ -527,6 +542,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       this.showKPITransactions(workOrder);
       this.showKPIs(workOrder);
       this.showPicks(workOrder);
+      this.showShortAllocations(workOrder);
     }
   }
 
@@ -932,5 +948,26 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         },
       );
   }
+
+  
+  cancelShortAllocation(workOrder: WorkOrder, shortAllocation: ShortAllocation): void {
+    this.shortAllocationService.cancelShortAllocations([shortAllocation]).subscribe(shortAllocationRes => {
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      // refresh the short allocation
+      this.search(workOrder.id);
+    });
+  }
+
+  
+  isShortAllocationAllocatable(shortAllocation: ShortAllocation): boolean {
+    return shortAllocation.openQuantity > 0;
+  }
+  allocateShortAllocation(workOrder: WorkOrder, shortAllocation: ShortAllocation): void {
+    this.shortAllocationService.allocateShortAllocation(shortAllocation).subscribe(shortAllocationRes => {
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      this.search(workOrder.id);
+    });
+  }
+
 
 }

@@ -1,8 +1,9 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
-import { _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { IntegrationOrder } from '../models/integration-order';
@@ -111,6 +112,8 @@ export class IntegrationIntegrationDataOrderConfirmComponent implements OnInit {
   searchForm!: FormGroup;
 
   searching = false;
+  isSpinning = false;
+  
   searchResult = '';
 
   // Table data for display
@@ -121,7 +124,7 @@ export class IntegrationIntegrationDataOrderConfirmComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private integrationOrderConfirmationService: IntegrationOrderConfirmationService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private utilService: UtilService,
   ) {}
 
@@ -137,13 +140,22 @@ export class IntegrationIntegrationDataOrderConfirmComponent implements OnInit {
   search(): void {
     this.searching = true;
     this.searchResult = '';
-    this.integrationOrderConfirmationService.getData().subscribe(
+    this.isSpinning = true;
+
+    let startTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
+        this.searchForm.controls.integrationDateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
+        this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.controls.integrationDate.value;
+    this.integrationOrderConfirmationService.getData(startTime, endTime, specificDate).subscribe(
       integrationOrderConfirmationRes => {
         console.log(`integrationOrderConfirmationRes:${JSON.stringify(integrationOrderConfirmationRes)}`);
         this.listOfAllIntegrationOrderConfirmations = integrationOrderConfirmationRes;
         this.listOfDisplayIntegrationOrderConfirmations = integrationOrderConfirmationRes;
 
         this.searching = false;
+        this.isSpinning = false;
+      
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
           rowCount: integrationOrderConfirmationRes.length,
@@ -151,6 +163,8 @@ export class IntegrationIntegrationDataOrderConfirmComponent implements OnInit {
       },
       () => {
         this.searching = false;
+        this.isSpinning = false;
+      
         this.searchResult = '';
       },
     );

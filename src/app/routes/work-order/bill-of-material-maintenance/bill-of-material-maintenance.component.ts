@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { ItemService } from '../../inventory/services/item.service';
@@ -42,12 +43,12 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
     private inventoryStatusService: InventoryStatusService,
     private itemService: ItemService,
   ) {
-    this.pageTitle = this.i18n.fanyi('page.production-plan.new');
+    this.pageTitle = this.i18n.fanyi('page.bill-of-material.new');
   }
 
   ngOnInit(): void {
-    this.pageTitle = this.i18n.fanyi('page.production-plan.new');
-    this.titleService.setTitle(this.i18n.fanyi('page.production-plan.new'));
+    this.pageTitle = this.i18n.fanyi('page.bill-of-material.new');
+    this.titleService.setTitle(this.i18n.fanyi('page.bill-of-material.new'));
     this.stepIndex = 0;
 
     this.activatedRoute.queryParams.subscribe(params => {
@@ -96,7 +97,7 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
     this.setupBillOfMaterialQuantity();
 
     // Save a new bill of material or update an existing bill of material
-    if (this.currentBillOfMaterial.id !== null) {
+    if (this.currentBillOfMaterial.id) {
       this.billOfMeasureService.changeBillOfMaterial(this.currentBillOfMaterial).subscribe(billOfMaterialRes => {
         this.messageService.success(this.i18n.fanyi('message.save.complete'));
         setTimeout(() => {
@@ -210,7 +211,7 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
 
   // BOM Line related functions
   bomLineItemNameChanged(event: Event, billOfMaterialLine: BillOfMaterialLine): void {
-    const itemName: string = (event.target as HTMLInputElement).value;
+    const itemName: string = (event.target as HTMLInputElement).value.trim();
     console.log(`Item of billOfMaterialLine change to ${itemName}`);
     if (itemName === '') {
       billOfMaterialLine.item = {
@@ -274,7 +275,7 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
         maxLineNumber = Number(billOfMaterialLine.number) + 1;
       }
     });
-    return maxLineNumber + '';
+    return `${maxLineNumber  }`;
   }
   getEmptyBillOfMaterialLine(): BillOfMaterialLine {
     return {

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+
 import { IntegrationIntegrationDataInventoryAdjustComponent } from './integration-data-inventory-adjust.component';
 
 describe('IntegrationIntegrationDataInventoryAdjustComponent', () => {

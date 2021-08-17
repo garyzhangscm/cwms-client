@@ -1,8 +1,9 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
-import { _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { IntegrationInventoryAdjustmentConfirmation } from '../models/integration-inventory-adjustment-confirmation';
@@ -220,6 +221,8 @@ export class IntegrationIntegrationDataInventoryAttributeChangeComponent impleme
   sortValue: string | null = null;
 
   isCollapse = false;
+  isSpinning = false;
+  
 
   // list of expanded row
   mapOfExpandedId: { [key: string]: boolean } = {};
@@ -227,7 +230,7 @@ export class IntegrationIntegrationDataInventoryAttributeChangeComponent impleme
   constructor(
     private fb: FormBuilder,
     private integrationInventoryAdjustmentConfirmationService: IntegrationInventoryAttributeChangeConfirmationService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private utilService: UtilService,
   ) {}
 
@@ -243,12 +246,20 @@ export class IntegrationIntegrationDataInventoryAttributeChangeComponent impleme
   search(): void {
     this.searching = true;
     this.searchResult = '';
-    this.integrationInventoryAdjustmentConfirmationService.getData().subscribe(
+    this.isSpinning = true;
+
+    let startTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
+        this.searchForm.controls.integrationDateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
+        this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.controls.integrationDate.value;
+    this.integrationInventoryAdjustmentConfirmationService.getData(startTime, endTime, specificDate).subscribe(
       integrationInventoryAdjustmentConfirmationRes => {
         this.listOfAllIntegrationInventoryAttributeChangeConfirmations = integrationInventoryAdjustmentConfirmationRes;
         this.listOfDisplayIntegrationInventoryAttributeChangeConfirmations = integrationInventoryAdjustmentConfirmationRes;
 
         this.searching = false;
+        this.isSpinning = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
           rowCount: integrationInventoryAdjustmentConfirmationRes.length,
@@ -256,6 +267,7 @@ export class IntegrationIntegrationDataInventoryAttributeChangeComponent impleme
       },
       () => {
         this.searching = false;
+        this.isSpinning = false;
         this.searchResult = '';
       },
     );

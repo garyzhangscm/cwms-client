@@ -9,7 +9,10 @@ export interface WorkOrderLineConsumeTransaction {
 
   workOrderProduceTransaction?: WorkOrderProduceTransaction;
   workOrderLine?: WorkOrderLine;
-  consumedQuantity?: number;
+  consumingByBomQuantity?: number;  // if we consume by bom
+  consumedQuantity?: number;        // use manually type in the consume quantity
+  consumingByLPNQuantity?: number;   // consume from non picked inventory
+  consumingByWorkOrderQuantity?: number;    // consume from other work order's finish goods
   
   consumeFromWorkOrder?: WorkOrder;
   consumeFromWorkOrderQuantity?: number;

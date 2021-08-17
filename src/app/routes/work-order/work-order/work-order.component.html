@@ -426,25 +426,83 @@
 
 
     <nz-tab nzTitle=" {{ 'short-allocation' | i18n }}" *ngIf="isTabVisible('work-order.work-order.short-allocation')">
-      <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="data.workOrderLines" nzSize="middle"
-        [nzShowPagination]="false">
+      
+      <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="mapOfShortAllocations[data.id!!]" nzSize="middle"
+        [nzShowPagination]="true"  #shortAllocationTable>
 
+        
         <thead>
           <th>
-            {{ 'item' | i18n }}</th>
+            {{ 'item' | i18n }}
+          </th>
           <th>
-            {{ 'item.description' | i18n }}</th>
+            {{ 'item.description' | i18n }}
+          </th>
           <th>
-            {{ 'pick.quantity' | i18n }}</th>
+            {{ 'short-allocation.quantity' | i18n }}
+          </th>
+          <th>
+            {{ 'short-allocation.openQuantity' | i18n }}
+          </th>
+          <th>
+            {{ 'short-allocation.inprocessQuantity' | i18n }}
+          </th>
+          <th>
+            {{ 'short-allocation.deliveredQuantity' | i18n }}
+          </th>
+          <th>
+            {{ 'short-allocation.status' | i18n }}
+          </th>
+          <th>
+            {{ 'short-allocation.allocationCount' | i18n }}
+          </th>
+          <th>
+            {{ 'short-allocation.lastAllocationDatetime' | i18n }}
+          </th>
+          <th>
+            {{ 'action' | i18n }}
+          </th>
         </thead>
-        <tbody *ngFor="let workOrderLine of data.workOrderLines">
+        <tbody *ngFor="let shortAllocation of shortAllocationTable.data">
+          <tr *ngIf="shortAllocation.status !== shortAllocationStatus.CANCELLED">
 
-          <tr *ngFor="let shortAllocation of workOrderLine.shortAllocations">
             <td>{{ shortAllocation.item?.name }}</td>
             <td>{{ shortAllocation.item?.description }}</td>
             <td>{{ shortAllocation.quantity }}</td>
+            <td>{{ shortAllocation.openQuantity }}</td>
+            <td><a routerLink="/outbound/pick" routerLinkActive="active"
+                [queryParams]="{shortAllocationId : shortAllocation.id}">
+                {{ shortAllocation.inprocessQuantity }}
+              </a></td>
+            <td>{{ shortAllocation.deliveredQuantity }}</td>
+            <td>{{ 'SHORT-ALLOCATION-STATUS-' +shortAllocation.status | i18n}}</td>
+            <td>{{ shortAllocation.allocationCount }}</td>
+
+            <td>
+              <span *ngIf="shortAllocation.lastAllocationDatetime">
+                {{ shortAllocation.lastAllocationDatetime[1] }}/{{ shortAllocation.lastAllocationDatetime[2] }}/{{
+                shortAllocation.lastAllocationDatetime[0] }}
+                {{ shortAllocation.lastAllocationDatetime[3] }}:{{ shortAllocation.lastAllocationDatetime[4] }}:{{
+                shortAllocation.lastAllocationDatetime[5] }}
+              </span>
+            </td>
+            <td>
+              <button nz-button (click)="cancelShortAllocation(data, shortAllocation)"
+                [disabled]="shortAllocation.status !== shortAllocationStatus.PENDING || data.status === workOrderStatus.COMPLETED">
+                {{ 'cancel' | i18n }}
+              </button>
+
+              <nz-divider nzType="vertical"></nz-divider>
+              <button nz-button (click)="allocateShortAllocation(data, shortAllocation)"
+                [disabled]="!isShortAllocationAllocatable(shortAllocation) || data.status === workOrderStatus.COMPLETED">
+                {{ 'allocate' | i18n }}
+              </button>
+
+            </td>
           </tr>
         </tbody>
+
+       
       </nz-table>
     </nz-tab>
 

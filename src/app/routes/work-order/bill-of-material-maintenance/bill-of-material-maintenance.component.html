@@ -121,20 +121,20 @@
         <tr *ngFor="let billOfMaterialLine of currentBillOfMaterial?.billOfMaterialLines">
           <td>{{ billOfMaterialLine.number }}</td>
           <td>
-            <span *ngIf="billOfMaterialLine.id !== null">{{ billOfMaterialLine.item!.name }}</span>
+            <span *ngIf="billOfMaterialLine.id !== undefined && billOfMaterialLine.id !== null ">{{ billOfMaterialLine.item!.name }}</span>
 
-            <nz-input-group nzCompact *ngIf="billOfMaterialLine.id === null">
-              <input nz-input [(ngModel)]="billOfMaterialLine.item!.name" [nzAutocomplete]="itemList"
+            <nz-input-group nzCompact *ngIf="billOfMaterialLine.id === undefined || billOfMaterialLine.id === null">
+              <input nz-input [(ngModel)]="billOfMaterialLine.item!.name"  
                 style="width: 150px;" (blur)="bomLineItemNameChanged($event, billOfMaterialLine)" />
             </nz-input-group>
           </td>
           <td>{{ billOfMaterialLine.item?.description }}</td>
           <td>
-            <span *ngIf="billOfMaterialLine.id !== null">{{
+            <span *ngIf="billOfMaterialLine.id !== undefined && billOfMaterialLine.id !== null">{{
               'INVENTORY-STATUS-' + billOfMaterialLine.inventoryStatus?.name | i18n
               }}</span>
 
-            <nz-input-group nzCompact *ngIf="billOfMaterialLine.id === null">
+            <nz-input-group nzCompact *ngIf="billOfMaterialLine.id === undefined || billOfMaterialLine.id === null">
               <nz-select nz-input [ngModel]="billOfMaterialLine.inventoryStatus?.name"
                 (ngModelChange)="inventoryStatusChange($event, billOfMaterialLine)" style="width: 150px">
                 <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"

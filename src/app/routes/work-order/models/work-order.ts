@@ -1,19 +1,17 @@
-import { WorkOrderLine } from './work-order-line';
 
-import { WorkOrderInstruction } from './work-order-instruction';
-
-import { ProductionLine } from './production-line';
 
 import { Item } from '../../inventory/models/item';
-
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
-
+import { BillOfMaterial } from './bill-of-material';
+import { ProductionLine } from './production-line';
+import { ProductionLineAssignment } from './production-line-assignment';
 import { ProductionPlanLine } from './production-plan-line';
 import { WorkOrderAssignment } from './work-order-assignment';
 import { WorkOrderByProduct } from './work-order-by-product';
+import { WorkOrderInstruction } from './work-order-instruction';
 import { WorkOrderKpi } from './work-order-kpi';
+import { WorkOrderLine } from './work-order-line';
 import { WorkOrderStatus } from './work-order-status.enum';
-import { ProductionLineAssignment } from './production-line-assignment';
 
 export interface WorkOrder {
   id?: number;
@@ -40,4 +38,6 @@ export interface WorkOrder {
   totalLineInprocessQuantity?: number;
   totalLineDeliveredQuantity?: number;
   totalLineConsumedQuantity?: number;
+
+  billOfMaterial?: BillOfMaterial;
 }

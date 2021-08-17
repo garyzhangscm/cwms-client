@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
-import { ShortAllocation } from '../models/short-allocation';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { WorkOrderBillOfMaterialComponent } from '../../work-order/bill-of-material/bill-of-material.component';
+import { WorkOrder } from '../../work-order/models/work-order';
+import { ShortAllocation } from '../models/short-allocation';
 
 @Injectable({
   providedIn: 'root',
@@ -17,8 +20,22 @@ export class ShortAllocationService {
   getShortAllocationsByOrder(orderId: number): Observable<ShortAllocation[]> {
     return this.getShortAllocations(undefined, orderId, undefined, undefined);
   }
-  getShortAllocationsByWorkOrder(workOrderId: number): Observable<ShortAllocation[]> {
-    return this.getShortAllocations(undefined, undefined, workOrderId, undefined);
+  getShortAllocationsByWorkOrder(workOrder: WorkOrder): Observable<ShortAllocation[]> {
+    let workOrderLineIds : string = 
+        workOrder.workOrderLines.filter(workOrderLine => workOrderLine.id !== undefined && workOrderLine.id !== null)
+        .map(workOrderLine => workOrderLine.id).join(",");
+        
+    if (workOrderLineIds.length > 0) {
+      return this.getShortAllocationsByWorkOrderLines(workOrderLineIds);
+    }
+    else {
+
+      return of([]);
+      
+    }
+  }
+  getShortAllocationsByWorkOrderLines(workOrderIds: string): Observable<ShortAllocation[]> {
+    return this.getShortAllocations(undefined, undefined, undefined, undefined, undefined, workOrderIds);
   }
   getShortAllocationsByWave(waveId: number): Observable<ShortAllocation[]> {
     return this.getShortAllocations(undefined, undefined, undefined, undefined, waveId);
@@ -29,6 +46,7 @@ export class ShortAllocationService {
     workOrderId?: number,
     shipmentId?: number,
     waveId?: number,
+    workOrderLineIds?: string
   ): Observable<ShortAllocation[]> {
     let url = `outbound/shortAllocations?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
 
@@ -47,6 +65,10 @@ export class ShortAllocationService {
     }
     if (waveId) {
       url = `${url}&waveId=${waveId}`;
+    }
+    if (workOrderLineIds) {
+      url = `${url}&workOrderLineIds=${workOrderLineIds}`;
+
     }
 
     return this.http.get(url).pipe(map(res => res.data));
@@ -82,3 +104,7 @@ export class ShortAllocationService {
     return this.http.post(url).pipe(map(res => res.data));
   }
 }
+function of(arg0: never[]): Observable<ShortAllocation[]> {
+  throw new Error('Function not implemented.');
+}
+

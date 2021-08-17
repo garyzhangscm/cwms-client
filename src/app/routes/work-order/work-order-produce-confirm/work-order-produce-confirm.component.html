@@ -136,7 +136,10 @@
             <th>{{ 'work-order.line.expectedQuantity' | i18n }}</th>
             <th>{{ 'work-order.line.inprocessQuantity' | i18n }}</th>
             <th>{{ 'work-order.line.consumedQuantity' | i18n }}</th>
+            <th>{{ 'work-order.line.consumingByBomQuantity' | i18n }}</th>
             <th>{{ 'work-order.line.consumingQuantity' | i18n }}</th>
+            <th>{{ 'work-order.line.consumingByLPNQuantity' | i18n }}</th>
+            <th>{{ 'work-order.line.consumingByWorkOrderQuantity' | i18n }}</th>
             <th>{{ 'work-order.line.totalConsumingQuantity' | i18n }}</th>
           </tr>
         </thead>
@@ -163,7 +166,16 @@
                 {{ data?.workOrderLine?.consumedQuantity }}
               </td>
               <td>
+                {{ data?.consumingByBomQuantity }} 
+              </td>
+              <td>
                 {{ data?.consumedQuantity }} 
+              </td>
+              <td>
+                {{ data?.consumingByLPNQuantity }} 
+              </td>
+              <td>
+                {{ data?.consumingByWorkOrderQuantity }} 
               </td>
               <td>
                 {{ data?.totalConsumedQuantity }}
@@ -250,14 +262,14 @@
     <span *ngIf="workOrderProduceTransaction.consumeByBomQuantity === true">
 
       <a nz-popover nzPopoverTitle="BOM" [nzPopoverContent]="bomDetails">{{
-        workOrderProduceTransaction.matchedBillOfMaterial?.number }}</a>
+        workOrderProduceTransaction.consumeByBom?.number }}</a>
 
     </span>
   </ng-template>
 
   <ng-template #bomDetails>
     <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #bomDetailTable
-      [nzData]="workOrderProduceTransaction.matchedBillOfMaterial!.billOfMaterialLines" nzSize="middle"
+      [nzData]="workOrderProduceTransaction.consumeByBom!.billOfMaterialLines" nzSize="middle"
       [nzShowPagination]="false" nzBordered>
       <thead>
         <th>

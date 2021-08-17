@@ -56,13 +56,7 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
 
     this.workOrderProduceTransaction = JSON.parse(sessionStorage.getItem('currentWorkOrderProduceTransaction')!);
 
-    console.log(`kpi 3: \n ${JSON.stringify(this.workOrderProduceTransaction.workOrderKPITransactions)}`);
-    if (
-      this.workOrderProduceTransaction.consumeByBomQuantity === true &&
-      this.workOrderProduceTransaction.matchedBillOfMaterial !== null
-    ) {
-      this.setupWorkOrderConsumptionInformation();
-    }
+    this.setupWorkOrderConsumptionInformation(); 
     this.savingInProcess = false;
   }
   setupWorkOrderConsumptionInformation(): void {
@@ -71,13 +65,57 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
       workOrderProducedQuantity += inventory.quantity!;
     });
 
-    this.workOrderProduceTransaction.workOrderLineConsumeTransactions.forEach(workOrderLineConsumeTransaction => {
-      const matchedBillOfMaterialLines = this.workOrderProduceTransaction.matchedBillOfMaterial!.billOfMaterialLines.filter(
-        billOfMaterialLine => billOfMaterialLine.itemId === workOrderLineConsumeTransaction.workOrderLine!.itemId,
-      );
-      workOrderLineConsumeTransaction.consumedQuantity =
-        (matchedBillOfMaterialLines[0].expectedQuantity! * workOrderProducedQuantity) /
-        this.workOrderProduceTransaction.matchedBillOfMaterial!.expectedQuantity!;
+    this.workOrderProduceTransaction.workOrderLineConsumeTransactions.forEach(
+      workOrderLineConsumeTransaction => {
+        if (this.workOrderProduceTransaction.consumeByBomQuantity) {
+          // ok, we will consume by bom
+          workOrderLineConsumeTransaction.consumedQuantity = 0;
+          workOrderLineConsumeTransaction.consumingByLPNQuantity = 0;
+          workOrderLineConsumeTransaction.consumingByWorkOrderQuantity = 0;
+          workOrderLineConsumeTransaction.consumingByBomQuantity = 0; 
+
+          if (this.workOrderProduceTransaction.consumeByBom) {
+            const matchedBillOfMaterialLines = this.workOrderProduceTransaction.consumeByBom!.billOfMaterialLines.filter(
+              billOfMaterialLine => billOfMaterialLine.itemId === workOrderLineConsumeTransaction.workOrderLine!.itemId,
+            );
+            if (matchedBillOfMaterialLines.length > 0) {
+              
+              workOrderLineConsumeTransaction.consumingByBomQuantity = 
+                (matchedBillOfMaterialLines[0].expectedQuantity! * workOrderProducedQuantity) /
+                this.workOrderProduceTransaction.consumeByBom!.expectedQuantity!;
+            }
+          }
+        }
+        else {
+          
+          // ok, we will not consume by bom
+          workOrderLineConsumeTransaction.consumingByBomQuantity = 0; 
+
+          workOrderLineConsumeTransaction.consumingByLPNQuantity = 0;
+          workOrderLineConsumeTransaction.consumingByWorkOrderQuantity = 0;
+          
+          
+          // workOrderLineConsumeTransaction.consumedQuantity should be already setup 
+          // manually by the user
+          // workOrderLineConsumeTransaction.consumedQuantity = 0;
+
+          workOrderLineConsumeTransaction.workOrderLineConsumeLPNTransactions?.filter(
+            lpn => lpn && lpn.quantity > 0
+          ).forEach(
+            lpn => workOrderLineConsumeTransaction.consumingByLPNQuantity! += +lpn.quantity!
+          );
+
+          // TO-DO: Consume from other work order's finish goods is still under develop 
+          // workOrderLineConsumeTransaction.consumingByWorkOrderQuantity = 0;
+        }
+        workOrderLineConsumeTransaction.totalConsumedQuantity = 
+        
+            +workOrderLineConsumeTransaction.consumedQuantity! + 
+            +workOrderLineConsumeTransaction.consumingByLPNQuantity + 
+            +workOrderLineConsumeTransaction.consumingByWorkOrderQuantity + 
+            +workOrderLineConsumeTransaction.consumingByBomQuantity ;
+
+      
     });
   }
   toggleCollapse(): void {

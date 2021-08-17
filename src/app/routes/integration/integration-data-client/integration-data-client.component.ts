@@ -1,9 +1,10 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
-import { _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+
 import { Client } from '../../common/models/client';
 import { ClientService } from '../../common/services/client.service';
 import { ColumnItem } from '../../util/models/column-item';
@@ -223,6 +224,9 @@ export class IntegrationIntegrationDataClientComponent implements OnInit {
   listOfDisplayIntegrationClientData: IntegrationClientData[] = []; 
 
   isCollapse = false;
+  
+  isSpinning = false;
+
 
   integrationDataModal!: NzModalRef;
   integrationDataForm!: FormGroup;
@@ -235,8 +239,7 @@ export class IntegrationIntegrationDataClientComponent implements OnInit {
     private fb: FormBuilder,
     private integrationClientDataService: IntegrationClientDataService,
     private clientService: ClientService,
-
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private utilService: UtilService,
   ) {}
@@ -246,14 +249,24 @@ export class IntegrationIntegrationDataClientComponent implements OnInit {
     this.listOfAllIntegrationClientData = [];
     this.listOfDisplayIntegrationClientData = [];
   }
-  search(integrationClientDataId?: number): void {
+  search(): void {
     this.searching = true;
+    this.isSpinning = true;
+
     this.searchResult = '';
-    this.integrationClientDataService.getClientData(integrationClientDataId).subscribe(
+    
+    let startTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
+        this.searchForm.controls.integrationDateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
+        this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.controls.integrationDate.value;
+
+    this.integrationClientDataService.getData(startTime, endTime, specificDate).subscribe(
       integrationClientDataRes => {
         this.listOfAllIntegrationClientData = integrationClientDataRes;
         this.listOfDisplayIntegrationClientData = integrationClientDataRes;
         this.searching = false;
+        this.isSpinning = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
           rowCount: integrationClientDataRes.length,
@@ -261,6 +274,7 @@ export class IntegrationIntegrationDataClientComponent implements OnInit {
       },
       () => {
         this.searching = false;
+        this.isSpinning = false;
         this.searchResult = '';
       },
     );
@@ -288,7 +302,8 @@ export class IntegrationIntegrationDataClientComponent implements OnInit {
       clientList.forEach(client => this.clients.push({ label: client.description, value: client.id.toString() }));
     });
   }
-
+/**
+ * 
   openAddIntegrationDataModal(
     tplIntegrationDataModalTitle: TemplateRef<{}>,
     tplIntegrationDataModalContent: TemplateRef<{}>,
@@ -331,4 +346,5 @@ export class IntegrationIntegrationDataClientComponent implements OnInit {
       this.search(integrationClientDataRes.id);
     });
   }
+ */
 }

@@ -126,8 +126,7 @@
       <nz-content class="inner-nz-content">
         <a nz-button nzType="link" (click)="produceByProduct()">
           {{ 'steps.work-order-produce.by-product.title' | i18n }}</a>
-        <button nz-button nzType="primary" routerLink="/work-order/work-order/produce/confirm" routerLinkActive="active"
-          [queryParams]="{ id: currentWorkOrder?.id }" (click)="saveCurrentWorkOrderResults()">
+        <button nz-button nzType="primary" (click)="saveCurrentWorkOrderResults()">
           {{ 'confirm' | i18n }}
         </button>
       </nz-content>
@@ -139,10 +138,93 @@
 </ng-template>
 
 <!-- Table to specify the consumed inventory  -->
-<nz-card nzTitle="{{ 'work-order.line' | i18n }}" [nzExtra]="workOrderLineActions"
-  
+<nz-card nzTitle="{{ 'work-order.line' | i18n }}" [nzExtra]="workOrderLineActions" 
+
   *ngIf="workOrderProduceTransaction !== undefined && workOrderProduceTransaction.productionLine !== undefined">
-  <div class="search-result-list" [hidden]="isCollapse">
+  <!-- 
+    Consume by BOM
+  -->
+  <div *ngIf="consumeByBomQuantity === 'true'" style="padding: 20px;">
+
+    {{'work-order.consume-by-bom-on-work-order' | i18n}} : 
+      <nz-radio-group [(ngModel)]="consumeByWorkOrderBOM"  (ngModelChange)="consumeByWorkOrderBOMChanged()"
+        nzName="radiogroup">
+        <label nz-radio nzValue="true">{{ 'yes' | i18n }}</label>
+        <label nz-radio nzValue="false">{{ 'no' | i18n }}</label>
+      </nz-radio-group>
+    <div *ngIf="consumeByWorkOrderBOM === 'true'" style="padding-top: 20px;">  
+      {{ 'work-order.bill-of-material' | i18n}} : 
+      <span *ngIf="workOrderProduceTransaction.workOrder!.billOfMaterial" >{{ workOrderProduceTransaction.workOrder!.billOfMaterial?.number }} </span>
+      <span *ngIf="workOrderProduceTransaction.workOrder!.billOfMaterial === undefined || workOrderProduceTransaction.workOrder!.billOfMaterial === null" >N/A</span>
+          
+    </div>
+    
+    
+    <div *ngIf="consumeByWorkOrderBOM === 'false'" style="padding-top: 20px;">  
+      
+      {{'work-order.matched-bom' | i18n}} : 
+        <nz-select *ngIf="matchedBOM.length >0" style="width: 150px" [(ngModel)]="workOrderProduceTransaction!.consumeByBom!.number"
+            (ngModelChange)="matchedBOMChanged()">
+            <nz-option *ngFor="let billOfMaterial of matchedBOM"
+              [nzLabel]="billOfMaterial.number!"
+              [nzValue]="billOfMaterial.number"></nz-option>
+          </nz-select>
+          <span *ngIf="matchedBOM.length === 0" >N/A</span>
+    </div>
+    
+      <div class="search-result-list"
+          style = "padding-top: 25px"
+          *ngIf="workOrderProduceTransaction!.consumeByBom && workOrderProduceTransaction!.consumeByBom.number">
+        <!-- if we have the consume by bom setup, show the details  --> 
+          <nz-descriptions nzTitle="{{ 'bill-of-material' | i18n }}" nzBordered 
+          style = "padding-bottom: 25px">
+            <nz-descriptions-item nzTitle="{{ 'bill-of-material.number' | i18n }}">
+              {{ workOrderProduceTransaction!.consumeByBom.number }}
+
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'item' | i18n }}">
+              {{ workOrderProduceTransaction!.consumeByBom.item?.name }}
+
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'bill-of-material.expectedQuantity' | i18n }}">
+              {{ workOrderProduceTransaction!.consumeByBom.expectedQuantity }}
+
+            </nz-descriptions-item>
+        </nz-descriptions>
+        
+        <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #bomDetailTable
+            [nzData]="workOrderProduceTransaction!.consumeByBom.billOfMaterialLines!" nzSize="middle"
+            [nzShowPagination]="false" nzBordered>
+            <thead>
+              <th>
+                {{ 'bill-of-material.line.number' | i18n }}</th>
+              <th>
+                {{ 'item' | i18n }}</th>
+              <th>
+                {{ 'item.description' | i18n }}</th>
+              <th>
+                {{ 'bill-of-material.line.expectedQuantity' | i18n }}</th>
+              <th>
+                {{ 'inventory.status' | i18n }}</th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let billOfMaterialLine of bomDetailTable.data">
+                <td>{{ billOfMaterialLine.number }}</td>
+                <td>{{ billOfMaterialLine.item?.name }}</td>
+                <td>{{ billOfMaterialLine.item?.description }}</td>
+                <td>{{ billOfMaterialLine.expectedQuantity }}</td>
+                <td>{{ billOfMaterialLine.inventoryStatus?.name }}</td>
+              </tr>
+            </tbody>
+          </nz-table> 
+      </div>
+
+  </div>
+  <!--
+      User specify how to consume the inventory
+
+  -->
+  <div class="search-result-list" *ngIf="consumeByBomQuantity === 'false'">
     <nz-table [nzScroll]="{ x: 'true', y: 'true' }"
       [nzData]="workOrderProduceTransaction.workOrderLineConsumeTransactions" nzShowPagination="false"
       #workOrderLineTable>
@@ -226,46 +308,9 @@
   </div>
 </nz-card>
 <ng-template #workOrderLineActions>
-  <span>
-    {{ 'work-order-produce-transaction.consume-by-bom-quantity' | i18n }}
-
-    <span *ngIf="findMatchedBOM">(
-      <a nz-popover nzPopoverTitle="BOM" [nzPopoverContent]="bomDetails">{{
-        workOrderProduceTransaction.matchedBillOfMaterial?.number }}</a>
-      )
-    </span>
-  </span>
   <nz-radio-group [(ngModel)]="consumeByBomQuantity" (ngModelChange)="onConsumeByBomQuantityChanged($event)"
     nzName="radiogroup">
     <label nz-radio nzValue="true">{{ 'yes' | i18n }}</label>
     <label nz-radio nzValue="false">{{ 'no' | i18n }}</label>
   </nz-radio-group>
-</ng-template>
-
-<ng-template #bomDetails>
-  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #bomDetailTable
-    [nzData]="workOrderProduceTransaction.matchedBillOfMaterial!.billOfMaterialLines!" nzSize="middle"
-    [nzShowPagination]="false" nzBordered>
-    <thead>
-      <th>
-        {{ 'bill-of-material.line.number' | i18n }}</th>
-      <th>
-        {{ 'item' | i18n }}</th>
-      <th>
-        {{ 'item.description' | i18n }}</th>
-      <th>
-        {{ 'bill-of-material.line.expectedQuantity' | i18n }}</th>
-      <th>
-        {{ 'inventory.status' | i18n }}</th>
-    </thead>
-    <tbody>
-      <tr *ngFor="let billOfMaterialLine of bomDetailTable.data">
-        <td>{{ billOfMaterialLine.number }}</td>
-        <td>{{ billOfMaterialLine.item?.name }}</td>
-        <td>{{ billOfMaterialLine.item?.description }}</td>
-        <td>{{ billOfMaterialLine.expectedQuantity }}</td>
-        <td>{{ billOfMaterialLine.inventoryStatus?.name }}</td>
-      </tr>
-    </tbody>
-  </nz-table>
 </ng-template>

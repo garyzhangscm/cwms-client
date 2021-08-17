@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';   
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+
 import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Client } from '../models/client';
@@ -31,15 +32,15 @@ export class ClientService {
       .pipe(tap(res => this.gzLocalStorageService.setItem('common.client', res)));
   }
   getClient(clientId: number): Observable<Client> {
-    const data = this.gzLocalStorageService.getItem('common.client.' + clientId);
+    const data = this.gzLocalStorageService.getItem(`common.client.${  clientId}`);
     if (data !== null) {
       return of(data);
     }
 
     return this.http
-      .get('common/clients/' + clientId)
+      .get(`common/clients/${  clientId}`)
       .pipe(map(res => res.data))
-      .pipe(tap(res => this.gzLocalStorageService.setItem('common.client.' + clientId, res)));
+      .pipe(tap(res => this.gzLocalStorageService.setItem(`common.client.${  clientId}`, res)));
   }
 
   addClient(client: Client): Observable<Client> {
@@ -47,12 +48,12 @@ export class ClientService {
   }
 
   changeClient(client: Client): Observable<Client> {
-    const url = 'common/clients/' + client.id;
+    const url = `common/clients/${  client.id}`;
     return this.http.put(url, client).pipe(map(res => res.data));
   }
 
   removeClient(client: Client): Observable<Client> {
-    const url = 'common/clients/' + client.id;
+    const url = `common/clients/${  client.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 

@@ -6,6 +6,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+
 import { Customer } from '../../common/models/customer';
 import { Order } from '../../outbound/models/order';
 import { ColumnItem } from '../../util/models/column-item';
@@ -99,7 +100,6 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
   // Table data for display
   listOfAllBillOfMaterial: BillOfMaterial[] = [];
   listOfDisplayBillOfMaterial: BillOfMaterial[] = [];
-
 
 
   constructor(
@@ -196,7 +196,6 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
       this.expandSet.delete(id);
     }
   }
-
 
 
   removeSelectedBillOfMaterials(): void {

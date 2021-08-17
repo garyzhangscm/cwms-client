@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
@@ -10,6 +11,7 @@ import { InventoryService } from '../../inventory/services/inventory.service';
 import { ItemService } from '../../inventory/services/item.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { BillOfMaterial } from '../models/bill-of-material';
 import { ProductionLine } from '../models/production-line';
 import { ProductionLineAssignment } from '../models/production-line-assignment';
 import { WorkOrder } from '../models/work-order';
@@ -38,10 +40,14 @@ import { WorkOrderService } from '../services/work-order.service';
 })
 export class WorkOrderWorkOrderProduceComponent implements OnInit {
   workOrderProduceTransaction!: WorkOrderProduceTransaction;
-  consumeByBomQuantity = 'true';
+  consumeByBomQuantity = 'true'; // consume by BOM
+  consumeByWorkOrderBOM = 'true';  // whether we consume by the BOM on the work order, 
+                                 // or the user can select one BOM that matches with
+                                 // the work order's item
   currentWorkOrder!: WorkOrder;
   findMatchedBOM = true;
   pageLoading = false;
+  matchedBOM: BillOfMaterial[] = [];
 
   validInventoryStatuses: InventoryStatus[] = [];
   assignedProductionLines: ProductionLine[] = [];
@@ -61,6 +67,7 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
     private inventoryStatusService: InventoryStatusService,
     private inventoryService: InventoryService,
     private warehouseService: WarehouseService,
+    private messageService: NzMessageService,
     private router: Router,
   ) {
     this.pageTitle = this.i18n.fanyi('page.work-order.produce');
@@ -75,48 +82,67 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
         this.workOrderService.getWorkOrder(params.id).subscribe(workOrderRes => {
           this.currentWorkOrder = workOrderRes;
           this.setupEmptyWorkOrderProduceTransaction(this.currentWorkOrder);
+          this.loadMatchedBillOfMaterial(workOrderRes);
         });
       }
     });
     this.loadAvailableInventoryStatus();
   }
-  setupEmptyWorkOrderProduceTransaction(workOrder: WorkOrder): void {
-    this.billOfMaterialService.findMatchedBillOfMaterial(workOrder.id!).subscribe(bomRes => {
-      if (bomRes != null) {
-        this.findMatchedBOM = true;
-        this.consumeByBomQuantity = 'true';
-        this.workOrderProduceTransaction = {
-          id: undefined,
-          workOrder,
-          workOrderLineConsumeTransactions: this.getEmptyWorkOrderLineConsumeTransactions(),
-          workOrderProducedInventories: [this.getEmptyWorkOrderProducedInventory()],
-          consumeByBomQuantity: true,
-          matchedBillOfMaterial: bomRes,
-          workOrderByProductProduceTransactions: [],
-          workOrderKPITransactions: [],
-          productionLine: undefined,
-        };
-        // hide the consume quantity table so by default we will 
-        // consume by BOM
-        this.isCollapse = true;
-      } else {
-        this.findMatchedBOM = false;
-        this.consumeByBomQuantity = 'false';
-        this.workOrderProduceTransaction = {
-          id: undefined,
-          workOrder,
-          workOrderLineConsumeTransactions: this.getEmptyWorkOrderLineConsumeTransactions(),
-          workOrderProducedInventories: [this.getEmptyWorkOrderProducedInventory()],
-          consumeByBomQuantity: false,
-          matchedBillOfMaterial: undefined,
-          workOrderByProductProduceTransactions: [],
-          workOrderKPITransactions: [],
-          productionLine: undefined,
-        };
-        this.isCollapse = false;
-      }
+  loadMatchedBillOfMaterial(workOrder: WorkOrder) : void {
 
-    });
+    this.billOfMaterialService.findMatchedBillOfMaterialByItemName(workOrder.item!.name)
+        .subscribe({
+          next: (billOfMaterialRes) => this.matchedBOM = billOfMaterialRes
+        })
+  }
+  setupEmptyWorkOrderProduceTransaction(workOrder: WorkOrder): void {
+      
+    this.workOrderProduceTransaction = {
+          id: undefined,
+          workOrder,
+          workOrderLineConsumeTransactions: this.getEmptyWorkOrderLineConsumeTransactions(),
+          workOrderProducedInventories: [this.getEmptyWorkOrderProducedInventory()],
+          consumeByBomQuantity: this.consumeByBomQuantity === 'true',
+          consumeByBom: {
+            id: undefined,
+            number: "",
+            description: "",
+            billOfMaterialLines: [],
+            workOrderInstructionTemplates: [],
+            billOfMaterialByProducts: [],  
+          },
+          workOrderByProductProduceTransactions: [],
+          workOrderKPITransactions: [],
+          productionLine: undefined,
+    }; 
+    if (this.workOrderProduceTransaction.consumeByBomQuantity && 
+        this.consumeByWorkOrderBOM) {
+        this.workOrderProduceTransaction.consumeByBom =
+            this.workOrderProduceTransaction.workOrder?.billOfMaterial;
+    }
+  }
+
+  consumeByWorkOrderBOMChanged() {
+    if (this.consumeByWorkOrderBOM === 'false') {
+      // will not consume from the bom on the work order
+      // clear the data and let the user to select one from
+      // all the matched bom
+      this.workOrderProduceTransaction.consumeByBom = 
+          {
+            id: undefined,
+            number: "",
+            description: "",
+            billOfMaterialLines: [],
+            workOrderInstructionTemplates: [],
+            billOfMaterialByProducts: [],  
+          };
+    }
+    else {
+      // will consume from the bom on the work order
+      
+      this.workOrderProduceTransaction.consumeByBom = 
+          this.workOrderProduceTransaction.workOrder?.billOfMaterial;
+    }
   }
 
   getEmptyWorkOrderLineConsumeTransactions(): WorkOrderLineConsumeTransaction[] {
@@ -132,6 +158,18 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
       workOrderLineConsumeTransactions.push(workOrderLineConsumeTransaction);
     });
     return workOrderLineConsumeTransactions;
+  }
+  matchedBOMChanged() {
+    this.matchedBOM.filter(
+      bom => bom.number === this.workOrderProduceTransaction!.consumeByBom!.number
+    )
+    .forEach(
+      bom =>  {
+        this.workOrderProduceTransaction!.consumeByBom = bom;
+      
+      }
+    );
+    
   }
   loadAvailableInventoryStatus(): void {
     if (this.validInventoryStatuses.length === 0) {
@@ -180,7 +218,58 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
   }
 
   saveCurrentWorkOrderResults(): void {
-    sessionStorage.setItem('currentWorkOrderProduceTransaction', JSON.stringify(this.workOrderProduceTransaction));
+    if (this.validateProduceTransaction()) {
+      
+      sessionStorage.setItem('currentWorkOrderProduceTransaction', JSON.stringify(this.workOrderProduceTransaction));
+      this.router.navigateByUrl(`/work-order/work-order/produce/confirm?id=${this.currentWorkOrder.id!}`);
+    }
+
+
+  }
+  validateProduceTransaction(): boolean {
+    // make sure all the necessary fields are filled in
+    let result : boolean = true;
+
+    let errorMessage : string = "";
+    // make sure the produced invenotory has necessary field filled in
+    if (this.workOrderProduceTransaction.workOrderProducedInventories
+        .some(producedInventory => {
+          if (producedInventory.lpn === undefined || producedInventory.lpn === null || producedInventory.lpn.trim().length === 0) {
+            errorMessage = "please input lpn for produced inventory"
+            return true;
+          }
+          if (producedInventory.quantity === undefined || producedInventory.quantity === null ) {
+            errorMessage = "please input quantity for produced inventory"
+            return true;
+          }
+          if (producedInventory.inventoryStatusId === undefined || producedInventory.inventoryStatusId === null) {
+            errorMessage = "please input inventory status for produced inventory"
+            return true;
+          }
+          if (producedInventory.itemPackageTypeId === undefined || producedInventory.itemPackageTypeId === null) {
+            errorMessage = "please input item package type for produced inventory"
+            return true;
+          }
+          return false;
+        })) {
+  
+          this.messageService.error(errorMessage);
+          return false;
+    }
+    
+    // if we consume by BOM, make sure the bom is passed in
+    
+    if (this.workOrderProduceTransaction.consumeByBomQuantity &&
+          (this.workOrderProduceTransaction.consumeByBom?.id === undefined ||
+            this.workOrderProduceTransaction.consumeByBom?.id === null
+    )) {
+       
+
+        this.messageService.error("BOM needs to be setup to produce from the work order");
+        return false;
+    }
+
+    return true;
   }
 
   getEmptyWorkOrderProducedInventory(): WorkOrderProducedInventory {
@@ -207,9 +296,29 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
   }
   onConsumeByBomQuantityChanged(consumeByBomQuantity: string): void {
     this.consumeByBomQuantity = consumeByBomQuantity;
-    this.workOrderProduceTransaction.consumeByBomQuantity = consumeByBomQuantity === 'true';
-    this.isCollapse = this.workOrderProduceTransaction.consumeByBomQuantity;
+    this.workOrderProduceTransaction.consumeByBomQuantity = consumeByBomQuantity === 'true'; 
+    if (this.workOrderProduceTransaction.consumeByBomQuantity) {
+
+      if (this.consumeByWorkOrderBOM === 'true') {
+          // if we are consumed by bom on the work order, let's setup
+          // the value
+          this.workOrderProduceTransaction.consumeByBom = 
+              this.workOrderProduceTransaction.workOrder?.billOfMaterial;
+      }
+      else {
+        
+        this.workOrderProduceTransaction.consumeByBom = {
+          id: undefined,
+          number: "",
+          description: "",
+          billOfMaterialLines: [],
+          workOrderInstructionTemplates: [],
+          billOfMaterialByProducts: [],  
+        };
+      }
+    }
   }
+   
 
   produceByProduct(): void {
     sessionStorage.setItem('currentWorkOrderProduceTransaction', JSON.stringify(this.workOrderProduceTransaction));
@@ -240,8 +349,7 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
     }
   }
 
-  productionLineChanged(productionLineName: string) {
-    console.log(`setup current work order produce transaction's production line to ${productionLineName}`);
+  productionLineChanged(productionLineName: string) { 
     const productionLineAssignments: ProductionLineAssignment[] | undefined =
       this.currentWorkOrder.productionLineAssignments?.filter(
         productionLineAssignment => productionLineAssignment.productionLine.name === productionLineName
@@ -249,8 +357,7 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
     if (productionLineAssignments != undefined &&
       productionLineAssignments.length > 0) {
 
-      this.workOrderProduceTransaction.productionLine = productionLineAssignments[0].productionLine;
-      console.log(`set production line to ${this.workOrderProduceTransaction.productionLine.name}`);
+      this.workOrderProduceTransaction.productionLine = productionLineAssignments[0].productionLine; 
     }
     else {
       this.workOrderProduceTransaction.productionLine = undefined;
@@ -284,7 +391,7 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
                   );
                   lpnList.forEach((value: number, key: string) => {
                     
-                    console.log(`we found inventory ${key} / ${value}`)
+                    
                     workOrderLineConsumeTransaction.workOrderLineConsumeLPNTransactions?.push({
                       lpn: key,
                       quantity:value,
@@ -300,13 +407,11 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
   onExpandChange(workOrderLineConsumeTransaction : WorkOrderLineConsumeTransaction, checked: boolean): void {
 
     if (checked) {
-      this.expandSet.add(workOrderLineConsumeTransaction.workOrderLine!.id!); 
-      console.log(`add ${workOrderLineConsumeTransaction.workOrderLine!.id!} to the expandset, now we have ${JSON.stringify(this.expandSet)}`);
+      this.expandSet.add(workOrderLineConsumeTransaction.workOrderLine!.id!);  
       this.loadNonpickedInventory(workOrderLineConsumeTransaction);
 
     } else {
-      this.expandSet.delete(workOrderLineConsumeTransaction.workOrderLine!.id!);
-      console.log(`remove ${workOrderLineConsumeTransaction.workOrderLine!.id!} to the expandset, now we have ${JSON.stringify(this.expandSet)}`);
+      this.expandSet.delete(workOrderLineConsumeTransaction.workOrderLine!.id!); 
     }
   }
   recalculateTotalConsumedQuantity(workOrderLineConsumeTransaction: WorkOrderLineConsumeTransaction) {

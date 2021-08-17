@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+
 import { IntegrationIntegrationDataReceiptComponent } from './integration-data-receipt.component';
 
 describe('IntegrationIntegrationDataReceiptComponent', () => {

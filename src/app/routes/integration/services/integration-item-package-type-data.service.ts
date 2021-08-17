@@ -1,24 +1,36 @@
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
-import { IntegrationItemPackageTypeData } from '../models/integration-item-package-type-data';
 import { map } from 'rxjs/operators';
+
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { IntegrationItemPackageTypeData } from '../models/integration-item-package-type-data';
+import { IntegrationDataService } from './integration-data.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class IntegrationItemPackageTypeDataService {
-  constructor(private http: _HttpClient) {}
+  
+  constructor(private http: _HttpClient, 
+    private warehouseService: WarehouseService, 
+    private integrationDataService: IntegrationDataService) {}
 
-  getItemPackageTypeData(integrationItemPackageTypeDataId?: number): Observable<IntegrationItemPackageTypeData[]> {
-    let url = `integration/integration-data/item-package-types`;
-    if (integrationItemPackageTypeDataId) {
-      url = `${url}/${integrationItemPackageTypeDataId}`;
+	
+    getData(startTime?: Date, endTime?:Date, date?: Date): Observable<IntegrationItemPackageTypeData[]> {
+      let url = `integration/integration-data/item-package-types?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+      
+      if (startTime) {
+        url = `${url}&startTime=${this.integrationDataService.getISODateTimeString(startTime)}`;
+      }
+      if (endTime) {
+        url = `${url}&endTime=${this.integrationDataService.getISODateTimeString(endTime)}`;
+      }
+      if (date) {
+        url = `${url}&date=${this.integrationDataService.getISODateString(date)}`;
+      }
+      return this.http.get(url).pipe(map(res => res.data));
     }
-    return this.http.get(url).pipe(map(res => res.data));
-  }
-  addItemPackageTypeData(itemPackageTypeData: IntegrationItemPackageTypeData) {
-    const url = `integration/integration-data/item-package-types`;
-    return this.http.put(url, itemPackageTypeData).pipe(map(res => res.data));
-  }
+
+    
 }
