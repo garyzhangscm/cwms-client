@@ -3,9 +3,9 @@ import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { Client } from '../../common/models/client';
-import { SystemControlledNumberService } from '../../common/services/system-controlled-number.service';
+import { Client } from '../../common/models/client'; 
 import { ReportHistory } from '../../report/models/report-history';
+import { SystemControlledNumberService } from '../../util/services/system-controlled-number.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Inventory } from '../models/inventory';

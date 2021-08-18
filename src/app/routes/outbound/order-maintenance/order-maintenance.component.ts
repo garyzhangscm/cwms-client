@@ -4,8 +4,11 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzCascaderOption } from 'ng-zorro-antd/cascader';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { Address } from 'ngx-google-places-autocomplete/objects/address';
 
 import { UserService } from '../../auth/services/user.service';
+import { Customer } from '../../common/models/customer';
+import { CustomerService } from '../../common/services/customer.service';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { ItemService } from '../../inventory/services/item.service';
@@ -37,6 +40,8 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   currentOrder?: Order;
   pageTitle: string;
   newOrder = true;
+  existingCustomer = 'true';
+  validCustomers: Customer[] = [];
 
   validInventoryStatuses: InventoryStatus[] = [];
   warehouses: Warehouse[] | undefined;
@@ -49,6 +54,9 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
 
   stepIndex = 0; 
   isSpinning = false;
+  saveNewCustomer = false; 
+  newCustomer?: Customer;
+
   constructor(
     private http: _HttpClient,
     private activatedRoute: ActivatedRoute,
@@ -63,7 +71,8 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     private inventoryStatusService: InventoryStatusService, 
     private locationGroupService: LocationGroupService, 
     private locationGroupTypeService: LocationGroupTypeService, 
-    private locationService: LocationService) { 
+    private locationService: LocationService, 
+    private customerService: CustomerService) { 
 
     this.pageTitle = this.i18n.fanyi('menu.main.outbound.order-maintenance');
   }
@@ -88,6 +97,10 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     this.loadAvailableInventoryStatus();
     this.loadWarehouses();
     this.loadShippingStageLocationGroups();
+    // init the customer auto complete if necessar
+    this.customerOptionChanged();
+    
+    this.loadScript('https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDkPmh0PEC7JTCutUhWuN3BUU38M2fvR5s&sensor=false&language=en');
   }
 
   loadShippingStageLocationGroups(): void {
@@ -139,7 +152,22 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
       category: OrderCategory.SALES_ORDER,
       orderLines: [],
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
+      shipToCustomer: this.getEmptyCustomer(),
  
+    }
+  }
+  getEmptyCustomer(): Customer{
+    return {       
+      name: "",
+      warehouseId: this.warehouseService.getCurrentWarehouse().id,
+      description:  "",
+      contactorFirstname:  "",
+      contactorLastname:  "",
+      addressCountry:  "",
+      addressState:  "", 
+      addressCity:  "", 
+      addressLine1:  "", 
+      addressPostcode:  "",
     }
   }
 
@@ -268,20 +296,51 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
 
   confirm() { 
     this.isSpinning = true;
-    this.orderService.addOrder(this.currentOrder!).subscribe({
-      next: () => {
+    if (this.existingCustomer === 'false' && this.saveNewCustomer) {
+      // ok we will save the customer information first, then
+      // assign it to the order before we finally save the order
+      this.customerService.addCustomer(this.newCustomer!)
+          .subscribe({
+            next: (customerRes) => {
+              console.log(`customer saved! \n ${JSON.stringify(customerRes)}`);
+              this.currentOrder!.shipToCustomer = customerRes;
+              this.currentOrder!.shipToCustomerId = customerRes.id!;
+              
+              this.orderService.addOrder(this.currentOrder!).subscribe({
+                next: () => {
 
-        this.messageService.success(this.i18n.fanyi('message.action.success'));
-        setTimeout(() => {
-          this.isSpinning = false;
-          this.router.navigateByUrl(`/outbound/order?number=${this.currentOrder?.number}`);
-        }, 2500);
-      },
-      error: () => {
-        this.isSpinning = false;
-      },
+                  this.messageService.success(this.i18n.fanyi('message.action.success'));
+                  setTimeout(() => {
+                    this.isSpinning = false;
+                    this.router.navigateByUrl(`/outbound/order?number=${this.currentOrder?.number}`);
+                  }, 2500);
+                },
+                error: () => {
+                  this.isSpinning = false;
+                },
+              });
+            }, 
+            error: () => {
+              this.isSpinning = false;
+            },
+          })
     }
-    )
+    else {
+      
+      this.orderService.addOrder(this.currentOrder!).subscribe({
+        next: () => {
+
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          setTimeout(() => {
+            this.isSpinning = false;
+            this.router.navigateByUrl(`/outbound/order?number=${this.currentOrder?.number}`);
+          }, 2500);
+        },
+        error: () => {
+          this.isSpinning = false;
+        },
+      });
+    }
   }
 
   orderTransferWarehouseIdChanged() {
@@ -290,7 +349,12 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
       warehouse => warehouse.id === this.currentOrder!.transferReceiptWarehouseId
     );
   }
-  orderNumberChange() {
+  orderNumberChange(event: Event) {
+    // assign the value to the order, in case we press key to let the system
+    // generate the next order number
+    this.currentOrder!.number = (event.target as HTMLInputElement).value;
+    console.log(`user input order number: ${this.currentOrder!.number}`);
+    console.log(`user input order number: ${(event.target as HTMLInputElement).value}`);
     if (this.currentOrder!.number) {
       // THE USER input the order number, let's make sure it is not exists yet
       this.orderService.getOrders(this.currentOrder!.number).subscribe({
@@ -330,4 +394,96 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
         }
       )
   } 
+  customerOptionChanged() {
+    if (this.existingCustomer === 'true' && this.validCustomers.length === 0) {
+
+      this.loadValidCustomers();
+    }
+    else {
+      // setup the new customer for later use
+      this.newCustomer = {
+          name: "",
+          description: "",
+          warehouseId: this.warehouseService.getCurrentWarehouse().id,
+          contactorFirstname: "",
+          contactorLastname: "",
+          addressCountry: "",
+          addressState: "", 
+          addressCity:"", 
+          addressLine1: "",
+          addressPostcode: "",
+      }
+    }
+  }
+
+  loadValidCustomers() {
+
+    this.customerService.loadCustomers().subscribe({
+      next: (customerRes) => this.validCustomers = customerRes
+    });
+  }
+  shipToCustomerChanged() {
+
+    console.log(`ship to customer is chagned to ${this.currentOrder!.shipToCustomer!.name}`)
+    const matchedCustomer = this.validCustomers.find(customer => customer.name === this.currentOrder!.shipToCustomer!.name)
+    if (matchedCustomer) {
+      // clone a new customer structure so any further change won't 
+      // mess up with the existing customers auto complete drop down list
+      var clone = { ...matchedCustomer };
+      this.currentOrder!.shipToCustomer = clone;
+      this.currentOrder!.shipToCustomerId = clone.id!;
+    }
+
+  }
+  
+  handleNewCustomerAddressChange(address: Address) {  
+    // this.warehouseAddress = address;
+    address.address_components.forEach(
+      addressComponent => {
+         
+        if (addressComponent.types[0] === 'street_number') {
+          // street number
+          // address line 1 = street number + street name
+          this.newCustomer!.addressLine1 = `${addressComponent.long_name  } ${  this.newCustomer!.addressLine1}`;
+        }
+        else if (addressComponent.types[0] === 'route') {
+          // street name
+          // address line 1 = street number + street name
+          this.newCustomer!.addressLine1 = `${this.newCustomer!.addressLine1  } ${  addressComponent.long_name}`;
+        } 
+        else if (addressComponent.types[0] === 'locality') {
+          // city
+          this.newCustomer!.addressCity = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'administrative_area_level_2') {
+          // county
+          this.newCustomer!.addressCounty = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'administrative_area_level_1') {
+          // city
+          this.newCustomer!.addressState = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'country') {
+          // city
+          this.newCustomer!.addressCountry = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'postal_code') {
+          // city
+          this.newCustomer!.addressPostcode = addressComponent.long_name;
+        } 
+      }
+
+    )
+  }
+
+  
+  public loadScript(url: string) {
+    const body = <HTMLDivElement> document.body;
+    const script = document.createElement('script');
+    script.innerHTML = '';
+    script.src = url;
+    script.async = false;
+    script.defer = true;
+    body.appendChild(script);
+  }
 }

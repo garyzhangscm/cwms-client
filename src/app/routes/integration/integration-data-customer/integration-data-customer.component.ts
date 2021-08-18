@@ -298,7 +298,7 @@ export class IntegrationIntegrationDataCustomerComponent implements OnInit {
     // initiate the select control
     this.customerService.loadCustomers().subscribe((customerList: Customer[]) => {
       customerList.forEach(customer =>
-        this.customers.push({ label: customer.description, value: customer.id.toString() }),
+        this.customers.push({ label: customer.description, value: customer.id!.toString() }),
       );
     });
   }

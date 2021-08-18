@@ -39,7 +39,9 @@
                 <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="orderNumberErrorTpl" [nzValidateStatus]="orderNumberValidateStatus"
                 >
         
-                  <input type="text" nz-input [(ngModel)]="currentOrder!.number" required (blur)="orderNumberChange()"/>
+
+                  <input appFkey variable="order-number" type="text" nz-input [(ngModel)]="currentOrder!.number" required 
+                    (blur)="orderNumberChange($event)"/>
                   <ng-template #orderNumberErrorTpl let-control>  
                       <ng-container *ngIf="orderNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
                       <ng-container *ngIf="orderNumberValidateStatus === 'numberExists'">Order Number already exists</ng-container>
@@ -135,8 +137,112 @@
                       
                 </div>
             </div>
-          </nz-card>
+        </nz-card>
          
+          
+        <nz-card   nzTitle="{{ 'ORDER-CATEGORY-SALES_ORDER' | i18n}}" 
+        *ngIf="currentOrder!.category === orderCategories.SALES_ORDER">
+        
+          <div nz-row [nzGutter]="24">
+              <div nz-col [nzSpan]="24">
+                  <nz-form-item> 
+                    <nz-form-control [nzSpan]="12" >
+                      <nz-radio-group [(ngModel)]="existingCustomer"  (ngModelChange)="customerOptionChanged()"
+                        nzName="radiogroup">
+                        <label nz-radio nzValue="true">{{ 'existing-customer' | i18n }}</label>
+                        <label nz-radio nzValue="false">{{ 'new-customer' | i18n }}</label>
+                      </nz-radio-group>
+                    </nz-form-control>
+                  </nz-form-item>
+              </div>
+          </div>
+          <div *ngIf="existingCustomer === 'true'">
+
+            <div nz-row [nzGutter]="24" >
+              <div nz-col [nzSpan]="24">                  
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="3">
+                    {{ 'shipToCustomer' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="customerNameErrorTpl">              
+                    <input type="text" nz-input [(ngModel)]="currentOrder!.shipToCustomer!.name" 
+                      (ngModelChange)="shipToCustomerChanged()" variable="customer-name" appExistingNumberValidator
+                      id="customerName" name="customerName" 
+                      [nzAutocomplete]="customerAutoCompleteTpl"
+                      [ngModelOptions]="{updateOn: 'blur'}" #customerNameModel="ngModel"/>
+                      
+                      <!-- Display error if the customer doesn't exists -->
+                    <ng-template #customerNameErrorTpl let-control>
+                      <div *ngIf="customerNameModel.invalid && (customerNameModel.dirty ||customerNameModel.touched)">
+                        <ng-container *ngIf="customerNameModel.errors?.errorCode">
+                           {{customerNameModel.errors!.errorCode |i18n}}</ng-container>
+                        <ng-container *ngIf="control.hasError('required')">
+                           {{ 'error.form.field.required' | i18n}}
+                        </ng-container>
+                      </div>
+                    </ng-template>
+                    <!-- Auto Complete -->
+                    <nz-autocomplete #customerAutoCompleteTpl>
+                      <nz-auto-option *ngFor="let customer of validCustomers" [nzLabel]="customer.name" [nzValue]="customer.name">
+                        {{ customer.name }}
+                      </nz-auto-option>
+                    </nz-autocomplete>
+  
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <!-- if the user choose a valid customer, show the address underneath-->
+            <div nz-row *ngIf="currentOrder?.shipToCustomer?.id">
+              
+              <address>  
+                {{currentOrder?.shipToCustomer?.addressLine1}} <br>
+                {{currentOrder?.shipToCustomer?.addressLine2}} <br>
+                {{currentOrder?.shipToCustomer?.addressCity}},  {{currentOrder?.shipToCustomer?.addressState}} <br>
+                {{currentOrder?.shipToCustomer?.addressPostcode}} <br>
+                </address>
+
+            </div>
+          </div>
+
+          <div *ngIf="existingCustomer === 'false'">
+            <div nz-row [nzGutter]="24" >
+              <div nz-col [nzSpan]="24">            
+                <nz-form-item nzFlex>
+                  <nz-form-label [nzSpan]="2">
+                    {{ 'address' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                    <input nz-input ngx-google-places-autocomplete (onAddressChange)="handleNewCustomerAddressChange($event)" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <div nz-row [nzGutter]="24" >
+              <div nz-col [nzSpan]="24">    
+                <nz-form-item >
+                  <nz-form-control [nzSpan]="12" >
+                    <label nz-checkbox [(ngModel)]="saveNewCustomer">
+                      {{ 'save-new-customer' | i18n }}
+                    </label>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <div nz-row [nzGutter]="24" >
+              <div nz-col [nzSpan]="18" *ngIf="saveNewCustomer && newCustomer !== undefined">            
+                <nz-form-item >
+                  <nz-form-label [nzSpan]="3">
+                    {{ 'customer.name' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                    <input nz-input  [(ngModel)]="newCustomer!.name" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </div>
+        </nz-card>
           
         
     </div>
@@ -144,7 +250,6 @@
     <!-- Let the user input the order line information -->
     <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
  
-
 
         <!-- Table to show inventory  -->
 
@@ -261,7 +366,7 @@
         </nz-descriptions>
         
         <nz-descriptions nzTitle="{{ 'ORDER-CATEGORY-WAREHOUSE_TRANSFER_ORDER' | i18n}}" 
-        *ngIf="currentOrder!.category === orderCategories.WAREHOUSE_TRANSFER_ORDER" nzBordered> 
+            *ngIf="currentOrder!.category === orderCategories.WAREHOUSE_TRANSFER_ORDER" nzBordered> 
             <nz-descriptions-item nzTitle="{{ 'order.transferReceiptWarehouseId' | i18n}}"> 
 
                 {{ currentOrder?.transferReceiptWarehouse?.name}}
@@ -269,6 +374,47 @@
             <nz-descriptions-item nzTitle="{{ 'order.transferReceiptNumber' | i18n}}"> 
 
                 {{ currentOrder?.transferReceiptNumber}}
+            </nz-descriptions-item>
+        </nz-descriptions>
+
+        
+        <nz-descriptions nzTitle="{{ 'ORDER-CATEGORY-SALES_ORDER' | i18n}}" 
+            *ngIf="currentOrder!.category === orderCategories.SALES_ORDER" nzBordered> 
+            <nz-descriptions-item nzTitle="{{ 'ship-to-customer' | i18n}}"> 
+
+              <!--Get data from the existing customer, which should already being assigned
+                  to the order
+              -->
+              <span *ngIf="existingCustomer==='true'">
+
+                {{ currentOrder?.shipToCustomer?.name}}
+              </span>
+              <!-- New Customer -->
+              <span *ngIf="existingCustomer==='false'">
+                {{ newCustomer?.name }}
+
+              </span>
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'address' | i18n}}"> 
+              <div *ngIf="existingCustomer==='true'">
+                <address>  
+                  {{currentOrder?.shipToCustomer?.addressLine1}} <br>
+                  {{currentOrder?.shipToCustomer?.addressLine2}} <br>
+                  {{currentOrder?.shipToCustomer?.addressCity}},  {{currentOrder?.shipToCustomer?.addressState}} <br>
+                  {{currentOrder?.shipToCustomer?.addressPostcode}} <br>
+                  </address>
+              </div>
+              <!-- New Customer -->
+              <div *ngIf="existingCustomer==='false'">
+                <address>
+                
+                  {{newCustomer?.addressLine1}} <br>
+                  {{newCustomer?.addressLine2}} <br>
+                  {{newCustomer?.addressCity}},  {{newCustomer?.addressState}} <br>
+                  {{newCustomer?.addressPostcode}} <br>
+                </address>
+
+              </div>
             </nz-descriptions-item>
         </nz-descriptions>
 

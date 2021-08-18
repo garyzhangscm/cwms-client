@@ -72,10 +72,18 @@
 
 
       -->
+      
+    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+      <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+    </div>
+    <!--
+
       <div class="mb-md">
         <nz-checkbox-group [(ngModel)]="customColumns" name="customColumns"
           (ngModelChange)="st.resetColumns({ emitReload: true })"></nz-checkbox-group>
       </div>
+
+    -->
       <st #st [data]="displayProductionLineKanbanDataList" [columns]="columns">
       </st>
 

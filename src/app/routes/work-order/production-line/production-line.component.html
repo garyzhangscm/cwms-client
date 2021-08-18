@@ -74,19 +74,30 @@
             <td>{{ data.enabled + "" | i18n }}</td>
             <td>{{ data.genericPurpose + "" | i18n }}</td>
             <td>
-              <a routerLink="/work-order/production-line-maintenance" [queryParams]="{id: data.id!}"
-                routerLinkActive="active"> {{ 'modify' | i18n }}</a>
-
-              <nz-divider nzType="vertical"></nz-divider>
-              <button nz-button nzDanger (click)="removeProductionLine(data)">
-                {{'delete' | i18n}}
-              </button>
-            </td>
-
-
-
-
-
+              
+              <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+                {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu>
+                  <!--  allow the user to assign the production line only when
+                   the work order is not start yet
+                  -->
+                  <li nz-menu-item>                    
+                    <a routerLink="/work-order/production-line-maintenance" [queryParams]="{id: data.id!}"
+                    routerLinkActive="active"> {{ 'modify' | i18n }}</a>
+                  </li>              
+                  <li nz-menu-item *ngIf="data.enabled === true" >
+                    <a (click)="disableProductionLine(data)"> {{'disable' | i18n}}</a>
+                  </li>          
+                  <li nz-menu-item *ngIf="data.enabled === false" >
+                    <a (click)="enableProductionLine(data)"> {{'enable' | i18n}}</a>
+                  </li>           
+                  <li nz-menu-item  >
+                    <a (click)="removeProductionLine(data)"> {{'delete' | i18n}}</a>
+                  </li> 
+                </ul>
+              </nz-dropdown-menu> 
+            </td> 
           </tr>
           <tr [nzExpand]="expandSet.has(data.id!!)" class="inner-table">
 

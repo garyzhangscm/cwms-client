@@ -228,8 +228,14 @@ export class WorkOrderProductionLineComponent implements OnInit {
     });
 
   }
-  disableProductionLine(productionLine: ProductionLine, disabled: boolean): void {
-    this.productionLineService.disableProductionLine(productionLine, disabled).subscribe(() => {
+  disableProductionLine(productionLine: ProductionLine): void {
+    this.productionLineService.disableProductionLine(productionLine, true).subscribe(() => {
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      this.search();
+    });
+  }
+  enableProductionLine(productionLine: ProductionLine): void {
+    this.productionLineService.disableProductionLine(productionLine, false).subscribe(() => {
       this.messageService.success(this.i18n.fanyi('message.action.success'));
       this.search();
     });
@@ -367,5 +373,6 @@ export class WorkOrderProductionLineComponent implements OnInit {
 
     });
   }
+
 
 }

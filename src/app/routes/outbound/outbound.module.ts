@@ -1,8 +1,10 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
+import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
+import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 
 import { CommonModule } from '../common/common.module';
 import { DirectivesModule } from '../directives/directives.module';
@@ -64,7 +66,9 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzStatisticModule,
     CommonModule,
     NzStepsModule,
-    UtilModule
+    UtilModule, 
+    NzAutocompleteModule,
+    GooglePlaceModule
   ],
   declarations: [
     ...COMPONENTS,

@@ -730,8 +730,13 @@ export class OutboundOrderComponent implements OnInit {
       format: (item, _col, index) => this.i18n.fanyi(`ORDER-CATEGORY-${ item.category}` ), 
       
       iif: () => this.isChoose('category'), },
-    { title: this.i18n.fanyi("status"), index: 'status', iif: () => this.isChoose('status'), },
-    { title: this.i18n.fanyi("shipToCustomer"), index: 'shipToCustomer?.name', iif: () => this.isChoose('shipToCustomer'), },
+    { title: this.i18n.fanyi("status"), index: 'status', iif: () => this.isChoose('status'), },    
+    {
+      title: this.i18n.fanyi("shipToCustomer"),
+      // renderTitle: 'customTitle',
+      render: 'shipToCustomerColumn',
+      iif: () => this.isChoose('shipToCustomer'),
+    },
     { title: this.i18n.fanyi("order.billToCustomer"), index: 'billToCustomer?.name', iif: () => this.isChoose('billToCustomer'), },
     { title: this.i18n.fanyi("order.totalItemCount"), index: 'totalItemCount', iif: () => this.isChoose('totalItemCount'), },
     { title: this.i18n.fanyi("order.totalOrderQuantity"), index: 'totalExpectedQuantity', iif: () => this.isChoose('totalExpectedQuantity'), },
@@ -783,7 +788,7 @@ export class OutboundOrderComponent implements OnInit {
 
   columnChoosingChanged(): void{ 
     if (this.st !== undefined && this.st.columns !== undefined) {
-      this.st.resetColumns({ emitReload: true });
+      this.st!.resetColumns({ emitReload: true });
 
     }
   }

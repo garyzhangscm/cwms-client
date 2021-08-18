@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+ 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { SystemControlledNumberService } from '../../common/services/system-controlled-number.service';
+import { InventoryAdjustmentRequest } from '../models/inventory-adjustment-request';
 import { InventoryAdjustmentRequestStatus } from '../models/inventory-adjustment-request-status.enum';
 import { InventoryQuantityChangeType } from '../models/inventory-quantity-change-type.enum';
-import { Observable } from 'rxjs';
-import { InventoryAdjustmentRequest } from '../models/inventory-adjustment-request';
-import { map } from 'rxjs/operators';
+
 
 @Injectable({
   providedIn: 'root',

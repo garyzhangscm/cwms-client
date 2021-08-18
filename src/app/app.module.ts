@@ -87,6 +87,7 @@ import { SharedModule } from './shared/shared.module';
 import { STWidgetModule } from './shared/st-widget/st-widget.module';
 import { Observable } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 
 @NgModule({
   declarations: [AppComponent],
@@ -102,6 +103,7 @@ import { FormsModule } from '@angular/forms';
     STWidgetModule,
     NzNotificationModule,
     FormsModule,
+    GooglePlaceModule,
     ...GLOBAL_THIRD_MODULES,
     ...FORM_MODULES
   ],

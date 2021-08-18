@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { CycleCountBatch } from '../models/cycle-count-batch';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { SystemControlledNumberService } from '../../common/services/system-controlled-number.service';
+
+import { SystemControlledNumberService } from '../../util/services/system-controlled-number.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { CycleCountBatch } from '../models/cycle-count-batch';
 
 @Injectable({
   providedIn: 'root',

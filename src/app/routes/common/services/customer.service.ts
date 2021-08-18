@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+
 import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Customer } from '../models/customer';
@@ -17,30 +18,23 @@ export class CustomerService {
     private warehouseService: WarehouseService,
   ) {}
 
-  loadCustomers(refresh: boolean = false): Observable<Customer[]> {
+  loadCustomers(): Observable<Customer[]> {
     // if we can find the value in local storage, we get it from their.
-    // otherwise we get from server
-    if (!refresh) {
-      const data = this.gzLocalStorageService.getItem('common.customer');
-      if (data !== null) {
-        return of(data);
-      }
-    }
+    // otherwise we get from server 
     return this.http
       .get(`common/customers?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`)
-      .pipe(map(res => res.data))
-      .pipe(tap(res => this.gzLocalStorageService.setItem('common.customer', res)));
+      .pipe(map(res => res.data));
   }
   getCustomer(customerId: number): Observable<Customer> {
-    const data = this.gzLocalStorageService.getItem('common.customer.' + customerId);
+    const data = this.gzLocalStorageService.getItem(`common.customer.${  customerId}`);
     if (data !== null) {
       return of(data);
     }
 
     return this.http
-      .get('common/customers/' + customerId)
+      .get(`common/customers/${  customerId}`)
       .pipe(map(res => res.data))
-      .pipe(tap(res => this.gzLocalStorageService.setItem('common.customer.' + customerId, res)));
+      .pipe(tap(res => this.gzLocalStorageService.setItem(`common.customer.${  customerId}`, res)));
   }
 
   addCustomer(customer: Customer): Observable<Customer> {
@@ -48,19 +42,19 @@ export class CustomerService {
   }
 
   changeCustomer(customer: Customer): Observable<Customer> {
-    const url = 'common/customers/' + customer.id;
+    const url = `common/customers/${  customer.id}`;
     return this.http.put(url, customer).pipe(map(res => res.data));
   }
 
   removeCustomer(customer: Customer): Observable<Customer> {
-    const url = 'common/customers/' + customer.id;
+    const url = `common/customers/${  customer.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 
   removeCustomers(customers: Customer[]): Observable<Customer[]> {
     const customerIds: number[] = [];
     customers.forEach(customer => {
-      customerIds.push(customer.id);
+      customerIds.push(customer.id!);
     });
     const params = {
       customer_ids: customerIds.join(','),

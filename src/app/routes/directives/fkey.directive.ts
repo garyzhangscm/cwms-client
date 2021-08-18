@@ -1,6 +1,7 @@
 import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 
-import { SystemControlledNumberService } from '../common/services/system-controlled-number.service';
+import { SystemControlledNumberService } from '../util/services/system-controlled-number.service';
+ 
 
 @Directive({
   selector: '[appFkey]',

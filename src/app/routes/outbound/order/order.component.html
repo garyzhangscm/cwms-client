@@ -34,6 +34,21 @@
     
     <st #st [data]="listOfAllOrders"  [columns]="columns" [expand]="expand" expandRowByClick expandAccordion
     (change)="orderTableChanged($event)">
+      <!-- more details about the shipping to customer -->
+      <ng-template st-row="shipToCustomerColumn" let-item let-index="index">
+        <a nz-tooltip [nzTooltipTitle]="shipToCustomerDetailsTemplate">{{ item.shipToCustomer?.name }}</a>
+        <ng-template #shipToCustomerDetailsTemplate>
+          
+          <address>  
+            {{item.shipToCustomer?.addressLine1}} <br>
+            {{item.shipToCustomer?.addressLine2}} <br>
+            {{item.shipToCustomer?.addressCity}},  {{item.shipToCustomer?.addressState}} <br>
+            {{item.shipToCustomer?.addressPostcode}} <br>
+            </address>
+        </ng-template>
+
+      </ng-template>
+
       <!--   order details  -->
       <ng-template #expand let-item let-index="index" let-column="column">
         

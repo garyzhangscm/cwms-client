@@ -4,13 +4,12 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzModalService } from 'ng-zorro-antd/modal';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { Customer } from '../models/customer';
 import { Supplier } from '../models/supplier';
 import { CustomerService } from '../services/customer.service';
 import { SupplierService } from '../services/supplier.service';
-
-
 
 
 @Component({
@@ -159,8 +158,6 @@ export class CommonCustomerComponent implements OnInit {
   listOfDisplayCustomers: Customer[] = [];
 
 
-
-
   // editable cell
   editId = -1;
   editCol = '';
@@ -174,11 +171,9 @@ export class CommonCustomerComponent implements OnInit {
   ) { }
 
   search(refresh: boolean = false): void {
-    this.customerService.loadCustomers(refresh).subscribe(customerRes => {
+    this.customerService.loadCustomers().subscribe(customerRes => {
       this.listOfAllCustomers = customerRes;
       this.listOfDisplayCustomers = customerRes;
-
-
 
 
     });
@@ -199,7 +194,7 @@ export class CommonCustomerComponent implements OnInit {
   }
 
   onAllChecked(value: boolean): void {
-    this.listOfDisplayCustomers!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.listOfDisplayCustomers!.forEach(item => this.updateCheckedSet(item.id!, value));
     this.refreshCheckedStatus();
   }
 
@@ -209,8 +204,8 @@ export class CommonCustomerComponent implements OnInit {
   }
 
   refreshCheckedStatus(): void {
-    this.checked = this.listOfDisplayCustomers!.every(item => this.setOfCheckedId.has(item.id));
-    this.indeterminate = this.listOfDisplayCustomers!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
+    this.checked = this.listOfDisplayCustomers!.every(item => this.setOfCheckedId.has(item.id!));
+    this.indeterminate = this.listOfDisplayCustomers!.some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
   }
 
   removeSelectedCustomers(): void {
@@ -237,7 +232,7 @@ export class CommonCustomerComponent implements OnInit {
   getSelectedCustomers(): Customer[] {
     const selectedCustomers: Customer[] = [];
     this.listOfAllCustomers.forEach((customer: Customer) => {
-      if (this.setOfCheckedId.has(customer.id)) {
+      if (this.setOfCheckedId.has(customer.id!)) {
         selectedCustomers.push(customer);
       }
     });

@@ -1,5 +1,6 @@
 export interface Customer {
-  id: number;
+  id?: number;
+  warehouseId: number,
   name: string;
   description: string;
   contactorFirstname: string;

@@ -1,5 +1,7 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
+import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
+
 import { CommonModule } from '../common/common.module';
 import { DirectivesModule } from '../directives/directives.module';
 import { InboundRoutingModule } from './inbound-routing.module';
@@ -9,14 +11,14 @@ import { InboundPutawayConfigurationComponent } from './putaway-configuration/pu
 import { InboundReceiptConfirmComponent } from './receipt-confirm/receipt-confirm.component';
 import { InboundReceiptMaintenanceComponent } from './receipt-maintenance/receipt-maintenance.component';
 import { InboundReceiptComponent } from './receipt/receipt.component';
-import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 
-const COMPONENTS: Type<void>[] = [
+const COMPONENTS: Array<Type<void>> = [
   InboundReceiptComponent, InboundReceiptMaintenanceComponent, InboundReceiptConfirmComponent,
   InboundPutawayConfigurationComponent,
   InboundPutawayConfigurationMaintenanceComponent,
   InboundPutawayConfigurationConfimComponent];
-const COMPONENTS_NOROUNT: Type<void>[] = [];
+  
+const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
   imports: [

@@ -2,6 +2,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Customer } from '../models/customer';
 
 @Component({
@@ -16,6 +18,7 @@ export class CommonCustomerMaintenanceComponent implements OnInit {
     id: 0,
     name: '',
     description: '',
+    warehouseId: this.warehouseService.getCurrentWarehouse().id,
     contactorFirstname: '',
     contactorLastname: '',
     addressCountry: '',
@@ -30,6 +33,7 @@ export class CommonCustomerMaintenanceComponent implements OnInit {
 
   constructor(private router: Router,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private warehouseService: WarehouseService,
     private titleService: TitleService) { }
 
   ngOnInit(): void {

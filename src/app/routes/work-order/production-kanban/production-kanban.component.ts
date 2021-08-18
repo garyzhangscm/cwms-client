@@ -1,6 +1,6 @@
-import { Inject , ChangeDetectorRef, Component, OnInit, } from '@angular/core';
+import { Inject , ChangeDetectorRef, Component, OnInit, ViewChild, } from '@angular/core';
 import { I18NService } from '@core';
-import { STColumn, } from '@delon/abc/st';
+import { STColumn, STComponent, } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { interval, Subscription } from 'rxjs';
@@ -257,10 +257,14 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
     this.hideProductionLineSelection = !this.hideProductionLineSelection;
   }
 
+  @ViewChild('st', { static: true })
+  st!: STComponent;
   columns: STColumn[] = [
     { title: this.i18n.fanyi("production-line.name"), index: 'productionLineName', iif: () => this.isChoose('productionLineName'), },
     { title: this.i18n.fanyi("work-order.number"), index: 'workOrderNumber', iif: () => this.isChoose('workOrderNumber'), },
     { title: this.i18n.fanyi("item.name"), index: 'itemName', iif: () => this.isChoose('itemName'), },
+    { title: this.i18n.fanyi("production-line.enabled"), index: 'productionLineEnabled', iif: () => this.isChoose('productionLineEnabled'), },
+    
     { title: this.i18n.fanyi("production-line.target-production"), index: 'productionLineTargetOutput', iif: () => this.isChoose('productionLineTargetOutput'), },
     { title: this.i18n.fanyi("production-line.actual-production"), index: 'productionLineActualOutput', iif: () => this.isChoose('productionLineActualOutput'), },
     { title: this.i18n.fanyi("production-line.actual-putaway-production"), index: 'productionLineActualPutawayOutput', iif: () => this.isChoose('productionLineActualPutawayOutput'), },
@@ -276,6 +280,7 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
     { label: this.i18n.fanyi("production-line.name"), value: 'productionLineName', checked: true },
     { label: this.i18n.fanyi("work-order.number"), value: 'workOrderNumber', checked: true },
     { label: this.i18n.fanyi("item.name"), value: 'itemName', checked: true },
+    { label: this.i18n.fanyi("production-line.enabled"), value: 'productionLineEnabled', checked: true },
     { label: this.i18n.fanyi("production-line.target-production"), value: 'productionLineTargetOutput', checked: true },
     { label: this.i18n.fanyi("production-line.actual-production"), value: 'productionLineActualOutput', checked: true },
     { label: this.i18n.fanyi("production-line.actual-putaway-production"), value: 'productionLineActualPutawayOutput', checked: true },
@@ -289,5 +294,12 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
 
   isChoose(key: string): boolean {
     return !!this.customColumns.find(w => w.value === key && w.checked);
+  }
+
+  columnChoosingChanged(): void{ 
+    if (this.st.columns !== undefined) {
+      this.st.resetColumns({ emitReload: true });
+
+    }
   }
 }

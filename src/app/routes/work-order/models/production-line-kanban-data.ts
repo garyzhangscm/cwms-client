@@ -20,5 +20,7 @@ export interface ProductionLineKanbanData {
     shift: string | null;
     percent: number;
 
+    productionLineEnabled: boolean | null;
+
 
 }
