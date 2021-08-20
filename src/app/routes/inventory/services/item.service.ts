@@ -20,6 +20,17 @@ export class ItemService {
     private warehouseService: WarehouseService,
   ) {}
 
+  getItemsByIdList(itemIdList: string, loadDetails?: boolean): Observable<Item[]> {
+    let url = `inventory/items?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&itemIdList=${itemIdList}`;
+    
+    if (loadDetails === undefined) {
+      url = `${url}&loadDetails=true`
+    }
+    else {      
+      url = `${url}&loadDetails=${loadDetails}`
+    }
+    return this.http.get(url).pipe(map(res => res.data));
+  }
   getItems(name?: string, clients?: Client[], itemFamilies?: ItemFamily[]): Observable<Item[]> {
     
     const httpUrlEncodingCodec = new HttpUrlEncodingCodec();

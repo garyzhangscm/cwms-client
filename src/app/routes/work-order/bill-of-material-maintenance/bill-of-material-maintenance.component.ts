@@ -133,8 +133,8 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
   }
   itemNameOnBlur(event: Event): void {
     const itemName: string = (event.target as HTMLInputElement).value;
-    console.log(`Item of BOM change to ${itemName}`);
-    if (itemName === '') {
+    console.log(`Item of BOM change to ${itemName.trim()}`);
+    if (itemName.trim() === '') {
       this.currentBillOfMaterial.item = {
         id: undefined,
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
@@ -159,13 +159,41 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
         trackingExpirationDateFlag: undefined,
       };
     } else {
-      this.itemService.getItems(itemName).subscribe(itemRes => {
+      this.itemService.getItems(itemName.trim()).subscribe(itemRes => {
         if (itemRes.length > 0) {
           // we should only get one item in the return
           // as the name is the business key
           this.currentBillOfMaterial.itemId = itemRes[0].id!;
           this.currentBillOfMaterial.item = itemRes[0];
           console.log(`Item of BOM set to ${this.currentBillOfMaterial.item.name}`);
+        }
+        else {
+          // if we can't find the item by name, then reset it to nothing
+          
+          this.currentBillOfMaterial.itemId = undefined;
+          this.currentBillOfMaterial.item = {
+            id: undefined,
+            warehouseId: this.warehouseService.getCurrentWarehouse().id,
+            name: '',
+            description: '',
+            itemPackageTypes: [],
+
+            allowCartonization: undefined,
+            client: undefined,
+            itemFamily: undefined,
+            unitCost: undefined,
+
+            allowAllocationByLPN: undefined,
+            allocationRoundUpStrategyType: undefined,
+
+            allocationRoundUpStrategyValue: undefined,
+
+            trackingVolumeFlag: undefined,
+            trackingLotNumberFlag: undefined,
+            trackingManufactureDateFlag: undefined,
+            shelfLifeDays: undefined,
+            trackingExpirationDateFlag: undefined,
+          };
         }
       });
     }

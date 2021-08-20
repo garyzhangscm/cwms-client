@@ -15,6 +15,7 @@ import { ProductionLineAssignment } from '../models/production-line-assignment';
 import { WorkOrder } from '../models/work-order';
 import { WorkOrderKpi } from '../models/work-order-kpi';
 import { WorkOrderKpiTransaction } from '../models/work-order-kpi-transaction';
+import { WorkOrderMaterialConsumeTiming } from '../models/work-order-material-consume-timing';
 
 @Injectable({
   providedIn: 'root',
@@ -29,8 +30,10 @@ export class WorkOrderService {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
   ) { }
 
-  getWorkOrders(number?: string, itemName?: string, productionPlanId?: number): Observable<WorkOrder[]> {
+  getWorkOrders(number?: string, itemName?: string, productionPlanId?: number, loadDetails?: boolean): Observable<WorkOrder[]> {
+    
     let url = `workorder/work-orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    
     if (number) {
       url = `${url}&number=${number}`;
     }
@@ -39,6 +42,12 @@ export class WorkOrderService {
     }
     if (productionPlanId) {
       url = `${url}&productionPlanId=${productionPlanId}`;
+    }
+    if (loadDetails === undefined) {
+      url = `${url}&loadDetails=true`;
+    }
+    else {      
+      url = `${url}&loadDetails=${loadDetails}`;
     }
     return this.http.get(url).pipe(map(res => res.data));
   }
@@ -166,6 +175,20 @@ export class WorkOrderService {
     }
 
     return this.http.post(`workorder/work-orders/${workOrder.id}/pick-report?locale=${locale}`).pipe(map(res => res.data));
+  }
+
+  changeWorkOrderConsumeMethod(workOrderId: number, 
+    materialConsumeTiming: WorkOrderMaterialConsumeTiming, 
+    consumeByBomFlag?: boolean, consumeByBOMId?: number): Observable<WorkOrder> {
+    
+    let url = `workorder/work-orders/${workOrderId}/consume-method?materialConsumeTiming=${materialConsumeTiming}`;
+    if (consumeByBomFlag !== undefined && consumeByBomFlag !== null) {
+      url = `${url}&consumeByBomFlag=${consumeByBomFlag}`
+    }
+    if (consumeByBOMId) {
+      url = `${url}&consumeByBOMId=${consumeByBOMId}`
+    }
+    return this.http.post(url).pipe(map(res => res.data));
   }
 
 }

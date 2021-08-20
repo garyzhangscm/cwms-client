@@ -13,7 +13,11 @@ import { PrintPageSize } from '../../common/models/print-page-size.enum';
 import { PrintingService } from '../../common/services/printing.service';
 import { PutawayConfigurationService } from '../../inbound/services/putaway-configuration.service';
 import { Inventory } from '../../inventory/models/inventory';
+import { InventoryStatus } from '../../inventory/models/inventory-status';
+import { Item } from '../../inventory/models/item';
+import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
+import { ItemService } from '../../inventory/services/item.service';
 import { PickWork } from '../../outbound/models/pick-work';
 import { ShortAllocation } from '../../outbound/models/short-allocation';
 import { ShortAllocationStatus } from '../../outbound/models/short-allocation-status.enum';
@@ -25,13 +29,16 @@ import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { WebClientConfigurationService } from '../../util/services/web-client-configuration.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
+import { BillOfMaterial } from '../models/bill-of-material';
 import { ProductionLineAllocationRequest } from '../models/production-line-allocation-request';
 import { ProductionLineAllocationRequestLine } from '../models/production-line-allocation-request-line';
 import { ProductionLineAssignment } from '../models/production-line-assignment';
 import { WorkOrder } from '../models/work-order';
 import { WorkOrderKpi } from '../models/work-order-kpi';
 import { WorkOrderKpiTransaction } from '../models/work-order-kpi-transaction';
+import { WorkOrderMaterialConsumeTiming } from '../models/work-order-material-consume-timing';
 import { WorkOrderStatus } from '../models/work-order-status.enum';
+import { BillOfMaterialService } from '../services/bill-of-material.service';
 import { ProductionLineAssignmentService } from '../services/production-line-assignment.service';
 import { ProductionLineService } from '../services/production-line.service';
 import { WorkOrderService } from '../services/work-order.service';
@@ -217,6 +224,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     private printingService: PrintingService,
     private webClientConfigurationService: WebClientConfigurationService,
     private productionLineAssignmentService: ProductionLineAssignmentService,
+    private itemService: ItemService,
+    private inventoryStatusService: InventoryStatusService,
+    private billOfMaterialService: BillOfMaterialService,
   ) { }
   workOrderStatus = WorkOrderStatus;
   // Form related data and functions
@@ -261,6 +271,16 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   productionLineAllocationRequests: ProductionLineAllocationRequest[] = [];
   productionLineAllocationRequestModal!: NzModalRef;
 
+  
+  workOrderConsumeMethodModal!: NzModalRef;
+  currentWorkOrder?: WorkOrder;
+  currentWorkOrderConsumeByBomNumber: string = "";
+  currentWorkOrderConsumeByBomFlag = 'yes';
+  currentWorkOrderMatchedBOM: BillOfMaterial[] = [];
+  materialConsumeTimings = WorkOrderMaterialConsumeTiming;
+  currentWorkOrderMaterialConsumeTiming?: WorkOrderMaterialConsumeTiming;
+
+
   ngOnInit(): void {
     console.log(`webClientConfigurationService.getWebClientConfiguration().tabDisplayConfiguration: 
        ${JSON.stringify(this.webClientConfigurationService.getWebClientConfiguration().tabDisplayConfiguration["work-order.work-order.work-order.delivered-inventory"])}`);
@@ -293,7 +313,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         workOrderRes => {
           this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities([workOrderRes]);
           this.listOfDisplayWorkOrder = this.listOfAllWorkOrder;
-          this.refreshDetailInformation([workOrderRes]);
+          this.refreshDetailInformation([workOrderRes], false);
           this.isSpinning = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
@@ -307,11 +327,11 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       );
     } else {
       this.workOrderService
-        .getWorkOrders(this.searchForm.controls.number.value, this.searchForm.controls.item.value)
+        .getWorkOrders(this.searchForm.controls.number.value, this.searchForm.controls.item.value, undefined, false)
         .subscribe(
           workOrderRes => {
             this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities(workOrderRes);
-            this.refreshDetailInformation(workOrderRes);
+            this.refreshDetailInformation(workOrderRes, true);
             this.listOfDisplayWorkOrder = this.listOfAllWorkOrder;
             this.isSpinning = false;
             this.searchResult = this.i18n.fanyi('search_result_analysis', {
@@ -341,7 +361,18 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
     return workOrders;
   }
-  refreshDetailInformation(workOrders: WorkOrder[]): void {
+  refreshDetailInformation(workOrders: WorkOrder[], loadDetails: boolean): void {
+    // in case we search the work order by 'loadDetails=false'
+    // both the work order and work order line won't included 
+    // item information and inventory status information.
+    // they will only have the item id and inventory status id
+    // but not the details like name / description. 
+    // we will need to load the details async here to improve
+    // the performance yet still show the meaningful information
+    if (loadDetails) {      
+      this.loadItemInformation(workOrders);
+      this.loadInventoryStatusInformation(workOrders);
+    }
     workOrders.forEach(workOrder => {
       // only refresh the detail information if it is expanded already
       if (this.expandSet.has(workOrder.id!)) {
@@ -350,6 +381,77 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       }
     });
 
+  }
+  loadItemInformation(workOrders: WorkOrder[]) {
+
+      // ok, we will group the items all together then 
+      // load the item in one transaction
+      // to increase performance      
+      let itemIdSet = new Set<number>(); 
+      workOrders.forEach(
+        workOrder => {
+          itemIdSet.add(workOrder.itemId!);
+          workOrder.workOrderLines.forEach(
+            workOrderLine => itemIdSet.add(workOrderLine.itemId!)
+          )
+        }
+      )
+      if (itemIdSet.size > 0) {
+
+        let itemMap = new Map<number, Item>(); 
+        let itemIdList : string = Array.from(itemIdSet).join(',')
+        this.itemService.getItemsByIdList(itemIdList, false).subscribe({
+          next: (itemRes) => {
+
+            // add the result to a map so we can assign it to 
+            // the work order / work order line later on
+            itemRes.forEach(
+              item => itemMap.set(item.id!, item)
+            )
+            workOrders.forEach(
+              workOrder => {
+                // only assign if we get the item from the server
+                if (itemMap.has(workOrder.itemId!)) {
+                  workOrder.item = itemMap.get(workOrder.itemId!)
+                }
+                workOrder.workOrderLines.forEach(
+                  workOrderLine => {                    
+                    if (itemMap.has(workOrderLine.itemId!)) {
+                      workOrderLine.item = itemMap.get(workOrderLine.itemId!)
+                    }
+                  }
+                )
+              }
+            )
+          }
+        })
+      }
+  }
+  loadInventoryStatusInformation(workOrders: WorkOrder[]) {
+    // we will reasonablly assume there's very few inventory status
+    // in the system so we will get all from the server now
+
+    let inventoryStatusMap = new Map<number, InventoryStatus>(); 
+    this.inventoryStatusService.loadInventoryStatuses().subscribe({
+      next: (inventoryStatusRes) => {        
+            // add the result to a map so we can assign it to 
+            // the work order / work order line later on
+            inventoryStatusRes.forEach(
+              inventoryStatus => inventoryStatusMap.set(inventoryStatus.id!, inventoryStatus)
+            );
+            workOrders.forEach(
+              workOrder => {
+                workOrder.workOrderLines.forEach(
+                  workOrderLine => {                    
+                    if (inventoryStatusMap.has(workOrderLine.inventoryStatusId!)) {
+                      workOrderLine.inventoryStatus = inventoryStatusMap.get(workOrderLine.inventoryStatusId!)
+                    }
+                  }
+                )
+              }
+            )
+      }
+    });
   }
 
   calculateWorkOrderLineTotalQuantity(workOrder: WorkOrder): WorkOrder {
@@ -970,4 +1072,144 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   }
 
 
+  openWorkOrderConsumeMethodModal(
+    workOrder: WorkOrder,
+    tplWorkOrderConsumeMethodModalTitle: TemplateRef<{}>,
+    tplWorkOrderConsumeMethodModalContent: TemplateRef<{}>,
+  ): void { 
+    this.currentWorkOrderMaterialConsumeTiming = workOrder.materialConsumeTiming;
+    this.currentWorkOrder = workOrder;
+    this.materialConsumeTimingChange();
+    this.currentWorkOrderConsumeByBomFlag = 'yes' // we will only allow consume by BOM
+    this.currentWorkOrderConsumeByBomNumber = workOrder.consumeByBom ?
+        workOrder.consumeByBom.number! : "";
+
+    // Load the location
+    this.workOrderConsumeMethodModal = this.modalService.create({
+      nzTitle: tplWorkOrderConsumeMethodModalTitle,
+      nzContent: tplWorkOrderConsumeMethodModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.workOrderConsumeMethodModal.destroy();
+      },
+      nzOnOk: () => {
+        if (this.currentWorkOrderMaterialConsumeTiming === undefined || this.currentWorkOrderMaterialConsumeTiming === null) {
+          this.messageService.error("please set the material consume timing");
+          return false;
+        }
+        return this.changeWorkOrderConsumeMethod(
+          workOrder, this.currentWorkOrderMaterialConsumeTiming!, 
+          this.currentWorkOrderConsumeByBomFlag, this.currentWorkOrderConsumeByBomNumber
+        );
+      },
+
+      nzWidth: 1000,
+    });
+  }
+
+  materialConsumeTimingChange() {
+    console.log(`this.currentWorkOrderMaterialConsumeTiming: ${this.currentWorkOrderMaterialConsumeTiming}`);
+    if (this.currentWorkOrderMaterialConsumeTiming == WorkOrderMaterialConsumeTiming.BY_TRANSACTION) {
+       
+        this.loadValidBOM(this.currentWorkOrder!);
+    } 
+  }
+  currentWorkOrderConsumeByBomChanged() {
+    if (this.currentWorkOrderConsumeByBomFlag == 'yes') {
+       
+        this.loadValidBOM(this.currentWorkOrder!);
+    } 
+  }
+  loadValidBOM(workOrder: WorkOrder) {
+    console.log(`start to load BOM for ${JSON.stringify(workOrder.item)}`)
+    if (workOrder.item === undefined || workOrder.item === null) {
+
+      this.currentWorkOrderMatchedBOM = [];
+    }
+    else {
+
+      this.billOfMaterialService.findMatchedBillOfMaterialByItemName(
+        workOrder.item!.name
+      ).subscribe({
+        next: (bomRes) => this.currentWorkOrderMatchedBOM = bomRes
+      })
+    }
+  }
+  changeWorkOrderConsumeMethod(workOrder: WorkOrder, 
+    materialConsumeTiming: WorkOrderMaterialConsumeTiming,
+    consumeByBomFlag: string, consumeByBomNumber: string) {
+      this.isSpinning = true;
+      // first, make sure the value is corret
+      if (materialConsumeTiming !== WorkOrderMaterialConsumeTiming.BY_TRANSACTION) {
+        // if we won't consume the material per transaction, then there's no 
+        // need to setup the work order's consuming BOM 
+        this.workOrderService.changeWorkOrderConsumeMethod(
+          workOrder.id!, materialConsumeTiming, false
+        ).subscribe({
+          next: () => {
+            
+            this.messageService.success(this.i18n.fanyi("message.action.success"));
+            this.isSpinning = false;
+            this.searchForm.controls.number.setValue(workOrder.number);
+            this.search();
+           },
+          error: () => this.isSpinning = false, 
+        })
+
+      }
+      else if (consumeByBomFlag === 'yes') {
+        // the user setup the work order to be consumed by bom but
+        // there's no bom setup , return false;
+        if (consumeByBomNumber === '') {
+
+          this.isSpinning = false;
+          this.messageService.error("consume by bom is not setup")
+          return false;
+        }
+        let consumeByBOM: BillOfMaterial | undefined = 
+            this.currentWorkOrderMatchedBOM
+            .find(matchedBOM => matchedBOM.number === consumeByBomNumber);
+        if (consumeByBOM === undefined) {        
+          this.isSpinning = false;
+          this.messageService.error(`can't find BOM with number ${consumeByBomNumber}`);
+          return false;
+        } 
+        // will set the work order's consume by BOM
+        this.workOrderService.changeWorkOrderConsumeMethod(
+          workOrder.id!, materialConsumeTiming, true, consumeByBOM.id!
+        ).subscribe({
+          next: () => {
+            
+          this.messageService.success(this.i18n.fanyi("message.action.success"));
+          this.isSpinning = false;
+          this.searchForm.controls.number.setValue(workOrder.number);
+          this.search();
+         },
+          error: () => this.isSpinning = false, 
+        })
+      }
+      else {
+        // will set the work order to not consume by BOM
+        this.workOrderService.changeWorkOrderConsumeMethod(
+          workOrder.id!, materialConsumeTiming, false
+        ).subscribe({
+          next: () => {
+            
+            this.messageService.success(this.i18n.fanyi("message.action.success"));
+            this.isSpinning = false;
+            this.searchForm.controls.number.setValue(workOrder.number);
+            this.search();
+           },
+          error: () => this.isSpinning = false, 
+        })
+
+      }
+
+      return true;
+
+    }
+
+  
 }

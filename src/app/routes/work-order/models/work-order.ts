@@ -11,6 +11,7 @@ import { WorkOrderByProduct } from './work-order-by-product';
 import { WorkOrderInstruction } from './work-order-instruction';
 import { WorkOrderKpi } from './work-order-kpi';
 import { WorkOrderLine } from './work-order-line';
+import { WorkOrderMaterialConsumeTiming } from './work-order-material-consume-timing';
 import { WorkOrderStatus } from './work-order-status.enum';
 
 export interface WorkOrder {
@@ -39,5 +40,9 @@ export interface WorkOrder {
   totalLineDeliveredQuantity?: number;
   totalLineConsumedQuantity?: number;
 
-  billOfMaterial?: BillOfMaterial;
+  billOfMaterial?: BillOfMaterial; // if the work order is created from the BOM
+
+  consumeByBomOnly? : boolean;
+  consumeByBom?: BillOfMaterial;  // the user can specify a bom to consume the material
+  materialConsumeTiming?: WorkOrderMaterialConsumeTiming;
 }

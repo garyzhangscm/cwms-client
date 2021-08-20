@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+
+import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { InventoryStatus } from '../models/inventory-status';
-import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
 
 @Injectable({
   providedIn: 'root',
