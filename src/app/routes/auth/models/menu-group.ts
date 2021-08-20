@@ -1,4 +1,5 @@
 import { MenuSubGroup } from './menu-sub-group';
+import { MenuType } from './menu-type.enum';
 
 export interface MenuGroup {
   id: number;
@@ -8,4 +9,5 @@ export interface MenuGroup {
   hideInBreadcrumb: boolean;
   children: MenuSubGroup[];
   sequence: number;
+  type: MenuType;
 }

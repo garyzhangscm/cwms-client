@@ -5,9 +5,11 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { TransferItem } from 'ng-zorro-antd/transfer';
+
 import { Menu } from '../models/menu';
 import { MenuGroup } from '../models/menu-group';
 import { MenuSubGroup } from '../models/menu-sub-group';
+import { MenuType } from '../models/menu-type.enum';
 import { Role } from '../models/role';
 import { MenuService } from '../services/menu.service';
 import { RoleService } from '../services/role.service';
@@ -18,7 +20,8 @@ import { RoleService } from '../services/role.service';
 })
 export class AuthRoleMenuComponent implements OnInit {
   pageTitle: string;
-  menuList: TransferItem[] = [];
+  webMenuList: TransferItem[] = [];
+  mobileMenuList: TransferItem[] = [];
   currentRole: Role | undefined;
   accessibleMenuIds: number[] = [];
   allMenus: MenuGroup[] | undefined;
@@ -102,20 +105,37 @@ export class AuthRoleMenuComponent implements OnInit {
   }
 
   loadMenuList(): void {
-    this.menuList = [];
+    this.webMenuList = [];
+    this.mobileMenuList = [];
     this.allMenus!.forEach(menuGroup => {
       menuGroup.children.forEach(menuSubGroup => {
         menuSubGroup.children.forEach(menu => {
-          this.menuList.push({
-            key: menu.id.toString(),
-            title: `${this.i18n.fanyi(menuGroup.i18n)} / ${this.i18n.fanyi(menuSubGroup.i18n)} / ${this.i18n.fanyi(
-              menu.i18n,
-            )}`,
-            description: `${this.i18n.fanyi(menuGroup.i18n)} / ${this.i18n.fanyi(
-              menuSubGroup.i18n,
-            )} / ${this.i18n.fanyi(menu.i18n)}`,
-            direction: this.accessibleMenuIds.some(id => menu.id === id) ? 'right' : undefined,
-          });
+          if (menuGroup.type === MenuType.MOBILE) {
+
+            this.mobileMenuList.push({
+              key: menu.id.toString(),
+              title: `${this.i18n.fanyi(menuGroup.i18n)} / ${this.i18n.fanyi(menuSubGroup.i18n)} / ${this.i18n.fanyi(
+                menu.i18n,
+              )}`,
+              description: `${this.i18n.fanyi(menuGroup.i18n)} / ${this.i18n.fanyi(
+                menuSubGroup.i18n,
+              )} / ${this.i18n.fanyi(menu.i18n)}`,
+              direction: this.accessibleMenuIds.some(id => menu.id === id) ? 'right' : undefined,
+            });
+          }
+          else {
+
+            this.webMenuList.push({
+              key: menu.id.toString(),
+              title: `${this.i18n.fanyi(menuGroup.i18n)} / ${this.i18n.fanyi(menuSubGroup.i18n)} / ${this.i18n.fanyi(
+                menu.i18n,
+              )}`,
+              description: `${this.i18n.fanyi(menuGroup.i18n)} / ${this.i18n.fanyi(
+                menuSubGroup.i18n,
+              )} / ${this.i18n.fanyi(menu.i18n)}`,
+              direction: this.accessibleMenuIds.some(id => menu.id === id) ? 'right' : undefined,
+            });
+          }
         });
       });
     });
@@ -146,8 +166,9 @@ export class AuthRoleMenuComponent implements OnInit {
     // this.accessibleMenuIds: arrays of number
     // when compare the 2 array, we may need to conver the string to number before the comparasion.
     this.processingMenu = true;
-    const currentAssignedMenuIds = this.menuList.filter(item => item.direction === 'right').map(item => item.key);
-
+    const currentAssignedMenuIds = [...this.webMenuList.filter(item => item.direction === 'right').map(item => item.key), 
+       ...this.mobileMenuList.filter(item => item.direction === 'right').map(item => item.key)]; 
+       
     const newlyAssignedMenuIds = currentAssignedMenuIds.filter(
       id => !this.accessibleMenuIds.some(accessibleMenuId => accessibleMenuId === +id),
     );
@@ -163,7 +184,7 @@ export class AuthRoleMenuComponent implements OnInit {
   }
 
   goToNextPage(): void {
-    const currentAssignedMenuIds = this.menuList.filter(item => item.direction === 'right').map(item => item.key);
+    const currentAssignedMenuIds = this.webMenuList.filter(item => item.direction === 'right').map(item => item.key);
 
     // Get the group and subgroup ids that we will need to
     // hold the actual menu items that assigned to the current role
@@ -198,6 +219,7 @@ export class AuthRoleMenuComponent implements OnInit {
         hideInBreadcrumb: menuGroup.hideInBreadcrumb,
         children: [],
         sequence: menuGroup.sequence,
+        type: MenuType.WEB
       };
 
       // Loop through each sub group of this menu group and check

@@ -40,15 +40,29 @@
     </div>
   </div>
 
-  <div nz-row style="padding: 10px">
-    <div nz-col nzSpan="12" nzOffset="6">
-      <nz-transfer [nzDataSource]="menuList" nzShowSearch [nzFilterOption]="transferListFilterOption"
-        (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
-        (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
-        [nzTitles]="[ unassignedMenuText, assignedMenuText]">
-      </nz-transfer>
+  <nz-card nzTitle="{{ 'web' | i18n}}">
+    <div nz-row style="padding: 10px">
+      <div nz-col nzSpan="12" nzOffset="6">
+        <nz-transfer [nzDataSource]="webMenuList" nzShowSearch [nzFilterOption]="transferListFilterOption"
+          (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
+          (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
+          [nzTitles]="[ unassignedMenuText, assignedMenuText]">
+        </nz-transfer>
+      </div>
     </div>
-  </div>
+  </nz-card>
+  <nz-card nzTitle="{{ 'mobile' | i18n}}">
+      <div nz-row style="padding: 10px">
+        <div nz-col nzSpan="12" nzOffset="6">
+          <nz-transfer [nzDataSource]="mobileMenuList" nzShowSearch [nzFilterOption]="transferListFilterOption"
+            (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
+            (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
+            [nzTitles]="[ unassignedMenuText, assignedMenuText]">
+          </nz-transfer>
+        </div>
+      </div>
+  </nz-card>
+  
 </nz-card>
 
 

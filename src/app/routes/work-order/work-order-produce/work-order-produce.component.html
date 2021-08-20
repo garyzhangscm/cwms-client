@@ -154,8 +154,8 @@
       </nz-radio-group>
     <div *ngIf="consumeByWorkOrderBOM === 'true'" style="padding-top: 20px;">  
       {{ 'work-order.bill-of-material' | i18n}} : 
-      <span *ngIf="workOrderProduceTransaction.workOrder!.billOfMaterial" >{{ workOrderProduceTransaction.workOrder!.billOfMaterial?.number }} </span>
-      <span *ngIf="workOrderProduceTransaction.workOrder!.billOfMaterial === undefined || workOrderProduceTransaction.workOrder!.billOfMaterial === null" >N/A</span>
+      <span *ngIf="workOrderProduceTransaction.workOrder!.consumeByBom" >{{ workOrderProduceTransaction.workOrder!.consumeByBom?.number }} </span>
+      <span *ngIf="workOrderProduceTransaction.workOrder!.consumeByBom === undefined || workOrderProduceTransaction.workOrder!.consumeByBom === null" >N/A</span>
           
     </div>
     

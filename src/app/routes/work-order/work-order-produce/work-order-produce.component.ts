@@ -256,14 +256,21 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
           this.messageService.error(errorMessage);
           return false;
     }
+
+    // setup the missing field before we start validating the
+    // consume by bom 
     
-    // if we consume by BOM, make sure the bom is passed in
+    if (this.consumeByWorkOrderBOM === 'true') {          
+      this.workOrderProduceTransaction.consumeByBom = this.workOrderProduceTransaction.workOrder?.consumeByBom;
+    }
+    
+    // if we consume by BOM, make sure the bom is passed in 
+
     
     if (this.workOrderProduceTransaction.consumeByBomQuantity &&
           (this.workOrderProduceTransaction.consumeByBom?.id === undefined ||
             this.workOrderProduceTransaction.consumeByBom?.id === null
     )) {
-       
 
         this.messageService.error("BOM needs to be setup to produce from the work order");
         return false;

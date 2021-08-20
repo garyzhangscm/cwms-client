@@ -139,12 +139,14 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
 
       this.stepIndex += 1;
     }
-    else if (this.stepIndex === 1) {
+    // else if (this.stepIndex === 1) {
       // flow to the next step becased on the result
       // of the quantity valication
-      this.validateProductionLineQuantity();
+      // we will not validate the production line quantity
+      // any more
+      // this.validateProductionLineQuantity(); 
 
-    }
+    // }
     else {
 
       this.stepIndex += 1;

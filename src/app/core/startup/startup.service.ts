@@ -1,19 +1,20 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, Injector } from '@angular/core';
+import { Router } from '@angular/router';
 import { ACLService } from '@delon/acl';
+import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { ALAIN_I18N_TOKEN, MenuService, SettingsService, TitleService } from '@delon/theme';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzIconService } from 'ng-zorro-antd/icon';
 import { Observable, zip } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { WebClientConfigurationService } from 'src/app/routes/util/services/web-client-configuration.service';
 import { CompanyService } from 'src/app/routes/warehouse-layout/services/company.service';
+import { WarehouseService } from 'src/app/routes/warehouse-layout/services/warehouse.service';
+
 import { ICONS } from '../../../style-icons';
 import { ICONS_AUTO } from '../../../style-icons-auto';
 import { I18NService } from '../i18n/i18n.service';
-import { Router } from '@angular/router';
-import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
-import { WarehouseService } from 'src/app/routes/warehouse-layout/services/warehouse.service';
-import { WebClientConfigurationService } from 'src/app/routes/util/services/web-client-configuration.service';
 
 /**
  * Used for application startup
@@ -119,7 +120,6 @@ export class StartupService {
         })
     );
   }
-
 
 
   private goToLoginForm() {
