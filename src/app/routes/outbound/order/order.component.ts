@@ -5,11 +5,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 import { Customer } from '../../common/models/customer';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
+import { PrintPageSize } from '../../common/models/print-page-size.enum';
 import { Printer } from '../../common/models/printer';
 import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
@@ -435,6 +437,57 @@ export class OutboundOrderComponent implements OnInit {
       this.search();
     }, 
     () =>  this.isSpinning = false);
+  }
+
+  
+  printPackingSlip(event: any, order: Order) {
+
+    this.isSpinning = true;
+
+    this.orderService.generateOrderPackingList(
+      order)
+      .subscribe(printResult => {
+
+        // send the result to the printer
+        const printFileUrl
+          = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
+        console.log(`will print file: ${printFileUrl}`);
+        this.printingService.printRemoteFileByName(
+          "Packing Slip",
+          printResult.fileName,
+          ReportType.PACKING_SLIP,
+          event.printerIndex,
+          event.printerName,
+          event.physicalCopyCount,
+          PrintPageOrientation.Portrait,
+          PrintPageSize.Letter,
+          order.number);
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi("report.print.printed"));
+      },
+        () => {
+          this.isSpinning = false;
+        },
+
+      );
+
+  }
+  previewPackingSlip(order: Order): void {
+
+
+    this.isSpinning = true;
+    this.orderService.generateOrderPackingList(
+      order)
+      .subscribe(printResult => {
+        // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+        this.isSpinning = false;
+        this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
+
+      },
+        () => {
+          this.isSpinning = false;
+        },
+      );
   }
 
   completeOrder(order: Order): void {

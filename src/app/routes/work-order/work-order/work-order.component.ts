@@ -932,25 +932,32 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     tplAllocateByProductionLineModalTitle: TemplateRef<{}>,
     tplAllocateByProductionLineModalContent: TemplateRef<{}>,
   ): void {
-    this.productionLineAllocationRequests = this.generateEmptyProductionLineAllocationRequests(workOrder);
+    // we will load the detail information of the  work order before we continue
+    this.workOrderService.getWorkOrder(workOrder.id!).subscribe({
 
-    // Load the location
-    this.productionLineAllocationRequestModal = this.modalService.create({
-      nzTitle: tplAllocateByProductionLineModalTitle,
-      nzContent: tplAllocateByProductionLineModalContent,
-      nzOkText: this.i18n.fanyi('confirm'),
-      nzCancelText: this.i18n.fanyi('cancel'),
-      nzMaskClosable: false,
-      nzOnCancel: () => {
-        this.productionLineAllocationRequestModal.destroy();
-      },
-      nzOnOk: () => {
-        this.allocateWorkOrderByProductionLine(
-          workOrder, this.productionLineAllocationRequests
-        );
-      },
+      next: (workOrderRes) => {
+        this.productionLineAllocationRequests = this.generateEmptyProductionLineAllocationRequests(workOrderRes);
+    
+        // Load the location
+        this.productionLineAllocationRequestModal = this.modalService.create({
+          nzTitle: tplAllocateByProductionLineModalTitle,
+          nzContent: tplAllocateByProductionLineModalContent,
+          nzOkText: this.i18n.fanyi('confirm'),
+          nzCancelText: this.i18n.fanyi('cancel'),
+          nzMaskClosable: false,
+          nzOnCancel: () => {
+            this.productionLineAllocationRequestModal.destroy();
+          },
+          nzOnOk: () => {
+            this.allocateWorkOrderByProductionLine(
+              workOrderRes, this.productionLineAllocationRequests
+            );
+          },
+    
+          nzWidth: 1000,
+        });
 
-      nzWidth: 1000,
+      }
     });
   }
 

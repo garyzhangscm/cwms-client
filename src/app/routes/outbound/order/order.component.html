@@ -331,12 +331,16 @@
               <a  (click)="openReassignStageLocationModel(item, tplOrderReassignShippingStageLocationModalTitle, tplOrderReassignShippingStageLocationModalContent)">
                 {{ 'order.assign-ship-stage-location' | i18n }}</a>
             </li>
-
             <li nz-menu-item *ngIf="isOrderReadyForComplete(item)">
               <a  (click)="completeOrder(item)">{{ 'complete' | i18n }}</a>
             </li>
           </ul>
         </nz-dropdown-menu>
+        <nz-divider nzType="vertical"></nz-divider>
+        <cwms-common-print-button style='padding-left: 20px;'
+          (print)="printPackingSlip($event, item)"
+          (preview)="previewPackingSlip(item)">
+        </cwms-common-print-button>
 
       </ng-template>
     </st>

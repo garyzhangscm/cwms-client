@@ -75,6 +75,13 @@ export class OrderService {
     return this.http.post(`outbound/orders/${order.id}/pick-report?locale=${locale}`).pipe(map(res => res.data));
   }
  
+  generateOrderPackingList(order: Order, locale?: string): Observable<ReportHistory> {
+    if (!locale) {
+      locale = this.i18n.defaultLang;
+    }
+
+    return this.http.post(`outbound/orders/${order.id}/picking-list-report?locale=${locale}`).pipe(map(res => res.data));
+  }
   stageOrder(order: Order): Observable<Order> {
     return this.http.post(`outbound/orders/${order.id}/stage`).pipe(map(res => res.data));
   }
