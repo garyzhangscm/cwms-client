@@ -33,7 +33,7 @@
     </div>
     
     <st #st [data]="listOfAllOrders"  [columns]="columns" [expand]="expand" expandRowByClick expandAccordion
-    (change)="orderTableChanged($event)">
+    (change)="orderTableChanged($event)" [scroll]="{ x: '1865px' }">
       <!-- more details about the shipping to customer -->
       <ng-template st-row="shipToCustomerColumn" let-item let-index="index">
         <a nz-tooltip [nzTooltipTitle]="shipToCustomerDetailsTemplate">{{ item.shipToCustomer?.name }}</a>
@@ -336,7 +336,12 @@
             </li>
           </ul>
         </nz-dropdown-menu>
-        <nz-divider nzType="vertical"></nz-divider>
+      </ng-template>
+        
+      <ng-template st-row="printPackingSlipColumnTitle" type="title" let-c>
+        {{ 'packing-slip' | i18n }}
+      </ng-template>
+      <ng-template st-row="printPackingSlipColumn" let-item let-index="index">  
         <cwms-common-print-button style='padding-left: 20px;'
           (print)="printPackingSlip($event, item)"
           (preview)="previewPackingSlip(item)">

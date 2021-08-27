@@ -777,26 +777,26 @@ export class OutboundOrderComponent implements OnInit {
   @ViewChild('st', { static: true })
   st!: STComponent;
   columns: STColumn[] = [
-    { title: this.i18n.fanyi("order.number"), index: 'number', iif: () => this.isChoose('number'), },
+    { title: this.i18n.fanyi("order.number"), index: 'number', fixed: 'left', iif: () => this.isChoose('number'), width: 100},
     { title: this.i18n.fanyi("order.category"), 
-      index: 'category', 
+      index: 'category', fixed: 'left',
       format: (item, _col, index) => this.i18n.fanyi(`ORDER-CATEGORY-${ item.category}` ), 
       
-      iif: () => this.isChoose('category'), },
-    { title: this.i18n.fanyi("status"), index: 'status', iif: () => this.isChoose('status'), },    
+      iif: () => this.isChoose('category'), width: 100},
+    { title: this.i18n.fanyi("status"), index: 'status',fixed: 'left', iif: () => this.isChoose('status'), width: 100 },    
     {
       title: this.i18n.fanyi("shipToCustomer"),
       // renderTitle: 'customTitle',
       render: 'shipToCustomerColumn',
-      iif: () => this.isChoose('shipToCustomer'),
+      iif: () => this.isChoose('shipToCustomer'), width: 100
     },
-    { title: this.i18n.fanyi("order.billToCustomer"), index: 'billToCustomer?.name', iif: () => this.isChoose('billToCustomer'), },
-    { title: this.i18n.fanyi("order.totalItemCount"), index: 'totalItemCount', iif: () => this.isChoose('totalItemCount'), },
-    { title: this.i18n.fanyi("order.totalOrderQuantity"), index: 'totalExpectedQuantity', iif: () => this.isChoose('totalExpectedQuantity'), },
-    { title: this.i18n.fanyi("order.totalOpenQuantity"), index: 'totalOpenQuantity', iif: () => this.isChoose('totalOpenQuantity'), },
-    { title: this.i18n.fanyi("shipment.stage.locationGroup"), index: 'stageLocationGroup.description', iif: () => this.isChoose('stageLocationGroup'), },
-    { title: this.i18n.fanyi("shipment.stage.location"), index: 'stageLocation.name', iif: () => this.isChoose('stageLocation'), },    
-    { title: this.i18n.fanyi("order.totalInprocessQuantity"), index: 'totalInprocessQuantity', iif: () => this.isChoose('totalInprocessQuantity'), },
+    { title: this.i18n.fanyi("order.billToCustomer"), index: 'billToCustomer?.name', iif: () => this.isChoose('billToCustomer'), width: 100},
+    { title: this.i18n.fanyi("order.totalItemCount"), index: 'totalItemCount', iif: () => this.isChoose('totalItemCount'), width: 100},
+    { title: this.i18n.fanyi("order.totalOrderQuantity"), index: 'totalExpectedQuantity', iif: () => this.isChoose('totalExpectedQuantity'), width: 100 },
+    { title: this.i18n.fanyi("order.totalOpenQuantity"), index: 'totalOpenQuantity', iif: () => this.isChoose('totalOpenQuantity'), width: 100 },
+    { title: this.i18n.fanyi("shipment.stage.locationGroup"), index: 'stageLocationGroup.description', iif: () => this.isChoose('stageLocationGroup'),width: 100 },
+    { title: this.i18n.fanyi("shipment.stage.location"), index: 'stageLocation.name', iif: () => this.isChoose('stageLocation'), width: 100},    
+    { title: this.i18n.fanyi("order.totalInprocessQuantity"), index: 'totalInprocessQuantity', iif: () => this.isChoose('totalInprocessQuantity'), width: 100},
     {
       title: this.i18n.fanyi('order.totalInprocessQuantity'),
       iif: () => this.isChoose('totalInprocessQuantity'),
@@ -804,15 +804,18 @@ export class OutboundOrderComponent implements OnInit {
         { title: this.i18n.fanyi("order.totalPendingAllocationQuantity"), index: 'totalPendingAllocationQuantity', iif: () => this.isChoose('totalPendingAllocationQuantity'), }, 
         { title: this.i18n.fanyi("order.totalOpenPickQuantity"), index: 'totalOpenPickQuantity', iif: () => this.isChoose('totalOpenPickQuantity'), }, 
         { title: this.i18n.fanyi("order.totalPickedQuantity"), index: 'totalPickedQuantity', iif: () => this.isChoose('totalPickedQuantity'), },    
-      ],
+      ],width: 100
     },
-    { title: this.i18n.fanyi("order.totalShippedQuantity"), index: 'totalShippedQuantity', iif: () => this.isChoose('totalShippedQuantity'), },
-    { title: this.i18n.fanyi("action"), index: 'totalShippedQuantity', iif: () => this.isChoose('totalShippedQuantity'), },
-    
+    { title: this.i18n.fanyi("order.totalShippedQuantity"), index: 'totalShippedQuantity', iif: () => this.isChoose('totalShippedQuantity'), width: 100},     
     {
       title: 'action',
-      renderTitle: 'actionColumnTitle',
+      renderTitle: 'actionColumnTitle',fixed: 'right',width: 110, 
       render: 'actionColumn',
+    },
+    {
+      title: 'printPackingSlip',
+      renderTitle: 'printPackingSlipColumnTitle',fixed: 'right',width: 110, 
+      render: 'printPackingSlipColumn',
     },
    
   ];

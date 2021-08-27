@@ -80,7 +80,7 @@ export class OrderService {
       locale = this.i18n.defaultLang;
     }
 
-    return this.http.post(`outbound/orders/${order.id}/picking-list-report?locale=${locale}`).pipe(map(res => res.data));
+    return this.http.post(`outbound/orders/${order.id}/packing-list-report?locale=${locale}`).pipe(map(res => res.data));
   }
   stageOrder(order: Order): Observable<Order> {
     return this.http.post(`outbound/orders/${order.id}/stage`).pipe(map(res => res.data));

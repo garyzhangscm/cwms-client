@@ -305,6 +305,9 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
               console.log(`customer saved! \n ${JSON.stringify(customerRes)}`);
               this.currentOrder!.shipToCustomer = customerRes;
               this.currentOrder!.shipToCustomerId = customerRes.id!;
+
+              // copy the address information from the customer to the order
+              this.copyAddressInformation(this.currentOrder!, customerRes);
               
               this.orderService.addOrder(this.currentOrder!).subscribe({
                 next: () => {
@@ -327,6 +330,9 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     }
     else {
       
+      // copy the address information from the customer to the order
+      this.copyAddressInformation(this.currentOrder!, this.currentOrder!.shipToCustomer!);
+      
       this.orderService.addOrder(this.currentOrder!).subscribe({
         next: () => {
 
@@ -343,6 +349,15 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     }
   }
 
+  copyAddressInformation(order: Order, customer: Customer) {
+    order.shipToAddressCountry = customer.addressCountry;
+    order.shipToAddressState  = customer.addressState;
+    order.shipToAddressCounty = customer.addressCounty;
+    order.shipToAddressCity = customer.addressCity;
+    order.shipToAddressLine1 = customer.addressLine1;
+    order.shipToAddressLine2 = customer.addressLine2;
+    order.shipToAddressPostcode = customer.addressPostcode;
+  }
   orderTransferWarehouseIdChanged() {
     console.log(`order's transfer warehouse id  is changed to ${this.currentOrder!.transferReceiptWarehouseId}`);
     this.currentOrder!.transferReceiptWarehouse = this.warehouses?.find(
