@@ -339,13 +339,17 @@
       </ng-template>
         
       <ng-template st-row="printPackingSlipColumnTitle" type="title" let-c>
-        {{ 'packing-slip' | i18n }}
+        {{ 'print' | i18n }}
       </ng-template>
       <ng-template st-row="printPackingSlipColumn" let-item let-index="index">  
+        <div>
+          
+        {{ 'packing-slip' | i18n }}: 
         <cwms-common-print-button style='padding-left: 20px;'
           (print)="printPackingSlip($event, item)"
           (preview)="previewPackingSlip(item)">
         </cwms-common-print-button>
+        </div>
 
       </ng-template>
     </st>

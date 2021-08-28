@@ -97,6 +97,12 @@ export class WorkOrderService {
     }
   }
 
+  
+  reverseProduction(workOrder: WorkOrder, lpn: string): Observable<WorkOrder> {
+    let url = `workorder/work-orders/${workOrder.id}/reserve-production?lpn=${lpn}`; 
+    return this.http.post(url).pipe(map(res => res.data)); 
+  }
+
 
   getReturnedInventory(workOrder: WorkOrder): Observable<Inventory[]> {
     return this.http.get(`workorder/work-orders/${workOrder.id}/returned-inventory`).pipe(map(res => res.data));

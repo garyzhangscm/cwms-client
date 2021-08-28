@@ -961,6 +961,22 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     });
   }
 
+  reverseProduction(workOrder: WorkOrder, inventory: Inventory): void { 
+    
+    this.isSpinning = true;
+
+    this.workOrderService.reverseProduction(workOrder, inventory.lpn!)
+      .subscribe(workOrderRes => {
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.search()
+
+      },
+        () => this.isSpinning = false);
+
+    
+  }
+
   allocateByProductionLineOptionsChanged() {
     if (this.allocateByProductionLineOptions === 'BY_WORK_ORDER') {
 

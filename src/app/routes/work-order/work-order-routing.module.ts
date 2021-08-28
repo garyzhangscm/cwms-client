@@ -8,6 +8,7 @@ import { WorkOrderBillOfMaterialComponent } from './bill-of-material/bill-of-mat
 import { WorkOrderDeassignProductionLineComponent } from './deassign-production-line/deassign-production-line.component';
 import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component';
 import { WorkOrderMouldComponent } from './mould/mould.component';
+import { WorkOrderProduceTransactionComponent } from './produce-transaction/produce-transaction.component';
 import { WorkOrderProductionKanbanComponent } from './production-kanban/production-kanban.component';
 import { WorkOrderProductionLineMaintenanceComponent } from './production-line-maintenance/production-line-maintenance.component';
 import { WorkOrderProductionLineComponent } from './production-line/production-line.component';
@@ -51,7 +52,8 @@ const routes: Routes = [
   { path: 'mould/maintenance', component: WorkOrderMouldMaintenanceComponent },
   { path: 'production-kanban', component: WorkOrderProductionKanbanComponent },
   { path: 'work-order/deassign-production-line', component: WorkOrderDeassignProductionLineComponent },
-  { path: 'work-order-configuration', component: WorkOrderWorkOrderConfigurationComponent }];
+  { path: 'work-order-configuration', component: WorkOrderWorkOrderConfigurationComponent },
+  { path: 'produce-transaction', component: WorkOrderProduceTransactionComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

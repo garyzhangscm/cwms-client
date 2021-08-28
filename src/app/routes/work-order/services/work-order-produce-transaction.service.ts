@@ -19,4 +19,19 @@ export class WorkOrderProduceTransactionService {
       .post(`workorder/work-order-produce-transactions`, workOrderProduceTransaction)
       .pipe(map(res => res.data));
   }
+
+  
+  getWorkOrderProduceTransaction(workOrderNumber?: string, productionLineId?: number): Observable<WorkOrderProduceTransaction[]> {
+    
+    let url = `workorder/work-order-produce-transactions?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    
+    if (workOrderNumber) {
+      url = `${url}&workOrderNumber=${workOrderNumber}`;
+    }
+    if (productionLineId) {
+      url = `${url}&productionLineId=${productionLineId}`;
+    }
+    
+    return this.http.get(url).pipe(map(res => res.data));
+  }
 }

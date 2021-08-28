@@ -666,6 +666,9 @@
 
               <nz-dropdown-menu #receivedInventoryActionTpl="nzDropdownMenu">
                 <ul nz-menu>
+                  <li nz-menu-item >
+                    <a (click)="reverseProduction(data, inventory)">{{ 'reverseProduction' | i18n }}</a>
+                  </li>
                   <li nz-menu-item
                     *ngIf="inventoryReadyForPutaway(data, inventory) && inventory.inventoryMovements && inventory.inventoryMovements!.length === 0">
                     <a (click)="allocateLocation(data, inventory)">{{ 'allocateLocation' | i18n }}</a>
