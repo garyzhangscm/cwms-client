@@ -268,7 +268,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   printingInProcess = false;
   isSpinning = false;
 
-  productionLineAllocationRequests: ProductionLineAllocationRequest[] = [];
+  productionLineAllocationRequests: ProductionLineAllocationRequest[] = []; 
   productionLineAllocationRequestModal!: NzModalRef;
 
   
@@ -894,7 +894,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         productionLineAssignment => {
           // construct the line allocation request, in case the user want to allocate by work order line.
           // by default we will allocate by work order
-          let productionLineAllocationRequestLines: ProductionLineAllocationRequestLine[] = [];
+          let productionLineAllocationRequestLines: ProductionLineAllocationRequestLine[] = []; 
           productionLineAssignment.lines.forEach(
             productionLineAssignmentLine => {
               productionLineAllocationRequestLines.push({
@@ -907,9 +907,10 @@ export class WorkOrderWorkOrderComponent implements OnInit {
                   itemName: productionLineAssignmentLine.workOrderLine.item!.name,
                   workOrderLineNumber: productionLineAssignmentLine.workOrderLine.number!,
                   itemDescription: productionLineAssignmentLine.workOrderLine.item?.description,
+                  productionLineName: productionLineAssignment.productionLine.name,
               })
             }
-          )
+          ) 
           productionLineAllocationRequests.push({
             workOrderId: workOrder.id!,
             productionLineId: productionLineAssignment.productionLine.id!,
@@ -917,7 +918,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
             totalQuantity: productionLineAssignment.quantity,
             openQuantity: productionLineAssignment.openQuantity,
             allocatingQuantity: productionLineAssignment.openQuantity, // by default, we will allocate the whole open quantity
-            allocateByLine: this.allocateByProductionLineOptions === 'BY_WORK_ORDER_LINE', 
+            allocateByLine: this.allocateByProductionLineOptions === 'BY_WORK_ORDER_LINE' ,
             lines: productionLineAllocationRequestLines,
           });
         }
@@ -977,19 +978,24 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     
   }
 
-  allocateByProductionLineOptionsChanged() {
+  allocateByProductionLineOptionsChanged() { 
     if (this.allocateByProductionLineOptions === 'BY_WORK_ORDER') {
 
       this.productionLineAllocationRequests.forEach(
         productionLineAllocationRequest => productionLineAllocationRequest.allocateByLine = false
       );
     }
-    else {
+    else { 
       this.productionLineAllocationRequests.forEach(
-        productionLineAllocationRequest => productionLineAllocationRequest.allocateByLine = true
+        productionLineAllocationRequest => {
+          productionLineAllocationRequest.allocateByLine = true
+           
+        }
+
       );
 
-    }
+
+    } 
   }
   allocateWorkOrderByProductionLine(workOrder: WorkOrder, productionLineAllocationRequests: ProductionLineAllocationRequest[]) {
 

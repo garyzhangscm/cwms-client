@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
 import { TimeUnit } from '../../common/models/time-unit.enum';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -21,8 +22,6 @@ export class WorkOrderMouldMaintenanceComponent implements OnInit {
   stepIndex = 0;
   pageTitle: string;
   newMould = true;
-
-
 
 
   constructor(private http: _HttpClient,

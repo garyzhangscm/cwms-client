@@ -33,7 +33,7 @@
     </div>
     
     <st #st [data]="listOfAllOrders"  [columns]="columns" [expand]="expand" expandRowByClick expandAccordion
-    (change)="orderTableChanged($event)" [scroll]="{ x: '1865px' }">
+    (change)="orderTableChanged($event)" [scroll]="{ x: '2460px' }">
       <!-- more details about the shipping to customer -->
       <ng-template st-row="shipToCustomerColumn" let-item let-index="index">
         <a nz-tooltip [nzTooltipTitle]="shipToCustomerDetailsTemplate">{{ item.shipToCustomer?.name }}</a>
@@ -45,6 +45,15 @@
             {{item.shipToCustomer?.addressCity}},  {{item.shipToCustomer?.addressState}} <br>
             {{item.shipToCustomer?.addressPostcode}} <br>
             </address>
+        </ng-template>
+
+      </ng-template>
+      
+      <!-- more details about the order number -->
+      <ng-template st-row="orderNumberColumn" let-item let-index="index">
+        <a nz-tooltip [nzTooltipTitle]="orderNumberTemplate">{{ item.number }}</a>
+        <ng-template #orderNumberTemplate>
+          {{item.number}}
         </ng-template>
 
       </ng-template>
@@ -338,10 +347,10 @@
         </nz-dropdown-menu>
       </ng-template>
         
-      <ng-template st-row="printPackingSlipColumnTitle" type="title" let-c>
+      <ng-template st-row="printColumnTitle" type="title" let-c>
         {{ 'print' | i18n }}
       </ng-template>
-      <ng-template st-row="printPackingSlipColumn" let-item let-index="index">  
+      <ng-template st-row="printColumn" let-item let-index="index">  
         <div>
           
         {{ 'packing-slip' | i18n }}: 

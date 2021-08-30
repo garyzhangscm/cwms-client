@@ -6,5 +6,6 @@ export interface ProductionLineAllocationRequestLine {
     itemName: string;
     itemDescription?: string;
     workOrderLineNumber: string;
+    productionLineName: string;
     
 }

@@ -777,7 +777,9 @@ export class OutboundOrderComponent implements OnInit {
   @ViewChild('st', { static: true })
   st!: STComponent;
   columns: STColumn[] = [
-    { title: this.i18n.fanyi("order.number"), index: 'number', fixed: 'left', iif: () => this.isChoose('number'), width: 100},
+    { title: this.i18n.fanyi("order.number"), 
+      render: 'orderNumberColumn',
+      fixed: 'left', iif: () => this.isChoose('number'), width: 100},
     { title: this.i18n.fanyi("order.category"), 
       index: 'category', fixed: 'left',
       format: (item, _col, index) => this.i18n.fanyi(`ORDER-CATEGORY-${ item.category}` ), 
@@ -809,13 +811,13 @@ export class OutboundOrderComponent implements OnInit {
     { title: this.i18n.fanyi("order.totalShippedQuantity"), index: 'totalShippedQuantity', iif: () => this.isChoose('totalShippedQuantity'), width: 100},     
     {
       title: 'action',
-      renderTitle: 'actionColumnTitle',fixed: 'right',width: 110, 
+      renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 
       render: 'actionColumn',
     },
     {
-      title: 'printPackingSlip',
-      renderTitle: 'printPackingSlipColumnTitle',fixed: 'right',width: 110, 
-      render: 'printPackingSlipColumn',
+      title: 'print',
+      renderTitle: 'printColumnTitle',fixed: 'right',width: 210, 
+      render: 'printColumn',
     },
    
   ];
