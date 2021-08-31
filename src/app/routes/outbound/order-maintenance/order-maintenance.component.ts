@@ -184,9 +184,12 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     
     console.log(`item name is changed to ${(event.target as HTMLInputElement).value}`);
     const itemName: string = (event.target as HTMLInputElement).value.trim();
+    if (itemName.length === 0) {
+      return;
+    }
     this.itemService.getItems(itemName).subscribe(
       itemRes => {
-        if (itemRes.length > 0) {
+        if (itemRes.length === 1) {
           // we should only get one item by the name
           orderLine.item = itemRes[0];
           orderLine.itemId = itemRes[0].id;
