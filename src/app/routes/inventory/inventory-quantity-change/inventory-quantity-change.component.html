@@ -16,7 +16,7 @@
     <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
   </nz-breadcrumb>
 </ng-template>
-
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 <ng-container>
   <nz-card [nzActions]="[actionConfirm]">
     <nz-descriptions nzBordered>
@@ -74,6 +74,7 @@
   </nz-card>
 </ng-container>
 
+</nz-spin>
 
 <ng-template #actionConfirm>
   <a nz-button nzType="primary" routerLink="/inventory/inventory-quantity-change/confirm"

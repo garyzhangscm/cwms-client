@@ -18,6 +18,7 @@
   </nz-breadcrumb>
 </ng-template>
 
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 <ng-container>
   <nz-card [nzActions]="[actionConfirm]">
     <nz-descriptions nzBordered>
@@ -96,3 +97,5 @@
     </ng-template>
   </nz-card>
 </ng-container>
+
+</nz-spin>

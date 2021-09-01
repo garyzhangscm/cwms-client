@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
 import { Inventory } from '../models/inventory';
 import { InventoryService } from '../services/inventory.service';
 
@@ -17,7 +18,7 @@ export class InventoryInventoryQuantityChangeConfirmComponent implements OnInit 
   previousApplication = '';
   documentNumber = '';
   comment = '';
-
+  isSpinning = false;
   constructor(
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
@@ -42,6 +43,7 @@ export class InventoryInventoryQuantityChangeConfirmComponent implements OnInit 
   }
 
   confirmInventoryAdjust(): void {
+    this.isSpinning = true;
     this.inventoryService
       .adjustInventoryQuantity(this.currentInventory, this.documentNumber, this.comment)
       .subscribe(inventoryRes => {
@@ -52,13 +54,16 @@ export class InventoryInventoryQuantityChangeConfirmComponent implements OnInit 
         }
         setTimeout(() => {
           if (this.previousApplication === 'inventory') {
+            this.isSpinning = false;
             this.router.navigateByUrl(`/inventory/inventory?id=${inventoryRes.id}&refresh=true`);
           } else {
+            this.isSpinning = false;
             this.router.navigateByUrl(
               `/inventory/inventory-adjust?locationName=${inventoryRes.location!.name}&expand=true`,
             );
           }
         }, 2500);
-      });
+      }, 
+      () => this.isSpinning = false);
   }
 }

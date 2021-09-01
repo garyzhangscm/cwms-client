@@ -304,9 +304,11 @@ export class InventoryInventoryComponent implements OnInit {
   }
 
   removeInventory(inventory: Inventory): void {
+    this.isSpinning = true;
     this.inventoryService.adjustDownInventory(inventory, this.documentNumber, this.comment).subscribe(
       inventoryRes => {
         this.mapOfInprocessInventoryId[inventory.id!] = false;
+        this.isSpinning = false;
         if (inventoryRes.lockedForAdjust === true) {
           this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.request-success'));
         } else {
@@ -316,6 +318,7 @@ export class InventoryInventoryComponent implements OnInit {
       },
       () => {
         this.mapOfInprocessInventoryId[inventory.id!] = false;
+        this.isSpinning = false;
         this.messageService.error(this.i18n.fanyi('message.action.fail'));
       },
     );
