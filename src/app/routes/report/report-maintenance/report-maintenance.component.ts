@@ -135,14 +135,12 @@ export class ReportReportMaintenanceComponent implements OnInit {
     }
   }
 
-  handleUploadChange(info: NzUploadChangeParam): void {
-    if (info.file.status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
+  handleUploadChange(info: NzUploadChangeParam): void { 
     if (info.file.status === 'done') {
       this.messageService.success(`${info.file.name} ${this.i18n.fanyi('file.upload.success')}`);
 
       if (info.file.name.endsWith('.jrxml')) {
+        
         this.currentReport.fileName = info.file.name;
       }
       let url = `${environment.api.baseUrl}/resource/reports/templates/upload`;
@@ -150,8 +148,7 @@ export class ReportReportMaintenanceComponent implements OnInit {
       url = `${url}/${this.warehouseService.getCurrentWarehouse().id}`;
       url = `${url}/${this.userService.getCurrentUsername()}`;
       url = `${url}/${info.file.response.data}`;
-
-      console.log(`will download file from ${url}`);
+ 
 
       this.fileList = [
         ...this.fileList,
@@ -167,6 +164,6 @@ export class ReportReportMaintenanceComponent implements OnInit {
       this.messageService.error(`${info.file.name} ${this.i18n.fanyi('file.upload.fail')}`);
     }
 
-    console.log(`====    handleUploadChange ====\n ${JSON.stringify(info)}`);
+    
   }
 }

@@ -279,7 +279,7 @@ export class PickService {
     pickListNumber?: string,
     cartonizationNumber?: string,
     containerId?: string,
-    workOrderLineIds?: string,
+    workOrderLineIds?: string
   ): Observable<PickWork[]> {
     let url = `outbound/picks?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (number) {
@@ -407,10 +407,15 @@ export class PickService {
     return this.http.post(url).pipe(map(res => res.data));
   }
 
-  getPickedInventories(picks: PickWork[]): Observable<Inventory[]> {
+  getPickedInventories(picks: PickWork[], includeVirturalInventory?: boolean): Observable<Inventory[]> {
     const pickIds = picks.map(pick => pick.id).join(',');
+    let url = `inventory/inventories?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&pickIds=${pickIds}`;
+    if (includeVirturalInventory) {
+      url = `${url}&includeVirturalInventory=${includeVirturalInventory}`;
+    }
+
     return this.http
-      .get(`inventory/inventories?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&pickIds=${pickIds}`)
+      .get(url)
       .pipe(map(res => res.data));
   }
 }

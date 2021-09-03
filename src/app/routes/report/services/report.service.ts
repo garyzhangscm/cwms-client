@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
 import { UserService } from '../../auth/services/user.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Report } from '../models/report';
@@ -45,7 +46,7 @@ export class ReportService {
   }
 
   changeReport(report: Report): Observable<Report> {
-    const url = 'resource/reports/' + report.id;
+    const url = `resource/reports/${report.id}`;
     return this.http.post(url, report).pipe(map(res => res.data));
   }
 

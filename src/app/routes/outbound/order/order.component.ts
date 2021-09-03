@@ -490,6 +490,57 @@ export class OutboundOrderComponent implements OnInit {
       );
   }
 
+  
+  printBillOfLading(event: any, order: Order) {
+
+    this.isSpinning = true;
+
+    this.orderService.generateOrderBillOfLading(
+      order)
+      .subscribe(printResult => {
+
+        // send the result to the printer
+        const printFileUrl
+          = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
+        console.log(`will print file: ${printFileUrl}`);
+        this.printingService.printRemoteFileByName(
+          "Bill Of Lading",
+          printResult.fileName,
+          ReportType.BILL_OF_LADING,
+          event.printerIndex,
+          event.printerName,
+          event.physicalCopyCount,
+          PrintPageOrientation.Portrait,
+          PrintPageSize.Letter,
+          order.number);
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi("report.print.printed"));
+      },
+        () => {
+          this.isSpinning = false;
+        },
+
+      );
+
+  }
+  previewBillOfLading(order: Order): void {
+
+
+    this.isSpinning = true;
+    this.orderService.generateOrderBillOfLading(
+      order)
+      .subscribe(printResult => {
+        // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+        this.isSpinning = false;
+        this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
+
+      },
+        () => {
+          this.isSpinning = false;
+        },
+      );
+  }
+
   completeOrder(order: Order): void {
     this.isSpinning = true;
     this.orderService.completeOrder(order).subscribe(orderRes => {
@@ -544,7 +595,7 @@ export class OutboundOrderComponent implements OnInit {
       if (pickRes.length === 0) {
         this.mapOfPickedInventory[order.id!] = [];
       } else {
-        this.pickService.getPickedInventories(pickRes).subscribe(pickedInventoryRes => {
+        this.pickService.getPickedInventories(pickRes, true).subscribe(pickedInventoryRes => {
           this.mapOfPickedInventory[order.id!] = [...pickedInventoryRes];
         });
       }
