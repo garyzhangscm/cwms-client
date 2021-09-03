@@ -897,8 +897,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     const itemNumber: string = (event.target as HTMLInputElement).value;
     if (itemNumber) {
       this.itemService
-        .getItems(itemNumber)
-        .subscribe(items => (this.currentReceiptLine.item = items.length > 0 ? items[0] : undefined));
+        .getItems(itemNumber.trim())
+        .subscribe(items => (this.currentReceiptLine.item = items.length === 1 ? items[0] : undefined));
     } else {
       this.currentReceiptLine.item = undefined;
     }
