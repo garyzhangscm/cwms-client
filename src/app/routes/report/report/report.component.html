@@ -1,5 +1,5 @@
 <page-header></page-header>
-
+<nz-spin nzSize="large" [nzSpinning]="isSpinning">
 <!-- Form to query the result  -->
 <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
   <div nz-row [nzGutter]="12">
@@ -96,6 +96,13 @@
             [queryParams]="{id : data.id!}" [disabled]="data.companyId === null && data.warehouseId === null">
             {{ 'modify' | i18n }}
           </button>
+          <nz-divider nzType="vertical" ></nz-divider>
+
+          
+          <button nz-button nzDanger [disabled]="data.companyId === null && data.warehouseId === null" 
+          (click)="removeCustomizedReport(data)">
+            {{ 'delete' | i18n }}
+          </button>
 
         </td>
       </tr>
@@ -103,9 +110,6 @@
     </tbody>
   </nz-table>
   <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
-    <button nz-button nzDanger (click)="removeCustomizedReport()">
-      {{ 'delete' | i18n }}
-    </button>
     <button nz-button nzType="primary" routerLink="/report/report-maintenance" routerLinkActive="active">
       {{ 'add' | i18n }}
     </button>
@@ -117,3 +121,4 @@
     {{searchResult}}
   </div>
 </ng-template>
+</nz-spin>

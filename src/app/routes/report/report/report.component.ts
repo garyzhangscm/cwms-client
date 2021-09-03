@@ -120,7 +120,7 @@ export class ReportReportComponent implements OnInit {
   }
 
   search(): void {
-    this.searching = true;
+    this.isSpinning = true;
     this.searchResult = '';
 
     this.reportService
@@ -135,14 +135,14 @@ export class ReportReportComponent implements OnInit {
           this.listOfAllReports = reportRes;
           this.listOfDisplayReports = reportRes;
 
-          this.searching = false;
+          this.isSpinning = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
             rowCount: reportRes.length
           });
         },
         () => {
-          this.searching = false;
+          this.isSpinning = false;
           this.searchResult = '';
         }
       );
@@ -182,5 +182,16 @@ export class ReportReportComponent implements OnInit {
     });
   }
 
-  removeCustomizedReport(): void {}
+  removeCustomizedReport(report: Report): void {
+    // make sure we will only allow the user
+    this.isSpinning = true;
+    this.reportService.removeReport(report).subscribe({
+      next: () => {
+          this.message.success(this.i18n.fanyi('message.action.success'));
+          this.isSpinning = false;
+          this.search();
+      }, 
+      error: () => this.isSpinning = false
+    });
+  }
 }

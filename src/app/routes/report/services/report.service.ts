@@ -49,5 +49,10 @@ export class ReportService {
     const url = `resource/reports/${report.id}`;
     return this.http.post(url, report).pipe(map(res => res.data));
   }
+  
+  removeReport(report: Report): Observable<Report> {
+    const url = `resource/reports/${report.id}`;
+    return this.http.delete(url).pipe(map(res => res.data));
+  }
 
 }
