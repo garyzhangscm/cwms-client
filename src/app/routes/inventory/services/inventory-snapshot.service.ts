@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { InventorySnapshot } from '../models/inventory-snapshot';
 import { InventorySnapshotDetail } from '../models/inventory-snapshot-detail';
@@ -35,7 +36,6 @@ export class InventorySnapshotService {
   }
   
   
-  
   getInventorySnapshotDetails(batchNumber: string): Observable<InventorySnapshotDetail[]> {
     
     return this.http
@@ -53,6 +53,41 @@ export class InventorySnapshotService {
     return this.http
       .post(url)
       .pipe(map(res => res.data));
+      
+  }
+
+  generateInventorySnapshotFile(batchNumber : string):  Observable<string> {
+    // if we can find the value in local storage, we get it from their.
+    // otherwise we get from server
+    const url = `inventory/inventory_snapshot/${batchNumber}/files?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+ 
+    
+    return this.http
+      .post(url)
+      .pipe(map(res => res.data));
+      
+  }
+
+  removeInventorySnapshotFile(batchNumber : string):  Observable<string> {
+    // if we can find the value in local storage, we get it from their.
+    // otherwise we get from server
+    const url = `inventory/inventory_snapshot/${batchNumber}/files?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+ 
+    
+    return this.http
+      .delete(url)
+      .pipe(map(res => res.data));
+      
+  }
+  
+  downloadInventorySnapshotFile(batchNumber : string):  Observable<string> {
+    // if we can find the value in local storage, we get it from their.
+    // otherwise we get from server
+    const url = `inventory/inventory_snapshot/${batchNumber}/files/download?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+ 
+    
+    return this.http
+      .get(url, null, { responseType: 'blob' });
       
   }
 

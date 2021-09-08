@@ -1034,7 +1034,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
     this.isSpinning = true;
 
-    this.productionLineAssignmentService.generateroductionLineAssignmentLabel(
+    this.productionLineAssignmentService.generateroductionLineAssignmentReport(
       productionLineAssignment.id!)
       .subscribe(printResult => {
 
@@ -1043,7 +1043,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
         console.log(`will print file: ${printFileUrl}`);
         this.printingService.printRemoteFileByName(
-          "LPN Label",
+          "Work Order Assignment Report",
           printResult.fileName,
           ReportType.PRODUCTION_LINE_ASSIGNMENT_REPORT,
           event.printerIndex,
@@ -1066,7 +1066,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
 
     this.isSpinning = true;
-    this.productionLineAssignmentService.generateroductionLineAssignmentLabel(
+    this.productionLineAssignmentService.generateroductionLineAssignmentReport(
       productionLineAssignment.id!)
       .subscribe(printResult => {
         // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
@@ -1080,6 +1080,56 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       );
   }
 
+  
+  printProductionLineAssignmentLabel(event: any, productionLineAssignment: ProductionLineAssignment) {
+
+    this.isSpinning = true;
+
+    this.productionLineAssignmentService.generateroductionLineAssignmentLabel(
+      productionLineAssignment.id!)
+      .subscribe(printResult => {
+
+        // send the result to the printer
+        const printFileUrl
+          = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
+        console.log(`will print file: ${printFileUrl}`);
+        this.printingService.printRemoteFileByName(
+          "Work Order Assignment Report",
+          printResult.fileName,
+          ReportType.PRODUCTION_LINE_ASSIGNMENT_REPORT,
+          event.printerIndex,
+          event.printerName,
+          event.physicalCopyCount,
+          PrintPageOrientation.Portrait,
+          PrintPageSize.Letter,
+          productionLineAssignment.productionLine.name);
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi("report.print.printed"));
+      },
+        () => {
+          this.isSpinning = false;
+        },
+
+      );
+
+  }
+  previewProductionLineAssignmentLabel(productionLineAssignment: ProductionLineAssignment): void {
+
+
+    this.isSpinning = true;
+    this.productionLineAssignmentService.generateroductionLineAssignmentLabel(
+      productionLineAssignment.id!)
+      .subscribe(printResult => {
+        // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+        this.isSpinning = false;
+        this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
+
+      },
+        () => {
+          this.isSpinning = false;
+        },
+      );
+  }
   
   cancelShortAllocation(workOrder: WorkOrder, shortAllocation: ShortAllocation): void {
     this.shortAllocationService.cancelShortAllocations([shortAllocation]).subscribe(shortAllocationRes => {

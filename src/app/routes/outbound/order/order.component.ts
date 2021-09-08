@@ -380,38 +380,7 @@ export class OutboundOrderComponent implements OnInit {
     }
     this.showAllOrderDetails();
   }
-
-
-  cancelSelectedOrders(): void {
-    // make sure we have at least one checkbox checked
-    const selectedOrders = this.getSelectedOrders();
-    if (selectedOrders.length > 0) {
-      this.modalService.confirm({
-        nzTitle: this.i18n.fanyi('page.location-group.modal.delete.header.title'),
-        nzContent: this.i18n.fanyi('page.location-group.modal.delete.content'),
-        nzOkText: this.i18n.fanyi('confirm'),
-        nzOkDanger: true,
-        nzOnOk: () => {
-          this.orderService.removeOrders(selectedOrders).subscribe(res => {
-            this.search();
-          });
-        },
-        nzCancelText: this.i18n.fanyi('cancel'),
-        nzOnCancel: () => console.log('Cancel'),
-      });
-    }
-  }
-
-  getSelectedOrders(): Order[] {
-    const selectedOrders: Order[] = [];
-    this.listOfAllOrders.forEach((order: Order) => {
-      if (this.setOfCheckedId.has(order.id!)) {
-        selectedOrders.push(order);
-      }
-    });
-    return selectedOrders;
-  }
-
+  
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.order'));
     // initiate the search form
@@ -830,22 +799,22 @@ export class OutboundOrderComponent implements OnInit {
   columns: STColumn[] = [
     { title: this.i18n.fanyi("order.number"), 
       render: 'orderNumberColumn',
-      fixed: 'left', iif: () => this.isChoose('number'), width: 100},
+      fixed: 'left', iif: () => this.isChoose('number'), width: 50},
     { title: this.i18n.fanyi("order.category"), 
       index: 'category', fixed: 'left',
       format: (item, _col, index) => this.i18n.fanyi(`ORDER-CATEGORY-${ item.category}` ), 
       
-      iif: () => this.isChoose('category'), width: 100},
-    { title: this.i18n.fanyi("status"), index: 'status',fixed: 'left', iif: () => this.isChoose('status'), width: 100 },    
+      iif: () => this.isChoose('category'), width: 150},
+    { title: this.i18n.fanyi("status"), index: 'status',fixed: 'left', iif: () => this.isChoose('status'), width: 150 },    
     {
       title: this.i18n.fanyi("shipToCustomer"),
       // renderTitle: 'customTitle',
       render: 'shipToCustomerColumn',
-      iif: () => this.isChoose('shipToCustomer'), width: 100
+      iif: () => this.isChoose('shipToCustomer'), width: 150
     },
-    { title: this.i18n.fanyi("order.billToCustomer"), index: 'billToCustomer?.name', iif: () => this.isChoose('billToCustomer'), width: 100},
-    { title: this.i18n.fanyi("order.totalItemCount"), index: 'totalItemCount', iif: () => this.isChoose('totalItemCount'), width: 100},
-    { title: this.i18n.fanyi("order.totalOrderQuantity"), index: 'totalExpectedQuantity', iif: () => this.isChoose('totalExpectedQuantity'), width: 100 },
+    { title: this.i18n.fanyi("order.billToCustomer"), index: 'billToCustomer?.name', iif: () => this.isChoose('billToCustomer'), width: 150},
+    { title: this.i18n.fanyi("order.totalItemCount"), index: 'totalItemCount', iif: () => this.isChoose('totalItemCount'), width: 150},
+    { title: this.i18n.fanyi("order.totalOrderQuantity"), index: 'totalExpectedQuantity', iif: () => this.isChoose('totalExpectedQuantity'), width: 150 },
     { title: this.i18n.fanyi("order.totalOpenQuantity"), index: 'totalOpenQuantity', iif: () => this.isChoose('totalOpenQuantity'), width: 100 },
     { title: this.i18n.fanyi("shipment.stage.locationGroup"), index: 'stageLocationGroup.description', iif: () => this.isChoose('stageLocationGroup'),width: 100 },
     { title: this.i18n.fanyi("shipment.stage.location"), index: 'stageLocation.name', iif: () => this.isChoose('stageLocation'), width: 100},    
@@ -907,6 +876,28 @@ export class OutboundOrderComponent implements OnInit {
       
       this.showOrderDetails(event.expand);
     }
+
+  }
+
+  
+  isOrderReadyForRemove(order: Order): boolean {
+    // if the order has not been planned into shipment
+    // or if it is planned but we don't have any pick / short allocation yet
+    // then we are allowed to remove the shipment
+    return order.totalInprocessQuantity === 0 ||
+        order.totalInprocessQuantity === order.totalPendingAllocationQuantity;
+  }
+
+  removeOrder(order: Order) : void{
+    this.isSpinning = true;
+    this.orderService.removeOrder(order).subscribe({
+      next: () => {
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.isSpinning = false;
+        this.search();
+      }, 
+      error: () => this.isSpinning = false
+    });
 
   }
 }

@@ -15,4 +15,6 @@ export interface InventorySnapshot {
 
     inventorySnapshotDetails: InventorySnapshotDetail[];
 
+    fileName: string;
+
 }

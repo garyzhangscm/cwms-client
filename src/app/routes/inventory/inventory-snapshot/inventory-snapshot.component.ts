@@ -3,11 +3,15 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { saveAs } from 'file-saver';
+import { NzMessageService } from 'ng-zorro-antd/message';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { InventorySnapshot } from '../models/inventory-snapshot';
 import { InventorySnapshotStatus } from '../models/inventory-snapshot-status.enum';
 import { InventorySnapshotService } from '../services/inventory-snapshot.service';
+
 
 @Component({
   selector: 'app-inventory-inventory-snapshot',
@@ -26,7 +30,8 @@ export class InventoryInventorySnapshotComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width:"200px"
     }, {
       name: 'inventory-snapshot.status',
       showSort: true,
@@ -36,7 +41,8 @@ export class InventoryInventorySnapshotComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width:"150px"
     }, {
       name: 'start-time',
       showSort: true,
@@ -46,7 +52,8 @@ export class InventoryInventorySnapshotComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width:"200px"
     }, {
       name: 'complete-time',
       showSort: true,
@@ -56,7 +63,8 @@ export class InventoryInventorySnapshotComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width:"200px"
     },];
 
 
@@ -67,6 +75,7 @@ export class InventoryInventorySnapshotComponent implements OnInit {
 
   searching = false;
   searchResult = '';
+  isSpinging = false;
 
 
   // Table data for display
@@ -78,6 +87,7 @@ export class InventoryInventorySnapshotComponent implements OnInit {
     private inventorySnapshotService: InventorySnapshotService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
+    private messageService: NzMessageService,
     private utilService: UtilService,) { }
 
   ngOnInit(): void {
@@ -139,5 +149,52 @@ export class InventoryInventorySnapshotComponent implements OnInit {
     console.log(`inventory snapshot details: ${JSON.stringify(inventorySnapshot.inventorySnapshotDetails)}`);
   }
 
+  downloadInventorySnapshot(inventorySnapshot: InventorySnapshot) {
+    this.isSpinging = true;
+    
 
+    this.inventorySnapshotService.downloadInventorySnapshotFile(inventorySnapshot.batchNumber).subscribe(
+      {
+        next:  (file) => {
+          saveAs(file, inventorySnapshot.fileName);
+          this.isSpinging = false;
+
+        }, 
+        error: () => this.isSpinging = false
+      }
+    )
+  }
+
+
+  generateInventorySnapshot(inventorySnapshot: InventorySnapshot) {
+    this.isSpinging = true;
+    this.inventorySnapshotService.generateInventorySnapshotFile(inventorySnapshot.batchNumber).subscribe(
+      {
+        next:  (fileName) => {
+          this.isSpinging = false;
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          console.log(`filename: ${fileName}`);
+          inventorySnapshot.fileName = fileName;
+
+        }, 
+        error: () => this.isSpinging = false
+      }
+    )
+  }
+
+  removeInventorySnapshotFile(inventorySnapshot: InventorySnapshot) {
+    
+    this.isSpinging = true;
+    this.inventorySnapshotService.removeInventorySnapshotFile(inventorySnapshot.batchNumber).subscribe(
+      {
+        next:  () => {
+          this.isSpinging = false;
+          this.messageService.success(this.i18n.fanyi('message.action.success')); 
+          inventorySnapshot.fileName = "";
+
+        }, 
+        error: () => this.isSpinging = false
+      }
+    )
+  }
 }

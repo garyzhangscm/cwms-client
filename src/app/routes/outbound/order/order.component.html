@@ -33,7 +33,7 @@
     </div>
     
     <st #st [data]="listOfAllOrders"  [columns]="columns" [expand]="expand" expandRowByClick expandAccordion
-    (change)="orderTableChanged($event)" [scroll]="{ x: '2460px' }">
+    (change)="orderTableChanged($event)" [scroll]="{ x: '2715px' }">
       <!-- more details about the shipping to customer -->
       <ng-template st-row="shipToCustomerColumn" let-item let-index="index">
         <a nz-tooltip [nzTooltipTitle]="shipToCustomerDetailsTemplate">{{ item.shipToCustomer?.name }}</a>
@@ -59,7 +59,7 @@
       </ng-template>
 
       <!--   order details  -->
-      <ng-template #expand let-item let-index="index" let-column="column">
+      <ng-template #expand let-item let-index="index" >
         
         <nz-tabset [nzSelectedIndex]="tabSelectedIndex">
           <nz-tab nzTitle=" {{ 'order.line' | i18n }}">
@@ -343,6 +343,9 @@
             <li nz-menu-item *ngIf="isOrderReadyForComplete(item)">
               <a  (click)="completeOrder(item)">{{ 'complete' | i18n }}</a>
             </li>
+            <li nz-menu-item *ngIf="isOrderReadyForRemove(item)">
+              <a  (click)="removeOrder(item)">{{ 'remove' | i18n }}</a>
+            </li>
           </ul>
         </nz-dropdown-menu>
       </ng-template>
@@ -351,8 +354,8 @@
         {{ 'print' | i18n }}
       </ng-template>
       <ng-template st-row="printColumn" let-item let-index="index">  
-        <nz-list  >
-          <nz-list-item >
+        <nz-list>
+          <nz-list-item>
             {{ 'packing-slip' | i18n }}: 
             <cwms-common-print-button style='padding-left: 20px;'
               (print)="printPackingSlip($event, item)"
