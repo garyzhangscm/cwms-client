@@ -3,6 +3,7 @@ import { SharedModule } from '@shared';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 
+import { UtilDataInitComponent } from './data-init/data-init.component';
 import { UtilFileUploadComponent } from './file-upload/file-upload.component';
 import { UtilIconListComponent } from './icon-list/icon-list.component'; 
 import { UtilRfMaintenanceComponent } from './rf-maintenance/rf-maintenance.component';
@@ -25,7 +26,8 @@ const COMPONENTS: Array<Type<void>> = [
   UtilRfComponent,
   UtilRfMaintenanceComponent,
   UtilSystemControlledNumberComponent,
-  UtilSystemControlledNumberMaintenanceComponent];
+  UtilSystemControlledNumberMaintenanceComponent,
+  UtilDataInitComponent];
   
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];

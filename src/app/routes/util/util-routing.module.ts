@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from '../auth/guard/auth.guard';
+import { UtilDataInitComponent } from './data-init/data-init.component';
 import { UtilFileUploadComponent } from './file-upload/file-upload.component';
 import { UtilIconListComponent } from './icon-list/icon-list.component';
 import { UtilRfMaintenanceComponent } from './rf-maintenance/rf-maintenance.component';
@@ -24,7 +25,8 @@ const routes: Routes = [
   { path: 'rf', component: UtilRfComponent },
   { path: 'rf/maintenance', component: UtilRfMaintenanceComponent },
   { path: 'system-controlled-number', component: UtilSystemControlledNumberComponent },
-  { path: 'system-controlled-number/maintenance', component: UtilSystemControlledNumberMaintenanceComponent }];
+  { path: 'system-controlled-number/maintenance', component: UtilSystemControlledNumberMaintenanceComponent },
+  { path: 'data-init', component: UtilDataInitComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
