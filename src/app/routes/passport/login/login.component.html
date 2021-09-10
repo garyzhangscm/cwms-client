@@ -98,3 +98,44 @@
   <a class="register" routerLink="/passport/register">{{ 'app.login.signup' | i18n }}</a>
 </div>
   -->
+
+<!--
+  Force the user to change the password if the user's change password at next logon flag is setup
+-->  
+
+<ng-template #tplChangePasswordModalTitle>
+  <span>{{ 'page.modal.change-password.header.title' | i18n}}</span>
+</ng-template>
+<ng-template #tplChangePasswordModalContent>
+  <form nz-form [formGroup]="changePasswordRequestForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="newPassword">
+            {{ 'password' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <nz-input-group nzSize="large">
+              <input nz-input   type="password" formControlName="newPassword" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="confirmPassword">
+            {{ 'password.confirm' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <nz-input-group nzSize="large">
+              <input nz-input type="password"  formControlName="confirmPassword" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div> 
+    
+  </form>
+</ng-template>

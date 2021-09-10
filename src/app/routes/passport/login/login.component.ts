@@ -1,4 +1,4 @@
-import { Component, Inject, Injector, OnDestroy, Optional } from '@angular/core';
+import { Component, Inject, Injector, OnDestroy, Optional, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { I18NService, StartupService } from '@core';
@@ -7,8 +7,11 @@ import { DA_SERVICE_TOKEN, ITokenService, SocialOpenType, SocialService } from '
 import { ALAIN_I18N_TOKEN, SettingsService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 
+import { User } from '../../auth/models/user';
+import { UserService } from '../../auth/services/user.service';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -22,12 +25,16 @@ import { WarehouseService } from '../../warehouse-layout/services/warehouse.serv
 export class UserLoginComponent implements OnDestroy {
   singleCompanySystem = true;
   defaultCompanyCode = '';
+  changePasswordRequestForm!: FormGroup;
+  changePasswordRequestModal!: NzModalRef;
 
   constructor(
-    fb: FormBuilder,
+    private fb: FormBuilder,
     private router: Router,
     private settingsService: SettingsService,
     private socialService: SocialService,
+    private modalService: NzModalService,
+    private userService: UserService, 
     @Optional()
     @Inject(ReuseTabService)
     private reuseTabService: ReuseTabService,
@@ -38,7 +45,7 @@ export class UserLoginComponent implements OnDestroy {
     private warehouseService: WarehouseService,
     private companyService: CompanyService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private injector: Injector,
+    private injector: Injector, 
   ) {
     this.form = fb.group({
       companyCode: [null, [Validators.required, Validators.minLength(1)]],
@@ -81,6 +88,12 @@ export class UserLoginComponent implements OnDestroy {
   count = 0;
   interval$: any;
   warehouses: Warehouse[] | undefined;
+
+  @ViewChild('tplChangePasswordModalTitle', { static: true })
+  tplChangePasswordModalTitle!: TemplateRef<any>;
+  @ViewChild('tplChangePasswordModalContent', { static: true })
+  tplChangePasswordModalContent!: TemplateRef<any>;
+  
 
   // #endregion
   ngOnInit(): void {
@@ -191,7 +204,21 @@ export class UserLoginComponent implements OnDestroy {
             this.router.navigateByUrl(url);
              * 
              */
-            this.router.navigateByUrl('/');
+            // before we flow into the main page, let's check if the user need to change the password
+            this.userService.getUser(res.user.id).subscribe({
+              next: (userInfoRes) => {
+                if (userInfoRes.changePasswordAtNextLogon === true) {
+                  // force the user to change the password before continue
+                  this.openChangePasswordModal(userInfoRes);
+
+                }
+                else {
+                  this.router.navigateByUrl('/');
+
+                }
+              }, 
+              error: () => this.router.navigateByUrl('/')
+            })
           });
         });
 
@@ -309,4 +336,58 @@ export class UserLoginComponent implements OnDestroy {
       clearInterval(this.interval$);
     }
   }
-}
+
+  
+  openChangePasswordModal(
+    // tplChangePasswordModalTitle: TemplateRef<{}>,
+    // tplChangePasswordModalContent: TemplateRef<{}>,
+    user: User
+  ): void {
+    
+    this.changePasswordRequestForm = this.fb.group({
+      newPassword: [null],
+      confirmPassword: [null],
+    });
+
+    // Load the location
+    this.changePasswordRequestModal = this.modalService.create({
+      nzTitle: this.tplChangePasswordModalTitle,
+      nzContent: this.tplChangePasswordModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.changePasswordRequestModal.destroy();
+      },
+      nzOnOk: () => {
+        
+        if (this.changePasswordRequestForm.controls.newPassword.value === null ||
+            this.changePasswordRequestForm.controls.confirmPassword.value === null) {
+           this.msg.error(this.i18n.fanyi('password-is-empty'));
+           return false;
+        }
+        if (this.changePasswordRequestForm.controls.newPassword.value !== 
+            this.changePasswordRequestForm.controls.confirmPassword.value) {
+           this.msg.error(this.i18n.fanyi('password-not-match'));
+           return false;
+        }
+        this.changePassword( 
+          user,
+          this.changePasswordRequestForm.controls.newPassword.value
+        );
+        return true;
+      },
+
+      nzWidth: 1000,
+    });
+  }
+
+  changePassword(user: User, newPassword: string) {
+    console.log(`password is changed to ${newPassword}`);
+    this.userService.changePassword(user, newPassword).subscribe({
+      next: () => this.router.navigateByUrl('/')
+      
+    })
+
+  }
+} 

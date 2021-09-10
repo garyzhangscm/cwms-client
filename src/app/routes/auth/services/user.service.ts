@@ -39,6 +39,10 @@ export class UserService {
   changeUser(user: User): Observable<User> {
     return this.http.post(`resource/users/${user.id}`, user).pipe(map(res => res.data));
   }
+  changePassword(user: User, newPassword: string): Observable<User> {
+    return this.http.post(`resource/users/${user.id}/password?newPassword=${newPassword}`, user).pipe(map(res => res.data));
+  }
+
 
   processRoles(userId: number, assignedRoleIds: number[], deassignedRoleIds: number[]) {
     if (assignedRoleIds.length === 0 && deassignedRoleIds.length === 0) {
