@@ -68,7 +68,7 @@
           <nz-form-control [nzSpan]="6" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
             <nz-input-group [nzSuffix]="suffixTemplate">
               <input [type]="passwordVisible ? 'text' : 'password'" nz-input [(ngModel)]="currentUser!.password"
-                id="password" name="password" required />
+                id="password" name="password" [disabled]="modifying" />
             </nz-input-group>
             <ng-template #suffixTemplate>
               <i nz-icon [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"

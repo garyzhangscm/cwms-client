@@ -8,6 +8,7 @@ import { AlainThemeModule } from '@delon/theme';
 import { LayoutDefaultModule } from '@delon/theme/layout-default';
 import { SettingDrawerModule } from '@delon/theme/setting-drawer';
 import { ThemeBtnModule } from '@delon/theme/theme-btn';
+import { SharedModule } from '@shared';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
@@ -72,7 +73,8 @@ const PASSPORT = [LayoutPassportComponent];
     NzAvatarModule,
     NzIconModule,
     NzCardModule, 
-    NzSelectModule
+    NzSelectModule, 
+    SharedModule
   ],
   declarations: [...COMPONENTS, ...HEADERCOMPONENTS, ...PASSPORT],
   exports: [...COMPONENTS, ...PASSPORT]
