@@ -154,6 +154,8 @@ export class InventoryItemMaintenanceComponent implements OnInit {
 
   itemFamilySelected(selectedItemFamilyId: number): void {
     console.log(`item family ${selectedItemFamilyId} selected`);
+    this.validItemFamilies.filter(itemFamily => itemFamily.id === selectedItemFamilyId)
+        .forEach(itemFamily => this.currentItem.itemFamily = itemFamily);
   }
   allocationRoundUpStrategyTypeChanged(selectedAllocationRoundUpStrategyType: AllocationRoundUpStrategyType): void {
     console.log(`AllocationRoundUpStrategyType: ${selectedAllocationRoundUpStrategyType} selected`);

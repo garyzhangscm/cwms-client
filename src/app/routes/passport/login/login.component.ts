@@ -165,6 +165,7 @@ export class UserLoginComponent implements OnDestroy {
       .post(loginURL, {
         type: this.type,
         companyId: this.companyService.getCurrentCompany()?.id,
+        loginWarehouseId: this.warehouseId.value,
         userName: this.userName.value,
         username: this.userName.value,
         password: this.password.value,

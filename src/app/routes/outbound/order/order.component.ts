@@ -195,15 +195,14 @@ export class OutboundOrderComponent implements OnInit {
     {
       text: this.i18n.fanyi(`select-all-rows`),
       onSelect: () => {
-        this.onAllChecked(true);
+        //this.onAllChecked(true);
       }
     },
   ];
   setOfCheckedId = new Set<number>();
   checked = false;
   indeterminate = false;
-
-  
+ 
   orderReassignShippingStageLocationModal!: NzModalRef;
   orderReassignShippingStageLocationForm!: FormGroup;
 
@@ -353,24 +352,20 @@ export class OutboundOrderComponent implements OnInit {
     }
   }
 
-  onItemChecked(id: number, checked: boolean): void {
+  onItemChecked(id: number, orderId: number, checked: boolean): void {
     this.updateCheckedSet(id, checked);
-    this.refreshCheckedStatus();
+    this.refreshCheckedStatus(orderId);
   }
 
-  onAllChecked(value: boolean): void {
-    this.listOfDisplayOrders!.forEach(item => this.updateCheckedSet(item.id!, value));
-    this.refreshCheckedStatus();
+  onAllChecked(value: boolean, orderId: number): void {
+    this.mapOfPicks[orderId].filter(item => item.pickedQuantity < item.quantity).forEach(item => this.updateCheckedSet(item.id!, value));
+    this.refreshCheckedStatus(orderId);
   }
+ 
 
-  currentPageDataChange($event: Order[]): void {
-    this.listOfDisplayOrders! = $event;
-    this.refreshCheckedStatus();
-  }
-
-  refreshCheckedStatus(): void {
-    this.checked = this.listOfDisplayOrders!.every(item => this.setOfCheckedId.has(item.id!));
-    this.indeterminate = this.listOfDisplayOrders!.some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
+  refreshCheckedStatus(orderId: number): void {
+    this.checked = this.mapOfPicks[orderId].every(item => this.setOfCheckedId.has(item.id!));
+    this.indeterminate = this.mapOfPicks[orderId].some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
   }
   onExpandChange(id: number, checked: boolean): void {
     if (checked) {
@@ -900,4 +895,33 @@ export class OutboundOrderComponent implements OnInit {
     });
 
   }
+
+  cancelSelectedPick(order: Order): void {
+    this.isSpinning = true;
+    const picks :PickWork[] = [];
+    this.mapOfPicks[order.id!]
+      .filter(pick => this.setOfCheckedId.has(pick.id!))
+      .forEach(pick => { 
+        picks.push(pick);
+      });
+ 
+      if (picks.length ===0) {
+        this.messageService.success(this.i18n.fanyi("message.action.success"));
+        this.isSpinning = false;
+        return;
+      }
+      this.pickService.cancelPicks(picks).subscribe({
+        next: () => {
+          this.messageService.success(this.i18n.fanyi("message.action.success"));
+          this.isSpinning = false;
+          this.search();
+        }, 
+        error: () => {
+          
+          this.messageService.error(this.i18n.fanyi("message.action.fail"));
+          this.isSpinning = false;
+        }
+      }) 
+  }
+
 }

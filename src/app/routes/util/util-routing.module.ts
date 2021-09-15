@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from '../auth/guard/auth.guard';
+import { UtilBillableRequestComponent } from './billable-request/billable-request.component';
 import { UtilDataInitComponent } from './data-init/data-init.component';
 import { UtilFileUploadComponent } from './file-upload/file-upload.component';
 import { UtilIconListComponent } from './icon-list/icon-list.component';
@@ -26,7 +27,8 @@ const routes: Routes = [
   { path: 'rf/maintenance', component: UtilRfMaintenanceComponent },
   { path: 'system-controlled-number', component: UtilSystemControlledNumberComponent },
   { path: 'system-controlled-number/maintenance', component: UtilSystemControlledNumberMaintenanceComponent },
-  { path: 'data-init', component: UtilDataInitComponent }];
+  { path: 'data-init', component: UtilDataInitComponent },
+  { path: 'billable-request', component: UtilBillableRequestComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

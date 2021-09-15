@@ -1,9 +1,9 @@
 import { KpiMeasurement } from './kpi-measurement.enum';
 import { WorkOrder } from './work-order';
 import { WorkOrderCompleteTransaction } from './work-order-complete-transaction';
+import { WorkOrderKpi } from './work-order-kpi';
 import { WorkOrderKpiTransactionType } from './work-order-kpi-transaction-type.enum';
 import { WorkOrderProduceTransaction } from './work-order-produce-transaction';
-import { WorkOrderKpi } from './work-order-kpi';
 
 export interface WorkOrderKpiTransaction {
   id?: number;

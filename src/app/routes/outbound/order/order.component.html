@@ -118,6 +118,9 @@
             <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="true"
               [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[item.id!]" #pickTable>
               <thead>
+                
+                <th   [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
+                (nzCheckedChange)="onAllChecked($event, item.id!)" nzWidth="60px"></th>
                 <th>
                   {{ 'pick.number' | i18n }}
                 </th>
@@ -154,6 +157,9 @@
               </thead>
               <tbody>
                 <tr *ngFor="let pick of pickTable.data">
+                  
+                  <td [nzChecked]="setOfCheckedId.has(pick.id!)" [nzDisabled]="pick.quantity === pick.pickedQuantity"
+                    (nzCheckedChange)="onItemChecked(pick.id!, item.id!, $event)"></td>
                   <td>{{ pick.number }}</td>
                   <td><a routerLink="/outbound/pick-list" routerLinkActive="active"
                       [queryParams]="{number : pick.pickListNumber}">{{ pick.pickListNumber }}</a></td>
@@ -186,6 +192,10 @@
                   [disabled]="mapOfPicks[item.id!]?.length === 0 || item.status === orderStatusEnum.COMPLETE">
                   {{ 'confirm' | i18n }}
                 </button>
+                <button nz-button (click)="cancelSelectedPick(item)"
+                      [disabled]="item.status === orderStatusEnum.COMPLETE">
+                      {{ 'cancel' | i18n }}
+                    </button>
               </div>
             </ng-template>
           </nz-tab>
@@ -194,6 +204,7 @@
             <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="true"
               [nzData]="mapOfPickedInventory[item.id!]" #pickedInventoryTable>
               <thead>
+                
                 <th>
                   {{ 'pick.number' | i18n }}
                 </th>
