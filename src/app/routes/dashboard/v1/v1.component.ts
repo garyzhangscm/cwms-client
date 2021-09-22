@@ -97,7 +97,7 @@ export class DashboardV1Component implements OnInit {
     this.dailySummayLoading = true;
     let date = new Date();
     // eslint-disable-next-line prefer-template
-    this.todayDate = `${date.getFullYear().toString()}-${date.getMonth().toString()}-${date.getDate().toString()}`;
+    this.todayDate = `${date.getFullYear().toString()}-${(date.getMonth()+1).toString()}-${date.getDate().toString()}`;
     console.log(`today date: ${this.todayDate}`);
     this.dailyWebAPIEndpointPieData = [];
     this.dailyTransactionPieData = [];
@@ -155,7 +155,7 @@ export class DashboardV1Component implements OnInit {
   loadMonthDailyData() {
     this.monthlySummayLoading = true;
     let date = this.getFirstDateOfMonth();
-    this.thisMonth = `${date.getFullYear().toString()  }-${  date.getMonth().toString()}`;
+    this.thisMonth = `${date.getFullYear().toString()  }-${(date.getMonth()+1).toString()}`;
     console.log(`first day of month: ${date}`);
 
     this.monthlyWebAPIEndpointPieData = [];

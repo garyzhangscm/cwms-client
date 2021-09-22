@@ -63,8 +63,30 @@
       <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
     </div>
     
-    <st #st [data]="items" [columns]="columns" [footer]="tableFoot" [expand]="expand" expandRowByClick expandAccordion>
+    <st #st [data]="items" [columns]="columns" [footer]="tableFoot" [expand]="expand" 
+        expandRowByClick expandAccordion
+        virtualScroll [scroll]="{ x: '1800px', y: '380px' }">
       
+      <!--   action colummn  --> 
+      <ng-template st-row="actionColumnTitle" type="title" let-c>
+        {{ 'action' | i18n }}
+      </ng-template>
+      <ng-template st-row="actionColumn" let-item let-index="index"> 
+        
+        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+          {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu> 
+            <li nz-menu-item >
+              <a  routerLink="/inventory/item/maintenance" routerLinkActive="active"
+                  [queryParams]="{id : item.id!}">{{ 'modify' | i18n }}</a>
+            </li>
+            <li nz-menu-item >
+              <a   (click)='removeItem(item)'>{{ 'delete' | i18n }}</a>
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+      </ng-template>
       <!--   order details  -->
       <ng-template #expand let-item let-index="index" let-column="column">
          

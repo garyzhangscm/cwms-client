@@ -528,6 +528,7 @@ export class OutboundPickConfirmComponent implements OnInit {
 
   confirmPick(pick: PickWork): void {
     this.confirming = true;
+    this.isSpinning = true;
 
     let pickToContainer = false;
     if (this.queryForm) {
@@ -535,11 +536,21 @@ export class OutboundPickConfirmComponent implements OnInit {
     }
     this.pickService
       .confirmPick(pick, this.mapOfConfirmedQuantity[pick.number], pickToContainer, this.containerId)
-      .subscribe(pickRes => {
-        this.message.success(this.i18n.fanyi('message.action.success'));
-        this.displayInformation(true);
-        this.confirming = false;
-      });
+      .subscribe(
+        {
+          next: () => {
+
+            this.message.success(this.i18n.fanyi('message.action.success'));
+            this.displayInformation(true);
+            this.confirming = false;
+            this.isSpinning = false;
+          }, 
+          error: () => {
+            
+            this.confirming = false;
+            this.isSpinning = false;
+          }
+        });
   }
   returnToPreviousPage(): void {
     this.router.navigateByUrl(this.lastPageUrl);

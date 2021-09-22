@@ -443,6 +443,11 @@ export class InventoryItemComponent implements OnInit {
     { title: this.i18n.fanyi("trackingManufactureDateFlag"), index: 'trackingManufactureDateFlag', iif: () => this.isChoose('trackingManufactureDateFlag'), },
     { title: this.i18n.fanyi("shelfLifeDays"), index: 'shelfLifeDays', iif: () => this.isChoose('shelfLifeDays'), },
     { title: this.i18n.fanyi("trackingExpirationDateFlag"), index: 'trackingExpirationDateFlag', iif: () => this.isChoose('trackingExpirationDateFlag'), },
+    {
+      title: 'action',
+      renderTitle: 'actionColumnTitle',
+      render: 'actionColumn',
+    },
   ];
   customColumns = [
 
