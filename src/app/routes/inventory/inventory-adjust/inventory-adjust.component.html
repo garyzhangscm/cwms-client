@@ -19,11 +19,11 @@
 
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
-        <nz-form-label for="location_group" [nzSm]="3" [nzXs]="3">
+        <nz-form-label for="location_group" [nzSpan]="4">
           {{ 'location-group' | i18n }}
         </nz-form-label>
 
-        <nz-form-control [nzSpan]="14">
+        <nz-form-control [nzSpan]="20">
           <nz-select nzMode="tags" formControlName="taggedLocationGroups">
             <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.label"
               [nzValue]="locationGroup.value"></nz-option>
@@ -140,36 +140,45 @@
                   </th>
                   <th>{{ 'action' | i18n }}</th>
                 </thead>
-    <tbody>
-      <tr *ngFor="let inventory of mapOfInventories[data.id!]">
-        <td>{{ inventory.lpn }}</td>
-        <td>{{ inventory.item?.name }}</td>
-        <td>{{ inventory.itemPackageType?.name }}</td>
-        <td>{{ inventory.quantity }}</td>
-        <td>{{ inventory.inventoryStatus?.name }}</td>
-        <td>
-          <a nz-button routerLink="/inventory/inventory-quantity-change" routerLinkActive="active"
-            [queryParams]="{id : inventory.id, by : 'inventory-adjust'}">
-            {{ 'adjustInventory' | i18n }}</a>
-          <nz-divider nzType="vertical"></nz-divider>
+                <tbody>
+                  <tr *ngFor="let inventory of mapOfInventories[data.id!]">
+                    <td>{{ inventory.lpn }}</td>
+                    <td>{{ inventory.item?.name }}</td>
+                    <td>{{ inventory.itemPackageType?.name }}</td>
+                    <td>{{ inventory.quantity }}</td>
+                    <td>{{ inventory.inventoryStatus?.name }}</td>
+                    <td>
+                      <button nz-button nz-dropdown [nzDropdownMenu]="actions">{{ 'action' | i18n }}<i nz-icon nzType="down"></i></button>
+                      <nz-dropdown-menu #actions="nzDropdownMenu">
+                        <ul nz-menu>
+                          <li nz-menu-item>
+                            <a  routerLink="/inventory/inventory-quantity-change" routerLinkActive="active"
+                              [queryParams]="{id : inventory.id, by : 'inventory-adjust'}">
+                              {{ 'adjustInventory' | i18n }}</a>
+                          </li>
+                          <li nz-menu-item>                            
+                            <a routerLink="/inventory/inventory-attribute-change" routerLinkActive="active"
+                            [queryParams]="{id : inventory.id}">
+                            {{ 'inventory.attributeChange' | i18n }}</a>
+                          </li>
+                          <li nz-menu-item>
+                            <a
+                              (click)="openRemoveInventoryModal(inventory, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
+                              nzDanger>{{ 'removeInventory' | i18n }}</a>
+                          </li> 
 
-          <a nz-button routerLink="/inventory/inventory-attribute-change" routerLinkActive="active"
-            [queryParams]="{id : inventory.id}">
-            {{ 'inventory.attributeChange' | i18n }}</a>
-          <nz-divider nzType="vertical"></nz-divider>
-          <button nz-button
-            (click)="openRemoveInventoryModal(inventory, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
-            nzDanger>{{ 'removeInventory' | i18n }}</button>
-        </td>
-      </tr>
+                        </ul>
+                      </nz-dropdown-menu> 
+                    </td>
+                  </tr>
+                </tbody>
+              </nz-table>
+            </nz-tab>
+          </nz-tabset>
+
+        </tr>
+      </ng-template>
     </tbody>
-  </nz-table>
-  </nz-tab>
-  </nz-tabset>
-
-  </tr>
-  </ng-template>
-  </tbody>
   </nz-table>
 </div>
 

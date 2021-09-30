@@ -1,6 +1,6 @@
 import { Inject , ChangeDetectorRef, Component, OnInit, ViewChild, } from '@angular/core';
 import { I18NService } from '@core';
-import { STColumn, STComponent, } from '@delon/abc/st';
+import { STChange, STColumn, STComponent, STPage, } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { interval, Subscription } from 'rxjs';
@@ -21,9 +21,11 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
   productionLineKanbanDataList: ProductionLineKanbanData[] = [];
   displayProductionLineKanbanDataList: ProductionLineKanbanData[] = [];
   productionLines: ProductionLine[] = [];
+  
 
   showProductionLineSet = new Set<string>();
   hideProductionLineSelection = true;
+  loadingData = false;
  
 
   countDownNumber = 300;
@@ -33,12 +35,15 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
     private productionLineKanbanService: ProductionLineKanbanService,
     private productionLineService: ProductionLineService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService) {
-    this.loadProductionLines();
   }
 
   ngOnInit(): void {
+    
+    this.st.page.front = false;
     this.resetCountDownNumber();
-    this.loadKanbanData();
+
+    
+    this.loadProductionLines();
     this.countDownsubscription = interval(1000).subscribe(x => {
       this.handleCountDownEvent();
     })
@@ -56,7 +61,7 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
         this.productionLines.forEach(productionLine => {
           this.showProductionLineSet.add(productionLine.name)
         });
-        this.refreshKanbanData();
+        this.loadKanbanData();
 
       });
   }
@@ -77,6 +82,12 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
     this.refreshKanbanData();
   }
   handleCountDownEvent(): void {
+    // don't count down when we are loading data
+    if (this.loadingData) {
+      
+      this.resetCountDownNumber();
+      return;
+    }
     this.countDownNumber--;
     if (this.countDownNumber <= 0) {
       this.resetCountDownNumber();
@@ -84,12 +95,27 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
     }
   }
   resetCountDownNumber() {
-    this.countDownNumber = 60;
+    this.countDownNumber = 300;
   }
   loadKanbanData() {
+    // only show the selected produciton lines
+    this.loadingData = true;
 
+    const selectedProductionLineNames = this.getSelectedProductionLineNamesByPage().map(
+      productionLine => productionLine.name
+    ).join(',');
+    
+    // this.st.page.total = this.showProductionLineSet.size.toString();
+    this.st.total = this.showProductionLineSet.size;
+    console.log(`selectedProductionLineNames:\n ${selectedProductionLineNames}`);
+    console.log(`this.st.page.total:\n ${this.st.page.total}`);
+    if (selectedProductionLineNames === '') {
+      this.productionLineKanbanDataList = [];
+      this.loadingData = false;
+    }
+    else {
 
-    this.productionLineKanbanService.getProductionLineKanbanData()
+      this.productionLineKanbanService.getProductionLineKanbanData(undefined, selectedProductionLineNames)
       .subscribe(productionLineKanbanDataRes => {
         this.productionLineKanbanDataList = productionLineKanbanDataRes;
         this.productionLineKanbanDataList.forEach(
@@ -99,15 +125,54 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
             )
         )
         this.refreshKanbanData();
+        this.loadingData = false;
       });
+    }
+
   }
 
+  getSelectedProductionLineNamesByPage(): ProductionLine[]{
+    console.log(`start to load data for page: ${this.st.pi}, ${this.st.ps} record per page`);
+
+    // step 1: get all selected production line
+    const selectedProductionLines : ProductionLine[] = this.productionLines.filter(
+      productionLine => this.showProductionLineSet.has(productionLine.name)
+    );
+    console.log(`selectedProductionLines:\n ${JSON.stringify(selectedProductionLines)}`);
+
+    // step 2: we will get record from ((page# -1) * record/page) to (page# * record/page - 1)  
+    let startIndex =  (this.st.pi - 1) * this.st.ps;
+    
+    // if we are out of range, then just return the last page
+    if (startIndex > selectedProductionLines.length - 1) {
+
+      startIndex = selectedProductionLines.length > this.st.ps ? 
+          selectedProductionLines.length - this.st.ps : 0;
+    }
+
+    let endIndex = this.st.pi * this.st.ps - 1;
+    if (endIndex > selectedProductionLines.length - 1) {
+      endIndex = selectedProductionLines.length - 1;
+    }
+    console.log(`start index: ${startIndex}, end index: ${endIndex}`);
+
+    return selectedProductionLines.slice(startIndex, endIndex + 1);
+
+
+  }
   toggleProductionLineDisplay() {
     this.hideProductionLineSelection = !this.hideProductionLineSelection;
   }
 
   @ViewChild('st', { static: true })
   st!: STComponent;
+  
+  page: STPage = {
+    front: false,
+    total: true,
+    show: true,
+  };
+  
   columns: STColumn[] = [
     { title: this.i18n.fanyi("production-line.name"), index: 'productionLineName', iif: () => this.isChoose('productionLineName'), },
     { title: this.i18n.fanyi("work-order.number"), index: 'workOrderNumber', iif: () => this.isChoose('workOrderNumber'), },
@@ -149,6 +214,13 @@ export class WorkOrderProductionKanbanComponent implements OnInit {
     if (this.st.columns !== undefined) {
       this.st.resetColumns({ emitReload: true });
 
+    }
+  }
+
+  kanbanDataTableChanged(e: STChange): void {
+    console.log(e);
+    if (e.type === 'pi') {
+      this.loadKanbanData();
     }
   }
 }

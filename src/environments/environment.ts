@@ -11,7 +11,7 @@ export const environment = {
   production: false,
   useHash: true,
   api: {
-    baseUrl: 'http://k8s-prod-zuulserv-77410c1a45-1699655254.us-west-1.elb.amazonaws.com/api/',
+    baseUrl: 'http://k8s-prod-zuulserv-77410c1a45-1887501898.us-west-1.elb.amazonaws.com/api/',
     refreshTokenEnabled: true,
     refreshTokenType: 'auth-refresh'
   },

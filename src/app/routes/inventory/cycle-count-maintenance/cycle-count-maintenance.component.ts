@@ -5,6 +5,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { PrintingService } from '../../common/services/printing.service';
 import { Receipt } from '../../inbound/models/receipt';
@@ -330,7 +331,6 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   cycleCountRequestConfirmModal!: NzModalRef;
   tabSelectedIndex = 0;
   newBatch = false;
-
 
 
   printingCycleCountRequest = false;
@@ -1004,7 +1004,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
       this.i18n.currentLang)
       .subscribe(printResult => {
         this.isSpinning = false;
-        sessionStorage.setItem("report_previous_page", `inventory/count/cycle-count-maintenance?batchId=${this.requestForm.controls.batchId}`);
+        sessionStorage.setItem("report_previous_page", `inventory/count/cycle-count-maintenance?batchId=${this.requestForm.controls.batchId.value}`);
         this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
 
       },

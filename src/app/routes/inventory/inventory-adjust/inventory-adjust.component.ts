@@ -407,6 +407,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
       lpn: '',
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
       location: location,
+      locationName: location.name,
       virtual: false, // default to NON virtual inventory. It make no sense to adjust virtual inventory
       item: {
         id: undefined,

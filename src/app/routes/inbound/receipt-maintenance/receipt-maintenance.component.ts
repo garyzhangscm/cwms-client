@@ -331,6 +331,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
   saveReceipt(): void {
     // Setup the value
+    this.isSpinning = true;
     this.currentReceipt.id = this.receiptForm!.controls.receiptId.value;
     this.currentReceipt.number = this.receiptForm!.controls.receiptNumber.value;
 
@@ -346,21 +347,32 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
     if (this.currentReceipt.id) {
       // we are changing an exiting receipt
-      this.receiptService.changeReceipt(this.currentReceipt).subscribe(res => {
-        this.refreshReceiptResults();
-        this.message.success(this.i18n.fanyi('message.save.complete'));
+      this.receiptService.changeReceipt(this.currentReceipt).subscribe({
+        next: () => {
+          this.refreshReceiptResults();
+          this.message.success(this.i18n.fanyi('message.save.complete'));
+          this.isSpinning = false
+        }, 
+        error: () => this.isSpinning = false
       });
     } else {
       // we are creating a new receipt
-      this.receiptService.addReceipt(this.currentReceipt).subscribe(res => {
-        this.currentReceipt = res;
-        this.setupDisplay();
-        this.message.success(this.i18n.fanyi('message.new.complete'));
+      this.receiptService.addReceipt(this.currentReceipt).subscribe({
+        next: (res) => {
+          this.currentReceipt = res;
+          this.setupDisplay();
+          this.message.success(this.i18n.fanyi('message.new.complete'));
 
-        this.receiptForm!.controls.receiptId.setValue(res.id);
-        this.receiptForm!.controls.receiptId.disable();
-        this.receiptForm!.controls.receiptNumber.setValue(res.number);
-        this.receiptForm!.controls.receiptNumber.disable();
+          this.receiptForm!.controls.receiptId.setValue(res.id);
+          this.receiptForm!.controls.receiptId.disable();
+          this.receiptForm!.controls.receiptNumber.setValue(res.number);
+          this.receiptForm!.controls.receiptNumber.disable();
+          this.isSpinning = false;
+
+        }, 
+        error: () => this.isSpinning = false
+        
+        
       });
     }
   }
@@ -711,6 +723,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
   confirmReceiving(): void {
     this.receivingInProcess = true;
+    this.isSpinning = true;
     this.receivingInventory();
   }
 
@@ -811,15 +824,20 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
               this.receivingModal.destroy();
               this.receivingInProcess = false;
+              this.isSpinning = false;
 
               this.refreshReceiptResults();
             },
-            () => (this.receivingInProcess = false),
+            () => {
+              this.receivingInProcess = false;
+              this.isSpinning = false;
+            },
           );
       });
     } else {
       this.displayReceivingFormError(this.receivingForm);
       this.receivingInProcess = false;
+      this.isSpinning = false;
     }
   }
   displayReceivingFormError(fromGroup: FormGroup): void {
@@ -989,10 +1007,19 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
   // reserve inventory
   reverseInventory(inventory: Inventory): void {
-    this.inventoryService.reverseReceivedInventory(inventory).subscribe(removedInventoryRes => {
-      // reload the receipt inventory
-      this.loadReceipt(this.currentReceipt.number);
-      this.message.success(this.i18n.fanyi('message.action.success'));
+    this.isSpinning = true;
+    this.inventoryService.reverseReceivedInventory(inventory).subscribe({
+      next: () => {
+
+        this.loadReceipt(this.currentReceipt.number);
+        this.message.success(this.i18n.fanyi('message.action.success'));
+        this.isSpinning = false;
+      }, 
+      error: () => {
+            
+        this.isSpinning = false;
+      }
+
     });
   }
 

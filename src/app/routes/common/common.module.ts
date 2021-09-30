@@ -1,6 +1,10 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
+import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzStepsModule } from 'ng-zorro-antd/steps';
+import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
+
 import { DirectivesModule } from '../directives/directives.module';
 import { CommonClientAddressMaintenanceComponent } from './client-address-maintenance/client-address-maintenance.component';
 import { CommonClientMaintenanceConfimComponent } from './client-maintenance-confim/client-maintenance-confim.component';
@@ -11,6 +15,7 @@ import { CommonCustomerAddressMaintenanceComponent } from './customer-address-ma
 import { CommonCustomerMaintenanceConfirmComponent } from './customer-maintenance-confirm/customer-maintenance-confirm.component';
 import { CommonCustomerMaintenanceComponent } from './customer-maintenance/customer-maintenance.component';
 import { CommonCustomerComponent } from './customer/customer.component';
+import { CommonPrintButtonComponent } from './print-button/print-button.component';
 import { CommonSupplierAddressMaintenanceComponent } from './supplier-address-maintenance/supplier-address-maintenance.component';
 import { CommonSupplierMaintenanceConfirmComponent } from './supplier-maintenance-confirm/supplier-maintenance-confirm.component';
 import { CommonSupplierMaintenanceComponent } from './supplier-maintenance/supplier-maintenance.component';
@@ -18,10 +23,8 @@ import { CommonSupplierComponent } from './supplier/supplier.component';
 import { CommonUnitOfMeasureConfirmComponent } from './unit-of-measure-confirm/unit-of-measure-confirm.component';
 import { CommonUnitOfMeasureMaintenanceComponent } from './unit-of-measure-maintenance/unit-of-measure-maintenance.component';
 import { CommonUnitOfMeasureComponent } from './unit-of-measure/unit-of-measure.component';
-import { CommonPrintButtonComponent } from './print-button/print-button.component';
-import { NzStepsModule } from 'ng-zorro-antd/steps';
 
-const COMPONENTS: Type<void>[] = [
+const COMPONENTS: Array<Type<void>> = [
   CommonClientComponent,
   CommonClientMaintenanceComponent,
   CommonClientAddressMaintenanceComponent,
@@ -40,7 +43,7 @@ const COMPONENTS: Type<void>[] = [
   CommonPrintButtonComponent];
 
 
-const COMPONENTS_NOROUNT: Type<void>[] = [];
+const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
   imports: [
@@ -48,7 +51,9 @@ const COMPONENTS_NOROUNT: Type<void>[] = [];
     CommonRoutingModule,
     NzDescriptionsModule,
     DirectivesModule,
-    NzStepsModule
+    NzStepsModule,
+    NzAutocompleteModule,
+    GooglePlaceModule
   ],
   declarations: [
     ...COMPONENTS,

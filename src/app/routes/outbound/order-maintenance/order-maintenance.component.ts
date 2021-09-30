@@ -100,7 +100,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     // init the customer auto complete if necessar
     this.customerOptionChanged();
     
-    this.loadScript('https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDkPmh0PEC7JTCutUhWuN3BUU38M2fvR5s&sensor=false&language=en');
+    //this.loadScript('https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDkPmh0PEC7JTCutUhWuN3BUU38M2fvR5s&sensor=false&language=en');
   }
 
   loadShippingStageLocationGroups(): void {

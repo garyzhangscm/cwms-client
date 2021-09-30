@@ -205,17 +205,23 @@ export class UserLoginComponent implements OnDestroy {
             this.router.navigateByUrl(url);
              * 
              */
-            // before we flow into the main page, let's check if the user need to change the password
-            this.userService.getUser(res.user.id).subscribe({
+            // before we flow into the main page, let's check if the user need to change the password 
+            this.userService.getUsers(res.user.name).subscribe({
               next: (userInfoRes) => {
-                if (userInfoRes.changePasswordAtNextLogon === true) {
-                  // force the user to change the password before continue
-                  this.openChangePasswordModal(userInfoRes);
+                if (userInfoRes.length === 1) {
 
+                  if (userInfoRes[0].changePasswordAtNextLogon === true) {
+                    // force the user to change the password before continue
+                    this.openChangePasswordModal(userInfoRes[0]);
+  
+                  }
+                  else {
+                    this.router.navigateByUrl('/');
+  
+                  }
                 }
                 else {
-                  this.router.navigateByUrl('/');
-
+                  this.router.navigateByUrl('/')
                 }
               }, 
               error: () => this.router.navigateByUrl('/')

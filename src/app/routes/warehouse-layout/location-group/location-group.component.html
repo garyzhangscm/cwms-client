@@ -20,10 +20,10 @@
 
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
-        <nz-form-label for="location_group" [nzSm]="3" [nzXs]="3">
+        <nz-form-label for="location_group" [nzSpan]="4">
           {{ 'location-group' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSpan]="14">
+        <nz-form-control [nzSpan]="20">
           <nz-select nzMode="tags" [(ngModel)]="selectedLocationGroups" name="selectedLocationGroups">
             <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description"
               [nzValue]="locationGroup.id"></nz-option>

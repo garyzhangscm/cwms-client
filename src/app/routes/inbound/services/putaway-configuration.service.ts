@@ -3,6 +3,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
@@ -46,7 +47,7 @@ export class PutawayConfigurationService {
       params = params.substring(1);
     }
 
-    const url = 'inbound/putaway-configuration' + (params.length > 0 ? '?' + params : '');
+    const url = `inbound/putaway-configuration${  params.length > 0 ? `?${  params}` : ''}`;
 
     return this.http.get(url).pipe(map(res => res.data));
   }
@@ -56,12 +57,12 @@ export class PutawayConfigurationService {
   }
 
   addPutawayConfiguration(putawayConfiguration: PutawayConfiguration): Observable<PutawayConfiguration> {
-    return this.http.post(`inbound/putaway-configuration`, putawayConfiguration).pipe(map(res => res.data));
+    return this.http.put(`inbound/putaway-configuration`, putawayConfiguration).pipe(map(res => res.data));
   }
 
   changePutawayConfiguration(putawayConfiguration: PutawayConfiguration): Observable<PutawayConfiguration> {
     const url = `inbound/putaway-configuration/${putawayConfiguration.id}`;
-    return this.http.put(url, putawayConfiguration).pipe(map(res => res.data));
+    return this.http.post(url, putawayConfiguration).pipe(map(res => res.data));
   }
 
   removePutawayConfiguration(putawayConfiguration: PutawayConfiguration): Observable<PutawayConfiguration> {

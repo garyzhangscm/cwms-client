@@ -25,7 +25,7 @@
       <div nz-row [nzGutter]="24">
         <div nz-col [nzSpan]="8">
           <nz-form-item nzFlex>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="batchId">
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="receiptId">
               id
             </nz-form-label>
             <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
@@ -34,12 +34,12 @@
             </nz-form-control>
           </nz-form-item>
         </div>
-        <div nz-col [nzSpan]="8">
+        <div nz-col [nzSpan]="16">
           <nz-form-item nzFlex>
-            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="batchId">
+            <nz-form-label [nzSpan]="4" nzFor="receiptNumber">
               {{ 'receipt.number' | i18n }}
             </nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            <nz-form-control [nzSpan]="12" nzHasFeedback
               nzErrorTip="{{ 'error.form.field.required' | i18n }}">
               <input appFkey variable="receipt-number" nz-input formControlName="receiptNumber" id="receiptNumber"
                 name="receiptNumber" (blur)="receiptNumberOnBlur($event)" required #receiptNumberInput />
@@ -336,7 +336,6 @@
 
   </nz-tabset>
 
-</nz-spin>
 
 
 <!-- Modal for receiving inventory -->
@@ -724,3 +723,5 @@
   </div>
 
 </ng-template>
+
+</nz-spin>

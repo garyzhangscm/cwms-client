@@ -84,7 +84,7 @@
       </div>
 
     -->
-      <st #st [data]="displayProductionLineKanbanDataList" [columns]="columns">
+      <st #st [data]="displayProductionLineKanbanDataList" [columns]="columns" [loading]="loadingData" (change)="kanbanDataTableChanged($event)">
       </st>
 
     </div>

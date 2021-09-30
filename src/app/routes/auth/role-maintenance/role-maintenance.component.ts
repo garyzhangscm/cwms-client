@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { Role } from '../models/role';
 
 @Component({
@@ -16,6 +17,7 @@ export class AuthRoleMaintenanceComponent implements OnInit {
   emptyRole: Role = {
     id: 0,
     name: '',
+    companyId: this.companyService.getCurrentCompany()!.id,
     description: '',
     enabled: true,
     menuGroups: [],
@@ -28,6 +30,7 @@ export class AuthRoleMaintenanceComponent implements OnInit {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
+    private companyService: CompanyService,
   ) { }
 
   ngOnInit(): void {

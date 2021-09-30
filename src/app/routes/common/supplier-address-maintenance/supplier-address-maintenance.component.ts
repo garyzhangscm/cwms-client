@@ -2,6 +2,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { Address } from 'ngx-google-places-autocomplete/objects/address';
+
 import { Supplier } from '../models/supplier';
 
 @Component({
@@ -19,6 +21,7 @@ export class CommonSupplierAddressMaintenanceComponent implements OnInit {
   ngOnInit(): void {
     this.loadSupplierFromSessionStorage();
     this.setupPageTitle();
+    // this.loadScript('https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDkPmh0PEC7JTCutUhWuN3BUU38M2fvR5s&sensor=false&language=en');
   }
 
   loadSupplierFromSessionStorage(): void {
@@ -47,4 +50,55 @@ export class CommonSupplierAddressMaintenanceComponent implements OnInit {
         break;
     }
   }
+
+  handleNewSupplierAddressChange(address: Address) {  
+    // this.warehouseAddress = address;
+    address.address_components.forEach(
+      addressComponent => {
+         
+        if (addressComponent.types[0] === 'street_number') {
+          // street number
+          // address line 1 = street number + street name
+          this.currentSupplier!.addressLine1 = `${addressComponent.long_name  } ${  this.currentSupplier!.addressLine1}`;
+        }
+        else if (addressComponent.types[0] === 'route') {
+          // street name
+          // address line 1 = street number + street name
+          this.currentSupplier!.addressLine1 = `${this.currentSupplier!.addressLine1  } ${  addressComponent.long_name}`;
+        } 
+        else if (addressComponent.types[0] === 'locality') {
+          // city
+          this.currentSupplier!.addressCity = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'administrative_area_level_2') {
+          // county
+          this.currentSupplier!.addressCounty = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'administrative_area_level_1') {
+          // city
+          this.currentSupplier!.addressState = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'country') {
+          // city
+          this.currentSupplier!.addressCountry = addressComponent.long_name;
+        } 
+        else if (addressComponent.types[0] === 'postal_code') {
+          // city
+          this.currentSupplier!.addressPostcode = addressComponent.long_name;
+        } 
+      }
+
+    )
+  }
+  
+  public loadScript(url: string) {
+    const body = <HTMLDivElement> document.body;
+    const script = document.createElement('script');
+    script.innerHTML = '';
+    script.src = url;
+    script.async = false;
+    script.defer = true;
+    body.appendChild(script);
+  }
+
 }
