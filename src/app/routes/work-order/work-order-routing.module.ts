@@ -27,6 +27,7 @@ import { WorkOrderWorkOrderProduceConfirmComponent } from './work-order-produce-
 import { WorkOrderWorkOrderProduceKpiComponent } from './work-order-produce-kpi/work-order-produce-kpi.component';
 import { WorkOrderWorkOrderProduceComponent } from './work-order-produce/work-order-produce.component';
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
+import { WorkOrderPrePrintLpnLabelComponent } from './pre-print-lpn-label/pre-print-lpn-label.component';
 
 const routes: Routes = [
   { path: 'work-order', component: WorkOrderWorkOrderComponent, canActivate: [AuthGuard] },
@@ -53,7 +54,8 @@ const routes: Routes = [
   { path: 'production-kanban', component: WorkOrderProductionKanbanComponent },
   { path: 'work-order/deassign-production-line', component: WorkOrderDeassignProductionLineComponent },
   { path: 'work-order-configuration', component: WorkOrderWorkOrderConfigurationComponent },
-  { path: 'produce-transaction', component: WorkOrderProduceTransactionComponent }];
+  { path: 'produce-transaction', component: WorkOrderProduceTransactionComponent },
+  { path: 'pre-print-lpn-label', component: WorkOrderPrePrintLpnLabelComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

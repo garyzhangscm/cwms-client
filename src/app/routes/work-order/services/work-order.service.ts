@@ -197,4 +197,11 @@ export class WorkOrderService {
     return this.http.post(url).pipe(map(res => res.data));
   }
 
+  generatePrePrintLPNLabel(workOrderId: number, lpn: string, quantity: number) : Observable<ReportHistory> {
+    
+    let url = `workorder/work-orders/${workOrderId}/pre-print-lpn-label?lpn=${lpn}&quantity=${quantity}`;
+    
+    return this.http.post(url).pipe(map(res => res.data));
+  }
+
 }

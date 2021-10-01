@@ -56,6 +56,17 @@ export class InboundReceiptComponent implements OnInit {
       showFilter: false
     },
     {
+      name: 'supplier',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Receipt, b: Receipt) => this.utilService.compareNullableObjField(a.supplier, b.supplier, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
       name: 'status',
       showSort: true,
       sortOrder: null,

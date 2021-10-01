@@ -97,8 +97,8 @@
           </nz-auto-option>
         </nz-autocomplete>
         <nz-autocomplete #supplierAutoCompleteTpl>
-          <nz-auto-option *ngFor="let supplier of validSuppliers" [nzLabel]="supplier.name" [nzValue]="supplier.name">
-            {{ supplier.name }}
+          <nz-auto-option *ngFor="let supplier of validSuppliers" [nzLabel]="supplier.description" [nzValue]="supplier.name">
+            {{ supplier.description }}
           </nz-auto-option>
         </nz-autocomplete>
       </div>

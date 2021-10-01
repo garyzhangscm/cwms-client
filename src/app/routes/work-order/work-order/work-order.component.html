@@ -52,7 +52,7 @@
           </th>
           <th rowspan="2">
             {{ 'action' | i18n }}
-          </th>
+          </th> 
         </tr>
 
         <tr>
@@ -120,6 +120,10 @@
                   <!--  allow the user to assign the production line only when
                    the work order is not start yet
                   -->
+                  <li nz-menu-item>
+                    <a routerLink="/work-order/pre-print-lpn-label" routerLinkActive="active"
+                      [queryParams]="{workOrderId : data.id!}">{{ 'pre-print-lpn-label' | i18n }}</a>
+                  </li>
                   <li nz-menu-item *ngIf="isWorkOrderChangable(data)">
                     <a routerLink="/work-order/work-order/assign-production-line" routerLinkActive="active"
                       [queryParams]="{workOrderId : data.id!}">{{ 'work-order.assign-production-line' | i18n }}</a>
@@ -158,6 +162,8 @@
               </nz-dropdown-menu>
 
             </td>
+
+            
 
           </tr>
           <tr [nzExpand]="expandSet.has(data.id!!)" class="inner-table">

@@ -1,9 +1,9 @@
-import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
-import { Item } from './item';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
-import { ItemPackageType } from './item-package-type';
-import { InventoryStatus } from './inventory-status';
+import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { InventoryActivityType } from './inventory-activity-type.enum';
+import { InventoryStatus } from './inventory-status';
+import { Item } from './item';
+import { ItemPackageType } from './item-package-type';
 
 export interface InventoryActivity {
   id: number;
@@ -28,4 +28,5 @@ export interface InventoryActivity {
   toValue: string;
   documentNumber: string;
   comment: string;
+  rfCode: string;
 }

@@ -1,24 +1,23 @@
+import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { ClientService } from '../../common/services/client.service';
-import { InventoryActivity } from '../models/inventory-activity';
-import { InventoryActivityService } from '../services/inventory-activity.service';
-import { ItemFamilyService } from '../services/item-family.service';
 
-import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
-import { InventoryStatus } from '../models/inventory-status';
-import { Item } from '../models/item';
-import { ItemPackageType } from '../models/item-package-type';
-
-import { formatDate } from '@angular/common';
 import { Client } from '../../common/models/client';
+import { ClientService } from '../../common/services/client.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
+import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { InventoryActivity } from '../models/inventory-activity';
 import { InventoryActivityType } from '../models/inventory-activity-type.enum';
+import { InventoryStatus } from '../models/inventory-status';
+import { Item } from '../models/item';
 import { ItemFamily } from '../models/item-family';
+import { ItemPackageType } from '../models/item-package-type';
+import { InventoryActivityService } from '../services/inventory-activity.service';
+import { ItemFamilyService } from '../services/item-family.service';
 
 @Component({
   selector: 'app-inventory-inventory-activity',
@@ -150,6 +149,17 @@ export class InventoryInventoryActivityComponent implements OnInit {
       showFilter: false
     },
     {
+      name: 'rfCode',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.username, b.username),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
       name: 'inventory-activity.value-type',
       showSort: true,
       sortOrder: null,
@@ -222,6 +232,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
 
 
   isCollapse = false;
+  isSpinning = false;
 
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
@@ -246,7 +257,15 @@ export class InventoryInventoryActivityComponent implements OnInit {
   }
   search(): void {
     this.searching = true;
+    this.isSpinning = true;
     this.searchResult = '';
+    
+    let startTime : Date = this.searchForm.controls.activityDateTimeRanger.value ? 
+        this.searchForm.controls.activityDateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.controls.activityDateTimeRanger.value ? 
+        this.searchForm.controls.activityDateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.controls.activityDate.value;
+
     this.inventoryActivityService
       .getInventoryActivities(
         this.searchForm.value.taggedClients,
@@ -255,15 +274,16 @@ export class InventoryInventoryActivityComponent implements OnInit {
         this.searchForm.value.location,
         this.searchForm.value.lpn,
         this.searchForm.value.type,
-        this.searchForm.value.activityDateTimeRanger,
-        this.searchForm.value.activityDateTimeRanger,
-        this.searchForm.value.activityDate,
+        startTime,
+        endTime,specificDate,
         this.searchForm.value.username,
+        this.searchForm.value.rfCode
       )
       .subscribe(
         inventoryActivityRes => {
           this.processInventoryActivityQueryResult(inventoryActivityRes);
           this.searching = false;
+          this.isSpinning = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
             rowCount: inventoryActivityRes.length,
@@ -271,6 +291,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
         },
         () => {
           this.searching = false;
+          this.isSpinning = false;
           this.searchResult = '';
         },
       );
@@ -279,7 +300,6 @@ export class InventoryInventoryActivityComponent implements OnInit {
   processInventoryActivityQueryResult(inventoryActivities: InventoryActivity[]): void {
     this.listOfAllInventoryActivities = inventoryActivities;
     this.listOfDisplayInventoryActivities = inventoryActivities;
-
 
 
   }

@@ -94,5 +94,6 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     ...COMPONENTS,
     ...COMPONENTS_NOROUNT
   ],
+  exports: [InventoryItemQueryPopupComponent],
 })
 export class InventoryModule { }

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+
 import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Supplier } from '../models/supplier';
@@ -16,7 +17,7 @@ export class SupplierService {
     private warehouseService: WarehouseService,
   ) {}
 
-  loadSuppliers(refresh: boolean = false): Observable<Supplier[]> {
+  loadSuppliers(refresh: boolean = true): Observable<Supplier[]> {
     // if we can find the value in local storage, we get it from their.
     // otherwise we get from server
     if (!refresh) {
@@ -31,15 +32,15 @@ export class SupplierService {
       .pipe(tap(res => this.gzLocalStorageService.setItem('common.supplier', res)));
   }
   getSupplier(supplierId: number): Observable<Supplier> {
-    const data = this.gzLocalStorageService.getItem('common.supplier.' + supplierId);
+    const data = this.gzLocalStorageService.getItem(`common.supplier.${  supplierId}`);
     if (data !== null) {
       return of(data);
     }
 
     return this.http
-      .get('common/suppliers/' + supplierId)
+      .get(`common/suppliers/${  supplierId}`)
       .pipe(map(res => res.data))
-      .pipe(tap(res => this.gzLocalStorageService.setItem('common.supplier.' + supplierId, res)));
+      .pipe(tap(res => this.gzLocalStorageService.setItem(`common.supplier.${  supplierId}`, res)));
   }
 
   addSupplier(supplier: Supplier): Observable<Supplier> {
@@ -47,12 +48,12 @@ export class SupplierService {
   }
 
   changeSupplier(supplier: Supplier): Observable<Supplier> {
-    const url = 'common/suppliers/' + supplier.id;
+    const url = `common/suppliers/${  supplier.id}`;
     return this.http.put(url, supplier).pipe(map(res => res.data));
   }
 
   removeSupplier(supplier: Supplier): Observable<Supplier> {
-    const url = 'common/suppliers/' + supplier.id;
+    const url = `common/suppliers/${  supplier.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 

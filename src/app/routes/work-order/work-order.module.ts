@@ -21,6 +21,7 @@ import { WorkOrderBillOfMaterialComponent } from './bill-of-material/bill-of-mat
 import { WorkOrderDeassignProductionLineComponent } from './deassign-production-line/deassign-production-line.component';
 import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component';
 import { WorkOrderMouldComponent } from './mould/mould.component';
+import { WorkOrderPrePrintLpnLabelComponent } from './pre-print-lpn-label/pre-print-lpn-label.component';
 import { WorkOrderProduceTransactionComponent } from './produce-transaction/produce-transaction.component';
 import { WorkOrderProductionKanbanComponent } from './production-kanban/production-kanban.component';
 import { WorkOrderProductionLineMaintenanceComponent } from './production-line-maintenance/production-line-maintenance.component';
@@ -68,7 +69,8 @@ const COMPONENTS: Array<Type<void>> = [
   WorkOrderProductionKanbanComponent,
   WorkOrderDeassignProductionLineComponent,
   WorkOrderWorkOrderConfigurationComponent,
-  WorkOrderProduceTransactionComponent];
+  WorkOrderProduceTransactionComponent,
+  WorkOrderPrePrintLpnLabelComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

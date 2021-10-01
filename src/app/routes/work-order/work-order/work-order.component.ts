@@ -1289,6 +1289,6 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       return true;
 
     }
-
   
+    
 }
