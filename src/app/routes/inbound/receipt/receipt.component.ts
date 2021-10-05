@@ -134,6 +134,7 @@ export class InboundReceiptComponent implements OnInit {
   setOfCheckedId = new Set<number>();
   checked = false;
   indeterminate = false;
+  isSpinning = false;
 
   receiptStatus = ReceiptStatus;
 
@@ -180,6 +181,7 @@ export class InboundReceiptComponent implements OnInit {
 
   search(): void {
     this.searching = true;
+    this.isSpinning = true;
     this.searchResult = '';
     this.receiptService.getReceipts(this.searchForm!.controls.number.value).subscribe(
       receiptRes => {
@@ -187,6 +189,7 @@ export class InboundReceiptComponent implements OnInit {
         this.listOfDisplayReceipts = this.calculateQuantities(receiptRes);
 
         this.searching = false;
+        this.isSpinning = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
           rowCount: receiptRes.length,
@@ -196,6 +199,7 @@ export class InboundReceiptComponent implements OnInit {
       },
       () => {
         this.searching = false;
+        this.isSpinning = false;
         this.searchResult = '';
       },
     );

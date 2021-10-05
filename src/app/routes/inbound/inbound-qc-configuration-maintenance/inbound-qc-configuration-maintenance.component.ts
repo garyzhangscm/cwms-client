@@ -6,6 +6,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { Supplier } from '../../common/models/supplier';
 import { SupplierService } from '../../common/services/supplier.service';
+import { InventoryStatus } from '../../inventory/models/inventory-status';
+import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { ItemService } from '../../inventory/services/item.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -26,6 +28,8 @@ export class InboundInboundQcConfigurationMaintenanceComponent implements OnInit
   isSpinning = false;
   validSuppliers: Supplier[] = [];
   warehouseSpecific = false;
+  
+  validInventoryStatuses: InventoryStatus[] = [];
 
 
   constructor(private http: _HttpClient,
@@ -37,6 +41,7 @@ export class InboundInboundQcConfigurationMaintenanceComponent implements OnInit
     private warehouseService: WarehouseService,
     private itemService: ItemService,
     private supplierService: SupplierService,
+    private inventoryStatusService: InventoryStatusService, 
     private activatedRoute: ActivatedRoute) {
     this.pageTitle = this.i18n.fanyi('menu.main.inbound.qc-configuration');
 
@@ -76,6 +81,17 @@ export class InboundInboundQcConfigurationMaintenanceComponent implements OnInit
     });
     this.loadSuppliers();
 
+    
+    this.loadAvailableInventoryStatus();
+
+  }
+  
+  loadAvailableInventoryStatus(): void {
+    if (this.validInventoryStatuses.length === 0) {
+      this.inventoryStatusService
+        .loadInventoryStatuses()
+        .subscribe(inventoryStatuses => (this.validInventoryStatuses = inventoryStatuses));
+    }
   }
 
   loadSuppliers() {
@@ -87,7 +103,24 @@ export class InboundInboundQcConfigurationMaintenanceComponent implements OnInit
     );
 
   }
-
+  fromInventoryStatusChanged(id: number) { 
+    this.currentQCConfiguration.fromInventoryStatusId = id;
+    this.validInventoryStatuses
+      .filter(inventoryStatus => inventoryStatus.id == this.currentQCConfiguration.fromInventoryStatusId)
+      .forEach(inventoryStatus => {
+        this.currentQCConfiguration.fromInventoryStatus = inventoryStatus;
+      });
+    console.log(`currentQCConfiguration's FROM status is changed to ${this.currentQCConfiguration.fromInventoryStatus?.name}`);
+  }
+  toInventoryStatusChanged(id: number) { 
+    this.currentQCConfiguration.toInventoryStatusId = id;
+    this.validInventoryStatuses
+      .filter(inventoryStatus => inventoryStatus.id == this.currentQCConfiguration.toInventoryStatusId)
+      .forEach(inventoryStatus => {
+        this.currentQCConfiguration.toInventoryStatus = inventoryStatus;
+      });
+    console.log(`currentQCConfiguration's TO status is changed to ${this.currentQCConfiguration.toInventoryStatus?.name}`);
+  }
 
   previousStep(): void {
     this.stepIndex -= 1;

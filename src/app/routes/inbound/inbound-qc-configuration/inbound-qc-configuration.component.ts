@@ -112,6 +112,8 @@ export class InboundInboundQcConfigurationComponent implements OnInit {
     { title: this.i18n.fanyi("description"), index: 'item.description', iif: () => this.isChoose('itemDescription'), width: 150 },
     { title: this.i18n.fanyi("qc-configuration.by-quantity"), index: 'qcQuantityPerReceipt', iif: () => this.isChoose('qcQuantityPerReceipt'), width: 100 },
     { title: this.i18n.fanyi("qc-configuration.by-percentage"), index: 'qcPercentage', iif: () => this.isChoose('qcPercentage'),width: 100 },
+    { title: this.i18n.fanyi("from-inventory-status"), index: 'fromInventoryStatus.name', iif: () => this.isChoose('fromInventoryStatus'),width: 100 },
+    { title: this.i18n.fanyi("to-inventory-status"), index: 'toInventoryStatus.name', iif: () => this.isChoose('toInventoryStatus'),width: 100 },
     {
       title: 'action',
       renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 
@@ -127,6 +129,8 @@ export class InboundInboundQcConfigurationComponent implements OnInit {
     { label: this.i18n.fanyi("description"), value: 'itemDescription', checked: true },
     { label: this.i18n.fanyi("qc-configuration.by-quantity"), value: 'qcQuantityPerReceipt', checked: true },
     { label: this.i18n.fanyi("qc-configuration.by-percentage"), value: 'qcPercentage', checked: true },
+    { label: this.i18n.fanyi("from-inventory-status"), value: 'fromInventoryStatus', checked: true },
+    { label: this.i18n.fanyi("to-inventory-status"), value: 'toInventoryStatus', checked: true },
   ];
 
   isChoose(key: string): boolean {
