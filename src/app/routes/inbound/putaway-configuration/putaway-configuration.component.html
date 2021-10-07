@@ -1,5 +1,6 @@
 <page-header></page-header>
 
+<nz-spin [nzSpinning]="isSpinning">
 <!-- Form to query the result  -->
 <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
   <div nz-row [nzGutter]="24">
@@ -71,6 +72,9 @@
           {{ column.name | i18n }}
         </th>
 
+        <th>
+          {{ 'action' | i18n}}
+        </th>
 
       </tr>
     </thead>
@@ -89,8 +93,22 @@
         </td>
         <td><a nz-tooltip nzTooltipTitle="{{ data.locationGroupType?.description}}">{{
             data.locationGroupType?.name}}</a></td>
-        <td> </td>
+        <td> {{ data.strategies}}</td>
 
+        <td>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu> 
+  
+              <li nz-menu-item >
+                <a  (click)="modifyPutawayConfiguration(data)">{{ 'modify' | i18n }}</a>
+              </li>
+              <li nz-menu-item>
+                <a  (click)="removePutawayConfiguration(data)">{{ 'remove' | i18n }}</a>
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+
+        </td>
       </tr>
     </tbody>
   </nz-table>
@@ -98,8 +116,11 @@
     <a nz-button nzType="primary" routerLink="/inbound/putaway-configuration-maintenance" routerLinkActive="active">
       {{'add' | i18n}}
     </a>
+<!--
 
-    <button nz-button nzDanger (click)="removeSelectedPutawayConfigurations()">{{'delete' | i18n}}</button>
+  <button nz-button nzDanger (click)="removeSelectedPutawayConfigurations()">{{'delete' | i18n}}</button>
+
+-->
   </div>
 </div>
 
@@ -141,3 +162,4 @@
     </tbody>
   </nz-table>
 </nz-drawer>
+</nz-spin>

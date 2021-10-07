@@ -1,0 +1,9 @@
+export enum QCRuleItemComparator {
+    
+    EQUAL='EQUAL',
+    LIKE='LIKE',
+    GREAT_THAN='GREAT_THAN',
+    LESS_THAN='LESS_THAN',
+    GREAT_OR_EQUAL='GREAT_OR_EQUAL',
+    LESS_OR_EQUAL='LESS_OR_EQUAL'
+}

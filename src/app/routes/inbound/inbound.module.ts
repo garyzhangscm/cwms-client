@@ -8,6 +8,7 @@ import { CommonModule } from '../common/common.module';
 import { DirectivesModule } from '../directives/directives.module';
 import { InventoryModule } from '../inventory/inventory.module';
 import { UtilModule } from '../util/util.module';
+import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module';
 import { InboundInboundQcConfigurationMaintenanceComponent } from './inbound-qc-configuration-maintenance/inbound-qc-configuration-maintenance.component';
 import { InboundInboundQcConfigurationComponent } from './inbound-qc-configuration/inbound-qc-configuration.component';
 import { InboundRoutingModule } from './inbound-routing.module';
@@ -38,7 +39,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     UtilModule, 
     NzStepsModule,
     InventoryModule, 
-    NzDescriptionsModule
+    NzDescriptionsModule,
+    WarehouseLayoutModule,
   ],
   declarations: [
     ...COMPONENTS,

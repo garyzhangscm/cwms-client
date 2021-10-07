@@ -28,4 +28,5 @@ export interface Inventory {
 
   receiptId?: number;
   receiptLineId?: number;
+  inboundQCRequired?: boolean;
 }

@@ -7,7 +7,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { Supplier } from '../../common/models/supplier';
 import { SupplierService } from '../../common/services/supplier.service';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
+import { ItemFamily } from '../../inventory/models/item-family';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
+import { ItemFamilyService } from '../../inventory/services/item-family.service';
 import { ItemService } from '../../inventory/services/item.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -29,6 +31,7 @@ export class InboundInboundQcConfigurationMaintenanceComponent implements OnInit
   validSuppliers: Supplier[] = [];
   warehouseSpecific = false;
   
+  validItemFamilies: ItemFamily[] = [];
   validInventoryStatuses: InventoryStatus[] = [];
 
 
@@ -41,6 +44,7 @@ export class InboundInboundQcConfigurationMaintenanceComponent implements OnInit
     private warehouseService: WarehouseService,
     private itemService: ItemService,
     private supplierService: SupplierService,
+    private itemFamilyService: ItemFamilyService, 
     private inventoryStatusService: InventoryStatusService, 
     private activatedRoute: ActivatedRoute) {
     this.pageTitle = this.i18n.fanyi('menu.main.inbound.qc-configuration');
@@ -83,9 +87,18 @@ export class InboundInboundQcConfigurationMaintenanceComponent implements OnInit
 
     
     this.loadAvailableInventoryStatus();
+    this.loadItemFamlies();
 
   }
-  
+    
+  loadItemFamlies() {
+
+    this.itemFamilyService.loadItemFamilies().subscribe(
+    {
+      next: (itemFamilyRes) => this.validItemFamilies = itemFamilyRes 
+    });
+
+  }
   loadAvailableInventoryStatus(): void {
     if (this.validInventoryStatuses.length === 0) {
       this.inventoryStatusService
@@ -222,10 +235,27 @@ export class InboundInboundQcConfigurationMaintenanceComponent implements OnInit
   }
   readyForConfirm() : boolean{
 
-    return (this.currentQCConfiguration.qcPercentage !== undefined &&
+    // we have to have at lease
+    // 1. either qc quantity or qc percentage defined
+    // 2. to inventory status is defined
+    return ((this.currentQCConfiguration.qcPercentage !== undefined &&
               this.currentQCConfiguration.qcPercentage > 0) ||
               (this.currentQCConfiguration.qcQuantityPerReceipt  !== undefined &&
-                this.currentQCConfiguration.qcQuantityPerReceipt > 0);
+                this.currentQCConfiguration.qcQuantityPerReceipt > 0)) &&
+                this.currentQCConfiguration.toInventoryStatusId  !== undefined;
 
   }
+  
+  itemFamilyChanged(id: number) {
+    
+    this.currentQCConfiguration.itemFamilyId = id;
+    
+    this.currentQCConfiguration.itemFamily = 
+      this.validItemFamilies.find(
+        itemFamily => itemFamily.id === id
+      );
+
+      
+  }
+  
 }

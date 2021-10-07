@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+
 import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ItemFamily } from '../models/item-family';
@@ -35,15 +36,15 @@ export class ItemFamilyService {
       .pipe(tap(res => this.gzLocalStorageService.setItem('inventory.ItemFamily', res)));
   }
   getItemFamily(itemFamilyId: number): Observable<ItemFamily> {
-    const data = this.gzLocalStorageService.getItem('inventory.ItemFamily.' + itemFamilyId);
+    const data = this.gzLocalStorageService.getItem(`inventory.ItemFamily.${  itemFamilyId}`);
     if (data !== null) {
       return of(data);
     }
 
     return this.http
-      .get('inventory/item-family/' + itemFamilyId)
+      .get(`inventory/item-family/${  itemFamilyId}`)
       .pipe(map(res => res.data))
-      .pipe(tap(res => this.gzLocalStorageService.setItem('inventory.ItemFamily.' + itemFamilyId, res)));
+      .pipe(tap(res => this.gzLocalStorageService.setItem(`inventory.ItemFamily.${  itemFamilyId}`, res)));
   }
 
   addItemFamily(itemFamily: ItemFamily): Observable<ItemFamily> {
@@ -51,12 +52,12 @@ export class ItemFamilyService {
   }
 
   changeItemFamily(itemFamily: ItemFamily): Observable<ItemFamily> {
-    const url = 'inventory/item-family/' + itemFamily.id;
+    const url = `inventory/item-family/${  itemFamily.id}`;
     return this.http.put(url, itemFamily).pipe(map(res => res.data));
   }
 
   removeItemFamily(itemFamily: ItemFamily): Observable<ItemFamily> {
-    const url = 'inventory/item-family/' + itemFamily.id;
+    const url = `inventory/item-family/${  itemFamily.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 

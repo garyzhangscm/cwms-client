@@ -58,7 +58,7 @@
       <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
     </div>
     
-    <st #st [data]="listOfAllQCConfiguration"  [columns]="columns" >
+    <st #st [data]="listOfAllQCConfiguration"  [columns]="columns" [scroll]="{ x: '1450px'}">
       
       <!--   action colummn  --> 
       <ng-template st-row="actionColumnTitle" type="title" let-c>

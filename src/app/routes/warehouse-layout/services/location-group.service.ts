@@ -66,4 +66,9 @@ export class LocationGroupService {
     };
     return this.http.delete('layout/locationgroups', params).pipe(map(res => res.data));
   }
+  getQCLocationGroups(): Observable<LocationGroup[]> {
+    let url = `layout//locationgroups/qc?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+ 
+    return this.http.get(url).pipe(map(res => res.data));
+  }
 }

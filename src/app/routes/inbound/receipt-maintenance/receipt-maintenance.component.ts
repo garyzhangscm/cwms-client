@@ -224,6 +224,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   setOfReceivedInventoryTableCheckedId = new Set<number>();
   receivedInventoryTableChecked = false;
   receivedInventoryTableIndeterminate = false;
+  newBatch = false;
 
   receiptForm!: FormGroup;
   receivingForm!: FormGroup;
@@ -315,9 +316,11 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.receiptNumber) {
         this.loadReceipt(params.receiptNumber);
+        this.newBatch = false;
       } else {
         this.listOfAllReceiptLines = [];
         this.listOfDisplayReceiptLines = [];
+        this.newBatch = true;
       }
     });
 
@@ -434,12 +437,14 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
 
   refreshReceiptResults(selectedTabIndex: number = 0): void {
+    this.isSpinning = true;
     this.selectedTabIndex = selectedTabIndex;
     const receiptNumber = this.receiptForm!.controls.receiptNumber.value;
     if (receiptNumber) {
       this.loadReceipt(receiptNumber);
     } else {
       this.clearDisplay();
+      this.isSpinning = false;
     }
   }
 
@@ -455,6 +460,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
         this.receiptForm!.controls.receiptNumber.setValue(receiptNumber);
         console.log(`this.receiptForm.controls.receiptNumber: ${this.receiptForm!.controls.receiptNumber.value}`);
       }
+      this.isSpinning = false;
     });
   }
   calculateQuantities(receipt: Receipt): Receipt {
@@ -931,7 +937,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
         nzOkDanger: true,
         nzOnOk: () => {
           this.receiptLineService.removeReceiptLines(selectedReceiptLines).subscribe(res => {
-            this.message.success(this.i18n.fanyi('message.remove.complete'));
+            this.message.success(this.i18n.fanyi('message.remove.success'));
             this.refreshReceiptResults();
           });
         },

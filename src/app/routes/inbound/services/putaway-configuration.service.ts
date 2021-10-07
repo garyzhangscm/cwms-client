@@ -72,7 +72,7 @@ export class PutawayConfigurationService {
   removePutawayConfigurations(putawayConfigurations: PutawayConfiguration[]): Observable<PutawayConfiguration[]> {
     const putawayConfigurationIds: number[] = [];
     putawayConfigurations.forEach(putawayConfiguration => {
-      putawayConfigurationIds.push(putawayConfiguration.id);
+      putawayConfigurationIds.push(putawayConfiguration.id!);
     });
     const params = {
       putaway_configuration_ids: putawayConfigurationIds.join(','),

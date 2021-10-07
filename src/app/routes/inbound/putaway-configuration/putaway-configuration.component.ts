@@ -1,9 +1,11 @@
 import { formatDate } from '@angular/common';
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzModalService } from 'ng-zorro-antd/modal';
+
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { Item } from '../../inventory/models/item';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
@@ -22,7 +24,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
     {
       name: 'sequence',
       sortOrder: null,
-      sortFn: (a: PutawayConfiguration, b: PutawayConfiguration) => a.sequence - b.sequence,
+      sortFn: (a: PutawayConfiguration, b: PutawayConfiguration) => a.sequence! - b.sequence!,
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -112,6 +114,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
   setOfCheckedId = new Set<number>();
   checked = false;
   indeterminate = false;
+  isSpinning = false;
   // Form related data and functions
   searchForm!: FormGroup;
 
@@ -121,7 +124,6 @@ export class InboundPutawayConfigurationComponent implements OnInit {
 
   listOfAllItems: Item[] = [];
   listOfDisplayItems: Item[] = [];
-
 
 
   availableInventoryStatuses: InventoryStatus[] = [];
@@ -139,6 +141,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
     private inventoryStatusService: InventoryStatusService,
     private itemService: ItemService,
     private modalService: NzModalService,
+    private router: Router,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
   ) { }
   ngOnInit(): void {
@@ -162,6 +165,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
   }
   search(): void {
     this.searching = true;
+    this.isSpinning = true;
     this.searchResult = '';
     this.putawayConfigurationService
       .getPutawayConfigurations(
@@ -177,6 +181,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
           console.log(`putawayConfigurationRes: ${JSON.stringify(putawayConfigurationRes)}`);
 
           this.searching = false;
+          this.isSpinning = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
             rowCount: putawayConfigurationRes.length,
@@ -184,6 +189,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
         },
         () => {
           this.searching = false;
+          this.isSpinning = false;
           this.searchResult = '';
         },
       );
@@ -204,7 +210,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
   }
 
   onAllChecked(value: boolean): void {
-    this.listOfDisplayPutawayConfiguration!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.listOfDisplayPutawayConfiguration!.forEach(item => this.updateCheckedSet(item.id!, value));
     this.refreshCheckedStatus();
   }
 
@@ -214,8 +220,8 @@ export class InboundPutawayConfigurationComponent implements OnInit {
   }
 
   refreshCheckedStatus(): void {
-    this.checked = this.listOfDisplayPutawayConfiguration!.every(item => this.setOfCheckedId.has(item.id));
-    this.indeterminate = this.listOfDisplayPutawayConfiguration!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
+    this.checked = this.listOfDisplayPutawayConfiguration!.every(item => this.setOfCheckedId.has(item.id!));
+    this.indeterminate = this.listOfDisplayPutawayConfiguration!.some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
   }
 
 
@@ -224,8 +230,8 @@ export class InboundPutawayConfigurationComponent implements OnInit {
     const selectedPutawayConfigurations = this.getSelectedPutawayConfigurations();
     if (selectedPutawayConfigurations.length > 0) {
       this.modalService.confirm({
-        nzTitle: this.i18n.fanyi('page.putaway-configuration.modal.delete.header.title'),
-        nzContent: this.i18n.fanyi('page.putaway-configuration.modal.delete.content'),
+        nzTitle: this.i18n.fanyi('modal.delete.header.title'),
+        nzContent: this.i18n.fanyi('modal.delete.content'),
         nzOkText: this.i18n.fanyi('confirm'),
         nzOkDanger: true,
         nzOnOk: () => {
@@ -243,7 +249,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
   getSelectedPutawayConfigurations(): PutawayConfiguration[] {
     const selectedPutawayConfigurations: PutawayConfiguration[] = [];
     this.listOfAllPutawayConfiguration.forEach((putawayConfiguration: PutawayConfiguration) => {
-      if (this.setOfCheckedId.has(putawayConfiguration.id)) {
+      if (this.setOfCheckedId.has(putawayConfiguration.id!)) {
         selectedPutawayConfigurations.push(putawayConfiguration);
       }
     });
@@ -285,5 +291,25 @@ export class InboundPutawayConfigurationComponent implements OnInit {
 
     this.lookupDrawerclosed();
     this.searchForm!.controls.itemName.setValue(itemName);
+  }
+
+  modifyPutawayConfiguration(putawayConfiguration: PutawayConfiguration) {
+    this.router.navigateByUrl(
+      `/inbound/putaway-configuration-maintenance?id=${putawayConfiguration.id}`);
+
+  }
+  removePutawayConfiguration(putawayConfiguration: PutawayConfiguration) {
+    this.isSpinning = true;
+    this.putawayConfigurationService
+      .removePutawayConfiguration(putawayConfiguration)
+      .subscribe({
+        next: () => {
+          this.isSpinning = false;
+          this.search();
+
+        }, 
+        error: () =>  this.isSpinning = false
+      });
+    
   }
 }

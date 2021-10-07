@@ -1,8 +1,10 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
+
 import { DirectivesModule } from '../directives/directives.module';
 import { AuthRoutingModule } from './auth-routing.module';
 import { AuthRoleMaintenanceConfirmComponent } from './role-maintenance-confirm/role-maintenance-confirm.component';
@@ -18,9 +20,8 @@ import { AuthWorkingTeamMaintenanceConfirmComponent } from './working-team-maint
 import { AuthWorkingTeamMaintenanceComponent } from './working-team-maintenance/working-team-maintenance.component';
 import { AuthWorkingTeamUserComponent } from './working-team-user/working-team-user.component';
 import { AuthWorkingTeamComponent } from './working-team/working-team.component';
-import { NzStepsModule } from 'ng-zorro-antd/steps';
 
-const COMPONENTS: Type<void>[] = [
+const COMPONENTS: Array<Type<void>> = [
   AuthUserComponent,
   AuthRoleComponent,
   AuthRoleMenuComponent,
@@ -34,7 +35,7 @@ const COMPONENTS: Type<void>[] = [
   AuthWorkingTeamMaintenanceComponent,
   AuthWorkingTeamMaintenanceConfirmComponent,
   AuthWorkingTeamUserComponent];
-const COMPONENTS_NOROUNT: Type<void>[] = [];
+const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
   imports: [

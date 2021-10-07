@@ -1,6 +1,7 @@
 import { Supplier } from "../../common/models/supplier";
 import { InventoryStatus } from "../../inventory/models/inventory-status";
 import { Item } from "../../inventory/models/item";
+import { ItemFamily } from "../../inventory/models/item-family";
 import { Company } from "../../warehouse-layout/models/company";
 import { Warehouse } from "../../warehouse-layout/models/warehouse";
 
@@ -14,6 +15,8 @@ export interface InboundQcConfiguration {
 
     itemId?: number;
     item?: Item;
+    itemFamilyId?: number;
+    itemFamily?: ItemFamily;
 
 
     warehouseId?: number;

@@ -5,6 +5,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { LocationGroup } from '../models/location-group';
@@ -221,8 +222,6 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   // Table data for display
   listOfAllLocations: WarehouseLocation[] = [];
   listOfDisplayLocations: WarehouseLocation[] = [];
-
-
 
 
   constructor(

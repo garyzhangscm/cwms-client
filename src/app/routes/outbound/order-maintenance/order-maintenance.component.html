@@ -421,8 +421,7 @@
 
         <!-- Table to show order line  -->
 
-        <div class="search-result-list">
-            <h3>{{ 'work-order.returned-inventory' | i18n}}</h3>
+        <div class="search-result-list"> 
             <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="currentOrder!.orderLines"
                 #displayOrderLineTable>
                 <thead>

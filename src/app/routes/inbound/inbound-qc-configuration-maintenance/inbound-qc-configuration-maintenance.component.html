@@ -87,6 +87,73 @@
   </div>
 
   <div nz-row [nzGutter]="24">
+    
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'item-family' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+
+          <nz-select 
+              *ngIf='currentQCConfiguration !== undefined' nz-input [ngModel]="currentQCConfiguration.itemFamilyId!"
+              (ngModelChange)="itemFamilyChanged($event)" style="width: 250px"  [disabled]="!newQCConfiguration">
+              <nz-option *ngFor="let itemFamily of validItemFamilies"
+                  [nzLabel]="itemFamily.description" [nzValue]="itemFamily.id">
+              </nz-option>
+            </nz-select> 
+        
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">
+          {{ 'from-inventory-status' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+
+            
+            <nz-select *ngIf='currentQCConfiguration !== undefined' nz-input [(ngModel)]="currentQCConfiguration.fromInventoryStatusId!"
+                (ngModelChange)="fromInventoryStatusChanged($event)"
+              style="width: 250px"  >
+          
+            <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
+                nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | i18n }}"
+                [nzValue]="inventoryStatus.id">
+            </nz-option>
+        </nz-select>
+        
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">
+          {{ 'to-inventory-status' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+
+            
+            <nz-select *ngIf='currentQCConfiguration !== undefined' nz-input [(ngModel)]="currentQCConfiguration.toInventoryStatusId!"
+              (ngModelChange)="toInventoryStatusChanged($event)"
+              style="width: 250px"  >
+          
+            <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
+                nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | i18n }}"
+                [nzValue]="inventoryStatus.id">
+            </nz-option>
+        </nz-select>
+        
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div nz-row [nzGutter]="24">
       
     <div nz-col [nzSpan]="8">
         <nz-form-item>
@@ -121,52 +188,6 @@
   </div>
 
   
-  <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="8">
-      <nz-form-item>
-        <nz-form-label [nzSpan]="6">
-          {{ 'from-inventory-status' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
-
-            
-            <nz-select *ngIf='currentQCConfiguration !== undefined' nz-input [(ngModel)]="currentQCConfiguration.fromInventoryStatusId!"
-                (ngModelChange)="fromInventoryStatusChanged($event)"
-              style="width: 250px"  >
-          
-            <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
-                nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | i18n }}"
-                [nzValue]="inventoryStatus.id">
-            </nz-option>
-        </nz-select>
-        
-
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-    <div nz-col [nzSpan]="8">
-      <nz-form-item>
-        <nz-form-label [nzSpan]="6">
-          {{ 'to-inventory-status' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
-
-            
-            <nz-select *ngIf='currentQCConfiguration !== undefined' nz-input [(ngModel)]="currentQCConfiguration.toInventoryStatusId!"
-              (ngModelChange)="toInventoryStatusChanged($event)"
-              style="width: 250px"  >
-          
-            <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
-                nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | i18n }}"
-                [nzValue]="inventoryStatus.id">
-            </nz-option>
-        </nz-select>
-        
-
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-  </div>
 </div>
 
 <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
@@ -174,19 +195,23 @@
 
     <nz-descriptions nzTitle="{{ 'inbound-qc-configuration' | i18n}}" nzBordered>
       <nz-descriptions-item nzTitle="{{ 'supplier' | i18n}}">
-        {{currentQCConfiguration.supplier?.name}}</nz-descriptions-item>
+        {{currentQCConfiguration.supplier?.description}}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'item' | i18n}}">
         {{currentQCConfiguration.item?.name}}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'warehouse' | i18n}}">
           {{currentQCConfiguration.warehouse?.name}}</nz-descriptions-item>
+          
+      <nz-descriptions-item nzTitle="{{ 'item-family' | i18n}}">
+        {{currentQCConfiguration.itemFamily?.name}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'from-inventory-status' | i18n}}">
+        {{currentQCConfiguration.fromInventoryStatus?.name}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'to-inventory-status' | i18n}}">
+          {{currentQCConfiguration.toInventoryStatus?.name}}</nz-descriptions-item>
+           
       <nz-descriptions-item nzTitle="{{ 'qc-configuration.by-quantity' | i18n}}">
             {{currentQCConfiguration.qcQuantityPerReceipt}}</nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'qc-configuration.by-percentage' | i18n}}" nzSpan="2">
               {{currentQCConfiguration.qcPercentage}}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'from-inventory-status' | i18n}}">
-                      {{currentQCConfiguration.fromInventoryStatus?.name}}</nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'to-inventory-status' | i18n}}">
-                        {{currentQCConfiguration.toInventoryStatus?.name}}</nz-descriptions-item>
     </nz-descriptions>
 
   </nz-card>
