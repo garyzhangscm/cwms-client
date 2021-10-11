@@ -96,6 +96,8 @@
         <td> {{ data.strategies}}</td>
 
         <td>
+          <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+            {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
           <nz-dropdown-menu #menu="nzDropdownMenu">
             <ul nz-menu> 
   

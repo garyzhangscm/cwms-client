@@ -1,12 +1,14 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
 
 import { InventoryModule } from '../inventory/inventory.module';
 import { UtilModule } from '../util/util.module';
 import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module';
+import { QcInspectInventoryComponent } from './inspect-inventory/inspect-inventory.component';
 import { QcQcConfigurationComponent } from './qc-configuration/qc-configuration.component';
 import { QcQcInspectionComponent } from './qc-inspection/qc-inspection.component';
 import { QcRoutingModule } from './qc-routing.module';
@@ -14,7 +16,7 @@ import { QcQcRuleConfigurationMaintenanceComponent } from './qc-rule-configurati
 import { QcQcRuleConfigurationComponent } from './qc-rule-configuration/qc-rule-configuration.component';
 import { QcQcRuleMaintenanceComponent } from './qc-rule-maintenance/qc-rule-maintenance.component';
 import { QcQcRuleComponent } from './qc-rule/qc-rule.component';
-import { QcInspectInventoryComponent } from './inspect-inventory/inspect-inventory.component';
+import { QcQcResultComponent } from './qc-result/qc-result.component';
 
 const COMPONENTS: Array<Type<void>> = [
   QcQcRuleComponent,
@@ -23,7 +25,8 @@ const COMPONENTS: Array<Type<void>> = [
   QcQcRuleConfigurationComponent,
   QcQcRuleMaintenanceComponent,
   QcQcRuleConfigurationMaintenanceComponent,
-  QcInspectInventoryComponent];
+  QcInspectInventoryComponent,
+  QcQcResultComponent];
 
 @NgModule({
   imports: [
@@ -34,7 +37,7 @@ const COMPONENTS: Array<Type<void>> = [
     NzStepsModule,
     InventoryModule, 
     NzTransferModule,
-    WarehouseLayoutModule,
+    WarehouseLayoutModule,NzIconModule 
   ],
   declarations: COMPONENTS,
 })

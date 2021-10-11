@@ -9,6 +9,13 @@ import { SimpleInterceptor } from '@delon/auth';
 import { DELON_LOCALE, en_US as delonLang, ALAIN_I18N_TOKEN } from '@delon/theme';
 import { en_US, NZ_DATE_LOCALE, NZ_I18N, en_US as zorroLang } from 'ng-zorro-antd/i18n';
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
+import { IconDefinition } from '@ant-design/icons-angular';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+
+
+import { CheckCircleTwoTone, CloseCircleTwoTone, WarningTwoTone} from '@ant-design/icons-angular/icons';
+
+const icons: IconDefinition[] = [ CheckCircleTwoTone, CloseCircleTwoTone, WarningTwoTone ];
 
 // #region default language
 // 参考：https://ng-alain.com/docs/i18n
@@ -96,6 +103,7 @@ import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
     BrowserAnimationsModule,
     HttpClientModule,
     GlobalConfigModule.forRoot(),
+    NzIconModule.forRoot(icons),
     CoreModule,
     SharedModule,
     LayoutModule,

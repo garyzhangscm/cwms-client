@@ -110,7 +110,7 @@ export class QcQcInspectionComponent implements OnInit {
   columns: STColumn[] = [
 
     { title: "", index: 'id', type: 'checkbox' },
-    { title: this.i18n.fanyi("lpn"), index: 'lpn', iif: () => this.isChoose('lpn') },
+    { title: this.i18n.fanyi("lpn"), index: 'lpn', iif: () => this.isChoose('lpn') }, 
     { title: this.i18n.fanyi("item"), index: 'item.name', iif: () => this.isChoose('itemName') },
     { title: this.i18n.fanyi("item.description"), index: 'item.description', iif: () => this.isChoose('itemDescription') },
     { title: this.i18n.fanyi("quantity"), index: 'quantity', iif: () => this.isChoose('quantity') },
@@ -127,7 +127,7 @@ export class QcQcInspectionComponent implements OnInit {
   ];
   customColumns = [
 
-    { label: this.i18n.fanyi("lpn"), value: 'lpn', checked: true },
+    { label: this.i18n.fanyi("lpn"), value: 'lpn', checked: true }, 
     { label: this.i18n.fanyi("item"), value: 'itemName', checked: true },
     { label: this.i18n.fanyi("item.description"), value: 'itemDescription', checked: true },
     { label: this.i18n.fanyi("quantity"), value: 'quantity', checked: true },
@@ -177,6 +177,8 @@ export class QcQcInspectionComponent implements OnInit {
   } 
   processQCInspection(inventory: Inventory) {
     console.log(`start to process qc inspection for ${inventory.lpn}`);
+    this.router.navigateByUrl(
+          `/qc/inspect-inventory?ids=${inventory.id}`);
 
   }
 
@@ -186,7 +188,7 @@ export class QcQcInspectionComponent implements OnInit {
 
     
     this.router.navigateByUrl(
-          `/qc/inspect-inventory?id=${selectedInventoryIds}`);
+          `/qc/inspect-inventory?ids=${selectedInventoryIds}`);
 
   }
 

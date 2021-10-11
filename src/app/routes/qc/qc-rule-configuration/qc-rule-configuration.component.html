@@ -1,4 +1,4 @@
-<page-header [title]="'menu.main.inbound.qc-configuration' | i18n"> </page-header>
+<page-header [title]="'menu.main.qc.qc-rule-configuration' | i18n"> </page-header>
 
 <nz-spin [nzSpinning]="isSpinning">
 <!-- Form to query the result  -->
@@ -90,7 +90,7 @@
       <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
     </div>
     
-    <st #st [data]="listOfAllQCRuleConfiguration"  [columns]="columns" virtualScroll [scroll]="{ x: '1450px', y: '380px' }"
+    <st #st [data]="listOfAllQCRuleConfiguration"  [columns]="columns"  [scroll]="{ x: '1450px'}"
         [expand]="expand" expandRowByClick expandAccordion>
       
       <!--   qc rule details  -->
