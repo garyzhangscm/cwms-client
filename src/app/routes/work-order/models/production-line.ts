@@ -1,8 +1,8 @@
-import { WorkOrder } from './work-order';
-import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
+import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { ProductionLineAssignment } from './production-line-assignment';
 import { ProductionLineCapacity } from './production-line-capacity';
+import { WorkOrder } from './work-order';
 
 export interface ProductionLine {
   id?: number;

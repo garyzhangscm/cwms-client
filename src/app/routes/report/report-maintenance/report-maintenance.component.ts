@@ -28,7 +28,7 @@ export class ReportReportMaintenanceComponent implements OnInit {
   warehouseSpecific = false;
   fileList: NzUploadFile[] = [];
   templateFileUploadUrl = '';
-  acceptUploadedFileTypes = '.jrxml,.properties';
+  acceptUploadedFileTypes = '.jrxml,.properties,.prn';
 
   constructor(
     private http: _HttpClient,
@@ -139,7 +139,9 @@ export class ReportReportMaintenanceComponent implements OnInit {
     if (info.file.status === 'done') {
       this.messageService.success(`${info.file.name} ${this.i18n.fanyi('file.upload.success')}`);
 
-      if (info.file.name.endsWith('.jrxml')) {
+      // report files should ends with jrxml
+      // label files should ends with prn
+      if (info.file.name.endsWith('.jrxml') || info.file.name.endsWith('.prn')) {
         
         this.currentReport.fileName = info.file.name;
       }

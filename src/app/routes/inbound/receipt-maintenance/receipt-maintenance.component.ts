@@ -13,6 +13,7 @@ import { Supplier } from '../../common/models/supplier';
 import { ClientService } from '../../common/services/client.service';
 import { PrintingService } from '../../common/services/printing.service';
 import { SupplierService } from '../../common/services/supplier.service';
+import { NewNumberValidator } from '../../directives/newNumberValidator';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { ItemPackageType } from '../../inventory/models/item-package-type';
@@ -740,11 +741,14 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.receivingForm = this.fb.group({
       itemNumber: new FormControl({ value: receiptLine.item!.name, disabled: true }),
       itemDescription: new FormControl({ value: receiptLine.item!.description, disabled: true }),
-      lpn: ['', Validators.required],
+      lpn:   ['', Validators.required],
       inventoryStatus: ['', Validators.required],
       itemPackageType: ['', Validators.required],
       quantity: ['', Validators.required],
-      locationName: [''],
+      locationName: ['']
+    },
+    {
+      updateOn: 'blur'
     });
   }
   openManualPutawayModal(

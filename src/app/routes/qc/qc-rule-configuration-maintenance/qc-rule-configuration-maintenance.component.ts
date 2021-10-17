@@ -224,16 +224,14 @@ loadInventoryStatus() {
     }
   }
   
-  itemFamilyChanged(event: Event) {
-    const itemFamilyName = (event.target as HTMLInputElement).value.trim();
-    if (itemFamilyName.length > 0) {
-
-      this.currentQCRuleConfiguration.itemFamily = 
+  itemFamilyChanged(id: number) { 
+    console.log(`item family is changed to ${id}`); 
+    this.currentQCRuleConfiguration.itemFamily = 
           this.validItemFamilies.find(
-            itemFamily => itemFamily.name === itemFamilyName
+            itemFamily => itemFamily.id === +id
           );
+
           
-    }
   }
   
   inventoryStatusChanged(event: Event) {

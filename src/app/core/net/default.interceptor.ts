@@ -16,6 +16,8 @@ import { environment } from '@env/environment';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { catchError, filter, mergeMap, switchMap, take } from 'rxjs/operators';
+import { CompanyService } from 'src/app/routes/warehouse-layout/services/company.service';
+import { WarehouseService } from 'src/app/routes/warehouse-layout/services/warehouse.service';
 
 import { I18NService } from '../i18n/i18n.service';
 
@@ -48,7 +50,9 @@ export class DefaultInterceptor implements HttpInterceptor {
   private refreshToken$: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   constructor(private injector: Injector, 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) {
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private companyService: CompanyService,
+    private warehouseService: WarehouseService) {
     if (this.refreshTokenType === 'auth-refresh') {
       this.buildAuthRefresh();
     }
@@ -256,6 +260,13 @@ export class DefaultInterceptor implements HttpInterceptor {
     if (!headers?.has('Accept-Language') && lang) {
       res['Accept-Language'] = lang;
     }
+    if (!headers?.has('warehouseId') && this.warehouseService.getCurrentWarehouse()) {
+      res['warehouseId'] = this.warehouseService.getCurrentWarehouse().id.toString();
+    }
+    if (!headers?.has('companyId') && this.companyService.getCurrentCompany()) {
+      res['companyId'] = this.companyService.getCurrentCompany()!.id.toString();
+    }
+
 
     return res;
   }

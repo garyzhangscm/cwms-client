@@ -10,6 +10,7 @@ export interface ProductionLineAssignment {
     productionLine: ProductionLine;
 
     workOrder: WorkOrder;
+    workOrderId?: number;
     quantity: number;
     openQuantity: number;
     mould?: Mould;

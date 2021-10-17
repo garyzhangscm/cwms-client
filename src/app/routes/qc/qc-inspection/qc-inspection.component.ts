@@ -16,6 +16,7 @@ import { LocationGroupTypeService } from '../../warehouse-layout/services/locati
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { QCRule } from '../models/qc-rule';
+import { QcInspectionRequestService } from '../services/qc-inspection-request.service';
 import { QcInspectionService } from '../services/qc-inspection.service';
 
 @Component({
@@ -33,6 +34,7 @@ export class QcQcInspectionComponent implements OnInit {
   searching = false;
   isSpinning = false;
   searchResult = '';
+  qcInspectionByInventory = new Map();
 
   constructor(private http: _HttpClient,    
     private fb: FormBuilder,
@@ -45,6 +47,7 @@ export class QcQcInspectionComponent implements OnInit {
     private locationService: LocationService,
     private itemService: ItemService,
     private locationGroupTypeService: LocationGroupTypeService,
+    private qcInspectionRequestService: QcInspectionRequestService,
     private locationGroupService: LocationGroupService,
     ) { 
 
@@ -92,6 +95,7 @@ export class QcQcInspectionComponent implements OnInit {
       {
         next: (inventoryRes) => {
           this.listOfQCRequiredInventory = inventoryRes;
+          this.loadQCInspectionByInventory();
 
           this.isSpinning = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
@@ -104,12 +108,35 @@ export class QcQcInspectionComponent implements OnInit {
 
       
   }
+  loadQCInspectionByInventory() {
+    let inventoryIds = this.listOfQCRequiredInventory.map(
+      inventory => inventory.id!
+    ).join(",")
+    this.qcInspectionRequestService.getQCInspectionRequest(
+      undefined,inventoryIds
+    ).subscribe(
+      {
+        next: (qcInspectionRequestRes) => {
+          qcInspectionRequestRes.forEach(
+            qcInspectionRequest => 
+              this.qcInspectionByInventory.set(
+                qcInspectionRequest.inventory.id!, qcInspectionRequest
+              )
+          );
+        }
+      }
+    )
+  }
 
   @ViewChild('st', { static: true })
   st!: STComponent;
   columns: STColumn[] = [
-
-    { title: "", index: 'id', type: 'checkbox' },
+ 
+    {
+      title: 'qc-inspection',
+      renderTitle: 'qcInspectionColumnTitle' ,
+      render: 'qcInspectionColumn',
+    },
     { title: this.i18n.fanyi("lpn"), index: 'lpn', iif: () => this.isChoose('lpn') }, 
     { title: this.i18n.fanyi("item"), index: 'item.name', iif: () => this.isChoose('itemName') },
     { title: this.i18n.fanyi("item.description"), index: 'item.description', iif: () => this.isChoose('itemDescription') },
@@ -126,8 +153,8 @@ export class QcQcInspectionComponent implements OnInit {
 
   ];
   customColumns = [
-
-    { label: this.i18n.fanyi("lpn"), value: 'lpn', checked: true }, 
+ 
+    { label: this.i18n.fanyi("lpn"), value: 'lpn', checked: true },
     { label: this.i18n.fanyi("item"), value: 'itemName', checked: true },
     { label: this.i18n.fanyi("item.description"), value: 'itemDescription', checked: true },
     { label: this.i18n.fanyi("quantity"), value: 'quantity', checked: true },

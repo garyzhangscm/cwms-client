@@ -78,6 +78,24 @@
     
     <st #st [data]="listOfQCRequiredInventory"  [columns]="columns" >
       
+      <!--   qc inspection column --> 
+      <ng-template st-row="qcInspectionColumnTitle" type="title" let-c>
+        {{ 'qc-inspection' | i18n }}
+      </ng-template>
+      <ng-template st-row="qcInspectionColumn" let-item let-index="index"> 
+        
+          <nz-skeleton-element 
+            *ngIf="qcInspectionByInventory.get(item.id) === undefined || qcInspectionByInventory.get(item.id) === null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element>
+        <span *ngIf="qcInspectionByInventory.get(item.id)">
+          {{ qcInspectionByInventory.get(item.id).number }}
+        </span> 
+      
+      </ng-template>
         
       <!--   action colummn  --> 
       <ng-template st-row="actionColumnTitle" type="title" let-c>
@@ -94,10 +112,13 @@
       {{searchResult}}
     </div> 
     
+    <!--
+
     <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;"> 
       <button nz-button nzType="primary" (click)="processQCInspectionForSelectedInventory()">
         {{ 'qc-inspection' | i18n}}
       </button>
   </div>
+    -->
 </div>
 </nz-spin>

@@ -81,8 +81,8 @@
           {{ 'REPORT-TYPE-' + data.type | i18n }}
         </td>
         <td>{{ data.description }}</td>
-        <td>{{ data.companyId}}</td>
-        <td>{{ data.warehouseId }}</td>
+        <td>{{ data.company?.name}}</td>
+        <td>{{ data.warehouse?.name }}</td>
         <td>{{ 'REPORT-ORIENTATION_' + data.reportOrientation | i18n }}</td>
         <td>
           <a [href]="data.fileUrl" target="_blank" rel="noopener noreferrer">

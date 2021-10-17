@@ -316,6 +316,14 @@
                     (preview)="previewProductionLineAssignmentLabel(productionLineAssignment)">
                   </cwms-common-print-button>
                 </nz-list-item>
+                
+                <nz-list-item>
+                  <a routerLink="/work-order/qc-sample-maintenance" routerLinkActive="active"
+                      [queryParams]="{productionLineAssignmentId : productionLineAssignment.id!}">
+                      {{ 'work-order.qc-sample-maintenance' | i18n }}
+                    </a> 
+                  
+                </nz-list-item>
               </nz-list>
 
             </td>

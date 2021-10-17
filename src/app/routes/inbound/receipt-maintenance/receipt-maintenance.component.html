@@ -386,7 +386,7 @@
             <nz-input-group nzSize="large">
               <!--
                 
-              <input appFkey variable="lpn" nz-input [ngModel]="currentInventory.lpn"
+              <input appFkey appNewNumberValidator variable="lpn" nz-input [ngModel]="currentInventory.lpn"
                 (blur)="receivingLPNChanged($event)" id="lpn" name="lpn" required #receivingInventoryLpn />
               -->
               <input appFkey appNewNumberValidator variable="lpn" (blur)="receivingLPNChanged($event)" nz-input

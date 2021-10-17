@@ -40,6 +40,10 @@ import { WorkOrderWorkOrderProduceByProductComponent } from './work-order-produc
 import { WorkOrderWorkOrderProduceConfirmComponent } from './work-order-produce-confirm/work-order-produce-confirm.component';
 import { WorkOrderWorkOrderProduceKpiComponent } from './work-order-produce-kpi/work-order-produce-kpi.component';
 import { WorkOrderWorkOrderProduceComponent } from './work-order-produce/work-order-produce.component';
+import { WorkOrderWorkOrderQcInspectionOperationComponent } from './work-order-qc-inspection-operation/work-order-qc-inspection-operation.component';
+import { WorkOrderWorkOrderQcInspectionResultComponent } from './work-order-qc-inspection-result/work-order-qc-inspection-result.component';
+import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspection/work-order-qc-inspection.component'; 
+import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component';
 import { WorkOrderRoutingModule } from './work-order-routing.module';
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
 
@@ -70,7 +74,11 @@ const COMPONENTS: Array<Type<void>> = [
   WorkOrderDeassignProductionLineComponent,
   WorkOrderWorkOrderConfigurationComponent,
   WorkOrderProduceTransactionComponent,
-  WorkOrderPrePrintLpnLabelComponent];
+  WorkOrderPrePrintLpnLabelComponent,
+  WorkOrderWorkOrderQcSampleMaintenanceComponent,
+  WorkOrderWorkOrderQcInspectionComponent,
+  WorkOrderWorkOrderQcInspectionOperationComponent,
+  WorkOrderWorkOrderQcInspectionResultComponent ];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

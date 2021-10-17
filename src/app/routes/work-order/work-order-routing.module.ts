@@ -8,6 +8,7 @@ import { WorkOrderBillOfMaterialComponent } from './bill-of-material/bill-of-mat
 import { WorkOrderDeassignProductionLineComponent } from './deassign-production-line/deassign-production-line.component';
 import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component';
 import { WorkOrderMouldComponent } from './mould/mould.component';
+import { WorkOrderPrePrintLpnLabelComponent } from './pre-print-lpn-label/pre-print-lpn-label.component';
 import { WorkOrderProduceTransactionComponent } from './produce-transaction/produce-transaction.component';
 import { WorkOrderProductionKanbanComponent } from './production-kanban/production-kanban.component';
 import { WorkOrderProductionLineMaintenanceComponent } from './production-line-maintenance/production-line-maintenance.component';
@@ -26,8 +27,11 @@ import { WorkOrderWorkOrderProduceByProductComponent } from './work-order-produc
 import { WorkOrderWorkOrderProduceConfirmComponent } from './work-order-produce-confirm/work-order-produce-confirm.component';
 import { WorkOrderWorkOrderProduceKpiComponent } from './work-order-produce-kpi/work-order-produce-kpi.component';
 import { WorkOrderWorkOrderProduceComponent } from './work-order-produce/work-order-produce.component';
+import { WorkOrderWorkOrderQcInspectionOperationComponent } from './work-order-qc-inspection-operation/work-order-qc-inspection-operation.component';
+import { WorkOrderWorkOrderQcInspectionResultComponent } from './work-order-qc-inspection-result/work-order-qc-inspection-result.component';
+import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspection/work-order-qc-inspection.component'; 
+import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component';
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
-import { WorkOrderPrePrintLpnLabelComponent } from './pre-print-lpn-label/pre-print-lpn-label.component';
 
 const routes: Routes = [
   { path: 'work-order', component: WorkOrderWorkOrderComponent, canActivate: [AuthGuard] },
@@ -55,7 +59,11 @@ const routes: Routes = [
   { path: 'work-order/deassign-production-line', component: WorkOrderDeassignProductionLineComponent },
   { path: 'work-order-configuration', component: WorkOrderWorkOrderConfigurationComponent },
   { path: 'produce-transaction', component: WorkOrderProduceTransactionComponent },
-  { path: 'pre-print-lpn-label', component: WorkOrderPrePrintLpnLabelComponent }];
+  { path: 'pre-print-lpn-label', component: WorkOrderPrePrintLpnLabelComponent },
+  { path: 'qc-sample-maintenance', component: WorkOrderWorkOrderQcSampleMaintenanceComponent },
+  { path: 'work-order-qc-inspection', component: WorkOrderWorkOrderQcInspectionComponent },
+  { path: 'work-order-qc-inspection-operation', component: WorkOrderWorkOrderQcInspectionOperationComponent },
+  { path: 'qc-inspection-result', component: WorkOrderWorkOrderQcInspectionResultComponent } ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
