@@ -46,6 +46,8 @@ import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspect
 import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component';
 import { WorkOrderRoutingModule } from './work-order-routing.module';
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
+import { WorkOrderQcRuleConfigurationComponent } from './qc-rule-configuration/qc-rule-configuration.component';
+import { WorkOrderQcRuleConfigurationMaintenanceComponent } from './qc-rule-configuration-maintenance/qc-rule-configuration-maintenance.component';
 
 
 const COMPONENTS: Array<Type<void>> = [
@@ -78,7 +80,9 @@ const COMPONENTS: Array<Type<void>> = [
   WorkOrderWorkOrderQcSampleMaintenanceComponent,
   WorkOrderWorkOrderQcInspectionComponent,
   WorkOrderWorkOrderQcInspectionOperationComponent,
-  WorkOrderWorkOrderQcInspectionResultComponent ];
+  WorkOrderWorkOrderQcInspectionResultComponent ,
+  WorkOrderQcRuleConfigurationComponent,
+  WorkOrderQcRuleConfigurationMaintenanceComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

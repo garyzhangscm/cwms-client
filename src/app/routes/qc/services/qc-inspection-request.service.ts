@@ -53,13 +53,16 @@ export class QcInspectionRequestService {
 
   }
 
-  getQCInspectionResult(lpn?: string) : Observable<QcInspectionRequest[]> {
+  getQCInspectionResult(lpn?: string, workOrderQCSampleNumber?: string) : Observable<QcInspectionRequest[]> {
     let url = `inventory/qc-inspection-requests/result?warehouseId=${this.warehosueService.getCurrentWarehouse()!.id}`;
     
     if (lpn) {
       url = `${url}&lpn=${lpn}`;
     }
     
+    if (workOrderQCSampleNumber) {
+      url = `${url}&workOrderQCSampleNumber=${workOrderQCSampleNumber}`;
+    }
     
     return this.http.get(url).pipe(map(res => res.data));
 

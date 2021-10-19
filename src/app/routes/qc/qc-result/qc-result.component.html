@@ -8,14 +8,25 @@
   <div nz-row [nzGutter]="24"> 
     <div nz-col [nzSpan]="8" >
         <nz-form-item nzFlex>
-          <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="lpn">
+          <nz-form-label [nzSpan]="8" nzFor="lpn">
             {{ 'lpn' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="14">
+          <nz-form-control [nzSpan]="16">
             <input nz-input name="lpn" id="lpn" formControlName="lpn" />
           </nz-form-control>
         </nz-form-item>
       </div>
+      
+    <div nz-col [nzSpan]="8" >
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="8" nzFor="workOrderQCSampleNumber">
+          {{ 'work-order.qc-sample.number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input name="workOrderQCSampleNumber" id="workOrderQCSampleNumber" formControlName="workOrderQCSampleNumber" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
       
   </div>
 
@@ -57,8 +68,7 @@
                 <th>
                   {{ 'qcRule.expectedValue' | i18n }}
                 </th> 
- 
-                <th>
+  
                 <th>
                   {{ 'qc-result' | i18n }}
                 </th> 
@@ -80,6 +90,7 @@
         </nz-tabset>
       </ng-template>
       <!--   qc inspection time colummn  --> 
+
       <ng-template st-row="qcTimeColumnTitle" type="title" let-c>
         {{ 'qc-inspection-time' | i18n }}
       </ng-template>
@@ -87,9 +98,7 @@
         
          <span *ngIf="item.qcTime">
 
-            {{ item.qcTime[1] }}/{{ item.qcTime[2] }}/{{ item.qcTime[0] }} {{ item.qcTime[3] }}:{{
-                item.qcTime[4]
-              }}:{{ item.qcTime[5] }}
+            {{ item.qcTime  | date:'short':'+0000'}}
          </span>
       </ng-template>
     </st>

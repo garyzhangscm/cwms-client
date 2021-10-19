@@ -41,6 +41,7 @@ export class QcQcResultComponent implements OnInit {
 
     this.searchForm = this.fb.group({
       lpn: [null], 
+      workOrderQCSampleNumber: [null],
     }); 
 
     this.activatedRoute.queryParams.subscribe(params => {
@@ -64,7 +65,8 @@ export class QcQcResultComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     this.qcInspectionRequestService.getQCInspectionResult(
-      this.searchForm.controls.lpn.value).subscribe(
+      this.searchForm.controls.lpn.value,      
+      this.searchForm.controls.workOrderQCSampleNumber.value).subscribe(
       {
         next: (qcInspectionRequestRes) => {
           this.listOfQCInspectionRequest = qcInspectionRequestRes;
@@ -87,15 +89,18 @@ export class QcQcResultComponent implements OnInit {
 
     { title: this.i18n.fanyi("number"), index: 'number', iif: () => this.isChoose('number') },
     { title: this.i18n.fanyi("lpn"), index: 'inventory.lpn', iif: () => this.isChoose('lpn') },
+    { title: this.i18n.fanyi("work-order.qc-sample.number"), index: 'workOrderQCSample.number', iif: () => this.isChoose('workOrderQCSample') },
     { title: this.i18n.fanyi("item.name"), index: 'inventory.item.name', iif: () => this.isChoose('itemName') },
     { title: this.i18n.fanyi("item.description"), index: 'inventory.item.description', iif: () => this.isChoose('itemDescription') },
     { title: this.i18n.fanyi("qc-result"), index: 'qcInspectionResult', iif: () => this.isChoose('qcResult') },
+    // { title: this.i18n.fanyi("qc-time"), index: 'qcTime', iif: () => this.isChoose('qcTime') },
+     
     {
       title: this.i18n.fanyi("qc-inspection-time"),
       renderTitle: 'qcTimeColumnTitle' ,
       render: 'qcTimeColumn',
       iif: () => this.isChoose('qcTime')
-    },
+    }, 
     { title: this.i18n.fanyi("username"), index: 'qcUsername', iif: () => this.isChoose('username') },
 
   ];
@@ -103,6 +108,7 @@ export class QcQcResultComponent implements OnInit {
 
     { label: this.i18n.fanyi("number"), value: 'number', checked: true },
     { label: this.i18n.fanyi("lpn"), value: 'lpn', checked: true },
+    { label: this.i18n.fanyi("work-order.qc-sample.number"), value: 'workOrderQCSample', checked: true },
     { label: this.i18n.fanyi("item.name"), value: 'itemName', checked: true },
     { label: this.i18n.fanyi("item.description"), value: 'itemDescription', checked: true },
     { label: this.i18n.fanyi("qcResult"), value: 'qcResult', checked: true },

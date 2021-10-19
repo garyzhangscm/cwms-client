@@ -15,6 +15,8 @@ import { WorkOrderProductionLineMaintenanceComponent } from './production-line-m
 import { WorkOrderProductionLineComponent } from './production-line/production-line.component';
 import { WorkOrderProductionPlanMaintenanceComponent } from './production-plan-maintenance/production-plan-maintenance.component';
 import { WorkOrderProductionPlanComponent } from './production-plan/production-plan.component';
+import { WorkOrderQcRuleConfigurationMaintenanceComponent } from './qc-rule-configuration-maintenance/qc-rule-configuration-maintenance.component';
+import { WorkOrderQcRuleConfigurationComponent } from './qc-rule-configuration/qc-rule-configuration.component';
 import { WorkOrderWorkOrderCompleteByProductComponent } from './work-order-complete-by-product/work-order-complete-by-product.component';
 import { WorkOrderWorkOrderCompleteConfirmComponent } from './work-order-complete-confirm/work-order-complete-confirm.component';
 import { WorkOrderWorkOrderCompleteKpiComponent } from './work-order-complete-kpi/work-order-complete-kpi.component';
@@ -63,7 +65,9 @@ const routes: Routes = [
   { path: 'qc-sample-maintenance', component: WorkOrderWorkOrderQcSampleMaintenanceComponent },
   { path: 'work-order-qc-inspection', component: WorkOrderWorkOrderQcInspectionComponent },
   { path: 'work-order-qc-inspection-operation', component: WorkOrderWorkOrderQcInspectionOperationComponent },
-  { path: 'qc-inspection-result', component: WorkOrderWorkOrderQcInspectionResultComponent } ];
+  { path: 'qc-inspection-result', component: WorkOrderWorkOrderQcInspectionResultComponent } ,
+  { path: 'qc-rule-configuration', component: WorkOrderQcRuleConfigurationComponent },
+  { path: 'qc-rule-configuration/maintenance', component: WorkOrderQcRuleConfigurationMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
