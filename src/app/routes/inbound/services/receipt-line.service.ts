@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
 import { Inventory } from '../../inventory/models/inventory';
+import { ReportHistory } from '../../report/models/report-history';
 import { ReceiptLine } from '../models/receipt-line';
 
 @Injectable({
@@ -13,6 +15,9 @@ export class ReceiptLineService {
 
   getNextReceiptLineNumber(receiptId: number): Observable<string> {
     return this.http.get(`inbound/receipts/${receiptId}/next-line-number`).pipe(map(res => res.data));
+  }
+  getReceiptLine(receiptLineId: number): Observable<ReceiptLine> {
+    return this.http.get(`inbound/receipts/receipt-lines/${receiptLineId}`).pipe(map(res => res.data));
   }
 
   createReceiptLine(receiptId: number, receiptLine: ReceiptLine): Observable<ReceiptLine> {
@@ -38,5 +43,38 @@ export class ReceiptLineService {
       receiptLineIds: receiptLineIds.join(','),
     };
     return this.http.delete(`inbound/receipts/lines`, params).pipe(map(res => res.data));
+  }
+
+  
+  generatePrePrintLPNLabel(receiptLineId: number, lpn: string, quantity?: number) : Observable<ReportHistory> {
+    
+    let url = `inbound/receipts/receipt-lines/${receiptLineId}/pre-print-lpn-label?lpn=${lpn}`;
+    
+    if (quantity) {
+      url = `${url}&quantity=${quantity}`
+    }
+    
+    
+    return this.http.post(url).pipe(map(res => res.data));
+  }
+
+  
+  generatePrePrintLPNLabelInBatch(receiptLineId: number, lpn: string, quantity?: number, count?: number) : Observable<ReportHistory> {
+    
+    let url = `inbound/receipts/receipt-lines/${receiptLineId}/pre-print-lpn-label/batch?lpn=${lpn}`;
+    
+    if (count) {
+      url = `${url}&count=${count}`
+    }
+    else {      
+      url = `${url}&count=1`
+    }
+
+    if (quantity) {
+      url = `${url}&quantity=${quantity}`
+    }
+    
+    
+    return this.http.post(url).pipe(map(res => res.data));
   }
 }

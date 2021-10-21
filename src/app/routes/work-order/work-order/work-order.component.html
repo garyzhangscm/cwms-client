@@ -120,10 +120,13 @@
                   <!--  allow the user to assign the production line only when
                    the work order is not start yet
                   -->
+                  <!--
+
                   <li nz-menu-item>
                     <a routerLink="/work-order/pre-print-lpn-label" routerLinkActive="active"
                       [queryParams]="{workOrderId : data.id!}">{{ 'pre-print-lpn-label' | i18n }}</a>
                   </li>
+                  -->
                   <li nz-menu-item *ngIf="isWorkOrderChangable(data)">
                     <a routerLink="/work-order/work-order/assign-production-line" routerLinkActive="active"
                       [queryParams]="{workOrderId : data.id!}">{{ 'work-order.assign-production-line' | i18n }}</a>
@@ -308,7 +311,9 @@
                     (preview)="previewProductionLineAssignmentReport(productionLineAssignment)">
                   </cwms-common-print-button>
                 </nz-list-item>
-                
+                  
+                <!--
+                  
                 <nz-list-item>
                   {{ 'production-line-assignment-label' | i18n }}: 
                   <cwms-common-print-button style='padding-left: 20px;'
@@ -316,7 +321,15 @@
                     (preview)="previewProductionLineAssignmentLabel(productionLineAssignment)">
                   </cwms-common-print-button>
                 </nz-list-item>
+                -->
                 
+                
+                <nz-list-item>
+                  <a routerLink="/work-order/pre-print-lpn-label" routerLinkActive="active"
+                    [queryParams]="{productionLineAssignmentId : productionLineAssignment.id!}">{{ 'pre-print-lpn-label' | i18n }}</a>
+                
+                  </nz-list-item>
+
                 <nz-list-item>
                   <a routerLink="/work-order/qc-sample-maintenance" routerLinkActive="active"
                       [queryParams]="{productionLineAssignmentId : productionLineAssignment.id!}">

@@ -157,10 +157,19 @@
               <td>{{ data.overReceivingQuantity }}</td>
               <td>{{ data.overReceivingPercent }}</td>
               <td>
-                <!-- Only if the receipt is already checked in -->
-                <button nz-button [disabled]="currentReceipt?.receiptStatus === receiptStatus.OPEN"
-                  (click)="openReceivingModal(data, tplReceivingModalTitle, tplReceivingModalContent, tplReceivingModalFooter)"
-                  nzType="primary">{{ 'receiving' | i18n }}</button>
+                
+                <nz-list>
+                  <nz-list-item>
+                    <!-- Only if the receipt is already checked in -->
+                    <button nz-button [disabled]="currentReceipt?.receiptStatus === receiptStatus.OPEN"
+                      (click)="openReceivingModal(data, tplReceivingModalTitle, tplReceivingModalContent, tplReceivingModalFooter)"
+                      nzType="primary">{{ 'receiving' | i18n }}</button>
+                  </nz-list-item>
+                  <nz-list-item>
+                    <a routerLink="/work-order/pre-print-lpn-label" routerLinkActive="active"
+                      [queryParams]="{receiptLineId : data.id!}">{{ 'pre-print-lpn-label' | i18n }}</a>
+                    </nz-list-item>
+                </nz-list>
               </td>
             </tr>
           </tbody>

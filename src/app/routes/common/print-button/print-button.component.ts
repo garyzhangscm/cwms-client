@@ -6,8 +6,8 @@ import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Printer } from '../models/printer';
 import { PrintingService } from '../services/printing.service';
 
@@ -20,8 +20,9 @@ export class CommonPrintButtonComponent implements OnInit {
   @Input() printingInProcess: boolean = false;
   @Input() allowPreview: boolean = true;
   @Input() printButtonDisabled: boolean = false;
-  @Output() print: EventEmitter<{ printerIndex: number, printerName: string, physicalCopyCount: number }> = new EventEmitter();
-  @Output() preview: EventEmitter<any> = new EventEmitter();
+  @Input() defaultPhysicalCopyCount: number = 1;
+  @Output() readonly print: EventEmitter<{ printerIndex: number, printerName: string, physicalCopyCount: number }> = new EventEmitter();
+  @Output() readonly preview: EventEmitter<any> = new EventEmitter();
 
   printerModal!: NzModalRef;
   printerForm!: FormGroup;
@@ -34,6 +35,7 @@ export class CommonPrintButtonComponent implements OnInit {
     private warehouserService: WarehouseService,
     private printingService: PrintingService) { }
 
+  // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void {
 
   }
@@ -47,7 +49,7 @@ export class CommonPrintButtonComponent implements OnInit {
 
     this.printerForm = this.fb.group({
       printer: new FormControl({ value: 0, disabled: false }),
-      physicalCopyCount: new FormControl({ value: 1, disabled: false }),
+      physicalCopyCount: new FormControl({ value: this.defaultPhysicalCopyCount, disabled: false }),
     });
 
     this.loadAvaiablePrinters();
@@ -117,7 +119,7 @@ export class CommonPrintButtonComponent implements OnInit {
 
   printByDefaultConfiguration(): void {
     // print 1 copy from default printer(index = -1)
-    this.print.emit({ printerIndex: -1, printerName: "", physicalCopyCount: 1 });
+    this.print.emit({ printerIndex: -1, printerName: "", physicalCopyCount: this.defaultPhysicalCopyCount });
 
   }
 
