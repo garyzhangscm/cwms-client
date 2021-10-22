@@ -315,8 +315,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.receiptForm.controls.receiptId.disable();
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.receiptNumber) {
-        this.loadReceipt(params.receiptNumber);
+      if (params.receiptNumber) { 
+        this.loadReceipt(params.receiptNumber); 
         this.newBatch = false;
       } else {
         this.listOfAllReceiptLines = [];
@@ -450,6 +450,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
 
   loadReceipt(receiptNumber: string): void {
+    
+    this.isSpinning = true;
     this.receiptService.getReceipts(receiptNumber).subscribe(receipts => {
       if (receipts.length > 0) {
         this.currentReceipt = receipts[0];

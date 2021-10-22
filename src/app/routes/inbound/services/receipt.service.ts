@@ -24,11 +24,15 @@ export class ReceiptService {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
   ) { }
 
-  getReceipts(number: string): Observable<Receipt[]> {
+  getReceipts(number: string, loadDetails?: boolean): Observable<Receipt[]> {
     let url = `inbound/receipts?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (number) {
       url = `${url}&number=${number}`;
     }
+    if (loadDetails !== undefined && loadDetails!= null) {
+      url = `${url}&loadDetails=${loadDetails}`;
+    }
+
 
     return this.http.get(url).pipe(map(res => res.data));
   }

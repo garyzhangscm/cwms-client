@@ -53,9 +53,34 @@
         <td><a routerLink="/inbound/receipt-maintenance" routerLinkActive="active"
             [queryParams]="{receiptNumber : data.number}">
             {{ data.number }}</a></td>
-        <td>{{ data.client?.name }}</td>
-        <td>{{ data.supplier?.name }}</td>
-        <td>{{ data.supplier?.description }}</td>
+        <td>
+          <nz-skeleton-element 
+          *ngIf="data.clientId && data.client == null"
+          nzType="input"
+          [nzActive]="true"
+          [nzSize]="'small'"
+          style="width:75px"
+        ></nz-skeleton-element> 
+        {{ data.client?.name }}</td>
+        <td>
+          
+              <nz-skeleton-element 
+              *ngIf="data.supplierId && data.supplier == null"
+              nzType="input"
+              [nzActive]="true"
+              [nzSize]="'small'"
+              style="width:75px"
+            ></nz-skeleton-element> 
+          {{ data.supplier?.name }}</td>
+        <td>
+            <nz-skeleton-element 
+            *ngIf="data.supplierId && data.supplier == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+          {{ data.supplier?.description }}</td>
         <td>{{ 'RECEIPT-STATUS-' + data.receiptStatus | i18n}} </td>
         <td>{{ data.totalLineCount }}</td>
         <td>{{ data.totalItemCount }}</td>

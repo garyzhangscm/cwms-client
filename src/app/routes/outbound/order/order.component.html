@@ -36,6 +36,13 @@
     (change)="orderTableChanged($event)" [scroll]="{ x: '2715px' }">
       <!-- more details about the shipping to customer -->
       <ng-template st-row="shipToCustomerColumn" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.shipToCustomer && item.shipToCustomer == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
         <a nz-tooltip [nzTooltipTitle]="shipToCustomerDetailsTemplate">{{ item.shipToCustomer?.name }}</a>
         <ng-template #shipToCustomerDetailsTemplate>
           
@@ -44,6 +51,29 @@
             {{item.shipToCustomer?.addressLine2}} <br>
             {{item.shipToCustomer?.addressCity}},  {{item.shipToCustomer?.addressState}} <br>
             {{item.shipToCustomer?.addressPostcode}} <br>
+            </address>
+        </ng-template>
+
+      </ng-template>
+      
+      <ng-template st-row="billToCustomerColumn" let-item let-index="index">
+        
+        <nz-skeleton-element 
+          *ngIf="item.billToCustomer && item.billToCustomer == null"
+          nzType="input"
+          [nzActive]="true"
+          [nzSize]="'small'"
+          style="width:75px"
+        ></nz-skeleton-element> 
+
+        <a nz-tooltip [nzTooltipTitle]="billToCustomerDetailsTemplate">{{ item.billToCustomer?.name }}</a>
+        <ng-template #billToCustomerDetailsTemplate>
+          
+          <address>  
+            {{item.billToCustomer?.addressLine1}} <br>
+            {{item.billToCustomer?.addressLine2}} <br>
+            {{item.billToCustomer?.addressCity}},  {{item.shipToCustomer?.addressState}} <br>
+            {{item.billToCustomer?.addressPostcode}} <br>
             </address>
         </ng-template>
 
@@ -100,7 +130,17 @@
               <tbody>
                 <tr *ngFor="let orderLine of orderLineTable.data">
                   <td>{{ orderLine.number }}</td>
-                  <td>{{ orderLine.item?.name }}</td>
+                  
+                  <td>
+                    
+                      <nz-skeleton-element 
+                      *ngIf="orderLine.itemId && orderLine.item == null"
+                      nzType="input"
+                      [nzActive]="true"
+                      [nzSize]="'small'"
+                      style="width:75px"
+                    ></nz-skeleton-element> 
+                    {{ orderLine.item?.name }}</td>
                   <td>{{ orderLine.expectedQuantity }}</td>
                   <td>{{ orderLine.openQuantity }}</td>
                   <td>{{ orderLine.inprocessQuantity }}</td>

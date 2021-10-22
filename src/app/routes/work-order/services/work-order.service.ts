@@ -212,7 +212,8 @@ export class WorkOrderService {
     return this.http.post(url).pipe(map(res => res.data));
   }
   
-  generatePrePrintLPNLabelInBatch(workOrderId: number, lpn: string, quantity?: number, count?: number, productionLineName?: string) : Observable<ReportHistory> {
+  generatePrePrintLPNLabelInBatch(workOrderId: number, lpn: string, quantity?: number, 
+    count?: number, productionLineName?: string, copies?: number) : Observable<ReportHistory> {
     
     let url = `workorder/work-orders/${workOrderId}/pre-print-lpn-label/batch?lpn=${lpn}`;
     
@@ -225,6 +226,9 @@ export class WorkOrderService {
 
     if (quantity) {
       url = `${url}&quantity=${quantity}`
+    }
+    if (copies) {
+      url = `${url}&copies=${copies}`
     }
     
     if (productionLineName) {

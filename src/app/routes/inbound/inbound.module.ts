@@ -2,6 +2,7 @@ import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 
 import { CommonModule } from '../common/common.module';
@@ -41,6 +42,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     InventoryModule, 
     NzDescriptionsModule,
     WarehouseLayoutModule,
+    NzSkeletonModule 
   ],
   declarations: [
     ...COMPONENTS,

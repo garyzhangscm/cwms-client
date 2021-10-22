@@ -59,7 +59,8 @@ export class ReceiptLineService {
   }
 
   
-  generatePrePrintLPNLabelInBatch(receiptLineId: number, lpn: string, quantity?: number, count?: number) : Observable<ReportHistory> {
+  generatePrePrintLPNLabelInBatch(receiptLineId: number, lpn: string, quantity?: number, count?: number, 
+    copies?: number) : Observable<ReportHistory> {
     
     let url = `inbound/receipts/receipt-lines/${receiptLineId}/pre-print-lpn-label/batch?lpn=${lpn}`;
     
@@ -72,6 +73,9 @@ export class ReceiptLineService {
 
     if (quantity) {
       url = `${url}&quantity=${quantity}`
+    }
+    if (copies) {
+      url = `${url}&copies=${copies}`
     }
     
     

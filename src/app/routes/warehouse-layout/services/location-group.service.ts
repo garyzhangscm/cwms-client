@@ -18,7 +18,7 @@ export class LocationGroupService {
     return this.http.get(url).pipe(map(res => res.data));
   }
 
-  getLocationGroup(id: string): Observable<LocationGroup> {
+  getLocationGroup(id: number): Observable<LocationGroup> {
     return this.http.get(`layout/locationgroups/${id}`).pipe(map(res => res.data));
   }
   getLocationGroups(locationGroupTypes: number[], locationGroups: number[]): Observable<LocationGroup[]> {

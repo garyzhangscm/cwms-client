@@ -2,6 +2,7 @@ import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
@@ -53,7 +54,7 @@ const COMPONENTS: Array<Type<void>> = [
   OutboundGridComponent,
   OutboundGridMaintenanceComponent,
   OutboundShippingCartonizationComponent,
-  OutboundAllocationConfigurationComponent,
+  OutboundAllocationConfigurationComponent
 ];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
@@ -68,7 +69,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzStepsModule,
     UtilModule, 
     NzAutocompleteModule,
-    GooglePlaceModule
+    GooglePlaceModule,
+    NzSkeletonModule 
   ],
   declarations: [
     ...COMPONENTS,

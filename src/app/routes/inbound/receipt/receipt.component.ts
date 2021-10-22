@@ -9,9 +9,14 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 
 import { Client } from '../../common/models/client';
 import { Supplier } from '../../common/models/supplier';
+import { ClientService } from '../../common/services/client.service';
+import { SupplierService } from '../../common/services/supplier.service';
+import { ItemService } from '../../inventory/services/item.service';
 import { ColumnItem } from '../../util/models/column-item';
+import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
 import { Receipt } from '../models/receipt';
+import { ReceiptLine } from '../models/receipt-line';
 import { ReceiptStatus } from '../models/receipt-status.enum';
 import { ReceiptService } from '../services/receipt.service';
 
@@ -157,6 +162,7 @@ export class InboundReceiptComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
     private utilService: UtilService,
+    private localCacheService: LocalCacheService,
   ) { }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inbound.receipt'));
@@ -183,10 +189,8 @@ export class InboundReceiptComponent implements OnInit {
     this.searching = true;
     this.isSpinning = true;
     this.searchResult = '';
-    this.receiptService.getReceipts(this.searchForm!.controls.number.value).subscribe(
+    this.receiptService.getReceipts(this.searchForm!.controls.number.value, false).subscribe(
       receiptRes => {
-        this.listOfAllReceipts = this.calculateQuantities(receiptRes);
-        this.listOfDisplayReceipts = this.calculateQuantities(receiptRes);
 
         this.searching = false;
         this.isSpinning = false;
@@ -194,6 +198,11 @@ export class InboundReceiptComponent implements OnInit {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
           rowCount: receiptRes.length,
         });
+
+        
+        this.refreshDetailInformations(receiptRes);
+        this.listOfAllReceipts = this.calculateQuantities(receiptRes);
+        this.listOfDisplayReceipts = this.calculateQuantities(receiptRes);
 
 
       },
@@ -203,6 +212,61 @@ export class InboundReceiptComponent implements OnInit {
         this.searchResult = '';
       },
     );
+  }
+  // we will load the client / supplier / item information 
+  // asyncronized
+  refreshDetailInformations(receipts: Receipt[]) { 
+    receipts.forEach(
+      receipt => this.refreshDetailInformation(receipt)
+    );
+  }
+  refreshDetailInformation(receipt: Receipt) {
+  
+      this.loadClient(receipt); 
+     
+      this.loadSupplier(receipt); 
+
+      // this.loadItems(receipt);
+  }
+  loadClient(receipt: Receipt) {
+     
+    if (receipt.clientId && receipt.client == null) {
+      this.localCacheService.getClient(receipt.clientId).subscribe(
+        {
+          next: (clientRes) => receipt.client = clientRes
+        }
+      );
+      
+    }
+  }
+  
+  loadSupplier(receipt: Receipt) { 
+    if (receipt.supplierId && receipt.supplier == null) {
+      
+      this.localCacheService.getSupplier(receipt.supplierId).subscribe(
+        {
+          next: (supplierRes) => receipt.supplier = supplierRes
+        }
+      );
+    }
+  }
+
+  
+  loadItems(receipt: Receipt) {
+     receipt.receiptLines.forEach(
+       receiptLine => this.loadItem(receiptLine)
+     );
+  }
+
+  loadItem(receiptLine: ReceiptLine) {
+    if (receiptLine.itemId && receiptLine.item == null) { 
+      
+      this.localCacheService.getItem(receiptLine.itemId).subscribe(
+        {
+          next: (itemRes) => receiptLine.item = itemRes
+        }
+      );
+    }
   }
 
   calculateQuantities(receipts: Receipt[]): Receipt[] {
@@ -215,8 +279,8 @@ export class InboundReceiptComponent implements OnInit {
       receipt.receiptLines.forEach(receiptLine => {
         receipt.totalExpectedQuantity! += receiptLine.expectedQuantity!;
         receipt.totalReceivedQuantity! += receiptLine.receivedQuantity!;
-        if (!existingItemIds.has(receiptLine.item!.id)) {
-          existingItemIds.add(receiptLine.item!.id);
+        if (!existingItemIds.has(receiptLine.itemId)) {
+          existingItemIds.add(receiptLine.itemId);
         }
       });
       receipt.totalItemCount = existingItemIds.size;

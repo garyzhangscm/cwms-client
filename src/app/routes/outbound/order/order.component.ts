@@ -19,6 +19,7 @@ import { InventoryService } from '../../inventory/services/inventory.service';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { ReportType } from '../../report/models/report-type.enum';
 import { ColumnItem } from '../../util/models/column-item';
+import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
@@ -26,6 +27,7 @@ import { LocationGroupTypeService } from '../../warehouse-layout/services/locati
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { Order } from '../models/order';
+import { OrderLine } from '../models/order-line';
 import { OrderStatus } from '../models/order-status.enum';
 import { PickWork } from '../models/pick-work';
 import { ShortAllocation } from '../models/short-allocation';
@@ -222,7 +224,8 @@ export class OutboundOrderComponent implements OnInit {
     private printingService: PrintingService,
     private locationGroupTypeService: LocationGroupTypeService, 
     private locationGroupService: LocationGroupService, 
-    private locationService: LocationService
+    private locationService: LocationService,
+    private localCacheService: LocalCacheService,
   ) { }
 
   printerModal!: NzModalRef;
@@ -276,17 +279,9 @@ export class OutboundOrderComponent implements OnInit {
   search(expandedOrderId?: number, tabSelectedIndex?: number): void {
     this.isSpinning = true;
     this.searchResult = '';
-    this.orderService.getOrders(this.searchForm.controls.number.value).subscribe(
+    this.orderService.getOrders(this.searchForm.controls.number.value, false).subscribe(
       orderRes => {
-        this.listOfAllOrders = this.calculateQuantities(orderRes);
-        this.listOfDisplayOrders = this.calculateQuantities(orderRes);
-
-
-        this.listOfAllOrders.forEach(order => {
-          // reset the allocation in process flag
-          this.mapOfAllocationInProcessId[order.id!] = false;
-
-        });
+ 
 
         this.collapseAllRecord(expandedOrderId);
 
@@ -295,6 +290,10 @@ export class OutboundOrderComponent implements OnInit {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
           rowCount: orderRes.length,
         });
+        
+        this.refreshDetailInformations(orderRes);
+        this.listOfAllOrders = this.calculateQuantities(orderRes);
+        this.listOfDisplayOrders = this.calculateQuantities(orderRes);
 
         if (tabSelectedIndex) {
           this.tabSelectedIndex = tabSelectedIndex;
@@ -306,6 +305,100 @@ export class OutboundOrderComponent implements OnInit {
       },
     );
   }
+
+  // we will load the client / supplier / item information 
+  // asyncronized
+  refreshDetailInformations(orders: Order[]) { 
+    orders.forEach(
+      order => this.refreshDetailInformation(order)
+    );
+  }
+  refreshDetailInformation(order: Order) {
+  
+      this.loadClient(order); 
+     
+      this.loadCustomer(order); 
+      
+      this.loadStageLocation(order); 
+      
+      this.loadOrderLinesInfo(order); 
+
+      // this.loadItems(receipt);
+  }
+  
+  loadClient(order: Order) {
+     
+    if (order.clientId && order.client == null) {
+      this.localCacheService.getClient(order.clientId).subscribe(
+        {
+          next: (res) => order.client = res
+        }
+      );      
+    }
+  }
+  
+  loadCustomer(order: Order) {
+     
+    if (order.billToCustomerId && order.billToCustomer == null) {
+      this.localCacheService.getCustomer(order.billToCustomerId).subscribe(
+        {
+          next: (res) => order.billToCustomer = res
+        }
+      );      
+    }
+    
+    if (order.shipToCustomerId && order.shipToCustomer == null) {
+      this.localCacheService.getCustomer(order.shipToCustomerId).subscribe(
+        {
+          next: (res) => order.shipToCustomer = res
+        }
+      );      
+    }
+  }
+  
+  loadStageLocation(order: Order) {
+     
+    if (order.stageLocationGroupId && order.stageLocationGroup == null) {
+      this.localCacheService.getLocationGroup(order.stageLocationGroupId).subscribe(
+        {
+          next: (res) => order.stageLocationGroup = res
+        }
+      );      
+    }
+    if (order.stageLocationId && order.stageLocation == null) {
+      this.localCacheService.getLocation(order.stageLocationId).subscribe(
+        {
+          next: (res) => order.stageLocation = res
+        }
+      );      
+    }
+  }
+  
+  loadOrderLinesInfo(order: Order) {
+    order.orderLines.forEach(
+      orderLine => this.loadOrderLineInfo(orderLine)
+    )
+  }
+  
+  loadOrderLineInfo(orderLine: OrderLine) {
+     console.log(`load order line info ${orderLine.number}`)
+    if (orderLine.inventoryStatusId && orderLine.inventoryStatus == null) {
+      this.localCacheService.getInventoryStatus(orderLine.inventoryStatusId).subscribe(
+        {
+          next: (res) => orderLine.inventoryStatus = res
+        }
+      );      
+    }
+    
+    if (orderLine.itemId && orderLine.item == null) {
+      this.localCacheService.getItem(orderLine.itemId).subscribe(
+        {
+          next: (res) => orderLine.item = res
+        }
+      );      
+    }
+  }
+
 
   collapseAllRecord(expandedOrderId?: number): void {
     this.listOfDisplayOrders.forEach(item => this.expandSet.delete(item.id!));
@@ -807,7 +900,12 @@ export class OutboundOrderComponent implements OnInit {
       render: 'shipToCustomerColumn',
       iif: () => this.isChoose('shipToCustomer'), width: 150
     },
-    { title: this.i18n.fanyi("order.billToCustomer"), index: 'billToCustomer?.name', iif: () => this.isChoose('billToCustomer'), width: 150},
+    {
+      title: this.i18n.fanyi("order.billToCustomer"),
+      // renderTitle: 'customTitle',
+      render: 'billToCustomerColumn',
+      iif: () => this.isChoose('billToCustomer'), width: 150
+    },
     { title: this.i18n.fanyi("order.totalItemCount"), index: 'totalItemCount', iif: () => this.isChoose('totalItemCount'), width: 150},
     { title: this.i18n.fanyi("order.totalOrderQuantity"), index: 'totalExpectedQuantity', iif: () => this.isChoose('totalExpectedQuantity'), width: 150 },
     { title: this.i18n.fanyi("order.totalOpenQuantity"), index: 'totalOpenQuantity', iif: () => this.isChoose('totalOpenQuantity'), width: 100 },

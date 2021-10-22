@@ -153,7 +153,7 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
   printWorkOrderLPNLabelInBatch(event: any, startLPN: string, quantity: number, labelCount: number) {
     this.workOrderService.generatePrePrintLPNLabelInBatch(
       this.currentWorkOrder!.id!, startLPN, quantity, labelCount, 
-      this.currentProductionLineAssignment.productionLine.name)
+      this.currentProductionLineAssignment.productionLine.name, event.physicalCopyCount)
       .subscribe({
         next: (printResult) => {
           // send the result to the printer
@@ -180,7 +180,7 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
   }
   printReceivingLPNLabelInBatch(event: any, startLPN: string, quantity: number, labelCount: number) {
     this.receiptLineService.generatePrePrintLPNLabelInBatch(
-      this.currentReceiptLine!.id!, startLPN, quantity, labelCount)
+      this.currentReceiptLine!.id!, startLPN, quantity, labelCount, event.physicalCopyCount)
       .subscribe({
         next: (printResult) => {
           // send the result to the printer
@@ -193,7 +193,10 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
             ReportType.RECEIVING_LPN_LABEL,
             event.printerIndex,
             event.printerName,
-            event.physicalCopyCount,
+            // event.physicalCopyCount,
+            1, // we will always only print one copy. If the user want to print multiple copies
+                // the paramter will be passed into the 'generate' command instead of the print command
+                // so that we will have labels printed in uncollated format, not collated format
             PrintPageOrientation.Portrait,
             PrintPageSize.Letter,
             this.currentReceiptLine?.receiptNumber);

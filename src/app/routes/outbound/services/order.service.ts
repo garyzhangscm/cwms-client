@@ -25,10 +25,14 @@ export class OrderService {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
   ) { }
 
-  getOrders(number: string): Observable<Order[]> {
+  getOrders(number: string, loadDetails?: boolean): Observable<Order[]> {
     let url = `outbound/orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (number) {
       url = `${url}&number=${number}`;
+    }
+    if (loadDetails != null) {
+      url = `${url}&loadDetails=${loadDetails}`;
+
     }
     return this.http.get(url).pipe(map(res => res.data));
   }
