@@ -61,8 +61,12 @@ export class WorkOrderDeassignProductionLineComponent implements OnInit {
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.workOrderId) {
+        this.isSpinning = true;
         this.workOrderService.getWorkOrder(params.workOrderId).subscribe({
-          next: (workOrderRes) => this.currentWorkOrder = workOrderRes,
+          next: (workOrderRes) => {
+            this.currentWorkOrder = workOrderRes
+            this.isSpinning = false;
+          },
           error: () => { },
         });
 

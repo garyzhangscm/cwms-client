@@ -63,6 +63,7 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.workOrderId) {
+        this.isSpinning = true;
         this.workOrderService.getWorkOrder(params.workOrderId).subscribe(
           workOrderRes => {
             this.workOrder = workOrderRes;
@@ -102,8 +103,7 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
             return assignedProductionLine.productionLine.id === productionLine.id
           }
         )
-      })
-        .forEach(productionLine => {
+      }).forEach(productionLine => {
 
           this.productionLineList = [...this.productionLineList, {
             key: productionLine.id!.toString(),
@@ -115,6 +115,7 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
 
         })
 
+        this.isSpinning = false;
     });
   }
 

@@ -65,8 +65,10 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
     this.fileList = [];
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.productionLineAssignmentId) {
+
         this.imageFileUploadUrl = `workorder/qc-samples/${params.productionLineAssignmentId}/images`;
 
+        this.isSpinning = true;
         this.productionLineAssignmentService.getProductionLineAssignment(
           params.productionLineAssignmentId
         ).subscribe({
@@ -95,7 +97,13 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
                     this.sampleNumberValidateStatus = 'success'; 
                     this.newSample = false;
                     this.loadImages();
+                    this.isSpinning = false;
                   }
+                  else {
+                    
+                    this.isSpinning = false;
+                  }
+
                 }
               })
           }
@@ -220,6 +228,7 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
 
     } else if (info.file.status === 'error') {
       this.messageService.error(`${info.file.name} ${this.i18n.fanyi('file.upload.fail')}`);
+      this.fileList = this.fileList.filter(file => file.uid !== info.file.uid);
     }
     else if (info.file.status === 'removed') {
       this.fileList = this.fileList.filter(file => file.uid !== info.file.uid);

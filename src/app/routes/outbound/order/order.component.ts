@@ -34,6 +34,7 @@ import { ShortAllocation } from '../models/short-allocation';
 import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
 import { OrderService } from '../services/order.service';
 import { PickService } from '../services/pick.service';
+import { ShipmentLineService } from '../services/shipment-line.service';
 import { ShortAllocationService } from '../services/short-allocation.service';
 
 
@@ -226,6 +227,7 @@ export class OutboundOrderComponent implements OnInit {
     private locationGroupService: LocationGroupService, 
     private locationService: LocationService,
     private localCacheService: LocalCacheService,
+    private shipmentLineService: ShipmentLineService,
   ) { }
 
   printerModal!: NzModalRef;
@@ -269,6 +271,8 @@ export class OutboundOrderComponent implements OnInit {
 
   avaiableLocations: WarehouseLocation[] = [];
 
+  loadingOrderDetailsRequest = 0;
+
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllOrders = [];
@@ -308,11 +312,36 @@ export class OutboundOrderComponent implements OnInit {
 
   // we will load the client / supplier / item information 
   // asyncronized
-  refreshDetailInformations(orders: Order[]) { 
-    orders.forEach(
-      order => this.refreshDetailInformation(order)
-    );
+  async refreshDetailInformations(orders: Order[]) { 
+    let index = 0;
+    while (index < orders.length) {
+
+      // we will need to make sure we are at max loading detail information
+      // for 10 orders at a time(each order may have 5 different request). 
+      // we will get error if we flush requests for
+      // too many orders into the server at a time
+      console.log(`1. this.loadingOrderDetailsRequest: ${this.loadingOrderDetailsRequest}`);
+      while(this.loadingOrderDetailsRequest > 50) {
+        // sleep 50ms        
+        await this.delay(50);
+      } 
+      this.refreshDetailInformation(orders[index]);
+      index++;
+    }
+    
+    while(this.loadingOrderDetailsRequest > 0) {
+      // sleep 50ms        
+      await this.delay(100);
+    } 
+    // refresh the table while everything is loaded
+    // console.log(`refresh the table`);  
+    this.st.reload();
   }
+  
+  delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+  }
+  
   refreshDetailInformation(order: Order) {
   
       this.loadClient(order); 
@@ -323,55 +352,80 @@ export class OutboundOrderComponent implements OnInit {
       
       this.loadOrderLinesInfo(order); 
 
+      this.calculateStatisticQuantities(order);
+
       // this.loadItems(receipt);
   }
-  
+
   loadClient(order: Order) {
      
     if (order.clientId && order.client == null) {
+      this.loadingOrderDetailsRequest++;
       this.localCacheService.getClient(order.clientId).subscribe(
         {
-          next: (res) => order.client = res
+          next: (res) => {
+            order.client = res;
+            this.loadingOrderDetailsRequest--;
+          }
         }
       );      
-    }
+    } 
   }
   
   loadCustomer(order: Order) {
      
     if (order.billToCustomerId && order.billToCustomer == null) {
+      this.loadingOrderDetailsRequest++;
       this.localCacheService.getCustomer(order.billToCustomerId).subscribe(
         {
-          next: (res) => order.billToCustomer = res
+          next: (res) => {
+            order.billToCustomer = res;
+          
+            this.loadingOrderDetailsRequest--;
+          }
         }
       );      
-    }
+    } 
     
     if (order.shipToCustomerId && order.shipToCustomer == null) {
+      this.loadingOrderDetailsRequest++;
       this.localCacheService.getCustomer(order.shipToCustomerId).subscribe(
         {
-          next: (res) => order.shipToCustomer = res
+          next: (res) => {
+            order.shipToCustomer = res;
+          
+            this.loadingOrderDetailsRequest--;
+          }
         }
       );      
-    }
+    } 
   }
   
   loadStageLocation(order: Order) {
      
     if (order.stageLocationGroupId && order.stageLocationGroup == null) {
+      this.loadingOrderDetailsRequest++;
       this.localCacheService.getLocationGroup(order.stageLocationGroupId).subscribe(
         {
-          next: (res) => order.stageLocationGroup = res
+          next: (res) => {
+            order.stageLocationGroup = res;
+            this.loadingOrderDetailsRequest--;
+          }
         }
       );      
-    }
+    } 
     if (order.stageLocationId && order.stageLocation == null) {
+      this.loadingOrderDetailsRequest++;
       this.localCacheService.getLocation(order.stageLocationId).subscribe(
         {
-          next: (res) => order.stageLocation = res
+          next: (res) =>{ 
+            order.stageLocation = res;
+          
+            this.loadingOrderDetailsRequest--;
+          }
         }
       );      
-    }
+    } 
   }
   
   loadOrderLinesInfo(order: Order) {
@@ -380,23 +434,77 @@ export class OutboundOrderComponent implements OnInit {
     )
   }
   
-  loadOrderLineInfo(orderLine: OrderLine) {
-     console.log(`load order line info ${orderLine.number}`)
+  loadOrderLineInfo(orderLine: OrderLine) { 
     if (orderLine.inventoryStatusId && orderLine.inventoryStatus == null) {
+      this.loadingOrderDetailsRequest++;
       this.localCacheService.getInventoryStatus(orderLine.inventoryStatusId).subscribe(
         {
-          next: (res) => orderLine.inventoryStatus = res
+          next: (res) => {
+            orderLine.inventoryStatus = res;
+            this.loadingOrderDetailsRequest--;
+          }
         }
       );      
-    }
+    } 
     
     if (orderLine.itemId && orderLine.item == null) {
+      this.loadingOrderDetailsRequest++;
       this.localCacheService.getItem(orderLine.itemId).subscribe(
         {
-          next: (res) => orderLine.item = res
+          next: (res) => {
+            orderLine.item = res;
+            this.loadingOrderDetailsRequest--;
+          }
         }
       );      
-    }
+    } 
+  }
+
+  calculateStatisticQuantities(order: Order) {
+    order.totalLineCount = order.orderLines.length;
+    
+    
+    order.totalExpectedQuantity = 0;
+    order.totalOpenQuantity = 0;
+    order.totalInprocessQuantity = 0;
+    order.totalShippedQuantity = 0;
+    order.totalPendingAllocationQuantity = 0;
+    order.totalPickedQuantity = 0;
+    order.totalOpenPickQuantity = 0;
+
+    order.orderLines.forEach( 
+        orderLine => {
+          order.totalExpectedQuantity! += orderLine.expectedQuantity;
+          order.totalOpenQuantity! += orderLine.openQuantity;
+          order.totalInprocessQuantity! += orderLine.inprocessQuantity;
+    
+          order.totalShippedQuantity! += orderLine.shippedQuantity;
+
+        } 
+    );
+    this.loadingOrderDetailsRequest++;
+    this.shipmentLineService.getShipmentLinesByOrder(order.id!).subscribe({
+      next: (shipmentLineRes) => {
+        shipmentLineRes.forEach(shipmentLine => {
+
+          console.log(`add ${shipmentLine.openQuantity} to totalPendingAllocationQuantity: ${order.totalPendingAllocationQuantity}`);
+          order.totalPendingAllocationQuantity! += shipmentLine.openQuantity;
+        })
+        this.loadingOrderDetailsRequest--;
+      }
+    });
+
+    this.loadingOrderDetailsRequest++;
+    this.pickService.getPicksByOrder(order.id!).subscribe({
+      next: (pickRes) => {
+        
+        order.totalPickedQuantity = pickRes.map(pick => pick.pickedQuantity).reduce((sum, current) => sum + current, 0);
+          order.totalOpenPickQuantity = pickRes.map(pick => (pick.quantity - pick.pickedQuantity)).reduce((sum, current) => sum + current, 0);
+          this.loadingOrderDetailsRequest--;
+      }
+    })
+     
+
   }
 
 

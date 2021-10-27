@@ -48,6 +48,8 @@ import { WorkOrderRoutingModule } from './work-order-routing.module';
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
 import { WorkOrderQcRuleConfigurationComponent } from './qc-rule-configuration/qc-rule-configuration.component';
 import { WorkOrderQcRuleConfigurationMaintenanceComponent } from './qc-rule-configuration-maintenance/qc-rule-configuration-maintenance.component';
+import { WorkOrderLaborComponent } from './labor/labor.component';
+import { WorkOrderLaborActivityComponent } from './labor-activity/labor-activity.component';
 
 
 const COMPONENTS: Array<Type<void>> = [
@@ -82,7 +84,9 @@ const COMPONENTS: Array<Type<void>> = [
   WorkOrderWorkOrderQcInspectionOperationComponent,
   WorkOrderWorkOrderQcInspectionResultComponent ,
   WorkOrderQcRuleConfigurationComponent,
-  WorkOrderQcRuleConfigurationMaintenanceComponent];
+  WorkOrderQcRuleConfigurationMaintenanceComponent,
+  WorkOrderLaborComponent,
+  WorkOrderLaborActivityComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

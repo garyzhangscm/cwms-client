@@ -1,9 +1,9 @@
-import { HttpParams } from '@angular/common/http';
+import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, timeout } from 'rxjs/operators';
 
 import { PrintableBarcode } from '../../common/models/printable-barcode';
 import { PrintingService } from '../../common/services/printing.service';
@@ -25,10 +25,13 @@ export class OrderService {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
   ) { }
 
-  getOrders(number: string, loadDetails?: boolean): Observable<Order[]> {
+  getOrders(number: string, loadDetails?: boolean,): Observable<Order[]> {
     let url = `outbound/orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    
     if (number) {
-      url = `${url}&number=${number}`;
+      const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+      
+      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number)}`; 
     }
     if (loadDetails != null) {
       url = `${url}&loadDetails=${loadDetails}`;
@@ -62,7 +65,9 @@ export class OrderService {
     const params = {
       order_ids: orderIds.join(','),
     };
-    return this.http.delete('outbound/orders', params).pipe(map(res => res.data));
+    return this.http.delete('outbound/orders', params)
+    .pipe(timeout(120000))
+    .pipe(map(res => res.data));
   }
   allocateOrder(order: Order): Observable<Order> {
     return this.http.post(`outbound/orders/${order.id}/allocate`).pipe(map(res => res.data));

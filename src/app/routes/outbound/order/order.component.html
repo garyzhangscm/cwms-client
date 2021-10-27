@@ -37,7 +37,7 @@
       <!-- more details about the shipping to customer -->
       <ng-template st-row="shipToCustomerColumn" let-item let-index="index">
         <nz-skeleton-element 
-            *ngIf="item.shipToCustomer && item.shipToCustomer == null"
+            *ngIf="item.shipToCustomerId && item.shipToCustomer == null"
             nzType="input"
             [nzActive]="true"
             [nzSize]="'small'"
@@ -59,7 +59,7 @@
       <ng-template st-row="billToCustomerColumn" let-item let-index="index">
         
         <nz-skeleton-element 
-          *ngIf="item.billToCustomer && item.billToCustomer == null"
+          *ngIf="item.billToCustomerId && item.billToCustomer == null"
           nzType="input"
           [nzActive]="true"
           [nzSize]="'small'"
@@ -147,7 +147,19 @@
                   <td>{{ orderLine.productionPlanInprocessQuantity }}</td>
                   <td>{{ orderLine.productionPlanProducedQuantity }}</td>
                   <td>{{ orderLine.shippedQuantity }}</td>
-                  <td>{{ 'INVENTORY-STATUS-' + orderLine.inventoryStatus?.name | i18n}}</td>
+                  <td>
+                    
+                    <nz-skeleton-element 
+                    *ngIf="orderLine.inventoryStatusId && orderLine.inventoryStatus == null"
+                    nzType="input"
+                    [nzActive]="true"
+                    [nzSize]="'small'"
+                      style="width:75px"
+                    ></nz-skeleton-element> 
+                    <span *ngIf="orderLine.inventoryStatus != null" >
+                      {{ 'INVENTORY-STATUS-' + orderLine.inventoryStatus?.name | i18n}}
+                    </span>
+                    </td>
                   <td>{{ 'ALLOCATION-STRATEGY-TYPE-' + orderLine.allocationStrategyType | i18n}}</td>
                 </tr>
               </tbody>
