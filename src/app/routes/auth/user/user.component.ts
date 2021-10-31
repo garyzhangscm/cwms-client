@@ -1,11 +1,12 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { User } from '../models/user';
@@ -24,6 +25,8 @@ export class AuthUserComponent implements OnInit {
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
     private utilService: UtilService,
+    private modalService: NzModalService,
+    private messageService: NzMessageService,
   ) {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.auth.user'));
   }
@@ -112,6 +115,9 @@ export class AuthUserComponent implements OnInit {
 
   searching = false;
   searchResult = '';
+  
+  newTempUserForm!: FormGroup;
+  newTempUserModal!: NzModalRef;
 
   resetForm(): void {
     this.searchForm!.reset();
@@ -161,5 +167,52 @@ export class AuthUserComponent implements OnInit {
         this.search();
       }
     });
+  }
+
+  
+  openNewTempUserModal( 
+    tplNewTempUserModalTitle: TemplateRef<{}>,
+    tplNewTempUserModalContent: TemplateRef<{}>,
+  ): void { 
+    this.newTempUserForm = this.fb.group({
+      username:  [null],
+      firstname:  [null],
+      lastname:  [null],
+    });
+
+    // Load the location
+    this.newTempUserModal = this.modalService.create({
+      nzTitle: tplNewTempUserModalTitle,
+      nzContent: tplNewTempUserModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.newTempUserModal.destroy(); 
+      },
+      nzOnOk: () => {
+        this.addNewTempUser( 
+          this.newTempUserForm.controls.username.value,
+          this.newTempUserForm.controls.firstname.value,
+          this.newTempUserForm.controls.lastname.value,
+        );
+        return false;
+      },
+
+      nzWidth: 1000,
+    });
+  }
+  addNewTempUser(username: string, firstname: string, lastname: string) { 
+    this.userService.addTempUser(username, firstname, lastname).subscribe({
+      next: () => {
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.newTempUserModal.destroy(); 
+        // search by the new user
+        this.searchForm.controls.username.setValue(username);
+        this.search();
+      }, 
+      error: () => this.messageService.error(this.i18n.fanyi('message.action.error'))
+    })
+
   }
 }

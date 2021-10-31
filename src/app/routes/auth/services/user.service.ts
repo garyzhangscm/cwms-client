@@ -1,8 +1,10 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MenuService, _HttpClient , SettingsService } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { User } from '../models/user';
 
@@ -13,6 +15,7 @@ import { User } from '../models/user';
 export class UserService {
   constructor(private http: _HttpClient, 
     private warehouseService: WarehouseService, 
+    private companyService: CompanyService, 
               private menuService: MenuService, 
               private settings: SettingsService) {}
 
@@ -84,6 +87,14 @@ export class UserService {
 
   getCurrentUsername() : string {
      return this.settings.user.name!;
+  }
+
+  addTempUser(username: string, firstname: string, lastname: string) : Observable<User> {
+    let params = new HttpParams();
+    params = params.append('username', username);
+    params = params.append('firstname', firstname);
+    params = params.append('lastname', lastname);
+    return this.http.post(`resource/user/new-temp-user?companyId=${this.companyService.getCurrentCompany()!.id}`, null, params).pipe(map(res => res.data));
   }
 
 }

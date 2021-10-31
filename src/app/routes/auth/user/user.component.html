@@ -62,6 +62,9 @@
 
   <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
     <a nz-button routerLink="/auth/user/maintenance" routerLinkActive="active">{{ 'new' | i18n }}</a>
+    <nz-divider nzType="vertical"></nz-divider>
+    <button nz-button (click)="openNewTempUserModal(tplNewTempUserModalTitle, tplNewTempUserModalContent )">{{'new-temp-user' | i18n}}</button>
+    
   </div>
 </div>
 
@@ -70,4 +73,54 @@
   <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
     {{searchResult}}
   </div>
+</ng-template>
+
+
+
+
+<!-- Modal for adding temporary user-->
+<ng-template #tplNewTempUserModalTitle>
+  <span>{{ 'new' | i18n}}</span>
+</ng-template>
+<ng-template #tplNewTempUserModalContent>
+  <form nz-form [formGroup]="newTempUserForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
+            {{ 'username' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="username" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="firstname">
+            {{ 'first-name' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="firstname" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lastname">
+            {{ 'last-name' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="lastname" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div> 
+  </form>
 </ng-template>

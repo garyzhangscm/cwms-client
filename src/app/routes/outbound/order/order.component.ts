@@ -799,8 +799,10 @@ export class OutboundOrderComponent implements OnInit {
   }
 
   cancelPick(order: Order, pick: PickWork): void {
+    this.isSpinning = true;
     this.pickService.cancelPick(pick).subscribe(pickRes => {
       this.messageService.success(this.i18n.fanyi('message.action.success'));
+      this.isSpinning = false;
       this.search(order.id, 1);
     });
   }
