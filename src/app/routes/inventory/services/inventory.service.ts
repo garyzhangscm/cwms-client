@@ -78,6 +78,11 @@ export class InventoryService {
     const url = `inventory/inventory/${  inventory.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
+  
+  removeInventories(inventoryIds: string): Observable<Inventory> {
+    const url = `inventory/inventory?inventoryIds=${inventoryIds}`;
+    return this.http.delete(url).pipe(map(res => res.data));
+  }
   adjustDownInventory(inventory: Inventory, documentNumber?: string, comment?: string): Observable<Inventory> {
     let url = `inventory/inventory-adj/${inventory.id}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (documentNumber) {

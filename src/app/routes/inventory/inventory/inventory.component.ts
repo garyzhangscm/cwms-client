@@ -1,4 +1,5 @@
 import { formatDate } from '@angular/common';
+import { LEADING_TRIVIA_CHARS } from '@angular/compiler/src/render3/view/template';
 import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -154,7 +155,7 @@ export class InventoryInventoryComponent implements OnInit {
 
   // Table data for display
   inventories: Inventory[] = [];
-  listOfDisplayInventories: Inventory[] = [];
+  listOfDisplayInventories: readonly  Inventory[] = [];
 
 
   inventoryToBeRemoved!: Inventory;
@@ -169,6 +170,19 @@ export class InventoryInventoryComponent implements OnInit {
   inventoryMoveModal!: NzModalRef;
 
   mapOfInprocessInventoryId: { [key: string]: boolean } = {};
+
+  
+  listOfSelection = [
+    {
+      text: this.i18n.fanyi(`select-all-rows`),
+      onSelect: () => {
+        this.onAllChecked(true);
+      }
+    },
+  ];
+  setOfCheckedId = new Set<number>();
+  checked = false;
+  indeterminate = false;
 
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
@@ -220,6 +234,8 @@ export class InventoryInventoryComponent implements OnInit {
   search(id?: number): void {
     this.isSpinning = true;
     this.searchResult = '';
+    
+    this.setOfCheckedId.clear();
     if (id) {
       this.inventoryService.getInventoryById(id).subscribe(
         inventoryRes => {
@@ -267,8 +283,8 @@ export class InventoryInventoryComponent implements OnInit {
 
   }
 
-  currentPageDataChange($event: Inventory[]): void {
-    this.listOfDisplayInventories = $event;
+  onCurrentPageDataChange(listOfCurrentPageData: readonly  Inventory[]): void {
+    this.listOfDisplayInventories = listOfCurrentPageData;
   }
 
 
@@ -387,6 +403,31 @@ export class InventoryInventoryComponent implements OnInit {
       nzWidth: 1000,
     });
   }
+  
+  onAllChecked(value: boolean): void {
+    this.listOfDisplayInventories!.forEach(item => this.updateCheckedSet(item.id!, value));
+    this.refreshCheckedStatus();
+  }
+   
+  refreshCheckedStatus(): void {
+    this.checked = this.listOfDisplayInventories!.every(item => this.setOfCheckedId.has(item.id!));
+    this.indeterminate = this.listOfDisplayInventories!.some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
+  }
+  
+  onItemChecked(id: number, checked: boolean): void {
+    this.updateCheckedSet(id, checked);
+    this.refreshCheckedStatus();
+  }
+
+  
+  updateCheckedSet(id: number, checked: boolean): void {
+    if (checked) {
+      this.setOfCheckedId.add(id);
+    } else {
+      this.setOfCheckedId.delete(id);
+    }
+  }
+
   moveInventory(inventory: Inventory, destinationLocationName: string, immediateMove: boolean): void {
     this.locationService.getLocations(undefined, undefined, destinationLocationName).subscribe(location => {
       this.inventoryService.move(inventory, location[0], immediateMove).subscribe(
@@ -473,6 +514,47 @@ export class InventoryInventoryComponent implements OnInit {
   }
   processLocationValueQueryResult(event: Event) {
     console.log(`inventory selected: ${(event.target as HTMLInputElement).value}`)
+  }
+
+  
+  removeSelectedInventory(): void {
+    // make sure we have at least one checkbox checked
+    
+    this.isSpinning = true;
+    const selectedInventory = this.getSelectedInventory();
+    if (selectedInventory.length > 0) {
+      const inventoryIds = selectedInventory.map(inventory => inventory.id!).join(",");
+        this.inventoryService.removeInventories(inventoryIds).subscribe(
+          {
+            next: () => {
+              this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.adjust-success'));
+              this.isSpinning = false;
+              this.search();
+            }, 
+            error: () => {
+                    
+              this.isSpinning = false;
+              this.messageService.error(this.i18n.fanyi('message.action.fail'));
+            }
+          }
+
+        )
+    }
+    else {
+      
+      this.isSpinning = false;
+    }
+    
+  }
+  
+  getSelectedInventory(): Inventory[] {
+    const selectedInventory: Inventory[] = [];
+    this.listOfDisplayInventories.forEach((inventory: Inventory) => {
+      if (this.setOfCheckedId.has(inventory.id!)) {
+        selectedInventory.push(inventory);
+      }
+    });
+    return selectedInventory;
   }
 
 }
