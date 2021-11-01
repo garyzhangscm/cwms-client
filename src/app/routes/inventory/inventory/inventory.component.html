@@ -97,7 +97,7 @@
 
   <!-- Table to Display the result  -->
   <div class="search-result-list">
-    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #rowSelectionTable nzShowSizeChanger nzShowPagination
+    <nz-table [nzScroll]="{ x: '100vw'}" #rowSelectionTable nzShowSizeChanger nzShowPagination
       [nzData]="inventories" [nzFooter]="tableFoot" (nzCurrentPageDataChange)="onCurrentPageDataChange($event)">
       <thead>
         <tr>
@@ -112,7 +112,7 @@
           </th>
 
 
-          <th nzWidth="20%">{{ 'action' | i18n }}</th>
+          <th nzWidth="20%" nzRight>{{ 'action' | i18n }}</th>
         </tr>
       </thead>
       <tbody>
@@ -127,7 +127,15 @@
             <a nz-popover nzPopoverTitle="{{ 'itemPackageTypeDetails' | i18n}}"
               [nzPopoverContent]="itemPackageTypeDetails">{{ data.itemPackageType?.name }}</a>
           </td>
-          <td>{{ data.location?.name }}</td>
+          <td>
+            <nz-skeleton-element 
+              *ngIf="data.locationId && data.location == null"
+              nzType="input"
+              [nzActive]="true"
+              [nzSize]="'small'"
+              style="width:75px"
+            ></nz-skeleton-element> 
+            {{ data.location?.name }}</td>
           <td>{{ data.quantity }}</td>
           <td>
             <a nz-tooltip nzTooltipTitle="{{ 'INVENTORY-STATUS-' + data.inventoryStatus!.name | i18n }}">{{
@@ -140,16 +148,42 @@
                 routerLinkActive="active" [queryParams]="{inventoryId : data.id!}">{{ (data.lockedForAdjust + '') | i18n
                 }}</a></span>
           </td>
-          <td>{{ data.pick?.number }}</td>
-          <td>{{ data.allocatedByPick?.number }}</td>
+          <td>
+            
+            <nz-skeleton-element 
+              *ngIf="data.pickId && data.pick == null"
+              nzType="input"
+              [nzActive]="true"
+              [nzSize]="'small'"
+              style="width:75px"
+            ></nz-skeleton-element> 
+            {{ data.pick?.number }}</td>
+          <td>
+            <nz-skeleton-element 
+              *ngIf="data.allocatedByPickId && data.allocatedByPick == null"
+              nzType="input"
+              [nzActive]="true"
+              [nzSize]="'small'"
+              style="width:75px"
+            ></nz-skeleton-element> 
+            {{ data.allocatedByPick?.number }}</td>
           <td>
             <ol *ngIf="data.inventoryMovements!.length > 0">
               <li *ngFor="let movement of data.inventoryMovements">
-                <span>{{ movement.location?.name}}</span>
+                
+                <span>
+                  <nz-skeleton-element 
+                    *ngIf="movement.locationId && movement.location == null"
+                    nzType="input"
+                    [nzActive]="true"
+                    [nzSize]="'small'"
+                    style="width:75px"
+                  ></nz-skeleton-element> 
+                  {{ movement.location?.name}}</span>
               </li>
             </ol>
           </td>
-          <td>
+          <td nzRight>
             <button nz-button nz-dropdown [nzDropdownMenu]="actions" [nzLoading]="mapOfInprocessInventoryId[data.id!]"
               *ngIf="data.lockedForAdjust === false">{{ 'action' | i18n }}<i nz-icon nzType="down"></i></button>
             <nz-dropdown-menu #actions="nzDropdownMenu">
@@ -197,7 +231,15 @@
               </thead>
       <tbody>
         <tr *ngFor="let itemUnitOfMeasure of itemPackageTypeDetailTable.data">
-          <td>{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
+          <td>
+            <nz-skeleton-element 
+              *ngIf="itemUnitOfMeasure.unitOfMeasureId && itemUnitOfMeasure.unitOfMeasure == null"
+              nzType="input"
+              [nzActive]="true"
+              [nzSize]="'small'"
+              style="width:75px"
+            ></nz-skeleton-element> 
+            {{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
           <td>{{ itemUnitOfMeasure.quantity }}</td>
           <td>{{ itemUnitOfMeasure.weight }}</td>
           <td>{{ itemUnitOfMeasure.length }}</td>

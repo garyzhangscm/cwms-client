@@ -17,9 +17,11 @@ import { PrintingService } from '../../common/services/printing.service';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { ReportType } from '../../report/models/report-type.enum';
 import { ColumnItem } from '../../util/models/column-item';
+import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { Inventory } from '../models/inventory';
+import { InventoryMovement } from '../models/inventory-movement';
 import { ItemFamily } from '../models/item-family';
 import { InventoryService } from '../services/inventory.service';
 import { ItemFamilyService } from '../services/item-family.service';
@@ -202,6 +204,7 @@ export class InventoryInventoryComponent implements OnInit {
     private utilService: UtilService,
     private printingService: PrintingService,
     private router: Router,
+    private localCacheService: LocalCacheService
   ) { }
 
   ngOnInit(): void {
@@ -259,6 +262,7 @@ export class InventoryInventoryComponent implements OnInit {
           this.searchForm.value.itemName,
           this.searchForm.value.location,
           this.searchForm.value.lpn,
+          false
         )
         .subscribe(
           inventoryRes => {
@@ -281,6 +285,86 @@ export class InventoryInventoryComponent implements OnInit {
     this.inventories = inventories;
     this.listOfDisplayInventories = inventories;
 
+    this.loadDetails(this.inventories);
+
+  }
+  loadDetails(inventories: Inventory[]): void {
+
+    inventories.forEach(
+      inventory => {
+        this.loadDetail(inventory);
+      }
+    ) 
+  }
+  
+  loadDetail(inventory: Inventory): void {
+
+    // load the information for current location
+    if (inventory.locationId && inventory.location == null) {
+      this.localCacheService.getLocation(inventory.locationId!).subscribe(
+        {
+          next: (locationRes) => inventory.location = locationRes
+        }
+      )
+    } 
+    
+
+    // load the location of the inventory movement
+    if (inventory.inventoryMovements && inventory.inventoryMovements.length > 0) {
+      inventory.inventoryMovements.forEach(
+        inventoryMovement =>  this.loadInventoryMovementDetails(inventoryMovement)
+      )
+    }
+
+    // load the Unit of Measure for each item unit of measure of each package type
+    this.loadUnitOfMeasure(inventory);
+    
+    // load the pick informaiton
+    if (inventory.pickId && inventory.pick == null) {
+      this.localCacheService.getPick(inventory.pickId!).subscribe(
+        {
+          next: (pickRes) => inventory.pick = pickRes
+        }
+      )
+    } 
+
+    // load the allocate by pick informaiton
+    if (inventory.allocatedByPickId && inventory.allocatedByPick == null) {
+      this.localCacheService.getPick(inventory.allocatedByPickId!).subscribe(
+        {
+          next: (pickRes) => inventory.allocatedByPick = pickRes
+        }
+      )
+    } 
+    
+  }
+  loadUnitOfMeasure(inventory: Inventory): void {
+    if (inventory.itemPackageType && inventory.itemPackageType.itemUnitOfMeasures &&
+              inventory.itemPackageType.itemUnitOfMeasures.length > 0) {
+
+      inventory.itemPackageType.itemUnitOfMeasures.filter(
+        itemUnitOfMeasure  => itemUnitOfMeasure.unitOfMeasureId != null && 
+                                  itemUnitOfMeasure.unitOfMeasure == null
+      ).forEach(
+          itemUnitOfMeasure => {
+            this.localCacheService.getUnitOfMeasure(itemUnitOfMeasure.unitOfMeasureId!)
+              .subscribe({
+                next: (unitOfMeasureRes) => itemUnitOfMeasure.unitOfMeasure = unitOfMeasureRes
+              })
+          }
+      )
+    }
+  } 
+  loadInventoryMovementDetails(inventoryMovement: InventoryMovement) : void {
+
+    if (inventoryMovement.locationId && inventoryMovement.location == null) {
+
+      this.localCacheService.getLocation(inventoryMovement.locationId!).subscribe(
+        {
+          next: (locationRes) => inventoryMovement.location = locationRes
+        }
+      )
+    } 
   }
 
   onCurrentPageDataChange(listOfCurrentPageData: readonly  Inventory[]): void {

@@ -6,14 +6,18 @@ import { tap } from 'rxjs/operators';
 import { Client } from '../../common/models/client';
 import { Customer } from '../../common/models/customer';
 import { Supplier } from '../../common/models/supplier';
+import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { ClientService } from '../../common/services/client.service';
 import { CustomerService } from '../../common/services/customer.service';
 import { SupplierService } from '../../common/services/supplier.service';
+import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { Item } from '../../inventory/models/item';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ItemService } from '../../inventory/services/item.service';
+import { PickWork } from '../../outbound/models/pick-work';
+import { PickService } from '../../outbound/services/pick.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
@@ -44,6 +48,8 @@ export class LocalCacheService {
     private locationGroupService: LocationGroupService,
     private locationService: LocationService,
     private inventoryStatusService: InventoryStatusService,
+    private unitOfMeasureService: UnitOfMeasureService,
+    private pickService: PickService,
     private itemService: ItemService) { }
 
   getClient(id: number) : Observable<Client> {
@@ -180,6 +186,46 @@ export class LocalCacheService {
       
       
   }  
+  
+  getPick(id: number) : Observable<PickWork> {
+    
+    const cacheKey = `pickwork-${id}`;
+    const data = this.load(cacheKey)
+
+    // Return data from cache
+    if (data !== null) {
+        return of<PickWork>(data)
+    }
+    
+    return this.pickService.getPick(id)
+        .pipe(tap(res => this.save({
+          key: cacheKey,
+          data: res,
+          expirationMins: this.defaultCacheTime
+      })));
+      
+      
+  } 
+  
+  getUnitOfMeasure(id: number) : Observable<UnitOfMeasure> {
+    
+    const cacheKey = `unitOfMeasure-${id}`;
+    const data = this.load(cacheKey)
+
+    // Return data from cache
+    if (data !== null) {
+        return of<UnitOfMeasure>(data)
+    }
+    
+    return this.unitOfMeasureService.getUnitOfMeasure(id)
+        .pipe(tap(res => this.save({
+          key: cacheKey,
+          data: res,
+          expirationMins: this.defaultCacheTime
+      })));
+      
+      
+  }   
 
   save(options: LocalStorageSaveOptions) {
     // Set default values for optionals

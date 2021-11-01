@@ -2,6 +2,7 @@ import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzImageModule } from 'ng-zorro-antd/image';
+import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 
 import { CommonModule } from '../common/common.module';
@@ -88,7 +89,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzImageModule,
     CommonModule,
     NzStepsModule, 
-    UtilModule
+    UtilModule,
+    NzSkeletonModule 
   ],
   declarations: [
     ...COMPONENTS,

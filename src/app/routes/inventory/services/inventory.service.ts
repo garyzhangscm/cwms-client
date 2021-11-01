@@ -27,10 +27,11 @@ export class InventoryService {
     itemName?: string,
     location?: string,
     lpn?: string,
+    includeDetails?: boolean
   ): Observable<Inventory[]> {
-    let params = '';
+    let params = `warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (itemName) {
-      params = `itemName=${itemName}`;
+      params = `${params}&itemName=${itemName}`;
     }
     if (clients && clients.length > 0) {
       params = `${params}&clients=${clients.join(',')}`;
@@ -43,10 +44,10 @@ export class InventoryService {
     }
     if (lpn) {
       params = `${params}&lpn=${lpn}`;
-    }
-    params = `${params}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    if (params.startsWith('&')) {
-      params = params.substring(1);
+    } 
+    if (includeDetails !== undefined && includeDetails !== null) {
+
+      params = `${params}&includeDetails=${includeDetails}`;
     }
 
     const url = `inventory/inventories${  params.length > 0 ? `?${  params}` : ''}`;
