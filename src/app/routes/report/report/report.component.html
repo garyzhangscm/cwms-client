@@ -6,11 +6,11 @@
 
     <div nz-col [nzSpan]="8">
       <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24">
+        <nz-form-label [nzSpan]="6">
           {{ 'report.type' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-          <nz-select nzAllowClear formControlName="type" style="width: 200px;">
+        <nz-form-control [nzSpan]="18">
+          <nz-select nzAllowClear formControlName="type" style="width: 300px;">
             <nz-option *ngFor="let reportType of reportTypes | keys" nzValue="{{ reportType.key }}"
               nzLabel="{{ 'REPORT-TYPE-' + reportType.key | i18n }}">
             </nz-option>
@@ -85,25 +85,43 @@
         <td>{{ data.warehouse?.name }}</td>
         <td>{{ 'REPORT-ORIENTATION_' + data.reportOrientation | i18n }}</td>
         <td>
-          <a [href]="data.fileUrl" target="_blank" rel="noopener noreferrer">
+          
+          <nz-list>
+            <nz-list-item>
+              <a [href]="data.fileUrl" target="_blank" rel="noopener noreferrer">
+    
+                {{ data.fileName }}
+              </a>
+            </nz-list-item>
+            <nz-list-item *ngFor="let propertyFile of data.mapOfPropertyFiles | keyvalue"> 
 
-            {{ data.fileName }}
-          </a>
+              <a [href]="propertyFile.value" target="_blank" rel="noopener noreferrer">
+    
+                {{ propertyFile.key }}
+              </a>
+            </nz-list-item> 
+          </nz-list>
         </td>
         <td nzRight>
 
-          <button nz-button nzType="primary" routerLink="/report/report-maintenance" routerLinkActive="active"
-            [queryParams]="{id : data.id!}" [disabled]="data.companyId === null && data.warehouseId === null">
-            {{ 'modify' | i18n }}
-          </button>
-          <nz-divider nzType="vertical" ></nz-divider>
-
-          
-          <button nz-button nzDanger [disabled]="data.companyId === null && data.warehouseId === null" 
-          (click)="removeCustomizedReport(data)">
-            {{ 'delete' | i18n }}
-          </button>
-
+          <button nz-button nz-dropdown [nzDropdownMenu]="actions" [disabled]="data.companyId === null && data.warehouseId === null" >
+            {{ 'action' | i18n }}<i nz-icon nzType="down"></i></button>
+          <nz-dropdown-menu #actions="nzDropdownMenu">
+            <ul nz-menu>
+              <li nz-menu-item>
+                <button nz-button nzType="primary" routerLink="/report/report-maintenance" routerLinkActive="active"
+                  [queryParams]="{id : data.id!}" [disabled]="data.companyId === null && data.warehouseId === null">
+                  {{ 'modify' | i18n }}
+                </button>
+              </li>
+              <li nz-menu-item>
+                <button nz-button nzDanger [disabled]="data.companyId === null && data.warehouseId === null" 
+                (click)="removeCustomizedReport(data)">
+                  {{ 'delete' | i18n }}
+                </button>
+              </li>
+            </ul>
+          </nz-dropdown-menu>
         </td>
       </tr>
 

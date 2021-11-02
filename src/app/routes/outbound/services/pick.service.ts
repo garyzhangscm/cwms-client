@@ -256,6 +256,49 @@ export class PickService {
       orderNumber,
     );
   }
+  getPickBySourceLocationIdAndItemId(itemId: number, sourceLocationId: number) : Observable<PickWork[]> {
+    return this.getPicks(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      itemId,
+      sourceLocationId
+    );
+  }
+  getOpenPicksBySourceLocationIdAndItemId(itemId: number, sourceLocationId: number) : Observable<PickWork[]> {
+    return this.getPicks(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      itemId,
+      sourceLocationId,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      true
+    );
+  }
   getPicks(
     number?: string,
     orderId?: number,
@@ -279,7 +322,8 @@ export class PickService {
     pickListNumber?: string,
     cartonizationNumber?: string,
     containerId?: string,
-    workOrderLineIds?: string
+    workOrderLineIds?: string, 
+    openPickOnly?: boolean
   ): Observable<PickWork[]> {
     let url = `outbound/picks?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (number) {
@@ -355,6 +399,10 @@ export class PickService {
     }
     if (workOrderLineIds) {
       url = `${url}&workOrderLineIds=${workOrderLineIds}`;
+    }
+    if (openPickOnly != null) {
+      url = `${url}&openPickOnly=${openPickOnly}`;
+
     }
 
     return this.http.get(url).pipe(map(res => res.data));

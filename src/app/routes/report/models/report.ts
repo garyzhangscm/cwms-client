@@ -18,5 +18,9 @@ export interface Report {
   fileUrl?: string;
   reportOrientation: ReportOrientation;
 
+  
+  // key: filename
+  // value: file downloading url
+  mapOfPropertyFiles?: { [key: string]: string };
 
 }

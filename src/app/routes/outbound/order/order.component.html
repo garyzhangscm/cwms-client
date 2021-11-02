@@ -341,8 +341,8 @@
                   {{ 'action' | i18n }}
                 </th>
               </thead>
-              <tbody *ngFor="let shortAllocation of shortAllocationTable.data">
-                <tr *ngIf="shortAllocation.status !== shortAllocationStatus.CANCELLED">
+              <tbody >
+                <tr *ngFor="let shortAllocation of shortAllocationTable.data">
 
                   <td>{{ shortAllocation.item?.name }}</td>
                   <td>{{ shortAllocation.item?.description }}</td>

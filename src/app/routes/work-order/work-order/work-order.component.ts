@@ -630,7 +630,11 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     this.shortAllocationService.getShortAllocationsByWorkOrder(workOrder)
       .subscribe({
 
-        next: (shortAllocationRes) => this.mapOfShortAllocations[workOrder.id!] = [...shortAllocationRes]
+        next: (shortAllocationRes) => {
+          this.mapOfShortAllocations[workOrder.id!] = shortAllocationRes.filter(
+            shortAllocation => shortAllocation.status !== ShortAllocationStatus.CANCELLED
+          )
+        }
       });
   }
 

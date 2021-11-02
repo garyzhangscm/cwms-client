@@ -25,9 +25,10 @@ export class InventoryService {
     clients?: Client[],
     itemFamilies?: ItemFamily[],
     itemName?: string,
-    location?: string,
+    locationName?: string,
     lpn?: string,
-    includeDetails?: boolean
+    includeDetails?: boolean,
+    inventoryStatusId?: number
   ): Observable<Inventory[]> {
     let params = `warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (itemName) {
@@ -39,11 +40,14 @@ export class InventoryService {
     if (itemFamilies && itemFamilies.length > 0) {
       params = `${params}&item_families=${itemFamilies.join(',')}`;
     }
-    if (location) {
-      params = `${params}&location=${location}`;
+    if (locationName) {
+      params = `${params}&location=${locationName}`;
     }
     if (lpn) {
       params = `${params}&lpn=${lpn}`;
+    } 
+    if (inventoryStatusId) {
+      params = `${params}&inventoryStatusId=${inventoryStatusId}`;
     } 
     if (includeDetails !== undefined && includeDetails !== null) {
 
@@ -61,6 +65,16 @@ export class InventoryService {
 
   getInventoriesByLocationName(location: string): Observable<Inventory[]> {
     const url = `inventory/inventories?location=${location}&warehouseId=${
+      this.warehouseService.getCurrentWarehouse().id
+    }`;
+    return this.http.get(url).pipe(map(res => res.data));
+  }
+  getInventoriesByLocationNameAndItemNameAndInventoryStatusId(
+    locationId: number,
+    itemName: string,
+    inventoryStatusId: number
+  ): Observable<Inventory[]> {
+    const url = `inventory/inventories?inventoryStatusId=${inventoryStatusId}&locationId=${locationId}&itemName=${itemName}&warehouseId=${
       this.warehouseService.getCurrentWarehouse().id
     }`;
     return this.http.get(url).pipe(map(res => res.data));

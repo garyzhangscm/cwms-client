@@ -33,6 +33,7 @@ import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenis
 import { InventoryInventoryConfigurationComponent } from './inventory-configuration/inventory-configuration.component';
 import { InventoryInventorySnapshotComponent } from './inventory-snapshot/inventory-snapshot.component';
 import { InventoryInventorySnapshotConfigurationComponent } from './inventory-snapshot-configuration/inventory-snapshot-configuration.component';
+import { InventoryInventoryAllocationSummaryComponent } from './inventory-allocation-summary/inventory-allocation-summary.component';
 
 const routes: Routes = [
   { path: 'inventory', component: InventoryInventoryComponent, canActivate: [AuthGuard] },
@@ -69,7 +70,8 @@ const routes: Routes = [
   { path: 'item-query-popup', component: InventoryItemQueryPopupComponent },
   { path: 'configuration', component: InventoryInventoryConfigurationComponent },
   { path: 'snapshot', component: InventoryInventorySnapshotComponent },
-  { path: 'inventory-snapshot-configuration', component: InventoryInventorySnapshotConfigurationComponent }];
+  { path: 'inventory-snapshot-configuration', component: InventoryInventorySnapshotConfigurationComponent },
+  { path: 'inventory-allocation-summary', component: InventoryInventoryAllocationSummaryComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

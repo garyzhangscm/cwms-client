@@ -107,7 +107,8 @@ export class ReportReportMaintenanceComponent implements OnInit {
       description: '',
       type: undefined,
       fileName: '',
-      reportOrientation: ReportOrientation.LANDSCAPE
+      reportOrientation: ReportOrientation.LANDSCAPE,  
+
     };
   }
   previousStep(): void {

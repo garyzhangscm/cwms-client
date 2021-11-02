@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { UserService } from '../../auth/services/user.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Report } from '../models/report';
+import { ReportType } from '../models/report-type.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -53,6 +54,14 @@ export class ReportService {
   removeReport(report: Report): Observable<Report> {
     const url = `resource/reports/${report.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
+  }
+
+  isLabel(reportType: ReportType) : boolean {
+    const labelReportTypes = [
+      ReportType.LPN_LABEL, 
+      ReportType.PRODUCTION_LINE_ASSIGNMENT_LABEL, 
+      ReportType.RECEIVING_LPN_LABEL];
+    return labelReportTypes.includes(reportType);
   }
 
 }

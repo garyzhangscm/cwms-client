@@ -752,7 +752,11 @@ export class OutboundOrderComponent implements OnInit {
   showShortAllocations(order: Order): void {
     this.shortAllocationService
       .getShortAllocationsByOrder(order.id!)
-      .subscribe(shortAllocationRes => (this.mapOfShortAllocations[order.id!] = [...shortAllocationRes]));
+      .subscribe(shortAllocationRes => {
+        this.mapOfShortAllocations[order.id!] = shortAllocationRes.filter(
+          shortAllocation => shortAllocation.status != ShortAllocationStatus.CANCELLED
+        )
+      } );
   }
   showPickedInventory(order: Order): void {
     // Get all the picks and then load the pikced inventory

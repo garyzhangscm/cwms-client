@@ -113,6 +113,8 @@ export class ReportReportComponent implements OnInit {
 
   isSpinning = false;
   reportTypes = ReportType;
+   
+
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllReports = [];
@@ -150,7 +152,10 @@ export class ReportReportComponent implements OnInit {
 
   setupReportUrl(reports: Report[]): void {
     reports.forEach(report => {
-      let fileUrl = `${environment.api.baseUrl}/resource/reports/templates?fileName=${report.fileName}`;
+      
+      let fileUrl = `${environment.api.baseUrl}/resource/reports/templates?fileName=${
+        this.isLabel(report.type!) ? `${report.fileName  }.prn` : `${report.fileName  }.jrxml` }`;
+
       if (report.companyId) {
         fileUrl = `${fileUrl}&companyId=${report.companyId}`;
       }
@@ -158,7 +163,34 @@ export class ReportReportComponent implements OnInit {
         fileUrl = `${fileUrl}&warehouseId=${report.warehouseId}`;
       }
       report.fileUrl = fileUrl;
+      if (!this.isLabel(report.type!)) {
+        this.setupReportI18NFileNames(report);
+      }
     });
+  }
+  
+  setupReportI18NFileNames(report: Report) {
+    report.mapOfPropertyFiles = {};
+    const reportI18NFileNames = [
+      `${report.fileName  }_en_US.properties`,
+      `${report.fileName  }_zh_CN.properties`,
+    ];
+ 
+    reportI18NFileNames.forEach(
+      fileName => {
+        let fileUrl = `${environment.api.baseUrl}/resource/reports/templates?fileName=${fileName}`;
+  
+        if (report.companyId) {
+          fileUrl = `${fileUrl}&companyId=${report.companyId}`;
+        }
+        if (report.warehouseId) {
+          fileUrl = `${fileUrl}&warehouseId=${report.warehouseId}`;
+        }
+        report.mapOfPropertyFiles![fileName] = fileUrl;
+      }
+    )
+    
+
   }
 
   currentPageDataChange($event: Report[]): void {
@@ -193,5 +225,8 @@ export class ReportReportComponent implements OnInit {
       }, 
       error: () => this.isSpinning = false
     });
+  }
+  isLabel(reportType: ReportType) : boolean {
+    return this.reportService.isLabel(reportType);
   }
 }

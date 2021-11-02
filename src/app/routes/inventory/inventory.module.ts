@@ -42,6 +42,7 @@ import { InventoryMovementPathMaintenanceComponent } from './movement-path-maint
 import { InventoryMovementPathComponent } from './movement-path/movement-path.component';
 import { InventoryReplenishmentComponent } from './replenishment/replenishment.component';
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
+import { InventoryInventoryAllocationSummaryComponent } from './inventory-allocation-summary/inventory-allocation-summary.component';
 
 
 const COMPONENTS: Array<Type<void>> = [
@@ -76,7 +77,8 @@ const COMPONENTS: Array<Type<void>> = [
   InventoryItemQueryPopupComponent,
   InventoryInventoryConfigurationComponent,
   InventoryInventorySnapshotComponent,
-  InventoryInventorySnapshotConfigurationComponent];
+  InventoryInventorySnapshotConfigurationComponent,
+  InventoryInventoryAllocationSummaryComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
