@@ -52,6 +52,20 @@
     <nz-descriptions-item nzTitle="{{ 'email' | i18n}}">
       {{currentUser!.email}}
     </nz-descriptions-item>
+    
+    <nz-descriptions-item nzTitle="{{ 'department' | i18n}}">
+      {{currentUser!.department?.name}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'user.position' | i18n}}">
+      {{currentUser!.position}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'worker-type' | i18n}}">
+      {{ 'WORKER-TYPE-' + currentUser!.workerType | i18n }}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'user.on-board-time' | i18n}}">
+      {{ currentUser!.onBoardTime  | date:'MM/dd/yyyy':'+0000'}}
+    </nz-descriptions-item>
+
     <nz-descriptions-item nzTitle="{{ 'enabled' | i18n}}">
       {{currentUser!.enabled}}
     </nz-descriptions-item>

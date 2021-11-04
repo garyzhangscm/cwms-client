@@ -1,5 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes  } from '@angular/router';
+
+import { AuthDepartmentMaintenanceComponent } from './department-maintenance/department-maintenance.component';
+import { AuthDepartmentComponent } from './department/department.component';
 import { AuthGuard } from './guard/auth.guard';
 import { AuthRoleMaintenanceConfirmComponent } from './role-maintenance-confirm/role-maintenance-confirm.component';
 import { AuthRoleMaintenanceComponent } from './role-maintenance/role-maintenance.component';
@@ -29,7 +32,8 @@ const routes: Routes = [
   { path: 'working-team/maintenance', component: AuthWorkingTeamMaintenanceComponent },
   { path: 'working-team/maintenance/confirm', component: AuthWorkingTeamMaintenanceConfirmComponent },
   { path: 'working-team/user', component: AuthWorkingTeamUserComponent },
-];
+  { path: 'department', component: AuthDepartmentComponent },
+  { path: 'department/maintenance', component: AuthDepartmentMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

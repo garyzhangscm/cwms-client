@@ -2,8 +2,12 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+
 import { CompanyService } from '../../warehouse-layout/services/company.service';
+import { Department } from '../models/department';
 import { User } from '../models/user';
+import { WorkerType } from '../models/worker-type';
+import { DepartmentService } from '../services/department.service';
 import { UserService } from '../services/user.service';
 
 @Component({
@@ -15,6 +19,8 @@ export class AuthUserMaintenanceComponent implements OnInit {
   pageTitle = '';
   passwordVisible = false;
   modifying = false;
+  validDepartments: Department[] = [];
+  workerTypes = WorkerType;
 
   emptyUser: User = {
     id: undefined,
@@ -38,6 +44,7 @@ export class AuthUserMaintenanceComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private userService: UserService,
     private companyService: CompanyService,
+    private departmentService: DepartmentService,
   ) { }
 
   ngOnInit(): void {
@@ -50,8 +57,8 @@ export class AuthUserMaintenanceComponent implements OnInit {
     this.modifying = false;
     this.loadUsers();
     this.setupPageTitle();
+    this.loadValidDepartments();
 
-    this.activatedRoute.queryParams.subscribe(params => { });
   }
 
   loadUsers(): void {
@@ -67,6 +74,12 @@ export class AuthUserMaintenanceComponent implements OnInit {
     });
   }
 
+  loadValidDepartments(): void {
+
+    this.departmentService.getDepartments().subscribe({
+      next: (departmentRes) => this.validDepartments = departmentRes
+    })
+  }
   setupPageTitle(): void {
     this.titleService.setTitle(this.i18n.fanyi('page.user.add.title'));
     this.pageTitle = this.i18n.fanyi('page.user.add.title');
@@ -76,5 +89,13 @@ export class AuthUserMaintenanceComponent implements OnInit {
     // console.log(`this.currentUser:${this.currentUser}`);
     const url = '/auth/user-role?new-user';
     this.router.navigateByUrl(url);
+  }
+  workerTypeChanged(workerType: WorkerType) : void { 
+    this.currentUser!.workerType = workerType;
+  }
+  departmentChanged(departmentId: number) : void { 
+    this.currentUser!.department = this.validDepartments.find(
+      department => department.id === departmentId
+    );
   }
 }

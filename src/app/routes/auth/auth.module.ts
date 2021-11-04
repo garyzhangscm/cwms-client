@@ -7,6 +7,8 @@ import { NzTreeModule } from 'ng-zorro-antd/tree';
 
 import { DirectivesModule } from '../directives/directives.module';
 import { AuthRoutingModule } from './auth-routing.module';
+import { AuthDepartmentMaintenanceComponent } from './department-maintenance/department-maintenance.component';
+import { AuthDepartmentComponent } from './department/department.component';
 import { AuthRoleMaintenanceConfirmComponent } from './role-maintenance-confirm/role-maintenance-confirm.component';
 import { AuthRoleMaintenanceComponent } from './role-maintenance/role-maintenance.component';
 import { AuthRoleMenuComponent } from './role-menu/role-menu.component';
@@ -34,7 +36,9 @@ const COMPONENTS: Array<Type<void>> = [
   AuthWorkingTeamComponent,
   AuthWorkingTeamMaintenanceComponent,
   AuthWorkingTeamMaintenanceConfirmComponent,
-  AuthWorkingTeamUserComponent];
+  AuthWorkingTeamUserComponent,
+  AuthDepartmentComponent,
+  AuthDepartmentMaintenanceComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

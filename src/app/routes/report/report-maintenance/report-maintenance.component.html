@@ -28,11 +28,11 @@
 
     <div nz-col [nzSpan]="8">
       <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24">
+        <nz-form-label [nzSpan]="6">
           {{ 'report.type' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-          <nz-select nzAllowClear [(ngModel)]="currentReport.type" style="width: 200px;" [disabled]="standardReport">
+        <nz-form-control [nzSpan]="18">
+          <nz-select nzAllowClear [(ngModel)]="currentReport.type" style="width: 300px;" [disabled]="standardReport">
             <nz-option *ngFor="let reportType of reportTypes | keys" nzValue="{{ reportType.key }}"
               nzLabel="{{ 'REPORT-TYPE-' + reportType.key | i18n }}">
             </nz-option>

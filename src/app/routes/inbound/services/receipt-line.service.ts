@@ -71,7 +71,7 @@ export class ReceiptLineService {
       url = `${url}&count=1`
     }
 
-    if (quantity) {
+    if (quantity  && quantity > 0) {
       url = `${url}&quantity=${quantity}`
     }
     if (copies) {

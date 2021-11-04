@@ -73,6 +73,36 @@ export class AuthUserComponent implements OnInit {
       showFilter: false
     },
     {
+      name: 'department',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => this.utilService.compareNullableObjField(a, b, "department"),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'position',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => this.utilService.compareNullableString(a.position, b.position),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'user.on-board-time',
+      sortOrder: null,
+      sortFn: (a: User, b: User) => this.utilService.compareNullableObjField(a, b, "onBoardTime"),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
       name: 'enabled',
       sortOrder: null,
       sortFn: (a: User, b: User) => this.utilService.compareBoolean(a.enabled, b.enabled),

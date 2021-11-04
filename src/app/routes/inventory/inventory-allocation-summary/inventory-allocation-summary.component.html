@@ -164,6 +164,9 @@
                     {{ 'pick.number' | i18n }}
                     </th> 
                     <th>
+                    {{ 'order' | i18n }}
+                    </th> 
+                    <th>
                     {{ 'sourceLocation' | i18n }}
                     </th>
                     <th>
@@ -188,6 +191,7 @@
                 <tbody>
                     <tr *ngFor="let pick of pickTable.data"> 
                     <td>{{ pick.number }}</td> 
+                    <td>{{ pick.orderNumber }}</td> 
                     <td>{{ pick.sourceLocation?.name }}</td>
                     <td>{{ pick.destinationLocation?.name }}</td>
                     <td>{{ pick.item?.name }}</td>

@@ -166,7 +166,10 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
             ReportType.PRODUCTION_LINE_ASSIGNMENT_LABEL,
             event.printerIndex,
             event.printerName,
-            event.physicalCopyCount,
+            // event.physicalCopyCount,
+            1, // we will always only print one copy. If the user want to print multiple copies
+                // the paramter will be passed into the 'generate' command instead of the print command
+                // so that we will have labels printed in uncollated format, not collated format 
             PrintPageOrientation.Portrait,
             PrintPageSize.Letter,
             this.currentProductionLineAssignment.productionLine.name);

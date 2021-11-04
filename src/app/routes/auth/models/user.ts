@@ -1,3 +1,5 @@
+import { WorkerType } from '../models/worker-type';
+import { Department } from './department';
 import { Role } from './role';
 import { WorkingTeam } from './working-team';
 
@@ -14,4 +16,10 @@ export interface User {
   roles: Role[];
   workingTeams: WorkingTeam[];
   changePasswordAtNextLogon: boolean;
+
+  department?: Department;
+  position?: string;
+  onBoardTime?: Date;
+
+  workerType?: WorkerType;
 }
