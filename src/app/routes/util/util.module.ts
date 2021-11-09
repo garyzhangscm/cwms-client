@@ -16,6 +16,8 @@ import { UtilTableColumnSelectionComponent } from './table-column-selection/tabl
 import { UtilTestDataInitComponent } from './test-data-init/test-data-init.component';
 import { UtilTesterComponent } from './tester/tester.component';
 import { UtilRoutingModule } from './util-routing.module';
+import { UtilRfAppVersionComponent } from './rf-app-version/rf-app-version.component';
+import { UtilRfAppVersionMaintenanceComponent } from './rf-app-version-maintenance/rf-app-version-maintenance.component';
 
 const COMPONENTS: Array<Type<void>> = [
   UtilFileUploadComponent,  
@@ -29,7 +31,9 @@ const COMPONENTS: Array<Type<void>> = [
   UtilSystemControlledNumberComponent,
   UtilSystemControlledNumberMaintenanceComponent,
   UtilDataInitComponent,
-  UtilBillableRequestComponent];
+  UtilBillableRequestComponent,
+  UtilRfAppVersionComponent,
+  UtilRfAppVersionMaintenanceComponent];
   
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];

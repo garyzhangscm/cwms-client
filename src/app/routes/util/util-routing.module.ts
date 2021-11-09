@@ -6,6 +6,8 @@ import { UtilBillableRequestComponent } from './billable-request/billable-reques
 import { UtilDataInitComponent } from './data-init/data-init.component';
 import { UtilFileUploadComponent } from './file-upload/file-upload.component';
 import { UtilIconListComponent } from './icon-list/icon-list.component';
+import { UtilRfAppVersionMaintenanceComponent } from './rf-app-version-maintenance/rf-app-version-maintenance.component';
+import { UtilRfAppVersionComponent } from './rf-app-version/rf-app-version.component';
 import { UtilRfMaintenanceComponent } from './rf-maintenance/rf-maintenance.component';
 import { UtilRfComponent } from './rf/rf.component';
 import { UtilSystemConfigurationComponent } from './system-configuration/system-configuration.component';  
@@ -28,7 +30,9 @@ const routes: Routes = [
   { path: 'system-controlled-number', component: UtilSystemControlledNumberComponent },
   { path: 'system-controlled-number/maintenance', component: UtilSystemControlledNumberMaintenanceComponent },
   { path: 'data-init', component: UtilDataInitComponent },
-  { path: 'billable-request', component: UtilBillableRequestComponent }];
+  { path: 'billable-request', component: UtilBillableRequestComponent },
+  { path: 'rf-app-version', component: UtilRfAppVersionComponent },
+  { path: 'rf-app-version/maintenance', component: UtilRfAppVersionMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
