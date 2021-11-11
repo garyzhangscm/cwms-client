@@ -72,13 +72,23 @@
       </nz-form-item>
     </div>
       
-    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'qc-quantity' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
 
-    <div nz-row [nzGutter]="24">
-    
-    
-  </div>
- 
+            <nz-input-group >
+                <input nz-input [(ngModel)]="currentQCRuleConfiguration.qcQuantity" 
+                
+                [disabled]="!newQCRuleConfiguration"/>
+              </nz-input-group> 
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div> 
   
 </div>
 <!-- assign qc rule -->
@@ -104,6 +114,8 @@
         <nz-descriptions-item nzTitle="{{ 'work-order' | i18n}}">
             {{currentQCRuleConfiguration.workOrder?.number}}</nz-descriptions-item> 
           
+        <nz-descriptions-item nzTitle="{{ 'qc-quantity' | i18n}}">
+          {{currentQCRuleConfiguration.qcQuantity}}</nz-descriptions-item> 
             
       </nz-descriptions>
 

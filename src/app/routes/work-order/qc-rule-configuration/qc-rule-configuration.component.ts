@@ -108,6 +108,7 @@ columns: STColumn[] = [
  
 { title: this.i18n.fanyi("work-order"), index: 'workOrder.number', iif: () => this.isChoose('workOrder') },
 { title: this.i18n.fanyi("production-line"), index: 'productionLine.name', iif: () => this.isChoose('productionLine') }, 
+{ title: this.i18n.fanyi("qc-quantity"), index: 'qcQuantity', iif: () => this.isChoose('qcQuantity') }, 
 {
   title: 'action',
   renderTitle: 'actionColumnTitle',fixed: 'right',width: 110, 
@@ -119,6 +120,7 @@ customColumns = [
  
 { label: this.i18n.fanyi("work-order"), value: 'workOrder', checked: true },
 { label: this.i18n.fanyi("production-line"), value: 'productionLine', checked: true }, 
+{ label: this.i18n.fanyi("qc-quantity"), value: 'qcQuantity', checked: true }, 
 ];
 
 isChoose(key: string): boolean {

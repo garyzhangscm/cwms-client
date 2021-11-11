@@ -28,7 +28,8 @@ export class InventoryService {
     locationName?: string,
     lpn?: string,
     includeDetails?: boolean,
-    inventoryStatusId?: number
+    inventoryStatusId?: number,
+    locationGroupId?: number
   ): Observable<Inventory[]> {
     let params = `warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (itemName) {
@@ -45,6 +46,9 @@ export class InventoryService {
     }
     if (lpn) {
       params = `${params}&lpn=${lpn}`;
+    } 
+    if (locationGroupId) {
+      params = `${params}&locationGroupId=${locationGroupId}`;
     } 
     if (inventoryStatusId) {
       params = `${params}&inventoryStatusId=${inventoryStatusId}`;

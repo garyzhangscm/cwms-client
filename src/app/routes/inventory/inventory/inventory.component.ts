@@ -19,6 +19,8 @@ import { ReportType } from '../../report/models/report-type.enum';
 import { ColumnItem } from '../../util/models/column-item';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
+import { LocationGroup } from '../../warehouse-layout/models/location-group';
+import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { Inventory } from '../models/inventory';
 import { InventoryMovement } from '../models/inventory-movement';
@@ -158,6 +160,7 @@ export class InventoryInventoryComponent implements OnInit {
   // Table data for display
   inventories: Inventory[] = [];
   listOfDisplayInventories: readonly  Inventory[] = [];
+  locationGroups: LocationGroup[] = [];
 
 
   inventoryToBeRemoved!: Inventory;
@@ -200,6 +203,7 @@ export class InventoryInventoryComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
     private locationService: LocationService,
+    private locationGroupService: LocationGroupService,
     private messageService: NzMessageService,
     private utilService: UtilService,
     private printingService: PrintingService,
@@ -224,6 +228,10 @@ export class InventoryInventoryComponent implements OnInit {
           this.search();
         }
       }
+    });
+    
+    this.locationGroupService.loadLocationGroups().subscribe((locationGroupList: LocationGroup[]) => {
+      this.locationGroups = locationGroupList;
     });
   }
 
@@ -262,7 +270,9 @@ export class InventoryInventoryComponent implements OnInit {
           this.searchForm.value.itemName,
           this.searchForm.value.location,
           this.searchForm.value.lpn,
-          false
+          false,
+          undefined,
+          this.searchForm.value.locationGroups
         )
         .subscribe(
           inventoryRes => {
@@ -430,6 +440,7 @@ export class InventoryInventoryComponent implements OnInit {
     // initiate the search form
     this.searchForm = this.fb.group({
       taggedClients: [null],
+      locationGroups: [null],
       taggedItemFamilies: [null],
       itemName: [null],
       location: [null],

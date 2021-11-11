@@ -16,6 +16,8 @@ import { UtilSystemControlledNumberComponent } from './system-controlled-number/
 import { UtilTableColumnSelectionComponent } from './table-column-selection/table-column-selection.component';
 import { UtilTestDataInitComponent } from './test-data-init/test-data-init.component';
 import { UtilTesterComponent } from './tester/tester.component';
+import { UtilCompanyComponent } from './company/company.component';
+import { UtilCompanyMaintenanceComponent } from './company-maintenance/company-maintenance.component';
 
 const routes: Routes = [
   { path: 'file-upload', component: UtilFileUploadComponent, canActivate: [AuthGuard] },
@@ -32,7 +34,9 @@ const routes: Routes = [
   { path: 'data-init', component: UtilDataInitComponent },
   { path: 'billable-request', component: UtilBillableRequestComponent },
   { path: 'rf-app-version', component: UtilRfAppVersionComponent },
-  { path: 'rf-app-version/maintenance', component: UtilRfAppVersionMaintenanceComponent }];
+  { path: 'rf-app-version/maintenance', component: UtilRfAppVersionMaintenanceComponent },
+  { path: 'company', component: UtilCompanyComponent },
+  { path: 'company-maintenance', component: UtilCompanyMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

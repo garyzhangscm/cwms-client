@@ -71,6 +71,7 @@ export class WorkOrderQcRuleConfigurationMaintenanceComponent implements OnInit 
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
    
       workOrderQCRuleConfigurationRules: [], 
+      qcQuantity: 0
     }
   }
 

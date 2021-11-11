@@ -10,4 +10,5 @@ export interface WorkOrderQcRuleConfiguration {
     warehouseId: number;
     productionLine?: ProductionLine;
     workOrder?: WorkOrder;
+    qcQuantity?: number
 }

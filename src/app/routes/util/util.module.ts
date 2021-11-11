@@ -18,6 +18,8 @@ import { UtilTesterComponent } from './tester/tester.component';
 import { UtilRoutingModule } from './util-routing.module';
 import { UtilRfAppVersionComponent } from './rf-app-version/rf-app-version.component';
 import { UtilRfAppVersionMaintenanceComponent } from './rf-app-version-maintenance/rf-app-version-maintenance.component';
+import { UtilCompanyComponent } from './company/company.component';
+import { UtilCompanyMaintenanceComponent } from './company-maintenance/company-maintenance.component';
 
 const COMPONENTS: Array<Type<void>> = [
   UtilFileUploadComponent,  
@@ -33,7 +35,9 @@ const COMPONENTS: Array<Type<void>> = [
   UtilDataInitComponent,
   UtilBillableRequestComponent,
   UtilRfAppVersionComponent,
-  UtilRfAppVersionMaintenanceComponent];
+  UtilRfAppVersionMaintenanceComponent,
+  UtilCompanyComponent,
+  UtilCompanyMaintenanceComponent];
   
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];

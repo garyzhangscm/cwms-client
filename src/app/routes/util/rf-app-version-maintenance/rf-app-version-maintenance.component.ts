@@ -20,6 +20,7 @@ export class UtilRfAppVersionMaintenanceComponent implements OnInit {
   currentRFAppVersion: RFAppVersion; 
   stepIndex = 0; 
   versionNumberValidateStatus = 'warning'; 
+  versionNumberErrorCode = ''; 
   isSpinning = false; 
   pageTitle: string;
 
@@ -63,7 +64,8 @@ export class UtilRfAppVersionMaintenanceComponent implements OnInit {
         next: (rfAppVersionRes) => {
           if (rfAppVersionRes.length > 0) {
             // the order is already exists 
-            this.versionNumberValidateStatus = 'numberExists'
+            this.versionNumberValidateStatus = 'error'; 
+            this.versionNumberErrorCode = 'numberExists'
           }
         }
       })
