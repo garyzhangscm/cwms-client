@@ -263,6 +263,7 @@ export class InventoryInventoryComponent implements OnInit {
         },
       );
     } else {
+      
       this.inventoryService
         .getInventories(
           this.searchForm.value.taggedClients,
