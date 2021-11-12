@@ -447,6 +447,7 @@ export class InventoryItemComponent implements OnInit {
       title: 'action',
       renderTitle: 'actionColumnTitle',
       render: 'actionColumn',
+      fixed: 'right',width: 110, 
     },
   ];
   customColumns = [

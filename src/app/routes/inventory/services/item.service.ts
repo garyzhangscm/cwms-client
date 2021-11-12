@@ -37,7 +37,7 @@ export class ItemService {
 
     let url = `inventory/items?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (name) {
-      url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name)}`;
+      url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name.trim())}`;
     }
     if (clients && clients.length > 0) {
       url = `${url}&clientIds=${clients.join(',')}`;

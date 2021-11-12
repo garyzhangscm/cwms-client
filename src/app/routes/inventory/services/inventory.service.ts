@@ -1,3 +1,4 @@
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -32,8 +33,11 @@ export class InventoryService {
     locationGroupId?: number
   ): Observable<Inventory[]> {
     let params = `warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+
     if (itemName) {
-      params = `${params}&itemName=${itemName}`;
+      params = `${params}&itemName=${httpUrlEncodingCodec.encodeValue(itemName.trim())}`;
     }
     if (clients && clients.length > 0) {
       params = `${params}&clients=${clients.join(',')}`;
@@ -42,10 +46,10 @@ export class InventoryService {
       params = `${params}&item_families=${itemFamilies.join(',')}`;
     }
     if (locationName) {
-      params = `${params}&location=${locationName}`;
+      params = `${params}&location=${httpUrlEncodingCodec.encodeValue(locationName.trim())}`;
     }
     if (lpn) {
-      params = `${params}&lpn=${lpn}`;
+      params = `${params}&lpn=${httpUrlEncodingCodec.encodeValue(lpn.trim())}`;
     } 
     if (locationGroupId) {
       params = `${params}&locationGroupId=${locationGroupId}`;

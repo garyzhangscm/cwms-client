@@ -170,6 +170,9 @@ export class InventoryItemMaintenanceComponent implements OnInit {
       length: [0, Validators.required],
       width: [0, Validators.required],
       height: [0, Validators.required],
+      defaultForInboundReceiving: [false, Validators.required],
+      defaultForWorkOrderReceiving: [false, Validators.required],
+      trackingLpnUOM: [false, Validators.required],
     });
   }
   openAddingItemUnitOfMeasureModal(
@@ -216,6 +219,9 @@ export class InventoryItemMaintenanceComponent implements OnInit {
         this.itemUOMForm.controls.length.value,
         this.itemUOMForm.controls.width.value,
         this.itemUOMForm.controls.height.value,
+        this.itemUOMForm.controls.defaultForInboundReceiving.value,
+        this.itemUOMForm.controls.defaultForWorkOrderReceiving.value,
+        this.itemUOMForm.controls.trackingLpnUOM.value,
       );
 
       this.itemUOMModal.destroy();
@@ -246,6 +252,9 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     length: number,
     width: number,
     height: number,
+    defaultForInboundReceiving: boolean,
+    defaultForWorkOrderReceiving: boolean,
+    trackingLpnUOM: boolean,
   ): void {
     // Get the unit of measure first
     this.availableUnitOfMeasures
@@ -263,6 +272,9 @@ export class InventoryItemMaintenanceComponent implements OnInit {
               length: length === null ? 0 : length,
               width: width === null ? 0 : width,
               height: height === null ? 0 : height,
+              defaultForInboundReceiving: defaultForInboundReceiving === null ? false : defaultForInboundReceiving,
+              defaultForWorkOrderReceiving: defaultForWorkOrderReceiving === null ? false : defaultForWorkOrderReceiving,
+              trackingLpn: trackingLpnUOM === null ? false : trackingLpnUOM,
             },
           ];
           itemPackageType.itemUnitOfMeasures.sort((a, b) => a.quantity! - b.quantity!);

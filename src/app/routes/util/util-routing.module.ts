@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { UtilBillableRequestComponent } from './billable-request/billable-request.component';
+import { UtilCompanyMaintenanceComponent } from './company-maintenance/company-maintenance.component';
+import { UtilCompanyComponent } from './company/company.component';
 import { UtilDataInitComponent } from './data-init/data-init.component';
 import { UtilFileUploadComponent } from './file-upload/file-upload.component';
 import { UtilIconListComponent } from './icon-list/icon-list.component';
@@ -16,8 +18,6 @@ import { UtilSystemControlledNumberComponent } from './system-controlled-number/
 import { UtilTableColumnSelectionComponent } from './table-column-selection/table-column-selection.component';
 import { UtilTestDataInitComponent } from './test-data-init/test-data-init.component';
 import { UtilTesterComponent } from './tester/tester.component';
-import { UtilCompanyComponent } from './company/company.component';
-import { UtilCompanyMaintenanceComponent } from './company-maintenance/company-maintenance.component';
 
 const routes: Routes = [
   { path: 'file-upload', component: UtilFileUploadComponent, canActivate: [AuthGuard] },

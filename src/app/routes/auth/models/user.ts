@@ -16,6 +16,7 @@ export interface User {
   roles: Role[];
   workingTeams: WorkingTeam[];
   changePasswordAtNextLogon: boolean;
+  isSystemAdmin?: boolean;
 
   department?: Department;
   position?: string;

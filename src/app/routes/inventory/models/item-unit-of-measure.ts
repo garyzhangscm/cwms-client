@@ -13,4 +13,7 @@ export interface ItemUnitOfMeasure {
   width?: number;
   height?: number;
   warehouseId?: number;
+  defaultForInboundReceiving?: boolean;
+  defaultForWorkOrderReceiving?: boolean;
+  trackingLpn?: boolean;
 }

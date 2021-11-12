@@ -55,7 +55,7 @@
         <td>{{ data.locked + '' | i18n}}</td>
         <td>
           
-          <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+          <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" [disabled]="data.isSystemAdmin === true || data.companyId! < 0">
             {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
             <nz-dropdown-menu #menu="nzDropdownMenu">
               <ul nz-menu>
