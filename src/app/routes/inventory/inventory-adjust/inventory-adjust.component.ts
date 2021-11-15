@@ -468,7 +468,12 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   }
 
   itemNumberChanged(event: Event): void {
-    this.itemService.getItems((event.target as HTMLInputElement).value.trim()).subscribe(itemRes => {
+    const itemNumber = (event.target as HTMLInputElement).value.trim();
+    if (itemNumber.length == 0) {
+      return;
+    }
+
+    this.itemService.getItems(itemNumber).subscribe(itemRes => {
       if (itemRes.length > 0) {
         // with a name, we should only get one item information
         this.currentInventory.item = itemRes[0];
