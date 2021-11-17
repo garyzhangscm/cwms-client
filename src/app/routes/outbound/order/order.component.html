@@ -14,6 +14,22 @@
           </nz-form-control>
         </nz-form-item>
       </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label for="orderStatus" [nzSpan]="5">
+            {{ 'status' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <nz-select formControlName="orderStatus">
+               <nz-option
+                   *ngFor="let orderStatus of orderStatuses  | keys"
+                    [nzValue]="orderStatus.key"
+                    [nzLabel]="orderStatus.key"
+                      ></nz-option>
+               </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
     </div>
     <div nz-row>
       <div nz-col [nzSpan]="24" class="search-area">

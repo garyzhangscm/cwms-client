@@ -209,6 +209,8 @@ export class OutboundOrderComponent implements OnInit {
   orderReassignShippingStageLocationModal!: NzModalRef;
   orderReassignShippingStageLocationForm!: FormGroup;
 
+  orderStatuses = OrderStatus;
+
   constructor(
     private fb: FormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -283,7 +285,7 @@ export class OutboundOrderComponent implements OnInit {
   search(expandedOrderId?: number, tabSelectedIndex?: number): void {
     this.isSpinning = true;
     this.searchResult = '';
-    this.orderService.getOrders(this.searchForm.controls.number.value, false).subscribe(
+    this.orderService.getOrders(this.searchForm.controls.number.value, false, this.searchForm.controls.orderStatus.value).subscribe(
       orderRes => {
  
 
@@ -582,6 +584,7 @@ export class OutboundOrderComponent implements OnInit {
     // initiate the search form
     this.searchForm = this.fb.group({
       number: [null],
+      orderStatus: [null],
     });
 
     // IN case we get the number passed in, refresh the display

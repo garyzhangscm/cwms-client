@@ -11,6 +11,7 @@ import { ReportHistory } from '../../report/models/report-history';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Order } from '../models/order';
 import { OrderLine } from '../models/order-line';
+import { OrderStatus } from '../models/order-status.enum';
 import { PickWork } from '../models/pick-work';
 import { PickService } from './pick.service';
 
@@ -25,7 +26,7 @@ export class OrderService {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
   ) { }
 
-  getOrders(number: string, loadDetails?: boolean,): Observable<Order[]> {
+  getOrders(number?: string, loadDetails?: boolean, orderStatus?: OrderStatus): Observable<Order[]> {
     let url = `outbound/orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     
     if (number) {
@@ -35,6 +36,10 @@ export class OrderService {
     }
     if (loadDetails != null) {
       url = `${url}&loadDetails=${loadDetails}`;
+
+    }
+    if (orderStatus) {
+      url = `${url}&status=${orderStatus}`;
 
     }
     return this.http.get(url).pipe(map(res => res.data));
