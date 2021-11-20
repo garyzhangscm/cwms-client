@@ -285,7 +285,19 @@ export class OutboundOrderComponent implements OnInit {
   search(expandedOrderId?: number, tabSelectedIndex?: number): void {
     this.isSpinning = true;
     this.searchResult = '';
-    this.orderService.getOrders(this.searchForm.controls.number.value, false, this.searchForm.controls.orderStatus.value).subscribe(
+    
+    let startCompleteTime : Date = this.searchForm.controls.completeTimeRanger.value ? 
+        this.searchForm.controls.completeTimeRanger.value[0] : undefined; 
+    let endCompleteTime : Date = this.searchForm.controls.completeTimeRanger.value ? 
+        this.searchForm.controls.completeTimeRanger.value[1] : undefined; 
+    let specificCompleteDate : Date = this.searchForm.controls.completeDate.value;
+
+    this.orderService.getOrders(
+      this.searchForm.controls.number.value, 
+      false, 
+      this.searchForm.controls.orderStatus.value, 
+      startCompleteTime, 
+      endCompleteTime, specificCompleteDate).subscribe(
       orderRes => {
  
 
@@ -322,7 +334,7 @@ export class OutboundOrderComponent implements OnInit {
       // for 10 orders at a time(each order may have 5 different request). 
       // we will get error if we flush requests for
       // too many orders into the server at a time
-      console.log(`1. this.loadingOrderDetailsRequest: ${this.loadingOrderDetailsRequest}`);
+      // console.log(`1. this.loadingOrderDetailsRequest: ${this.loadingOrderDetailsRequest}`);
       while(this.loadingOrderDetailsRequest > 50) {
         // sleep 50ms        
         await this.delay(50);
@@ -489,7 +501,7 @@ export class OutboundOrderComponent implements OnInit {
       next: (shipmentLineRes) => {
         shipmentLineRes.forEach(shipmentLine => {
 
-          console.log(`add ${shipmentLine.openQuantity} to totalPendingAllocationQuantity: ${order.totalPendingAllocationQuantity}`);
+          // console.log(`add ${shipmentLine.openQuantity} to totalPendingAllocationQuantity: ${order.totalPendingAllocationQuantity}`);
           order.totalPendingAllocationQuantity! += shipmentLine.openQuantity;
         })
         this.loadingOrderDetailsRequest--;
@@ -585,6 +597,8 @@ export class OutboundOrderComponent implements OnInit {
     this.searchForm = this.fb.group({
       number: [null],
       orderStatus: [null],
+      completeTimeRanger: [null],
+      completeDate: [null],
     });
 
     // IN case we get the number passed in, refresh the display

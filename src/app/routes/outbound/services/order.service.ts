@@ -8,6 +8,7 @@ import { map, timeout } from 'rxjs/operators';
 import { PrintableBarcode } from '../../common/models/printable-barcode';
 import { PrintingService } from '../../common/services/printing.service';
 import { ReportHistory } from '../../report/models/report-history';
+import { DateTimeService } from '../../util/services/date-time.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Order } from '../models/order';
 import { OrderLine } from '../models/order-line';
@@ -23,10 +24,12 @@ export class OrderService {
   constructor(
     private http: _HttpClient,
     private warehouseService: WarehouseService,
+    private dateTimeService: DateTimeService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
   ) { }
 
-  getOrders(number?: string, loadDetails?: boolean, orderStatus?: OrderStatus): Observable<Order[]> {
+  getOrders(number?: string, loadDetails?: boolean, orderStatus?: OrderStatus, 
+    startCompleteTime?: Date, endCompleteTime?:Date, specificCompleteDate?: Date): Observable<Order[]> {
     let url = `outbound/orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     
     if (number) {
@@ -40,7 +43,16 @@ export class OrderService {
     }
     if (orderStatus) {
       url = `${url}&status=${orderStatus}`;
-
+    }
+    
+    if (startCompleteTime) {
+      url = `${url}&startCompleteTime=${this.dateTimeService.getISODateTimeString(startCompleteTime)}`;
+    }
+    if (endCompleteTime) {
+      url = `${url}&endCompleteTime=${this.dateTimeService.getISODateTimeString(endCompleteTime)}`;
+    }
+    if (specificCompleteDate) {
+      url = `${url}&specificCompleteDate=${this.dateTimeService.getISODateString(specificCompleteDate)}`;
     }
     return this.http.get(url).pipe(map(res => res.data));
   }

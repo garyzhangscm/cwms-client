@@ -28,6 +28,8 @@ import { LocationService } from '../../warehouse-layout/services/location.servic
 })
 export class LocalCacheService {
 
+  cleanInProcess = false;
+
   
   clientMap = new Map();
   supplierMap = new Map();
@@ -228,6 +230,10 @@ export class LocalCacheService {
   }   
 
   save(options: LocalStorageSaveOptions) {
+    
+      // clear the cache key
+      this.removeExpiredCache();
+
     // Set default values for optionals
     options.expirationMins = options.expirationMins || 0
 
@@ -239,6 +245,7 @@ export class LocalCacheService {
         expiration: expirationMS !== 0 ? new Date().getTime() + expirationMS : null,
         hasExpiration: expirationMS !== 0 ? true : false
     }
+    // console.log(`localStorage.length： ${localStorage.length}`);
     localStorage.setItem(options.key, JSON.stringify(record))
   }
 
@@ -257,6 +264,45 @@ export class LocalCacheService {
       }
       return null
   }
+  
+  removeExpiredCache() {
+    if (this.cleanInProcess == true) {
+      return;
+    }
+    this.cleanInProcess = true;
+
+    
+    setTimeout(() => {
+      
+        var keys = Object.keys(localStorage).filter(
+          key => key.startsWith("client-") ||
+                  key.startsWith("supplier-") ||
+                  key.startsWith("customer-") ||
+                  key.startsWith("location-group-") ||
+                  key.startsWith("location-") ||
+                  key.startsWith("inventory-status-") ||
+                  key.startsWith("item-") ||
+                  key.startsWith("pickwork-") ||
+                  key.startsWith("unitOfMeasure-")
+        );
+
+        
+        var i = keys.length;
+
+        const now = new Date().getTime();
+
+        while (i--) {
+          const record = JSON.parse(localStorage.getItem(keys[i])!);
+          if (record.hasExpiration && record.expiration <= now) {
+            console.log(`${keys[i]} expired, will clear it`) ;
+            localStorage.removeItem(keys[i]);
+          }
+        }
+        this.cleanInProcess = false;
+    }, 500);
+
+  }
+  
 }
 export class LocalStorageSaveOptions {
   key!: string
