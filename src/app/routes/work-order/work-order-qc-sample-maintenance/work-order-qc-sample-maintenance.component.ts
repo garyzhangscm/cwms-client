@@ -240,4 +240,22 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
     
   }
 
+  removeQCExample() {
+    if (this.currentWorkOrderQcSample.id) {
+      this.isSpinning = true;
+      this.workOrderQcSampleService.removeWorkOrderQcSample(this.currentWorkOrderQcSample.id)
+      .subscribe({
+        next: () => {
+
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          setTimeout(() => {
+            this.isSpinning = false;
+            this.router.navigateByUrl(`/work-order/work-order?number=${this.currentProductionLineAssignment?.workOrder.number}`);
+          }, 2500);
+        }, 
+        error: () => this.isSpinning = false
+      })
+    }
+  }
+
 }

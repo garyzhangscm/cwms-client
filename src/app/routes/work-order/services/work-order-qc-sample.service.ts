@@ -37,4 +37,12 @@ export class WorkOrderQcSampleService {
     return this.http.put(url, workOrderQcSample).pipe(map(res => res.data));
   }
 
+  
+  removeWorkOrderQcSample(workOrderQcSampleId: number): Observable<WorkOrderQcSample[]> {
+    
+    let url = `workorder/qc-samples/${workOrderQcSampleId}`;
+    
+    
+    return this.http.delete(url).pipe(map(res => res.data));
+  }
 }

@@ -27,7 +27,8 @@
     </nz-steps>
 
     <!-- Let the user input the order information -->
-    <div class="small-card" *ngIf="stepIndex === 0 && currentWorkOrderQcSample !== undefined && currentProductionLineAssignment !== undefined" style="padding-top: 20px;">
+    <nz-card class="small-card" *ngIf="stepIndex === 0 && currentWorkOrderQcSample !== undefined && currentProductionLineAssignment !== undefined" 
+    style="margin-top: 20px;"  [nzExtra]="removeQCSampleTemplate">
         <div nz-row [nzGutter]="24">
             <div nz-col [nzSpan]="8">
               <nz-form-item>
@@ -112,10 +113,13 @@
           </div>
 
         </div>
-    </div>
+        <ng-template #removeQCSampleTemplate>
+          <a *ngIf="newSample == false"  (click)="removeQCExample()">{{'remove' | i18n}}</a>
+        </ng-template>
+    </nz-card>
  
     <!-- Let the user confirm the result -->
-    <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+    <nz-card class="small-card" *ngIf="stepIndex === 1" style="margin-top: 20px;">
 
         <nz-descriptions nzBordered>
             <nz-descriptions-item nzTitle="{{ 'number' | i18n}}"> 
@@ -133,7 +137,7 @@
         </nz-descriptions>
         
         
-    </div>
+    </nz-card>
 
 
 
