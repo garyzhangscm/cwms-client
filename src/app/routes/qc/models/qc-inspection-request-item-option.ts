@@ -8,4 +8,11 @@ export interface QCInspectionRequestItemOption {
     
     qcInspectionResult: QCInspectionResult;
 
+    booleanValue?: boolean;
+    value?: string;  // used to convert the boolean value into a string so we can show 3 state radio button
+
+    stringValue?: string;
+
+    doubleValue?: number;
+
 }

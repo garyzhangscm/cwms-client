@@ -11,9 +11,11 @@ import { InventoryService } from '../../inventory/services/inventory.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { QcInspectionRequest } from '../models/qc-inspection-request';
 import { QCInspectionRequestItem } from '../models/qc-inspection-request-item';
+import { QCInspectionRequestItemOption } from '../models/qc-inspection-request-item-option';
 import { QCInspectionResult } from '../models/qc-inspection-result';
 import { QCRule } from '../models/qc-rule';
 import { QCRuleConfiguration } from '../models/qc-rule-configuration';
+import { QCRuleItemComparator } from '../models/qc-rule-item-comparator';
 import { QCRuleItemType } from '../models/qc-rule-item-type';
 import { QcInspectionRequestService } from '../services/qc-inspection-request.service';
 
@@ -168,24 +170,149 @@ refreshInventoryQCResultMap() {
 
      
   }
-  qcInspectionRequestItemOptionChanged(qcInspectionRequestItem: QCInspectionRequestItem){
 
-    if (!qcInspectionRequestItem.qcInspectionRequestItemOptions.some(
-          qcInspectionRequestItemOption => qcInspectionRequestItemOption.qcInspectionResult !== QCInspectionResult.PENDING
-        )) {
-          // all options are pending, let's set the result to pending
-          qcInspectionRequestItem.qcInspectionResult = QCInspectionResult.PENDING
+  // For YesNo type question, we will only compare the result to either true or fail
+  resetQCInspectionRequestItemYESNOOptionResult(qcInspectionRequestItemOption: QCInspectionRequestItemOption) {
+
+    // for yes no question, we will only allow the comparator to 'equals'
+    if (qcInspectionRequestItemOption.qcRuleItem.qcRuleItemComparator != QCRuleItemComparator.EQUAL) {
+
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PENDING;
+      return;
     }
-    else if (qcInspectionRequestItem.qcInspectionRequestItemOptions.some(
-        qcInspectionRequestItemOption => qcInspectionRequestItemOption.qcInspectionResult !== QCInspectionResult.PASS
-      )) {
-        // at least one option fail, let's make the whole request as fail
-        qcInspectionRequestItem.qcInspectionResult = QCInspectionResult.FAIL
+    // if the use has not chosen anything, or chose N/A, then the result of this option is PENDING
+    if (!qcInspectionRequestItemOption.value || qcInspectionRequestItemOption.value == 'PENDING') {
+      
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PENDING;
+      return;
+    }
+
+    // convert the result into boolean value
+    qcInspectionRequestItemOption.booleanValue = qcInspectionRequestItemOption.value.trim().toLowerCase() == "yes";
+    
+    // compare the user's input to the expectation
+    if (qcInspectionRequestItemOption.qcRuleItem.expectedValue.toLowerCase() == 'true' &&
+      qcInspectionRequestItemOption.booleanValue === true
+      ) {
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PASS;
+    }
+    else if (qcInspectionRequestItemOption.qcRuleItem.expectedValue.toLowerCase() == 'false' &&
+      qcInspectionRequestItemOption.booleanValue === false
+      ) {
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PASS;
     }
     else {
-        
-        qcInspectionRequestItem.qcInspectionResult = QCInspectionResult.PASS
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.FAIL;
+    }    
+  }
+  
+  // for number type question, we will allow to compare the result to the expectation by 
+  // equals / greater than / les stahn / great or equal / less or equals
+  resetQCInspectionRequestItemNUMBEROptionResult(qcInspectionRequestItemOption: QCInspectionRequestItemOption) {
+
+    // make sure the user input something
+    if (qcInspectionRequestItemOption.doubleValue == null) {
+      
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PENDING;
+      return;
     }
+
+    // check if the user's input meet the expectation
+    if (qcInspectionRequestItemOption.qcRuleItem.qcRuleItemComparator == QCRuleItemComparator.EQUAL &&
+      qcInspectionRequestItemOption.doubleValue == +qcInspectionRequestItemOption.qcRuleItem.expectedValue) {
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PASS;
+    }
+    else if (qcInspectionRequestItemOption.qcRuleItem.qcRuleItemComparator == QCRuleItemComparator.GREAT_THAN &&
+      qcInspectionRequestItemOption.doubleValue > +qcInspectionRequestItemOption.qcRuleItem.expectedValue) {
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PASS;
+    }
+    else if (qcInspectionRequestItemOption.qcRuleItem.qcRuleItemComparator == QCRuleItemComparator.GREAT_OR_EQUAL &&
+      qcInspectionRequestItemOption.doubleValue >= +qcInspectionRequestItemOption.qcRuleItem.expectedValue) {
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PASS;
+    }
+    else if (qcInspectionRequestItemOption.qcRuleItem.qcRuleItemComparator == QCRuleItemComparator.LESS_THAN &&
+      qcInspectionRequestItemOption.doubleValue < +qcInspectionRequestItemOption.qcRuleItem.expectedValue) {
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PASS;
+    }
+    else if (qcInspectionRequestItemOption.qcRuleItem.qcRuleItemComparator == QCRuleItemComparator.LESS_OR_EQUAL &&
+      qcInspectionRequestItemOption.doubleValue <= +qcInspectionRequestItemOption.qcRuleItem.expectedValue) {
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PASS;
+    }
+    else {
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.FAIL;
+    }    
+  }
+  
+  // for string type question, we will allow to compare the result to the expectation by 
+  // equals / like
+  resetQCInspectionRequestItemSTRINGOptionResult(qcInspectionRequestItemOption: QCInspectionRequestItemOption) {
+
+    // make sure the user input something
+    if (qcInspectionRequestItemOption.stringValue == null) {
+      
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PENDING;
+      return;
+    }
+
+    // check the user's input with the expectation
+    if (qcInspectionRequestItemOption.qcRuleItem.qcRuleItemComparator == QCRuleItemComparator.EQUAL &&
+      qcInspectionRequestItemOption.stringValue == qcInspectionRequestItemOption.qcRuleItem.expectedValue) {
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PASS;
+    }
+    // if the comparator is like, then make sure the user's input is part of the expectation
+    else if (qcInspectionRequestItemOption.qcRuleItem.qcRuleItemComparator == QCRuleItemComparator.LIKE &&
+      qcInspectionRequestItemOption.qcRuleItem.expectedValue.trim().toLowerCase().includes(qcInspectionRequestItemOption.stringValue.trim().toLowerCase())) {
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PASS;
+    }
+    else {
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.FAIL;
+    }    
+  }
+
+  // check the result of the option based on the user's input
+  resetQCInspectionRequestItemOptionResult(qcInspectionRequestItemOption: QCInspectionRequestItemOption) {
+     if (qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === QCRuleItemType.YESNO) {
+       this.resetQCInspectionRequestItemYESNOOptionResult(qcInspectionRequestItemOption);
+     }
+     else if (qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === QCRuleItemType.NUMBER) {
+      this.resetQCInspectionRequestItemNUMBEROptionResult(qcInspectionRequestItemOption);
+       
+     }
+     else if (qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === QCRuleItemType.STRING) {
+      this.resetQCInspectionRequestItemSTRINGOptionResult(qcInspectionRequestItemOption);
+       
+     }
+  }
+  qcInspectionRequestItemOptionChanged(qcInspectionRequestItem: QCInspectionRequestItem, 
+    qcInspectionRequestItemOption: QCInspectionRequestItemOption){
+ 
+      // update the item option's result first, 
+      this.resetQCInspectionRequestItemOptionResult(qcInspectionRequestItemOption);
+
+      console.log(`after reset the option ${qcInspectionRequestItemOption.qcRuleItem.checkPoint}`);
+
+      qcInspectionRequestItem.qcInspectionRequestItemOptions.forEach(
+        qcInspectionRequestItemOption => {
+          console.log(`==> ${qcInspectionRequestItemOption.qcRuleItem.checkPoint} : ${qcInspectionRequestItemOption.qcInspectionResult}`);
+        }
+      )
+
+      // update the qc inspection request  based on the result of all item options
+      if (!qcInspectionRequestItem.qcInspectionRequestItemOptions.some(
+            qcInspectionRequestItemOption => qcInspectionRequestItemOption.qcInspectionResult !== QCInspectionResult.PENDING
+          )) {
+            // all options are pending, let's set the result to pending
+            qcInspectionRequestItem.qcInspectionResult = QCInspectionResult.PENDING
+      }
+      else if (qcInspectionRequestItem.qcInspectionRequestItemOptions.some(
+          qcInspectionRequestItemOption => qcInspectionRequestItemOption.qcInspectionResult !== QCInspectionResult.PASS
+        )) {
+          // at least one option fail, let's make the whole request as fail
+          qcInspectionRequestItem.qcInspectionResult = QCInspectionResult.FAIL
+      }
+      else {        
+          qcInspectionRequestItem.qcInspectionResult = QCInspectionResult.PASS
+      }
     this.refreshInventoryQCResultMap();
   }
    

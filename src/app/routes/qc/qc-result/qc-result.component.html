@@ -68,6 +68,9 @@
                 <th>
                   {{ 'qcRule.expectedValue' | i18n }}
                 </th> 
+                <th>
+                  {{ 'qc.actualValue' | i18n }}
+                </th> 
   
                 <th>
                   {{ 'qc-result' | i18n }}
@@ -82,6 +85,17 @@
                   <td>{{ 'QC-RULE-ITEM-TYPE-' + qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType | i18n }}</td>
                   <td>{{ 'QC-RULE-ITEM-COMPARATOR-' + qcInspectionRequestItemOption.qcRuleItem.qcRuleItemComparator  | i18n}}</td>
                   <td>{{ qcInspectionRequestItemOption.qcRuleItem.expectedValue }}</td> 
+                  <td>
+                    <span *ngIf="qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === qcRuleItemTypes.NUMBER">
+                      {{qcInspectionRequestItemOption.doubleValue}}
+                    </span>
+                    <span *ngIf="qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === qcRuleItemTypes.STRING">
+                      {{qcInspectionRequestItemOption.stringValue}}
+                    </span>
+                    <span *ngIf="qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === qcRuleItemTypes.YESNO">
+                      {{qcInspectionRequestItemOption.booleanValue}}
+                    </span>
+                  </td> 
                   <td>{{ qcInspectionRequestItemOption.qcInspectionResult }}</td>
                 </tr>
               </tbody>

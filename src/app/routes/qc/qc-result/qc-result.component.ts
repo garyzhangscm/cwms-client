@@ -10,6 +10,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 
 import { QcInspectionRequest } from '../models/qc-inspection-request';
 import { QCRule } from '../models/qc-rule';
+import { QCRuleItemType } from '../models/qc-rule-item-type';
 import { QcInspectionRequestService } from '../services/qc-inspection-request.service';
 
 @Component({
@@ -36,6 +37,7 @@ export class QcQcResultComponent implements OnInit {
   searchResult = '';
   isSpinning = false;
   searchForm!: FormGroup; 
+  qcRuleItemTypes = QCRuleItemType;
 
   ngOnInit(): void { 
 
