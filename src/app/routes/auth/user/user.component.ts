@@ -148,6 +148,9 @@ export class AuthUserComponent implements OnInit {
   
   newTempUserForm!: FormGroup;
   newTempUserModal!: NzModalRef;
+  
+  copyUserForm!: FormGroup;
+  copyUserModal!: NzModalRef;
 
   resetForm(): void {
     this.searchForm!.reset();
@@ -237,6 +240,56 @@ export class AuthUserComponent implements OnInit {
       next: () => {
         this.messageService.success(this.i18n.fanyi('message.action.success'));
         this.newTempUserModal.destroy(); 
+        // search by the new user
+        this.searchForm.controls.username.setValue(username);
+        this.search();
+      }, 
+      error: () => this.messageService.error(this.i18n.fanyi('message.action.error'))
+    })
+
+  }
+
+  
+  openCopyUserModal(
+    existingUser: User,
+    tplCopyUserModalTitle: TemplateRef<{}>,
+    tplCopyUserModalContent: TemplateRef<{}>,
+  ): void { 
+    this.copyUserForm = this.fb.group({
+      copyFromUsername: new FormControl({ value: existingUser.username, disabled: true }),
+      username:  [null],
+      firstname:  [null],
+      lastname:  [null],
+    });
+
+    // Load the location
+    this.copyUserModal = this.modalService.create({
+      nzTitle: tplCopyUserModalTitle,
+      nzContent: tplCopyUserModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.copyUserModal.destroy(); 
+      },
+      nzOnOk: () => {
+        this.copyUser( 
+          existingUser.id!,
+          this.copyUserForm.controls.username.value,
+          this.copyUserForm.controls.firstname.value,
+          this.copyUserForm.controls.lastname.value,
+        );
+        return false;
+      },
+
+      nzWidth: 1000,
+    });
+  }
+  copyUser(existingUserId: number, username: string, firstname: string, lastname: string) { 
+    this.userService.copyUser(existingUserId, username, firstname, lastname).subscribe({
+      next: () => {
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.copyUserModal.destroy(); 
         // search by the new user
         this.searchForm.controls.username.setValue(username);
         this.search();

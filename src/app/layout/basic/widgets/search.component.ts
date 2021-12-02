@@ -6,12 +6,22 @@ import {
   ElementRef,
   EventEmitter,
   HostBinding,
+  Inject,
   Input,
   OnDestroy,
   Output
 } from '@angular/core';
+import { Router } from '@angular/router';
+import { I18NService } from '@core';
+import { ALAIN_I18N_TOKEN, Menu, MenuService } from '@delon/theme';
 import { BehaviorSubject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators'; 
+
+interface MenuItem{
+  name: string;
+  url: string;
+}
+
 
 @Component({
   selector: 'header-search',
@@ -31,11 +41,13 @@ import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
         (input)="search($event)"
         (focus)="qFocus()"
         (blur)="qBlur()"
+       
         [attr.placeholder]="'menu.search.placeholder' | i18n"
       />
     </nz-input-group>
-    <nz-autocomplete nzBackfill #auto>
-      <nz-auto-option *ngFor="let i of options" [nzValue]="i">{{ i }}</nz-auto-option>
+    <nz-autocomplete #auto >
+      <nz-auto-option *ngFor="let menuItem of options" [nzValue]="menuItem.name" (selectionChange)="optionSelectedChanged($event, menuItem)" >
+        <a>{{ menuItem.name }}</a></nz-auto-option>
     </nz-autocomplete>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -43,7 +55,7 @@ import { debounceTime, distinctUntilChanged, tap } from 'rxjs/operators';
 export class HeaderSearchComponent implements AfterViewInit, OnDestroy {
   q = '';
   qIpt: HTMLInputElement | null = null;
-  options: string[] = [];
+  options: MenuItem[] = [];
   search$ = new BehaviorSubject('');
   loading = false;
 
@@ -65,7 +77,10 @@ export class HeaderSearchComponent implements AfterViewInit, OnDestroy {
   }
   @Output() readonly toggleChangeChange = new EventEmitter<boolean>();
 
-  constructor(private el: ElementRef<HTMLElement>, private cdr: ChangeDetectorRef) {}
+  constructor(private el: ElementRef<HTMLElement>, private cdr: ChangeDetectorRef,     
+    private router: Router,
+    private menuService: MenuService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) {}
 
   ngAfterViewInit(): void {
     this.qIpt = this.el.nativeElement.querySelector('.ant-input') as HTMLInputElement;
@@ -80,12 +95,56 @@ export class HeaderSearchComponent implements AfterViewInit, OnDestroy {
         })
       )
       .subscribe(value => {
-        this.options = value ? [value, value + value, value + value + value] : [];
+        this.options = value ? this.loadMatchedMenus(value) : [];
         this.loading = false;
         this.cdr.detectChanges();
       });
   }
 
+  loadMatchedMenus(name: string): MenuItem[] { 
+    
+    let menuItems: MenuItem[] = [];
+    this.menuService.menus.forEach(
+      menuGroup => {
+        menuGroup.children?.forEach(
+          menuSubGroup => {
+            menuSubGroup.children?.forEach(
+              assignedMenu => {
+                if (assignedMenu.i18n && this.i18n.fanyi(assignedMenu.i18n).toLocaleLowerCase().includes(name.toLocaleLowerCase())) {
+                  menuItems = [...menuItems, {
+                    name: this.i18n.fanyi(assignedMenu.i18n),
+                    url: assignedMenu.link ? assignedMenu.link : ""
+                  }];
+                }
+                else if (assignedMenu.text && 
+                          (assignedMenu.text.toLocaleLowerCase().includes(name.toLocaleLowerCase()) 
+                            || this.i18n.fanyi(assignedMenu.text).toLocaleLowerCase().includes(name.toLocaleLowerCase()))) {
+                    menuItems = [...menuItems, {
+                              name: this.i18n.fanyi(assignedMenu.text),
+                              url: assignedMenu.link ? assignedMenu.link : ""
+                            }];
+                }
+              }
+            )
+          }
+        )
+      }
+    )
+    return menuItems;
+    
+  }
+
+  optionSelectedChanged(event: any, menuItem: MenuItem) {
+    if (event.isUserInput) {
+      
+      this.openPage(menuItem);
+    }
+  }
+  openPage(menuItem: MenuItem) {
+    
+
+    this.router.navigateByUrl(menuItem.url);
+  }
   qFocus(): void {
     this.focus = true;
   }
@@ -98,6 +157,8 @@ export class HeaderSearchComponent implements AfterViewInit, OnDestroy {
   }
 
   search(ev: Event): void {
+    
+    
     this.search$.next((ev.target as HTMLInputElement).value);
   }
 

@@ -6,6 +6,7 @@ import { I18NService } from '@core';
 import { TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
+
 import { FileUploadType } from '../models/file-upload-type';
 import { FileUploadOperationService } from '../services/file-upload-operation.service';
 
@@ -35,7 +36,7 @@ export class UtilFileUploadComponent implements OnInit {
   loadFileForm!: FormGroup;
   fromMenu = false;
   pageTitle = '';
-  selectedFileUploadType!: FileUploadType;
+  selectedFileUploadType?: FileUploadType;
   fileUploadDisabled = false;
 
   allowedFileTypes: Array<{ label: string; value: string }> = [];

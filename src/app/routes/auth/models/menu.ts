@@ -9,4 +9,6 @@ export interface Menu {
   link: string;
   sequence: number;
   overallSequence?: number;
+  enabled?: boolean;
+  systemAdminMenuFlag?: boolean;
 }

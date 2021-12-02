@@ -96,5 +96,13 @@ export class UserService {
     params = params.append('lastname', lastname);
     return this.http.post(`resource/user/new-temp-user?companyId=${this.companyService.getCurrentCompany()!.id}`, null, params).pipe(map(res => res.data));
   }
+  
+  copyUser(existingUserId: number, username: string, firstname: string, lastname: string) : Observable<User> {
+    let params = new HttpParams();
+    params = params.append('username', username);
+    params = params.append('firstname', firstname);
+    params = params.append('lastname', lastname);
+    return this.http.post(`resource//users/${existingUserId}/copy?companyId=${this.companyService.getCurrentCompany()!.id}`, null, params).pipe(map(res => res.data));
+  }
 
 }

@@ -77,7 +77,7 @@
       <div nz-row [nzGutter]="24">
         <div nz-col [nzSpan]="12">
           <nz-form-item nzFlex>
-            <nz-form-label for="fileType" [nzSpan]="3"> {{ 'file-upload.template-file' | i18n }} </nz-form-label
+            <nz-form-label for="fileType" [nzSpan]="4"> {{ 'file-upload.template-file' | i18n }} </nz-form-label
             >
             <!--
 
@@ -106,7 +106,7 @@
     </form>
   </nz-card>
 
-  <div class="search-result-list" *ngIf="selectedFileUploadType !== null">
+  <div class="search-result-list" *ngIf="selectedFileUploadType">
     <nz-table
     [nzScroll]="{ x: 'true', y: 'true' }" 
       #rowSelectionTable
