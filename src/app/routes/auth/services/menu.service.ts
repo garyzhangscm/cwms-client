@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { CompanyService } from '../../warehouse-layout/services/company.service';
@@ -33,10 +33,16 @@ export class MenuService {
       ),
     );
   }
-  disableMenu(menu: Menu) : Observable<Menu[]> {
+  disableMenu(menu: Menu) : Observable<Menu> {
     return this.http.post(`resource/menu/${menu.id}/enable?enabled=false`).pipe(map(res => res.data));
   }
-  enableMenu(menu: Menu) : Observable<Menu[]> {
+  enableMenu(menu: Menu) : Observable<Menu> {
     return this.http.post(`resource/menu/${menu.id}/enable?enabled=true`).pipe(map(res => res.data));
   }
+
+  getCompanyAccessibleMenu(companyId: number): Observable<MenuGroup[]> {
+    return this.http.get(`resource/menus/company-accessible?companyId=${this.companyService.getCurrentCompany()!.id}`).pipe(map(res => res.data));
+  }
+
+  
 }

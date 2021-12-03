@@ -2,13 +2,17 @@ import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
+import { NzTransferModule } from 'ng-zorro-antd/transfer';
 
 import { UtilBillableRequestComponent } from './billable-request/billable-request.component';
 import { UtilCompanyMaintenanceComponent } from './company-maintenance/company-maintenance.component';
+import { UtilCompanyMenuComponent } from './company-menu/company-menu.component';
 import { UtilCompanyComponent } from './company/company.component';
 import { UtilDataInitComponent } from './data-init/data-init.component';
+import { UtilDataTransferComponent } from './data-transfer/data-transfer.component';
 import { UtilFileUploadComponent } from './file-upload/file-upload.component';
 import { UtilIconListComponent } from './icon-list/icon-list.component'; 
+import { UtilMenuComponent } from './menu/menu.component';
 import { UtilRfAppVersionMaintenanceComponent } from './rf-app-version-maintenance/rf-app-version-maintenance.component';
 import { UtilRfAppVersionComponent } from './rf-app-version/rf-app-version.component';
 import { UtilRfMaintenanceComponent } from './rf-maintenance/rf-maintenance.component';
@@ -20,8 +24,6 @@ import { UtilTableColumnSelectionComponent } from './table-column-selection/tabl
 import { UtilTestDataInitComponent } from './test-data-init/test-data-init.component';
 import { UtilTesterComponent } from './tester/tester.component';
 import { UtilRoutingModule } from './util-routing.module';
-import { UtilMenuComponent } from './menu/menu.component';
-import { UtilCompanyMenuComponent } from './company-menu/company-menu.component';
 
 const COMPONENTS: Array<Type<void>> = [
   UtilFileUploadComponent,  
@@ -41,7 +43,8 @@ const COMPONENTS: Array<Type<void>> = [
   UtilCompanyComponent,
   UtilCompanyMaintenanceComponent,
   UtilMenuComponent,
-  UtilCompanyMenuComponent];
+  UtilCompanyMenuComponent,
+  UtilDataTransferComponent];
   
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
@@ -52,6 +55,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     UtilRoutingModule,    
     NzDescriptionsModule, 
     NzStepsModule, 
+    NzTransferModule,
   ],
   declarations: [
     ...COMPONENTS,

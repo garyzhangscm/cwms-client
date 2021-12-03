@@ -20,6 +20,7 @@ import { UtilTestDataInitComponent } from './test-data-init/test-data-init.compo
 import { UtilTesterComponent } from './tester/tester.component';
 import { UtilMenuComponent } from './menu/menu.component';
 import { UtilCompanyMenuComponent } from './company-menu/company-menu.component';
+import { UtilDataTransferComponent } from './data-transfer/data-transfer.component';
 
 const routes: Routes = [
   { path: 'file-upload', component: UtilFileUploadComponent, canActivate: [AuthGuard] },
@@ -40,7 +41,8 @@ const routes: Routes = [
   { path: 'company', component: UtilCompanyComponent },
   { path: 'company-maintenance', component: UtilCompanyMaintenanceComponent },
   { path: 'menu', component: UtilMenuComponent },
-  { path: 'company-menu', component: UtilCompanyMenuComponent }];
+  { path: 'company-menu', component: UtilCompanyMenuComponent },
+  { path: 'data-transfer', component: UtilDataTransferComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
