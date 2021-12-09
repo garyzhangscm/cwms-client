@@ -238,7 +238,11 @@
                       <a (click)="allocateLocation(data)">{{ 'allocateLocation' | i18n }}</a>
                     </li>
                     <li nz-menu-item *ngIf="isInventoryReversible(data)">
+                      <!--
                       <a (click)="reverseInventory(data)">{{ 'receipt.reverseInventory' | i18n }}</a>
+
+                      -->
+                      <a (click)="openReverseInventoryModal(data, tplReverseInventoryModalTitle, tplReverseInventoryModalContent)">{{ 'receipt.reverseInventory' | i18n }}</a>
                     </li>
                     <li nz-menu-item
                       *ngIf="data.inventoryMovements!.length > 0 && data.location!.name === currentReceipt.number">
@@ -736,6 +740,58 @@
     </nz-table>
   </div>
 
+</ng-template>
+
+
+<!-- Modal for reverse inventory -->
+<ng-template #tplReverseInventoryModalTitle>
+  <span>{{ 'receipt.reverseInventory' | i18n}}</span>
+</ng-template>
+<ng-template #tplReverseInventoryModalContent>
+  <form nz-form [formGroup]="reverseInventoryForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="3" nzFor="lpn">
+            {{ 'lpn' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="lpn" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>  
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex> 
+          <nz-form-control [nzSpan]="16">
+            <nz-input-group nzSize="large">
+              <label nz-checkbox formControlName="reverseQCQuantity">
+                <span>{{ 'reverse-QC-quantity' | i18n }}</span>
+              </label> 
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>  
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          
+          <nz-form-control [nzSpan]="16">
+            <nz-input-group nzSize="large">
+              <label nz-checkbox formControlName="allowReuseLPN">
+                <span>{{ 'allow-reuse-LPN' | i18n }}</span>
+              </label> 
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div> 
+    
+  </form>
 </ng-template>
 
 </nz-spin>

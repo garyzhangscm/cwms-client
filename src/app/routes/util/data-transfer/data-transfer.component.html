@@ -1,1 +1,173 @@
-<page-header></page-header>
+<page-header> </page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form"> 
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="companyCode">
+            {{ 'company.code' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+              
+            <nz-select nz-input formControlName="companyCode" style="width: 250px">
+                <nz-option *ngFor="let company of validCompanies" [nzLabel]="company.name"
+                [nzValue]="company.code">
+                </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="number">
+            {{ 'number' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <input nz-input name="number" id="number" formControlName="number">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="search()"  >
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form> 
+ 
+ 
+  
+  <div class="search-result-list"> 
+    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+      <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+    </div>
+    
+    <st #st [data]="dataTransferRequests" [columns]="columns" [footer]="tableFoot"   [expand]="expand" expandRowByClick expandAccordion
+    >
+    
+      <!--   inventory allocation summary details  -->
+      <ng-template #expand let-item let-index="index" >
+        <nz-tabset  >
+               
+            <nz-tab nzTitle=" {{ 'data-transfer-request-detail' | i18n }}">
+                <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="item.dataTransferRequestDetails" nzSize="middle"
+                [nzShowPagination]="false" #dataTransferRequestDetailsTable>
+                <thead>
+                    <th>
+                    {{ 'sequence' | i18n }}
+                    </th>
+                    <th>
+                    {{ 'description' | i18n }}
+                    </th>
+                    <th>
+                    {{ 'data-transfer-request-detail.tablesName' | i18n }}
+                    </th>
+                    <th>
+                    {{ 'status' | i18n }}
+                    </th>
+                    
+                    
+                </thead>
+                <tbody>
+                    <tr *ngFor="let dataTransferRequestDetail of dataTransferRequestDetailsTable.data">
+                    <td>{{ dataTransferRequestDetail.sequence }}</td>
+                    
+                    <td>{{ dataTransferRequestDetail.description }}</td>
+                    <td>{{ dataTransferRequestDetail.tablesName }}</td> 
+                    <td>{{ dataTransferRequestDetail.status }}</td>
+                    
+                    </tr>
+                </tbody>
+                </nz-table>
+            </nz-tab>  
+        </nz-tabset>
+      </ng-template> 
+    </st>
+  
+  </div>
+ 
+</nz-spin>
+<ng-template #tableFoot>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+  
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+    
+    <button nz-button nzType="primary" (click)="openDataExportRequestModal(tplDataExportRequestModalTitle, tplDataExportRequestModalContent )">
+      {{ 'Export' | i18n }}
+    </button>
+    <nz-divider nzType="vertical"></nz-divider>
+    
+    <button nz-button nzType="primary" (click)="openDataImportRequestModal(tplDataExportRequestModalTitle, tplDataExportRequestModalContent )">
+        {{ 'Import' | i18n }}
+      </button>
+  </div>
+</ng-template>
+
+
+<!-- Modal for export data-->
+<ng-template #tplDataExportRequestModalTitle>
+    <span>{{ 'Export' | i18n}}</span>
+  </ng-template>
+  <ng-template #tplDataExportRequestModalContent>
+    <form nz-form [formGroup]="dataExportRequestForm">
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="8" nzFor="number">
+              {{ 'number' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <nz-input-group nzSize="large">
+                <input nz-input formControlName="number" />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="12">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="8" nzFor="description">
+              {{ 'description' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <nz-input-group nzSize="large">
+                <input nz-input formControlName="description" />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="8" nzFor="companyCode">
+              {{ 'company.code' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <nz-input-group nzSize="large">
+                  
+                <nz-select nz-input formControlName="companyCode" style="width: 250px">
+                    <nz-option *ngFor="let company of validCompanies" [nzLabel]="company.name"
+                    [nzValue]="company.code">
+                    </nz-option>
+                </nz-select>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      
+    </form>
+  </ng-template>
+
+
+
+ 

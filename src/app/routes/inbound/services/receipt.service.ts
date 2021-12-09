@@ -1,3 +1,4 @@
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -24,10 +25,14 @@ export class ReceiptService {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
   ) { }
 
-  getReceipts(number: string, loadDetails?: boolean): Observable<Receipt[]> {
+  getReceipts(number?: string, loadDetails?: boolean): Observable<Receipt[]> {
     let url = `inbound/receipts?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+    
+
     if (number) {
-      url = `${url}&number=${number}`;
+      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number.trim())}`;
     }
     if (loadDetails !== undefined && loadDetails!= null) {
       url = `${url}&loadDetails=${loadDetails}`;

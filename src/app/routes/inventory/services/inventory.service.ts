@@ -164,8 +164,9 @@ export class InventoryService {
     return this.http.post(url).pipe(map(res => res.data));
   }
 
-  reverseReceivedInventory(inventory: Inventory) {
-    const url = `inventory/inventory/${inventory.id}/reverse-receiving`;
+  reverseReceivedInventory(inventory: Inventory, 
+    reverseQCQuantity: boolean, allowReuseLPN: boolean) {
+    const url = `inventory/inventory/${inventory.id}/reverse-receiving?reverseQCQuantity=${reverseQCQuantity}&allowReuseLPN=${allowReuseLPN}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 

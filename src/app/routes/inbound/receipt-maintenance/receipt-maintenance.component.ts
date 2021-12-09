@@ -271,6 +271,10 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   displayItemPackageType: ItemPackageType | undefined;
   receivingInProcess = false;
 
+  
+  reverseInventoryForm!: FormGroup;
+  reverseInventoryModal!: NzModalRef;
+
   isSpinning = false;
   // how to print putaway work
   // all: print everything recevied, include the one that already in stock
@@ -1018,9 +1022,10 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     return this.currentReceipt.receiptStatus !== ReceiptStatus.CLOSED;
   }
   // reserve inventory
-  reverseInventory(inventory: Inventory): void {
+  reverseInventory(inventory: Inventory, 
+    reverseQCQuantity: boolean, allowReuseLPN: boolean): void {
     this.isSpinning = true;
-    this.inventoryService.reverseReceivedInventory(inventory).subscribe({
+    this.inventoryService.reverseReceivedInventory(inventory, reverseQCQuantity, allowReuseLPN).subscribe({
       next: () => {
 
         this.loadReceipt(this.currentReceipt.number);
@@ -1056,5 +1061,42 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
         },
       );
   }
+
+  openReverseInventoryModal(
+    inventory: Inventory,
+    tplReverseInventoryModalTitle: TemplateRef<{}>,
+    tplReverseInventoryModalContent: TemplateRef<{}>,
+  ): void {
+    
+    this.reverseInventoryForm = this.fb.group({
+      lpn: new FormControl({ value: inventory.lpn, disabled: true }),
+      reverseQCQuantity: new FormControl({ 
+        value: inventory.inboundQCRequired === true ? true : false, 
+        disabled: inventory.inboundQCRequired === true ? false: true }),
+      allowReuseLPN: new FormControl({ value: false, disabled: false }),
+    });
+
+    // Load the location
+    this.reverseInventoryModal = this.modalService.create({
+      nzTitle: tplReverseInventoryModalTitle,
+      nzContent: tplReverseInventoryModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.reverseInventoryModal.destroy();
+      },
+      nzOnOk: () => {
+        this.reverseInventory( 
+          inventory,
+          this.reverseInventoryForm.controls.reverseQCQuantity.value,
+          this.reverseInventoryForm.controls.allowReuseLPN.value,
+        );
+      },
+
+      nzWidth: 1000,
+    });
+  }
+ 
 
 }
