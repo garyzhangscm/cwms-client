@@ -9,4 +9,5 @@ export interface DataTransferRequestDetail {
     description: String;
     tablesName: DataTransferRequestTable;
     status: DataTransferRequestStatus;
+    fileUrl?: string;
 }

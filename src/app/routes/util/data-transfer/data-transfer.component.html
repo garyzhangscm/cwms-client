@@ -8,7 +8,7 @@
       <div nz-col [nzSpan]="12">
         <nz-form-item nzFlex>
           <nz-form-label [nzSpan]="6" nzFor="companyCode">
-            {{ 'company.code' | i18n }}
+            {{ 'company.name' | i18n }}
           </nz-form-label>
           <nz-form-control [nzSpan]="18">
               
@@ -51,7 +51,44 @@
     <st #st [data]="dataTransferRequests" [columns]="columns" [footer]="tableFoot"   [expand]="expand" expandRowByClick expandAccordion
     >
     
-      <!--   inventory allocation summary details  -->
+    
+      <!-- more details about the company -->
+      <ng-template st-row="companyCode" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.company && item.company == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+          {{ item.company?.code}}
+
+      </ng-template>
+      
+      <ng-template st-row="companyName" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.company && item.company == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+          {{ item.company?.name}}
+
+      </ng-template>
+      
+      <!-- zip file download url -->
+      <ng-template st-row="zipFileUrl" let-item let-index="index">
+        
+                      
+          <a [href]="item.zipFileUrl" target="_blank" rel="noopener noreferrer" *ngIf="item.status === dataTransferRequestStatus.COMPLETE">
+              
+            {{ item.number + ".zip" }}
+          </a>
+
+      </ng-template>
+
+      <!--   data transfer request details  -->
       <ng-template #expand let-item let-index="index" >
         <nz-tabset  >
                
@@ -71,6 +108,9 @@
                     <th>
                     {{ 'status' | i18n }}
                     </th>
+                    <th>
+                    {{ 'csv-file' | i18n }}
+                    </th>
                     
                     
                 </thead>
@@ -81,6 +121,16 @@
                     <td>{{ dataTransferRequestDetail.description }}</td>
                     <td>{{ dataTransferRequestDetail.tablesName }}</td> 
                     <td>{{ dataTransferRequestDetail.status }}</td>
+                    <td>
+                      
+                      <a [href]="dataTransferRequestDetail.fileUrl" target="_blank" rel="noopener noreferrer"
+                      *ngIf="dataTransferRequestDetail.status === dataTransferRequestStatus.COMPLETE"
+                      >
+            
+                        {{ dataTransferRequestDetail.tablesName + ".csv" }}
+                      </a>
+                      
+                    </td>
                     
                     </tr>
                 </tbody>
