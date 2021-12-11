@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { InventoryAuditCountConfirmComponent } from './audit-count-confirm/audit-count-confirm.component';
 import { InventoryAuditCountResultComponent } from './audit-count-result/audit-count-result.component';
@@ -13,27 +14,29 @@ import { InventoryInventoryAdjustmentRequestComponent } from './inventory-adjust
 import { InventoryInventoryAdjustmentThresholdConfirmComponent } from './inventory-adjustment-threshold-confirm/inventory-adjustment-threshold-confirm.component';
 import { InventoryInventoryAdjustmentThresholdMaintenanceComponent } from './inventory-adjustment-threshold-maintenance/inventory-adjustment-threshold-maintenance.component';
 import { InventoryInventoryAdjustmentThresholdComponent } from './inventory-adjustment-threshold/inventory-adjustment-threshold.component';
+import { InventoryInventoryAllocationSummaryComponent } from './inventory-allocation-summary/inventory-allocation-summary.component';
 import { InventoryInventoryAttributeChangeConfirmComponent } from './inventory-attribute-change-confirm/inventory-attribute-change-confirm.component';
 import { InventoryInventoryAttributeChangeComponent } from './inventory-attribute-change/inventory-attribute-change.component';
+import { InventoryInventoryConfigurationComponent } from './inventory-configuration/inventory-configuration.component';
 import { InventoryInventoryMoveComponent } from './inventory-move/inventory-move.component';
 import { InventoryInventoryQuantityChangeConfirmComponent } from './inventory-quantity-change-confirm/inventory-quantity-change-confirm.component';
 import { InventoryInventoryQuantityChangeComponent } from './inventory-quantity-change/inventory-quantity-change.component';
+import { InventoryInventorySnapshotConfigurationComponent } from './inventory-snapshot-configuration/inventory-snapshot-configuration.component';
+import { InventoryInventorySnapshotComponent } from './inventory-snapshot/inventory-snapshot.component';
 import { InventoryInventoryComponent } from './inventory/inventory.component';
 import { InventoryItemFamilyMaintenanceConfirmComponent } from './item-family-maintenance-confirm/item-family-maintenance-confirm.component';
 import { InventoryItemFamilyMaintenanceComponent } from './item-family-maintenance/item-family-maintenance.component';
 import { InventoryItemFamilyComponent } from './item-family/item-family.component';
 import { InventoryItemMaintenanceComponent } from './item-maintenance/item-maintenance.component';
 import { InventoryItemQueryPopupComponent } from './item-query-popup/item-query-popup.component';
+import { InventoryItemSamplingMaintenanceComponent } from './item-sampling-maintenance/item-sampling-maintenance.component';
+import { InventoryItemSamplingComponent } from './item-sampling/item-sampling.component';
 import { InventoryItemComponent } from './item/item.component';
 import { InventoryMovementPathConfirmComponent } from './movement-path-confirm/movement-path-confirm.component';
 import { InventoryMovementPathMaintenanceComponent } from './movement-path-maintenance/movement-path-maintenance.component';
 import { InventoryMovementPathComponent } from './movement-path/movement-path.component';
 import { InventoryReplenishmentComponent } from './replenishment/replenishment.component';
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
-import { InventoryInventoryConfigurationComponent } from './inventory-configuration/inventory-configuration.component';
-import { InventoryInventorySnapshotComponent } from './inventory-snapshot/inventory-snapshot.component';
-import { InventoryInventorySnapshotConfigurationComponent } from './inventory-snapshot-configuration/inventory-snapshot-configuration.component';
-import { InventoryInventoryAllocationSummaryComponent } from './inventory-allocation-summary/inventory-allocation-summary.component';
 
 const routes: Routes = [
   { path: 'inventory', component: InventoryInventoryComponent, canActivate: [AuthGuard] },
@@ -71,7 +74,9 @@ const routes: Routes = [
   { path: 'configuration', component: InventoryInventoryConfigurationComponent },
   { path: 'snapshot', component: InventoryInventorySnapshotComponent },
   { path: 'inventory-snapshot-configuration', component: InventoryInventorySnapshotConfigurationComponent },
-  { path: 'inventory-allocation-summary', component: InventoryInventoryAllocationSummaryComponent }];
+  { path: 'inventory-allocation-summary', component: InventoryInventoryAllocationSummaryComponent },
+  { path: 'item-sampling', component: InventoryItemSamplingComponent },
+  { path: 'item-sampling/maintenance', component: InventoryItemSamplingMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
