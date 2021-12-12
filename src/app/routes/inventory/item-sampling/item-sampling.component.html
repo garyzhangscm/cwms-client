@@ -53,6 +53,39 @@
     
     <st #st [data]="itemSamplingList" [columns]="columns" [footer]="tableFoot"   [expand]="expand" expandRowByClick expandAccordion
     > 
+    
+    <ng-template st-row="images" let-item let-index="index">
+      <button nz-button nzType="primary" (click)="previewSamplingImage(item)">{{'Preview' | i18n}}</button>
+
+    </ng-template>
+
+    
+      <!--   action colummn  --> 
+      <ng-template st-row="actionColumnTitle" type="title" let-c>
+        {{ 'action' | i18n }}
+      </ng-template>
+      <ng-template st-row="actionColumn" let-item let-index="index"> 
+        
+        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+          {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu> 
+            <li nz-menu-item  >
+              
+              <a routerLink="/inventory/item-sampling/maintenance"
+              [queryParams]="{id : item.id}" routerLinkActive="active">
+                  {{ 'modify' | i18n }}</a>
+                  
+            </li>
+            <li nz-menu-item  >
+              <a  (click)="disableItemSampling(item)">{{ 'disable' | i18n }}</a>
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+      </ng-template>
+
+    
+      
 
       <!--   data transfer request details  -->
       <ng-template #expand let-item let-index="index" >

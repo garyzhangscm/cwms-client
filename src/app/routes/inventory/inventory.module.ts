@@ -37,14 +37,14 @@ import { InventoryItemFamilyMaintenanceComponent } from './item-family-maintenan
 import { InventoryItemFamilyComponent } from './item-family/item-family.component';
 import { InventoryItemMaintenanceComponent } from './item-maintenance/item-maintenance.component';
 import { InventoryItemQueryPopupComponent } from './item-query-popup/item-query-popup.component';
+import { InventoryItemSamplingMaintenanceComponent } from './item-sampling-maintenance/item-sampling-maintenance.component';
+import { InventoryItemSamplingComponent } from './item-sampling/item-sampling.component';
 import { InventoryItemComponent } from './item/item.component';
 import { InventoryMovementPathConfirmComponent } from './movement-path-confirm/movement-path-confirm.component';
 import { InventoryMovementPathMaintenanceComponent } from './movement-path-maintenance/movement-path-maintenance.component';
 import { InventoryMovementPathComponent } from './movement-path/movement-path.component';
 import { InventoryReplenishmentComponent } from './replenishment/replenishment.component';
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
-import { InventoryItemSamplingComponent } from './item-sampling/item-sampling.component';
-import { InventoryItemSamplingMaintenanceComponent } from './item-sampling-maintenance/item-sampling-maintenance.component';
 
 
 const COMPONENTS: Array<Type<void>> = [

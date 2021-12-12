@@ -34,6 +34,25 @@ export class ItemSamplingService {
     }
     return this.http.get(url).pipe(map(res => res.data));
   }
+  
+  getItemSamplingsForDisplay(number?: string, itemName?: string, itemId?: number): Observable<ItemSampling[]> {
+    
+    let url = `inventory/item-sampling/display?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+    
+    if (number) {
+      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number.trim())}`;
+    }
+    
+    if (itemName) {
+      url = `${url}&itemName=${httpUrlEncodingCodec.encodeValue(itemName.trim())}`;
+    }
+    if (itemId) {
+      url = `${url}&itemId=${itemId}`;
+    }
+    return this.http.get(url).pipe(map(res => res.data));
+  }
   getItemSampling(id: number): Observable<ItemSampling> {
     
     let url = `inventory/item-sampling/${id}`;

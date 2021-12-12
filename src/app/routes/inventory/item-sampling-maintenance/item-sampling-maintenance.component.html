@@ -28,7 +28,7 @@
 
     <!-- Let the user input the order information -->
     <nz-card class="small-card" *ngIf="stepIndex === 0 && currentItemSampling !== undefined" 
-    style="margin-top: 20px;"  [nzExtra]="removeQCSampleTemplate">
+    style="margin-top: 20px;"   >
         <div nz-row [nzGutter]="24">
             <div nz-col [nzSpan]="8">
               <nz-form-item>
@@ -51,38 +51,37 @@
             <div nz-col [nzSpan]="8">
                 <nz-form-item>
                   <nz-form-label [nzSpan]="6">
-                    {{ 'work-order' | i18n }}
+                    {{ 'description' | i18n }}
                   </nz-form-label>
                   <nz-form-control [nzSpan]="18" >                    
-                    <input   type="text" nz-input [ngModel]="currentProductionLineAssignment!.workOrder?.number" disabled/>        
+                    <input   type="text" nz-input [ngModel]="currentItemSampling!.description"/>        
                   </nz-form-control>
                 </nz-form-item>
               </div>
+
+              
             <div nz-col [nzSpan]="8">
-              <nz-form-item>
-                <nz-form-label [nzSpan]="6">
-                  {{ 'production-line' | i18n }}
-                </nz-form-label>
-                <nz-form-control [nzSpan]="18" >                    
-                  <input   type="text" nz-input [ngModel]="currentProductionLineAssignment!.productionLine?.name" disabled/>        
-                </nz-form-control>
+              <nz-form-item nzFlex>
+                  <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemName">
+                      {{ 'item' | i18n }}
+                  </nz-form-label>
+              <nz-form-control [nzSpan]="14">
+                  <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                      <input nz-input  type="text"  [ngModel]="currentItemSampling!.item?.name" 
+                      
+                         (blur)="itemNameBlur($event)"/>
+                  </nz-input-group>
+                  <ng-template #suffixIconButton>
+                      <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
+                      </app-inventory-item-query-popup>
+                  </ng-template>
+              </nz-form-control>
               </nz-form-item>
-            </div>
-        </div>
-
-        <div nz-row [nzGutter]="24">
-          <!--
-
-
-            <nz-upload [nzAction]="imageFileUploadUrl" [nzHeaders]="{ authorization: 'authorization-text' }"
-            [nzFileList]="fileList" [nzAccept]="acceptUploadedFileTypes" (nzChange)="handleUploadChange($event)">
-                <button nz-button>
-                <i nz-icon nzType="upload"></i>
-    
-                {{ 'file-upload' | i18n }}
-                </button>
-            </nz-upload>
-          -->
+          </div>
+          
+        </div> 
+        
+        <div nz-row [nzGutter]="24"> 
           <div class="clearfix">
               <nz-upload
               [nzAction]="imageFileUploadUrl"
@@ -93,6 +92,7 @@
               [nzFileList]="fileList"
               [nzShowButton]="fileList.length < 8"
               [nzPreview]="handlePreview"
+              [nzDisabled]="imageFileUploadUrl == ''"
             >
               <div>
                 <i nz-icon nzType="plus"></i>
@@ -113,9 +113,6 @@
           </div>
 
         </div>
-        <ng-template #removeQCSampleTemplate>
-          <a *ngIf="newSample == false"  (click)="removeQCExample()">{{'remove' | i18n}}</a>
-        </ng-template>
     </nz-card>
  
     <!-- Let the user confirm the result -->
@@ -123,16 +120,16 @@
 
         <nz-descriptions nzBordered>
             <nz-descriptions-item nzTitle="{{ 'number' | i18n}}"> 
-                {{currentWorkOrderQcSample!.number }}
+                {{currentItemSampling!.number }}
             </nz-descriptions-item> 
-            <nz-descriptions-item nzTitle="{{ 'work-order' | i18n}}"> 
-                {{ currentProductionLineAssignment!.workOrder.number }}
+            <nz-descriptions-item nzTitle="{{ 'description' | i18n}}"> 
+                {{currentItemSampling!.description }}
             </nz-descriptions-item> 
-            <nz-descriptions-item nzTitle="{{ 'production-line' | i18n}}"> 
-                {{ currentProductionLineAssignment!.productionLine.name }}
+            <nz-descriptions-item nzTitle="{{ 'item' | i18n}}"> 
+                {{currentItemSampling!.item!.name }}
             </nz-descriptions-item> 
             <nz-descriptions-item nzTitle="{{ 'Images' | i18n}}"> 
-                {{currentWorkOrderQcSample.imageUrls}}
+                {{currentItemSampling.imageUrls}}
             </nz-descriptions-item> 
         </nz-descriptions>
         

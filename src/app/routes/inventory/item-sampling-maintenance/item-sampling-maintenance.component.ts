@@ -9,6 +9,7 @@ import { NzUploadFile, NzUploadChangeParam } from 'ng-zorro-antd/upload';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service'; 
 import { ItemSampling } from '../models/item-sampling';
 import { ItemSamplingService } from '../services/item-sampling.service';
+import { ItemService } from '../services/item.service';
 
 
 const getBase64 = (file: File): Promise<string | ArrayBuffer | null> =>
@@ -46,6 +47,7 @@ export class InventoryItemSamplingMaintenanceComponent implements OnInit {
     private titleService: TitleService,
     private warehouseService: WarehouseService, 
     private messageService: NzMessageService,
+    private itemService: ItemService,
     private router: Router,) { 
       this.currentItemSampling = {        
         number: "", 
@@ -60,9 +62,11 @@ export class InventoryItemSamplingMaintenanceComponent implements OnInit {
     }
 
   ngOnInit(): void { 
+    this.newSample = true;
     
     this.fileList = [];
     this.activatedRoute.queryParams.subscribe(params => {
+      // if we are changing an existing record
       if (params.id) {
 
 
@@ -71,13 +75,14 @@ export class InventoryItemSamplingMaintenanceComponent implements OnInit {
           params.id
         ).subscribe({
           next: (itemSamplingRes) => {
-            this.imageFileUploadUrl = `inventory/item-sampling/${itemSamplingRes.number}/images`;
+            this.imageFileUploadUrl = `inventory/item-sampling/${itemSamplingRes.item?.id}/${itemSamplingRes.number}/images`;
 
+            this.newSample = false;
             this.currentItemSampling = itemSamplingRes;  
           }
         })
 
-      }
+      } 
     });
 
   }
@@ -169,8 +174,15 @@ export class InventoryItemSamplingMaintenanceComponent implements OnInit {
   }
 
   getImageUrl(imageFileName: string) : string {
-    return `${environment.api.baseUrl}inventory/item-sampling/images/${this.warehouseService.getCurrentWarehouse().id}/${this.currentItemSampling.number}/${imageFileName}`;
+    if (this.newSample) {
+      return `${environment.api.baseUrl}inventory/item-sampling/images/${this.warehouseService.getCurrentWarehouse().id}/${this.currentItemSampling.item?.id}/${imageFileName}`;
 
+    }
+    else {
+      return `${environment.api.baseUrl}inventory/item-sampling/images/${this.warehouseService.getCurrentWarehouse().id}/${this.currentItemSampling.item?.id}/${this.currentItemSampling.number}/${imageFileName}`;
+
+    }
+   
     
   }
    
@@ -222,6 +234,47 @@ export class InventoryItemSamplingMaintenanceComponent implements OnInit {
         }, 
         error: () => this.isSpinning = false
       })
+    }
+  }
+
+  
+  processItemQueryResult(selectedItemName: any): void {
+    console.log(`start to query with item name ${selectedItemName}`);
+    this.itemService.getItems(selectedItemName).subscribe({
+      next:(itemRes) => {
+        if (itemRes.length === 1) {
+          this.currentItemSampling.item = itemRes[0];
+        }
+      }
+    })
+    
+    
+  }
+
+  itemNameBlur(event: Event): void {
+    const itemName: string = (event.target as HTMLInputElement).value;
+    console.log(`item name is changed to ${itemName}`);
+    // Load the item informaiton when the name is changed
+    if (this.currentItemSampling.item == null ||
+        itemName !== this.currentItemSampling.item!.name) {
+      // clear the file upload url when we changed the item.
+      // we will reset the url once we get the new item's information
+      this.imageFileUploadUrl = '';
+      if (itemName.length === 0) {
+        // item is chagned to empty, let's clear the item
+        this.currentItemSampling.item = undefined;
+      } else {
+        
+          this.itemService.getItems(itemName).subscribe({
+            next:(itemRes) => {
+              if (itemRes.length === 1) {
+                this.currentItemSampling.item = itemRes[0];
+                
+                this.imageFileUploadUrl = `inventory/item-sampling/${this.currentItemSampling.item?.id}/images`;
+              }
+            }
+          })
+      }
     }
   }
 

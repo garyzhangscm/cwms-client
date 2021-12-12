@@ -6,6 +6,7 @@ import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
+import { NzImageService } from 'ng-zorro-antd/image';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
@@ -77,6 +78,7 @@ export class InventoryItemSamplingComponent implements OnInit {
     private messageService: NzMessageService,
     private modalService: NzModalService,
     private companyService: CompanyService,
+    private nzImageService: NzImageService,
     private fb: FormBuilder,) { }
 
   ngOnInit(): void { 
@@ -87,6 +89,13 @@ export class InventoryItemSamplingComponent implements OnInit {
       itemName: [null]
     });
  
+    this.activatedRoute.queryParams.subscribe(params => {
+      // if we are changing an existing record
+      if (params.number) { 
+        this.searchForm!.controls.number.setValue(params.number);
+        this.search();
+      } 
+    });
 
   }
 
@@ -108,7 +117,7 @@ export class InventoryItemSamplingComponent implements OnInit {
   search(): void {
     this.isSpinning = true; 
     this.itemSamplingService
-      .getItemSamplings(this.searchForm.value.number, this.searchForm.value.itemName)
+      .getItemSamplingsForDisplay(this.searchForm.value.number, this.searchForm.value.itemName)
       .subscribe({
 
         next: (itemSamplingRes) => {
@@ -136,6 +145,29 @@ export class InventoryItemSamplingComponent implements OnInit {
     this.searchForm.controls.item.setValue(selectedItemName);
     
     
+  }
+
+  previewSamplingImage(itemSampling : ItemSampling) {
+    const images = 
+      itemSampling.imageUrls.split(",").map(
+        imageUrl => 
+          {
+            return {
+                src: `${environment.api.baseUrl}inventory/item-sampling/images/${itemSampling.warehouseId}/${itemSampling.item?.id}/${itemSampling.number}/${imageUrl}`,
+              width: '200px',
+              height: '200px',
+              alt: 'ng-zorro'
+            }
+          },
+      );
+      console.log(`will show images \n ${JSON.stringify(images)}`)
+
+    this.nzImageService.preview(images, { nzZoom: 1.5, nzRotate: 0 });
+  
+  }
+ 
+  disableItemSampling(itemSampling : ItemSampling) {
+
   }
 
 }
