@@ -236,7 +236,9 @@ export class InventoryItemSamplingMaintenanceComponent implements OnInit {
     }
     else if (info.file.status === 'removed') {
       this.fileList = this.fileList.filter(file => file.uid !== info.file.uid);
-      this.removeItemSamplingImage(info.file.name);
+      // we will not remove the image file on the server side at this moment.
+      // instead we will clear the image files when we save the result
+      // this.removeItemSamplingImage(info.file.name);
       
       this.loadImageUrls(this.currentItemSampling);
 
