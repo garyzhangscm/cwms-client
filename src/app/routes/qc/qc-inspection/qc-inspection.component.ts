@@ -148,7 +148,7 @@ export class QcQcInspectionComponent implements OnInit {
     {
       title: 'action',
       renderTitle: 'actionColumnTitle' ,
-      render: 'actionColumn',
+      render: 'actionColumn',fixed: 'right',width: 150, 
     },
 
   ];

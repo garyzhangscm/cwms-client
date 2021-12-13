@@ -3,7 +3,7 @@ import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { STComponent, STColumn } from '@delon/abc/st';
+import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzImageService } from 'ng-zorro-antd/image';
@@ -142,7 +142,7 @@ export class InventoryItemSamplingComponent implements OnInit {
   
   processItemQueryResult(selectedItemName: any): void {
     console.log(`start to query with item name ${selectedItemName}`);
-    this.searchForm.controls.item.setValue(selectedItemName);
+    this.searchForm.controls.itemName.setValue(selectedItemName);
     
     
   }
@@ -168,6 +168,38 @@ export class InventoryItemSamplingComponent implements OnInit {
  
   disableItemSampling(itemSampling : ItemSampling) {
 
+    this.isSpinning = true;
+    this.itemSamplingService.disableItemSampling(itemSampling).subscribe({
+      next: () => {
+
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        
+        this.searchForm.controls.number.setValue(itemSampling.number);
+        this.searchForm.controls.itemName.setValue("");
+
+        this.search();
+      },
+      error: () => {
+        this.isSpinning = false;
+      },
+    });
   }
 
+  itemSamplingListTableChanged(event: STChange) : void { 
+    
+    if (event.type === 'expand' && event.expand.expand === true) {
+      
+      this.showItemSamplingListTableDetail(event.expand);
+    }
+  }
+  showItemSamplingListTableDetail(itemSampling: ItemSampling) {
+    this.itemSamplingService.getPreviousItemSamplingForDisplay(itemSampling.item?.name, itemSampling.item?.id).subscribe(
+      {
+        next: (itemSamplingRes) => this.mapOfPreviousItemSampling[itemSampling.item!.id!] = itemSamplingRes
+      }
+    )
+
+
+  }
 }

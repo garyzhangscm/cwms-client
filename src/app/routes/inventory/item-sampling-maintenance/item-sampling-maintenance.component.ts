@@ -78,7 +78,10 @@ export class InventoryItemSamplingMaintenanceComponent implements OnInit {
             this.imageFileUploadUrl = `inventory/item-sampling/${itemSamplingRes.item?.id}/${itemSamplingRes.number}/images`;
 
             this.newSample = false;
+            this.isSpinning = false;
             this.currentItemSampling = itemSamplingRes;  
+            this.sampleNumberValidateStatus = 'success'; 
+            this.loadImages();
           }
         })
 
@@ -152,21 +155,40 @@ export class InventoryItemSamplingMaintenanceComponent implements OnInit {
   
   confirm() { 
     this.isSpinning = true;  
+    if (this.newSample) {
+      this.itemSamplingService.addItemSampling(this.currentItemSampling).subscribe({
+        next: () => {
+  
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          setTimeout(() => {
+            this.isSpinning = false;
+            this.router.navigateByUrl(`/inventory/item-sampling?number=${this.currentItemSampling.number}`);
+          }, 2500);
+        },
+        error: () => {
+          this.isSpinning = false;
+        },
+      }); 
+
+    }
+    else {
+      this.itemSamplingService.changeItemSampling(this.currentItemSampling).subscribe({
+        next: () => {
+  
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          setTimeout(() => {
+            this.isSpinning = false;
+            this.router.navigateByUrl(`/inventory/item-sampling?number=${this.currentItemSampling.number}`);
+          }, 2500);
+        },
+        error: () => {
+          this.isSpinning = false;
+        },
+      }); 
+
+    }
 
     
-    this.itemSamplingService.addItemSampling(this.currentItemSampling).subscribe({
-      next: () => {
-
-        this.messageService.success(this.i18n.fanyi('message.action.success'));
-        setTimeout(() => {
-          this.isSpinning = false;
-          this.router.navigateByUrl(`/inventory/item-sampling?number=${this.currentItemSampling.number}`);
-        }, 2500);
-      },
-      error: () => {
-        this.isSpinning = false;
-      },
-    }); 
   }
   
   loadImageUrls(itemSampling: ItemSampling) {
@@ -187,22 +209,25 @@ export class InventoryItemSamplingMaintenanceComponent implements OnInit {
   }
    
   handleUploadChange(info: NzUploadChangeParam): void { 
-    console.log(`handleUploadChange: ${JSON.stringify(info)}`)
+    
     if (info.file.status === 'done') {
       
-      let url = this.getImageUrl(info.file.name);
-      
+      let url = this.getImageUrl(info.file.name); 
+
+      if (!this.fileList.some(file => file.name == info.file.name)) {
  
-      this.fileList = [
-        ...this.fileList,
-        {
-          uid: info.file.uid,
-          name: info.file.name,
-          status: info.file.status,
-          response: '', // custom error message to show
-          url: url
-        }
-      ]; 
+        this.fileList = [
+          ...this.fileList,
+          {
+            uid: info.file.uid,
+            name: info.file.name,
+            status: info.file.status,
+            response: '', // custom error message to show
+            url: url
+          }
+        ]; 
+      }
+ 
       this.loadImageUrls(this.currentItemSampling);
 
     } else if (info.file.status === 'error') {
@@ -211,12 +236,31 @@ export class InventoryItemSamplingMaintenanceComponent implements OnInit {
     }
     else if (info.file.status === 'removed') {
       this.fileList = this.fileList.filter(file => file.uid !== info.file.uid);
+      this.removeItemSamplingImage(info.file.name);
       
       this.loadImageUrls(this.currentItemSampling);
 
 
     }
     
+  }
+  removeItemSamplingImage(fileName: string) {
+    if (this.newSample) {
+      this.itemSamplingService.removeItemSamplingImageByItemId(this.currentItemSampling.item!.id!, fileName).subscribe({
+
+        next: () => console.log(`file ${fileName} for item ${this.currentItemSampling.item!.id!} removed`)
+
+      })
+    }
+    else {
+      this.itemSamplingService.removeItemSamplingImageByItemIdAndNumber(this.currentItemSampling.item!.id!,
+        this.currentItemSampling.number, fileName).subscribe({
+
+        next: () => console.log(`file ${fileName} for item ${this.currentItemSampling.item!.id!}, item sampling number ${this.currentItemSampling.number} removed`)
+
+      })
+
+    }
   }
 
   removeQCExample() {

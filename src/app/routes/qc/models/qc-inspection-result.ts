@@ -5,5 +5,6 @@ export enum QCInspectionResult {
     FAIL = 'FAIL',
     SKIPPED = 'SKIPPED',
     CANCELLED = 'CANCELLED',
+    NOT_APPLY = 'NOT_APPLY',
 
 }

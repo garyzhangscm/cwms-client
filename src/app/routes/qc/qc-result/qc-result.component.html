@@ -53,7 +53,7 @@
         <nz-tabset  >
           <nz-tab *ngFor="let qcInspectionRequestItem of item.qcInspectionRequestItems" [nzTitle]="qcInspectionRequestItem.qcRule.name">
             <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="qcInspectionRequestItem.qcInspectionRequestItemOptions" nzSize="middle"
-              [nzShowPagination]="false" #qcInspectionRequestItemOptionTable>
+              [nzShowPagination]="true" #qcInspectionRequestItemOptionTable>
               <thead>
                 <th>
                   {{ 'qcRule.checkPoint' | i18n }}

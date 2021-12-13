@@ -1,7 +1,9 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
+import { NzCarouselModule } from 'ng-zorro-antd/carousel';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
@@ -39,7 +41,9 @@ const COMPONENTS: Array<Type<void>> = [
     InventoryModule, 
     NzTransferModule,
     WarehouseLayoutModule,NzIconModule ,
-    NzSkeletonModule 
+    NzSkeletonModule , 
+    NzCarouselModule,
+    NzImageModule 
   ],
   declarations: COMPONENTS,
 })

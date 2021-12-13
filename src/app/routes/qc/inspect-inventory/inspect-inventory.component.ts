@@ -3,11 +3,14 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { TransferChange } from 'ng-zorro-antd/transfer';
 
 import { Inventory } from '../../inventory/models/inventory';
+import { ItemSampling } from '../../inventory/models/item-sampling';
 import { InventoryService } from '../../inventory/services/inventory.service';
+import { ItemSamplingService } from '../../inventory/services/item-sampling.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { QcInspectionRequest } from '../models/qc-inspection-request';
 import { QCInspectionRequestItem } from '../models/qc-inspection-request-item';
@@ -22,6 +25,7 @@ import { QcInspectionRequestService } from '../services/qc-inspection-request.se
 @Component({
   selector: 'app-qc-inspect-inventory',
   templateUrl: './inspect-inventory.component.html',
+  styleUrls: ['./inspect-inventory.component.less'],
 })
 export class QcInspectInventoryComponent implements OnInit {
    
@@ -33,6 +37,9 @@ export class QcInspectInventoryComponent implements OnInit {
   inventoryQCResultMap = new Map();
   qcRuleItemTypes = QCRuleItemType;
   qcInspectionResults = QCInspectionResult;
+  itemSamplingMap = new Map();
+  notApplyQCInspectionRequestItemOptionSet = new Set();
+  isCollapse = false;
 
 
   constructor(private http: _HttpClient, 
@@ -41,6 +48,7 @@ export class QcInspectInventoryComponent implements OnInit {
     private router: Router,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private warehouseService: WarehouseService,
+    private itemSamplingService: ItemSamplingService,
     private qcInspectionRequestService: QcInspectionRequestService,
     private activatedRoute: ActivatedRoute) {
     this.pageTitle = this.i18n.fanyi('qc-inspection');
@@ -50,6 +58,7 @@ export class QcInspectInventoryComponent implements OnInit {
   ngOnInit(): void {
 
 
+    this.itemSamplingMap = new Map();
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.ids) { 
         this.qcInspectionRequestService.getPendingQCInspectionRequest(undefined, params.ids)
@@ -69,6 +78,7 @@ export class QcInspectInventoryComponent implements OnInit {
                 
 
                 this.inventoryQCRequestMap.set(lpn, qcRules);
+                this.loadItemSampling(lpn, qcRequest.inventory.item?.id, qcRequest.inventory.item?.name);
               }
             );
             this.refreshInventoryQCResultMap();
@@ -79,6 +89,28 @@ export class QcInspectInventoryComponent implements OnInit {
       } 
     }); 
 }
+loadItemSampling(lpn: string, itemId?: number, itemName?: string) {
+  // we will only load the item sampling information if we haven't done so
+  // we will always assume there's only one item on this lpn
+  if (!this.itemSamplingMap.has(lpn)) {
+    this.itemSamplingService.getItemSamplings(undefined, itemName, itemId, undefined, true).subscribe(
+      {
+        next: (itemSamplingRes) => {
+          // we should only get at most one enabled item sampling for each item
+          if (itemSamplingRes.length === 1) {
+            this.itemSamplingMap.set(lpn, itemSamplingRes[0])
+          }
+        }
+      }
+    )
+
+  }
+}
+
+toggleCollapse(): void {
+  this.isCollapse = !this.isCollapse;
+}
+
 refreshInventoryQCResultMap() {
   //inventoryQCRequestMap
   // key: lpn
@@ -174,19 +206,25 @@ refreshInventoryQCResultMap() {
   // For YesNo type question, we will only compare the result to either true or fail
   resetQCInspectionRequestItemYESNOOptionResult(qcInspectionRequestItemOption: QCInspectionRequestItemOption) {
 
-    // for yes no question, we will only allow the comparator to 'equals'
+    // for yes no question, we will only allow the comparator to 'equals'.
+    console.log(`qcInspectionRequestItemOption.value for YESNO: ${qcInspectionRequestItemOption.value}`);
     if (qcInspectionRequestItemOption.qcRuleItem.qcRuleItemComparator != QCRuleItemComparator.EQUAL) {
 
       qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PENDING;
       return;
     }
     // if the use has not chosen anything, or chose N/A, then the result of this option is PENDING
-    if (!qcInspectionRequestItemOption.value || qcInspectionRequestItemOption.value == 'PENDING') {
+    if (qcInspectionRequestItemOption.value == 'NOT_APPLY') {
+      // if the question is not apply, then we consider it is a pass
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.NOT_APPLY;
+      return;
+    }
+    else if (!qcInspectionRequestItemOption.value || qcInspectionRequestItemOption.value == 'PENDING') {
       
       qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PENDING;
       return;
     }
-
+    
     // convert the result into boolean value
     qcInspectionRequestItemOption.booleanValue = qcInspectionRequestItemOption.value.trim().toLowerCase() == "yes";
     
@@ -211,6 +249,11 @@ refreshInventoryQCResultMap() {
   resetQCInspectionRequestItemNUMBEROptionResult(qcInspectionRequestItemOption: QCInspectionRequestItemOption) {
 
     // make sure the user input something
+    if (this.notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)) {
+      
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.NOT_APPLY;
+      return;
+    }
     if (qcInspectionRequestItemOption.doubleValue == null) {
       
       qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PENDING;
@@ -305,7 +348,8 @@ refreshInventoryQCResultMap() {
             qcInspectionRequestItem.qcInspectionResult = QCInspectionResult.PENDING
       }
       else if (qcInspectionRequestItem.qcInspectionRequestItemOptions.some(
-          qcInspectionRequestItemOption => qcInspectionRequestItemOption.qcInspectionResult !== QCInspectionResult.PASS
+          qcInspectionRequestItemOption => qcInspectionRequestItemOption.qcInspectionResult !== QCInspectionResult.PASS &&
+              qcInspectionRequestItemOption.qcInspectionResult !== QCInspectionResult.NOT_APPLY
         )) {
           // at least one option fail, let's make the whole request as fail
           qcInspectionRequestItem.qcInspectionResult = QCInspectionResult.FAIL
@@ -316,4 +360,23 @@ refreshInventoryQCResultMap() {
     this.refreshInventoryQCResultMap();
   }
    
+  getImageUrl(itemSampling: ItemSampling, imageFileName: string): string {
+    return `${environment.api.baseUrl}inventory/item-sampling/images/${this.warehouseService.getCurrentWarehouse().id}/${itemSampling.item?.id}/${itemSampling.number}/${imageFileName}`
+  }
+
+  notApplyQCInspectionRequestItemOptionChanged(qcInspectionRequestItem: QCInspectionRequestItem, 
+    qcInspectionRequestItemOption: QCInspectionRequestItemOption, checked: boolean) {
+    console.log(`checked: ${checked}`)
+    console.log(`this.notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id): ${this.notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)}`)
+    if (checked && !this.notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)) { 
+        console.log(`add ${qcInspectionRequestItemOption.id} to the set`) 
+        this.notApplyQCInspectionRequestItemOptionSet.add(qcInspectionRequestItemOption.id); 
+    }
+    else if (!checked && this.notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)) {
+        console.log(`remove ${qcInspectionRequestItemOption.id} from the set`) 
+        this.notApplyQCInspectionRequestItemOptionSet.delete(qcInspectionRequestItemOption.id); 
+    }
+
+    this.qcInspectionRequestItemOptionChanged(qcInspectionRequestItem, qcInspectionRequestItemOption);
+  }
 }

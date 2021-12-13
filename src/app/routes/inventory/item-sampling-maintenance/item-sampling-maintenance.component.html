@@ -54,7 +54,7 @@
                     {{ 'description' | i18n }}
                   </nz-form-label>
                   <nz-form-control [nzSpan]="18" >                    
-                    <input   type="text" nz-input [ngModel]="currentItemSampling!.description"/>        
+                    <input   type="text" nz-input [(ngModel)]="currentItemSampling!.description"/>        
                   </nz-form-control>
                 </nz-form-item>
               </div>
@@ -69,7 +69,7 @@
                   <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
                       <input nz-input  type="text"  [ngModel]="currentItemSampling!.item?.name" 
                       
-                         (blur)="itemNameBlur($event)"/>
+                         (blur)="itemNameBlur($event)"  [disabled]="!newSample"/>
                   </nz-input-group>
                   <ng-template #suffixIconButton>
                       <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
