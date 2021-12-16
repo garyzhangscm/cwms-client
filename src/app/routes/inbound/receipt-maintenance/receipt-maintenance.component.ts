@@ -1,7 +1,8 @@
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
+import { STComponent, STColumn, STData } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -274,6 +275,11 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   
   reverseInventoryForm!: FormGroup;
   reverseInventoryModal!: NzModalRef;
+  
+  recalculateQCForm!: FormGroup;
+  recalculateQCModal!: NzModalRef;
+  formatterPercent = (value: number): string => `${value} %`;
+  parserPercent = (value: string): string => value.replace(' %', '');
 
   isSpinning = false;
   // how to print putaway work
@@ -555,9 +561,22 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
 
   getSelectedReceiptLines(): ReceiptLine[] {
+    /***
+     * 
+     */
     const selectedReceiptLines: ReceiptLine[] = [];
+    const selectedReceiptLineIdSet = new Set();
+    // we will only return the selected data from the current page
+    // this.st.list will only return data from current page
+    const receiptLineDataList : STData[] = this.st.list;
+    receiptLineDataList.filter(receiptLineRow => receiptLineRow.checked).forEach(
+      receiptLineRow => { 
+        selectedReceiptLineIdSet.add(receiptLineRow["id"])}
+    )
+    
+    
     this.listOfAllReceiptLines.forEach((receiptLine: ReceiptLine) => {
-      if (this.setOfReceiptLinesTableCheckedId.has(receiptLine.id!)) {
+      if (selectedReceiptLineIdSet.has(receiptLine.id!)) {
         selectedReceiptLines.push(receiptLine);
       }
     });
@@ -939,6 +958,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
   removeSelectedReceiptLines(): void {
     const selectedReceiptLines = this.getSelectedReceiptLines();
+    
     if (selectedReceiptLines.length > 0) {
       this.modalService.confirm({
         nzTitle: this.i18n.fanyi('page.modal.delete.header.title'),
@@ -946,10 +966,18 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
         nzOkText: this.i18n.fanyi('confirm'),
         nzOkDanger: true,
         nzOnOk: () => {
-          this.receiptLineService.removeReceiptLines(selectedReceiptLines).subscribe(res => {
-            this.message.success(this.i18n.fanyi('message.remove.success'));
-            this.refreshReceiptResults();
-          });
+          this.isSpinning = true;
+          this.receiptLineService.removeReceiptLines(selectedReceiptLines).subscribe(
+            {
+              next: () => {
+                
+                this.message.success(this.i18n.fanyi('message.remove.success'));
+                this.isSpinning = false;
+                this.refreshReceiptResults(); 
+              },
+              error: () => this.isSpinning = false
+            }
+          );
         },
         nzCancelText: this.i18n.fanyi('cancel'),
         nzOnCancel: () => console.log('Cancel'),
@@ -1098,5 +1126,105 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     });
   }
  
+  
+  @ViewChild('st', { static: true })
+  st!: STComponent;
+  columns: STColumn[] = [
+    {
+      title: 'id',
+      index: 'id',
+      type: 'checkbox'
+    },
+    { title: this.i18n.fanyi("receipt.line.number"), index: 'number',  iif: () => this.isChoose('number'), width: 150 },    
+    { title: this.i18n.fanyi("item"), index: 'item.name',  iif: () => this.isChoose('itemName'), width: 150 },    
+    { title: this.i18n.fanyi("item.description"), index: 'item.description',  iif: () => this.isChoose('itemDescription'), width: 150 },    
+    { title: this.i18n.fanyi("receipt.line.expectedQuantity"), index: 'expectedQuantity',  iif: () => this.isChoose('expectedQuantity'), width: 150 },    
+    { title: this.i18n.fanyi("receipt.line.receivedQuantity"), index: 'receivedQuantity', iif: () => this.isChoose('receivedQuantity'), width: 150 },    
+    { title: this.i18n.fanyi("receipt.line.overReceivingQuantity"), index: 'overReceivingQuantity',  iif: () => this.isChoose('overReceivingQuantity'), width: 150 },  
+    { title: this.i18n.fanyi("receipt.line.overReceivingPercent"), index: 'overReceivingPercent', iif: () => this.isChoose('overReceivingPercent'), width: 150 },      
+    { title: this.i18n.fanyi("qcQuantity"), index: 'qcQuantity', iif: () => this.isChoose('qcQuantity'), width: 150 },      
+    { title: this.i18n.fanyi("qcPercentage"), index: 'qcPercentage', iif: () => this.isChoose('qcPercentage'), width: 150 },      
+    { title: this.i18n.fanyi("qcQuantityRequested"), index: 'qcQuantityRequested', iif: () => this.isChoose('qcQuantityRequested'), width: 150 },      
+    {
+      title: 'action',
+      renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 
+      render: 'actionColumn',
+    },    
+  ];
+  customColumns = [
 
+    { label: this.i18n.fanyi("receipt.line.number"), value: 'number', checked: true },
+    { label: this.i18n.fanyi("item"), value: 'itemName', checked: true }, 
+    { label: this.i18n.fanyi("item.description"), value: 'itemDescription', checked: true }, 
+    { label: this.i18n.fanyi("receipt.line.expectedQuantity"), value: 'expectedQuantity', checked: true }, 
+    { label: this.i18n.fanyi("receipt.line.receivedQuantity"), value: 'receivedQuantity', checked: true }, 
+    { label: this.i18n.fanyi("receipt.line.overReceivingQuantity"), value: 'overReceivingQuantity', checked: true }, 
+    { label: this.i18n.fanyi("receipt.line.overReceivingPercent"), value: 'overReceivingPercent', checked: true }, 
+    { label: this.i18n.fanyi("qcQuantity"), value: 'qcQuantity', checked: true }, 
+    { label: this.i18n.fanyi("qcPercentage"), value: 'qcPercentage', checked: true }, 
+    { label: this.i18n.fanyi("qcQuantityRequested"), value: 'qcQuantityRequested', checked: true },  
+  ];
+
+  isChoose(key: string): boolean {
+    return !!this.customColumns.find(w => w.value === key && w.checked);
+  }
+
+  columnChoosingChanged(): void{ 
+    if (this.st !== undefined && this.st.columns !== undefined) {
+      this.st!.resetColumns({ emitReload: true });
+
+    }
+  }
+
+  recalculateQCQuantity(receiptLine: ReceiptLine, qcQuantity?: number, qcPercentage?: number) {
+
+    this.isSpinning = true;
+    this.receiptLineService.recalculateQCQuantity(receiptLine, qcQuantity, qcPercentage).subscribe(
+      {
+        next: () => {
+          
+          this.message.success(this.i18n.fanyi('message.action.success'));
+          this.isSpinning = false;
+          this.refreshReceiptResults(); 
+        },
+        error: () => this.isSpinning = false
+      }
+    );
+  }
+
+  
+  openRecalculateQCModal(
+    receiptLine: ReceiptLine,
+    tplRecalculateQCModalTitle: TemplateRef<{}>,
+    tplRecalculateQCModalContent: TemplateRef<{}>,
+  ): void {
+    
+    this.recalculateQCForm = this.fb.group({
+      qcQuantity: new FormControl({ value: receiptLine.qcQuantity, disabled: true }),
+      newQCQuantity: new FormControl({ value: receiptLine.qcQuantity, disabled: false}),
+      qcPercentage: new FormControl({ value: receiptLine.qcPercentage, disabled: true }),
+      newQCPercentage: new FormControl({ value: receiptLine.qcPercentage, disabled: false }),
+    });
+
+    // Load the location
+    this.recalculateQCModal = this.modalService.create({
+      nzTitle: tplRecalculateQCModalTitle,
+      nzContent: tplRecalculateQCModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.reverseInventoryModal.destroy();
+      },
+      nzOnOk: () => {
+        this.recalculateQCQuantity( 
+          receiptLine,
+          this.recalculateQCForm.controls.newQCQuantity.value,
+          this.recalculateQCForm.controls.newQCPercentage.value,
+        );
+      },
+
+      nzWidth: 1000,
+    });
+  }
 }

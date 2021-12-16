@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -5,13 +6,15 @@ import { map } from 'rxjs/operators';
 
 import { Inventory } from '../../inventory/models/inventory';
 import { ReportHistory } from '../../report/models/report-history';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ReceiptLine } from '../models/receipt-line';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ReceiptLineService {
-  constructor(private http: _HttpClient) {}
+  constructor(private http: _HttpClient, 
+    private warehouseService: WarehouseService) {}
 
   getNextReceiptLineNumber(receiptId: number): Observable<string> {
     return this.http.get(`inbound/receipts/${receiptId}/next-line-number`).pipe(map(res => res.data));
@@ -81,4 +84,20 @@ export class ReceiptLineService {
     
     return this.http.post(url).pipe(map(res => res.data));
   }
+
+  recalculateQCQuantity(receiptLine: ReceiptLine, qcQuantity?: number, qcPercentage?: number) :  Observable<ReceiptLine> {
+     
+    let url = `inbound/receipts/lines/${receiptLine.id}/recalculate-qc-quantity?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+      
+    if (qcQuantity) {
+      url = `${url}&qcQuantity=${qcQuantity}`
+    }
+    if (qcPercentage) {
+      url = `${url}&qcPercentage=${qcPercentage}`
+    }
+     
+
+    return this.http.post(url).pipe(map(res => res.data));
+  }
+
 }

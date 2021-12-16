@@ -74,7 +74,7 @@ export class ItemSamplingService {
   }
   
 
-  addItemSampling(itemSampling: ItemSampling): Observable<ItemSampling[]> {
+  addItemSampling(itemSampling: ItemSampling): Observable<ItemSampling> {
     
     let url = `inventory/item-sampling?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     
@@ -82,7 +82,7 @@ export class ItemSamplingService {
     return this.http.put(url, itemSampling).pipe(map(res => res.data));
   }
 
-  changeItemSampling(itemSampling: ItemSampling): Observable<ItemSampling[]> {
+  changeItemSampling(itemSampling: ItemSampling): Observable<ItemSampling> {
     
     let url = `inventory/item-sampling/${itemSampling.id}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     
@@ -90,7 +90,7 @@ export class ItemSamplingService {
     return this.http.post(url, itemSampling).pipe(map(res => res.data));
   }
   
-  removeItemSampling(itemSamplingId: number): Observable<ItemSampling[]> {
+  removeItemSampling(itemSamplingId: number): Observable<ItemSampling> {
     
     let url = `inventory/item-sampling/${itemSamplingId}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     
@@ -98,7 +98,7 @@ export class ItemSamplingService {
     return this.http.delete(url).pipe(map(res => res.data));
   }
 
-  disableItemSampling(itemSampling: ItemSampling): Observable<ItemSampling[]> {
+  disableItemSampling(itemSampling: ItemSampling): Observable<ItemSampling> {
     
     let url = `inventory/item-sampling/${itemSampling.id}/disable?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     

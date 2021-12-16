@@ -11,4 +11,8 @@ export interface ReceiptLine {
   receivedQuantity?: number;
   overReceivingQuantity?: number;
   overReceivingPercent?: number;
+  
+  qcQuantity?: number;
+  qcPercentage?: number;
+  qcQuantityRequested?: number;
 }

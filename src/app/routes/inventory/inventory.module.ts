@@ -40,6 +40,8 @@ import { InventoryItemQueryPopupComponent } from './item-query-popup/item-query-
 import { InventoryItemSamplingMaintenanceComponent } from './item-sampling-maintenance/item-sampling-maintenance.component';
 import { InventoryItemSamplingComponent } from './item-sampling/item-sampling.component';
 import { InventoryItemComponent } from './item/item.component';
+import { InventoryLockMaintenanceComponent } from './lock-maintenance/lock-maintenance.component';
+import { InventoryLockComponent } from './lock/lock.component';
 import { InventoryMovementPathConfirmComponent } from './movement-path-confirm/movement-path-confirm.component';
 import { InventoryMovementPathMaintenanceComponent } from './movement-path-maintenance/movement-path-maintenance.component';
 import { InventoryMovementPathComponent } from './movement-path/movement-path.component';
@@ -82,7 +84,9 @@ const COMPONENTS: Array<Type<void>> = [
   InventoryInventorySnapshotConfigurationComponent,
   InventoryInventoryAllocationSummaryComponent,
   InventoryItemSamplingComponent,
-  InventoryItemSamplingMaintenanceComponent];
+  InventoryItemSamplingMaintenanceComponent,
+  InventoryLockComponent,
+  InventoryLockMaintenanceComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

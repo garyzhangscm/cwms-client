@@ -128,6 +128,66 @@
     <nz-tab nzTitle="{{ 'receipt.line' | i18n }}">
       <!-- Table to Display the result  -->
       <div>
+          
+        <div class="search-result-list">
+          <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+            <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+          </div>
+          
+          <st #st [data]="listOfAllReceiptLines"  [columns]="columns"   [scroll]="{ x: '2715px' }">
+            
+            <!--   action colummn  --> 
+            <ng-template st-row="actionColumnTitle" type="title" let-c>
+              {{ 'action' | i18n }}
+            </ng-template>
+            <ng-template st-row="actionColumn" let-item let-index="index"> 
+              <nz-list>
+                <nz-list-item>
+                  <!-- Only if the receipt is already checked in -->
+                  
+                  <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+                    {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+                  <nz-dropdown-menu #menu="nzDropdownMenu">
+                    <ul nz-menu> 
+
+                      <li nz-menu-item *ngIf="currentReceipt?.receiptStatus != receiptStatus.OPEN">
+                        <a  (click)="openReceivingModal(item, tplReceivingModalTitle, tplReceivingModalContent, tplReceivingModalFooter)">
+                          {{ 'receiving' | i18n }}</a>
+                      </li>
+                      <li nz-menu-item >
+                        <a  (click)="recalculateQCQuantity(item)">
+                          {{ 'recalculateQCQuantity' | i18n }}</a>
+                      </li>
+                      <li nz-menu-item >
+                        <a  (click)="openRecalculateQCModal(item, tplRecalculateQCModalTitle, tplRecalculateQCModalContent)">
+                          {{ 'manualRecalculateQCQuantity' | i18n }}</a>
+                      </li>
+                    </ul>
+                  </nz-dropdown-menu>
+
+                </nz-list-item>
+                <nz-list-item>
+                  <a routerLink="/work-order/pre-print-lpn-label" routerLinkActive="active"
+                    [queryParams]="{receiptLineId : item.id!}">{{ 'pre-print-lpn-label' | i18n }}</a>
+                  </nz-list-item>
+              </nz-list>
+            </ng-template>
+          </st>
+        </div>
+        <div nz-row nzType="flex" [nzJustify]="'start'" style='padding-left: 10px;'>
+          <button nz-button nzType="primary"
+            (click)="showAddReceiptLineModal(tplReceiptLineModalTitle, tplReceiptLineModalContent)">
+            {{ 'add' | i18n }}
+          </button>
+          <button nz-button nzDanger (click)="removeSelectedReceiptLines()">
+            {{ 'remove' | i18n }}
+          </button>
+
+        </div>
+
+        <!--
+
+
         <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="listOfAllReceiptLines"
           [nzFooter]="receiptLinesTableFoot" #receiptLinesTable>
           <thead>
@@ -159,8 +219,7 @@
               <td>
                 
                 <nz-list>
-                  <nz-list-item>
-                    <!-- Only if the receipt is already checked in -->
+                  <nz-list-item> 
                     <button nz-button [disabled]="currentReceipt?.receiptStatus === receiptStatus.OPEN"
                       (click)="openReceivingModal(data, tplReceivingModalTitle, tplReceivingModalContent, tplReceivingModalFooter)"
                       nzType="primary">{{ 'receiving' | i18n }}</button>
@@ -174,6 +233,7 @@
             </tr>
           </tbody>
         </nz-table>
+        -->
       </div>
 
       <ng-template #receiptLinesTableFoot>
@@ -794,4 +854,77 @@
   </form>
 </ng-template>
 
+
+
+<!-- Modal for recalculate qc quantity -->
+<ng-template #tplRecalculateQCModalTitle>
+  <span>{{ 'recalculateQCQuantity' | i18n}}</span>
+</ng-template>
+<ng-template #tplRecalculateQCModalContent>
+  <form nz-form [formGroup]="recalculateQCForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="10" nzFor="qcQuantity">
+            {{ 'qcQuantity' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="qcQuantity"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="10" nzFor="newQCQuantity">
+            {{ 'newQCQuantity' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <nz-input-group nzSize="large">
+              
+              <nz-input-number formControlName="newQCQuantity" [nzMin]="0"  [nzStep]="1" 
+              
+              
+                ></nz-input-number>
+
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>  
+    
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="10" nzFor="qcPercentage">
+            {{ 'qcPercentage' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="qcPercentage"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="10" nzFor="newQCPercentage">
+            {{ 'newQCPercentage' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <nz-input-group nzSize="large">
+              <nz-input-number formControlName="newQCPercentage" [nzMin]="0" [nzMax]="100" [nzStep]="1" 
+              
+                [nzFormatter]="formatterPercent"
+                [nzParser]="parserPercent"
+                ></nz-input-number>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>  
+    
+  </form>
+</ng-template>
 </nz-spin>
