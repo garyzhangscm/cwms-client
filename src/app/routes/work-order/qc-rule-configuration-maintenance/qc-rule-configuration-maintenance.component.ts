@@ -7,17 +7,27 @@ import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { TransferChange, TransferItem } from 'ng-zorro-antd/transfer';
 
+import { UserService } from '../../auth/services/user.service';
+import { Customer } from '../../common/models/customer';
 import { Supplier } from '../../common/models/supplier';
+import { CustomerService } from '../../common/services/customer.service';
 import { SupplierService } from '../../common/services/supplier.service';
+import { InventoryLock } from '../../inventory/models/inventory-lock';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
+import { Item } from '../../inventory/models/item';
 import { ItemFamily } from '../../inventory/models/item-family';
+import { InventoryLockService } from '../../inventory/services/inventory-lock.service';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { ItemFamilyService } from '../../inventory/services/item-family.service';
 import { ItemService } from '../../inventory/services/item.service';
+import { Order } from '../../outbound/models/order';
+import { OrderService } from '../../outbound/services/order.service';
 import { QCRule } from '../../qc/models/qc-rule';
 import { QCRuleConfiguration } from '../../qc/models/qc-rule-configuration';
 import { QcRuleConfigurationService } from '../../qc/services/qc-rule-configuration.service';
 import { QcRuleService } from '../../qc/services/qc-rule.service';
+import { LocalCacheService } from '../../util/services/local-cache.service';
+import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ProductionLine } from '../models/production-line';
@@ -47,6 +57,21 @@ export class WorkOrderQcRuleConfigurationMaintenanceComponent implements OnInit 
   validproductionLines: ProductionLine[] = [];  
   currentQCRuleConfiguration!: WorkOrderQcRuleConfiguration;
 
+  // whether we configure for qc sample, or for work order
+  // can be either sample, or workOrder
+  configureBy = "sample"
+
+  warehouses: Warehouse[] = [];
+  validCustomers: Customer[] = [];
+  warehouseSpecific = false;
+  
+  validItemFamilies: ItemFamily[] = [];
+  validInventoryStatuses: InventoryStatus[] = [];
+  validInventoryLocks: InventoryLock[] = [];
+
+  
+  formatterPercent = (value: number): string => `${value} %`;
+  parserPercent = (value: string): string => value.replace(' %', '');
 
   constructor(private http: _HttpClient,
     private companyService: CompanyService,
@@ -55,10 +80,18 @@ export class WorkOrderQcRuleConfigurationMaintenanceComponent implements OnInit 
     private messageService: NzMessageService,
     private router: Router,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private warehouseService: WarehouseService, 
+    private warehouseService: WarehouseService,  
     private productionLineService: ProductionLineService,
+    private userService: UserService,
     private workOrderService: WorkOrderService,
+    private customerService: CustomerService,
+    private inventoryLockService: InventoryLockService,
     private qcRuleService: QcRuleService,
+    private localCacheService: LocalCacheService,
+    private orderService: OrderService,
+    private itemService: ItemService,
+    private itemFamilyService: ItemFamilyService,
+    private inventoryStatusService: InventoryStatusService,
     private activatedRoute: ActivatedRoute) {
 
     this.pageTitle = this.i18n.fanyi('menu.main.work-order.qc-rule-config');
@@ -66,76 +99,370 @@ export class WorkOrderQcRuleConfigurationMaintenanceComponent implements OnInit 
  
   }
   
+  
+  loadWarehouses(): void {
+    console.log(`Start to load warehouse ${this.userService.getCurrentUsername()}`); 
+      this.warehouseService
+        .getWarehouseByUser(this.companyService.getCurrentCompany()!.code, this.userService.getCurrentUsername())
+        .subscribe((warehouses: Warehouse[]) => {
+          this.warehouses = warehouses;  
+        });
+  } 
+
   createEmptyQcRuleConfiguration(): WorkOrderQcRuleConfiguration {
     return {  
-      warehouseId: this.warehouseService.getCurrentWarehouse().id,
+      companyId: this.companyService.getCurrentCompany()!.id,
    
       workOrderQCRuleConfigurationRules: [], 
-      qcQuantity: 0
+      qcQuantity: 0,
+      qcQuantityPerWorkOrder: 0,
+      qcPercentagePerWorkOrder: 0,
+      customer: this.getEmptyCustomer(),
     }
   }
 
+  getEmptyCustomer(): Customer{
+    return {       
+      name: "",
+      warehouseId: this.warehouseService.getCurrentWarehouse().id,
+      description:  "",
+      contactorFirstname:  "",
+      contactorLastname:  "",
+      addressCountry:  "",
+      addressState:  "", 
+      addressCity:  "", 
+      addressLine1:  "", 
+      addressPostcode:  "",
+    }
+  }
 
   ngOnInit(): void {
 
      
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.id) { 
+        this.isSpinning = true;
         this.workOrderQcRuleConfigurationService.getQCRuleConfiguration(params.id)
           .subscribe(qcRuleConfiguration => {
              this.currentQCRuleConfiguration = qcRuleConfiguration;
-             this.newQCRuleConfiguration = false;
-             this.loadQCRules();
+             this.newQCRuleConfiguration = false; 
+             this.refreshDetailInformation(this.currentQCRuleConfiguration);
+             this.isSpinning = false;
             
           });
       }
       else {
         
+        this.isSpinning = true;
         this.newQCRuleConfiguration = true;
-        this.loadQCRules();
+        this.isSpinning = false;
       }
     });
-    
+    this.loadWarehouses();
+    this.loadQCRules();
     this.loadProductionLines();
-
-}
-
-loadProductionLines() {
-
-  this.productionLineService.getProductionLines().subscribe(
-  {
-    next: (productionLineRes) => this.validproductionLines = productionLineRes 
-  });
-
-}
+    this.loadValidCustomers();
+    this.loadItemFamlies();
+    this.loadValidInventoryLocks();
+    this.loadAvailableInventoryStatus();
+    
+  }
 
 
-loadQCRules() {
+  refreshDetailInformation(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration) {
+     
+    this.loadWarehouse(workOrderQcRuleConfiguration); 
 
-  this.qcRuleService.getQCRules().subscribe({
-    next: (qcRuleRes) =>  {
-      this.allQCRules = qcRuleRes;
-      this.qcRuleList = [];
-      this.assignedQCRuleIds = [];
-      this.allQCRules.forEach(qcRule => {
-        const qcRuleAssigned = 
-            this.currentQCRuleConfiguration!.workOrderQCRuleConfigurationRules!.some(workOrderQCRuleConfigurationRule => {
-              console.log(`workOrderQCRuleConfigurationRule.qcRuleId: ${workOrderQCRuleConfigurationRule.qcRuleId}`);
-              console.log(`qcRule.id: ${qcRule.id}`);
-              return workOrderQCRuleConfigurationRule.qcRuleId === qcRule.id!
-            }
-        )
+    this.loadOrder(workOrderQcRuleConfiguration); 
+  
+    this.loadCustomer(workOrderQcRuleConfiguration); 
+    
+    this.loadItem(workOrderQcRuleConfiguration); 
+    
+    this.loadItemFamily(workOrderQcRuleConfiguration); 
+
+    this.loadInventoryStatus(workOrderQcRuleConfiguration);
+
+    this.loadInventoryLock(workOrderQcRuleConfiguration);
+
+  }
+
+  
+  loadWarehouse(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
+    if (workOrderQcRuleConfiguration.warehouseId) {
  
-        this.qcRuleList.push({
-          key: qcRule.id!.toString(),
-          title: `${qcRule.name}`,
-          description: `${qcRule.description}`,
-          direction: qcRuleAssigned ? 'right' : undefined,
-        });
+      this.localCacheService
+      .getWarehouse(workOrderQcRuleConfiguration.warehouseId)
+      .subscribe((warehouse: Warehouse) => {
+
+        workOrderQcRuleConfiguration.warehouse = warehouse; 
       });
     }
-  })
-}
+  }
+  loadOrder(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
+    if (workOrderQcRuleConfiguration.outboundOrderId) {
+ 
+      this.orderService
+      .getOrder(workOrderQcRuleConfiguration.outboundOrderId)
+      .subscribe((order: Order) => {
+
+        workOrderQcRuleConfiguration.outboundOrder = order; 
+      });
+    }}
+  loadCustomer(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
+    if (workOrderQcRuleConfiguration.customerId) {
+ 
+      this.localCacheService
+      .getCustomer(workOrderQcRuleConfiguration.customerId)
+      .subscribe((customer: Customer) => {
+
+        workOrderQcRuleConfiguration.customer = customer; 
+      });
+    }}
+  loadItem(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
+    if (workOrderQcRuleConfiguration.itemId) {
+ 
+      this.localCacheService
+      .getItem(workOrderQcRuleConfiguration.itemId)
+      .subscribe((item: Item) => {
+
+        workOrderQcRuleConfiguration.item = item; 
+      });
+    }}
+  loadItemFamily(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
+    if (workOrderQcRuleConfiguration.itemFamilyId) {
+ 
+      this.localCacheService
+      .getItemFamily(workOrderQcRuleConfiguration.itemFamilyId)
+      .subscribe((itemFamily: ItemFamily) => {
+
+        workOrderQcRuleConfiguration.itemFamily = itemFamily; 
+      });
+    }}
+  loadInventoryStatus(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
+    if (workOrderQcRuleConfiguration.fromInventoryStatusId) {
+ 
+      this.localCacheService
+      .getInventoryStatus(workOrderQcRuleConfiguration.fromInventoryStatusId)
+      .subscribe((inventoryStatus: InventoryStatus) => {
+
+        workOrderQcRuleConfiguration.fromInventoryStatus = inventoryStatus; 
+      });
+    }
+    if (workOrderQcRuleConfiguration.toInventoryStatusId) {
+ 
+      this.localCacheService
+      .getInventoryStatus(workOrderQcRuleConfiguration.toInventoryStatusId)
+      .subscribe((inventoryStatus: InventoryStatus) => {
+
+        workOrderQcRuleConfiguration.toInventoryStatus = inventoryStatus; 
+      });
+    }
+
+  }
+  loadInventoryLock(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
+    if (workOrderQcRuleConfiguration.inventoryLockId) {
+ 
+      this.localCacheService
+      .getInventoryLock(workOrderQcRuleConfiguration.inventoryLockId)
+      .subscribe((inventoryLock: InventoryLock) => {
+
+        workOrderQcRuleConfiguration.inventoryLock = inventoryLock; 
+      });
+    }
+    if (workOrderQcRuleConfiguration.futureInventoryLockId) {
+ 
+      this.localCacheService
+      .getInventoryLock(workOrderQcRuleConfiguration.futureInventoryLockId)
+      .subscribe((inventoryLock: InventoryLock) => {
+
+        workOrderQcRuleConfiguration.futureInventoryLock = inventoryLock; 
+      });
+    }
+
+  }
+
+  loadAvailableInventoryStatus(): void {
+    if (this.validInventoryStatuses.length === 0) {
+      this.inventoryStatusService
+        .loadInventoryStatuses()
+        .subscribe(inventoryStatuses => (this.validInventoryStatuses = inventoryStatuses));
+    }
+  }
+  loadProductionLines() {
+
+    this.productionLineService.getProductionLines().subscribe(
+    {
+      next: (productionLineRes) => this.validproductionLines = productionLineRes 
+    });
+
+  }
+
+
+  loadQCRules() {
+
+    this.qcRuleService.getQCRules().subscribe({
+      next: (qcRuleRes) =>  {
+        this.allQCRules = qcRuleRes;
+        this.qcRuleList = [];
+        this.assignedQCRuleIds = [];
+        this.allQCRules.forEach(qcRule => {
+          const qcRuleAssigned = 
+              this.currentQCRuleConfiguration!.workOrderQCRuleConfigurationRules!.some(workOrderQCRuleConfigurationRule => {
+                
+                return workOrderQCRuleConfigurationRule.qcRuleId === qcRule.id!
+              }
+          )
+  
+          this.qcRuleList.push({
+            key: qcRule.id!.toString(),
+            title: `${qcRule.name}`,
+            description: `${qcRule.description}`,
+            direction: qcRuleAssigned ? 'right' : undefined,
+          });
+        });
+      }
+    })
+  }
+
+  loadValidCustomers() {
+
+    this.customerService.loadCustomers().subscribe({
+      next: (customerRes) => this.validCustomers = customerRes
+    });
+  }
+
+  loadValidInventoryLocks() {
+
+    this.inventoryLockService.getInventoryLocks().subscribe({
+      next: (inventoryLockRes) => this.validInventoryLocks = inventoryLockRes
+    });
+  }
+
+
+  loadItemFamlies() {
+
+    this.itemFamilyService.loadItemFamilies().subscribe(
+    {
+      next: (itemFamilyRes) => this.validItemFamilies = itemFamilyRes 
+    });
+
+  }
+  customerNameChanged(customerName: string) {
+  
+    const matchedCustomer = this.validCustomers.find(customer => customer.name === customerName)
+    if (matchedCustomer) {
+      // clone a new customer structure so any further change won't 
+      // mess up with the existing customers auto complete drop down list
+      var clone = { ...matchedCustomer };
+      this.currentQCRuleConfiguration!.customer = clone;
+      this.currentQCRuleConfiguration!.customerId = clone.id!;
+    }
+  }
+
+  lockNameChanged(lockName: string) {
+  
+    console.log(`lock is chagned to ${lockName}`)
+    const matchedLock = this.validInventoryLocks.find(lock => lock.name === lockName)
+    if (matchedLock) {
+      // clone a new customer structure so any further change won't 
+      // mess up with the existing customers auto complete drop down list
+      var clone = { ...matchedLock };
+      this.currentQCRuleConfiguration!.inventoryLock = clone;
+      this.currentQCRuleConfiguration!.inventoryLockId = clone.id!;
+    }
+
+  }
+
+  futureLockNameChanged(lockName: string) {
+  
+    console.log(`lock is chagned to ${lockName}`)
+    const matchedLock = this.validInventoryLocks.find(lock => lock.name === lockName)
+    if (matchedLock) {
+      // clone a new customer structure so any further change won't 
+      // mess up with the existing customers auto complete drop down list
+      var clone = { ...matchedLock };
+      this.currentQCRuleConfiguration!.futureInventoryLock = clone;
+      this.currentQCRuleConfiguration!.futureInventoryLockId = clone.id!;
+    }
+
+  }
+
+
+  orderNumberChanged(event: Event) { 
+    const orderNumber = (event.target as HTMLInputElement).value.trim();
+    if (orderNumber.length > 0) {
+
+      this.orderService.getOrders(orderNumber, false).subscribe(
+        {
+          next: (orderRes) => {
+            if (orderRes.length === 1) {
+              console.log(`order is changed to ${orderRes[0].number}`);
+              this.currentQCRuleConfiguration.outboundOrder = orderRes[0];
+              this.currentQCRuleConfiguration.outboundOrderId = orderRes[0].id!;
+            }
+          }
+        }
+      )
+    }
+  }
+  itemNameChanged(event: Event) {
+    const itemName = (event.target as HTMLInputElement).value.trim();
+    if (itemName.length > 0) {
+
+      this.itemService.getItems(itemName).subscribe(
+        {
+          next: (itemsRes) => {
+            if (itemsRes.length === 1) {
+              console.log(`item is changed to ${itemsRes[0].name}`);
+              this.currentQCRuleConfiguration.item = itemsRes[0];
+              this.currentQCRuleConfiguration.itemId = itemsRes[0].id!;
+            }
+          }
+        }
+      )
+    }
+  }
+  warehouseChanged(id: number) {
+    
+    this.currentQCRuleConfiguration.warehouseId = id;
+    
+    this.currentQCRuleConfiguration.warehouse = 
+      this.warehouses.find(
+        warehouse => warehouse.id === id
+      );
+
+      
+  }
+  itemFamilyChanged(id: number) {
+    
+    this.currentQCRuleConfiguration.itemFamilyId = id;
+    
+    this.currentQCRuleConfiguration.itemFamily = 
+      this.validItemFamilies.find(
+        itemFamily => itemFamily.id === id
+      );
+
+      
+  }
+  fromInventoryStatusChanged(id: number) { 
+    this.currentQCRuleConfiguration.fromInventoryStatusId = id;
+    this.validInventoryStatuses
+      .filter(inventoryStatus => inventoryStatus.id == this.currentQCRuleConfiguration.fromInventoryStatusId)
+      .forEach(inventoryStatus => {
+        this.currentQCRuleConfiguration.fromInventoryStatus = inventoryStatus;
+      });
+    console.log(`currentQCRuleConfiguration's FROM status is changed to ${this.currentQCRuleConfiguration.fromInventoryStatus?.name}`);
+  }
+  toInventoryStatusChanged(id: number) { 
+    this.currentQCRuleConfiguration.toInventoryStatusId = id;
+    this.validInventoryStatuses
+      .filter(inventoryStatus => inventoryStatus.id == this.currentQCRuleConfiguration.toInventoryStatusId)
+      .forEach(inventoryStatus => {
+        this.currentQCRuleConfiguration.toInventoryStatus = inventoryStatus;
+      });
+    console.log(`currentQCRuleConfiguration's TO status is changed to ${this.currentQCRuleConfiguration.toInventoryStatus?.name}`);
+  }
 
 
   previousStep(): void {
@@ -183,6 +510,22 @@ loadQCRules() {
         }); 
         
     }
+  }
+
+  
+  processItemQueryResult(selectedItemName: any): void {
+    console.log(`start to query with item name ${selectedItemName}`);
+    this.itemService.getItems(selectedItemName).subscribe(
+      {
+        next: (itemsRes) => {
+          if (itemsRes.length === 1) {
+            this.currentQCRuleConfiguration.item = itemsRes[0];
+            this.currentQCRuleConfiguration.itemId = itemsRes[0].id!;
+          }
+        }
+      }
+    )
+    
   }
 
   productionLineChanged(id: number) {

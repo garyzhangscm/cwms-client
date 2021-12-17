@@ -19,7 +19,7 @@ export class InventoryLockService {
     private warehouseService: WarehouseService,
   ) { }
 
-  getInventoryLocks(name: string): Observable<InventoryLock[]> {
+  getInventoryLocks(name?: string): Observable<InventoryLock[]> {
     
     let url = `inventory/inventory-lock?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     

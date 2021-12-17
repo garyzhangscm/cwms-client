@@ -11,17 +11,23 @@ import { ClientService } from '../../common/services/client.service';
 import { CustomerService } from '../../common/services/customer.service';
 import { SupplierService } from '../../common/services/supplier.service';
 import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
+import { InventoryLock } from '../../inventory/models/inventory-lock';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { Item } from '../../inventory/models/item';
+import { ItemFamily } from '../../inventory/models/item-family';
+import { InventoryLockService } from '../../inventory/services/inventory-lock.service';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
+import { ItemFamilyService } from '../../inventory/services/item-family.service';
 import { ItemService } from '../../inventory/services/item.service';
 import { PickWork } from '../../outbound/models/pick-work';
 import { PickService } from '../../outbound/services/pick.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
+import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Injectable({
   providedIn: 'root'
@@ -38,6 +44,9 @@ export class LocalCacheService {
   locationMap = new Map();
   inventoryStatusMap = new Map();
   itemMap = new Map();
+  warehouses = new Map();
+  itemFamily = new Map();
+  inventoryLock = new Map();
 
   // by default, cache 30 minutes
   defaultCacheTime = 30;
@@ -51,9 +60,28 @@ export class LocalCacheService {
     private locationService: LocationService,
     private inventoryStatusService: InventoryStatusService,
     private unitOfMeasureService: UnitOfMeasureService,
+    private warehouseService: WarehouseService,
+    private itemFamilyService: ItemFamilyService,
+    private inventoryLockService: InventoryLockService,
     private pickService: PickService,
     private itemService: ItemService) { }
 
+  getWarehouse(id: number) : Observable<Warehouse> {
+      const cacheKey = `warehouse-${id}`;
+      const data = this.load(cacheKey)
+  
+      // Return data from cache
+      if (data !== null) {
+          return of<Warehouse>(data)
+      }
+      
+      return this.warehouseService.getWarehouse(id)
+          .pipe(tap(res => this.save({
+            key: cacheKey,
+            data: res,
+            expirationMins: this.defaultCacheTime
+        })));
+  }  
   getClient(id: number) : Observable<Client> {
     const cacheKey = `client-${id}`;
     const data = this.load(cacheKey)
@@ -189,6 +217,41 @@ export class LocalCacheService {
       
   }  
   
+  getItemFamily(id: number) : Observable<ItemFamily> {
+    
+    const cacheKey = `item-family-${id}`;
+    const data = this.load(cacheKey)
+
+    // Return data from cache
+    if (data !== null) {
+        return of<ItemFamily>(data)
+    }
+    
+    return this.itemFamilyService.getItemFamily(id)
+        .pipe(tap(res => this.save({
+          key: cacheKey,
+          data: res,
+          expirationMins: this.defaultCacheTime
+      })));      
+  }  
+  
+  getInventoryLock(id: number) : Observable<InventoryLock> {
+    
+    const cacheKey = `inventory-lock-${id}`;
+    const data = this.load(cacheKey)
+
+    // Return data from cache
+    if (data !== null) {
+        return of<InventoryLock>(data)
+    }
+    
+    return this.inventoryLockService.getInventoryLock(id)
+        .pipe(tap(res => this.save({
+          key: cacheKey,
+          data: res,
+          expirationMins: this.defaultCacheTime
+      })));      
+  }  
   getPick(id: number) : Observable<PickWork> {
     
     const cacheKey = `pickwork-${id}`;

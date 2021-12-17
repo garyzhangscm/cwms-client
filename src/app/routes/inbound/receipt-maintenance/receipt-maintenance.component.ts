@@ -1214,7 +1214,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       nzCancelText: this.i18n.fanyi('cancel'),
       nzMaskClosable: false,
       nzOnCancel: () => {
-        this.reverseInventoryModal.destroy();
+        this.recalculateQCModal.destroy();
       },
       nzOnOk: () => {
         this.recalculateQCQuantity( 

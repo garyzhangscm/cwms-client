@@ -239,4 +239,20 @@ export class WorkOrderService {
     return this.http.post(url).pipe(map(res => res.data));
   }
 
+
+  recalculateQCQuantity(workOrder: WorkOrder, qcQuantity?: number, qcPercentage?: number) :  Observable<WorkOrder> {
+     
+    let url = `workorder/work-orders/${workOrder.id}/recalculate-qc-quantity?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+      
+    if (qcQuantity != null) {
+      url = `${url}&qcQuantity=${qcQuantity}`
+    }
+    if (qcPercentage != null) {
+      url = `${url}&qcPercentage=${qcPercentage}`
+    }
+     
+
+    return this.http.post(url).pipe(map(res => res.data));
+  }
+
 }

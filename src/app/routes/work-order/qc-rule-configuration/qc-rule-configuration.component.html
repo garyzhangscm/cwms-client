@@ -55,6 +55,141 @@
     <st #st [data]="listOfAllQCRuleConfiguration"  [columns]="columns"  [scroll]="{ x: '1450px'}"
         [expand]="expand" expandRowByClick expandAccordion>
       
+        
+      <ng-template st-row="warehouse" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.warehouseId && item.warehouse == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+         {{ item.warehouse?.name }} 
+
+      </ng-template>
+      <ng-template st-row="itemName" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.itemId && item.item == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+          
+        <a nz-tooltip [nzTooltipTitle]="itemNameTemplate">{{ item.item?.name }} </a>
+        <ng-template #itemNameTemplate>
+          {{ item.item?.name }} 
+        </ng-template>
+
+         
+
+      </ng-template>
+      <ng-template st-row="itemDescription" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.itemId && item.item == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+          <a nz-tooltip [nzTooltipTitle]="itemDescriptionTemplate"> {{ item.item?.description }}  </a>
+          <ng-template #itemDescriptionTemplate>
+            {{ item.item?.description }} 
+          </ng-template>
+        
+
+      </ng-template>
+      <ng-template st-row="itemFamily" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.itemFamilyId && item.itemFamily == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+          
+          <a nz-tooltip [nzTooltipTitle]="itemFamilyTemplate">
+            {{ item.itemFamily?.name }}   </a>
+          <ng-template #itemFamilyTemplate>
+            {{ item.itemFamily?.name }} 
+          </ng-template>
+
+      </ng-template>
+      <ng-template st-row="btoCustomer" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.customerId && item.customer == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+          <a nz-tooltip [nzTooltipTitle]="customerTemplate">
+            {{ item.customer?.name }}  </a>
+          <ng-template #customerTemplate>
+            {{ item.customer?.name }} 
+          </ng-template>
+
+      </ng-template>
+      <ng-template st-row="btoOrder" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.outboundOrderId && item.outboundOrder == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+          <a nz-tooltip [nzTooltipTitle]="orderTemplate">
+            {{ item.outboundOrder?.number }}  </a>
+          <ng-template #orderTemplate>
+            {{ item.outboundOrder?.number }} 
+          </ng-template>
+
+      </ng-template>
+      <ng-template st-row="fromInventoryStatus" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.fromInventoryStatusId && item.fromInventoryStatus == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+         {{ item.fromInventoryStatus?.name }} 
+
+      </ng-template>
+      <ng-template st-row="toInventoryStatus" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.toInventoryStatusId && item.toInventoryStatus == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+         {{ item.toInventoryStatus?.name }} 
+
+      </ng-template>
+      <ng-template st-row="inventoryLock" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.inventoryLockId && item.inventoryLock == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+         {{ item.inventoryLock?.name }} 
+
+      </ng-template>
+      <ng-template st-row="futureInventoryLock" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.futureInventoryLockId && item.futureInventoryLock == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+         {{ item.futureInventoryLock?.name }} 
+
+      </ng-template>
+      
       <!--   qc rule details  -->
       <ng-template #expand let-item let-index="index" >
         

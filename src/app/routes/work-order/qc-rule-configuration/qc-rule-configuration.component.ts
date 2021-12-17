@@ -8,15 +8,25 @@ import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { Customer } from '../../common/models/customer';
 import { Supplier } from '../../common/models/supplier';
+import { CustomerService } from '../../common/services/customer.service';
 import { SupplierService } from '../../common/services/supplier.service';
+import { InventoryLock } from '../../inventory/models/inventory-lock';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
+import { Item } from '../../inventory/models/item';
 import { ItemFamily } from '../../inventory/models/item-family';
+import { InventoryLockService } from '../../inventory/services/inventory-lock.service';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { ItemFamilyService } from '../../inventory/services/item-family.service';
 import { ItemService } from '../../inventory/services/item.service';
+import { Order } from '../../outbound/models/order';
+import { OrderService } from '../../outbound/services/order.service';
 import { QCRuleConfiguration } from '../../qc/models/qc-rule-configuration';
 import { QcRuleConfigurationService } from '../../qc/services/qc-rule-configuration.service';
+import { LocalCacheService } from '../../util/services/local-cache.service';
+import { Warehouse } from '../../warehouse-layout/models/warehouse';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ProductionLine } from '../models/production-line';
 import { WorkOrderQcRuleConfiguration } from '../models/work-order-qc-rule-configuration';
 import { ProductionLineService } from '../services/production-line.service';
@@ -34,6 +44,14 @@ export class WorkOrderQcRuleConfigurationComponent implements OnInit {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private messageService: NzMessageService,
     private workOrderQcRuleConfigurationService: WorkOrderQcRuleConfigurationService,
+    private warehouseService: WarehouseService,
+    private itemService: ItemService, 
+    private localCacheService: LocalCacheService,
+    private inventoryStatusService: InventoryStatusService,
+    private inventoryLockService: InventoryLockService,
+    private itemFamilyService: ItemFamilyService, 
+    private orderService: OrderService,
+    private customerService: CustomerService,
     private router: Router,
     private productionLineService: ProductionLineService,
     
@@ -47,6 +65,7 @@ searchResult = '';
 isSpinning = false;
 searchForm!: FormGroup;
 validproductionLines: ProductionLine[] = []; 
+loadingQCConfigurationDetailsRequest = 0;
 
 ngOnInit(): void { 
 
@@ -92,6 +111,7 @@ search(): void {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
           rowCount: qcRuleConfigurationRes.length,
         });
+        this.refreshDetailInformations(this.listOfAllQCRuleConfiguration);
       }, 
       error: () => {
         this.isSpinning = false;
@@ -102,13 +122,200 @@ search(): void {
     
 }
 
+// we will load the item / order / customer / etc
+  // asyncronized
+  async refreshDetailInformations(workOrderQcRuleConfigurationList: WorkOrderQcRuleConfiguration[]) { 
+    let index = 0;
+    while (index < workOrderQcRuleConfigurationList.length) {
+
+      // we will need to make sure we are at max loading detail information
+      // for 10 WorkOrderQcRuleConfiguration at a time(each WorkOrderQcRuleConfiguration may have 5 different request). 
+      // we will get error if we flush requests for
+      // too many orders into the server at a time
+      
+      while(this.loadingQCConfigurationDetailsRequest > 50) {
+        // sleep 50ms        
+        await this.delay(50);
+      } 
+      this.refreshDetailInformation(workOrderQcRuleConfigurationList[index]);
+      index++;
+    }
+    
+    while(this.loadingQCConfigurationDetailsRequest > 0) {
+      // sleep 50ms        
+      await this.delay(100);
+    } 
+    // refresh the table while everything is loaded
+    console.log(`refresh the table`);  
+    this.st.reload();
+  }
+
+  delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+  }
+  
+  refreshDetailInformation(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration) {
+  
+    this.loadWarehouse(workOrderQcRuleConfiguration); 
+
+    this.loadOrder(workOrderQcRuleConfiguration); 
+   
+    this.loadCustomer(workOrderQcRuleConfiguration); 
+    
+    this.loadItem(workOrderQcRuleConfiguration); 
+    
+    this.loadItemFamily(workOrderQcRuleConfiguration); 
+
+    this.loadInventoryStatus(workOrderQcRuleConfiguration);
+
+    this.loadInventoryLock(workOrderQcRuleConfiguration);
+ 
+  }
+
+  loadWarehouse(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
+    if (workOrderQcRuleConfiguration.warehouseId) {
+
+      this.loadingQCConfigurationDetailsRequest++;
+      this.localCacheService
+      .getWarehouse(workOrderQcRuleConfiguration.warehouseId)
+      .subscribe((warehouse: Warehouse) => {
+
+        workOrderQcRuleConfiguration.warehouse = warehouse;
+        this.loadingQCConfigurationDetailsRequest--;
+      });
+    }
+  }
+  loadOrder(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
+    if (workOrderQcRuleConfiguration.outboundOrderId) {
+
+      this.loadingQCConfigurationDetailsRequest++;
+      this.orderService
+      .getOrder(workOrderQcRuleConfiguration.outboundOrderId)
+      .subscribe((order: Order) => {
+
+        workOrderQcRuleConfiguration.outboundOrder = order;
+        this.loadingQCConfigurationDetailsRequest--;
+      });
+    }}
+  loadCustomer(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
+    if (workOrderQcRuleConfiguration.customerId) {
+
+      this.loadingQCConfigurationDetailsRequest++;
+      this.localCacheService
+      .getCustomer(workOrderQcRuleConfiguration.customerId)
+      .subscribe((customer: Customer) => {
+
+        workOrderQcRuleConfiguration.customer = customer;
+        this.loadingQCConfigurationDetailsRequest--;
+      });
+    }}
+  loadItem(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
+    if (workOrderQcRuleConfiguration.itemId) {
+
+      this.loadingQCConfigurationDetailsRequest++;
+      this.localCacheService
+      .getItem(workOrderQcRuleConfiguration.itemId)
+      .subscribe((item: Item) => {
+
+        workOrderQcRuleConfiguration.item = item;
+        this.loadingQCConfigurationDetailsRequest--;
+      });
+    }}
+  loadItemFamily(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
+    if (workOrderQcRuleConfiguration.itemFamilyId) {
+
+      this.loadingQCConfigurationDetailsRequest++;
+      this.localCacheService
+      .getItemFamily(workOrderQcRuleConfiguration.itemFamilyId)
+      .subscribe((itemFamily: ItemFamily) => {
+
+        workOrderQcRuleConfiguration.itemFamily = itemFamily;
+        this.loadingQCConfigurationDetailsRequest--;
+      });
+    }}
+  loadInventoryStatus(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
+    if (workOrderQcRuleConfiguration.fromInventoryStatusId) {
+
+      this.loadingQCConfigurationDetailsRequest++;
+      this.localCacheService
+      .getInventoryStatus(workOrderQcRuleConfiguration.fromInventoryStatusId)
+      .subscribe((inventoryStatus: InventoryStatus) => {
+
+        workOrderQcRuleConfiguration.fromInventoryStatus = inventoryStatus;
+        this.loadingQCConfigurationDetailsRequest--;
+      });
+    }
+    if (workOrderQcRuleConfiguration.toInventoryStatusId) {
+
+      this.loadingQCConfigurationDetailsRequest++;
+      this.localCacheService
+      .getInventoryStatus(workOrderQcRuleConfiguration.toInventoryStatusId)
+      .subscribe((inventoryStatus: InventoryStatus) => {
+
+        workOrderQcRuleConfiguration.toInventoryStatus = inventoryStatus;
+        this.loadingQCConfigurationDetailsRequest--;
+      });
+    }
+
+  }
+  loadInventoryLock(workOrderQcRuleConfiguration: WorkOrderQcRuleConfiguration){
+    if (workOrderQcRuleConfiguration.inventoryLockId) {
+
+      this.loadingQCConfigurationDetailsRequest++;
+      this.localCacheService
+      .getInventoryLock(workOrderQcRuleConfiguration.inventoryLockId)
+      .subscribe((inventoryLock: InventoryLock) => {
+
+        workOrderQcRuleConfiguration.inventoryLock = inventoryLock;
+        this.loadingQCConfigurationDetailsRequest--;
+      });
+    }
+    if (workOrderQcRuleConfiguration.futureInventoryLockId) {
+
+      this.loadingQCConfigurationDetailsRequest++;
+      this.localCacheService
+      .getInventoryLock(workOrderQcRuleConfiguration.futureInventoryLockId)
+      .subscribe((inventoryLock: InventoryLock) => {
+
+        workOrderQcRuleConfiguration.futureInventoryLock = inventoryLock;
+        this.loadingQCConfigurationDetailsRequest--;
+      });
+    }
+
+  }
+  
 @ViewChild('st', { static: true })
 st!: STComponent;
 columns: STColumn[] = [
- 
-{ title: this.i18n.fanyi("work-order"), index: 'workOrder.number', iif: () => this.isChoose('workOrder') },
-{ title: this.i18n.fanyi("production-line"), index: 'productionLine.name', iif: () => this.isChoose('productionLine') }, 
-{ title: this.i18n.fanyi("qc-quantity"), index: 'qcQuantity', iif: () => this.isChoose('qcQuantity') }, 
+ // Used by QC by sampling
+{ title: this.i18n.fanyi("work-order"), index: 'workOrder.number', iif: () => this.isChoose('workOrder'), width: "100px"},
+{ title: this.i18n.fanyi("production-line"), index: 'productionLine.name', iif: () => this.isChoose('productionLine'), width: "150px"}, 
+{ title: this.i18n.fanyi("qc-quantity"), index: 'qcQuantity', iif: () => this.isChoose('qcQuantity'), width: "100px" }, 
+// used by qc by work order
+{ title: this.i18n.fanyi("warehouse"), 
+    render: 'warehouse', iif: () => this.isChoose('warehouse'), width: "120px"}, 
+{ title: this.i18n.fanyi("item.name"),  
+    render: 'itemName', iif: () => this.isChoose('itemName'), width: "100px"}, 
+{ title: this.i18n.fanyi("item.description"),   
+    render: 'itemDescription',  iif: () => this.isChoose('itemDescription'), width: "150px"}, 
+{ title: this.i18n.fanyi("item-family"),   
+    render: 'itemFamily',  iif: () => this.isChoose('itemFamily'), width: "100px"}, 
+{ title: this.i18n.fanyi("customer"),   
+    render: 'btoCustomer',  iif: () => this.isChoose('btoCustomer'), width: "100px"}, 
+{ title: this.i18n.fanyi("order"),   
+    render: 'btoOrder',  iif: () => this.isChoose('btoOrder'), width: "100px"}, 
+{ title: this.i18n.fanyi("qc-configuration.by-quantity"), index: 'qcQuantityPerWorkOrder', 
+    iif: () => this.isChoose('qcQuantityPerWorkOrder') , width: "100px"}, 
+{ title: this.i18n.fanyi("qc-configuration.by-percentage"), index: 'qcPercentagePerWorkOrder', 
+    iif: () => this.isChoose('qcPercentagePerWorkOrder'), width: "150px" }, 
+{ title: this.i18n.fanyi("from-inventory-status"),    
+    render: 'fromInventoryStatus',  iif: () => this.isChoose('fromInventoryStatus'), width: "100px" }, 
+{ title: this.i18n.fanyi("to-inventory-status"),    
+    render: 'toInventoryStatus',  iif: () => this.isChoose('toInventoryStatus'), width: "100px" }, 
+{ title: this.i18n.fanyi("inventoryLock"),    
+    render: 'inventoryLock',  iif: () => this.isChoose('inventoryLock'), width: "100px" }, 
+{ title: this.i18n.fanyi("futureInventoryLock"),    
+    render: 'futureInventoryLock', iif: () => this.isChoose('futureInventoryLock'), width: "150px" }, 
 {
   title: 'action',
   renderTitle: 'actionColumnTitle',fixed: 'right',width: 110, 
@@ -118,9 +325,27 @@ columns: STColumn[] = [
 ];
 customColumns = [
  
+ // Used by QC by sampling
 { label: this.i18n.fanyi("work-order"), value: 'workOrder', checked: true },
-{ label: this.i18n.fanyi("production-line"), value: 'productionLine', checked: true }, 
-{ label: this.i18n.fanyi("qc-quantity"), value: 'qcQuantity', checked: true }, 
+{ label: this.i18n.fanyi("production-line"), value: 'productionLine', checked: true },
+{ label: this.i18n.fanyi("qc-quantity"), value: 'qcQuantity', checked: true },
+
+// used by qc by work order
+
+{ label: this.i18n.fanyi("warehouse"), value: 'warehouse', checked: true },
+{ label: this.i18n.fanyi("item.name"), value: 'itemName', checked: true }, 
+{ label: this.i18n.fanyi("item.description"), value: 'itemDescription', checked: true }, 
+
+
+{ label: this.i18n.fanyi("item-family"), value: 'itemFamily', checked: true }, 
+{ label: this.i18n.fanyi("customer"), value: 'btoCustomer', checked: true }, 
+{ label: this.i18n.fanyi("order"), value: 'btoOrder', checked: true }, 
+{ label: this.i18n.fanyi("qc-configuration.by-quantity"), value: 'qcQuantityPerWorkOrder', checked: true }, 
+{ label: this.i18n.fanyi("qc-configuration.by-percentage"), value: 'qcPercentagePerWorkOrder', checked: true }, 
+{ label: this.i18n.fanyi("from-inventory-status"), value: 'fromInventoryStatus', checked: true }, 
+{ label: this.i18n.fanyi("to-inventory-status"), value: 'toInventoryStatus', checked: true }, 
+{ label: this.i18n.fanyi("inventoryLock"), value: 'inventoryLock', checked: true }, 
+{ label: this.i18n.fanyi("futureInventoryLock"), value: 'futureInventoryLock', checked: true }, 
 ];
 
 isChoose(key: string): boolean {

@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { WorkOrderQcRuleConfigurationMaintenanceComponent } from './qc-rule-configuration-maintenance.component';
 
 describe('WorkOrderQcRuleConfigurationMaintenanceComponent', () => {

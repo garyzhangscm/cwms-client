@@ -4,8 +4,8 @@ export interface InventoryLock {
     warehouseId: number;
 
 
-    name: String;
-    description: String;
+    name: string;
+    description: string;
 
 
     allowPick: boolean;

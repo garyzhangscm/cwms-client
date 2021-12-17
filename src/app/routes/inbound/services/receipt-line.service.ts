@@ -89,10 +89,10 @@ export class ReceiptLineService {
      
     let url = `inbound/receipts/lines/${receiptLine.id}/recalculate-qc-quantity?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
       
-    if (qcQuantity) {
+    if (qcQuantity != null) {
       url = `${url}&qcQuantity=${qcQuantity}`
     }
-    if (qcPercentage) {
+    if (qcPercentage != null) {
       url = `${url}&qcPercentage=${qcPercentage}`
     }
      

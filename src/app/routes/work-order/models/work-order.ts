@@ -1,6 +1,8 @@
 
 
+import { Customer } from '../../common/models/customer';
 import { Item } from '../../inventory/models/item';
+import { Order } from '../../outbound/models/order';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { BillOfMaterial } from './bill-of-material';
 import { ProductionLine } from './production-line';
@@ -45,4 +47,16 @@ export interface WorkOrder {
   consumeByBomOnly? : boolean;
   consumeByBom?: BillOfMaterial;  // the user can specify a bom to consume the material
   materialConsumeTiming?: WorkOrderMaterialConsumeTiming;
+
+  
+  qcQuantity?: number;
+
+  qcPercentage?: number;
+  qcQuantityRequested?: number;
+  qcQuantityCompleted?: number;
+
+  btoOutboundOrderId?: number;
+  btoOutboundOrder?: Order;
+  btoCustomerId?: number;
+  btoCustomer?: Customer;
 }

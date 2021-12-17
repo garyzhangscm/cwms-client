@@ -3,6 +3,7 @@ import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { WorkOrderQcRuleConfiguration } from '../models/work-order-qc-rule-configuration';
 
@@ -11,12 +12,13 @@ import { WorkOrderQcRuleConfiguration } from '../models/work-order-qc-rule-confi
 })
 export class WorkOrderQcRuleConfigurationService {
   
-  constructor(private http: _HttpClient, private warehosueService: WarehouseService) {}
+  constructor(private http: _HttpClient, private warehosueService: WarehouseService, 
+    private companyService: CompanyService) {}
 
   getQCRuleConfigurations(workOrderId?: number, 
                           workOrderNumber?: string,  
                           productionLineId?: number): Observable<WorkOrderQcRuleConfiguration[]> {
-  let url = `workorder/qc-rule-configuration?warehouseId=${this.warehosueService.getCurrentWarehouse()!.id}`;
+  let url = `workorder/qc-rule-configuration?companyId=${this.companyService.getCurrentCompany()!.id}`;
   if (workOrderId) {
     url = `${url}&workOrderId=${workOrderId}`;
   }

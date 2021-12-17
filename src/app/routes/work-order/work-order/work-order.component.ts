@@ -111,7 +111,21 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       showFilter: false,
       rowspan: 2,
       colspan: 1,
-    }, {
+    },
+    {
+      name: 'qcQuantity',
+      showSort: false,
+      sortOrder: null,
+      sortFn: null,
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 1,
+      colspan: 4,
+    },
+    {
       name: 'work-order.totalInprocessQuantity',
       showSort: false,
       sortOrder: null,
@@ -198,6 +212,58 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     }, 
     **/
   ];
+  
+  listOfQCColumns: ColumnItem[] = [{
+    name: 'qcQuantity',
+    showSort: true,
+    sortOrder: null,
+    sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableNumber(a.qcQuantity, b.qcQuantity),
+    sortDirections: ['ascend', 'descend'],
+    filterMultiple: true,
+    listOfFilter: [],
+    filterFn: null,
+    showFilter: false,
+    rowspan: 1,
+    colspan: 1,
+  }, {
+    name: 'qcPercentage',
+    showSort: true,
+    sortOrder: null,
+    sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableNumber(a.qcPercentage, b.qcPercentage),
+    sortDirections: ['ascend', 'descend'],
+    filterMultiple: true,
+    listOfFilter: [],
+    filterFn: null,
+    showFilter: false,
+    rowspan: 1,
+    colspan: 1,
+  }, {
+    name: 'qcQuantityRequested',
+    showSort: true,
+    sortOrder: null,
+    sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableNumber(a.qcQuantityRequested, b.qcQuantityRequested),
+    sortDirections: ['ascend', 'descend'],
+    filterMultiple: true,
+    listOfFilter: [],
+    filterFn: null,
+    showFilter: false,
+    rowspan: 1,
+    colspan: 1,
+  }, {
+    name: 'qcQuantityCompleted',
+    showSort: true,
+    sortOrder: null,
+    sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableNumber(a.qcQuantityCompleted, b.qcQuantityCompleted),
+    sortDirections: ['ascend', 'descend'],
+    filterMultiple: true,
+    listOfFilter: [],
+    filterFn: null,
+    showFilter: false,
+    rowspan: 1,
+    colspan: 1,
+  },   
+  ];
+
 
   expandSet = new Set<number>();
   allocateByProductionLineOptions = "BY_WORK_ORDER";
@@ -280,6 +346,10 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   materialConsumeTimings = WorkOrderMaterialConsumeTiming;
   currentWorkOrderMaterialConsumeTiming?: WorkOrderMaterialConsumeTiming;
 
+  recalculateQCForm!: FormGroup;
+  recalculateQCModal!: NzModalRef;
+  formatterPercent = (value: number): string => `${value} %`;
+  parserPercent = (value: string): string => value.replace(' %', '');
 
   ngOnInit(): void {
     console.log(`webClientConfigurationService.getWebClientConfiguration().tabDisplayConfiguration: 
@@ -1293,6 +1363,57 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       return true;
 
     }
-  
+
+    recalculateQCQuantity(workOrder: WorkOrder, qcQuantity?: number, qcPercentage?: number) {
+
+      this.isSpinning = true; 
+      this.workOrderService.recalculateQCQuantity(workOrder, qcQuantity, qcPercentage).subscribe(
+        {
+          next: () => {
+            
+            this.messageService.success(this.i18n.fanyi('message.action.success'));
+            this.isSpinning = false;
+            this.searchForm.controls.number.setValue(workOrder.number);
+            this.search();
+          },
+          error: () => this.isSpinning = false
+        }
+      );
+    }
+    
+  openRecalculateQCModal(
+    workOrder: WorkOrder,
+    tplRecalculateQCModalTitle: TemplateRef<{}>,
+    tplRecalculateQCModalContent: TemplateRef<{}>,
+  ): void {
+    
+    this.recalculateQCForm = this.fb.group({
+      qcQuantity: new FormControl({ value: workOrder.qcQuantity, disabled: true }),
+      newQCQuantity: new FormControl({ value: workOrder.qcQuantity, disabled: false}),
+      qcPercentage: new FormControl({ value: workOrder.qcPercentage, disabled: true }),
+      newQCPercentage: new FormControl({ value: workOrder.qcPercentage, disabled: false }),
+    });
+
+    // Load the location
+    this.recalculateQCModal = this.modalService.create({
+      nzTitle: tplRecalculateQCModalTitle,
+      nzContent: tplRecalculateQCModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.recalculateQCModal.destroy();
+      },
+      nzOnOk: () => {
+        this.recalculateQCQuantity( 
+          workOrder,
+          this.recalculateQCForm.controls.newQCQuantity.value,
+          this.recalculateQCForm.controls.newQCPercentage.value,
+        );
+      },
+
+      nzWidth: 1000,
+    });
+  }
     
 }

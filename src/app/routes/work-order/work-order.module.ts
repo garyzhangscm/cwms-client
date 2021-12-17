@@ -13,12 +13,15 @@ import { CountdownModule } from 'ngx-countdown';
 
 import { CommonModule } from '../common/common.module';
 import { DirectivesModule } from '../directives/directives.module';
+import { InventoryModule } from '../inventory/inventory.module';
 import { UtilModule } from '../util/util.module';
 import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module';
 import { WorkOrderAssignProductionLineComponent } from './assign-production-line/assign-production-line.component';
 import { WorkOrderBillOfMaterialMaintenanceComponent } from './bill-of-material-maintenance/bill-of-material-maintenance.component';
 import { WorkOrderBillOfMaterialComponent } from './bill-of-material/bill-of-material.component';
 import { WorkOrderDeassignProductionLineComponent } from './deassign-production-line/deassign-production-line.component';
+import { WorkOrderLaborActivityComponent } from './labor-activity/labor-activity.component';
+import { WorkOrderLaborComponent } from './labor/labor.component';
 import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component';
 import { WorkOrderMouldComponent } from './mould/mould.component';
 import { WorkOrderPrePrintLpnLabelComponent } from './pre-print-lpn-label/pre-print-lpn-label.component';
@@ -28,6 +31,8 @@ import { WorkOrderProductionLineMaintenanceComponent } from './production-line-m
 import { WorkOrderProductionLineComponent } from './production-line/production-line.component';
 import { WorkOrderProductionPlanMaintenanceComponent } from './production-plan-maintenance/production-plan-maintenance.component';
 import { WorkOrderProductionPlanComponent } from './production-plan/production-plan.component';
+import { WorkOrderQcRuleConfigurationMaintenanceComponent } from './qc-rule-configuration-maintenance/qc-rule-configuration-maintenance.component';
+import { WorkOrderQcRuleConfigurationComponent } from './qc-rule-configuration/qc-rule-configuration.component';
 import { WorkOrderWorkOrderCompleteByProductComponent } from './work-order-complete-by-product/work-order-complete-by-product.component';
 import { WorkOrderWorkOrderCompleteConfirmComponent } from './work-order-complete-confirm/work-order-complete-confirm.component';
 import { WorkOrderWorkOrderCompleteKpiComponent } from './work-order-complete-kpi/work-order-complete-kpi.component';
@@ -46,10 +51,6 @@ import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspect
 import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component';
 import { WorkOrderRoutingModule } from './work-order-routing.module';
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
-import { WorkOrderQcRuleConfigurationComponent } from './qc-rule-configuration/qc-rule-configuration.component';
-import { WorkOrderQcRuleConfigurationMaintenanceComponent } from './qc-rule-configuration-maintenance/qc-rule-configuration-maintenance.component';
-import { WorkOrderLaborComponent } from './labor/labor.component';
-import { WorkOrderLaborActivityComponent } from './labor-activity/labor-activity.component';
 
 
 const COMPONENTS: Array<Type<void>> = [
@@ -101,7 +102,9 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     ScrollingModule, STModule, NzStepsModule,
     NzAutocompleteModule,
     UtilModule, 
-    NzSkeletonModule 
+    NzSkeletonModule ,
+    
+    InventoryModule 
   ],
   declarations: [
     ...COMPONENTS,
