@@ -68,7 +68,7 @@ export class QcInspectInventoryComponent implements OnInit {
             
             qcInspectionRequestRes.forEach(
               qcRequest => {
-                const lpn = qcRequest.inventory.lpn!;
+                const lpn = qcRequest.inventory!.lpn!;
                 let qcRules: QCInspectionRequestItem[] = [];
                 if (this.inventoryQCRequestMap.has(lpn)) {
                   qcRules = this.inventoryQCRequestMap.get(lpn);
@@ -78,7 +78,7 @@ export class QcInspectInventoryComponent implements OnInit {
                 
 
                 this.inventoryQCRequestMap.set(lpn, qcRules);
-                this.loadItemSampling(lpn, qcRequest.inventory.item?.id, qcRequest.inventory.item?.name);
+                this.loadItemSampling(lpn, qcRequest.inventory!.item?.id, qcRequest.inventory!.item?.name);
               }
             );
             this.refreshInventoryQCResultMap();

@@ -14,7 +14,8 @@ export class QcInspectionRequestService {
 
   constructor(private http: _HttpClient, private warehosueService: WarehouseService) {}
 
-  getQCInspectionRequest(inventoryId? : number, inventoryIds?: string, lpn?: string) : Observable<QcInspectionRequest[]> {
+  getQCInspectionRequests(inventoryId? : number, inventoryIds?: string, lpn?: string,  number?: string, 
+    type?: string, qcInspectionResult?: string) : Observable<QcInspectionRequest[]> {
     let url = `inventory/qc-inspection-requests?warehouseId=${this.warehosueService.getCurrentWarehouse()!.id}`;
     if (inventoryId) {
       url = `${url}&inventoryId=${inventoryId}`;
@@ -27,18 +28,50 @@ export class QcInspectionRequestService {
       url = `${url}&lpn=${lpn}`;
     }
     
+    if (number) {
+      url = `${url}&number=${number}`;
+    }
+    if (type) {
+      url = `${url}&type=${type}`;
+    }
+    if (qcInspectionResult) {
+      url = `${url}&qcInspectionResult=${qcInspectionResult}`;
+    }
+    
     
     return this.http.get(url).pipe(map(res => res.data));
 
   }
+  getQCInspectionRequest(id: number) : Observable<QcInspectionRequest> {
+    let url = `inventory/qc-inspection-requests/${id}`;
+    return this.http.get(url).pipe(map(res => res.data));
+  }
+
   
-  getPendingQCInspectionRequest(inventoryId? : number, inventoryIds?: string) : Observable<QcInspectionRequest[]> {
+  addQCInspectionRequest(qcInspectionRequest: QcInspectionRequest) : Observable<QcInspectionRequest> {
+    let url = `inventory/qc-inspection-requests`;
+    return this.http.put(url, qcInspectionRequest).pipe(map(res => res.data));
+  }
+  
+  changeQCInspectionRequest(qcInspectionRequest: QcInspectionRequest) : Observable<QcInspectionRequest> {
+    let url = `inventory/qc-inspection-requests/${qcInspectionRequest.id}`;
+    return this.http.put(url, qcInspectionRequest).pipe(map(res => res.data));
+  }
+  
+  getPendingQCInspectionRequest(inventoryId? : number, inventoryIds?: string, lpn?: string,  number?: string) : Observable<QcInspectionRequest[]> {
     let url = `inventory/qc-inspection-requests/pending?warehouseId=${this.warehosueService.getCurrentWarehouse()!.id}`;
     if (inventoryId) {
       url = `${url}&inventoryId=${inventoryId}`;
     }
     if (inventoryIds) {
       url = `${url}&inventoryIds=${inventoryIds}`;
+    }
+    if (lpn) {
+      url = `${url}&lpn=${lpn}`;
+    }
+    
+    if (number) {
+      url = `${url}&number=${number}`;
     }
     
     

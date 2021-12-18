@@ -1,23 +1,38 @@
+import { Receipt } from "../../inbound/models/receipt";
 import { Inventory } from "../../inventory/models/inventory";
+import { Item } from "../../inventory/models/item";
+import { WorkOrder } from "../../work-order/models/work-order";
 import { WorkOrderQcSample } from "../../work-order/models/work-order-qc-sample";
 import { QCInspectionRequestItem } from "./qc-inspection-request-item";
+import { QcInspectionRequestType } from "./qc-inspection-request-type";
 import { QCInspectionResult } from "./qc-inspection-result";
 
 export interface QcInspectionRequest {
     
-    id: number;
+    id?: number;
 
     number: string;
-    inventory: Inventory;
+    inventory?: Inventory;
 
-    workOrderQCSampleId: number;
-    workOrderQCSample: WorkOrderQcSample;
+    workOrderQCSampleId?: number;
+    workOrderQCSample?: WorkOrderQcSample;
 
     qcInspectionResult: QCInspectionResult;
 
-    qcUsername: string;
+    qcUsername?: string;
 
-    qcTime: number[];
+    qcTime?: number[];
     qcInspectionRequestItems: QCInspectionRequestItem[];
+
+    
+     item?: Item;
+
+     workOrderId?: number;
+     workOrder?: WorkOrder;
+
+     receiptId?: number;
+     receipt?: Receipt;
+
+     type: QcInspectionRequestType;
 
 }

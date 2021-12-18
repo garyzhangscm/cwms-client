@@ -1,3 +1,4 @@
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -99,7 +100,10 @@ export class WorkOrderService {
 
   
   reverseProduction(workOrder: WorkOrder, lpn: string): Observable<WorkOrder> {
-    let url = `workorder/work-orders/${workOrder.id}/reserve-production?lpn=${lpn}`; 
+    
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+    
+    let url = `workorder/work-orders/${workOrder.id}/reverse-production?lpn=${httpUrlEncodingCodec.encodeValue(lpn.trim())}`; 
     return this.http.post(url).pipe(map(res => res.data)); 
   }
 

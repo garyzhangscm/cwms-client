@@ -1,0 +1,5 @@
+export enum QcInspectionRequestType {
+    BY_INVENTORY="BY_INVENTORY",
+    BY_ITEM="BY_ITEM",
+    BY_WORK_ORDER_SAMPLING="BY_WORK_ORDER_SAMPLING"
+}

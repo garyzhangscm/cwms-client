@@ -711,14 +711,14 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   showWorkOrderDetails(workOrder: WorkOrder): void {
     // When we expand the details for the order, load the picks and short allocation from the server
     if (this.expandSet.has(workOrder.id!)) {
-      this.showDeliveredInventory(workOrder);
+      this.showDeliveredInventory(workOrder); 
       this.showProducedInventory(workOrder);
       this.showProducedByProduct(workOrder);
       this.showReturnedInventory(workOrder);
       this.showKPITransactions(workOrder);
       this.showKPIs(workOrder);
       this.showPicks(workOrder);
-      this.showShortAllocations(workOrder);
+      this.showShortAllocations(workOrder); 
     }
   }
 

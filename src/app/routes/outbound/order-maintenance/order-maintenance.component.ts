@@ -370,9 +370,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   orderNumberChange(event: Event) {
     // assign the value to the order, in case we press key to let the system
     // generate the next order number
-    this.currentOrder!.number = (event.target as HTMLInputElement).value;
-    console.log(`user input order number: ${this.currentOrder!.number}`);
-    console.log(`user input order number: ${(event.target as HTMLInputElement).value}`);
+    this.currentOrder!.number = (event.target as HTMLInputElement).value; 
     if (this.currentOrder!.number) {
       // THE USER input the order number, let's make sure it is not exists yet
       this.orderService.getOrders(this.currentOrder!.number).subscribe({

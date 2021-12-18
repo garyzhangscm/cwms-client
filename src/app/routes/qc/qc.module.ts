@@ -20,6 +20,7 @@ import { QcQcRuleConfigurationMaintenanceComponent } from './qc-rule-configurati
 import { QcQcRuleConfigurationComponent } from './qc-rule-configuration/qc-rule-configuration.component';
 import { QcQcRuleMaintenanceComponent } from './qc-rule-maintenance/qc-rule-maintenance.component';
 import { QcQcRuleComponent } from './qc-rule/qc-rule.component';
+import { QcQcInspectionRequestMaintenanceComponent } from './qc-inspection-request-maintenance/qc-inspection-request-maintenance.component';
 
 const COMPONENTS: Array<Type<void>> = [
   QcQcRuleComponent,
@@ -29,7 +30,8 @@ const COMPONENTS: Array<Type<void>> = [
   QcQcRuleMaintenanceComponent,
   QcQcRuleConfigurationMaintenanceComponent,
   QcInspectInventoryComponent,
-  QcQcResultComponent];
+  QcQcResultComponent,
+  QcQcInspectionRequestMaintenanceComponent];
 
 @NgModule({
   imports: [
