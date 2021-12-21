@@ -141,7 +141,8 @@
       <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
     </div>
     
-    <st #st [data]="listOfQCInspectionRequest"  [columns]="columns" [scroll]="{ x: '1450px'}">
+    <st #st [data]="listOfQCInspectionRequest"  [columns]="columns" [scroll]="{ x: '1450px'}"
+    [expand]="expand" expandRowByClick expandAccordion>
       
       <!--   qc inspection column --> 
       <ng-template st-row="qcInspectionColumnTitle" type="title" let-c>
@@ -189,11 +190,48 @@
         {{ 'action' | i18n }}
       </ng-template>
       <ng-template st-row="actionColumn" let-item let-index="index"> 
-        <button nz-button [disabled]="!item.inboundQCRequired" (click)="processQCInspection(item)">
+        <button nz-button [disabled]="!isQCRequired(item)" (click)="processQCInspection(item)">
             {{ 'qc-inspection' | i18n}}
         </button>
         
       </ng-template>
+
+      
+            <!--   qc rule details  -->
+            <ng-template #expand let-item let-index="index" >
+                
+              <nz-tabset  >
+              <nz-tab *ngFor="let qcInspectionRequestItem of item.qcInspectionRequestItems" [nzTitle]="qcInspectionRequestItem.qcRule.name">
+                  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="qcInspectionRequestItem.qcRule.qcRuleItems" nzSize="middle"
+                  [nzShowPagination]="false" #qcRuleItemTable>
+                  <thead>
+                      <th>
+                      {{ 'qcRule.checkPoint' | i18n }}
+                      </th>
+                      <th>
+                      {{ 'qcRule.qcRuleItemType' | i18n }}
+                      </th>
+                      <th>
+                      {{ 'qcRule.qcRuleItemComparator' | i18n }}
+                      </th>
+                      <th>
+                      {{ 'qcRule.expectedValue' | i18n }}
+                      </th> 
+                      
+                  </thead>
+                  <tbody>
+                      <tr *ngFor="let qcRuleItem of qcRuleItemTable.data">
+                      <td>{{ qcRuleItem.checkPoint }}</td>
+                      <td>{{ 'QC-RULE-ITEM-TYPE-' + qcRuleItem.qcRuleItemType | i18n }}</td>
+                      <td>{{ 'QC-RULE-ITEM-COMPARATOR-' + qcRuleItem.qcRuleItemComparator  | i18n}}</td>
+                      <td>{{ qcRuleItem.expectedValue }}</td>
+                      </tr>
+                  </tbody>
+                  </nz-table>
+              </nz-tab>
+              </nz-tabset>
+          </ng-template>  
+
     </st>
     <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
       {{searchResult}}

@@ -35,11 +35,13 @@ export class WorkOrderService {
     
     let url = `workorder/work-orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+
     if (number) {
-      url = `${url}&number=${number}`;
+      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number.trim())}`;
     }
     if (itemName) {
-      url = `${url}&itemName=${itemName}`;
+      url = `${url}&itemName=${httpUrlEncodingCodec.encodeValue(itemName.trim())}`;
     }
     if (productionPlanId) {
       url = `${url}&productionPlanId=${productionPlanId}`;

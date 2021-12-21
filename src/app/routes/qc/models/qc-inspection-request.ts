@@ -13,6 +13,7 @@ export interface QcInspectionRequest {
 
     number: string;
     inventory?: Inventory;
+    warehouseId: number;
 
     workOrderQCSampleId?: number;
     workOrderQCSample?: WorkOrderQcSample;
@@ -34,5 +35,7 @@ export interface QcInspectionRequest {
      receipt?: Receipt;
 
      type: QcInspectionRequestType;
+
+     qcQuantity?: number;
 
 }

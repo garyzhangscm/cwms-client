@@ -3,7 +3,7 @@ import { QCInspectionResult } from "./qc-inspection-result";
 import { QCRule } from "./qc-rule";
 
 export interface QCInspectionRequestItem {
-    id: number;
+    id?: number;
 
     qcRule: QCRule;
 

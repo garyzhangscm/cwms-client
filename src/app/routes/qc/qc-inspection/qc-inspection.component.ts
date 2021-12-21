@@ -150,6 +150,11 @@ export class QcQcInspectionComponent implements OnInit {
 
       
   }
+  isQCRequired(qcInspectionRequest: QcInspectionRequest) : boolean {
+
+    return qcInspectionRequest.qcInspectionResult === QCInspectionResult.PENDING;
+
+  }
   loadQCInspectionByInventory() {
     let inventoryIds = this.listOfQCRequiredInventory.map(
       inventory => inventory.id!

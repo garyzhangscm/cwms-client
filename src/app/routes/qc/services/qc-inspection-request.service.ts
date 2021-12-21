@@ -49,12 +49,12 @@ export class QcInspectionRequestService {
 
   
   addQCInspectionRequest(qcInspectionRequest: QcInspectionRequest) : Observable<QcInspectionRequest> {
-    let url = `inventory/qc-inspection-requests`;
+    let url = `inventory/qc-inspection-requests?warehouseId=${this.warehosueService.getCurrentWarehouse()!.id}`;
     return this.http.put(url, qcInspectionRequest).pipe(map(res => res.data));
   }
   
   changeQCInspectionRequest(qcInspectionRequest: QcInspectionRequest) : Observable<QcInspectionRequest> {
-    let url = `inventory/qc-inspection-requests/${qcInspectionRequest.id}`;
+    let url = `inventory/qc-inspection-requests/${qcInspectionRequest.id}?warehouseId=${this.warehosueService.getCurrentWarehouse()!.id}`;
     return this.http.put(url, qcInspectionRequest).pipe(map(res => res.data));
   }
   
@@ -79,7 +79,7 @@ export class QcInspectionRequestService {
 
   }
 
-  savePendingQCInspectionRequest(qcInspectionRequests: QcInspectionRequest[]) : Observable<QcInspectionRequest[]> {
+  saveQCInspectionRequest(qcInspectionRequests: QcInspectionRequest[]) : Observable<QcInspectionRequest[]> {
     let url = `inventory/qc-inspection-requests?warehouseId=${this.warehosueService.getCurrentWarehouse()!.id}`; 
     
     return this.http.post(url, qcInspectionRequests).pipe(map(res => res.data));

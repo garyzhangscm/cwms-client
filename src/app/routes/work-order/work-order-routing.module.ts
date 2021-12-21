@@ -6,6 +6,8 @@ import { WorkOrderAssignProductionLineComponent } from './assign-production-line
 import { WorkOrderBillOfMaterialMaintenanceComponent } from './bill-of-material-maintenance/bill-of-material-maintenance.component';
 import { WorkOrderBillOfMaterialComponent } from './bill-of-material/bill-of-material.component';
 import { WorkOrderDeassignProductionLineComponent } from './deassign-production-line/deassign-production-line.component';
+import { WorkOrderLaborActivityComponent } from './labor-activity/labor-activity.component';
+import { WorkOrderLaborComponent } from './labor/labor.component';
 import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component';
 import { WorkOrderMouldComponent } from './mould/mould.component';
 import { WorkOrderPrePrintLpnLabelComponent } from './pre-print-lpn-label/pre-print-lpn-label.component';
@@ -32,10 +34,8 @@ import { WorkOrderWorkOrderProduceComponent } from './work-order-produce/work-or
 import { WorkOrderWorkOrderQcInspectionOperationComponent } from './work-order-qc-inspection-operation/work-order-qc-inspection-operation.component';
 import { WorkOrderWorkOrderQcInspectionResultComponent } from './work-order-qc-inspection-result/work-order-qc-inspection-result.component';
 import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspection/work-order-qc-inspection.component'; 
-import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component';
+import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component'; 
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
-import { WorkOrderLaborComponent } from './labor/labor.component';
-import { WorkOrderLaborActivityComponent } from './labor-activity/labor-activity.component';
 
 const routes: Routes = [
   { path: 'work-order', component: WorkOrderWorkOrderComponent, canActivate: [AuthGuard] },

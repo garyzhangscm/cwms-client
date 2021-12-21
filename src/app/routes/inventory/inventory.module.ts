@@ -7,8 +7,10 @@ import { NzStepsModule } from 'ng-zorro-antd/steps';
 
 import { CommonModule } from '../common/common.module';
 import { DirectivesModule } from '../directives/directives.module'; 
+import { OutboundModule } from '../outbound/outbound.module';
 import { UtilModule } from '../util/util.module';
 import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module';
+import { WorkOrderModule } from '../work-order/work-order.module';
 import { InventoryAuditCountConfirmComponent } from './audit-count-confirm/audit-count-confirm.component';
 import { InventoryAuditCountResultComponent } from './audit-count-result/audit-count-result.component';
 import { InventoryCountConfigComponent } from './count-config/count-config.component';
@@ -100,7 +102,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     CommonModule,
     NzStepsModule, 
     UtilModule,
-    NzSkeletonModule 
+    NzSkeletonModule,
   ],
   declarations: [
     ...COMPONENTS,

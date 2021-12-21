@@ -1,13 +1,10 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { TransferChange } from 'ng-zorro-antd/transfer';
 
-import { Inventory } from '../../inventory/models/inventory';
 import { ItemSampling } from '../../inventory/models/item-sampling';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ItemSamplingService } from '../../inventory/services/item-sampling.service';
@@ -16,28 +13,24 @@ import { QcInspectionRequest } from '../models/qc-inspection-request';
 import { QCInspectionRequestItem } from '../models/qc-inspection-request-item';
 import { QCInspectionRequestItemOption } from '../models/qc-inspection-request-item-option';
 import { QCInspectionResult } from '../models/qc-inspection-result';
-import { QCRule } from '../models/qc-rule';
-import { QCRuleConfiguration } from '../models/qc-rule-configuration';
 import { QCRuleItemComparator } from '../models/qc-rule-item-comparator';
 import { QCRuleItemType } from '../models/qc-rule-item-type';
 import { QcInspectionRequestService } from '../services/qc-inspection-request.service';
 
 @Component({
-  selector: 'app-qc-inspect-inventory',
-  templateUrl: './inspect-inventory.component.html',
-  styleUrls: ['./inspect-inventory.component.less'],
+  selector: 'app-qc-inspect-by-request',
+  templateUrl: './inspect-by-request.component.html',
+  styleUrls: ['./inspect-by-request.component.less'],
 })
-export class QcInspectInventoryComponent implements OnInit {
-   
+export class QcInspectByRequestComponent implements OnInit {
   stepIndex = 0;
   pageTitle: string = ""; 
   isSpinning = false; 
-  qcInspectionRequests: QcInspectionRequest[] = [];
-  inventoryQCRequestMap = new Map();
-  inventoryQCResultMap = new Map();
+  qcInspectionRequest?: QcInspectionRequest;
+  
   qcRuleItemTypes = QCRuleItemType;
   qcInspectionResults = QCInspectionResult;
-  itemSamplingMap = new Map();
+  itemSampling?: ItemSampling;
   notApplyQCInspectionRequestItemOptionSet = new Set();
   isCollapse = false;
 
@@ -56,91 +49,39 @@ export class QcInspectInventoryComponent implements OnInit {
   }
   
   ngOnInit(): void {
-
-
-    this.itemSamplingMap = new Map();
+ 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.ids) { 
-        this.qcInspectionRequestService.getPendingQCInspectionRequest(undefined, params.ids)
+        this.qcInspectionRequestService.getQCInspectionRequest(params.ids)
         .subscribe({
           next: (qcInspectionRequestRes) => {
-            this.qcInspectionRequests = qcInspectionRequestRes;
+            this.qcInspectionRequest = qcInspectionRequestRes;
             
-            qcInspectionRequestRes.forEach(
-              qcRequest => {
-                const lpn = qcRequest.inventory!.lpn!;
-                let qcRules: QCInspectionRequestItem[] = [];
-                if (this.inventoryQCRequestMap.has(lpn)) {
-                  qcRules = this.inventoryQCRequestMap.get(lpn);
-                }
-                
-                qcRules = [...qcRules, ...qcRequest.qcInspectionRequestItems];
-                
-
-                this.inventoryQCRequestMap.set(lpn, qcRules);
-                this.loadItemSampling(lpn, qcRequest.inventory!.item?.id, qcRequest.inventory!.item?.name);
-              }
-            );
-            this.refreshInventoryQCResultMap();
-
-            
+            this.loadItemSampling(this.qcInspectionRequest.item?.id, this.qcInspectionRequest.item?.name);
+              
           }
         })
       } 
     }); 
 }
-loadItemSampling(lpn: string, itemId?: number, itemName?: string) {
-  // we will only load the item sampling information if we haven't done so
-  // we will always assume there's only one item on this lpn
-  if (!this.itemSamplingMap.has(lpn)) {
+loadItemSampling(itemId?: number, itemName?: string) { 
     this.itemSamplingService.getItemSamplings(undefined, itemName, itemId, undefined, true).subscribe(
       {
         next: (itemSamplingRes) => {
           // we should only get at most one enabled item sampling for each item
           if (itemSamplingRes.length === 1) {
-            this.itemSamplingMap.set(lpn, itemSamplingRes[0])
+            this.itemSampling = itemSamplingRes[0];
           }
         }
       }
     )
-
-  }
+ 
 }
 
 toggleCollapse(): void {
   this.isCollapse = !this.isCollapse;
 }
-
-refreshInventoryQCResultMap() {
-  //inventoryQCRequestMap
-  // key: lpn
-  // value: QCInspectionRequestItem list
-  this.inventoryQCRequestMap.forEach((qcInspectionRequestItems: QCInspectionRequestItem[], lpn: string) => { 
-    
-      let lpnQCInspectionResult = QCInspectionResult.PASS;
-        // if everything is pending, then the overall result is pending so we can inspect again later on
-        // otherwise, if we have one fail, the overall result is fail
-      if (!qcInspectionRequestItems.some(
-            qcInspectionRequestItem =>  qcInspectionRequestItem.qcInspectionResult !== QCInspectionResult.PENDING
-            )) {
-            lpnQCInspectionResult = QCInspectionResult.PENDING;
-      }
-      else if (qcInspectionRequestItems.some(
-                qcInspectionRequestItem => qcInspectionRequestItem.qcInspectionResult !== QCInspectionResult.PASS
-                )) {
-          // at least one option fail, let's make the whole request as fail
-          lpnQCInspectionResult = QCInspectionResult.FAIL
-      }
-      else {
-          
-        lpnQCInspectionResult = QCInspectionResult.PASS
-      }
-      this.inventoryQCResultMap.set(lpn, lpnQCInspectionResult);
-
-
-  });
-}
-
+ 
 
   previousStep(): void {
     this.stepIndex -= 1;
@@ -152,30 +93,28 @@ refreshInventoryQCResultMap() {
 
   confirm(): void {
     this.isSpinning = true;
-    // let get the overall request for each request
-    this.qcInspectionRequests.forEach(
-      qcInspectionRequest => {
+    
         // if everything is pending, then the overall result is pending so we can inspect again later on
         // otherwise, if we have one fail, the overall result is fail
-        if (!qcInspectionRequest.qcInspectionRequestItems.some(
+        if (!this.qcInspectionRequest!.qcInspectionRequestItems.some(
             qcInspectionRequestItem =>  qcInspectionRequestItem.qcInspectionResult !== QCInspectionResult.PENDING
             )) {
-          qcInspectionRequest.qcInspectionResult = QCInspectionResult.PENDING;
+              this.qcInspectionRequest!.qcInspectionResult = QCInspectionResult.PENDING;
         }
-        else if (qcInspectionRequest.qcInspectionRequestItems.some(
+        else if (this.qcInspectionRequest!.qcInspectionRequestItems.some(
           qcInspectionRequestItem => qcInspectionRequestItem.qcInspectionResult !== QCInspectionResult.PASS
           )) {
             // at least one option fail, let's make the whole request as fail
-            qcInspectionRequest.qcInspectionResult = QCInspectionResult.FAIL
+            this.qcInspectionRequest!.qcInspectionResult = QCInspectionResult.FAIL
         }
         else {
             
-          qcInspectionRequest.qcInspectionResult = QCInspectionResult.PASS
+          this.qcInspectionRequest!.qcInspectionResult = QCInspectionResult.PASS
         }
 
-        console.log(`========   ${qcInspectionRequest.id}  ======`);
-        console.log(`result: ${qcInspectionRequest.qcInspectionResult}`);
-        qcInspectionRequest.qcInspectionRequestItems.forEach(
+        console.log(`========   ${this.qcInspectionRequest!.id}  ======`);
+        console.log(`result: ${this.qcInspectionRequest!.qcInspectionResult}`);
+        this.qcInspectionRequest!.qcInspectionRequestItems.forEach(
           qcInspectionRequestItem => {
 
             console.log(`> ${qcInspectionRequestItem.qcRule.name} / result: ${qcInspectionRequestItem.qcInspectionResult}`)
@@ -187,14 +126,15 @@ refreshInventoryQCResultMap() {
             )
           }
         );
-      }
-    )
-    this.qcInspectionRequestService.saveQCInspectionRequest(this.qcInspectionRequests).subscribe({
+       
+    let qcInspectionRequests: QcInspectionRequest[] = [];
+    qcInspectionRequests.push(this.qcInspectionRequest!);
+    this.qcInspectionRequestService.saveQCInspectionRequest(qcInspectionRequests).subscribe({
       next: () => {
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi('message.save.complete'));
         setTimeout(() => {
-          this.router.navigateByUrl(`/qc/inspection`);
+          this.router.navigateByUrl(`/qc/inspection?number=${this.qcInspectionRequest?.number}`);
         }, 2500);
       },
       error: () => this.isSpinning = false
@@ -357,7 +297,7 @@ refreshInventoryQCResultMap() {
       else {        
           qcInspectionRequestItem.qcInspectionResult = QCInspectionResult.PASS
       }
-    this.refreshInventoryQCResultMap();
+    // this.refreshInventoryQCResultMap();
   }
    
   getImageUrl(itemSampling: ItemSampling, imageFileName: string): string {
@@ -379,4 +319,5 @@ refreshInventoryQCResultMap() {
 
     this.qcInspectionRequestItemOptionChanged(qcInspectionRequestItem, qcInspectionRequestItemOption);
   }
+
 }

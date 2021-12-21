@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { OutboundAllocationConfigurationComponent } from './allocation-configuration/allocation-configuration.component';
 import { OutboundCartonComponent } from './carton/carton.component';
@@ -47,8 +48,7 @@ const routes: Routes = [
   { path: 'grid', component: OutboundGridComponent, canActivate: [AuthGuard]  },
   { path: 'grid-maintenance', component: OutboundGridMaintenanceComponent },
   { path: 'shipping-cartonization', component: OutboundShippingCartonizationComponent, canActivate: [AuthGuard]  },
-  { path: 'allocation-configuration', component: OutboundAllocationConfigurationComponent, canActivate: [AuthGuard]  },
-];
+  { path: 'allocation-configuration', component: OutboundAllocationConfigurationComponent, canActivate: [AuthGuard]  }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

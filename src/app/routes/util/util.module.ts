@@ -14,6 +14,7 @@ import { UtilDataTransferComponent } from './data-transfer/data-transfer.compone
 import { UtilFileUploadComponent } from './file-upload/file-upload.component';
 import { UtilIconListComponent } from './icon-list/icon-list.component'; 
 import { UtilMenuComponent } from './menu/menu.component';
+import { UtilOrderQueryPopupComponent } from './order-query-popup/order-query-popup.component';
 import { UtilRfAppVersionMaintenanceComponent } from './rf-app-version-maintenance/rf-app-version-maintenance.component';
 import { UtilRfAppVersionComponent } from './rf-app-version/rf-app-version.component';
 import { UtilRfMaintenanceComponent } from './rf-maintenance/rf-maintenance.component';
@@ -25,6 +26,7 @@ import { UtilTableColumnSelectionComponent } from './table-column-selection/tabl
 import { UtilTestDataInitComponent } from './test-data-init/test-data-init.component';
 import { UtilTesterComponent } from './tester/tester.component';
 import { UtilRoutingModule } from './util-routing.module';
+import { UtilWorkOrderQueryPopupComponent } from './work-order-query-popup/work-order-query-popup.component';
 
 const COMPONENTS: Array<Type<void>> = [
   UtilFileUploadComponent,  
@@ -45,7 +47,9 @@ const COMPONENTS: Array<Type<void>> = [
   UtilCompanyMaintenanceComponent,
   UtilMenuComponent,
   UtilCompanyMenuComponent,
-  UtilDataTransferComponent];
+  UtilDataTransferComponent,
+  UtilWorkOrderQueryPopupComponent,
+  UtilOrderQueryPopupComponent];
   
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
@@ -63,7 +67,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     ...COMPONENTS,
     ...COMPONENTS_NOROUNT
   ],
-  exports: [UtilTableColumnSelectionComponent],
+  exports: [UtilTableColumnSelectionComponent, UtilWorkOrderQueryPopupComponent, UtilOrderQueryPopupComponent],
 
 })
 export class UtilModule { }

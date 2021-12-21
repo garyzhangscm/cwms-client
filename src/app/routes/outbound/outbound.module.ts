@@ -54,8 +54,7 @@ const COMPONENTS: Array<Type<void>> = [
   OutboundGridComponent,
   OutboundGridMaintenanceComponent,
   OutboundShippingCartonizationComponent,
-  OutboundAllocationConfigurationComponent
-];
+  OutboundAllocationConfigurationComponent,];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

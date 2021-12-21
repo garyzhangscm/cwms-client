@@ -4,10 +4,13 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { UtilBillableRequestComponent } from './billable-request/billable-request.component';
 import { UtilCompanyMaintenanceComponent } from './company-maintenance/company-maintenance.component';
+import { UtilCompanyMenuComponent } from './company-menu/company-menu.component';
 import { UtilCompanyComponent } from './company/company.component';
 import { UtilDataInitComponent } from './data-init/data-init.component';
+import { UtilDataTransferComponent } from './data-transfer/data-transfer.component';
 import { UtilFileUploadComponent } from './file-upload/file-upload.component';
 import { UtilIconListComponent } from './icon-list/icon-list.component';
+import { UtilMenuComponent } from './menu/menu.component';
 import { UtilRfAppVersionMaintenanceComponent } from './rf-app-version-maintenance/rf-app-version-maintenance.component';
 import { UtilRfAppVersionComponent } from './rf-app-version/rf-app-version.component';
 import { UtilRfMaintenanceComponent } from './rf-maintenance/rf-maintenance.component';
@@ -18,9 +21,8 @@ import { UtilSystemControlledNumberComponent } from './system-controlled-number/
 import { UtilTableColumnSelectionComponent } from './table-column-selection/table-column-selection.component';
 import { UtilTestDataInitComponent } from './test-data-init/test-data-init.component';
 import { UtilTesterComponent } from './tester/tester.component';
-import { UtilMenuComponent } from './menu/menu.component';
-import { UtilCompanyMenuComponent } from './company-menu/company-menu.component';
-import { UtilDataTransferComponent } from './data-transfer/data-transfer.component';
+import { UtilWorkOrderQueryPopupComponent } from './work-order-query-popup/work-order-query-popup.component';
+import { UtilOrderQueryPopupComponent } from './order-query-popup/order-query-popup.component';
 
 const routes: Routes = [
   { path: 'file-upload', component: UtilFileUploadComponent, canActivate: [AuthGuard] },
@@ -42,7 +44,9 @@ const routes: Routes = [
   { path: 'company-maintenance', component: UtilCompanyMaintenanceComponent },
   { path: 'menu', component: UtilMenuComponent },
   { path: 'company-menu', component: UtilCompanyMenuComponent },
-  { path: 'data-transfer', component: UtilDataTransferComponent }];
+  { path: 'data-transfer', component: UtilDataTransferComponent },
+  { path: 'work-order-query-popup', component: UtilWorkOrderQueryPopupComponent },
+  { path: 'order-query-popup', component: UtilOrderQueryPopupComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
