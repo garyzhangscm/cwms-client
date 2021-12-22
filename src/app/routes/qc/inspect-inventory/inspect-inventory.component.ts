@@ -173,8 +173,10 @@ refreshInventoryQCResultMap() {
           qcInspectionRequest.qcInspectionResult = QCInspectionResult.PASS
         }
 
-        console.log(`========   ${qcInspectionRequest.id}  ======`);
-        console.log(`result: ${qcInspectionRequest.qcInspectionResult}`);
+        // console.log(`========   ${qcInspectionRequest.id}  ======`);
+        // console.log(`result: ${qcInspectionRequest.qcInspectionResult}`);
+        /**
+         * 
         qcInspectionRequest.qcInspectionRequestItems.forEach(
           qcInspectionRequestItem => {
 
@@ -187,6 +189,8 @@ refreshInventoryQCResultMap() {
             )
           }
         );
+         */
+        
       }
     )
     this.qcInspectionRequestService.saveQCInspectionRequest(this.qcInspectionRequests).subscribe({
@@ -207,7 +211,7 @@ refreshInventoryQCResultMap() {
   resetQCInspectionRequestItemYESNOOptionResult(qcInspectionRequestItemOption: QCInspectionRequestItemOption) {
 
     // for yes no question, we will only allow the comparator to 'equals'.
-    console.log(`qcInspectionRequestItemOption.value for YESNO: ${qcInspectionRequestItemOption.value}`);
+    // console.log(`qcInspectionRequestItemOption.value for YESNO: ${qcInspectionRequestItemOption.value}`);
     if (qcInspectionRequestItemOption.qcRuleItem.qcRuleItemComparator != QCRuleItemComparator.EQUAL) {
 
       qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PENDING;
@@ -290,6 +294,11 @@ refreshInventoryQCResultMap() {
   // equals / like
   resetQCInspectionRequestItemSTRINGOptionResult(qcInspectionRequestItemOption: QCInspectionRequestItemOption) {
 
+    if (this.notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)) {
+      
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.NOT_APPLY;
+      return;
+    }
     // make sure the user input something
     if (qcInspectionRequestItemOption.stringValue == null) {
       
@@ -332,7 +341,7 @@ refreshInventoryQCResultMap() {
       // update the item option's result first, 
       this.resetQCInspectionRequestItemOptionResult(qcInspectionRequestItemOption);
 
-      console.log(`after reset the option ${qcInspectionRequestItemOption.qcRuleItem.checkPoint}`);
+      //console.log(`after reset the option ${qcInspectionRequestItemOption.qcRuleItem.checkPoint}`);
 
       qcInspectionRequestItem.qcInspectionRequestItemOptions.forEach(
         qcInspectionRequestItemOption => {
@@ -366,14 +375,14 @@ refreshInventoryQCResultMap() {
 
   notApplyQCInspectionRequestItemOptionChanged(qcInspectionRequestItem: QCInspectionRequestItem, 
     qcInspectionRequestItemOption: QCInspectionRequestItemOption, checked: boolean) {
-    console.log(`checked: ${checked}`)
-    console.log(`this.notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id): ${this.notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)}`)
+    // console.log(`checked: ${checked}`)
+    // console.log(`this.notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id): ${this.notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)}`)
     if (checked && !this.notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)) { 
-        console.log(`add ${qcInspectionRequestItemOption.id} to the set`) 
+       // console.log(`add ${qcInspectionRequestItemOption.id} to the set`) 
         this.notApplyQCInspectionRequestItemOptionSet.add(qcInspectionRequestItemOption.id); 
     }
     else if (!checked && this.notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)) {
-        console.log(`remove ${qcInspectionRequestItemOption.id} from the set`) 
+        // console.log(`remove ${qcInspectionRequestItemOption.id} from the set`) 
         this.notApplyQCInspectionRequestItemOptionSet.delete(qcInspectionRequestItemOption.id); 
     }
 

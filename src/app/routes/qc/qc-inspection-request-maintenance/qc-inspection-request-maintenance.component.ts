@@ -59,6 +59,7 @@ export class QcQcInspectionRequestMaintenanceComponent implements OnInit {
 
       number:  "",
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
+      inventories: [],
       qcInspectionRequestItems: [],
       qcInspectionResult: QCInspectionResult.PENDING,
       qcQuantity:0 ,
@@ -149,7 +150,7 @@ export class QcQcInspectionRequestMaintenanceComponent implements OnInit {
     }
     else {
 
-      this.router.navigateByUrl(`/qc/inspection?number=${this.currentQCInspectionRequest.number}`);
+      this.router.navigateByUrl(`/qc/inspection?number=${this.currentQCInspectionRequest.number}&type=${QcInspectionRequestType.BY_ITEM}&result=${QCInspectionResult.PENDING}`);
     }
   }
 
@@ -182,7 +183,7 @@ export class QcQcInspectionRequestMaintenanceComponent implements OnInit {
               this.isSpinning = false;
               this.messageService.success(this.i18n.fanyi('message.save.complete'));
               setTimeout(() => {
-                this.router.navigateByUrl(`/qc/inspection?number=${this.currentQCInspectionRequest.number}`);
+                this.router.navigateByUrl(`/qc/inspection?number=${this.currentQCInspectionRequest.number}&type=${QcInspectionRequestType.BY_ITEM}&result=${QCInspectionResult.PENDING}`);
               }, 2500);
             }
           });
@@ -198,7 +199,7 @@ export class QcQcInspectionRequestMaintenanceComponent implements OnInit {
               this.isSpinning = false;
               this.messageService.success(this.i18n.fanyi('message.save.complete'));
               setTimeout(() => {
-                this.router.navigateByUrl(`/qc/inspection?number=${this.currentQCInspectionRequest.number}`);
+                this.router.navigateByUrl(`/qc/inspection?number=${this.currentQCInspectionRequest.number}&type=${QcInspectionRequestType.BY_ITEM}&result=${QCInspectionResult.PENDING}`);
               }, 2500);
             }
           });
@@ -249,6 +250,7 @@ export class QcQcInspectionRequestMaintenanceComponent implements OnInit {
             if (workOrderRes.length === 1) {
               console.log(`work order number is changed to ${workOrderRes[0].number}`);
               this.currentQCInspectionRequest.workOrder = workOrderRes[0]; 
+              this.currentQCInspectionRequest.workOrderId = workOrderRes[0].id; 
             }
           }
         }
@@ -264,6 +266,7 @@ export class QcQcInspectionRequestMaintenanceComponent implements OnInit {
         next: (workOrderRes) => {
           if (workOrderRes.length === 1) {
             this.currentQCInspectionRequest.workOrder = workOrderRes[0]; 
+            this.currentQCInspectionRequest.workOrderId = workOrderRes[0].id; 
           }
         }
       }

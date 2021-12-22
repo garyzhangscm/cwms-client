@@ -415,7 +415,11 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           },
         );
     }
-    this.loadAvailableProductionLine();
+    // we will no long load available production line here. 
+    // instead we will assign production line to the work order
+    // in a separate page
+    
+    // this.loadAvailableProductionLine();
     this.collapseAll();
   }
 

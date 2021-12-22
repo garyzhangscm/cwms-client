@@ -175,4 +175,5 @@ export class InventoryService {
     const url = `inventory/inventories/${this.warehouseService.getCurrentWarehouse().id}/${lpn}/lpn-label/ecotech`;
     return this.http.post(url).pipe(map(res => res.data));
   }
+
 }

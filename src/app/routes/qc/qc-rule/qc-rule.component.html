@@ -46,7 +46,7 @@
         <nz-tabset  >
           <nz-tab nzTitle=" {{ 'qc-rule.item' | i18n }}">
             <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="item.qcRuleItems" nzSize="middle"
-              [nzShowPagination]="false" #qcRuleItemTable>
+              [nzShowPagination]="true" #qcRuleItemTable>
               <thead>
                 <th>
                   {{ 'qcRule.checkPoint' | i18n }}

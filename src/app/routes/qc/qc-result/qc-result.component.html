@@ -27,6 +27,17 @@
         </nz-form-control>
       </nz-form-item>
     </div>
+    
+    <div nz-col [nzSpan]="8" >
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="8" nzFor="number">
+          {{ 'number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input name="number" id="number" formControlName="number" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
       
   </div>
 
@@ -51,6 +62,7 @@
       <ng-template #expand let-item let-index="index" >
         
         <nz-tabset  >
+          <!-- QC rule details-->
           <nz-tab *ngFor="let qcInspectionRequestItem of item.qcInspectionRequestItems" [nzTitle]="qcInspectionRequestItem.qcRule.name">
             <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="qcInspectionRequestItem.qcInspectionRequestItemOptions" nzSize="middle"
               [nzShowPagination]="true" #qcInspectionRequestItemOptionTable>
@@ -101,6 +113,13 @@
               </tbody>
             </nz-table>
           </nz-tab>
+          <!-- QC inventory-->
+          <nz-tab nzTitle="{{'inventory' | i18n}}">
+            
+            <st  [data]="item.allInventories"  [columns]="inventoryColumns" >
+            </st>
+          </nz-tab>
+          
         </nz-tabset>
       </ng-template>
       <!--   qc inspection time colummn  --> 

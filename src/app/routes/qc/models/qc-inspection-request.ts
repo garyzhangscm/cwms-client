@@ -13,6 +13,8 @@ export interface QcInspectionRequest {
 
     number: string;
     inventory?: Inventory;
+    inventories: Inventory[];
+    allInventories?: Inventory[];
     warehouseId: number;
 
     workOrderQCSampleId?: number;

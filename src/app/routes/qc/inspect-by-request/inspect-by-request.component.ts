@@ -1,10 +1,12 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
+import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { Inventory } from '../../inventory/models/inventory';
 import { ItemSampling } from '../../inventory/models/item-sampling';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ItemSamplingService } from '../../inventory/services/item-sampling.service';
@@ -12,6 +14,7 @@ import { WarehouseService } from '../../warehouse-layout/services/warehouse.serv
 import { QcInspectionRequest } from '../models/qc-inspection-request';
 import { QCInspectionRequestItem } from '../models/qc-inspection-request-item';
 import { QCInspectionRequestItemOption } from '../models/qc-inspection-request-item-option';
+import { QcInspectionRequestType } from '../models/qc-inspection-request-type';
 import { QCInspectionResult } from '../models/qc-inspection-result';
 import { QCRuleItemComparator } from '../models/qc-rule-item-comparator';
 import { QCRuleItemType } from '../models/qc-rule-item-type';
@@ -33,6 +36,9 @@ export class QcInspectByRequestComponent implements OnInit {
   itemSampling?: ItemSampling;
   notApplyQCInspectionRequestItemOptionSet = new Set();
   isCollapse = false;
+  
+  showQCInventoryFlag = false;
+  inputLpn = "";
 
 
   constructor(private http: _HttpClient, 
@@ -94,38 +100,24 @@ toggleCollapse(): void {
   confirm(): void {
     this.isSpinning = true;
     
-        // if everything is pending, then the overall result is pending so we can inspect again later on
-        // otherwise, if we have one fail, the overall result is fail
-        if (!this.qcInspectionRequest!.qcInspectionRequestItems.some(
+    // if everything is pending, then the overall result is pending so we can inspect again later on
+    // otherwise, if we have one fail, the overall result is fail
+    if (!this.qcInspectionRequest!.qcInspectionRequestItems.some(
             qcInspectionRequestItem =>  qcInspectionRequestItem.qcInspectionResult !== QCInspectionResult.PENDING
             )) {
               this.qcInspectionRequest!.qcInspectionResult = QCInspectionResult.PENDING;
-        }
-        else if (this.qcInspectionRequest!.qcInspectionRequestItems.some(
+    }
+    else if (this.qcInspectionRequest!.qcInspectionRequestItems.some(
           qcInspectionRequestItem => qcInspectionRequestItem.qcInspectionResult !== QCInspectionResult.PASS
           )) {
             // at least one option fail, let's make the whole request as fail
             this.qcInspectionRequest!.qcInspectionResult = QCInspectionResult.FAIL
-        }
-        else {
+    }
+    else {
             
           this.qcInspectionRequest!.qcInspectionResult = QCInspectionResult.PASS
-        }
-
-        console.log(`========   ${this.qcInspectionRequest!.id}  ======`);
-        console.log(`result: ${this.qcInspectionRequest!.qcInspectionResult}`);
-        this.qcInspectionRequest!.qcInspectionRequestItems.forEach(
-          qcInspectionRequestItem => {
-
-            console.log(`> ${qcInspectionRequestItem.qcRule.name} / result: ${qcInspectionRequestItem.qcInspectionResult}`)
-            qcInspectionRequestItem.qcInspectionRequestItemOptions.forEach(
-              qcInspectionRequestItemOption => {
-                console.log(`>>>> ${qcInspectionRequestItemOption.qcRuleItem.checkPoint} / result: ${qcInspectionRequestItemOption.qcInspectionResult}`)
-
-              }
-            )
-          }
-        );
+    }
+        
        
     let qcInspectionRequests: QcInspectionRequest[] = [];
     qcInspectionRequests.push(this.qcInspectionRequest!);
@@ -134,7 +126,7 @@ toggleCollapse(): void {
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi('message.save.complete'));
         setTimeout(() => {
-          this.router.navigateByUrl(`/qc/inspection?number=${this.qcInspectionRequest?.number}`);
+          this.router.navigateByUrl(`/qc/inspection?number=${this.qcInspectionRequest?.number}&type=${QcInspectionRequestType.BY_ITEM}&result=${this.qcInspectionRequest?.qcInspectionResult}`);
         }, 2500);
       },
       error: () => this.isSpinning = false
@@ -147,7 +139,7 @@ toggleCollapse(): void {
   resetQCInspectionRequestItemYESNOOptionResult(qcInspectionRequestItemOption: QCInspectionRequestItemOption) {
 
     // for yes no question, we will only allow the comparator to 'equals'.
-    console.log(`qcInspectionRequestItemOption.value for YESNO: ${qcInspectionRequestItemOption.value}`);
+    // console.log(`qcInspectionRequestItemOption.value for YESNO: ${qcInspectionRequestItemOption.value}`);
     if (qcInspectionRequestItemOption.qcRuleItem.qcRuleItemComparator != QCRuleItemComparator.EQUAL) {
 
       qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.PENDING;
@@ -230,6 +222,11 @@ toggleCollapse(): void {
   // equals / like
   resetQCInspectionRequestItemSTRINGOptionResult(qcInspectionRequestItemOption: QCInspectionRequestItemOption) {
 
+    if (this.notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)) {
+      
+      qcInspectionRequestItemOption.qcInspectionResult = QCInspectionResult.NOT_APPLY;
+      return;
+    }
     // make sure the user input something
     if (qcInspectionRequestItemOption.stringValue == null) {
       
@@ -272,13 +269,16 @@ toggleCollapse(): void {
       // update the item option's result first, 
       this.resetQCInspectionRequestItemOptionResult(qcInspectionRequestItemOption);
 
-      console.log(`after reset the option ${qcInspectionRequestItemOption.qcRuleItem.checkPoint}`);
+      // console.log(`after reset the option ${qcInspectionRequestItemOption.qcRuleItem.checkPoint}`);
 
+      /**
+       * 
       qcInspectionRequestItem.qcInspectionRequestItemOptions.forEach(
         qcInspectionRequestItemOption => {
           console.log(`==> ${qcInspectionRequestItemOption.qcRuleItem.checkPoint} : ${qcInspectionRequestItemOption.qcInspectionResult}`);
         }
       )
+       */
 
       // update the qc inspection request  based on the result of all item options
       if (!qcInspectionRequestItem.qcInspectionRequestItemOptions.some(
@@ -297,7 +297,26 @@ toggleCollapse(): void {
       else {        
           qcInspectionRequestItem.qcInspectionResult = QCInspectionResult.PASS
       }
-    // this.refreshInventoryQCResultMap();
+      this.refreshOverallQCResult();
+  }
+
+  refreshOverallQCResult() {
+    this.qcInspectionRequest!.qcInspectionResult = QCInspectionResult.PASS;
+    if (!this.qcInspectionRequest?.qcInspectionRequestItems.some(
+          qcInspectionRequestItem =>  qcInspectionRequestItem.qcInspectionResult !== QCInspectionResult.PENDING
+          )) {
+            this.qcInspectionRequest!.qcInspectionResult = QCInspectionResult.PENDING;
+    }
+    else if (this.qcInspectionRequest!.qcInspectionRequestItems.some(
+              qcInspectionRequestItem => qcInspectionRequestItem.qcInspectionResult !== QCInspectionResult.PASS
+              )) {
+        // at least one option fail, let's make the whole request as fail
+        this.qcInspectionRequest!.qcInspectionResult = QCInspectionResult.FAIL
+    }
+    else {
+        
+      this.qcInspectionRequest!.qcInspectionResult = QCInspectionResult.PASS
+    }
   }
    
   getImageUrl(itemSampling: ItemSampling, imageFileName: string): string {
@@ -306,18 +325,67 @@ toggleCollapse(): void {
 
   notApplyQCInspectionRequestItemOptionChanged(qcInspectionRequestItem: QCInspectionRequestItem, 
     qcInspectionRequestItemOption: QCInspectionRequestItemOption, checked: boolean) {
-    console.log(`checked: ${checked}`)
-    console.log(`this.notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id): ${this.notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)}`)
+    
     if (checked && !this.notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)) { 
-        console.log(`add ${qcInspectionRequestItemOption.id} to the set`) 
         this.notApplyQCInspectionRequestItemOptionSet.add(qcInspectionRequestItemOption.id); 
     }
     else if (!checked && this.notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)) {
-        console.log(`remove ${qcInspectionRequestItemOption.id} from the set`) 
         this.notApplyQCInspectionRequestItemOptionSet.delete(qcInspectionRequestItemOption.id); 
     }
 
     this.qcInspectionRequestItemOptionChanged(qcInspectionRequestItem, qcInspectionRequestItemOption);
   }
 
+  
+  @ViewChild('st', { static: true })
+  st!: STComponent;
+  columns: STColumn[] = [
+
+    { title: this.i18n.fanyi("lpn"), index: 'lpn',   },
+    { title: this.i18n.fanyi("item"), index: 'item.name',  }, 
+    { title: this.i18n.fanyi("item.description"), index: 'item.description',  }, 
+    { title: this.i18n.fanyi("quantity"), index: 'quantity',  }, 
+    { title: this.i18n.fanyi("status"), index: 'inventoryStatus.name',  }, 
+
+  ];
+
+  addLpn() {
+    // only proceed if the user input an lpn
+    if (this.inputLpn != '') {
+
+      this.isSpinning = true;
+      this.qcInspectionRequestService.validateLPNForInspectionByQCRequest(this.qcInspectionRequest!.id!, this.inputLpn).subscribe(
+        {
+          next: (inventoryRes) => {
+            if (inventoryRes.length === 0) {
+              
+              this.messageService.error("message.lpn.not-exists");
+              this.isSpinning = false;
+            }
+            // make sure the inventory has the right item 
+            else if (inventoryRes.some(inventory => inventory.item?.id != this.qcInspectionRequest?.item?.id )) {
+              this.messageService.error("message.item.not-match");
+              this.isSpinning = false;
+            }
+            else {
+              // remove the duplicated inventory record
+              inventoryRes = inventoryRes.filter(
+                inventory => !this.qcInspectionRequest?.inventories.some(addedInventory => addedInventory.id === inventory.id)
+              );
+              if (inventoryRes.length > 0) {
+  
+                this.qcInspectionRequest!.inventories = [...this.qcInspectionRequest!.inventories, ...inventoryRes];
+              }
+              this.messageService.error("message.lpn.added");
+              this.inputLpn = '';
+              this.isSpinning = false;
+
+            }
+
+          },
+          error: () => this.isSpinning = false
+        }
+      )
+    }
+  }
 }

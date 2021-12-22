@@ -70,14 +70,16 @@ export class QcQcInspectionComponent implements OnInit {
       locationName: [null], 
       itemName: [null], 
       number: [null], 
-      qcInspectionRequestType: [null],
-      qcInspectionResult: [null]
+      qcInspectionRequestType: [QcInspectionRequestType.BY_INVENTORY],
+      qcInspectionResult: [QCInspectionResult.PENDING]
     }); 
 
     
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.number) {
+      if (params.number || params.type || params.result) {
         this.searchForm!.controls.number.setValue(params.number);
+        this.searchForm!.controls.qcInspectionRequestType.setValue(params.type ? params.type : QcInspectionRequestType.BY_INVENTORY );
+        this.searchForm!.controls.qcInspectionResult.setValue(params.result ? params.result : QCInspectionResult.PENDING);
         this.search();
       } 
     });
@@ -191,6 +193,7 @@ export class QcQcInspectionComponent implements OnInit {
        render: 'itemNameColumn', iif: () => this.isChoose('itemName') },
     { title: this.i18n.fanyi("item.description"), 
         render: 'itemDescriptionColumn',    iif: () => this.isChoose('itemDescription') },
+    { title: this.i18n.fanyi("work-order"), index: 'workOrder.number', iif: () => this.isChoose('workOrder') },
     { title: this.i18n.fanyi("inventory-quantity"), index: 'inventory.quantity', iif: () => this.isChoose('quantity') },
     { title: this.i18n.fanyi("location-group"), index: 'inventory.location.locationGroup.name', iif: () => this.isChoose('locationGroup') },
     { title: this.i18n.fanyi("location"), index: 'inventory.location.name', iif: () => this.isChoose('location') },
@@ -208,6 +211,7 @@ export class QcQcInspectionComponent implements OnInit {
     { label: this.i18n.fanyi("lpn"), value: 'lpn', checked: true },
     { label: this.i18n.fanyi("item"), value: 'itemName', checked: true },
     { label: this.i18n.fanyi("item.description"), value: 'itemDescription', checked: true },
+    { label: this.i18n.fanyi("work-order"), value: 'workOrder', checked: true },
     { label: this.i18n.fanyi("quantity"), value: 'quantity', checked: true },
     { label: this.i18n.fanyi("location-group"), value: 'locationGroup', checked: true },
     { label: this.i18n.fanyi("location"), value: 'location', checked: true },
@@ -253,10 +257,22 @@ export class QcQcInspectionComponent implements OnInit {
     )
     
   } 
-  processQCInspection(inventory: Inventory) {
-    console.log(`start to process qc inspection for ${inventory.lpn}`);
-    this.router.navigateByUrl(
-          `/qc/inspect-inventory?ids=${inventory.id}`);
+  processQCInspection(qcInspectionRequest: QcInspectionRequest) {
+    console.log(`start to process qc inspection for ${qcInspectionRequest.number}`);
+    switch (qcInspectionRequest.type) {
+      case QcInspectionRequestType.BY_INVENTORY: {
+        this.router.navigateByUrl(
+          `/qc/inspect-inventory?ids=${qcInspectionRequest.inventory?.id}`);
+          break;
+      }
+      case QcInspectionRequestType.BY_ITEM: {
+        
+        this.router.navigateByUrl(
+          `/qc/inspect-by-request?ids=${qcInspectionRequest.id}`);
+          break;
+      }
+
+    }
 
   }
 

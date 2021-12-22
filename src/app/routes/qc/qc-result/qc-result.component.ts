@@ -44,6 +44,7 @@ export class QcQcResultComponent implements OnInit {
     this.searchForm = this.fb.group({
       lpn: [null], 
       workOrderQCSampleNumber: [null],
+      number: [null],
     }); 
 
     this.activatedRoute.queryParams.subscribe(params => {
@@ -66,12 +67,15 @@ export class QcQcResultComponent implements OnInit {
   search(): void {
     this.isSpinning = true;
     this.searchResult = '';
+    console.log(`search by number ${this.searchForm.controls.number.value}`);
     this.qcInspectionRequestService.getQCInspectionResult(
       this.searchForm.controls.lpn.value,      
-      this.searchForm.controls.workOrderQCSampleNumber.value).subscribe(
+      this.searchForm.controls.workOrderQCSampleNumber.value,      
+      this.searchForm.controls.number.value).subscribe(
       {
         next: (qcInspectionRequestRes) => {
           this.listOfQCInspectionRequest = qcInspectionRequestRes;
+          this.setupDisplayInventory();
 
           this.isSpinning = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
@@ -85,6 +89,24 @@ export class QcQcResultComponent implements OnInit {
       
   }
 
+  // combine inventory list and single inventory onto one display so we can 
+  // show them in a signle table
+  // 1. Single inventory: used for inbound QC
+  // 2. inventory list: used for qc by item
+  setupDisplayInventory() {
+    this.listOfQCInspectionRequest.forEach(
+      qcInspectionRequest => {
+        if (qcInspectionRequest.inventory) {
+
+          qcInspectionRequest.allInventories = [...qcInspectionRequest.inventories, qcInspectionRequest.inventory]
+        }
+        else {
+          qcInspectionRequest.allInventories = qcInspectionRequest.inventories;
+        }
+      }
+    )
+  }
+
   @ViewChild('st', { static: true })
   st!: STComponent;
   columns: STColumn[] = [
@@ -92,6 +114,7 @@ export class QcQcResultComponent implements OnInit {
     { title: this.i18n.fanyi("number"), index: 'number', iif: () => this.isChoose('number') },
     { title: this.i18n.fanyi("lpn"), index: 'inventory.lpn', iif: () => this.isChoose('lpn') },
     { title: this.i18n.fanyi("work-order.qc-sample.number"), index: 'workOrderQCSample.number', iif: () => this.isChoose('workOrderQCSample') },
+    { title: this.i18n.fanyi("work-order"), index: 'workOrder.number', iif: () => this.isChoose('workOrder') },
     { title: this.i18n.fanyi("item.name"), index: 'inventory.item.name', iif: () => this.isChoose('itemName') },
     { title: this.i18n.fanyi("item.description"), index: 'inventory.item.description', iif: () => this.isChoose('itemDescription') },
     { title: this.i18n.fanyi("qc-result"), index: 'qcInspectionResult', iif: () => this.isChoose('qcResult') },
@@ -111,6 +134,7 @@ export class QcQcResultComponent implements OnInit {
     { label: this.i18n.fanyi("number"), value: 'number', checked: true },
     { label: this.i18n.fanyi("lpn"), value: 'lpn', checked: true },
     { label: this.i18n.fanyi("work-order.qc-sample.number"), value: 'workOrderQCSample', checked: true },
+    { label: this.i18n.fanyi("work-order"), value: 'workOrder', checked: true },
     { label: this.i18n.fanyi("item.name"), value: 'itemName', checked: true },
     { label: this.i18n.fanyi("item.description"), value: 'itemDescription', checked: true },
     { label: this.i18n.fanyi("qcResult"), value: 'qcResult', checked: true },
@@ -129,4 +153,15 @@ export class QcQcResultComponent implements OnInit {
 
     }
   }
+  
+  
+  inventoryColumns: STColumn[] = [
+
+    { title: this.i18n.fanyi("lpn"), index: 'lpn',   },
+    { title: this.i18n.fanyi("item"), index: 'item.name',  }, 
+    { title: this.i18n.fanyi("item.description"), index: 'item.description',  }, 
+    { title: this.i18n.fanyi("quantity"), index: 'quantity',  }, 
+    { title: this.i18n.fanyi("status"), index: 'inventoryStatus.name',  }, 
+
+  ];
 }
