@@ -5,11 +5,17 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
+import { PrintPageSize } from '../../common/models/print-page-size.enum';
+import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { ItemService } from '../../inventory/services/item.service';
+import { ReportOrientation } from '../../report/models/report-orientation.enum';
+import { ReportType } from '../../report/models/report-type.enum';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { LocationGroupType } from '../../warehouse-layout/models/location-group-type';
 import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
@@ -52,6 +58,7 @@ export class QcQcInspectionComponent implements OnInit {
     private locationGroupTypeService: LocationGroupTypeService,
     private qcInspectionRequestService: QcInspectionRequestService, 
     private locationGroupService: LocationGroupService,
+    private printingService: PrintingService,
     ) { 
 
   }
@@ -202,7 +209,7 @@ export class QcQcInspectionComponent implements OnInit {
     {
       title: 'action',
       renderTitle: 'actionColumnTitle' ,
-      render: 'actionColumn',fixed: 'right',width: 150, 
+      render: 'actionColumn',fixed: 'right',width: 350, 
     },
 
   ];
@@ -288,6 +295,58 @@ export class QcQcInspectionComponent implements OnInit {
 
   getSelectedInventory() : number[] {
     return this.st._data.filter(item => item.checked).map(item => item.id); 
+  }
+
+  
+  printQCInspectionRequestReport(event: any, qcInspectionRequest: QcInspectionRequest) {
+
+    this.isSpinning = true;
+
+    console.log(`start to print qc inspection request report for  \n${qcInspectionRequest.number}`);
+    this.qcInspectionRequestService.generateQCInspectionRequestReport(
+      qcInspectionRequest.id!)
+      .subscribe(printResult => {
+
+        // send the result to the printer
+        const printFileUrl
+          = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
+        console.log(`will print file: ${printFileUrl}`);
+        this.printingService.printRemoteFileByName(
+          "LPN Label",
+          printResult.fileName,
+          ReportType.LPN_REPORT,
+          event.printerIndex,
+          event.printerName,
+          event.physicalCopyCount,
+          PrintPageOrientation.Landscape,
+          PrintPageSize.A4,
+          qcInspectionRequest.number);
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi("report.print.printed"));
+      },
+        () => {
+          this.isSpinning = false;
+        },
+
+      );
+
+  }
+  previewQCInspectionRequestReport(qcInspectionRequest: QcInspectionRequest): void {
+
+
+    this.isSpinning = true;
+    this.qcInspectionRequestService.generateQCInspectionRequestReport(
+      qcInspectionRequest.id!)
+      .subscribe(printResult => {
+        // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+        this.isSpinning = false;
+        this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
+
+      },
+        () => {
+          this.isSpinning = false;
+        },
+      );
   }
   
 }

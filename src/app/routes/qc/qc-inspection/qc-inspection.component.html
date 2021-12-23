@@ -193,6 +193,10 @@
         <button nz-button [disabled]="!isQCRequired(item)" (click)="processQCInspection(item)">
             {{ 'qc-inspection' | i18n}}
         </button>
+        <nz-divider nzType="vertical"></nz-divider>
+        <cwms-common-print-button style='padding-left: 20px;' (print)="printQCInspectionRequestReport($event, item)"
+          (preview)="previewQCInspectionRequestReport(item)">
+        </cwms-common-print-button>
         
       </ng-template>
 

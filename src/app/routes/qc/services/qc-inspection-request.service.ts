@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Inventory } from '../../inventory/models/inventory';
+import { ReportHistory } from '../../report/models/report-history';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { QcInspectionRequest } from '../models/qc-inspection-request';
 import { QCInspectionResult } from '../models/qc-inspection-result';
@@ -113,6 +114,12 @@ export class QcInspectionRequestService {
   
   validateLPNForInspectionByQCRequest(id: number, lpn: string) : Observable<Inventory[]>{
     const url = `inventory/qc-inspection-requests/${id}/inspect-by-request/validate-lpn?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&lpn=${lpn}`;
+    return this.http.post(url).pipe(map(res => res.data));
+  }
+
+  
+  generateQCInspectionRequestReport(id: number) : Observable<ReportHistory>{
+    const url = `inventory/qc-inspection-requests/${id}/report`;
     return this.http.post(url).pipe(map(res => res.data));
   }
    

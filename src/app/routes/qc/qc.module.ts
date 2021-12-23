@@ -13,6 +13,7 @@ import { DirectivesModule } from '../directives/directives.module';
 import { InventoryModule } from '../inventory/inventory.module';
 import { UtilModule } from '../util/util.module';
 import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module';
+import { QcInspectByRequestComponent } from './inspect-by-request/inspect-by-request.component';
 import { QcInspectInventoryComponent } from './inspect-inventory/inspect-inventory.component';
 import { QcQcConfigurationComponent } from './qc-configuration/qc-configuration.component';
 import { QcQcInspectionRequestMaintenanceComponent } from './qc-inspection-request-maintenance/qc-inspection-request-maintenance.component';
@@ -23,7 +24,6 @@ import { QcQcRuleConfigurationMaintenanceComponent } from './qc-rule-configurati
 import { QcQcRuleConfigurationComponent } from './qc-rule-configuration/qc-rule-configuration.component';
 import { QcQcRuleMaintenanceComponent } from './qc-rule-maintenance/qc-rule-maintenance.component';
 import { QcQcRuleComponent } from './qc-rule/qc-rule.component';
-import { QcInspectByRequestComponent } from './inspect-by-request/inspect-by-request.component';
 
 const COMPONENTS: Array<Type<void>> = [
   QcQcRuleComponent,
@@ -50,6 +50,7 @@ const COMPONENTS: Array<Type<void>> = [
     NzSkeletonModule , 
     NzCarouselModule,
     NzImageModule ,
+    CommonModule,
     DirectivesModule, 
   ],
   declarations: COMPONENTS,
