@@ -63,7 +63,7 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllLocations"
+  <nz-table [nzScroll]="{ x: '100vw'}" nzShowSizeChanger nzShowPagination [nzData]="listOfAllLocations"
     #nestedTable [nzFooter]="tableFoot">
     <thead>
       <tr>
@@ -76,7 +76,7 @@
           {{ column.name | i18n }}
         </th>
 
-        <th>
+        <th nzRight nzWidth="250PX">
           {{ 'action' | i18n }}
         </th>
       </tr>
@@ -104,7 +104,7 @@
                 routerLinkActive="active" [queryParams]="{locationName : data.name}">{{ (data.locked + '') | i18n
                 }}</a></span>
           </td>
-          <td>
+          <td nzRight>
 
             <button nz-button
               (click)="openAddInventoryModal(data, tplAddInventoryModalTitle, tplAddInventoryModalContent)"

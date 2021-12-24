@@ -1,3 +1,4 @@
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
@@ -12,8 +13,10 @@ export class ValidatorServiceService {
   constructor(private http: _HttpClient, private companyService: CompanyService, private warehouseService: WarehouseService) {}
 
   validateNewNumber(numberType: string, value: string): Observable<string> {
+    
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
     if (value && value.length > 0) {
-      const url = `common/validator/validate-new-number/${numberType}/${value}?warehouseId=${
+      const url = `common/validator/validate-new-number/${numberType}/${httpUrlEncodingCodec.encodeValue(value.trim())}?warehouseId=${
         this.warehouseService.getCurrentWarehouse().id
       }&companyId=${
         this.companyService.getCurrentCompany()?.id
@@ -26,9 +29,11 @@ export class ValidatorServiceService {
 
   }
   validateExistingNumber(numberType: string, value: string): Observable<string> {
+    
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
     if (value && value.length > 0) {
 
-      const url = `common/validator/validate-existing-number/${numberType}/${value}?warehouseId=${
+      const url = `common/validator/validate-existing-number/${numberType}/${httpUrlEncodingCodec.encodeValue(value.trim())}?warehouseId=${
         this.warehouseService.getCurrentWarehouse().id
       }&companyId=${
         this.companyService.getCurrentCompany()?.id
