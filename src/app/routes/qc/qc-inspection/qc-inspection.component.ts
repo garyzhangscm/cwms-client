@@ -73,10 +73,11 @@ export class QcQcInspectionComponent implements OnInit {
   ngOnInit(): void { 
 
     this.searchForm = this.fb.group({ 
-      locationGroups: [null], 
-      locationName: [null], 
-      itemName: [null], 
+     // locationGroups: [null], 
+     // locationName: [null], 
       number: [null], 
+      lpn: [null], 
+      // itemName: [null], 
       qcInspectionRequestType: [QcInspectionRequestType.BY_INVENTORY],
       qcInspectionResult: [QCInspectionResult.PENDING]
     }); 
@@ -104,8 +105,8 @@ export class QcQcInspectionComponent implements OnInit {
   
 
   resetForm(): void {
-    this.searchForm.reset();
-    this.listOfQCRequiredInventory = [];
+    this.searchForm.reset(); 
+    this.listOfQCInspectionRequest = [];
 
 
   }
@@ -116,12 +117,10 @@ export class QcQcInspectionComponent implements OnInit {
     console.log(`this.searchForm.controls.qcInspectionRequestType.value: ${this.searchForm.controls.qcInspectionRequestType.value}`) 
 
       this.qcInspectionRequestService.getQCInspectionRequests(
-        this.searchForm.controls.locationName.value,
-        this.searchForm.controls.locationGroups.value, 
-        this.searchForm.controls.itemName.value, 
+        undefined, undefined,
+        this.searchForm.controls.lpn.value,
         this.searchForm.controls.number.value, 
-        this.searchForm.controls.qcInspectionRequestType.value,         
-        this.searchForm.controls.qcInspectionResult.value).subscribe(
+        this.searchForm.controls.qcInspectionRequestType.value).subscribe(
         {
           next: (qcInspectionRequestRes) => {
             this.listOfQCInspectionRequest = qcInspectionRequestRes; 

@@ -5,7 +5,8 @@
 
 <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
   
-    
+    <!--
+
   <div nz-row [nzGutter]="24"> 
 
     <div nz-col [nzSpan]="16">
@@ -41,6 +42,8 @@
     </div> 
    </div>
    
+
+    -->
   <div nz-row [nzGutter]="24"> 
       
     <div nz-col [nzSpan]="8">
@@ -57,6 +60,23 @@
         </nz-form-control>
       </nz-form-item>
     </div> 
+    
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'lpn' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18" >
+
+            <nz-input-group >
+              <input nz-input name="lpn" id="lpn" formControlName="lpn" />
+              </nz-input-group> 
+
+        </nz-form-control>
+      </nz-form-item>
+    </div> 
+
+    <!--
 
     <div nz-col [nzSpan]="8">
         <nz-form-item>
@@ -76,7 +96,11 @@
           </nz-form-control>
         </nz-form-item>
       </div> 
+
+    -->
       
+  </div>
+  <div  nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item>
         <nz-form-label [nzSpan]="6">
@@ -98,8 +122,6 @@
       </nz-form-item>
     </div> 
 
-  </div>
-  <div  nz-row [nzGutter]="24">
     
     <div nz-col [nzSpan]="8">
       <nz-form-item>
