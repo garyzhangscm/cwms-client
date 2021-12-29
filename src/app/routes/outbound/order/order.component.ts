@@ -881,11 +881,18 @@ export class OutboundOrderComponent implements OnInit {
   }
 
   cancelShortAllocation(order: Order, shortAllocation: ShortAllocation): void {
-    this.shortAllocationService.cancelShortAllocations([shortAllocation]).subscribe(shortAllocationRes => {
-      this.messageService.success(this.i18n.fanyi('message.action.success'));
-      // refresh the short allocation
-      this.search(order.id, 3);
+    this.isSpinning = true;
+    this.shortAllocationService.cancelShortAllocations([shortAllocation]).subscribe({
+      next: () => {
+
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        // refresh the short allocation
+        this.search(order.id, 3);
+      }, 
+      error: () => this.isSpinning = false
     });
+     
   }
 
   isShortAllocationAllocatable(shortAllocation: ShortAllocation): boolean {

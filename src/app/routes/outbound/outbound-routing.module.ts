@@ -10,6 +10,7 @@ import { OutboundCartonizationConfigurationComponent } from './cartonization-con
 import { OutboundCartonizationComponent } from './cartonization/cartonization.component';
 import { OutboundGridMaintenanceComponent } from './grid-maintenance/grid-maintenance.component';
 import { OutboundGridComponent } from './grid/grid.component';
+import { OutboundOrderActivityComponent } from './order-activity/order-activity.component';
 import { OutboundOrderMaintenanceComponent } from './order-maintenance/order-maintenance.component';
 import { OutboundOrderComponent } from './order/order.component';
 import { OutboundPickConfirmComponent } from './pick-confirm/pick-confirm.component';
@@ -48,7 +49,8 @@ const routes: Routes = [
   { path: 'grid', component: OutboundGridComponent, canActivate: [AuthGuard]  },
   { path: 'grid-maintenance', component: OutboundGridMaintenanceComponent },
   { path: 'shipping-cartonization', component: OutboundShippingCartonizationComponent, canActivate: [AuthGuard]  },
-  { path: 'allocation-configuration', component: OutboundAllocationConfigurationComponent, canActivate: [AuthGuard]  }];
+  { path: 'allocation-configuration', component: OutboundAllocationConfigurationComponent, canActivate: [AuthGuard]  },
+  { path: 'order-activity', component: OutboundOrderActivityComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

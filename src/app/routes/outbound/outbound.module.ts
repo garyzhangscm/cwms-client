@@ -18,6 +18,7 @@ import { OutboundCartonizationConfigurationComponent } from './cartonization-con
 import { OutboundCartonizationComponent } from './cartonization/cartonization.component';
 import { OutboundGridMaintenanceComponent } from './grid-maintenance/grid-maintenance.component';
 import { OutboundGridComponent } from './grid/grid.component';
+import { OutboundOrderActivityComponent } from './order-activity/order-activity.component';
 import { OutboundOrderMaintenanceComponent } from './order-maintenance/order-maintenance.component';
 import { OutboundOrderComponent } from './order/order.component';
 import { OutboundRoutingModule } from './outbound-routing.module';
@@ -54,7 +55,8 @@ const COMPONENTS: Array<Type<void>> = [
   OutboundGridComponent,
   OutboundGridMaintenanceComponent,
   OutboundShippingCartonizationComponent,
-  OutboundAllocationConfigurationComponent,];
+  OutboundAllocationConfigurationComponent,
+  OutboundOrderActivityComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
