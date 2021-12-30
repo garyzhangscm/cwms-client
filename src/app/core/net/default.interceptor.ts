@@ -175,7 +175,7 @@ export class DefaultInterceptor implements HttpInterceptor {
   // #endregion
 
   private toLogin(): void {
-    this.notification.error(`未登录或登录已过期，请重新登录。`, ``);
+    this.notification.error(`Login expired, please log back again。`, ``);
     this.goTo('/passport/login');
   }
 

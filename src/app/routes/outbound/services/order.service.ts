@@ -145,4 +145,9 @@ export class OrderService {
 
   }
  
+  retriggerOrderConfirmationIntegration(order: Order): Observable<Order> {
+    return this.http.post(`outbound/orders/${order.id}/retrigger-order-confirm-integration?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`).pipe(map(res => res.data));
+  }
+
+ 
 }

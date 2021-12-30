@@ -3,7 +3,7 @@ import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { STComponent, STColumn, STChange } from '@delon/abc/st';
+import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -274,7 +274,7 @@ export class OutboundOrderComponent implements OnInit {
   avaiableLocations: WarehouseLocation[] = [];
 
   loadingOrderDetailsRequest = 0;
-
+ 
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllOrders = [];
@@ -301,7 +301,7 @@ export class OutboundOrderComponent implements OnInit {
       orderRes => {
  
 
-        this.collapseAllRecord(expandedOrderId);
+        // this.collapseAllRecord(expandedOrderId);
 
         this.isSpinning = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
@@ -309,10 +309,8 @@ export class OutboundOrderComponent implements OnInit {
           rowCount: orderRes.length,
         });
         
+        this.listOfAllOrders = this.calculateQuantities(orderRes);  
         this.refreshDetailInformations(orderRes);
-        this.listOfAllOrders = this.calculateQuantities(orderRes);
-        this.listOfDisplayOrders = this.calculateQuantities(orderRes);
-
         if (tabSelectedIndex) {
           this.tabSelectedIndex = tabSelectedIndex;
         }
@@ -323,11 +321,14 @@ export class OutboundOrderComponent implements OnInit {
       },
     );
   }
-
+ 
+ 
   // we will load the client / supplier / item information 
   // asyncronized
-  async refreshDetailInformations(orders: Order[]) { 
+  async refreshDetailInformations(orders: Order[]) {  
+    // const currentPageOrders = this.getCurrentPageOrders(); 
     let index = 0;
+    this.loadingOrderDetailsRequest = 0;
     while (index < orders.length) {
 
       // we will need to make sure we are at max loading detail information
@@ -335,22 +336,41 @@ export class OutboundOrderComponent implements OnInit {
       // we will get error if we flush requests for
       // too many orders into the server at a time
       // console.log(`1. this.loadingOrderDetailsRequest: ${this.loadingOrderDetailsRequest}`);
+      
+      
       while(this.loadingOrderDetailsRequest > 50) {
         // sleep 50ms        
         await this.delay(50);
       } 
+      
       this.refreshDetailInformation(orders[index]);
       index++;
-    }
-    
+    } 
     while(this.loadingOrderDetailsRequest > 0) {
       // sleep 50ms        
       await this.delay(100);
-    } 
+    }  
     // refresh the table while everything is loaded
-    // console.log(`refresh the table`);  
-    this.st.reload();
+    console.log(`mnaually refresh the table`);   
+    this.st.reload();  
   }
+ 
+  getCurrentPageOrders() : Order[]{ 
+    if (this.listOfAllOrders.length === 0) {
+      return [];
+    }
+    const currentPageDataList : STData[] = this.st.list;
+    if (currentPageDataList.length === 0) {
+      // we have datas but the table is not loaded, let's just assume 
+      // we will return the first page 
+      return this.listOfAllOrders.slice((this.st.pi - 1) * this.st.ps, this.st.pi * this.st.ps);
+
+    }
+    else {
+      // the current page already show datas, let's find the right order 
+      return this.listOfAllOrders.filter(order => currentPageDataList.some(orderData => orderData["id"] === order.id));
+    } 
+  } 
   
   delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
@@ -393,7 +413,7 @@ export class OutboundOrderComponent implements OnInit {
       this.localCacheService.getCustomer(order.billToCustomerId).subscribe(
         {
           next: (res) => {
-            order.billToCustomer = res;
+            order.billToCustomer = res; 
           
             this.loadingOrderDetailsRequest--;
           }
@@ -406,8 +426,8 @@ export class OutboundOrderComponent implements OnInit {
       this.localCacheService.getCustomer(order.shipToCustomerId).subscribe(
         {
           next: (res) => {
-            order.shipToCustomer = res;
-          
+            order.shipToCustomer = res; 
+             
             this.loadingOrderDetailsRequest--;
           }
         }
@@ -1106,7 +1126,7 @@ export class OutboundOrderComponent implements OnInit {
     if (event.type === 'expand' && event.expand.expand === true) {
       
       this.showOrderDetails(event.expand);
-    }
+    } 
 
   }
 
@@ -1158,6 +1178,25 @@ export class OutboundOrderComponent implements OnInit {
           this.isSpinning = false;
         }
       }) 
+  }
+  isAlreadyCompleted(order: Order) : boolean {
+    return order.status === OrderStatus.COMPLETE;
+  }
+  retriggerOrderConfirmationIntegration(order: Order) {
+    this.isSpinning = true;
+    
+    this.orderService.retriggerOrderConfirmationIntegration(order).subscribe({
+      next: () => {
+        this.messageService.success(this.i18n.fanyi("message.action.success"));
+        this.isSpinning = false;
+        this.search();
+      }, 
+      error: () => {
+        
+        this.messageService.error(this.i18n.fanyi("message.action.fail"));
+        this.isSpinning = false;
+      }
+    }) 
   }
 
 }

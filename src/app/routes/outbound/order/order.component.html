@@ -80,6 +80,10 @@
     (change)="orderTableChanged($event)" [scroll]="{ x: '2715px' }">
       <!-- more details about the shipping to customer -->
       <ng-template st-row="shipToCustomerColumn" let-item let-index="index">
+        <!--
+
+          
+        -->
         <nz-skeleton-element 
             *ngIf="item.shipToCustomerId && item.shipToCustomer == null"
             nzType="input"
@@ -88,6 +92,7 @@
             style="width:75px"
           ></nz-skeleton-element> 
         <a nz-tooltip [nzTooltipTitle]="shipToCustomerDetailsTemplate">{{ item.shipToCustomer?.name }}</a>
+        
         <ng-template #shipToCustomerDetailsTemplate>
           
           <address>  
@@ -452,6 +457,10 @@
             </li>
             <li nz-menu-item *ngIf="isOrderReadyForRemove(item)">
               <a  (click)="removeOrder(item)">{{ 'remove' | i18n }}</a>
+            </li>
+            
+            <li nz-menu-item *ngIf="isAlreadyCompleted(item)">
+              <a  (click)="retriggerOrderConfirmationIntegration(item)">{{ 'retrigger-order-confirm-integration' | i18n }}</a>
             </li>
           </ul>
         </nz-dropdown-menu>

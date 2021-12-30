@@ -357,7 +357,7 @@ export class LocalCacheService {
         while (i--) {
           const record = JSON.parse(localStorage.getItem(keys[i])!);
           if (record.hasExpiration && record.expiration <= now) {
-            console.log(`${keys[i]} expired, will clear it`) ;
+            // console.log(`${keys[i]} expired, will clear it`) ;
             localStorage.removeItem(keys[i]);
           }
         }

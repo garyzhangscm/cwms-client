@@ -350,16 +350,27 @@ export class InboundReceiptComponent implements OnInit {
   }
 
   checkInReceipt(receipt: Receipt): void {
-    this.receiptService.checkInReceipt(receipt).subscribe(res => {
-      this.message.success(this.i18n.fanyi('message.action.success'));
-      this.search();
+    this.isSpinning = true;
+    this.receiptService.checkInReceipt(receipt).subscribe({
+      next: () => {
+        this.isSpinning = false;
+
+        this.message.success(this.i18n.fanyi('message.action.success'));
+        this.search();
+      }, 
+      error: () => this.isSpinning = false
     });
   }
 
   closeReceipt(receipt: Receipt): void {
-    this.receiptService.closeReceipt(receipt).subscribe(res => {
-      this.message.success(this.i18n.fanyi('message.action.success'));
-      this.search();
+    this.isSpinning = true;
+    this.receiptService.closeReceipt(receipt).subscribe({
+      next: () => {
+        this.isSpinning = false;
+        this.message.success(this.i18n.fanyi('message.action.success'));
+        this.search();
+      }, 
+      error: () => this.isSpinning = false
     });
   }
 }
