@@ -414,8 +414,16 @@
                     </span>
                   </td>
                   <td>
+                    <!--
+
                     <button nz-button (click)="cancelShortAllocation(item,shortAllocation)"
                       [disabled]="shortAllocation.status !== shortAllocationStatus.PENDING || item.status === orderStatusEnum.COMPLETE">
+                      {{ 'cancel' | i18n }}
+                    </button>
+
+                    -->
+                    <button nz-button (click)="cancelShortAllocation(item,shortAllocation)"
+                      [disabled]="item.status === orderStatusEnum.COMPLETE">
                       {{ 'cancel' | i18n }}
                     </button>
 

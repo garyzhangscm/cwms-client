@@ -185,7 +185,7 @@ export class WorkOrderDeassignProductionLineComponent implements OnInit {
 
   }
   displayPicksToBeCancelled() {
-    this.pickService.getPicksByWorkOrder(this.currentWorkOrder!)
+    this.pickService.getPicksByWorkOrderAndProductionLine(this.currentWorkOrder!, this.selectedProductionLine!)
       .subscribe({
 
         next: (pickRes) => this.picksToBeCancelled = pickRes,

@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 
 import { Inventory } from '../../inventory/models/inventory';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { ProductionLine } from '../../work-order/models/production-line';
 import { WorkOrder } from '../../work-order/models/work-order';
 import { PickWork } from '../models/pick-work';
 
@@ -80,6 +81,39 @@ export class PickService {
       undefined,
       undefined,
       undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      workOrderLineIds.join(','),
+    );
+  }
+  
+  getPicksByWorkOrderAndProductionLine(workOrder: WorkOrder, productionLine: ProductionLine): Observable<PickWork[]> {
+    const workOrderLineIds: number[] = [];
+    workOrder.workOrderLines.forEach(workOrderLine => {
+      workOrderLineIds.push(workOrderLine.id!);
+    });
+
+    return this.getPicks(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      productionLine.inboundStageLocationId,
       undefined,
       undefined,
       undefined,

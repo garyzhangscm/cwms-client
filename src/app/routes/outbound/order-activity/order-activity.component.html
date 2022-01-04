@@ -110,7 +110,7 @@
         <nz-tabset  >
             <nz-tab nzTitle=" {{ 'order' | i18n }}" >
                 <nz-descriptions [nzTitle]="item.orderNumber" nzBordered [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 2, sm: 2, xs: 1 }">
-                    <nz-descriptions-item nzTitle=" {{ 'order.line' | i18n }}" nzSpan="2">{{ item.orderLine?.number}}</nz-descriptions-item>
+                    <nz-descriptions-item nzTitle=" {{ 'order.line' | i18n }}" nzSpan="2">{{ item.orderLineNumber}}</nz-descriptions-item>
 
                     <nz-descriptions-item nzTitle=" {{ 'oldOrderLineExpectedQuantity' | i18n }}">{{ item.oldOrderLineExpectedQuantity}}</nz-descriptions-item> 
                     <nz-descriptions-item nzTitle=" {{ 'newOrderLineExpectedQuantity' | i18n }}">{{ item.newOrderLineExpectedQuantity}}</nz-descriptions-item> 
@@ -127,7 +127,8 @@
             </nz-tab> 
             <nz-tab nzTitle=" {{ 'shipment' | i18n }}">
                 <nz-descriptions [nzTitle]="item.shipmentNumber" nzBordered [nzColumn]="{ xxl: 2, xl: 2, lg: 2, md: 2, sm: 2, xs: 1 }">
-                    <nz-descriptions-item nzTitle=" {{ 'shipment.line' | i18n }}" nzSpan="2">{{ item.shipmentLine?.number}}</nz-descriptions-item>
+                  <nz-descriptions-item nzTitle=" {{ 'shipment' | i18n }}" >{{ item.shipmentNumber}}</nz-descriptions-item>
+                    <nz-descriptions-item nzTitle=" {{ 'shipment.line.number' | i18n }}" >{{ item.shipmentLineNumber}}</nz-descriptions-item>
                     
                     <nz-descriptions-item nzTitle=" {{ 'oldShipmentLineQuantity' | i18n }}">{{ item.oldShipmentLineQuantity}}</nz-descriptions-item> 
                     <nz-descriptions-item nzTitle=" {{ 'newShipmentLineQuantity' | i18n }}">{{ item.newShipmentLineQuantity}}</nz-descriptions-item> 
