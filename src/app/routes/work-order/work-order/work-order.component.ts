@@ -333,6 +333,17 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
   printingInProcess = false;
   isSpinning = false;
+  
+
+  isDeliveredInventorySpinning = false;
+  isProducedInventorySpinning = false;
+  isProducedByProductSpinning = false;
+  isReturnedInventorySpinning = false;
+  isKPITransactionsSpinning = false;
+  isKPIsSpinning = false;
+  isPicksSpinning = false;
+  isShortAllocationsSpinning = false;
+
 
   productionLineAllocationRequests: ProductionLineAllocationRequest[] = []; 
   productionLineAllocationRequestModal!: NzModalRef;
@@ -651,64 +662,114 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   }
 
   showDeliveredInventory(workOrder: WorkOrder): void {
-    this.workOrderService.getDeliveredInventory(workOrder).subscribe(deliveredInventoryRes => {
-      this.mapOfDeliveredInventory[workOrder.id!] = [...deliveredInventoryRes];
+    
+    this.isDeliveredInventorySpinning = true;
+
+    this.workOrderService.getDeliveredInventory(workOrder).subscribe({
+
+      next: (deliveredInventoryRes) => {
+        this.mapOfDeliveredInventory[workOrder.id!] = [...deliveredInventoryRes];
+        this.isDeliveredInventorySpinning = false;
+      },
+      error: () => this.isDeliveredInventorySpinning = false
     });
   }
 
   showProducedByProduct(workOrder: WorkOrder): void {
-    this.workOrderService.getProducedByProduct(workOrder).subscribe(producedByProductRes => {
-      this.mapOfProducedByProduct[workOrder.id!] = [...producedByProductRes];
+    this.isProducedByProductSpinning = true;
+    this.workOrderService.getProducedByProduct(workOrder).subscribe({
+
+      next: (producedByProductRes)=> {
+        this.mapOfProducedByProduct[workOrder.id!] = [...producedByProductRes];
+        this.isProducedByProductSpinning = false;
+      },
+      error: () => this.isProducedByProductSpinning = false
+
     });
   }
 
   showProducedInventory(workOrder: WorkOrder): void {
-    this.workOrderService.getProducedInventory(workOrder).subscribe(returnedInventoryRes => {
-      this.mapOfProducedInventory[workOrder.id!] = [...returnedInventoryRes];
-
-    });
+    this.isProducedInventorySpinning = true;
+    this.workOrderService.getProducedInventory(workOrder).subscribe({
+      next: (returnedInventoryRes) => {
+        this.mapOfProducedInventory[workOrder.id!] = [...returnedInventoryRes];
+        this.isProducedInventorySpinning = false;
+      },
+      error: () => this.isProducedInventorySpinning = false
+    }); 
   }
 
   showReturnedInventory(workOrder: WorkOrder): void {
-    this.workOrderService.getReturnedInventory(workOrder).subscribe(producedInventoryRes => {
-      this.mapOfReturnedInventory[workOrder.id!] = [...producedInventoryRes];
+    this.isReturnedInventorySpinning = true;
+    this.workOrderService.getReturnedInventory(workOrder).subscribe({
+
+      next: (producedInventoryRes) => {
+        this.mapOfReturnedInventory[workOrder.id!] = [...producedInventoryRes];
+        this.isReturnedInventorySpinning = false;
+      },
+      error: () => this.isReturnedInventorySpinning = false
+
     });
+    
   }
 
   showKPIs(workOrder: WorkOrder): void {
-    this.workOrderService.getKPIs(workOrder).subscribe(workOrderKPIs => {
-      this.mapOfKPIs[workOrder.id!] = [...workOrderKPIs];
-    });
+    this.isKPIsSpinning = true;
+    this.workOrderService.getKPIs(workOrder).subscribe({
+
+      next: (workOrderKPIs) => {
+        this.mapOfKPIs[workOrder.id!] = [...workOrderKPIs];
+        this.isKPIsSpinning = false;
+      },
+      error: () => this.isKPIsSpinning = false
+
+    }); 
+    
   }
 
   showKPITransactions(workOrder: WorkOrder): void {
-    this.workOrderService.getKPITransactions(workOrder).subscribe(workOrderKPITransactions => {
-      workOrderKPITransactions.forEach(transaction => {
-        console.log(
-          `transaction: ${transaction.amount}, type: ${transaction.type}, createdBy: ${transaction.createdTime}`,
-        );
-        console.log(`transaction: ${JSON.stringify(transaction)}`);
-      });
-      this.mapOfKPITransactions[workOrder.id!] = [...workOrderKPITransactions];
+    this.isKPITransactionsSpinning = true;
+    this.workOrderService.getKPITransactions(workOrder).subscribe({
+      next: (workOrderKPITransactions) => {
+        workOrderKPITransactions.forEach(transaction => {
+          console.log(
+            `transaction: ${transaction.amount}, type: ${transaction.type}, createdBy: ${transaction.createdTime}`,
+          );
+          console.log(`transaction: ${JSON.stringify(transaction)}`);
+        });
+        this.mapOfKPITransactions[workOrder.id!] = [...workOrderKPITransactions];
+        this.isKPITransactionsSpinning = false;
+      },
+      error: () => this.isKPITransactionsSpinning = false
     });
+    
   }
   showPicks(workOrder: WorkOrder): void {
+    this.isPicksSpinning = true;
     this.pickService.getPicksByWorkOrder(workOrder)
       .subscribe({
 
-        next: (pickRes) => this.mapOfPicks[workOrder.id!] = [...pickRes]
+        next: (pickRes) => {
+          this.mapOfPicks[workOrder.id!] = [...pickRes];
+          this.isPicksSpinning = false;
+        },
+        error: () => this.isPicksSpinning = false
       });
   }
   
   showShortAllocations(workOrder: WorkOrder): void {
+    this.isShortAllocationsSpinning = true;
     this.shortAllocationService.getShortAllocationsByWorkOrder(workOrder)
       .subscribe({
 
         next: (shortAllocationRes) => {
           this.mapOfShortAllocations[workOrder.id!] = shortAllocationRes.filter(
             shortAllocation => shortAllocation.status !== ShortAllocationStatus.CANCELLED
-          )
-        }
+          );
+          
+          this.isShortAllocationsSpinning = false;
+        },
+        error: () => this.isShortAllocationsSpinning = false
       });
   }
 
