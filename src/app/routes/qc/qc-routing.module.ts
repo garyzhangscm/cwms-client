@@ -1,8 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { QcInspectByRequestComponent } from './inspect-by-request/inspect-by-request.component';
 import { QcInspectInventoryComponent } from './inspect-inventory/inspect-inventory.component';
 import { QcQcConfigurationComponent } from './qc-configuration/qc-configuration.component';
+import { QcQcInspectionDocumentMaintenanceComponent } from './qc-inspection-document-maintenance/qc-inspection-document-maintenance.component';
 import { QcQcInspectionRequestMaintenanceComponent } from './qc-inspection-request-maintenance/qc-inspection-request-maintenance.component';
 import { QcQcInspectionComponent } from './qc-inspection/qc-inspection.component';
 import { QcQcResultComponent } from './qc-result/qc-result.component';
@@ -10,7 +12,6 @@ import { QcQcRuleConfigurationMaintenanceComponent } from './qc-rule-configurati
 import { QcQcRuleConfigurationComponent } from './qc-rule-configuration/qc-rule-configuration.component';
 import { QcQcRuleMaintenanceComponent } from './qc-rule-maintenance/qc-rule-maintenance.component';
 import { QcQcRuleComponent } from './qc-rule/qc-rule.component';
-import { QcInspectByRequestComponent } from './inspect-by-request/inspect-by-request.component';
 
 const routes: Routes = [
 
@@ -23,7 +24,8 @@ const routes: Routes = [
   { path: 'inspect-inventory', component: QcInspectInventoryComponent },
   { path: 'result', component: QcQcResultComponent },
   { path: 'qc-inspection-request/maintenance', component: QcQcInspectionRequestMaintenanceComponent },
-  { path: 'inspect-by-request', component: QcInspectByRequestComponent }];
+  { path: 'inspect-by-request', component: QcInspectByRequestComponent },
+  { path: 'inspection-document/maintenance', component: QcQcInspectionDocumentMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

@@ -39,5 +39,6 @@ export interface QcInspectionRequest {
      type: QcInspectionRequestType;
 
      qcQuantity?: number;
+     documentUrls: string;
 
 }

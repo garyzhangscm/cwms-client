@@ -63,7 +63,7 @@ export class QcQcInspectionRequestMaintenanceComponent implements OnInit {
       qcInspectionRequestItems: [],
       qcInspectionResult: QCInspectionResult.PENDING,
       qcQuantity:0 ,
-    
+      documentUrls: "",
   
        type: QcInspectionRequestType.BY_ITEM // now we will only support generate QC by item
 

@@ -122,5 +122,13 @@ export class QcInspectionRequestService {
     const url = `inventory/qc-inspection-requests/${id}/report`;
     return this.http.post(url).pipe(map(res => res.data));
   }
+
+  changeQCInspectionDocument(qcInspectionRequest: QcInspectionRequest)  : Observable<QcInspectionRequest>{
+    
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+
+    const url = `inventory/qc-inspection-requests/${qcInspectionRequest.id}/change-document-urls?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&documentUrls=${httpUrlEncodingCodec.encodeValue(qcInspectionRequest.documentUrls.trim())}`;
+    return this.http.post(url).pipe(map(res => res.data));
+  }
    
 }

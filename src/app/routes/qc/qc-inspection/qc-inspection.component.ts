@@ -84,10 +84,11 @@ export class QcQcInspectionComponent implements OnInit {
 
     
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.number || params.type || params.result) {
-        this.searchForm!.controls.number.setValue(params.number);
-        this.searchForm!.controls.qcInspectionRequestType.setValue(params.type ? params.type : QcInspectionRequestType.BY_INVENTORY );
-        this.searchForm!.controls.qcInspectionResult.setValue(params.result ? params.result : QCInspectionResult.PENDING);
+      if (params.number || params.type || params.result) { 
+
+        this.searchForm!.controls.number.setValue(params.number ? params.number : "");
+        this.searchForm!.controls.qcInspectionRequestType.setValue(params.type ? params.type : "");
+        this.searchForm!.controls.qcInspectionResult.setValue(params.result ? params.result  : "");
         this.search();
       } 
     });
