@@ -84,7 +84,7 @@ export class QcQcInspectionDocumentMaintenanceComponent implements OnInit {
   }
   
   loadDocuments() {
-    if(this.currentQCInspectionRequest.documentUrls == null) {
+    if(!this.currentQCInspectionRequest.documentUrls || this.currentQCInspectionRequest.documentUrls.trim().length == 0) {
 
       this.currentQCInspectionRequest.documentUrls = "";
       this.fileList = []; 
