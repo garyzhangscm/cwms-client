@@ -36,6 +36,8 @@ import { WorkOrderWorkOrderQcInspectionResultComponent } from './work-order-qc-i
 import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspection/work-order-qc-inspection.component'; 
 import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component'; 
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
+import { WorkOrderMpsComponent } from './mps/mps.component';
+import { WorkOrderMrpComponent } from './mrp/mrp.component';
 
 const routes: Routes = [
   { path: 'work-order', component: WorkOrderWorkOrderComponent, canActivate: [AuthGuard] },
@@ -71,7 +73,9 @@ const routes: Routes = [
   { path: 'qc-rule-configuration', component: WorkOrderQcRuleConfigurationComponent },
   { path: 'qc-rule-configuration/maintenance', component: WorkOrderQcRuleConfigurationMaintenanceComponent },
   { path: 'labor', component: WorkOrderLaborComponent },
-  { path: 'labor-activity', component: WorkOrderLaborActivityComponent }];
+  { path: 'labor-activity', component: WorkOrderLaborActivityComponent },
+  { path: 'mps', component: WorkOrderMpsComponent },
+  { path: 'mrp', component: WorkOrderMrpComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
