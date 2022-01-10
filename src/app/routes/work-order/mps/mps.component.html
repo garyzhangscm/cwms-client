@@ -1,1 +1,67 @@
-<page-header></page-header>
+<page-header [title]="'MPS' | i18n"> </page-header>
+
+<nz-spin [nzSpinning]="isSpinning"> 
+    <!-- Form to query the result  -->
+    <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="12">
+            <nz-form-item nzFlex>
+                <nz-form-label for="number" [nzSm]="3" [nzXs]="3">
+                {{ 'number' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="14">
+                <input nz-input name="number" id="number" formControlName="number" />
+                </nz-form-control>
+            </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="12">
+            <nz-form-item nzFlex>
+                <nz-form-label for="description" [nzSm]="3" [nzXs]="3">
+                {{ 'description' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="14">
+                <input nz-input name="description" id="description" formControlName="description" />
+                </nz-form-control>
+            </nz-form-item>
+            </div>
+        </div>
+        <div nz-row>
+            <div nz-col [nzSpan]="24" class="search-area">
+            <button nz-button [nzType]="'primary'" (click)="search()">
+                {{ 'search' | i18n }}
+            </button>
+            <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+            </div>
+        </div>
+    </form>
+
+    
+
+  <div class="search-result-list">
+    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+      <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+    </div>
+    
+    <st #st [data]="listOfAllMPSs"  [columns]="columns" [expand]="expand" expandRowByClick expandAccordion
+    (change)="mpsTableChanged($event)" [scroll]="{ x: '2715px' }">
+    
+        <ng-template st-row="cutoffDateColumn" let-item let-index="index">
+            
+            <span *ngIf="item.cutoffDate">
+
+                {{ item.cutoffDate  | date:'short':'+0000'}}
+            </span>
+
+        </ng-template>
+        <ng-template #expand let-item let-index="index" >
+        </ng-template>
+    </st>
+  
+  </div>
+  
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;"> 
+    <button nz-button nzType="primary" routerLink="/work-order/mps-maintenance" routerLinkActive="active">
+      {{ 'add' | i18n }}
+    </button>
+  </div>
+</nz-spin>

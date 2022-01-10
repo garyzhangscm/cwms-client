@@ -24,6 +24,9 @@ import { WorkOrderLaborActivityComponent } from './labor-activity/labor-activity
 import { WorkOrderLaborComponent } from './labor/labor.component';
 import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component';
 import { WorkOrderMouldComponent } from './mould/mould.component';
+import { WorkOrderMpsMaintenanceComponent } from './mps-maintenance/mps-maintenance.component';
+import { WorkOrderMpsComponent } from './mps/mps.component';
+import { WorkOrderMrpComponent } from './mrp/mrp.component';
 import { WorkOrderPrePrintLpnLabelComponent } from './pre-print-lpn-label/pre-print-lpn-label.component';
 import { WorkOrderProduceTransactionComponent } from './produce-transaction/produce-transaction.component';
 import { WorkOrderProductionKanbanComponent } from './production-kanban/production-kanban.component';
@@ -51,8 +54,6 @@ import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspect
 import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component'; 
 import { WorkOrderRoutingModule } from './work-order-routing.module';
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
-import { WorkOrderMpsComponent } from './mps/mps.component';
-import { WorkOrderMrpComponent } from './mrp/mrp.component';
 
 
 const COMPONENTS: Array<Type<void>> = [
@@ -89,9 +90,10 @@ const COMPONENTS: Array<Type<void>> = [
   WorkOrderQcRuleConfigurationComponent,
   WorkOrderQcRuleConfigurationMaintenanceComponent,
   WorkOrderLaborComponent,
-  WorkOrderLaborActivityComponent,,
+  WorkOrderLaborActivityComponent,
   WorkOrderMpsComponent,
-  WorkOrderMrpComponent];
+  WorkOrderMrpComponent,
+  WorkOrderMpsMaintenanceComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
