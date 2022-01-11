@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { OrderLine } from '../models/order-line';
+
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { OrderLine } from '../models/order-line';
 
 @Injectable({
   providedIn: 'root',
@@ -39,6 +40,13 @@ export class OrderLineService {
     if (itemName) {
       url = `${url}&itemName=${itemName}`;
     }
+    return this.http.get(url).pipe(map(res => res.data));
+  }
+  
+  getAvailableOrderLinesForMPS(itemId: number) : Observable<OrderLine[]>{
+    let url = `outbound/orders/lines/available-for-mps?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&itemId=${itemId}`;
+  
+    
     return this.http.get(url).pipe(map(res => res.data));
   }
 }

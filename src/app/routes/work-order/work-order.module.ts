@@ -7,6 +7,7 @@ import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
+import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
 import { CountdownModule } from 'ngx-countdown';
@@ -109,7 +110,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzAutocompleteModule,
     UtilModule, 
     NzSkeletonModule ,
-    
+    NzStatisticModule ,
     InventoryModule 
   ],
   declarations: [

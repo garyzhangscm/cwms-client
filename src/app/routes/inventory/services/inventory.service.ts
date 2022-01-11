@@ -176,4 +176,18 @@ export class InventoryService {
     return this.http.post(url).pipe(map(res => res.data));
   }
 
+  
+  getAvailableInventoryForMPS(itemId?: number, itemName?: string) : Observable<Inventory[]>{
+    let url = `inventory/inventories/available-for-mps/inventory-ignore-order?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    if (itemId) {    
+      url = `${url}&itemId=${itemId}`;
+    }
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+
+    if (itemName) {
+      url = `${url}&itemName=${httpUrlEncodingCodec.encodeValue(itemName.trim())}`;
+    }
+    return this.http.get(url).pipe(map(res => res.data));
+  }
+
 }

@@ -18,15 +18,14 @@
 
 <nz-spin [nzSpinning]="isSpinning">
     <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
-    <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
-    <nz-step nzTitle="{{ 'steps.assign-qc-rule' | i18n }}"> </nz-step>
+    <nz-step nzTitle="{{ 'quantity-calculator' | i18n }}"> </nz-step>
+    <nz-step nzTitle="{{ 'production-line-produce-plan' | i18n }}"> </nz-step>
     <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
     </nz-steps>
 
-
-    <div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
-        <nz-card>
-            
+    <!-- Calcualte the MPS required quantity-->
+    <div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;" >
+        <nz-card [nzTitle]="itemFilter"> 
             <div nz-row [nzGutter]="24">
                 
                 <div nz-col [nzSpan]="8">
@@ -49,8 +48,300 @@
                     </nz-form-control>
                     </nz-form-item>
                 </div>
+                
+                <div nz-col [nzSpan]="12">
+                    <nz-form-item nzFlex>
+                    <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="activityDate">
+                        {{ 'cutoffDate' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="18">
+                        <nz-date-picker [(ngModel)]="currentMPS.cutoffDate" (ngModelChange)="cutoffDateChanged($event)"></nz-date-picker>
+                    </nz-form-control>
+                    </nz-form-item>
+                </div>
             </div>
+            <ng-template #itemFilter>
+                <h5>{{'filter-by-item' | i18n}}</h5>
+            </ng-template>
             
         </nz-card>
+        <nz-card   *ngIf="currentMPS.item?.id && currentMPS.cutoffDate " >
+             
+            <nz-card nzType="inner" [nzTitle]="quantityFilter">
+                
+                <nz-checkbox-wrapper style="width: 100%;" >
+                    <div nz-row>
+                        <div nz-col nzSpan="8">
+                            <label nz-checkbox  [(ngModel)]="filterByExistingInventoryQuantity"
+                                (ngModelChange)="filterByExistingInventoryQuantityChanged()">
+                            {{'existing-inventory' | i18n}}
+                            </label>
+                        </div>
+                        <div nz-col nzSpan="8">
+                            <label nz-checkbox  [(ngModel)]="filterByExistingOrderQuantity"
+                            (ngModelChange)="filterByExistingOrderQuantityChanged()">
+                            {{'existing-order' | i18n}}
+                            </label>
+                        </div>
+                        <div nz-col nzSpan="8">
+                            <label nz-checkbox  [(ngModel)]="filterByExpectedOrderQuantity"
+                            (ngModelChange)="filterByExpectedOrderQuantityChanged()">
+                            {{'expected-order-quantity' | i18n}}
+                            </label>
+                        </div>
+                        <div nz-col nzSpan="8">
+                            <label nz-checkbox  [(ngModel)]="filterByExistingInboundQuantity"
+                            (ngModelChange)="filterByExistingInboundQuantityChanged()">
+                            {{'existing-inbound-quantity' | i18n}}
+                            </label>
+                        </div>
+                        <div nz-col nzSpan="8">
+                            <label nz-checkbox  [(ngModel)]="filterByExpectedInboundQuantity"
+                            (ngModelChange)="filterByExpectedInboundQuantityChanged()">
+                            {{'expected-inbound-quantity' | i18n}}
+                            </label>
+                        </div>
+                        <div nz-col nzSpan="8">
+                            <label nz-checkbox  [(ngModel)]="filterByExistingWorkOrderQuantity"
+                            (ngModelChange)="filterByExistingWorkOrderQuantityChanged()">
+                            {{'existing-workorder-quantity' | i18n}}
+                            </label>
+                        </div>
+                        <div nz-col nzSpan="8">
+                            <label nz-checkbox  [(ngModel)]="filterByExpectedWorkOrderQuantity"
+                            (ngModelChange)="filterByExpectedWorkOrderQuantityChanged()">
+                            {{'expected-workorder-quantity' | i18n}}
+                            </label>
+                        </div>
+                    </div>
+                </nz-checkbox-wrapper>
+<!--
+
+                <nz-checkbox-group [(ngModel)]="quantityFilterOptions" (ngModelChange)="quantityFilterOptionsChanged($event)"></nz-checkbox-group>
+
+-->
+                
+            </nz-card>
+              
+            <ng-template #quantityFilter>
+                <h5>{{'filter-quantity' | i18n}}</h5>
+            </ng-template>
+        </nz-card>
+
+        <nz-spin [nzSpinning]="isExistingInventorySpinning">
+            <nz-card [nzTitle]="existingInventory" *ngIf="currentMPS.item?.id  && currentMPS.cutoffDate && filterByExistingInventoryQuantity" >        
+                <ng-template #existingInventory>
+                    <h5>{{'existing-inventory' | i18n}}</h5>
+                </ng-template>
+                
+                <nz-row [nzGutter]="16">
+                    <nz-col [nzSpan]="12">
+                        <nz-statistic [nzValue]="(existingInventoryQuantity | number)!" nzTitle=" {{ 'quantity' | i18n }}"></nz-statistic>
+                    </nz-col>
+                </nz-row>   
+
+                <div class="search-result-list"> 
+                    <st #inventoryTable [data]="inventoryList"  [columns]="inventoryTableColumns"  
+                            (change)="inventoryTableChanged($event)" >        
+                    </st>
+                </div>
+
+            </nz-card>
+        </nz-spin>
+        
+        <nz-spin [nzSpinning]="isExistingOrdersSpinning">
+            <nz-card [nzTitle]="existingOrders" *ngIf="currentMPS.item?.id && currentMPS.cutoffDate  && filterByExistingOrderQuantity" >        
+                <ng-template #existingOrders>
+                    <h5>{{'existing-order' | i18n}}</h5>
+                </ng-template>
+                
+                <nz-row [nzGutter]="16">
+                    <nz-col [nzSpan]="12">
+                        <nz-statistic [nzValue]="(existingOrderQuantity | number)!" nzTitle=" {{ 'quantity' | i18n }}"></nz-statistic>
+                    </nz-col>
+                </nz-row>   
+
+                <div class="search-result-list"> 
+                    <st #orderLineTable [data]="orderLineList"  [columns]="orderLineTableColumns"  
+                            (change)="orderLineTableChanged($event)" >        
+                    </st>
+                </div>
+
+            </nz-card>
+        </nz-spin>
+         
+        <nz-card [nzTitle]="expectedOrder" *ngIf="currentMPS.item?.id && currentMPS.cutoffDate  && filterByExpectedOrderQuantity" >        
+            <ng-template #expectedOrder>
+                <h5>{{'expected-order-quantity' | i18n}}</h5>
+            </ng-template> 
+                
+            <div nz-row [nzGutter]="24">                
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                    <nz-form-label [nzSpan]="6">
+                        {{ 'quantity' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            
+                        <nz-input-group>
+                            <input nz-input [(ngModel)]="expectedOrderQuantity" 
+                             />
+                        </nz-input-group> 
+            
+                    </nz-form-control>
+                    </nz-form-item>
+                </div>
+                
+            </div>
+                 
+
+        </nz-card>
+
+        
+        <nz-spin [nzSpinning]="isExistingInboundSpinning">
+
+            <nz-card [nzTitle]="existingInbound" *ngIf="currentMPS.item?.id && currentMPS.cutoffDate  && filterByExistingInboundQuantity" >        
+                <ng-template #existingInbound>
+                    <h5>{{'existing-inbound-quantity' | i18n}}</h5>
+                </ng-template>
+                <nz-row [nzGutter]="16">
+                    <nz-col [nzSpan]="12">
+                        <nz-statistic [nzValue]="(existingInboundQuantity | number)!" nzTitle=" {{ 'quantity' | i18n }}"></nz-statistic>
+                    </nz-col>
+                </nz-row>   
+
+                <div class="search-result-list"> 
+                    <st #receiptLineTable [data]="receiptLineList"  [columns]="receiptLineTableColumns"  
+                            (change)="receiptLineTableChanged($event)" >        
+                    </st>
+                </div>
+            </nz-card>
+        </nz-spin>
+        
+        <nz-card [nzTitle]="expectedInbound" *ngIf="currentMPS.item?.id && currentMPS.cutoffDate  && filterByExpectedInboundQuantity" >        
+            <ng-template #expectedInbound>
+                <h5>{{'expected-inbound-quantity' | i18n}}</h5>
+            </ng-template> 
+            <div nz-row [nzGutter]="24">                
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                    <nz-form-label [nzSpan]="6">
+                        {{ 'quantity' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            
+                        <nz-input-group>
+                            <input nz-input [(ngModel)]="expectedInboundQuantity" />
+                        </nz-input-group> 
+            
+                    </nz-form-control>
+                    </nz-form-item>
+                </div>
+                
+            </div> 
+
+        </nz-card>
+        
+        
+        <nz-spin [nzSpinning]="isExistingWorkOrderSpinning">
+
+            <nz-card [nzTitle]="existingInbound" *ngIf="currentMPS.item?.id && currentMPS.cutoffDate  && filterByExistingWorkOrderQuantity" >        
+                <ng-template #existingInbound>
+                    <h5>{{'existing-workorder-quantity' | i18n}}</h5>
+                </ng-template>
+                
+                <nz-row [nzGutter]="16">
+                    <nz-col [nzSpan]="12">
+                        <nz-statistic [nzValue]="(existingWorkOrderQuantity | number)!" nzTitle=" {{ 'quantity' | i18n }}"></nz-statistic>
+                    </nz-col>
+                </nz-row>   
+
+                <div class="search-result-list"> 
+                    <st #workOrderTable [data]="workOrderList"  [columns]="workOrderTableColumns"  
+                            (change)="workOrderTableChanged($event)" >        
+                    </st>
+                </div> 
+            </nz-card>
+        </nz-spin>
+        
+        <nz-card [nzTitle]="expectedInbound" *ngIf="currentMPS.item?.id && currentMPS.cutoffDate  && filterByExpectedWorkOrderQuantity" >        
+            <ng-template #expectedInbound>
+                <h5>{{'expected-inbound-quantity' | i18n}}</h5>
+            </ng-template> 
+            <div nz-row [nzGutter]="24">                
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                    <nz-form-label [nzSpan]="6">
+                        {{ 'quantity' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            
+                        <nz-input-group>
+                            <input nz-input [(ngModel)]="expectedWorkOrderQuantity" />
+                        </nz-input-group> 
+            
+                    </nz-form-control>
+                    </nz-form-item>
+                </div>
+                
+            </div> 
+
+        </nz-card>
+        
+        <nz-card *ngIf="currentMPS.item?.id && currentMPS.cutoffDate ">
+            
+            <nz-card nzType="inner">
+                <div>{{ 'suggested-mps-quantity' | i18n }}<span style="color: red; font-size: medium;">( {{getSuggestedTotalQuantity()}} )</span> = </div>
+                    <div style="margin-left:20px;">( {{ 'existing-order' | i18n }} <em>( {{ existingOrderQuantity }} ) </em>+ 
+                        {{ 'expected-order-quantity' | i18n }}<em>( {{ expectedOrderQuantity }} )</em> ) - </div>
+                    <div  style="margin-left:40px;">{{ 'existing-inventory' | i18n }}<em>( {{ existingInventoryQuantity }} )</em> -  </div>
+                    <div style="margin-left:40px;">{{ 'existing-inbound-quantity' | i18n }}<em>( {{ existingInboundQuantity }} )</em> - 
+                            {{ 'expected-inbound-quantity' | i18n }}( {{ expectedInboundQuantity }} ) - </div>
+                    <div style="margin-left:40px;">{{ 'existing-workorder-quantity' | i18n }}<em>( {{ existingWorkOrderQuantity }} )</em> - 
+                            {{ 'expected-workorder-quantity' | i18n }}<em>( {{ expectedWorkOrderQuantity }} )</em>  </div>
+            </nz-card>          
+            <div nz-row [nzGutter]="24">
+                
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                    <nz-form-label [nzSpan]="6">
+                        {{ 'totalQuantity' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            
+                        <nz-input-group  >
+                            <nz-input-number [(ngModel)]="currentMPS.totalQuantity" [nzMin]="0"   [nzStep]="1"></nz-input-number>
+                        </nz-input-group> 
+            
+                    </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+        </nz-card>
     </div>
+
+    <!-- plan MPS based on production line -->
+    <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;" >
+    </div>
+    
+    <!-- confirm the MPS  -->
+    <div class="small-card" *ngIf="stepIndex === 2" style="padding-top: 20px;" >
+        Confirm!
+    </div>
+    
+<div class="steps-action" style="padding-top: 20px;">
+    <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0"  >
+      <span>{{ 'steps.previous' | i18n }}</span>
+    </button>
+    <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+    <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 2" [disabled]="!readyForNextStep()">
+      <span>{{ 'steps.next' | i18n }}</span>
+    </button>
+    <nz-divider nzType="vertical"></nz-divider>
+    <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 2"
+    
+    >
+      <span> {{ 'confirm' | i18n }}</span>
+    </button>
+  </div>
 </nz-spin>

@@ -100,4 +100,11 @@ export class ReceiptLineService {
     return this.http.post(url).pipe(map(res => res.data));
   }
 
+  
+  getAvailableReceiptLinesForMPS(itemId: number) : Observable<ReceiptLine[]>{
+    let url = `inbound/receipts/lines/available-for-mps?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&itemId=${itemId}`;
+  
+    
+    return this.http.get(url).pipe(map(res => res.data));
+  }
 }

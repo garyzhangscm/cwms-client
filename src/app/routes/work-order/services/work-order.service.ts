@@ -261,4 +261,12 @@ export class WorkOrderService {
     return this.http.post(url).pipe(map(res => res.data));
   }
 
+  
+  getAvailableWorkOrderForMPS(itemId: number) : Observable<WorkOrder[]>{
+    let url = `workorder/work-orders/available-for-mps?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&itemId=${itemId}`;
+  
+    
+    return this.http.get(url).pipe(map(res => res.data));
+  }
+
 }

@@ -9,7 +9,7 @@ export interface MasterProductionSchedule {
     number: string;
     description: string;
     
-    cutoffDate: number[];
+    cutoffDate?: Date;
 
 
     itemId?: number;
