@@ -4,6 +4,7 @@ import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { DateTimeService } from '../../util/services/date-time.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { MasterProductionSchedule } from '../models/master-production-schedule';
 
@@ -11,7 +12,8 @@ import { MasterProductionSchedule } from '../models/master-production-schedule';
   providedIn: 'root'
 })
 export class MasterProductionScheduleService {
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
+  constructor(private http: _HttpClient, private warehouseService: WarehouseService, 
+    private dateTimeService: DateTimeService) {}
 
   getMasterProductionSchedules(number?: string, description?: string): Observable<MasterProductionSchedule[]> {
     const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
@@ -50,6 +52,15 @@ export class MasterProductionScheduleService {
     url = `${url}&productionLineId=${productionLineId}`;
     url = `${url}&beginDate=${beginDate}`;
     url = `${url}&endDate=${endDate}`;
+    return this.http.get(url).pipe(map(res => res.data));
+  }
+
+  
+  getExistingMPSs(productionLineId: number, beginDate: Date, endDate: Date): Observable<MasterProductionSchedule[]> {
+    let url = `workorder/master-production-schedules/existing-mps?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    url = `${url}&productionLineId=${productionLineId}`;
+    url = `${url}&beginDateTime=${this.dateTimeService.getISODateTimeString(beginDate)}`;
+    url = `${url}&endDateTime=${this.dateTimeService.getISODateTimeString(endDate)}`;
     return this.http.get(url).pipe(map(res => res.data));
   }
 }

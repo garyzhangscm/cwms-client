@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { differenceInCalendarDays, eachDayOfInterval, isEqual, getMonth, isBefore } from 'date-fns';
+import { differenceInCalendarDays, eachDayOfInterval, isEqual, getMonth, isBefore, parseISO } from 'date-fns';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
@@ -16,7 +16,9 @@ import { InventoryService } from '../../inventory/services/inventory.service';
 import { ItemService } from '../../inventory/services/item.service';
 import { Order } from '../../outbound/models/order';
 import { OrderLine } from '../../outbound/models/order-line';
-import { OrderLineService } from '../../outbound/services/order-line.service';
+import { OrderLineService } from '../../outbound/services/order-line.service'; 
+import { ColorService } from '../../util/services/color.service';
+import { DateTimeService } from '../../util/services/date-time.service';
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { MasterProductionSchedule } from '../models/master-production-schedule';
@@ -59,6 +61,15 @@ import { WorkOrderService } from '../services/work-order.service';
         width: 100%;
         text-overflow: ellipsis;
         font-size: 12px;
+      }
+      .color-box {
+        
+        width: 15px;
+        height: 15px;
+        display: inline-block;
+        
+        left: 5px;
+        top: 5px;
       }
     `
   ]
@@ -106,6 +117,27 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
   selectedProductionLines: ProductionLine[] = [];
   rangeDates:  { [key: number]: any } = {};
   disabledDates:  { [key: number]: (current: Date) => boolean } = {};
+  // dates that already assigned by some existing MPS
+  // key: production line id - date
+  // value: MPS number
+  existingMPSs:  { [key: string]: MasterProductionSchedule } = {}; 
+  // MPSs that already assigned to the production line
+  // key: production line id
+  // value: MPS number
+  existingMPSNumbers:  { [key: string]: Set<string> } = {}; 
+  // background of the calendar cell for each MPS & production line
+  // key: production line id - MPS number
+  // value: color value in Hex  
+  existingMPSColors:  { [key: string]: string } = {}; 
+  
+  colors = [this.colorService.Red, 
+    this.colorService.Orange,
+    this.colorService.Yellow,
+    this.colorService.Purple,
+    this.colorService.Green,
+    this.colorService.Blue,
+    this.colorService.Brown];
+
   showAddProductionLineMPSModal = false;
   addProductionLineMPSModalMessage = "";
   currentMPSDates: Date[] = []
@@ -128,6 +160,8 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
     private itemService: ItemService,
     private modalService: NzModalService,
     private messageService: NzMessageService,
+    private dateTimeService: DateTimeService,
+    private colorService: ColorService,
     ) { 
       this.pageTitle = this.i18n.fanyi('MPS');
     this.currentMPS = {        
@@ -577,7 +611,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
       productionLine => {
         this.rangeDates[productionLine.id!] = null;
         this.disabledDates[productionLine.id!] =  
-          (current: Date): boolean => !this.isDateValidForMPS(current, productionLine.id!);
+          (current: Date): boolean => !this.isDateValidForMPS(current);
 
         // if this is a new production line for the MPS, then add it as an MPS line with 0 quantity
         if (!this.currentMPS.masterProductionScheduleLines.some(
@@ -592,13 +626,83 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
             }
           ]
         }
+        this.loadExistingMPSs(productionLine.id!);
 
         
       }
     )
   }
+  
+
+  // load existing MPSs, dated from today until the cutoff date
+  // so that we can know which dates of the production line is 
+  // not available
+  loadExistingMPSs(productionLineId: number) {
+
+    this.isProductionLineSpinning = true;
+    this.existingMPSNumbers[productionLineId] = new Set();
+    this.masterProductionScheduleService.getExistingMPSs(productionLineId, 
+      new Date(), this.currentMPS.cutoffDate!).subscribe(
+        {
+          next: (mpsRes) => {
+            console.log(`start to process existing MPS with length ${mpsRes.length}`);
+            
+            mpsRes.forEach(
+              (mps, index) => {
+                this.existingMPSNumbers[productionLineId].add(mps.number); 
+                // setup the date for each production line and mps
+                mps.masterProductionScheduleLines.filter(
+                  masterProductionScheduleLine => masterProductionScheduleLine.productionLine.id === productionLineId
+                )
+                .forEach(
+                  masterProductionScheduleLine => {
+                    // get the date in between today and cutoff day as those are the only date we are care about
+                    // when plan for a new MPS
+                    masterProductionScheduleLine.masterProductionScheduleLineDates.filter(
+                      masterProductionScheduleLineDate => 
+                              differenceInCalendarDays(
+                                  parseISO(masterProductionScheduleLineDate.plannedDate.toString().substring(0, 10)), new Date()) >= 0 &&
+                              differenceInCalendarDays(
+                                   parseISO(masterProductionScheduleLineDate.plannedDate.toString().substring(0, 10)),  this.currentMPS.cutoffDate!) <= 0 
+                       
+                    )
+                    .forEach(
+                      masterProductionScheduleLineDate => {
+                        const plannedDate = parseISO(masterProductionScheduleLineDate.plannedDate.toString().substring(0, 10));
+                        const key = `${productionLineId  }-${ 
+                            plannedDate.getFullYear().toString()  }-${ 
+                            plannedDate.getMonth().toString()  }-${ 
+                            plannedDate.getDate().toString()}`;
+
+                            
+                        this.existingMPSs[key] = mps;
+                      }
+                    )
+
+
+                  }
+                )
+
+                // setup the color for each production line and mps
+                const color = this.colors[index % this.colors.length];
+                
+                // key: production line id - MPS number
+                // value: color value in Hex  
+                const key = `${productionLineId  }-${  mps.number}`;
+                this.existingMPSColors[key] = color;
+
+
+              }
+            );
+            this.isProductionLineSpinning = false;
+          }, 
+          error: () => this.isProductionLineSpinning = false
+        }
+      )
+
+  }
   // check if we can setup the MPS on a production line by a specific date
-  isDateValidForMPS(current: Date, productionLineId: number) : boolean {
+  isDateValidForMPS(current: Date) : boolean {
     // past date is not valid for MPS
     if (differenceInCalendarDays(new Date(), current) > 0) {
       return false;
@@ -636,7 +740,8 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
           // and the date that is already assigned
           this.currentMPSDates = eachDayOfInterval(interval).filter(
             date =>  !this.isDateALreadyAssigned(date, productionLineId) &&
-                          this.isDateValidForMPS(date, productionLineId) 
+                         !this.getExistingMPS(date, productionLineId) &&
+                          this.isDateValidForMPS(date) 
           );
           if (this.currentMPSDates.length == 0) {
             this.messageService.error(this.i18n.fanyi("no-valid-date"));
@@ -687,13 +792,13 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
             mpsDate => {
               // if the date doesn't exists yet, add it
               if (!masterProductionScheduleLine.masterProductionScheduleLineDates.some(
-                masterProductionScheduleLineDate => isEqual(masterProductionScheduleLineDate.date, mpsDate)
+                masterProductionScheduleLineDate => isEqual(masterProductionScheduleLineDate.plannedDate, mpsDate)
               )) {
                 masterProductionScheduleLine.masterProductionScheduleLineDates = [
                   ...masterProductionScheduleLine.masterProductionScheduleLineDates, 
                   {                    
                       plannedQuantity: dailyQuantity,
-                      date: mpsDate
+                      plannedDate: mpsDate
                   }
                 ]
               }
@@ -705,6 +810,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
 
 
   }
+
 
   refreshCurrentMPSPlannedQuantity() {
     this.currentMPS.plannedQuantity = 0;
@@ -760,9 +866,56 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
     ).some(
       masterProductionScheduleLine =>  
         masterProductionScheduleLine.masterProductionScheduleLineDates.some(
-          masterProductionScheduleLineDate =>  isEqual(masterProductionScheduleLineDate.date, date)
+          masterProductionScheduleLineDate =>  isEqual(masterProductionScheduleLineDate.plannedDate, date)
         ) 
     );
+  }
+  
+
+  // check if the production line is already assigned to an existing MPS on a specific date
+  getExistingMPS(date: Date, productionLineId: number): MasterProductionSchedule | undefined {
+    if (!this.isDateValidForMPS(date)) {
+      return undefined;
+    }
+    const key = `${productionLineId  }-${ 
+         date.getFullYear().toString()  }-${ 
+         date.getMonth().toString()  }-${ 
+         date.getDate().toString()}`;
+
+    // console.log(`date: ${date}`)
+    // console.log(`get existing mps by key ${key}`)
+     
+    if (this.existingMPSs[key] && this.existingMPSs[key].number === this.currentMPS.number) {
+
+      return undefined;
+    }
+
+    
+    return this.existingMPSs[key];
+    
+    // make sure 
+
+  }
+  getExistingMPSBGColorByDate(date: Date, productionLineId: number) : string{
+    const masterProductionSchedule = this.getExistingMPS(date, productionLineId);
+
+    if (masterProductionSchedule === undefined) {
+      return this.colorService.White;
+    }
+    // key: production line id - MPS number
+    // value: color value in Hex  
+    const key = `${productionLineId  }-${  masterProductionSchedule.number}`;
+
+    return this.existingMPSColors[key];
+
+  }
+  
+  getExistingMPSBGColor(number: string, productionLineId: number) : string{
+    
+    const key = `${productionLineId  }-${  number}`;
+    
+    return this.existingMPSColors[key];
+
   }
   removeDateAssignedment(masterProductionScheduleLineDate: MasterProductionScheduleLineDate
     , productionLineId: number): void {
@@ -772,7 +925,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
         masterProductionScheduleLine =>  
           masterProductionScheduleLine.masterProductionScheduleLineDates = 
           masterProductionScheduleLine.masterProductionScheduleLineDates.filter(
-            existMPSDate => !isEqual(existMPSDate.date, masterProductionScheduleLineDate.date)
+            existMPSDate => !isEqual(existMPSDate.plannedDate, masterProductionScheduleLineDate.plannedDate)
           )
       );
     }
@@ -780,18 +933,35 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
   // confirm page
   getDailyPlannedQuantity(masterProductionScheduleLine: MasterProductionScheduleLine, date: Date): number {
     return masterProductionScheduleLine.masterProductionScheduleLineDates.filter(
-      masterProductionScheduleLineDate => isEqual(masterProductionScheduleLineDate.date, date)
+      masterProductionScheduleLineDate => isEqual(masterProductionScheduleLineDate.plannedDate, date)
     )
     .map(masterProductionScheduleLineDate => masterProductionScheduleLineDate.plannedQuantity)
     .reduce((sum, current) => sum + current, 0);
   }
+  
+  getTotalDailyPlannedQuantity(date: Date): number {
+    let totalQuantity = 0;
+    this.currentMPS.masterProductionScheduleLines.forEach(
+      masterProductionScheduleLine => totalQuantity += this.getDailyPlannedQuantity(masterProductionScheduleLine, date)
+    )
+    return totalQuantity;
+  }
+
   getMonthlyPlannedQuantity(masterProductionScheduleLine: MasterProductionScheduleLine, date: Date): number {
     return masterProductionScheduleLine.masterProductionScheduleLineDates.filter(
-      masterProductionScheduleLineDate => getMonth(masterProductionScheduleLineDate.date) === getMonth(date)
+      masterProductionScheduleLineDate => getMonth(masterProductionScheduleLineDate.plannedDate) === getMonth(date)
     )
     .map(masterProductionScheduleLineDate => masterProductionScheduleLineDate.plannedQuantity)
     .reduce((sum, current) => sum + current, 0);
   }
+  getTotalMonthlyPlannedQuantity(date: Date): number {
+    let totalQuantity = 0;
+    this.currentMPS.masterProductionScheduleLines.forEach(
+      masterProductionScheduleLine => totalQuantity += this.getMonthlyPlannedQuantity(masterProductionScheduleLine, date)
+    )
+    return totalQuantity;
+  }
+  
   
   confirm(): void {
     this.isSpinning = true;

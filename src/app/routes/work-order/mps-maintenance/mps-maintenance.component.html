@@ -390,10 +390,30 @@
                             (ngModelChange)="onRangeDateChange(productionLine.id!)"
                             [nzDateRender]="tplDatePickerRender"></nz-range-picker>
                         <ng-template #tplDatePickerRender let-current>
-                            <div class="ant-picker-cell-inner" [class.bg-green-dark]="isDateALreadyAssigned(current, productionLine.id!)">
+                            <div class="ant-picker-cell-inner" *ngIf="getExistingMPS(current, productionLine.id!)" 
+                            [style.background-color]="getExistingMPSBGColorByDate(current, productionLine.id!)">
+                               <a nz-popover  [nzPopoverContent]="contentTemplate">{{ current.getDate() }}</a>
+                                <ng-template #contentTemplate>
+                                    <a>
+                                        {{getExistingMPS(current, productionLine.id!)?.number}}</a>
+                                </ng-template>
+                            </div>
+                            <div class="ant-picker-cell-inner" 
+                                *ngIf="!getExistingMPS(current, productionLine.id!)" 
+                                [class.bg-green-dark]="isDateALreadyAssigned(current, productionLine.id!)">
                                   {{ current.getDate() }}
                             </div>
                         </ng-template>
+                        <div *ngIf="existingMPSNumbers[productionLine.id!].size > 0">
+                            <ul >
+                                <li *ngFor="let mpsNumber  of existingMPSNumbers[productionLine.id!]"
+                                    style="list-style: none;">
+                                    <div class="color-box" [style.background-color]="getExistingMPSBGColor(mpsNumber,productionLine.id!)"></div>
+                                   {{mpsNumber}}
+                                </li>
+
+                            </ul>
+                        </div>
                     </div>
                     <div nz-col [nzSpan]="12">
 
@@ -408,7 +428,7 @@
                               <nz-list-item *cdkVirtualFor="let mpsDate of getMasterProductionScheduleLineDates(productionLine.id!)">
                                   <nz-list-item-meta
                                       *ngIf="mpsDate" 
-                                      nzDescription="{{ mpsDate.date |  date:'MM/dd/yyyy':'+0000' }}"
+                                      nzDescription="{{ mpsDate.plannedDate |  date:'MM/dd/yyyy':'+0000' }}"
                                       > 
                                       <nz-list-item-meta-title>
                                          {{ mpsDate.plannedQuantity}} 
@@ -443,26 +463,48 @@
             </div>
         </nz-card>
       
-        <nz-card [nzTitle]="masterProductionScheduleLine.productionLine.name" 
-            *ngFor="let masterProductionScheduleLine of currentMPS.masterProductionScheduleLines"> 
-            
-            <nz-calendar >
-                 
-                <ul *nzDateCell="let date" class="events"> 
-                    <ng-container *ngIf="getDailyPlannedQuantity(masterProductionScheduleLine, date) > 0">
-                
-                        <li>
-                            <nz-badge nzStatus="success">
-                                {{'quantity'|i18n}}: {{getDailyPlannedQuantity(masterProductionScheduleLine, date)}}
-                            </nz-badge>
-                        </li>
+        <nz-card>             
+            <nz-calendar>                 
+                <ng-container *nzDateCell="let date" > 
+                    <ng-container *ngIf="getTotalDailyPlannedQuantity(date) > 0">
+                        <h5>{{'total-quantity' | i18n}}: {{getTotalDailyPlannedQuantity(date)}}</h5>
+                        <ul class="events">
+                            <ng-container *ngFor="let masterProductionScheduleLine of currentMPS.masterProductionScheduleLines">
+    
+                                <li *ngIf="getDailyPlannedQuantity(masterProductionScheduleLine, date) > 0">
+                                    <nz-badge nzStatus="success">
+                                       {{masterProductionScheduleLine.productionLine.name}} / {{'quantity'|i18n}}: {{getDailyPlannedQuantity(masterProductionScheduleLine, date)}}
+                                    </nz-badge>
+                                </li>
+                            </ng-container>
+
+                        </ul>
                     </ng-container>
-                </ul>
+                </ng-container>
                 <ng-container *nzMonthCell="let month">
+                    
+                    <ng-container *ngIf="getTotalMonthlyPlannedQuantity(month) > 0">
+                        <h5>{{'total-quantity' | i18n}}: {{getTotalMonthlyPlannedQuantity(month)}}</h5>
+                        <ul class="events">
+                            <ng-container *ngFor="let masterProductionScheduleLine of currentMPS.masterProductionScheduleLines">
+    
+                                <li *ngIf="getMonthlyPlannedQuantity(masterProductionScheduleLine, month) > 0">
+                                    <nz-badge nzStatus="success">
+                                       {{masterProductionScheduleLine.productionLine.name}} / {{'quantity'|i18n}}: {{getMonthlyPlannedQuantity(masterProductionScheduleLine, month)}}
+                                    </nz-badge>
+                                </li>
+                            </ng-container>
+
+                        </ul>
+                    </ng-container>
+
+                    <!--
+
                     <div *ngIf="getMonthlyPlannedQuantity(masterProductionScheduleLine, month) > 0" class="notes-month">
                         <span>{{'quantity'|i18n}}</span>
                       <section>{{ getMonthlyPlannedQuantity(masterProductionScheduleLine, month) }}</section>
                     </div>
+                    -->
                   </ng-container>
             </nz-calendar>
         </nz-card>

@@ -5,6 +5,6 @@ export interface MasterProductionScheduleLineDate {
  
     plannedQuantity: number;
 
-    date: Date;
+    plannedDate: Date;
 
 }
