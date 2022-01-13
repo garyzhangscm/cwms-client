@@ -31,6 +31,27 @@
                 <div nz-col [nzSpan]="8">
                     <nz-form-item>
                     <nz-form-label [nzSpan]="6">
+                        {{ 'number' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            
+                       
+                        <input appFkey variable="mps-number" type="text" nz-input [(ngModel)]="currentMPS!.number" required 
+                        (blur)="mpsNumberChange($event)"/>
+                        <ng-template #mpsNumberErrorTpl let-control>  
+                            <ng-container *ngIf="mpsNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
+                            <ng-container *ngIf="mpsNumberValidateStatus === 'numberExists'">MPS Number already exists</ng-container>
+                                  
+                        </ng-template>
+            
+                    </nz-form-control>
+                    </nz-form-item>
+                </div>
+                
+
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                    <nz-form-label [nzSpan]="6">
                         {{ 'item' | i18n }}
                     </nz-form-label>
                     <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
@@ -49,13 +70,29 @@
                     </nz-form-item>
                 </div>
                 
-                <div nz-col [nzSpan]="12">
+                <div nz-col [nzSpan]="8">
                     <nz-form-item nzFlex>
                     <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="activityDate">
                         {{ 'cutoffDate' | i18n }}
                     </nz-form-label>
                     <nz-form-control [nzSpan]="18">
-                        <nz-date-picker [(ngModel)]="currentMPS.cutoffDate" (ngModelChange)="cutoffDateChanged($event)"></nz-date-picker>
+                        <nz-date-picker [ngModel]="currentMPS.cutoffDate" (ngModelChange)="cutoffDateChanged($event)"></nz-date-picker>
+                    </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+            <div nz-row [nzGutter]="24">
+                
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                    <nz-form-label [nzSpan]="6">
+                        {{ 'description' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            
+                       
+                        <input  type="text" nz-input [(ngModel)]="currentMPS!.description"   />
+            
                     </nz-form-control>
                     </nz-form-item>
                 </div>
@@ -322,11 +359,114 @@
 
     <!-- plan MPS based on production line -->
     <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;" >
+        <nz-spin [nzSpinning]="isProductionLineSpinning">
+            
+            <nz-card nzTitle="{{'quantity' | i18n}}"  > 
+                <div>
+                    {{ 'required-quantity' | i18n }} : {{ currentMPS.totalQuantity}}
+                    <br />
+                    {{ 'planned-quantity' | i18n }} : {{ currentMPS.plannedQuantity}}
+
+                </div>
+            </nz-card>
+
+            <nz-result nzStatus="warning" nzTitle="no production found" *ngIf="!isProductionLineSpinning && availableProductionLines.length == 0"> 
+            </nz-result>
+
+            <nz-card nzTitle="{{'production-line' | i18n}}" *ngIf="availableProductionLines.length > 0"> 
+                <nz-select  nzMode="multiple" [(ngModel)]="selectedProductionLines" (ngModelChange)="onProductionLineSelected()">
+                    <nz-option *ngFor="let productionLine of availableProductionLines" [nzLabel]="productionLine.name" 
+                        [nzValue]="productionLine"></nz-option>
+              </nz-select>
+            </nz-card>
+
+          
+            <nz-card [nzTitle]="productionLine.name" *ngFor="let productionLine of selectedProductionLines"> 
+                <div nz-row [nzGutter]="24">
+                    <div nz-col [nzSpan]="12">
+                        <nz-range-picker nzInline 
+                            [nzDisabledDate]="disabledDates[productionLine.id!]"
+                            [(ngModel)]="rangeDates[productionLine.id!]" 
+                            (ngModelChange)="onRangeDateChange(productionLine.id!)"
+                            [nzDateRender]="tplDatePickerRender"></nz-range-picker>
+                        <ng-template #tplDatePickerRender let-current>
+                            <div class="ant-picker-cell-inner" [class.bg-green-dark]="isDateALreadyAssigned(current, productionLine.id!)">
+                                  {{ current.getDate() }}
+                            </div>
+                        </ng-template>
+                    </div>
+                    <div nz-col [nzSpan]="12">
+
+                        <div>
+                            {{'date-already-assigned' | i18n}}, {{'total-planned-quantity' | i18n}} : 
+                            {{ getTotalPlannedQuantityByProductionLine(productionLine.id!)}}
+                        </div>
+                        <cdk-virtual-scroll-viewport itemSize="10" class="demo-infinite-container" 
+                            *ngIf="getMasterProductionScheduleLineDates(productionLine.id!).length > 0">
+                  
+                          <nz-list nzBordered>
+                              <nz-list-item *cdkVirtualFor="let mpsDate of getMasterProductionScheduleLineDates(productionLine.id!)">
+                                  <nz-list-item-meta
+                                      *ngIf="mpsDate" 
+                                      nzDescription="{{ mpsDate.date |  date:'MM/dd/yyyy':'+0000' }}"
+                                      > 
+                                      <nz-list-item-meta-title>
+                                         {{ mpsDate.plannedQuantity}} 
+                                      </nz-list-item-meta-title>
+                                    </nz-list-item-meta>
+                                    <nz-list-item-extra>
+                                      <a (click)="removeDateAssignedment(mpsDate,  productionLine.id!)">
+                                          {{'remove' | i18n}}
+                                      </a>
+                                    </nz-list-item-extra>
+                                  </nz-list-item>
+                            </nz-list>
+                        </cdk-virtual-scroll-viewport>
+                        <nz-result nzStatus="warning" *ngIf="getMasterProductionScheduleLineDates(productionLine.id!).length == 0"
+                            nzTitle="{{ 'no-date-already-assigned' | i18n}}"></nz-result>
+                    </div>
+                </div>
+            </nz-card>
+
+        </nz-spin>
     </div>
     
     <!-- confirm the MPS  -->
     <div class="small-card" *ngIf="stepIndex === 2" style="padding-top: 20px;" >
-        Confirm!
+        
+        <nz-card nzTitle="{{'quantity' | i18n}}"  > 
+            <div>
+                {{ 'required-quantity' | i18n }} : {{ currentMPS.totalQuantity}}
+                <br />
+                {{ 'planned-quantity' | i18n }} : {{ currentMPS.plannedQuantity}}
+
+            </div>
+        </nz-card>
+      
+        <nz-card [nzTitle]="masterProductionScheduleLine.productionLine.name" 
+            *ngFor="let masterProductionScheduleLine of currentMPS.masterProductionScheduleLines"> 
+            
+            <nz-calendar >
+                 
+                <ul *nzDateCell="let date" class="events"> 
+                    <ng-container *ngIf="getDailyPlannedQuantity(masterProductionScheduleLine, date) > 0">
+                
+                        <li>
+                            <nz-badge nzStatus="success">
+                                {{'quantity'|i18n}}: {{getDailyPlannedQuantity(masterProductionScheduleLine, date)}}
+                            </nz-badge>
+                        </li>
+                    </ng-container>
+                </ul>
+                <ng-container *nzMonthCell="let month">
+                    <div *ngIf="getMonthlyPlannedQuantity(masterProductionScheduleLine, month) > 0" class="notes-month">
+                        <span>{{'quantity'|i18n}}</span>
+                      <section>{{ getMonthlyPlannedQuantity(masterProductionScheduleLine, month) }}</section>
+                    </div>
+                  </ng-container>
+            </nz-calendar>
+        </nz-card>
+
     </div>
     
 <div class="steps-action" style="padding-top: 20px;">
@@ -345,3 +485,45 @@
     </button>
   </div>
 </nz-spin>
+
+
+<!-- Modal for add date for MPS -->
+<ng-template #tplAddMPSDateModalTitle>
+    <span>{{ 'mps.add-date' | i18n}}</span>
+  </ng-template>
+  
+  <ng-template #tplAddMPSDateModalContent>
+    <div>{{ 'following-date-will-be-added-to-the-current-MPS' | i18n }}, {{'total-days' | i18n}} : {{currentMPSDates.length}}</div>
+    <form nz-form [formGroup]="addMPSDateForm">
+
+
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="8" nzFor="quantity">
+                {{ 'daily-quantity' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <nz-input-group nzSize="large">
+                <nz-input-number formControlName="dailyQuantity" [nzMin]="0"   [nzStep]="1" >
+                    </nz-input-number>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        </div>
+    </form>
+
+      <cdk-virtual-scroll-viewport itemSize="10" class="demo-infinite-container">
+
+        <nz-list nzBordered  >
+            <nz-list-item *cdkVirtualFor="let mpsDate of currentMPSDates">
+                <nz-list-item-meta
+                    *ngIf="mpsDate" 
+                    nzDescription="{{ mpsDate |  date:'MM/dd/yyyy':'+0000' }}"
+                    > </nz-list-item-meta>
+                </nz-list-item>
+          </nz-list>
+      </cdk-virtual-scroll-viewport>
+
+  </ng-template>

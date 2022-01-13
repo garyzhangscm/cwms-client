@@ -43,13 +43,13 @@
     </div>
     
     <st #st [data]="listOfAllMPSs"  [columns]="columns" [expand]="expand" expandRowByClick expandAccordion
-    (change)="mpsTableChanged($event)" [scroll]="{ x: '2715px' }">
+    (change)="mpsTableChanged($event)" [scroll]="{ x: '1500px' }">
     
         <ng-template st-row="cutoffDateColumn" let-item let-index="index">
             
             <span *ngIf="item.cutoffDate">
 
-                {{ item.cutoffDate  | date:'short':'+0000'}}
+                {{ item.cutoffDate  | date:'MM/dd/yyyy':'+0000'}}
             </span>
 
         </ng-template>

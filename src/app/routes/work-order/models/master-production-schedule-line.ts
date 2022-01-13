@@ -3,14 +3,13 @@ import { ProductionLine } from "./production-line";
 
 export interface MasterProductionScheduleLine {
 
-    id: number;
-    number: string;
+    id?: number;
     
 
     quantity: number;
     productionLine: ProductionLine;
 
-    masterProductionScheduleLineDates: MasterProductionScheduleLineDate[];
+    masterProductionScheduleLineDates: MasterProductionScheduleLineDate[]; 
 
 
 }

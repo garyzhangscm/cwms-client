@@ -27,6 +27,12 @@ export class ProductionLineService {
     }
     return this.http.get(url).pipe(map(res => res.data));
   }
+  getAvailableProductionLinesForMPS(itemId: number): Observable<ProductionLine[]> {
+    let url = `workorder/production-lines/available-for-mps?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&itemId=${itemId}`;
+
+    
+    return this.http.get(url).pipe(map(res => res.data));
+  }
   getProductionLinesByIdList(productionLineIds: string[]): Observable<ProductionLine[]> {
     const idList = productionLineIds.join(',');
     const url =

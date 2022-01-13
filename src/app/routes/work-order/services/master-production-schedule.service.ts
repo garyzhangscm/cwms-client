@@ -44,4 +44,12 @@ export class MasterProductionScheduleService {
     const url = `workorder/master-production-schedules/${masterProductionSchedule.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
+  
+  getAvailableDate(productionLineId: number, beginDate: Date, endDate: Date): Observable<Date[]> {
+    let url = `workorder/master-production-schedules/available-date?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    url = `${url}&productionLineId=${productionLineId}`;
+    url = `${url}&beginDate=${beginDate}`;
+    url = `${url}&endDate=${endDate}`;
+    return this.http.get(url).pipe(map(res => res.data));
+  }
 }

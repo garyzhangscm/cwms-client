@@ -16,6 +16,7 @@ export interface MasterProductionSchedule {
     item?: Item;
     
     totalQuantity: number;
+    plannedQuantity?: number;
     masterProductionScheduleLines: MasterProductionScheduleLine[];
 
 }

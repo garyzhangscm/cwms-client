@@ -367,6 +367,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
       warehouse => warehouse.id === this.currentOrder!.transferReceiptWarehouseId
     );
   }
+  
   orderNumberChange(event: Event) {
     // assign the value to the order, in case we press key to let the system
     // generate the next order number

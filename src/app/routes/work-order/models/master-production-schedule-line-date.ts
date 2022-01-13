@@ -1,10 +1,10 @@
 export interface MasterProductionScheduleLineDate {
 
     
-    id: number;
+    id?: number;
  
     plannedQuantity: number;
 
-    date: number[];
+    date: Date;
 
 }

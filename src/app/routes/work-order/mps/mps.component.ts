@@ -89,20 +89,21 @@ export class WorkOrderMpsComponent implements OnInit {
   st!: STComponent;
   columns: STColumn[] = [
     
-    { title: this.i18n.fanyi("number"), index: 'number', iif: () => this.isChoose('number'), width: 150},
+    { title: this.i18n.fanyi("number"), index: 'number', iif: () => this.isChoose('number'), width: 100},
     { title: this.i18n.fanyi("description"), index: 'description', iif: () => this.isChoose('description'), width: 150},
-    { title: this.i18n.fanyi("item"), index: 'item.name', iif: () => this.isChoose('itemName'), width: 150 },
+    { title: this.i18n.fanyi("item"), index: 'item.name', iif: () => this.isChoose('itemName'), width: 100 },
     { title: this.i18n.fanyi("item.description"), index: 'item.description', iif: () => this.isChoose('itemDescription'), width: 100 },
-    { title: this.i18n.fanyi("quantity"), index: 'totalQuantity', iif: () => this.isChoose('totalQuantity'), width: 100 },
+    { title: this.i18n.fanyi("quantity"), index: 'totalQuantity', iif: () => this.isChoose('totalQuantity'), width: 50 },
+    { title: this.i18n.fanyi("planned-quantity"), index: 'plannedQuantity', iif: () => this.isChoose('plannedQuantity'), width: 50 },
     {
       title: this.i18n.fanyi("cutoffDate"),
       // renderTitle: 'customTitle',
       render: 'cutoffDateColumn',
-      iif: () => this.isChoose('cutoffDate'), width: 150
+      iif: () => this.isChoose('cutoffDate'), width: 100
     },
     {
       title: 'action',
-      renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 
+      renderTitle: 'actionColumnTitle',fixed: 'right',width: 100, 
       render: 'actionColumn',
     }, 
    
@@ -114,6 +115,7 @@ export class WorkOrderMpsComponent implements OnInit {
     { label: this.i18n.fanyi("item"), value: 'itemName', checked: true }, 
     { label: this.i18n.fanyi("item.description"), value: 'itemDescription', checked: true }, 
     { label: this.i18n.fanyi("quantity"), value: 'totalQuantity', checked: true }, 
+    { label: this.i18n.fanyi("planned-quantity"), value: 'plannedQuantity', checked: true }, 
     { label: this.i18n.fanyi("cutoffDate"), value: 'cutoffDate', checked: true }, 
   ];
 

@@ -3,9 +3,11 @@ import { NgModule, Type } from '@angular/core';
 import { STModule } from '@delon/abc/st';
 import { SharedModule } from '@shared';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
+import { NzCalendarModule } from 'ng-zorro-antd/calendar';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
@@ -111,7 +113,9 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     UtilModule, 
     NzSkeletonModule ,
     NzStatisticModule ,
-    InventoryModule 
+    InventoryModule,
+    NzResultModule,
+    NzCalendarModule 
   ],
   declarations: [
     ...COMPONENTS,
