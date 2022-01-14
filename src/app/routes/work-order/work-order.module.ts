@@ -28,6 +28,7 @@ import { WorkOrderLaborComponent } from './labor/labor.component';
 import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component';
 import { WorkOrderMouldComponent } from './mould/mould.component';
 import { WorkOrderMpsMaintenanceComponent } from './mps-maintenance/mps-maintenance.component';
+import { WorkOrderMpsViewComponent } from './mps-view/mps-view.component';
 import { WorkOrderMpsComponent } from './mps/mps.component';
 import { WorkOrderMrpComponent } from './mrp/mrp.component';
 import { WorkOrderPrePrintLpnLabelComponent } from './pre-print-lpn-label/pre-print-lpn-label.component';
@@ -96,7 +97,8 @@ const COMPONENTS: Array<Type<void>> = [
   WorkOrderLaborActivityComponent,
   WorkOrderMpsComponent,
   WorkOrderMrpComponent,
-  WorkOrderMpsMaintenanceComponent];
+  WorkOrderMpsMaintenanceComponent,
+  WorkOrderMpsViewComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
@@ -115,7 +117,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzStatisticModule ,
     InventoryModule,
     NzResultModule,
-    NzCalendarModule 
+    NzCalendarModule
   ],
   declarations: [
     ...COMPONENTS,

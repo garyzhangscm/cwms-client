@@ -23,6 +23,7 @@ import { UtilTestDataInitComponent } from './test-data-init/test-data-init.compo
 import { UtilTesterComponent } from './tester/tester.component';
 import { UtilWorkOrderQueryPopupComponent } from './work-order-query-popup/work-order-query-popup.component';
 import { UtilOrderQueryPopupComponent } from './order-query-popup/order-query-popup.component';
+import { UtilGanttComponent } from './gantt/gantt.component';
 
 const routes: Routes = [
   { path: 'file-upload', component: UtilFileUploadComponent, canActivate: [AuthGuard] },
@@ -46,7 +47,8 @@ const routes: Routes = [
   { path: 'company-menu', component: UtilCompanyMenuComponent },
   { path: 'data-transfer', component: UtilDataTransferComponent },
   { path: 'work-order-query-popup', component: UtilWorkOrderQueryPopupComponent },
-  { path: 'order-query-popup', component: UtilOrderQueryPopupComponent }];
+  { path: 'order-query-popup', component: UtilOrderQueryPopupComponent },
+  { path: 'gantt', component: UtilGanttComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

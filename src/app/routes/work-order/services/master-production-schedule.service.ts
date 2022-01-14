@@ -4,6 +4,7 @@ import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { GanttTask } from '../../util/models/gantt-task';
 import { DateTimeService } from '../../util/services/date-time.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { MasterProductionSchedule } from '../models/master-production-schedule';
@@ -62,5 +63,12 @@ export class MasterProductionScheduleService {
     url = `${url}&beginDateTime=${this.dateTimeService.getISODateTimeString(beginDate)}`;
     url = `${url}&endDateTime=${this.dateTimeService.getISODateTimeString(endDate)}`;
     return this.http.get(url).pipe(map(res => res.data));
+  }
+
+  getMPSsGanttView(): Promise<GanttTask[]>{
+      return Promise.resolve([
+          {id: 1, text: "Task #1", start_date: "2017-04-15 00:00", duration: 3, progress: 0.6},
+          {id: 2, text: "Task #2", start_date: "2017-04-18 00:00", duration: 3, progress: 0.4}
+      ]);
   }
 }
