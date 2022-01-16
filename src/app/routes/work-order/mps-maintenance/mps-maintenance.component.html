@@ -1,7 +1,7 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 
 <ng-template #returnLink>
-  <a routerLink="work-order/mps" routerLinkActive="active">{{ 'return' | i18n }}</a>
+  <a routerLink="/work-order/mps" routerLinkActive="active">{{ 'return' | i18n }}</a>
 </ng-template>
 <ng-template #breadcrumb>
   <nz-breadcrumb>
@@ -9,7 +9,7 @@
       <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
     </nz-breadcrumb-item>
     <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
-    <nz-breadcrumb-item><a routerLink="work-order/mps" routerLinkActive="active">{{
+    <nz-breadcrumb-item><a routerLink="/work-order/mps" routerLinkActive="active">{{
         'mps' | i18n
         }}</a></nz-breadcrumb-item>
     <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
@@ -37,7 +37,7 @@
             
                        
                         <input appFkey variable="mps-number" type="text" nz-input [(ngModel)]="currentMPS!.number" required 
-                        (blur)="mpsNumberChange($event)"/>
+                        (blur)="mpsNumberChange($event)" [disabled]="!newMPS"/>
                         <ng-template #mpsNumberErrorTpl let-control>  
                             <ng-container *ngIf="mpsNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
                             <ng-container *ngIf="mpsNumberValidateStatus === 'numberExists'">MPS Number already exists</ng-container>
@@ -58,7 +58,7 @@
             
                         <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
                             <input nz-input [ngModel]="currentMPS.item?.name"
-                                (blur)="itemNameChanged($event)"
+                                (blur)="itemNameChanged($event)"  [disabled]="!newMPS"  
                              />
                         </nz-input-group>
                         <ng-template #suffixIconButton>
@@ -400,11 +400,20 @@
                             </div>
                             <div class="ant-picker-cell-inner" 
                                 *ngIf="!getExistingMPS(current, productionLine.id!)" 
-                                [class.bg-green-dark]="isDateALreadyAssigned(current, productionLine.id!)">
-                                  {{ current.getDate() }}
+                                [class.bg-green-dark]="isDateALreadyAssignedToCurrentMPS(current, productionLine.id!)"> 
+                               <a style="color: white" *ngIf="isDateALreadyAssignedToCurrentMPS(current, productionLine.id!)" 
+                                   nz-popover  [nzPopoverContent]="contentTemplate">{{ current.getDate() }}</a>
+                               <ng-template #contentTemplate>
+                                   <a>
+                                     {{ currentMPS.number}}    
+                                   </a>
+                               </ng-template>
+                               <span *ngIf="!isDateALreadyAssignedToCurrentMPS(current, productionLine.id!)">
+                                {{ current.getDate() }}
+                               </span>
                             </div>
                         </ng-template>
-                        <div *ngIf="existingMPSNumbers[productionLine.id!].size > 0">
+                        <div *ngIf="existingMPSNumbers[productionLine.id!] != null && existingMPSNumbers[productionLine.id!].size > 0">
                             <ul >
                                 <li *ngFor="let mpsNumber  of existingMPSNumbers[productionLine.id!]"
                                     style="list-style: none;">
@@ -568,4 +577,67 @@
           </nz-list>
       </cdk-virtual-scroll-viewport>
 
+  </ng-template>
+
+  
+<!-- Modal for changes date for MPS -->
+<ng-template #tplModifyMPSDateModalTitle>
+    <span>{{ 'mps.change-date' | i18n}}</span>
+  </ng-template>
+  
+  <ng-template #tplModifyMPSDateModalContent>
+      
+    <nz-spin [nzSpinning]="isModifiedMPSDateModalSpinning">
+
+      <div style="padding: 10px; ">
+          {{'date-range' | i18n}} : {{currentMPSInterval!.start | date:'MM/dd/yyyy'  }} - {{currentMPSInterval!.end | date:'MM/dd/yyyy' }}
+      </div>
+      <nz-radio-group [(ngModel)]="modifyMPSDateOption" style="padding: 10px; ">
+        <label nz-radio nzValue="remove">{{'remove' | i18n}}</label>
+        <label nz-radio nzValue="move">{{'move' | i18n}}</label>
+      </nz-radio-group>
+      <div *ngIf="modifyMPSDateOption === 'move'">
+
+        <form nz-form [formGroup]="modifyMPSDateForm"  style="padding: 10px; ">
+
+            <div nz-row [nzGutter]="24">
+              <div nz-col [nzSpan]="8">
+                <nz-form-item nzFlex>
+                  <nz-form-label [nzSpan]="8" nzFor="movedDays">
+                      {{ 'moved-days' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="16">
+                    <nz-input-group nzSize="large">
+                      <nz-input-number formControlName="movedDays"  [nzStep]="1" (ngModelChange)="movedDaysChanged()">
+                          </nz-input-number>
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col [nzSpan]="8">
+                <nz-form-item nzFlex>
+                  <nz-form-label [nzSpan]="8" nzFor="extendedDays">
+                      {{ 'extended-days' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="16">
+                    <nz-input-group nzSize="large">
+                      <nz-input-number formControlName="extendedDays"  [nzStep]="1" (ngModelChange)="extendedDaysChanged()">
+                          </nz-input-number>
+                    </nz-input-group>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+        </form>
+        <div>
+            {{'date-range' | i18n}} : {{newMPSInterval!.start | date:'MM/dd/yyyy'  }} - {{newMPSInterval!.end | date:'MM/dd/yyyy' }}. 
+            {{'valid' | i18n}}? : 
+            <span style="color:red" *ngIf="!modifiedMPSDateValid">{{modifiedMPSDateValid}}</span> 
+            <span style="color:green" *ngIf="modifiedMPSDateValid">{{modifiedMPSDateValid}}</span>
+           
+        </div>
+        
+      </div>
+
+    </nz-spin>
   </ng-template>

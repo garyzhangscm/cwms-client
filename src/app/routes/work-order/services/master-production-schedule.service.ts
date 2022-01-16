@@ -16,7 +16,10 @@ export class MasterProductionScheduleService {
   constructor(private http: _HttpClient, private warehouseService: WarehouseService, 
     private dateTimeService: DateTimeService) {}
 
-  getMasterProductionSchedules(number?: string, description?: string): Observable<MasterProductionSchedule[]> {
+  getMasterProductionSchedules(number?: string, description?: string, productionLineId?: number,
+     productionLineIds?: string, itemName?:string,     
+    beginDateTime?: Date,
+    endDateTime?: Date, ): Observable<MasterProductionSchedule[]> {
     const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
     
     let url = `workorder/master-production-schedules?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
@@ -25,6 +28,22 @@ export class MasterProductionScheduleService {
     }
     if (description) {
       url = `${url}&description=${httpUrlEncodingCodec.encodeValue(description.trim())}`;
+    }
+
+    if (productionLineId) {
+      url = `${url}&productionLineId=${productionLineId}`;
+    }
+    if (productionLineIds) {
+      url = `${url}&productionLineIds=${productionLineIds}`;
+    }
+    if (itemName) {
+      url = `${url}&itemName=${itemName}`;
+    }
+    if (beginDateTime) {
+      url = `${url}&beginDateTime=${this.dateTimeService.getISODateTimeString(beginDateTime)}`;
+    }
+    if (endDateTime) {
+      url = `${url}&endDateTime=${this.dateTimeService.getISODateTimeString(endDateTime)}`;
     }
 
     return this.http.get(url).pipe(map(res => res.data));
@@ -40,7 +59,7 @@ export class MasterProductionScheduleService {
 
   changeMasterProductionSchedule(masterProductionSchedule: MasterProductionSchedule): Observable<MasterProductionSchedule> {
     const url = `workorder/master-production-schedules/${masterProductionSchedule.id}`;
-    return this.http.put(url, masterProductionSchedule).pipe(map(res => res.data));
+    return this.http.post(url, masterProductionSchedule).pipe(map(res => res.data));
   }
 
   removeMasterProductionSchedule(masterProductionSchedule: MasterProductionSchedule): Observable<MasterProductionSchedule> {
@@ -62,13 +81,16 @@ export class MasterProductionScheduleService {
     url = `${url}&productionLineId=${productionLineId}`;
     url = `${url}&beginDateTime=${this.dateTimeService.getISODateTimeString(beginDate)}`;
     url = `${url}&endDateTime=${this.dateTimeService.getISODateTimeString(endDate)}`;
+    console.log(`getExistingMPSs by url ${url}`);
     return this.http.get(url).pipe(map(res => res.data));
   }
 
   getMPSsGanttView(): Promise<GanttTask[]>{
       return Promise.resolve([
-          {id: 1, text: "Task #1", start_date: "2017-04-15 00:00", duration: 3, progress: 0.6},
-          {id: 2, text: "Task #2", start_date: "2017-04-18 00:00", duration: 3, progress: 0.4}
+          {id: 1, text: "M1", start_date: "2022-01-15 00:00", duration: 30, progress: 1},
+          {id: 2, text: "HT-BLK-4SH22-Pannel", start_date: "2022-01-15 00:00", duration: 20, progress: 1, parent: 1},
+          {id: 3, text: "HT-BLK-4SH22-Pannel", start_date: "2022-01-15 00:00", duration: 5, progress: 1, parent: 2},
+          {id: 4, text: "HT-BLK-4SH22-Pannel", start_date: "2022-01-25 00:00", duration: 10, progress: 1, parent: 2}
       ]);
   }
 }

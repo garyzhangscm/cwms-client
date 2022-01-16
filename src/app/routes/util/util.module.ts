@@ -11,8 +11,7 @@ import { UtilCompanyMenuComponent } from './company-menu/company-menu.component'
 import { UtilCompanyComponent } from './company/company.component';
 import { UtilDataInitComponent } from './data-init/data-init.component';
 import { UtilDataTransferComponent } from './data-transfer/data-transfer.component';
-import { UtilFileUploadComponent } from './file-upload/file-upload.component';
-import { UtilGanttComponent } from './gantt/gantt.component';
+import { UtilFileUploadComponent } from './file-upload/file-upload.component'; 
 import { UtilIconListComponent } from './icon-list/icon-list.component'; 
 import { UtilMenuComponent } from './menu/menu.component';
 import { UtilOrderQueryPopupComponent } from './order-query-popup/order-query-popup.component';
@@ -50,8 +49,7 @@ const COMPONENTS: Array<Type<void>> = [
   UtilCompanyMenuComponent,
   UtilDataTransferComponent,
   UtilWorkOrderQueryPopupComponent,
-  UtilOrderQueryPopupComponent,
-  UtilGanttComponent];
+  UtilOrderQueryPopupComponent];
   
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
@@ -71,8 +69,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
   ],
   exports: [UtilTableColumnSelectionComponent, 
     UtilWorkOrderQueryPopupComponent, 
-    UtilOrderQueryPopupComponent, 
-    UtilGanttComponent],
+    UtilOrderQueryPopupComponent],
 
 })
 export class UtilModule { }

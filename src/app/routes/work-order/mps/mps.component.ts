@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { UtilService } from '../../util/services/util.service';
 import { MasterProductionSchedule } from '../models/master-production-schedule';
@@ -32,6 +33,7 @@ export class WorkOrderMpsComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private utilService: UtilService,
+    private messageService: NzMessageService,
   ) { }
 
   ngOnInit(): void {
@@ -103,7 +105,7 @@ export class WorkOrderMpsComponent implements OnInit {
     },
     {
       title: 'action',
-      renderTitle: 'actionColumnTitle',fixed: 'right',width: 100, 
+      fixed: 'right',width: 100, 
       render: 'actionColumn',
     }, 
    
@@ -141,4 +143,16 @@ export class WorkOrderMpsComponent implements OnInit {
 
   }
 
+  removeMPS(masterProductionSchedule: MasterProductionSchedule) : void{
+    this.isSpinning = true;
+    this.masterProductionScheduleService.removeMasterProductionSchedule(masterProductionSchedule).subscribe({
+      next: () => {
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.isSpinning = false;
+        this.search();
+      }, 
+      error: () => this.isSpinning = false
+    });
+
+  } 
 }

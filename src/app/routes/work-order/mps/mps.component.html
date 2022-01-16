@@ -42,7 +42,7 @@
       <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
     </div>
     
-    <st #st [data]="listOfAllMPSs"  [columns]="columns" [expand]="expand" expandRowByClick expandAccordion
+    <st #st [data]="listOfAllMPSs"  [columns]="columns" 
     (change)="mpsTableChanged($event)" [scroll]="{ x: '1500px' }">
     
         <ng-template st-row="cutoffDateColumn" let-item let-index="index">
@@ -52,9 +52,27 @@
                 {{ item.cutoffDate  | date:'MM/dd/yyyy':'+0000'}}
             </span>
 
-        </ng-template>
-        <ng-template #expand let-item let-index="index" >
-        </ng-template>
+        </ng-template> 
+        
+      <ng-template st-row="actionColumn" let-item let-index="index"> 
+        
+        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+          {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu> 
+
+            <li nz-menu-item >
+              <a routerLink="/work-order/mps-maintenance" routerLinkActive="active"
+                  [queryParams]="{id : item.id!}">{{ 'modify' | i18n }}</a>
+            </li>
+            <li nz-menu-item >
+              <a  (click)="removeMPS(item)">
+                {{ 'remove' | i18n }}</a>
+            </li>
+            
+          </ul>
+        </nz-dropdown-menu>
+      </ng-template>
     </st>
   
   </div>

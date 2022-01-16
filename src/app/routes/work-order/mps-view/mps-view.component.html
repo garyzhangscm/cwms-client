@@ -1,29 +1,64 @@
 <page-header></page-header>
-
-
-<nz-spin [nzSpinning]="isSpinning"> 
-    <!-- Form to query the result  -->
+ 
+<nz-spin [nzSpinning]="isSpinning">  
     <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
         <div nz-row [nzGutter]="24">
             <div nz-col [nzSpan]="12">
-            <nz-form-item nzFlex>
-                <nz-form-label for="number" [nzSm]="3" [nzXs]="3">
-                {{ 'number' | i18n }}
-                </nz-form-label>
-                <nz-form-control [nzSpan]="14">
-                <input nz-input name="number" id="number" formControlName="number" />
-                </nz-form-control>
-            </nz-form-item>
+                <nz-form-item nzFlex>
+                    <nz-form-label for="number" [nzSm]="3" [nzXs]="3">
+                    {{ 'number' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="14">
+                    <input nz-input name="number" id="number" formControlName="number" />
+                    </nz-form-control>
+                </nz-form-item>
             </div>
+                    
             <div nz-col [nzSpan]="12">
-            <nz-form-item nzFlex>
-                <nz-form-label for="description" [nzSm]="3" [nzXs]="3">
-                {{ 'description' | i18n }}
+                <nz-form-item nzFlex>
+                <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="name">
+                    {{ 'item' | i18n }}
                 </nz-form-label>
                 <nz-form-control [nzSpan]="14">
-                <input nz-input name="description" id="description" formControlName="description" />
+
+                    <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                    <input nz-input name="itemName" id="itemName" formControlName="itemName" />
+                    </nz-input-group>
+                    <ng-template #suffixIconButton>
+                    <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
+                    </app-inventory-item-query-popup>
+                    </ng-template>
                 </nz-form-control>
-            </nz-form-item>
+                </nz-form-item>
+            </div>
+            
+        </div>
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="12">
+                <nz-form-item nzFlex>
+                    <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="name">
+                        {{ 'production-line' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="14">
+                        
+                        <nz-select  nzMode="multiple" formControlName="productionLines"  >
+                            <nz-option *ngFor="let productionLine of availableProductionLines" [nzLabel]="productionLine.name" 
+                                [nzValue]="productionLine.id"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            
+            <div nz-col [nzSpan]="12" >
+                <nz-form-item nzFlex>
+                <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="mpsDateTimeRanger">
+                    {{ 'date-range' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="14"> 
+                    <nz-range-picker formControlName="mpsDateTimeRanger"></nz-range-picker>
+        
+                </nz-form-control>
+                </nz-form-item>
             </div>
         </div>
         <div nz-row>
@@ -35,11 +70,34 @@
             </div>
         </div>
     </form>
-</nz-spin>
-<!-- gantt diagram-->
+<!-- gantt diagram / option 1-->
 <!--
 https://www.npmjs.com/package/dhtmlx-gantt
 https://dhtmlx.com/blog/dhtmlx-gantt-chart-usage-angularjs-2-framework/
 
+    <div #gantt_here class='gantt-chart'></div>
 -->
-<div #gantt_here class='gantt-chart'></div>
+
+
+<!-- gantt diagram / option 2-->
+<!--
+http://gantt.ngnice.com/guides/intro 
+ 
+-->
+
+<!--google chart-->
+<!--
+    https://github.com/FERNman/angular-google-charts
+--> 
+    <div id="google_chart_wrapper" *ngIf="chartData.length > 0">
+
+        <google-chart
+         [type]="chartType" [data]="chartData" 
+        [dynamicResize]="true"  
+        (select)="onSelect($event)"
+        [options]="chartOptions"
+        [width]="chartWidth" ></google-chart>
+        
+    </div>
+    <nz-empty *ngIf="chartData.length == 0" style="padding-top: 25px;"></nz-empty>
+</nz-spin> 

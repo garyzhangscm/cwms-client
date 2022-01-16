@@ -1,10 +1,12 @@
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { NgModule, Type } from '@angular/core';
 import { STModule } from '@delon/abc/st';
-import { SharedModule } from '@shared';
+import { SharedModule } from '@shared'; 
+import { GoogleChartsModule } from 'angular-google-charts';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzCalendarModule } from 'ng-zorro-antd/calendar';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzResultModule } from 'ng-zorro-antd/result';
@@ -117,7 +119,9 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzStatisticModule ,
     InventoryModule,
     NzResultModule,
-    NzCalendarModule
+    NzCalendarModule,
+    GoogleChartsModule,
+    NzEmptyModule 
   ],
   declarations: [
     ...COMPONENTS,
