@@ -1,3 +1,19 @@
+<script type="text/javascript" >
+  // Move the X Axis to the top of the google chart
+  // https://stackoverflow.com/questions/37328945/google-charts-timeline-move-date-year-to-the-top-of-the-chart
+
+  function afterDraw() {
+
+        console.log("js / afterDraw");
+      	var g = document.getElementsByTagName("svg")[0].getElementsByTagName("g")[1];
+        document.getElementsByTagName("svg")[0].parentNode.style.top = '40px';
+        document.getElementsByTagName("svg")[0].style.overflow = 'visible';
+        var height = Number(g.getElementsByTagName("text")[0].getAttribute('y')) + 15;
+        g.setAttribute('transform','translate(0,-'+height+')');
+        g = null;
+      }
+</script>
+
 <page-header></page-header>
  
 <nz-spin [nzSpinning]="isSpinning">  
@@ -95,6 +111,7 @@ http://gantt.ngnice.com/guides/intro
          [type]="chartType" [data]="chartData" 
         [dynamicResize]="true"  
         (select)="onSelect($event)"
+        (ready)="onGoogleChartReady()"
         [options]="chartOptions"
         [width]="chartWidth" ></google-chart>
         

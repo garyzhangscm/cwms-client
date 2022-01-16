@@ -100,7 +100,7 @@ export class StartupService {
         this.titleService.default = '';
         this.titleService.suffix = res.app.name;
 
-        console.log(`res.webClientConfiguration: ${JSON.stringify(res.webClientConfiguration)}`);
+        // console.log(`res.webClientConfiguration: ${JSON.stringify(res.webClientConfiguration)}`);
         this.webClientConfigurationService.setWebClientConfiguration(res.webClientConfiguration);
 
         // setup the company information

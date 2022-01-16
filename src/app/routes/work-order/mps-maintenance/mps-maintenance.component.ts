@@ -269,7 +269,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
   
 
   processItemQueryResult(selectedItemName: any): void {
-    console.log(`start to query with item name ${selectedItemName}`);
+    // console.log(`start to query with item name ${selectedItemName}`);
     this.itemService.getItems(selectedItemName).subscribe(
       {
         next: (itemsRes) => {
@@ -500,7 +500,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
   ]; 
   
   inventoryTableChanged(event: STChange) : void { 
-    console.log(`event.type: ${event.type}`);
+    // console.log(`event.type: ${event.type}`);
 
     if (event.type === 'checkbox') {
       
@@ -531,7 +531,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
   ]; 
   
   orderLineTableChanged(event: STChange) : void { 
-    console.log(`event.type: ${event.type}`);
+    // console.log(`event.type: ${event.type}`);
 
     if (event.type === 'checkbox') {
       
@@ -675,14 +675,14 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
   // not available
   loadExistingMPSs(productionLineId: number) {
 
-    console.log(`loadExistingMPSs by production line id: ${productionLineId}, with cutoff date ${this.currentMPS.cutoffDate!}`);
+    // console.log(`loadExistingMPSs by production line id: ${productionLineId}, with cutoff date ${this.currentMPS.cutoffDate!}`);
     this.isProductionLineSpinning = true;
     this.existingMPSNumbers[productionLineId] = new Set(); 
     this.masterProductionScheduleService.getExistingMPSs(productionLineId, 
       new Date(), this.currentMPS.cutoffDate!).subscribe(
         {
           next: (mpsRes) => {
-            console.log(`start to process existing MPS with length ${mpsRes.length}`);
+            // console.log(`start to process existing MPS with length ${mpsRes.length}`);
             
             // skip the current MPS
             mpsRes.filter(mps => mps.number !== this.currentMPS.number)
@@ -842,17 +842,48 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
           this.messageService.error(this.i18n.fanyi("new-mps-date-interval-not-valid`"));
           return false;
         }
-        this.modifyMPSDates(
-          productionLineId,
-          this.currentMPSInterval!, 
-          this.newMPSInterval!
-        );
+        if (this.modifyMPSDateOption === 'remove') {
+
+          this.removeMPSDates(
+            productionLineId,
+            this.currentMPSInterval!, 
+          );
+        }
+        else {
+
+          this.modifyMPSDates(
+            productionLineId,
+            this.currentMPSInterval!, 
+            this.newMPSInterval!
+          );
+        }
         return true;
       },
       nzWidth: 1000,
     });
   }
 
+  removeMPSDates(productionLineId: number, currentInterval: Interval) {
+
+    // remove the dates
+    this.currentMPS.masterProductionScheduleLines.filter(
+      masterProductionScheduleLine => masterProductionScheduleLine.productionLine.id === productionLineId)
+    .forEach(
+      masterProductionScheduleLine => 
+          masterProductionScheduleLine.masterProductionScheduleLineDates = 
+              masterProductionScheduleLine.masterProductionScheduleLineDates.filter(
+                    masterProductionScheduleLineDate =>  
+                        differenceInCalendarDays(masterProductionScheduleLineDate.plannedDate, currentInterval.start) < 0 ||
+                        differenceInCalendarDays(masterProductionScheduleLineDate.plannedDate, currentInterval.end) > 0 
+
+              )
+    )
+    // clear the selction
+    
+    this.rangeDates[productionLineId] = null;
+  }
+
+  // modify MPS dates after we close the modify MPS modal
   modifyMPSDates(productionLineId: number, currentInterval: Interval, newInterval: Interval) {
     // we will change the MPS date only when at least the begin date or the end date is 
     // changed
@@ -881,10 +912,12 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
     const currentDates = eachDayOfInterval(currentInterval);
     const newDates = eachDayOfInterval(newInterval);
 
+    // see if we will need to remove some days
     const removedDates = currentDates.filter(
       currentDate => 
           !newDates.some(newDate => differenceInCalendarDays(currentDate, newDate) === 0));
     
+    // see if we will need to add some days
     const addedDates = newDates.filter(
       newDate => 
           !currentDates.some(currentDate => differenceInCalendarDays(currentDate, newDate) === 0));
@@ -895,6 +928,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
       masterProductionScheduleLine => masterProductionScheduleLine.productionLine.id === productionLineId)
     .forEach(
       masterProductionScheduleLine => 
+          // filter out the days that already removed
           masterProductionScheduleLine.masterProductionScheduleLineDates = 
               masterProductionScheduleLine.masterProductionScheduleLineDates.filter(
                     masterProductionScheduleLineDate => !removedDates.some(
@@ -911,6 +945,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
       masterProductionScheduleLine => {        
         addedDates.forEach(
           addedDate => {
+            // add the date only if it doesn't exists yet
             if (!masterProductionScheduleLine.masterProductionScheduleLineDates.some(
               masterProductionScheduleLineDate => isEqual(masterProductionScheduleLineDate.plannedDate, addedDate)
             )) {
@@ -1166,7 +1201,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
         this.modifyMPSDateForm.controls.extendedDays.value : 0;
 
         
-    console.log(`start to move ${movedDays} days and extend ${extendedDays} days`);
+    // console.log(`start to move ${movedDays} days and extend ${extendedDays} days`);
     this.newMPSInterval = {
       start: addDays(this.currentMPSInterval!.start, movedDays),
       end: addDays(addDays(this.currentMPSInterval!.end, movedDays), extendedDays),
@@ -1185,10 +1220,10 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
 
     // first all of, make sure all the date within the interval is valid for 
     // the MPS and not assigned to other MPS yet
-    console.log(`validate newMPSInterval: ${JSON.stringify(newMPSInterval)}`);
+    // console.log(`validate newMPSInterval: ${JSON.stringify(newMPSInterval)}`);
     if (eachDayOfInterval(newMPSInterval).some(
             date =>  {
-              console.log(`validate date: ${date}`);
+              // console.log(`validate date: ${date}`);
               return this.getExistingMPS(date, this.modifiedMPSProductionLineId!) ||
                           !this.isDateValidForMPS(date)})) {
         this.modifiedMPSDateValid = false;
