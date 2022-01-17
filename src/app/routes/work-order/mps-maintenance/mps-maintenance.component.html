@@ -391,7 +391,8 @@
                             [nzDateRender]="tplDatePickerRender"></nz-range-picker>
                         <ng-template #tplDatePickerRender let-current>
                             <div class="ant-picker-cell-inner" *ngIf="getExistingMPS(current, productionLine.id!)" 
-                            [style.background-color]="getExistingMPSBGColorByDate(current, productionLine.id!)">
+                            [style.background-color]="getExistingMPSBGColorByDate(current, productionLine.id!)"
+                            [class.border]="isDateALreadyAssignedToCurrentMPS(current, productionLine.id!)">
                                <a nz-popover  [nzPopoverContent]="contentTemplate">{{ current.getDate() }}</a>
                                 <ng-template #contentTemplate>
                                     <a>
@@ -596,12 +597,12 @@
         <label nz-radio nzValue="remove">{{'remove' | i18n}}</label>
         <label nz-radio nzValue="move">{{'move' | i18n}}</label>
       </nz-radio-group>
-      <div *ngIf="modifyMPSDateOption === 'move'">
+      <div>
 
-        <form nz-form [formGroup]="modifyMPSDateForm"  style="padding: 10px; ">
+      <form nz-form [formGroup]="modifyMPSDateForm"  style="padding: 10px; ">
 
             <div nz-row [nzGutter]="24">
-              <div nz-col [nzSpan]="8">
+              <div nz-col [nzSpan]="8"  *ngIf="modifyMPSDateOption === 'move'">
                 <nz-form-item nzFlex>
                   <nz-form-label [nzSpan]="8" nzFor="movedDays">
                       {{ 'moved-days' | i18n }}
@@ -614,7 +615,7 @@
                   </nz-form-control>
                 </nz-form-item>
               </div>
-              <div nz-col [nzSpan]="8">
+              <div nz-col [nzSpan]="8"  *ngIf="modifyMPSDateOption === 'move'">
                 <nz-form-item nzFlex>
                   <nz-form-label [nzSpan]="8" nzFor="extendedDays">
                       {{ 'extended-days' | i18n }}
@@ -627,6 +628,29 @@
                   </nz-form-control>
                 </nz-form-item>
               </div>
+            </div>
+            
+            <div nz-row [nzGutter]="24">
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="14">
+                        {{ 'mps.move-successor-mps' | i18n }}
+                      </nz-form-label>
+                      <nz-form-control [nzSpan]="10">
+                        <label nz-checkbox formControlName="moveSuccessor"></label>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div nz-col [nzSpan]="8" *ngIf="modifiedMPSDateBeyondCutoffDate">
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="14">
+                        {{ 'mps.move-cutoff-date' | i18n }}
+                      </nz-form-label>
+                      <nz-form-control [nzSpan]="10">
+                        <label nz-checkbox formControlName="moveCutoffDate"></label>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
             </div>
         </form>
         <div>

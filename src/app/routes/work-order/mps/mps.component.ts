@@ -1,11 +1,12 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 import { UtilService } from '../../util/services/util.service';
 import { MasterProductionSchedule } from '../models/master-production-schedule';
@@ -24,6 +25,8 @@ export class WorkOrderMpsComponent implements OnInit {
   isSpinning = false;
   searchResult= "";
  
+  removeMPSModal!: NzModalRef;
+  removeMPSForm!: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -34,6 +37,7 @@ export class WorkOrderMpsComponent implements OnInit {
     private router: Router,
     private utilService: UtilService,
     private messageService: NzMessageService,
+    private modalService: NzModalService,
   ) { }
 
   ngOnInit(): void {
@@ -142,10 +146,40 @@ export class WorkOrderMpsComponent implements OnInit {
   showMPSDetails(masterProductionSchedule: MasterProductionSchedule) {
 
   }
+  openRemoveMPSModal(
+    masterProductionSchedule: MasterProductionSchedule,
+    tplRemoveMPSModalTitle: TemplateRef<{}>,
+    tplRemoveMPSModalContent: TemplateRef<{}>,
+  ): void {
+    
+    this.removeMPSForm = this.fb.group({
+      moveSuccessor: new FormControl({ value: true, disabled: false }),
+    });
 
-  removeMPS(masterProductionSchedule: MasterProductionSchedule) : void{
+
+    this.removeMPSModal = this.modalService.create({
+      nzTitle: tplRemoveMPSModalTitle,
+      nzContent: tplRemoveMPSModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.removeMPSModal.destroy();
+      },
+      nzOnOk: () => {
+        this.removeMPS(
+          masterProductionSchedule, 
+          this.removeMPSForm.controls.moveSuccessor.value,
+        );
+      },
+
+      nzWidth: 1000,
+    });
+
+  }
+  removeMPS(masterProductionSchedule: MasterProductionSchedule, moveSuccessor: boolean) : void{
     this.isSpinning = true;
-    this.masterProductionScheduleService.removeMasterProductionSchedule(masterProductionSchedule).subscribe({
+    this.masterProductionScheduleService.removeMasterProductionSchedule(masterProductionSchedule, moveSuccessor).subscribe({
       next: () => {
         this.messageService.success(this.i18n.fanyi('message.action.success'));
         this.isSpinning = false;

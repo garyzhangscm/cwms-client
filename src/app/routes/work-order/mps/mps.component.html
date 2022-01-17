@@ -66,7 +66,7 @@
                   [queryParams]="{id : item.id!}">{{ 'modify' | i18n }}</a>
             </li>
             <li nz-menu-item >
-              <a  (click)="removeMPS(item)">
+              <a  (click)="openRemoveMPSModal(item, tplRemoveMPSModalTitle, tplRemoveMPSModalContent)">
                 {{ 'remove' | i18n }}</a>
             </li>
             
@@ -83,3 +83,30 @@
     </button>
   </div>
 </nz-spin>
+
+
+
+<!-- Modal for remove MPS -->
+<ng-template #tplRemoveMPSModalTitle>
+  <span>{{ 'remove' | i18n}}</span>
+</ng-template>
+
+<ng-template #tplRemoveMPSModalContent>
+  
+      <form nz-form [formGroup]="removeMPSForm"  style="padding: 10px; ">
+ 
+          
+          <div nz-row [nzGutter]="24">
+              <div nz-col [nzSpan]="8">
+                  <nz-form-item>
+                    <nz-form-label [nzSpan]="14">
+                      {{ 'mps.move-successor-mps' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="10">
+                      <label nz-checkbox formControlName="moveSuccessor"></label>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div> 
+          </div>
+      </form>  
+</ng-template>

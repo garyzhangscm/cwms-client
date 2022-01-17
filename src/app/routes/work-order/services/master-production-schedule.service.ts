@@ -57,13 +57,13 @@ export class MasterProductionScheduleService {
     return this.http.put(`workorder/master-production-schedules`, masterProductionSchedule).pipe(map(res => res.data));
   }
 
-  changeMasterProductionSchedule(masterProductionSchedule: MasterProductionSchedule): Observable<MasterProductionSchedule> {
-    const url = `workorder/master-production-schedules/${masterProductionSchedule.id}`;
+  changeMasterProductionSchedule(masterProductionSchedule: MasterProductionSchedule, moveSuccessor: boolean): Observable<MasterProductionSchedule> {
+    const url = `workorder/master-production-schedules/${masterProductionSchedule.id}?moveSuccessor=${moveSuccessor}`;
     return this.http.post(url, masterProductionSchedule).pipe(map(res => res.data));
   }
 
-  removeMasterProductionSchedule(masterProductionSchedule: MasterProductionSchedule): Observable<MasterProductionSchedule> {
-    const url = `workorder/master-production-schedules/${masterProductionSchedule.id}`;
+  removeMasterProductionSchedule(masterProductionSchedule: MasterProductionSchedule, moveSuccessor: boolean): Observable<MasterProductionSchedule> {
+    const url = `workorder/master-production-schedules/${masterProductionSchedule.id}?moveSuccessor=${moveSuccessor}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
   

@@ -10,5 +10,6 @@ export interface MasterProductionScheduleLineDate {
     // used for MPS display
     productionLineName?: string; 
     itemName?: string,   
+    mpsNumber?: string,   
 
 }

@@ -46,7 +46,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
     '#800080', '#008000', '#0000FF', '#A52A2A', '#ff0000'], 
     
     hAxis: {
-      format: "dd/MM/yy", 
+      format: "MM/dd/yy", 
     }
   };
  
@@ -161,6 +161,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
                             // used for MPS display
                             productionLineName: masterProductionScheduleLine.productionLine.name, 
                             itemName: mps.item!.name,   
+                            mpsNumber: mps.number
                           }];
                         if (differenceInCalendarDays(plannedDate, minStartTime) < 0) {
                             minStartTime = plannedDate;
@@ -188,7 +189,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
                 parseISO(mpsDate2.plannedDate.toString().substring(0, 10)))
           }
           else {
-            return this.utilService.compareNullableString(mpsDate1.itemName, mpsDate2.itemName);
+            return this.utilService.compareNullableString(mpsDate1.productionLineName, mpsDate2.productionLineName);
           }
         })
         // console.log(`after sort we get this.mpsDates: ${JSON.stringify(mpsDates)}`);
@@ -211,7 +212,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
             }
             // we already have mps date saved temporary and sorted by production line and date, 
             // let's first check if 
-            // the current date belongs to the same production and item and daily quantity as the last 
+            // the current date belongs to the same production and MPS and daily quantity as the last 
             // one, if so, we will check if the current date is next to the previous
             // MPS date's date(we can do so as we already sort the MPS date array by
             // date). If so, we will continue until we reach the end of the current date range
@@ -219,7 +220,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
             // and continue with a new range
             else if (
               this.utilService.compareNullableString(mpsDate.productionLineName, lastMPSDate.productionLineName) == 0 &&
-              this.utilService.compareNullableString(mpsDate.itemName, lastMPSDate.itemName) == 0 && 
+              this.utilService.compareNullableString(mpsDate.mpsNumber, lastMPSDate.mpsNumber) == 0 && 
               mpsDate.plannedQuantity === lastMPSDate.plannedQuantity   &&
               differenceInCalendarDays(parseISO(mpsDate.plannedDate.toString().substring(0, 10)), 
                   interval.end) === 1  
@@ -241,7 +242,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
               this.chartData = [
                 ...this.chartData,
                   [ lastMPSDate.productionLineName!, 
-                    `${lastMPSDate.itemName!}(daily: ${lastMPSDate.plannedQuantity}, total: ${totalPlannedQuantity})`, 
+                    `${lastMPSDate.itemName!}(${lastMPSDate.mpsNumber}, daily: ${lastMPSDate.plannedQuantity}, total: ${totalPlannedQuantity})`, 
                     interval.start, 
                     addDays(interval.end, 1) // the chart won't include the end date, so we will need to add one day to better show the date range
                   ],
@@ -264,7 +265,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
               this.chartData = [
                 ...this.chartData,
                   [ lastMPSDate.productionLineName!, 
-                    `${lastMPSDate.itemName!}(daily: ${lastMPSDate.plannedQuantity}, total: ${totalPlannedQuantity})`, 
+                    `${lastMPSDate.itemName!}(${lastMPSDate.mpsNumber}, daily: ${lastMPSDate.plannedQuantity}, total: ${totalPlannedQuantity})`, 
                     interval.start,                  
                     addDays(interval.end, 1) // the chart won't include the end date, so we will need to add one day to better show the date range
                   ],

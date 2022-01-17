@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
@@ -71,6 +71,10 @@ import { WorkOrderService } from '../services/work-order.service';
         left: 5px;
         top: 5px;
       }
+      .border {
+        border: 1px solid #1890ff;
+        border-radius: 50%;
+      }
     `
   ]
 })
@@ -131,6 +135,8 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
   existingMPSColors:  { [key: string]: string } = {}; 
   modifyMPSDateOption: string = "remove";
   modifiedMPSDateValid: boolean = true;
+  modifiedMPSDateBeyondCutoffDate: boolean = false;
+  modifiedMPSDateOverlapWithOthers: boolean = false;
   modifiedMPSProductionLineId?: number;
   isModifiedMPSDateModalSpinning = false;
   
@@ -152,6 +158,17 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
   addMPSDateForm!: FormGroup;
   modifyMPSDateModal!: NzModalRef;
   modifyMPSDateForm!: FormGroup;
+
+  // confirm
+  // see if we will need to move the successor
+  // when we chagne the current MPS
+  // if current mps is overlapping with other MPS, then
+  // move successor is force to be true
+  // if the user is changing a existing MPS and modified
+  // the last date of the MPS, then the user can choose
+  // to move successor accordingly, or not
+  moveSuccessor: boolean = true;
+  originalMPSLastDate: Date|undefined = undefined;
   
   constructor(private http: _HttpClient, 
     private fb: FormBuilder,
@@ -211,7 +228,23 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
 
             this.newMPS = false;
             this.mpsNumberValidateStatus = 'success';
+
             
+            // save the last date of the current MPS. we will check if we changed the last
+            // date of the MPS. If so, then we will check if we will need to move the successor MPS 
+            this.currentMPS.masterProductionScheduleLines
+            .forEach(
+              masterProductionScheduleLine => 
+                  masterProductionScheduleLine.masterProductionScheduleLineDates.forEach(
+                    masterProductionScheduleLineDate => {
+                        if (this.originalMPSLastDate == null || 
+                          differenceInCalendarDays(this.originalMPSLastDate, masterProductionScheduleLineDate.plannedDate) < 0) {
+                            this.originalMPSLastDate = masterProductionScheduleLineDate.plannedDate
+                        }
+                      }
+                  )
+            )
+              
             
           });
       }
@@ -231,7 +264,14 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
           this.availableProductionLines = productionLines;
           this.isProductionLineSpinning = false;
           // add the production lines that already assigned to the MPS
-          this.selectedProductionLines = [];
+          this.selectedProductionLines = this.availableProductionLines.filter(
+            productionLine => 
+              this.currentMPS.masterProductionScheduleLines.some(
+                masterProductionScheduleLine => masterProductionScheduleLine.productionLine.id === productionLine.id
+              )
+          );
+          /**
+           * 
           this.currentMPS.masterProductionScheduleLines.forEach(
             masterProductionScheduleLine => {
               this.selectedProductionLines = [
@@ -240,6 +280,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
               ]
             }
           )
+           */
           this.onProductionLineSelected();
           
         },
@@ -815,16 +856,22 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
   
   showModifyMPSDateModal(productionLineId: number, interval: Interval) {
     this.modifyMPSDateForm = this.fb.group({
-      movedDays: [null],
-      extendedDays: [null],
+      movedDays: new FormControl({ value: 0, disabled: false }),
+      extendedDays: new FormControl({ value: 0, disabled: false }),
+      moveSuccessor: new FormControl({ value: true, disabled: false }),
+      moveCutoffDate: new FormControl({ value: true, disabled: false }),
     });
 
     
+    //initiate the variable we will use in the modify MPS date modal
     this.modifyMPSDateOption = "remove";
-    this.modifiedMPSDateValid = true;
+    this.modifiedMPSDateValid = true;    
+    this.modifiedMPSDateBeyondCutoffDate = false;
+    this.modifiedMPSDateOverlapWithOthers = false;
     this.currentMPSInterval = interval;
     this.newMPSInterval = interval;
     this.modifiedMPSProductionLineId = productionLineId;
+
           
     // Load the location
     this.modifyMPSDateModal = this.modalService.create({
@@ -838,23 +885,53 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
         // this.refreshReceiptResults();
       },
       nzOnOk: () => {
-        if (!this.modifiedMPSDateValid) {
-          this.messageService.error(this.i18n.fanyi("new-mps-date-interval-not-valid`"));
-          return false;
-        }
         if (this.modifyMPSDateOption === 'remove') {
 
           this.removeMPSDates(
             productionLineId,
             this.currentMPSInterval!, 
+            this.modifyMPSDateForm.controls.moveSuccessor.value
           );
         }
         else {
+          // validate the new interval
 
+          // if the new interval is beyond the cutoff date, make sure
+          // the user choose to move the cutoff date accordingly as well
+          if (this.modifiedMPSDateBeyondCutoffDate) {
+            if (this.modifyMPSDateForm.controls.moveCutoffDate.value === true) {
+              // the new interval exceed the cutoff date but the user choose to move
+              // the cutoff date accordingly
+              this.currentMPS.cutoffDate = this.newMPSInterval!.end as Date;
+            }
+            else {
+
+              this.messageService.error(this.i18n.fanyi("new-mps-date-interval-beyond-cutoff-date`"));
+              // this.messageService.error(this.i18n.fanyi("new-mps-date-interval-not-valid`"));
+              return false;
+            }
+          } 
+          else if (this.modifiedMPSDateOverlapWithOthers) {
+            // when the new interval overlap with other MPSs, make sure the use choose
+            // the "move successor mps" as well
+            if (this.modifyMPSDateForm.controls.moveSuccessor.value !== true) {
+              
+              this.messageService.error(this.i18n.fanyi("new-mps-date-interval-overlap-with-other-mps"));
+              // this.messageService.error(this.i18n.fanyi("new-mps-date-interval-not-valid`"));
+              return false;
+            }
+            else {
+              // overlapping, let's force to move the successor
+              this.moveSuccessor = true;
+            }
+          }
+
+          console.log(`start to modify the MPS dates`);
           this.modifyMPSDates(
             productionLineId,
             this.currentMPSInterval!, 
-            this.newMPSInterval!
+            this.newMPSInterval!,
+            this.modifyMPSDateForm.controls.moveSuccessor.value
           );
         }
         return true;
@@ -863,7 +940,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
     });
   }
 
-  removeMPSDates(productionLineId: number, currentInterval: Interval) {
+  removeMPSDates(productionLineId: number, currentInterval: Interval, moveSuccessor: boolean) {
 
     // remove the dates
     this.currentMPS.masterProductionScheduleLines.filter(
@@ -881,16 +958,40 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
     // clear the selction
     
     this.rangeDates[productionLineId] = null;
+
+    
+    // see if we are chaging the last date of the current MPS  
+    let newMPSLastDate: Date | undefined = undefined;
+    this.currentMPS.masterProductionScheduleLines
+    .forEach(
+      masterProductionScheduleLine => 
+          masterProductionScheduleLine.masterProductionScheduleLineDates.forEach(
+            masterProductionScheduleLineDate => {
+                if (newMPSLastDate == null || 
+                  differenceInCalendarDays(newMPSLastDate, masterProductionScheduleLineDate.plannedDate) < 0) {
+                    newMPSLastDate = masterProductionScheduleLineDate.plannedDate
+                }
+              }
+          )
+    )
+    if (this.originalMPSLastDate === undefined  ||  newMPSLastDate === undefined  || 
+          differenceInCalendarDays(newMPSLastDate!, this.originalMPSLastDate!) !== 0) {
+        // we changed the last date of the MPS,
+        this.moveSuccessor = moveSuccessor;
+     
+    }
   }
 
   // modify MPS dates after we close the modify MPS modal
-  modifyMPSDates(productionLineId: number, currentInterval: Interval, newInterval: Interval) {
+  modifyMPSDates(productionLineId: number, currentInterval: Interval, 
+    newInterval: Interval, moveSuccessor: boolean) {
     // we will change the MPS date only when at least the begin date or the end date is 
-    // changed
+    // changed 
     if (differenceInCalendarDays(currentInterval.start, newInterval.start) == 0 &&
-        differenceInCalendarDays(currentInterval.end, currentInterval.end) == 0) {
+        differenceInCalendarDays(currentInterval.end, newInterval.end) == 0) {
           return;
         }
+
 
     // save the original daily quantity as we will 'move' the MPS plan. so we will
     // move along with the quantity
@@ -907,7 +1008,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
                 masterProductionScheduleLineDate.plannedQuantity
               ]
           )
-    )
+    ) 
     
     const currentDates = eachDayOfInterval(currentInterval);
     const newDates = eachDayOfInterval(newInterval);
@@ -915,14 +1016,13 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
     // see if we will need to remove some days
     const removedDates = currentDates.filter(
       currentDate => 
-          !newDates.some(newDate => differenceInCalendarDays(currentDate, newDate) === 0));
-    
+          !newDates.some(newDate => differenceInCalendarDays(currentDate, newDate) === 0)); 
+
     // see if we will need to add some days
     const addedDates = newDates.filter(
       newDate => 
           !currentDates.some(currentDate => differenceInCalendarDays(currentDate, newDate) === 0));
-
-          
+ 
     // remove the dates
     this.currentMPS.masterProductionScheduleLines.filter(
       masterProductionScheduleLine => masterProductionScheduleLine.productionLine.id === productionLineId)
@@ -1002,6 +1102,28 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
       // clear the selction
       
       this.rangeDates[productionLineId] = null;
+       
+
+      // see if we are chaging the last date of the current MPS  
+      let newMPSLastDate: Date | undefined = undefined;
+      this.currentMPS.masterProductionScheduleLines
+      .forEach(
+        masterProductionScheduleLine => 
+            masterProductionScheduleLine.masterProductionScheduleLineDates.forEach(
+              masterProductionScheduleLineDate => {
+                  if (newMPSLastDate == null || 
+                    differenceInCalendarDays(newMPSLastDate, masterProductionScheduleLineDate.plannedDate) < 0) {
+                      newMPSLastDate = masterProductionScheduleLineDate.plannedDate
+                  }
+                }
+            )
+      ) 
+      if (this.originalMPSLastDate === undefined  ||  newMPSLastDate === undefined  || 
+            differenceInCalendarDays(newMPSLastDate!, this.originalMPSLastDate!) !== 0) {
+          // we changed the last date of the MPS, 
+          this.moveSuccessor = moveSuccessor;
+      
+      }
 
   }
  
@@ -1222,13 +1344,19 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
     // the MPS and not assigned to other MPS yet
     // console.log(`validate newMPSInterval: ${JSON.stringify(newMPSInterval)}`);
     if (eachDayOfInterval(newMPSInterval).some(
-            date =>  {
-              // console.log(`validate date: ${date}`);
-              return this.getExistingMPS(date, this.modifiedMPSProductionLineId!) ||
-                          !this.isDateValidForMPS(date)})) {
+            date =>   this.getExistingMPS(date, this.modifiedMPSProductionLineId!))) {
+               
+        this.modifiedMPSDateOverlapWithOthers = true;
+        this.modifiedMPSDateValid = false;
+    }
+    else if (eachDayOfInterval(newMPSInterval).some(
+        date =>  differenceInCalendarDays( this.currentMPS.cutoffDate!, date) < 0)) {
+        this.modifiedMPSDateBeyondCutoffDate = true;
         this.modifiedMPSDateValid = false;
     }
     else {
+      this.modifiedMPSDateOverlapWithOthers = false;
+      this.modifiedMPSDateBeyondCutoffDate = false;
       this.modifiedMPSDateValid = true;
     }
     
@@ -1292,7 +1420,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
     }
     else {
       
-      this.masterProductionScheduleService.changeMasterProductionSchedule(this.currentMPS)
+      this.masterProductionScheduleService.changeMasterProductionSchedule(this.currentMPS, this.moveSuccessor)
           .subscribe({
             next:() => {
               this.messageService.success(this.i18n.fanyi('message.action.success'));
