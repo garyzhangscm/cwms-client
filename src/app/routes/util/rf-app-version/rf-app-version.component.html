@@ -37,7 +37,8 @@
   
   <div class="search-result-list"> 
     
-    <st #st [data]="rfAppVersions" [columns]="columns" [footer]="tableFoot" [widthMode]="{ type: 'strict' }">
+    <st #st [data]="rfAppVersions" [columns]="columns" [footer]="tableFoot" [widthMode]="{ type: 'strict' }"
+    [expand]="expand" expandRowByClick expandAccordion>
         
       
       <!--   apk file colummn  --> 
@@ -77,6 +78,24 @@
 
             {{ item.releaseDate  | date:'short':'+0000'}}
          </span>
+      </ng-template>
+
+      
+      <!--   specify the RF for this version  -->
+      <ng-template #expand let-item let-index="index" >
+        
+        <nz-tabset  >
+          <nz-tab nzTitle="{{'rf' | i18n}}">
+            <nz-list nzBordered *ngIf="item.rfAppVersionByRFCodes.length > 0">
+              <nz-list-item *ngFor="let rfAppVersionByRFCode of item.rfAppVersionByRFCodes">
+                 
+                {{ rfAppVersionByRFCode.rf.rfCode }}
+              </nz-list-item>
+            </nz-list>
+            
+            <nz-empty *ngIf="item.rfAppVersionByRFCodes.length == 0" style="padding-top: 25px;"></nz-empty>
+          </nz-tab>
+        </nz-tabset>
       </ng-template>
     </st>
   

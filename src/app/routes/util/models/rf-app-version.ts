@@ -1,3 +1,5 @@
+import { RFAppVersionByRFCode } from "./rf-app-version-by-rf-code";
+
 export interface RFAppVersion {
     
     id?: number;
@@ -10,5 +12,7 @@ export interface RFAppVersion {
     releaseDate: Date;
 
     apkDownloadUrl?: string;
+
+    rfAppVersionByRFCodes :RFAppVersionByRFCode[] ;
 
 }

@@ -4,16 +4,32 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { TransferItem } from 'ng-zorro-antd/transfer';
 import { NzUploadFile, NzUploadChangeParam } from 'ng-zorro-antd/upload';
 
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WorkOrderQcSample } from '../../work-order/models/work-order-qc-sample';
+import { RF } from '../models/rf';
 import { RFAppVersion } from '../models/rf-app-version';
 import { RfAppVersionService } from '../services/rf-app-version.service';
+import { RfService } from '../services/rf.service';
 
 @Component({
   selector: 'app-util-rf-app-version-maintenance',
-  templateUrl: './rf-app-version-maintenance.component.html',
+  templateUrl: './rf-app-version-maintenance.component.html',styles: [
+    ` 
+      .demo-infinite-container {
+        height: 300px;
+        border: 1px solid #e8e8e8;
+        border-radius: 4px;
+      }
+
+      nz-list {
+        padding: 24px;
+      } 
+ 
+    `
+  ]
 })
 export class UtilRfAppVersionMaintenanceComponent implements OnInit {
 
@@ -28,6 +44,12 @@ export class UtilRfAppVersionMaintenanceComponent implements OnInit {
   fileList: NzUploadFile[] = [];
   acceptUploadedFileTypes = '.apk';  
 
+  
+  rfList: TransferItem[] = [];
+  unassignedRFText: string;
+  assignedRFText: string;
+  allRFs: RF[] = [];
+
   constructor(private http: _HttpClient, 
     private rfAppVersionService: RfAppVersionService, 
     private activatedRoute: ActivatedRoute,
@@ -35,7 +57,12 @@ export class UtilRfAppVersionMaintenanceComponent implements OnInit {
     private titleService: TitleService,
     private companyService: CompanyService, 
     private messageService: NzMessageService,
+    private rfService: RfService,
     private router: Router,) { 
+
+      this.unassignedRFText = this.i18n.fanyi('RF.unassigned');
+      this.assignedRFText = this.i18n.fanyi('RF.assigned');
+
       this.currentRFAppVersion = {        
         versionNumber: "",
         fileName: "",
@@ -43,6 +70,7 @@ export class UtilRfAppVersionMaintenanceComponent implements OnInit {
         companyId: this.companyService.getCurrentCompany()!.id,
         releaseNote: "",
         releaseDate: new Date(),
+        rfAppVersionByRFCodes: []
         
       }
       this.pageTitle = this.i18n.fanyi('menu.main.util.rf-app-version');
@@ -52,6 +80,7 @@ export class UtilRfAppVersionMaintenanceComponent implements OnInit {
     
     this.fileList = []; 
     this.apkFileUploadUrl = `resource/rf-app-version/new/apk-files?companyId=${this.companyService.getCurrentCompany()!.id}`;
+    this.initRFAssignment();
 
   }
    
@@ -124,7 +153,7 @@ export class UtilRfAppVersionMaintenanceComponent implements OnInit {
   }
    
   handleUploadChange(info: NzUploadChangeParam): void { 
-    console.log(`handleUploadChange: ${JSON.stringify(info)}`)
+    
     if (info.file.status === 'done') {
       
       let url = this.getFileUrl(info.file.name);
@@ -154,5 +183,64 @@ export class UtilRfAppVersionMaintenanceComponent implements OnInit {
     
   }
 
+
+  transferListFilterOption(inputValue: string, item: any): boolean {
+    return item.title.indexOf(inputValue) > -1;
+  }
+  
+  transferListSearch(ret: {}): void {
+    console.log('nzSearchChange', ret);
+  }
+
+  transferListSelect(ret: {}): void {
+    console.log('nzSelectChange', ret);
+  }
+
+  transferListChange(ret: {}): void {
+    console.log('nzChange', ret);
+
+    // get all the assigned RF to this version
+    const currentAssignedRFIds = [...this.rfList.filter(item => item.direction === 'right').map(item => item.key)]; 
+    console.log(`currentAssignedRFIds:${currentAssignedRFIds}`);
+    this.currentRFAppVersion.rfAppVersionByRFCodes = [];
+    this.allRFs.filter(
+      rf => currentAssignedRFIds.some(assignedRFId => 
+                 +assignedRFId === rf.id))
+    .forEach(rf => {
+      console.log(`add rf ${rf.rfCode}`)
+      this.currentRFAppVersion.rfAppVersionByRFCodes = [
+        ...this.currentRFAppVersion.rfAppVersionByRFCodes, 
+        {
+          rf: rf,
+        }
+      ]
+    })
+  }
+  
+  
+  initRFAssignment(): void {
+    // Get all rf 
+    // for new, we will only allow the user to create an app update information
+    // if the user will need to change the APP update, then 
+    // the user will need to remove the new version and create another version information
+    this.rfList = [];
+    this.rfService.getRFs().subscribe(rfRes => {
+      this.allRFs = rfRes;
+      this.allRFs.forEach(
+        rf => {
+
+          this.rfList.push({
+            key: rf.id!.toString(),
+            title: `${rf.rfCode}`,
+            description: `${rf.rfCode}`,
+            direction: undefined,
+          });
+        }
+      )
+      
+      
+    });
+  }
+ 
 
 }

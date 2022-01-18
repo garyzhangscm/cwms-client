@@ -1,6 +1,8 @@
+import { ScrollingModule } from '@angular/cdk/scrolling';
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
@@ -61,7 +63,9 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzDescriptionsModule, 
     NzStepsModule, 
     NzTransferModule,
-    NzSkeletonModule 
+    NzSkeletonModule ,
+    NzEmptyModule,
+    ScrollingModule
   ],
   declarations: [
     ...COMPONENTS,

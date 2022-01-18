@@ -21,6 +21,7 @@
 
     <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
         <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+        <nz-step nzTitle="{{ 'assign-rf' | i18n }}"> </nz-step>
         
         <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
     </nz-steps>
@@ -97,8 +98,21 @@
         </div>
     </div>
  
-    <!-- Let the user confirm the result -->
     <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+      <nz-card nzTitle="{{ 'rf' | i18n}}">
+        <div nz-row style="padding: 10px">
+          <div nz-col nzSpan="12" nzOffset="6">
+            <nz-transfer [nzDataSource]="rfList" nzShowSearch [nzFilterOption]="transferListFilterOption"
+              (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
+              (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
+              [nzTitles]="[ unassignedRFText, assignedRFText]">
+            </nz-transfer>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+    <!-- Let the user confirm the result -->
+    <div class="small-card" *ngIf="stepIndex === 2" style="padding-top: 20px;">
 
         <nz-descriptions nzBordered>
             <nz-descriptions-item nzTitle="{{ 'rf.app.version-number' | i18n}}"> 
@@ -115,6 +129,24 @@
             </nz-descriptions-item>  
         </nz-descriptions>
         
+        <nz-card nzTitle="{{'RF.assigned' | i18n}}">
+          
+          <cdk-virtual-scroll-viewport itemSize="10" class="demo-infinite-container" 
+              *ngIf="currentRFAppVersion!.rfAppVersionByRFCodes.length > 0">
+
+            <nz-list nzBordered>
+                <nz-list-item *cdkVirtualFor="let rfAppVersionByRFCode of currentRFAppVersion!.rfAppVersionByRFCodes">
+                    <nz-list-item-meta> 
+                        <nz-list-item-meta-title>
+                          {{ rfAppVersionByRFCode.rf.rfCode}} 
+                        </nz-list-item-meta-title>
+                      </nz-list-item-meta>
+                    </nz-list-item>
+              </nz-list>
+          </cdk-virtual-scroll-viewport>
+          
+          <nz-empty *ngIf="currentRFAppVersion!.rfAppVersionByRFCodes.length == 0" style="padding-top: 25px;"></nz-empty>
+        </nz-card>
         
     </div>
 
@@ -125,11 +157,11 @@
             <span>{{ 'steps.previous' | i18n }}</span>
         </button>
         <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
-        <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1" [disabled]="this.currentRFAppVersion.fileName == ''">
+        <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 2" [disabled]="this.currentRFAppVersion.fileName == ''">
             <span>{{ 'steps.next' | i18n }}</span>
         </button>
         <nz-divider nzType="vertical"></nz-divider>
-        <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 1">
+        <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 2">
             <span> {{ 'confirm' | i18n }}</span>
         </button>
     </div>
