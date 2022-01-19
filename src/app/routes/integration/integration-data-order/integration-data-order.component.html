@@ -49,7 +49,7 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
   <nz-table 
-  [nzScroll]="{ x: 'true', y: 'true' }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationOrders" #nestedTable
+  [nzScroll]="{ x: '100vw' }"  nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationOrders" #nestedTable
     [nzFooter]="tableFoot">
     <thead  >
       <tr><th nzWidth="40px"></th>
@@ -67,6 +67,7 @@
             {{ column.name | i18n }}
           </th> 
  
+          <th>{{ 'action' | i18n }}</th>
       </tr>
     </thead>
     <tbody>
@@ -113,6 +114,9 @@
             {{ data.lastUpdateTime[3] }}:{{ data.lastUpdateTime[4] }}:{{ data.lastUpdateTime[5] }}
           </td>
           <td>{{ data.errorMessage }}</td>
+          <td>
+            <button nz-button (click)="resendIntegration(data.id!)">{{ 'resend' | i18n }}</button>
+          </td>
 
         </tr>
         <tr  [nzExpand]="expandSet.has(data.id)" class="inner-table">

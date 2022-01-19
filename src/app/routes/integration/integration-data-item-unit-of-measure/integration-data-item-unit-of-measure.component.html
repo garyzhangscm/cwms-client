@@ -48,7 +48,7 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
   <nz-table 
-  [nzScroll]="{ x: 'true', y: 'true' }" #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationItemUnitOfMeasureData"
+  [nzScroll]="{ x: '100vw' }"  #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationItemUnitOfMeasureData"
     [nzFooter]="tableFoot">
     <thead  nzSingleSort>
       <tr>
@@ -69,6 +69,7 @@
           </th> 
  
  
+          <th>{{ 'action' | i18n }}</th>
  
       </tr>
     </thead>
@@ -105,6 +106,9 @@
         <td>
           {{ data.lastUpdateTime[1] }}/{{ data.lastUpdateTime[2] }}/{{ data.lastUpdateTime[0] }}
           {{ data.lastUpdateTime[3] }}:{{ data.lastUpdateTime[4] }}:{{ data.lastUpdateTime[5] }}
+        </td>
+        <td>
+          <button nz-button (click)="resendIntegration(data.id!)">{{ 'resend' | i18n }}</button>
         </td>
       </tr>
 

@@ -33,5 +33,10 @@ export class IntegrationItemPackageTypeDataService {
       return this.http.get(url).pipe(map(res => res.data));
     }
 
+    resend(id: number) : Observable<IntegrationItemPackageTypeData> {
+      let url = `integration/integration-data/item-package-types/${id}/resend`;
+      
+      return this.http.post(url).pipe(map(res => res.data));
+    }
     
 }

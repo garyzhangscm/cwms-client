@@ -43,17 +43,13 @@ export class UtilRfAppVersionComponent implements OnInit {
       renderTitle: 'releaseDateColumnTitle' ,
       render: 'releaseDateColumn',
       iif: () => this.isChoose('releaseDate') 
-    },    
+    },  
     {
       title: this.i18n.fanyi("action"),  
-      buttons: [ 
-        {
-          text: this.i18n.fanyi("remove"),  
-          type: 'link',
-          click: (_record) => this.removeRFAppVersion(_record)
-        }
-      ]
-    }
+      renderTitle: 'actionColumnTitle',fixed: 'right',width: 110, 
+      render: 'actionColumn',
+    },  
+    
   ]; 
   customColumns = [
 

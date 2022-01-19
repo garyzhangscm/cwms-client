@@ -31,5 +31,10 @@ export class IntegrationItemFamilyDataService {
       return this.http.get(url).pipe(map(res => res.data));
     }
 
+    resend(id: number) : Observable<IntegrationItemFamilyData> {
+      let url = `integration/integration-data/item-families/${id}/resend`;
+      
+      return this.http.post(url).pipe(map(res => res.data));
+    }
     
 }

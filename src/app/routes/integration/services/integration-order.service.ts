@@ -32,5 +32,10 @@ export class IntegrationOrderService {
     return this.http.get(url).pipe(map(res => res.data));
   }
 
+  resend(id: number) : Observable<IntegrationOrder> {
+    let url = `integration/integration-data/orders/${id}/resend`;
+    
+    return this.http.post(url).pipe(map(res => res.data));
+  }
   
 }

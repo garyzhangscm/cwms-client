@@ -30,4 +30,9 @@ export class IntegrationReceiptService {
       return this.http.get(url).pipe(map(res => res.data));
     }
     
+    resend(id: number) : Observable<IntegrationReceipt> {
+      let url = `integration/integration-data/receipts/${id}/resend`;
+      
+      return this.http.post(url).pipe(map(res => res.data));
+    }
 }

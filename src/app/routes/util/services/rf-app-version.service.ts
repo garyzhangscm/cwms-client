@@ -40,6 +40,9 @@ export class RfAppVersionService {
     return this.http.put('resource/rf-app-versions', rfAppVersion).pipe(map(res => res.data));
   }
  
+  changeRFAppVersion(rfAppVersion: RFAppVersion): Observable<RFAppVersion> {
+    return this.http.post(`resource/rf-app-versions/${rfAppVersion.id}`, rfAppVersion).pipe(map(res => res.data));
+  }
 
   removeRFAppVersion(rfAppVersion: RFAppVersion): Observable<RFAppVersion> {
     const url = `resource/rf-app-versions/${rfAppVersion.id}`;

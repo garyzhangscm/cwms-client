@@ -3,6 +3,7 @@ import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 import { Supplier } from '../../common/models/supplier';
@@ -241,6 +242,7 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
     private utilService: UtilService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
+    private messageService: NzMessageService,
   ) {}
 
   resetForm(): void {
@@ -349,4 +351,16 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
   }
    * 
    */
+
+  
+  resendIntegration(id: number) : void {
+    this.integrationSupplierDataService.resend(id).subscribe({
+      next: () => {
+        
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.search();
+      }
+    })
+
+  }
 }

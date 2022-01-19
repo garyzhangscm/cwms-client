@@ -1,0 +1,84 @@
+<page-header> </page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form"> 
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="3" [nzXs]="3" nzFor="type">
+            {{ 'type' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <nz-select  nzMode="multiple" formControlName="type">
+                <nz-option
+                      *ngFor="let alertType of alertTypes | keys"
+                      [nzValue]="alertType.key"
+                      nzLabel="{{ 'ALERT-TYPE-' + alertType.key | i18n}}"
+                    ></nz-option>
+          </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="3" [nzXs]="3" nzFor="status">
+            {{ 'status' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <nz-select    formControlName="status">
+                <nz-option
+                      *ngFor="let alertStatus of alertStatusList | keys"
+                      [nzValue]="alertStatus.key"
+                      nzLabel="{{ 'ALERT-STATUS-' + alertStatus.key | i18n}}"
+                    ></nz-option>
+          </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    
+    <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSm]="3" [nzXs]="3" nzFor="keyWords">
+              {{ 'key-words' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18">
+                <input nz-input name="keyWords" id="keyWords" formControlName="keyWords">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+    </div>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="search()"  >
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form> 
+ 
+ 
+  
+  <div class="search-result-list"> 
+    
+    <st #st [data]="alerts" [columns]="columns" [footer]="tableFoot">
+    </st>
+  
+  </div>
+ 
+</nz-spin>
+<ng-template #tableFoot>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+  
+</ng-template>
+
+
+
+ 

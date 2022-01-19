@@ -32,5 +32,11 @@ export class IntegrationSupplierDataService {
     return this.http.get(url).pipe(map(res => res.data));
   }
 
+
+  resend(id: number) : Observable<IntegrationSupplierData> {
+    let url = `integration/integration-data/suppliers/${id}/resend`;
+    
+    return this.http.post(url).pipe(map(res => res.data));
+  }
   
 }

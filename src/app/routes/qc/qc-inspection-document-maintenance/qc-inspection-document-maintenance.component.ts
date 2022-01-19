@@ -37,6 +37,7 @@ export class QcQcInspectionDocumentMaintenanceComponent implements OnInit {
 
   imageFileUploadUrl = '';
   fileList: NzUploadFile[] = [];
+  
   acceptUploadedFileTypes = '.jpg,.svg,.png';
   previewImage: string | undefined = '';
   previewVisible = false;

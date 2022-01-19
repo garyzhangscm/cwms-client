@@ -32,5 +32,10 @@ export class IntegrationItemUnitOfMeasureDataService {
       return this.http.get(url).pipe(map(res => res.data));
     }
 
+    resend(id: number) : Observable<IntegrationItemUnitOfMeasureData> {
+      let url = `integration/integration-data/item-unit-of-measures/${id}/resend`;
+      
+      return this.http.post(url).pipe(map(res => res.data));
+    }
     
 }

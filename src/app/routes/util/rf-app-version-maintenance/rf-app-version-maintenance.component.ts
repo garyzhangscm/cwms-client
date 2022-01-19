@@ -1,3 +1,4 @@
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -38,6 +39,7 @@ export class UtilRfAppVersionMaintenanceComponent implements OnInit {
   versionNumberValidateStatus = 'warning'; 
   versionNumberErrorCode = ''; 
   isSpinning = false; 
+  newRFAppVersion = true;
   pageTitle: string;
 
   apkFileUploadUrl = '';
@@ -80,11 +82,49 @@ export class UtilRfAppVersionMaintenanceComponent implements OnInit {
     
     this.fileList = []; 
     this.apkFileUploadUrl = `resource/rf-app-version/new/apk-files?companyId=${this.companyService.getCurrentCompany()!.id}`;
-    this.initRFAssignment();
+
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.id) { 
+        this.rfAppVersionService.getRFAppVersion(params.id)
+          .subscribe(rfAppVersion => {
+            this.currentRFAppVersion = rfAppVersion;
+
+            this.newRFAppVersion = false;
+            this.versionNumberValidateStatus = 'success'
+            this.initRFAssignment();
+            this.loadAPKFile();
+            
+          });
+      }
+      else {
+        
+        this.newRFAppVersion = true;
+        this.initRFAssignment();
+      }
+    });
+
 
   }
+  
+  loadAPKFile() {
+    if(!this.currentRFAppVersion.id) {
+      
+      this.fileList = []; 
+    }
+    else {
+        this.currentRFAppVersion.apkDownloadUrl = `${environment.api.baseUrl}resource/rf-apk-files/${this.currentRFAppVersion.id!}`;
+        this.fileList = [
+          {
+            uid: this.currentRFAppVersion.fileName,
+            name: this.currentRFAppVersion.fileName,
+            status: 'done',
+            response: '', // custom error message to show
+            url: this.currentRFAppVersion.apkDownloadUrl
+          }
+        ];
+    }
+  }
    
- 
   versionNumberChange(event: Event) {  
     this.currentRFAppVersion!.versionNumber = (event.target as HTMLInputElement).value;
     if (this.currentRFAppVersion!.versionNumber) {
@@ -126,20 +166,40 @@ export class UtilRfAppVersionMaintenanceComponent implements OnInit {
   
   confirm() { 
     this.isSpinning = true;  
-    
-    this.rfAppVersionService.addRFAppVersion(this.currentRFAppVersion).subscribe({
-      next: () => {
+    if (this.newRFAppVersion) {
 
-        this.messageService.success(this.i18n.fanyi('message.action.success'));
-        setTimeout(() => {
+      this.rfAppVersionService.addRFAppVersion(this.currentRFAppVersion).subscribe({
+        next: () => {
+  
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          setTimeout(() => {
+            this.isSpinning = false;
+            this.router.navigateByUrl(`/util/rf-app-version?versionNumber=${this.currentRFAppVersion?.versionNumber}`);
+          }, 2500);
+        },
+        error: () => {
           this.isSpinning = false;
-          this.router.navigateByUrl(`/util/rf-app-version?versionNumber=${this.currentRFAppVersion?.versionNumber}`);
-        }, 2500);
-      },
-      error: () => {
-        this.isSpinning = false;
-      },
-    }); 
+        },
+      }); 
+
+    }
+    else {
+      this.rfAppVersionService.changeRFAppVersion(this.currentRFAppVersion).subscribe({
+        next: () => {
+  
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          setTimeout(() => {
+            this.isSpinning = false;
+            this.router.navigateByUrl(`/util/rf-app-version?versionNumber=${this.currentRFAppVersion?.versionNumber}`);
+          }, 2500);
+        },
+        error: () => {
+          this.isSpinning = false;
+        },
+      }); 
+
+    }
+    
   }
   
   loadImageUrls(workOrderQcSample: WorkOrderQcSample) {
@@ -219,10 +279,7 @@ export class UtilRfAppVersionMaintenanceComponent implements OnInit {
   
   
   initRFAssignment(): void {
-    // Get all rf 
-    // for new, we will only allow the user to create an app update information
-    // if the user will need to change the APP update, then 
-    // the user will need to remove the new version and create another version information
+    
     this.rfList = [];
     this.rfService.getRFs().subscribe(rfRes => {
       this.allRFs = rfRes;
@@ -233,7 +290,9 @@ export class UtilRfAppVersionMaintenanceComponent implements OnInit {
             key: rf.id!.toString(),
             title: `${rf.rfCode}`,
             description: `${rf.rfCode}`,
-            direction: undefined,
+            direction: this.currentRFAppVersion.rfAppVersionByRFCodes
+                        .some(rfAppVersionByRFCode => 
+                              rfAppVersionByRFCode.rf.id === rf.id) ? 'right' : undefined,
           });
         }
       )

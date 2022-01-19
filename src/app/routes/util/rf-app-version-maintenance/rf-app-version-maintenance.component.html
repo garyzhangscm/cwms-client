@@ -37,7 +37,7 @@
                 <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="versionNumberErrorTpl" [nzValidateStatus]="versionNumberValidateStatus"
                 >
                   <input   type="text" nz-input [(ngModel)]="currentRFAppVersion!.versionNumber" required 
-                    (blur)="versionNumberChange($event)" />
+                    (blur)="versionNumberChange($event)" [disabled]="!newRFAppVersion"/>
                   <ng-template #versionNumberErrorTpl let-control>  
                       <ng-container *ngIf="versionNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
                       <ng-container *ngIf="versionNumberErrorCode === 'numberExists'">Version number already exists</ng-container>

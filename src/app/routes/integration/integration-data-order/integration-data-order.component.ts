@@ -3,6 +3,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+import { NzMessageService } from 'ng-zorro-antd/message';
  
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
@@ -149,6 +150,7 @@ export class IntegrationIntegrationDataOrderComponent implements OnInit {
     private integrationOrderService: IntegrationOrderService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private utilService: UtilService,
+    private messageService: NzMessageService,
   ) {}
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
@@ -211,5 +213,16 @@ export class IntegrationIntegrationDataOrderComponent implements OnInit {
       integrationDateTimeRanger: [null],
       integrationDate: [null],
     });
+  }
+  
+  resendIntegration(id: number) : void {
+    this.integrationOrderService.resend(id).subscribe({
+      next: () => {
+        
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.search();
+      }
+    })
+
   }
 }
