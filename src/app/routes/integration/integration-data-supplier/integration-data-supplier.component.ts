@@ -3,6 +3,7 @@ import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+import { differenceInMilliseconds } from 'date-fns';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
@@ -10,6 +11,7 @@ import { Supplier } from '../../common/models/supplier';
 import { SupplierService } from '../../common/services/supplier.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
+import { IntegrationStatus } from '../models/integration-status.enum';
 import { IntegrationSupplierData } from '../models/integration-supplier-data';
 import { IntegrationSupplierDataService } from '../services/integration-supplier-data.service';
 
@@ -180,7 +182,7 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
               name: 'integration.insertTime',
               showSort: true,
               sortOrder: null,
-              sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => this.utilService.compareDateTime(a.insertTime, b.insertTime),
+              sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => differenceInMilliseconds(b.insertTime, a.insertTime),
               sortDirections: ['ascend', 'descend'],
               filterMultiple: true,
               listOfFilter: [],
@@ -191,7 +193,7 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
               name: 'integration.lastUpdateTime',
               showSort: true,
               sortOrder: null,
-              sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => this.utilService.compareDateTime(a.lastUpdateTime, b.lastUpdateTime),
+              sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => differenceInMilliseconds(b.lastUpdateTime, a.lastUpdateTime),
               sortDirections: ['ascend', 'descend'],
               filterMultiple: true,
               listOfFilter: [],
@@ -226,6 +228,7 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
   listOfAllIntegrationSupplierData: IntegrationSupplierData[] = [];
   listOfDisplayIntegrationSupplierData: IntegrationSupplierData[] = []; 
   isCollapse = false;
+  integrationStatusList = IntegrationStatus;
 
   integrationDataModal!: NzModalRef;
   integrationDataForm!: FormGroup;

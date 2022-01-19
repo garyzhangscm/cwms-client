@@ -27,6 +27,7 @@ export class UtilService {
     }
     return 0;  
   }
+  
   compareBoolean(a?: boolean, b?: boolean): number{
 
     if (a === null || a === undefined) {
@@ -65,8 +66,8 @@ export class UtilService {
        }
        else {
          // convert to string and compare
-         aValue = aValue + '';
-         bValue = bValue + '';
+         aValue = `${aValue  }`;
+         bValue = `${bValue  }`;
          return aValue.localeCompare(bValue);
        }
 

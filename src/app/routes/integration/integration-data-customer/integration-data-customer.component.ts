@@ -3,6 +3,7 @@ import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+import { differenceInMilliseconds } from 'date-fns';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
@@ -12,6 +13,7 @@ import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { IntegrationClientData } from '../models/integration-client-data';
 import { IntegrationCustomerData } from '../models/integration-customer-data';
+import { IntegrationStatus } from '../models/integration-status.enum';
 import { IntegrationCustomerDataService } from '../services/integration-customer-data.service';
 
 @Component({
@@ -180,7 +182,7 @@ export class IntegrationIntegrationDataCustomerComponent implements OnInit {
               name: 'integration.insertTime',
               showSort: true,
               sortOrder: null,
-              sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => this.utilService.compareDateTime(a.insertTime, b.insertTime),
+              sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => differenceInMilliseconds(b.insertTime, a.insertTime),
               sortDirections: ['ascend', 'descend'],
               filterMultiple: true,
               listOfFilter: [],
@@ -191,7 +193,7 @@ export class IntegrationIntegrationDataCustomerComponent implements OnInit {
               name: 'integration.lastUpdateTime',
               showSort: true,
               sortOrder: null,
-              sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => this.utilService.compareDateTime(a.lastUpdateTime, b.lastUpdateTime),
+              sortFn: (a: IntegrationCustomerData, b: IntegrationCustomerData) => differenceInMilliseconds(b.lastUpdateTime, a.lastUpdateTime),
               sortDirections: ['ascend', 'descend'],
               filterMultiple: true,
               listOfFilter: [],
@@ -230,6 +232,7 @@ export class IntegrationIntegrationDataCustomerComponent implements OnInit {
   integrationDataModal!: NzModalRef;
   integrationDataForm!: FormGroup;
   isSpinning = false;
+  integrationStatusList = IntegrationStatus;
 
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;

@@ -3,12 +3,14 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+import { differenceInMilliseconds } from 'date-fns';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { IntegrationItemUnitOfMeasureData } from '../models/integration-item-unit-of-measure-data';
+import { IntegrationStatus } from '../models/integration-status.enum';
 import { IntegrationItemUnitOfMeasureDataService } from '../services/integration-item-unit-of-measure-data.service';
 
 @Component({
@@ -193,7 +195,7 @@ export class IntegrationIntegrationDataItemUnitOfMeasureComponent implements OnI
               name: 'integration.insertTime',
               showSort: true,
               sortOrder: null,
-              sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => this.utilService.compareDateTime(a.insertTime, b.insertTime),
+              sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => differenceInMilliseconds(b.insertTime, a.insertTime),
               sortDirections: ['ascend', 'descend'],
               filterMultiple: true,
               listOfFilter: [],
@@ -204,7 +206,7 @@ export class IntegrationIntegrationDataItemUnitOfMeasureComponent implements OnI
               name: 'integration.lastUpdateTime',
               showSort: true,
               sortOrder: null,
-              sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => this.utilService.compareDateTime(a.lastUpdateTime, b.lastUpdateTime),
+              sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => differenceInMilliseconds(b.lastUpdateTime, a.lastUpdateTime),
               sortDirections: ['ascend', 'descend'],
               filterMultiple: true,
               listOfFilter: [],
@@ -241,6 +243,7 @@ export class IntegrationIntegrationDataItemUnitOfMeasureComponent implements OnI
   sortValue: string | null = null;
 
   isCollapse = false;
+  integrationStatusList = IntegrationStatus;
 
   // list of expanded row
   mapOfExpandedId: { [key: string]: boolean } = {};

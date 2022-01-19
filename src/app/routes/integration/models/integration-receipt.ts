@@ -20,7 +20,7 @@ export interface IntegrationReceipt {
   allowUnexpectedItem: boolean;
 
   status: IntegrationStatus;
-  insertTime: number[];
-  lastUpdateTime: number[];
+  insertTime:  Date;
+  lastUpdateTime:  Date;
   errorMessage: string;
 }

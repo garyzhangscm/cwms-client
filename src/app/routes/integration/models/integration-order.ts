@@ -53,7 +53,7 @@ export interface IntegrationOrder {
   stageLocationGroupName: string;
 
   status: IntegrationStatus;
-  insertTime: number[];
-  lastUpdateTime: number[];
+  insertTime:  Date;
+  lastUpdateTime:  Date;
   errorMessage: string;
 }

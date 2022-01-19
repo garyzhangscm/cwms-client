@@ -17,7 +17,7 @@ export class IntegrationItemUnitOfMeasureDataService {
     private dateTimeService: DateTimeService,) {}
 
 	
-    getData(startTime?: Date, endTime?:Date, date?: Date): Observable<IntegrationItemUnitOfMeasureData[]> {
+    getData(startTime?: Date, endTime?:Date, date?: Date, statusList?: string): Observable<IntegrationItemUnitOfMeasureData[]> {
       let url = `integration/integration-data/item-unit-of-measures?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
       
       if (startTime) {
@@ -28,6 +28,9 @@ export class IntegrationItemUnitOfMeasureDataService {
       }
       if (date) {
         url = `${url}&date=${this.dateTimeService.getISODateString(date)}`;
+      }
+      if (statusList) {
+        url = `${url}&statusList=${statusList}`;
       }
       return this.http.get(url).pipe(map(res => res.data));
     }

@@ -17,7 +17,7 @@ export interface IntegrationReceiptLine {
   overReceivingPercent: number;
 
   status: IntegrationStatus;
-  insertTime: number[];
-  lastUpdateTime: number[];
+  insertTime:  Date;
+  lastUpdateTime:  Date;
   errorMessage: string;
 }

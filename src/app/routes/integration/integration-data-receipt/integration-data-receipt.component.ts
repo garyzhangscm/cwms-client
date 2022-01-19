@@ -3,11 +3,13 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+import { differenceInMilliseconds } from 'date-fns';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { IntegrationReceipt } from '../models/integration-receipt';
+import { IntegrationStatus } from '../models/integration-status.enum';
 import { IntegrationReceiptService } from '../services/integration-receipt.service';
 
 @Component({
@@ -133,7 +135,7 @@ export class IntegrationIntegrationDataReceiptComponent implements OnInit {
                   name: 'integration.insertTime',
                   showSort: true,
                   sortOrder: null,
-                  sortFn: (a: IntegrationReceipt, b: IntegrationReceipt) => this.utilService.compareDateTime(a.insertTime, b.insertTime),
+                  sortFn: (a: IntegrationReceipt, b: IntegrationReceipt) => differenceInMilliseconds(b.insertTime, a.insertTime),
                   sortDirections: ['ascend', 'descend'],
                   filterMultiple: true,
                   listOfFilter: [],
@@ -144,7 +146,7 @@ export class IntegrationIntegrationDataReceiptComponent implements OnInit {
                   name: 'integration.lastUpdateTime',
                   showSort: true,
                   sortOrder: null,
-                  sortFn: (a: IntegrationReceipt, b: IntegrationReceipt) => this.utilService.compareDateTime(a.lastUpdateTime, b.lastUpdateTime),
+                  sortFn: (a: IntegrationReceipt, b: IntegrationReceipt) => differenceInMilliseconds(b.lastUpdateTime, a.lastUpdateTime),
                   sortDirections: ['ascend', 'descend'],
                   filterMultiple: true,
                   listOfFilter: [],
@@ -176,6 +178,7 @@ export class IntegrationIntegrationDataReceiptComponent implements OnInit {
   listOfDisplayIntegrationReceipts: IntegrationReceipt[] = []; 
 
   isCollapse = false;
+  integrationStatusList = IntegrationStatus;
  
 
   constructor(
@@ -205,7 +208,8 @@ export class IntegrationIntegrationDataReceiptComponent implements OnInit {
     let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
         this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
     let specificDate : Date = this.searchForm.controls.integrationDate.value;
-    this.integrationReceiptService.getData(startTime, endTime, specificDate).subscribe(
+    this.integrationReceiptService.getData(startTime, endTime, specificDate, 
+      this.searchForm.controls.statusList.value).subscribe(
       integrationReceiptRes => {
         this.listOfAllIntegrationReceipts = integrationReceiptRes;
         this.listOfDisplayIntegrationReceipts = integrationReceiptRes;
@@ -246,6 +250,7 @@ export class IntegrationIntegrationDataReceiptComponent implements OnInit {
     this.searchForm = this.fb.group({
       integrationDateTimeRanger: [null],
       integrationDate: [null],
+      statusList:[null]
     });
   }
 

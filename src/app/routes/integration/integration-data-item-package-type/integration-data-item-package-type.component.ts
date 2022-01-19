@@ -3,11 +3,13 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+import { differenceInMilliseconds } from 'date-fns';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { IntegrationItemPackageTypeData } from '../models/integration-item-package-type-data';
+import { IntegrationStatus } from '../models/integration-status.enum';
 import { IntegrationItemPackageTypeDataService } from '../services/integration-item-package-type-data.service';
 
 @Component({
@@ -158,7 +160,7 @@ export class IntegrationIntegrationDataItemPackageTypeComponent implements OnIni
               name: 'integration.insertTime',
               showSort: true,
               sortOrder: null,
-              sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => this.utilService.compareDateTime(a.insertTime, b.insertTime),
+              sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => differenceInMilliseconds(b.insertTime, a.insertTime),
               sortDirections: ['ascend', 'descend'],
               filterMultiple: true,
               listOfFilter: [],
@@ -169,7 +171,7 @@ export class IntegrationIntegrationDataItemPackageTypeComponent implements OnIni
               name: 'integration.lastUpdateTime',
               showSort: true,
               sortOrder: null,
-              sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => this.utilService.compareDateTime(a.lastUpdateTime, b.lastUpdateTime),
+              sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => differenceInMilliseconds(b.lastUpdateTime, a.lastUpdateTime),
               sortDirections: ['ascend', 'descend'],
               filterMultiple: true,
               listOfFilter: [],
@@ -203,6 +205,7 @@ export class IntegrationIntegrationDataItemPackageTypeComponent implements OnIni
   listOfDisplayIntegrationItemPackageTypeData: IntegrationItemPackageTypeData[] = []; 
 
   isCollapse = false;
+  integrationStatusList = IntegrationStatus;
  
 
   toggleCollapse(): void {

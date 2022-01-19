@@ -3,6 +3,7 @@ import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+import { differenceInMilliseconds } from 'date-fns';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
@@ -11,6 +12,7 @@ import { ClientService } from '../../common/services/client.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { IntegrationClientData } from '../models/integration-client-data';
+import { IntegrationStatus } from '../models/integration-status.enum';
 import { IntegrationClientDataService } from '../services/integration-client-data.service';
 
 @Component({
@@ -179,7 +181,7 @@ export class IntegrationIntegrationDataClientComponent implements OnInit {
               name: 'integration.insertTime',
               showSort: true,
               sortOrder: null,
-              sortFn: (a: IntegrationClientData, b: IntegrationClientData) => this.utilService.compareDateTime(a.insertTime, b.insertTime),
+              sortFn: (a: IntegrationClientData, b: IntegrationClientData) => differenceInMilliseconds(b.insertTime, a.insertTime),
               sortDirections: ['ascend', 'descend'],
               filterMultiple: true,
               listOfFilter: [],
@@ -190,7 +192,7 @@ export class IntegrationIntegrationDataClientComponent implements OnInit {
               name: 'integration.lastUpdateTime',
               showSort: true,
               sortOrder: null,
-              sortFn: (a: IntegrationClientData, b: IntegrationClientData) => this.utilService.compareDateTime(a.lastUpdateTime, b.lastUpdateTime),
+              sortFn: (a: IntegrationClientData, b: IntegrationClientData) => differenceInMilliseconds(b.lastUpdateTime, a.lastUpdateTime),
               sortDirections: ['ascend', 'descend'],
               filterMultiple: true,
               listOfFilter: [],
@@ -227,6 +229,7 @@ export class IntegrationIntegrationDataClientComponent implements OnInit {
   isCollapse = false;
   
   isSpinning = false;
+  integrationStatusList = IntegrationStatus;
 
 
   integrationDataModal!: NzModalRef;

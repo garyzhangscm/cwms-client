@@ -31,6 +31,26 @@
       </nz-form-item>
     </div>
   </div>
+  
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="6" nzFor="status">
+          {{ 'integration.status' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          
+          <nz-select  nzMode="multiple" formControlName="statusList" name="statusList">
+            <nz-option
+              *ngFor="let status of integrationStatusList  | keys"
+              [nzValue]="status.key"
+              nzLabel="{{ 'INTEGRATION-STATUS-' + status.key | i18n}}"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
       <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
@@ -89,16 +109,15 @@
           <td>{{ data.warehouseId }}</td>
           <td>{{ data.warehouseName }}</td>
 
-          <td>{{ data.status }}</td>
+          <td>{{ 'INTEGRATION-STATUS-' + data.status | i18n}}</td>
+          
           <td>
-            {{ data.insertTime[1] }}/{{ data.insertTime[2] }}/{{ data.insertTime[0] }} {{ data.insertTime[3] }}:{{
-                data.insertTime[4]
-              }}:{{ data.insertTime[5] }}
+            {{data.insertTime | date:'short'}} 
           </td>
           <td>
-            {{ data.lastUpdateTime[1] }}/{{ data.lastUpdateTime[2] }}/{{ data.lastUpdateTime[0] }}
-            {{ data.lastUpdateTime[3] }}:{{ data.lastUpdateTime[4] }}:{{ data.lastUpdateTime[5] }}
+            {{data.lastUpdateTime | date:'short'}}  
           </td>
+          <td>{{ data.errorMessage }}</td>
           <td>
             <button nz-button (click)="resendIntegration(data.id!)">{{ 'resend' | i18n }}</button>
           </td>
