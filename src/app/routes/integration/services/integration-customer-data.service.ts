@@ -15,7 +15,7 @@ export class IntegrationCustomerDataService {
     private warehouseService: WarehouseService,  
     private dateTimeService: DateTimeService,) {}
 
-    getData(startTime?: Date, endTime?:Date, date?: Date, statusList?: string): Observable<IntegrationCustomerData[]> {
+    getData(startTime?: Date, endTime?:Date, date?: Date, statusList?: string, id?: number): Observable<IntegrationCustomerData[]> {
       let url = `integration/integration-data/customers?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
       
       if (startTime) {
@@ -29,6 +29,9 @@ export class IntegrationCustomerDataService {
       }
       if (statusList) {
         url = `${url}&statusList=${statusList}`;
+      }
+      if (id) {
+        url = `${url}&id=${id}`;
       }
       return this.http.get(url).pipe(map(res => res.data));
     }

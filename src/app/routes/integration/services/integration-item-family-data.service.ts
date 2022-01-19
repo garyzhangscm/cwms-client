@@ -16,7 +16,7 @@ export class IntegrationItemFamilyDataService {
     private warehouseService: WarehouseService,  
     private dateTimeService: DateTimeService,) {}
 
-    getData(startTime?: Date, endTime?:Date, date?: Date, statusList?: string): Observable<IntegrationItemFamilyData[]> {
+    getData(startTime?: Date, endTime?:Date, date?: Date, statusList?: string, id?: number): Observable<IntegrationItemFamilyData[]> {
       let url = `integration/integration-data/item-families?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
       
       if (startTime) {
@@ -30,6 +30,9 @@ export class IntegrationItemFamilyDataService {
       }
       if (statusList) {
         url = `${url}&statusList=${statusList}`;
+      }
+      if (id) {
+        url = `${url}&id=${id}`;
       }
       return this.http.get(url).pipe(map(res => res.data));
     }

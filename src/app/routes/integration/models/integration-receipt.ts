@@ -23,4 +23,9 @@ export interface IntegrationReceipt {
   insertTime:  Date;
   lastUpdateTime:  Date;
   errorMessage: string;
+  
+  createdTime:  Date;
+  createdBy: string;
+  lastModifiedTime:  Date;
+  lastModifiedBy: string;
 }

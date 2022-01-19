@@ -106,18 +106,7 @@ export class IntegrationIntegrationDataItemFamilyComponent implements OnInit {
           listOfFilter: [],
           filterFn: null, 
           showFilter: false
-        },
-        {
-          name: 'integration.errorMessage',
-          showSort: true,
-          sortOrder: null,
-          sortFn: (a: IntegrationItemFamilyData, b: IntegrationItemFamilyData) => a.errorMessage.localeCompare(b.errorMessage),
-          sortDirections: ['ascend', 'descend'],
-          filterMultiple: true,
-          listOfFilter: [],
-          filterFn: null, 
-          showFilter: false
-        },
+        }, 
         ];
         
 
@@ -163,7 +152,9 @@ export class IntegrationIntegrationDataItemFamilyComponent implements OnInit {
     let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
         this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
     let specificDate : Date = this.searchForm.controls.integrationDate.value;
-    this.integrationItemFamilyDataService.getData(startTime, endTime, specificDate).subscribe(
+    this.integrationItemFamilyDataService.getData(startTime, endTime, specificDate, 
+      this.searchForm.controls.statusList.value,
+      this.searchForm.controls.id.value,).subscribe(
       integrationItemFamilyDataRes => {
         this.listOfAllIntegrationItemFamilyData = integrationItemFamilyDataRes;
         this.listOfDisplayIntegrationItemFamilyData = integrationItemFamilyDataRes;
@@ -196,6 +187,8 @@ export class IntegrationIntegrationDataItemFamilyComponent implements OnInit {
     this.searchForm = this.fb.group({
       integrationDateTimeRanger: [null],
       integrationDate: [null],
+      statusList: [null],
+      id: [null]
     });
   }
 

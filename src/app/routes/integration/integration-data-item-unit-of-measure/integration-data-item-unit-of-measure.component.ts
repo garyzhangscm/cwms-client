@@ -212,18 +212,7 @@ export class IntegrationIntegrationDataItemUnitOfMeasureComponent implements OnI
               listOfFilter: [],
               filterFn: null, 
               showFilter: false
-            },
-            {
-              name: 'integration.errorMessage',
-              showSort: true,
-              sortOrder: null,
-              sortFn: (a: IntegrationItemUnitOfMeasureData, b: IntegrationItemUnitOfMeasureData) => a.errorMessage.localeCompare(b.errorMessage),
-              sortDirections: ['ascend', 'descend'],
-              filterMultiple: true,
-              listOfFilter: [],
-              filterFn: null, 
-              showFilter: false
-            },
+            }, 
         ];
 
   // Form related data and functions
@@ -275,7 +264,9 @@ export class IntegrationIntegrationDataItemUnitOfMeasureComponent implements OnI
     let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
         this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
     let specificDate : Date = this.searchForm.controls.integrationDate.value;
-    this.integrationItemUnitOfMeasureDataService.getData(startTime, endTime, specificDate).subscribe(
+    this.integrationItemUnitOfMeasureDataService.getData(startTime, endTime, specificDate, 
+      this.searchForm.controls.statusList.value,
+      this.searchForm.controls.id.value,).subscribe(
       integrationItemUnitOfMeasureDataRes => {
         this.listOfAllIntegrationItemUnitOfMeasureData = integrationItemUnitOfMeasureDataRes;
         this.listOfDisplayIntegrationItemUnitOfMeasureData = integrationItemUnitOfMeasureDataRes;
@@ -311,6 +302,8 @@ export class IntegrationIntegrationDataItemUnitOfMeasureComponent implements OnI
     this.searchForm = this.fb.group({
       integrationDateTimeRanger: [null],
       integrationDate: [null],
+      statusList: [null],
+      id: [null]
     });
   }
   

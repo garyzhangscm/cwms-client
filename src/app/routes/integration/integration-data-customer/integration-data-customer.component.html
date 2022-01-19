@@ -50,6 +50,18 @@
         </nz-form-control>
       </nz-form-item>
     </div>
+    
+    <div nz-col [nzSpan]="12" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="6" nzFor="id">
+          {{ 'id' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="6">
+          
+          <input nz-input name="id" id="id" formControlName="id"> 
+        </nz-form-control>
+      </nz-form-item>
+    </div>
   </div>
   <div nz-row>
     <div nz-col [nzSpan]="24" class="search-area">
@@ -88,6 +100,7 @@
             {{ column.name | i18n }}
           </th> 
           
+          <th nzEllipsis>{{ 'integration.errorMessage' | i18n }}</th>
           <th>{{ 'action' | i18n }}</th>
           
       </tr>
@@ -112,12 +125,16 @@
         <td>{{ 'INTEGRATION-STATUS-' + data.status | i18n}}</td>
         
         <td>
-          {{data.insertTime | date:'short'}} 
+          {{data.createdTime | date:'short'}} 
         </td>
         <td>
-          {{data.lastUpdateTime | date:'short'}}  
+          {{data.lastModifiedTime | date:'short'}}  
         </td>
-        <td>{{ data.errorMessage }}</td>
+        <td nzEllipsis>
+          <a>
+            <span nz-tooltip nzTooltipTitle="{{ data.errorMessage }}">{{ data.errorMessage }}</span>
+          </a>
+        </td>
         <td>
           <button nz-button (click)="resendIntegration(data.id!)">{{ 'resend' | i18n }}</button>
         </td>

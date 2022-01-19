@@ -177,18 +177,7 @@ export class IntegrationIntegrationDataItemPackageTypeComponent implements OnIni
               listOfFilter: [],
               filterFn: null, 
               showFilter: false
-            },
-            {
-              name: 'integration.errorMessage',
-              showSort: true,
-              sortOrder: null,
-              sortFn: (a: IntegrationItemPackageTypeData, b: IntegrationItemPackageTypeData) => a.errorMessage.localeCompare(b.errorMessage),
-              sortDirections: ['ascend', 'descend'],
-              filterMultiple: true,
-              listOfFilter: [],
-              filterFn: null, 
-              showFilter: false
-            },
+            }, 
         ];
         expandSet = new Set<number>();
 
@@ -235,7 +224,9 @@ export class IntegrationIntegrationDataItemPackageTypeComponent implements OnIni
     let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
         this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
     let specificDate : Date = this.searchForm.controls.integrationDate.value;
-    this.integrationItemPackageTypeDataService.getData(startTime, endTime, specificDate).subscribe(
+    this.integrationItemPackageTypeDataService.getData(startTime, endTime, specificDate, 
+      this.searchForm.controls.statusList.value,
+      this.searchForm.controls.id.value,).subscribe(
       integrationItemPackageTypeDataRes => {
         this.listOfAllIntegrationItemPackageTypeData = integrationItemPackageTypeDataRes;
         this.listOfDisplayIntegrationItemPackageTypeData = integrationItemPackageTypeDataRes;
@@ -266,6 +257,8 @@ export class IntegrationIntegrationDataItemPackageTypeComponent implements OnIni
     this.searchForm = this.fb.group({
       integrationDateTimeRanger: [null],
       integrationDate: [null],
+      statusList: [null],
+      id: [null]
     });
   }
   onExpandChange(id: number, checked: boolean): void {

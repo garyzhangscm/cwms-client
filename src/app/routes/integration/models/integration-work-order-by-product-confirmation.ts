@@ -18,4 +18,9 @@ export interface IntegrationWorkOrderByProductConfirmation {
   insertTime: number[];
   lastUpdateTime: number[];
   errorMessage: string;
+  
+  createdTime:  Date;
+  createdBy: string;
+  lastModifiedTime:  Date;
+  lastModifiedBy: string;
 }

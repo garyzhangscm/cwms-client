@@ -199,18 +199,7 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
               listOfFilter: [],
               filterFn: null, 
               showFilter: false
-            },
-            {
-              name: 'integration.errorMessage',
-              showSort: true,
-              sortOrder: null,
-              sortFn: (a: IntegrationSupplierData, b: IntegrationSupplierData) => a.errorMessage.localeCompare(b.errorMessage),
-              sortDirections: ['ascend', 'descend'],
-              filterMultiple: true,
-              listOfFilter: [],
-              filterFn: null, 
-              showFilter: false
-            },
+            }, 
         ];
 
   // Select control for clients and item families
@@ -263,7 +252,9 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
         this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
     let specificDate : Date = this.searchForm.controls.integrationDate.value;
     this.integrationSupplierDataService
-      .getData(startTime, endTime, specificDate)
+      .getData(startTime, endTime, specificDate, 
+        this.searchForm.controls.statusList.value,
+        this.searchForm.controls.id.value,)
       .subscribe(integrationSupplierDataRes => {
         this.listOfAllIntegrationSupplierData = integrationSupplierDataRes;
         this.listOfDisplayIntegrationSupplierData = integrationSupplierDataRes;
@@ -297,6 +288,8 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
 
       integrationDateTimeRanger: [null],
       integrationDate: [null],
+      statusList: [null],
+      id: [null]
     });
 
     // initiate the select control

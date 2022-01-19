@@ -22,4 +22,9 @@ export interface IntegrationWorkOrderConfirmation {
   insertTime: number[];
   lastUpdateTime: number[];
   errorMessage: string;
+  
+  createdTime:  Date;
+  createdBy: string;
+  lastModifiedTime:  Date;
+  lastModifiedBy: string;
 }

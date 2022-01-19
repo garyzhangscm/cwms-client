@@ -152,18 +152,7 @@ export class IntegrationIntegrationDataReceiptComponent implements OnInit {
                   listOfFilter: [],
                   filterFn: null, 
                   showFilter: false
-                },
-                {
-                  name: 'integration.errorMessage',
-                  showSort: true,
-                  sortOrder: null,
-                  sortFn: (a: IntegrationReceipt, b: IntegrationReceipt) => a.errorMessage.localeCompare(b.errorMessage),
-                  sortDirections: ['ascend', 'descend'],
-                  filterMultiple: true,
-                  listOfFilter: [],
-                  filterFn: null, 
-                  showFilter: false
-                },
+                }, 
         ];
         expandSet = new Set<number>();
 
@@ -209,7 +198,9 @@ export class IntegrationIntegrationDataReceiptComponent implements OnInit {
         this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
     let specificDate : Date = this.searchForm.controls.integrationDate.value;
     this.integrationReceiptService.getData(startTime, endTime, specificDate, 
-      this.searchForm.controls.statusList.value).subscribe(
+      this.searchForm.controls.statusList.value,
+      this.searchForm.controls.id.value,
+      ).subscribe(
       integrationReceiptRes => {
         this.listOfAllIntegrationReceipts = integrationReceiptRes;
         this.listOfDisplayIntegrationReceipts = integrationReceiptRes;
@@ -250,7 +241,8 @@ export class IntegrationIntegrationDataReceiptComponent implements OnInit {
     this.searchForm = this.fb.group({
       integrationDateTimeRanger: [null],
       integrationDate: [null],
-      statusList:[null]
+      statusList: [null],
+      id: [null]
     });
   }
 

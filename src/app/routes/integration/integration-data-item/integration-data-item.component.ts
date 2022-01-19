@@ -156,18 +156,7 @@ export class IntegrationIntegrationDataItemComponent implements OnInit {
               listOfFilter: [],
               filterFn: null, 
               showFilter: false
-            },
-            {
-              name: 'integration.errorMessage',
-              showSort: true,
-              sortOrder: null,
-              sortFn: (a: IntegrationItemData, b: IntegrationItemData) => a.errorMessage.localeCompare(b.errorMessage),
-              sortDirections: ['ascend', 'descend'],
-              filterMultiple: true,
-              listOfFilter: [],
-              filterFn: null, 
-              showFilter: false
-            },
+            }, 
         ];
   // Form related data and functions
   // Form related data and functions
@@ -214,7 +203,9 @@ export class IntegrationIntegrationDataItemComponent implements OnInit {
         this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
     let specificDate : Date = this.searchForm.controls.integrationDate.value;
 	
-    this.integrationItemDataService.getData(startTime, endTime, specificDate).subscribe(
+    this.integrationItemDataService.getData(startTime, endTime, specificDate, 
+      this.searchForm.controls.statusList.value,
+      this.searchForm.controls.id.value,).subscribe(
       integrationItemDataRes => {
         console.log(`integrationItemDataRes:\n${JSON.stringify(integrationItemDataRes)}`);
         this.listOfAllIntegrationItemData = integrationItemDataRes;
@@ -247,6 +238,8 @@ export class IntegrationIntegrationDataItemComponent implements OnInit {
     this.searchForm = this.fb.group({
       integrationDateTimeRanger: [null],
       integrationDate: [null],
+      statusList: [null],
+      id: [null]
     });
   }
   onExpandChange(id: number, checked: boolean): void {
