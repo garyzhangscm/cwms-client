@@ -34,14 +34,14 @@ export class IntegrationIntegrationDataWorkOrderComponent implements OnInit {
   @ViewChild('st', { static: true })
   st!: STComponent;
   columns: STColumn[] = [
-    { title: this.i18n.fanyi("id"),  index: 'id' , iif: () => this.isChoose('id') }, 
-    { title: this.i18n.fanyi("number"),  index: 'number' , iif: () => this.isChoose('number') }, 
-    { title: this.i18n.fanyi("warehouse.id"),  index: 'warehouseId' , iif: () => this.isChoose('warehouseId') }, 
-    { title: this.i18n.fanyi("warehouse.name"),  index: 'warehouseName' , iif: () => this.isChoose('warehouseName') }, 
-    { title: this.i18n.fanyi("item.id"),  index: 'itemId' , iif: () => this.isChoose('itemId') }, 
-    { title: this.i18n.fanyi("item.name"),  index: 'itemName' , iif: () => this.isChoose('itemName') }, 
+    { title: this.i18n.fanyi("id"),  index: 'id' , iif: () => this.isChoose('id'), width: 100 }, 
+    { title: this.i18n.fanyi("number"),  index: 'number' , iif: () => this.isChoose('number') ,  }, 
+    { title: this.i18n.fanyi("warehouse.id"),  index: 'warehouseId' , iif: () => this.isChoose('warehouseId') , }, 
+    { title: this.i18n.fanyi("warehouse.name"),  index: 'warehouseName' , iif: () => this.isChoose('warehouseName'),   }, 
+    { title: this.i18n.fanyi("item.id"),  index: 'itemId' , iif: () => this.isChoose('itemId') ,  }, 
+    { title: this.i18n.fanyi("item.name"),  index: 'itemName' , iif: () => this.isChoose('itemName') ,  }, 
     { title: this.i18n.fanyi("poNumber"),  index: 'poNumber' , iif: () => this.isChoose('poNumber') }, 
-    { title: this.i18n.fanyi("expectedQuantity"),  index: 'expectedQuantity' , iif: () => this.isChoose('expectedQuantity') }, 
+    { title: this.i18n.fanyi("work-order.expected-quantity"),  index: 'expectedQuantity' , iif: () => this.isChoose('expectedQuantity') }, 
     { title: this.i18n.fanyi("integration.status"),  index: 'status' , iif: () => this.isChoose('status') },  
     {
       title: this.i18n.fanyi("integration.insertTime"), 
@@ -54,7 +54,7 @@ export class IntegrationIntegrationDataWorkOrderComponent implements OnInit {
       iif: () => this.isChoose('lastUpdateTime') 
     },    
     {
-      title: this.i18n.fanyi("errorMessage"), 
+      title: this.i18n.fanyi("integration.errorMessage"), 
       render: 'errorMessageColumn',
       iif: () => this.isChoose('errorMessage'),
       width: 150
@@ -74,11 +74,11 @@ export class IntegrationIntegrationDataWorkOrderComponent implements OnInit {
     { label: this.i18n.fanyi("item.id"), value: 'itemId', checked: true },
     { label: this.i18n.fanyi("item.name"), value: 'itemName', checked: true },
     { label: this.i18n.fanyi("poNumber"), value: 'poNumber', checked: true },
-    { label: this.i18n.fanyi("expectedQuantity"), value: 'expectedQuantity', checked: true },
+    { label: this.i18n.fanyi("work-order.expected-quantity"), value: 'expectedQuantity', checked: true },
     { label: this.i18n.fanyi("integration.status"), value: 'status', checked: true },
     { label: this.i18n.fanyi("integration.insertTime"), value: 'insertTime', checked: true },
     { label: this.i18n.fanyi("integration.lastUpdateTime"), value: 'lastUpdateTime', checked: true },
-    { label: this.i18n.fanyi("errorMessage"), value: 'errorMessage', checked: true },
+    { label: this.i18n.fanyi("integration.errorMessage"), value: 'errorMessage', checked: true },
     
 
   ];
