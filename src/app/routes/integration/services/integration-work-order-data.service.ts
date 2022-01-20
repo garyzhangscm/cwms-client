@@ -6,22 +6,21 @@ import { map } from 'rxjs/operators';
 import { DateTimeService } from '../../util/services/date-time.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { IntegrationOrder } from '../models/integration-order'; 
+import { IntegrationWorkOrder } from '../models/integration-work-order';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
-export class IntegrationOrderService {
+export class IntegrationWorkOrderDataService {
   
   constructor(private http: _HttpClient, 
     private warehouseService: WarehouseService,  
     private dateTimeService: DateTimeService,
     private companyService: CompanyService,) {}
 
-    
-  getData(startTime?: Date, endTime?:Date, date?: Date, statusList?: string, id?: number, warehouseName?: string): Observable<IntegrationOrder[]> {
-    let url = `integration/integration-data/orders?companyCode=${this.companyService.getCurrentCompany()?.code}`;
-    
+  getData(startTime?: Date, endTime?:Date, date?: Date, statusList?: string, id?: number, warehouseName?: string): Observable<IntegrationWorkOrder[]> {
+    let url = `integration/integration-data/work-orders?companyCode=${this.companyService.getCurrentCompany()?.code}`;
+
     if (warehouseName) {
         
       url = `${url}&warehouseName=${warehouseName}`;
@@ -44,10 +43,9 @@ export class IntegrationOrderService {
     return this.http.get(url).pipe(map(res => res.data));
   }
 
-  resend(id: number) : Observable<IntegrationOrder> {
-    let url = `integration/integration-data/orders/${id}/resend`;
+  resend(id: number) : Observable<IntegrationWorkOrder> {
+    let url = `integration/integration-data/work-orders/${id}/resend`;
     
     return this.http.post(url).pipe(map(res => res.data));
   }
-  
 }

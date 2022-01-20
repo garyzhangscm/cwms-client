@@ -5,4 +5,5 @@ export enum IntegrationStatus {
   INPROCESS = 'INPROCESS', // we are processing the data
   ERROR = 'ERROR', // we have error processing the data
   COMPLETED = 'COMPLETED', // we complete processing the data, long with any child that attached to it.
+  SENT = 'SENT',      // We have sent the integration data to some service to process
 }

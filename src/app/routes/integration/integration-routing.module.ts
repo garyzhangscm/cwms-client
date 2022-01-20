@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { IntegrationIntegrationDataClientComponent } from './integration-data-client/integration-data-client.component';
 import { IntegrationIntegrationDataCustomerComponent } from './integration-data-customer/integration-data-customer.component';
@@ -15,6 +16,7 @@ import { IntegrationIntegrationDataReceiptConfirmComponent } from './integration
 import { IntegrationIntegrationDataReceiptComponent } from './integration-data-receipt/integration-data-receipt.component';
 import { IntegrationIntegrationDataSupplierComponent } from './integration-data-supplier/integration-data-supplier.component';
 import { IntegrationIntegrationDataWorkOrderConfirmComponent } from './integration-data-work-order-confirm/integration-data-work-order-confirm.component';
+import { IntegrationIntegrationDataWorkOrderComponent } from './integration-data-work-order/integration-data-work-order.component';
 import { IntegrationIntegrationDataComponent } from './integration-data/integration-data.component';
 
 const routes: Routes = [
@@ -36,7 +38,7 @@ const routes: Routes = [
     component: IntegrationIntegrationDataInventoryAttributeChangeComponent,
   },
   { path: 'integration-data-work-order-confirm', component: IntegrationIntegrationDataWorkOrderConfirmComponent },
-];
+  { path: 'integration-data-work-order', component: IntegrationIntegrationDataWorkOrderComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

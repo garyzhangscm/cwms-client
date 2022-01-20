@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { DateTimeService } from '../../util/services/date-time.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { IntegrationItemFamilyData } from '../models/integration-item-family-data'; 
 
@@ -14,11 +15,16 @@ export class IntegrationItemFamilyDataService {
   
   constructor(private http: _HttpClient, 
     private warehouseService: WarehouseService,  
-    private dateTimeService: DateTimeService,) {}
+    private dateTimeService: DateTimeService,
+    private companyService: CompanyService,) {}
 
-    getData(startTime?: Date, endTime?:Date, date?: Date, statusList?: string, id?: number): Observable<IntegrationItemFamilyData[]> {
-      let url = `integration/integration-data/item-families?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    getData(startTime?: Date, endTime?:Date, date?: Date, statusList?: string, id?: number, warehouseName?: string): Observable<IntegrationItemFamilyData[]> {
+      let url = `integration/integration-data/item-families?companyCode=${this.companyService.getCurrentCompany()?.code}`;
       
+      if (warehouseName) {
+        
+        url = `${url}&warehouseName=${warehouseName}`;
+      }
       if (startTime) {
         url = `${url}&startTime=${this.dateTimeService.getISODateTimeString(startTime)}`;
       }

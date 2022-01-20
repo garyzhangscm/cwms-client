@@ -15,6 +15,7 @@ import { IntegrationIntegrationDataReceiptConfirmComponent } from './integration
 import { IntegrationIntegrationDataReceiptComponent } from './integration-data-receipt/integration-data-receipt.component';
 import { IntegrationIntegrationDataSupplierComponent } from './integration-data-supplier/integration-data-supplier.component';
 import { IntegrationIntegrationDataWorkOrderConfirmComponent } from './integration-data-work-order-confirm/integration-data-work-order-confirm.component';
+import { IntegrationIntegrationDataWorkOrderComponent } from './integration-data-work-order/integration-data-work-order.component';
 import { IntegrationIntegrationDataComponent } from './integration-data/integration-data.component';
 import { IntegrationRoutingModule } from './integration-routing.module';
 
@@ -35,7 +36,7 @@ const COMPONENTS: Array<Type<void>> =  [
   IntegrationIntegrationDataInventoryAdjustComponent,
   IntegrationIntegrationDataInventoryAttributeChangeComponent,
   IntegrationIntegrationDataWorkOrderConfirmComponent,
-];
+  IntegrationIntegrationDataWorkOrderComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
