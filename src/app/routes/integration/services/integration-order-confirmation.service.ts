@@ -17,7 +17,7 @@ export class IntegrationOrderConfirmationService {
     private dateTimeService: DateTimeService,) {}
     
 	
-  getData(startTime?: Date, endTime?:Date, date?: Date): Observable<IntegrationOrderConfirmation[]> {
+  getData(startTime?: Date, endTime?:Date, date?: Date, statusList?: string, id?: number): Observable<IntegrationOrderConfirmation[]> {
     let url = `integration/integration-data/order-confirmations?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     
     if (startTime) {
@@ -28,6 +28,12 @@ export class IntegrationOrderConfirmationService {
     }
     if (date) {
       url = `${url}&date=${this.dateTimeService.getISODateString(date)}`;
+    }
+    if (statusList) {
+      url = `${url}&statusList=${statusList}`;
+    }
+    if (id) {
+      url = `${url}&id=${id}`;
     }
     return this.http.get(url).pipe(map(res => res.data));
   }

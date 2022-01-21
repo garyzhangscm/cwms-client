@@ -151,6 +151,7 @@ export class InboundReceiptComponent implements OnInit {
   // Table data for display
   listOfAllReceipts: Receipt[] = [];
   listOfDisplayReceipts: Receipt[] = [];
+  receiptStatusList = ReceiptStatus;
 
 
   constructor(
@@ -169,6 +170,7 @@ export class InboundReceiptComponent implements OnInit {
     // initiate the search form
     this.searchForm = this.fb.group({
       number: [null],
+      statusList: [null],
     });
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.number) {
@@ -189,7 +191,8 @@ export class InboundReceiptComponent implements OnInit {
     this.searching = true;
     this.isSpinning = true;
     this.searchResult = '';
-    this.receiptService.getReceipts(this.searchForm!.controls.number.value, false).subscribe(
+    this.receiptService.getReceipts(this.searchForm!.controls.number.value, false,       
+      this.searchForm!.controls.statusList.value,).subscribe(
       receiptRes => {
 
         this.searching = false;

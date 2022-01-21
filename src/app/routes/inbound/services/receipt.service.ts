@@ -25,7 +25,7 @@ export class ReceiptService {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
   ) { }
 
-  getReceipts(number?: string, loadDetails?: boolean): Observable<Receipt[]> {
+  getReceipts(number?: string, loadDetails?: boolean, statusList?: string,): Observable<Receipt[]> {
     let url = `inbound/receipts?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     
     const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
@@ -36,6 +36,9 @@ export class ReceiptService {
     }
     if (loadDetails !== undefined && loadDetails!= null) {
       url = `${url}&loadDetails=${loadDetails}`;
+    }
+    if (statusList) {
+      url = `${url}&receipt_status_list=${statusList}`;
     }
 
 

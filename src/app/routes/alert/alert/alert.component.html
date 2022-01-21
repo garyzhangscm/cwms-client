@@ -67,6 +67,11 @@
     
     <st #st [data]="alerts" [columns]="columns" [footer]="tableFoot" [scroll]="{ x: '2715px' }">
       
+          <!--   typeColumn colummn  -->  
+          <ng-template st-row="typeColumn" let-item let-index="index"> 
+              
+            <a nz-tooltip [nzTooltipTitle]="item.type">{{ item.type}}</a>
+        </ng-template>
           <!--   createdTimeColumn colummn  -->  
         <ng-template st-row="createdTimeColumn" let-item let-index="index"> 
               

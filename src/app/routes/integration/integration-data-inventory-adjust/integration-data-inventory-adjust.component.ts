@@ -10,6 +10,7 @@ import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { IntegrationInventoryAdjustmentConfirmation } from '../models/integration-inventory-adjustment-confirmation';
 import { IntegrationOrderConfirmation } from '../models/integration-order-confirmation';
+import { IntegrationStatus } from '../models/integration-status.enum';
 import { IntegrationInventoryAdjustmentConfirmationService } from '../services/integration-inventory-adjustment-confirmation.service';
 
 @Component({
@@ -179,6 +180,7 @@ export class IntegrationIntegrationDataInventoryAdjustComponent implements OnIni
 
   // list of expanded row
   mapOfExpandedId: { [key: string]: boolean } = {};
+  integrationStatusList = IntegrationStatus;
 
   constructor(
     private fb: FormBuilder,
@@ -209,7 +211,9 @@ export class IntegrationIntegrationDataInventoryAdjustComponent implements OnIni
     this.integrationInventoryAdjustmentConfirmationService
       .getData( startTime,
         endTime, 
-        specificDate
+        specificDate,
+        this.searchForm.controls.statusList.value,
+        this.searchForm.controls.id.value,
          )
       .subscribe(integrationInventoryAdjustmentConfirmationRes => {
         this.listOfAllIntegrationInventoryAdjustmentConfirmations = integrationInventoryAdjustmentConfirmationRes;
@@ -238,6 +242,8 @@ export class IntegrationIntegrationDataInventoryAdjustComponent implements OnIni
     this.searchForm = this.fb.group({
       integrationDateTimeRanger: [null],
       integrationDate: [null],
+      statusList: [null],
+      id: [null]
     });
   }
   

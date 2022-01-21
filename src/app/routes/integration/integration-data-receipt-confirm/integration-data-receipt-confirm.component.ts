@@ -10,6 +10,7 @@ import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { IntegrationReceipt } from '../models/integration-receipt';
 import { IntegrationReceiptConfirmation } from '../models/integration-receipt-confirmation';
+import { IntegrationStatus } from '../models/integration-status.enum';
 import { IntegrationReceiptConfirmationService } from '../services/integration-receipt-confirmation.service';
 
 @Component({
@@ -168,6 +169,7 @@ export class IntegrationIntegrationDataReceiptConfirmComponent implements OnInit
 
   isCollapse = false;
   isSpinning = false;
+  integrationStatusList = IntegrationStatus;
  
 
   constructor(
@@ -197,7 +199,9 @@ export class IntegrationIntegrationDataReceiptConfirmComponent implements OnInit
     let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
         this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
     let specificDate : Date = this.searchForm.controls.integrationDate.value;
-    this.integrationReceiptConfirmationService.getData(startTime, endTime, specificDate).subscribe(
+    this.integrationReceiptConfirmationService.getData(startTime, endTime, specificDate,
+      this.searchForm.controls.statusList.value,
+      this.searchForm.controls.id.value,).subscribe(
       integrationReceiptConfirmationRes => {
         this.listOfAllIntegrationReceiptConfirmations = integrationReceiptConfirmationRes;
         this.listOfDisplayIntegrationReceiptConfirmations = integrationReceiptConfirmationRes;
@@ -239,6 +243,8 @@ export class IntegrationIntegrationDataReceiptConfirmComponent implements OnInit
     this.searchForm = this.fb.group({
       integrationDateTimeRanger: [null],
       integrationDate: [null],
+      statusList: [null],
+      id: [null]
     });
   }
   

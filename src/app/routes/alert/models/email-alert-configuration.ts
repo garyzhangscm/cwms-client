@@ -10,6 +10,8 @@ export interface EmailAlertConfiguration {
     username: string;
     password: string;
 
+    sendFromEmail: string;
+
     transportProtocol: string;
     authFlag: boolean;
     starttlsEnableFlag: boolean;

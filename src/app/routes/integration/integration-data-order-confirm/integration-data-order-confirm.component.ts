@@ -10,6 +10,7 @@ import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { IntegrationOrder } from '../models/integration-order';
 import { IntegrationOrderConfirmation } from '../models/integration-order-confirmation';
+import { IntegrationStatus } from '../models/integration-status.enum';
 import { IntegrationOrderConfirmationService } from '../services/integration-order-confirmation.service';
 
 @Component({
@@ -111,6 +112,7 @@ export class IntegrationIntegrationDataOrderConfirmComponent implements OnInit {
   listOfAllIntegrationOrderConfirmations: IntegrationOrderConfirmation[] = [];
   listOfDisplayIntegrationOrderConfirmations: IntegrationOrderConfirmation[] = []; 
   isCollapse = false;
+  integrationStatusList = IntegrationStatus;
  
   constructor(
     private fb: FormBuilder,
@@ -139,7 +141,9 @@ export class IntegrationIntegrationDataOrderConfirmComponent implements OnInit {
     let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
         this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
     let specificDate : Date = this.searchForm.controls.integrationDate.value;
-    this.integrationOrderConfirmationService.getData(startTime, endTime, specificDate).subscribe(
+    this.integrationOrderConfirmationService.getData(startTime, endTime, specificDate,
+      this.searchForm.controls.statusList.value,
+      this.searchForm.controls.id.value,).subscribe(
       integrationOrderConfirmationRes => {
         console.log(`integrationOrderConfirmationRes:${JSON.stringify(integrationOrderConfirmationRes)}`);
         this.listOfAllIntegrationOrderConfirmations = integrationOrderConfirmationRes;
@@ -182,6 +186,8 @@ export class IntegrationIntegrationDataOrderConfirmComponent implements OnInit {
     this.searchForm = this.fb.group({
       integrationDateTimeRanger: [null],
       integrationDate: [null],
+      statusList: [null],
+      id: [null]
     });
   }
   

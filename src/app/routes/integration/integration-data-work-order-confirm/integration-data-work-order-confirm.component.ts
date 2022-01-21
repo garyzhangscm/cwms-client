@@ -9,6 +9,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { IntegrationOrderConfirmation } from '../models/integration-order-confirmation';
+import { IntegrationStatus } from '../models/integration-status.enum';
 import { IntegrationWorkOrderConfirmation } from '../models/integration-work-order-confirmation';
 import { IntegrationWorkOrderConfirmationService } from '../services/integration-work-order-confirmation.service';
 
@@ -180,6 +181,7 @@ export class IntegrationIntegrationDataWorkOrderConfirmComponent implements OnIn
   listOfDisplayIntegrationWorkOrderConfirmations: IntegrationWorkOrderConfirmation[] = []; 
 
   isCollapse = false;
+  integrationStatusList = IntegrationStatus;
  
   constructor(
     private fb: FormBuilder,
@@ -209,7 +211,9 @@ export class IntegrationIntegrationDataWorkOrderConfirmComponent implements OnIn
         this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
     let specificDate : Date = this.searchForm.controls.integrationDate.value;
 	
-    this.integrationWorkOrderConfirmationService.getData(startTime, endTime, specificDate).subscribe(
+    this.integrationWorkOrderConfirmationService.getData(startTime, endTime, specificDate,
+      this.searchForm.controls.statusList.value,
+      this.searchForm.controls.id.value,).subscribe(
       integrationWorkOrderConfirmationRes => {
         console.log(`integrationOrderConfirmationRes:${JSON.stringify(integrationWorkOrderConfirmationRes)}`);
         this.listOfAllIntegrationWorkOrderConfirmations = integrationWorkOrderConfirmationRes;
@@ -253,6 +257,8 @@ export class IntegrationIntegrationDataWorkOrderConfirmComponent implements OnIn
     this.searchForm = this.fb.group({
       integrationDateTimeRanger: [null],
       integrationDate: [null],
+      statusList: [null],
+      id: [null]
     });
   }
   resendIntegration(id: number) : void {

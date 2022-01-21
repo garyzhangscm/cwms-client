@@ -15,7 +15,7 @@ export class IntegrationInventoryAdjustmentConfirmationService {
     private warehouseService: WarehouseService,  
     private dateTimeService: DateTimeService,) {}
 
-  getData(startTime?: Date, endTime?:Date, date?: Date): Observable<IntegrationInventoryAdjustmentConfirmation[]> {
+  getData(startTime?: Date, endTime?:Date, date?: Date, statusList?: string, id?: number): Observable<IntegrationInventoryAdjustmentConfirmation[]> {
     let url = `integration/integration-data/inventory-adjustment-confirmations?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     
     if (startTime) {
@@ -26,6 +26,12 @@ export class IntegrationInventoryAdjustmentConfirmationService {
     }
     if (date) {
       url = `${url}&date=${this.dateTimeService.getISODateString(date)}`;
+    }
+    if (statusList) {
+      url = `${url}&statusList=${statusList}`;
+    }
+    if (id) {
+      url = `${url}&id=${id}`;
     }
     return this.http.get(url).pipe(map(res => res.data));
   }

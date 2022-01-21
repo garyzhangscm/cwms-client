@@ -8,6 +8,7 @@ import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { IntegrationInventoryAdjustmentConfirmation } from '../models/integration-inventory-adjustment-confirmation';
 import { IntegrationInventoryAttributeChangeConfirmation } from '../models/integration-inventory-attribute-change-confirmation';
+import { IntegrationStatus } from '../models/integration-status.enum';
 import { IntegrationInventoryAttributeChangeConfirmationService } from '../services/integration-inventory-attribute-change-confirmation.service';
 
 @Component({
@@ -222,6 +223,7 @@ export class IntegrationIntegrationDataInventoryAttributeChangeComponent impleme
 
   isCollapse = false;
   isSpinning = false;
+  integrationStatusList = IntegrationStatus;
   
 
   // list of expanded row
@@ -253,7 +255,9 @@ export class IntegrationIntegrationDataInventoryAttributeChangeComponent impleme
     let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
         this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
     let specificDate : Date = this.searchForm.controls.integrationDate.value;
-    this.integrationInventoryAdjustmentConfirmationService.getData(startTime, endTime, specificDate).subscribe(
+    this.integrationInventoryAdjustmentConfirmationService.getData(startTime, endTime, specificDate,
+      this.searchForm.controls.statusList.value,
+      this.searchForm.controls.id.value,).subscribe(
       integrationInventoryAdjustmentConfirmationRes => {
         this.listOfAllIntegrationInventoryAttributeChangeConfirmations = integrationInventoryAdjustmentConfirmationRes;
         this.listOfDisplayIntegrationInventoryAttributeChangeConfirmations = integrationInventoryAdjustmentConfirmationRes;
@@ -293,6 +297,8 @@ export class IntegrationIntegrationDataInventoryAttributeChangeComponent impleme
     this.searchForm = this.fb.group({
       integrationDateTimeRanger: [null],
       integrationDate: [null],
+      statusList: [null],
+      id: [null]
     });
   }
 }

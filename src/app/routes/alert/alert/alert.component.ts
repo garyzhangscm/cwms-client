@@ -23,8 +23,13 @@ export class AlertAlertComponent implements OnInit {
   @ViewChild('st', { static: true })
   st!: STComponent;
   columns: STColumn[] = [
-    { title: this.i18n.fanyi("type"),  index: 'type' , width: 200,
-        iif: () => this.isChoose('type') }, 
+    
+    {
+      title: this.i18n.fanyi("type"), 
+      render: 'typeColumn', width: 200,
+      iif: () => this.isChoose('type') 
+    }, 
+    
     { title: this.i18n.fanyi("keyWords"),  index: 'keyWords' ,
         iif: () => this.isChoose('keyWords')  }, 
     { title: this.i18n.fanyi("title"),  index: 'title' , 

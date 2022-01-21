@@ -31,6 +31,7 @@ export class AlertConfigurationComponent implements OnInit {
 
       username: "",
       password: "",
+      sendFromEmail: "",
 
       transportProtocol: "",
       authFlag: true,
