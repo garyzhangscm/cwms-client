@@ -48,7 +48,7 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
   <nz-table 
-  [nzScroll]="{ x: 'true', y: 'true' }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationReceiptConfirmations" #nestedTable
+  [nzScroll]="{ x: '100vw' }"  nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationReceiptConfirmations" #nestedTable
     [nzFooter]="tableFoot">
     <thead >
       <tr>
@@ -66,6 +66,9 @@
           >
             {{ column.name | i18n }}
           </th>  
+          <th nzEllipsis>{{ 'integration.errorMessage' | i18n }}</th>
+          <th nzRight>{{ 'action' | i18n }}</th>
+          
  
       </tr>
     </thead>
@@ -83,20 +86,24 @@
           <td>{{ data.supplierId }}</td>
           <td>{{ data.supplierName }}</td>
           <td>{{ data.allowUnexpectedItem + '' | i18n}}</td>
-          <td>{{ data.status }}</td>
+          
+          <td>{{ 'INTEGRATION-STATUS-' + data.status | i18n}}</td>
+          
           <td>
-            {{ data.insertTime[1] }}/{{ data.insertTime[2] }}/{{ data.insertTime[0] }} {{ data.insertTime[3] }}:{{
-                    data.insertTime[4]
-                  }}:{{ data.insertTime[5] }}
+            {{data.createdTime | date:'M/d/yy, h:mm:ss a':'+0000'}} 
           </td>
           <td>
-            <span *ngIf="data.lastUpdateTime !== null">
+            {{data.lastModifiedTime | date:'M/d/yy, h:mm:ss a':'+0000'}}  
+          </td>
+          <td nzEllipsis>
+            <a>
+              <span nz-tooltip nzTooltipTitle="{{ data.errorMessage }}">{{ data.errorMessage }}</span>
+            </a>
+          </td>
+          <td nzRight>
+            <button nz-button (click)="resendIntegration(data.id!)">{{ 'resend' | i18n }}</button>
+          </td>
 
-              {{ data.lastUpdateTime[1] }}/{{ data.lastUpdateTime[2] }}/{{ data.lastUpdateTime[0] }}
-              {{ data.lastUpdateTime[3] }}:{{ data.lastUpdateTime[4] }}:{{ data.lastUpdateTime[5] }}
-            </span>
-          </td>
-          <td>{{ data.errorMessage }}</td>
 
         </tr>
         <tr [nzExpand]="expandSet.has(data.id)" class="inner-table">

@@ -13,6 +13,10 @@ export interface Alert {
     title: string;
 
     message: string;
+    errorMessage: string;
 
     status: AlertStatus;
+    
+    createdTime:  Date;
+    lastSentTime:  Date;
 }

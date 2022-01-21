@@ -43,7 +43,7 @@
         <div nz-col [nzSpan]="12">
           <nz-form-item nzFlex>
             <nz-form-label [nzSm]="3" [nzXs]="3" nzFor="keyWords">
-              {{ 'key-words' | i18n }}
+              {{ 'keyWords' | i18n }}
             </nz-form-label>
             <nz-form-control [nzSpan]="18">
                 <input nz-input name="keyWords" id="keyWords" formControlName="keyWords">
@@ -65,7 +65,19 @@
   
   <div class="search-result-list"> 
     
-    <st #st [data]="alerts" [columns]="columns" [footer]="tableFoot">
+    <st #st [data]="alerts" [columns]="columns" [footer]="tableFoot" [scroll]="{ x: '2715px' }">
+      
+          <!--   createdTimeColumn colummn  -->  
+        <ng-template st-row="createdTimeColumn" let-item let-index="index"> 
+              
+            {{ item.createdTime  | date:'M/d/yy, h:mm:ss a':'+0000'}} 
+        </ng-template>
+        <!--   lastSentTimeColumn colummn  -->  
+        <ng-template st-row="lastSentTimeColumn" let-item let-index="index"> 
+          
+
+              {{ item.lastModifiedTime  | date:'M/d/yy, h:mm:ss a':'+0000'}} 
+        </ng-template>
     </st>
   
   </div>

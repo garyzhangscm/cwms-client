@@ -94,6 +94,33 @@ export class IntegrationIntegrationDataWorkOrderComponent implements OnInit {
     }
   }
 
+  workOrderLineTableColumns: STColumn[] = [
+    { title: this.i18n.fanyi("id"),  index: 'id' , width: 100 }, 
+    { title: this.i18n.fanyi("number"),  index: 'number' ,   }, 
+    { title: this.i18n.fanyi("itemId"),  index: 'itemId' ,   }, 
+    { title: this.i18n.fanyi("itemName"),  index: 'itemName' ,   }, 
+    { title: this.i18n.fanyi("expected-quantity"),  index: 'expectedQuantity' ,   }, 
+    { title: this.i18n.fanyi("inventory-status.id"),  index: 'inventoryStatusId' ,   }, 
+    { title: this.i18n.fanyi("inventory-status.name"),  index: 'inventoryStatusName' ,   }, 
+    { title: this.i18n.fanyi("allocation-strategy"),  index: 'allocationStrategyType' ,   }, 
+  ]
+
+  workOrderByProductTableColumns: STColumn[] = [
+    { title: this.i18n.fanyi("id"),  index: 'id' , width: 100 }, 
+    { title: this.i18n.fanyi("itemId"),  index: 'itemId' ,   }, 
+    { title: this.i18n.fanyi("itemName"),  index: 'itemName' ,   }, 
+    { title: this.i18n.fanyi("expected-quantity"),  index: 'expectedQuantity' ,   }, 
+    { title: this.i18n.fanyi("inventory-status.id"),  index: 'inventoryStatusId' ,   }, 
+    { title: this.i18n.fanyi("inventory-status.name"),  index: 'inventoryStatusName' ,   }, 
+  ]
+  
+  workOrderInstructionTableColumns: STColumn[] = [
+    { title: this.i18n.fanyi("id"),  index: 'id' , width: 100 }, 
+    { title: this.i18n.fanyi("sequence"),  index: 'sequence' ,   }, 
+    { title: this.i18n.fanyi("instruction"),  index: 'instruction' ,   }, 
+    
+  ]
+
   constructor(
     private fb: FormBuilder,
     private integrationWorkOrderService: IntegrationWorkOrderDataService,

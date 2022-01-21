@@ -29,5 +29,10 @@ export class IntegrationInventoryAttributeChangeConfirmationService {
       return this.http.get(url).pipe(map(res => res.data));
     }
 
+    resend(id: number) : Observable<IntegrationInventoryAttributeChangeConfirmation> {
+      let url = `integration/integration-data/inventory-attribute-change-confirmations/${id}/resend`;
+      
+      return this.http.post(url).pipe(map(res => res.data));
+    }
     
 }

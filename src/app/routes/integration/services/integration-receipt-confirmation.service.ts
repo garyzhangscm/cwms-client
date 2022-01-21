@@ -32,4 +32,9 @@ export class IntegrationReceiptConfirmationService {
     }
 
     
+  resend(id: number) : Observable<IntegrationReceiptConfirmation> {
+    let url = `integration/integration-data/receipt-confirmations/${id}/resend`;
+    
+    return this.http.post(url).pipe(map(res => res.data));
+  }
 }

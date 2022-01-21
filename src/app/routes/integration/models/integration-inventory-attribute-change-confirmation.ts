@@ -30,4 +30,5 @@ export interface IntegrationInventoryAttributeChangeConfirmation {
   createdBy: string;
   lastModifiedTime:  Date;
   lastModifiedBy: string;
+  
 }

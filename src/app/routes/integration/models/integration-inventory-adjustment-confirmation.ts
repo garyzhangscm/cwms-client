@@ -25,4 +25,5 @@ export interface IntegrationInventoryAdjustmentConfirmation {
   createdBy: string;
   lastModifiedTime:  Date;
   lastModifiedBy: string;
+  
 }

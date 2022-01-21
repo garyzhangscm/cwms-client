@@ -23,22 +23,65 @@ export class AlertAlertComponent implements OnInit {
   @ViewChild('st', { static: true })
   st!: STComponent;
   columns: STColumn[] = [
-    { title: this.i18n.fanyi("type"),  index: 'type' , }, 
-    { title: this.i18n.fanyi("keyWords"),  index: 'keyWords' , }, 
-    { title: this.i18n.fanyi("ketitleyWords"),  index: 'title' , }, 
-    { title: this.i18n.fanyi("message"),  index: 'message' , }, 
+    { title: this.i18n.fanyi("type"),  index: 'type' , width: 200,
+        iif: () => this.isChoose('type') }, 
+    { title: this.i18n.fanyi("keyWords"),  index: 'keyWords' ,
+        iif: () => this.isChoose('keyWords')  }, 
+    { title: this.i18n.fanyi("title"),  index: 'title' , 
+        iif: () => this.isChoose('title') }, 
+    { title: this.i18n.fanyi("message"),  index: 'message' ,
+        iif: () => this.isChoose('message')  }, 
+    { title: this.i18n.fanyi("status"),  index: 'status' , width: 150,
+        iif: () => this.isChoose('status')  }, 
+    { title: this.i18n.fanyi("errorMessage"),  index: 'errorMessage' ,
+            iif: () => this.isChoose('errorMessage')  }, 
+    {
+      title: this.i18n.fanyi("createdTime"), 
+      render: 'createdTimeColumn', width: 200,
+      iif: () => this.isChoose('createdTimeColumn') 
+    },    
+    {
+      title: this.i18n.fanyi("lastSentTime"), 
+      render: 'lastSentTimeColumn', 
+      iif: () => this.isChoose('lastSentTimeColumn'),
+      width: 200
+    },     
     {
       title: this.i18n.fanyi("action"),  
       buttons: [ 
         {
           text: this.i18n.fanyi("resend"),  
           type: 'link',
-          click: (_record) => this.resendAlert(_record)
+          click: (_record) => this.resendAlert(_record),
         }
-      ]
+      ], 
+      width: 150,
+      fixed: 'right',
     }
   ]; 
+  
+  customColumns = [
 
+    { label: this.i18n.fanyi("type"), value: 'type', checked: true },
+    { label: this.i18n.fanyi("keyWords"), value: 'keyWords', checked: true },
+    { label: this.i18n.fanyi("title"), value: 'title', checked: true },
+    { label: this.i18n.fanyi("message"), value: 'message', checked: true },
+    { label: this.i18n.fanyi("status"), value: 'status', checked: true },
+    { label: this.i18n.fanyi("errorMessage"), value: 'errorMessage', checked: true },
+    { label: this.i18n.fanyi("createdTime"), value: 'createdTimeColumn', checked: true },
+    { label: this.i18n.fanyi("lastSentTime"), value: 'lastSentTimeColumn', checked: true }, 
+  ];
+
+  isChoose(key: string): boolean {
+    return !!this.customColumns.find(w => w.value === key && w.checked);
+  }
+
+  columnChoosingChanged(): void{ 
+    if (this.st !== undefined && this.st.columns !== undefined) {
+        this.st!.resetColumns({ emitReload: true });
+
+    }
+  }
   
   searchForm!: FormGroup;
   alerts: Alert[] = [];
@@ -61,7 +104,8 @@ export class AlertAlertComponent implements OnInit {
     this.searchForm = this.fb.group({
       type: [null],
       status: [null],
-      keywords: [null]
+      keyWords: [null],
+
     });
 
     this.activatedRoute.queryParams.subscribe(params => {

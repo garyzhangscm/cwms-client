@@ -29,4 +29,9 @@ export class IntegrationInventoryAdjustmentConfirmationService {
     }
     return this.http.get(url).pipe(map(res => res.data));
   }
+  resend(id: number) : Observable<IntegrationInventoryAdjustmentConfirmation> {
+    let url = `integration/integration-data/inventory-adjustment-confirmations/${id}/resend`;
+    
+    return this.http.post(url).pipe(map(res => res.data));
+  }
 }

@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { I18NService } from '@core';
-import { _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { CompanyService } from '../../warehouse-layout/services/company.service';
@@ -14,10 +14,13 @@ import { EmailAlertConfigurationService } from '../services/email-alert-configur
 export class AlertConfigurationComponent implements OnInit {
   currentEmailAlertConfiguration: EmailAlertConfiguration | undefined;
 
+  isSpinning = false;
+
+
   constructor(private http: _HttpClient,
     private emailAlertConfigurationService: EmailAlertConfigurationService,    
     private messageService: NzMessageService,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private companyService: CompanyService) {
 
     this.currentEmailAlertConfiguration = {
@@ -41,18 +44,45 @@ export class AlertConfigurationComponent implements OnInit {
   ngOnInit(): void { 
     this.emailAlertConfigurationService.getEmailAlertConfigurations().subscribe(
       {
-        next: (emailAlertConfigurationRes) => this.currentEmailAlertConfiguration = emailAlertConfigurationRes
+        next: (emailAlertConfigurationRes) => {
+          if (emailAlertConfigurationRes != null) {
+            this.currentEmailAlertConfiguration = emailAlertConfigurationRes;
+          }
+        }
       }
     )
   }
 
   saveConfiguration(): void {
-    this.emailAlertConfigurationService.changeEmailAlertConfiguration(this.currentEmailAlertConfiguration!).subscribe(
-      res => {
+    this.isSpinning = true;
+    if (this.currentEmailAlertConfiguration!.id == null) {
 
-        this.messageService.success(this.i18n.fanyi('message.action.success'));
-      }
-    )
+      this.emailAlertConfigurationService.addEmailAlertConfiguration(this.currentEmailAlertConfiguration!).subscribe(
+        {
+          next: () => {
+  
+            this.isSpinning = false;
+            this.messageService.success(this.i18n.fanyi('message.action.success'));
+          }, 
+          error: () => this.isSpinning = false
+  
+        }
+      )
+    }
+    else {
+
+      this.emailAlertConfigurationService.changeEmailAlertConfiguration(this.currentEmailAlertConfiguration!).subscribe(
+        {
+          next: () => {
+  
+            this.isSpinning = false;
+            this.messageService.success(this.i18n.fanyi('message.action.success'));
+          }, 
+          error: () => this.isSpinning = false
+  
+        }
+      )
+    }
   }
 
 }

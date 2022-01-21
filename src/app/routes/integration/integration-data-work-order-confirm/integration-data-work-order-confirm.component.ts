@@ -3,6 +3,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+import { differenceInMilliseconds } from 'date-fns';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
@@ -146,7 +148,7 @@ export class IntegrationIntegrationDataWorkOrderConfirmComponent implements OnIn
                   name: 'integration.insertTime',
                   showSort: true,
                   sortOrder: null,
-                  sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation) => this.utilService.compareDateTime(a.insertTime, b.insertTime),
+                  sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation) => differenceInMilliseconds(b.createdTime, a.createdTime),
                   sortDirections: ['ascend', 'descend'],
                   filterMultiple: true,
                   listOfFilter: [],
@@ -157,24 +159,13 @@ export class IntegrationIntegrationDataWorkOrderConfirmComponent implements OnIn
                   name: 'integration.lastUpdateTime',
                   showSort: true,
                   sortOrder: null,
-                  sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation) => this.utilService.compareDateTime(a.lastUpdateTime, b.lastUpdateTime),
+                  sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation) => differenceInMilliseconds(b.lastModifiedTime, a.lastModifiedTime),
                   sortDirections: ['ascend', 'descend'],
                   filterMultiple: true,
                   listOfFilter: [],
                   filterFn: null, 
                   showFilter: false
-                },
-                {
-                  name: 'integration.errorMessage',
-                  showSort: true,
-                  sortOrder: null,
-                  sortFn: (a: IntegrationWorkOrderConfirmation, b: IntegrationWorkOrderConfirmation) => a.errorMessage.localeCompare(b.errorMessage),
-                  sortDirections: ['ascend', 'descend'],
-                  filterMultiple: true,
-                  listOfFilter: [],
-                  filterFn: null, 
-                  showFilter: false
-                },
+                }, 
         ];
         expandSet = new Set<number>();
         
@@ -194,6 +185,7 @@ export class IntegrationIntegrationDataWorkOrderConfirmComponent implements OnIn
     private fb: FormBuilder,
     private integrationWorkOrderConfirmationService: IntegrationWorkOrderConfirmationService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private messageService: NzMessageService,
     private utilService: UtilService,
   ) {}
 
@@ -262,5 +254,15 @@ export class IntegrationIntegrationDataWorkOrderConfirmComponent implements OnIn
       integrationDateTimeRanger: [null],
       integrationDate: [null],
     });
+  }
+  resendIntegration(id: number) : void {
+    this.integrationWorkOrderConfirmationService.resend(id).subscribe({
+      next: () => {
+        
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.search();
+      }
+    })
+
   }
 }

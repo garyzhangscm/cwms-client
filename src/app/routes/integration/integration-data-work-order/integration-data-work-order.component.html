@@ -111,12 +111,21 @@
             
             <nz-tabset>
               <nz-tab nzTitle="{{'work-order.line' | i18n}}">
+                <st #workOrderLineTable [data]="item.workOrderLines" [columns]="workOrderLineTableColumns">
+
+                </st>
                  
               </nz-tab>
               <nz-tab nzTitle="{{'work-order.by-product' | i18n}}">
+                <st #workOrderByProductTable [data]="item.workOrderByProduct" [columns]="workOrderByProductTableColumns">
+
+                </st>
                  
               </nz-tab>
               <nz-tab nzTitle="{{'work-order-instruction' | i18n}}">
+                <st #workOrderInstructionTable [data]="item.workOrderInstructions" [columns]="workOrderInstructionTableColumns">
+
+                </st>
                  
               </nz-tab>
             </nz-tabset>

@@ -6,6 +6,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
@@ -282,9 +283,6 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
   currentPageDataChange($event: InventoryAdjustmentRequest[]): void {
     this.listOfDisplayInventoryAdjustmentRequests = $event;
   }
-
-
-
   initSearchForm(): void {
     // initiate the search form
     this.searchForm = this.fb.group({
@@ -326,7 +324,6 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
 
       nzWidth: 1000,
     });
-
 
 
   }

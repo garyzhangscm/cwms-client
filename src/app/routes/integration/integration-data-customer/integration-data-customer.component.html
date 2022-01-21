@@ -101,7 +101,7 @@
           </th> 
           
           <th nzEllipsis>{{ 'integration.errorMessage' | i18n }}</th>
-          <th>{{ 'action' | i18n }}</th>
+          <th nzRight>{{ 'action' | i18n }}</th>
           
       </tr>
     </thead>
@@ -135,7 +135,7 @@
             <span nz-tooltip nzTooltipTitle="{{ data.errorMessage }}">{{ data.errorMessage }}</span>
           </a>
         </td>
-        <td>
+        <td nzRight>
           <button nz-button (click)="resendIntegration(data.id!)">{{ 'resend' | i18n }}</button>
         </td>
       </tr>

@@ -13,4 +13,9 @@ export interface AlertSubscription {
 
     type: AlertType;
     deliveryChannel: AlertDeliveryChannel;
+
+    subscribed?: boolean;
+
+    keyWordsList?: string;
+    keyWords?: string[];
 }

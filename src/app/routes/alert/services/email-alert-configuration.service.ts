@@ -22,15 +22,15 @@ export class EmailAlertConfigurationService {
   getEmailAlertConfiguration(id: number): Observable<EmailAlertConfiguration> {
     return this.http.get(`resource/email-alert-configurations/${id}`).pipe(map(res => res.data));
   }
-  addEmailAlertConfiguration(department: EmailAlertConfiguration): Observable<EmailAlertConfiguration> {
-    return this.http.put(`resource/email-alert-configurations`, department).pipe(map(res => res.data));
+  addEmailAlertConfiguration(emailAlertConfiguration: EmailAlertConfiguration): Observable<EmailAlertConfiguration> {
+    return this.http.put(`resource/email-alert-configurations`, emailAlertConfiguration).pipe(map(res => res.data));
   }
-  changeEmailAlertConfiguration(department: EmailAlertConfiguration): Observable<EmailAlertConfiguration> {
-    return this.http.post(`resource/email-alert-configurations/${department.id}`, department).pipe(map(res => res.data));
+  changeEmailAlertConfiguration(emailAlertConfiguration: EmailAlertConfiguration): Observable<EmailAlertConfiguration> {
+    return this.http.post(`resource/email-alert-configurations/${emailAlertConfiguration.id}`, emailAlertConfiguration).pipe(map(res => res.data));
   }
  
-  removeEmailAlertConfiguration(department: EmailAlertConfiguration): Observable<EmailAlertConfiguration> {
-    return this.http.delete(`resource/email-alert-configurations/${department.id}`).pipe(map(res => res.data));
+  removeEmailAlertConfiguration(emailAlertConfiguration: EmailAlertConfiguration): Observable<EmailAlertConfiguration> {
+    return this.http.delete(`resource/email-alert-configurations/${emailAlertConfiguration.id}`).pipe(map(res => res.data));
   }
  
 }

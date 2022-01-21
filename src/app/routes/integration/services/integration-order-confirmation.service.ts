@@ -32,5 +32,10 @@ export class IntegrationOrderConfirmationService {
     return this.http.get(url).pipe(map(res => res.data));
   }
 
+  resend(id: number) : Observable<IntegrationOrderConfirmation> {
+    let url = `integration/integration-data/order-confirmations/${id}/resend`;
+    
+    return this.http.post(url).pipe(map(res => res.data));
+  }
   
 }

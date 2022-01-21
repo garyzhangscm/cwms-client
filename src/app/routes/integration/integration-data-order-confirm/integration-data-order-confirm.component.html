@@ -47,7 +47,7 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
   <nz-table 
-  [nzScroll]="{ x: 'true', y: 'true' }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationOrderConfirmations" #nestedTable
+  [nzScroll]="{ x: '100vw' }"  nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationOrderConfirmations" #nestedTable
     [nzFooter]="tableFoot">
     <thead  >
       <tr>
@@ -65,6 +65,9 @@
           >
             {{ column.name | i18n }}
           </th> 
+          <th nzEllipsis>{{ 'integration.errorMessage' | i18n }}</th>
+          <th nzRight>{{ 'action' | i18n }}</th>
+          
  
       </tr>
     </thead>
@@ -77,20 +80,24 @@
           <td>{{ data.number }}</td>
           <td>{{ data.warehouseId }}</td>
           <td>{{ data.warehouseName }}</td>
-          <td>{{ data.status }}</td>
+          
+          <td>{{ 'INTEGRATION-STATUS-' + data.status | i18n}}</td>
+          
           <td>
-            {{ data.insertTime[1] }}/{{ data.insertTime[2] }}/{{ data.insertTime[0] }} {{ data.insertTime[3] }}:{{
-                data.insertTime[4]
-              }}:{{ data.insertTime[5] }}
+            {{data.createdTime | date:'M/d/yy, h:mm:ss a':'+0000'}} 
           </td>
           <td>
-            <span *ngIf="data.lastUpdateTime !== null">
-              {{ data.lastUpdateTime[1] }}/{{ data.lastUpdateTime[2] }}/{{ data.lastUpdateTime[0] }}
-              {{ data.lastUpdateTime[3] }}:{{ data.lastUpdateTime[4] }}:{{ data.lastUpdateTime[5] }}
+            {{data.lastModifiedTime | date:'M/d/yy, h:mm:ss a':'+0000'}}  
+          </td>
+          <td nzEllipsis>
+            <a>
+              <span nz-tooltip nzTooltipTitle="{{ data.errorMessage }}">{{ data.errorMessage }}</span>
+            </a>
+          </td>
+          <td nzRight>
+            <button nz-button (click)="resendIntegration(data.id!)">{{ 'resend' | i18n }}</button>
+          </td>
 
-            </span>
-          </td>
-          <td>{{ data.errorMessage }}</td>
 
 
         </tr>
