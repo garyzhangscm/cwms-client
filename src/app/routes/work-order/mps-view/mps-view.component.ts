@@ -13,6 +13,15 @@ import { ProductionLineService } from '../services/production-line.service';
 
 declare function afterDraw(): Function;
 
+export interface ChartOptions {
+
+  colors: string[];
+        
+  hAxis: {
+    format: string, 
+  }
+}
+
 @Component({ 
   selector: 'app-work-order-mps-view',
   templateUrl: './mps-view.component.html',
@@ -40,15 +49,11 @@ export class WorkOrderMpsViewComponent implements OnInit {
     { type: 'date', id: 'Start' },
     { type: 'date', id: 'End' }
   ];
-  chartOptions = {
-    colors: ['#ff0000', '#FFA500', '#FFFF00', '#800080', '#008000',
-    '#0000FF', '#A52A2A', '#ff0000', '#FFA500', '#FFFF00',
-    '#800080', '#008000', '#0000FF', '#A52A2A', '#ff0000'], 
-    
-    hAxis: {
-      format: "MM/dd/yy", 
-    }
-  };
+  validColors = ['#ff0000', '#FFA500', '#FFFF00', '#800080', '#008000',
+                '#0000FF', '#A52A2A', '#ff0000', '#FFA500', '#FFFF00',
+                '#800080', '#008000', '#0000FF', '#A52A2A', '#ff0000'];
+  colorByItemMap = new Map<string, string>(); 
+  chartOptions?: ChartOptions;
  
    
   constructor(private http: _HttpClient, 
@@ -71,11 +76,12 @@ export class WorkOrderMpsViewComponent implements OnInit {
   
   
   initiatePorductionLines() {
-    
+    this.isSpinning = true;
     this.productionLineService.getProductionLines().subscribe(
       {
         next: (productionLines) => {
           this.availableProductionLines = productionLines; 
+          this.isSpinning = false;
         }, 
       }
     );
@@ -85,6 +91,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
   resetForm(): void {
     this.searchForm.reset();
     this.chartData = [];
+    this.colorByItemMap.clear();
     
 
   }
@@ -93,6 +100,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
     this.isSpinning = true; 
     
     this.chartData = [];
+    this.colorByItemMap.clear();
 
     // by default, we will show date start from today, 
     let startTime : Date = this.searchForm.controls.mpsDateTimeRanger.value ? 
@@ -197,6 +205,9 @@ export class WorkOrderMpsViewComponent implements OnInit {
         let interval: Interval | undefined;
         let lastMPSDate: MasterProductionScheduleLineDate | undefined;
         let totalPlannedQuantity = 0;
+        this.colorByItemMap.clear();
+        let barColors: string[] = [];
+
         mpsDates.forEach(
           mpsDate => {
             // this is the first date in the range, let's save it first 
@@ -248,12 +259,31 @@ export class WorkOrderMpsViewComponent implements OnInit {
                   ],
                 ];
 
-                interval = {
+              // setup the color for the previous added bar
+              // we will set the color by item, one color per item, regardless
+              // of how many bars this item has 
+              if (this.colorByItemMap.has(lastMPSDate.itemName!)) {
+
+                barColors = [
+                  ...barColors, 
+                  this.colorByItemMap.get(lastMPSDate.itemName!)!                  
+                ]
+              }
+              else {
+                barColors = [
+                  ...barColors, 
+                  this.getColorByItem(lastMPSDate.itemName!)!                  
+                ]
+
+              }
+
+
+              interval = {
                   start: parseISO(mpsDate.plannedDate.toString().substring(0, 10)),
                   end: parseISO(mpsDate.plannedDate.toString().substring(0, 10)),
-                }
-                lastMPSDate = mpsDate;
-                totalPlannedQuantity = mpsDate.plannedQuantity
+              }
+              lastMPSDate = mpsDate;
+              totalPlannedQuantity = mpsDate.plannedQuantity
             }
 
           }
@@ -270,15 +300,35 @@ export class WorkOrderMpsViewComponent implements OnInit {
                     addDays(interval.end, 1) // the chart won't include the end date, so we will need to add one day to better show the date range
                   ],
                 ];
-        }
-        // console.log(`this.chartData: ${JSON.stringify(this.chartData)}`);
+                
+              // setup the color for the previous added bar
+              // we will set the color by item, one color per item, regardless
+              // of how many bars this item has 
 
-        // console.log(`mpsRes : ${JSON.stringify(mpsRes)}`);
+              if (this.colorByItemMap.has(lastMPSDate.itemName!)) {
+
+                barColors = [
+                  ...barColors, 
+                  this.colorByItemMap.get(lastMPSDate.itemName!)!                  
+                ]
+              }
+              else {
+                barColors = [
+                  ...barColors, 
+                  this.getColorByItem(lastMPSDate.itemName!)!                  
+                ]
+
+              }
+        } 
         
-        this.chartWidth = Math.max(28 * differenceInCalendarDays(maxEndTime, minStartTime), 1500);
-        // console.log(`minStartTime : ${minStartTime}`);
-        // console.log(`maxEndTime : ${maxEndTime}`);
-        // console.log(`this.chartWidth : ${this.chartWidth}`);
+        this.chartWidth = Math.max(28 * differenceInCalendarDays(maxEndTime, minStartTime), 1500); 
+        this.chartOptions = {
+          colors: barColors,
+              
+          hAxis: {
+            format: "MM/dd/yy", 
+          }
+        };  
         
         this.isSpinning = false; 
       }, 
@@ -309,9 +359,23 @@ export class WorkOrderMpsViewComponent implements OnInit {
     */
     
   }
+  getColorByItem(itemName: string) : string { 
+    // see how many colors we already used
+    const usedColorCount = this.colorByItemMap.size;
+    let itemColor: string = ""; 
+    if (usedColorCount >= this.validColors.length) {
+      itemColor =  this.validColors[usedColorCount % this.validColors.length];
+    }
+    else {
+      itemColor = this.validColors[usedColorCount];
+    } 
+    // add it to the map 
+    this.colorByItemMap.set(itemName, itemColor);
+    return itemColor;
 
-  processItemQueryResult(selectedItemName: any): void {
-    console.log(`start to query with item name ${selectedItemName}`);
+  }
+
+  processItemQueryResult(selectedItemName: any): void { 
     this.searchForm.controls.itemName.setValue(selectedItemName);
   }
 
@@ -322,6 +386,6 @@ export class WorkOrderMpsViewComponent implements OnInit {
   onGoogleChartReady() {
     console.log(`onGoogleChartReady, start to call afterDraw`);
     // afterDraw() 
-  }
+  } 
 }
  

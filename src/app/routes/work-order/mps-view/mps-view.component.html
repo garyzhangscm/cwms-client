@@ -86,6 +86,14 @@
             </div>
         </div>
     </form>
+    
+    <div nz-row>
+        <div nz-col [nzSpan]="24"  >
+            <a  routerLink="/work-order/mps-export" routerLinkActive="active" >
+                {{ 'export' | i18n }}
+            </a> 
+        </div>
+    </div>
 <!-- gantt diagram / option 1-->
 <!--
 https://www.npmjs.com/package/dhtmlx-gantt
@@ -105,7 +113,7 @@ http://gantt.ngnice.com/guides/intro
 <!--
     https://github.com/FERNman/angular-google-charts
 --> 
-    <div id="google_chart_wrapper" *ngIf="chartData.length > 0">
+    <div id="google_chart_wrapper" *ngIf="chartData.length > 0 && chartOptions != null">
 
         <google-chart
          [type]="chartType" [data]="chartData" 
@@ -117,4 +125,14 @@ http://gantt.ngnice.com/guides/intro
         
     </div>
     <nz-empty *ngIf="chartData.length == 0" style="padding-top: 25px;"></nz-empty>
+    
+    <nz-list nzGrid *ngIf="colorByItemMap.size > 0">
+        <div nz-row [nzGutter]="16">
+          <div nz-col [nzSpan]="3"  *ngFor="let colorByItem of colorByItemMap | keyvalue">
+            <nz-list-item>
+              <nz-card nzSize="small" [style.background]="colorByItem.value">{{colorByItem.key}}</nz-card>
+            </nz-list-item>
+          </div>
+        </div>
+      </nz-list>
 </nz-spin> 
