@@ -1,7 +1,7 @@
-import { Component,  OnInit, ViewChild, } from '@angular/core';
+import { Component,  OnInit,  } from '@angular/core';
 import { FormBuilder , FormGroup } from '@angular/forms';
 import { _HttpClient } from '@delon/theme'; 
-import { ChartBase, ChartEditorComponent, ChartSelectionChangedEvent, ChartType, Row } from 'angular-google-charts';
+import {  ChartSelectionChangedEvent, ChartType, Row } from 'angular-google-charts';
 import { differenceInCalendarDays, addDays, parseISO, Interval} from 'date-fns';
 
 import { ColorService } from '../../style/color.service';
@@ -13,6 +13,17 @@ import { ProductionLineService } from '../services/production-line.service';
 
 declare function afterDraw(): Function;
 
+// MPS in chart format for better display and export
+export interface MPSChartData {
+  productionLineName: string;
+  itemName: string;
+  mpsNumber: string;
+  dailyQuantity: number;
+  totalQuantity: number; 
+  startDate: Date;
+  endDate: Date; 
+}
+
 export interface ChartOptions {
 
   colors: string[];
@@ -21,6 +32,18 @@ export interface ChartOptions {
     format: string, 
   }
 }
+
+
+export interface MPSByItemView{
+  itemName: string;
+  totalLines: number;
+  lineNumber: number;
+  totalQuantity: number;
+  goalQuantity: number;
+  productionLineName: string;
+  productionDays: number;
+}
+ 
 
 @Component({ 
   selector: 'app-work-order-mps-view',
@@ -40,7 +63,13 @@ export class WorkOrderMpsViewComponent implements OnInit {
   defaultDaySpan = 90;
 
   chartType = ChartType.Timeline;
+  // data for display in the google chart
   chartData: Row[] = [];
+  // meta data for chart and export
+  mpsChartData: MPSChartData[] = []
+  
+  // mps by item view, used for export to excel
+  mpsByItemViewData: MPSByItemView[] = [];
   chartWidth: number = 5000;
   chartColumns = [
     { type: 'string', id: 'Role' },
@@ -100,14 +129,24 @@ export class WorkOrderMpsViewComponent implements OnInit {
     this.isSpinning = true; 
     
     this.chartData = [];
+    this.mpsChartData = [];
     this.colorByItemMap.clear();
 
     // by default, we will show date start from today, 
+    /***
+     * 
     let startTime : Date = this.searchForm.controls.mpsDateTimeRanger.value ? 
         this.searchForm.controls.mpsDateTimeRanger.value[0] : new Date(); 
     let endTime : Date = this.searchForm.controls.mpsDateTimeRanger.value ? 
         this.searchForm.controls.mpsDateTimeRanger.value[1] : 
         addDays(startTime, this.defaultDaySpan); 
+     * 
+     */
+    
+    let startTime : Date = this.searchForm.controls.mpsDateTimeRanger.value ? 
+        this.searchForm.controls.mpsDateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.controls.mpsDateTimeRanger.value ? 
+        this.searchForm.controls.mpsDateTimeRanger.value[1] : undefined;
 
       
     this.masterProductionScheduleService.getMasterProductionSchedules(      
@@ -258,6 +297,19 @@ export class WorkOrderMpsViewComponent implements OnInit {
                     addDays(interval.end, 1) // the chart won't include the end date, so we will need to add one day to better show the date range
                   ],
                 ];
+              this.mpsChartData = [
+                  ...this.mpsChartData,
+                  {
+                      productionLineName: lastMPSDate.productionLineName!,
+                      itemName: lastMPSDate.itemName!,
+                      mpsNumber: lastMPSDate.mpsNumber!,
+                      dailyQuantity: lastMPSDate.plannedQuantity,
+                      totalQuantity: totalPlannedQuantity, 
+                      startDate: interval.start as Date, 
+                      endDate: addDays(interval.end, 1) 
+                  }
+              ];
+
 
               // setup the color for the previous added bar
               // we will set the color by item, one color per item, regardless
@@ -301,6 +353,19 @@ export class WorkOrderMpsViewComponent implements OnInit {
                   ],
                 ];
                 
+                this.mpsChartData = [
+                  ...this.mpsChartData,
+                  {
+                      productionLineName: lastMPSDate.productionLineName!,
+                      itemName: lastMPSDate.itemName!,
+                      mpsNumber: lastMPSDate.mpsNumber!,
+                      dailyQuantity: lastMPSDate.plannedQuantity,
+                      totalQuantity: totalPlannedQuantity, 
+                      startDate: interval.start as Date, 
+                      endDate: addDays(interval.end, 1) 
+                  }
+              ];
+
               // setup the color for the previous added bar
               // we will set the color by item, one color per item, regardless
               // of how many bars this item has 
@@ -387,5 +452,63 @@ export class WorkOrderMpsViewComponent implements OnInit {
     console.log(`onGoogleChartReady, start to call afterDraw`);
     // afterDraw() 
   } 
+
+  exportByItem() {
+    this.fillDataForExportByItem();
+
+  }
+  fillDataForExportByItem() {
+    // sort the meta data by item name
+    this.mpsChartData.sort((a, b) => {
+
+      if (a.itemName == b.itemName) {
+        return a.productionLineName.localeCompare(b.productionLineName)
+      }
+      else {
+        return a.itemName.localeCompare(b.itemName)
+      }
+    })
+    // see how many production line per item, as we will need to group by 
+    // production line and get a total number of the item
+    let lastItemName: string = "";
+    let lastProductionLineName: string = "";
+    let lastMPSByItemViewData: MPSByItemView;
+    this.mpsChartData.forEach(
+      singleMPSChartData => {
+        if (lastMPSByItemViewData ==  null) {
+          lastMPSByItemViewData = {
+            
+            itemName: singleMPSChartData.itemName,
+            totalLines: 1,
+            lineNumber: 0,
+            totalQuantity: singleMPSChartData.dailyQuantity,
+            goalQuantity: singleMPSChartData.dailyQuantity,
+            productionLineName: singleMPSChartData.productionLineName,
+            productionDays: singleMPSChartData.;
+          }
+        }
+        if (lastItemName == singleMPSChartData.itemName &&
+            lastProductionLineName == singleMPSChartData.productionLineName) {
+          // ok, we are still process the same item and same production line, 
+          // we will have multiple mps record when there're difference in the
+          // daily quantity for the same item and production line
+          // if we havn't create the MPSByItemView data yet,
+          // created it, otherwise, add to it
+          if (lastMPSByItemViewData) {
+            lastMPSByItemViewData.goalQuantity = lastMPSByItemViewData.goalQuantity +
+                singleMPSChartData.dailyQuantity;
+            lastMPSByItemViewData.totalQuantity = lastMPSByItemViewData.totalQuantity +
+                singleMPSChartData.dailyQuantity;
+          } 
+        }
+
+      }
+    )
+
+  }
+
+  exportByProductionLine(){
+    
+  }
 }
  

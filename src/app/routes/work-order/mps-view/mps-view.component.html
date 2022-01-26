@@ -89,9 +89,14 @@
     
     <div nz-row>
         <div nz-col [nzSpan]="24"  >
+            <!--
+
             <a  routerLink="/work-order/mps-export" routerLinkActive="active" >
                 {{ 'export' | i18n }}
             </a> 
+            -->
+            <button nz-button (click)="exportByItem()">{{ 'export-by-item' | i18n }}</button>
+            <button nz-button (click)="exportByProductionLine()">{{ 'export-by-item' | i18n }}</button>
         </div>
     </div>
 <!-- gantt diagram / option 1-->
@@ -136,3 +141,43 @@ http://gantt.ngnice.com/guides/intro
         </div>
       </nz-list>
 </nz-spin> 
+
+
+
+        <!--
+            Wrapper for export Excel
+        -->
+        <div #tableWrapper hidden>
+
+            <nz-table  [nzData]="mpsByItemViewData" #mpsByItemViewTable  nzShowPagination>
+                <thead>
+                  <tr>  
+                    <th>{{'item' | i18n}}</th>
+                    <th>{{'totalQuantity' | i18n}}</th>
+                    <th>{{'goalQuantity' | i18n}}</th>
+                    <th>{{'production-line' | i18n}}</th>
+                    <th>{{'productionDays' | i18n}}</th>
+                  </tr> 
+                </thead>
+                <tbody>
+    
+                    <tr *ngFor="let mpsByItemViewRow of mpsByItemViewTable.data;  let i = index">
+                        <td *ngIf="mpsByItemViewRow.lineNumber == 0" [rowSpan]="mpsByItemViewRow.totalLines">
+                          {{mpsByItemViewRow.itemName}}
+                        </td>
+                        <td *ngIf="mpsByItemViewRow.lineNumber == 0" [rowSpan]="mpsByItemViewRow.totalLines">
+                          {{mpsByItemViewRow.totalQuantity}}
+                        </td>
+                        <td>
+                          {{mpsByItemViewRow.goalQuantity}}
+                        </td>
+                        <td>
+                          {{mpsByItemViewRow.productionLineName}}
+                        </td>
+                        <td>
+                          {{mpsByItemViewRow.productionDays}}
+                        </td>
+                      </tr>
+                </tbody>
+              </nz-table>
+        </div>
