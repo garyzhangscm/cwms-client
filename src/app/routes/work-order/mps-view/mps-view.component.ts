@@ -48,6 +48,17 @@ export interface MPSByItemView{
 }
  
 
+export interface MPSByProductionLineView{
+  productionLineName: string;
+  dateRange: string;
+  productionDays: number;
+  itemName: string;
+  goalQuantity: number;
+  totalLines: number;
+  lineNumber: number;
+}
+ 
+
 @Component({ 
   selector: 'app-work-order-mps-view',
   templateUrl: './mps-view.component.html',
@@ -71,8 +82,10 @@ export class WorkOrderMpsViewComponent implements OnInit {
   // meta data for chart and export
   mpsChartRawData: MPSChartRawData[] = []
   
-  // mps by item view, used for export to excel
+  // mps by item & production line view, used for export to excel
   mpsByItemViewData: MPSByItemView[] = [];
+  mpsByProductionLineViewData: MPSByProductionLineView[] = [];
+
   chartWidth: number = 5000;
   chartColumns = [
     { type: 'string', id: 'Role' },
@@ -407,6 +420,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
         };  
         
         this.fillDataForExportByItem();
+        this.fillDataForExportByProductionLine();
         this.isSpinning = false; 
       }, 
       error: () => this.isSpinning = false
@@ -465,9 +479,12 @@ export class WorkOrderMpsViewComponent implements OnInit {
     // afterDraw() 
   } 
 
+  @ViewChild('exportByItemTableWrapper', { static: false }) exportByItemTableWrapper?: ElementRef;
+  @ViewChild('exportByProductionLineTableWrapper', { static: false }) exportByProductionLineTableWrapper?: ElementRef;
+
   exportByItem() {
 
-    this.exportToExcel(this.exportByItemTableWrapper!.nativeElement);
+    this.exportToExcel(this.exportByItemTableWrapper!.nativeElement, "mps_by_item");
   }
   fillDataForExportByItem() {
     // sort the meta data by item name
@@ -494,12 +511,12 @@ export class WorkOrderMpsViewComponent implements OnInit {
     // save the total quantity for the item and production line
     // key: item id - production line id
     // value: total planned quantity
-    let itemProductionLineQuantityMap: Map<String, number> = new Map();
+    let itemProductionLineQuantityMap: Map<string, number> = new Map();
 
     // production line days
     // key: item id - production line id
     // value: total planned days
-    let itemProductionLineDaysMap: Map<String, number> = new Map();
+    let itemProductionLineDaysMap: Map<string, number> = new Map();
 
     // how many productoin line per item. we will need this number
     // to merge the cell of the item name so when we have
@@ -520,6 +537,9 @@ export class WorkOrderMpsViewComponent implements OnInit {
     let itemTotalQty = 0;  // total quantity 
     let itemTotalLinesCount = 0;
 
+    
+    let processedProductionLineAndItem = new Set();
+
     this.mpsChartRawData.forEach(
       singleMPSChartRawData => {
         
@@ -536,12 +556,18 @@ export class WorkOrderMpsViewComponent implements OnInit {
         
 
         // calculate how many production lines for each item
+        // we use processedProductionLineAndItem set to save the production line for
+        // any item and production that we alaready processed. In case the item 
+        // has 2 separated date range in the same production line, we will still
+        // need only one line in the exported excel 
         itemTotalLinesCount = 
             itemTotalLinesCountMap.has(itemId) ? 
-              itemTotalLinesCountMap.get(itemId)! + 1 
+              itemTotalLinesCountMap.get(itemId)! + 
+              (processedProductionLineAndItem.has(itemIdAndProductionLineId) ? 0 : 1)
               :
               1; 
         itemTotalLinesCountMap.set(itemId, itemTotalLinesCount);  
+        processedProductionLineAndItem.add(itemIdAndProductionLineId);
 
         // calculate the goal quantity for the item and production line
         itemAndProductionLineQty = 
@@ -560,6 +586,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
                     differenceInCalendarDays(singleMPSChartRawData.endDate, singleMPSChartRawData.startDate);
         itemProductionLineDaysMap.set(itemIdAndProductionLineId, itemAndProductionLineDays);
 
+        
         // calculate the total quantity for the item
         itemTotalQty = 
             itemQuantityMap.has(itemId) ? 
@@ -598,6 +625,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
               productionDays: itemProductionLineDaysMap.get(key)!,
             }
           ]
+
           processedItemIds.add(itemId);
 
         }
@@ -609,15 +637,173 @@ export class WorkOrderMpsViewComponent implements OnInit {
   }
 
   exportByProductionLine(){
+    this.exportToExcel(this.exportByProductionLineTableWrapper!.nativeElement, "mps_by_production_line");
+    
+  }
+  
+  fillDataForExportByProductionLine() {
+    // sort the meta data by item name
+    this.mpsChartRawData.sort((a, b) => {
+
+      if (a.productionLineName == b.productionLineName) {
+        return a.itemName.localeCompare(b.itemName)
+      }
+      else {
+        return a.productionLineName.localeCompare(b.productionLineName)
+      }
+    }) 
+    // see how many production line per item, as we will need to group by 
+    // production line and get a total number of the item
+
+    // key: item id
+    // value: item name
+    let itemNameMap: Map<number, string> = new Map();
+    // key: production line id
+    // value: production line value
+    let productionLineNameMap: Map<number, string> = new Map();
+    
+    // save the total quantity for the item and production line
+    // key: item id - production line id
+    // value: total planned quantity
+    let itemProductionLineQuantityMap: Map<string, number> = new Map();
+
+
+    // production line date range
+    // key: item id - production line id
+    // value: total planned days
+    let itemProductionLineDateRangeMap: Map<string, string> = new Map();
+
+    // production line days
+    // key: item id - production line id
+    // value: total planned days
+    let itemProductionLineDaysMap: Map<string, number> = new Map();
+
+    // how many productoin line per item. we will need this number
+    // to merge the cell of the item name so when we have
+    // one single cell for the item for multiple lines
+    // key: item id
+    // value: total lines
+    let productionLineTotalLinesCountMap: Map<number, number> = new Map();
+
+    // variable that will be used during each loop
+    let itemName = '';
+    let itemId;
+    let productionLineName = '';
+    let productionLineId;
+    let itemIdAndProductionLineId = '';
+
+    let itemAndProductionLineQty = 0; // goal quantity
+    let itemAndProductionLineDays = 0; // production days
+    let itemAndProductionLineDateRange = ''; // production date range
+    
+    let productionLineTotalLinesCount = 0;
+    let processedProductionLineAndItem = new Set();
+
+    this.mpsChartRawData.forEach(
+      singleMPSChartRawData => {
+        
+        // get the goal quantity for item & production line that already saved 
+        itemName = singleMPSChartRawData.itemName;
+        itemId = singleMPSChartRawData.itemId;
+        productionLineName = singleMPSChartRawData.productionLineName;
+        productionLineId = singleMPSChartRawData.productionLineId;
+
+        itemNameMap.set(itemId, itemName);
+        productionLineNameMap.set(productionLineId, productionLineName);
+
+        itemIdAndProductionLineId = `${itemId}-${productionLineId}`;
+        
+
+        // calculate how many items  for each production line
+        // we use processedProductionLineAndItem set to save the production line for
+        // any item and production that we alaready processed. In case the item 
+        // has 2 separated date range in the same production line, we will still
+        // need only one line in the exported excel 
+        productionLineTotalLinesCount = 
+          productionLineTotalLinesCountMap.has(productionLineId) ? 
+          productionLineTotalLinesCountMap.get(productionLineId)! +  
+              (processedProductionLineAndItem.has(itemIdAndProductionLineId) ? 0 : 1)
+              :
+              1; 
+        productionLineTotalLinesCountMap.set(productionLineId, productionLineTotalLinesCount);  
+        processedProductionLineAndItem.add(itemIdAndProductionLineId);
+
+        // calculate the goal quantity for the item and production line
+        itemAndProductionLineQty = 
+            itemProductionLineQuantityMap.has(itemIdAndProductionLineId) ? 
+                itemProductionLineQuantityMap.get(itemIdAndProductionLineId)! + singleMPSChartRawData.totalQuantity 
+                :
+                singleMPSChartRawData.totalQuantity;
+        itemProductionLineQuantityMap.set(itemIdAndProductionLineId, itemAndProductionLineQty);
+        
+        // calculate the production days for the item and production line
+        itemAndProductionLineDays = 
+                itemProductionLineDaysMap.has(itemIdAndProductionLineId) ? 
+                    itemProductionLineDaysMap.get(itemIdAndProductionLineId)! 
+                        + differenceInCalendarDays(singleMPSChartRawData.endDate, singleMPSChartRawData.startDate) 
+                    :
+                    differenceInCalendarDays(singleMPSChartRawData.endDate, singleMPSChartRawData.startDate);
+        itemProductionLineDaysMap.set(itemIdAndProductionLineId, itemAndProductionLineDays);
+
+        // calculate the production date range for the item and production line
+        itemAndProductionLineDateRange =  itemProductionLineDateRangeMap.has(itemIdAndProductionLineId) ? 
+              `${itemProductionLineDateRangeMap.get(itemIdAndProductionLineId)!}, ${
+                   singleMPSChartRawData.startDate.toLocaleDateString()  } ~ ${ 
+                        singleMPSChartRawData.endDate.toLocaleDateString()}` 
+              :
+              `${singleMPSChartRawData.startDate.toLocaleDateString()  } ~ ${ 
+                  singleMPSChartRawData.endDate.toLocaleDateString()}`;
+
+        itemProductionLineDateRangeMap.set(itemIdAndProductionLineId, itemAndProductionLineDateRange);
+        
+        
+      }) 
+    // local variable that will be used in the foreach loop
+    let itemIdAndProductionLineIdArray: string[] = [];
+    let processedProductionLineIds = new Set();
+     
+    // loop through the map to generate the item table for export
+    this.mpsByProductionLineViewData = [];
+    itemProductionLineQuantityMap.forEach(
+      (itemProductionLineQuantity, key) => { 
+        // key: item id - production line id
+        itemIdAndProductionLineIdArray = key.split("-");
+        if (itemIdAndProductionLineIdArray.length == 2) {
+          itemId = +itemIdAndProductionLineIdArray[0]; 
+          productionLineId = +itemIdAndProductionLineIdArray[1];
+
+          itemName = itemNameMap.get(itemId)!;
+          productionLineName = productionLineNameMap.get(productionLineId)!; 
+          this.mpsByProductionLineViewData = [
+            ...this.mpsByProductionLineViewData, 
+            {
+              productionLineName: productionLineName,
+              dateRange: itemProductionLineDateRangeMap.get(key)!,
+              productionDays: itemProductionLineDaysMap.get(key)!,
+              itemName: itemName,
+              goalQuantity: itemProductionLineQuantity,
+              totalLines: productionLineTotalLinesCountMap.get(productionLineId)!,
+              lineNumber: processedProductionLineIds.has(productionLineId) ? 1 : 0, // if the line number is 0, then we will show the item name and span it accross all the lines
+              // otherwise, we won't need to show the item in the table due to the rowspan of the first record
+            
+              
+            }
+          ]
+          processedProductionLineIds.add(productionLineId);
+
+        }
+
+      }
+    ) 
+ 
     
   }
 
-  @ViewChild('exportByItemTableWrapper', { static: false }) exportByItemTableWrapper?: ElementRef;
 
-  exportToExcel(nativeTableElement: any): void {
+  exportToExcel(nativeTableElement: any, name: string): void {
 		/* generate worksheet */
     // const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(nativeTableElement);
-		const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(this.exportByItemTableWrapper!.nativeElement);
+		const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(nativeTableElement);
 
     var wscols = [
         {wch:20},
@@ -634,7 +820,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
 		XLSX.utils.book_append_sheet(wb, ws, 'mps');
 
 		/* save to file */
-		XLSX.writeFile(wb,"mps_export.xlsx");
+		XLSX.writeFile(wb,`${name}.xlsx`);
 	}
 }
  

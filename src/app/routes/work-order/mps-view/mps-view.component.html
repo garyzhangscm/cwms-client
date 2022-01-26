@@ -87,7 +87,7 @@
         </div>
     </form>
     
-    <div nz-row style="padding: 20px">
+    <div nz-row style="padding: 20px" *ngIf="mpsByItemViewData.length > 0">
         <div nz-col [nzSpan]="24"  >
             <!--
 
@@ -95,8 +95,8 @@
                 {{ 'export' | i18n }}
             </a> 
             -->
-            <button nz-button (click)="exportByItem()">{{ 'export-by-item' | i18n }}</button>
-            <button nz-button (click)="exportByProductionLine()">{{ 'export-by-item' | i18n }}</button>
+            {{'export' | i18n }}: <button nz-button (click)="exportByItem()">{{ 'MPS-EXPORT-TYPE.BY_ITEM' | i18n }}</button>
+            <button nz-button (click)="exportByProductionLine()">{{ 'MPS-EXPORT-TYPE.BY_PRODUCTION_LINE' | i18n }}</button>
         </div>
     </div>
 <!-- gantt diagram / option 1-->
@@ -177,6 +177,44 @@ http://gantt.ngnice.com/guides/intro
                         <td>
                           {{mpsByItemViewRow.productionDays}}
                         </td>
+                      </tr>
+                </tbody>
+              </nz-table>
+        </div> 
+
+        
+        <div #exportByProductionLineTableWrapper hidden>
+
+            <nz-table  [nzData]="mpsByProductionLineViewData" #mpsByProductionLineViewTable  nzShowPagination>
+                <thead>
+                  <tr>  
+                    <th>{{'production-line' | i18n}}</th>
+                    <th>{{'date-range' | i18n}}</th>
+                    <th>{{'productionDays' | i18n}}</th>
+                    <th>{{'item' | i18n}}</th>
+                    <th>{{'goalQuantity' | i18n}}</th>
+                  </tr> 
+                </thead>
+                <tbody>
+    
+                    <tr *ngFor="let mpsByProductionLineViewRow of mpsByProductionLineViewTable.data;  let i = index">
+                        <td *ngIf="mpsByProductionLineViewRow.lineNumber == 0" [rowSpan]="mpsByProductionLineViewRow.totalLines">
+                          {{mpsByProductionLineViewRow.productionLineName}}
+                        </td>
+                        
+                        <td>
+                          {{mpsByProductionLineViewRow.dateRange}}
+                        </td>
+                        <td>
+                          {{mpsByProductionLineViewRow.productionDays}}
+                        </td>
+                        <td>
+                          {{mpsByProductionLineViewRow.itemName}}
+                        </td>
+                        <td>
+                          {{mpsByProductionLineViewRow.goalQuantity}}
+                        </td>
+                        
                       </tr>
                 </tbody>
               </nz-table>

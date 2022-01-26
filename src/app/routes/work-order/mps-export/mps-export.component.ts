@@ -23,8 +23,12 @@ export interface MPSByItemView{
   productionLineName: string;
   productionDays: number;
 }
- 
 
+ 
+//
+//  OBSOLETED!!!!
+//
+//
 @Component({
   selector: 'app-work-order-mps-export',
   templateUrl: './mps-export.component.html',
