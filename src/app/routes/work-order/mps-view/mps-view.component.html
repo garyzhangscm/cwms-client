@@ -87,7 +87,7 @@
         </div>
     </form>
     
-    <div nz-row>
+    <div nz-row style="padding: 20px">
         <div nz-col [nzSpan]="24"  >
             <!--
 
@@ -142,12 +142,12 @@ http://gantt.ngnice.com/guides/intro
       </nz-list>
 </nz-spin> 
 
-
+ 
 
         <!--
             Wrapper for export Excel
         -->
-        <div #tableWrapper hidden>
+        <div #exportByItemTableWrapper hidden>
 
             <nz-table  [nzData]="mpsByItemViewData" #mpsByItemViewTable  nzShowPagination>
                 <thead>
@@ -180,4 +180,4 @@ http://gantt.ngnice.com/guides/intro
                       </tr>
                 </tbody>
               </nz-table>
-        </div>
+        </div> 

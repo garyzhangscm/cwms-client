@@ -1,8 +1,9 @@
-import { Component,  OnInit,  } from '@angular/core';
+import { Component,  ElementRef,  OnInit, ViewChild,  } from '@angular/core';
 import { FormBuilder , FormGroup } from '@angular/forms';
 import { _HttpClient } from '@delon/theme'; 
 import {  ChartSelectionChangedEvent, ChartType, Row } from 'angular-google-charts';
 import { differenceInCalendarDays, addDays, parseISO, Interval} from 'date-fns';
+import * as XLSX from 'xlsx';
 
 import { ColorService } from '../../style/color.service';
 import { UtilService } from '../../util/services/util.service';
@@ -14,9 +15,11 @@ import { ProductionLineService } from '../services/production-line.service';
 declare function afterDraw(): Function;
 
 // MPS in chart format for better display and export
-export interface MPSChartData {
-  productionLineName: string;
+export interface MPSChartRawData {
+  itemId: number;
   itemName: string;
+  productionLineId: number;
+  productionLineName: string;
   mpsNumber: string;
   dailyQuantity: number;
   totalQuantity: number; 
@@ -66,7 +69,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
   // data for display in the google chart
   chartData: Row[] = [];
   // meta data for chart and export
-  mpsChartData: MPSChartData[] = []
+  mpsChartRawData: MPSChartRawData[] = []
   
   // mps by item view, used for export to excel
   mpsByItemViewData: MPSByItemView[] = [];
@@ -105,7 +108,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
   
   
   initiatePorductionLines() {
-    this.isSpinning = true;
+    // this.isSpinning = true;
     this.productionLineService.getProductionLines().subscribe(
       {
         next: (productionLines) => {
@@ -129,7 +132,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
     this.isSpinning = true; 
     
     this.chartData = [];
-    this.mpsChartData = [];
+    this.mpsChartRawData = [];
     this.colorByItemMap.clear();
 
     // by default, we will show date start from today, 
@@ -144,9 +147,9 @@ export class WorkOrderMpsViewComponent implements OnInit {
      */
     
     let startTime : Date = this.searchForm.controls.mpsDateTimeRanger.value ? 
-        this.searchForm.controls.mpsDateTimeRanger.value[0] : undefined; 
+        this.searchForm.controls.mpsDateTimeRanger.value[0] : addDays(new Date(), -2000); 
     let endTime : Date = this.searchForm.controls.mpsDateTimeRanger.value ? 
-        this.searchForm.controls.mpsDateTimeRanger.value[1] : undefined;
+        this.searchForm.controls.mpsDateTimeRanger.value[1] : addDays(new Date(), 2000); 
 
       
     this.masterProductionScheduleService.getMasterProductionSchedules(      
@@ -207,7 +210,9 @@ export class WorkOrderMpsViewComponent implements OnInit {
                         
                             // used for MPS display
                             productionLineName: masterProductionScheduleLine.productionLine.name, 
+                            productionLineId: masterProductionScheduleLine.productionLine.id,
                             itemName: mps.item!.name,   
+                            itemId: mps.itemId,
                             mpsNumber: mps.number
                           }];
                         if (differenceInCalendarDays(plannedDate, minStartTime) < 0) {
@@ -297,11 +302,14 @@ export class WorkOrderMpsViewComponent implements OnInit {
                     addDays(interval.end, 1) // the chart won't include the end date, so we will need to add one day to better show the date range
                   ],
                 ];
-              this.mpsChartData = [
-                  ...this.mpsChartData,
+              // console.log(`chartDate: ${JSON.stringify(this.chartData)}`)  
+              this.mpsChartRawData = [
+                  ...this.mpsChartRawData,
                   {
+                      productionLineId: lastMPSDate.productionLineId!,    
                       productionLineName: lastMPSDate.productionLineName!,
                       itemName: lastMPSDate.itemName!,
+                      itemId: lastMPSDate.itemId!,                  
                       mpsNumber: lastMPSDate.mpsNumber!,
                       dailyQuantity: lastMPSDate.plannedQuantity,
                       totalQuantity: totalPlannedQuantity, 
@@ -352,12 +360,15 @@ export class WorkOrderMpsViewComponent implements OnInit {
                     addDays(interval.end, 1) // the chart won't include the end date, so we will need to add one day to better show the date range
                   ],
                 ];
+                // console.log(`chartDate: ${JSON.stringify(this.chartData)}`)  
                 
-                this.mpsChartData = [
-                  ...this.mpsChartData,
+                this.mpsChartRawData = [
+                  ...this.mpsChartRawData,
                   {
+                      productionLineId: lastMPSDate.productionLineId!,    
                       productionLineName: lastMPSDate.productionLineName!,
                       itemName: lastMPSDate.itemName!,
+                      itemId: lastMPSDate.itemId!,           
                       mpsNumber: lastMPSDate.mpsNumber!,
                       dailyQuantity: lastMPSDate.plannedQuantity,
                       totalQuantity: totalPlannedQuantity, 
@@ -395,6 +406,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
           }
         };  
         
+        this.fillDataForExportByItem();
         this.isSpinning = false; 
       }, 
       error: () => this.isSpinning = false
@@ -454,12 +466,12 @@ export class WorkOrderMpsViewComponent implements OnInit {
   } 
 
   exportByItem() {
-    this.fillDataForExportByItem();
 
+    this.exportToExcel(this.exportByItemTableWrapper!.nativeElement);
   }
   fillDataForExportByItem() {
     // sort the meta data by item name
-    this.mpsChartData.sort((a, b) => {
+    this.mpsChartRawData.sort((a, b) => {
 
       if (a.itemName == b.itemName) {
         return a.productionLineName.localeCompare(b.productionLineName)
@@ -467,48 +479,162 @@ export class WorkOrderMpsViewComponent implements OnInit {
       else {
         return a.itemName.localeCompare(b.itemName)
       }
-    })
+    }) 
     // see how many production line per item, as we will need to group by 
     // production line and get a total number of the item
-    let lastItemName: string = "";
-    let lastProductionLineName: string = "";
-    let lastMPSByItemViewData: MPSByItemView;
-    this.mpsChartData.forEach(
-      singleMPSChartData => {
-        if (lastMPSByItemViewData ==  null) {
-          lastMPSByItemViewData = {
-            
-            itemName: singleMPSChartData.itemName,
-            totalLines: 1,
-            lineNumber: 0,
-            totalQuantity: singleMPSChartData.dailyQuantity,
-            goalQuantity: singleMPSChartData.dailyQuantity,
-            productionLineName: singleMPSChartData.productionLineName,
-            productionDays: singleMPSChartData.;
-          }
-        }
-        if (lastItemName == singleMPSChartData.itemName &&
-            lastProductionLineName == singleMPSChartData.productionLineName) {
-          // ok, we are still process the same item and same production line, 
-          // we will have multiple mps record when there're difference in the
-          // daily quantity for the same item and production line
-          // if we havn't create the MPSByItemView data yet,
-          // created it, otherwise, add to it
-          if (lastMPSByItemViewData) {
-            lastMPSByItemViewData.goalQuantity = lastMPSByItemViewData.goalQuantity +
-                singleMPSChartData.dailyQuantity;
-            lastMPSByItemViewData.totalQuantity = lastMPSByItemViewData.totalQuantity +
-                singleMPSChartData.dailyQuantity;
-          } 
+
+    // key: item id
+    // value: item name
+    let itemNameMap: Map<number, string> = new Map();
+    // key: production line id
+    // value: production line value
+    let productionLineNameMap: Map<number, string> = new Map();
+    // save the total quantity for the item
+    let itemQuantityMap: Map<number, number> = new Map();
+    // save the total quantity for the item and production line
+    // key: item id - production line id
+    // value: total planned quantity
+    let itemProductionLineQuantityMap: Map<String, number> = new Map();
+
+    // production line days
+    // key: item id - production line id
+    // value: total planned days
+    let itemProductionLineDaysMap: Map<String, number> = new Map();
+
+    // how many productoin line per item. we will need this number
+    // to merge the cell of the item name so when we have
+    // one single cell for the item for multiple lines
+    // key: item id
+    // value: total lines
+    let itemTotalLinesCountMap: Map<number, number> = new Map();
+
+    // variable that will be used during each loop
+    let itemName = '';
+    let itemId;
+    let productionLineName = '';
+    let productionLineId;
+    let itemIdAndProductionLineId = '';
+
+    let itemAndProductionLineQty = 0; // goal quantity
+    let itemAndProductionLineDays = 0; // production days
+    let itemTotalQty = 0;  // total quantity 
+    let itemTotalLinesCount = 0;
+
+    this.mpsChartRawData.forEach(
+      singleMPSChartRawData => {
+        
+        // get the goal quantity for item & production line that already saved 
+        itemName = singleMPSChartRawData.itemName;
+        itemId = singleMPSChartRawData.itemId;
+        productionLineName = singleMPSChartRawData.productionLineName;
+        productionLineId = singleMPSChartRawData.productionLineId;
+
+        itemNameMap.set(itemId, itemName);
+        productionLineNameMap.set(productionLineId, productionLineName);
+
+        itemIdAndProductionLineId = `${itemId}-${productionLineId}`;
+        
+
+        // calculate how many production lines for each item
+        itemTotalLinesCount = 
+            itemTotalLinesCountMap.has(itemId) ? 
+              itemTotalLinesCountMap.get(itemId)! + 1 
+              :
+              1; 
+        itemTotalLinesCountMap.set(itemId, itemTotalLinesCount);  
+
+        // calculate the goal quantity for the item and production line
+        itemAndProductionLineQty = 
+            itemProductionLineQuantityMap.has(itemIdAndProductionLineId) ? 
+                itemProductionLineQuantityMap.get(itemIdAndProductionLineId)! + singleMPSChartRawData.totalQuantity 
+                :
+                singleMPSChartRawData.totalQuantity;
+        itemProductionLineQuantityMap.set(itemIdAndProductionLineId, itemAndProductionLineQty);
+        
+        // calculate the production days for the item and production line
+        itemAndProductionLineDays = 
+                itemProductionLineDaysMap.has(itemIdAndProductionLineId) ? 
+                    itemProductionLineDaysMap.get(itemIdAndProductionLineId)! 
+                        + differenceInCalendarDays(singleMPSChartRawData.endDate, singleMPSChartRawData.startDate) 
+                    :
+                    differenceInCalendarDays(singleMPSChartRawData.endDate, singleMPSChartRawData.startDate);
+        itemProductionLineDaysMap.set(itemIdAndProductionLineId, itemAndProductionLineDays);
+
+        // calculate the total quantity for the item
+        itemTotalQty = 
+            itemQuantityMap.has(itemId) ? 
+              itemQuantityMap.get(itemId)! + singleMPSChartRawData.totalQuantity 
+              :
+              singleMPSChartRawData.totalQuantity;
+        itemQuantityMap.set(itemId, itemTotalQty);
+        
+      }) 
+    // local variable that will be used in the foreach loop
+    let itemIdAndProductionLineIdArray: string[] = [];
+    let processedItemIds = new Set();
+     
+    // loop through the map to generate the item table for export
+    this.mpsByItemViewData = [];
+    itemProductionLineQuantityMap.forEach(
+      (itemProductionLineQuantity, key) => { 
+        // key: item id - production line id
+        itemIdAndProductionLineIdArray = key.split("-");
+        if (itemIdAndProductionLineIdArray.length == 2) {
+          itemId = +itemIdAndProductionLineIdArray[0]; 
+          productionLineId = +itemIdAndProductionLineIdArray[1];
+
+          itemName = itemNameMap.get(itemId)!;
+          productionLineName = productionLineNameMap.get(productionLineId)!; 
+          this.mpsByItemViewData = [
+            ...this.mpsByItemViewData, 
+            {
+              itemName: itemName,
+              totalLines: itemTotalLinesCountMap.get(itemId)!,
+              lineNumber: processedItemIds.has(itemId) ? 1 : 0, // if the line number is 0, then we will show the item name and span it accross all the lines
+              // otherwise, we won't need to show the item in the table due to the rowspan of the first record
+              totalQuantity: itemQuantityMap.get(itemId)!,
+              goalQuantity: itemProductionLineQuantity,
+              productionLineName: productionLineName,
+              productionDays: itemProductionLineDaysMap.get(key)!,
+            }
+          ]
+          processedItemIds.add(itemId);
+
         }
 
       }
-    )
-
+    ) 
+      
+    
   }
 
   exportByProductionLine(){
     
   }
+
+  @ViewChild('exportByItemTableWrapper', { static: false }) exportByItemTableWrapper?: ElementRef;
+
+  exportToExcel(nativeTableElement: any): void {
+		/* generate worksheet */
+    // const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(nativeTableElement);
+		const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(this.exportByItemTableWrapper!.nativeElement);
+
+    var wscols = [
+        {wch:20},
+        {wch:20},
+        {wch:20},
+        {wch:20},
+        {wch:20}
+    ];
+    
+    ws['!cols'] = wscols;
+
+		/* generate workbook and add the worksheet */
+		const wb: XLSX.WorkBook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(wb, ws, 'mps');
+
+		/* save to file */
+		XLSX.writeFile(wb,"mps_export.xlsx");
+	}
 }
  
