@@ -18,9 +18,9 @@
 
 <nz-spin [nzSpinning]="isSpinning">
     <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
-    <nz-step nzTitle="{{ 'quantity-calculator' | i18n }}"> </nz-step>
-    <nz-step nzTitle="{{ 'production-line-produce-plan' | i18n }}"> </nz-step>
-    <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+        <nz-step nzTitle="{{ 'quantity-calculator' | i18n }}"> </nz-step>
+        <nz-step nzTitle="{{ 'production-line-produce-plan' | i18n }}"> </nz-step>
+        <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
     </nz-steps>
 
     <!-- Calcualte the MPS required quantity-->
@@ -72,7 +72,7 @@
                 
                 <div nz-col [nzSpan]="8">
                     <nz-form-item nzFlex>
-                    <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="activityDate">
+                    <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="cutoffDate">
                         {{ 'cutoffDate' | i18n }}
                     </nz-form-label>
                     <nz-form-control [nzSpan]="18">

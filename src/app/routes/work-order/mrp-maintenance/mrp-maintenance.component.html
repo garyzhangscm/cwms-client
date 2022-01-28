@@ -1,0 +1,182 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+  <a routerLink="/work-order/mrp" routerLinkActive="active">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/work-order/mrp" routerLinkActive="active">{{
+        'mrp' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning"> 
+    
+    <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+        <nz-step nzTitle="{{ 'select-mps' | i18n }}"> </nz-step>
+        <nz-step nzTitle="{{ 'expand-by-bom' | i18n }}"> </nz-step> 
+    </nz-steps>
+
+    <!-- select MPS and production line-->
+    <div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;" > 
+        <nz-card [nzTitle]="mpsFilter"> 
+            
+            <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+                <div nz-row [nzGutter]="24">
+                    <div nz-col [nzSpan]="6">
+                        <nz-form-item nzFlex>
+                            <nz-form-label for="mpsNumber" [nzSpan]="6">
+                            {{ 'mps' | i18n }}
+                            </nz-form-label>
+                            <nz-form-control [nzSpan]="18">
+                                <input nz-input name="mpsNumber" id="mpsNumber" formControlName="mpsNumber" (blur)="loadMPS()" />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <div nz-col [nzSpan]="12" *ngIf="currentMPS">
+                        <nz-form-item nzFlex>
+                            <nz-form-label for="production-line" [nzSpan]="6">
+                            {{ 'production-line' | i18n }}
+                            </nz-form-label>
+                            <nz-form-control [nzSpan]="18">
+                                <nz-select  nzMode="multiple" formControlName="productionLines"
+                                     [(ngModel)]="selectedProductionLines" (ngModelChange)="selectedProductionLineChanged()">
+                                    <nz-option *ngFor="let productionLine of availableProductionLines" [nzLabel]="productionLine.name" 
+                                        [nzValue]="productionLine"></nz-option>
+                                </nz-select>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>                
+                </div>
+                <div nz-row [nzGutter]="24">
+                    
+                </div>
+                
+                <div nz-row>
+                    <div nz-col [nzSpan]="24" class="search-area"> 
+                    <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+                    </div>
+                </div>
+            </form>
+            
+            <ng-template #mpsFilter>
+                <h5>{{'filter-by-mps' | i18n}}</h5>
+            </ng-template>
+            
+        </nz-card>
+
+        
+        <nz-card *ngIf="currentMPS">             
+            <nz-calendar [(ngModel)]="cutOffDate">                 
+                <ng-container *nzDateCell="let date" > 
+                    <ng-container *ngIf="getTotalDailyPlannedQuantity(date) > 0">
+                        <h5>{{'total-quantity' | i18n}}: {{getTotalDailyPlannedQuantity(date)}}</h5>
+                        <ul class="events">
+                            <ng-container *ngFor="let masterProductionScheduleLine of getMPSLinesBySelectedProductionLine()">
+    
+                                <li *ngIf="getDailyPlannedQuantity(masterProductionScheduleLine, date) > 0">
+                                    <nz-badge nzStatus="success">
+                                       {{masterProductionScheduleLine.productionLine.name}} / {{'quantity'|i18n}}: {{getDailyPlannedQuantity(masterProductionScheduleLine, date)}}
+                                    </nz-badge>
+                                </li>
+                            </ng-container>
+
+                        </ul>
+                    </ng-container>
+                </ng-container>
+                <ng-container *nzMonthCell="let month">
+                    
+                    <ng-container *ngIf="getTotalMonthlyPlannedQuantity(month) > 0">
+                        <h5>{{'total-quantity' | i18n}}: {{getTotalMonthlyPlannedQuantity(month)}}</h5>
+                        <ul class="events">
+                            <ng-container *ngFor="let masterProductionScheduleLine of currentMPS.masterProductionScheduleLines">
+    
+                                <li *ngIf="getMonthlyPlannedQuantity(masterProductionScheduleLine, month) > 0">
+                                    <nz-badge nzStatus="success">
+                                       {{masterProductionScheduleLine.productionLine.name}} / {{'quantity'|i18n}}: {{getMonthlyPlannedQuantity(masterProductionScheduleLine, month)}}
+                                    </nz-badge>
+                                </li>
+                            </ng-container>
+
+                        </ul>
+                    </ng-container> 
+                  </ng-container>
+            </nz-calendar>
+        </nz-card> 
+    </div>
+
+    
+    <!-- expand by BOM -->
+    <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;" > 
+        
+        <nz-card>
+            <nz-descriptions nzBordered>
+                <nz-descriptions-item nzTitle="{{'mps' | i18n}}">{{currentMPS!.number}}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="{{'cutoffDate' | i18n}}">
+                    {{ cutOffDate  | date:'MM/dd/yyyy':'+0000'}}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="{{'total-quantity' | i18n}}">{{currentMRP!.totalRequiredQuantity}}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="{{'production-line' | i18n}}">
+                    {{ getSelectedProductionLineNames().join(',') }}
+
+                </nz-descriptions-item>
+            </nz-descriptions>
+                  
+        </nz-card>
+        <nz-card>
+            <nz-tree-view [nzTreeControl]="treeControl" [nzDataSource]="dataSource" [trackBy]="trackBy">
+                <!-- If the item is already expanded by BOM, allow the user to cancel the option
+                -->
+                <nz-tree-node *nzTreeNodeDef="let node" nzTreeNodeIndentLine>
+                <nz-tree-node-option 
+                  (nzClick)="selectListSelection.toggle(node)"
+                >
+                  {{ node.name }} ( {{'requiredQuantity' | i18n}}({{node.requiredQuantity}}) 
+                      = {{'totalRequiredQuantity' | i18n}}({{node.totalRequiredQuantity}}) 
+                      - {{'expectedInventoryOnHand' | i18n}}({{node.expectedInventoryOnHand}}) 
+                      
+                      
+                      )
+                </nz-tree-node-option>
+                <button nz-button nzType="text" nzSize="small" (click)="expandByBom(node)">
+                  <i nz-icon nzType="plus" nzTheme="outline"></i>
+                </button>
+              </nz-tree-node> 
+        
+                <!-- Allow the user to expand by BOM
+                -->
+              <nz-tree-node *nzTreeNodeDef="let node; when: hasChild" nzTreeNodeIndentLine>
+                <nz-tree-node-toggle>
+                  <i nz-icon nzType="caret-down" nzTreeNodeToggleRotateIcon></i>
+                </nz-tree-node-toggle>
+                {{ node.name }} 
+                <button nz-button nzType="text" nzSize="small" (click)="removeBOM(node)">
+                  <i nz-icon nzType="close" nzTheme="outline"></i>
+                </button>
+              </nz-tree-node>
+            </nz-tree-view>
+
+        </nz-card>
+    </div>
+    
+  <div class="steps-action" style="padding-top: 20px;">
+      
+    <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0"  >
+        <span>{{ 'steps.previous' | i18n }}</span>
+      </button>
+      <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+      <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1" [disabled]="!readyForNextStep()">
+        <span>{{ 'steps.next' | i18n }}</span>
+      </button>
+      <nz-divider nzType="vertical"></nz-divider>
+      <button nz-button nzType="primary" (click)="saveResult()"  *ngIf="stepIndex == 1" >
+        <span> {{ 'save' | i18n }}</span>
+      </button>
+  </div>
+</nz-spin>
+

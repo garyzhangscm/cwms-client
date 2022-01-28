@@ -41,6 +41,7 @@ import { WorkOrderMrpComponent } from './mrp/mrp.component';
 import { WorkOrderMpsMaintenanceComponent } from './mps-maintenance/mps-maintenance.component';
 import { WorkOrderMpsViewComponent } from './mps-view/mps-view.component';
 import { WorkOrderMpsExportComponent } from './mps-export/mps-export.component';
+import { WorkOrderMrpMaintenanceComponent } from './mrp-maintenance/mrp-maintenance.component';
 
 const routes: Routes = [
   { path: 'work-order', component: WorkOrderWorkOrderComponent, canActivate: [AuthGuard] },
@@ -81,7 +82,8 @@ const routes: Routes = [
   { path: 'mrp', component: WorkOrderMrpComponent },
   { path: 'mps-maintenance', component: WorkOrderMpsMaintenanceComponent },
   { path: 'mps-view', component: WorkOrderMpsViewComponent },
-  { path: 'mps-export', component: WorkOrderMpsExportComponent }];
+  { path: 'mps-export', component: WorkOrderMpsExportComponent },
+  { path: 'mrp-maintenance', component: WorkOrderMrpMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

@@ -14,6 +14,7 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
+import { NzTreeViewModule } from 'ng-zorro-antd/tree-view';
 import { CountdownModule } from 'ngx-countdown';
 
 import { CommonModule } from '../common/common.module';
@@ -29,9 +30,11 @@ import { WorkOrderLaborActivityComponent } from './labor-activity/labor-activity
 import { WorkOrderLaborComponent } from './labor/labor.component';
 import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component';
 import { WorkOrderMouldComponent } from './mould/mould.component';
+import { WorkOrderMpsExportComponent } from './mps-export/mps-export.component';
 import { WorkOrderMpsMaintenanceComponent } from './mps-maintenance/mps-maintenance.component';
 import { WorkOrderMpsViewComponent } from './mps-view/mps-view.component';
 import { WorkOrderMpsComponent } from './mps/mps.component';
+import { WorkOrderMrpMaintenanceComponent } from './mrp-maintenance/mrp-maintenance.component';
 import { WorkOrderMrpComponent } from './mrp/mrp.component';
 import { WorkOrderPrePrintLpnLabelComponent } from './pre-print-lpn-label/pre-print-lpn-label.component';
 import { WorkOrderProduceTransactionComponent } from './produce-transaction/produce-transaction.component';
@@ -60,8 +63,6 @@ import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspect
 import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component'; 
 import { WorkOrderRoutingModule } from './work-order-routing.module';
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
-import { WorkOrderMpsExportComponent } from './mps-export/mps-export.component';
-
 
 const COMPONENTS: Array<Type<void>> = [
   WorkOrderWorkOrderComponent,
@@ -102,7 +103,8 @@ const COMPONENTS: Array<Type<void>> = [
   WorkOrderMrpComponent,
   WorkOrderMpsMaintenanceComponent,
   WorkOrderMpsViewComponent,
-  WorkOrderMpsExportComponent];
+  WorkOrderMpsExportComponent,
+  WorkOrderMrpMaintenanceComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
@@ -123,7 +125,9 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzResultModule,
     NzCalendarModule,
     GoogleChartsModule,
-    NzEmptyModule 
+    NzEmptyModule , 
+    NzTreeViewModule 
+
   ],
   declarations: [
     ...COMPONENTS,
