@@ -14,6 +14,7 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
+import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { NzTreeViewModule } from 'ng-zorro-antd/tree-view';
 import { CountdownModule } from 'ngx-countdown';
 
@@ -126,7 +127,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzCalendarModule,
     GoogleChartsModule,
     NzEmptyModule , 
-    NzTreeViewModule 
+    NzTreeViewModule ,
+    NzTreeModule
 
   ],
   declarations: [

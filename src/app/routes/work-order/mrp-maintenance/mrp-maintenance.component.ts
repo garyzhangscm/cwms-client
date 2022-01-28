@@ -1,46 +1,32 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
+import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { differenceInCalendarDays, getMonth, parseISO } from 'date-fns';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NzTreeNodeOptions } from 'ng-zorro-antd/tree';
 import { NzTreeFlatDataSource, NzTreeFlattener } from 'ng-zorro-antd/tree-view';
 
+import { Item } from '../../inventory/models/item';
+import { ItemService } from '../../inventory/services/item.service';
+import { LocalCacheService } from '../../util/services/local-cache.service';
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { BillOfMaterial } from '../models/bill-of-material';
 import { MasterProductionSchedule } from '../models/master-production-schedule';
 import { MasterProductionScheduleLine } from '../models/master-production-schedule-line';
 import { MaterialRequirementsPlanning } from '../models/material-requirements-planning';
 import { MaterialRequirementsPlanningLine } from '../models/material-requirements-planning-line';
 import { ProductionLine } from '../models/production-line';
+import { BillOfMaterialService } from '../services/bill-of-material.service';
 import { MasterProductionScheduleService } from '../services/master-production-schedule.service';
 import { MaterialRequirementsPlanningService } from '../services/material-requirements-planning.service';
-
-interface FlatNode {
-  expandable: boolean;
-  name: string;
-  key: string;
-  level: number;
-
-  
-  totalRequiredQuantity: number;
-  requiredQuantity: number;
-  expectedInventoryOnHand: number;
-  expectedReceiveQuantity: number;
-  expectedOrderQuantity: number;
-  expectedWorkOrderQuantity: number;
-   
-}
-interface TreeNode {
-  name: string;
-  key: string;
-   
-
-  children?: TreeNode[];
-}
-
+ 
 
 @Component({
   selector: 'app-work-order-mrp-maintenance',
@@ -59,49 +45,13 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
   cutOffDate?: Date;
   selectedProductionLines: ProductionLine[] = [];
 
-  // data needed to build the tree view for MRP lines
-  private transformer = (node: MaterialRequirementsPlanningLine, level: number): FlatNode => {
-    const existingNode = this.nestedNodeMap.get(node);
-    const flatNode =
-      existingNode && existingNode.key === node.itemId?.toString()
-        ? existingNode
-        : {
-            expandable: !!node.children && node.children.length > 0,
-            name: node.item!.name,
-            level,
-            key: node.itemId!.toString(),
-            
-            totalRequiredQuantity: node.totalRequiredQuantity,
-            requiredQuantity: node.requiredQuantity,
-            expectedInventoryOnHand: node.expectedInventoryOnHand,
-            expectedReceiveQuantity: node.expectedReceiveQuantity,
-            expectedOrderQuantity: node.expectedOrderQuantity,
-            expectedWorkOrderQuantity: node.expectedWorkOrderQuantity,
-          };
-    flatNode.name = node.item!.name;
-    this.flatNodeMap.set(flatNode, node);
-    this.nestedNodeMap.set(node, flatNode);
-    return flatNode;
-  };
+  // modal for choosing BOM
+  selectedBOM?: BillOfMaterial;
+  listOfBOMs: BillOfMaterial[] = [];
+  chooseBOMModal!: NzModalRef;
 
-  treeData : MaterialRequirementsPlanningLine[] = [];
-  flatNodeMap = new Map<FlatNode, MaterialRequirementsPlanningLine>();
-  nestedNodeMap = new Map<MaterialRequirementsPlanningLine, FlatNode>();
-  selectListSelection = new SelectionModel<FlatNode>(true);
-  treeControl = new FlatTreeControl<FlatNode>(
-    node => node.level,
-    node => node.expandable
-  );
-  treeFlattener = new NzTreeFlattener(
-    this.transformer,
-    node => node.level,
-    node => node.expandable,
-    node => node.children
-  );
-  
-  dataSource = new NzTreeFlatDataSource(this.treeControl, this.treeFlattener);
-  hasChild = (_: number, node: FlatNode): boolean => node.expandable; 
-  trackBy = (_: number, node: FlatNode): string => `${node.key}-${node.name}`;
+  // data needed to build the tree view for MRP lines
+  itemTreeNodes: NzTreeNodeOptions[] = [];
 
   constructor(private http: _HttpClient,
     private fb: FormBuilder,
@@ -109,8 +59,12 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
     private titleService: TitleService,
     private materialRequirementsPlanningService: MaterialRequirementsPlanningService,
     private masterProductionScheduleService: MasterProductionScheduleService,
+    private itemService: ItemService,
+    private modalService: NzModalService,
     private warehouseService: WarehouseService,
     private activatedRoute: ActivatedRoute,  
+    private billOfMaterialService: BillOfMaterialService,
+    private localCacheService: LocalCacheService,
     private messageService: NzMessageService, ) { }
 
   ngOnInit(): void { 
@@ -270,8 +224,7 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
       warehouseId: mrp.warehouseId,
 
       itemId: mrp.itemId,
-      item: mrp.item,
-
+      item: mrp.item, 
       children: [],
 
       totalRequiredQuantity: mrp.totalRequiredQuantity,
@@ -280,6 +233,8 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
       expectedReceiveQuantity: 0,
       expectedOrderQuantity: 0,
       expectedWorkOrderQuantity: 0,
+      level: 0,
+      sequence: 0,
     }
 
   }
@@ -318,16 +273,190 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
 
   // setup the tree view based on the MRP lines
   setupMRPLineDisplay() {
-    
-    this.treeData =[ this.currentMRP!.materialRequirementsPlanningLines[0]
-    ];
-    console.log(`this.treeData: ${JSON.stringify(this.treeData)}`)
-    this.dataSource.setData(this.treeData);
-    this.treeControl.expandAll();
+    this.itemTreeNodes = [{
+      title: this.currentMRP!.materialRequirementsPlanningLines[0].item!.name,
+      key: `${this.currentMRP!.materialRequirementsPlanningLines[0].level!.toString()  }-${ 
+               this.currentMRP!.materialRequirementsPlanningLines[0].sequence!.toString()}`,
+      children: this.getItemTreeNodeChildren(this.currentMRP!.materialRequirementsPlanningLines[0]),
+      expanded: true
+    }];
+
+    console.log(`====   this.itemTreeNodes =====\n ${this.itemTreeNodes}`)
+     
 
   }
+  getItemTreeNodeChildren(mrpLine: MaterialRequirementsPlanningLine): NzTreeNodeOptions[] {
+    if (mrpLine.children == null || mrpLine.children.length == 0) {
+      return [];
+    }
+    return mrpLine.children.map(
+      childMRPLine => {    
+        let nzTreeNodeOption: NzTreeNodeOptions =  {    
+          title: childMRPLine.item!.name,
+          key: `${childMRPLine.level!.toString()  }-${ 
+            childMRPLine.sequence!.toString()}`,
+          children: this.getItemTreeNodeChildren(childMRPLine)
+        } 
+        return nzTreeNodeOption;
+      } 
+    );
+  }
  
+  @ViewChild('bomTable', { static: true })
+  bomTable!: STComponent;
+  bomColumns: STColumn[] = [
+    
+    { title: this.i18n.fanyi("id"), index: 'id', type: 'radio', width: 70 },
+    { title: this.i18n.fanyi("bill-of-material.number"), index: 'number',   width: 100}, 
+    { title: this.i18n.fanyi("item"), index: 'item.name',   width: 100}, 
+    { title: this.i18n.fanyi("item.description"), index: 'item.description',   width: 100}, 
+    { title: this.i18n.fanyi("bill-of-material.expectedQuantity"), index: 'expectedQuantity',   width: 100},  
+   
+  ];
+
+  findMatchedMRPFromTreeNode(node: NzTreeNodeOptions, mrpLine: MaterialRequirementsPlanningLine) : MaterialRequirementsPlanningLine | undefined {
+
+    // check if the passed in MRP line matched with the tree node.
+    // if not, we will check if we can find the MRP line from the current line's children
+    if (node.key == `${mrpLine.level!.toString()}-${mrpLine.sequence!.toString()}`) {
+        return mrpLine;
+    }
+    else if (mrpLine.children == null || mrpLine.children.length == 0){
+
+      return undefined;
+    }
+    else {
+      let matchedMRPLine: MaterialRequirementsPlanningLine | undefined = undefined;
+      for(let childMRPLine of mrpLine.children) {
+        matchedMRPLine = this.findMatchedMRPFromTreeNode(node, childMRPLine);
+        if (matchedMRPLine != null) {
+          break;
+        }
+
+     }
+     return matchedMRPLine;
+
+    }
+  }
+ 
+  openExpandByBomModal(
+    node: NzTreeNodeOptions,
+    tplExpandByBOMModalTitle: TemplateRef<{}>,
+    tplExpandByBOMModalContent: TemplateRef<{}>,
+  ): void {
+    
+    // Please note this.currentMRP!.materialRequirementsPlanningLines[0] is the top most item of the 
+    // MRP, which is the final finish good from the MPS
+    let mrpLine = this.findMatchedMRPFromTreeNode(node, this.currentMRP!.materialRequirementsPlanningLines[0]);
+    
+    if (mrpLine != null) {
+
+      this.billOfMaterialService.findMatchedBillOfMaterialByItemName(mrpLine.item!.name).subscribe(
+        {
+          next:(bomRes) => {
+            if (bomRes.length > 0) {
+              // we found matched BOM, let's show the modal for the user to choose one
   
-  removeBOM(node: FlatNode) {}
-  expandByBom(node: FlatNode) {}
+              this.listOfBOMs = bomRes;
+              this.selectedBOM = undefined;
+              // show the model
+              this.chooseBOMModal = this.modalService.create({
+                nzTitle: tplExpandByBOMModalTitle,
+                nzContent: tplExpandByBOMModalContent,
+                nzOkText: this.i18n.fanyi('confirm'),
+                nzCancelText: this.i18n.fanyi('cancel'),
+                nzMaskClosable: false,
+                nzOnCancel: () => {
+                  this.chooseBOMModal.destroy(); 
+                },
+                nzOnOk: () => {
+                  if (this.selectedBOM) {
+                    this.expandByBom(node, this.selectedBOM);
+                    
+  
+                  }
+                },
+                nzWidth: 1000,
+              });
+            }
+            else {
+              // no matched bom found
+              this.messageService.error(this.i18n.fanyi('no-matched-bom-found'))
+            }
+  
+          }
+              
+        }
+      )
+    }
+
+  } 
+  bomTableChanged(ret: STChange): void {
+    console.log('change', ret);
+    if (ret.type === 'radio') {
+      this.selectedBOM = ret.radio;
+    }
+  }
+  removeBOM(node: NzTreeNodeOptions) {}
+  expandByBom(node: NzTreeNodeOptions, bom?: BillOfMaterial) {
+
+    
+    // expand the MRP line by matched BOM
+    if ( bom == null) {
+      return;
+    }
+
+    let mrpLine = this.currentMRP!.materialRequirementsPlanningLines.find(
+      existingMRPLine => existingMRPLine.item!.id === bom.itemId
+    );
+    if (mrpLine == null) {
+      return
+    }
+    // clear the old expansion if there's any
+    mrpLine.children = [];
+
+    bom.billOfMaterialLines.forEach(
+      bomLine =>   
+          mrpLine!.children.push(
+            { 
+              warehouseId: this.warehouseService.getCurrentWarehouse().id,
+
+              itemId: bomLine.itemId,
+              item: bomLine.item,
+              parentMRPLineId: mrpLine!.id, 
+
+              children: [],
+
+              totalRequiredQuantity: mrpLine!.requiredQuantity * bomLine.expectedQuantity! / bom.expectedQuantity!,
+              requiredQuantity: mrpLine!.requiredQuantity * bomLine.expectedQuantity! / bom.expectedQuantity!,
+              expectedInventoryOnHand: 0,
+              expectedReceiveQuantity: 0,
+              expectedOrderQuantity: 0,
+              expectedWorkOrderQuantity: 0,
+              level: mrpLine!.level! + 1,
+              sequence: mrpLine!.children.length
+
+            }
+          )
+    )
+    
+     
+    this.setupMRPLineDisplay(); 
+ 
+
+    // for each newly added line, we may need to setup the item if we haven't done so,
+    // so that we can further expand it
+    mrpLine.children.filter(
+      childMRPLine => childMRPLine.item == null && childMRPLine.itemId != null
+    ).forEach(
+      childMRPLine => {
+        this.localCacheService.getItem(childMRPLine.itemId!).subscribe(
+          {
+            next: (itemRes) => childMRPLine.item = itemRes
+          }
+        )
+      }
+    )
+
+  } 
 }

@@ -6,6 +6,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { ProductionPlan } from '../models/production-plan';
@@ -197,7 +198,6 @@ export class WorkOrderProductionPlanComponent implements OnInit {
       this.expandSet.delete(id);
     }
   }
-
 
 
   ngOnInit(): void {

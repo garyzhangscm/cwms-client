@@ -119,7 +119,7 @@
             <nz-descriptions nzBordered>
                 <nz-descriptions-item nzTitle="{{'mps' | i18n}}">{{currentMPS!.number}}</nz-descriptions-item>
                 <nz-descriptions-item nzTitle="{{'cutoffDate' | i18n}}">
-                    {{ cutOffDate  | date:'MM/dd/yyyy':'+0000'}}</nz-descriptions-item>
+                    {{ cutOffDate  | date:'MM/dd/yyyy'}}</nz-descriptions-item>
                 <nz-descriptions-item nzTitle="{{'total-quantity' | i18n}}">{{currentMRP!.totalRequiredQuantity}}</nz-descriptions-item>
                 <nz-descriptions-item nzTitle="{{'production-line' | i18n}}">
                     {{ getSelectedProductionLineNames().join(',') }}
@@ -129,37 +129,27 @@
                   
         </nz-card>
         <nz-card>
-            <nz-tree-view [nzTreeControl]="treeControl" [nzDataSource]="dataSource" [trackBy]="trackBy">
-                <!-- If the item is already expanded by BOM, allow the user to cancel the option
-                -->
-                <nz-tree-node *nzTreeNodeDef="let node" nzTreeNodeIndentLine>
-                <nz-tree-node-option 
-                  (nzClick)="selectListSelection.toggle(node)"
-                >
-                  {{ node.name }} ( {{'requiredQuantity' | i18n}}({{node.requiredQuantity}}) 
-                      = {{'totalRequiredQuantity' | i18n}}({{node.totalRequiredQuantity}}) 
-                      - {{'expectedInventoryOnHand' | i18n}}({{node.expectedInventoryOnHand}}) 
-                      
-                      
-                      )
-                </nz-tree-node-option>
-                <button nz-button nzType="text" nzSize="small" (click)="expandByBom(node)">
-                  <i nz-icon nzType="plus" nzTheme="outline"></i>
-                </button>
-              </nz-tree-node> 
-        
-                <!-- Allow the user to expand by BOM
-                -->
-              <nz-tree-node *nzTreeNodeDef="let node; when: hasChild" nzTreeNodeIndentLine>
-                <nz-tree-node-toggle>
-                  <i nz-icon nzType="caret-down" nzTreeNodeToggleRotateIcon></i>
-                </nz-tree-node-toggle>
-                {{ node.name }} 
-                <button nz-button nzType="text" nzSize="small" (click)="removeBOM(node)">
-                  <i nz-icon nzType="close" nzTheme="outline"></i>
-                </button>
-              </nz-tree-node>
-            </nz-tree-view>
+            
+            <nz-tree [nzData]="itemTreeNodes" [nzTreeTemplate]="nzTreeTemplate" [nzExpandAll]="'true'">
+
+                <ng-template #nzTreeTemplate let-node let-origin="origin">
+                    <span class="custom-node">
+                      {{node.title}}
+                      <span *ngIf="node.children == null ||  node.children.length == 0">                
+                            <button nz-button nzType="text" nzSize="small" (click)="openExpandByBomModal(node, tplExpandByBOMModalTitle, tplExpandByBOMModalContent )">
+                                <i nz-icon nzType="plus" nzTheme="outline"></i>
+                            </button>
+                      </span>
+                      <span *ngIf="node.children && node.children.length > 0">                               
+                            <button nz-button nzType="text" nzSize="small" 
+                                (click)="removeBOM(node)">
+                                <i nz-icon nzType="close" nzTheme="outline"></i>
+                            </button>
+                      </span>
+                    </span>
+                  </ng-template>
+            </nz-tree>
+
 
         </nz-card>
     </div>
@@ -180,3 +170,52 @@
   </div>
 </nz-spin>
 
+
+
+<!-- Modal to choose BOM 
+-->
+<ng-template #tplExpandByBOMModalTitle>
+    <span>{{ 'bill-of-material' | i18n}}</span>
+  </ng-template>
+  <ng-template #tplExpandByBOMModalContent>
+     
+    <st #bomTable [data]="listOfBOMs"  [columns]="bomColumns"  [expand]="expand" 
+    expandRowByClick expandAccordion 
+    (change)="bomTableChanged($event)">
+     
+      <!--   BOM details  -->
+      <ng-template #expand let-item let-index="index" let-column="column">
+         
+        <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
+          <nz-tab  nzTitle=" {{ 'bill-of-material.line' | i18n }}">
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #bomDetailTable
+            [nzData]="item.billOfMaterialLines" 
+             nzSize="middle" [nzShowPagination]="false">
+             <thead>
+               <th>
+                 {{ 'bill-of-material.line.number' | i18n }}</th>
+               <th>
+                 {{ 'item' | i18n }}</th>
+               <th>
+                 {{ 'item.description' | i18n }}</th>
+               <th>
+                 {{ 'bill-of-material.line.expectedQuantity' | i18n }}</th>
+               <th>
+                 {{ 'inventory.status' | i18n }}</th>
+             </thead>
+              <tbody>
+                  <tr *ngFor="let billOfMaterialLine of bomDetailTable.data">
+                    <td>{{ billOfMaterialLine.number }}</td>
+                    <td>{{ billOfMaterialLine.item!.name }}</td>
+                    <td>{{ billOfMaterialLine.item!.description }}</td>
+                    <td>{{ billOfMaterialLine.expectedQuantity }}</td>
+                    <td>{{ billOfMaterialLine.inventoryStatus!.name }}</td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </nz-tab>
+        </nz-tabset>
+      </ng-template>
+    </st>
+  
+  </ng-template>

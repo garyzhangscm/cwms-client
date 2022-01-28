@@ -22,6 +22,10 @@ export interface MaterialRequirementsPlanningLine {
     expectedReceiveQuantity: number;
     expectedOrderQuantity: number;
     expectedWorkOrderQuantity: number;
+
+    // fields used by client only, for display in the tree structure
+    level?: number;
+    sequence?: number;
     
 
 }
