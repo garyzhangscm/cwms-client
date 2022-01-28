@@ -23,4 +23,6 @@ export interface PickWork {
   orderNumber?: string;
 
   lpn?: string;
+  workOrderLineId?: number; 
+  workOrderNumber?: string;
 }

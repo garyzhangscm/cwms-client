@@ -25,4 +25,5 @@ export interface WorkOrderLine {
 
   picks: PickWork[];
   shortAllocations: ShortAllocation[];
+  workOrderNumber?: string;
 }

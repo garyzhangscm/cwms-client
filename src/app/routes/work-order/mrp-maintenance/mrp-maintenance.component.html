@@ -21,6 +21,7 @@
     <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
         <nz-step nzTitle="{{ 'select-mps' | i18n }}"> </nz-step>
         <nz-step nzTitle="{{ 'expand-by-bom' | i18n }}"> </nz-step> 
+        <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
     </nz-steps>
 
     <!-- select MPS and production line-->
@@ -134,7 +135,47 @@
 
                 <ng-template #nzTreeTemplate let-node let-origin="origin">
                     <span class="custom-node">
-                      {{node.title}}
+                      {{node.title}} <em>( {{'required-quantity' | i18n}}({{ origin.requiredQuantity }}) =
+                        {{'total-required-quantity' | i18n}}({{ origin.totalRequiredQuantity }}) -
+                        {{'on-hand-quantity' | i18n}}({{ origin.expectedInventoryOnHand }})
+                        
+                        )</em> 
+                        <a *ngIf="origin.bom" style="padding-left: 25px" 
+                             nz-popover  nzPopoverTitle="{{'bill-of-material'|i18n}}" [nzPopoverContent]="bomDetailTpl">
+                            {{'bill-of-material'|i18n}}: {{origin.bom.number}} 
+                            <ng-template #bomDetailTpl>
+                                <div>
+                                    {{'bill-of-material.expectedQuantity' | i18n}} : {{origin.bom.expectedQuantity}}
+                                </div>
+                                <table>
+                                    <nz-table #popoverBOMDetailTable
+                                            [nzData]="origin.bom.billOfMaterialLines" nzBordered="true" 
+                                            nzSize="middle" [nzShowPagination]="false">
+                                        <thead>
+                                        <th>
+                                            {{ 'bill-of-material.line.number' | i18n }}</th>
+                                        <th>
+                                            {{ 'item' | i18n }}</th>
+                                        <th>
+                                            {{ 'item.description' | i18n }}</th>
+                                        <th>
+                                            {{ 'bill-of-material.line.expectedQuantity' | i18n }}</th>
+                                        <th>
+                                            {{ 'inventory.status' | i18n }}</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let billOfMaterialLine of popoverBOMDetailTable.data">
+                                                <td>{{ billOfMaterialLine.number }}</td>
+                                                <td>{{ billOfMaterialLine.item!.name }}</td>
+                                                <td>{{ billOfMaterialLine.item!.description }}</td>
+                                                <td>{{ billOfMaterialLine.expectedQuantity }}</td>
+                                                <td>{{ billOfMaterialLine.inventoryStatus!.name }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </nz-table>
+                                </table>    
+                            </ng-template>
+                        </a>
                       <span *ngIf="node.children == null ||  node.children.length == 0">                
                             <button nz-button nzType="text" nzSize="small" (click)="openExpandByBomModal(node, tplExpandByBOMModalTitle, tplExpandByBOMModalContent )">
                                 <i nz-icon nzType="plus" nzTheme="outline"></i>
@@ -154,17 +195,122 @@
         </nz-card>
     </div>
     
+    <!-- Confirm -->
+    <div class="small-card" *ngIf="stepIndex === 2" style="padding-top: 20px;" > 
+        <nz-card>
+            <nz-descriptions nzBordered>
+                <nz-descriptions-item nzTitle="{{'mps' | i18n}}">{{currentMPS!.number}}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="{{'cutoffDate' | i18n}}">
+                    {{ cutOffDate  | date:'MM/dd/yyyy'}}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="{{'total-quantity' | i18n}}">{{currentMRP!.totalRequiredQuantity}}</nz-descriptions-item>
+                <nz-descriptions-item nzTitle="{{'production-line' | i18n}}">
+                    {{ getSelectedProductionLineNames().join(',') }}
+
+                </nz-descriptions-item>
+            </nz-descriptions>
+                  
+        </nz-card>
+        <nz-card>
+            <nz-tabset>
+                <!-- show the result by tree view-->
+                <nz-tab nzTitle="{{'expandable-view' | i18n}}">
+                    <nz-tree [nzData]="itemTreeNodes" [nzTreeTemplate]="nzTreeTemplate" [nzExpandAll]="'true'">
+    
+                        <ng-template #nzTreeTemplate let-node let-origin="origin">
+                            <span class="custom-node">
+                            {{node.title}} <em>( {{'required-quantity' | i18n}}({{ origin.requiredQuantity }}) =
+                                {{'total-required-quantity' | i18n}}({{ origin.totalRequiredQuantity }}) -
+                                {{'on-hand-quantity' | i18n}}({{ origin.expectedInventoryOnHand }})
+                                
+                                )</em> 
+                                <a *ngIf="origin.bom" style="padding-left: 25px" 
+                                    nz-popover  nzPopoverTitle="{{'bill-of-material'|i18n}}" [nzPopoverContent]="bomDetailTpl">
+                                    {{'bill-of-material'|i18n}}: {{origin.bom.number}} 
+                                    <ng-template #bomDetailTpl>
+                                        <div>
+                                            {{'bill-of-material.expectedQuantity' | i18n}} : {{origin.bom.expectedQuantity}}
+                                        </div> 
+                                            <nz-table #popoverBOMDetailTable
+                                                    [nzData]="origin.bom.billOfMaterialLines" nzBordered="true" 
+                                                    nzSize="middle" [nzShowPagination]="false">
+                                                <thead>
+                                                <th>
+                                                    {{ 'bill-of-material.line.number' | i18n }}</th>
+                                                <th>
+                                                    {{ 'item' | i18n }}</th>
+                                                <th>
+                                                    {{ 'item.description' | i18n }}</th>
+                                                <th>
+                                                    {{ 'bill-of-material.line.expectedQuantity' | i18n }}</th>
+                                                <th>
+                                                    {{ 'inventory.status' | i18n }}</th>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let billOfMaterialLine of popoverBOMDetailTable.data">
+                                                        <td>{{ billOfMaterialLine.number }}</td>
+                                                        <td>{{ billOfMaterialLine.item!.name }}</td>
+                                                        <td>{{ billOfMaterialLine.item!.description }}</td>
+                                                        <td>{{ billOfMaterialLine.expectedQuantity }}</td>
+                                                        <td>{{ billOfMaterialLine.inventoryStatus!.name }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </nz-table>   
+                                    </ng-template>
+                                </a>
+                            </span>
+                        </ng-template>
+                    </nz-tree>
+    
+
+                </nz-tab>
+                <nz-tab nzTitle="{{'table-view' | i18n}}">
+
+                    <nz-table #mrpLineTable
+                        [nzData]="currentMRP!.materialRequirementsPlanningLines" nzBordered="true" 
+                        nzSize="middle" [nzShowPagination]="false">
+                        <thead>
+                            <th>
+                                {{ 'item' | i18n }}</th>
+                            <th>
+                                {{ 'item.description' | i18n }}</th>
+                            <th>
+                                {{ 'required-quantity' | i18n }}</th>
+                            <th>
+                                {{ 'total-required-quantity' | i18n }}</th>
+                            <th>
+                                {{ 'on-hand-quantity' | i18n }}</th>
+                            <th>
+                                {{ 'bill-of-material' | i18n }}</th>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let mrpLine of mrpLineTable.data">
+                                <td>{{ mrpLine.item?.name }}</td> 
+                                <td>{{ mrpLine.item?.description }}</td>
+                                <td>{{ mrpLine.requiredQuantity }}</td>
+                                <td>{{ mrpLine.totalRequiredQuantity }}</td>
+                                <td>{{ mrpLine.expectedInventoryOnHand }}</td>
+                                <td>{{ mrpLine.billOfMaterial?.number }}</td>
+                            </tr>
+                        </tbody>
+                    </nz-table>  
+                </nz-tab>
+
+                
+                <!-- show the result by table -->
+            </nz-tabset>    
+        </nz-card>
+    </div>
   <div class="steps-action" style="padding-top: 20px;">
       
     <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0"  >
         <span>{{ 'steps.previous' | i18n }}</span>
       </button>
-      <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
-      <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1" [disabled]="!readyForNextStep()">
+      <nz-divider nzType="vertical" *ngIf="stepIndex < 2"></nz-divider>
+      <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 2" [disabled]="!readyForNextStep()">
         <span>{{ 'steps.next' | i18n }}</span>
       </button>
       <nz-divider nzType="vertical"></nz-divider>
-      <button nz-button nzType="primary" (click)="saveResult()"  *ngIf="stepIndex == 1" >
+      <button nz-button nzType="primary" (click)="saveResult(tplAddMRPModalTitle, tplAddMRPModalContent)"  *ngIf="stepIndex == 2" >
         <span> {{ 'save' | i18n }}</span>
       </button>
   </div>
@@ -177,7 +323,7 @@
 <ng-template #tplExpandByBOMModalTitle>
     <span>{{ 'bill-of-material' | i18n}}</span>
   </ng-template>
-  <ng-template #tplExpandByBOMModalContent>
+<ng-template #tplExpandByBOMModalContent>
      
     <st #bomTable [data]="listOfBOMs"  [columns]="bomColumns"  [expand]="expand" 
     expandRowByClick expandAccordion 
@@ -189,8 +335,8 @@
         <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
           <nz-tab  nzTitle=" {{ 'bill-of-material.line' | i18n }}">
             <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #bomDetailTable
-            [nzData]="item.billOfMaterialLines" 
-             nzSize="middle" [nzShowPagination]="false">
+                [nzData]="item.billOfMaterialLines" 
+                 nzSize="middle" [nzShowPagination]="false">
              <thead>
                <th>
                  {{ 'bill-of-material.line.number' | i18n }}</th>
@@ -218,4 +364,42 @@
       </ng-template>
     </st>
   
+</ng-template>
+
+
+
+<!-- Add a name and description if we want to save the MRP
+-->
+<ng-template #tplAddMRPModalTitle>
+    <span>{{ 'MRP' | i18n}}</span>
   </ng-template>
+<ng-template #tplAddMRPModalContent>
+      
+    <form nz-form [formGroup]="addMRPForm" class="ant-advanced-search-form">
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="12">
+                <nz-form-item nzFlex>
+                    <nz-form-label for="mrpNumber" [nzSpan]="6">
+                    {{ 'number' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="18">
+                        <input appFkey variable="mrp-number" nz-input name="mrpNumber" id="mrpNumber" formControlName="mrpNumber"  
+                        (blur)="mrpNumberOnBlur($event)" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>               
+        </div> 
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="12">
+                <nz-form-item nzFlex>
+                    <nz-form-label for="description" [nzSpan]="6">
+                    {{ 'description' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="18">
+                        <input nz-input name="description" id="description" formControlName="description"   />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>               
+        </div> 
+    </form>
+</ng-template>

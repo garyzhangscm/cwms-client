@@ -2,7 +2,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -37,9 +37,10 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
 
   currentMRP?: MaterialRequirementsPlanning;
   currentMPS?: MasterProductionSchedule;
-  pageTitle = "";
+  pageTitle = "MRP.maintenance";
   isSpinning = false;
   searchForm!: FormGroup;
+  
   availableProductionLines: ProductionLine[] = [];
   stepIndex = 0;
   cutOffDate?: Date;
@@ -53,12 +54,17 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
   // data needed to build the tree view for MRP lines
   itemTreeNodes: NzTreeNodeOptions[] = [];
 
+  
+  addMRPForm!: FormGroup;
+  addMRPModal!: NzModalRef;
+
   constructor(private http: _HttpClient,
     private fb: FormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private materialRequirementsPlanningService: MaterialRequirementsPlanningService,
     private masterProductionScheduleService: MasterProductionScheduleService,
+    private router: Router,
     private itemService: ItemService,
     private modalService: NzModalService,
     private warehouseService: WarehouseService,
@@ -74,7 +80,8 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
       mpsNumber: [null],
       cutoffDate: [null],
       productionLines: [null],
-    });}
+    });
+  }
 
 
   resetForm(): void {
@@ -115,6 +122,12 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
     if (this.stepIndex == 1) {
       // setup empty MRP from the MPS and selected date
       this.initiateMRP();
+    }
+    else if (this.stepIndex == 2) {
+      // convert from the tree structure into table structure
+      // so that we can display in the table 
+      // and save in the server
+      this.flattenMRPLines();
     }
 
   }
@@ -267,21 +280,78 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
     )
     return requiredQuantity;
   }
-  saveResult() {
+  saveResult(
+    tplAddMRPModalTitle: TemplateRef<{}>,
+    tplAddMRPModalContent: TemplateRef<{}>) 
+  {
+    
+    this.addMRPForm = this.fb.group({
+      mrpNumber: [null],
+      description: [null], 
+    });
+      
+    // show the model
+    this.addMRPModal = this.modalService.create({
+      nzTitle: tplAddMRPModalTitle,
+      nzContent: tplAddMRPModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.chooseBOMModal.destroy(); 
+      },
+      nzOnOk: () => {
+        if (this.addMRPForm.controls.mrpNumber.value == null) {
+          this.messageService.error(this.i18n.fanyi('mrp-number-is-required'))
+          return false;
+        }
+        this.currentMRP!.number = this.addMRPForm.controls.mrpNumber.value;
+        this.currentMRP!.description = this.addMRPForm.controls.description.value;
+        this.saveMRP();
+        return true;
+      },
+      nzWidth: 1000,
+    });
 
   }
+  saveMRP() {
+    this.isSpinning = true;
+    this.materialRequirementsPlanningService.addMRP(this.currentMRP!).subscribe({
+      next: () => {
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        setTimeout(() => {
+          this.isSpinning = false;
+          this.router.navigateByUrl(`/work-order/mrp?number=${this.currentMRP!.number}`);
+        }, 2500);
+      },
+      error: () => this.isSpinning = false
+    })
+  }
 
+  // get the top most item from the current MRP. This is the final
+  // finish goods and should be the same as the item
+  getTopMostItemMRPLine() : MaterialRequirementsPlanningLine | undefined{
+    return this.currentMRP!.materialRequirementsPlanningLines.find(
+      mrpLine => mrpLine.parentMRPLineId == null
+    );
+  }
   // setup the tree view based on the MRP lines
   setupMRPLineDisplay() {
+    const topMostMRPLine = this.getTopMostItemMRPLine()!;
     this.itemTreeNodes = [{
-      title: this.currentMRP!.materialRequirementsPlanningLines[0].item!.name,
-      key: `${this.currentMRP!.materialRequirementsPlanningLines[0].level!.toString()  }-${ 
-               this.currentMRP!.materialRequirementsPlanningLines[0].sequence!.toString()}`,
-      children: this.getItemTreeNodeChildren(this.currentMRP!.materialRequirementsPlanningLines[0]),
+      title: topMostMRPLine.item!.name,      
+      totalRequiredQuantity: topMostMRPLine.totalRequiredQuantity,
+      requiredQuantity: topMostMRPLine.requiredQuantity,
+      expectedInventoryOnHand: topMostMRPLine.expectedInventoryOnHand,
+      expectedReceiveQuantity: topMostMRPLine.expectedReceiveQuantity,
+      expectedOrderQuantity: topMostMRPLine.expectedOrderQuantity,
+      expectedWorkOrderQuantity: topMostMRPLine.expectedWorkOrderQuantity,
+      bom: topMostMRPLine.billOfMaterial,
+      key: `${topMostMRPLine.level!.toString()  }-${ 
+        topMostMRPLine.sequence!.toString()}`,
+      children: this.getItemTreeNodeChildren(topMostMRPLine),
       expanded: true
     }];
-
-    console.log(`====   this.itemTreeNodes =====\n ${this.itemTreeNodes}`)
      
 
   }
@@ -293,6 +363,13 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
       childMRPLine => {    
         let nzTreeNodeOption: NzTreeNodeOptions =  {    
           title: childMRPLine.item!.name,
+          totalRequiredQuantity: childMRPLine.totalRequiredQuantity,
+          requiredQuantity: childMRPLine.requiredQuantity,
+          expectedInventoryOnHand: childMRPLine.expectedInventoryOnHand,
+          expectedReceiveQuantity: childMRPLine.expectedReceiveQuantity,
+          expectedOrderQuantity: childMRPLine.expectedOrderQuantity,
+          expectedWorkOrderQuantity: childMRPLine.expectedWorkOrderQuantity,
+          bom: childMRPLine.billOfMaterial,
           key: `${childMRPLine.level!.toString()  }-${ 
             childMRPLine.sequence!.toString()}`,
           children: this.getItemTreeNodeChildren(childMRPLine)
@@ -339,6 +416,37 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
     }
   }
  
+  flattenMRPLines() {
+    const topMostMRPLine = this.getTopMostItemMRPLine();
+    if (topMostMRPLine != null) {
+      // first we will clear all the lines except the top most line
+      this.currentMRP!.materialRequirementsPlanningLines = [
+        topMostMRPLine, 
+        ...this.getAllChildrenMRPLine(topMostMRPLine)
+      ];
+
+
+    }
+  } 
+
+  getAllChildrenMRPLine(mrpLine: MaterialRequirementsPlanningLine) : MaterialRequirementsPlanningLine[] {
+    if (mrpLine.children == null || mrpLine.children.length == 0) {
+      return [];
+    }
+    else {
+      // add the level 1 children first, then we will recusively add the descendant 
+      let allChildrenMRPLine: MaterialRequirementsPlanningLine[] = mrpLine.children;
+
+      mrpLine.children.forEach(
+        childMRPLine => allChildrenMRPLine = [
+          ...allChildrenMRPLine,
+          ...this.getAllChildrenMRPLine(childMRPLine)
+        ]
+      )
+
+      return allChildrenMRPLine;
+    }
+  }
   openExpandByBomModal(
     node: NzTreeNodeOptions,
     tplExpandByBOMModalTitle: TemplateRef<{}>,
@@ -347,7 +455,7 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
     
     // Please note this.currentMRP!.materialRequirementsPlanningLines[0] is the top most item of the 
     // MRP, which is the final finish good from the MPS
-    let mrpLine = this.findMatchedMRPFromTreeNode(node, this.currentMRP!.materialRequirementsPlanningLines[0]);
+    let mrpLine = this.findMatchedMRPFromTreeNode(node, this.getTopMostItemMRPLine()!);
     
     if (mrpLine != null) {
 
@@ -391,13 +499,26 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
     }
 
   } 
+  
+  mrpNumberOnBlur(event: Event): void { 
+    this.addMRPForm!.controls.mrpNumber.setValue((event.target as HTMLInputElement).value); 
+  }
+
   bomTableChanged(ret: STChange): void {
     console.log('change', ret);
     if (ret.type === 'radio') {
       this.selectedBOM = ret.radio;
     }
   }
-  removeBOM(node: NzTreeNodeOptions) {}
+  removeBOM(node: NzTreeNodeOptions) {
+
+    let mrpLine = this.findMatchedMRPFromTreeNode(node, this.getTopMostItemMRPLine()!);
+    if (mrpLine != null) {
+      mrpLine.children = [];
+      mrpLine.billOfMaterial = undefined;
+      this.setupMRPLineDisplay();
+    }
+  }
   expandByBom(node: NzTreeNodeOptions, bom?: BillOfMaterial) {
 
     
@@ -406,13 +527,15 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
       return;
     }
 
-    let mrpLine = this.currentMRP!.materialRequirementsPlanningLines.find(
-      existingMRPLine => existingMRPLine.item!.id === bom.itemId
-    );
+    let mrpLine = this.findMatchedMRPFromTreeNode(node, this.getTopMostItemMRPLine()!);
+
     if (mrpLine == null) {
       return
     }
+    // setup the bom on the MRP line
+    mrpLine.billOfMaterial = bom;
     // clear the old expansion if there's any
+
     mrpLine.children = [];
 
     bom.billOfMaterialLines.forEach(

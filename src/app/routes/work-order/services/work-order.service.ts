@@ -16,6 +16,7 @@ import { ProductionLineAssignment } from '../models/production-line-assignment';
 import { WorkOrder } from '../models/work-order';
 import { WorkOrderKpi } from '../models/work-order-kpi';
 import { WorkOrderKpiTransaction } from '../models/work-order-kpi-transaction';
+import { WorkOrderLine } from '../models/work-order-line';
 import { WorkOrderMaterialConsumeTiming } from '../models/work-order-material-consume-timing';
 
 @Injectable({
@@ -61,6 +62,10 @@ export class WorkOrderService {
 
   getWorkOrder(id: number): Observable<WorkOrder> {
     return this.http.get(`workorder/work-orders/${id}`).pipe(map(res => res.data));
+  }
+  
+  getWorkOrderLine(id: number): Observable<WorkOrderLine> {
+    return this.http.get(`workorder/work-orders/lines/${id}`).pipe(map(res => res.data));
   }
 
   addWorkOrder(workOrder: WorkOrder): Observable<WorkOrder> {

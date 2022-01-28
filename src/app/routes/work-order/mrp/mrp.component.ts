@@ -7,6 +7,7 @@ import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { LocalCacheService } from '../../util/services/local-cache.service';
 import { MaterialRequirementsPlanning } from '../models/material-requirements-planning';
 import { MaterialRequirementsPlanningService } from '../services/material-requirements-planning.service';
 
@@ -21,6 +22,7 @@ export class WorkOrderMrpComponent implements OnInit {
   listOfAllMRPs: MaterialRequirementsPlanning[] = [];
   isSpinning = false;
   searchResult= "";
+  loadingMRPDetailsRequest = 0;
   
   constructor(
     private fb: FormBuilder,
@@ -29,6 +31,7 @@ export class WorkOrderMrpComponent implements OnInit {
     private materialRequirementsPlanningService: MaterialRequirementsPlanningService,
     private activatedRoute: ActivatedRoute,  
     private messageService: NzMessageService, 
+    private localCacheService: LocalCacheService,
   ) { }
 
   ngOnInit(): void {
@@ -74,6 +77,7 @@ export class WorkOrderMrpComponent implements OnInit {
             rowCount: mrpRes.length,
           });
           this.listOfAllMRPs =mrpRes; 
+          this.refreshDetailInformations(this.listOfAllMRPs);
          
         },
         () => {
@@ -84,26 +88,94 @@ export class WorkOrderMrpComponent implements OnInit {
   }
 
   
+  // we will load the client / supplier / item information 
+  // asyncronized
+  async refreshDetailInformations(mrps: MaterialRequirementsPlanning[]) {  
+    // const currentPageOrders = this.getCurrentPageOrders(); 
+    let index = 0;
+    this.loadingMRPDetailsRequest = 0;
+    while (index < mrps.length) {
+
+      // we will need to make sure we are at max loading detail information
+      // for 10 orders at a time(each order may have 5 different request). 
+      // we will get error if we flush requests for
+      // too many orders into the server at a time
+      // console.log(`1. this.loadingOrderDetailsRequest: ${this.loadingOrderDetailsRequest}`);
+      
+      
+      while(this.loadingMRPDetailsRequest > 50) {
+        // sleep 50ms        
+        await this.delay(50);
+      } 
+      
+      this.refreshDetailInformation(mrps[index]);
+      index++;
+    } 
+    while(this.loadingMRPDetailsRequest > 0) {
+      // sleep 50ms        
+      await this.delay(100);
+    }  
+    // refresh the table while everything is loaded
+    console.log(`mnaually refresh the table`);   
+    this.st.reload();  
+  }
+  delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+  }
+  
+ 
+  refreshDetailInformation(mrp: MaterialRequirementsPlanning) {
+    this.loadItem(mrp);
+  }
+  loadItem(mrp: MaterialRequirementsPlanning) {
+     
+    if (mrp.itemId && mrp.item == null) {
+      this.loadingMRPDetailsRequest++;
+      this.localCacheService.getItem(mrp.itemId).subscribe(
+        {
+          next: (res) => {
+            mrp.item = res;
+            this.loadingMRPDetailsRequest--;
+          }
+        }
+      );      
+    } 
+  }
+
+  
   @ViewChild('st', { static: true })
   st!: STComponent;
   columns: STColumn[] = [
     
     { title: this.i18n.fanyi("number"), index: 'number', iif: () => this.isChoose('number'), width: 100},
-    { title: this.i18n.fanyi("description"), index: 'description', iif: () => this.isChoose('description'), width: 150},
-    { title: this.i18n.fanyi("item"), index: 'item.name', iif: () => this.isChoose('itemName'), width: 100 },
-    { title: this.i18n.fanyi("item.description"), index: 'item.description', iif: () => this.isChoose('itemDescription'), width: 100 },
-    { title: this.i18n.fanyi("mps"), index: 'mps.number', iif: () => this.isChoose('mps'), width: 50 }, 
+    { title: this.i18n.fanyi("description"), index: 'description', iif: () => this.isChoose('description'), width: 150}, 
+    {
+      title: this.i18n.fanyi("item"),
+      // renderTitle: 'customTitle',
+      render: 'itemNameColumn',
+      iif: () => this.isChoose('itemName'), width: 100
+    }, 
+    {
+      title: this.i18n.fanyi("item.description"),
+      // renderTitle: 'customTitle',
+      render: 'itemDescriptionColumn',
+      iif: () => this.isChoose('itemDescription'), width: 100
+    },
+    { title: this.i18n.fanyi("mps"), index: 'masterProductionSchedule.number', iif: () => this.isChoose('mps'), width: 100 }, 
     {
       title: this.i18n.fanyi("cutoffDate"),
       // renderTitle: 'customTitle',
       render: 'cutoffDateColumn',
       iif: () => this.isChoose('cutoffDate'), width: 100
     },
+    /**
+     * 
     {
       title: 'action',
       fixed: 'right',width: 100, 
       render: 'actionColumn',
     }, 
+     */
    
   ];
   customColumns = [
@@ -128,6 +200,7 @@ export class WorkOrderMrpComponent implements OnInit {
   }
   
   mpsTableChanged(event: STChange) : void { 
+    console.log(`mpsTableChanged: ${event.type}`)
     if (event.type === 'expand' && event.expand.expand === true) {
       
       this.showMRPDetails(event.expand);
@@ -135,8 +208,20 @@ export class WorkOrderMrpComponent implements OnInit {
 
   }
   
-  showMRPDetails(materialRequirementsPlanning: MaterialRequirementsPlanning) {
+  showMRPDetails(materialRequirementsPlanning: MaterialRequirementsPlanning) { 
+    materialRequirementsPlanning.materialRequirementsPlanningLines.forEach(
+      mrpLine => {
+        if (mrpLine.itemId && mrpLine.item == null) {
 
+           this.localCacheService.getItem(mrpLine.itemId).subscribe(
+             {
+               next: (itemRes) => {
+                mrpLine.item = itemRes; 
+               }
+             });
+        }
+      }
+    )
   }
 
 }
