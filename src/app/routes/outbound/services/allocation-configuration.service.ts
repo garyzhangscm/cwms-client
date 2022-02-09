@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
-import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Observable } from 'rxjs';
-import { AllocationConfiguration } from '../models/allocation-configuration';
 import { map } from 'rxjs/operators';
+
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { AllocationConfiguration } from '../models/allocation-configuration';
+
 
 @Injectable({
   providedIn: 'root',

@@ -1,3 +1,4 @@
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -371,9 +372,12 @@ export class PickService {
     openPickOnly?: boolean,
     loadDetails?: boolean,
   ): Observable<PickWork[]> {
+    
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+    
     let url = `outbound/picks?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (number) {
-      url = `${url}&number=${number}`;
+      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number.trim())}`;
     }
 
     if (orderId) {
@@ -411,34 +415,34 @@ export class PickService {
     }
 
     if (orderNumber) {
-      url = `${url}&orderNumber=${orderNumber}`;
+      url = `${url}&orderNumber=${httpUrlEncodingCodec.encodeValue(orderNumber.trim())}`;
     }
 
     if (shipmentNumber) {
-      url = `${url}&shipmentNumber=${shipmentNumber}`;
+      url = `${url}&shipmentNumber=${httpUrlEncodingCodec.encodeValue(shipmentNumber.trim())}`;
     }
 
     if (workOrderNumber) {
-      url = `${url}&workOrderNumber=${workOrderNumber}`;
+      url = `${url}&workOrderNumber=${httpUrlEncodingCodec.encodeValue(workOrderNumber.trim())}`;
     }
     if (waveNumber) {
-      url = `${url}&waveNumber=${waveNumber}`;
+      url = `${url}&waveNumber=${httpUrlEncodingCodec.encodeValue(waveNumber.trim())}`;
     }
 
     if (pickListNumber) {
-      url = `${url}&pickListNumber=${pickListNumber}`;
+      url = `${url}&pickListNumber=${httpUrlEncodingCodec.encodeValue(pickListNumber.trim())}`;
     }
     if (cartonizationNumber) {
-      url = `${url}&cartonizationNumber=${cartonizationNumber}`;
+      url = `${url}&cartonizationNumber=${httpUrlEncodingCodec.encodeValue(cartonizationNumber.trim())}`;
     }
     if (itemNumber) {
-      url = `${url}&itemNumber=${itemNumber}`;
+      url = `${url}&itemNumber=${httpUrlEncodingCodec.encodeValue(itemNumber.trim())}`;
     }
     if (sourceLocationName) {
-      url = `${url}&sourceLocationName=${sourceLocationName}`;
+      url = `${url}&sourceLocationName=${httpUrlEncodingCodec.encodeValue(sourceLocationName.trim())}`;
     }
     if (destinationLocationName) {
-      url = `${url}&destinationLocationName=${destinationLocationName}`;
+      url = `${url}&destinationLocationName=${httpUrlEncodingCodec.encodeValue(destinationLocationName.trim())}`;
     }
     if (containerId) {
       url = `${url}&containerId=${containerId}`;
