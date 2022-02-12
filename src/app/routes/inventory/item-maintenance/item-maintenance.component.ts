@@ -9,6 +9,7 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
 import { newItemUOMQuantityValidator } from '../../directives/newItemUOMQuantityValidator';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { AllocationRoundUpStrategyType } from '../models/allocation-round-up-strategy-type.enum';
 import { Item } from '../models/item';
@@ -58,6 +59,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     private itemService: ItemService,
     private activatedRoute: ActivatedRoute,
     private warehouseService: WarehouseService,
+    private companyService: CompanyService,
     private itemFamilyService: ItemFamilyService,
     private modalService: NzModalService,
     private unitOfMeasureService: UnitOfMeasureService,
@@ -104,13 +106,15 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     return {
       id: undefined,
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
+      companyId: this.companyService.getCurrentCompany()!.id,
       name: '',
       description: '',
       client: undefined,
       itemFamily: {
         name: '',
         description: '',
-        warehouseId: this.warehouseService.getCurrentWarehouse().id
+        warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        companyId: this.companyService.getCurrentCompany()!.id,
       },
       itemPackageTypes: [],
       unitCost: 0,

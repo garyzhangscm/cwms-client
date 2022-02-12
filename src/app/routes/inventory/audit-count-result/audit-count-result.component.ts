@@ -2,7 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { AuditCountResult } from '../models/audit-count-result';
@@ -37,6 +39,7 @@ export class InventoryAuditCountResultComponent implements OnInit {
     private itemService: ItemService,
     private inventoryService: InventoryService,
     private warehouseService: WarehouseService,
+    private companyService: CompanyService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inventory.audit-count-result.title');
 
@@ -144,6 +147,7 @@ export class InventoryAuditCountResultComponent implements OnInit {
         item: {
           id: undefined,
           warehouseId: this.warehouseService.getCurrentWarehouse().id,
+          companyId: this.companyService.getCurrentCompany()!.id,
           name: '',
           description: '',
           allowCartonization: undefined,
@@ -192,6 +196,7 @@ export class InventoryAuditCountResultComponent implements OnInit {
       item: {
         id: undefined,
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        companyId: this.companyService.getCurrentCompany()!.id,
         name: '',
         description: '',
         allowCartonization: undefined,

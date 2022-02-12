@@ -3,9 +3,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { ItemService } from '../../inventory/services/item.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { KpiMeasurement } from '../models/kpi-measurement.enum';
 import { WorkOrder } from '../models/work-order';
@@ -39,6 +41,7 @@ export class WorkOrderWorkOrderLineMaintenanceComponent implements OnInit {
     private itemService: ItemService,
     private inventoryStatusService: InventoryStatusService,
     private warehouseService: WarehouseService,
+    private companyService: CompanyService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.work-order.line.maintenance');
   }
@@ -92,6 +95,7 @@ export class WorkOrderWorkOrderLineMaintenanceComponent implements OnInit {
       item: {
         id: undefined,
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        companyId: this.companyService.getCurrentCompany()!.id,
         name: '',
         description: '',
         itemPackageTypes: [],
@@ -135,7 +139,7 @@ export class WorkOrderWorkOrderLineMaintenanceComponent implements OnInit {
         maxLineNumber = Number(workOrderLine.number) + 1;
       }
     });
-    return maxLineNumber + '';
+    return `${maxLineNumber  }`;
   }
 
   itemNameChanged(event: Event, workOrderLine: WorkOrderLine): void {

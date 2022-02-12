@@ -10,6 +10,7 @@ import { InventoryStatusService } from '../../inventory/services/inventory-statu
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { PickWork } from '../../outbound/models/pick-work';
 import { PickService } from '../../outbound/services/pick.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ProductionLine } from '../models/production-line';
 import { ProductionLineAssignment } from '../models/production-line-assignment';
@@ -46,10 +47,10 @@ export class WorkOrderDeassignProductionLineComponent implements OnInit {
 
     private activatedRoute: ActivatedRoute,
     private workOrderService: WorkOrderService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private inventoryService: InventoryService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private inventoryStatusService: InventoryStatusService,
     private warehouseService: WarehouseService,
+    private companyService: CompanyService,
     private messageService: NzMessageService,
     private router: Router,
     private pickService: PickService,
@@ -225,6 +226,7 @@ export class WorkOrderDeassignProductionLineComponent implements OnInit {
       item: {
         id: undefined,
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        companyId: this.companyService.getCurrentCompany()!.id,
         name: '',
         description: '',
         allowCartonization: undefined,

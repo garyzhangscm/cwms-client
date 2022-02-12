@@ -13,6 +13,7 @@ import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { ReportType } from '../../report/models/report-type.enum';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { AuditCountRequest } from '../models/audit-count-request';
 import { AuditCountResult } from '../models/audit-count-result';
@@ -354,6 +355,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     private itemService: ItemService,
     private message: NzMessageService,
     private warehouseService: WarehouseService,
+    private companyService: CompanyService,
     private utilService: UtilService,
     private printingService: PrintingService,
     private router: Router,
@@ -752,6 +754,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     return {
       id: undefined,
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
+      companyId: this.companyService.getCurrentCompany()!.id,
       name: '',
       description: '',
       client: undefined,

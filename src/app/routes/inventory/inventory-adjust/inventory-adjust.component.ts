@@ -15,6 +15,7 @@ import { UtilService } from '../../util/services/util.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { LocationGroupType } from '../../warehouse-layout/models/location-group-type';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
@@ -193,6 +194,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
     private inventoryStatusService: InventoryStatusService,
+    private companyService: CompanyService,
     private itemService: ItemService,
     private warehouseService: WarehouseService,
     private messageService: NzMessageService,
@@ -412,6 +414,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
       item: {
         id: undefined,
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        companyId: this.companyService.getCurrentCompany()!.id,
         name: '',
         description: '',
         allowCartonization: undefined,

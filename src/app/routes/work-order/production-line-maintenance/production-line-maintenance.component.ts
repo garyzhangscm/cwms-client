@@ -9,6 +9,7 @@ import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
 import { ItemService } from '../../inventory/services/item.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Mould } from '../models/mould';
@@ -50,6 +51,7 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
 
   constructor(private http: _HttpClient,
     private warehouseService: WarehouseService,
+    private companyService: CompanyService,
     private locationService: LocationService,
     private productionLineService: ProductionLineService,
     private messageService: NzMessageService,
@@ -298,7 +300,8 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
         item: {
           name: "",
           description: "",
-          itemPackageTypes: []
+          itemPackageTypes: [],
+          companyId: this.companyService.getCurrentCompany()!.id
         },
 
         capacity: 0,

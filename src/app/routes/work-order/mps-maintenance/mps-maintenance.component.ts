@@ -20,6 +20,7 @@ import { OrderLineService } from '../../outbound/services/order-line.service';
 import { ColorService } from '../../util/services/color.service';
 import { DateTimeService } from '../../util/services/date-time.service';
 import { UtilService } from '../../util/services/util.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { MasterProductionSchedule } from '../models/master-production-schedule';
 import { MasterProductionScheduleLine } from '../models/master-production-schedule-line';
@@ -179,14 +180,14 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private warehouseService: WarehouseService,
+    private companyService: CompanyService,
     private orderLineService: OrderLineService,
     private receiptLineService: ReceiptLineService,
     private workOrderService: WorkOrderService,
     private productionLineService: ProductionLineService,
     private itemService: ItemService,
     private modalService: NzModalService,
-    private messageService: NzMessageService,
-    private dateTimeService: DateTimeService,
+    private messageService: NzMessageService, 
     private colorService: ColorService,
     ) { 
       this.pageTitle = this.i18n.fanyi('MPS');
@@ -198,7 +199,8 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
       item: {         
         name: "",
         description: "",        
-        itemPackageTypes: []         
+        itemPackageTypes: [], 
+        companyId: this.companyService.getCurrentCompany()!.id      
       },      
       totalQuantity: 0,
       plannedQuantity: 0,

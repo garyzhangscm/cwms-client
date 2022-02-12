@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 
 import { Client } from '../../common/models/client';
 import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Item } from '../models/item';
 import { ItemFamily } from '../models/item-family';
@@ -18,6 +19,7 @@ export class ItemService {
     private http: _HttpClient,
     private gzLocalStorageService: GzLocalStorageService,
     private warehouseService: WarehouseService,
+    private companyService: CompanyService,
   ) {}
 
   getItemsByIdList(itemIdList: string, loadDetails?: boolean): Observable<Item[]> {
@@ -35,7 +37,10 @@ export class ItemService {
     
     const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
 
-    let url = `inventory/items?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    let url = `inventory/items?companyId=${this.companyService.getCurrentCompany()!.id}`;
+    
+    url = `${url}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`; 
+
     if (name) {
       url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name.trim())}`;
     }

@@ -4,6 +4,7 @@ import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
 import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ItemFamily } from '../models/item-family';
 
@@ -15,6 +16,7 @@ export class ItemFamilyService {
     private http: _HttpClient,
     private gzLocalStorageService: GzLocalStorageService,
     private warehouseService: WarehouseService,
+    private companyService: CompanyService,
   ) {}
 
   loadItemFamilies(refresh: boolean = false): Observable<ItemFamily[]> {
@@ -31,7 +33,7 @@ export class ItemFamilyService {
     }
      */
     return this.http
-      .get(`inventory/item-families?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`)
+      .get(`inventory/item-families?companyId=${this.companyService.getCurrentCompany()!.id}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem('inventory.ItemFamily', res)));
   }

@@ -243,6 +243,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
       item: {
         id: undefined,
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        companyId: this.companyService.getCurrentCompany()!.id,
         name: '',
         description: '',
         allowCartonization: undefined,

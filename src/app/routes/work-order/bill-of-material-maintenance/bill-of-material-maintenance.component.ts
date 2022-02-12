@@ -8,6 +8,7 @@ import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { ItemService } from '../../inventory/services/item.service';
 import { OrderLineService } from '../../outbound/services/order-line.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { BillOfMaterial } from '../models/bill-of-material';
 import { BillOfMaterialByProduct } from '../models/bill-of-material-by-product';
@@ -41,6 +42,8 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
     private warehouseService: WarehouseService,
     private billOfMeasureService: BillOfMaterialService,
     private inventoryStatusService: InventoryStatusService,
+    private companyService: CompanyService,
+
     private itemService: ItemService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.bill-of-material.new');
@@ -138,6 +141,7 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
       this.currentBillOfMaterial.item = {
         id: undefined,
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        companyId: this.companyService.getCurrentCompany()!.id,
         name: '',
         description: '',
         itemPackageTypes: [],
@@ -174,6 +178,7 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
           this.currentBillOfMaterial.item = {
             id: undefined,
             warehouseId: this.warehouseService.getCurrentWarehouse().id,
+            companyId: this.companyService.getCurrentCompany()!.id,
             name: '',
             description: '',
             itemPackageTypes: [],
@@ -203,7 +208,7 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
       id: undefined,
       number: undefined,
       description: undefined,
-      warehouseId: this.warehouseService.getCurrentWarehouse().id,
+      warehouseId: this.warehouseService.getCurrentWarehouse().id, 
       warehouse: this.warehouseService.getCurrentWarehouse(),
       billOfMaterialLines: [],
       workOrderInstructionTemplates: [],
@@ -213,6 +218,7 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
       item: {
         id: undefined,
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        companyId: this.companyService.getCurrentCompany()!.id,
         name: '',
         description: '',
         itemPackageTypes: [],
@@ -245,6 +251,7 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
       billOfMaterialLine.item = {
         id: undefined,
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        companyId: this.companyService.getCurrentCompany()!.id,
         name: '',
         description: '',
         itemPackageTypes: [],
@@ -315,6 +322,7 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
       item: {
         id: undefined,
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        companyId: this.companyService.getCurrentCompany()!.id,
         name: '',
         description: '',
         itemPackageTypes: [],
@@ -384,6 +392,7 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
         id: undefined,
 
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        companyId: this.companyService.getCurrentCompany()!.id,
         name: '',
         description: '',
         itemPackageTypes: [],
@@ -447,6 +456,7 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
       item: {
         id: undefined,
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        companyId: this.companyService.getCurrentCompany()!.id,
         name: '',
         description: '',
         itemPackageTypes: [],
