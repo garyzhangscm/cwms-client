@@ -4,7 +4,7 @@
   <!-- Form to query the result  -->
   <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
     <div nz-row [nzGutter]="24">
-      <div nz-col [nzSpan]="12">
+      <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label for="number" [nzSpan]="6">
             {{ 'work-order.number' | i18n }}
@@ -14,7 +14,7 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col [nzSpan]="12">
+      <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label for="item" [nzSpan]="6">
             {{ 'item' | i18n }}
@@ -24,7 +24,22 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label for="status" [nzSpan]="5">
+            {{ 'status' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <nz-select formControlName="status">
+               <nz-option
+                   *ngFor="let status of workOrderStatuses  | keys"
+                    [nzValue]="status.key"
+                    [nzLabel]="status.key"
+                      ></nz-option>
+               </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
     </div>
     <div nz-row>
       <div nz-col [nzSpan]="24" class="search-area">
@@ -616,13 +631,13 @@
                         </td>
                         <td>
                           <button nz-button (click)="cancelShortAllocation(data, shortAllocation)"
-                            [disabled]="shortAllocation.status !== shortAllocationStatus.PENDING || data.status === workOrderStatus.COMPLETED">
+                            [disabled]="shortAllocation.status !== shortAllocationStatus.PENDING || data.status === workOrderStatuses.COMPLETED">
                             {{ 'cancel' | i18n }}
                           </button>
 
                           <nz-divider nzType="vertical"></nz-divider>
                           <button nz-button (click)="allocateShortAllocation(data, shortAllocation)"
-                            [disabled]="!isShortAllocationAllocatable(shortAllocation) || data.status === workOrderStatus.COMPLETED">
+                            [disabled]="!isShortAllocationAllocatable(shortAllocation) || data.status === workOrderStatuses.COMPLETED">
                             {{ 'allocate' | i18n }}
                           </button>
 

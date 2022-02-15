@@ -229,7 +229,7 @@
         <td>{{ data.pickedQuantity }}</td>
         <td>
           <input nz-input [(ngModel)]="mapOfConfirmedQuantity[data.number]"
-            [disabled]="mapOfConfirmedQuantity[data.number] === 0 || confirming === true" style="width: 250px;" />
+            [disabled]="mapOfConfirmedQuantity[data.number] === 0 || confirming === true" style="width: 100px;" />
         </td>
         <td>
           <button nz-button nzType="primary" (click)="confirmPick(data)"

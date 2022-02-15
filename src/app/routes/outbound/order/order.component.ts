@@ -919,9 +919,17 @@ export class OutboundOrderComponent implements OnInit {
     return shortAllocation.openQuantity > 0;
   }
   allocateShortAllocation(order: Order, shortAllocation: ShortAllocation): void {
-    this.shortAllocationService.allocateShortAllocation(shortAllocation).subscribe(shortAllocationRes => {
-      this.messageService.success(this.i18n.fanyi('message.action.success'));
-      this.search(order.id, 3);
+    
+    this.isSpinning = true;
+    this.shortAllocationService.allocateShortAllocation(shortAllocation).subscribe({
+      next: () => {
+
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        // refresh the short allocation
+        this.search(order.id, 3);
+      }, 
+      error: () => this.isSpinning = false
     });
   }
 

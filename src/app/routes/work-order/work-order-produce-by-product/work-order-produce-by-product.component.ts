@@ -2,11 +2,13 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ItemService } from '../../inventory/services/item.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { WorkOrder } from '../models/work-order';
@@ -50,6 +52,7 @@ export class WorkOrderWorkOrderProduceByProductComponent implements OnInit {
     private inventoryStatusService: InventoryStatusService,
     private inventoryService: InventoryService,
     private warehouseService: WarehouseService,
+    private companyService: CompanyService,
     private router: Router,
   ) {
     this.pageTitle = this.i18n.fanyi('steps.work-order-produce.by-product.title');
@@ -134,6 +137,7 @@ export class WorkOrderWorkOrderProduceByProductComponent implements OnInit {
       itemPackageType: {
         id: undefined,
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        companyId: this.companyService.getCurrentCompany()!.id,
         description: undefined,
         name: '',
         itemUnitOfMeasures: [],

@@ -1,9 +1,11 @@
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
 import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Supplier } from '../models/supplier';
 
@@ -15,6 +17,7 @@ export class SupplierService {
     private http: _HttpClient,
     private gzLocalStorageService: GzLocalStorageService,
     private warehouseService: WarehouseService,
+    private companyService: CompanyService,
   ) {}
 
   loadSuppliers(refresh: boolean = true): Observable<Supplier[]> {
@@ -31,6 +34,20 @@ export class SupplierService {
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem('common.supplier', res)));
   }
+  
+  getSuppliers(name?: string): Observable<Supplier[]> {
+    
+    let url = `common/suppliers?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&companyId=${this.companyService.getCurrentCompany()!.id}`;
+
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+    if (name) {
+      url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name.trim())}`;
+    }
+    return this.http
+      .get(url)
+      .pipe(map(res => res.data));
+  }
+
   getSupplier(supplierId: number): Observable<Supplier> {
     const data = this.gzLocalStorageService.getItem(`common.supplier.${  supplierId}`);
     if (data !== null) {

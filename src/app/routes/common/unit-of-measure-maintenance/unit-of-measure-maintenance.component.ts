@@ -2,6 +2,9 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+
+import { CompanyService } from '../../warehouse-layout/services/company.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { UnitOfMeasure } from '../models/unit-of-measure';
 
 @Component({
@@ -16,10 +19,14 @@ export class CommonUnitOfMeasureMaintenanceComponent implements OnInit {
     id: 0,
     name: '',
     description: '',
+    warehouseId: this.warehouseService.getCurrentWarehouse().id,
+    companyId: this.companyService.getCurrentCompany()!.id
   };
 
   constructor(private router: Router,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private warehouseService: WarehouseService,
+    private companyService: CompanyService,
     private titleService: TitleService) { }
 
   ngOnInit(): void {

@@ -6,4 +6,5 @@ export interface ItemPackageType {
   description?: string;
   itemUnitOfMeasures: ItemUnitOfMeasure[];
   warehouseId?: number;
+  companyId: number;
 }

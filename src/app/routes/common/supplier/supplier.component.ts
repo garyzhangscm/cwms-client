@@ -161,6 +161,8 @@ export class CommonSupplierComponent implements OnInit {
   setOfCheckedId = new Set<number>();
   checked = false;
   indeterminate = false;
+  searchForm!: FormGroup;
+  isSpinning = false;
 
   // Table data for display
   listOfAllSuppliers: Supplier[] = [];
@@ -177,14 +179,33 @@ export class CommonSupplierComponent implements OnInit {
     private supplierService: SupplierService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
+    private fb: FormBuilder,
   ) { }
 
-  search(refresh: boolean = false): void {
-    this.supplierService.loadSuppliers(refresh).subscribe(supplierRes => {
-      this.listOfAllSuppliers = supplierRes;
-      this.listOfDisplaySuppliers = supplierRes;
+  ngOnInit(): void {
+    this.searchForm = this.fb.group({
+      name: [null], 
+    }); 
+  }
+  resetForm(): void {
+    this.searchForm.reset();
+    this.listOfAllSuppliers = [];
+    this.listOfDisplaySuppliers = [];
+  }
 
-    });
+  search(refresh: boolean = false): void {
+    this.supplierService.getSuppliers(
+      this.searchForm.controls.name.value).subscribe(
+        {
+          next: (supplierRes) => {
+
+            this.listOfAllSuppliers = supplierRes;
+            this.listOfDisplaySuppliers = supplierRes;
+            this.isSpinning = false;
+          }, 
+          error: () => this.isSpinning = false
+        }) 
+ 
   }
 
 
@@ -262,9 +283,6 @@ export class CommonSupplierComponent implements OnInit {
   handleClick(e: MouseEvent): void {
   }
 
-  ngOnInit(): void {
-    this.search(true);
-  }
   clearSessionSupplier(): void {
     sessionStorage.removeItem('supplier-maintenance.supplier');
   }

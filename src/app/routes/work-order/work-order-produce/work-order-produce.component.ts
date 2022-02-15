@@ -9,6 +9,7 @@ import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ItemService } from '../../inventory/services/item.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { BillOfMaterial } from '../models/bill-of-material';
@@ -67,6 +68,7 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
     private inventoryStatusService: InventoryStatusService,
     private inventoryService: InventoryService,
     private warehouseService: WarehouseService,
+    private companyService: CompanyService,
     private messageService: NzMessageService,
     private router: Router,
   ) {
@@ -288,6 +290,7 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
       itemPackageType: {
         id: undefined,
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        companyId: this.companyService.getCurrentCompany()!.id,
         description: '',
         name: '',
         itemUnitOfMeasures: [],

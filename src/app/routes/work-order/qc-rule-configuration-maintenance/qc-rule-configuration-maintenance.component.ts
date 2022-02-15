@@ -125,6 +125,7 @@ export class WorkOrderQcRuleConfigurationMaintenanceComponent implements OnInit 
     return {       
       name: "",
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
+      companyId: this.companyService.getCurrentCompany()!.id,
       description:  "",
       contactorFirstname:  "",
       contactorLastname:  "",

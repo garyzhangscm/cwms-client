@@ -422,6 +422,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
           {
             id: undefined,
             warehouseId: this.warehouseService.getCurrentWarehouse().id,
+            companyId: this.companyService.getCurrentCompany()!.id,
             description: '',
             name: '',
             itemUnitOfMeasures: [],
@@ -447,6 +448,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
         description: '',
         id: undefined,
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        companyId: this.companyService.getCurrentCompany()!.id,
         name: '',
         itemUnitOfMeasures: [],
       },

@@ -152,6 +152,8 @@ export class CommonCustomerComponent implements OnInit {
   setOfCheckedId = new Set<number>();
   checked = false;
   indeterminate = false;
+  searchForm!: FormGroup;
+  isSpinning = false;
 
   // Table data for display
   listOfAllCustomers: Customer[] = [];
@@ -168,15 +170,33 @@ export class CommonCustomerComponent implements OnInit {
     private customerService: CustomerService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
+    private fb: FormBuilder,
   ) { }
 
+  ngOnInit(): void {
+    this.searchForm = this.fb.group({
+      name: [null], 
+    }); 
+  }
+  resetForm(): void {
+    this.searchForm.reset();
+    this.listOfAllCustomers = [];
+    this.listOfDisplayCustomers = [];
+  }
+
   search(refresh: boolean = false): void {
-    this.customerService.loadCustomers().subscribe(customerRes => {
-      this.listOfAllCustomers = customerRes;
-      this.listOfDisplayCustomers = customerRes;
+    this.isSpinning = true;
+    this.customerService.getCustomers(
+      this.searchForm.controls.name.value).subscribe(
+        {
+          next: (customerRes) => {
 
-
-    });
+            this.listOfAllCustomers = customerRes;
+            this.listOfDisplayCustomers = customerRes;
+            this.isSpinning = false;
+          }, 
+          error: () => this.isSpinning = false
+        })
   }
 
 
@@ -254,9 +274,6 @@ export class CommonCustomerComponent implements OnInit {
   handleClick(e: MouseEvent): void {
   }
 
-  ngOnInit(): void {
-    this.search(true);
-  }
   clearSessionCustomer(): void {
     sessionStorage.removeItem('customer-maintenance.customer');
   }

@@ -1,9 +1,32 @@
 <page-header [title]="'page.supplier.header.title' | i18n">
 </page-header>
-
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+    <div nz-row [nzGutter]="12">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label for="name" [nzSm]="6" [nzXs]="14">
+            {{ 'name' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <input nz-input name="name" id="name" formControlName="name" />
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+    </div> 
+  
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="search()">
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form>
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #rowSelectionTable nzShowSizeChanger [nzData]="listOfAllSuppliers"
+  <nz-table [nzScroll]="{ x: '100vw' }" #rowSelectionTable nzShowSizeChanger [nzData]="listOfAllSuppliers"
     [nzFooter]="tableFoot">
     <thead>
       <tr>
@@ -152,13 +175,10 @@
     </tbody>
   </nz-table>
 </div>
-
+</nz-spin>
 
 <ng-template #tableFoot>
-  <div nz-row nzType="flex" nzJustify="start">
-    <a nz-button nzType="primary" (click)="refresh()">
-      {{'fresh' | i18n}}
-    </a>
+  <div nz-row nzType="flex" nzJustify="start"> 
     <a nz-button nzType="primary" routerLink="/common/supplier-maintenance" routerLinkActive="active"
       (click)="clearSessionSupplier()">
       {{'add' | i18n}}

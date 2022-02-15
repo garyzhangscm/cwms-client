@@ -160,6 +160,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     return {       
       name: "",
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
+      companyId: this.companyService.getCurrentCompany()!.id,
       description:  "",
       contactorFirstname:  "",
       contactorLastname:  "",
@@ -251,6 +252,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
           {
             id: undefined,
             warehouseId: this.warehouseService.getCurrentWarehouse().id,
+            companyId: this.companyService.getCurrentCompany()!.id,
             description: '',
             name: '',
             itemUnitOfMeasures: [],
@@ -423,6 +425,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
           name: "",
           description: "",
           warehouseId: this.warehouseService.getCurrentWarehouse().id,
+          companyId: this.companyService.getCurrentCompany()!.id,
           contactorFirstname: "",
           contactorLastname: "",
           addressCountry: "",

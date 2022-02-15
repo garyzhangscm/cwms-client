@@ -294,7 +294,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     private inventoryStatusService: InventoryStatusService,
     private billOfMaterialService: BillOfMaterialService,
   ) { }
-  workOrderStatus = WorkOrderStatus;
+  workOrderStatuses = WorkOrderStatus;
   // Form related data and functions
   searchForm!: FormGroup;
   searching = false;
@@ -303,7 +303,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   unpickForm!: FormGroup;
   unpickModal!: NzModalRef;
   currentInventory!: Inventory;
-  manualPutawayModal!: NzModalRef;
+  manualPutawayModal!: NzModalRef; 
 
   availableProductionLines: Array<{ label: string; value: string }> = [];
 
@@ -370,6 +370,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     this.searchForm = this.fb.group({
       number: [null],
       item: [null],
+      status: [null],
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
@@ -408,7 +409,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       );
     } else {
       this.workOrderService
-        .getWorkOrders(this.searchForm.controls.number.value, this.searchForm.controls.item.value, undefined, false)
+        .getWorkOrders(this.searchForm.controls.number.value, this.searchForm.controls.item.value, 
+          undefined, this.searchForm.controls.status.value, false)
         .subscribe(
           workOrderRes => {
             this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities(workOrderRes);

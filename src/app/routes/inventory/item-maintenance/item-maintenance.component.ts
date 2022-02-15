@@ -270,6 +270,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
             {
               unitOfMeasure,
               warehouseId: this.warehouseService.getCurrentWarehouse().id,
+              companyId: this.companyService.getCurrentCompany()!.id,
               unitOfMeasureId: unitOfMeasure === null ? undefined : unitOfMeasure.id,
               quantity,
               weight,
@@ -292,6 +293,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
       {
         id: undefined,
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        companyId: this.companyService.getCurrentCompany()!.id,
         name: undefined,
         description: undefined,
         itemUnitOfMeasures: [],

@@ -162,6 +162,7 @@ export class OutboundPickComponent implements OnInit {
 
   // Form related data and functions
   searchForm!: FormGroup;
+  
 
   // Table data for display
   listOfAllPicks: PickWork[] = [];

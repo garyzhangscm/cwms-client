@@ -32,7 +32,7 @@ export class WorkOrderService {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
   ) { }
 
-  getWorkOrders(number?: string, itemName?: string, productionPlanId?: number, loadDetails?: boolean): Observable<WorkOrder[]> {
+  getWorkOrders(number?: string, itemName?: string, productionPlanId?: number, statusList?:string, loadDetails?: boolean): Observable<WorkOrder[]> {
     
     let url = `workorder/work-orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     
@@ -46,6 +46,9 @@ export class WorkOrderService {
     }
     if (productionPlanId) {
       url = `${url}&productionPlanId=${productionPlanId}`;
+    }
+    if (statusList) {
+      url = `${url}&statusList=${statusList}`;
     }
     if (loadDetails === undefined) {
       url = `${url}&loadDetails=true`;

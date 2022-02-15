@@ -1,3 +1,4 @@
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -34,6 +35,7 @@ export class OrderActivityService {
     
   ): Observable<OrderActivity[]> {
     let url = `outbound/order-activities?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
    
     if (beginDateTime) {
       url = `${url}&beginDateTime=${this.dateTimeService.getISODateTimeString(beginDateTime)}`;
@@ -46,23 +48,23 @@ export class OrderActivityService {
     }
 
     if (username) {
-      url = `${url}&username=${username}`;
+      url = `${url}&username=${httpUrlEncodingCodec.encodeValue(username.trim())}`;
     }
     if (rfCode) {
-      url = `${url}&rfCode=${rfCode}`;
+      url = `${url}&rfCode=${httpUrlEncodingCodec.encodeValue(rfCode.trim())}`;
     }
     
     if (orderNumber) {
-      url = `${url}&orderNumber=${orderNumber}`;
+      url = `${url}&orderNumber=${httpUrlEncodingCodec.encodeValue(orderNumber.trim())}`;
     }
     if (shipmentNumber) {
-      url = `${url}&shipmentNumber=${shipmentNumber}`;
+      url = `${url}&shipmentNumber=${httpUrlEncodingCodec.encodeValue(shipmentNumber.trim())}`;
     }
     if (shipmentLineNumber) {
-      url = `${url}&shipmentLineNumber=${shipmentLineNumber}`;
+      url = `${url}&shipmentLineNumber=${httpUrlEncodingCodec.encodeValue(shipmentLineNumber.trim())}`;
     }
     if (pickNumber) {
-      url = `${url}&pickNumber=${pickNumber}`;
+      url = `${url}&pickNumber=${httpUrlEncodingCodec.encodeValue(pickNumber.trim())}`;
     }
  
     

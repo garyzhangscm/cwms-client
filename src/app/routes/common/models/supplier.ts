@@ -1,6 +1,7 @@
 export interface Supplier {
   id: number;
-  warehouseId: number;
+  warehouseId?: number,
+  companyId: number,
   name: string;
   description: string;
   contactorFirstname: string;
