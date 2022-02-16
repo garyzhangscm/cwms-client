@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+
 import { Client } from '../../common/models/client';
 import { ClientService } from '../../common/services/client.service';
 import { PutawayConfiguration } from '../../inbound/models/putaway-configuration';
@@ -109,7 +110,7 @@ export class OutboundCartonizationConfigurationComponent implements OnInit {
 
     // initiate the select control
     this.clientService.loadClients().subscribe((clientList: Client[]) => {
-      clientList.forEach(client => this.clients.push({ label: client.description, value: client.id.toString() }));
+      clientList.forEach(client => this.clients.push({ label: client.description, value: client.id!.toString() }));
     });
 
     this.activatedRoute.queryParams.subscribe(params => {

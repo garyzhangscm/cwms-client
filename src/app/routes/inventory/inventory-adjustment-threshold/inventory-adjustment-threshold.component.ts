@@ -1,20 +1,19 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-
 import { FormBuilder, FormGroup } from '@angular/forms';
-
 import { I18NService } from '@core';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzModalService } from 'ng-zorro-antd/modal';
-import { ClientService } from '../../common/services/client.service';
-import { ItemFamilyService } from '../services/item-family.service';
+
 
 import { Client } from '../../common/models/client';
+import { ClientService } from '../../common/services/client.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { InventoryAdjustmentThreshold } from '../models/inventory-adjustment-threshold';
 import { InventoryQuantityChangeType } from '../models/inventory-quantity-change-type.enum';
 import { ItemFamily } from '../models/item-family';
 import { InventoryAdjustmentThresholdService } from '../services/inventory-adjustment-threshold.service';
+import { ItemFamilyService } from '../services/item-family.service';
 
 @Component({
   selector: 'app-inventory-inventory-adjustment-threshold',
@@ -200,7 +199,7 @@ export class InventoryInventoryAdjustmentThresholdComponent implements OnInit {
 
     // initiate the select control
     this.clientService.loadClients().subscribe((clientList: Client[]) => {
-      clientList.forEach(client => this.clients.push({ label: client.description, value: client.id.toString() }));
+      clientList.forEach(client => this.clients.push({ label: client.description, value: client.id!.toString() }));
     });
     this.itemFamilyService.loadItemFamilies().subscribe((itemFamilyList: ItemFamily[]) => {
       itemFamilyList.forEach(itemFamily =>

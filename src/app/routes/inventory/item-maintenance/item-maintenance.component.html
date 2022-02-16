@@ -15,6 +15,14 @@
   </nz-breadcrumb>
 </ng-template>
 
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  
+<div>
+  <nz-radio-group [(ngModel)]="warehouseSpecific" (ngModelChange)="warehouseSpecificOptionChanged()">
+    <label nz-radio nzValue="NO">{{'company-wide' | i18n}}</label>
+    <label nz-radio nzValue="YES">{{currentWarehouseName}}</label> 
+  </nz-radio-group>
+</div>
 <nz-steps nzType="navigation" [nzCurrent]="stepIndex" style="padding: 15px">
   <nz-step nzTitle="{{ 'steps.item.info' | i18n }}"> </nz-step>
   <nz-step nzTitle="{{ 'steps.item.package-type.info' | i18n }}"> </nz-step>
@@ -29,7 +37,7 @@
         <nz-form-label [nzSpan]="10">
           {{ 'item.name' | i18n }}
         </nz-form-label>
-        <nz-form-control *ngIf="currentItem.id === undefined" [nzSpan]="14" nzHasFeedback
+        <nz-form-control *ngIf="newItem" [nzSpan]="14" nzHasFeedback
           [nzErrorTip]="itemNumberErrorTpl">
 
           <!--
@@ -51,7 +59,7 @@
           </ng-template>
         </nz-form-control>
 
-        <nz-form-control *ngIf="currentItem.id !== undefined" [nzSpan]="14">
+        <nz-form-control *ngIf="!newItem" [nzSpan]="14">
 
 
           <input nz-input [(ngModel)]="currentItem.name" required disabled />
@@ -409,6 +417,7 @@
   </button>
 </div>
 
+</nz-spin>
 <!-- Modal for adding item unit of measure -->
 <ng-template #tplItemUOMModalTitle>
   <span>{{ 'unit-of-measure' | i18n }}</span>

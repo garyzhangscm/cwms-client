@@ -278,7 +278,7 @@ export class InventoryItemComponent implements OnInit {
 
     // initiate the select control
     this.clientService.loadClients().subscribe((clientList: Client[]) => {
-      clientList.forEach(client => this.clients.push({ label: client.description, value: client.id.toString() }));
+      clientList.forEach(client => this.clients.push({ label: client.description, value: client.id!.toString() }));
     });
     this.itemFamilyService.loadItemFamilies().subscribe((itemFamilyList: ItemFamily[]) => {
       itemFamilyList.forEach(itemFamily => this.itemFamilies.push({ label: itemFamily.description, value: itemFamily.id!.toString() }));

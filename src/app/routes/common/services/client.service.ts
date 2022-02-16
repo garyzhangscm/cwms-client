@@ -60,7 +60,7 @@ export class ClientService {
   removeClients(clients: Client[]): Observable<Client[]> {
     const clientIds: number[] = [];
     clients.forEach(client => {
-      clientIds.push(client.id);
+      clientIds.push(client.id!);
     });
     const params = {
       client_ids: clientIds.join(','),

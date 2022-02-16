@@ -223,7 +223,7 @@ export class CommonSupplierComponent implements OnInit {
   }
 
   onAllChecked(value: boolean): void {
-    this.listOfDisplaySuppliers!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.listOfDisplaySuppliers!.forEach(item => this.updateCheckedSet(item.id!, value));
     this.refreshCheckedStatus();
   }
 
@@ -233,8 +233,8 @@ export class CommonSupplierComponent implements OnInit {
   }
 
   refreshCheckedStatus(): void {
-    this.checked = this.listOfDisplaySuppliers!.every(item => this.setOfCheckedId.has(item.id));
-    this.indeterminate = this.listOfDisplaySuppliers!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
+    this.checked = this.listOfDisplaySuppliers!.every(item => this.setOfCheckedId.has(item.id!));
+    this.indeterminate = this.listOfDisplaySuppliers!.some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
   }
 
   removeSelectedSuppliers(): void {
@@ -261,7 +261,7 @@ export class CommonSupplierComponent implements OnInit {
   getSelectedSuppliers(): Supplier[] {
     const selectedSuppliers: Supplier[] = [];
     this.listOfAllSuppliers.forEach((supplier: Supplier) => {
-      if (this.setOfCheckedId.has(supplier.id)) {
+      if (this.setOfCheckedId.has(supplier.id!)) {
         selectedSuppliers.push(supplier);
       }
     });

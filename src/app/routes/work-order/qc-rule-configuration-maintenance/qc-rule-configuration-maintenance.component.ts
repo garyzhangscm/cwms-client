@@ -112,6 +112,7 @@ export class WorkOrderQcRuleConfigurationMaintenanceComponent implements OnInit 
   createEmptyQcRuleConfiguration(): WorkOrderQcRuleConfiguration {
     return {  
       companyId: this.companyService.getCurrentCompany()!.id,
+      warehouseId: this.warehouseService.getCurrentWarehouse()!.id,
    
       workOrderQCRuleConfigurationRules: [], 
       qcQuantity: 0,

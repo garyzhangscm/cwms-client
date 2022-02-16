@@ -1,7 +1,7 @@
 export interface UnitOfMeasure {
-  id: number;
+  id?: number;
   name: string;
   description: string;
-  warehouseId: number;
+  warehouseId?: number;
   companyId: number;
 }

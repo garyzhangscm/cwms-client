@@ -77,7 +77,7 @@ export class SupplierService {
   removeSuppliers(suppliers: Supplier[]): Observable<Supplier[]> {
     const supplierIds: number[] = [];
     suppliers.forEach(supplier => {
-      supplierIds.push(supplier.id);
+      supplierIds.push(supplier.id!);
     });
     const params = {
       supplier_ids: supplierIds.join(','),

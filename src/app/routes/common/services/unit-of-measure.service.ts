@@ -62,7 +62,7 @@ export class UnitOfMeasureService {
   removeUnitOfMeasures(unitOfMeasures: UnitOfMeasure[]): Observable<UnitOfMeasure[]> {
     const unitOfMeasureIds: number[] = [];
     unitOfMeasures.forEach(unitOfMeasure => {
-      unitOfMeasureIds.push(unitOfMeasure.id);
+      unitOfMeasureIds.push(unitOfMeasure.id!);
     });
     const params = {
       unit_of_measure_ids: unitOfMeasureIds.join(','),

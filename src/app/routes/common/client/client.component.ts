@@ -4,6 +4,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzModalService } from 'ng-zorro-antd/modal';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { Client } from '../models/client';
 import { ClientService } from '../services/client.service';
@@ -191,7 +192,7 @@ export class CommonClientComponent implements OnInit {
   }
 
   onAllChecked(value: boolean): void {
-    this.listOfDisplayClients!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.listOfDisplayClients!.forEach(item => this.updateCheckedSet(item.id!, value));
     this.refreshCheckedStatus();
   }
 
@@ -200,8 +201,8 @@ export class CommonClientComponent implements OnInit {
     this.refreshCheckedStatus();
   }
   refreshCheckedStatus(): void {
-    this.checked = this.listOfDisplayClients!.every(item => this.setOfCheckedId.has(item.id));
-    this.indeterminate = this.listOfDisplayClients!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
+    this.checked = this.listOfDisplayClients!.every(item => this.setOfCheckedId.has(item.id!));
+    this.indeterminate = this.listOfDisplayClients!.some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
   }
 
   removeSelectedClients(): void {
@@ -228,7 +229,7 @@ export class CommonClientComponent implements OnInit {
   getSelectedClients(): Client[] {
     const selectedClients: Client[] = [];
     this.clients.forEach((client: Client) => {
-      if (this.setOfCheckedId.has(client.id)) {
+      if (this.setOfCheckedId.has(client.id!)) {
         selectedClients.push(client);
       }
     });

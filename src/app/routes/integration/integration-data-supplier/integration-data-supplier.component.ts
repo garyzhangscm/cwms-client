@@ -295,7 +295,7 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
     // initiate the select control
     this.supplierService.loadSuppliers().subscribe((supplierList: Supplier[]) => {
       supplierList.forEach(supplier =>
-        this.suppliers.push({ label: supplier.description, value: supplier.id.toString() }),
+        this.suppliers.push({ label: supplier.description, value: supplier.id!.toString() }),
       );
     });
   }

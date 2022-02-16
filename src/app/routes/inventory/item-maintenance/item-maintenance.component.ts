@@ -9,6 +9,8 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
 import { newItemUOMQuantityValidator } from '../../directives/newItemUOMQuantityValidator';
+import { ReportRoutingModule } from '../../report/report-routing.module';
+import { UtilService } from '../../util/services/util.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { AllocationRoundUpStrategyType } from '../models/allocation-round-up-strategy-type.enum';
@@ -29,6 +31,8 @@ export class InventoryItemMaintenanceComponent implements OnInit {
   pageTitle = '';
   stepIndex = 0;
   currentItem!: Item;
+  newItem = true;
+  
   validItemFamilies: ItemFamily[] = [];
   allocationRoundUpStrategyTypes = AllocationRoundUpStrategyType;
 
@@ -48,6 +52,12 @@ export class InventoryItemMaintenanceComponent implements OnInit {
   // global variable. Setup when we are adding
   // UOM for the package type
   currentItemPackageType!: ItemPackageType;
+  isSpinning = false;
+
+  currentWarehouseName?: string;
+  warehouseSpecific = "YES";
+  companyItem?: Item;
+  warehouseSpecificItem?: Item;
 
   constructor(
     private fb: FormBuilder,
@@ -64,20 +74,42 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     private modalService: NzModalService,
     private unitOfMeasureService: UnitOfMeasureService,
     private itemPackageTypeService: ItemPackageTypeService,
-  ) { }
+    private utilService: UtilService,
+  ) { 
+
+    this.currentWarehouseName = warehouseService.getCurrentWarehouse().name;
+  }
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.id) {
         this.itemService.getItem(params.id).subscribe(itemRes => {
           this.currentItem = itemRes;
+          this.newItem = false;
+          if (this.currentItem.warehouseId) {            
+               this.warehouseSpecific = "YES";
+               this.warehouseSpecificItem = this.currentItem;
+               this.companyItem = undefined;
+          }
+          else {
+            // this is a global item
+            this.warehouseSpecific = "NO";
+            this.warehouseSpecificItem = undefined;
+            this.companyItem = this.currentItem;
+          }
+
 
           this.titleService.setTitle(this.i18n.fanyi('page.item.maintenance.modify'));
           this.pageTitle = this.i18n.fanyi('page.item.maintenance.modify');
           this.loadMapOfRemovableItemPackageTypes();
         });
       } else {
-        this.currentItem = this.getEmptyItem();
+        this.warehouseSpecificItem = this.getEmptyItem(false);
+        this.currentItem = this.warehouseSpecificItem;
+        this.newItem = true;
+        // By default, we will always create the item under specific warehouse
+        this.warehouseSpecific = "YES";
+        this.companyItem = undefined;
         this.titleService.setTitle(this.i18n.fanyi('page.item.maintenance.new'));
         this.pageTitle = this.i18n.fanyi('page.item.maintenance.new');
       }
@@ -102,10 +134,10 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     });
   }
 
-  getEmptyItem(): Item {
+  getEmptyItem(isGlobalItem: boolean): Item {
     return {
       id: undefined,
-      warehouseId: this.warehouseService.getCurrentWarehouse().id,
+      warehouseId: isGlobalItem? undefined: this.warehouseService.getCurrentWarehouse().id,
       companyId: this.companyService.getCurrentCompany()!.id,
       name: '',
       description: '',
@@ -113,7 +145,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
       itemFamily: {
         name: '',
         description: '',
-        warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        warehouseId: isGlobalItem? undefined: this.warehouseService.getCurrentWarehouse().id,
         companyId: this.companyService.getCurrentCompany()!.id,
       },
       itemPackageTypes: [],
@@ -139,19 +171,37 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     this.stepIndex += 1;
   }
   confirmItem(): void {
+    console.log(`start to save item \n ${JSON.stringify(this.currentItem)}`);
+    console.log(`warehouse specific item \n ${JSON.stringify(this.warehouseSpecificItem)}`);
+    console.log(`company item \n ${JSON.stringify(this.companyItem)}`);
+
     if (this.currentItem.id != null) {
-      this.itemService.changeItem(this.currentItem).subscribe(itemRes => {
-        this.messageService.success(this.i18n.fanyi('message.item.changed'));
-        setTimeout(() => {
-          this.router.navigateByUrl(`/inventory/item?name=${itemRes.name}`);
-        }, 2500);
-      });
+      this.isSpinning = true;
+      this.itemService.changeItem(this.currentItem).subscribe({
+        next: (itemRes) => {
+
+          this.messageService.success(this.i18n.fanyi('message.item.changed'));
+          this.isSpinning = false;
+          setTimeout(() => {
+            this.router.navigateByUrl(`/inventory/item?name=${itemRes.name}`);
+          }, 2500);
+        }, 
+        error: () => this.isSpinning = false
+      }); 
+      
     } else {
-      this.itemService.addItem(this.currentItem).subscribe(itemRes => {
-        this.messageService.success(this.i18n.fanyi('message.item.added'));
-        setTimeout(() => {
-          this.router.navigateByUrl(`/inventory/item?name=${itemRes.name}`);
-        }, 2500);
+      
+      this.isSpinning = true;
+      this.itemService.addItem(this.currentItem).subscribe({
+
+        next: (itemRes) => {
+          this.messageService.success(this.i18n.fanyi('message.item.added'));
+          setTimeout(() => {
+            this.router.navigateByUrl(`/inventory/item?name=${itemRes.name}`);
+          }, 2500);
+
+        }, 
+        error: () => this.isSpinning = false 
       });
     }
   }
@@ -327,4 +377,97 @@ export class InventoryItemMaintenanceComponent implements OnInit {
       this.itemPackageTypesExpandSet.delete(id);
     }
   }
+  warehouseSpecificOptionChanged() {
+    if (this.warehouseSpecific === "NO" ) {
+      // load the global item
+      this.loadGlobalItem();
+    }
+    else {
+      // load the warehouse specific item for current warehouse
+      this.loadWarehouseSepcificItem();
+    }
+  }
+  loadGlobalItem() {
+    
+    if (this.companyItem) {
+      // we already initiate the company item, then point the 
+      // current item to company item
+      this.currentItem = this.companyItem;
+      return;
+
+    }
+    if (this.newItem) {  
+        this.companyItem = this.getEmptyItem(true);
+        this.currentItem = this.companyItem; 
+    }
+    else { 
+        this.isSpinning = true;
+        // get the global item from the server
+        // we should have the current item point to some existing item since we
+        // are modifying existing item
+        this.itemService.getItems(this.currentItem.name, undefined, undefined, true).subscribe(
+          {
+            next: (itemRes) => {
+
+              if (itemRes.length === 1) {
+                // we should at max have only one global item for a specific name
+                this.companyItem = itemRes[0];
+                this.currentItem = this.companyItem;
+              }
+              else if (itemRes.length === 0) {
+                // we may not have any global item defined, then we will copy the warehouse
+                // specific item 
+                this.companyItem = this.utilService.cloneItem(this.warehouseSpecificItem!, false);
+                this.currentItem = this.companyItem;
+              }
+              this.isSpinning = false;
+            },
+            error: () => this.isSpinning = false
+
+          }
+        ) 
+    }
+  } 
+  loadWarehouseSepcificItem() {
+    
+    if (this.warehouseSpecificItem) {
+      // we already initiate the global item, then point the 
+      // current item to global item
+      this.currentItem = this.warehouseSpecificItem;
+      return;
+
+    }
+    if (this.newItem) {  
+        this.warehouseSpecificItem = this.getEmptyItem(false);
+        this.currentItem = this.warehouseSpecificItem; 
+    }
+    else { 
+        this.isSpinning = true;
+        // get the global item from the server
+        // we should have the current item point to some existing item since we
+        // are modifying existing item 
+        this.itemService.getItems(this.currentItem.name, undefined, undefined, undefined, true).subscribe(
+          {
+            next: (itemRes) => {
+ 
+
+              if (itemRes.length === 1) {
+                // we should at max have only one warehouse specific item for a specific name
+                this.warehouseSpecificItem = itemRes[0];
+                this.currentItem = this.warehouseSpecificItem;
+              }
+              else if (itemRes.length === 0) {
+                // we may not have any warehouse specific item defined, then we will copy the company
+                // specific item 
+                this.warehouseSpecificItem = this.utilService.cloneItem(this.companyItem!, true);
+                this.currentItem = this.warehouseSpecificItem;
+              }
+              this.isSpinning = false;
+            },
+            error: () => this.isSpinning = false
+
+          }
+        ) 
+    }
+  } 
 }

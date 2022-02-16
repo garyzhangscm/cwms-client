@@ -33,7 +33,7 @@ export class ItemService {
     }
     return this.http.get(url).pipe(map(res => res.data));
   }
-  getItems(name?: string, clients?: Client[], itemFamilies?: ItemFamily[]): Observable<Item[]> {
+  getItems(name?: string, clients?: Client[], itemFamilies?: ItemFamily[], companyItem?: boolean, warehouseSpecificItem?: boolean): Observable<Item[]> {
     
     const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
 
@@ -49,6 +49,12 @@ export class ItemService {
     }
     if (itemFamilies && itemFamilies.length > 0) {
       url = `${url}&itemFamilyIds=${itemFamilies.join(',')}`;
+    }
+    if (companyItem != null) {
+      url = `${url}&globalItem=${companyItem}`;
+    }
+    if (warehouseSpecificItem != null) {
+      url = `${url}&warehouseSpecificItem=${warehouseSpecificItem}`;
     }
 
     console.log(`start to get item by url\n ${url}`);

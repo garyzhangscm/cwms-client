@@ -1,11 +1,23 @@
 import { Injectable } from '@angular/core';
 
+import { Client } from '../../common/models/client';
+import { Customer } from '../../common/models/customer';
+import { Supplier } from '../../common/models/supplier';
+import { UnitOfMeasure } from '../../common/models/unit-of-measure';
+import { Item } from '../../inventory/models/item';
+import { ItemFamily } from '../../inventory/models/item-family';
+import { ItemPackageType } from '../../inventory/models/item-package-type';
+import { ItemUnitOfMeasure } from '../../inventory/models/item-unit-of-measure';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+
 @Injectable({
   providedIn: 'root'
 })
 export class UtilService {
 
-  constructor() { }
+  constructor(private warehouseService: WarehouseService, 
+    private companyService: CompanyService) { }
 
   // a helper function to compare 2 date times. When 
   // the date time returned from server is a LocalDateTime, then
@@ -95,6 +107,135 @@ export class UtilService {
     }
     else {
       return a.localeCompare(b);
+    }
+  }
+
+  cloneClient(client: Client, warehouseSpecific: boolean) : Client {
+    return { 
+      name: client.name,
+      description: client.description,
+      contactorFirstname: client.contactorFirstname,
+      contactorLastname: client.contactorLastname,
+      addressCountry: client.addressCountry,
+      addressState: client.addressState,
+      addressCounty: client.addressCounty,
+      addressCity: client.addressCity,
+      addressDistrict: client.addressDistrict,
+      addressLine1: client.addressLine1,
+      addressLine2: client.addressLine2,
+      addressPostcode: client.addressPostcode,
+    }
+  }
+
+  cloneCustomer(customer: Customer, warehouseSpecific: boolean) : Customer {
+    return {  
+      warehouseId: warehouseSpecific? this.warehouseService.getCurrentWarehouse().id : undefined,
+      companyId: this.companyService.getCurrentCompany()!.id,
+      name: customer.name,
+      description: customer.description,
+      contactorFirstname: customer.contactorFirstname,
+      contactorLastname: customer.contactorLastname,
+      addressCountry: customer.addressCountry,
+      addressState: customer.addressState,
+      addressCounty: customer.addressCounty,
+      addressCity: customer.addressCity,
+      addressDistrict: customer.addressDistrict,
+      addressLine1: customer.addressLine1,
+      addressLine2: customer.addressLine2,
+      addressPostcode: customer.addressPostcode
+    }
+  }
+  
+
+  cloneSupplier(supplier: Supplier, warehouseSpecific: boolean) : Supplier {
+    return {  
+      warehouseId: warehouseSpecific? this.warehouseService.getCurrentWarehouse().id : undefined,
+      companyId: this.companyService.getCurrentCompany()!.id,
+      name: supplier.name,
+      description: supplier.description,
+      contactorFirstname: supplier.contactorFirstname,
+      contactorLastname: supplier.contactorLastname,
+      addressCountry: supplier.addressCountry,
+      addressState: supplier.addressState,
+      addressCounty: supplier.addressCounty,
+      addressCity: supplier.addressCity,
+      addressDistrict: supplier.addressDistrict,
+      addressLine1: supplier.addressLine1,
+      addressLine2: supplier.addressLine2,
+      addressPostcode: supplier.addressPostcode
+    }
+  }
+  cloneUnitOfMeasure(unitOfMeasure: UnitOfMeasure, warehouseSpecific: boolean) : UnitOfMeasure {
+    return {  
+      warehouseId: warehouseSpecific? this.warehouseService.getCurrentWarehouse().id : undefined,
+      companyId: this.companyService.getCurrentCompany()!.id,
+      name: unitOfMeasure.name,
+      description: unitOfMeasure.description, 
+    }
+  }
+  cloneItemUnitOfMeasure(itemUnitOfMeasure: ItemUnitOfMeasure, warehouseSpecific: boolean) : ItemUnitOfMeasure {
+    return {  
+      warehouseId: warehouseSpecific? this.warehouseService.getCurrentWarehouse().id : undefined,
+      companyId: this.companyService.getCurrentCompany()!.id,
+      client: itemUnitOfMeasure.client ? this.cloneClient(itemUnitOfMeasure.client!, warehouseSpecific) : undefined,
+      supplier: itemUnitOfMeasure.supplier ? this.cloneSupplier(itemUnitOfMeasure.supplier!, warehouseSpecific) : undefined, 
+      unitOfMeasure: itemUnitOfMeasure.unitOfMeasure ? this.cloneUnitOfMeasure(itemUnitOfMeasure.unitOfMeasure!, warehouseSpecific) : undefined, 
+      quantity: itemUnitOfMeasure.quantity,
+      weight: itemUnitOfMeasure.weight,
+      length: itemUnitOfMeasure.length,
+      width: itemUnitOfMeasure.width,
+      height: itemUnitOfMeasure.height, 
+      defaultForInboundReceiving: itemUnitOfMeasure.defaultForInboundReceiving,
+      defaultForWorkOrderReceiving: itemUnitOfMeasure.defaultForWorkOrderReceiving,
+      trackingLpn: itemUnitOfMeasure.trackingLpn
+    }
+  }
+  cloneItemPackageType(itemPackageType: ItemPackageType, warehouseSpecific: boolean) : ItemPackageType {
+    return {  
+      warehouseId: warehouseSpecific? this.warehouseService.getCurrentWarehouse().id : undefined,
+      companyId: this.companyService.getCurrentCompany()!.id,
+      name: itemPackageType.name,
+      description: itemPackageType.description, 
+      itemUnitOfMeasures: itemPackageType.itemUnitOfMeasures.map(
+            itemUnitOfMeasure => this.cloneItemUnitOfMeasure(itemUnitOfMeasure, warehouseSpecific)
+          )
+    }
+  }
+  cloneItemFamily(itemFamily: ItemFamily, warehouseSpecific: boolean) : ItemFamily {
+    return {  
+      warehouseId: warehouseSpecific? this.warehouseService.getCurrentWarehouse().id : undefined,
+      companyId: this.companyService.getCurrentCompany()!.id,
+      name: itemFamily.name,
+      description: itemFamily.description, 
+      totalItemCount: itemFamily.totalItemCount,  
+    }
+
+  }
+  cloneItem(item: Item, warehouseSpecific: boolean) : Item {
+
+    return { 
+      name: item.name,
+      description: item.description, 
+      client: item.client ? this.cloneClient(item.client!, warehouseSpecific) : undefined,
+      itemFamily: item.itemFamily ? this.cloneItemFamily(item.itemFamily!, warehouseSpecific) : undefined,
+      itemPackageTypes: item.itemPackageTypes.map(
+            itemPackageType => this.cloneItemPackageType(itemPackageType, warehouseSpecific)
+        ),
+      allowCartonization: item.allowCartonization,
+      unitCost: item.unitCost,
+      allowAllocationByLPN: item.allowAllocationByLPN,
+      allocationRoundUpStrategyType: item.allocationRoundUpStrategyType,
+      allocationRoundUpStrategyValue: item.allocationRoundUpStrategyValue,
+      trackingVolumeFlag: item.trackingLotNumberFlag,
+      trackingLotNumberFlag: item.trackingLotNumberFlag,
+      trackingManufactureDateFlag: item.trackingManufactureDateFlag,
+      shelfLifeDays: item.shelfLifeDays,
+      trackingExpirationDateFlag: item.trackingExpirationDateFlag,
+
+      warehouseId: warehouseSpecific? this.warehouseService.getCurrentWarehouse().id : undefined,
+      companyId: this.companyService.getCurrentCompany()!.id,
+      imageUrl: item.imageUrl,
+      thumbnailUrl: item.thumbnailUrl,
     }
   }
 }

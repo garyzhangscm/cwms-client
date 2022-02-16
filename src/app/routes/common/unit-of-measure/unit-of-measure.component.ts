@@ -4,9 +4,9 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzModalService } from 'ng-zorro-antd/modal';
+
 import { UnitOfMeasure } from '../models/unit-of-measure';
 import { UnitOfMeasureService } from '../services/unit-of-measure.service';
-
 
 
 @Component({
@@ -65,13 +65,13 @@ export class CommonUnitOfMeasureComponent implements OnInit {
     this.refreshStatus();
   }
   refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayUnitOfMeasures.every(item => this.mapOfCheckedId[item.id]);
+    this.isAllDisplayDataChecked = this.listOfDisplayUnitOfMeasures.every(item => this.mapOfCheckedId[item.id!]);
     this.indeterminate =
-      this.listOfDisplayUnitOfMeasures.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
+      this.listOfDisplayUnitOfMeasures.some(item => this.mapOfCheckedId[item.id!]) && !this.isAllDisplayDataChecked;
   }
 
   checkAll(value: boolean): void {
-    this.listOfDisplayUnitOfMeasures.forEach(item => (this.mapOfCheckedId[item.id] = value));
+    this.listOfDisplayUnitOfMeasures.forEach(item => (this.mapOfCheckedId[item.id!] = value));
     this.refreshStatus();
   }
 
@@ -88,7 +88,7 @@ export class CommonUnitOfMeasureComponent implements OnInit {
   }
   sortAndFilter(): void {
     // filter data
-    const filterFunc = (item: { id: number; name: string; description: string }) =>
+    const filterFunc = (item: { id?: number; name: string; description: string }) =>
       (this.selectedFiltersByName.length
         ? this.selectedFiltersByName.some(name => item.name.indexOf(name) !== -1)
         : true) &&
@@ -124,7 +124,7 @@ export class CommonUnitOfMeasureComponent implements OnInit {
   getSelectedUnitOfMeasures(): UnitOfMeasure[] {
     const selectedUnitOfMeasures: UnitOfMeasure[] = [];
     this.unitOfMeasures.forEach((unitOfMeasure: UnitOfMeasure) => {
-      if (this.mapOfCheckedId[unitOfMeasure.id] === true) {
+      if (this.mapOfCheckedId[unitOfMeasure.id!] === true) {
         selectedUnitOfMeasures.push(unitOfMeasure);
       }
     });
