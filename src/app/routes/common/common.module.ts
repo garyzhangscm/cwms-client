@@ -23,6 +23,8 @@ import { CommonSupplierComponent } from './supplier/supplier.component';
 import { CommonUnitOfMeasureConfirmComponent } from './unit-of-measure-confirm/unit-of-measure-confirm.component';
 import { CommonUnitOfMeasureMaintenanceComponent } from './unit-of-measure-maintenance/unit-of-measure-maintenance.component';
 import { CommonUnitOfMeasureComponent } from './unit-of-measure/unit-of-measure.component';
+import { CommonTrailerComponent } from './trailer/trailer.component';
+import { CommonTrailerContainerComponent } from './trailer-container/trailer-container.component';
 
 const COMPONENTS: Array<Type<void>> = [
   CommonClientComponent,
@@ -40,7 +42,9 @@ const COMPONENTS: Array<Type<void>> = [
   CommonCustomerMaintenanceComponent,
   CommonCustomerMaintenanceConfirmComponent,
   CommonCustomerAddressMaintenanceComponent,
-  CommonPrintButtonComponent];
+  CommonPrintButtonComponent,
+  CommonTrailerComponent,
+  CommonTrailerContainerComponent];
 
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];

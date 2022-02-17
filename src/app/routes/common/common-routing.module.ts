@@ -17,6 +17,8 @@ import { CommonUnitOfMeasureConfirmComponent } from './unit-of-measure-confirm/u
 import { CommonUnitOfMeasureMaintenanceComponent } from './unit-of-measure-maintenance/unit-of-measure-maintenance.component';
 import { CommonUnitOfMeasureComponent } from './unit-of-measure/unit-of-measure.component';
 import { CommonPrintButtonComponent } from './print-button/print-button.component';
+import { CommonTrailerComponent } from './trailer/trailer.component';
+import { CommonTrailerContainerComponent } from './trailer-container/trailer-container.component';
 
 const routes: Routes = [
   { path: 'client', component: CommonClientComponent, canActivate: [AuthGuard] },
@@ -34,7 +36,9 @@ const routes: Routes = [
   { path: 'customer-maintenance', component: CommonCustomerMaintenanceComponent },
   { path: 'customer-maintenance/confirm', component: CommonCustomerMaintenanceConfirmComponent },
   { path: 'customer-maintenance/address', component: CommonCustomerAddressMaintenanceComponent },
-  { path: 'print-button', component: CommonPrintButtonComponent }];
+  { path: 'print-button', component: CommonPrintButtonComponent },
+  { path: 'trailer', component: CommonTrailerComponent },
+  { path: 'trailer-container', component: CommonTrailerContainerComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
