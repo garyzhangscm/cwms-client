@@ -190,4 +190,9 @@ export class InventoryService {
     return this.http.get(url).pipe(map(res => res.data));
   }
 
+  emptyLocation(locationId: number): Observable<WarehouseLocation>{
+    let url = `inventory/inventories/${this.warehouseService.getCurrentWarehouse().id}/empty-location`;
+    url = `${url}?locationId=${locationId}`;
+    return this.http.post(url).pipe(map(res => res.data));
+  }
 }

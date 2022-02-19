@@ -6,6 +6,7 @@ import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 
 import { DirectivesModule } from '../directives/directives.module';
+import { UtilModule } from '../util/util.module';
 import { CommonClientAddressMaintenanceComponent } from './client-address-maintenance/client-address-maintenance.component';
 import { CommonClientMaintenanceConfimComponent } from './client-maintenance-confim/client-maintenance-confim.component';
 import { CommonClientMaintenanceComponent } from './client-maintenance/client-maintenance.component';
@@ -20,11 +21,13 @@ import { CommonSupplierAddressMaintenanceComponent } from './supplier-address-ma
 import { CommonSupplierMaintenanceConfirmComponent } from './supplier-maintenance-confirm/supplier-maintenance-confirm.component';
 import { CommonSupplierMaintenanceComponent } from './supplier-maintenance/supplier-maintenance.component';
 import { CommonSupplierComponent } from './supplier/supplier.component';
+import { CommonTrailerContainerMaintenanceComponent } from './trailer-container-maintenance/trailer-container-maintenance.component';
+import { CommonTrailerContainerComponent } from './trailer-container/trailer-container.component';
+import { CommonTrailerMaintenanceComponent } from './trailer-maintenance/trailer-maintenance.component';
+import { CommonTrailerComponent } from './trailer/trailer.component';
 import { CommonUnitOfMeasureConfirmComponent } from './unit-of-measure-confirm/unit-of-measure-confirm.component';
 import { CommonUnitOfMeasureMaintenanceComponent } from './unit-of-measure-maintenance/unit-of-measure-maintenance.component';
 import { CommonUnitOfMeasureComponent } from './unit-of-measure/unit-of-measure.component';
-import { CommonTrailerComponent } from './trailer/trailer.component';
-import { CommonTrailerContainerComponent } from './trailer-container/trailer-container.component';
 
 const COMPONENTS: Array<Type<void>> = [
   CommonClientComponent,
@@ -44,7 +47,9 @@ const COMPONENTS: Array<Type<void>> = [
   CommonCustomerAddressMaintenanceComponent,
   CommonPrintButtonComponent,
   CommonTrailerComponent,
-  CommonTrailerContainerComponent];
+  CommonTrailerContainerComponent,
+  CommonTrailerContainerMaintenanceComponent,
+  CommonTrailerMaintenanceComponent];
 
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
@@ -57,7 +62,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     DirectivesModule,
     NzStepsModule,
     NzAutocompleteModule,
-    GooglePlaceModule
+    GooglePlaceModule,    
+    UtilModule,
   ],
   declarations: [
     ...COMPONENTS,

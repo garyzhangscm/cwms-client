@@ -125,9 +125,19 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
       listOfFilter: [],
       filterFn: null,
       showFilter: false
+    },{
+      name: 'location-group.allowEmptyLocation',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareBoolean(a.allowEmptyLocation, b.allowEmptyLocation),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
     },
   ];
-
+  isSpinning = false;
   // Select control for Location Group Types
   // locationGroupTypes: Array<{ label: string; value: string }> = [];
   locationGroupTypes: LocationGroupType[] = [];
@@ -191,11 +201,12 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
   }
   search(): void {
     this.searchResult = '';
-    this.searching = true;
+    this.isSpinning = true;
+    
     this.locationGroupService.getLocationGroups(this.selectedLocationGroupTypes, this.selectedLocationGroups).subscribe(
       locationGroupsRes => {
         this.setupLocationGroupRes(locationGroupsRes);
-        this.searching = false;
+        this.isSpinning = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
           rowCount: locationGroupsRes.length,
@@ -203,7 +214,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
         //this.searchResult = this.i18n.fanyi('menu.main.layout.location.group');
       },
       () => {
-        this.searching = false;
+        this.isSpinning = false;
         this.searchResult = '';
       },
     );
@@ -223,7 +234,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
 
   removeLocationGroup(id: number): void {
     // make sure we have at least one checkbox checked
-    this.operationInProcess = true;
+    this.isSpinning = true;
     const modal: NzModalRef = this.modalService.confirm({
       nzTitle: this.i18n.fanyi('page.location-group.modal.delete.header.title'),
       nzContent: this.i18n.fanyi('page.location-group.modal.delete.content'),
@@ -233,29 +244,30 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
         this.locationGroupService.removeLocationGroupById(id).subscribe(
           res => {
             this.messageService.success(this.i18n.fanyi('message.action.success'));
-            this.operationInProcess = false;
+            this.isSpinning = false;
             this.search();
           },
 
-          () => (this.operationInProcess = false),
+          () => (this.isSpinning = false),
         );
       },
       nzCancelText: this.i18n.fanyi('cancel'),
       nzOnCancel: () => {
         modal.close();
-        this.operationInProcess = false;
+        this.isSpinning = false;
       },
     });
   }
 
   changeLocationGroup(locationGroup: LocationGroup): void {
-    this.operationInProcess = true;
+    this.isSpinning = true;
     this.locationGroupService.changeLocationGroup(locationGroup).subscribe(
       res => {
         this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.isSpinning = false;
       },
-      () => { },
-      () => (this.operationInProcess = false),
+      () => {this.isSpinning = false },
+      () => (this.isSpinning = false),
     );
   }
 

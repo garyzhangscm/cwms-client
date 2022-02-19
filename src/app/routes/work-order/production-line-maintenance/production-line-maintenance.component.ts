@@ -113,7 +113,7 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
       pendingVolume: -9999,
       locationGroup: undefined,
       enabled: false,
-      locked: true,
+      locked: true, 
       reservedCode: "",
     }
   }

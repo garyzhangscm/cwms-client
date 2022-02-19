@@ -22,6 +22,7 @@ import { ItemSamplingService } from '../services/item-sampling.service';
 })
 export class InventoryItemSamplingComponent implements OnInit {
   isSpinning = false;
+  
  
   @ViewChild('st', { static: true })
   st!: STComponent;

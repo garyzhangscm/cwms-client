@@ -1,5 +1,10 @@
 <page-header [title]="'page.location-group.header.title' | i18n">
 </page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  
+
+
 <!-- Form to query the result  -->
 <form nz-form class="ant-advanced-search-form">
   <div nz-row [nzGutter]="24">
@@ -44,7 +49,7 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #rowSelectionTable nzShowSizeChanger
+  <nz-table [nzScroll]="{ x: '100vw'}" #rowSelectionTable nzShowSizeChanger
     [nzData]="listOfAllLocationGroups" [nzFooter]="tableFoot">
     <thead>
       <tr>
@@ -56,7 +61,7 @@
         </th>
 
 
-        <th>{{'action' | i18n}}</th>
+        <th nzRight nzWidth="250px">{{'action' | i18n}}</th>
       </tr>
     </thead>
     <tbody>
@@ -82,8 +87,9 @@
               {{ 'LOCATION-VOLUME-TRACKING-POLICY-' + data.volumeTrackingPolicy | i18n}}
             </span></td>
           <td>{{ 'INVENTORY-CONSOLIDATION-STRATEGY-' + data.inventoryConsolidationStrategy | i18n}}</td>
+          <td>{{ data.allowEmptyLocation + '' | i18n}}</td>
 
-          <td>
+          <td nzRight>
             <a (click)="startEdit(data.id!)"
               *ngIf="!searching && !operationInProcess && data.locationGroupType?.virtual === false"> {{ 'modify' | i18n
               }}</a>
@@ -178,8 +184,16 @@
             </nz-select>
 
           </td>
-
           <td>
+
+            <nz-select [(ngModel)]="editCache[data.id!].data.allowEmptyLocation">
+              <nz-option nzLabel="{{ 'true' | i18n }} " [nzValue]="true"></nz-option>
+              <nz-option nzLabel="{{ 'false' | i18n }}" [nzValue]="false"></nz-option>
+            </nz-select>
+
+          </td>
+
+          <td nzRight>
             <a (click)="saveRecord(data.id!)" class="save">{{'save' | i18n }}</a>
             <a nz-popconfirm nzPopconfirmTitle="Sure to cancel?" (nzOnConfirm)="cancelEdit(data.id!)">{{'cancel' |
               i18n }}</a>
@@ -201,6 +215,7 @@
   </div>
 </div>
 
+</nz-spin>
 
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">

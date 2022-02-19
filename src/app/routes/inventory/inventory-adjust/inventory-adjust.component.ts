@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService, NzModalState } from 'ng-zorro-antd/modal';
 
 import { ReasonCode } from '../../common/models/reason-code';
 import { ReasonCodeType } from '../../common/models/reason-code-type.enum';
@@ -179,6 +179,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
       filterFn: (list: boolean[], location: WarehouseLocation) => list.some(locked => location.locked === locked),
       showFilter: true
     },
+    
   ];
 
 
@@ -227,6 +228,11 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   inventoryRemovalModal!: NzModalRef;
   inventoryRemovalReason!: ReasonCode;
   listOfReasons: ReasonCode[] = [];
+
+  emptyLocationlModal!: NzModalRef;
+  emptyLocationPercent = 0;
+  emptyLocationInventoryCount = 0;
+  emptyLocationCurrentInventoryIndex = 0;
 
   documentNumber = '';
   comment = '';
@@ -462,6 +468,78 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     };
   }
 
+  openEmptyLocationModal(
+    location: WarehouseLocation,
+    tplEmptyLocationModalTitle: TemplateRef<{}>,
+    tplEmptyLocationModalContent: TemplateRef<{}>,
+  ): void { 
+ 
+    this.emptyLocationInventoryCount = 0;
+    this.emptyLocationCurrentInventoryIndex = 0;
+
+    this.emptyLocationlModal = this.modalService.create({
+      nzTitle: tplEmptyLocationModalTitle,
+      nzContent: tplEmptyLocationModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOkLoading: true,
+      nzOnCancel: () => {
+        console.log(`nzOnCancel!`)
+        this.emptyLocationlModal.destroy();
+        this.search();
+      },
+      nzOnOk: () => {
+        this.emptyLocation(location); 
+        // we will keep the modal on until we remove all the inventory
+        return false;
+      },
+      nzWidth: 1000,
+    }); 
+    this.emptyLocationlModal.afterOpen.subscribe(() => this.initInventoryList(location));
+  }
+  initInventoryList(location: WarehouseLocation) {   
+    this.inventoryService.getInventoriesByLocationId(location.id).subscribe({
+      next: (inventories) => {
+        this.mapOfInventories[location.id] = [...inventories]; 
+        this.emptyLocationInventoryCount = this.mapOfInventories[location.id!].length;
+        this.emptyLocationCurrentInventoryIndex = 0;
+        this.emptyLocationlModal.updateConfig({ 
+          nzOkLoading: false,
+        })
+      }, 
+    }); 
+  }
+  emptyLocation(location: WarehouseLocation) {   
+    this.emptyLocationlModal.updateConfig({ 
+      nzOkLoading: true,
+    }); 
+    this.removeInventoryFromList(location.name, this.mapOfInventories[location.id!])
+    
+  }
+  // remove the first inventory from the list
+  removeInventoryFromList(locationName: string, inventories: Inventory[]) {
+    // see the current inventory index that we are trying to remove
+    this.emptyLocationCurrentInventoryIndex =
+        this.emptyLocationInventoryCount - inventories.length; 
+    this.emptyLocationPercent = +(this.emptyLocationCurrentInventoryIndex * 100 / this.emptyLocationInventoryCount).toFixed(2);
+    if (inventories.length == 0) { 
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      if (this.emptyLocationlModal.state == NzModalState.OPEN) {
+        this.emptyLocationlModal.destroy();
+      }
+      return;
+    } 
+    this.inventoryService.adjustDownInventory(
+      inventories[0], undefined, 
+      `Remove Inventory ${  inventories[0].lpn  } to empty location ${  locationName}`).subscribe({
+      next: () => {
+         
+        this.removeInventoryFromList(locationName, inventories.slice(1, inventories.length + 1))
+        
+      }
+    })
+  }
 
   lpnChanged(event: Event): void {
     this.currentInventory.lpn = (event.target as HTMLInputElement).value;

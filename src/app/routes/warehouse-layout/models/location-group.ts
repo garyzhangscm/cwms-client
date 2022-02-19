@@ -15,6 +15,7 @@ export interface LocationGroup {
   countable: boolean;
   adjustable: boolean;
   trackingVolume: boolean;
+  allowEmptyLocation: boolean;
   volumeTrackingPolicy: LocationVolumeTrackingPolicy;
   inventoryConsolidationStrategy: InventoryConsolidationStrategy;
 }

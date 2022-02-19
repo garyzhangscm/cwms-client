@@ -61,7 +61,7 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #rowSelectionTable nzShowPagination [nzData]="listOfAllLocations"
+  <nz-table [nzScroll]="{ x: '100vw'}" #rowSelectionTable nzShowPagination [nzData]="listOfAllLocations"
     [nzFooter]="tableFoot">
     <thead>
       <tr>
@@ -77,7 +77,7 @@
           {{ column.name | i18n }}
         </th>
 
-        <th nzWidth="62px" nzRight>
+        <th nzWidth="100px" nzRight>
           {{ 'action' | i18n }}
         </th>
       </tr>
