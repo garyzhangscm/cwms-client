@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
-import { Trailer } from '../models/trailer';
 import { map } from 'rxjs/operators';
+
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { Trailer } from '../models/trailer';
 
 @Injectable({
   providedIn: 'root',

@@ -7,6 +7,7 @@ import { map, tap } from 'rxjs/operators';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service'; 
 import { Trailer } from '../models/trailer';
+import { TrailerAppointment } from '../models/trailer-appointment';
 
 @Injectable({
   providedIn: 'root'
@@ -53,4 +54,8 @@ export class TrailerService {
     return this.http.delete(url).pipe(map(res => res.data));
   } 
 
+  getTrailerCurrentAppointment(trailerId: number): Observable<TrailerAppointment> {
+    const url = `common/trailers/${trailerId}/current-appointment`;
+    return this.http.get(url).pipe(map(res => res.data));
+  } 
 }

@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, HostListener, Input, Output } from '@angular/core';
 
 import { SystemControlledNumberService } from '../util/services/system-controlled-number.service';
  
@@ -9,6 +9,7 @@ import { SystemControlledNumberService } from '../util/services/system-controlle
 export class FkeyDirective {
   @Input() variable = '';
   element: ElementRef;
+  @Output() readonly nextNumberAvailableEvent = new EventEmitter<string>()
 
   constructor(element: ElementRef, private systemControlledNumberService: SystemControlledNumberService) {
     this.element = element;
@@ -39,7 +40,10 @@ export class FkeyDirective {
     if (this.variable) {
       this.systemControlledNumberService
         .getNextAvailableId(this.variable)
-        .subscribe(nextId => (this.element.nativeElement.value = nextId));
+        .subscribe(nextId => {
+          this.element.nativeElement.value = nextId;
+          this.nextNumberAvailableEvent.emit(nextId);
+        });
     }
   }
 }

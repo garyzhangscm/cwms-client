@@ -4,6 +4,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { Trailer } from '../models/trailer';
@@ -192,8 +193,6 @@ export class OutboundTrailerComponent implements OnInit {
     this.checked = this.listOfDisplayTrailers!.every(item => this.setOfCheckedId.has(item.id));
     this.indeterminate = this.listOfDisplayTrailers!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
   }
-
-
 
 
   checkInTrailer(trailer: Trailer): void {

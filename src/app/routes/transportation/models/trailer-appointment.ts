@@ -1,3 +1,4 @@
+import { TrailerAppointmentStatus } from "./trailer-appointment-status.enum";
 import { TrailerAppointmentType } from "./trailer-appointment-type.enum";
 
 export interface TrailerAppointment {
@@ -7,6 +8,9 @@ export interface TrailerAppointment {
     companyId: number;
     warehouseId?: number;
 
+    number: string;
+    description: string;
 
-    type: TrailerAppointmentType;
+    type?: TrailerAppointmentType;
+    status: TrailerAppointmentStatus;
 }
