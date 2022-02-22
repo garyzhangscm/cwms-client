@@ -1,4 +1,4 @@
-export enum TrailerCategory {
+export enum TractorCategory {
     RECEIVING = 'RECEIVING',
     SHIPPING = 'SHIPPING',
     STORAGE = 'STORAGE'

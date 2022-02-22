@@ -1,11 +1,11 @@
 import { WarehouseLocation } from "../../warehouse-layout/models/warehouse-location";
 import { Carrier } from "./carrier";
 import { CarrierServiceLevel } from "./carrier-service-level";
-import { TrailerCategory } from "./trailer-category.enum";
-import { TrailerContainer } from "./trailer-container";
-import { TrailerStatus } from "./trailer-status.enum";
+import { TractorCategory } from "./tractor-category.enum";
+import { TractorStatus } from "./tractor-status.enum";
+import { Trailer } from "./trailer";
 
-export interface Trailer {
+export interface Tractor {
     
     id: number;
  
@@ -23,7 +23,7 @@ export interface Trailer {
     description: string;
     
     size: number;
-    category: TrailerCategory;
+    category: TractorCategory;
 
     carrier: Carrier;
 
@@ -31,5 +31,7 @@ export interface Trailer {
 
     locationId: number;
     location: WarehouseLocation;
-    status: TrailerStatus;
+    status: TractorStatus;
+
+    attachedTrailer: Trailer[];
 }

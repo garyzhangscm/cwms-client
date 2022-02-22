@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { CommonTrailerComponent } from './trailer.component';
+import { CommonTractorComponent } from './tractor.component';
 
-describe('CommonTrailerComponent', () => {
-  let component: CommonTrailerComponent;
-  let fixture: ComponentFixture<CommonTrailerComponent>;
+describe('CommonTractorComponent', () => {
+  let component: CommonTractorComponent;
+  let fixture: ComponentFixture<CommonTractorComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CommonTrailerComponent ]
+      declarations: [ CommonTractorComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CommonTrailerComponent);
+    fixture = TestBed.createComponent(CommonTractorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

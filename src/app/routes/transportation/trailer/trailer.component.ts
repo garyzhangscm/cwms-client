@@ -4,23 +4,20 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { NzImageService } from 'ng-zorro-antd/image';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
-import { ItemSampling } from '../../inventory/models/item-sampling';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
-import { TrailerContainer } from '../models/trailer-container';
-import { TrailerContainerService } from '../services/trailer-container.service';
+import { Trailer } from '../models/trailer';
+import { TrailerService } from '../services/trailer.service';
 
 @Component({
-  selector: 'app-common-trailer-container',
-  templateUrl: './trailer-container.component.html',
-  styleUrls: ['./trailer-container.component.less']
+  selector: 'app-common-trailer',
+  templateUrl: './trailer.component.html',
+  styleUrls: ['./trailer.component.less'],
 })
-export class CommonTrailerContainerComponent implements OnInit {
-
+export class CommonTrailerComponent implements OnInit {
   isSpinning = false;
   
  
@@ -50,18 +47,17 @@ export class CommonTrailerContainerComponent implements OnInit {
 
  
   searchForm!: FormGroup;
-  trailerContainers: TrailerContainer[] = [];
+  trailers: Trailer[] = [];
   searchResult = "";
 
   constructor(private http: _HttpClient,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
-    private trailerContainerService: TrailerContainerService,
+    private trailerService: TrailerService,
     private messageService: NzMessageService,
     private modalService: NzModalService,
-    private companyService: CompanyService,
-    private nzImageService: NzImageService,
+    private companyService: CompanyService, 
     private fb: FormBuilder,) { }
 
   ngOnInit(): void {  
@@ -92,16 +88,16 @@ export class CommonTrailerContainerComponent implements OnInit {
     
   resetForm(): void {
     this.searchForm.reset();
-    this.trailerContainers = []; 
+    this.trailers = []; 
   }
   search(): void {
     this.isSpinning = true; 
-    this.trailerContainerService
-      .getTrailerContainers(this.searchForm.value.number)
+    this.trailerService
+      .getTrailers(this.searchForm.value.number)
       .subscribe({
 
         next: (containerRes) => {
-          this.trailerContainers = containerRes;
+          this.trailers = containerRes;
           this.isSpinning = false;
 
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
@@ -119,10 +115,10 @@ export class CommonTrailerContainerComponent implements OnInit {
       
   }   
 
-  removeContainer(trailerContainer : TrailerContainer) {
+  removeTrailer(trailer : Trailer) {
     
     this.isSpinning = true;
-    this.trailerContainerService.removeTrailerContainer(trailerContainer).subscribe({
+    this.trailerService.removeTrailer(trailer).subscribe({
       next: () => {
 
         this.isSpinning = false;

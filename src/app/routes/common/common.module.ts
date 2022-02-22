@@ -20,11 +20,7 @@ import { CommonPrintButtonComponent } from './print-button/print-button.componen
 import { CommonSupplierAddressMaintenanceComponent } from './supplier-address-maintenance/supplier-address-maintenance.component';
 import { CommonSupplierMaintenanceConfirmComponent } from './supplier-maintenance-confirm/supplier-maintenance-confirm.component';
 import { CommonSupplierMaintenanceComponent } from './supplier-maintenance/supplier-maintenance.component';
-import { CommonSupplierComponent } from './supplier/supplier.component';
-import { CommonTrailerContainerMaintenanceComponent } from './trailer-container-maintenance/trailer-container-maintenance.component';
-import { CommonTrailerContainerComponent } from './trailer-container/trailer-container.component';
-import { CommonTrailerMaintenanceComponent } from './trailer-maintenance/trailer-maintenance.component';
-import { CommonTrailerComponent } from './trailer/trailer.component';
+import { CommonSupplierComponent } from './supplier/supplier.component';  
 import { CommonUnitOfMeasureConfirmComponent } from './unit-of-measure-confirm/unit-of-measure-confirm.component';
 import { CommonUnitOfMeasureMaintenanceComponent } from './unit-of-measure-maintenance/unit-of-measure-maintenance.component';
 import { CommonUnitOfMeasureComponent } from './unit-of-measure/unit-of-measure.component';
@@ -45,11 +41,7 @@ const COMPONENTS: Array<Type<void>> = [
   CommonCustomerMaintenanceComponent,
   CommonCustomerMaintenanceConfirmComponent,
   CommonCustomerAddressMaintenanceComponent,
-  CommonPrintButtonComponent,
-  CommonTrailerComponent,
-  CommonTrailerContainerComponent,
-  CommonTrailerContainerMaintenanceComponent,
-  CommonTrailerMaintenanceComponent];
+  CommonPrintButtonComponent, ];
 
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];

@@ -36,7 +36,8 @@ const routes: Routes = [
       { path: 'work-order', loadChildren: () => import('./work-order/work-order.module').then((m) => m.WorkOrderModule) },
       { path: 'integration', loadChildren: () => import('./integration/integration.module').then((m) => m.IntegrationModule) },
       { path: 'qc', loadChildren: () => import('./qc/qc.module').then((m) => m.QcModule) },
-      { path: 'alert', loadChildren: () => import('./alert/alert.module').then((m) => m.AlertModule) },]
+      { path: 'alert', loadChildren: () => import('./alert/alert.module').then((m) => m.AlertModule) },
+      { path: 'transportation', loadChildren: () => import('./transportation/transportation.module').then((m) => m.TransportationModule) },]
   },
   // Blak Layout 空白布局
   {

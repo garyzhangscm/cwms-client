@@ -26,7 +26,7 @@
   </form>
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table [nzScroll]="{ x: '100vw' }" #rowSelectionTable nzShowSizeChanger [nzData]="listOfAllSuppliers"
+  <nz-table [nzScroll]="{ x: '150vw' }" #rowSelectionTable nzShowSizeChanger [nzData]="listOfAllSuppliers"
     [nzFooter]="tableFoot">
     <thead>
       <tr>
@@ -55,10 +55,12 @@
             <input type="text" nz-input [(ngModel)]="data.name" (blur)="changeSupplier(data)" />
           </ng-template>
         </td>
-        <td>
+        <td  nzEllipsis>
           <div class="editable-cell" *ngIf="editId !== data.id! || editCol != 'description'; else editDescTpl">
             <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'description', $event)">
-              {{ data.description }}
+              <a>
+                <span nz-tooltip nzTooltipTitle="{{ data.description }}">{{ data.description }}</span>
+                </a> 
             </div>
           </div>
           <ng-template #editDescTpl>
@@ -140,20 +142,24 @@
             <input type="text" nz-input [(ngModel)]="data.addressDistrict" (blur)="changeSupplier(data)" />
           </ng-template>
         </td>
-        <td>
+        <td  nzEllipsis>
           <div class="editable-cell" *ngIf="editId !== data.id! || editCol != 'addressLine1'; else editAddressLine1Tpl">
             <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'addressLine1', $event)">
-              {{ data.addressLine1 }}
+              <a>
+                <span nz-tooltip nzTooltipTitle="{{ data.addressLine1 }}">{{ data.addressLine1 }}</span>
+                </a> 
             </div>
           </div>
           <ng-template #editAddressLine1Tpl>
             <input type="text" nz-input [(ngModel)]="data.addressLine1" (blur)="changeSupplier(data)" />
           </ng-template>
         </td>
-        <td>
+        <td nzEllipsis>
           <div class="editable-cell" *ngIf="editId !== data.id! || editCol != 'addressLine2'; else editAddressLine2Tpl">
             <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'addressLine2', $event)">
-              {{ data.addressLine2 }}
+              <a>
+                <span nz-tooltip nzTooltipTitle="{{ data.addressLine2 }}">{{ data.addressLine2 }}</span>
+                </a> 
             </div>
           </div>
           <ng-template #editAddressLine2Tpl>
@@ -178,6 +184,10 @@
 </nz-spin>
 
 <ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+  
   <div nz-row nzType="flex" nzJustify="start"> 
     <a nz-button nzType="primary" routerLink="/common/supplier-maintenance" routerLinkActive="active"
       (click)="clearSessionSupplier()">

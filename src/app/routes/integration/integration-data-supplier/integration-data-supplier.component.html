@@ -81,7 +81,7 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
   <nz-table 
-  [nzScroll]="{ x: '100vw' }"  #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationSupplierData"
+  [nzScroll]="{ x: '150vw' }"  #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationSupplierData"
     [nzFooter]="tableFoot">
     <thead  >
       <tr>
@@ -110,7 +110,9 @@
         <td>{{ data.id }}</td>
 
         <td>{{ data.name }}</td>
-        <td>{{ data.description }}</td>
+        <td nzEllipsis><a>
+          <span nz-tooltip nzTooltipTitle="{{ data.description }}">{{ data.description }}</span>
+          </a> </td>
         <td>{{ data.contactorFirstname }}</td>
         <td>{{ data.contactorLastname }}</td>
         <td>{{ data.addressCountry }}</td>
@@ -118,8 +120,12 @@
         <td>{{ data.addressCounty }}</td>
         <td>{{ data.addressCity }}</td>
         <td>{{ data.addressDistrict }}</td>
-        <td>{{ data.addressLine1 }}</td>
-        <td>{{ data.addressLine2 }}</td>
+        <td nzEllipsis><a>
+          <span nz-tooltip nzTooltipTitle="{{ data.addressLine1 }}">{{ data.addressLine1 }}</span>
+          </a> </td>
+        <td nzEllipsis><a>
+          <span nz-tooltip nzTooltipTitle="{{ data.addressLine2 }}">{{ data.addressLine2 }}</span>
+          </a> </td>
         <td>{{ data.addressPostcode }}</td>
 
         <td>{{ 'INTEGRATION-STATUS-' + data.status | i18n}}</td>

@@ -14,11 +14,7 @@ import { CommonPrintButtonComponent } from './print-button/print-button.componen
 import { CommonSupplierAddressMaintenanceComponent } from './supplier-address-maintenance/supplier-address-maintenance.component';
 import { CommonSupplierMaintenanceConfirmComponent } from './supplier-maintenance-confirm/supplier-maintenance-confirm.component';
 import { CommonSupplierMaintenanceComponent } from './supplier-maintenance/supplier-maintenance.component';
-import { CommonSupplierComponent } from './supplier/supplier.component';
-import { CommonTrailerContainerMaintenanceComponent } from './trailer-container-maintenance/trailer-container-maintenance.component';
-import { CommonTrailerContainerComponent } from './trailer-container/trailer-container.component';
-import { CommonTrailerMaintenanceComponent } from './trailer-maintenance/trailer-maintenance.component';
-import { CommonTrailerComponent } from './trailer/trailer.component';
+import { CommonSupplierComponent } from './supplier/supplier.component';  
 import { CommonUnitOfMeasureConfirmComponent } from './unit-of-measure-confirm/unit-of-measure-confirm.component';
 import { CommonUnitOfMeasureMaintenanceComponent } from './unit-of-measure-maintenance/unit-of-measure-maintenance.component';
 import { CommonUnitOfMeasureComponent } from './unit-of-measure/unit-of-measure.component';
@@ -39,11 +35,7 @@ const routes: Routes = [
   { path: 'customer-maintenance', component: CommonCustomerMaintenanceComponent },
   { path: 'customer-maintenance/confirm', component: CommonCustomerMaintenanceConfirmComponent },
   { path: 'customer-maintenance/address', component: CommonCustomerAddressMaintenanceComponent },
-  { path: 'print-button', component: CommonPrintButtonComponent },
-  { path: 'trailer', component: CommonTrailerComponent },
-  { path: 'trailer-container', component: CommonTrailerContainerComponent },
-  { path: 'trailer-container/maintenance', component: CommonTrailerContainerMaintenanceComponent },
-  { path: 'trailer/maintenance', component: CommonTrailerMaintenanceComponent }];
+  { path: 'print-button', component: CommonPrintButtonComponent },];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

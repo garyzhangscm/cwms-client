@@ -42,7 +42,7 @@
                   <ng-template #sampleNumberErrorTpl let-control>  
                       <ng-container *ngIf="sampleNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
                       <ng-container *ngIf="sampleNumberValidateStatus === 'numberExists'">Sample number already exists</ng-container>
-                              
+                    
                   </ng-template>
                 </nz-form-control>
               </nz-form-item>

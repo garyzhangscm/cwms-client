@@ -34,7 +34,7 @@
         <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
       </div>
       
-      <st #st [data]="trailerContainers" [columns]="columns" [footer]="tableFoot"    
+      <st #st [data]="trailers" [columns]="columns" [footer]="tableFoot"    
       > 
        
   
@@ -53,13 +53,21 @@
             <ul nz-menu> 
               <li nz-menu-item  >
                 
-                <a routerLink="/common/trailer-container/maintenance"
+                <a routerLink="/transportation/trailer/maintenance"
                 [queryParams]="{id : item.id}" routerLinkActive="active">
                     {{ 'modify' | i18n }}</a>
                     
               </li>
               <li nz-menu-item  >
-                <a  (click)="removeContainer(item)">{{ 'remove' | i18n }}</a>
+                <a  (click)="removeTrailer(item)">{{ 'remove' | i18n }}</a>
+              </li>
+              
+              <li nz-menu-item  >
+                
+                <a routerLink="/transportation/trailer/appointment/maintenance"
+                [queryParams]="{id : item.id}" routerLinkActive="active">
+                    {{ 'appointment' | i18n }}</a>
+                    
               </li>
             </ul>
           </nz-dropdown-menu>
@@ -79,7 +87,7 @@
     
     <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
       
-      <button nz-button nzType="primary" routerLink="/common/trailer-container/maintenance" routerLinkActive="active">
+      <button nz-button nzType="primary" routerLink="/transportation/trailer/maintenance" routerLinkActive="active">
           {{ 'add' | i18n }}
         </button>
     </div>

@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 
 @Component({
-  selector: 'app-common-trailer',
-  templateUrl: './trailer.component.html',
+  selector: 'app-common-tractor',
+  templateUrl: './tractor.component.html',
 })
-export class CommonTrailerComponent implements OnInit {
+export class CommonTractorComponent implements OnInit {
 
   constructor(private http: _HttpClient) { }
 

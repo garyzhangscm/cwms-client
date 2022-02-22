@@ -1,3 +1,4 @@
+import { formatDate } from '@angular/common';
 import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
@@ -172,6 +173,7 @@ export class CommonSupplierComponent implements OnInit {
   // editable cell
   editId = -1;
   editCol = '';
+  searchResult = "";
 
   @ViewChild(NzInputDirective, { static: false, read: ElementRef }) inputElement: ElementRef | undefined;
 
@@ -194,6 +196,8 @@ export class CommonSupplierComponent implements OnInit {
   }
 
   search(refresh: boolean = false): void {
+    this.isSpinning = true;
+
     this.supplierService.getSuppliers(
       this.searchForm.controls.name.value).subscribe(
         {
@@ -201,6 +205,10 @@ export class CommonSupplierComponent implements OnInit {
 
             this.listOfAllSuppliers = supplierRes;
             this.listOfDisplaySuppliers = supplierRes;
+            this.searchResult = this.i18n.fanyi('search_result_analysis', {
+              currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+              rowCount: supplierRes.length
+            });
             this.isSpinning = false;
           }, 
           error: () => this.isSpinning = false

@@ -1,4 +1,4 @@
-export enum TrailerStatus {
+export enum TractorStatus {
     CANCELLED = 'CANCELLED',
     PENDING = 'PENDING',
     INPROCESS = 'INPROCESS',

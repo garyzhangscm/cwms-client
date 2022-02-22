@@ -1,4 +1,4 @@
-export interface TrailerContainer {
+export interface Trailer {
     
     id?: number;
  
