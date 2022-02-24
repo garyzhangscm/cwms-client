@@ -61,7 +61,8 @@ export interface Order {
   clientId?: number;
   client?: Client;
 
-  orderLines: OrderLine[];
+  orderLines: OrderLine[]; 
+
 
   totalLineCount?: number;
   totalItemCount?: number;

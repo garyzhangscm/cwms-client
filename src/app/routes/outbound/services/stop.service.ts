@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
-import { Stop } from '../models/stop';
 import { map } from 'rxjs/operators';
+
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { Stop } from '../models/stop';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StopService {
-  constructor(private http: _HttpClient) {}
+  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
   getStops(): Observable<Stop[]> {
     const url = `outbound/stops`;
@@ -42,5 +44,10 @@ export class StopService {
       stop_ids: stopIds.join(','),
     };
     return this.http.delete('outbound/stops', params).pipe(map(res => res.data));
+  }
+  
+  getOpenStops(): Observable<Stop[]> {
+    const url = `outbound/stops/open?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    return this.http.get(url).pipe(map(res => res.data));
   }
 }

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
-import { Shipment } from '../models/shipment';
 import { map } from 'rxjs/operators';
+
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { Shipment } from '../models/shipment';
 
 @Injectable({
   providedIn: 'root',
@@ -68,5 +69,9 @@ export class ShipmentService {
 
   dispatchTrailer(shipment: Shipment): Observable<Shipment> {
     return this.http.post(`outbound/shipments/${shipment.id}/dispatch`).pipe(map(res => res.data));
+  }
+
+  getOpenShpimentsForStop(): Observable<Shipment[]> {
+    return this.http.get(`outbound/shipments/open-for-stop?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`).pipe(map(res => res.data));
   }
 }

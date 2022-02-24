@@ -45,6 +45,111 @@
 
         </div>
     </nz-card>   
+    <!-- Add Stop to this trailer appoinment -->
+    <nz-card *ngIf="currentAppointment?.number != null && currentAppointment?.type === trailerAppointmentTypes.SHIPPING">
+      <nz-tabset nzType="card">
+        
+        <nz-tab nzTitle="{{'stop' | i18n}}">
+          <st #stopTable [data]="stops" [columns]="stopTablecolumns" [footer]="stopTableFoot"> 
+            
+            <!--   action colummn  --> 
+            <ng-template st-row="actionColumnTitle" type="title" let-c>
+              {{ 'action' | i18n }}
+            </ng-template>
+            <ng-template st-row="actionColumn" let-item let-index="index"> 
+              
+              <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" 
+                  [disabled]="item.number==''"
+              >
+                {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu>  
+                  <li nz-menu-item  >
+                    <a  (click)="deassignStop(item)">{{ 'deassign' | i18n }}</a>
+                  </li>
+                  
+                </ul>
+              </nz-dropdown-menu>
+            </ng-template>
+
+            
+            <ng-template #stopTableFoot>
+              <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">                
+                <button nz-button nzType="primary"  (click)="showAssignStopModal(tplAssignStopModalTitle, tplAssignStopModalContent)">
+                    {{ 'assign' | i18n }}
+                  </button>
+              </div>
+            </ng-template>
+          </st>
+        </nz-tab>
+        <nz-tab nzTitle="{{'shipment' | i18n}}">
+          <st #shipmentTable [data]="shipments" [columns]="shipmentTablecolumns" [footer]="shipmentTableFoot"> 
+            
+            <!--   action colummn  --> 
+            <ng-template st-row="actionColumnTitle" type="title" let-c>
+              {{ 'action' | i18n }}
+            </ng-template>
+            <ng-template st-row="actionColumn" let-item let-index="index"> 
+              
+              <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" 
+                  [disabled]="item.number==''"
+              >
+                {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu>  
+                  <li nz-menu-item  >
+                    <a  (click)="deassignShipmentFromStop(item)">{{ 'deassign' | i18n }}</a>
+                  </li>
+                  
+                </ul>
+              </nz-dropdown-menu>
+            </ng-template>
+
+            
+            <ng-template #shipmentTableFoot>
+              <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">                
+                <button nz-button nzType="primary"  (click)="showAssignShipmentModal(tplAssignShipmentModalTitle, tplAssignShipmentModalContent)">
+                    {{ 'assign' | i18n }}
+                </button> 
+                    
+              </div>
+            </ng-template>
+          </st>
+        </nz-tab> 
+        <nz-tab nzTitle="{{'order' | i18n}}">
+          <st #orderTable [data]="orders" [columns]="orderTablecolumns" [footer]="orderTableFoot" [scroll]="{ x: '1450px'}"> 
+             
+            <ng-template st-row="actionColumnTitle" type="title" let-c>
+              {{ 'action' | i18n }}
+            </ng-template>
+            <ng-template st-row="actionColumn" let-item let-index="index"> 
+              
+              <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary"  
+              >
+                {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu>  
+                  <li nz-menu-item  >
+                    <a  (click)="deassignOrderFromStop(item)">{{ 'deassign' | i18n }}</a>
+                  </li>
+                  
+                </ul>
+              </nz-dropdown-menu>
+            </ng-template>
+
+            
+            <ng-template #orderTableFoot>
+              <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">                
+                <button nz-button nzType="primary"  (click)="showAssignOrderModal(tplAssignOrderModalTitle, tplAssignOrderModalContent)">
+                    {{ 'assign' | i18n }}
+                </button>
+              </div>
+            </ng-template>
+          </st>
+        </nz-tab> 
+      </nz-tabset>
+
+    </nz-card>
 </div>
 
 
@@ -88,8 +193,8 @@
 <!-- Modal for creating receipt line -->
 <ng-template #tplAddAppointmentModalTitle>
     <span>{{ 'add-appointment' | i18n}}</span>
-  </ng-template>
-  <ng-template #tplAddAppointmentModalContent>
+</ng-template>
+<ng-template #tplAddAppointmentModalContent>
     <div nz-row [nzGutter]="24">
       <div nz-col [nzSpan]="12">
         <nz-form-item nzFlex>
@@ -137,4 +242,43 @@
         </nz-form-item>
       </div>
     </div>
-  </ng-template>
+</ng-template>
+
+<!-- Modal for assign stop to current trailer appointment -->
+<ng-template #tplAssignStopModalTitle>
+  <span>{{ 'assign-stop' | i18n}}</span>
+</ng-template>
+<ng-template #tplAssignStopModalContent>
+  
+  <st #openStopTable [data]="openStops" [columns]="openStopTablecolumns" 
+  (change)="openStopTableChange($event)"> 
+  
+  </st>
+</ng-template>
+
+
+<!-- Modal for assign shipment to current trailer appointment -->
+<ng-template #tplAssignShipmentModalTitle>
+  <span>{{ 'assign-shipment' | i18n}}</span>
+</ng-template>
+<ng-template #tplAssignShipmentModalContent>
+  
+  <st #openShipmentTable [data]="openShipments" [columns]="openShipmentTablecolumns" 
+  (change)="openShipmentTableChange($event)"> 
+  
+  </st>
+</ng-template>
+
+
+
+<!-- Modal for assign order to current trailer appointment -->
+<ng-template #tplAssignOrderModalTitle>
+  <span>{{ 'assign-order' | i18n}}</span>
+</ng-template>
+<ng-template #tplAssignOrderModalContent>
+  
+  <st #openOrderTable [data]="openOrders" [columns]="openOrderTablecolumns" 
+  (change)="openOrderTableChange($event)" [scroll]="{ x: '1450px'}"> 
+  
+  </st>
+</ng-template>

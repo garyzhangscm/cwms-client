@@ -1,19 +1,21 @@
-import { ShipmentLine } from './shipment-line';
-import { ShipmentStatus } from './shipment-status.enum';
 import { Carrier } from '../../common/models/carrier';
 import { CarrierServiceLevel } from '../../common/models/carrier-service-level';
-import { Customer } from '../../common/models/customer';
 import { Client } from '../../common/models/client';
+import { Customer } from '../../common/models/customer';
+import { ShipmentLine } from './shipment-line';
+import { ShipmentStatus } from './shipment-status.enum';
 
 export interface Shipment {
   id: number;
   number: string;
   shipmentLines: ShipmentLine[];
+  orderNumbers: string[];
   status: ShipmentStatus;
   carrierId: number;
   carrier: Carrier;
   carrierServiceLevelId: number;
   carrierServiceLevel: CarrierServiceLevel;
+  stopNumber: string;
 
   clientId: number;
   client: Client;
