@@ -94,9 +94,9 @@ export class CommonTrailerMaintenanceComponent implements OnInit {
     if (this.newTrailer) {
       this.trailerService.addTrailer(this.currentTrailer).subscribe({
         next: (trailerRes) => {
-          this.isSpinning= false; 
           this.messageService.success(this.i18n.fanyi('message.action.success'));
           setTimeout(() => {
+            this.isSpinning= false; 
             this.router.navigateByUrl(`/transportation/trailer?number=${trailerRes.number}`);
           }, 2500);
         }, 

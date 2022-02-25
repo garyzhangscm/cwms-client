@@ -1,4 +1,6 @@
+import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
@@ -23,6 +25,7 @@ import { TrailerService } from '../services/trailer.service';
 @Component({
   selector: 'app-transportation-trailer-appointment-maintenance',
   templateUrl: './trailer-appointment-maintenance.component.html',
+  styleUrls: ['./trailer-appointment-maintenance.component.less'],
 })
 export class TransportationTrailerAppointmentMaintenanceComponent implements OnInit {
 
@@ -40,9 +43,19 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
   assignStopModal!: NzModalRef;
   openStops: Stop[] = [];
   assignShipmentModal!: NzModalRef;
+  
+  openShipmentSearchForm!: FormGroup; 
+  openShipmentTableSearchResult = "";
   openShipments: Shipment[] = [];
   assignOrderModal!: NzModalRef;
+  openShipmentSearching = false;
+
+  
+  openOrderSearchForm!: FormGroup; 
+  openOrderTableSearchResult = "";
   openOrders: Order[] = [];
+  newAppointment = true;
+  openOrderSearching = false;
 
 
   constructor(
@@ -58,19 +71,30 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
     private orderService: OrderService,
     private messageService: NzMessageService,
     private router: Router,
-    private activatedRoute: ActivatedRoute,) { }
+    private activatedRoute: ActivatedRoute,
+    private fb: FormBuilder,) { }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('trailer.maintenance'));
     this.pageTitle = this.i18n.fanyi('trailer.maintenance');
 
     this.activatedRoute.queryParams.subscribe(params => {
+      // if we passed in the trailer id, then get the 
+      // current appointment assigned to this trailer
       if (params.id) {
         // Get the current appoint for the trailer
         this.trailerService.getTrailerCurrentAppointment(params.id)
           .subscribe({
             next: (trailerAppoitmentRes) => {
-              this.currentAppointment = trailerAppoitmentRes;  
+              if (trailerAppoitmentRes) {
+                this.currentAppointment = trailerAppoitmentRes;                  
+                this.newAppointment = false;
+              }
+              else {
+                // there's no appointment for the trailer yet                
+                this.newAppointment = true;
+              }
+              
             }
           });
        
@@ -94,8 +118,47 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
     this.stepIndex += 1;
   }
 
-  confirm() {}
+  confirm() {
+    if (this.newAppointment) {
+      this.isSpinning = true;
+      this.trailerService.addTrailerAppointment(this.currentTrailer.id!, this.currentAppointment!)
+          .subscribe({
+            next: (trailerAppointmentRes) => {
+              this.isSpinning = false;
+              this.attachStopShipmentOrdersToTrailerAppointment(trailerAppointmentRes);
+            }, 
+            error: () => this.isSpinning = false
+          })
+    }
+    else {
+      
+      this.attachStopShipmentOrdersToTrailerAppointment(this.currentAppointment!);
+    }
+  }
 
+  attachStopShipmentOrdersToTrailerAppointment(trailerAppointment: TrailerAppointment) {
+
+    this.isSpinning = true;
+    
+    // let's attach the stop first
+    const stopIdList = this.stops.map(stop => stop.id).join(",");
+    const shipmentIdList = this.shipments.map(shipment => shipment.id).join(",");
+    const orderIdList = this.orders.map(order => order.id).join(",");
+
+    this.trailerService.assignStopShipmentOrdersToTrailerAppointment(
+      trailerAppointment.id!, stopIdList, shipmentIdList, orderIdList
+    ).subscribe({
+      next: () => { 
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        setTimeout(() => {
+          this.isSpinning= false; 
+          this.router.navigateByUrl(`/transportation/trailer?number=${this.currentTrailer.number}`);
+        }, 2500);
+      }, 
+      error: () => this.isSpinning = false
+    })
+
+  }
   
   showAddAppointmentModal( 
     tplAddAppointmentModalTitle: TemplateRef<{}>,
@@ -169,6 +232,7 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
       title: 'action',
       renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 
       render: 'actionColumn',
+      iif: () => this.stepIndex === 0
     },
   ]; 
 
@@ -190,7 +254,10 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
     { title: this.i18n.fanyi("postcode"),  index: 'addressPostcode' ,   }, 
   ]; 
 
-  deassignStop(stop: Stop) {}
+  deassignStop(stop: Stop) {
+    
+    this.stops = this.stops.filter(assignedStop => assignedStop.id != stop.id)
+  }
 
   openStopTableChange(stChange: STChange) {
     // make sure the user only check one column
@@ -251,8 +318,8 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
   shipmentTablecolumns: STColumn[] = [
     { title: this.i18n.fanyi("number"),  index: 'number' ,  },  
     { title: this.i18n.fanyi("orderNumber"),  index: 'orderNumbers' ,   },     
-    { title: this.i18n.fanyi("stopNumber"),  index: 'stopNumber' ,   },       
-    { title: this.i18n.fanyi("stopSequence"),  index: 'stopSequence' ,   },     
+    { title: this.i18n.fanyi("stop.number"),  index: 'stopNumber' ,   },       
+    { title: this.i18n.fanyi("stop.sequence"),  index: 'stopSequence' ,   },     
     { title: this.i18n.fanyi("contactor.firstname"),  index: 'shipTocontactorFirstname' ,   },     
     { title: this.i18n.fanyi("contactor.lastname"),  index: 'shipTocontactorLastname' ,   }, 
     { title: this.i18n.fanyi("country"),  index: 'shipToAddressCountry' ,   }, 
@@ -267,11 +334,12 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
       title: 'action',
       renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 
       render: 'actionColumn',
+      iif: () => this.stepIndex === 0
     },
   ]; 
 
   
-  @ViewChild('openShipmentTable', { static: true })
+  @ViewChild('openShipmentTable', { static: false })
   openShipmentTable!: STComponent;
   openShipmentTablecolumns: STColumn[] = [
     { title: this.i18n.fanyi("id"),  index: 'id' , type: "checkbox" },   
@@ -289,8 +357,49 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
     { title: this.i18n.fanyi("postcode"),  index: 'shipToAddressPostcode' ,   }, 
   ]; 
 
+  resetopenShipmentForm(): void {
+    this.openShipmentSearchForm.reset();
+    this.openShipments = []; 
+  }
+  openShipmentSearch(): void {
+    
+    this.assignShipmentModal.updateConfig({ 
+      nzOkDisabled: true,
+      nzOkLoading: true
+    });
+    this.openShipmentSearching = true;
+    this.shipmentService
+      .getOpenShpimentsForStop(this.openShipmentSearchForm.value.number, this.openShipmentSearchForm.value.orderNumber)
+      .subscribe({
+
+        next: (shipmentRes) => {
+          this.openShipments = shipmentRes;
+          this.assignShipmentModal.updateConfig({ 
+            nzOkDisabled: true,
+            nzOkLoading: false
+          });
+          this.openShipmentSearching = false;
+
+          this.openShipmentTableSearchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: shipmentRes.length
+          });
+ 
+
+        },
+        error: () => {
+          this.assignShipmentModal.updateConfig({ 
+            nzOkDisabled: true,
+            nzOkLoading: false
+          });
+          this.openShipmentSearching = false;
+          this.openShipmentTableSearchResult = '';
+        }
+      });
+      
+  }   
   deassignShipmentFromStop(shipment: Shipment) {
-    this.openShipments = this.openShipments.filter(assignedShipment => assignedShipment.id != shipment.id)
+    this.shipments = this.shipments.filter(assignedShipment => assignedShipment.id != shipment.id)
   }
  
   openShipmentTableChange(stChange: STChange) {
@@ -306,6 +415,7 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
         
         this.assignShipmentModal.updateConfig({ 
           nzOkDisabled: false,
+          nzOkLoading: false,
         })
       }
     }
@@ -315,6 +425,12 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
   showAssignShipmentModal(
     tplAssignShipmentModalTitle: TemplateRef<{}>,
     tplAssignShipmentModalContent: TemplateRef<{}>,) {
+      // initiate the search form
+      this.openShipmentSearchForm = this.fb.group({
+        number: [null], 
+        orderNumber: [null], 
+      });
+      this.openShipments = [];
 
       // show the model
       this.assignShipmentModal = this.modalService.create({
@@ -332,19 +448,9 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
           
         },
         nzWidth: 1000,
-      });
-      
-    this.assignShipmentModal.afterOpen.subscribe(() => this.setupOpenShipments()); 
+      }); 
   }
-
-  setupOpenShipments() {
-    this.shipmentService.getOpenShpimentsForStop().subscribe({
-      next: (shipmentRes) => {
-        this.openShipments = shipmentRes;
-      }
-    })
-
-  }
+ 
   assignShipment() {
     
     const dataList: STData[] = this.openShipmentTable.list; 
@@ -365,7 +471,7 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
   orderTable!: STComponent;
   orderTablecolumns: STColumn[] = [
     { title: this.i18n.fanyi("number"),  index: 'number' ,  },      
-    { title: this.i18n.fanyi("shipmentNumber"),  index: 'shipmentNumber' ,   },     
+    { title: this.i18n.fanyi("shipment.number"),  index: 'shipmentNumber' ,   },     
     { title: this.i18n.fanyi("stopNumber"),  index: 'stopNumber' ,   },    
     { title: this.i18n.fanyi("stopSequence"),  index: 'stopSequence' ,   },      
     { title: this.i18n.fanyi("contactor.firstname"),  index: 'shipTocontactorFirstname' ,   },     
@@ -382,6 +488,7 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
       title: 'action',
       renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 
       render: 'actionColumn',
+      iif: () => this.stepIndex === 0
     },
   ];  
 
@@ -403,20 +510,58 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
     { title: this.i18n.fanyi("postcode"),  index: 'shipToAddressPostcode' ,   }, 
   ]; 
 
-  deassignOrderFromStop(order: Order) {
-    this.openOrders = this.openOrders.filter(assignedOrder => assignedOrder.id != order.id)
+  deassignOrderFromStop(order: Order) { 
+    this.orders = this.orders.filter(assignedOrder => assignedOrder.id != order.id);
+    
   }
+  
+  resetOpenOrderForm(): void {
+    this.openOrderSearchForm.reset();
+    this.openOrders = []; 
+  }
+  openOrderSearch(): void {
+    
+    this.assignOrderModal.updateConfig({ 
+      nzOkDisabled: true,
+      nzOkLoading: true
+    });
+    this.openOrderSearching = true;
+    this.orderService
+      .getOpenOrdersForStop(this.openOrderSearchForm.value.number)
+      .subscribe({
+
+        next: (orderRes) => {
+          this.openOrders = orderRes;
+          this.assignOrderModal.updateConfig({ 
+            nzOkDisabled: true,
+            nzOkLoading: false
+          });
+          this.openOrderSearching = false;
+
+          this.openOrderTableSearchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: orderRes.length
+          });
+ 
+
+        },
+        error: () => {
+          this.assignOrderModal.updateConfig({ 
+            nzOkDisabled: true,
+            nzOkLoading: false
+          });
+          this.openOrderSearching = false;
+          this.openOrderTableSearchResult = '';
+        }
+      });
+      
+  }   
+
 
   openOrderTableChange(stChange: STChange) {
-    // make sure the user only check one column
-    console.log('change', stChange);
-    console.log(`openOrderTableChange, type: ${stChange.type}` );
+    // make sure the user only check one column 
     if (stChange.type === 'checkbox') {
-
-
-      const dataList: STData[] = this.openOrderTable.list; 
-      console.log(`dataList: ${dataList.length}` );
-      console.log(`dataList.filter( data => data.checked).length: ${dataList.filter( data => data.checked).length}` );
+      const dataList: STData[] = this.openOrderTable.list;  
       if (dataList.filter( data => data.checked).length > 0) {
         // as long as the user select one stop , allow the user to 
         // click the confirm button on the modal to assign the 
@@ -424,6 +569,7 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
         
         this.assignOrderModal.updateConfig({ 
           nzOkDisabled: false,
+          nzOkLoading: false
         })
       }
     }
@@ -434,6 +580,11 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
     tplAssignOrderModalTitle: TemplateRef<{}>,
     tplAssignOrderModalContent: TemplateRef<{}>,) {
 
+      // initiate the search form
+      this.openOrderSearchForm = this.fb.group({
+        number: [null],  
+      });
+      this.openOrders = [];
       // show the model
       this.assignOrderModal = this.modalService.create({
         nzTitle: tplAssignOrderModalTitle,
@@ -450,22 +601,9 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
         },
         nzWidth: 1000,
       });
-      
-    this.assignOrderModal.afterOpen.subscribe(() => this.setupOpenOrders()); 
+       
   }
-
-  setupOpenOrders() {
-    this.orderService.getOpenOrdersForStop().subscribe({
-      next: (orderRes) => {
-        this.openOrders = orderRes;
-        this.assignOrderModal.updateConfig({ 
-          nzOkLoading: false,
-          nzOkDisabled: true,
-        })
-      }
-    })
-
-  }
+ 
   
   assignOrder() {
     

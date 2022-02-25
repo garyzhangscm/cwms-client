@@ -1,3 +1,4 @@
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -12,10 +13,15 @@ import { Shipment } from '../models/shipment';
 export class ShipmentService {
   constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
-  getShipments(number: string): Observable<Shipment[]> {
+  getShipments(number?: string, orderNumber?: string): Observable<Shipment[]> {
     let url = `outbound/shipments?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
     if (number) {
-      url = `${url}&number=${number}`;
+      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number)}`;
+    }
+    if (orderNumber) {
+      url = `${url}&orderNumber=${httpUrlEncodingCodec.encodeValue(orderNumber)}`;
     }
 
     return this.http.get(url).pipe(map(res => res.data));
@@ -71,7 +77,17 @@ export class ShipmentService {
     return this.http.post(`outbound/shipments/${shipment.id}/dispatch`).pipe(map(res => res.data));
   }
 
-  getOpenShpimentsForStop(): Observable<Shipment[]> {
-    return this.http.get(`outbound/shipments/open-for-stop?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`).pipe(map(res => res.data));
+  getOpenShpimentsForStop(number?: string, orderNumber?: string): Observable<Shipment[]> {
+    let url = `outbound/shipments/open-for-stop?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+    if (number) {
+      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number)}`;
+    }
+    if (orderNumber) {
+      url = `${url}&orderNumber=${httpUrlEncodingCodec.encodeValue(orderNumber)}`;
+    }
+
+    return this.http.get(url).pipe(map(res => res.data));
   }
 }

@@ -149,8 +149,15 @@ export class OrderService {
     return this.http.post(`outbound/orders/${order.id}/retrigger-order-confirm-integration?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`).pipe(map(res => res.data));
   }
 
-  getOpenOrdersForStop(): Observable<Order[]> {
-    return this.http.get(`outbound/orders/open-for-stop?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`).pipe(map(res => res.data));
+  getOpenOrdersForStop(number?: string): Observable<Order[]> {
+    let url = `outbound/orders/open-for-stop?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    
+    if (number) {
+      const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+      
+      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number)}`; 
+    }
+    return this.http.get(url).pipe(map(res => res.data));
   }
  
 }

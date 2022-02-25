@@ -161,13 +161,37 @@
 
       <nz-descriptions-item nzTitle="{{ 'number' | i18n }}">{{ currentAppointment?.number }}
       </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description' | i18n}}">
+          {{currentAppointment?.description}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'type' | i18n}}">
+          <span *ngIf="currentAppointment?.type != null">
+              {{'TRAILER-APPOINTMENT-TYPE-' + currentAppointment?.type | i18n}} </span>
+      </nz-descriptions-item>
       
 
        
     </nz-descriptions>
+  </nz-card>   
+  <!-- Add Stop to this trailer appoinment -->
+  <nz-card *ngIf="currentAppointment?.number != null && currentAppointment?.type === trailerAppointmentTypes.SHIPPING">
+    <nz-tabset nzType="card">
+        
+      <nz-tab nzTitle="{{'stop' | i18n}}">
+        <st #stopTable [data]="stops" [columns]="stopTablecolumns" [scroll]="{ x: '1450px'}" >  
+        </st>
+      </nz-tab>
+      <nz-tab nzTitle="{{'shipment' | i18n}}">
+        <st #shipmentTable [data]="shipments" [columns]="shipmentTablecolumns" [scroll]="{ x: '1450px'}" >  
+        </st>
+      </nz-tab> 
+      <nz-tab nzTitle="{{'order' | i18n}}">
+        <st #orderTable [data]="orders" [columns]="orderTablecolumns"  [scroll]="{ x: '1450px'}">  
+        </st>
+      </nz-tab> 
+    </nz-tabset> 
   </nz-card>
 </div>
-
 
 <div class="steps-action" *ngIf="stepIndex === 0">
   <button nz-button nzType="default" (click)="nextStep()"  >
@@ -251,7 +275,7 @@
 <ng-template #tplAssignStopModalContent>
   
   <st #openStopTable [data]="openStops" [columns]="openStopTablecolumns" 
-  (change)="openStopTableChange($event)"> 
+  (change)="openStopTableChange($event)" [ps]="5"> 
   
   </st>
 </ng-template>
@@ -263,10 +287,57 @@
 </ng-template>
 <ng-template #tplAssignShipmentModalContent>
   
-  <st #openShipmentTable [data]="openShipments" [columns]="openShipmentTablecolumns" 
-  (change)="openShipmentTableChange($event)"> 
+    <!-- Form to query the result  -->
+    <form nz-form [formGroup]="openShipmentSearchForm" class="ant-advanced-search-form"> 
   
-  </st>
+      <div nz-row [nzGutter]="24">
+          <div nz-col [nzSpan]="12">
+              <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="6" nzFor="number">
+                  {{ 'number' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18">
+                  <input nz-input name="number" id="number" formControlName="number">
+                </nz-form-control>
+              </nz-form-item>
+          </div> 
+          <div nz-col [nzSpan]="12">
+              <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="6" nzFor="orderNumber">
+                  {{ 'order.number' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18">
+                  <input nz-input name="orderNumber" id="orderNumber" formControlName="orderNumber">
+                </nz-form-control>
+              </nz-form-item>
+          </div> 
+        
+      </div>
+      <div nz-row>
+        <div nz-col [nzSpan]="24" class="search-area">
+          <button nz-button [nzType]="'primary'" (click)="openShipmentSearch()" [nzLoading]="openShipmentSearching">
+            {{ 'search' | i18n }}
+          </button>
+          <button nz-button (click)="resetopenShipmentForm()">{{ 'clear' | i18n }}</button>
+        </div>
+      </div>
+    </form> 
+   
+   
+    
+    <div class="search-result-list"> 
+      <st #openShipmentTable [data]="openShipments" [columns]="openShipmentTablecolumns" 
+      (change)="openShipmentTableChange($event)" [scroll]="{ x: '1450px'}" [footer]="openShipmentTableFoot" [ps]="5"  > 
+      
+      </st>
+      <ng-template #openShipmentTableFoot>
+      
+          <div nz-row nzType="flex" nzJustify="start" *ngIf="openShipmentTableSearchResult != ''">
+            {{openShipmentTableSearchResult}}
+          </div> 
+      </ng-template>
+        
+    </div>
 </ng-template>
 
 
@@ -277,8 +348,44 @@
 </ng-template>
 <ng-template #tplAssignOrderModalContent>
   
-  <st #openOrderTable [data]="openOrders" [columns]="openOrderTablecolumns" 
-  (change)="openOrderTableChange($event)" [scroll]="{ x: '1450px'}"> 
+    <!-- Form to query the result  -->
+    <form nz-form [formGroup]="openOrderSearchForm" class="ant-advanced-search-form"> 
   
-  </st>
+      <div nz-row [nzGutter]="24">
+          <div nz-col [nzSpan]="12">
+              <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="6" nzFor="number">
+                  {{ 'number' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18">
+                  <input nz-input name="number" id="number" formControlName="number">
+                </nz-form-control>
+              </nz-form-item>
+          </div>  
+      </div>
+      <div nz-row>
+        <div nz-col [nzSpan]="24" class="search-area">
+          <button nz-button [nzType]="'primary'" (click)="openOrderSearch()" [nzLoading]="openShipmentSearching">
+            {{ 'search' | i18n }}
+          </button>
+          <button nz-button (click)="resetOpenOrderForm()">{{ 'clear' | i18n }}</button>
+        </div>
+      </div>
+    </form> 
+   
+   
+    
+    <div class="search-result-list"> 
+      <st #openOrderTable [data]="openOrders" [columns]="openOrderTablecolumns" 
+      (change)="openOrderTableChange($event)" [scroll]="{ x: '1450px'}" [footer]="openOrderTableFoot" [ps]="5"> 
+      
+      </st>
+      <ng-template #openOrderTableFoot>
+      
+          <div nz-row nzType="flex" nzJustify="start" *ngIf="openOrderTableSearchResult != ''">
+            {{openOrderTableSearchResult}}
+          </div> 
+      </ng-template>
+        
+    </div>
 </ng-template>

@@ -58,4 +58,30 @@ export class TrailerService {
     const url = `common/trailers/${trailerId}/current-appointment`;
     return this.http.get(url).pipe(map(res => res.data));
   } 
+  addTrailerAppointment(trailerId: number, trailerAppointment: TrailerAppointment): Observable<TrailerAppointment> {
+    const url = `common/trailers/${trailerId}/add-appointment`;
+    return this.http.put(url, trailerAppointment).pipe(map(res => res.data));
+  } 
+  removeTrailerAppointment(trailerId: number, trailerAppointment: TrailerAppointment): Observable<TrailerAppointment> {
+    const url = `common/trailers/${trailerId}/appointment/${trailerAppointment.id}`;
+    return this.http.delete(url, trailerAppointment).pipe(map(res => res.data));
+  } 
+  
+  assignStopShipmentOrdersToTrailerAppointment(
+    trailerAppointmentId: number, stopIdList?: string, shipmentIdList?: string, orderIdList?: string
+  ) : Observable<TrailerAppointment> {
+    let url = `outbound/trailer-appointments/${trailerAppointmentId}/assign-stops-shipments-orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&companyId=${this.companyService.getCurrentCompany()!.id}`;
+    
+    if (stopIdList) {
+      url = `${url}&stopIdList=${stopIdList}`;
+    }
+    if (shipmentIdList) {
+      url = `${url}&shipmentIdList=${shipmentIdList}`;
+    }
+    if (orderIdList) {
+      url = `${url}&orderIdList=${orderIdList}`;
+    }
+    return this.http.post(url).pipe(map(res => res.data));
+  } 
+  
 }
