@@ -11,13 +11,15 @@ import { TransportationTrailerAppointmentMaintenanceComponent } from './trailer-
 import { CommonTrailerMaintenanceComponent } from './trailer-maintenance/trailer-maintenance.component';
 import { CommonTrailerComponent } from './trailer/trailer.component';
 import { TransportationRoutingModule } from './transportation-routing.module';
+import { TransportationTractorAppointmentMaintenanceComponent } from './tractor-appointment-maintenance/tractor-appointment-maintenance.component';
 
 const COMPONENTS: Array<Type<void>> = [
   CommonTractorComponent,
   CommonTractorMaintenanceComponent,
   CommonTrailerComponent,
   CommonTrailerMaintenanceComponent,
-  TransportationTrailerAppointmentMaintenanceComponent];
+  TransportationTrailerAppointmentMaintenanceComponent,
+  TransportationTractorAppointmentMaintenanceComponent];
 
 @NgModule({
   imports: [

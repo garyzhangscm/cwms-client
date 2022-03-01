@@ -1,37 +1,25 @@
-import { WarehouseLocation } from "../../warehouse-layout/models/warehouse-location";
-import { Carrier } from "./carrier";
-import { CarrierServiceLevel } from "./carrier-service-level";
-import { TractorCategory } from "./tractor-category.enum";
+
+import { WarehouseLocation } from "../../warehouse-layout/models/warehouse-location"; 
+import { TractorAppointment } from "./tractor-appointment"; 
 import { TractorStatus } from "./tractor-status.enum";
 import { Trailer } from "./trailer";
 
 export interface Tractor {
     
-    id: number;
+    id?: number;
  
     warehouseId: number;
-
-
-    driverFirstName: string;
-    driverLastName: string;
-
-    driverPhone: string;
-
+    companyId: number;
+ 
     licensePlateNumber: string;
 
     number: string;
     description: string;
-    
-    size: number;
-    category: TractorCategory;
+    currentAppointment?: TractorAppointment;
+    locationId?: number;
+    location?: WarehouseLocation;
 
-    carrier: Carrier;
-
-    carrierServiceLevel: CarrierServiceLevel; 
-
-    locationId: number;
-    location: WarehouseLocation;
     status: TractorStatus;
-
-    attachedTrailer: Trailer[];
+    
+    attachedTrailers: Trailer[];
 }

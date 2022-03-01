@@ -35,9 +35,7 @@
       </div>
       
       <st #st [data]="trailers" [columns]="columns" [footer]="tableFoot"    
-      > 
-       
-  
+      [expand]="expand" expandRowByClick expandAccordion> 
       
         <!--   action colummn  --> 
         <ng-template st-row="actionColumnTitle" type="title" let-c>
@@ -73,6 +71,26 @@
           </nz-dropdown-menu>
         </ng-template>
    
+        <!--   current appointment -->
+        <ng-template #expand let-item let-index="index" >
+          
+          <nz-tabset>
+            <nz-tab nzTitle="{{'current-appointment' | i18n}}">
+              
+              <nz-descriptions nzBordered="true">
+                <nz-descriptions-item nzTitle="{{ 'number' | i18n }}">{{ item.currentAppointment?.number }}
+                </nz-descriptions-item>
+                <nz-descriptions-item nzTitle="{{ 'description' | i18n}}">
+                    {{item.currentAppointment?.description}}
+                </nz-descriptions-item>
+                <nz-descriptions-item nzTitle="{{ 'type' | i18n}}">
+                    <span *ngIf="item.currentAppointment?.type != null">
+                        {{'TRAILER-APPOINTMENT-TYPE-' + item.currentAppointment.type | i18n}} </span>
+                </nz-descriptions-item>
+              </nz-descriptions>
+            </nz-tab>
+          </nz-tabset>
+        </ng-template>
       </st>
     
     </div>

@@ -32,6 +32,15 @@ export class TrailerService {
       .pipe(map(res => res.data));
   }
   
+  getOpenTrailersForTractor(number?: string): Observable<Trailer[]> {
+    
+    let url = `common/trailers/open-for-tractor?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&companyId=${this.companyService.getCurrentCompany()!.id}`;
+ 
+    return this.http
+      .get(url)
+      .pipe(map(res => res.data));
+  }
+  
 
   getTrailer(trailerId: number): Observable<Trailer> { 
 
@@ -61,6 +70,14 @@ export class TrailerService {
   addTrailerAppointment(trailerId: number, trailerAppointment: TrailerAppointment): Observable<TrailerAppointment> {
     const url = `common/trailers/${trailerId}/add-appointment`;
     return this.http.put(url, trailerAppointment).pipe(map(res => res.data));
+  } 
+  cancelTrailerAppointment(trailerId: number, trailerAppointmentId: number): Observable<TrailerAppointment> {
+    const url = `common/trailers/${trailerId}/appointments/${trailerAppointmentId}/cancel`;
+    return this.http.post(url).pipe(map(res => res.data));
+  } 
+  completeTrailerAppointment(trailerId: number, trailerAppointmentId: number): Observable<TrailerAppointment> {
+    const url = `common/trailers/${trailerId}/appointments/${trailerAppointmentId}/complete`;
+    return this.http.post(url).pipe(map(res => res.data));
   } 
   removeTrailerAppointment(trailerId: number, trailerAppointment: TrailerAppointment): Observable<TrailerAppointment> {
     const url = `common/trailers/${trailerId}/appointment/${trailerAppointment.id}`;

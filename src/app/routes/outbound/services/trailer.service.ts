@@ -17,6 +17,7 @@ export class TrailerService {
     const url = number ? `outbound/trailers?number=${number}` : `outbound/trailers`;
     return this.http.get(url).pipe(map(res => res.data));
   }
+   
 
   getTrailer(id: number): Observable<Trailer> {
     return this.http.get(`outbound/trailers/${id}`).pipe(map(res => res.data));

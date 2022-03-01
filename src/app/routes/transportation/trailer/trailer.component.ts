@@ -51,13 +51,10 @@ export class CommonTrailerComponent implements OnInit {
   searchResult = "";
 
   constructor(private http: _HttpClient,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private titleService: TitleService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private activatedRoute: ActivatedRoute,
     private trailerService: TrailerService,
-    private messageService: NzMessageService,
-    private modalService: NzModalService,
-    private companyService: CompanyService, 
+    private messageService: NzMessageService, 
     private fb: FormBuilder,) { }
 
   ngOnInit(): void {  

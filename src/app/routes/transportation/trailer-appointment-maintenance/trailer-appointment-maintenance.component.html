@@ -38,6 +38,15 @@
                         {{'TRAILER-APPOINTMENT-TYPE-' + currentAppointment?.type | i18n}} </span>
                 </nz-descriptions-item>
           </nz-descriptions>
+          <div nz-row nzType="flex" nzJustify="end" style="padding: 15px;">                
+              <button nz-button nzType="default"  nzDanger (click)="cancelTrailerAppointment()">
+                {{ 'cancel' | i18n }}
+              </button>     
+              <nz-divider nzType="vertical"></nz-divider>
+              <button nz-button nzType="primary"  (click)="completeTrailerAppointment()">
+                  {{ 'complete' | i18n }}
+                </button>
+          </div>
 
         </div>
         <div *ngIf="currentAppointment == null">
@@ -83,7 +92,7 @@
           </st>
         </nz-tab>
         <nz-tab nzTitle="{{'shipment' | i18n}}">
-          <st #shipmentTable [data]="shipments" [columns]="shipmentTablecolumns" [footer]="shipmentTableFoot"> 
+          <st #shipmentTable [data]="shipments" [columns]="shipmentTablecolumns" [footer]="shipmentTableFoot" [scroll]="{ x: '2150px'}"> 
             
             <!--   action colummn  --> 
             <ng-template st-row="actionColumnTitle" type="title" let-c>
@@ -182,7 +191,7 @@
         </st>
       </nz-tab>
       <nz-tab nzTitle="{{'shipment' | i18n}}">
-        <st #shipmentTable [data]="shipments" [columns]="shipmentTablecolumns" [scroll]="{ x: '1450px'}" >  
+        <st #shipmentTable [data]="shipments" [columns]="shipmentTablecolumns" [scroll]="{ x: '2150px'}" >  
         </st>
       </nz-tab> 
       <nz-tab nzTitle="{{'order' | i18n}}">

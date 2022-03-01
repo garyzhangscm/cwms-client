@@ -135,6 +135,38 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
       this.attachStopShipmentOrdersToTrailerAppointment(this.currentAppointment!);
     }
   }
+  cancelTrailerAppointment() {
+
+    if (this.currentTrailer && this.currentAppointment) {
+      this.isSpinning = true;
+      this.trailerService.cancelTrailerAppointment(this.currentTrailer.id!, this.currentAppointment!.id!)
+      .subscribe({
+        next: () => {
+          this.currentAppointment = undefined;
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi("message.action.success"))
+        }, 
+        error: () => this.isSpinning = false
+      })
+    }
+
+  }
+  completeTrailerAppointment() {
+
+    if (this.currentTrailer && this.currentAppointment) {
+      this.isSpinning = true;
+      this.trailerService.completeTrailerAppointment(this.currentTrailer.id!, this.currentAppointment!.id!)
+      .subscribe({
+        next: () => {
+          this.currentAppointment = undefined;
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi("message.action.success"))
+        }, 
+        error: () => this.isSpinning = false
+      })
+    }
+
+  }
 
   attachStopShipmentOrdersToTrailerAppointment(trailerAppointment: TrailerAppointment) {
 
@@ -316,23 +348,23 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
   @ViewChild('shipmentTable', { static: true })
   shipmentTable!: STComponent;
   shipmentTablecolumns: STColumn[] = [
-    { title: this.i18n.fanyi("number"),  index: 'number' ,  },  
-    { title: this.i18n.fanyi("orderNumber"),  index: 'orderNumbers' ,   },     
+    { title: this.i18n.fanyi("number"),  index: 'number' ,  width: 200,},  
+    { title: this.i18n.fanyi("orderNumber"),  index: 'orderNumbers' ,   width: 200,},     
     { title: this.i18n.fanyi("stop.number"),  index: 'stopNumber' ,   },       
-    { title: this.i18n.fanyi("stop.sequence"),  index: 'stopSequence' ,   },     
+    { title: this.i18n.fanyi("stop.sequence"),  index: 'stopSequence' ,   width: 150,},     
     { title: this.i18n.fanyi("contactor.firstname"),  index: 'shipTocontactorFirstname' ,   },     
     { title: this.i18n.fanyi("contactor.lastname"),  index: 'shipTocontactorLastname' ,   }, 
     { title: this.i18n.fanyi("country"),  index: 'shipToAddressCountry' ,   }, 
-    { title: this.i18n.fanyi("state"),  index: 'shipToAddressState' ,   }, 
-    { title: this.i18n.fanyi("county"),  index: 'shipToAddressCounty' ,   }, 
+    { title: this.i18n.fanyi("state"),  index: 'shipToAddressState' ,   width: 150,}, 
+    { title: this.i18n.fanyi("county"),  index: 'shipToAddressCounty' ,   width: 200,}, 
     { title: this.i18n.fanyi("city"),  index: 'shipToAddressCity' ,   }, 
     { title: this.i18n.fanyi("district"),  index: 'shipToAddressDistrict' ,   }, 
-    { title: this.i18n.fanyi("line1"),  index: 'shipToAddressLine1' ,   }, 
-    { title: this.i18n.fanyi("line2"),  index: 'shipToAddressLine2' ,   }, 
-    { title: this.i18n.fanyi("postcode"),  index: 'shipToAddressPostcode' ,   }, 
+    { title: this.i18n.fanyi("line1"),  index: 'shipToAddressLine1' ,   width: 200,}, 
+    { title: this.i18n.fanyi("line2"),  index: 'shipToAddressLine2' ,   width: 200,}, 
+    { title: this.i18n.fanyi("postcode"),  index: 'shipToAddressPostcode' ,   width: 150,}, 
     {
       title: 'action',
-      renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 
+      renderTitle: 'actionColumnTitle',fixed: 'right',width: 150, 
       render: 'actionColumn',
       iif: () => this.stepIndex === 0
     },
@@ -472,8 +504,8 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
   orderTablecolumns: STColumn[] = [
     { title: this.i18n.fanyi("number"),  index: 'number' ,  },      
     { title: this.i18n.fanyi("shipment.number"),  index: 'shipmentNumber' ,   },     
-    { title: this.i18n.fanyi("stopNumber"),  index: 'stopNumber' ,   },    
-    { title: this.i18n.fanyi("stopSequence"),  index: 'stopSequence' ,   },      
+    { title: this.i18n.fanyi("stop.number"),  index: 'stopNumber' ,   },    
+    { title: this.i18n.fanyi("stop.sequence"),  index: 'stopSequence' ,   },      
     { title: this.i18n.fanyi("contactor.firstname"),  index: 'shipTocontactorFirstname' ,   },     
     { title: this.i18n.fanyi("contactor.lastname"),  index: 'shipTocontactorLastname' ,   }, 
     { title: this.i18n.fanyi("country"),  index: 'shipToAddressCountry' ,   }, 

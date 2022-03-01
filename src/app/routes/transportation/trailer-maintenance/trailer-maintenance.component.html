@@ -66,11 +66,13 @@
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
             <nz-input-number
                     [(ngModel)]="currentTrailer.size" 
-                    [nzStep]="0.01" 
+                    [nzStep]="0.01" [nzMin]="0"
                 ></nz-input-number> 
         </nz-form-control>
       </nz-form-item>
     </div>
+    <!--
+
     <div nz-col [nzSpan]="12">
         <nz-form-item>
           <nz-form-label [nzSm]="6" [nzXs]="24">
@@ -81,6 +83,8 @@
           </nz-form-control>
         </nz-form-item>
       </div>
+
+    -->
   </div>
 </div>
 
