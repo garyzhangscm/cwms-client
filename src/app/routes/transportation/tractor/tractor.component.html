@@ -64,6 +64,13 @@
               
               <li nz-menu-item  >
                 
+                <a routerLink="/transportation/tractor/schedule"
+                [queryParams]="{id : item.id}" routerLinkActive="active">
+                    {{ 'schedule' | i18n }}</a>
+                    
+              </li>
+              <li nz-menu-item  >
+                
                 <a routerLink="/transportation/tractor/appointment/maintenance"
                 [queryParams]="{id : item.id}" routerLinkActive="active">
                     {{ 'appointment' | i18n }}</a>

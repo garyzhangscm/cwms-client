@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { TransportationTractorAppointmentMaintenanceComponent } from './tractor-appointment-maintenance/tractor-appointment-maintenance.component';
 import { CommonTractorMaintenanceComponent } from './tractor-maintenance/tractor-maintenance.component';
+import { TransportationTractorScheduleComponent } from './tractor-schedule/tractor-schedule.component';
 import { CommonTractorComponent } from './tractor/tractor.component';
 import { TransportationTrailerAppointmentMaintenanceComponent } from './trailer-appointment-maintenance/trailer-appointment-maintenance.component';
 import { CommonTrailerMaintenanceComponent } from './trailer-maintenance/trailer-maintenance.component';
@@ -14,7 +15,8 @@ const routes: Routes = [
   { path: 'trailer', component: CommonTrailerComponent },
   { path: 'trailer/maintenance', component: CommonTrailerMaintenanceComponent },
   { path: 'trailer/appointment/maintenance', component: TransportationTrailerAppointmentMaintenanceComponent },
-  { path: 'tractor/appointment/maintenance', component: TransportationTractorAppointmentMaintenanceComponent }];
+  { path: 'tractor/appointment/maintenance', component: TransportationTractorAppointmentMaintenanceComponent },
+  { path: 'tractor/schedule', component: TransportationTractorScheduleComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

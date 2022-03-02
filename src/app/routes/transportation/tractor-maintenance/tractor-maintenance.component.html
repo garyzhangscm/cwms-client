@@ -1,6 +1,6 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
-  <a routerLink="/transportation/trailer" routerLinkActive="active" [queryParams]="{number: currentTractor?.number}">{{ 'return' | i18n
+  <a routerLink="/transportation/tractor" routerLinkActive="active" [queryParams]="{number: currentTractor?.number}">{{ 'return' | i18n
     }}</a>
 </ng-template>
 <ng-template #breadcrumb>
@@ -9,9 +9,9 @@
       <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
     </nz-breadcrumb-item>
     <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
-    <nz-breadcrumb-item><a routerLink="/transportation/trailer" routerLinkActive="active">{{ 'trailer' | i18n }}</a>
+    <nz-breadcrumb-item><a routerLink="/transportation/tractor" routerLinkActive="active">{{ 'tractor' | i18n }}</a>
     </nz-breadcrumb-item>
-    <nz-breadcrumb-item><a>{{ 'trailer.maintenance' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'tractor.maintenance' | i18n }}</a></nz-breadcrumb-item>
   </nz-breadcrumb>
 </ng-template>
 
