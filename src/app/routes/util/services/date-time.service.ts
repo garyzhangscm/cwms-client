@@ -16,5 +16,5 @@ export class DateTimeService {
 
   getISODateString(dateTime: Date) : string {
     return this.getISODateTimeString(dateTime).substring(0, 10);
-  }
+  } 
 }

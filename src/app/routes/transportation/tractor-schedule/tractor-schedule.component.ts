@@ -3,11 +3,11 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { isBefore, isAfter, subDays, addDays,  isWithinInterval,parseISO, toDate  } from 'date-fns';
-import * as moment from 'moment-timezone';
+import { startOfDay, endOfDay,  isWithinInterval,parseISO, toDate  } from 'date-fns';
+import * as moment from 'moment-timezone'; 
 import { NzMessageService } from 'ng-zorro-antd/message';
 
-
+import { DateTimeService } from '../../util/services/date-time.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Tractor } from '../models/tractor';
 import { TractorAppointmentType } from '../models/tractor-appointment-type.enum';
@@ -20,8 +20,7 @@ import { TractorService } from '../services/tractor.service';
   templateUrl: './tractor-schedule.component.html',
   styleUrls: ['./tractor-schedule.component.less'],
 })
-export class TransportationTractorScheduleComponent implements OnInit {
-
+export class TransportationTractorScheduleComponent implements OnInit { 
   pageTitle = '';
   addScheduleForm!: FormGroup;
   currentTractor!: Tractor;
@@ -36,6 +35,7 @@ export class TransportationTractorScheduleComponent implements OnInit {
     private tractorScheduleService: TractorScheduleService,
     private messageService: NzMessageService,
     private titleService: TitleService, 
+    private dateTimeService: DateTimeService,
     private warehouseService: WarehouseService,
     private fb: FormBuilder,) {
       this.titleService.setTitle(this.i18n.fanyi('tractor.schedule'));
@@ -139,25 +139,20 @@ export class TransportationTractorScheduleComponent implements OnInit {
                 // if there's no dispatch time, then make sure the check in time is on or after
                 // the date
                 const checkInTime : Date = schedule.checkInTime ? 
-                    schedule.checkInTime : subDays(date, 1);
+                    schedule.checkInTime : startOfDay(
+                      parseISO(moment.utc(schedule.dispatchTime).utcOffset(timeZoneOffset).format("YYYY-MM-DD"))
+                    );
                 const dispatchTime : Date  = schedule.dispatchTime ? 
-                    schedule.dispatchTime : addDays(date, 1);
-                
-                     
+                    schedule.dispatchTime : endOfDay(
+                      parseISO(moment.utc(schedule.checkInTime).utcOffset(timeZoneOffset).format("YYYY-MM-DD"))
+                    );
+                      
+
                 const interval: Interval = {
 
                   start:  parseISO(moment.utc(checkInTime).utcOffset(timeZoneOffset).format("YYYY-MM-DD")),
                   end:  parseISO(moment.utc(dispatchTime).utcOffset(timeZoneOffset).format("YYYY-MM-DD")),
-                } 
-                /**
-                 * 
-                console.log(`checkInTime: ${JSON.stringify(checkInTime)}`);
-                console.log(`dispatchTime: ${JSON.stringify(dispatchTime)}`);
-                console.log(`interval.start: ${JSON.stringify(interval.start)}`);
-                console.log(`interval.end: ${JSON.stringify(interval.end)}`);
-                console.log(`date: ${JSON.stringify(date)}`);
-                 * 
-                 */
+                }  
                 return isWithinInterval(date,  interval)
               }
             );
