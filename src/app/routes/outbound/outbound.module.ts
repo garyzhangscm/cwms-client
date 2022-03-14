@@ -34,6 +34,7 @@ import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
 import { OutboundAllocationTransactionHistoryComponent } from './allocation-transaction-history/allocation-transaction-history.component';
+import { OutboundCompleteOrderComponent } from './complete-order/complete-order.component';
 
 const COMPONENTS: Array<Type<void>> = [
   OutboundOrderComponent,
@@ -58,7 +59,8 @@ const COMPONENTS: Array<Type<void>> = [
   OutboundShippingCartonizationComponent,
   OutboundAllocationConfigurationComponent,
   OutboundOrderActivityComponent,
-  OutboundAllocationTransactionHistoryComponent];
+  OutboundAllocationTransactionHistoryComponent,
+  OutboundCompleteOrderComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

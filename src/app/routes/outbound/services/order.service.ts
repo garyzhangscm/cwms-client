@@ -11,6 +11,7 @@ import { ReportHistory } from '../../report/models/report-history';
 import { DateTimeService } from '../../util/services/date-time.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Order } from '../models/order';
+import { OrderCategory } from '../models/order-category';
 import { OrderLine } from '../models/order-line';
 import { OrderStatus } from '../models/order-status.enum';
 import { PickWork } from '../models/pick-work';
@@ -90,7 +91,7 @@ export class OrderService {
     return this.http.post(`outbound/orders/${order.id}/allocate`).pipe(map(res => res.data));
   }
   completeOrder(order: Order): Observable<Order> {
-    return this.http.post(`outbound/orders/${order.id}/complete`).pipe(map(res => res.data));
+    return this.http.post(`outbound/orders/${order.id}/complete`, order).pipe(map(res => res.data));
   }
 
   printOrderPickSheet(order: Order, locale?: string): Observable<ReportHistory> {
@@ -160,4 +161,11 @@ export class OrderService {
     return this.http.get(url).pipe(map(res => res.data));
   }
  
+  isOrderAllocatable(order: Order): boolean {
+    // the order is allocatable when
+    // 1. it is not a outsourcing order. Outsoucing order will be done by another party
+    // 2. it has open quantity or pending allocation quantity
+    return order.category != OrderCategory.OUTSOURCING_ORDER &&
+          (order.totalOpenQuantity! > 0 || order.totalPendingAllocationQuantity! > 0)
+  }
 }

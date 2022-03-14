@@ -77,13 +77,33 @@
     </div>
     
     <st #st [data]="listOfAllOrders"  [columns]="columns" [expand]="expand" expandRowByClick expandAccordion
-    (change)="orderTableChanged($event)" [scroll]="{ x: '2715px' }">
+    (change)="orderTableChanged($event)" [scroll]="{ x: '2865px' }">
+      <!-- more details about the supplier -->
+      <ng-template st-row="supplierColumn" let-item let-index="index">
+        
+        <nz-skeleton-element 
+            *ngIf="item.supplierId && item.supplier == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+        <a nz-tooltip [nzTooltipTitle]="supplierDetailsTemplate">{{ item.supplier?.name }}</a>
+        
+        <ng-template #supplierDetailsTemplate>
+          <div>{{item.supplier.name}} - {{item.supplier.description}}</div>
+          <address>  
+            {{item.supplier?.addressLine1}} <br>
+            {{item.supplier?.addressLine2}} <br>
+            {{item.supplier?.addressCity}},  {{item.supplier?.addressState}} <br>
+            {{item.supplier?.addressPostcode}} <br>
+            </address>
+        </ng-template>
+
+      </ng-template>
       <!-- more details about the shipping to customer -->
       <ng-template st-row="shipToCustomerColumn" let-item let-index="index">
-        <!--
-
-          
-        -->
+        
         <nz-skeleton-element 
             *ngIf="item.shipToCustomerId && item.shipToCustomer == null"
             nzType="input"

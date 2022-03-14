@@ -25,6 +25,7 @@ import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
 import { OutboundAllocationTransactionHistoryComponent } from './allocation-transaction-history/allocation-transaction-history.component';
+import { OutboundCompleteOrderComponent } from './complete-order/complete-order.component';
 
 const routes: Routes = [
   { path: 'order', component: OutboundOrderComponent, canActivate: [AuthGuard]  },
@@ -52,7 +53,8 @@ const routes: Routes = [
   { path: 'shipping-cartonization', component: OutboundShippingCartonizationComponent, canActivate: [AuthGuard]  },
   { path: 'allocation-configuration', component: OutboundAllocationConfigurationComponent, canActivate: [AuthGuard]  },
   { path: 'order-activity', component: OutboundOrderActivityComponent },
-  { path: 'allocation-transaction-history', component: OutboundAllocationTransactionHistoryComponent }];
+  { path: 'allocation-transaction-history', component: OutboundAllocationTransactionHistoryComponent },
+  { path: 'complete-order', component: OutboundCompleteOrderComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

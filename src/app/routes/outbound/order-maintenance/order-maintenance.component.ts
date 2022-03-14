@@ -8,7 +8,9 @@ import { Address } from 'ngx-google-places-autocomplete/objects/address';
 
 import { UserService } from '../../auth/services/user.service';
 import { Customer } from '../../common/models/customer';
+import { Supplier } from '../../common/models/supplier';
 import { CustomerService } from '../../common/services/customer.service';
+import { SupplierService } from '../../common/services/supplier.service';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { ItemService } from '../../inventory/services/item.service';
@@ -43,6 +45,10 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   existingCustomer = 'true';
   validCustomers: Customer[] = [];
 
+  // supplier is only used by outsourcing orders
+  existingSupplier = 'true';
+  validSuppliers: Supplier[] = [];
+
   validInventoryStatuses: InventoryStatus[] = [];
   warehouses: Warehouse[] | undefined;
 
@@ -72,7 +78,8 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     private locationGroupService: LocationGroupService, 
     private locationGroupTypeService: LocationGroupTypeService, 
     private locationService: LocationService, 
-    private customerService: CustomerService) { 
+    private customerService: CustomerService,
+    private supplierService: SupplierService) { 
 
     this.pageTitle = this.i18n.fanyi('menu.main.outbound.order-maintenance');
   }
@@ -99,6 +106,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     this.loadShippingStageLocationGroups();
     // init the customer auto complete if necessar
     this.customerOptionChanged();
+    this.loadValidSuppliers();
     
     //this.loadScript('https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDkPmh0PEC7JTCutUhWuN3BUU38M2fvR5s&sensor=false&language=en');
   }
@@ -443,6 +451,12 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
       next: (customerRes) => this.validCustomers = customerRes
     });
   }
+  loadValidSuppliers() {
+
+    this.supplierService.loadSuppliers().subscribe({
+      next: (supplierRes) => this.validSuppliers = supplierRes
+    });
+  }
   shipToCustomerChanged() {
 
     console.log(`ship to customer is chagned to ${this.currentOrder!.shipToCustomer!.name}`)
@@ -453,6 +467,15 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
       var clone = { ...matchedCustomer };
       this.currentOrder!.shipToCustomer = clone;
       this.currentOrder!.shipToCustomerId = clone.id!;
+    }
+
+  }
+  
+  supplierChanged() {
+
+    console.log(`supplier is chagned to ${this.currentOrder!.supplier!.name}`)
+    if (this.currentOrder!.supplier) {
+      this.currentOrder!.supplierId = this.currentOrder?.supplier.id;
     }
 
   }

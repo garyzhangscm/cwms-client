@@ -27,6 +27,7 @@ import { LocationGroupTypeService } from '../../warehouse-layout/services/locati
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { Order } from '../models/order';
+import { OrderCategory } from '../models/order-category';
 import { OrderLine } from '../models/order-line';
 import { OrderStatus } from '../models/order-status.enum';
 import { PickWork } from '../models/pick-work';
@@ -44,7 +45,9 @@ import { ShortAllocationService } from '../services/short-allocation.service';
   styleUrls: ['./order.component.less'],
 })
 export class OutboundOrderComponent implements OnInit {
-
+/**
+ * 
+ *  
   listOfColumns: ColumnItem[] = [
     {
       name: 'order.number',
@@ -202,6 +205,7 @@ export class OutboundOrderComponent implements OnInit {
       }
     },
   ];
+  */
   setOfCheckedId = new Set<number>();
   checked = false;
   indeterminate = false;
@@ -380,6 +384,8 @@ export class OutboundOrderComponent implements OnInit {
   
       this.loadClient(order); 
      
+      this.loadSupplier(order);
+      
       this.loadCustomer(order); 
       
       this.loadStageLocation(order); 
@@ -406,6 +412,22 @@ export class OutboundOrderComponent implements OnInit {
     } 
   }
   
+  loadSupplier(order: Order) {
+     
+    if (order.supplierId && order.supplier == null) {
+      this.loadingOrderDetailsRequest++;
+      this.localCacheService.getSupplier(order.supplierId).subscribe(
+        {
+          next: (res) => {
+            order.supplier = res; 
+          
+            this.loadingOrderDetailsRequest--;
+          }
+        }
+      );      
+    }  
+  }
+
   loadCustomer(order: Order) {
      
     if (order.billToCustomerId && order.billToCustomer == null) {
@@ -541,7 +563,8 @@ export class OutboundOrderComponent implements OnInit {
 
   }
 
-
+/**
+ *  
   collapseAllRecord(expandedOrderId?: number): void {
     this.listOfDisplayOrders.forEach(item => this.expandSet.delete(item.id!));
     if (expandedOrderId) {
@@ -554,6 +577,7 @@ export class OutboundOrderComponent implements OnInit {
     }
   }
 
+ */
   calculateQuantities(orders: Order[]): Order[] {
     orders.forEach(order => {
       const existingItemIds = new Set();
@@ -602,6 +626,8 @@ export class OutboundOrderComponent implements OnInit {
     this.checked = this.mapOfPicks[orderId].every(item => this.setOfCheckedId.has(item.id!));
     this.indeterminate = this.mapOfPicks[orderId].some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
   }
+  /**
+   *  
   onExpandChange(id: number, checked: boolean): void {
     if (checked) {
       this.expandSet.add(id);
@@ -611,6 +637,7 @@ export class OutboundOrderComponent implements OnInit {
     this.showAllOrderDetails();
   }
   
+   */
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.order'));
     // initiate the search form
@@ -744,16 +771,25 @@ export class OutboundOrderComponent implements OnInit {
   }
 
   completeOrder(order: Order): void {
-    this.isSpinning = true;
-    this.orderService.completeOrder(order).subscribe(orderRes => {
-      this.messageService.success(this.i18n.fanyi('message.action.success'));
-      this.isSpinning = false;
-      this.search();
-    }, 
-    () =>  this.isSpinning = false);
+    if (order.category === OrderCategory.OUTSOURCING_ORDER) {
+      // if this is a outsourcing order, we will flow to a page to let the user
+      // specify the shipped quantity, in order to complete the order
+
+      this.router.navigateByUrl(`/outbound/complete-order?id=${order.id}`);
+    }
+    else {
+      // for orders fulfilled by the warehouse, let's directly close the order      
+      this.isSpinning = true;
+      this.orderService.completeOrder(order).subscribe(orderRes => {
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.isSpinning = false;
+        this.search();
+      }, 
+      () =>  this.isSpinning = false);
+    } 
   }
   isOrderAllocatable(order: Order): boolean {
-    return order.totalOpenQuantity! > 0 || order.totalPendingAllocationQuantity! > 0;
+    return this.orderService.isOrderAllocatable(order);
   }
   isOrderReadyForComplete(order: Order): boolean {
     return order.status === OrderStatus.OPEN;
@@ -771,6 +807,8 @@ export class OutboundOrderComponent implements OnInit {
     // }
   }
 
+  /**
+   * 
   showAllOrderDetails(): void {
 
     this.listOfDisplayOrders.forEach(order => {
@@ -781,6 +819,7 @@ export class OutboundOrderComponent implements OnInit {
       }
     });
   }
+   */
   showPicks(order: Order): void {
     this.pickService.getPicksByOrder(order.id!).subscribe(pickRes => {
       this.mapOfPicks[order.id!] = [...pickRes];
@@ -1059,7 +1098,15 @@ export class OutboundOrderComponent implements OnInit {
       format: (item, _col, index) => this.i18n.fanyi(`ORDER-CATEGORY-${ item.category}` ), 
       
       iif: () => this.isChoose('category'), width: 150},
-    { title: this.i18n.fanyi("status"), index: 'status',fixed: 'left', iif: () => this.isChoose('status'), width: 150 },    
+    { title: this.i18n.fanyi("status"), index: 'status',fixed: 'left', iif: () => this.isChoose('status'), width: 150 },   
+    
+    {
+      title: this.i18n.fanyi("supplier"),
+      // renderTitle: 'customTitle',
+      render: 'supplierColumn',
+      iif: () => this.isChoose('supplier'), width: 150
+    },
+
     {
       title: this.i18n.fanyi("shipToCustomer"),
       // renderTitle: 'customTitle',
@@ -1105,6 +1152,7 @@ export class OutboundOrderComponent implements OnInit {
     { label: this.i18n.fanyi("order.number"), value: 'number', checked: true },
     { label: this.i18n.fanyi("order.category"), value: 'category', checked: true },
     { label: this.i18n.fanyi("status"), value: 'status', checked: true },
+    { label: this.i18n.fanyi("supplier"), value: 'supplier', checked: true },
     { label: this.i18n.fanyi("shipToCustomer"), value: 'shipToCustomer', checked: true },
     { label: this.i18n.fanyi("order.billToCustomer"), value: 'billToCustomer', checked: true },
     { label: this.i18n.fanyi("order.totalItemCount"), value: 'totalItemCount', checked: true },
