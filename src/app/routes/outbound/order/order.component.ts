@@ -214,6 +214,7 @@ export class OutboundOrderComponent implements OnInit {
   orderReassignShippingStageLocationForm!: FormGroup;
 
   orderStatuses = OrderStatus;
+  orderCategories = OrderCategory;
 
   constructor(
     private fb: FormBuilder,
@@ -301,7 +302,8 @@ export class OutboundOrderComponent implements OnInit {
       false, 
       this.searchForm.controls.orderStatus.value, 
       startCompleteTime, 
-      endCompleteTime, specificCompleteDate).subscribe(
+      endCompleteTime, specificCompleteDate,       
+      this.searchForm.controls.orderCategory.value).subscribe(
       orderRes => {
  
 
@@ -646,6 +648,7 @@ export class OutboundOrderComponent implements OnInit {
       orderStatus: [null],
       completeTimeRanger: [null],
       completeDate: [null],
+      orderCategory: [null]
     });
 
     // IN case we get the number passed in, refresh the display
@@ -790,6 +793,9 @@ export class OutboundOrderComponent implements OnInit {
   }
   isOrderAllocatable(order: Order): boolean {
     return this.orderService.isOrderAllocatable(order);
+  }
+  canReassignStageLocation(order: Order): boolean {
+    return order.totalInprocessQuantity === 0 && !this.orderService.isOutsourcingOrder(order);
   }
   isOrderReadyForComplete(order: Order): boolean {
     return order.status === OrderStatus.OPEN;

@@ -41,9 +41,9 @@ export class OutboundCompleteOrderComponent implements OnInit {
         this.orderService.getOrder(params.id)
           .subscribe(orderRes => {
             this.currentOrder = orderRes; 
-            // load the shipped quantity map based on the current shipped quantity
+            // default the ship quantity to the order quantity
             this.currentOrder.orderLines.forEach(
-              orderLine => this.shippedQuantityMap.set(orderLine.number, orderLine.shippedQuantity)
+              orderLine => this.shippedQuantityMap.set(orderLine.number, orderLine.expectedQuantity)
             );
  
           });

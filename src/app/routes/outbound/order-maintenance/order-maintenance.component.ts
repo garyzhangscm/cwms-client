@@ -48,6 +48,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   // supplier is only used by outsourcing orders
   existingSupplier = 'true';
   validSuppliers: Supplier[] = [];
+  filterValidSuppliers: Supplier[] = [];
 
   validInventoryStatuses: InventoryStatus[] = [];
   warehouses: Warehouse[] | undefined;
@@ -310,6 +311,20 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
 
   confirm() { 
     this.isSpinning = true;
+    // for outsourcing order, we will clear the stage location
+    // for non outsource order, we will clear the supplier(supplier is the one
+    // who fulfill the outsourcing order)
+    if (this.isOutsourcingOrder(this.currentOrder!)) {
+      this.currentOrder!.stageLocationGroup = undefined;
+      this.currentOrder!.stageLocationGroupId = undefined;
+      this.currentOrder!.stageLocation = undefined;
+      this.currentOrder!.stageLocationId = undefined;
+    }
+    else {
+      this.currentOrder!.supplier = undefined;
+      this.currentOrder!.supplierId = undefined;
+
+    }
     if (this.existingCustomer === 'false' && this.saveNewCustomer) {
       // ok we will save the customer information first, then
       // assign it to the order before we finally save the order
@@ -361,6 +376,23 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
         },
       });
     }
+  }
+
+  onSupplierInputChange(e: Event): void {
+    const value = (e.target as HTMLInputElement).value;
+    if (value.length === 0) {
+      // the user didn't input any value in the supplire filter, let's
+      // show all the valid supplier
+      this.filterValidSuppliers = this.validSuppliers;
+    }
+    else {
+      // the user input something, furture filter out the result by
+      // the input value, from the supplier's name or description
+      this.filterValidSuppliers = this.validSuppliers.filter(
+        supplier => supplier.name.toLowerCase().indexOf(value.toLowerCase()) >= 0 || 
+              supplier.description.toLowerCase().indexOf(value.toLowerCase()) >= 0
+      );
+    } 
   }
 
   copyAddressInformation(order: Order, customer: Customer) {
@@ -454,7 +486,10 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   loadValidSuppliers() {
 
     this.supplierService.loadSuppliers().subscribe({
-      next: (supplierRes) => this.validSuppliers = supplierRes
+      next: (supplierRes) => {
+        this.validSuppliers = supplierRes;
+        this.filterValidSuppliers = supplierRes;
+      }
     });
   }
   shipToCustomerChanged() {
@@ -521,6 +556,11 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   }
 
   
+  isOutsourcingOrder(order: Order): boolean {
+    return this.orderService.isOutsourcingOrder(order);
+  }
+
+  // load google address script
   public loadScript(url: string) {
     const body = <HTMLDivElement> document.body;
     const script = document.createElement('script');

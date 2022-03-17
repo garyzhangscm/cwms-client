@@ -30,7 +30,7 @@ export class OrderService {
   ) { }
 
   getOrders(number?: string, loadDetails?: boolean, orderStatus?: OrderStatus, 
-    startCompleteTime?: Date, endCompleteTime?:Date, specificCompleteDate?: Date): Observable<Order[]> {
+    startCompleteTime?: Date, endCompleteTime?:Date, specificCompleteDate?: Date, category?: OrderCategory): Observable<Order[]> {
     let url = `outbound/orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     
     if (number) {
@@ -40,6 +40,10 @@ export class OrderService {
     }
     if (loadDetails != null) {
       url = `${url}&loadDetails=${loadDetails}`;
+
+    }
+    if (category) {
+      url = `${url}&category=${category}`;
 
     }
     if (orderStatus) {
@@ -165,7 +169,10 @@ export class OrderService {
     // the order is allocatable when
     // 1. it is not a outsourcing order. Outsoucing order will be done by another party
     // 2. it has open quantity or pending allocation quantity
-    return order.category != OrderCategory.OUTSOURCING_ORDER &&
+    return !this.isOutsourcingOrder(order) &&
           (order.totalOpenQuantity! > 0 || order.totalPendingAllocationQuantity! > 0)
+  }
+  isOutsourcingOrder(order: Order): boolean {
+    return order.category === OrderCategory.OUTSOURCING_ORDER
   }
 }
