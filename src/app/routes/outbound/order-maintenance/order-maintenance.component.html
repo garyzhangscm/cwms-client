@@ -426,7 +426,15 @@
             <nz-descriptions-item nzTitle="{{ 'supplier' | i18n}}"> 
               {{ currentOrder?.supplier?.name}} - {{currentOrder?.supplier?.description}}
               </nz-descriptions-item>
-            <nz-descriptions-item nzTitle="{{ 'ship-to-customer' | i18n}}"> 
+            <nz-descriptions-item nzTitle="{{ 'address' | i18n}}" nzSpan="2">  
+                  <address>  
+                    {{currentOrder?.supplier?.addressLine1}} <br>
+                    {{currentOrder?.supplier?.addressLine2}} <br>
+                    {{currentOrder?.supplier?.addressCity}},  {{currentOrder?.supplier?.addressState}} <br>
+                    {{currentOrder?.supplier?.addressPostcode}} <br>
+                  </address> 
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'shipToCustomer' | i18n}}"> 
 
               <!--Get data from the existing customer, which should already being assigned
                   to the order
@@ -441,7 +449,7 @@
 
               </span>
             </nz-descriptions-item>
-            <nz-descriptions-item nzTitle="{{ 'address' | i18n}}"> 
+            <nz-descriptions-item nzTitle="{{ 'address' | i18n}}"  nzSpan="2"> 
               <div *ngIf="existingCustomer==='true'">
                 <address>  
                   {{currentOrder?.shipToCustomer?.addressLine1}} <br>
