@@ -110,6 +110,8 @@ export class AlertAlertComponent implements OnInit {
       type: [null],
       status: [null],
       keyWords: [null],
+      dateTimeRanger: [null],
+      date: [null],
 
     });
 
@@ -130,9 +132,18 @@ export class AlertAlertComponent implements OnInit {
   }
   search(): void {
     this.isSpinning = true; 
+    
+    let startTime : Date = this.searchForm.controls.dateTimeRanger.value ? 
+        this.searchForm.controls.dateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.controls.dateTimeRanger.value ? 
+        this.searchForm.controls.dateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.controls.date.value;
+
+
     this.alertService
       .getAlerts(this.searchForm.value.type, this.searchForm.value.status, 
-         this.searchForm.value.keywords )
+         this.searchForm.value.keyWords, 
+         startTime, endTime, specificDate )
       .subscribe({
 
         next: (alertRes) => {
