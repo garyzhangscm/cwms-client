@@ -23,10 +23,8 @@
 </ng-template>
 
 <div class="container">
-  <div nz-row style="height: 1100px">
-    <pdf-viewer [src]="pdfUrl"></pdf-viewer>
-  </div>
-  <div nz-row nzType="flex" nzJustify="center">
+   
+  <div nz-row nzType="flex" nzJustify="center" style="margin: 25px;"> 
     <cwms-common-print-button
       [printingInProcess]="printingInProcess"
       [allowPreview]="false"
@@ -36,7 +34,11 @@
     </cwms-common-print-button>
     <nz-divider nzType="vertical"></nz-divider>
     <a [href]="pdfUrl" target="_blank" rel="noopener noreferrer">
-      {{ 'report.download' | i18n }}
+      {{ 'report.download' | i18n }} 
     </a>
+ 
   </div>
+  <div nz-row  >
+    <pdf-viewer [src]="pdfUrl"></pdf-viewer>
+  </div> 
 </div>

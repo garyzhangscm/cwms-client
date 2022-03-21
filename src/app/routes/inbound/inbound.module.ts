@@ -8,8 +8,10 @@ import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { CommonModule } from '../common/common.module';
 import { DirectivesModule } from '../directives/directives.module';
 import { InventoryModule } from '../inventory/inventory.module';
+import { OutboundModule } from '../outbound/outbound.module';
 import { UtilModule } from '../util/util.module';
 import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module';
+import { InboundCustomerReturnOrderMaintenanceComponent } from './customer-return-order-maintenance/customer-return-order-maintenance.component';
 import { InboundCustomerReturnComponent } from './customer-return/customer-return.component';
 import { InboundInboundQcConfigurationMaintenanceComponent } from './inbound-qc-configuration-maintenance/inbound-qc-configuration-maintenance.component';
 import { InboundInboundQcConfigurationComponent } from './inbound-qc-configuration/inbound-qc-configuration.component';
@@ -28,7 +30,8 @@ const COMPONENTS: Array<Type<void>> = [
   InboundPutawayConfigurationConfimComponent,
   InboundInboundQcConfigurationComponent,
   InboundInboundQcConfigurationMaintenanceComponent,
-  InboundCustomerReturnComponent];
+  InboundCustomerReturnComponent,
+  InboundCustomerReturnOrderMaintenanceComponent];
   
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
@@ -44,7 +47,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     InventoryModule, 
     NzDescriptionsModule,
     WarehouseLayoutModule,
-    NzSkeletonModule 
+    NzSkeletonModule ,
+    OutboundModule
   ],
   declarations: [
     ...COMPONENTS,

@@ -11,6 +11,7 @@ import { InboundReceiptConfirmComponent } from './receipt-confirm/receipt-confir
 import { InboundReceiptMaintenanceComponent } from './receipt-maintenance/receipt-maintenance.component';
 import { InboundReceiptComponent } from './receipt/receipt.component';
 import { InboundCustomerReturnComponent } from './customer-return/customer-return.component';
+import { InboundCustomerReturnOrderMaintenanceComponent } from './customer-return-order-maintenance/customer-return-order-maintenance.component';
 
 const routes: Routes = [
 
@@ -22,7 +23,8 @@ const routes: Routes = [
   { path: 'putaway-configuration-confim', component: InboundPutawayConfigurationConfimComponent },
   { path: 'inbound-qc-configuration', component: InboundInboundQcConfigurationComponent },
   { path: 'inbound-qc-configuration/maintenance', component: InboundInboundQcConfigurationMaintenanceComponent },
-  { path: 'customer-return', component: InboundCustomerReturnComponent }];
+  { path: 'customer-return', component: InboundCustomerReturnComponent },
+  { path: 'customer-return-order-maintenance', component: InboundCustomerReturnOrderMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

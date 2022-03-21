@@ -22,7 +22,7 @@ export class UtilWorkOrderQueryPopupComponent implements OnInit {
   @ViewChild('st', { static: false })
   st!: STComponent;
   columns: STColumn[] = [ 
-    { title: 'id', index: 'work-order.id', type: 'checkbox' },
+    { title: 'id', index: 'work-order.id', type: 'radio' },
     { title: this.i18n.fanyi("work-order.number"), index: 'number',  iif: () => this.isChoose('number'), width: 150 },    
     { title: this.i18n.fanyi("status"), index: 'status',  iif: () => this.isChoose('status'), width: 150 },    
     { title: this.i18n.fanyi("item"), index: 'item.name',  iif: () => this.isChoose('itemName'), width: 150 },    

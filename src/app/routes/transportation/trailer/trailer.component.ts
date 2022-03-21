@@ -20,7 +20,7 @@ import { TrailerService } from '../services/trailer.service';
 export class CommonTrailerComponent implements OnInit {
   isSpinning = false;
   
- 
+
   @ViewChild('st', { static: true })
   st!: STComponent;
   columns: STColumn[] = [

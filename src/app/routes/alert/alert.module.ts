@@ -4,8 +4,8 @@ import { SharedModule } from '@shared';
 import { AlertRoutingModule } from './alert-routing.module';
 import { AlertAlertComponent } from './alert/alert.component';
 import { AlertConfigurationComponent } from './configuration/configuration.component';
-import { AlertSubscriptionComponent } from './subscription/subscription.component';
 import { AlertSubscriptionMaintenanceComponent } from './subscription-maintenance/subscription-maintenance.component';
+import { AlertSubscriptionComponent } from './subscription/subscription.component';
 
 const COMPONENTS: Array<Type<void>> = [
   AlertSubscriptionComponent,

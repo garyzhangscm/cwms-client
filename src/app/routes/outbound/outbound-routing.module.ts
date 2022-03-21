@@ -26,6 +26,7 @@ import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-mainte
 import { OutboundWaveComponent } from './wave/wave.component';
 import { OutboundAllocationTransactionHistoryComponent } from './allocation-transaction-history/allocation-transaction-history.component';
 import { OutboundCompleteOrderComponent } from './complete-order/complete-order.component';
+import { OutboundOutboundOrderPopupQueryComponent } from './outbound-order-popup-query/outbound-order-popup-query.component';
 
 const routes: Routes = [
   { path: 'order', component: OutboundOrderComponent, canActivate: [AuthGuard]  },
@@ -54,7 +55,8 @@ const routes: Routes = [
   { path: 'allocation-configuration', component: OutboundAllocationConfigurationComponent, canActivate: [AuthGuard]  },
   { path: 'order-activity', component: OutboundOrderActivityComponent },
   { path: 'allocation-transaction-history', component: OutboundAllocationTransactionHistoryComponent },
-  { path: 'complete-order', component: OutboundCompleteOrderComponent }];
+  { path: 'complete-order', component: OutboundCompleteOrderComponent },
+  { path: 'outbound-order-popup-query', component: OutboundOutboundOrderPopupQueryComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
