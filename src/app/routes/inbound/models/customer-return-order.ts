@@ -16,7 +16,7 @@ export interface CustomerReturnOrder {
     clientId?: number;
     client?: Client;
 
-    RMANumber: string;
+    rmaNumber: string;
 
     trackingNumber: string;
 

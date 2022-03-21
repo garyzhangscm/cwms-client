@@ -10,6 +10,7 @@ import { Customer } from '../../common/models/customer';
 import { ClientService } from '../../common/services/client.service';
 import { CustomerService } from '../../common/services/customer.service';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
+import { Item } from '../../inventory/models/item';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { ItemService } from '../../inventory/services/item.service';
 import { AllocationStrategyType } from '../../outbound/models/allocation-strategy-type.enum';
@@ -50,6 +51,11 @@ export class InboundCustomerReturnOrderMaintenanceComponent implements OnInit {
   stepIndex = 0; 
   isSpinning = false; 
 
+  // map of valid OrderLine on an order.
+  // key: order id
+  // value: OrderLines
+  mapOfValidOrderLines: { [key: number]: OrderLine[] } = {};
+
   constructor(
     private http: _HttpClient,
     private activatedRoute: ActivatedRoute,
@@ -81,7 +87,7 @@ export class InboundCustomerReturnOrderMaintenanceComponent implements OnInit {
       }
       else {
         // this.currentProductionLine = this.createEmptyProductionLine();
-        this.currentCustomerReturnOrder = this.getEmptyOrder();
+        this.currentCustomerReturnOrder = this.getEmptyCSROrder();
         this.newCustomerReturnOrder = true;
       }
     });
@@ -126,7 +132,7 @@ export class InboundCustomerReturnOrderMaintenanceComponent implements OnInit {
     }
 
   }
-  getEmptyOrder() : CustomerReturnOrder{
+  getEmptyCSROrder() : CustomerReturnOrder{
     return {
       id: undefined,
       number: '', 
@@ -135,11 +141,27 @@ export class InboundCustomerReturnOrderMaintenanceComponent implements OnInit {
       clientId: undefined,  
       client: undefined,
   
-      RMANumber: '',  
+      rmaNumber: '',  
       trackingNumber: '',
 
       customerId: undefined,
-      customer: undefined,
+      customer: {
+         
+        warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        companyId: this.companyService.getCurrentCompany()!.id,
+        name: "",
+        description: "",
+        contactorFirstname:  "",
+        contactorLastname:  "",
+        addressCountry: "",
+        addressState: "",
+        addressCounty:  "",
+        addressCity:  "",
+        addressDistrict: "",
+        addressLine1: "",
+        addressLine2:  "",
+        addressPostcode:  "",
+      },
   
       category: ReceiptCategory.CUSTOMER_RETURN,
   
@@ -151,12 +173,14 @@ export class InboundCustomerReturnOrderMaintenanceComponent implements OnInit {
     }
   } 
   
-  itemChanged(event: Event, csrOrderLine: CustomerReturnOrderLine) {
-    
-    console.log(`item name is changed to ${(event.target as HTMLInputElement).value}`);
-    const itemName: string = (event.target as HTMLInputElement).value.trim();
-    if (itemName.length === 0) {
-      return;
+  itemChanged(orderLine: OrderLine, csrOrderLine: CustomerReturnOrderLine) {
+    if (orderLine) {
+
+      console.log(`item name is changed to ${orderLine.item!.name}`);
+      csrOrderLine.item = orderLine.item;
+      csrOrderLine.itemId = orderLine.itemId;
+      csrOrderLine.outboundOrderLine = orderLine;
+      csrOrderLine.outboundOrderLineId = orderLine.id;
     }
 
 
@@ -249,7 +273,7 @@ export class InboundCustomerReturnOrderMaintenanceComponent implements OnInit {
           this.messageService.success(this.i18n.fanyi('message.action.success'));
           setTimeout(() => {
             this.isSpinning = false;
-            this.router.navigateByUrl(`/outbound/order?number=${this.currentCustomerReturnOrder?.number}`);
+            this.router.navigateByUrl(`/inbound/customer-return?number=${this.currentCustomerReturnOrder?.number}`);
           }, 2500);
         },
         error: () => {
@@ -291,35 +315,44 @@ export class InboundCustomerReturnOrderMaintenanceComponent implements OnInit {
  
   }
   
-  outboundOrderNumberChanged(customerReturnOrderLine: CustomerReturnOrderLine, event: Event) {
-    const orderNumber = (event.target as HTMLInputElement).value.trim();
-    if (orderNumber.length > 0) {
-
-      this.orderService.getOrders(orderNumber, false).subscribe(
-        {
-          next: (orderRes) => {
-            if (orderRes.length === 1) {
-              console.log(`order is changed to ${orderRes[0].number}`);
-              customerReturnOrderLine.outboundOrder = orderRes[0];
-            }
-          }
-        }
-      )
-    }
-  }
-       
-  procesOutboundOrderQueryResult(customerReturnOrderLine: CustomerReturnOrderLine, selectedOrderNumber: any): void {
-    console.log(`start to query with order number ${selectedOrderNumber}`);
-    this.orderService.getOrders(selectedOrderNumber, false).subscribe(
+  setupOrderNumberOnCSRLine(customerReturnOrderLine: CustomerReturnOrderLine, orderNumber: string) {
+    this.orderService.getOrders(orderNumber, true).subscribe(
       {
         next: (orderRes) => {
           if (orderRes.length === 1) {
             console.log(`order is changed to ${orderRes[0].number}`);
             customerReturnOrderLine.outboundOrder = orderRes[0];
+            customerReturnOrderLine.outboundOrderNumber = orderRes[0].number;
+            // load the valid item for the order
+            this.loadItemsForOrder(orderRes[0])
           }
         }
       }
     )
+  }
+  outboundOrderNumberChanged(customerReturnOrderLine: CustomerReturnOrderLine, event: Event) {
+    // clear the original selection
+    customerReturnOrderLine.outboundOrder = undefined;
+    customerReturnOrderLine.itemId = undefined;
+    customerReturnOrderLine.item = undefined;
+    customerReturnOrderLine.outboundOrderNumber = undefined;
+    const orderNumber = (event.target as HTMLInputElement).value.trim();
+    if (orderNumber.length > 0) {
+      this.setupOrderNumberOnCSRLine(customerReturnOrderLine, orderNumber);
+      
+    }
+  }
+  loadItemsForOrder(order: Order) {
+    this.mapOfValidOrderLines[order.id!] = order.orderLines;
+  }
+
+       
+  procesOutboundOrderQueryResult(customerReturnOrderLine: CustomerReturnOrderLine, selectedOrderNumber: any): void {
+    console.log(`start to query with order number ${selectedOrderNumber}`);
+    if (selectedOrderNumber.length > 0) {
+      this.setupOrderNumberOnCSRLine(customerReturnOrderLine, selectedOrderNumber);
+      
+    }
     
   }  
 }

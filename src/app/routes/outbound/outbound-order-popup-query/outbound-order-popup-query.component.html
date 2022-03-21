@@ -12,12 +12,12 @@
   <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
  
     <div nz-row [nzGutter]="24">
-      <div nz-col [nzSpan]="12">
+      <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="12" nzFor="number">
+          <nz-form-label [nzSpan]="8" nzFor="number">
             {{ 'number' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="12">
+          <nz-form-control [nzSpan]="16">
             <input nz-input name="number" id="number" formControlName="number" />
           </nz-form-control>
         </nz-form-item>
@@ -29,7 +29,7 @@
             {{ 'status' | i18n }}
           </nz-form-label>
           <nz-form-control [nzSpan]="16">
-            <nz-select formControlName="orderStatus">
+            <nz-select formControlName="orderStatus" nzAllowClear >
                <nz-option
                    *ngFor="let orderStatus of orderStatuses  | keys"
                     [nzValue]="orderStatus.key"
@@ -46,7 +46,7 @@
             {{ 'order.category' | i18n }}
           </nz-form-label>
           <nz-form-control [nzSpan]="16">
-            <nz-select formControlName="orderCategory">
+            <nz-select formControlName="orderCategory" nzAllowClear >
                <nz-option
                    *ngFor="let orderCategory of orderCategories  | keys"
                     [nzValue]="orderCategory.key"
@@ -59,12 +59,12 @@
     </div>
     
     <div nz-row [nzGutter]="24">  
-      <div nz-col [nzSpan]="12">
+      <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="12" nzFor="customer">
+          <nz-form-label [nzSpan]="8" nzFor="customer">
             {{ 'customer' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="12" >              
+          <nz-form-control [nzSpan]="16" >              
             <input type="text" nz-input formControlName="customer"  
               id="customer" name="customer" 
               [nzAutocomplete]="customerAutoCompleteTpl" 

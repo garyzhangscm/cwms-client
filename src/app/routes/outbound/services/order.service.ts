@@ -30,11 +30,12 @@ export class OrderService {
   ) { }
 
   getOrders(number?: string, loadDetails?: boolean, orderStatus?: OrderStatus, 
-    startCompleteTime?: Date, endCompleteTime?:Date, specificCompleteDate?: Date, category?: OrderCategory): Observable<Order[]> {
+    startCompleteTime?: Date, endCompleteTime?:Date, specificCompleteDate?: Date, category?: OrderCategory, 
+    customerName?: string,): Observable<Order[]> {
     let url = `outbound/orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
     if (number) {
-      const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
       
       url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number)}`; 
     }
@@ -48,6 +49,9 @@ export class OrderService {
     }
     if (orderStatus) {
       url = `${url}&status=${orderStatus}`;
+    }
+    if (customerName) {
+      url = `${url}&customerName=${httpUrlEncodingCodec.encodeValue(customerName)}`; 
     }
     
     if (startCompleteTime) {

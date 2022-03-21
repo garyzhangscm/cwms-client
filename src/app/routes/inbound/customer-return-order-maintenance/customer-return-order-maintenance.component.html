@@ -40,7 +40,7 @@
                 >
         
 
-                  <input appFkey variable="order-number" type="text" nz-input [(ngModel)]="currentCustomerReturnOrder!.number" required 
+                  <input appFkey variable="csr-order-number" type="text" nz-input [(ngModel)]="currentCustomerReturnOrder!.number" required 
                     (blur)="orderNumberChange($event)"/>
                   <ng-template #orderNumberErrorTpl let-control>  
                       <ng-container *ngIf="orderNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
@@ -100,18 +100,18 @@
         
        
         <div nz-row [nzGutter]="24">
-            <div nz-col [nzSpan]="10" >
+            <div nz-col [nzSpan]="8" >
               <nz-form-item>
                 <nz-form-label [nzSpan]="12">
                   {{ 'RMANumber' | i18n }}
                 </nz-form-label>
                 <nz-form-control [nzSpan]="12" nzHasFeedback  >
-                  <input  type="text" nz-input [(ngModel)]="currentCustomerReturnOrder!.RMANumber"  />
+                  <input  type="text" nz-input [(ngModel)]="currentCustomerReturnOrder!.rmaNumber"  />
                       
                 </nz-form-control>
               </nz-form-item>
             </div>
-            <div nz-col [nzSpan]="10" >
+            <div nz-col [nzSpan]="8" >
               <nz-form-item>
                 <nz-form-label [nzSpan]="12">
                   {{ 'trackingNumber' | i18n }}
@@ -121,12 +121,14 @@
                       
                 </nz-form-control>
               </nz-form-item>
-            </div><div nz-col [nzSpan]="8">
+            </div>
+            <div nz-col [nzSpan]="8">
               <nz-form-item>
+                <nz-form-label [nzSpan]="12">
+                  {{ 'allowUnexpectedItem' | i18n }}
+                </nz-form-label>
                 <nz-form-control>
-                  <label nz-checkbox [(ngModel)]="currentCustomerReturnOrder!.allowUnexpectedItem">
-                    <span>
-                      {{ 'allowUnexpectedItem' | i18n }}</span>
+                  <label nz-checkbox [(ngModel)]="currentCustomerReturnOrder!.allowUnexpectedItem"> 
                   </label>
     
                 </nz-form-control>
@@ -148,22 +150,19 @@
                 [nzFooter]="orderLineTableFoot" #csrOrderLineTable>
                 <thead>
                     <tr> 
-                        <th>
-                          {{ 'customer-return-order.line.number' | i18n }}
+                        <th nzWidth="150px">
+                          {{ 'line.number' | i18n }}
                         </th>
                         <th>
                           {{ 'order' | i18n }}
-                        </th> 
-                        <th>
-                          {{ 'order.line' | i18n }}
-                        </th> 
+                        </th>  
                         <th>
                           {{ 'item' | i18n }}
                         </th>
                         <th>
                           {{ 'item.description' | i18n }}
                         </th>
-                        <th>
+                        <th nzWidth="150px">
                           {{ 'order.line.expectedQuantity' | i18n }}
                         </th>  
                         <th>
@@ -172,29 +171,26 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let data of csrOrderLineTable.data; let i = index"> 
-                        <td>
-                            <div *ngIf="data.id === undefined">
-                                <div class="row">
-                                    <input   type="text" [(ngModel)]="data.number"/>
-                                </div>
+                        <td nzWidth="150px">
+                            <div *ngIf="data.id === undefined"  > 
+                              <nz-input-number  [nzMin]="1" [nzStep]="1" [(ngModel)]="data.number" style="width: 100px">
+                                </nz-input-number> 
                             </div>
                             <span *ngIf="data.id">
                                 {{ data.number }}
                             </span>
                         </td>
                         <td>
-                          
-                          <div *ngIf="data.id === undefined">
-                            <div class="row">
-                              <nz-input-group nzSearch [nzAddOnAfter]="outboundOrderNumberSuffixIconButton">
-                                <input nz-input [ngModel]="data.outboundOrderNumber"
-                                            (blur)="outboundOrderNumberChanged(data, $event)"/>
-                                </nz-input-group>
-                                <ng-template #outboundOrderNumberSuffixIconButton>
-                                    <app-outbound-outbound-order-popup-query (recordSelected)="procesOutboundOrderQueryResult(data, $event)">
-                                    </app-outbound-outbound-order-popup-query>
-                                </ng-template> 
-                            </div>
+                          <div *ngIf="data.id === undefined" style="height: 32px;">   
+                                  <nz-input-group  nzSearch [nzAddOnAfter]="outboundOrderNumberSuffixIconButton">
+                                    <input nz-input [ngModel]="data.outboundOrderNumber"
+                                                (blur)="outboundOrderNumberChanged(data, $event)"/>
+                                  </nz-input-group>
+                                  <ng-template #outboundOrderNumberSuffixIconButton> 
+                                    <app-outbound-outbound-order-popup-query (recordSelected)="procesOutboundOrderQueryResult(data, $event)"
+                                    [customerName]="currentCustomerReturnOrder.customer?.name">
+                                    </app-outbound-outbound-order-popup-query> 
+                                  </ng-template>  
                           </div>
                           <span *ngIf="data.id">
                               {{ data.number }}
@@ -203,10 +199,13 @@
                         </td>
                         <td>
                             <div *ngIf="data.id === undefined">
-                                <div class="row">
-                                    <input  type="text" [ngModel]="data.item!.name"
-                                        (blur)="itemChanged($event, data)"  />
-                                </div>
+                              <!-- Only show the dropdown when the user select an outbound order and there's valid items on this order to be returned
+                              -->
+                              <nz-select *ngIf="data.outboundOrder && data.outboundOrder.id && mapOfValidOrderLines[data.outboundOrder!.id!] &&
+                              mapOfValidOrderLines[data.outboundOrder!.id!].length > 0" 
+                                  [ngModel]="data.outboundOrderLine" (ngModelChange)="itemChanged($event, data)" style="width: 200px">
+                                <nz-option *ngFor="let orderLine of mapOfValidOrderLines[data.outboundOrder!.id!]" [nzValue]="orderLine" [nzLabel]="orderLine.item!.name"></nz-option>
+                              </nz-select> 
                             </div> 
                             <span *ngIf="data.id">
                                 {{ data.item?.name }}
@@ -215,9 +214,10 @@
                         <td>
                             {{ data.item?.description }}
                         </td>                        
-                        <td>
+                        <td nzWidth="150px">
                             <div class="row">
-                                <input  type="text" [(ngModel)]="data.expectedQuantity"  />
+                                <nz-input-number  [nzMin]="0" [nzStep]="1"   [(ngModel)]="data.expectedQuantity" >
+                                </nz-input-number>
                             </div>
                         </td>  
                         <td>
@@ -244,23 +244,36 @@
     <div class="small-card" *ngIf="stepIndex === 2" style="padding-top: 20px;">
  
 
-
+      <nz-descriptions nzTitle="{{ 'customer-return-order' | i18n}} - {{  currentCustomerReturnOrder!.number }}" nzBordered>
+        <nz-descriptions-item nzTitle="{{ 'client' | i18n}}"> 
+            {{ currentCustomerReturnOrder?.client?.name  }}
+        </nz-descriptions-item> 
+        <nz-descriptions-item nzTitle="{{ 'RMANumber' | i18n}}"> 
+            {{ currentCustomerReturnOrder?.rmaNumber  }}
+        </nz-descriptions-item> 
+        <nz-descriptions-item nzTitle="{{ 'trackingNumber' | i18n}}"> 
+            {{ currentCustomerReturnOrder?.trackingNumber  }}
+        </nz-descriptions-item> 
+        <nz-descriptions-item nzTitle="{{ 'customer' | i18n}}"> 
+            {{ currentCustomerReturnOrder?.customer?.name  }}
+        </nz-descriptions-item> 
+        <nz-descriptions-item nzTitle="{{ 'allowUnexpectedItem' | i18n}}"> 
+            {{ currentCustomerReturnOrder?.allowUnexpectedItem  }}
+        </nz-descriptions-item> 
+      </nz-descriptions>
         <!-- Table to show order line  -->
 
-        <div class="search-result-list"> 
-            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="currentCustomerReturnOrder!.customerReturnOrderLines"
+        <div class="search-result-list" style="padding-top: 25px"> 
+            <nz-table [nzScroll]="{ x: '100vw' }" nzShowPagination [nzData]="currentCustomerReturnOrder!.customerReturnOrderLines"
                 #displayOrderLineTable>
                 <thead>
                     <tr> 
                       <th>
-                        {{ 'customer-return-order.line.number' | i18n }}
+                        {{ 'line.number' | i18n }}
                       </th>
                       <th>
                         {{ 'order' | i18n }}
-                      </th> 
-                      <th>
-                        {{ 'order.line' | i18n }}
-                      </th> 
+                      </th>  
                       <th>
                         {{ 'item' | i18n }}
                       </th>
@@ -275,8 +288,7 @@
                 <tbody>
                     <tr *ngFor="let data of displayOrderLineTable.data; let i = index">  
                         <td>{{ data.number }} </td>
-                        <td>{{ data.outboundOrderNumber }} </td>
-                        <td>{{ data.outboundOrderLine?.number }} </td>
+                        <td>{{ data.outboundOrderNumber }} </td> 
                         <td>{{ data.item?.name }} </td>
                         <td>{{ data.item?.description }} </td>
                         <td>{{ data.expectedQuantity }} </td> 

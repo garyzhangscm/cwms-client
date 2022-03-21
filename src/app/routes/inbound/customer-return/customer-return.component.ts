@@ -3,7 +3,7 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { STComponent, STColumn } from '@delon/abc/st';
+import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -30,7 +30,7 @@ export class InboundCustomerReturnComponent implements OnInit {
   columns: STColumn[] = [
     { title: this.i18n.fanyi("number"),  index: 'number' ,
       iif: () => this.isChoose('number')  }, 
-    { title: this.i18n.fanyi("RMANumber"),  index: 'RMANumber' , 
+    { title: this.i18n.fanyi("RMANumber"),  index: 'rmaNumber' , 
     iif: () => this.isChoose('RMANumber')  }, 
     { title: this.i18n.fanyi("trackingNumber"),  index: 'trackingNumber' , 
     iif: () => this.isChoose('trackingNumber')  }, 
@@ -180,5 +180,16 @@ export class InboundCustomerReturnComponent implements OnInit {
   }
   removeCustomerReturnOrder(customerReturnOrder: CustomerReturnOrder) {
 
+  }
+  
+  csrTableChanged(event: STChange) : void { 
+    if (event.type === 'expand' && event.expand.expand === true) {
+      
+      this.showCSRDetails(event.expand);
+    }
+
+  }
+  showCSRDetails(customerReturnOrder: CustomerReturnOrder): void { 
+    
   }
 }

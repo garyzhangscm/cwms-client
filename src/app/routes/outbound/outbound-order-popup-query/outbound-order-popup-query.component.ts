@@ -1,26 +1,15 @@
 import { formatDate } from '@angular/common';
-import { Component, EventEmitter, Inject, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, EventEmitter, Inject, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
+import { FormGroup, FormBuilder } from '@angular/forms'; 
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 import { Customer } from '../../common/models/customer';
-import { CustomerService } from '../../common/services/customer.service';
-import { PrintingService } from '../../common/services/printing.service';
-import { Inventory } from '../../inventory/models/inventory';
-import { InventoryService } from '../../inventory/services/inventory.service';
-import { LocalCacheService } from '../../util/services/local-cache.service';
-import { UtilService } from '../../util/services/util.service';
-import { LocationGroup } from '../../warehouse-layout/models/location-group';
-import { LocationGroupType } from '../../warehouse-layout/models/location-group-type';
-import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
-import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
-import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
-import { LocationService } from '../../warehouse-layout/services/location.service';
+import { CustomerService } from '../../common/services/customer.service'; 
+import { Inventory } from '../../inventory/models/inventory'; 
+import { LocalCacheService } from '../../util/services/local-cache.service'; 
 import { Order } from '../models/order';
 import { OrderCategory } from '../models/order-category';
 import { OrderLine } from '../models/order-line';
@@ -45,7 +34,7 @@ export class OutboundOutboundOrderPopupQueryComponent implements OnInit {
   searchForm!: FormGroup;
 
   
-  @ViewChild('st', { static: true })
+  @ViewChild('st', { static: false })
   st!: STComponent;
   columns: STColumn[] = [
     { title: 'id', index: 'id', type: 'radio' },
@@ -115,6 +104,7 @@ export class OutboundOutboundOrderPopupQueryComponent implements OnInit {
   filterValidCustomers: Customer[] = [];
 
   @Output() readonly recordSelected: EventEmitter<any> = new EventEmitter();
+  @Input() customerName?: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -146,7 +136,8 @@ export class OutboundOutboundOrderPopupQueryComponent implements OnInit {
       this.searchForm.controls.orderStatus.value, 
       undefined, 
       undefined, undefined,       
-      this.searchForm.controls.orderCategory.value).subscribe(
+      this.searchForm.controls.orderCategory.value,
+      this.searchForm.controls.customer.value).subscribe(
       orderRes => {
  
 
@@ -466,13 +457,13 @@ calculateStatisticQuantities(order: Order) {
     });
   }
  
-  isAnyRecordChecked(): boolean {
-    
+  isAnyRecordChecked(): boolean { 
     if (this.st == null || this.st.list == null) {
       return false;
     }
-    const dataList: STData[] = this.st.list;
-    return dataList.some(record =>  record.checked );
+    const dataList: STData[] = this.st.list; 
+
+    return dataList.some(record =>  record.checked  );
   }
 
   openQueryModal(
@@ -493,12 +484,13 @@ calculateStatisticQuantities(order: Order) {
     });
   }
   createQueryForm(): void {
+    console.log(`open order query with customer ${this.customerName}`)
     // initiate the search form
     this.searchForm = this.fb.group({
       number: [null],
       orderStatus: [null],
       orderCategory: [null],
-      customer: [null],
+      customer: [this.customerName],
     }); 
   }
   closeQueryModal(): void {
