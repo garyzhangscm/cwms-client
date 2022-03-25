@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
 import { LocationGroup } from '../models/location-group';
 import { LocationGroupService } from '../services/location-group.service';
 
@@ -12,7 +13,7 @@ import { LocationGroupService } from '../services/location-group.service';
 })
 export class WarehouseLayoutLocationGroupMaintenanceConfirmComponent implements OnInit {
   currentLocationGroup!: LocationGroup;
-
+  isSpinning = false;
   pageTitle: string;
   constructor(
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -30,12 +31,21 @@ export class WarehouseLayoutLocationGroupMaintenanceConfirmComponent implements 
   }
 
   saveLocationGroup(): void {
-    this.locationGroupService.addLocationGroup(this.currentLocationGroup).subscribe(res => {
-      this.messageService.success(this.i18n.fanyi('message.action.success'));
-      setTimeout(() => {
-        this.router.navigateByUrl(`/warehouse-layout/location-group?id=${res.id}`);
-      }, 2000);
-    });
+    this.isSpinning = true;
+    this.locationGroupService.addLocationGroup(this.currentLocationGroup).subscribe(
+      {
+
+        next: (res) => {
+
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          setTimeout(() => {
+            this.isSpinning = false;
+            this.router.navigateByUrl(`/warehouse-layout/location-group?id=${res.id}`);
+          }, 2000);
+        }, 
+        error: () => this.isSpinning = false
+
+      }); 
   }
 
   onStepIndexChange(): void {

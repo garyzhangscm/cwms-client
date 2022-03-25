@@ -9,6 +9,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 import { Trailer } from '../../outbound/models/trailer';
+import { OrderLineService } from '../../outbound/services/order-line.service';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
 import { CustomerReturnOrder } from '../models/customer-return-order';
@@ -75,6 +76,7 @@ export class InboundCustomerReturnComponent implements OnInit {
     private modalService: NzModalService,   
     private titleService: TitleService,
     private utilService: UtilService,
+    private orderLineService: OrderLineService,
     private localCacheService: LocalCacheService,) { }
 
   ngOnInit(): void {  
@@ -189,7 +191,29 @@ export class InboundCustomerReturnComponent implements OnInit {
     }
 
   }
-  showCSRDetails(customerReturnOrder: CustomerReturnOrder): void { 
-    
+  showCSRDetails(customerReturnOrder: CustomerReturnOrder): void {  
+    customerReturnOrder.customerReturnOrderLines.forEach(
+      csrLine => {
+        if (!csrLine.outboundOrderNumber) {
+
+          this.orderLineService.getOrderLine(csrLine.outboundOrderLineId!).subscribe(
+            outboundOrderLine => {
+              csrLine.outboundOrderNumber = outboundOrderLine.orderNumber; 
+              
+            }
+          )
+        }
+        if (!csrLine.item) {
+
+          this.localCacheService.getItem(csrLine.itemId!).subscribe(
+              {
+                next: (itemRes) => {
+                  csrLine.item = itemRes; 
+                }
+              }
+          )
+        }
+      }
+    )
   }
 }

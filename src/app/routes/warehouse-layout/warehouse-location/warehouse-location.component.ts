@@ -35,6 +35,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       filterFn: null,
       showFilter: false,
       fixToTheLeft: true,
+      width: "150px"
     }, {
       name: 'location-group',
       showSort: true,
@@ -55,7 +56,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: '100px'
     }, {
       name: 'location.length',
       showSort: true,
@@ -65,7 +67,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: '100px'
     }, {
       name: 'location.width',
       showSort: true,
@@ -75,7 +78,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: '100px'
     }, {
       name: 'location.height',
       showSort: true,
@@ -85,7 +89,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: '15100px0px'
     }, {
       name: 'location.capacity',
       showSort: true,
@@ -95,7 +100,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: '100px'
     }, {
       name: 'location.fillPercentage',
       showSort: true,
@@ -105,7 +111,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: '100px'
     }, {
       name: 'location.currentVolume',
       showSort: true,
@@ -115,7 +122,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: '100px'
     }, {
       name: 'location.pendingVolume',
       showSort: true,
@@ -125,7 +133,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: '100px'
     }, {
       name: 'location.putawaySequence',
       showSort: true,
@@ -135,7 +144,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: '100px'
     }, {
       name: 'location.pickSequence',
       showSort: true,
@@ -145,7 +155,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: '100px'
     }, {
       name: 'location.countSequence',
       showSort: true,
@@ -155,7 +166,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: '100px'
     },
     {
       name: 'enabled',
@@ -169,7 +181,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
         { text: this.i18n.fanyi('false'), value: false },
       ],
       filterFn: (list: boolean[], warehouseLocation: WarehouseLocation) => list.some(enabled => warehouseLocation.enabled === enabled),
-      showFilter: true
+      showFilter: true,
+      width: '100px'
     },
     {
       name: 'locked',
@@ -183,7 +196,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
         { text: this.i18n.fanyi('false'), value: false },
       ],
       filterFn: (list: boolean[], warehouseLocation: WarehouseLocation) => list.some(locked => warehouseLocation.locked === locked),
-      showFilter: true
+      showFilter: true,
+      width: '100px'
     }, {
       name: 'location.reservedCode',
       showSort: true,
@@ -193,7 +207,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: '100px'
     },
   ];
   listOfSelection = [

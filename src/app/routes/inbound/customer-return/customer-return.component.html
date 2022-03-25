@@ -51,7 +51,7 @@
     </div>
     
     <st #st [data]="customerReturnOrders"  [columns]="columns" [scroll]="{ x: '1450px'}"
-    [expand]="expand" expandRowByClick expandAccordion> 
+    [expand]="expand" expandRowByClick expandAccordion (change)="csrTableChanged($event)"> 
       
       <!-- more details about the customer -->
       <ng-template st-row="customerColumn" let-item let-index="index">
@@ -89,7 +89,12 @@
           <ul nz-menu> 
 
             <li nz-menu-item >
-              <a  (click)="modifyCustomerReturnOrder(item)">{{ 'modify' | i18n }}</a>
+              <a routerLink="/inbound/customer-return-receive" routerLinkActive="active"
+              [queryParams]="{id: item.id}">{{ 'receive' | i18n }}</a>
+            </li>
+            <li nz-menu-item >
+              <a routerLink="/inbound/customer-return-order/maintenance" routerLinkActive="active"
+              [queryParams]="{id: item.id}">{{ 'modify' | i18n }}</a>
             </li>
             <li nz-menu-item>
               <a  (click)="removeCustomerReturnOrder(item)">{{ 'remove' | i18n }}</a>
@@ -128,9 +133,33 @@
               <tbody>
                   <tr *ngFor="let data of displayOrderLineTable.data">  
                       <td  nzWidth="150px">{{ data.number }} </td>
-                      <td>{{ data.outboundOrderNumber }} </td> 
-                      <td>{{ data.item?.name }} </td>
-                      <td>{{ data.item?.description }} </td>
+                      <td>
+                        <nz-skeleton-element 
+                            *ngIf="data.outboundOrderNumber == null"
+                            nzType="input"
+                            [nzActive]="true"
+                            [nzSize]="'small'"
+                            style="width:75px"
+                          ></nz-skeleton-element> 
+                          {{ data.outboundOrderNumber }} </td> 
+                      <td>
+                        <nz-skeleton-element 
+                            *ngIf="data.itemId && data.item == null"
+                            nzType="input"
+                            [nzActive]="true"
+                            [nzSize]="'small'"
+                            style="width:75px"
+                          ></nz-skeleton-element> 
+                          {{ data.item?.name }} </td>
+                      <td>
+                        <nz-skeleton-element 
+                            *ngIf="data.itemId && data.item == null"
+                            nzType="input"
+                            [nzActive]="true"
+                            [nzSize]="'small'"
+                            style="width:75px"
+                          ></nz-skeleton-element> 
+                          {{ data.item?.description }}  </td>
                       <td>{{ data.expectedQuantity }} </td> 
                   </tr>
               </tbody>

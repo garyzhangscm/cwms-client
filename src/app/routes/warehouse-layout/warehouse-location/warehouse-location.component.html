@@ -5,10 +5,10 @@
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label for="location_group_type" [nzSm]="6" [nzXs]="6">
+        <nz-form-label for="location_group_type" [nzSpan]="8">
           {{ 'location-group-type' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSpan]="18">
+        <nz-form-control [nzSpan]="16">
           <nz-select nzMode="tags" formControlName="taggedLocationGroupTypes">
             <nz-option *ngFor="let locationGroupType of locationGroupTypes" [nzLabel]="locationGroupType.description"
               [nzValue]="locationGroupType.id"></nz-option>
@@ -61,7 +61,7 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table [nzScroll]="{ x: '100vw'}" #rowSelectionTable nzShowPagination [nzData]="listOfAllLocations"
+  <nz-table [nzScroll]="{ x: '130vw'}" #rowSelectionTable nzShowPagination [nzData]="listOfAllLocations"
     [nzFooter]="tableFoot">
     <thead>
       <tr>
@@ -73,7 +73,7 @@
         <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
           [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
           [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
-          [nzShowFilter]="column.showFilter">
+          [nzShowFilter]="column.showFilter" [nzWidth]="column.width!">
           {{ column.name | i18n }}
         </th>
 
