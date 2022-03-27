@@ -1,4 +1,5 @@
 import { InventoryConsolidationStrategy } from './inventory-consolidation-strategy.enum';
+import { ItemVolumeTrackingLevel } from './item_volume_tracking_level.enum';
 import { LocationGroupType } from './location-group-type';
 import { LocationVolumeTrackingPolicy } from './location-volume-tracking-policy.enum';
 import { Warehouse } from './warehouse';
@@ -16,6 +17,8 @@ export interface LocationGroup {
   adjustable: boolean;
   trackingVolume: boolean;
   allowEmptyLocation: boolean;
+  trackingLocationUtilization: boolean;
+  itemVolumeTrackingLevel: ItemVolumeTrackingLevel;
   volumeTrackingPolicy: LocationVolumeTrackingPolicy;
   inventoryConsolidationStrategy: InventoryConsolidationStrategy;
 }
