@@ -39,6 +39,7 @@ import { InventoryMovementPathMaintenanceComponent } from './movement-path-maint
 import { InventoryMovementPathComponent } from './movement-path/movement-path.component';
 import { InventoryReplenishmentComponent } from './replenishment/replenishment.component';
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
+import { InventoryLocationUtilizationSnapshotComponent } from './location-utilization-snapshot/location-utilization-snapshot.component';
 
 const routes: Routes = [
   { path: 'inventory', component: InventoryInventoryComponent, canActivate: [AuthGuard] },
@@ -80,7 +81,8 @@ const routes: Routes = [
   { path: 'item-sampling', component: InventoryItemSamplingComponent },
   { path: 'item-sampling/maintenance', component: InventoryItemSamplingMaintenanceComponent },
   { path: 'lock', component: InventoryLockComponent },
-  { path: 'lock/maintenance', component: InventoryLockMaintenanceComponent }];
+  { path: 'lock/maintenance', component: InventoryLockMaintenanceComponent },
+  { path: 'location-utilization-snapshot', component: InventoryLocationUtilizationSnapshotComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
