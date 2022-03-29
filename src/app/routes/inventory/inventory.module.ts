@@ -1,6 +1,7 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
@@ -42,6 +43,7 @@ import { InventoryItemQueryPopupComponent } from './item-query-popup/item-query-
 import { InventoryItemSamplingMaintenanceComponent } from './item-sampling-maintenance/item-sampling-maintenance.component';
 import { InventoryItemSamplingComponent } from './item-sampling/item-sampling.component';
 import { InventoryItemComponent } from './item/item.component';
+import { InventoryLocationUtilizationSnapshotComponent } from './location-utilization-snapshot/location-utilization-snapshot.component';
 import { InventoryLockMaintenanceComponent } from './lock-maintenance/lock-maintenance.component';
 import { InventoryLockComponent } from './lock/lock.component';
 import { InventoryMovementPathConfirmComponent } from './movement-path-confirm/movement-path-confirm.component';
@@ -49,7 +51,6 @@ import { InventoryMovementPathMaintenanceComponent } from './movement-path-maint
 import { InventoryMovementPathComponent } from './movement-path/movement-path.component';
 import { InventoryReplenishmentComponent } from './replenishment/replenishment.component';
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
-import { InventoryLocationUtilizationSnapshotComponent } from './location-utilization-snapshot/location-utilization-snapshot.component';
 
 
 const COMPONENTS: Array<Type<void>> = [
@@ -104,7 +105,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     CommonModule,
     NzStepsModule, 
     UtilModule,
-    NzSkeletonModule,
+    NzSkeletonModule,NzIconModule ,
   ],
   declarations: [
     ...COMPONENTS,

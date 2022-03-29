@@ -20,5 +20,6 @@ export interface LocationGroup {
   trackingLocationUtilization: boolean;
   itemVolumeTrackingLevel: ItemVolumeTrackingLevel;
   volumeTrackingPolicy: LocationVolumeTrackingPolicy;
-  inventoryConsolidationStrategy: InventoryConsolidationStrategy;
+  inventoryConsolidationStrategy: InventoryConsolidationStrategy; 
+
 }

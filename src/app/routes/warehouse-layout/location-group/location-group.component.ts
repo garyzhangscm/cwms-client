@@ -10,6 +10,7 @@ import { I18NService } from 'src/app/core/i18n/i18n.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { InventoryConsolidationStrategy } from '../models/inventory-consolidation-strategy.enum';
+import { ItemVolumeTrackingLevel } from '../models/item_volume_tracking_level.enum';
 import { LocationGroup } from '../models/location-group';
 import { LocationGroupType } from '../models/location-group-type';
 import { LocationVolumeTrackingPolicy } from '../models/location-volume-tracking-policy.enum';
@@ -33,7 +34,8 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: "150px"
     }, {
       name: 'description',
       showSort: true,
@@ -43,7 +45,8 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: "250px"
     }, {
       name: 'location-group-type',
       showSort: true,
@@ -53,7 +56,8 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: "250px"
     }, {
       name: 'location-group.pickable',
       showSort: true,
@@ -63,7 +67,8 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: "150px"
     },
     {
       name: 'location-group.storable',
@@ -74,7 +79,8 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: "150px"
     }, {
       name: 'location-group.countable',
       showSort: true,
@@ -84,7 +90,8 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: "150px"
     }, {
       name: 'location-group.adjustable',
       showSort: true,
@@ -94,7 +101,8 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: "150px"
     }, {
       name: 'location-group.tracking-volume',
       showSort: true,
@@ -104,7 +112,8 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: "150px"
     }, {
       name: 'location-group.volume-tracking-policy',
       showSort: true,
@@ -114,7 +123,8 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: "250px"
     }, {
       name: 'location-group.inventory-consolidation-strategy',
       showSort: true,
@@ -124,7 +134,8 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: "250px"
     },{
       name: 'location-group.allowEmptyLocation',
       showSort: true,
@@ -134,7 +145,30 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
       filterMultiple: true,
       listOfFilter: [],
       filterFn: null,
-      showFilter: false
+      showFilter: false,
+      width: "150px"
+    },{
+      name: 'location-group.trackingLocationUtilization',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareBoolean(a.trackingLocationUtilization, b.trackingLocationUtilization),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      width: "150px"
+    },{
+      name: 'location-group.itemVolumeTrackingLevel',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareNullableString(a.itemVolumeTrackingLevel, b.itemVolumeTrackingLevel),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      width: "250px"
     },
   ];
   isSpinning = false;
@@ -144,6 +178,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
   locationGroups: LocationGroup[] = [];
   locationVolumeTrackingPolicy = LocationVolumeTrackingPolicy;
   inventoryConsolidationStrategy = InventoryConsolidationStrategy;
+  itemVolumeTrackingLevels = ItemVolumeTrackingLevel;
   selectedLocationGroupTypes: number[] = [];
   selectedLocationGroups: number[] = [];
   // Form related data and functions

@@ -42,13 +42,7 @@ export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
     { title: this.i18n.fanyi("startTime"),  index: 'startTime' , 
     iif: () => this.isChoose('startTime')  }, 
     { title: this.i18n.fanyi("completeTime"),  index: 'completeTime' , 
-    iif: () => this.isChoose('completeTime')  }, 
-    
-    {
-      title: 'action',
-      renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 
-      render: 'actionColumn',
-    },
+    iif: () => this.isChoose('completeTime')  },  
   ]; 
   
   customColumns = [
@@ -76,7 +70,7 @@ export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
     private fb: FormBuilder,
     private modalService: NzModalService,   
     private titleService: TitleService,
-    private utilService: UtilService, 
+    private utilService: UtilService,  
     private localCacheService: LocalCacheService,) { }
 
   ngOnInit(): void {  
@@ -163,5 +157,18 @@ export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
       
     }
   }
-   
+ 
+  generateLocationUtilizationSnapshotBatch() {
+
+    this.isSpinning = true;
+    this.locationUtilizationSnapshotBatchService.generateLocationUtilizationSnapshotBatch()
+    .subscribe({
+      next: (locationUtilizationSnapshotRes) => {
+        this.searchForm!.controls.number.setValue(locationUtilizationSnapshotRes.number);
+        this.isSpinning = false;
+        this.search();
+      } ,
+      error: () => this.isSpinning = false
+    })
+  }
 }

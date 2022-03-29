@@ -3,6 +3,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { InventorySnapshotConfiguration } from '../models/inventory-snapshot-configuration';
 import { InventorySnapshotConfigurationService } from '../services/inventory-snapshot-configuration.service';
@@ -28,6 +29,7 @@ export class InventoryInventorySnapshotConfigurationComponent implements OnInit 
   ngOnInit(): void {
     this.configurationForm = this.fb.group({
       cron: [null],
+      locationUtilizationCron: [null],
     });
 
     this.inventorySnapshotConfigurationService
@@ -35,6 +37,8 @@ export class InventoryInventorySnapshotConfigurationComponent implements OnInit 
       .subscribe(inventorySnapshotConfiguration => {
         this.configurationForm.controls.cron.setValue(
           inventorySnapshotConfiguration.cron);
+          this.configurationForm.controls.locationUtilizationCron.setValue(
+            inventorySnapshotConfiguration.locationUtilizationSnapshotCron);
       })
 
   }
@@ -44,17 +48,24 @@ export class InventoryInventorySnapshotConfigurationComponent implements OnInit 
     {
       id: undefined,
       cron: this.configurationForm.controls.cron.value,
+      locationUtilizationSnapshotCron:  this.configurationForm.controls.locationUtilizationCron.value,
       warehouseId: this.warehouseService.getCurrentWarehouse().id
 
 
     }
 
+    this.isSpinning= true;
     this.inventorySnapshotConfigurationService
       .updateInventorySnapshotConfiguration(inventorySnapshotConfiguration)
-      .subscribe(inventorySnapshotConfiguration => {
+      .subscribe({
+        next: (inventorySnapshotConfiguration) => {
 
-        this.message.info(this.i18n.fanyi('message.change.complete'));
-      })
+          this.message.info(this.i18n.fanyi('message.save.complete'));
+          this.isSpinning= false;
+        }, 
+        error: () => this.isSpinning = false
+
+      }); 
   }
   generateInventorySnapshot(): void {
     this.isSpinning = true;
@@ -74,7 +85,6 @@ export class InventoryInventorySnapshotConfigurationComponent implements OnInit 
           this.isSpinning = false;
         })
   }
-
 
 
 }
