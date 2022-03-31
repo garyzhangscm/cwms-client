@@ -1,20 +1,22 @@
+import { Client } from "../../common/models/client";
 import { InvoiceLine } from "./invoice-line";
 
 export interface Invoice {
     
-    id: number;
+    id?: number;
 
     companyId: number;
     warehouseId: number;
-    clientId: number;
+    clientId?: number;
+    client?: Client;
 
     number: string;
     referenceNumber: string;
     comment: string;
 
-    startTime: Date;
+    startTime?: Date;
 
-    endTime: Date;
+    endTime?: Date;
     lines: InvoiceLine[];
     totalCharge: number;
 }

@@ -3,10 +3,10 @@ import { BillingCycle } from "./billing-cycle";
 
 export interface BillingRate {
    
-    id: number;
+    id?: number;
     companyId: number;
-    warehouseId: number;
-    clientId: number;
+    warehouseId?: number;
+    clientId?: number;
     billableCategory: BillableCategory;
 
     rate: number;

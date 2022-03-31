@@ -1,12 +1,16 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzStepsModule } from 'ng-zorro-antd/steps';
+
+import { DirectivesModule } from '../directives/directives.module';
 import { BillingRoutingModule } from './billing-routing.module';
-import { BillingRateComponent } from './rate/rate.component';
-import { BillingRateMaintenanceComponent } from './rate-maintenance/rate-maintenance.component';
 import { BillingInvoiceMaintenanceComponent } from './invoice-maintenance/invoice-maintenance.component';
 import { BillingInvoiceComponent } from './invoice/invoice.component';
+import { BillingRateMaintenanceComponent } from './rate-maintenance/rate-maintenance.component';
+import { BillingRateComponent } from './rate/rate.component';
 
-const COMPONENTS: Type<void>[] = [
+const COMPONENTS: Array<Type<void>> = [
   BillingRateComponent,
   BillingRateMaintenanceComponent,
   BillingInvoiceMaintenanceComponent,
@@ -15,7 +19,10 @@ const COMPONENTS: Type<void>[] = [
 @NgModule({
   imports: [
     SharedModule,
-    BillingRoutingModule
+    BillingRoutingModule,
+    NzStepsModule,
+    DirectivesModule,
+    NzDescriptionsModule 
   ],
   declarations: COMPONENTS,
 })
