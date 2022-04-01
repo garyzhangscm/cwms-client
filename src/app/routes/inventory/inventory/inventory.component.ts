@@ -177,6 +177,8 @@ export class InventoryInventoryComponent implements OnInit {
   mapOfInprocessInventoryId: { [key: string]: boolean } = {};
 
   
+  loadingDetailsRequest = 0;
+
   listOfSelection = [
     {
       text: this.i18n.fanyi(`select-all-rows`),
@@ -299,26 +301,77 @@ export class InventoryInventoryComponent implements OnInit {
     this.loadDetails(this.inventories);
 
   }
-  loadDetails(inventories: Inventory[]): void {
+  
+  // we will load the information 
+  // asyncronized
+  async loadDetails(inventories: Inventory[]) {
+ 
+    let index = 0;
+    this.loadingDetailsRequest = 0;
 
-    inventories.forEach(
-      inventory => {
-        this.loadDetail(inventory);
-      }
-    ) 
+    
+    while (index < inventories.length) {
+
+      // we will need to make sure we are at max loading detail information
+      // for 10 inventory at a time(each order may have 5 different request). 
+      // we will get error if we flush requests for
+      // too many inventory into the server at a time 
+      
+      
+      while(this.loadingDetailsRequest > 50) {
+        // sleep 50ms        
+        await this.delay(50);
+      } 
+      
+      this.loadDetail(inventories[index]);
+      index++;
+    } 
+    while(this.loadingDetailsRequest > 0) {
+      // sleep 50ms        
+      await this.delay(100);
+    }  
+ 
+  }
+  
+  delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
   }
   
   loadDetail(inventory: Inventory): void {
+ 
+
+    this.loadLocation(inventory);
+
+    this.loadInventoryMovements(inventory);
+
+    // load the Unit of Measure for each item unit of measure of each package type
+    this.loadUnitOfMeasure(inventory);
+
+    this.loadPicksInformation(inventory);
+    
+    this.loadAllocateByPicksInformation(inventory);
+
+    
+  }
+  
+  loadLocation(inventory: Inventory): void {
 
     // load the information for current location
     if (inventory.locationId && inventory.location == null) {
+      this.loadingDetailsRequest++;
       this.localCacheService.getLocation(inventory.locationId!).subscribe(
         {
-          next: (locationRes) => inventory.location = locationRes
+          next: (locationRes) => {
+            inventory.location = locationRes;
+            this.loadingDetailsRequest--;
+          },
+          error: () => this.loadingDetailsRequest--
         }
       )
     } 
-    
+
+  }
+  loadInventoryMovements(inventory: Inventory): void {
 
     // load the location of the inventory movement
     if (inventory.inventoryMovements && inventory.inventoryMovements.length > 0) {
@@ -327,27 +380,54 @@ export class InventoryInventoryComponent implements OnInit {
       )
     }
 
-    // load the Unit of Measure for each item unit of measure of each package type
-    this.loadUnitOfMeasure(inventory);
-    
-    // load the pick informaiton
-    if (inventory.pickId && inventory.pick == null) {
-      this.localCacheService.getPick(inventory.pickId!).subscribe(
+  }
+  loadInventoryMovementDetails(inventoryMovement: InventoryMovement) : void {
+
+    if (inventoryMovement.locationId && inventoryMovement.location == null) {
+
+      this.loadingDetailsRequest++;
+      this.localCacheService.getLocation(inventoryMovement.locationId!).subscribe(
         {
-          next: (pickRes) => inventory.pick = pickRes
+          next: (locationRes) => {
+            inventoryMovement.location = locationRes;
+            this.loadingDetailsRequest--;
+          },
+          error: () => this.loadingDetailsRequest--
         }
       )
     } 
+  }
+  loadPicksInformation(inventory: Inventory): void {
+
+    // load the pick informaiton
+    if (inventory.pickId && inventory.pick == null) {
+      this.loadingDetailsRequest++;
+      this.localCacheService.getPick(inventory.pickId!).subscribe(
+        {
+          next: (pickRes) => {
+            inventory.pick = pickRes;
+            this.loadingDetailsRequest--;
+          },
+          error: () => this.loadingDetailsRequest--
+        }
+      )
+    } 
+  }
+  loadAllocateByPicksInformation(inventory: Inventory): void {
 
     // load the allocate by pick informaiton
     if (inventory.allocatedByPickId && inventory.allocatedByPick == null) {
+      this.loadingDetailsRequest++;
       this.localCacheService.getPick(inventory.allocatedByPickId!).subscribe(
         {
-          next: (pickRes) => inventory.allocatedByPick = pickRes
+          next: (pickRes) => {
+            inventory.allocatedByPick = pickRes;
+            this.loadingDetailsRequest--;
+          },
+          error: () => this.loadingDetailsRequest--
         }
       )
     } 
-    
   }
   loadUnitOfMeasure(inventory: Inventory): void {
     if (inventory.itemPackageType && inventory.itemPackageType.itemUnitOfMeasures &&
@@ -358,25 +438,21 @@ export class InventoryInventoryComponent implements OnInit {
                                   itemUnitOfMeasure.unitOfMeasure == null
       ).forEach(
           itemUnitOfMeasure => {
+            
+            this.loadingDetailsRequest++;
             this.localCacheService.getUnitOfMeasure(itemUnitOfMeasure.unitOfMeasureId!)
               .subscribe({
-                next: (unitOfMeasureRes) => itemUnitOfMeasure.unitOfMeasure = unitOfMeasureRes
+                next: (unitOfMeasureRes) => {
+                  itemUnitOfMeasure.unitOfMeasure = unitOfMeasureRes;
+                  this.loadingDetailsRequest--;
+                
+                }, 
+                error: () => this.loadingDetailsRequest--
               })
           }
       )
     }
   } 
-  loadInventoryMovementDetails(inventoryMovement: InventoryMovement) : void {
-
-    if (inventoryMovement.locationId && inventoryMovement.location == null) {
-
-      this.localCacheService.getLocation(inventoryMovement.locationId!).subscribe(
-        {
-          next: (locationRes) => inventoryMovement.location = locationRes
-        }
-      )
-    } 
-  }
 
   onCurrentPageDataChange(listOfCurrentPageData: readonly  Inventory[]): void {
     this.listOfDisplayInventories = listOfCurrentPageData;

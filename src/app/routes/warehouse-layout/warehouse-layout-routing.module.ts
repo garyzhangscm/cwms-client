@@ -1,14 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
 import { WarehouseLayoutLocationGroupMaintenanceConfirmComponent } from './location-group-maintenance-confirm/location-group-maintenance-confirm.component';
 import { WarehouseLayoutLocationGroupMaintenanceComponent } from './location-group-maintenance/location-group-maintenance.component';
 import { WarehouseLayoutLocationGroupComponent } from './location-group/location-group.component';
 import { WarehouseLayoutLocationQueryPopupComponent } from './location-query-popup/location-query-popup.component';
+import { WarehouseLayoutWarehouseConfigurationComponent } from './warehouse-configuration/warehouse-configuration.component';
+import { WarehouseLayoutWarehouseLayoutMaintenanceComponent } from './warehouse-layout-maintenance/warehouse-layout-maintenance.component';
 import { WarehouseLayoutWarehouseLocationComponent } from './warehouse-location/warehouse-location.component';
 import { WarehouseLayoutWarehouseMaintenanceConfirmComponent } from './warehouse-maintenance-confirm/warehouse-maintenance-confirm.component';
 import { WarehouseLayoutWarehouseMaintenanceComponent } from './warehouse-maintenance/warehouse-maintenance.component';
 import { WarehouseLayoutWarehouseComponent } from './warehouse/warehouse.component';
-import { WarehouseLayoutWarehouseLayoutMaintenanceComponent } from './warehouse-layout-maintenance/warehouse-layout-maintenance.component';
 
 const routes: Routes = [
   { path: 'warehouse', component: WarehouseLayoutWarehouseComponent },
@@ -28,7 +30,8 @@ const routes: Routes = [
   },
   { path: 'warehouse-location', component: WarehouseLayoutWarehouseLocationComponent },
   { path: 'location-query-popup', component: WarehouseLayoutLocationQueryPopupComponent },
-  { path: 'warehouse-layout-maintenance', component: WarehouseLayoutWarehouseLayoutMaintenanceComponent }];
+  { path: 'warehouse-layout-maintenance', component: WarehouseLayoutWarehouseLayoutMaintenanceComponent },
+  { path: 'warehouse-configuration', component: WarehouseLayoutWarehouseConfigurationComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

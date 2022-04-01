@@ -327,7 +327,7 @@ export class OutboundOrderComponent implements OnInit {
       },
     );
   }
- 
+  
  
   // we will load the client / supplier / item information 
   // asyncronized

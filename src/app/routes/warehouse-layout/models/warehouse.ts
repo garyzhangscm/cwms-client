@@ -1,4 +1,4 @@
-import { WarehouseConfig } from './warehouse-config';
+ 
 
 export interface Warehouse {
   id: number;
@@ -13,6 +13,5 @@ export interface Warehouse {
   addressCounty?: string;
   addressCity: string;
   addressDistrict?: string;
-  addressPostcode: string;
-  config?: WarehouseConfig;
+  addressPostcode: string; 
 }

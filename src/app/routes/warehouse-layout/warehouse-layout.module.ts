@@ -9,6 +9,7 @@ import { WarehouseLayoutLocationGroupMaintenanceConfirmComponent } from './locat
 import { WarehouseLayoutLocationGroupMaintenanceComponent } from './location-group-maintenance/location-group-maintenance.component';
 import { WarehouseLayoutLocationGroupComponent } from './location-group/location-group.component';
 import { WarehouseLayoutLocationQueryPopupComponent } from './location-query-popup/location-query-popup.component';
+import { WarehouseLayoutWarehouseConfigurationComponent } from './warehouse-configuration/warehouse-configuration.component';
 import { WarehouseLayoutWarehouseLayoutMaintenanceComponent } from './warehouse-layout-maintenance/warehouse-layout-maintenance.component';
 import { WarehouseLayoutRoutingModule } from './warehouse-layout-routing.module';
 import { WarehouseLayoutWarehouseLocationComponent } from './warehouse-location/warehouse-location.component';
@@ -25,7 +26,8 @@ const COMPONENTS: Array<Type<void>> = [
   WarehouseLayoutLocationGroupMaintenanceConfirmComponent,
   WarehouseLayoutWarehouseLocationComponent,
   WarehouseLayoutLocationQueryPopupComponent,
-  WarehouseLayoutWarehouseLayoutMaintenanceComponent];
+  WarehouseLayoutWarehouseLayoutMaintenanceComponent,
+  WarehouseLayoutWarehouseConfigurationComponent];
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
