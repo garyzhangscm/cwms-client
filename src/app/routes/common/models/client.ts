@@ -12,4 +12,6 @@ export interface Client {
   addressLine1: string;
   addressLine2?: string;
   addressPostcode: string;
+  warehouseId?: number;
+  companyId: number;
 }

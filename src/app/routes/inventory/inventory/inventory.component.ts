@@ -147,8 +147,8 @@ export class InventoryInventoryComponent implements OnInit {
       showFilter: false
     },
   ];
-  // Select control for clients and item families
-  clients: Array<{ label: string; value: string }> = [];
+  // Select control for clients and item families 
+  availableClients: Client[] = [];
   itemFamilies: Array<{ label: string; value: string }> = [];
   // Form related data and functions
   searchForm!: FormGroup;
@@ -268,7 +268,7 @@ export class InventoryInventoryComponent implements OnInit {
       
       this.inventoryService
         .getInventories(
-          this.searchForm.value.taggedClients,
+          this.searchForm.value.client,
           this.searchForm.value.taggedItemFamilies,
           this.searchForm.value.itemName,
           this.searchForm.value.location,
@@ -516,7 +516,7 @@ export class InventoryInventoryComponent implements OnInit {
   initSearchForm(): void {
     // initiate the search form
     this.searchForm = this.fb.group({
-      taggedClients: [null],
+      client: [null],
       locationGroups: [null],
       taggedItemFamilies: [null],
       itemName: [null],
@@ -525,9 +525,11 @@ export class InventoryInventoryComponent implements OnInit {
     });
 
     // initiate the select control
-    this.clientService.loadClients().subscribe((clientList: Client[]) => {
-      clientList.forEach(client => this.clients.push({ label: client.description, value: client.id!.toString() }));
+    this.clientService.getClients().subscribe({
+      next: (clientRes) => this.availableClients = clientRes
+       
     });
+
     this.itemFamilyService.loadItemFamilies().subscribe((itemFamilyList: ItemFamily[]) => {
       itemFamilyList.forEach(itemFamily =>
         this.itemFamilies.push({ label: itemFamily.description, value: itemFamily.id!.toString() }),

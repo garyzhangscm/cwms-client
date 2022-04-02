@@ -124,6 +124,8 @@ export class UtilService {
       addressLine1: client.addressLine1,
       addressLine2: client.addressLine2,
       addressPostcode: client.addressPostcode,
+      warehouseId: warehouseSpecific? this.warehouseService.getCurrentWarehouse().id : undefined,
+      companyId: this.companyService.getCurrentCompany()!.id
     }
   }
 

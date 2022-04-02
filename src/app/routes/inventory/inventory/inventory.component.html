@@ -10,8 +10,8 @@
             {{ 'client' | i18n }}
           </nz-form-label>
           <nz-form-control [nzSpan]="18">
-            <nz-select nzMode="tags" formControlName="taggedClients">
-              <nz-option *ngFor="let client of clients" [nzLabel]="client.label" [nzValue]="client.value"></nz-option>
+            <nz-select formControlName="client">
+              <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client"></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>

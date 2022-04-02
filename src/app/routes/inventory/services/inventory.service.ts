@@ -23,7 +23,7 @@ export class InventoryService {
   ) {}
 
   getInventories(
-    clients?: Client[],
+    client?: Client,
     itemFamilies?: ItemFamily[],
     itemName?: string,
     locationName?: string,
@@ -39,8 +39,8 @@ export class InventoryService {
     if (itemName) {
       params = `${params}&itemName=${httpUrlEncodingCodec.encodeValue(itemName.trim())}`;
     }
-    if (clients && clients.length > 0) {
-      params = `${params}&clients=${clients.join(',')}`;
+    if (client) {
+      params = `${params}&client=${client.id}`;
     }
     if (itemFamilies && itemFamilies.length > 0) {
       params = `${params}&item_families=${itemFamilies.join(',')}`;

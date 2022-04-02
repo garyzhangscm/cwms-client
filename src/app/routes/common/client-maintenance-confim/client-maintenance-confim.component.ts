@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+
 import { Client } from '../models/client';
 import { ClientService } from '../services/client.service';
 
@@ -29,7 +30,8 @@ export class CommonClientMaintenanceConfimComponent implements OnInit {
   }
 
   saveClient(): void {
-    this.clientService.addClient(this.currentClient!).subscribe(res => this.router.navigateByUrl('/common/client'));
+    this.clientService.addClient(this.currentClient!).subscribe(
+      res => this.router.navigateByUrl(`/common/client?name=${res.name}`));
   }
   onStepIndexChange(event: number): void {
     switch (event) {

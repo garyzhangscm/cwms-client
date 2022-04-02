@@ -24,9 +24,11 @@ import { PickWork } from '../../outbound/models/pick-work';
 import { PickService } from '../../outbound/services/pick.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
+import { WarehouseConfiguration } from '../../warehouse-layout/models/warehouse-configuration';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
+import { WarehouseConfigurationService } from '../../warehouse-layout/services/warehouse-configuration.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Injectable({
@@ -64,7 +66,33 @@ export class LocalCacheService {
     private itemFamilyService: ItemFamilyService,
     private inventoryLockService: InventoryLockService,
     private pickService: PickService,
-    private itemService: ItemService) { }
+    private itemService: ItemService, 
+    private warehouserConfigurationService: WarehouseConfigurationService) { }
+
+    getWarehouseConfiguration() : Observable<WarehouseConfiguration> {
+      const cacheKey = `warehouse-config-${this.warehouseService.getCurrentWarehouse}`;
+      const data = this.load(cacheKey)
+  
+      // Return data from cache
+      if (data !== null) {
+          return of<WarehouseConfiguration>(data)
+      }
+      
+      return this.warehouserConfigurationService.getWarehouseConfiguration()
+          .pipe(tap(res => this.save({
+            key: cacheKey,
+            data: res,
+            expirationMins: this.defaultCacheTime
+        })));
+  } 
+  resetWarehouseConfiguration(warehouseConfiguration: WarehouseConfiguration) {
+    const cacheKey = `warehouse-config-${this.warehouseService.getCurrentWarehouse}`;
+      this.save({
+        key: cacheKey,
+        data: warehouseConfiguration,
+        expirationMins: this.defaultCacheTime
+    })
+  } 
 
   getWarehouse(id: number) : Observable<Warehouse> {
       const cacheKey = `warehouse-${id}`;

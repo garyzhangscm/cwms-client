@@ -1,9 +1,11 @@
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';   
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
 import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Client } from '../models/client';
 
@@ -15,6 +17,7 @@ export class ClientService {
     private http: _HttpClient,
     private gzLocalStorageService: GzLocalStorageService,
     private warehouseService: WarehouseService,
+    private companyService: CompanyService,
   ) {}
 
   loadClients(refresh: boolean = false): Observable<Client[]> {
@@ -31,6 +34,20 @@ export class ClientService {
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem('common.client', res)));
   }
+  
+  getClients(name?: string): Observable<Client[]> {
+
+    let url = `common/clients?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&companyId=${this.companyService.getCurrentCompany()!.id}`;
+
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+    if (name) {
+      url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name.trim())}`;
+    }
+    return this.http
+      .get(url)
+      .pipe(map(res => res.data));
+  }
+
   getClient(clientId: number): Observable<Client> {
     const data = this.gzLocalStorageService.getItem(`common.client.${  clientId}`);
     if (data !== null) {
@@ -63,7 +80,7 @@ export class ClientService {
       clientIds.push(client.id!);
     });
     const params = {
-      client_ids: clientIds.join(','),
+      clientIds: clientIds.join(','),
     };
     return this.http.delete('common/clients', params).pipe(map(res => res.data));
   }
