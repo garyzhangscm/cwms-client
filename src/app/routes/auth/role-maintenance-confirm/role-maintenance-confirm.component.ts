@@ -4,6 +4,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { Client } from '../../common/models/client';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { Role } from '../models/role';
@@ -92,9 +93,134 @@ export class AuthRoleMaintenanceConfirmComponent implements OnInit {
     }
   ];
 
+  listOfClientColumns: ColumnItem[] = [
+    {
+      name: 'name',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.name.localeCompare(b.name),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'description',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.description.localeCompare(b.description),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'contactor.firstname',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.contactorFirstname.localeCompare(b.contactorFirstname),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'contactor.lastname',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.contactorLastname.localeCompare(b.contactorLastname),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'country',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.addressCountry.localeCompare(b.addressCountry),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'state',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.addressState.localeCompare(b.addressState),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'county',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.addressCounty!.localeCompare(b.addressCounty!),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'city',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.addressCity.localeCompare(b.addressCity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'district',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.addressDistrict!.localeCompare(b.addressDistrict!),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'line1',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.addressLine1.localeCompare(b.addressLine1),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'line2',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.addressLine2!.localeCompare(b.addressLine2!),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'postcode',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.addressPostcode.localeCompare(b.addressPostcode),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+  ];
+
   currentRole!: Role;
   pageTitle: string;
   menuTree: MenuTreeNode[] = [];
+
+  isSpinning = false;
 
   constructor(
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -145,9 +271,17 @@ export class AuthRoleMaintenanceConfirmComponent implements OnInit {
     });
   }
   confirm(): void {
-    this.roleService.addRole(this.currentRole!).subscribe(roleRes => {
-      this.messageService.success(this.i18n.fanyi('message.new.complete'));
-      setTimeout(() => this.goToNextPage(), 2000);
+    this.isSpinning = true;
+    this.roleService.addRole(this.currentRole!).subscribe({
+      next: () => {
+        
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        setTimeout(() => {
+          this.isSpinning = false;
+          this.goToNextPage();
+        }, 2500);
+      }, 
+      error: () => this.isSpinning = false
     });
   }
 
@@ -166,6 +300,9 @@ export class AuthRoleMaintenanceConfirmComponent implements OnInit {
         break;
       case 2:
         this.router.navigateByUrl('/auth/role-menu?new-role');
+        break;
+      case 3:
+        this.router.navigateByUrl('/auth/role-client?new-role');
         break;
       default:
         this.router.navigateByUrl('/auth/role/maintenance?new-role');

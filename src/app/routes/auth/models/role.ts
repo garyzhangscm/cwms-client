@@ -1,5 +1,6 @@
 import { Menu } from './menu';
 import { MenuGroup } from './menu-group';
+import { RoleClientAccess } from './role-client-access';
 import { User } from './user';
 
 export interface Role {
@@ -11,4 +12,6 @@ export interface Role {
   menuGroups: MenuGroup[];
   menus: Menu[];
   users?: User[];
+  clientAccesses: RoleClientAccess[]; 
+  nonClientDataAccessible: boolean;
 }

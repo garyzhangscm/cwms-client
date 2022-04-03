@@ -64,6 +64,18 @@ export class RoleService {
       return this.http.post(url).pipe(map(res => res.data));
     }
   }
+  
+  processClients(roleId: number, assignedClientIds: number[], deassignedClientIds: number[]) {
+    if (assignedClientIds.length === 0 && deassignedClientIds.length === 0) {
+      return of(`succeed`);
+    } else {
+      const url = `resource/roles/${roleId}/clients?assigned=${assignedClientIds.join(
+        ',',
+      )}&deassigned=${deassignedClientIds.join(',')}`;
+      return this.http.post(url).pipe(map(res => res.data));
+    }
+  }
+
 
   deassignUser(roleId: number, userId: number) {
     const url = `resource/roles/${roleId}/users?deassigned=${userId}`;

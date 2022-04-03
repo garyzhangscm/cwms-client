@@ -267,7 +267,7 @@ export class AuthRoleMenuComponent implements OnInit {
       this.currentRole!.menuGroups.push(currentMenuGroup);
     });
     sessionStorage.setItem('role-maintenance.role', JSON.stringify(this.currentRole));
-    const url = '/auth/role/maintenance/confirm?new-role';
+    const url = '/auth/role-client?new-role';
     this.router.navigateByUrl(url);
   }
 

@@ -19,7 +19,7 @@
 </ng-template>
 
 <div nz-row style="padding: 50px">
-  <div nz-col nzSpan="12" nzOffset="6">
+  <div nz-col nzSpan="20" nzOffset="2">
     <nz-steps [nzCurrent]="0" [nzSize]="'default'">
       <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"
         nzDescription="{{ 'steps.role.basic-info.description' | i18n }}">
@@ -29,6 +29,9 @@
       </nz-step>
       <nz-step nzTitle="{{ 'steps.role.assign-menus.title' | i18n }}"
         nzDescription="{{ 'steps.role.assign-menus.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.role.assign-clients.title' | i18n }}"
+        nzDescription="{{ 'steps.role.assign-clients.description' | i18n }}">
       </nz-step>
       <nz-step nzTitle="{{ 'steps.confirm.title' | i18n }}" nzDescription="{{ 'steps.confirm.description' | i18n }}">
       </nz-step>
@@ -45,7 +48,7 @@
           <nz-form-label [nzSpan]="6" nzFor="name">
             {{ 'role.name' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="6" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
             <input nz-input [(ngModel)]="currentRole!.name" id="name" name="name" required />
           </nz-form-control>
         </nz-form-item>
@@ -55,7 +58,7 @@
           <nz-form-label [nzSpan]="6" nzFor="description">
             {{ 'role.description' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="6" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
             <input nz-input [(ngModel)]="currentRole!.description" id="description" name="description" required />
           </nz-form-control>
         </nz-form-item>

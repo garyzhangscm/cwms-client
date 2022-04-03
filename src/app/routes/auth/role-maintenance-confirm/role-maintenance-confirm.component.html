@@ -18,73 +18,124 @@
   </nz-breadcrumb>
 </ng-template>
 
-<div nz-row style="padding: 10px">
-  <div nz-col nzSpan="12" nzOffset="6">
-    <nz-steps [nzCurrent]="3" [nzSize]="'default'" (nzIndexChange)="onStepsIndexChange($event)">
-      <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"
-        nzDescription="{{ 'steps.role.basic-info.description' | i18n }}">
-      </nz-step>
-      <nz-step nzTitle="{{ 'steps.role.assign-users.title' | i18n }}"
-        nzDescription="{{ 'steps.role.assign-users.description' | i18n }}">
-      </nz-step>
-      <nz-step nzTitle="{{ 'steps.role.assign-menus.title' | i18n }}"
-        nzDescription="{{ 'steps.role.assign-menus.description' | i18n }}">
-      </nz-step>
-      <nz-step nzTitle="{{ 'steps.confirm.title' | i18n }}" nzDescription="{{ 'steps.confirm.description' | i18n }}"
-        [nzDisabled]="true">
-      </nz-step>
-    </nz-steps>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <div nz-row style="padding: 10px">
+    <div nz-col nzSpan="20" nzOffset="2">
+      <nz-steps [nzCurrent]="3" [nzSize]="'default'" (nzIndexChange)="onStepsIndexChange($event)">
+        <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"
+          nzDescription="{{ 'steps.role.basic-info.description' | i18n }}">
+        </nz-step>
+        <nz-step nzTitle="{{ 'steps.role.assign-users.title' | i18n }}"
+          nzDescription="{{ 'steps.role.assign-users.description' | i18n }}">
+        </nz-step>
+        <nz-step nzTitle="{{ 'steps.role.assign-menus.title' | i18n }}"
+          nzDescription="{{ 'steps.role.assign-menus.description' | i18n }}">
+        </nz-step>
+        <nz-step nzTitle="{{ 'steps.role.assign-clients.title' | i18n }}"
+          nzDescription="{{ 'steps.role.assign-clients.description' | i18n }}">
+        </nz-step>
+        <nz-step nzTitle="{{ 'steps.confirm.title' | i18n }}" nzDescription="{{ 'steps.confirm.description' | i18n }}"
+          [nzDisabled]="true">
+        </nz-step>
+      </nz-steps>
+    </div>
   </div>
-</div>
 
 
-<nz-card nzTitle="{{ 'steps.basic-info.title' | i18n }}">
-  <nz-descriptions nzBordered>
-    <nz-descriptions-item nzTitle="{{ 'name' | i18n}}">
-      {{currentRole!.name}}
-    </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'description' | i18n}}">
-      {{currentRole!.description}}
-    </nz-descriptions-item>
-  </nz-descriptions>
-</nz-card>
+  <nz-card nzTitle="{{ 'steps.basic-info.title' | i18n }}">
+    <nz-descriptions nzBordered>
+      <nz-descriptions-item nzTitle="{{ 'name' | i18n}}">
+        {{currentRole!.name}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description' | i18n}}">
+        {{currentRole!.description}}
+      </nz-descriptions-item>
+    </nz-descriptions>
+  </nz-card>
 
-<nz-card nzTitle="{{ 'steps.role.assign-users.title' | i18n }}">
-  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #userTable [nzData]="currentRole!.users!">
-    <thead>
-      <tr>
-        <th *ngFor="let column of listOfUserTableColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
-          [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
-          [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+  <nz-card nzTitle="{{ 'steps.role.assign-users.title' | i18n }}">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #userTable [nzData]="currentRole!.users!">
+      <thead>
+        <tr>
+          <th *ngFor="let column of listOfUserTableColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
 
-          {{ column.name | i18n }}
-        </th>
+            {{ column.name | i18n }}
+          </th>
 
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let data of userTable.data">
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of userTable.data">
 
-        <td>
-          {{ data.username }}</td>
-        <td>{{ data.firstname }}</td>
-        <td>{{ data.lastname }}</td>
-        <td>{{ data.email }} </td>
-        <td>{{ data.enabled }}</td>
-        <td>{{ data.locked }}</td>
-      </tr>
-    </tbody>
-  </nz-table>
-</nz-card>
+          <td>
+            {{ data.username }}</td>
+          <td>{{ data.firstname }}</td>
+          <td>{{ data.lastname }}</td>
+          <td>{{ data.email }} </td>
+          <td>{{ data.enabled }}</td>
+          <td>{{ data.locked }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
 
-<nz-card nzTitle="{{ 'steps.role.assign-menus.title' | i18n }}" [nzActions]="[cardFoot]">
-  <nz-tree [nzData]="menuTree" nzShowLine> </nz-tree>
-</nz-card>
+  <nz-card nzTitle="{{ 'steps.role.assign-menus.title' | i18n }}">
+    <nz-tree [nzData]="menuTree" nzShowLine> </nz-tree>
+  </nz-card>
+  
+  <nz-card nzTitle="{{ 'steps.role.assign-clients.title' | i18n }}"  [nzActions]="[cardFoot]">
+    
+      <nz-table [nzScroll]="{ x: '100vw' }"  nzShowSizeChanger [nzData]="currentRole!.clientAccesses"
+      #clientTable>
+      <thead>
+        <tr> 
+          <th *ngFor="let column of listOfClientColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+            {{ column.name | i18n }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of clientTable.data"> 
 
-<ng-template #cardFoot>
-  <div nz-row nzType="flex" nzJustify="center" style='padding-left: 20px;'>
-    <button nz-button nzType="primary" (click)="confirm()">
-      {{ 'steps.confirm.title' | i18n }}
-    </button>
-  </div>
-</ng-template>
+          <td>{{ data.client?.name }}
+          </td>
+          <td> {{ data.client?.description }}
+          </td>
+          <td>{{ data.client?.contactorFirstname }}
+          </td>
+          <td>{{ data.client?.contactorLastname }}
+          </td>
+          <td>{{ data.client?.addressCountry }}
+          </td>
+          <td>{{ data.client?.addressState }}
+          </td>
+          <td>{{ data.client?.addressCounty }}
+          </td>
+          <td>{{ data.client?.addressCity }}
+          </td>
+          <td>{{ data.client?.addressDistrict }}
+          </td>
+          <td>{{ data.client?.addressLine1 }}
+          </td>
+          <td> {{ data.client?.addressLine2 }}
+          </td>
+          <td>{{ data.client?.addressPostcode }}
+          </td>
+        </tr>
+      </tbody>
+      </nz-table>
+  </nz-card>
+
+  <ng-template #cardFoot>
+    <div nz-row nzType="flex" nzJustify="center" style='padding-left: 20px;'>
+      <button nz-button nzType="primary" (click)="confirm()">
+        {{ 'steps.confirm.title' | i18n }}
+      </button>
+    </div>
+  </ng-template>
+</nz-spin>

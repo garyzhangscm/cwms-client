@@ -1,6 +1,7 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
@@ -9,6 +10,7 @@ import { DirectivesModule } from '../directives/directives.module';
 import { AuthRoutingModule } from './auth-routing.module';
 import { AuthDepartmentMaintenanceComponent } from './department-maintenance/department-maintenance.component';
 import { AuthDepartmentComponent } from './department/department.component';
+import { AuthRoleClientComponent } from './role-client/role-client.component';
 import { AuthRoleMaintenanceConfirmComponent } from './role-maintenance-confirm/role-maintenance-confirm.component';
 import { AuthRoleMaintenanceComponent } from './role-maintenance/role-maintenance.component';
 import { AuthRoleMenuComponent } from './role-menu/role-menu.component';
@@ -38,7 +40,8 @@ const COMPONENTS: Array<Type<void>> = [
   AuthWorkingTeamMaintenanceConfirmComponent,
   AuthWorkingTeamUserComponent,
   AuthDepartmentComponent,
-  AuthDepartmentMaintenanceComponent];
+  AuthDepartmentMaintenanceComponent,
+  AuthRoleClientComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
@@ -48,7 +51,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzDescriptionsModule,
     NzTreeModule,
     NzTransferModule,
-    DirectivesModule, NzStepsModule
+    DirectivesModule, NzStepsModule,
+    NzResultModule ,
   ],
   declarations: [
     ...COMPONENTS,
