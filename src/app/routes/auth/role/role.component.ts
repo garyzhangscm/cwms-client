@@ -6,7 +6,9 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { Client } from '../../common/models/client';
 import { ColumnItem } from '../../util/models/column-item';
+import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
 import { Menu } from '../models/menu';
 import { MenuGroup } from '../models/menu-group';
@@ -181,8 +183,133 @@ export class AuthRoleComponent implements OnInit {
       showFilter: false
     },
   ];
+
+  
+  listOfClientColumns: ColumnItem[] = [
+    {
+      name: 'name',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.name.localeCompare(b.name),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'description',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.description.localeCompare(b.description),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'contactor.firstname',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.contactorFirstname.localeCompare(b.contactorFirstname),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'contactor.lastname',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.contactorLastname.localeCompare(b.contactorLastname),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'country',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.addressCountry.localeCompare(b.addressCountry),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'state',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.addressState.localeCompare(b.addressState),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'county',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.addressCounty!.localeCompare(b.addressCounty!),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'city',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.addressCity.localeCompare(b.addressCity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'district',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.addressDistrict!.localeCompare(b.addressDistrict!),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'line1',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.addressLine1.localeCompare(b.addressLine1),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'line2',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.addressLine2!.localeCompare(b.addressLine2!),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'postcode',
+      sortOrder: null,
+      sortFn: (a: Client, b: Client) => a.addressPostcode.localeCompare(b.addressPostcode),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+  ];
   searching = false;
   searchResult = '';
+
 
   constructor(
     private fb: FormBuilder,
@@ -194,6 +321,7 @@ export class AuthRoleComponent implements OnInit {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private utilService: UtilService,
+    private localCacheService: LocalCacheService,
   ) { }
 
   // Form related data and functions
@@ -238,7 +366,7 @@ export class AuthRoleComponent implements OnInit {
         // refresh the content as well
         this.listOfAllRoles.forEach(role => {
           if (this.expandSet.has(role.id)) {
-            this.loadUserAndMenu(this.expandSet.has(role.id), role, tabIndex);
+            this.loadUserAndMenuAndClient(this.expandSet.has(role.id), role, tabIndex);
           }
         });
       },
@@ -286,7 +414,7 @@ export class AuthRoleComponent implements OnInit {
     });
   }
 
-  loadUserAndMenu(expanded: boolean, role: Role, tabIndex: number = 0): void {
+  loadUserAndMenuAndClient(expanded: boolean, role: Role, tabIndex: number = 0): void {
     if (expanded) {
       this.expandSet.add(role.id);
     } else {
@@ -318,6 +446,18 @@ export class AuthRoleComponent implements OnInit {
     // Let's sort the menus based on the sequence of menu group / menu sub group / menu
     role.menus.sort((a, b) => a.overallSequence! - b.overallSequence!);
     this.tabIndex = tabIndex;
+
+    // load the client information
+    role.clientAccesses.forEach(
+      roleClientAccess => {
+        if (roleClientAccess.client == null) {
+
+          this.localCacheService.getClient(roleClientAccess.clientId).subscribe(
+            client => roleClientAccess.client = client
+          )
+        }
+      }
+    )
   }
 
   deassignUser(roleId: number, userId: number): void {
@@ -335,7 +475,7 @@ export class AuthRoleComponent implements OnInit {
   onExpandChange(role: Role, checked: boolean): void {
     if (checked) {
       this.expandSet.add(role.id);
-      this.loadUserAndMenu(true, role);
+      this.loadUserAndMenuAndClient(true, role);
     } else {
       this.expandSet.delete(role.id);
     }

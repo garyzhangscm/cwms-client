@@ -48,8 +48,17 @@
           <nz-form-label [nzSpan]="6" nzFor="name">
             {{ 'role.name' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
-            <input nz-input [(ngModel)]="currentRole!.name" id="name" name="name" required />
+          <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="roleNameErrorTpl" [nzValidateStatus]="roleNameValidateStatus"
+          > 
+            
+            <input nz-input [(ngModel)]="currentRole!.name" id="name" name="name"  required 
+            (blur)="roleNameChange($event)"/>
+            <ng-template #roleNameErrorTpl let-control>  
+                <ng-container *ngIf="roleNameValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
+                <ng-container *ngIf="roleNameValidationMessage === 'nameExists'">Role Name already exists</ng-container>
+                        
+            </ng-template>
+          
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -71,7 +80,7 @@
 
 <ng-template #cardFoot>
   <div nz-row nzType="flex" nzJustify="center" style='padding-left: 20px;'>
-    <button nz-button nzType="primary" (click)="goToNextPage()">
+    <button nz-button nzType="primary" (click)="goToNextPage()" [disabled]="!passValidation()">
       {{ 'steps.next' | i18n }} :
       {{ 'steps.role.assign-users.title' | i18n }}
     </button>

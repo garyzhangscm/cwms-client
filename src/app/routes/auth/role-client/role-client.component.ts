@@ -52,15 +52,6 @@ export class AuthRoleClientComponent implements OnInit {
     this.unassignedClientText = this.i18n.fanyi('unassigned-clients');
     this.assignedClientText = this.i18n.fanyi('assigned-client');
 
-    this.isSpinning = true;
-    this.localCacheService.getWarehouseConfiguration().subscribe({
-      next: (warehouseConfigRes) => {
-
-        this.threePartyLogisticsFlag = warehouseConfigRes.threePartyLogisticsFlag;
-        this.isSpinning = false;
-      }, 
-      error: () => this.isSpinning = false
-    });
   }
 
   ngOnInit(): void {
@@ -88,9 +79,25 @@ export class AuthRoleClientComponent implements OnInit {
   }
 
   initClientAssignment(): void {
-      if (this.threePartyLogisticsFlag) {
-          this.initClientAssignmentFor3plWarehouse();
-      } 
+    
+    this.isSpinning = true;
+    this.localCacheService.getWarehouseConfiguration().subscribe({
+      next: (warehouseConfigRes) => {
+
+        if (warehouseConfigRes && warehouseConfigRes.threePartyLogisticsFlag) {
+          this.threePartyLogisticsFlag = true;
+        }
+        else {
+          this.threePartyLogisticsFlag = false;
+        }
+        if (this.threePartyLogisticsFlag) {
+            this.initClientAssignmentFor3plWarehouse();
+        } 
+        this.isSpinning = false;
+      }, 
+      error: () => this.isSpinning = false
+    });
+    
   }
 
   initClientAssignmentFor3plWarehouse(): void {

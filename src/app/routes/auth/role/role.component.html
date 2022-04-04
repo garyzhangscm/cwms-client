@@ -82,7 +82,7 @@
         <tr [nzExpand]="expandSet.has(data.id!)">
           <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" [nzSelectedIndex]="tabIndex">
             <nz-tab nzTitle="{{'menu.main.auth.user' | i18n}}">
-              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #userTable [nzData]="data.users!" nzSize="middle"
+              <nz-table  #userTable [nzData]="data.users!" nzSize="middle"
                 [nzShowPagination]="false">
                 <thead>
                   <tr>
@@ -97,53 +97,97 @@
                     <th>{{ 'action' | i18n }}</th>
                   </tr>
                 </thead>
-    <tbody>
-      <tr *ngFor="let user of userTable.data">
-        <td>
-          {{ user.username }}</td>
-        <td>{{ user.firstname }}</td>
-        <td>{{ user.lastname }}</td>
-        <td>{{ user.email }} </td>
-        <td>{{ user.enabled + '' | i18n }}</td>
-        <td>{{ user.locked + '' | i18n}}</td>
-        <td>
-          <button nz-button (click)="deassignUser(data.id!, user.id!)">{{ 'role.unassign-user' | i18n }}</button>
-        </td>
-      </tr>
-    </tbody>
-  </nz-table>
-  </nz-tab>
-  <nz-tab nzTitle="{{'menu.main.auth.menu' | i18n}}">
-    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #menuTable [nzData]="data.menus" nzSize="middle"
-      [nzShowPagination]="true">
-      <thead>
-        <tr>
+                <tbody>
+                  <tr *ngFor="let user of userTable.data">
+                    <td>
+                      {{ user.username }}</td>
+                    <td>{{ user.firstname }}</td>
+                    <td>{{ user.lastname }}</td>
+                    <td>{{ user.email }} </td>
+                    <td>{{ user.enabled + '' | i18n }}</td>
+                    <td>{{ user.locked + '' | i18n}}</td>
+                    <td>
+                      <button nz-button (click)="deassignUser(data.id!, user.id!)">{{ 'role.unassign-user' | i18n }}</button>
+                    </td>
+                  </tr>
+                </tbody>
+            </nz-table>
+          </nz-tab>
+          <nz-tab nzTitle="{{'menu.main.auth.menu' | i18n}}">
+              <nz-table  #menuTable [nzData]="data.menus" nzSize="middle"
+                [nzShowPagination]="true">
+                <thead>
+                  <tr>
 
 
-          <th *ngFor="let column of listOfMenuTableColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
-            [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
-            [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
-            {{ column.name | i18n }}
-          </th>
-          <th>{{ 'action' | i18n }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let menu of menuTable.data">
-          <td>
-            {{ menu.menuGroup }}</td>
-          <td>{{ menu.menuSubGroup }}</td>
-          <td>{{ menu.i18n | i18n }}</td>
-          <td>{{ menu.sequence }} </td>
-          <td>{{ menu.i18n }}</td>
-          <td>{{ menu.link }}</td>
-          <td>
-            <button nz-button (click)="deassignMenu(data.id!, menu.id)">{{ 'role.unassign-menu' | i18n }}</button>
-          </td>
-        </tr>
-      </tbody>
-    </nz-table>
-  </nz-tab>
+                    <th *ngFor="let column of listOfMenuTableColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+                      [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+                      [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+                      {{ column.name | i18n }}
+                    </th>
+                    <th>{{ 'action' | i18n }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let menu of menuTable.data">
+                    <td>
+                      {{ menu.menuGroup }}</td>
+                    <td>{{ menu.menuSubGroup }}</td>
+                    <td>{{ menu.i18n | i18n }}</td>
+                    <td>{{ menu.sequence }} </td>
+                    <td>{{ menu.i18n }}</td>
+                    <td>{{ menu.link }}</td>
+                    <td>
+                      <button nz-button (click)="deassignMenu(data.id!, menu.id)">{{ 'role.unassign-menu' | i18n }}</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </nz-table>
+          </nz-tab>
+          <nz-tab nzTitle="{{'client' | i18n}}">
+            <div>length: {{data.clientAccesses.length}}</div>
+            <nz-table [nzScroll]="{ x: '100vw' }"  nzShowSizeChanger [nzData]="data.clientAccesses"
+            #clientTable>
+              <thead>
+                <tr> 
+                  <th *ngFor="let column of listOfClientColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+                    [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+                    [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+                    {{ column.name | i18n }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let clientAccess of clientTable.data"> 
+      
+                  <td>{{ clientAccess.client?.name }}
+                  </td>
+                  <td> {{ clientAccess.client?.description }}
+                  </td>
+                  <td>{{ clientAccess.client?.contactorFirstname }}
+                  </td>
+                  <td>{{ clientAccess.client?.contactorLastname }}
+                  </td>
+                  <td>{{ clientAccess.client?.addressCountry }}
+                  </td>
+                  <td>{{ clientAccess.client?.addressState }}
+                  </td>
+                  <td>{{ clientAccess.client?.addressCounty }}
+                  </td>
+                  <td>{{ clientAccess.client?.addressCity }}
+                  </td>
+                  <td>{{ clientAccess.client?.addressDistrict }}
+                  </td>
+                  <td>{{ clientAccess.client?.addressLine1 }}
+                  </td>
+                  <td> {{ clientAccess.client?.addressLine2 }}
+                  </td>
+                  <td>{{ clientAccess.client?.addressPostcode }}
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </nz-tab>
   </nz-tabset>
 
 

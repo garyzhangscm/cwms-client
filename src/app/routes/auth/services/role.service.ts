@@ -1,3 +1,4 @@
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
@@ -16,8 +17,9 @@ export class RoleService {
 
   getRoles(name?: string, enabled?: boolean): Observable<Role[]> {
     let url = `resource/roles?companyId=${this.warehouseService.getCurrentWarehouse().companyId}`;
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
     if (name) {
-      url = `${url}&name=${name}`;
+      url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name.trim())}`;
     }
 
     return this.http.get(url).pipe(map(res => res.data));
