@@ -54,13 +54,12 @@
             <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="client">
               {{ 'client' | i18n }}
             </nz-form-label>
-            <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-              nzErrorTip="{{ 'error.form.field.required' | i18n }}">
-              <nz-input-group nzSize="large" [nzSuffix]="searchIcon">
-                <input nz-input formControlName="client" id="client" name="client"
-                  [nzAutocomplete]="clientAutoCompleteTpl" />
-              </nz-input-group>
+            <nz-form-control [nzSpan]="18">
+              <nz-select  formControlName="client" id="client" name="client">
+                <nz-option *ngFor="let client of validClients" [nzLabel]="client.name" [nzValue]="client"></nz-option>
+              </nz-select>
             </nz-form-control>
+            
           </nz-form-item>
         </div>
         <div nz-col [nzSpan]="8">
@@ -91,11 +90,7 @@
         <ng-template #searchIcon>
           <i nz-icon nzType="search"></i>
         </ng-template>
-        <nz-autocomplete #clientAutoCompleteTpl>
-          <nz-auto-option *ngFor="let client of validClients" [nzLabel]="client.name" [nzValue]="client.name">
-            {{ client.name }}
-          </nz-auto-option>
-        </nz-autocomplete>
+        
         <nz-autocomplete #supplierAutoCompleteTpl>
           <nz-auto-option *ngFor="let supplier of validSuppliers" [nzLabel]="supplier.description" [nzValue]="supplier.name">
             {{ supplier.description }}

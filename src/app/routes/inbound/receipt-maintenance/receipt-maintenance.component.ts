@@ -339,7 +339,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       .loadInventoryStatuses()
       .subscribe(inventoryStatuses => (this.availableInventoryStatuses = inventoryStatuses));
 
-    this.clientService.loadClients().subscribe(clients => (this.validClients = clients));
+    this.clientService.getClients().subscribe(clients => (this.validClients = clients));
     this.supplierService.loadSuppliers().subscribe(suppliers => (this.validSuppliers = suppliers));
   }
 

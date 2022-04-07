@@ -67,15 +67,12 @@ export class RoleService {
     }
   }
   
-  processClients(roleId: number, assignedClientIds: number[], deassignedClientIds: number[]) {
-    if (assignedClientIds.length === 0 && deassignedClientIds.length === 0) {
-      return of(`succeed`);
-    } else {
+  processClients(roleId: number, assignedClientIds: number[], deassignedClientIds: number[], 
+    nonClientDataAccessible: boolean) { 
       const url = `resource/roles/${roleId}/clients?assigned=${assignedClientIds.join(
         ',',
-      )}&deassigned=${deassignedClientIds.join(',')}`;
-      return this.http.post(url).pipe(map(res => res.data));
-    }
+      )}&deassigned=${deassignedClientIds.join(',')}&nonClientDataAccessible=${nonClientDataAccessible}`;
+      return this.http.post(url).pipe(map(res => res.data)); 
   }
 
 
