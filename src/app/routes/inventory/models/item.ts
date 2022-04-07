@@ -8,6 +8,7 @@ export interface Item {
   id?: number;
   name: string;
   description: string;
+  clientId?: number;
   client?: Client;
   itemFamily?: ItemFamily;
   itemPackageTypes: ItemPackageType[];

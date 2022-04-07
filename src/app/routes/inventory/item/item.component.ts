@@ -221,7 +221,7 @@ export class InventoryItemComponent implements OnInit {
   isSpinning = false;
 
   // Select control for clients and item families
-  clients: Array<{ label: string; value: string }> = [];
+  availableClients: Client[] = [];
   itemFamilies: Array<{ label: string; value: string }> = [];
   // Form related data and functions
   searchForm!: FormGroup;
@@ -264,7 +264,7 @@ export class InventoryItemComponent implements OnInit {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.item'));
     // initiate the search form
     this.searchForm = this.fb.group({
-      taggedClients: [null],
+      clientId: [null],
       taggedItemFamilies: [null],
       itemName: [null]
     });
@@ -277,8 +277,9 @@ export class InventoryItemComponent implements OnInit {
     });
 
     // initiate the select control
-    this.clientService.loadClients().subscribe((clientList: Client[]) => {
-      clientList.forEach(client => this.clients.push({ label: client.description, value: client.id!.toString() }));
+    this.clientService.getClients().subscribe({
+      next: (clientRes) => this.availableClients = clientRes
+       
     });
     this.itemFamilyService.loadItemFamilies().subscribe((itemFamilyList: ItemFamily[]) => {
       itemFamilyList.forEach(itemFamily => this.itemFamilies.push({ label: itemFamily.description, value: itemFamily.id!.toString() }));
@@ -294,7 +295,8 @@ export class InventoryItemComponent implements OnInit {
   search(): void {
     this.isSpinning = true; 
     this.itemService
-      .getItems(this.searchForm.value.itemName, this.searchForm.value.taggedClients, this.searchForm.value.taggedItemFamilies)
+      .getItems(this.searchForm.value.itemName, undefined, this.searchForm.value.taggedItemFamilies, 
+        undefined,undefined, this.searchForm.value.clientId)
       .subscribe(
         itemRes => {
           this.items = itemRes;

@@ -1,10 +1,12 @@
 import { formatDate } from '@angular/common';
-import { Component, EventEmitter, Inject, OnInit, Output, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, EventEmitter, Inject, Input, OnInit, Output, TemplateRef } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { Client } from '../../common/models/client';
+import { ClientService } from '../../common/services/client.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
@@ -13,6 +15,7 @@ import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-locat
 import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
+import { WarehouseConfigurationService } from '../../warehouse-layout/services/warehouse-configuration.service';
 import { Item } from '../models/item';
 import { ItemFamily } from '../models/item-family';
 import { ItemFamilyService } from '../services/item-family.service';
@@ -197,7 +200,7 @@ export class InventoryItemQueryPopupComponent implements OnInit {
 
 
   itemFamilies: Array<{ label: string; value: string }> = [];
-
+  availableClients: Client[] = [];
 
   // Form related data and functions
   queryModal!: NzModalRef;
@@ -214,7 +217,10 @@ export class InventoryItemQueryPopupComponent implements OnInit {
 
   // list of checked checkbox
   setOfCheckedId = new Set<number>();
+  threePartyLogisticsFlag = false;
 
+
+  @Input() clientId? : number = undefined;
   // eslint-disable-next-line @angular-eslint/prefer-output-readonly
   @Output() recordSelected: EventEmitter<any> = new EventEmitter();
 
@@ -224,12 +230,20 @@ export class InventoryItemQueryPopupComponent implements OnInit {
     private itemFamilyService: ItemFamilyService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
+    private warehouseConfigurationService: WarehouseConfigurationService,
     private utilService: UtilService,
-  ) { }
+    private clientService: ClientService,
+  ) {
+    this.warehouseConfigurationService.getWarehouseConfiguration().subscribe(
+      {
+        next: (configRes) => this.threePartyLogisticsFlag = configRes.threePartyLogisticsFlag
+      }
+    )
+   }
 
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void {
-
+ 
   }
 
   resetForm(): void {
@@ -245,6 +259,8 @@ export class InventoryItemQueryPopupComponent implements OnInit {
         this.searchForm.value.itemName,
         undefined,
         this.searchForm.value.taggedItemFamilies,
+        undefined, undefined, 
+        this.searchForm.value.clientId
       )
       .subscribe(
         itemRes => {
@@ -297,23 +313,45 @@ export class InventoryItemQueryPopupComponent implements OnInit {
 
     this.listOfAllItems = [];
     this.listOfDisplayItems = [];
-    this.createQueryForm();
 
-    // show the model
-    this.queryModal = this.modalService.create({
-      nzTitle: tplQueryModalTitle,
-      nzContent: tplQueryModalContent,
-      nzFooter: tplQueryModalFooter,
-
-      nzWidth: 1000,
+    
+    this.clientService.getClients().subscribe({
+      next: (clientRes) => {
+        this.availableClients = clientRes;
+        this.setupQueryModal(tplQueryModalTitle, tplQueryModalContent, tplQueryModalFooter);
+      }, 
+      error: () =>  this.setupQueryModal(tplQueryModalTitle, tplQueryModalContent, tplQueryModalFooter)
+       
     });
+
+  }
+
+  setupQueryModal(
+    tplQueryModalTitle: TemplateRef<{}>,
+    tplQueryModalContent: TemplateRef<{}>,
+    tplQueryModalFooter: TemplateRef<{}>,) {
+
+      this.createQueryForm();
+
+      // show the model
+      this.queryModal = this.modalService.create({
+        nzTitle: tplQueryModalTitle,
+        nzContent: tplQueryModalContent,
+        nzFooter: tplQueryModalFooter,
+  
+        nzWidth: 1000,
+      });
   }
   createQueryForm(): void {
     // initiate the search form
     this.searchForm = this.fb.group({
+      clientId: new FormControl({ value: this.clientId, disabled: false }),
       taggedItemFamilies: [null],
       itemName: [null],
     });
+
+    console.log(`this.clientId： ${this.clientId}`)
+    console.log(`this.threePartyLogisticsFlag ${this.threePartyLogisticsFlag}`)
 
     // initiate the select control
     this.itemFamilyService.loadItemFamilies().subscribe((itemFamilyList: ItemFamily[]) => {

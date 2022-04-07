@@ -6,7 +6,9 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { Client } from '../../common/models/client';
 import { UnitOfMeasure } from '../../common/models/unit-of-measure';
+import { ClientService } from '../../common/services/client.service';
 import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
 import { newItemUOMQuantityValidator } from '../../directives/newItemUOMQuantityValidator';
 import { ReportRoutingModule } from '../../report/report-routing.module';
@@ -58,6 +60,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
   warehouseSpecific = "YES";
   companyItem?: Item;
   warehouseSpecificItem?: Item;
+  availableClients: Client[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -74,6 +77,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     private modalService: NzModalService,
     private unitOfMeasureService: UnitOfMeasureService,
     private itemPackageTypeService: ItemPackageTypeService,
+    private clientService: ClientService,
     private utilService: UtilService,
   ) { 
 
@@ -121,6 +125,13 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     this.unitOfMeasureService
       .loadUnitOfMeasures()
       .subscribe(unitOfMeasureRes => (this.availableUnitOfMeasures = unitOfMeasureRes));
+
+      
+    // initiate the select control
+    this.clientService.getClients().subscribe({
+      next: (clientRes) => this.availableClients = clientRes
+       
+    });
   }
 
   loadMapOfRemovableItemPackageTypes(): void {
@@ -470,4 +481,14 @@ export class InventoryItemMaintenanceComponent implements OnInit {
         ) 
     }
   } 
+
+  clientChanged() {
+    if (this.currentItem.client) {
+
+      this.currentItem.clientId = this.currentItem.client.id;
+    }
+    else {
+      this.currentItem.clientId = undefined;
+    }
+  }
 }

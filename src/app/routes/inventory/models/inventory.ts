@@ -9,6 +9,7 @@ import { ItemPackageType } from './item-package-type';
 export interface Inventory {
   id?: number;
   lpn?: string;
+  clientId?: number;
   locationId?: number;
   location?: WarehouseLocation;
   locationName?: string;

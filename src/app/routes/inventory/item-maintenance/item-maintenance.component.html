@@ -78,6 +78,21 @@
         </nz-form-control>
       </nz-form-item>
     </div>
+    
+    <div nz-col [nzSpan]="8" >
+      <nz-form-item nzFlex>
+        <nz-form-label for="client" [nzSpan]="6">
+          {{ 'client' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <nz-select [(ngModel)]="currentItem.client" (ngModelChange)="clientChanged()">
+            <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row [nzGutter]="24">
 
     <div nz-col [nzSpan]="8">
       <nz-form-item>
@@ -94,9 +109,7 @@
         </nz-form-control>
       </nz-form-item>
     </div>
-  </div>
 
-  <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item>
         <nz-form-label [nzSpan]="10">
@@ -118,6 +131,9 @@
         </nz-form-control>
       </nz-form-item>
     </div>
+  </div>
+
+  <div nz-row [nzGutter]="24">
 
     <div nz-col [nzSpan]="8">
       <nz-form-item>
@@ -129,9 +145,6 @@
         </nz-form-control>
       </nz-form-item>
     </div>
-  </div>
-
-  <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item>
         <nz-form-label [nzSpan]="10">
@@ -153,6 +166,9 @@
         </nz-form-control>
       </nz-form-item>
     </div>
+  </div>
+
+  <div nz-row [nzGutter]="24">
 
     <div nz-col [nzSpan]="8">
       <nz-form-item>
@@ -164,9 +180,6 @@
         </nz-form-control>
       </nz-form-item>
     </div>
-  </div>
-
-  <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item>
         <nz-form-label [nzSpan]="10">
@@ -194,6 +207,9 @@
         </nz-form-control>
       </nz-form-item>
     </div>
+  </div>
+
+  <div nz-row [nzGutter]="24">
 
     <div nz-col [nzSpan]="8">
       <nz-form-item>
@@ -205,9 +221,6 @@
         </nz-form-control>
       </nz-form-item>
     </div>
-  </div>
-
-  <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item>
         <nz-form-label [nzSpan]="8">
@@ -331,6 +344,8 @@
     <nz-descriptions nzBordered="true">
       <nz-descriptions-item nzTitle="{{ 'name' | i18n }}">{{ currentItem.name }} </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'description' | i18n }}">{{ currentItem.description }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'client' | i18n }}">{{ currentItem.client?.name }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'item-family' | i18n }}">{{ currentItem.itemFamily?.name }}
       </nz-descriptions-item>

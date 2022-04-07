@@ -214,6 +214,19 @@
 <ng-template #tplAddInventoryModalContent>
 
   <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8" >
+      <nz-form-item nzFlex>
+        <nz-form-label for="client" [nzSpan]="6">
+          {{ 'client' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <nz-select [(ngModel)]="currentInventory.clientId">
+            <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSpan]="6" nzFor="locationName">
@@ -242,7 +255,7 @@
           </nz-input-group>
 
           <ng-template #itemSuffixIconButton>
-            <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
+            <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)" [clientId] = "currentInventory.clientId">
             </app-inventory-item-query-popup>
           </ng-template>
 

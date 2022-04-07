@@ -323,7 +323,7 @@ export class InventoryInventoryComponent implements OnInit {
         await this.delay(50);
       } 
       
-      this.loadDetail(inventories[index]);
+      await this.loadDetail(inventories[index]);
       index++;
     } 
     while(this.loadingDetailsRequest > 0) {
@@ -337,26 +337,27 @@ export class InventoryInventoryComponent implements OnInit {
     return new Promise( resolve => setTimeout(resolve, ms) );
   }
   
-  loadDetail(inventory: Inventory): void {
+  async loadDetail(inventory: Inventory) {
  
 
-    this.loadLocation(inventory);
+    await this.loadLocation(inventory);
 
     this.loadInventoryMovements(inventory);
 
     // load the Unit of Measure for each item unit of measure of each package type
     this.loadUnitOfMeasure(inventory);
 
-    this.loadPicksInformation(inventory);
+    await this.loadPicksInformation(inventory);
     
-    this.loadAllocateByPicksInformation(inventory);
+    await this.loadAllocateByPicksInformation(inventory);
 
     
   }
   
-  loadLocation(inventory: Inventory): void {
-
-    // load the information for current location
+  async loadLocation(inventory: Inventory) {
+ 
+    /***
+     * 
     if (inventory.locationId && inventory.location == null) {
       this.loadingDetailsRequest++;
       this.localCacheService.getLocation(inventory.locationId!).subscribe(
@@ -369,20 +370,31 @@ export class InventoryInventoryComponent implements OnInit {
         }
       )
     } 
+     */
+    // load the information for current location
+    if (inventory.locationId && inventory.location == null) {
+      this.loadingDetailsRequest++;
+      inventory.location =  await this.localCacheService.getLocation(inventory.locationId!).toPromise().finally(
+        () => this.loadingDetailsRequest--
+      );
+       
+    } 
 
   }
-  loadInventoryMovements(inventory: Inventory): void {
-
+  async loadInventoryMovements(inventory: Inventory) {
+ 
     // load the location of the inventory movement
     if (inventory.inventoryMovements && inventory.inventoryMovements.length > 0) {
       inventory.inventoryMovements.forEach(
-        inventoryMovement =>  this.loadInventoryMovementDetails(inventoryMovement)
+        inventoryMovement => this.loadInventoryMovementDetails(inventoryMovement)
       )
     }
 
   }
-  loadInventoryMovementDetails(inventoryMovement: InventoryMovement) : void {
+  async loadInventoryMovementDetails(inventoryMovement: InventoryMovement) {
 
+    /**
+     * 
     if (inventoryMovement.locationId && inventoryMovement.location == null) {
 
       this.loadingDetailsRequest++;
@@ -396,9 +408,20 @@ export class InventoryInventoryComponent implements OnInit {
         }
       )
     } 
-  }
-  loadPicksInformation(inventory: Inventory): void {
+     * 
+     */
+    if (inventoryMovement.locationId && inventoryMovement.location == null) {
 
+      this.loadingDetailsRequest++;
+      inventoryMovement.location =  await this.localCacheService.getLocation(inventoryMovement.locationId!).toPromise().finally(
+        () => this.loadingDetailsRequest--
+      );
+    } 
+  }
+  async loadPicksInformation(inventory: Inventory) {
+
+    /**
+     * 
     // load the pick informaiton
     if (inventory.pickId && inventory.pick == null) {
       this.loadingDetailsRequest++;
@@ -412,9 +435,18 @@ export class InventoryInventoryComponent implements OnInit {
         }
       )
     } 
+     */
+    // load the pick informaiton
+    if (inventory.pickId && inventory.pick == null) {
+      this.loadingDetailsRequest++;
+      inventory.pick =  await this.localCacheService.getPick(inventory.pickId!).toPromise().finally(
+        () => this.loadingDetailsRequest--
+      );
+    } 
   }
-  loadAllocateByPicksInformation(inventory: Inventory): void {
+  async loadAllocateByPicksInformation(inventory: Inventory) {
 
+    /**
     // load the allocate by pick informaiton
     if (inventory.allocatedByPickId && inventory.allocatedByPick == null) {
       this.loadingDetailsRequest++;
@@ -428,8 +460,17 @@ export class InventoryInventoryComponent implements OnInit {
         }
       )
     } 
+     * 
+     */
+    // load the allocate by pick informaiton
+    if (inventory.allocatedByPickId && inventory.allocatedByPick == null) {
+      this.loadingDetailsRequest++;
+      inventory.allocatedByPick =  await this.localCacheService.getPick(inventory.allocatedByPickId!).toPromise().finally(
+        () => this.loadingDetailsRequest--
+      );
+    } 
   }
-  loadUnitOfMeasure(inventory: Inventory): void {
+  async loadUnitOfMeasure(inventory: Inventory) {
     if (inventory.itemPackageType && inventory.itemPackageType.itemUnitOfMeasures &&
               inventory.itemPackageType.itemUnitOfMeasures.length > 0) {
 

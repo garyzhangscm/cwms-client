@@ -7,8 +7,10 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService, NzModalState } from 'ng-zorro-antd/modal';
 
+import { Client } from '../../common/models/client';
 import { ReasonCode } from '../../common/models/reason-code';
 import { ReasonCodeType } from '../../common/models/reason-code-type.enum';
+import { ClientService } from '../../common/services/client.service';
 import { ReasonCodeService } from '../../common/services/reason-code.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
@@ -200,6 +202,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     private warehouseService: WarehouseService,
     private messageService: NzMessageService,
     private utilService: UtilService,
+    private clientService: ClientService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inventory.adjust.header.title');
   }
@@ -240,6 +243,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   // key: locatin id
   // value: list of inventroy in the location
   mapOfInventories: { [key: string]: Inventory[] } = {};
+  availableClients: Client[] = [];
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('page.inventory.adjust.header.title'));
@@ -273,6 +277,13 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.inventoryStatusService
       .loadInventoryStatuses()
       .subscribe(inventoryStatuses => (this.availableInventoryStatuses = inventoryStatuses));
+
+      
+    // initiate the select control
+    this.clientService.getClients().subscribe({
+      next: (clientRes) => this.availableClients = clientRes
+       
+    });
   }
   resetForm(): void {
     this.searchForm.reset();
