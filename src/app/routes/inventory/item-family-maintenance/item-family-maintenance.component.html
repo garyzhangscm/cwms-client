@@ -35,10 +35,10 @@
     <div nz-row [nzGutter]="24">
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemFamilyName">
+          <nz-form-label [nzSpan]="8" nzFor="itemFamilyName">
             {{ 'item-family.name' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
             <input nz-input [(ngModel)]="currentItemFamily.name" id="itemFamilyName" name="name" required />
           </nz-form-control>
         </nz-form-item>
