@@ -21,6 +21,7 @@ export class AuthUserMaintenanceComponent implements OnInit {
   modifying = false;
   validDepartments: Department[] = [];
   workerTypes = WorkerType;
+  isLoginUserAdmin = false;
 
   emptyUser: User = {
     id: undefined,
@@ -59,8 +60,19 @@ export class AuthUserMaintenanceComponent implements OnInit {
     this.setupPageTitle();
     this.loadValidDepartments();
 
+    // get the login user. If it is an admin, then we will
+    // allow the login user to change the password for others
+    this.loadLoginUser();
+
   }
 
+  loadLoginUser() {
+    this.userService.getUsers(this.userService.getCurrentUsername()).subscribe(
+      {
+        next: (userRes) => this.isLoginUserAdmin = userRes.length == 1 && userRes[0].admin ? true : false 
+      }
+    )
+  }
   loadUsers(): void {
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.hasOwnProperty('userId')) {
