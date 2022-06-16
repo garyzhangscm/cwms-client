@@ -12,8 +12,11 @@ export const environment = {
   useHash: true,
   api: {
     //  AWS Prod
-    // baseUrl: 'http://k8s-prod-zuulserv-77410c1a45-1887501898.us-west-1.elb.amazonaws.com/api/',
-    baseUrl: 'http://gateway.claytechsuite.com/api/',
+    // baseUrl: 'http://k8s-prod-zuulserv-77410c1a45-1887501898.us-west-1.elb.amazonaws.com/api/', 
+    baseUrl: 'http://k8s-staging-zuulserv-707034e5d3-1773071136.us-west-1.elb.amazonaws.com/api/', 
+    
+    // baseUrl: 'http://dualstack.k8s-prod-webclien-8aaf75f256-1586881181.us-west-1.elb.amazonaws.com./#/passport/login',
+    // baseUrl: 'http://gateway.claytechsuite.com/api/',
     // customer's internal K8S
     // baseUrl: 'http://10.0.10.37:32262/api/',
     refreshTokenEnabled: true,

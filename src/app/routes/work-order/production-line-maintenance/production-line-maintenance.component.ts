@@ -48,6 +48,8 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
 
   timeUnits = TimeUnit;
 
+  isSpinning = false;
+
 
   constructor(private http: _HttpClient,
     private warehouseService: WarehouseService,
@@ -264,12 +266,14 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
         );
       }
     )
+    this.isSpinning = true;
     if (this.newProductionLine) {
 
       this.productionLineService.addProductionLine(this.currentProductionLine)
         .subscribe(productionLine => {
           this.messageService.success(this.i18n.fanyi('message.save.complete'));
           setTimeout(() => {
+            this.isSpinning = false;
             this.router.navigateByUrl(`/work-order/production-line?name=${this.currentProductionLine.name}`);
           }, 2500);
         });
@@ -280,6 +284,7 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
         .subscribe(productionLine => {
           this.messageService.success(this.i18n.fanyi('message.save.complete'));
           setTimeout(() => {
+            this.isSpinning = false;
             this.router.navigateByUrl(`/work-order/production-line?name=${this.currentProductionLine.name}`);
           }, 2500);
         });

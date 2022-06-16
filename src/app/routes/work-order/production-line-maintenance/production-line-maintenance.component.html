@@ -16,6 +16,8 @@
   </nz-breadcrumb>
 </ng-template>
 
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
   <nz-step nzTitle="{{ 'steps.production-line.info' | i18n }}"> </nz-step>
   <nz-step nzTitle="{{ 'production-line.capacity' | i18n }}"> </nz-step>
@@ -312,3 +314,4 @@
     <span> {{ 'confirm' | i18n }}</span>
   </button>
 </div>
+</nz-spin>
