@@ -6,12 +6,16 @@ import { AlertAlertComponent } from './alert/alert.component';
 import { AlertConfigurationComponent } from './configuration/configuration.component';
 import { AlertSubscriptionMaintenanceComponent } from './subscription-maintenance/subscription-maintenance.component';
 import { AlertSubscriptionComponent } from './subscription/subscription.component';
+import { AlertWebMessageAlertComponent } from './web-message-alert/web-message-alert.component';
+import { AlertWebMessageAlertDetailComponent } from './web-message-alert-detail/web-message-alert-detail.component';
 
 const COMPONENTS: Array<Type<void>> = [
   AlertSubscriptionComponent,
   AlertConfigurationComponent,
   AlertAlertComponent,
-  AlertSubscriptionMaintenanceComponent];
+  AlertSubscriptionMaintenanceComponent,
+  AlertWebMessageAlertComponent,
+  AlertWebMessageAlertDetailComponent];
 
 @NgModule({
   imports: [

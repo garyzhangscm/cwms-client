@@ -260,11 +260,11 @@ export class DefaultInterceptor implements HttpInterceptor {
     if (!headers?.has('Accept-Language') && lang) {
       res['Accept-Language'] = lang;
     }
-    if (!headers?.has('warehouseId') && this.warehouseService.getCurrentWarehouse()) {
-      res['warehouseId'] = this.warehouseService.getCurrentWarehouse().id.toString();
+    if (!headers?.has('warehouseId') && this.warehouseService?.getCurrentWarehouse()?.id) {
+      res['warehouseId'] = this.warehouseService?.getCurrentWarehouse()?.id?.toString();
     }
-    if (!headers?.has('companyId') && this.companyService.getCurrentCompany()) {
-      res['companyId'] = this.companyService.getCurrentCompany()!.id.toString();
+    if (!headers?.has('companyId') && this.companyService?.getCurrentCompany()?.id) {
+      res['companyId'] = this.companyService?.getCurrentCompany()!.id.toString();
     }
 
 
