@@ -451,24 +451,28 @@
                     </span>
                   </td>
                   <td>
-                    <!--
+                    
+                    <button nz-button nz-dropdown [nzDropdownMenu]="shortAllocationMenu" nzType="primary">
+                      {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+                    <nz-dropdown-menu #shortAllocationMenu="nzDropdownMenu">
+                      <ul nz-menu> 
 
-                    <button nz-button (click)="cancelShortAllocation(item,shortAllocation)"
-                      [disabled]="shortAllocation.status !== shortAllocationStatus.PENDING || item.status === orderStatusEnum.COMPLETE">
-                      {{ 'cancel' | i18n }}
-                    </button>
-
-                    -->
-                    <button nz-button (click)="cancelShortAllocation(item,shortAllocation)"
-                      [disabled]="item.status === orderStatusEnum.COMPLETE">
-                      {{ 'cancel' | i18n }}
-                    </button>
-
-                    <nz-divider nzType="vertical"></nz-divider>
-                    <button nz-button (click)="allocateShortAllocation(item, shortAllocation)"
-                      [disabled]="!isShortAllocationAllocatable(shortAllocation) || item.status === orderStatusEnum.COMPLETE">
-                      {{ 'allocate' | i18n }}
-                    </button>
+                        <li nz-menu-item *ngIf="isShortAllocationAllocatable(shortAllocation) && item.status != orderStatusEnum.COMPLETE">
+                          <a   (click)="allocateShortAllocation(item, shortAllocation)">{{ 'allocate' | i18n }}</a>
+                        </li>
+                        
+                        <li nz-menu-item *ngIf="item.status != orderStatusEnum.COMPLETE">
+                          <a  (click)="openCreateWorkOrderModel(shortAllocation, tplCreateWorkOrderModalTitle, tplCreateWorkOrderModalContent)">
+                            {{ 'create-work-order' | i18n }}</a>
+                        </li>
+                        
+                        
+                        <li nz-menu-item *ngIf="item.status != orderStatusEnum.COMPLETE">
+                          <a  (click)="cancelShortAllocation(item,shortAllocation)">{{ 'cancel' | i18n }}</a>
+                        </li>
+                      </ul>
+                    </nz-dropdown-menu> 
+ 
 
                   </td>
                 </tr>
@@ -1225,6 +1229,95 @@
           </nz-form-control>
         </nz-form-item>
       </div>
+    </div>
+  </form>
+</ng-template>
+
+
+<!-- Modal for create work order for short allocation-->
+<ng-template #tplCreateWorkOrderModalTitle>
+  <span>{{ 'create-work-order' | i18n}}</span>
+</ng-template>
+<ng-template #tplCreateWorkOrderModalContent>
+  <form nz-form [formGroup]="createWorkOrderForm">
+    
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="12">
+            {{ 'item.name' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback  >
+            <input nz-input formControlName="itemName" /> 
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="12">
+            {{ 'short-allocation.quantity' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback  >
+            <input nz-input formControlName="shortQuantity"> 
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="12">
+            {{ 'bom' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback  >
+              <nz-select   formControlName="bom" >
+                  <nz-option *ngFor="let bom of availableBOM" [nzValue]="bom.id" [nzLabel]="bom.number!"></nz-option>
+                </nz-select>
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="12">
+            {{ 'work-order.number' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback  >
+            <input nz-input formControlName="workOrderNumber" /> 
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="12">
+            {{ 'quantity' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback  >
+            <input nz-input formControlName="workOrderQuantity"> 
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    
+    <div nz-col [nzSpan]="24" *ngIf="displayBom !== null">
+      <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #BOMDetailTable
+        [nzData]="displayBom!.billOfMaterialLines" nzSize="middle" [nzShowPagination]="false" nzBordered>
+        <thead>
+          <tr>
+            <th>{{ 'item.name' | i18n}}</th>
+            <th>{{ 'quantity' | i18n }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let billOfMaterialLine of BOMDetailTable.data">
+            <td>{{ billOfMaterialLine.item?.name }}</td>
+            <td>{{ billOfMaterialLine.expectedQuantity }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
     </div>
   </form>
 </ng-template>

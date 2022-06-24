@@ -6,14 +6,31 @@ import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { ALAIN_I18N_TOKEN, SettingsService, User } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { WebMessageAlertService } from 'src/app/routes/alert/services/web-message-alert.service';
 import { UserService } from 'src/app/routes/auth/services/user.service';
 
 @Component({
   selector: 'header-user',
+  styles: [
+    `
+      .head-example {
+        display: inline-block;
+        width: 30px;
+        height: 22px;
+        vertical-align: middle;
+        //background: #eee;
+        border-radius: 4px;
+      }
+    `
+  ],
   template: `
     <div class="alain-default__nav-item d-flex align-items-center px-sm" nz-dropdown nzPlacement="bottomRight" [nzDropdownMenu]="userMenu">
       <nz-avatar [nzSrc]="user.avatar" nzSize="small" class="mr-sm"></nz-avatar>
-      {{ user.name }}
+        {{ user.name }} 
+      <nz-badge [nzCount]="newAlertCount">
+        <a class="head-example"></a>
+      </nz-badge>
+ 
     </div>
     <nz-dropdown-menu #userMenu="nzDropdownMenu">
       <div nz-menu class="width-sm">    
@@ -25,6 +42,11 @@ import { UserService } from 'src/app/routes/auth/services/user.service';
         <div nz-menu-item (click)="openChangePasswordModal()">
           <i nz-icon nzType="key" class="mr-sm"></i>
           {{ 'menu.account.change-password' | i18n }}
+        </div>
+        
+        <div nz-menu-item (click)="openWebMessageAlertPage()">
+          <i nz-icon nzType="key" class="mr-sm"></i>
+          {{ 'web-message-alert' | i18n }}
         </div>
       </div>
     </nz-dropdown-menu>
@@ -66,12 +88,13 @@ import { UserService } from 'src/app/routes/auth/services/user.service';
       </form>
     </ng-template>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderUserComponent {
   
   changePasswordRequestForm!: FormGroup;
   changePasswordRequestModal!: NzModalRef;
+  newAlertCount = 0;
   
   @ViewChild('tplChangePasswordModalTitle', { static: true })
   tplChangePasswordModalTitle!: TemplateRef<any>;
@@ -89,8 +112,28 @@ export class HeaderUserComponent {
     private userService: UserService, 
     public msg: NzMessageService,    
     private fb: FormBuilder,
-    private modalService: NzModalService,) { }
+    private modalService: NzModalService,
+    private webMessageAlertService: WebMessageAlertService) {  
+      this.setWebMessageAlertTimer();
+    }
+    
+  setWebMessageAlertTimer() {
+    this.reloadUserInreadWebMessageAlertCount();
+     
+    // get new alert every 2 minutes = 2 * 60 * 1000 = 120,000 ms
+    setInterval(() => {
+  
+      this.reloadUserInreadWebMessageAlertCount();
+    }, 120000); 
+  }
 
+  reloadUserInreadWebMessageAlertCount() {
+
+    this.webMessageAlertService.getUserInreadWebMessageAlertCount().subscribe({
+      next: (count) => this.newAlertCount = count,
+      error: () => {}
+    }) 
+  }
   logout(): void {
     this.tokenService.clear();
     this.router.navigateByUrl(this.tokenService.login_url!);
@@ -148,6 +191,12 @@ export class HeaderUserComponent {
       },  
     })
  
+
+  }
+
+  openWebMessageAlertPage() {
+    
+    this.router.navigateByUrl('alert/web-message-alert');
 
   }
 }

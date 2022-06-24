@@ -26,6 +26,8 @@ import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-locat
 import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
+import { BillOfMaterial } from '../../work-order/models/bill-of-material';
+import { BillOfMaterialService } from '../../work-order/services/bill-of-material.service';
 import { Order } from '../models/order';
 import { OrderCategory } from '../models/order-category';
 import { OrderLine } from '../models/order-line';
@@ -213,8 +215,18 @@ export class OutboundOrderComponent implements OnInit {
   orderReassignShippingStageLocationModal!: NzModalRef;
   orderReassignShippingStageLocationForm!: FormGroup;
 
+
   orderStatuses = OrderStatus;
   orderCategories = OrderCategory;
+
+  availableBOM: BillOfMaterial[] = [];
+
+  createWorkOrderModal!: NzModalRef;
+  createWorkOrderForm!: FormGroup;
+  
+  // show the BOM details when the user choose
+  // a bom to create work order for short allocation
+  displayBom: BillOfMaterial | undefined;
 
   constructor(
     private fb: FormBuilder,
@@ -235,6 +247,7 @@ export class OutboundOrderComponent implements OnInit {
     private locationService: LocationService,
     private localCacheService: LocalCacheService,
     private shipmentLineService: ShipmentLineService,
+    private billOfMaterialService: BillOfMaterialService,
   ) { }
 
   printerModal!: NzModalRef;
@@ -1260,5 +1273,91 @@ export class OutboundOrderComponent implements OnInit {
       }
     }) 
   }
+
+  
+  openCreateWorkOrderModel(
+    shortAllocation: ShortAllocation,
+    tplCreateWorkOrderModalTitle: TemplateRef<{}>,
+    tplCreateWorkOrderModalContent: TemplateRef<{}>,
+  ): void { 
+    // get all the valid BOM for the item in short
+    if (!shortAllocation.item.name) {
+
+      this.messageService.error(this.i18n.fanyi("ERROR-NO-ITEM-INFO-FOR-SHORT-ALLOCATION"));
+      return;
+    }
+    this.isSpinning = true;
+    this.availableBOM = [];
+    this.billOfMaterialService.getBillOfMaterials(undefined, shortAllocation.item.name).subscribe(
+      {
+        next: (bomRes) => {
+
+          this.availableBOM = bomRes;
+          if (this.availableBOM.length == 0 ) {
+            
+              this.messageService.error(this.i18n.fanyi("ERROR-NO-BOM-INFO-FOR-ITEM"));
+              this.isSpinning = false;
+          }
+          else {
+            // open the modal
+            this.createWorkOrderForm = this.fb.group({
+              itemName: new FormControl({ value: shortAllocation.item.name, disabled: true}),
+              shortQuantity: new FormControl({ value:  shortAllocation.openQuantity, disabled: true}),
+              bom: new FormControl(),
+              workOrderNumber: new FormControl(),
+              workOrderQuantity: new FormControl({ value: shortAllocation.openQuantity, disabled: false }),
+            });
+            this.displayBom = undefined;
+            this.setupDefaultDisplayBOM();
+
+            this.isSpinning = false;
+             
+              this.createWorkOrderModal = this.modalService.create({
+                nzTitle: tplCreateWorkOrderModalTitle,
+                nzContent: tplCreateWorkOrderModalContent,
+                nzOkText: this.i18n.fanyi('confirm'),
+                nzCancelText: this.i18n.fanyi('cancel'),
+                nzMaskClosable: false,
+                nzOnCancel: () => {
+                  this.createWorkOrderModal.destroy();
+                  
+                },
+                nzOnOk: () => {
+                  this.isSpinning = true;
+                  this.shortAllocationService.createWorkOrder(
+                    shortAllocation,
+                    this.createWorkOrderForm.controls.bom.value,
+                    this.createWorkOrderForm.controls.workOrderNumber.value,
+                    this.createWorkOrderForm.controls.workOrderQuantity.value,
+                  ).subscribe({
+                    next: () => {
+                      
+                      this.messageService.success(this.i18n.fanyi('message.action.success')); 
+                      this.search();
+                      this.isSpinning = false;
+                    }, 
+                    error: () => {this.isSpinning = false}
+                  });
+                },
+
+                nzWidth: 1000,
+              });
+
+          }
+         }, 
+        error: () => this.isSpinning = false
+      }
+    )
+
+
+  }
+  
+  setupDefaultDisplayBOM(): void {
+    if (this.availableBOM.length === 1) {
+      this.createWorkOrderForm!.controls.bom.setValue(this.availableBOM[0].id);
+      this.displayBom = this.availableBOM[0];
+    }
+  }
+
 
 }

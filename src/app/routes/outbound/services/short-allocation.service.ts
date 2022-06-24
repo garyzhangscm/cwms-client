@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -103,8 +103,12 @@ export class ShortAllocationService {
     const url = `outbound/shortAllocations/${shortAllocation.id}/allocate`;
     return this.http.post(url).pipe(map(res => res.data));
   }
-}
-function of(arg0: never[]): Observable<ShortAllocation[]> {
-  throw new Error('Function not implemented.');
-}
-
+  
+  createWorkOrder(shortAllocation: ShortAllocation, bomId: number, workOrderNumber: string, workOrderQuantity: number): Observable<ShortAllocation> {
+    let url = `outbound/shortAllocations/${shortAllocation.id}/create-work-order`;
+    url = `${url}?bomId=${bomId}`;
+    url = `${url}&workOrderNumber=${workOrderNumber}`;
+    url = `${url}&workOrderQuantity=${workOrderQuantity}`;
+    return this.http.post(url).pipe(map(res => res.data));
+  }
+} 

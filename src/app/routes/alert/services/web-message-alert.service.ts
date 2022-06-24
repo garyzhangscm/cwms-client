@@ -16,7 +16,16 @@ export class WebMessageAlertService {
   constructor(private http: _HttpClient, private companyService: CompanyService, 
     private userService: UserService) {}
 
-  getWebMessageAlerts(readFlag?: boolean): Observable<WebMessageAlert[]> {
+    getUserInreadWebMessageAlertCount(): Observable<number> {
+      let url = `resource/web-message-alerts/new-message-count?companyId=${this.companyService.getCurrentCompany()?.id}`;
+      
+      url = `${url}&username=${this.userService.getCurrentUsername()}`;
+  
+      
+      return this.http.get(url).pipe(map(res => res.data));
+    }
+    
+    getUserWebMessageAlerts(readFlag?: boolean): Observable<WebMessageAlert[]> {
     let url = `resource/web-message-alerts?companyId=${this.companyService.getCurrentCompany()?.id}`;
     
     url = `${url}&username=${this.userService.getCurrentUsername()}`;
@@ -27,8 +36,8 @@ export class WebMessageAlertService {
     return this.http.get(url).pipe(map(res => res.data));
   }
   
-  getUnreadWebMessageAlerts(): Observable<WebMessageAlert[]> {
-    return this.getWebMessageAlerts(false);
+  getUserUnreadWebMessageAlerts(): Observable<WebMessageAlert[]> {
+    return this.getUserWebMessageAlerts(false);
   }
 
   
