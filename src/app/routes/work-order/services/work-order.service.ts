@@ -277,4 +277,11 @@ export class WorkOrderService {
     return this.http.get(url).pipe(map(res => res.data));
   }
 
+  changeSpareParts(workOrderLine: WorkOrderLine) : Observable<WorkOrderLine>{
+    let url = `workorder/work-orders/lines/${workOrderLine.id}/spare-parts?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+  
+    
+    return this.http.post(url, workOrderLine.workOrderLineSpareParts).pipe(map(res => res.data));
+  }
+
 }

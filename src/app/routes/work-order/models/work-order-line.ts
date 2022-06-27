@@ -3,6 +3,7 @@ import { Item } from '../../inventory/models/item';
 import { AllocationStrategyType } from '../../outbound/models/allocation-strategy-type.enum';
 import { PickWork } from '../../outbound/models/pick-work';
 import { ShortAllocation } from '../../outbound/models/short-allocation';
+import { WorkOrderLineSparePart } from './work-order-line-spare-part';
 
 export interface WorkOrderLine {
   id?: number;
@@ -26,4 +27,5 @@ export interface WorkOrderLine {
   picks: PickWork[];
   shortAllocations: ShortAllocation[];
   workOrderNumber?: string;
+  workOrderLineSpareParts: WorkOrderLineSparePart[];
 }

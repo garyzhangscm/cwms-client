@@ -10,6 +10,12 @@ import { WorkOrderLaborActivityComponent } from './labor-activity/labor-activity
 import { WorkOrderLaborComponent } from './labor/labor.component';
 import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component';
 import { WorkOrderMouldComponent } from './mould/mould.component';
+import { WorkOrderMpsExportComponent } from './mps-export/mps-export.component';
+import { WorkOrderMpsMaintenanceComponent } from './mps-maintenance/mps-maintenance.component';
+import { WorkOrderMpsViewComponent } from './mps-view/mps-view.component';
+import { WorkOrderMpsComponent } from './mps/mps.component';
+import { WorkOrderMrpMaintenanceComponent } from './mrp-maintenance/mrp-maintenance.component';
+import { WorkOrderMrpComponent } from './mrp/mrp.component';
 import { WorkOrderPrePrintLpnLabelComponent } from './pre-print-lpn-label/pre-print-lpn-label.component';
 import { WorkOrderProduceTransactionComponent } from './produce-transaction/produce-transaction.component';
 import { WorkOrderProductionKanbanComponent } from './production-kanban/production-kanban.component';
@@ -27,6 +33,7 @@ import { WorkOrderWorkOrderConfigurationComponent } from './work-order-configura
 import { WorkOrderWorkOrderLineCompleteConfirmComponent } from './work-order-line-complete-confirm/work-order-line-complete-confirm.component';
 import { WorkOrderWorkOrderLineCompleteComponent } from './work-order-line-complete/work-order-line-complete.component';
 import { WorkOrderWorkOrderLineMaintenanceComponent } from './work-order-line-maintenance/work-order-line-maintenance.component';
+import { WorkOrderWorkOrderLineSparePartMaintenanceComponent } from './work-order-line-spare-part-maintenance/work-order-line-spare-part-maintenance.component';
 import { WorkOrderWorkOrderProduceByProductComponent } from './work-order-produce-by-product/work-order-produce-by-product.component';
 import { WorkOrderWorkOrderProduceConfirmComponent } from './work-order-produce-confirm/work-order-produce-confirm.component';
 import { WorkOrderWorkOrderProduceKpiComponent } from './work-order-produce-kpi/work-order-produce-kpi.component';
@@ -36,12 +43,6 @@ import { WorkOrderWorkOrderQcInspectionResultComponent } from './work-order-qc-i
 import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspection/work-order-qc-inspection.component'; 
 import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component'; 
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
-import { WorkOrderMpsComponent } from './mps/mps.component';
-import { WorkOrderMrpComponent } from './mrp/mrp.component';
-import { WorkOrderMpsMaintenanceComponent } from './mps-maintenance/mps-maintenance.component';
-import { WorkOrderMpsViewComponent } from './mps-view/mps-view.component';
-import { WorkOrderMpsExportComponent } from './mps-export/mps-export.component';
-import { WorkOrderMrpMaintenanceComponent } from './mrp-maintenance/mrp-maintenance.component';
 
 const routes: Routes = [
   { path: 'work-order', component: WorkOrderWorkOrderComponent, canActivate: [AuthGuard] },
@@ -83,7 +84,8 @@ const routes: Routes = [
   { path: 'mps-maintenance', component: WorkOrderMpsMaintenanceComponent },
   { path: 'mps-view', component: WorkOrderMpsViewComponent },
   { path: 'mps-export', component: WorkOrderMpsExportComponent },
-  { path: 'mrp-maintenance', component: WorkOrderMrpMaintenanceComponent }];
+  { path: 'mrp-maintenance', component: WorkOrderMrpMaintenanceComponent },
+  { path: 'line/spare-part-maintenance', component: WorkOrderWorkOrderLineSparePartMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
