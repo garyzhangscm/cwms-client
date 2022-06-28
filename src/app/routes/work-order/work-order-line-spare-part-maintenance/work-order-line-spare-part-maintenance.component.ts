@@ -50,6 +50,7 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
     private router: Router,
     private itemService: ItemService,
     private activatedRoute: ActivatedRoute, 
+    private inventoryStatusService: InventoryStatusService,
     private modalService: NzModalService,) { }
 
   ngOnInit(): void { 
@@ -67,9 +68,12 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
           this.router.navigateByUrl(`/work-order/work-order`);
         }, 2500);
       }
+      
+      this.isSpinning = true;
       this.workOrderService.getWorkOrderLine(params.id).subscribe({
         next: (workOrderLine) => {
           this.currentWorkOrderLine = workOrderLine;
+          this.isSpinning = false;
           if (!this.currentWorkOrderLine) {
             this.messageService.error(`Error: can't find Work Order Line by id ${params.id}`);
             
@@ -82,6 +86,10 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
           }
         }
       })
+    })
+
+    this.inventoryStatusService.loadInventoryStatuses().subscribe({
+      next: (inventoryStatusRes) => this.availableInventoryStatuses = inventoryStatusRes
     })
   }
 
@@ -140,7 +148,10 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
   }
   confirmSparePartDetail(): void { 
 
+    console.log(`confirmSparePartDetail`);
+    console.log(`this.sparePartDetailForm.valid: ${this.sparePartDetailForm.valid}`)
     if (this.sparePartDetailForm.valid) {
+
       this.addSparePartDetail(
         this.currentSparePart!,
         this.sparePartDetailForm.controls.itemName.value,
@@ -175,11 +186,11 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
                   itemId: item.id!,
                   item: item,
                   inventoryStatusId: inventoryStatusId, 
-                  inventoryStatus: matchedInventoryStatus,
+                  inventoryStatus: matchedInventoryStatus,                  
                   
-                  workOrderLineSparePart: workOrderLineSparePart,
-                  
-                  quantity: quantity
+                  quantity: quantity,
+                  openQuantity: quantity,
+                  inprocessQuantity: 0,
                 },
               ];
 
@@ -210,10 +221,10 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
       ...this.currentWorkOrderLine!.workOrderLineSpareParts,
       {
         id: undefined,
-        workOrderLine: this.currentWorkOrderLine!,
         name: "",
         description: "",
-        quantity: 0,
+        quantity: 1,
+        inprocessQuantity: 0,
         workOrderLineSparePartDetails: [],
       },
     ];
@@ -222,6 +233,8 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
   
   confirmSpareParts(): void { 
  
+    console.log(`start to confirm spare parts`)
+    console.log(`========         this.currentWorkOrderLine   ========\n ${JSON.stringify(this.currentWorkOrderLine?.workOrderLineSpareParts)}`)
       this.isSpinning = true;
       this.workOrderService.changeSpareParts(this.currentWorkOrderLine!).subscribe({
         next: (workOrderLine) => {

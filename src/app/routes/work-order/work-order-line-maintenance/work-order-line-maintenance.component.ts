@@ -116,6 +116,7 @@ export class WorkOrderWorkOrderLineMaintenanceComponent implements OnInit {
         shelfLifeDays: undefined,
         trackingExpirationDateFlag: undefined,
       },
+      workOrderLineSpareParts: [],
 
       expectedQuantity: 0,
       openQuantity: 0,

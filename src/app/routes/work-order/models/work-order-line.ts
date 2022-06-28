@@ -18,6 +18,7 @@ export interface WorkOrderLine {
   consumedQuantity?: number;
   scrappedQuantity?: number;
   returnedQuantity?: number;
+  sparePartQuantity?:number;
 
   inventoryStatusId?: number;
   inventoryStatus?: InventoryStatus;

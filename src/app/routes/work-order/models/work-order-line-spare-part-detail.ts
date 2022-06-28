@@ -16,8 +16,9 @@ export interface WorkOrderLineSparePartDetail {
     inventoryStatusId: number;
     inventoryStatus?: InventoryStatus;
     
-    workOrderLineSparePart?: WorkOrderLineSparePart;
     
     quantity: number;
+    openQuantity: number;
+    inprocessQuantity: number;
 
 }

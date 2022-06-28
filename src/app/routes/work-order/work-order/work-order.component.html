@@ -231,6 +231,8 @@
                         {{ 'work-order.line.scrappedQuantity' | i18n }}</th>
                       <th>
                         {{ 'work-order.line.returnedQuantity' | i18n }}</th>
+                        <th>
+                          {{ 'work-order.line.sparePartQuantity' | i18n }}</th>
                       <th>
                         {{ 'inventory.status' | i18n }}</th>
                       <th>
@@ -268,6 +270,7 @@
                         <td>{{ workOrderLine.consumedQuantity }}</td>
                         <td>{{ workOrderLine.scrappedQuantity }}</td>
                         <td>{{ workOrderLine.returnedQuantity }}</td>
+                        <td>{{ workOrderLine.sparePartQuantity }}</td>
                         <td>{{ 'INVENTORY-STATUS-' + workOrderLine.inventoryStatus?.name | i18n}}</td>
                         <td>{{ 'ALLOCATION-STRATEGY-TYPE-' + workOrderLine.allocationStrategyType | i18n}}</td>
                         <td>

@@ -1,6 +1,6 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
-  <a routerLink="/work-order/work-order" routerLinkActive="active" [queryParams]="{name: currentWorkOrderLine?.workOrderNumber}">{{ 'return' | i18n
+  <a routerLink="/work-order/work-order" routerLinkActive="active" [queryParams]="{number: currentWorkOrderLine?.workOrderNumber}">{{ 'return' | i18n
     }}</a>
 </ng-template>
 <ng-template #breadcrumb>
@@ -23,7 +23,7 @@
  
 
 <!-- Maintain the spare part -->
-<div *ngIf="stepIndex === 0" class="small-card">
+<div *ngIf="stepIndex === 0 && currentWorkOrderLine != null" class="small-card">
   <div class="search-result-list">
     <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #nestedTable [nzData]="currentWorkOrderLine!.workOrderLineSpareParts"
       [nzShowPagination]="false">
@@ -175,10 +175,10 @@
         
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemName">
+          <nz-form-label [nzSpan]="8" nzFor="itemName">
             {{ 'item' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="14">
+          <nz-form-control [nzSpan]="16">
 
             <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
               <input nz-input name="itemName" id="itemName" formControlName="itemName" />
@@ -192,12 +192,12 @@
       </div>
       
       
-        <div nz-col [nzSpan]="8">
+        <div nz-col [nzSpan]="16">
             <nz-form-item nzFlex>
-            <nz-form-label for="inventoryStatus" [nzSm]="3" [nzXs]="3">
+            <nz-form-label for="inventoryStatus" [nzSpan]="8">
                 {{'inventory.status' | i18n}}
             </nz-form-label>
-            <nz-form-control [nzSpan]="14">
+            <nz-form-control [nzSpan]="16">
                 <nz-select name="inventoryStatus" id="inventoryStatus" formControlName="inventoryStatus">
                 <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
                     [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.id">

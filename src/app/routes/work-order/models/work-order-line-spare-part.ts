@@ -4,11 +4,11 @@ import { WorkOrderLineSparePartDetail } from "./work-order-line-spare-part-detai
 export interface WorkOrderLineSparePart {
     
     id? : number;
-    workOrderLine: WorkOrderLine;
     
     name: string;
     description: string;
     
     quantity: number;
+    inprocessQuantity: number;
     workOrderLineSparePartDetails: WorkOrderLineSparePartDetail[];
 }
