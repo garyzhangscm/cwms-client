@@ -15,6 +15,7 @@
   </nz-breadcrumb>
 </ng-template>
 
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
   <nz-step nzTitle="{{ 'steps.bill-of-material.maintenance.info' | i18n }}"> </nz-step>
   <nz-step nzTitle="{{ 'steps.bill-of-material.maintenance.line' | i18n }}"> </nz-step>
@@ -412,3 +413,4 @@
     <span> {{ 'confirm' | i18n }}</span>
   </button>
 </div>
+</nz-spin>

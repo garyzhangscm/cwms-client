@@ -47,7 +47,7 @@ export class CommonUnitOfMeasureMaintenanceComponent implements OnInit {
   }
   goToConfirmPage(): void {
     sessionStorage.setItem('unit-of-measure-maintenance.unit-of-measure', JSON.stringify(this.currentUnitOfMeasure));
-    const url = '/inventory/unit-of-measure-maintenance/confirm';
+    const url = '/inventory/unit-of-measure/confirm';
     this.router.navigateByUrl(url);
   }
 }

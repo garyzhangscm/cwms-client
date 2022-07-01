@@ -1,9 +1,9 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
 
@@ -21,16 +21,11 @@ export class UtilFileUploadComponent implements OnInit {
     private fileUploadOperationService: FileUploadOperationService,
     private fb: FormBuilder,
     private webLocation: Location,
-    private i18n: I18NService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private msg: NzMessageService,
   ) {}
-  // Following 2 fields are used for
-  // downloading the template
-  data = {
-    otherdata: 1,
-    time: new Date(),
-  };
+  
   fileTypes = ['.csv'];
 
   loadFileForm!: FormGroup;
@@ -68,12 +63,14 @@ export class UtilFileUploadComponent implements OnInit {
     });
   }
 
-  setupFileUploadUrl(): void {
+  setupFileUploadUrl(): void { 
     if (this.loadFileForm.value.fileTypeSelector) {
       this.fileUploadOperationService.getFileUploadTypes().subscribe((fileUploadTypes: FileUploadType[]) => {
         fileUploadTypes
           .filter(item => item.name === this.loadFileForm.value.fileTypeSelector)
           .forEach(fileUploadType => {
+            
+            
             this.selectedFileUploadType = fileUploadType;
           });
       });

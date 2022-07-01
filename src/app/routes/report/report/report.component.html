@@ -103,22 +103,21 @@
           </nz-list>
         </td>
         <td nzRight>
-
           <button nz-button nz-dropdown [nzDropdownMenu]="actions" [disabled]="data.companyId === null && data.warehouseId === null" >
             {{ 'action' | i18n }}<i nz-icon nzType="down"></i></button>
-          <nz-dropdown-menu #actions="nzDropdownMenu">
-            <ul nz-menu>
+          <nz-dropdown-menu #actions="nzDropdownMenu" >
+            <ul nz-menu  *ngIf="data.companyId != null || data.warehouseId != null">
               <li nz-menu-item>
-                <button nz-button nzType="primary" routerLink="/report/report-maintenance" routerLinkActive="active"
-                  [queryParams]="{id : data.id!}" [disabled]="data.companyId === null && data.warehouseId === null">
+                <a routerLink="/report/report-maintenance" routerLinkActive="active"
+                  [queryParams]="{id : data.id!}">
                   {{ 'modify' | i18n }}
-                </button>
+              </a>
               </li>
               <li nz-menu-item>
-                <button nz-button nzDanger [disabled]="data.companyId === null && data.warehouseId === null" 
+                <a   
                 (click)="removeCustomizedReport(data)">
                   {{ 'delete' | i18n }}
-                </button>
+              </a>
               </li>
             </ul>
           </nz-dropdown-menu>

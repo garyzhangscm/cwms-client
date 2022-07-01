@@ -65,7 +65,7 @@ export class UnitOfMeasureService {
       unitOfMeasureIds.push(unitOfMeasure.id!);
     });
     const params = {
-      unit_of_measure_ids: unitOfMeasureIds.join(','),
+      unitOfMeasureIds: unitOfMeasureIds.join(','),
     };
     return this.http.delete('common/unit-of-measures', params).pipe(map(res => res.data));
   }

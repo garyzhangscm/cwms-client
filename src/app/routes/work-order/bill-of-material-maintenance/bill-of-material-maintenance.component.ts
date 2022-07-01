@@ -30,6 +30,7 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
   mapOfNewByProductExpectedQuantity: { [key: string]: number } = {};
   validItemNames: string[] = [];
 
+  isSpinning = false;
   availableInventoryStatuses: InventoryStatus[] = [];
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -97,20 +98,24 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
   }
 
   confirm(): void {
+    this.isSpinning = true;
     this.setupBillOfMaterialQuantity();
 
     // Save a new bill of material or update an existing bill of material
     if (this.currentBillOfMaterial.id) {
       this.billOfMeasureService.changeBillOfMaterial(this.currentBillOfMaterial).subscribe(billOfMaterialRes => {
-        this.messageService.success(this.i18n.fanyi('message.save.complete'));
         setTimeout(() => {
+          
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi('message.save.complete'));
           this.router.navigateByUrl(`/work-order/bill-of-material?number=${this.currentBillOfMaterial.number}`);
         }, 2500);
       });
     } else {
-      this.billOfMeasureService.addBillOfMaterial(this.currentBillOfMaterial).subscribe(billOfMaterialRes => {
-        this.messageService.success(this.i18n.fanyi('message.create.complete'));
+      this.billOfMeasureService.addBillOfMaterial(this.currentBillOfMaterial).subscribe(billOfMaterialRes => { 
         setTimeout(() => {
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi('message.create.complete'));
           this.router.navigateByUrl(`/work-order/bill-of-material?number=${this.currentBillOfMaterial.number}`);
         }, 2500);
       });

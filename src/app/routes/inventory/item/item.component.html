@@ -244,9 +244,23 @@
   </div>
   
   <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
-    <button nz-button nzType="primary" routerLink="/util/file-upload/items" routerLinkActive="active">
-      {{ 'file-upload' | i18n }}
-    </button>
+    
+    
+    <button nz-button nz-dropdown [nzDropdownMenu]="uploadFileMenu" nzType="primary">
+      {{ 'file-upload' | i18n }} <i nz-icon nzType="down"></i></button>
+    <nz-dropdown-menu #uploadFileMenu="nzDropdownMenu">
+      <ul nz-menu> 
+        <li nz-menu-item >
+          <a  routerLink="/util/file-upload/items" routerLinkActive="active"
+               >{{ 'item' | i18n }}</a>
+        </li>
+        <li nz-menu-item >
+          <a  routerLink="/util/file-upload/itemUnitOfMeasure" routerLinkActive="active"
+               >{{ 'unit-of-measure' | i18n }}</a>
+        </li>
+      </ul>
+    </nz-dropdown-menu>
+ 
     <nz-divider nzType="vertical"></nz-divider>
     <button nz-button nzType="primary" routerLink="/inventory/item/maintenance" routerLinkActive="active">
       {{ 'add' | i18n }}

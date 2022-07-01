@@ -93,13 +93,21 @@
             </button>
 
             -->
-            <button
-              down-file 
-              nz-button 
-              [disabled]="selectedFileUploadType === null || selectedFileUploadType?.templateFileUrl === ''"
-            >
-              {{ 'download' | i18n }}
-            </button>
+            <div  *ngIf="selectedFileUploadType?.templateFileUrl != null">
+
+              <button nz-button 
+                down-file
+                nzType="primary" 
+                [http-url]="selectedFileUploadType!.templateFileUrl"
+                [file-name]="selectedFileUploadType!.name"
+                  nzShape="round">
+                  <i nz-icon nzType="download"></i>
+                      {{ 'download' | i18n }} 
+              </button>
+            </div>
+
+
+            
           </nz-form-item>
         </div>
       </div>

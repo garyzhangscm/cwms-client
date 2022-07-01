@@ -272,7 +272,7 @@
             <td>
               <button nz-button
                 (click)="openAddingItemUnitOfMeasureModal(data, tplItemUOMModalTitle, tplItemUOMModalContent, tplItemUOMModalFooter)">
-                {{ 'add' | i18n }}{{ 'unit-of-measure' | i18n }}
+                {{ 'add' | i18n }} {{ 'unit-of-measure' | i18n }}
               </button>
               <nz-divider nzType="vertical"></nz-divider>
 
@@ -302,32 +302,32 @@
                     <th>{{ 'unit-of-measure.tracking_lpn' | i18n }}</th>
                     <th>{{ 'action' | i18n }}</th>
                   </thead>
-      <tbody>
-        <tr *ngFor="let itemUnitOfMeasure of data.itemUnitOfMeasures">
-          <td>{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
-          <td>{{ itemUnitOfMeasure.quantity }}</td>
-          <td>{{ itemUnitOfMeasure.weight }}</td>
-          <td>{{ itemUnitOfMeasure.length }}</td>
-          <td>{{ itemUnitOfMeasure.width }}</td>
-          <td>{{ itemUnitOfMeasure.height }}</td>
-          <td>{{ itemUnitOfMeasure.defaultForInboundReceiving }}</td>
-          <td>{{ itemUnitOfMeasure.defaultForWorkOrderReceiving }}</td>
-          <td>{{ itemUnitOfMeasure.trackingLpn }}</td>
+                  <tbody>
+                    <tr *ngFor="let itemUnitOfMeasure of data.itemUnitOfMeasures">
+                      <td>{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
+                      <td>{{ itemUnitOfMeasure.quantity }}</td>
+                      <td>{{ itemUnitOfMeasure.weight }}</td>
+                      <td>{{ itemUnitOfMeasure.length }}</td>
+                      <td>{{ itemUnitOfMeasure.width }}</td>
+                      <td>{{ itemUnitOfMeasure.height }}</td>
+                      <td>{{ itemUnitOfMeasure.defaultForInboundReceiving }}</td>
+                      <td>{{ itemUnitOfMeasure.defaultForWorkOrderReceiving }}</td>
+                      <td>{{ itemUnitOfMeasure.trackingLpn }}</td>
 
-          <td>
-            <button nz-button (click)="removeItemUnitOfMeasure(data, itemUnitOfMeasure)">
-              {{ 'remove' | i18n }}
-            </button>
-          </td>
-        </tr>
+                      <td>
+                        <button nz-button (click)="removeItemUnitOfMeasure(data, itemUnitOfMeasure)">
+                          {{ 'remove' | i18n }}
+                        </button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </nz-table>
+              </nz-tab>
+            </nz-tabset>
+
+          </tr>
+        </ng-container>
       </tbody>
-    </nz-table>
-    </nz-tab>
-    </nz-tabset>
-
-    </tr>
-    </ng-container>
-    </tbody>
     </nz-table>
 
     <div nz-row nzType="flex" nzJustify="start" style="padding: 10px;">
