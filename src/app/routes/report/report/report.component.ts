@@ -66,6 +66,17 @@ export class ReportReportComponent implements OnInit {
       showFilter: false
     },
     {
+      name: 'printer-type',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Report, b: Report) => this.utilService.compareNullableObjField(a, b, "printerType"),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
       name: 'report.orientation',
       showSort: true,
       sortOrder: null,

@@ -5,10 +5,11 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile, NzUploadChangeParam } from 'ng-zorro-antd/upload';
-import { UserService } from '../../auth/services/user.service';
-import { Printer } from '../../common/models/printer';
+
+import { UserService } from '../../auth/services/user.service'; 
 import { PrintingService } from '../../common/services/printing.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { Printer } from '../models/printer';
 import { Report } from '../models/report';
 import { ReportOrientation } from '../models/report-orientation.enum';
 import { ReportPrinterConfiguration } from '../models/report-printer-configuration';
@@ -64,7 +65,6 @@ export class ReportReportPrinterConfigurationMaintenanceComponent implements OnI
   }
 
 
-
   getEmptyReportPrinterConfiguration(): ReportPrinterConfiguration {
     return {
       id: undefined,
@@ -114,7 +114,7 @@ export class ReportReportPrinterConfigurationMaintenanceComponent implements OnI
         printers.forEach(
           (printer, index) => {
             this.availablePrinters.push({
-              id: index, name: printer
+              id: index, name: printer, description: printer, warehouseId: this.warehouseService.getCurrentWarehouse().id
             });
 
           });
@@ -127,7 +127,7 @@ export class ReportReportPrinterConfigurationMaintenanceComponent implements OnI
       this.printingService.getAllLocalPrinters().forEach(
         (printer, index) => {
           this.availablePrinters.push({
-            id: index, name: printer
+            id: index, name: printer, description: printer, warehouseId: this.warehouseService.getCurrentWarehouse().id
           });
 
         });

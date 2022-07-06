@@ -15,6 +15,7 @@ import { PrinterService } from '../services/printer.service';
 @Component({
   selector: 'app-report-printer',
   templateUrl: './printer.component.html',
+  styleUrls: ['./printer.component.less'],
 })
 export class ReportPrinterComponent implements OnInit {
   isSpinning = false;

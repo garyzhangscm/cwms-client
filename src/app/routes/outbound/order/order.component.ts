@@ -11,11 +11,11 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 import { Customer } from '../../common/models/customer';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
-import { PrintPageSize } from '../../common/models/print-page-size.enum';
-import { Printer } from '../../common/models/printer';
+import { PrintPageSize } from '../../common/models/print-page-size.enum'; 
 import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
+import { Printer } from '../../report/models/printer';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { ReportType } from '../../report/models/report-type.enum';
 import { ColumnItem } from '../../util/models/column-item';

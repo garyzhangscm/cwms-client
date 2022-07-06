@@ -17,7 +17,7 @@
 
 <nz-spin nzSize="large" [nzSpinning]="isSpinning">
 <nz-steps nzType="navigation" [nzCurrent]="stepIndex" nzStatus="wait" style="padding: 15px">
-  <nz-step nzTitle="{{ 'steps.baisc-info.title' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
   <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
 </nz-steps>
 
@@ -33,9 +33,13 @@
           {{ 'printer' | i18n }}
         </nz-form-label>
         <nz-form-control [nzSpan]="18">
-            <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
-              <input nz-input [(ngModel)]="currentPrinter.name" required  [disabled]="!newPrinter"/>
-            </nz-form-control>
+          
+          <nz-select nzAllowClear [(ngModel)]="currentPrinter" style="width: 300px;" *ngIf="newPrinter" >
+            <nz-option *ngFor="let printer of availablePrinters" [nzValue]="printer"
+                [nzLabel]="printer.name">
+            </nz-option>
+            </nz-select>
+            <input nz-input [ngModel]="currentPrinter.name"  *ngIf="!newPrinter" disabled/>
         </nz-form-control>
       </nz-form-item>
     </div>
@@ -62,8 +66,8 @@
             {{ 'printer-type' | i18n }}
       </nz-form-label>
       <nz-form-control [nzSpan]="18">
-            <nz-select nzAllowClear [(ngModel)]="currentPrinter.printerType" style="width: 300px;" >
-            <nz-option *ngFor="let printerType of printerTypes" [nzValue]="printerType"
+            <nz-select nzAllowClear [ngModel]="currentPrinter.printerType?.id" style="width: 300px;" (ngModelChange)="selectedPrinterTypeChanged($event)">
+            <nz-option *ngFor="let printerType of printerTypes" [nzValue]="printerType.id"
                 [nzLabel]="printerType.description">
             </nz-option>
             </nz-select>

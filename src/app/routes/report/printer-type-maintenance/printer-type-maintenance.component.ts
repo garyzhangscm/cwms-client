@@ -1,15 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { environment } from '@env/environment';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
+import { NzMessageService } from 'ng-zorro-antd/message'; 
 
 import { CompanyService } from '../../warehouse-layout/services/company.service';
-import { PrinterType } from '../models/printer-type';
-import { Report } from '../models/report';
-import { ReportOrientation } from '../models/report-orientation.enum';
+import { PrinterType } from '../models/printer-type'; 
 import { PrinterTypeService } from '../services/printer-type.service';
 
 @Component({
@@ -23,16 +19,21 @@ export class ReportPrinterTypeMaintenanceComponent implements OnInit {
   isSpinning = false;
 
 
-  constructor(
-    private http: _HttpClient,
-    private activatedRoute: ActivatedRoute,
-    private titleService: TitleService,
-    private companyService: CompanyService, 
+  constructor( 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private printerTypeService: PrinterTypeService,
+    private companyService: CompanyService,
     private messageService: NzMessageService,
     private router: Router
-  ) {}
+  ) {
+    this.currentPrinterType = {
+       
+      companyId: this.companyService.getCurrentCompany()!.id,
+
+      name: "",
+      description:"",
+    }
+  }
 
   ngOnInit(): void { 
     this.stepIndex = 0;

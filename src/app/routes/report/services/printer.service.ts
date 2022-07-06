@@ -15,7 +15,7 @@ export class PrinterService {
   constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
   getPrinters(name?: string, printerType?: string): Observable<Printer[]> {
-    let url = `resource/printers?companyId=${this.warehouseService.getCurrentWarehouse()!.id}`;
+    let url = `resource/printers?warehouseId=${this.warehouseService.getCurrentWarehouse()!.id}`;
     const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
     if (name) {
       url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name.trim())}`;
@@ -33,11 +33,11 @@ export class PrinterService {
   } 
  
   addPrinter(printer: Printer): Observable<Printer> {
-    return this.http.put(`resource/printers`, printer).pipe(map(res => res.data));
+    return this.http.put(`resource/printers?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`, printer).pipe(map(res => res.data));
   }
 
   changePrinter(printer: Printer): Observable<Printer> {
-    const url = `resource/printers/${printer.id}`;
+    const url = `resource/printers/${printer.id}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     return this.http.post(url, printer).pipe(map(res => res.data));
   }
 

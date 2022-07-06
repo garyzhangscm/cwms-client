@@ -7,8 +7,8 @@ import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
-import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { Printer } from '../models/printer';
+import { Printer } from '../../report/models/printer';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service'; 
 import { PrintingService } from '../services/printing.service';
 
 @Component({
@@ -32,7 +32,7 @@ export class CommonPrintButtonComponent implements OnInit {
     private fb: FormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
-    private warehouserService: WarehouseService,
+    private warehouseService: WarehouseService,
     private printingService: PrintingService) { }
 
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
@@ -65,7 +65,7 @@ export class CommonPrintButtonComponent implements OnInit {
       },
       nzOnOk: () => {
         let selectedPrinter = this.availablePrinters.find(element => {
-          return +element.id === +this.printerForm.controls.printer.value
+          return +element.id! === +this.printerForm.controls.printer.value
         });
         this.printReport(
           this.printerForm.controls.printer.value,
@@ -80,13 +80,13 @@ export class CommonPrintButtonComponent implements OnInit {
 
   loadAvaiablePrinters(): void {
     console.log(`start to load avaiable printers`)
-    if (this.warehouserService.getServerSidePrintingFlag() == true) {
+    if (this.warehouseService.getServerSidePrintingFlag() == true) {
       console.log(`will get printer from server`)
       this.printingService.getAllServerPrinters().subscribe(printers => {
         printers.forEach(
           (printer, index) => {
             this.availablePrinters.push({
-              id: index, name: printer
+              id: index, name: printer, description: printer, warehouseId: this.warehouseService.getCurrentWarehouse().id
             });
 
           });
@@ -99,7 +99,7 @@ export class CommonPrintButtonComponent implements OnInit {
       this.printingService.getAllLocalPrinters().forEach(
         (printer, index) => {
           this.availablePrinters.push({
-            id: index, name: printer
+            id: index, name: printer, description: printer, warehouseId: this.warehouseService.getCurrentWarehouse().id
           });
 
         });

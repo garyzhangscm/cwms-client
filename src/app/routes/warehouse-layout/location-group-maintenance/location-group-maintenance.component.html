@@ -34,30 +34,30 @@
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24">
+        <nz-form-label [nzSpan]="8">
           {{ 'name' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+        <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
           <input nz-input formControlName="name" required />
         </nz-form-control>
       </nz-form-item>
     </div>
     <div nz-col [nzSpan]="8">
       <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24">
+        <nz-form-label [nzSpan]="8">
           {{ 'description' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+        <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
           <input nz-input formControlName="description" required />
         </nz-form-control>
       </nz-form-item>
     </div>
     <div nz-col [nzSpan]="8">
       <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24">
+        <nz-form-label [nzSpan]="8">
           {{ 'location-group-type' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}"
+        <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}"
           [nzSuccessTip]="locationGroupTypeDetailTpl">
           <nz-select formControlName="type" (ngModelChange)="locationGroupTypeChange($event)">
             <nz-option *ngFor="let locationGroupType of locationGroupTypes" nzValue="{{ locationGroupType.value }}"
@@ -77,31 +77,37 @@
   </div>
 
   <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="8">
+    <div nz-col [nzSpan]="2">
+      </div>
+    <div nz-col [nzSpan]="6">
 
       <nz-form-item>
         <nz-form-control>
-          <nz-form-label [nzSm]="6" [nzXs]="24">
+          <nz-form-label>
             {{ 'location-group.storable' | i18n }}
           </nz-form-label>
           <label nz-checkbox formControlName="storable"> </label>
         </nz-form-control>
       </nz-form-item>
     </div>
-    <div nz-col [nzSpan]="8">
+    <div nz-col [nzSpan]="2">
+      </div>
+    <div nz-col [nzSpan]="6">
       <nz-form-item>
         <nz-form-control>
-          <nz-form-label [nzSm]="6" [nzXs]="24">
+          <nz-form-label >
             {{ 'location-group.pickable' | i18n }}
           </nz-form-label>
           <label nz-checkbox formControlName="pickable"></label>
         </nz-form-control>
       </nz-form-item>
     </div>
-    <div nz-col [nzSpan]="8">
+    <div nz-col [nzSpan]="2">
+      </div>
+    <div nz-col [nzSpan]="6">
       <nz-form-item>
         <nz-form-control>
-          <nz-form-label [nzSm]="6" [nzXs]="24">
+          <nz-form-label >
             {{ 'location-group.countable' | i18n }}
           </nz-form-label>
           <label nz-checkbox formControlName="countable"></label>
@@ -111,33 +117,36 @@
   </div>
 
   <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="8">
+    <div nz-col [nzSpan]="2">
+      </div>
+    <div nz-col [nzSpan]="6">
       <nz-form-item>
         <nz-form-control>
-          <nz-form-label [nzSm]="6" [nzXs]="24">
+          <nz-form-label >
             {{ 'location-group.adjustable' | i18n }}
           </nz-form-label>
           <label nz-checkbox formControlName="adjustable"></label>
         </nz-form-control>
       </nz-form-item>
     </div>
-    <div nz-col [nzSpan]="8">
-
+    <div nz-col [nzSpan]="2">
+      </div>
+    <div nz-col [nzSpan]="6">
       <nz-form-item>
         <nz-form-control>
-          <nz-form-label [nzSm]="6" [nzXs]="24">
+          <nz-form-label >
             {{ 'location-group.tracking-volume' | i18n }}
-          </nz-form-label>
-          <label nz-checkbox formControlName="trackingVolume"></label>
+          </nz-form-label> 
+              <label nz-checkbox formControlName="trackingVolume"></label> 
         </nz-form-control>
       </nz-form-item>
     </div>
     <div nz-col [nzSpan]="8">
       <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24">
+        <nz-form-label [nzSpan]="8">
           {{ 'location-group.volume-tracking-policy' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
+        <nz-form-control [nzSpan]="16">
           <nz-select formControlName="volumeTrackingPolicy">
             <nz-option *ngFor="let volumeTrackingPolicy of volumeTrackingPolicies | keys"
               [nzValue]="volumeTrackingPolicy.key"
@@ -151,10 +160,10 @@
     <div nz-col [nzSpan]="8">
 
       <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24">
+        <nz-form-label [nzSpan]="12">
           {{ 'location-group.inventory-consolidation-strategy' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+        <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
           <nz-select formControlName="inventoryConsolidationStrategy">
             <nz-option *ngFor="let inventoryConsolidationStrategy of inventoryConsolidationStrategies | keys"
               nzValue="{{ inventoryConsolidationStrategy.key }}"

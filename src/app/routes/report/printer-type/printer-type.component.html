@@ -34,7 +34,7 @@
       
         <ng-template st-row="actionColumn" let-item let-index="index"> 
         
-            <button nz-button  nzType="default"  nzDanger >
+            <button nz-button  nzType="default"  nzDanger (click)="remove(item)">
               {{ 'remove' | i18n }}  </button> 
         </ng-template>
     </st>

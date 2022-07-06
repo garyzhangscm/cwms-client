@@ -56,11 +56,13 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       // we may pre-print lpn label for receipt or work order
       if (params.productionLineAssignmentId) {
+        this.isSpinning = true;
         this.productionLineAssignmentService.getProductionLineAssignment(params.productionLineAssignmentId)
             .subscribe(
               {
                 next:(productionLineAssignmentRes) => {
                   this.currentProductionLineAssignment = productionLineAssignmentRes
+                  this.isSpinning = false;
                   this.loadWorkOrder();
                   this.type="work-order"; 
                 }
@@ -69,10 +71,13 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
       }
       else if (params.receiptLineId) {
 
+        this.isSpinning = true;
         this.receiptLineService.getReceiptLine(params.receiptLineId).subscribe(
           {
             next:(receiptLineRes) => {
               this.currentReceiptLine = receiptLineRes;
+              
+              this.isSpinning = false;
               this.type="receipt-line";
               this.returnUrl = `/inbound/receipt-maintenance?receiptNumber=${this.currentReceiptLine.receiptNumber}` 
             }
@@ -82,9 +87,11 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
     });
   }
   loadWorkOrder() {
+    this.isSpinning = true;
     this.workOrderService.getWorkOrder(this.currentProductionLineAssignment.workOrderId!).subscribe({
       next:(workOrderRes) => {
         this.currentWorkOrder = workOrderRes;
+        this.isSpinning = false;
         
         this.returnUrl = `/work-order/work-order?number=${this.currentWorkOrder.number}`
 
@@ -153,7 +160,7 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
   printWorkOrderLPNLabelInBatch(event: any, startLPN: string, quantity: number, labelCount: number) {
     this.workOrderService.generatePrePrintLPNLabelInBatch(
       this.currentWorkOrder!.id!, startLPN, quantity, labelCount, 
-      this.currentProductionLineAssignment.productionLine.name, event.physicalCopyCount)
+      this.currentProductionLineAssignment.productionLine.name, event.physicalCopyCount, event.printerName)
       .subscribe({
         next: (printResult) => {
           // send the result to the printer
@@ -183,7 +190,7 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
   }
   printReceivingLPNLabelInBatch(event: any, startLPN: string, quantity: number, labelCount: number) {
     this.receiptLineService.generatePrePrintLPNLabelInBatch(
-      this.currentReceiptLine!.id!, startLPN, quantity, labelCount, event.physicalCopyCount)
+      this.currentReceiptLine!.id!, startLPN, quantity, labelCount, event.physicalCopyCount, event.printerName)
       .subscribe({
         next: (printResult) => {
           // send the result to the printer

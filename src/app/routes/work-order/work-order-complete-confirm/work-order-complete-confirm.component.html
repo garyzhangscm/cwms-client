@@ -17,6 +17,8 @@
 </ng-template>
 
 
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
 <div nz-row style="padding: 10px">
   <div nz-col nzSpan="12" nzOffset="6">
     <nz-steps [nzCurrent]="2" [nzSize]="'small'" (nzIndexChange)="onStepsIndexChange($event)">
@@ -191,3 +193,4 @@
     {{ 'confirm' | i18n }}
   </button>
 </div>
+</nz-spin>

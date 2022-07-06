@@ -38,12 +38,15 @@ export class CustomerReturnOrderLineService {
   } 
 
   
-  generatePrePrintLPNLabel(customerReturnOrderLineId: number, lpn: string, quantity?: number) : Observable<ReportHistory> {
+  generatePrePrintLPNLabel(customerReturnOrderLineId: number, lpn: string, quantity?: number, printerName?: string) : Observable<ReportHistory> {
     
     let url = `inbound/customer-return-orders/lines/${customerReturnOrderLineId}/pre-print-lpn-label?lpn=${lpn}`;
     
     if (quantity) {
       url = `${url}&quantity=${quantity}`
+    }
+    if (printerName) {
+      url = `${url}&printerName=${printerName}`
     }
     
     
@@ -52,7 +55,7 @@ export class CustomerReturnOrderLineService {
 
   
   generatePrePrintLPNLabelInBatch(customerReturnOrderLineId: number, lpn: string, quantity?: number, count?: number, 
-    copies?: number) : Observable<ReportHistory> {
+    copies?: number, printerName?: string) : Observable<ReportHistory> {
     
     let url = `inbound/customer-return-orders/lines/${customerReturnOrderLineId}/pre-print-lpn-label/batch?lpn=${lpn}`;
     
@@ -68,6 +71,9 @@ export class CustomerReturnOrderLineService {
     }
     if (copies) {
       url = `${url}&copies=${copies}`
+    }
+    if (printerName) {
+      url = `${url}&printerName=${printerName}`
     }
     
     

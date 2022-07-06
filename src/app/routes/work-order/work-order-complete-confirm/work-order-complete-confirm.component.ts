@@ -5,6 +5,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { KpiMeasurement } from '../models/kpi-measurement.enum';
@@ -19,6 +20,7 @@ import { WorkOrderService } from '../services/work-order.service';
 interface KPI {
   username?: string;
   workingTeamName?: string;
+
 
   kpiMeasurement?: KpiMeasurement;
   amount?: number;
@@ -37,6 +39,7 @@ export class WorkOrderWorkOrderCompleteConfirmComponent implements OnInit {
 
   currentWorkOrder!: WorkOrder;
 
+  isSpinning = false;
   pageTitle = '';
 
   savingInProcess = false;
@@ -91,8 +94,8 @@ export class WorkOrderWorkOrderCompleteConfirmComponent implements OnInit {
           this.kpis = [
             ...this.kpis,
             {
-              username: '' + workOrderKPItransaction.username,
-              workingTeamName: '' + workOrderKPItransaction.workingTeamName,
+              username: `${  workOrderKPItransaction.username}`,
+              workingTeamName: `${  workOrderKPItransaction.workingTeamName}`,
               kpiMeasurement: workOrderKPItransaction.kpiMeasurement,
               amount: workOrderKPItransaction.amount,
               originalKpiMeasurement: matchedWorkOrderKPIs[0].kpiMeasurement,
@@ -117,8 +120,8 @@ export class WorkOrderWorkOrderCompleteConfirmComponent implements OnInit {
           this.kpis = [
             ...this.kpis,
             {
-              username: '' + workOrderKPItransaction.username,
-              workingTeamName: '' + workOrderKPItransaction.workingTeamName,
+              username: `${  workOrderKPItransaction.username}`,
+              workingTeamName: `${  workOrderKPItransaction.workingTeamName}`,
               kpiMeasurement: workOrderKPItransaction.kpiMeasurement,
               amount: workOrderKPItransaction.amount,
               originalKpiMeasurement: undefined,
@@ -136,8 +139,8 @@ export class WorkOrderWorkOrderCompleteConfirmComponent implements OnInit {
           this.kpis = [
             ...this.kpis,
             {
-              username: '' + workOrderKPI.username,
-              workingTeamName: '' + workOrderKPI.workingTeamName,
+              username: `${  workOrderKPI.username}`,
+              workingTeamName: `${  workOrderKPI.workingTeamName}`,
               kpiMeasurement: undefined,
               amount: undefined,
               originalKpiMeasurement: workOrderKPI.kpiMeasurement,
@@ -189,13 +192,13 @@ export class WorkOrderWorkOrderCompleteConfirmComponent implements OnInit {
 
   }
   confirmWorkOrderComplete(): void {
-    this.savingInProcess = true;
+    this.isSpinning = true;
     this.workOrderCompleteTransactionService
       .saveWorkOrderCompleteTransaction(this.workOrderCompleteTransaction)
       .subscribe(res => {
         this.messageService.success(this.i18n.fanyi('message.work-order.produced-success'));
         setTimeout(() => {
-          this.savingInProcess = false;
+          this.isSpinning = false;
           this.router.navigateByUrl(
             `/work-order/work-order?number=${this.workOrderCompleteTransaction.workOrder!.number}`,
           );

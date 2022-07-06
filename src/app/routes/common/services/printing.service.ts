@@ -49,7 +49,7 @@ export class PrintingService {
   }
 
   getAllServerPrinters(): Observable<string[]> {
-    const url = 'resource/printers';
+    const url = 'resource/server-printers';
     return this.http.get(url).pipe(map(res => res.data));
   }
   getAllLocalPrinters(): string[] {

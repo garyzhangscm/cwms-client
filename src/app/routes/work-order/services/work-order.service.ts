@@ -211,7 +211,7 @@ export class WorkOrderService {
     return this.http.post(url).pipe(map(res => res.data));
   }
 
-  generatePrePrintLPNLabel(workOrderId: number, lpn: string, quantity?: number, productionLineName?: string) : Observable<ReportHistory> {
+  generatePrePrintLPNLabel(workOrderId: number, lpn: string, quantity?: number, productionLineName?: string, printerName?: string) : Observable<ReportHistory> {
     
     let url = `workorder/work-orders/${workOrderId}/pre-print-lpn-label?lpn=${lpn}`;
     
@@ -222,12 +222,16 @@ export class WorkOrderService {
     if (productionLineName) {
       url = `${url}&productionLineName=${productionLineName}`
     }
+    if (printerName) {
+      url = `${url}&printerName=${printerName}`
+    }
+    
     
     return this.http.post(url).pipe(map(res => res.data));
   }
   
   generatePrePrintLPNLabelInBatch(workOrderId: number, lpn: string, quantity?: number, 
-    count?: number, productionLineName?: string, copies?: number) : Observable<ReportHistory> {
+    count?: number, productionLineName?: string, copies?: number, printerName?: string) : Observable<ReportHistory> {
     
     let url = `workorder/work-orders/${workOrderId}/pre-print-lpn-label/batch?lpn=${lpn}`;
     
@@ -243,10 +247,13 @@ export class WorkOrderService {
     }
     if (copies) {
       url = `${url}&copies=${copies}`
-    }
+    } 
     
     if (productionLineName) {
       url = `${url}&productionLineName=${productionLineName}`
+    }
+    if (printerName) {
+      url = `${url}&printerName=${printerName}`
     }
     
     

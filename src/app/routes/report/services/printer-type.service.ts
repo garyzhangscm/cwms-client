@@ -29,7 +29,7 @@ export class PrinterTypeService {
   } 
  
   addPrinterType(printerType: PrinterType): Observable<PrinterType> {
-    return this.http.put(`resource/printer-types`, printerType).pipe(map(res => res.data));
+    return this.http.put(`resource/printer-types?companyId=${this.companyService.getCurrentCompany()!.id}`, printerType).pipe(map(res => res.data));
   }
 
   changePrinterType(printerType: PrinterType): Observable<PrinterType> {

@@ -1,6 +1,7 @@
-import { PrintPageOrientation } from "../../common/models/print-page-orientation.enum";
+
 import { Company } from "../../warehouse-layout/models/company";
 import { Warehouse } from "../../warehouse-layout/models/warehouse";
+import { PrinterType } from "./printer-type";
 import { ReportOrientation } from "./report-orientation.enum";
 import { ReportType } from "./report-type.enum";
 
@@ -22,5 +23,7 @@ export interface Report {
   // key: filename
   // value: file downloading url
   mapOfPropertyFiles?: { [key: string]: string };
+
+  printerType?: PrinterType;
 
 }

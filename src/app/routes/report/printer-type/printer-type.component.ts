@@ -6,14 +6,14 @@ import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
-
-import { Alert } from '../../alert/models/alert';
+ 
 import { PrinterType } from '../models/printer-type';
 import { PrinterTypeService } from '../services/printer-type.service';
 
 @Component({
   selector: 'app-report-printer-type',
   templateUrl: './printer-type.component.html',
+  styleUrls: ['./printer-type.component.less'],
 })
 export class ReportPrinterTypeComponent implements OnInit {
   isSpinning = false;
@@ -92,6 +92,19 @@ export class ReportPrinterTypeComponent implements OnInit {
       });
       
   }
-   
+  
+  remove(printerType: PrinterType) : void {
+    this.isSpinning = true;
+    this.printerTypeService.removePrinterType(printerType).subscribe({
+      next: () => {
+        
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi(`message.access.success`));
+        this.search();
+        
+      }, 
+      error: () => this.isSpinning = false
+    })
+  }
 
 }

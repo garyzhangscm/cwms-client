@@ -15,6 +15,7 @@
   </nz-breadcrumb>
 </ng-template>
 
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 <nz-steps nzType="navigation" [nzCurrent]="stepIndex" nzStatus="wait" style="padding: 15px">
   <nz-step nzTitle="{{ 'steps.report.info' | i18n }}"> </nz-step>
   <nz-step nzTitle="{{ 'steps.report.confirm' | i18n }}"> </nz-step>
@@ -55,10 +56,10 @@
 
     <div nz-col [nzSpan]="8">
       <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24">
+        <nz-form-label [nzSpan]="8">
           {{ 'report.companySpecific' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
+        <nz-form-control [nzSpan]="16">
           <label nz-checkbox [(ngModel)]="companySpecific" nzDisabled></label>
         </nz-form-control>
       </nz-form-item>
@@ -69,16 +70,29 @@
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24">
+        <nz-form-label [nzSpan]="8">
           {{ 'report.warehouseSpecific' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
+        <nz-form-control [nzSpan]="16">
           <label nz-checkbox [(ngModel)]="warehouseSpecific" [disabled]="standardReport"></label>
         </nz-form-control>
       </nz-form-item>
     </div>
 
-
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+            {{ 'printer-type' | i18n }}
+      </nz-form-label>
+      <nz-form-control [nzSpan]="18">
+            <nz-select nzAllowClear [ngModel]="currentReport.printerType?.id" style="width: 300px;" (ngModelChange)="selectedPrinterTypeChanged($event)">
+            <nz-option *ngFor="let printerType of printerTypes" [nzValue]="printerType.id"
+                [nzLabel]="printerType.description">
+            </nz-option>
+            </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
 
   </div>
 
@@ -129,6 +143,9 @@
       <nz-descriptions-item nzTitle="{{ 'warehouse.name' | i18n }}">
         {{ currentReport.warehouse?.name }}
       </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'printer-type' | i18n }}">
+        {{ currentReport.printerType?.name }}
+      </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'fileName' | i18n }}">
         {{ currentReport.fileName}}
       </nz-descriptions-item>
@@ -154,3 +171,4 @@
     <span> {{ 'confirm' | i18n }}</span>
   </button>
 </div>
+</nz-spin>

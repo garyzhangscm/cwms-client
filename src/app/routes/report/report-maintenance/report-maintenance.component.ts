@@ -8,9 +8,11 @@ import { NzUploadChangeParam, NzUploadFile } from 'ng-zorro-antd/upload';
 
 import { UserService } from '../../auth/services/user.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { PrinterType } from '../models/printer-type';
 import { Report } from '../models/report';
 import { ReportOrientation } from '../models/report-orientation.enum';
 import { ReportType } from '../models/report-type.enum';
+import { PrinterTypeService } from '../services/printer-type.service';
 import { ReportService } from '../services/report.service';
 
 @Component({
@@ -29,6 +31,8 @@ export class ReportReportMaintenanceComponent implements OnInit {
   fileList: NzUploadFile[] = [];
   templateFileUploadUrl = '';
   acceptUploadedFileTypes = '.jrxml,.properties,.prn';
+  printerTypes: PrinterType[] = [];
+  isSpinning = false;
 
   constructor(
     private http: _HttpClient,
@@ -37,6 +41,7 @@ export class ReportReportMaintenanceComponent implements OnInit {
     private warehouseService: WarehouseService,
     private userService: UserService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private printerTypeService: PrinterTypeService,
     private reportService: ReportService,
     private messageService: NzMessageService,
     private router: Router
@@ -44,42 +49,49 @@ export class ReportReportMaintenanceComponent implements OnInit {
 
   ngOnInit(): void {
     this.fileList = [];
-    this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
-        this.reportService.getReport(params.id).subscribe(reportRes => {
-          this.currentReport = reportRes;
-
-          this.titleService.setTitle(this.i18n.fanyi('page.report.maintenance.modify'));
-          this.pageTitle = this.i18n.fanyi('page.report.maintenance.modify');
-
-          this.companySpecific = this.currentReport.warehouseId !== null;
-          this.warehouseSpecific = this.currentReport.warehouseId !== null;
-          this.standardReport = !this.companySpecific && !this.warehouseSpecific;
-          this.fileList = [
-            {
-              uid: this.currentReport.id!.toString(),
-              name: this.currentReport.fileName,
-              status: 'done',
-              response: '', // custom error message to show
-              url: this.getReportTemplateUrl(this.currentReport)
-            }
-          ];
+    
+    this.printerTypeService.getPrinterTypes().subscribe({
+      next: (printerTypeRes) =>  {
+        this.printerTypes = printerTypeRes; 
+        this.activatedRoute.queryParams.subscribe(params => {
+          if (params.id) {
+            this.reportService.getReport(params.id).subscribe(reportRes => {
+              this.currentReport = reportRes;
+    
+              this.titleService.setTitle(this.i18n.fanyi('page.report.maintenance.modify'));
+              this.pageTitle = this.i18n.fanyi('page.report.maintenance.modify');
+    
+              this.companySpecific = this.currentReport.warehouseId !== null;
+              this.warehouseSpecific = this.currentReport.warehouseId !== null;
+              this.standardReport = !this.companySpecific && !this.warehouseSpecific;
+              this.fileList = [
+                {
+                  uid: this.currentReport.id!.toString(),
+                  name: this.currentReport.fileName,
+                  status: 'done',
+                  response: '', // custom error message to show
+                  url: this.getReportTemplateUrl(this.currentReport)
+                }
+              ];
+            });
+          } else {
+            // the user is adding a new customized report
+            this.standardReport = false;
+            this.currentReport = this.getEmptyReport();
+            this.titleService.setTitle(this.i18n.fanyi('page.report.maintenance.new'));
+            this.pageTitle = this.i18n.fanyi('page.report.maintenance.new');
+            // to add a new report, the user is only able to add
+            // a customized report(either at company level or at warehouse level)
+            // at this moment, we are not allow the user to change the standard
+            // report. So if the user is here,
+            this.companySpecific = true;
+            this.templateFileUploadUrl = `resource/reports/templates/upload/${this.currentReport.warehouseId}`;
+          }
         });
-      } else {
-        // the user is adding a new customized report
-        this.standardReport = false;
-        this.currentReport = this.getEmptyReport();
-        this.titleService.setTitle(this.i18n.fanyi('page.report.maintenance.new'));
-        this.pageTitle = this.i18n.fanyi('page.report.maintenance.new');
-        // to add a new report, the user is only able to add
-        // a customized report(either at company level or at warehouse level)
-        // at this moment, we are not allow the user to change the standard
-        // report. So if the user is here,
-        this.companySpecific = true;
-        this.templateFileUploadUrl = `resource/reports/templates/upload/${this.currentReport.warehouseId}`;
+    
       }
     });
-
+    
     this.stepIndex = 0;
   }
 
@@ -120,16 +132,20 @@ export class ReportReportMaintenanceComponent implements OnInit {
 
   confirmReport(): void {
     if (this.currentReport.id) {
+      this.isSpinning = true;
       this.reportService.changeReport(this.currentReport).subscribe(reportRes => {
         this.messageService.success(this.i18n.fanyi('message.report.changed'));
         setTimeout(() => {
+          this.isSpinning = false;
           this.router.navigateByUrl(`/report/report?type=${reportRes.type}`);
         }, 2500);
       });
     } else {
+      this.isSpinning = true;
       this.reportService.addReport(this.currentReport, this.companySpecific, this.warehouseSpecific).subscribe(reportRes => {
         this.messageService.success(this.i18n.fanyi('message.report.added'));
         setTimeout(() => {
+          this.isSpinning = false;
           this.router.navigateByUrl(`/report/report?type=${reportRes.type}`);
         }, 2500);
       });
@@ -168,5 +184,14 @@ export class ReportReportMaintenanceComponent implements OnInit {
     }
 
     
+  }
+
+  selectedPrinterTypeChanged(printerTypeId: number) : void {
+
+    this.printerTypes.filter(
+      printerType => printerType.id === printerTypeId
+    ).forEach(
+      printerType => this.currentReport.printerType = printerType
+    );
   }
 }

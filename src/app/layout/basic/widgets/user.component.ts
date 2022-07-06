@@ -46,7 +46,7 @@ import { UserService } from 'src/app/routes/auth/services/user.service';
         
         <div nz-menu-item (click)="openWebMessageAlertPage()">
           <i nz-icon nzType="key" class="mr-sm"></i>
-          {{ 'web-message-alert' | i18n }}
+          {{ 'web-message-alert' | i18n }} <nz-badge nzDot></nz-badge>
         </div>
       </div>
     </nz-dropdown-menu>
@@ -124,7 +124,7 @@ export class HeaderUserComponent {
     setInterval(() => {
   
       this.reloadUserInreadWebMessageAlertCount();
-    }, 120000); 
+    }, 30000); 
   }
 
   reloadUserInreadWebMessageAlertCount() {
