@@ -140,6 +140,7 @@ export class InboundReceiptComponent implements OnInit {
   checked = false;
   indeterminate = false;
   isSpinning = false;
+  validSuppliers: Supplier[] = [];
 
   receiptStatus = ReceiptStatus;
 
@@ -164,6 +165,7 @@ export class InboundReceiptComponent implements OnInit {
     private titleService: TitleService,
     private utilService: UtilService,
     private localCacheService: LocalCacheService,
+    private supplierService: SupplierService,
   ) { }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inbound.receipt'));
@@ -171,6 +173,9 @@ export class InboundReceiptComponent implements OnInit {
     this.searchForm = this.fb.group({
       number: [null],
       statusList: [null],
+      supplier: [null],
+      checkInDateTimeRanger: [null],
+      checkInDate: [null],
     });
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.number) {
@@ -178,6 +183,9 @@ export class InboundReceiptComponent implements OnInit {
         this.search();
       }
     });
+
+    
+    this.supplierService.loadSuppliers().subscribe(suppliers => (this.validSuppliers = suppliers));
   }
 
   resetForm(): void {
@@ -191,8 +199,18 @@ export class InboundReceiptComponent implements OnInit {
     this.searching = true;
     this.isSpinning = true;
     this.searchResult = '';
+
+    
+    let checkInStartTime : Date = this.searchForm.controls.checkInDateTimeRanger.value ? 
+        this.searchForm.controls.checkInDateTimeRanger.value[0] : undefined; 
+    let checkInEndTime : Date = this.searchForm.controls.checkInDateTimeRanger.value ? 
+        this.searchForm.controls.checkInDateTimeRanger.value[1] : undefined; 
+    let checkInSpecificDate : Date = this.searchForm.controls.checkInDate.value;
+
     this.receiptService.getReceipts(this.searchForm!.controls.number.value, false,       
-      this.searchForm!.controls.statusList.value,).subscribe(
+      this.searchForm!.controls.statusList.value,       
+      this.searchForm!.controls.supplier.value,
+      checkInStartTime, checkInEndTime, checkInSpecificDate).subscribe(
       receiptRes => {
 
         this.searching = false;

@@ -1242,18 +1242,18 @@
   <form nz-form [formGroup]="createWorkOrderForm">
     
     <div nz-row [nzGutter]="24">
-      <div nz-col [nzSpan]="12">
+      <div nz-col [nzSpan]="8">
         <nz-form-item>
-          <nz-form-label [nzSpan]="12">
+          <nz-form-label [nzSpan]="8">
             {{ 'item.name' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="12" nzHasFeedback  >
+          <nz-form-control [nzSpan]="16" nzHasFeedback  >
             <input nz-input formControlName="itemName" /> 
 
           </nz-form-control>
         </nz-form-item>
       </div>
-      <div nz-col [nzSpan]="12">
+      <div nz-col [nzSpan]="8">
         <nz-form-item>
           <nz-form-label [nzSpan]="12">
             {{ 'short-allocation.quantity' | i18n }}
@@ -1267,10 +1267,10 @@
     <div nz-row [nzGutter]="24">
       <div nz-col [nzSpan]="8">
         <nz-form-item>
-          <nz-form-label [nzSpan]="12">
+          <nz-form-label [nzSpan]="8">
             {{ 'bom' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="12" nzHasFeedback  >
+          <nz-form-control [nzSpan]="16" nzHasFeedback  >
               <nz-select   formControlName="bom" >
                   <nz-option *ngFor="let bom of availableBOM" [nzValue]="bom.id" [nzLabel]="bom.number!"></nz-option>
                 </nz-select>
@@ -1284,17 +1284,18 @@
             {{ 'work-order.number' | i18n }}
           </nz-form-label>
           <nz-form-control [nzSpan]="12" nzHasFeedback  >
-            <input nz-input formControlName="workOrderNumber" /> 
+            <input  appFkey variable="work-order-number" nz-input formControlName="workOrderNumber" 
+            (nextNumberAvailableEvent)="workOrderNumberChanged($event)"/> 
 
           </nz-form-control>
         </nz-form-item>
       </div>
       <div nz-col [nzSpan]="8">
         <nz-form-item>
-          <nz-form-label [nzSpan]="12">
+          <nz-form-label [nzSpan]="8">
             {{ 'quantity' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="12" nzHasFeedback  >
+          <nz-form-control [nzSpan]="16" nzHasFeedback  >
             <input nz-input formControlName="workOrderQuantity"> 
           </nz-form-control>
         </nz-form-item>
@@ -1303,6 +1304,7 @@
 
     
     <div nz-col [nzSpan]="24" *ngIf="displayBom !== null">
+      <div><strong>{{'bill-of-material' | i18n}}</strong></div>
       <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #BOMDetailTable
         [nzData]="displayBom!.billOfMaterialLines" nzSize="middle" [nzShowPagination]="false" nzBordered>
         <thead>

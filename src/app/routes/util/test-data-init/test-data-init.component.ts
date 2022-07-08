@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
+
 import { TestDataUploadService } from '../services/test-data-upload.service';
 import { WebClientConfigurationService } from '../services/web-client-configuration.service';
 
@@ -45,8 +46,8 @@ export class UtilTestDataInitComponent implements OnInit {
     if (index < this.dataNames.length) {
       this.testDataUploadService.loadTestData(this.dataNames[index]).subscribe(
         res => {
-          console.log('#' + index + ' - ' + this.dataNames[index] + ' is done!');
-          console.log('>> Result: ' + JSON.stringify(res));
+          console.log(`#${  index  } - ${  this.dataNames[index]  } is done!`);
+          console.log(`>> Result: ${  JSON.stringify(res)}`);
           this.loadData(index + 1);
         },
         () => {
@@ -70,7 +71,7 @@ export class UtilTestDataInitComponent implements OnInit {
           console.log(`get web configuration: ${JSON.stringify(configuration)}`);
           
           this.webClientConfigurationService.setWebClientConfiguration(configuration);
-          console.log(`webClientConfigurationService saved!: ${JSON.stringify(this.webClientConfigurationService.getWebClientConfiguration())}`);
+          // console.log(`webClientConfigurationService saved!: ${JSON.stringify(this.webClientConfigurationService.getWebClientConfiguration())}`);
         }
       );
 

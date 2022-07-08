@@ -1358,6 +1358,9 @@ export class OutboundOrderComponent implements OnInit {
       this.displayBom = this.availableBOM[0];
     }
   }
-
+  workOrderNumberChanged(workOrderNumber: string) {
+    
+    this.createWorkOrderForm.controls.workOrderNumber.setValue(workOrderNumber);
+  }
 
 }

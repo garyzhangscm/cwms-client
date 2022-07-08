@@ -70,6 +70,7 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
   checked = false;
   indeterminate = false;
   expandSet = new Set<number>();
+  isSpinning = false;
 
   // Form related data and functions
   searchForm!: FormGroup;
@@ -96,6 +97,7 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
   availableProductionLines: ProductionLine[] = [];
 
   newWorkOrderModal!: NzModalRef;
+  newWorkOrderProductionLine: ProductionLine | undefined;
 
   // Table data for display
   listOfAllBillOfMaterial: BillOfMaterial[] = [];
@@ -141,7 +143,7 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
   }
 
   search(): void {
-    this.searching = true;
+    this.isSpinning = true;
     this.searchResult = '';
     this.billOfMaterialService
       .getBillOfMaterials(this.searchForm.controls.number.value, this.searchForm.controls.item.value)
@@ -149,14 +151,14 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
         billOfMaterailRes => {
           this.listOfAllBillOfMaterial = billOfMaterailRes;
           this.listOfDisplayBillOfMaterial = billOfMaterailRes;
-          this.searching = false;
+          this.isSpinning = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
             rowCount: billOfMaterailRes.length,
           });
         },
         () => {
-          this.searching = false;
+          this.isSpinning = false;
           this.searchResult = '';
         },
       );
@@ -252,6 +254,7 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
       status: WorkOrderStatus.PENDING,
     };
     // show the model
+    this.newWorkOrderProductionLine = undefined
     this.newWorkOrderModal = this.modalService.create({
       nzTitle: tplCreatingWorkOrderModalTitle,
       nzContent: tplCreatingWorkOrderModalContent,
@@ -268,18 +271,16 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
       nzWidth: 1000,
     });
   }
-  createWorkOrderFromBOM(billOfMaterial: BillOfMaterial, workOrder: WorkOrder): void {
+  createWorkOrderFromBOM(billOfMaterial: BillOfMaterial, workOrder: WorkOrder): void { 
+    this.isSpinning = true;
     this.billOfMaterialService
-      .createWorkOrderFromBOM(billOfMaterial, workOrder)
-      .subscribe(res => this.message.success(this.i18n.fanyi('message.action.success')));
-  }
-
-  productLineChanged(event: Event): void {
-    const productionLines = this.availableProductionLines.filter(
-      productionLine => productionLine.id === +(event.target as HTMLInputElement).value,
-    );
-
-  }
+      .createWorkOrderFromBOM(billOfMaterial, workOrder, this.newWorkOrderProductionLine)
+      .subscribe(res => {
+        this.message.success(this.i18n.fanyi('message.action.success'))
+      
+        this.isSpinning = false;
+      });
+  } 
 
   workOrderNumberOnBlur(event: Event): void {
     this.newWorkOrder.number = (event.target as HTMLInputElement).value;

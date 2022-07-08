@@ -8,6 +8,7 @@ import { I18NService } from 'src/app/core/i18n/i18n.service';
 import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { ReportHistory } from '../../report/models/report-history';
+import { DateTimeService } from '../../util/services/date-time.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Receipt } from '../models/receipt';
@@ -20,12 +21,14 @@ export class ReceiptService {
 
   constructor(
     private http: _HttpClient,
-    private warehouseService: WarehouseService,
-    private printingService: PrintingService,
+    private warehouseService: WarehouseService, 
+    private dateTimeService: DateTimeService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
   ) { }
 
-  getReceipts(number?: string, loadDetails?: boolean, statusList?: string,): Observable<Receipt[]> {
+  getReceipts(number?: string, loadDetails?: boolean, statusList?: string, 
+    supplierName?: string, 
+    checkInStartTime?: Date, checkInEndTime?:Date, checkInSpecificDate?: Date): Observable<Receipt[]> {
     let url = `inbound/receipts?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     
     const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
@@ -40,7 +43,19 @@ export class ReceiptService {
     if (statusList) {
       url = `${url}&receipt_status_list=${statusList}`;
     }
+    if (supplierName) {
+      url = `${url}&supplierName=${supplierName}`;
+    }
 
+    if (checkInStartTime) {
+      url = `${url}&checkInStartTime=${this.dateTimeService.getISODateTimeString(checkInStartTime)}`;
+    }
+    if (checkInEndTime) {
+      url = `${url}&checkInEndTime=${this.dateTimeService.getISODateTimeString(checkInEndTime)}`;
+    }
+    if (checkInSpecificDate) {
+      url = `${url}&checkInDate=${this.dateTimeService.getISODateString(checkInSpecificDate)}`;
+    }
 
     return this.http.get(url).pipe(map(res => res.data));
   }

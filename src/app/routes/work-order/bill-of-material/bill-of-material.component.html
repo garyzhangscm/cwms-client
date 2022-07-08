@@ -1,5 +1,7 @@
 <page-header [title]="'page.bill-of-material.header.title' | i18n"> </page-header>
 
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
 <!-- Form to query the result  -->
 <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
   <div nz-row [nzGutter]="24">
@@ -210,9 +212,9 @@
           {{ 'production-line' | i18n }}
         </nz-form-label>
         <nz-form-control  [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
-          <nz-select nz-input (ngModelChange)="productLineChanged($event)" style="width: 250px">
+          <nz-select nz-input [(ngModel)]="newWorkOrderProductionLine"  style="width: 250px" nzAllowClear >
             <nz-option *ngFor="let productionLine of availableProductionLines" [nzLabel]="productionLine.name"
-              [nzValue]="productionLine.id">
+              [nzValue]="productionLine">
             </nz-option>
           </nz-select>
         </nz-form-control>
@@ -236,3 +238,4 @@
 
 
 </ng-template>
+</nz-spin>

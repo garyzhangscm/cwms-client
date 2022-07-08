@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { BillOfMaterial } from '../models/bill-of-material';
+import { ProductionLine } from '../models/production-line';
 import { WorkOrder } from '../models/work-order';
 
 @Injectable({
@@ -68,13 +69,17 @@ export class BillOfMaterialService {
     return this.http.delete('workorder/bill-of-materials', params).pipe(map(res => res.data));
   }
 
-  createWorkOrderFromBOM(billOfMaterial: BillOfMaterial, workOrder: WorkOrder): Observable<WorkOrder[]> {
+  createWorkOrderFromBOM(billOfMaterial: BillOfMaterial, workOrder: WorkOrder, productionLine?: ProductionLine): Observable<WorkOrder[]> {
     let params = new HttpParams();
 
     // Begin assigning parameters
     params = params.append('billOfMaterialId', billOfMaterial.id!.toString());
     params = params.append('workOrderNumber', workOrder.number!);
     params = params.append('expectedQuantity', workOrder.expectedQuantity!.toString()); 
+    if (productionLine != null && productionLine.id != null) {
+      
+        params = params.append('productionLineId', productionLine.id); 
+    }
     return this.http.post('workorder/work-orders/create-from-bom', params).pipe(map(res => res.data));
   }
 }

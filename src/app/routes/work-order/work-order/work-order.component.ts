@@ -62,7 +62,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       filterFn: null,
       showFilter: false,
       rowspan: 2,
-      colspan: 1,
+      colspan: 1 
     }, {
       name: 'status',
       showSort: true,
@@ -363,8 +363,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   parserPercent = (value: string): string => value.replace(' %', '');
 
   ngOnInit(): void {
-    console.log(`webClientConfigurationService.getWebClientConfiguration().tabDisplayConfiguration: 
-       ${JSON.stringify(this.webClientConfigurationService.getWebClientConfiguration().tabDisplayConfiguration["work-order.work-order.work-order.delivered-inventory"])}`);
+    // console.log(`webClientConfigurationService.getWebClientConfiguration().tabDisplayConfiguration: 
+    //   ${JSON.stringify(this.webClientConfigurationService.getWebClientConfiguration().tabDisplayConfiguration["work-order.work-order.work-order.delivered-inventory"])}`);
     this.titleService.setTitle(this.i18n.fanyi('menu.main.work-order.work-order'));
     // initiate the search form
     this.searchForm = this.fb.group({

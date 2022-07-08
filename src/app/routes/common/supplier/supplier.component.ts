@@ -1,6 +1,7 @@
 import { formatDate } from '@angular/common';
 import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzInputDirective } from 'ng-zorro-antd/input';
@@ -181,6 +182,7 @@ export class CommonSupplierComponent implements OnInit {
     private supplierService: SupplierService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
+    private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
   ) { }
 
@@ -188,6 +190,12 @@ export class CommonSupplierComponent implements OnInit {
     this.searchForm = this.fb.group({
       name: [null], 
     }); 
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.name) {
+        this.searchForm!.controls.name.setValue(params.name);
+        this.search();
+      }
+    });
   }
   resetForm(): void {
     this.searchForm.reset();
