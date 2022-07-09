@@ -7,14 +7,17 @@
 
     <div nz-col [nzSpan]="12" [hidden]="isCollapse">
       <nz-form-item nzFlex>
-        <nz-form-label for="itemFamily" [nzSm]="3" [nzXs]="3">
+        <nz-form-label for="itemFamily"  [nzSpan]="6">
           {{ 'item-family' | i18n }}
         </nz-form-label>
-        <nz-select formControlName="itemFamily">
-          <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.description"
-            [nzValue]="itemFamily.name">
-          </nz-option>
-        </nz-select>
+        <nz-form-control [nzSpan]="14">
+
+          <nz-select formControlName="itemFamily">
+            <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.description"
+              [nzValue]="itemFamily.name">
+            </nz-option>
+          </nz-select>
+          </nz-form-control>
       </nz-form-item>
     </div>
     <div nz-col [nzSpan]="6" [hidden]="isCollapse">
