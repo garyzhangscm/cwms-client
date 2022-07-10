@@ -9,7 +9,10 @@ import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 
 import { CommonModule } from '../common/common.module';
 import { DirectivesModule } from '../directives/directives.module';
+import { InventoryModule } from '../inventory/inventory.module';
 import { UtilModule } from '../util/util.module';
+import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module';
+import { OutboundAllocationConfigurationMaintenanceComponent } from './allocation-configuration-maintenance/allocation-configuration-maintenance.component';
 import { OutboundAllocationConfigurationComponent } from './allocation-configuration/allocation-configuration.component';
 import { OutboundAllocationTransactionHistoryComponent } from './allocation-transaction-history/allocation-transaction-history.component';
 import { OutboundCartonComponent } from './carton/carton.component';
@@ -62,7 +65,8 @@ const COMPONENTS: Array<Type<void>> = [
   OutboundOrderActivityComponent,
   OutboundAllocationTransactionHistoryComponent,
   OutboundCompleteOrderComponent,
-  OutboundOutboundOrderPopupQueryComponent];
+  OutboundOutboundOrderPopupQueryComponent,
+  OutboundAllocationConfigurationMaintenanceComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
@@ -77,7 +81,9 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     UtilModule, 
     NzAutocompleteModule,
     GooglePlaceModule,
-    NzSkeletonModule 
+    NzSkeletonModule ,
+    InventoryModule,  
+    WarehouseLayoutModule,
   ],
   declarations: [
     ...COMPONENTS,

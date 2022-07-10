@@ -2,17 +2,21 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from '../auth/guard/auth.guard';
+import { OutboundAllocationConfigurationMaintenanceComponent } from './allocation-configuration-maintenance/allocation-configuration-maintenance.component';
 import { OutboundAllocationConfigurationComponent } from './allocation-configuration/allocation-configuration.component';
+import { OutboundAllocationTransactionHistoryComponent } from './allocation-transaction-history/allocation-transaction-history.component';
 import { OutboundCartonComponent } from './carton/carton.component';
 import { OutboundCartonizationConfigurationConfirmComponent } from './cartonization-configuration-confirm/cartonization-configuration-confirm.component';
 import { OutboundCartonizationConfigurationMaintenanceComponent } from './cartonization-configuration-maintenance/cartonization-configuration-maintenance.component';
 import { OutboundCartonizationConfigurationComponent } from './cartonization-configuration/cartonization-configuration.component';
 import { OutboundCartonizationComponent } from './cartonization/cartonization.component';
+import { OutboundCompleteOrderComponent } from './complete-order/complete-order.component';
 import { OutboundGridMaintenanceComponent } from './grid-maintenance/grid-maintenance.component';
 import { OutboundGridComponent } from './grid/grid.component';
 import { OutboundOrderActivityComponent } from './order-activity/order-activity.component';
 import { OutboundOrderMaintenanceComponent } from './order-maintenance/order-maintenance.component';
 import { OutboundOrderComponent } from './order/order.component';
+import { OutboundOutboundOrderPopupQueryComponent } from './outbound-order-popup-query/outbound-order-popup-query.component';
 import { OutboundPickConfirmComponent } from './pick-confirm/pick-confirm.component';
 import { OutboundPickListComponent } from './pick-list/pick-list.component';
 import { OutboundPickComponent } from './pick/pick.component';
@@ -24,9 +28,6 @@ import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
-import { OutboundAllocationTransactionHistoryComponent } from './allocation-transaction-history/allocation-transaction-history.component';
-import { OutboundCompleteOrderComponent } from './complete-order/complete-order.component';
-import { OutboundOutboundOrderPopupQueryComponent } from './outbound-order-popup-query/outbound-order-popup-query.component';
 
 const routes: Routes = [
   { path: 'order', component: OutboundOrderComponent, canActivate: [AuthGuard]  },
@@ -56,7 +57,8 @@ const routes: Routes = [
   { path: 'order-activity', component: OutboundOrderActivityComponent },
   { path: 'allocation-transaction-history', component: OutboundAllocationTransactionHistoryComponent },
   { path: 'complete-order', component: OutboundCompleteOrderComponent },
-  { path: 'outbound-order-popup-query', component: OutboundOutboundOrderPopupQueryComponent }];
+  { path: 'outbound-order-popup-query', component: OutboundOutboundOrderPopupQueryComponent },
+  { path: 'allocation-configuration/maintenance', component: OutboundAllocationConfigurationMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

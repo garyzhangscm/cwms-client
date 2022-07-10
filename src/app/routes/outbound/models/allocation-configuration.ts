@@ -1,3 +1,4 @@
+import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { Item } from '../../inventory/models/item';
 import { ItemFamily } from '../../inventory/models/item-family';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
@@ -8,30 +9,34 @@ import { AllocationConfigurationType } from './allocation-configuration-type.enu
 import { PickableUnitOfMeasure } from './pickable-unit-of-measure';
 
 export interface AllocationConfiguration {
-  id: number;
-  sequence: number;
-
-  itemId: number;
-  item: Item;
-
+  id?: number;
+  sequence?: number;
+  type?: AllocationConfigurationType;
   warehouseId: number;
-  warehouse: Warehouse;
+  warehouse?: Warehouse;
 
-  itemFamilyId: number;
-  itemFamily: ItemFamily;
 
-  type: AllocationConfigurationType;
+  itemId?: number;
+  item?: Item;
 
-  locationId: number;
-  location: WarehouseLocation;
 
-  locationGroupId: number;
-  locationGroup: LocationGroup;
+  itemFamilyId?: number;
+  itemFamily?: ItemFamily;
 
-  locationGroupTypeId: number;
-  locationGroupType: LocationGroupType;
+  inventoryStatusId?: number;
+  inventoryStatus?: InventoryStatus;
 
-  pickableUnitOfMeasures: PickableUnitOfMeasure[];
+  locationId?: number;
+  location?: WarehouseLocation;
 
-  allocationStrategy: string;
+  locationGroupId?: number;
+  locationGroup?: LocationGroup;
+
+  locationGroupTypeId?: number;
+  locationGroupType?: LocationGroupType;
+
+  pickableUnitOfMeasures?: PickableUnitOfMeasure[];
+
+
+  allocationStrategy?: string;
 }

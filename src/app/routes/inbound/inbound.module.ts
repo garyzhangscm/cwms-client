@@ -12,6 +12,7 @@ import { OutboundModule } from '../outbound/outbound.module';
 import { UtilModule } from '../util/util.module';
 import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module';
 import { InboundCustomerReturnOrderMaintenanceComponent } from './customer-return-order-maintenance/customer-return-order-maintenance.component';
+import { InboundCustomerReturnReceiveComponent } from './customer-return-receive/customer-return-receive.component';
 import { InboundCustomerReturnComponent } from './customer-return/customer-return.component';
 import { InboundInboundQcConfigurationMaintenanceComponent } from './inbound-qc-configuration-maintenance/inbound-qc-configuration-maintenance.component';
 import { InboundInboundQcConfigurationComponent } from './inbound-qc-configuration/inbound-qc-configuration.component';
@@ -22,7 +23,6 @@ import { InboundPutawayConfigurationComponent } from './putaway-configuration/pu
 import { InboundReceiptConfirmComponent } from './receipt-confirm/receipt-confirm.component';
 import { InboundReceiptMaintenanceComponent } from './receipt-maintenance/receipt-maintenance.component';
 import { InboundReceiptComponent } from './receipt/receipt.component';
-import { InboundCustomerReturnReceiveComponent } from './customer-return-receive/customer-return-receive.component';
 
 const COMPONENTS: Array<Type<void>> = [
   InboundReceiptComponent, InboundReceiptMaintenanceComponent, InboundReceiptConfirmComponent,

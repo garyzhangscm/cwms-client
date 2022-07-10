@@ -1,8 +1,11 @@
+import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzModalService } from 'ng-zorro-antd/modal';
+
 import { EmergencyReplenishmentConfiguration } from '../../inventory/models/emergency-replenishment-configuration';
 import { ItemFamily } from '../../inventory/models/item-family';
 import { ItemFamilyService } from '../../inventory/services/item-family.service';
@@ -33,7 +36,7 @@ export class OutboundAllocationConfigurationComponent implements OnInit {
       name: 'type',
       showSort: true,
       sortOrder: null,
-      sortFn: (a: AllocationConfiguration, b: AllocationConfiguration) => this.utilService.compareNullableString(a.type.toString(), b.type.toString()),
+      sortFn: (a: AllocationConfiguration, b: AllocationConfiguration) => this.utilService.compareNullableString(a.type, b.type),
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -120,7 +123,8 @@ export class OutboundAllocationConfigurationComponent implements OnInit {
   searchForm!: FormGroup;
 
   searching = false;
-
+  isSpinning = false;
+  searchResult = '';
   // Table data for display
   listOfAllConfigurations: AllocationConfiguration[] = [];
   listOfDisplayConfigurations: AllocationConfiguration[] = [];
@@ -141,6 +145,7 @@ export class OutboundAllocationConfigurationComponent implements OnInit {
     private modalService: NzModalService,
     private titleService: TitleService,
     private utilService: UtilService,
+    private activatedRoute: ActivatedRoute
   ) { }
 
   resetForm(): void {
@@ -148,12 +153,27 @@ export class OutboundAllocationConfigurationComponent implements OnInit {
     this.listOfAllConfigurations = [];
     this.listOfDisplayConfigurations = [];
   }
-  search(): void {
-    this.searching = true;
-    this.allocationConfigurationService.getAllocationConfiguration().subscribe(configurationRes => {
-      this.listOfAllConfigurations = configurationRes;
-      this.listOfDisplayConfigurations = configurationRes;
-      this.searching = false;
+  search(sequence?: number): void {
+    this.isSpinning = true;
+    this.searchResult = '';
+    this.allocationConfigurationService.getAllocationConfigurations(
+      sequence
+    ).subscribe({
+      next: (configurationRes) => {
+
+        this.listOfAllConfigurations = configurationRes;
+        this.listOfDisplayConfigurations = configurationRes;
+        this.isSpinning = false;
+        this.searchResult = this.i18n.fanyi('search_result_analysis', {
+          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+          rowCount: configurationRes.length,
+        });
+      }, 
+      error: () => {
+        
+        this.searchResult = '';
+        this.isSpinning = false;
+      }
     });
   }
 
@@ -165,6 +185,13 @@ export class OutboundAllocationConfigurationComponent implements OnInit {
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.allocation-configuration'));
     this.initSearchForm();
+
+    
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.sequence) { 
+        this.search(params.sequence);
+      } 
+    }); 
   }
 
   initSearchForm(): void {

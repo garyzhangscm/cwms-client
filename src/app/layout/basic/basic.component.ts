@@ -10,7 +10,7 @@ import { CompanyService } from 'src/app/routes/warehouse-layout/services/company
 import { WarehouseService } from 'src/app/routes/warehouse-layout/services/warehouse.service';
 
 @Component({
-  selector: 'layout-basic',
+  selector: 'layout-basic', 
   template: `
     <layout-default [options]="options" [asideUser]="asideUserTpl" [content]="contentTpl">
       
