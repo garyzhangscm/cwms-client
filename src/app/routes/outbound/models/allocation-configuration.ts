@@ -5,8 +5,8 @@ import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { LocationGroupType } from '../../warehouse-layout/models/location-group-type';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
-import { AllocationConfigurationType } from './allocation-configuration-type.enum';
-import { PickableUnitOfMeasure } from './pickable-unit-of-measure';
+import { AllocationConfigurationPickableUnitOfMeasure } from './allocation-configuration-pickable-unit-of-measure';
+import { AllocationConfigurationType } from './allocation-configuration-type.enum'; 
 
 export interface AllocationConfiguration {
   id?: number;
@@ -35,7 +35,7 @@ export interface AllocationConfiguration {
   locationGroupTypeId?: number;
   locationGroupType?: LocationGroupType;
 
-  pickableUnitOfMeasures?: PickableUnitOfMeasure[];
+  allocationConfigurationPickableUnitOfMeasures?: AllocationConfigurationPickableUnitOfMeasure[];
 
 
   allocationStrategy?: string;

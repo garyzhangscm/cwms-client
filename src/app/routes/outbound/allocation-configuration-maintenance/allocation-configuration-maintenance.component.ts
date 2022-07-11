@@ -18,8 +18,7 @@ import { LocationGroupService } from '../../warehouse-layout/services/location-g
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { AllocationConfiguration } from '../models/allocation-configuration';
-import { AllocationConfigurationType } from '../models/allocation-configuration-type.enum';
-import { PickableUnitOfMeasure } from '../models/pickable-unit-of-measure';
+import { AllocationConfigurationType } from '../models/allocation-configuration-type.enum'; 
 import { AllocationConfigurationService } from '../services/allocation-configuration.service';
 
 @Component({
@@ -75,26 +74,36 @@ export class OutboundAllocationConfigurationMaintenanceComponent implements OnIn
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.id) { 
+        this.isSpinning = true;
         this.allocationConfigurationService.getAllocationConfiguration(params.id)
-          .subscribe(allocationConfiguration => {
-            this.currentAllocationConfiguration = allocationConfiguration;
+          .subscribe(
+          {
 
-            this.newAllocationConfiguration = false;
-            this.selectedPickableUnitOfMeasures=[];
-            this.currentAllocationConfiguration.pickableUnitOfMeasures?.forEach(
-              pickableUnitOfMeasure => {
-                let matchedUnitOfMeasure = this.validUnitOfMeasures.find(
-                  unitOfMeasure => unitOfMeasure.id === pickableUnitOfMeasure.unitOfMeasureId
-                );
-                if (matchedUnitOfMeasure) {
+            next: (allocationConfiguration) => {
+              this.currentAllocationConfiguration = allocationConfiguration;
 
-                  this.selectedPickableUnitOfMeasures = [...this.selectedPickableUnitOfMeasures, 
-                    matchedUnitOfMeasure];
-                }
+              this.newAllocationConfiguration = false;
+              this.selectedPickableUnitOfMeasures=[];
+              this.currentAllocationConfiguration.allocationConfigurationPickableUnitOfMeasures?.forEach(
+                pickableUnitOfMeasure => {
+                  let matchedUnitOfMeasure = this.validUnitOfMeasures.find(
+                    unitOfMeasure => unitOfMeasure.id === pickableUnitOfMeasure.unitOfMeasureId
+                  );
+                  if (matchedUnitOfMeasure) {
+  
+                    this.selectedPickableUnitOfMeasures = [...this.selectedPickableUnitOfMeasures, 
+                      matchedUnitOfMeasure];
+                  }
+              });
+              
+              this.isSpinning = false;
+            }, 
+            error: () => {
+              this.isSpinning = false;
             }
-            )
-            
-          });
+
+          })
+          
       }
       else {
         
@@ -168,18 +177,18 @@ loadUnitOfMeasure() {
   }
 
   setupPickableUnitOfMeasure() {
-    if (!this.currentAllocationConfiguration.pickableUnitOfMeasures) {
-      this.currentAllocationConfiguration.pickableUnitOfMeasures = [];
+    if (!this.currentAllocationConfiguration.allocationConfigurationPickableUnitOfMeasures) {
+      this.currentAllocationConfiguration.allocationConfigurationPickableUnitOfMeasures = [];
     }
     // add the unit of measure to the configuration, if it doesn't exists 
     // yet
     this.selectedPickableUnitOfMeasures.forEach(
       unitOfMeasure => {
-        if (!this.currentAllocationConfiguration.pickableUnitOfMeasures!.some(
+        if (!this.currentAllocationConfiguration.allocationConfigurationPickableUnitOfMeasures!.some(
           pickableUnitOfMeasure => pickableUnitOfMeasure.unitOfMeasure.id === unitOfMeasure.id
         )) {
-          this.currentAllocationConfiguration.pickableUnitOfMeasures = [
-            ...this.currentAllocationConfiguration.pickableUnitOfMeasures!, 
+          this.currentAllocationConfiguration.allocationConfigurationPickableUnitOfMeasures = [
+            ...this.currentAllocationConfiguration.allocationConfigurationPickableUnitOfMeasures!, 
             {
               
               unitOfMeasureId: unitOfMeasure.id!,
@@ -195,8 +204,8 @@ loadUnitOfMeasure() {
     );
     
     // remove the unit of measure to the configuration, if it  no long exists 
-    this.currentAllocationConfiguration.pickableUnitOfMeasures = 
-    this.currentAllocationConfiguration.pickableUnitOfMeasures.filter(
+    this.currentAllocationConfiguration.allocationConfigurationPickableUnitOfMeasures = 
+    this.currentAllocationConfiguration.allocationConfigurationPickableUnitOfMeasures.filter(
       pickableUnitOfMeasure => this.selectedPickableUnitOfMeasures.some(
         unitOfMeasure => unitOfMeasure.id === pickableUnitOfMeasure.unitOfMeasureId
       )
@@ -210,9 +219,9 @@ loadUnitOfMeasure() {
       this.allocationConfigurationService.addAllocationConfiguration(this.currentAllocationConfiguration)
         .subscribe({
           next: (allocationConfigurationRes) => {
-            this.isSpinning = false;
             this.messageService.success(this.i18n.fanyi('message.save.complete'));
             setTimeout(() => {
+              this.isSpinning = false;
               this.router.navigateByUrl(`/outbound/allocation-configuration?sequence=${allocationConfigurationRes.sequence}`);
             }, 2500);
           },
@@ -226,10 +235,10 @@ loadUnitOfMeasure() {
 
       this.allocationConfigurationService.changeAllocationConfiguration(this.currentAllocationConfiguration)
         .subscribe({
-          next: (allocationConfigurationRes) => {
-            this.isSpinning = false;
+          next: (allocationConfigurationRes) => { 
             this.messageService.success(this.i18n.fanyi('message.save.complete'));
             setTimeout(() => {
+              this.isSpinning = false;
               this.router.navigateByUrl(`/outbound/allocation-configuration?sequence=${allocationConfigurationRes.sequence}`);
             }, 2500);
           },

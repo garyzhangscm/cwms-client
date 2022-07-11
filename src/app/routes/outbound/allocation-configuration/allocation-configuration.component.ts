@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 import { EmergencyReplenishmentConfiguration } from '../../inventory/models/emergency-replenishment-configuration';
@@ -145,6 +146,7 @@ export class OutboundAllocationConfigurationComponent implements OnInit {
     private modalService: NzModalService,
     private titleService: TitleService,
     private utilService: UtilService,
+    private messageService: NzMessageService,
     private activatedRoute: ActivatedRoute
   ) { }
 
@@ -204,5 +206,19 @@ export class OutboundAllocationConfigurationComponent implements OnInit {
     this.itemFamilyService.loadItemFamilies().subscribe((itemFamilyRes: ItemFamily[]) => {
       this.itemFamilies = itemFamilyRes;
     });
+  }
+  removeAllocationConfiguration(allocationConfiguration: AllocationConfiguration) {
+    this.isSpinning = true;
+    this.allocationConfigurationService.removeAllocationConfiguration(allocationConfiguration)
+    .subscribe({
+      next: () => {
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        setTimeout(() => {
+          this.isSpinning = false; 
+          this.search();
+        }, 2500);
+      }, 
+      error: () => this.isSpinning = false
+    })
   }
 }

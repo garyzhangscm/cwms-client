@@ -51,7 +51,7 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #rowSelectionTable nzShowSizeChanger nzShowPagination
+  <nz-table   #rowSelectionTable nzShowPagination
     [nzData]="listOfAllConfigurations">
     <thead>
       <tr>
@@ -62,12 +62,14 @@
           [nzShowFilter]="column.showFilter">
           {{ column.name | i18n }}
         </th>
+        <th width="20px">
+          {{ 'action' | i18n }}
+        </th>
 
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of rowSelectionTable.data">
-        <td>{{ data.id! }}</td>
+      <tr *ngFor="let data of rowSelectionTable.data"> 
         <td>{{ data.sequence }}</td>
         <td>{{ data.type }}</td>
         <td>{{ data.item?.name }}</td>
@@ -80,10 +82,29 @@
         <td>
 
           <ul>
-            <li *ngFor="let pickableUnitOfMeasure of data.pickableUnitOfMeasures">
+            <li *ngFor="let pickableUnitOfMeasure of data.allocationConfigurationPickableUnitOfMeasures">
               {{ pickableUnitOfMeasure.unitOfMeasure?.name }}
             </li>
           </ul>
+        </td>
+        <td width="20px">
+          <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+          {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu>
+              <!--  allow the user to assign the production line only when
+              the work order is not start yet
+              -->
+              <li nz-menu-item >                  
+                <a  routerLink="/outbound/allocation-configuration/maintenance" routerLinkActive="active" [queryParams]="{id : data.id!}">{{
+                  'modify' | i18n }}</a> 
+              </li>
+               
+              <li nz-menu-item>
+                <a  (click)="removeAllocationConfiguration(data)">{{ 'remove' | i18n }}</a>
+              </li> 
+            </ul>
+          </nz-dropdown-menu>
         </td>
       </tr>
     </tbody>

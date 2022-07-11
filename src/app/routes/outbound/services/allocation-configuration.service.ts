@@ -75,4 +75,10 @@ export class AllocationConfigurationService {
 
     return this.http.post(url, allocationConfiguration).pipe(map(res => res.data));
   }
+  removeAllocationConfiguration(allocationConfiguration: AllocationConfiguration): Observable<AllocationConfiguration> {
+    let url = `outbound/allocation-configuration/${allocationConfiguration.id}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+   
+
+    return this.http.delete(url).pipe(map(res => res.data));
+  }
 }

@@ -228,7 +228,7 @@
             <nz-descriptions-item nzTitle="{{ 'location-group-type' | i18n}}">
                 {{currentAllocationConfiguration.locationGroupType?.name}}</nz-descriptions-item>  
                 <nz-descriptions-item nzTitle="{{ 'unit-of-measure' | i18n}}">
-                  <span *ngFor="let pickableUnitOfMeasure of currentAllocationConfiguration.pickableUnitOfMeasures">
+                  <span *ngFor="let pickableUnitOfMeasure of currentAllocationConfiguration.allocationConfigurationPickableUnitOfMeasures">
                     {{ pickableUnitOfMeasure.unitOfMeasure.name}} , 
                   </span> </nz-descriptions-item>  
       </nz-descriptions>

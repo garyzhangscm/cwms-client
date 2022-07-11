@@ -236,7 +236,15 @@ export class InventoryItemQueryPopupComponent implements OnInit {
   ) {
     this.warehouseConfigurationService.getWarehouseConfiguration().subscribe(
       {
-        next: (configRes) => this.threePartyLogisticsFlag = configRes.threePartyLogisticsFlag
+        next: (configRes) => {
+          if (configRes != null) {
+            this.threePartyLogisticsFlag = configRes.threePartyLogisticsFlag;
+          }
+          else {
+
+            this.threePartyLogisticsFlag = false;
+          }
+        }
       }
     )
    }
