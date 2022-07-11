@@ -156,13 +156,29 @@
         <td>{{ data.totalExpectedQuantity }}</td>
         <td>{{ data.totalReceivedQuantity }}</td>
         <td>
-          <a nz-button nz-type="primary" (click)="checkInReceipt(data)"
-            *ngIf="data.receiptStatus === receiptStatus.OPEN">
-            {{ 'receipt.check-in' | i18n }}</a>
-          <nz-divider nzType="vertical" *ngIf="data.receiptStatus === receiptStatus.OPEN"></nz-divider>
-          <a nz-button nz-type="primary" (click)="closeReceipt(data)"
-            *ngIf="data.receiptStatus !== receiptStatus.CLOSED">
-            {{ 'complete' | i18n }}</a>
+          
+            
+          <button *ngIf="data.receiptStatus !== receiptStatus.CLOSED"
+              nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+            {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu> 
+                <li nz-menu-item *ngIf="data.receiptStatus === receiptStatus.OPEN">                  
+                  
+                  <a   nz-type="primary" (click)="checkInReceipt(data)"
+                  >
+                  {{ 'receipt.check-in' | i18n }}</a>
+                </li>
+                <li nz-menu-item *ngIf="data.receiptStatus !== receiptStatus.CLOSED">                   
+                  
+                  <a   nz-type="primary" (click)="closeReceipt(data)"
+                  >
+                  {{ 'complete' | i18n }}</a>
+                </li> 
+                 
+              </ul>
+            </nz-dropdown-menu>
+             
         </td>
       </tr>
     </tbody>
