@@ -90,6 +90,31 @@ export class ReceiptLineService {
     
     return this.http.post(url).pipe(map(res => res.data));
   }
+  generatePrePrintLPNReportInBatch(receiptLineId: number, lpn: string, quantity?: number, count?: number, 
+    copies?: number, printerName?: string) : Observable<ReportHistory> {
+    
+    let url = `inbound/receipts/receipt-lines/${receiptLineId}/pre-print-lpn-report/batch?lpn=${lpn}`;
+    
+    if (count) {
+      url = `${url}&count=${count}`
+    }
+    else {      
+      url = `${url}&count=1`
+    }
+
+    if (quantity  && quantity > 0) {
+      url = `${url}&quantity=${quantity}`
+    }
+    if (copies) {
+      url = `${url}&copies=${copies}`
+    }
+    if (printerName) {
+      url = `${url}&printerName=${printerName}`
+    }
+    
+    
+    return this.http.post(url).pipe(map(res => res.data));
+  }
 
   recalculateQCQuantity(receiptLine: ReceiptLine, qcQuantity?: number, qcPercentage?: number) :  Observable<ReceiptLine> {
      

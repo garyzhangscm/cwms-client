@@ -263,10 +263,16 @@ export class CommonSupplierComponent implements OnInit {
         nzOkText: this.i18n.fanyi('confirm'),
         nzOkDanger: true,
         nzOnOk: () => {
-          this.supplierService.removeSuppliers(selectedSuppliers).subscribe(res => {
-            console.log('selected suppliers are removed');
-            this.refresh();
-          });
+          this.isSpinning = true;
+          this.supplierService.removeSuppliers(selectedSuppliers).subscribe({
+            next: () => {
+              console.log('selected suppliers are removed');
+              this.isSpinning = false;
+              this.refresh();
+
+            }, 
+            error: () => this.isSpinning = false
+          }) 
         },
         nzCancelText: this.i18n.fanyi('cancel'),
         nzOnCancel: () => console.log('Cancel'),

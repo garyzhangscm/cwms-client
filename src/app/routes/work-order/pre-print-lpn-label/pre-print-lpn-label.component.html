@@ -77,6 +77,13 @@
       <input nz-input  [(ngModel)]="labelCount" />
   
     </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'format' | i18n}}">
+      <nz-radio-group [(ngModel)]="documentFormat" >
+        <label nz-radio nzValue="label">{{'label' | i18n}}</label>
+        <label nz-radio nzValue="report">{{'report' | i18n}}</label>
+      </nz-radio-group>
+  
+    </nz-descriptions-item>
 
   </nz-descriptions>
 
@@ -85,7 +92,7 @@
     <cwms-common-print-button style='padding-left: 20px; '
       [defaultPhysicalCopyCount]=2
       (print)="printLPNLabels($event)"
-      (preview)="previewLPNLabel()">
+      (preview)="previewLPNLabel($event)">
     </cwms-common-print-button>
   </div>
   </nz-spin>

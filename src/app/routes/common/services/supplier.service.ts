@@ -80,7 +80,8 @@ export class SupplierService {
       supplierIds.push(supplier.id!);
     });
     const params = {
-      supplier_ids: supplierIds.join(','),
+      supplierIds: supplierIds.join(','),
+      warehouseId: this.warehouseService.getCurrentWarehouse().id
     };
     return this.http.delete('common/suppliers', params).pipe(map(res => res.data));
   }

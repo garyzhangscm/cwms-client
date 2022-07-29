@@ -1125,7 +1125,6 @@ export class OutboundOrderComponent implements OnInit {
       render: 'supplierColumn',
       iif: () => this.isChoose('supplier'), width: 150
     },
-
     {
       title: this.i18n.fanyi("shipToCustomer"),
       // renderTitle: 'customTitle',

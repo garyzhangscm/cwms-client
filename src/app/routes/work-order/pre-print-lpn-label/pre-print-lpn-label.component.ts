@@ -10,6 +10,7 @@ import { PrintPageSize } from '../../common/models/print-page-size.enum';
 import { PrintingService } from '../../common/services/printing.service';
 import { ReceiptLine } from '../../inbound/models/receipt-line';
 import { ReceiptLineService } from '../../inbound/services/receipt-line.service';
+import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { ReportType } from '../../report/models/report-type.enum';
 import { SystemControlledNumberService } from '../../util/services/system-controlled-number.service';
 import { ProductionLineAssignment } from '../models/production-line-assignment';
@@ -36,6 +37,7 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
 
   returnUrl = "";
   type = "";  
+  documentFormat = "label";
   
   constructor(private http: _HttpClient, 
     private workOrderService: WorkOrderService,
@@ -153,7 +155,14 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
       this.printWorkOrderLPNLabelInBatch(event, startLPN, quantity, labelCount);
     }
     else if (this.type === "receipt-line") {
-      this.printReceivingLPNLabelInBatch(event, startLPN, quantity, labelCount);
+      if (this.documentFormat === 'report') {
+
+        this.printReceivingLPNReportInBatch(event, startLPN, quantity, labelCount);
+      }
+      else {
+
+        this.printReceivingLPNLabelInBatch(event, startLPN, quantity, labelCount);
+      }
     }
   }
   
@@ -218,135 +227,68 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
         error: () => this.isSpinning = false
       })
   }
-  /**
-   *  
-  printLPNLabel(event: any, startLPN: string, quantity: number, remainingLabelCount: number) {
-    if (remainingLabelCount === 0) {
-      this.isSpinning = false;
-      this.messageService.success(this.i18n.fanyi("report.print.printed"));
+  printReceivingLPNReportInBatch(event: any, startLPN: string, quantity: number, labelCount: number) {
+    this.receiptLineService.generatePrePrintLPNReportInBatch(
+      this.currentReceiptLine!.id!, startLPN, quantity, labelCount, event.physicalCopyCount, event.printerName)
+      .subscribe({
+        next: (printResult) => {
+          // send the result to the printer
+          const printFileUrl
+            = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
+          console.log(`will print file: ${printFileUrl}`);
+          this.printingService.printRemoteFileByName(
+            "Receiving LPN Report",
+            printResult.fileName,
+            ReportType.RECEIVING_LPN_REPORT,
+            event.printerIndex,
+            event.printerName,
+            // event.physicalCopyCount,
+            1, // we will always only print one copy. If the user want to print multiple copies
+                // the paramter will be passed into the 'generate' command instead of the print command
+                // so that we will have labels printed in uncollated format, not collated format
+            PrintPageOrientation.Portrait,
+            PrintPageSize.Letter,
+            this.currentReceiptLine?.receiptNumber);
+          
+            this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi("report.print.printed"));
+            
+        }, 
+        error: () => this.isSpinning = false
+      })
+  }
+  
+  previewLPNLabel(event: any) {
+    // preview label is not support
+    if (this.documentFormat === 'label') {
+
+      this.messageService.error(this.i18n.fanyi("action-not-support"));
       return;
     }
-    
-    let lpn = "";
-    // if the user specify the lpn, then we will need to calculate from the LPN input by the user
-    // otherwise, we will get the lpn from the parameters
-    if (this.userSpecifyLPN) {
-      lpn = this.getNextLPNNumber(startLPN, this.labelCount - remainingLabelCount);
-    }
-    else {
-      lpn = startLPN;
-    }
-
-    console.log(`will print lpn label ${lpn}`)
-
-    // if the user specify the quantity, we will print the quantity on the label.
-    // otherwise, we will let the server side logic to decide which quantity will be printed on the label
-
-    let lpnQuantity = quantity > 0 ? this.quantity : undefined;
-    
-    if (this.type === "work-order") {
-
-      this.workOrderService.generatePrePrintLPNLabel(
-        this.currentWorkOrder!.id!, lpn, lpnQuantity, this.currentProductionLineAssignment.productionLine.name)
-        .subscribe({
-          next: (printResult) => {
-            // send the result to the printer
-            const printFileUrl
-              = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
-            console.log(`will print file: ${printFileUrl}`);
-            this.printingService.printRemoteFileByName(
-              "Production Line Assignment Label",
-              printResult.fileName,
-              ReportType.PRODUCTION_LINE_ASSIGNMENT_LABEL,
-              event.printerIndex,
-              event.printerName,
-              event.physicalCopyCount,
-              PrintPageOrientation.Portrait,
-              PrintPageSize.Letter,
-              this.currentProductionLineAssignment.productionLine.name);
-            if (remainingLabelCount === 1) {
-              // ok, this is the last one, 
-              this.isSpinning = false;
-              this.messageService.success(this.i18n.fanyi("report.print.printed")); 
-            }
-            else {
-  
-              // if the user specify the start lpn, then we will recursively call the 
-              // function by the same start lpn but reduce the remainingLabelCount parameter, 
-              // which will be used to get the current LPN.
-              // if we get the next lpn from the system, then we will get the next one again
-              // and pass into the function so that the next round of this function will use 
-              // it directly
-              if (this.userSpecifyLPN) {
-                this.printLPNLabel(event, startLPN, quantity, remainingLabelCount - 1);
-              }
-              else {
-                
-                this.systemControlledNumberService.getNextAvailableId(this.systemControlledNumberVariable).subscribe({
-                  next: (nextNumber) => {
-                    this.printLPNLabel(event, nextNumber, this.quantity, remainingLabelCount - 1); 
-                  }
-                })
-              }
-            }
-          }, 
-          error: () => this.isSpinning = false
-        })
-    }
-    else if (this.type === "receipt-line") {
+    this.isSpinning = true; 
+    if (this.labelCount === 0) {
       
-      this.receiptLineService.generatePrePrintLPNLabel(
-        this.currentReceiptLine!.id!, lpn, lpnQuantity)
-        .subscribe({
-          next: (printResult) => {
-            // send the result to the printer
-            const printFileUrl
-              = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
-            console.log(`will print file: ${printFileUrl}`);
-            this.printingService.printRemoteFileByName(
-              "Receiving LPN Label",
-              printResult.fileName,
-              ReportType.RECEIVING_LPN_LABEL,
-              event.printerIndex,
-              event.printerName,
-              event.physicalCopyCount,
-              PrintPageOrientation.Portrait,
-              PrintPageSize.Letter,
-              this.currentReceiptLine?.receiptNumber);
-            if (remainingLabelCount === 1) {
-              // ok, this is the last one, 
-              this.isSpinning = false;
-              this.messageService.success(this.i18n.fanyi("report.print.printed")); 
-            }
-            else {
+      this.messageService.error(this.i18n.fanyi("Label Count needs to be bigger than 0"));
+      this.isSpinning = false;
   
-              // if the user specify the start lpn, then we will recursively call the 
-              // function by the same start lpn but reduce the remainingLabelCount parameter, 
-              // which will be used to get the current LPN.
-              // if we get the next lpn from the system, then we will get the next one again
-              // and pass into the function so that the next round of this function will use 
-              // it directly
-              if (this.userSpecifyLPN) {
-                this.printLPNLabel(event, startLPN, quantity, remainingLabelCount - 1);
-              }
-              else {
-                
-                this.systemControlledNumberService.getNextAvailableId("work-order-lpn-number").subscribe({
-                  next: (nextNumber) => {
-                    this.printLPNLabel(event, nextNumber, this.quantity, remainingLabelCount - 1); 
-                  }
-                })
-              }
-            }
-          }, 
-          error: () => this.isSpinning = false
-        })
+      return;
     }
-      
-  }
-   */
-  previewLPNLabel() {
-    this.messageService.error(this.i18n.fanyi("action-not-support"));
+
+    this.receiptLineService.generatePrePrintLPNReportInBatch(
+      this.currentReceiptLine!.id!, this.startLPN, this.quantity, this.labelCount)
+      .subscribe(printResult => {
+        this.isSpinning = false;
+        sessionStorage.setItem("report_previous_page", `work-order/pre-print-lpn-label?receiptLineId=${this.currentReceiptLine?.id}`);
+        this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
+
+      },
+        () => {
+          this.isSpinning = false;
+        },
+
+      );
+
+
   }
 
 }

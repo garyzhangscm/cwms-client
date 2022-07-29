@@ -3,6 +3,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+
 import { PrintableBarcode } from '../../common/models/printable-barcode';
 import { PrintingService } from '../../common/services/printing.service';
 import { ReportHistory } from '../../report/models/report-history';
@@ -151,7 +152,6 @@ export class CycleCountRequestService {
     )}`;
     return this.http.get(url).pipe(map(res => res.data));
   }
-
 
 
   printCycleCountSheet(batchId: string, cycleCountRequestIds: number[], locale?: string): Observable<ReportHistory> {

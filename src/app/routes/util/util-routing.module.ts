@@ -12,6 +12,8 @@ import { UtilFileUploadComponent } from './file-upload/file-upload.component';
 import { UtilIconListComponent } from './icon-list/icon-list.component';
 import { UtilMenuComponent } from './menu/menu.component';
 import { UtilOrderQueryPopupComponent } from './order-query-popup/order-query-popup.component'; 
+import { UtilQuickbookAuthComponent } from './quickbook-auth/quickbook-auth.component';
+import { UtilQuickbookPermissionComponent } from './quickbook-permission/quickbook-permission.component';
 import { UtilRfAppVersionMaintenanceComponent } from './rf-app-version-maintenance/rf-app-version-maintenance.component';
 import { UtilRfAppVersionComponent } from './rf-app-version/rf-app-version.component';
 import { UtilRfMaintenanceComponent } from './rf-maintenance/rf-maintenance.component';
@@ -46,7 +48,9 @@ const routes: Routes = [
   { path: 'company-menu', component: UtilCompanyMenuComponent },
   { path: 'data-transfer', component: UtilDataTransferComponent },
   { path: 'work-order-query-popup', component: UtilWorkOrderQueryPopupComponent },
-  { path: 'order-query-popup', component: UtilOrderQueryPopupComponent }];
+  { path: 'order-query-popup', component: UtilOrderQueryPopupComponent },
+  { path: 'quickbook-auth', component: UtilQuickbookAuthComponent },
+  { path: 'quickbook-permission', component: UtilQuickbookPermissionComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

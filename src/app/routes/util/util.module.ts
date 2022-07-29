@@ -31,6 +31,8 @@ import { UtilTestDataInitComponent } from './test-data-init/test-data-init.compo
 import { UtilTesterComponent } from './tester/tester.component';
 import { UtilRoutingModule } from './util-routing.module';
 import { UtilWorkOrderQueryPopupComponent } from './work-order-query-popup/work-order-query-popup.component';
+import { UtilQuickbookAuthComponent } from './quickbook-auth/quickbook-auth.component';
+import { UtilQuickbookPermissionComponent } from './quickbook-permission/quickbook-permission.component';
 
 const COMPONENTS: Array<Type<void>> = [
   UtilFileUploadComponent,  
@@ -53,7 +55,9 @@ const COMPONENTS: Array<Type<void>> = [
   UtilCompanyMenuComponent,
   UtilDataTransferComponent,
   UtilWorkOrderQueryPopupComponent,
-  UtilOrderQueryPopupComponent];
+  UtilOrderQueryPopupComponent,
+  UtilQuickbookAuthComponent,
+  UtilQuickbookPermissionComponent];
   
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
