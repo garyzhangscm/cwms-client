@@ -1,4 +1,5 @@
 import { Item } from '../../inventory/models/item';
+import { PurchaseOrderLine } from './purchase-order-line';
 
 export interface ReceiptLine {
   id?: number;
@@ -15,4 +16,6 @@ export interface ReceiptLine {
   qcQuantity?: number;
   qcPercentage?: number;
   qcQuantityRequested?: number;
+
+  purchaseOrderLine?: PurchaseOrderLine;
 }

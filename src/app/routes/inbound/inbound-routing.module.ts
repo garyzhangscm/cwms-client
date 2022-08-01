@@ -13,6 +13,7 @@ import { InboundReceiptConfirmComponent } from './receipt-confirm/receipt-confir
 import { InboundReceiptMaintenanceComponent } from './receipt-maintenance/receipt-maintenance.component';
 import { InboundReceiptComponent } from './receipt/receipt.component';
 import { InboundCustomerReturnReceiveComponent } from './customer-return-receive/customer-return-receive.component';
+import { InboundPurchaseOrderComponent } from './purchase-order/purchase-order.component';
 
 const routes: Routes = [
 
@@ -26,7 +27,8 @@ const routes: Routes = [
   { path: 'inbound-qc-configuration/maintenance', component: InboundInboundQcConfigurationMaintenanceComponent },
   { path: 'customer-return', component: InboundCustomerReturnComponent },
   { path: 'customer-return-order/maintenance', component: InboundCustomerReturnOrderMaintenanceComponent },
-  { path: 'customer-return-receive', component: InboundCustomerReturnReceiveComponent }];
+  { path: 'customer-return-receive', component: InboundCustomerReturnReceiveComponent },
+  { path: 'purchase-order', component: InboundPurchaseOrderComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
