@@ -1,12 +1,12 @@
+import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
-import { formatDate } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ColumnItem } from '../../util/models/column-item';
@@ -185,7 +185,6 @@ export class OutboundShipmentComponent implements OnInit {
   listOfDisplayShipments: Shipment[] = [];
 
 
-
   // list of record with allocation in process
   mapOfAllocationInProcessId: { [key: string]: boolean } = {};
 
@@ -312,12 +311,13 @@ export class OutboundShipmentComponent implements OnInit {
     this.indeterminate = this.listOfDisplayShipments!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
   }
 
-  onExpandChange(id: number, checked: boolean): void {
+  onExpandChange(shipment: Shipment, checked: boolean): void {
     if (checked) {
-      this.expandSet.add(id);
+      this.expandSet.add(shipment.id);
     } else {
-      this.expandSet.delete(id);
+      this.expandSet.delete(shipment.id);
     }
+    this.showShipmentDetails(shipment);
   }
 
 

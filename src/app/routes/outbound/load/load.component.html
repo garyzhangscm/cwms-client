@@ -1,0 +1,136 @@
+<page-header></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    <!-- Form to query the result  -->
+    <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label for="number" [nzSpan]="8">
+              {{ 'number' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <input nz-input name="number" id="number" formControlName="number" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label for="status" [nzSpan]="8">
+              {{ 'status' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <nz-select formControlName="status">
+                 <nz-option
+                     *ngFor="let status of trailerAppointmentStatus  | keys"
+                      [nzValue]="status.key"
+                      [nzLabel]="status.key"
+                        ></nz-option>
+                 </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+         
+      </div> 
+      <div nz-row [nzGutter]="24">
+    
+
+        <div nz-col [nzSpan]="12" >
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="6" nzFor="dateTimeRanger">
+              {{ 'complete-date-time-range' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18">
+              <nz-range-picker [nzShowTime]="{ nzHideDisabledOptions: true }" nzFormat="yyyy-MM-dd HH:mm:ss"
+                formControlName="dateTimeRanger" name="dateTimeRanger">
+              </nz-range-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+    
+        <div nz-col [nzSpan]="12" >
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="6" nzFor="date">
+              {{ 'date' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18">
+              <nz-date-picker formControlName="date" name="date"></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      
+      <div nz-row>
+        <div nz-col [nzSpan]="24" class="search-area">
+          <button nz-button [nzType]="'primary'" (click)="search()">
+            {{ 'search' | i18n }}
+          </button>
+          <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+        </div>
+      </div>
+    </form>
+  
+    <!-- Table to Display the result  -->
+  
+    <div class="search-result-list"> 
+      
+      <st #st [data]="listOfAllTrailerAppointments" [columns]="columns"   [expand]="expand" expandRowByClick expandAccordion>
+     
+        <ng-template st-row="completedTimeColumn" let-item let-index="index"> 
+              
+            {{ item.completedTime  | date:'M/d/yy, h:mm:ss a':'+0000'}} 
+        </ng-template>
+        <!--   order details  -->
+        <ng-template #expand let-item let-index="index" >
+          
+          <nz-tabset  >
+            <nz-tab nzTitle=" {{ 'stop' | i18n }}">
+              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="item.stops" nzSize="middle"
+                [nzShowPagination]="false" #stopTable>
+                <thead>
+                  <th>
+                    {{ 'sequence' | i18n }}
+                  </th>
+                   
+                </thead>
+                <tbody>
+                  <tr *ngFor="let stop of stopTable.data">
+                    <td>{{ stop.sequence }}</td>  
+                  </tr>
+                </tbody>
+              </nz-table>
+            </nz-tab> 
+          </nz-tabset>
+        </ng-template>
+  
+  
+        <!--   action colummn  -->  
+        <ng-template st-row="actionColumn" let-item let-index="index"> 
+          
+          <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+            {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu> 
+  
+              <li nz-menu-item *ngIf="isLoadReadForCompletoade(item)">
+                <a  (click)="completeLoad(item)">{{ 'complete' | i18n }}</a>
+              </li> 
+            </ul>
+          </nz-dropdown-menu>
+        </ng-template>
+           
+      </st>
+      
+    <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
+      {{searchResult}}
+    </div> 
+    </div> 
+  </nz-spin>
+  
+  
+  <ng-template #tableFoot>
+    <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+      {{searchResult}}
+    </div>
+  </ng-template>
+  

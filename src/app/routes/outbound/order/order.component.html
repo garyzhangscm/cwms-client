@@ -246,7 +246,9 @@
                       {{ 'INVENTORY-STATUS-' + orderLine.inventoryStatus?.name | i18n}}
                     </span>
                     </td>
-                  <td>{{ 'ALLOCATION-STRATEGY-TYPE-' + orderLine.allocationStrategyType | i18n}}</td>
+                  <td><span *ngIf="orderLine.allocationStrategyType != null">
+                    {{ 'ALLOCATION-STRATEGY-TYPE-' + orderLine.allocationStrategyType | i18n}}
+                  </span></td>
                 </tr>
               </tbody>
             </nz-table>
