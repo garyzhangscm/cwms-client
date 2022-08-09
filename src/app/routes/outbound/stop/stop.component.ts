@@ -1,6 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { formatDate } from '@angular/common';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { _HttpClient } from '@delon/theme';
+import { ActivatedRoute } from '@angular/router';
+import { I18NService } from '@core';
+import { STComponent, STColumn, STChange } from '@delon/abc/st';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { NzMessageService } from 'ng-zorro-antd/message';
+
+import { TrailerAppointment } from '../../transportation/models/trailer-appointment';
+import { TrailerAppointmentStatus } from '../../transportation/models/trailer-appointment-status.enum';
+import { TrailerAppointmentType } from '../../transportation/models/trailer-appointment-type.enum';
+import { Shipment } from '../models/shipment';
+import { Stop } from '../models/stop';
+import { StopStatus } from '../models/stop-status.enum';
+import { StopService } from '../services/stop.service';
 
 interface ItemData {
   id: number;
@@ -16,88 +29,183 @@ interface ItemData {
 })
 export class OutboundStopComponent implements OnInit {
 
-  constructor(private http: _HttpClient, private fb: FormBuilder) { }
-
-  // Form related data and functions
+   
   searchForm!: FormGroup;
-  controlArray: Array<{ index: number; show: boolean }> = [];
-  isCollapse = true;
+  searchResult = '';
+  listOfAllStops: Stop[] = [];
+  isSpinning = false; 
+   
 
-
-  // Table related data and functions
-  listOfSelection = [
+  @ViewChild('st', { static: true })
+  st!: STComponent;
+  columns: STColumn[] = [ 
+    { title: this.i18n.fanyi("number"), index: 'number'  },   
+    { title: this.i18n.fanyi("sequence"), index: 'sequence'  },  
+    { title: this.i18n.fanyi("status"), index: 'status'  },  
+    { title: this.i18n.fanyi("contactor.firstname"), index: 'contactorFirstname'  },  
+    { title: this.i18n.fanyi("contactor.lastname"), index: 'contactorLastname'  },  
+    { title: this.i18n.fanyi("country"), index: 'country'  },  
+    { title: this.i18n.fanyi("state"), index: 'state'  },  
+    { title: this.i18n.fanyi("county"), index: 'county'  },  
+    { title: this.i18n.fanyi("city"), index: 'city'  },  
+    { title: this.i18n.fanyi("address.line1"), index: 'address.line1'  },  
+    { title: this.i18n.fanyi("address.line2"), index: 'address.line2'  },  
+    { title: this.i18n.fanyi("postcode"), index: 'postcode'  },  
+         
     {
-      text: 'Select All Row',
-      onSelect: () => {
-        this.checkAll(true);
-      }
-    },
-    {
-      text: 'Select Odd Row',
-      onSelect: () => {
-        this.listOfDisplayData.forEach((data, index) => (this.mapOfCheckedId[data.id!] = index % 2 !== 0));
-        this.refreshStatus();
-      }
-    },
-    {
-      text: 'Select Even Row',
-      onSelect: () => {
-        this.listOfDisplayData.forEach((data, index) => (this.mapOfCheckedId[data.id!] = index % 2 === 0));
-        this.refreshStatus();
-      }
-    }
+      title: this.i18n.fanyi("action"), fixed: 'right',width: 210, 
+      render: 'actionColumn',
+    }, 
+   
   ];
-  isAllDisplayDataChecked = false;
-  isIndeterminate = false;
-  listOfDisplayData: ItemData[] = [];
-  listOfAllData: ItemData[] = [];
-  mapOfCheckedId: { [key: string]: boolean } = {};
 
-  toggleCollapse(): void {
-    this.isCollapse = !this.isCollapse;
-    this.controlArray.forEach((c, index) => {
-      c.show = this.isCollapse ? index < 6 : true;
+  constructor(private http: _HttpClient, 
+    private stopService: StopService,
+    private titleService: TitleService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private messageService: NzMessageService,
+    private activatedRoute: ActivatedRoute, 
+    private fb: FormBuilder,) { }
+
+  ngOnInit(): void { 
+    this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.stop'));
+    // initiate the search form
+    this.searchForm = this.fb.group({
+      number: [null], 
+    });
+
+    // IN case we get the number passed in, refresh the display
+    // and show the order information
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.number) {
+        this.searchForm.controls.number.setValue(params.number);
+        this.search();
+      }
+    });
+  }
+  resetForm(): void {
+    this.searchForm.reset();
+    this.listOfAllStops = []; 
+
+  }
+  search() {
+    this.isSpinning = true;
+     
+
+    this.stopService.getStops(
+      this.searchForm.controls.number.value,   
+    ).subscribe(
+      {
+        next: (stopRes) => {
+          this.isSpinning = false;
+          this.searchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: stopRes.length,
+          });
+          
+          this.listOfAllStops = stopRes;  
+        },
+        error: () => {
+          this.isSpinning = false;
+          this.searchResult = '';
+        },
+      }
+    )
+
+  }
+
+  isStopReadForComplete(stop: Stop): boolean {
+    return stop.status === StopStatus.INPROCESS || 
+    stop.status === StopStatus.PLANNED 
+  }
+  isStopReadForAllocate(stop: Stop): boolean {
+    return stop.status === StopStatus.INPROCESS || 
+    stop.status === StopStatus.PLANNED 
+  }
+  
+  allocateStop(stop: Stop) {
+
+    this.isSpinning = true;
+    this.stopService.allocateStop(
+      stop.id!  
+    ).subscribe({
+      next: () => {
+
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.search();
+      },
+      error: () => {
+        this.isSpinning = false;
+        this.searchResult = '';
+      },
     });
   }
 
-  resetForm(): void {
-    this.searchForm.reset();
+  completeStop(stop: Stop) {
+
+    this.isSpinning = true;
+    this.stopService.completeStop(
+      stop.id!  
+    ).subscribe({
+      next: () => {
+
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.search();
+      },
+      error: () => {
+        this.isSpinning = false;
+        this.searchResult = '';
+      },
+    });
   }
 
-  currentPageDataChange($event: ItemData[]): void {
-    this.listOfDisplayData = $event;
-    this.refreshStatus();
-  }
-
-  refreshStatus(): void {
-    this.isAllDisplayDataChecked = this.listOfDisplayData.every(item => this.mapOfCheckedId[item.id]);
-    this.isIndeterminate =
-      this.listOfDisplayData.some(item => this.mapOfCheckedId[item.id]) && !this.isAllDisplayDataChecked;
-  }
-
-  checkAll(value: boolean): void {
-    this.listOfDisplayData.forEach(item => (this.mapOfCheckedId[item.id] = value));
-    this.refreshStatus();
-  }
-
-  ngOnInit(): void {
-    // initiate the form
-    this.searchForm = this.fb.group({});
-    for (let i = 0; i < 10; i++) {
-      this.controlArray.push({ index: i, show: i < 6 });
-      this.searchForm.addControl(`field${i}`, new FormControl());
+  
+  stopTableChanged(event: STChange) : void { 
+    console.log(`stopTableChanged, event.type: ${event.type} `);
+    if (event.type === 'expand' && event.expand.expand === true) {
+      
+       console.log(`start to call showTrailerAppointmentDetails`);
+      this.showStopDetails(event.expand);
     }
 
-    // initiate the data for table
-    for (let i = 0; i < 100; i++) {
-      this.listOfAllData.push({
-        id: i,
-        name: `Edward King ${i}`,
-        age: 32,
-        address: `London, Park Lane no. ${i}`
+  }
+  
+  showStopDetails(stop: Stop): void {  
+
+    this.isSpinning = true;
+
+    stop.shipments = this.calculateQuantities(stop.shipments); 
+    this.isSpinning = false;
+  }
+
+  
+  calculateQuantities(shipments: Shipment[]): Shipment[] {
+    shipments.forEach(shipment => {
+      const existingItemIds = new Set();
+      shipment.totalLineCount = shipment.shipmentLines.length;
+      shipment.totalItemCount = 0;
+
+      shipment.totalQuantity = 0;
+      shipment.totalOpenQuantity = 0;
+      shipment.totalInprocessQuantity = 0;
+      shipment.totalLoadedQuantity = 0;
+      shipment.totalShippedQuantity = 0;
+
+      shipment.shipmentLines.forEach(shipmentLine => {
+        shipment.totalQuantity! += shipmentLine.quantity;
+        shipment.totalOpenQuantity! += shipmentLine.openQuantity;
+        shipment.totalInprocessQuantity! += shipmentLine.inprocessQuantity;
+        shipment.totalLoadedQuantity! += shipmentLine.loadedQuantity;
+        shipment.totalShippedQuantity! += shipmentLine.shippedQuantity;
+        if (!existingItemIds.has(shipmentLine.orderLine.itemId)) {
+          existingItemIds.add(shipmentLine.orderLine.itemId);
+        }
       });
-    }
 
+      shipment.totalItemCount = existingItemIds.size;
+    });
+    return shipments;
   }
-
 }

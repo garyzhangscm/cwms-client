@@ -74,7 +74,8 @@
   
     <div class="search-result-list"> 
       
-      <st #st [data]="listOfAllTrailerAppointments" [columns]="columns"   [expand]="expand" expandRowByClick expandAccordion>
+      <st #st [data]="listOfAllTrailerAppointments" [columns]="columns"   
+      [expand]="expand" expandRowByClick expandAccordion (change)="trailerAppointmentTableChanged($event)">
      
         <ng-template st-row="completedTimeColumn" let-item let-index="index"> 
               
@@ -85,17 +86,120 @@
           
           <nz-tabset  >
             <nz-tab nzTitle=" {{ 'stop' | i18n }}">
-              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="item.stops" nzSize="middle"
+              <nz-table [nzScroll]="{ x: 'true', y: 'true' }"   [nzData]="item.stops" nzSize="middle"
                 [nzShowPagination]="false" #stopTable>
                 <thead>
                   <th>
                     {{ 'sequence' | i18n }}
+                  </th>
+                  <th>{{ 'number' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'contactor.firstname' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'contactor.lastname' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'country' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'state' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'county' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'city' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'address.line1' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'address.line2' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'postcode' | i18n }}
                   </th>
                    
                 </thead>
                 <tbody>
                   <tr *ngFor="let stop of stopTable.data">
                     <td>{{ stop.sequence }}</td>  
+                    <td>
+                        <a routerLink="/outbound/stop" routerLinkActive="active"
+                          [queryParams]="{number : stop.number }">
+                          {{ stop.number }}</a></td>  
+                    <td>{{ stop.contactorFirstname }}</td>  
+                    <td>{{ stop.contactorLastname }}</td>  
+                    <td>{{ stop.addressCountry }}</td>  
+                    <td>{{ stop.addressState }}</td>  
+                    <td>{{ stop.addressCounty }}</td>  
+                    <td>{{ stop.addressCity }}</td>  
+                    <td>{{ stop.addressLine1 }}</td>  
+                    <td>{{ stop.addressLine2 }}</td>  
+                    <td>{{ stop.addressPostcode }}</td>  
+                  </tr>
+                </tbody>
+              </nz-table>
+            </nz-tab> 
+            <nz-tab nzTitle=" {{ 'shipment' | i18n }}" *ngIf="shipmentsMap.has(item.id)">
+              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="shipmentsMap.get(item.id)!" nzSize="middle"
+                [nzShowPagination]="false" #shipmentTable>
+                <thead>
+                  <th>
+                    {{ 'shipment.number' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'shipment.status' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'carrier' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'carrier.serviceLevel' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'shipment.totalLineCount' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'shipment.totalItemCount' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'shipment.totalQuantity' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'shipment.totalOpenQuantity' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'shipment.totalInprocessQuantity' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'shipment.totalLoadedQuantity' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'shipment.totalShippedQuantity' | i18n }}
+                  </th>
+                   
+                </thead>
+                <tbody>
+                  <tr *ngFor="let shipment of shipmentTable.data">
+                      
+                        <td>
+                            <a routerLink="/outbound/shipment" routerLinkActive="active"
+                              [queryParams]="{number : shipment.number }">
+                            {{ shipment.number }} </a></td>
+                        <td>{{ 'SHIPMENT-STATUS-' + shipment.status | i18n }}</td>
+                        <td>{{ shipment.carrier?.name }}</td>
+                        <td>{{ shipment.carrierServiceLevel?.name }}</td>
+                        <td>{{ shipment.totalLineCount }}</td>
+                        <td>{{ shipment.totalItemCount }}</td>
+                        <td>{{ shipment.totalQuantity }}</td>
+                        <td>{{ shipment.totalOpenQuantity }}</td>
+                        <td>{{ shipment.totalInprocessQuantity }}</td>
+                        <td>{{ shipment.totalLoadedQuantity }}</td>
+                        <td>{{ shipment.totalShippedQuantity }}</td>
+           
                   </tr>
                 </tbody>
               </nz-table>
@@ -112,7 +216,10 @@
           <nz-dropdown-menu #menu="nzDropdownMenu">
             <ul nz-menu> 
   
-              <li nz-menu-item *ngIf="isLoadReadForCompletoade(item)">
+              <li nz-menu-item *ngIf="isLoadReadForAllocate(item)">
+                <a  (click)="allocateLoad(item)">{{ 'allocate' | i18n }}</a>
+              </li> 
+              <li nz-menu-item *ngIf="isLoadReadForComplete(item)">
                 <a  (click)="completeLoad(item)">{{ 'complete' | i18n }}</a>
               </li> 
             </ul>

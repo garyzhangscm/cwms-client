@@ -1,5 +1,6 @@
 import { TrailerAppointment } from '../../transportation/models/trailer-appointment';
 import { Shipment } from './shipment';
+import { StopStatus } from './stop-status.enum';
 
 export interface Stop {
   id: number;
@@ -21,5 +22,6 @@ export interface Stop {
   addressLine1: string;
   addressLine2: string;
   addressPostcode: string;
+  status: StopStatus;
 
 }

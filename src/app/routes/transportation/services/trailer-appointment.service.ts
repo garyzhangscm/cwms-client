@@ -60,7 +60,19 @@ export class TrailerAppointmentService {
   completeTrailerAppointment(id: number): Observable<TrailerAppointment> { 
 
     return this.http
-      .post(`common/trailer-appointments/${id}/complete`)
+      .post(`common/trailer-appointments/${id}/complete?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`)
+      .pipe(map(res => res.data));
+  }
+  completeLoad(id: number): Observable<TrailerAppointment> { 
+
+    return this.http
+      .post(`outbound/trailer-appointments/${id}/complete?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`)
+      .pipe(map(res => res.data));
+  }
+  allocateTrailerAppointment(id: number): Observable<TrailerAppointment> { 
+
+    return this.http
+      .post(`outbound/trailer-appointments/${id}/allocate?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`)
       .pipe(map(res => res.data));
   }
 }

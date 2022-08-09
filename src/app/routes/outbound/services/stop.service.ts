@@ -1,3 +1,4 @@
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -12,9 +13,22 @@ import { Stop } from '../models/stop';
 export class StopService {
   constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
 
-  getStops(): Observable<Stop[]> {
-    const url = `outbound/stops`;
+  getStops(number?: string, trailerAppointmentId?: number, sequence?: number ): Observable<Stop[]> {
+    let url = `outbound/stops?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
 
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+    if (number) {
+      
+      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number)}`; 
+    }
+    if (trailerAppointmentId != null) {
+      
+      url = `${url}&trailerAppointmentId=${trailerAppointmentId}`; 
+    }
+    if (sequence != null) {
+      
+      url = `${url}&sequence=${sequence}`; 
+    }
     return this.http.get(url).pipe(map(res => res.data));
   }
 
@@ -50,4 +64,19 @@ export class StopService {
     const url = `outbound/stops/open?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     return this.http.get(url).pipe(map(res => res.data));
   }
+
+  
+  completeStop(id: number): Observable<Stop> { 
+
+    return this.http
+      .post(`outbound/stops/${id}/complete?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`)
+      .pipe(map(res => res.data));
+  }
+  allocateStop(id: number): Observable<Stop> { 
+
+    return this.http
+      .post(`outbound/stops/${id}/allocate?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`)
+      .pipe(map(res => res.data));
+  }
+
 }

@@ -3,7 +3,7 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { STComponent, STColumn } from '@delon/abc/st';
+import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message';
 
@@ -11,6 +11,8 @@ import { TrailerAppointment } from '../../transportation/models/trailer-appointm
 import { TrailerAppointmentStatus } from '../../transportation/models/trailer-appointment-status.enum';
 import { TrailerAppointmentType } from '../../transportation/models/trailer-appointment-type.enum';
 import { TrailerAppointmentService } from '../../transportation/services/trailer-appointment.service';
+import { Shipment } from '../models/shipment';
+import { StopService } from '../services/stop.service';
 
 @Component({
   selector: 'app-outbound-load',
@@ -25,6 +27,11 @@ export class OutboundLoadComponent implements OnInit {
   searchResult = '';
   listOfAllTrailerAppointments: TrailerAppointment[] = [];
   isSpinning = false;
+  // shipments map
+  // key: trailer appointment id
+  // value: list of the shipment in the trailer appointment
+  shipmentsMap = new Map<number, Shipment[]>();
+   
 
   @ViewChild('st', { static: true })
   st!: STComponent;
@@ -46,6 +53,7 @@ export class OutboundLoadComponent implements OnInit {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private messageService: NzMessageService,
     private activatedRoute: ActivatedRoute,
+    private stopService: StopService,
     private fb: FormBuilder,) { }
 
   ngOnInit(): void { 
@@ -106,15 +114,19 @@ export class OutboundLoadComponent implements OnInit {
 
   }
 
-  isLoadReadForCompletoade(trailerAppointment: TrailerAppointment): boolean {
+  isLoadReadForComplete(trailerAppointment: TrailerAppointment): boolean {
     return trailerAppointment.status === TrailerAppointmentStatus.INPROCESS || 
            trailerAppointment.status === TrailerAppointmentStatus.PLANNED 
   }
-
-  completeLoad(trailerAppointment: TrailerAppointment) {
+  isLoadReadForAllocate(trailerAppointment: TrailerAppointment): boolean {
+    return trailerAppointment.status === TrailerAppointmentStatus.INPROCESS || 
+           trailerAppointment.status === TrailerAppointmentStatus.PLANNED 
+  }
+  
+  allocateLoad(trailerAppointment: TrailerAppointment) {
 
     this.isSpinning = true;
-    this.trailerAppointmentService.completeTrailerAppointment(
+    this.trailerAppointmentService.allocateTrailerAppointment(
       trailerAppointment.id!  
     ).subscribe({
       next: () => {
@@ -128,5 +140,95 @@ export class OutboundLoadComponent implements OnInit {
         this.searchResult = '';
       },
     });
+  }
+
+  completeLoad(trailerAppointment: TrailerAppointment) {
+
+    this.isSpinning = true;
+    this.trailerAppointmentService.completeLoad(
+      trailerAppointment.id!  
+    ).subscribe({
+      next: () => {
+
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.search();
+      },
+      error: () => {
+        this.isSpinning = false;
+        this.searchResult = '';
+      },
+    });
+  }
+
+  
+  trailerAppointmentTableChanged(event: STChange) : void { 
+    console.log(`trailerAppointmentTableChanged, event.type: ${event.type} `);
+    if (event.type === 'expand' && event.expand.expand === true) {
+      
+       console.log(`start to call showTrailerAppointmentDetails`);
+      this.showTrailerAppointmentDetails(event.expand);
+    }
+
+  }
+  
+  showTrailerAppointmentDetails(trailerAppointment: TrailerAppointment): void {  
+
+    this.isSpinning = true;
+    this.stopService.getStops(undefined, trailerAppointment.id!).subscribe({
+      next: (stopsRes) => {
+
+        trailerAppointment.stops = stopsRes;
+
+        // add the shipments from the stop, into the map
+        // so that we can show them in the tab
+        this.shipmentsMap.set(trailerAppointment.id!, []);
+        let shipments: Shipment[] = [];
+        stopsRes.forEach(stop => { 
+          stop.shipments.forEach(
+            shipment => {
+              shipments = [...shipments, shipment];
+            }
+          )
+        });
+        shipments = this.calculateQuantities(shipments);
+        console.log(`add ${shipments.length} shipment to trailer ${trailerAppointment.id!}`);
+        
+        this.shipmentsMap.set(trailerAppointment.id!, shipments);
+
+        
+        this.isSpinning = false;
+      }, 
+      error: () => this.isSpinning = false
+    })
+  }
+
+  
+  calculateQuantities(shipments: Shipment[]): Shipment[] {
+    shipments.forEach(shipment => {
+      const existingItemIds = new Set();
+      shipment.totalLineCount = shipment.shipmentLines.length;
+      shipment.totalItemCount = 0;
+
+      shipment.totalQuantity = 0;
+      shipment.totalOpenQuantity = 0;
+      shipment.totalInprocessQuantity = 0;
+      shipment.totalLoadedQuantity = 0;
+      shipment.totalShippedQuantity = 0;
+
+      shipment.shipmentLines.forEach(shipmentLine => {
+        shipment.totalQuantity! += shipmentLine.quantity;
+        shipment.totalOpenQuantity! += shipmentLine.openQuantity;
+        shipment.totalInprocessQuantity! += shipmentLine.inprocessQuantity;
+        shipment.totalLoadedQuantity! += shipmentLine.loadedQuantity;
+        shipment.totalShippedQuantity! += shipmentLine.shippedQuantity;
+        if (!existingItemIds.has(shipmentLine.orderLine.itemId)) {
+          existingItemIds.add(shipmentLine.orderLine.itemId);
+        }
+      });
+
+      shipment.totalItemCount = existingItemIds.size;
+    });
+    return shipments;
   }
 }

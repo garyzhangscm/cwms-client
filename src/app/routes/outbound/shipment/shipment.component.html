@@ -132,7 +132,10 @@
                 </thead>
     <tbody>
       <tr *ngFor="let orderLine of mapOfOrderLines[data.id!]">
-        <td>{{ orderLine.orderNumber }}</td>
+        <td>
+          <a routerLink="/outbound/order" routerLinkActive="active"
+            [queryParams]="{number : orderLine.orderNumber  }">{{ orderLine.orderNumber }}
+          </a></td>
         <td>{{ orderLine.number }}</td>
         <td>{{ orderLine.item?.name }}</td>
         <td>{{ orderLine.expectedQuantity }}</td>
