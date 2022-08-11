@@ -31,14 +31,14 @@
     </div>
     </form>
     <h4>Token:</h4> 
-    <p><strong>{{token}}</strong></p>
+    <p><strong>{{currentQBOToken.token}}</strong></p>
     <h4>Refresh Token:</h4> 
-    <p><strong>{{refreshToken}}</strong></p>
-<button nz-button nzType="primary" (click)="getToken()">>
+    <p><strong>{{currentQBOToken.refreshToken}}</strong></p>
+<button nz-button nzType="primary" (click)="requestToken()">
   {{ 'get token' | i18n }}
 </button>
 
-<button nz-button nzType="primary" (click)="getRefreshToken()">>
+<button nz-button nzType="primary" (click)="refreshToken()">>
     {{ 'refresh token' | i18n }}
   </button>
 </nz-spin>

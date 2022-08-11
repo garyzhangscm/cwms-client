@@ -33,6 +33,7 @@ import { UtilRoutingModule } from './util-routing.module';
 import { UtilWorkOrderQueryPopupComponent } from './work-order-query-popup/work-order-query-popup.component';
 import { UtilQuickbookAuthComponent } from './quickbook-auth/quickbook-auth.component';
 import { UtilQuickbookPermissionComponent } from './quickbook-permission/quickbook-permission.component';
+import { UtilQuickbookOnlineConfigurationComponent } from './quickbook-online-configuration/quickbook-online-configuration.component';
 
 const COMPONENTS: Array<Type<void>> = [
   UtilFileUploadComponent,  
@@ -57,7 +58,8 @@ const COMPONENTS: Array<Type<void>> = [
   UtilWorkOrderQueryPopupComponent,
   UtilOrderQueryPopupComponent,
   UtilQuickbookAuthComponent,
-  UtilQuickbookPermissionComponent];
+  UtilQuickbookPermissionComponent,
+  UtilQuickbookOnlineConfigurationComponent];
   
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];

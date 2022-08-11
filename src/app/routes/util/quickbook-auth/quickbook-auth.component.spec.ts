@@ -1,4 +1,5 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { UtilQuickbookAuthComponent } from './quickbook-auth.component';
 
 describe('UtilQuickbookAuthComponent', () => {

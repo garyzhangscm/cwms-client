@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { QuickbookOnlineToken } from '../models/quickbook-online-token';
 import { QuickbookService } from '../services/quickbook.service';
 
 @Component({
@@ -12,66 +13,98 @@ import { QuickbookService } from '../services/quickbook.service';
 export class UtilQuickbookAuthComponent implements OnInit {
 
   isSpinning = false;
-  token = "N/A";
-  refreshToken = "N/A"
+  
+  currentQBOToken: QuickbookOnlineToken;
 
   constructor(private http: _HttpClient, 
     private quickbookService: QuickbookService, 
     private messageService: NzMessageService,
-    private fb: FormBuilder,) { }
+    private fb: FormBuilder,) { 
+      this.currentQBOToken = {
 
-    searchForm!: FormGroup;
+      }
+    }
+
+    
+  searchForm!: FormGroup;
   ngOnInit(): void {
     this.searchForm = this.fb.group({
       authCode: [null],
       
       realmId: [null]
     });
+    this.loadCurrentToken();
  }
 
- getToken(): void {
+ loadCurrentToken() {
+   this.isSpinning = true;
+   this.quickbookService.getCurrentToken().subscribe({
+     next: (tokenRes) => {
+        if (tokenRes != null) {
+          this.currentQBOToken = tokenRes;
+        }
+        else {
+          this.currentQBOToken = {};
+        }
+        this.displayCurrentToken();
+        this.isSpinning = false;
+     }, 
+     error: () => {
+       this.isSpinning = false;
+       this.displayCurrentToken();
+      }
+
+   })
+
+ }
+ displayCurrentToken() {
+   
+  this.searchForm.controls.authCode.setValue(this.currentQBOToken.authorizationCode);
+  this.searchForm.controls.realmId.setValue(this.currentQBOToken.realmId);
+ }
+ requestToken(): void {
     this.isSpinning = true;
-    this.quickbookService.getToken(this.searchForm.value.authCode, this.searchForm.value.realmId).subscribe(
+    this.quickbookService.requestToken(this.searchForm.value.authCode, this.searchForm.value.realmId).subscribe(
       {
         next: (tokenRes) => {
           this.isSpinning = false;
           this.messageService.success("auth success");
-          const tokenObj = JSON.parse(tokenRes)
-          this.token  = tokenObj.access_token;
-          this.refreshToken  = tokenObj.refresh_token;
+          this.currentQBOToken = tokenRes;
+          this.displayCurrentToken();
+          
+          
         }, 
         error: () => {
           
           this.isSpinning = false;
           this.messageService.success("auth fail");
-          this.token  = "N/A";
-          this.refreshToken  = "N/A";
+          this.currentQBOToken = {};
+          this.displayCurrentToken();
         }
       }
     )
 
   }
   
- getRefreshToken(): void {
-  this.isSpinning = true;
-  this.quickbookService.refreshToken(this.searchForm.value.realmId).subscribe(
-    {
-      next: (tokenRes) => {
-        this.isSpinning = false;
-        this.messageService.success("auth success");
-        const tokenObj = JSON.parse(tokenRes)
-        this.token  = tokenObj.access_token;
-        this.refreshToken  = tokenObj.refresh_token;
-      }, 
-      error: () => {
-        
-        this.isSpinning = false;
-        this.messageService.success("auth fail");
-        this.token  = "N/A";
-        this.refreshToken  = "N/A";
+ refreshToken(): void {
+    this.isSpinning = true;
+    this.quickbookService.refreshToken(this.searchForm.value.realmId).subscribe(
+      {
+        next: (tokenRes) => {
+          this.isSpinning = false;
+          this.messageService.success("auth success");
+          this.currentQBOToken = tokenRes;
+          this.displayCurrentToken();
+        }, 
+        error: () => {
+          
+          this.isSpinning = false;
+          this.messageService.success("auth fail");
+          this.currentQBOToken = {};
+          this.displayCurrentToken();
+        }
       }
-    }
-  )
+    )
 
-}
+  }
 }
