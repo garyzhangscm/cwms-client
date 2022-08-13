@@ -24,6 +24,7 @@ import { InboundReceiptConfirmComponent } from './receipt-confirm/receipt-confir
 import { InboundReceiptMaintenanceComponent } from './receipt-maintenance/receipt-maintenance.component';
 import { InboundReceiptComponent } from './receipt/receipt.component';
 import { InboundPurchaseOrderComponent } from './purchase-order/purchase-order.component';
+import { InboundCreateReceiptFromPoComponent } from './create-receipt-from-po/create-receipt-from-po.component';
 
 const COMPONENTS: Array<Type<void>> = [
   InboundReceiptComponent, InboundReceiptMaintenanceComponent, InboundReceiptConfirmComponent,
@@ -35,7 +36,8 @@ const COMPONENTS: Array<Type<void>> = [
   InboundCustomerReturnComponent,
   InboundCustomerReturnOrderMaintenanceComponent,
   InboundCustomerReturnReceiveComponent,
-  InboundPurchaseOrderComponent];
+  InboundPurchaseOrderComponent,
+  InboundCreateReceiptFromPoComponent];
   
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 

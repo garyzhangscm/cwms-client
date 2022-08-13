@@ -150,13 +150,16 @@
       <!--   action colummn  -->  
       <ng-template st-row="actionColumn" let-item let-index="index"> 
         
-        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary"
+        *ngIf="item.status == purchaseOrderStatusList.OPEN">
           {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
         <nz-dropdown-menu #menu="nzDropdownMenu">
           <ul nz-menu> 
 
-            <li nz-menu-item *ngIf="item.purchaseOrderStatus == purchaseOrderStatusList.OPEN">
-              <a  (click)="createReceipt(item)">{{ 'create-receipt' | i18n }}</a>
+            <li nz-menu-item *ngIf="item.status == purchaseOrderStatusList.OPEN">
+              <a routerLink="/inbound/create-receipt-from-po" routerLinkActive="active"
+            [queryParams]="{poid : item.id}">
+             {{ 'create-receipt' | i18n }}</a>
             </li>
             
           </ul>

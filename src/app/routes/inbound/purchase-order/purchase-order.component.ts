@@ -38,7 +38,7 @@ export class InboundPurchaseOrderComponent implements OnInit {
     { title: this.i18n.fanyi("totalExpectedQuantity"),  index: 'totalExpectedQuantity' , }, 
     { title: this.i18n.fanyi("totalReceiptQuantity"),  index: 'totalReceiptQuantity' , }, 
     { title: this.i18n.fanyi("totalReceivedQuantity"),  index: 'totalReceivedQuantity' , }, 
-    { title: this.i18n.fanyi("status"),  index: 'purchaseOrderStatus' , }, 
+    { title: this.i18n.fanyi("status"),  index: 'status' , }, 
     {
       title: this.i18n.fanyi("action"),  
       render: 'actionColumn', 
@@ -136,10 +136,7 @@ export class InboundPurchaseOrderComponent implements OnInit {
     });
     return purchaseOrders;
   }
-
-  createReceipt(purchaseOrder : PurchaseOrder) {
-
-  }
+ 
   
   // we will load the client / supplier / item information 
   // asyncronized

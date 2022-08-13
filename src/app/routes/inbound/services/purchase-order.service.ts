@@ -31,7 +31,7 @@ export class PurchaseOrderService {
       url = `${url}&loadDetails=${loadDetails}`;
     }
     if (statusList) {
-      url = `${url}&receipt_status_list=${statusList}`;
+      url = `${url}&purchasOrderStatusList=${statusList}`;
     }
     if (supplierName) {
       url = `${url}&supplierName=${supplierName}`;
@@ -41,18 +41,22 @@ export class PurchaseOrderService {
     return this.http.get(url).pipe(map(res => res.data));
   }
 
-  getReceipt(id: number): Observable<PurchaseOrder> {
+  getPurchaseOrder(id: number): Observable<PurchaseOrder> {
     return this.http.get(`inbound/purchase-orders/${id}`).pipe(map(res => res.data));
   }
 
   
-  createReceipt(id: number, receiptNumber: String, allowUnexpectedItem: boolean, receiptQuantityMap : Map<number, number>): Observable<PurchaseOrder> {
+  createReceipt(id: number, receiptNumber: String, allowUnexpectedItem: boolean, 
+    receiptQuantities :Array<{ purchaseOrderLineId: number; quantity: number }>): Observable<PurchaseOrder> {
       
     let url = `inbound/purchase-orders/${id}/create-receipt?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     url = `${url}&receiptNumber=${receiptNumber}`;
     url = `${url}&allowUnexpectedItem=${allowUnexpectedItem}`; 
 
-    return this.http.post(url, receiptQuantityMap).pipe(map(res => res.data));
+    console.log(`create receipt with quantities ${JSON.stringify(receiptQuantities)}`)
+
+    return this.http.post(url, receiptQuantities).pipe(map(res => res.data));
   }
+
 
 }

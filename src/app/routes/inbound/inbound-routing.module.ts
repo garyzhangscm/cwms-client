@@ -14,6 +14,7 @@ import { InboundReceiptMaintenanceComponent } from './receipt-maintenance/receip
 import { InboundReceiptComponent } from './receipt/receipt.component';
 import { InboundCustomerReturnReceiveComponent } from './customer-return-receive/customer-return-receive.component';
 import { InboundPurchaseOrderComponent } from './purchase-order/purchase-order.component';
+import { InboundCreateReceiptFromPoComponent } from './create-receipt-from-po/create-receipt-from-po.component';
 
 const routes: Routes = [
 
@@ -28,7 +29,8 @@ const routes: Routes = [
   { path: 'customer-return', component: InboundCustomerReturnComponent },
   { path: 'customer-return-order/maintenance', component: InboundCustomerReturnOrderMaintenanceComponent },
   { path: 'customer-return-receive', component: InboundCustomerReturnReceiveComponent },
-  { path: 'purchase-order', component: InboundPurchaseOrderComponent }];
+  { path: 'purchase-order', component: InboundPurchaseOrderComponent },
+  { path: 'create-receipt-from-po', component: InboundCreateReceiptFromPoComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

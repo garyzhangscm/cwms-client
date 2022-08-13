@@ -7,17 +7,17 @@ export interface PurchaseOrder {
     
     id?: number;
 
-    number: String;
+    number?: String;
 
     warehouseId: number;
     clientId?: number;
     
     client?: Client;
-    supplierId: number;
-    supplier: Supplier;
+    supplierId?: number;
+    supplier?: Supplier;
 
     purchaseOrderLines: PurchaseOrderLine[];
-    purchaseOrderStatus: PurchaseOrderStatus;
+    status: PurchaseOrderStatus;
 
     
     totalItemCount?: number;
