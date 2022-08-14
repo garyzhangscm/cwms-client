@@ -30,11 +30,13 @@ import { BillOfMaterial } from '../../work-order/models/bill-of-material';
 import { BillOfMaterialService } from '../../work-order/services/bill-of-material.service';
 import { Order } from '../models/order';
 import { OrderCategory } from '../models/order-category';
+import { OrderDocument } from '../models/order-document';
 import { OrderLine } from '../models/order-line';
 import { OrderStatus } from '../models/order-status.enum';
 import { PickWork } from '../models/pick-work';
 import { ShortAllocation } from '../models/short-allocation';
 import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
+import { OrderDocumentService } from '../services/order-document.service';
 import { OrderService } from '../services/order.service';
 import { PickService } from '../services/pick.service';
 import { ShipmentLineService } from '../services/shipment-line.service';
@@ -248,6 +250,7 @@ export class OutboundOrderComponent implements OnInit {
     private localCacheService: LocalCacheService,
     private shipmentLineService: ShipmentLineService,
     private billOfMaterialService: BillOfMaterialService,
+    private orderDocumentService: OrderDocumentService,
   ) { }
 
   printerModal!: NzModalRef;
@@ -1331,9 +1334,9 @@ export class OutboundOrderComponent implements OnInit {
                   ).subscribe({
                     next: () => {
                       
+                      this.isSpinning = false;
                       this.messageService.success(this.i18n.fanyi('message.action.success')); 
                       this.search();
-                      this.isSpinning = false;
                     }, 
                     error: () => {this.isSpinning = false}
                   });
@@ -1361,5 +1364,25 @@ export class OutboundOrderComponent implements OnInit {
     
     this.createWorkOrderForm.controls.workOrderNumber.setValue(workOrderNumber);
   }
+  
+  getOrderDocumentFileUrl(orderDocument : OrderDocument) : string { 
 
+      return `${environment.api.baseUrl}/outbound/orders/documents/${orderDocument.id}/download`; 
+     
+  }
+
+  removeOrderDocument(orderDocument : OrderDocument) { 
+    this.isSpinning = true;
+      this.orderDocumentService.removeOrderDocument(orderDocument.id!).subscribe({
+        next: () => {
+          
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi('message.action.success')); 
+          this.search();
+        }, 
+        error: () => this.isSpinning = false
+      })
+    
+   
+  }
 }

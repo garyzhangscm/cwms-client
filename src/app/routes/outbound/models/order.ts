@@ -7,6 +7,7 @@ import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { OrderCategory } from './order-category';
+import { OrderDocument } from './order-document';
 import { OrderLine } from './order-line';
 import { OrderStatus } from './order-status.enum';
 
@@ -25,6 +26,7 @@ export interface Order {
   supplierId?: number;
   supplier?: Supplier;
 
+  orderDocuments?: OrderDocument[]; 
   carrierId?: number;
   carrier?: Carrier;
   carrierServiceLevelId?: number;

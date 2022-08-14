@@ -17,6 +17,8 @@ export class WebMessageAlertService {
     private userService: UserService) {}
 
     getUserInreadWebMessageAlertCount(): Observable<number> {
+      // we will need to add _allow_anonymous=true to void delon's auth issue
+
       let url = `resource/web-message-alerts/new-message-count?companyId=${this.companyService.getCurrentCompany()?.id}`;
       
       url = `${url}&username=${this.userService.getCurrentUsername()}`;

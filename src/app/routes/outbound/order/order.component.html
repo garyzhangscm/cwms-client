@@ -158,7 +158,7 @@
           <address>  
             {{item.billToCustomer?.addressLine1}} <br>
             {{item.billToCustomer?.addressLine2}} <br>
-            {{item.billToCustomer?.addressCity}},  {{item.shipToCustomer?.addressState}} <br>
+            {{item.billToCustomer?.addressCity}},  {{item.billToCustomer?.addressState}} <br>
             {{item.billToCustomer?.addressPostcode}} <br>
             </address>
         </ng-template>
@@ -481,6 +481,18 @@
               </tbody>
             </nz-table>
           </nz-tab>
+          <nz-tab nzTitle=" {{ 'order-document' | i18n }}">
+            <nz-list nzBordered nzHeader="{{'files' | i18n}}" >
+              <nz-list-item *ngFor="let orderDocument of item.orderDocuments">
+                
+                <ul nz-list-item-actions>
+                  <nz-list-item-action><a (click)="removeOrderDocument(orderDocument)">{{'remove' | i18n}}</a></nz-list-item-action>
+                </ul>
+                <a [href]="getOrderDocumentFileUrl(orderDocument)" target="_blank" rel="noopener noreferrer" >
+                    {{orderDocument.fileName}}</a>
+              </nz-list-item>
+            </nz-list>
+          </nz-tab>
         </nz-tabset>
       </ng-template>
 
@@ -512,6 +524,11 @@
             
             <li nz-menu-item *ngIf="isAlreadyCompleted(item)">
               <a  (click)="retriggerOrderConfirmationIntegration(item)">{{ 'retrigger-order-confirm-integration' | i18n }}</a>
+            </li>
+            <li nz-menu-item >
+              <a routerLink="/outbound/order-document" routerLinkActive="active"
+                [queryParams]="{id : item.id}">
+                {{ 'upload-document' | i18n }}</a> 
             </li>
           </ul>
         </nz-dropdown-menu>
