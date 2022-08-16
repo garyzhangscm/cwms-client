@@ -73,7 +73,8 @@
   
   <div class="search-result-list"> 
     
-    <st #st [data]="purchaseOrders" [columns]="columns" [footer]="tableFoot" [expand]="expand" expandRowByClick expandAccordion>
+    <st #st [data]="purchaseOrders" [columns]="columns" [footer]="tableFoot" [expand]="expand" expandRowByClick expandAccordion
+    (change)="purchaseOrderTableChanged($event)">
         
       <ng-template st-row="supplierColumn" let-item let-index="index">
         
@@ -139,6 +140,43 @@
                   <td>{{ purchaseOrderLine.expectedQuantity }}</td>
                   <td>{{ purchaseOrderLine.receiptQuantity }}</td>
                   <td>{{ purchaseOrderLine.receivedQuantity }}</td>  
+                </tr>
+              </tbody>
+            </nz-table>
+          </nz-tab> 
+          <nz-tab nzTitle=" {{ 'receipt' | i18n }}">
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="mapOfReceipt[item.id!]" nzSize="middle"
+            [nzShowPagination]="true" #receiptTable>
+              <thead>
+                <th>
+                  {{ 'receipt.number' | i18n }}
+                </th>
+                <th>
+                  {{ 'client' | i18n }}
+                </th>
+                <th>
+                  {{ 'supplier' | i18n }}
+                </th>
+                <th>
+                  {{ 'supplier' | i18n }}
+                </th> 
+                <th>
+                  {{ 'status' | i18n }}
+                </th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let receipt of receiptTable.data">
+                  <td><a routerLink="/inbound/receipt" routerLinkActive="active"
+                    [queryParams]="{number : receipt.number}">
+                    {{ receipt.number }}</a></td>
+                    
+                  <td> 
+                  {{ receipt.client?.name }}</td>
+                  <td> 
+                  {{ receipt.supplier?.name }}</td>
+                  <td> 
+                  {{ receipt.supplier?.description }}</td>
+                  <td>{{ 'RECEIPT-STATUS-' + receipt.receiptStatus | i18n}} </td>
                 </tr>
               </tbody>
             </nz-table>

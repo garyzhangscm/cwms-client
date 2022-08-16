@@ -28,7 +28,7 @@ export class ReceiptService {
 
   getReceipts(number?: string, loadDetails?: boolean, statusList?: string, 
     supplierName?: string, 
-    checkInStartTime?: Date, checkInEndTime?:Date, checkInSpecificDate?: Date): Observable<Receipt[]> {
+    checkInStartTime?: Date, checkInEndTime?:Date, checkInSpecificDate?: Date, purchaseOrderId?: number): Observable<Receipt[]> {
     let url = `inbound/receipts?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     
     const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
@@ -45,6 +45,9 @@ export class ReceiptService {
     }
     if (supplierName) {
       url = `${url}&supplierName=${supplierName}`;
+    }
+    if (purchaseOrderId) {
+      url = `${url}&purchaseOrderId=${purchaseOrderId}`;
     }
 
     if (checkInStartTime) {

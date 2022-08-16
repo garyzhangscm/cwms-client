@@ -169,14 +169,23 @@ export class InventoryService {
     const url = `inventory/inventory/${inventory.id}/reverse-receiving?reverseQCQuantity=${reverseQCQuantity}&allowReuseLPN=${allowReuseLPN}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
-
+   
   
-  generateEcotechLPNLabel(lpn: string) : Observable<ReportHistory>{
-    const url = `inventory/inventories/${this.warehouseService.getCurrentWarehouse().id}/${lpn}/lpn-label/ecotech`;
+  generateLPNLabel(lpn: string, quantity?: number, printerName?: string) : Observable<ReportHistory> {
+    
+    let url = `inventory/inventories/${this.warehouseService.getCurrentWarehouse().id}/${lpn}/lpn-label`;
+    url = `${url}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`
+    if (quantity) {
+      url = `${url}&quantity=${quantity}`
+    }
+     
+    if (printerName) {
+      url = `${url}&printerName=${printerName}`
+    }
+    
+    
     return this.http.post(url).pipe(map(res => res.data));
   }
-
-  
   getAvailableInventoryForMPS(itemId?: number, itemName?: string) : Observable<Inventory[]>{
     let url = `inventory/inventories/available-for-mps/inventory-ignore-order?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (itemId) {    

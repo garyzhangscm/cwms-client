@@ -1,8 +1,9 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
+import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -128,6 +129,7 @@ export class InboundReceiptComponent implements OnInit {
     },
   ];
 
+
   listOfSelection = [
     {
       text: this.i18n.fanyi(`select-all-rows`),
@@ -136,6 +138,8 @@ export class InboundReceiptComponent implements OnInit {
       }
     },
   ];
+  expandSet = new Set<number>();
+
   setOfCheckedId = new Set<number>();
   checked = false;
   indeterminate = false;
@@ -247,7 +251,7 @@ export class InboundReceiptComponent implements OnInit {
      
       this.loadSupplier(receipt); 
 
-      // this.loadItems(receipt);
+      this.loadItems(receipt);
   }
   loadClient(receipt: Receipt) {
      
@@ -279,12 +283,14 @@ export class InboundReceiptComponent implements OnInit {
      );
   }
 
-  loadItem(receiptLine: ReceiptLine) {
+  loadItem(receiptLine: ReceiptLine) { 
     if (receiptLine.itemId && receiptLine.item == null) { 
-      
+       
       this.localCacheService.getItem(receiptLine.itemId).subscribe(
         {
-          next: (itemRes) => receiptLine.item = itemRes
+          next: (itemRes) => { 
+            receiptLine.item = itemRes; 
+          }
         }
       );
     }
@@ -394,4 +400,35 @@ export class InboundReceiptComponent implements OnInit {
       error: () => this.isSpinning = false
     });
   }
+  
+  onExpandChange(receipt: Receipt, checked: boolean): void { 
+    if (checked) {
+      this.expandSet.add(receipt.id!);
+      // this.loadItems(receipt);
+    } else {
+      this.expandSet.delete(receipt.id!);
+    }
+
+
+  }
+  @ViewChild('st', { static: true })
+  st!: STComponent;
+  receiptLineTableColumns: STColumn[] = [ 
+    { title: this.i18n.fanyi("receipt.line.number"), index: 'number', width: 150 },    
+    {
+      title: this.i18n.fanyi("item"), 
+      render: 'itemNameColumn', 
+    },
+    {
+      title: this.i18n.fanyi("item.description"), 
+      render: 'itemDescriptionColumn', 
+    }, 
+    { title: this.i18n.fanyi("receipt.line.expectedQuantity"), index: 'expectedQuantity' , width: 150 },    
+    { title: this.i18n.fanyi("receipt.line.receivedQuantity"), index: 'receivedQuantity' , width: 150 },    
+    { title: this.i18n.fanyi("receipt.line.overReceivingQuantity"), index: 'overReceivingQuantity' , width: 150 },  
+    { title: this.i18n.fanyi("receipt.line.overReceivingPercent"), index: 'overReceivingPercent' , width: 150 },      
+    { title: this.i18n.fanyi("qcQuantity"), index: 'qcQuantity' , width: 150 },      
+    { title: this.i18n.fanyi("qcPercentage"), index: 'qcPercentage' , width: 150 },      
+    { title: this.i18n.fanyi("qcQuantityRequested"), index: 'qcQuantityRequested' , width: 150 },       
+  ];
 }

@@ -681,10 +681,10 @@ export class InventoryInventoryComponent implements OnInit {
   printLPNReport(event: any, inventory: Inventory) {
 
     this.isSpinning = true;
-
+    
     console.log(`start to print lPN label for inventory \n${inventory}`);
-    this.inventoryService.generateEcotechLPNLabel(
-      inventory.lpn!)
+    this.inventoryService.generateLPNLabel(
+      inventory.lpn!, event.physicalCopyCount, event.printerName)
       .subscribe(printResult => {
 
         // send the result to the printer
@@ -694,7 +694,7 @@ export class InventoryInventoryComponent implements OnInit {
         this.printingService.printRemoteFileByName(
           "LPN Label",
           printResult.fileName,
-          ReportType.LPN_REPORT,
+          ReportType.LPN_LABEL,
           event.printerIndex,
           event.printerName,
           event.physicalCopyCount,
@@ -715,7 +715,7 @@ export class InventoryInventoryComponent implements OnInit {
 
 
     this.isSpinning = true;
-    this.inventoryService.generateEcotechLPNLabel(inventory.lpn!)
+    this.inventoryService.generateLPNLabel(inventory.lpn!)
       .subscribe(printResult => {
         // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
         this.isSpinning = false;

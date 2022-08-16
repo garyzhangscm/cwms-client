@@ -3,7 +3,7 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { STComponent, STColumn } from '@delon/abc/st';
+import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
@@ -13,7 +13,9 @@ import { RF } from '../../util/models/rf';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { PurchaseOrder } from '../models/purchase-order';
 import { PurchaseOrderStatus } from '../models/purchase-order-status';
+import { Receipt } from '../models/receipt';
 import { PurchaseOrderService } from '../services/purchase-order.service';
+import { ReceiptService } from '../services/receipt.service';
 
 @Component({
   selector: 'app-inbound-purchase-order',
@@ -23,6 +25,8 @@ import { PurchaseOrderService } from '../services/purchase-order.service';
 export class InboundPurchaseOrderComponent implements OnInit {
 
   isSpinning = false;
+
+  mapOfReceipt: { [key: string]: Receipt[] } = {};
 
   @ViewChild('st', { static: true })
   st!: STComponent;
@@ -61,6 +65,7 @@ export class InboundPurchaseOrderComponent implements OnInit {
     private messageService: NzMessageService,
     private localCacheService: LocalCacheService,
     private supplierService: SupplierService,
+    private receiptService: ReceiptService,
     private fb: FormBuilder,) { }
 
   ngOnInit(): void { 
@@ -174,5 +179,29 @@ export class InboundPurchaseOrderComponent implements OnInit {
         }
       );
     }
+  }
+
+  purchaseOrderTableChanged(event: STChange) : void { 
+    if (event.type === 'expand' && event.expand.expand === true) {
+      
+      this.showPurchaseOrderDetails(event.expand);
+    } 
+
+  }
+  
+  showPurchaseOrderDetails(purchaseOrder: PurchaseOrder): void { 
+      this.showReceipts(purchaseOrder);  
+  }
+  showReceipts(purchaseOrder: PurchaseOrder): void { 
+    this.mapOfReceipt[purchaseOrder.id!]  = [];
+    this.receiptService.getReceipts(undefined, false, undefined, undefined, undefined, 
+      undefined, undefined, purchaseOrder.id).subscribe(
+        {
+          next: (receiptsRes) => {
+
+            this.mapOfReceipt[purchaseOrder.id!] = [...receiptsRes];
+          }
+        }
+      )
   }
 }
