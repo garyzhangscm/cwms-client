@@ -56,7 +56,7 @@
       <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
     </div>
     
-    <st #st [data]="listOfQCInspectionRequest"  [columns]="columns"  [expand]="expand" expandRowByClick expandAccordion>
+    <st #st [data]="listOfQCInspectionRequest"  [columns]="columns"  [expand]="expand"   expandAccordion>
         
       <!--   qc rule details  -->
       <ng-template #expand let-item let-index="index" >

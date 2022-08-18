@@ -53,7 +53,7 @@
       <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
     </div>
     
-    <st #st [data]="workOrderProduceTransaction" [columns]="columns" [footer]="tableFoot" [expand]="expand" expandRowByClick expandAccordion>
+    <st #st [data]="workOrderProduceTransaction" [columns]="columns" [footer]="tableFoot" [expand]="expand"   expandAccordion>
       
       <!--   order details  -->
       <ng-template #expand let-item let-index="index" let-column="column">

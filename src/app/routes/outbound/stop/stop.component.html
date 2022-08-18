@@ -33,7 +33,7 @@
     <div class="search-result-list"> 
       
       <st #st [data]="listOfAllStops" [columns]="columns"   
-      [expand]="expand" expandRowByClick expandAccordion (change)="stopTableChanged($event)">
+      [expand]="expand"   expandAccordion (change)="stopTableChanged($event)">
       
         <!--   shipment details  -->
         <ng-template #expand let-item let-index="index" >

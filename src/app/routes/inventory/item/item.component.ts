@@ -433,7 +433,8 @@ export class InventoryItemComponent implements OnInit {
   columns: STColumn[] = [
     { title: this.i18n.fanyi("thumbnail"), type: 'img',index: 'thumbnailUrl', iif: () => this.isChoose('thumbnail'), },
     { title: this.i18n.fanyi("name"), index: 'name', iif: () => this.isChoose('name'), },
-    { title: this.i18n.fanyi("description"), index: 'description', iif: () => this.isChoose('description'), },
+    // { title: this.i18n.fanyi("description"), index: 'description', iif: () => this.isChoose('description'), },
+    { title: this.i18n.fanyi("description"),  render: 'descriptionColumn', iif: () => this.isChoose('description'), width: 200, },
     { title: this.i18n.fanyi("client"), index: 'client.name', iif: () => this.isChoose('client'), },
     { title: this.i18n.fanyi("item-family"), index: 'itemFamily.name', iif: () => this.isChoose('item-family'), },
     { title: this.i18n.fanyi("unit-cost"), index: 'unitCost', iif: () => this.isChoose('unit-cost'), },

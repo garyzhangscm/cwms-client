@@ -100,7 +100,7 @@
           {{ 'item-family' | i18n }}
         </nz-form-label>
         <nz-form-control [nzSpan]="16">
-          <nz-select nzAllowClear [(ngModel)]="currentItem!.itemFamily!.id" (ngModelChange)="itemFamilySelected($event)"
+          <nz-select nzAllowClear [ngModel]="currentItem!.itemFamily?.id" (ngModelChange)="itemFamilySelected($event)"
             style="width: 200px;">
             <nz-option *ngFor="let validItemFamily of validItemFamilies" [nzValue]="validItemFamily.id"
               [nzLabel]="validItemFamily.description">

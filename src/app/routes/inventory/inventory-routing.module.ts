@@ -23,6 +23,8 @@ import { InventoryInventoryQuantityChangeConfirmComponent } from './inventory-qu
 import { InventoryInventoryQuantityChangeComponent } from './inventory-quantity-change/inventory-quantity-change.component';
 import { InventoryInventorySnapshotConfigurationComponent } from './inventory-snapshot-configuration/inventory-snapshot-configuration.component';
 import { InventoryInventorySnapshotComponent } from './inventory-snapshot/inventory-snapshot.component';
+import { InventoryInventoryStatusMaintenanceComponent } from './inventory-status-maintenance/inventory-status-maintenance.component';
+import { InventoryInventoryStatusComponent } from './inventory-status/inventory-status.component';
 import { InventoryInventoryComponent } from './inventory/inventory.component';
 import { InventoryItemFamilyMaintenanceConfirmComponent } from './item-family-maintenance-confirm/item-family-maintenance-confirm.component';
 import { InventoryItemFamilyMaintenanceComponent } from './item-family-maintenance/item-family-maintenance.component';
@@ -32,6 +34,7 @@ import { InventoryItemQueryPopupComponent } from './item-query-popup/item-query-
 import { InventoryItemSamplingMaintenanceComponent } from './item-sampling-maintenance/item-sampling-maintenance.component';
 import { InventoryItemSamplingComponent } from './item-sampling/item-sampling.component';
 import { InventoryItemComponent } from './item/item.component';
+import { InventoryLocationUtilizationSnapshotComponent } from './location-utilization-snapshot/location-utilization-snapshot.component';
 import { InventoryLockMaintenanceComponent } from './lock-maintenance/lock-maintenance.component';
 import { InventoryLockComponent } from './lock/lock.component';
 import { InventoryMovementPathConfirmComponent } from './movement-path-confirm/movement-path-confirm.component';
@@ -39,7 +42,6 @@ import { InventoryMovementPathMaintenanceComponent } from './movement-path-maint
 import { InventoryMovementPathComponent } from './movement-path/movement-path.component';
 import { InventoryReplenishmentComponent } from './replenishment/replenishment.component';
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
-import { InventoryLocationUtilizationSnapshotComponent } from './location-utilization-snapshot/location-utilization-snapshot.component';
 
 const routes: Routes = [
   { path: 'inventory', component: InventoryInventoryComponent, canActivate: [AuthGuard] },
@@ -82,7 +84,9 @@ const routes: Routes = [
   { path: 'item-sampling/maintenance', component: InventoryItemSamplingMaintenanceComponent },
   { path: 'lock', component: InventoryLockComponent },
   { path: 'lock/maintenance', component: InventoryLockMaintenanceComponent },
-  { path: 'location-utilization-snapshot', component: InventoryLocationUtilizationSnapshotComponent }];
+  { path: 'location-utilization-snapshot', component: InventoryLocationUtilizationSnapshotComponent },
+  { path: 'status', component: InventoryInventoryStatusComponent },
+  { path: 'status/maintenance', component: InventoryInventoryStatusMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

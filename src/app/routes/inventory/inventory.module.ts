@@ -1,4 +1,5 @@
 import { NgModule, Type } from '@angular/core';
+import { EllipsisModule } from '@delon/abc/ellipsis';
 import { SharedModule } from '@shared';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -34,6 +35,8 @@ import { InventoryInventoryQuantityChangeComponent } from './inventory-quantity-
 import { InventoryRoutingModule } from './inventory-routing.module';
 import { InventoryInventorySnapshotConfigurationComponent } from './inventory-snapshot-configuration/inventory-snapshot-configuration.component';
 import { InventoryInventorySnapshotComponent } from './inventory-snapshot/inventory-snapshot.component';
+import { InventoryInventoryStatusMaintenanceComponent } from './inventory-status-maintenance/inventory-status-maintenance.component';
+import { InventoryInventoryStatusComponent } from './inventory-status/inventory-status.component';
 import { InventoryInventoryComponent } from './inventory/inventory.component';
 import { InventoryItemFamilyMaintenanceConfirmComponent } from './item-family-maintenance-confirm/item-family-maintenance-confirm.component';
 import { InventoryItemFamilyMaintenanceComponent } from './item-family-maintenance/item-family-maintenance.component';
@@ -91,7 +94,9 @@ const COMPONENTS: Array<Type<void>> = [
   InventoryItemSamplingMaintenanceComponent,
   InventoryLockComponent,
   InventoryLockMaintenanceComponent,
-  InventoryLocationUtilizationSnapshotComponent];
+  InventoryLocationUtilizationSnapshotComponent,
+  InventoryInventoryStatusComponent,
+  InventoryInventoryStatusMaintenanceComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
@@ -106,6 +111,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzStepsModule, 
     UtilModule,
     NzSkeletonModule,NzIconModule ,
+    EllipsisModule,
   ],
   declarations: [
     ...COMPONENTS,

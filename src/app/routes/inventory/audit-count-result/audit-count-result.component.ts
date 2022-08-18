@@ -190,6 +190,7 @@ export class InventoryAuditCountResultComponent implements OnInit {
           id: undefined,
           name: '',
           description: '',
+          warehouseId: this.warehouseService.getCurrentWarehouse().id,
         },
       },
       quantity: 0,

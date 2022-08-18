@@ -45,4 +45,17 @@ export class QuickbookService {
           
     return this.http.post(url).pipe(map(res => res.data));
   }
+  
+  syncEntity(entityName: string, syncTransactionDays?: number): Observable<number> {
+      
+    let url = `quickbook/data/sync/${entityName}`; 
+    url = `${url}?companyId=${this.companyService.getCurrentCompany()!.id}`;
+    url = `${url}&warehouseId=${this.warehouserService.getCurrentWarehouse().id}`;
+    if (syncTransactionDays != null) {
+      
+        url = `${url}&syncTransactionDays=${syncTransactionDays}`;
+    }
+          
+    return this.http.post(url).pipe(map(res => res.data));
+  }
 }

@@ -95,7 +95,7 @@
         <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
       </div>
       
-      <st #st [data]="listOfAllOrderActivities"  [columns]="columns" [scroll]="{ x: '1450px'}" [expand]="expand" expandRowByClick expandAccordion>
+      <st #st [data]="listOfAllOrderActivities"  [columns]="columns" [scroll]="{ x: '1450px'}" [expand]="expand"   expandAccordion>
           
       <ng-template st-row="transactionDate" let-item let-index="index"> 
         

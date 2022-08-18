@@ -1,3 +1,4 @@
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
@@ -40,7 +41,32 @@ export class InventoryStatusService {
         ),
       );
   }
+  getInventoryStatuses(name?: string, availableStatusFlag?: boolean): Observable<InventoryStatus[]> {
+    let params = `warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    
+    if (name) {
+      const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+      params = `${params}&itemName=${httpUrlEncodingCodec.encodeValue(name.trim())}`;
+    }
+    if (availableStatusFlag != null) {
+      params = `${params}&availableStatusFlag=${availableStatusFlag}`;
+    }
+
+    const url = `inventory/inventory-statuses?${params}`;
+    return this.http.get(url).pipe(map(res => res.data));
+  }
   getInventoryStatus(id: number): Observable<InventoryStatus> {
-    return this.http.get(`inventory/inventory-status/${id}`).pipe(map(res => res.data));
+    return this.http.get(`inventory/inventory-statuses/${id}`).pipe(map(res => res.data));
+  }
+  addInventoryStatus(inventoryStatus: InventoryStatus): Observable<InventoryStatus> {
+    return this.http.put(`inventory/inventory-statuses?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`, 
+        inventoryStatus).pipe(map(res => res.data));
+  }
+  changeInventoryStatus(inventoryStatus: InventoryStatus): Observable<InventoryStatus> {
+    return this.http.post(`inventory/inventory-statuses/${inventoryStatus.id}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`, 
+        inventoryStatus).pipe(map(res => res.data));
+  }
+  removeInventoryStatus(id: number): Observable<InventoryStatus> {
+    return this.http.delete(`inventory/inventory-statuses/${id}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`).pipe(map(res => res.data));
   }
 }

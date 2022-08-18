@@ -474,6 +474,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
         id: undefined,
         name: '',
         description: '',
+        warehouseId: this.warehouseService.getCurrentWarehouse().id,
       },
 
     };

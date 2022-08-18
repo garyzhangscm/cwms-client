@@ -75,7 +75,7 @@
     <div class="search-result-list"> 
       
       <st #st [data]="listOfAllTrailerAppointments" [columns]="columns"   
-      [expand]="expand" expandRowByClick expandAccordion (change)="trailerAppointmentTableChanged($event)">
+      [expand]="expand"  expandAccordion (change)="trailerAppointmentTableChanged($event)">
      
         <ng-template st-row="completedTimeColumn" let-item let-index="index"> 
               

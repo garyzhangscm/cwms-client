@@ -41,4 +41,18 @@
 <button nz-button nzType="primary" (click)="refreshToken()">>
     {{ 'refresh token' | i18n }}
   </button>
+  <div style="padding-top: 20px">
+    <nz-select nzAllowClear [(ngModel)]="currentSyncEntity" style="width: 300px;">
+      <nz-option *ngFor="let quickbookEntity of quickbookEntities | keys" nzValue="{{ quickbookEntity.key }}"
+        nzLabel="{{ quickbookEntity.key | i18n }}">
+      </nz-option>
+    </nz-select>
+    <span>for last 
+      <nz-input-number [(ngModel)]="syncTransactionDays"  [nzMin]="0" [nzMax]="9999" [nzStep]="1"></nz-input-number> 
+      days
+    </span>
+    <button nz-button nzType="primary" (click)="syncEntity()">>
+      {{ 'Sync' | i18n }}
+    </button>
+  </div>
 </nz-spin>

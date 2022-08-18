@@ -62,7 +62,7 @@
       <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
     </div>
     
-    <st #st [data]="listOfAllInventoryAllocationSummary"  [columns]="columns" [expand]="expand" expandRowByClick expandAccordion
+    <st #st [data]="listOfAllInventoryAllocationSummary"  [columns]="columns" [expand]="expand"  expandAccordion
     (change)="inventoryAllocationSummaryTableChanged($event)" >
        
       <ng-template st-row="locationColumn" let-item let-index="index">

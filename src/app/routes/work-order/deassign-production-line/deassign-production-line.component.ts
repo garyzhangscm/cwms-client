@@ -267,6 +267,7 @@ export class WorkOrderDeassignProductionLineComponent implements OnInit {
       quantity: 0,
       inventoryStatus: {
         id: undefined,
+        warehouseId: this.warehouseService.getCurrentWarehouse().id,
         name: '',
         description: '',
       },

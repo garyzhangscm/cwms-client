@@ -63,9 +63,13 @@
     </div>
     
     <st #st [data]="items" [columns]="columns" [footer]="tableFoot" [expand]="expand" 
-        expandRowByClick expandAccordion
+         expandAccordion
         [scroll]="{ x: '1800px'}">
       
+        <!-- item description -->
+        <ng-template st-row="descriptionColumn" let-item let-index="index"> 
+            <ellipsis length="100" tooltip>{{ item.description }}</ellipsis>
+        </ng-template>
       <!--   action colummn  --> 
       <ng-template st-row="actionColumnTitle" type="title" let-c>
         {{ 'action' | i18n }}
@@ -86,7 +90,7 @@
           </ul>
         </nz-dropdown-menu>
       </ng-template>
-      <!--   order details  -->
+      <!--   item details  -->
       <ng-template #expand let-item let-index="index" let-column="column">
          
         <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">

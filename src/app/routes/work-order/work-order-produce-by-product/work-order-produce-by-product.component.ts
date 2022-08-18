@@ -146,6 +146,7 @@ export class WorkOrderWorkOrderProduceByProductComponent implements OnInit {
       inventoryStatusId: undefined,
       inventoryStatus: {
         id: undefined,
+        warehouseId: this.warehouseService.getCurrentWarehouse().id,
         name: '',
         description: '',
       },

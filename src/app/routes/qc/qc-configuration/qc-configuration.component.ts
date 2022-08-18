@@ -31,11 +31,13 @@ export class QcQcConfigurationComponent implements OnInit {
       warehouseId: warehouseService.getCurrentWarehouse().id,
       qcPassInventoryStatus: { 
         name: "",
-        description: ""
+        description: "",
+        warehouseId: this.warehouseService.getCurrentWarehouse().id,
       },
       qcFailInventoryStatus: { 
         name: "",
-        description: ""
+        description: "",
+        warehouseId: this.warehouseService.getCurrentWarehouse().id,
       },
       
     }

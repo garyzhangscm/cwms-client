@@ -73,7 +73,7 @@
   
   <div class="search-result-list"> 
     
-    <st #st [data]="purchaseOrders" [columns]="columns" [footer]="tableFoot" [expand]="expand" expandRowByClick expandAccordion
+    <st #st [data]="purchaseOrders" [columns]="columns" [footer]="tableFoot" [expand]="expand"  expandAccordion
     (change)="purchaseOrderTableChanged($event)">
         
       <ng-template st-row="supplierColumn" let-item let-index="index">

@@ -50,7 +50,7 @@
       <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
     </div>
     
-    <st #st [data]="listOfLabors"  [columns]="columns"  [expand]="expand" expandRowByClick expandAccordion>
+    <st #st [data]="listOfLabors"  [columns]="columns"  [expand]="expand"   expandAccordion>
         
       <!--   labor activity history  -->
       <ng-template #expand let-item let-index="index" >

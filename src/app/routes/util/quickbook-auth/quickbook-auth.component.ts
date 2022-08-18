@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { QuickbookEntity } from '../models/quickbook-entity.enum';
 import { QuickbookOnlineToken } from '../models/quickbook-online-token';
 import { QuickbookService } from '../services/quickbook.service';
 
@@ -15,6 +16,9 @@ export class UtilQuickbookAuthComponent implements OnInit {
   isSpinning = false;
   
   currentQBOToken: QuickbookOnlineToken;
+  quickbookEntities = QuickbookEntity;
+  currentSyncEntity: QuickbookEntity = QuickbookEntity.Vendor;
+  syncTransactionDays: number = 1;
 
   constructor(private http: _HttpClient, 
     private quickbookService: QuickbookService, 
@@ -102,6 +106,26 @@ export class UtilQuickbookAuthComponent implements OnInit {
           this.messageService.success("auth fail");
           this.currentQBOToken = {};
           this.displayCurrentToken();
+        }
+      }
+    )
+
+  }
+
+  syncEntity() {
+    this.isSpinning = true;
+    console.log(`start to sync entity ${this.currentSyncEntity}`);
+    this.quickbookService.syncEntity(this.currentSyncEntity).subscribe(
+      {
+        next: (affectEntityNumber) => {
+          this.isSpinning = false;
+          this.messageService.success("sync success");
+          console.log(`sync ${affectEntityNumber} ${this.currentSyncEntity}`);
+        }, 
+        error: () => {
+          
+          this.isSpinning = false;
+          this.messageService.success("sync fail"); 
         }
       }
     )

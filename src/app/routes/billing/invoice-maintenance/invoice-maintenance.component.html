@@ -116,7 +116,7 @@
   <div class="search-result-list"> 
     
     <st #st [data]="billingRequests" [columns]="columns"  [scroll]="{ x: '1024px' }"
-        [expand]="expand" expandRowByClick expandAccordion  (change)="billingRequestTableChanged($event)">
+        [expand]="expand"  expandAccordion  (change)="billingRequestTableChanged($event)">
         
           <!--   billableCategoryColumn colummn  -->  
           <ng-template st-row="billableCategoryColumn" let-item let-index="index"> 
@@ -209,7 +209,7 @@
         <div class="search-result-list"> 
         
         <st #st2 [data]="selectedBillingRequests" [columns]="columns2"  [scroll]="{ x: '1024px' }"
-            [expand]="expand" expandRowByClick expandAccordion>
+            [expand]="expand"  expandAccordion>
             
             <!--   billableCategoryColumn colummn  -->  
             <ng-template st-row="billableCategoryColumn" let-item let-index="index"> 

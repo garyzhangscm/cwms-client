@@ -52,7 +52,7 @@
       <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
     </div>
     
-    <st #st [data]="listOfAllMRPs"  [columns]="columns" [expand]="expand" expandRowByClick expandAccordion
+    <st #st [data]="listOfAllMRPs"  [columns]="columns" [expand]="expand"   expandAccordion
     (change)="mpsTableChanged($event)" [scroll]="{ x: '1500px' }">
     
         <ng-template st-row="cutoffDateColumn" let-item let-index="index">

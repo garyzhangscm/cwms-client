@@ -51,7 +51,7 @@
     </div>
     
     <st #st [data]="customerReturnOrders"  [columns]="columns" [scroll]="{ x: '1450px'}"
-    [expand]="expand" expandRowByClick expandAccordion (change)="csrTableChanged($event)"> 
+    [expand]="expand"  expandAccordion (change)="csrTableChanged($event)"> 
       
       <!-- more details about the customer -->
       <ng-template st-row="customerColumn" let-item let-index="index">
