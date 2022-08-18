@@ -114,6 +114,9 @@
                   {{ 'item' | i18n }}
                 </th>
                 <th>
+                  {{ 'item' | i18n }}
+                </th>
+                <th>
                   {{ 'expectedQuantity' | i18n }}
                 </th>
                 <th>
@@ -137,6 +140,16 @@
                       style="width:75px"
                     ></nz-skeleton-element> 
                     {{ purchaseOrderLine.item?.name }}</td>
+                    <td>
+                      
+                        <nz-skeleton-element 
+                        *ngIf="purchaseOrderLine.itemId && purchaseOrderLine.item == null"
+                        nzType="input"
+                        [nzActive]="true"
+                        [nzSize]="'small'"
+                        style="width:75px"
+                      ></nz-skeleton-element> 
+                      {{ purchaseOrderLine.item?.description }}</td>
                   <td>{{ purchaseOrderLine.expectedQuantity }}</td>
                   <td>{{ purchaseOrderLine.receiptQuantity }}</td>
                   <td>{{ purchaseOrderLine.receivedQuantity }}</td>  
@@ -172,10 +185,26 @@
                     
                   <td> 
                   {{ receipt.client?.name }}</td>
-                  <td> 
-                  {{ receipt.supplier?.name }}</td>
-                  <td> 
-                  {{ receipt.supplier?.description }}</td>
+                  <td>  
+                      
+                        <nz-skeleton-element 
+                        *ngIf="receipt.supplierId && receipt.supplier == null"
+                        nzType="input"
+                        [nzActive]="true"
+                        [nzSize]="'small'"
+                        style="width:75px"
+                      ></nz-skeleton-element> 
+                      {{ receipt.supplier?.name }}</td>
+                      <td>  
+                          
+                            <nz-skeleton-element 
+                            *ngIf="receipt.supplierId && receipt.supplier == null"
+                            nzType="input"
+                            [nzActive]="true"
+                            [nzSize]="'small'"
+                            style="width:75px"
+                          ></nz-skeleton-element> 
+                          {{ receipt.supplier?.description }}</td>
                   <td>{{ 'RECEIPT-STATUS-' + receipt.receiptStatus | i18n}} </td>
                 </tr>
               </tbody>

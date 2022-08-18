@@ -200,6 +200,15 @@ export class InboundPurchaseOrderComponent implements OnInit {
           next: (receiptsRes) => {
 
             this.mapOfReceipt[purchaseOrder.id!] = [...receiptsRes];
+            // load the receipt's supplier
+            this.mapOfReceipt[purchaseOrder.id!].filter(
+              receipt => receipt.supplierId != null && receipt.supplier == null
+            ).forEach(receipt => {
+              this.localCacheService.getSupplier(receipt.supplierId!).subscribe({
+                next: (supplierRes) =>  receipt.supplier = supplierRes
+              })
+            })
+
           }
         }
       )

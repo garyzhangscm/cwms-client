@@ -109,7 +109,7 @@
         <nz-form-control [nzSpan]="18" >
 
             <nz-input-group >
-              <nz-select formControlName="qcInspectionRequestType" style="width: 250px" >
+              <nz-select formControlName="qcInspectionRequestType" style="width: 250px" nzAllowClear >
                   <nz-option
                           *ngFor="let qcInspectionRequestType of qcInspectionRequestTypes  | keys"
                           [nzValue]="qcInspectionRequestType.key"
@@ -131,7 +131,7 @@
         <nz-form-control [nzSpan]="18" >
 
             <nz-input-group >
-              <nz-select formControlName="qcInspectionResult" style="width: 250px" >
+              <nz-select formControlName="qcInspectionResult" style="width: 250px" nzAllowClear  >
                   <nz-option
                           *ngFor="let qcInspectionResult of qcInspectionResults | keys"
                           [nzValue]="qcInspectionResult.key"
