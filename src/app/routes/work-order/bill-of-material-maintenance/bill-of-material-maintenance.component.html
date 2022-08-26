@@ -28,7 +28,7 @@
   1. BOM number / description
   2. BOM item information
   -->
-<div class="steps-content" *ngIf="stepIndex === 0">
+<div class="steps-content" *ngIf="stepIndex === 0 && currentBillOfMaterial != null">
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item>
@@ -235,20 +235,20 @@
       <tbody>
         <tr *ngFor="let byProduct of currentBillOfMaterial.billOfMaterialByProducts">
           <td>
-            <span *ngIf="byProduct.id !== null">{{ byProduct.item?.name }}</span>
+            <span *ngIf="byProduct.id != null">{{ byProduct.item?.name }}</span>
 
-            <nz-input-group nzCompact *ngIf="byProduct.id === null">
+            <nz-input-group nzCompact *ngIf="byProduct.id == null">
               <input nz-input [(ngModel)]="byProduct.item!.name" [nzAutocomplete]="itemList" style="width: 150px;"
                 (blur)="byProductItemNameChanged($event, byProduct)" />
             </nz-input-group>
           </td>
           <td>{{ byProduct.item?.description }}</td>
           <td>
-            <span *ngIf="byProduct.id !== null">{{
+            <span *ngIf="byProduct.id != null">{{
               'INVENTORY-STATUS-' + byProduct.inventoryStatus?.name | i18n
               }}</span>
 
-            <nz-input-group nzCompact *ngIf="byProduct.id === null">
+            <nz-input-group nzCompact *ngIf="byProduct.id == null">
               <nz-select nz-input [ngModel]="byProduct.inventoryStatus?.name"
                 (ngModelChange)="byProductInventoryStatusChange($event, byProduct)" style="width: 150px">
                 <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
