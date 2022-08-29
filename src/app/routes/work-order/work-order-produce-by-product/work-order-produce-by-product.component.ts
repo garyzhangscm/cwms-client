@@ -68,7 +68,7 @@ export class WorkOrderWorkOrderProduceByProductComponent implements OnInit {
   }
   setupWorkOrderByProductMap(): void {
     this.currentWorkOrder.workOrderByProducts.forEach(workOrderByProduct => {
-      this.mapOfWorkOrderByProduct[workOrderByProduct.item.name] = workOrderByProduct;
+      this.mapOfWorkOrderByProduct[workOrderByProduct.item!.name] = workOrderByProduct;
     });
   }
   loadAvailableInventoryStatus(): void {

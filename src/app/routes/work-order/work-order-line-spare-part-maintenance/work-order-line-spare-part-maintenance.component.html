@@ -25,7 +25,7 @@
 <!-- Maintain the spare part -->
 <div *ngIf="stepIndex === 0 && currentWorkOrderLine != null" class="small-card">
   <div class="search-result-list">
-    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #nestedTable [nzData]="currentWorkOrderLine!.workOrderLineSpareParts"
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #nestedTable [nzData]="currentWorkOrderLine!.workOrderLineSpareParts!"
       [nzShowPagination]="false">
       <thead>
         <tr>

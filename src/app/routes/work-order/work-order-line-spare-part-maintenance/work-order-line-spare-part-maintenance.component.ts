@@ -204,8 +204,8 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
 
   
   removeSparePart(sparePartIndex: number): void {
-    if (this.currentWorkOrderLine!.workOrderLineSpareParts.length > sparePartIndex) {
-      this.currentWorkOrderLine!.workOrderLineSpareParts = this.currentWorkOrderLine!.workOrderLineSpareParts.filter(
+    if (this.currentWorkOrderLine!.workOrderLineSpareParts!.length > sparePartIndex) {
+      this.currentWorkOrderLine!.workOrderLineSpareParts = this.currentWorkOrderLine!.workOrderLineSpareParts!.filter(
         (element, index) => index !== sparePartIndex,
       );
     }
@@ -218,7 +218,7 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
   
   addSparePart(): void {
     this.currentWorkOrderLine!.workOrderLineSpareParts = [
-      ...this.currentWorkOrderLine!.workOrderLineSpareParts,
+      ...this.currentWorkOrderLine!.workOrderLineSpareParts!,
       {
         id: undefined,
         name: "",

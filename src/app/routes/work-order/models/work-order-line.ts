@@ -25,8 +25,8 @@ export interface WorkOrderLine {
 
   allocationStrategyType?: AllocationStrategyType;
 
-  picks: PickWork[];
-  shortAllocations: ShortAllocation[];
+  picks?: PickWork[];
+  shortAllocations?: ShortAllocation[];
   workOrderNumber?: string;
-  workOrderLineSpareParts: WorkOrderLineSparePart[];
+  workOrderLineSpareParts?: WorkOrderLineSparePart[];
 }

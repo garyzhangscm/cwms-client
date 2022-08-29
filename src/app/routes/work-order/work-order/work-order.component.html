@@ -320,7 +320,7 @@
                         <td>{{ workOrderByProduct.item?.description }}</td>
                         <td>{{ workOrderByProduct.expectedQuantity }}</td>
                         <td>{{ workOrderByProduct.producedQuantity }}</td>
-                        <td>{{ 'INVENTORY-STATUS-' + workOrderByProduct.inventoryStatus.name | i18n}}</td>
+                        <td>{{ 'INVENTORY-STATUS-' + workOrderByProduct.inventoryStatus!.name | i18n}}</td>
                       </tr>
                     </tbody>
                   </nz-table>
@@ -1029,6 +1029,10 @@
         </ng-template>
       </tbody>
     </nz-table>
+    <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle">
+  
+      <a nz-button routerLink="/work-order/work-order/maintenance" routerLinkActive="active">{{ 'new' | i18n }}</a> 
+    </div>
   </div>
 
 </nz-spin>

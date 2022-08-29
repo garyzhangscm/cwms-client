@@ -70,7 +70,7 @@
             [ngModel]="workOrderByProductProduceTransaction.workOrderByProduct?.item?.name"
             (ngModelChange)="itemChanged($event, workOrderByProductProduceTransaction)" nzShowSearch nzAllowClear>
             <nz-option *ngFor="let workOrderByProduct of currentWorkOrder?.workOrderByProducts"
-              [nzLabel]="workOrderByProduct.item.name" [nzValue]="workOrderByProduct.item.name"></nz-option>
+              [nzLabel]="workOrderByProduct.item!.name" [nzValue]="workOrderByProduct.item!.name"></nz-option>
           </nz-select>
         </td>
         <td>
