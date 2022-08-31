@@ -19,8 +19,12 @@ import { UtilFileUploadComponent } from './file-upload/file-upload.component';
 import { UtilIconListComponent } from './icon-list/icon-list.component'; 
 import { UtilMenuComponent } from './menu/menu.component';
 import { UtilOrderQueryPopupComponent } from './order-query-popup/order-query-popup.component';
+import { UtilQuickbookAuthComponent } from './quickbook-auth/quickbook-auth.component';
+import { UtilQuickbookOnlineConfigurationComponent } from './quickbook-online-configuration/quickbook-online-configuration.component';
+import { UtilQuickbookPermissionComponent } from './quickbook-permission/quickbook-permission.component';
 import { UtilRfAppVersionMaintenanceComponent } from './rf-app-version-maintenance/rf-app-version-maintenance.component';
 import { UtilRfAppVersionComponent } from './rf-app-version/rf-app-version.component';
+import { UtilRfConfigurationComponent } from './rf-configuration/rf-configuration.component';
 import { UtilRfMaintenanceComponent } from './rf-maintenance/rf-maintenance.component';
 import { UtilRfComponent } from './rf/rf.component';
 import { UtilSystemConfigurationComponent } from './system-configuration/system-configuration.component';
@@ -31,9 +35,6 @@ import { UtilTestDataInitComponent } from './test-data-init/test-data-init.compo
 import { UtilTesterComponent } from './tester/tester.component';
 import { UtilRoutingModule } from './util-routing.module';
 import { UtilWorkOrderQueryPopupComponent } from './work-order-query-popup/work-order-query-popup.component';
-import { UtilQuickbookAuthComponent } from './quickbook-auth/quickbook-auth.component';
-import { UtilQuickbookPermissionComponent } from './quickbook-permission/quickbook-permission.component';
-import { UtilQuickbookOnlineConfigurationComponent } from './quickbook-online-configuration/quickbook-online-configuration.component';
 
 const COMPONENTS: Array<Type<void>> = [
   UtilFileUploadComponent,  
@@ -59,7 +60,8 @@ const COMPONENTS: Array<Type<void>> = [
   UtilOrderQueryPopupComponent,
   UtilQuickbookAuthComponent,
   UtilQuickbookPermissionComponent,
-  UtilQuickbookOnlineConfigurationComponent];
+  UtilQuickbookOnlineConfigurationComponent,
+  UtilRfConfigurationComponent];
   
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];

@@ -1,0 +1,30 @@
+<page-header></page-header>
+
+
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+     
+        <nz-card nzTitle="{{ 'work-order' | i18n}}">
+
+            <div nz-row [nzGutter]="24">
+                
+                <div nz-col [nzSpan]="12">
+                    <nz-form-item nzFlex> 
+                    <nz-form-control [nzSpan]="16">
+                        <nz-input-group nzSize="large">
+                        <label nz-checkbox [(ngModel)]="currentRFConfiguration.workOrderValidatePartialLPNPick">
+                            <span>{{ 'workOrderValidatePartialLPNPick' | i18n }}</span>
+                        </label> 
+                        </nz-input-group>
+                    </nz-form-control>
+                    </nz-form-item>
+                </div>
+              </div>
+        </nz-card>
+ 
+       
+      
+<button nz-button nzType="primary" (click)="saveConfiguration()">
+    {{ 'save' | i18n }}
+  </button>
+      </nz-spin>

@@ -17,6 +17,7 @@ import { UtilQuickbookOnlineConfigurationComponent } from './quickbook-online-co
 import { UtilQuickbookPermissionComponent } from './quickbook-permission/quickbook-permission.component';
 import { UtilRfAppVersionMaintenanceComponent } from './rf-app-version-maintenance/rf-app-version-maintenance.component';
 import { UtilRfAppVersionComponent } from './rf-app-version/rf-app-version.component';
+import { UtilRfConfigurationComponent } from './rf-configuration/rf-configuration.component';
 import { UtilRfMaintenanceComponent } from './rf-maintenance/rf-maintenance.component';
 import { UtilRfComponent } from './rf/rf.component';
 import { UtilSystemConfigurationComponent } from './system-configuration/system-configuration.component';  
@@ -52,7 +53,8 @@ const routes: Routes = [
   { path: 'order-query-popup', component: UtilOrderQueryPopupComponent },
   { path: 'quickbook-auth', component: UtilQuickbookAuthComponent },
   { path: 'quickbook-permission', component: UtilQuickbookPermissionComponent },
-  { path: 'quickbook/configuration', component: UtilQuickbookOnlineConfigurationComponent }];
+  { path: 'quickbook/configuration', component: UtilQuickbookOnlineConfigurationComponent },
+  { path: 'rf-configuration', component: UtilRfConfigurationComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
