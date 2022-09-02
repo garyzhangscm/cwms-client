@@ -10,8 +10,7 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ColumnItem } from '../../util/models/column-item';
-import { UtilService } from '../../util/services/util.service';
-import { Order } from '../models/order';
+import { UtilService } from '../../util/services/util.service'; 
 import { OrderLine } from '../models/order-line';
 import { PickWork } from '../models/pick-work';
 import { Shipment } from '../models/shipment';
@@ -160,8 +159,7 @@ export class OutboundShipmentComponent implements OnInit {
     private fb: FormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
-    private shipmentService: ShipmentService,
-    private orderService: OrderService,
+    private shipmentService: ShipmentService, 
     private orderLineService: OrderLineService,
     private messageService: NzMessageService,
     private router: Router,
@@ -212,7 +210,8 @@ export class OutboundShipmentComponent implements OnInit {
     this.searching = true;
     this.searchResult = '';
 
-    this.shipmentService.getShipments(this.searchForm.controls.number.value).subscribe(
+    this.shipmentService.getShipments(this.searchForm.controls.number.value, 
+      this.searchForm.controls.orderNumber.value).subscribe(
       shipmentRes => {
         this.listOfAllShipments = this.calculateQuantities(shipmentRes);
         this.listOfDisplayShipments = this.calculateQuantities(shipmentRes);
@@ -365,6 +364,7 @@ export class OutboundShipmentComponent implements OnInit {
     // initiate the search form
     this.searchForm = this.fb.group({
       number: [null],
+      orderNumber: [null],
     });
 
     this.activatedRoute.queryParams.subscribe(params => {

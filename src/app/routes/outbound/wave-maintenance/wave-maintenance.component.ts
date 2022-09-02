@@ -8,6 +8,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { Customer } from '../../common/models/customer';
 import { Item } from '../../inventory/models/item';
 import { ColumnItem } from '../../util/models/column-item';
+import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
 import { Order } from '../models/order';
 import { OrderLine } from '../models/order-line';
@@ -20,6 +21,8 @@ import { WaveService } from '../services/wave.service';
 })
 export class OutboundWaveMaintenanceComponent implements OnInit {
 
+  isSpinning = false;
+  loadingOrderDetailsRequest = 0;
   listOfOrderTableColumns: ColumnItem[] = [
     {
       name: 'order.number',
@@ -260,6 +263,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     private message: NzMessageService,
     private router: Router,
     private utilService: UtilService,
+    private localCacheService: LocalCacheService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.outbound.wave.title');
   }
@@ -340,16 +344,24 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   }
 
   findWaveCandidate(): void {
+    this.isSpinning = true;
     this.waveService
       .findWaveCandidate(this.searchForm.controls.orderNumber.value, this.searchForm.controls.customerName.value)
-      .subscribe(wavableOrders => {
-        this.listOfAllOrders = this.calculateQuantities(wavableOrders);
-        this.listOfDisplayOrders = this.calculateQuantities(wavableOrders);
+      .subscribe({
 
-
-        this.listOfAllOrderLines = this.getWavableOrderLines(wavableOrders);
-        this.listOfDisplayOrderLines = this.getWavableOrderLines(wavableOrders);
-
+        next: (wavableOrders)  => {
+          this.listOfAllOrders = this.calculateQuantities(wavableOrders);
+          this.listOfDisplayOrders = this.calculateQuantities(wavableOrders);
+  
+  
+          this.listOfAllOrderLines = this.getWavableOrderLines(wavableOrders);
+          this.listOfDisplayOrderLines = this.getWavableOrderLines(wavableOrders);
+  
+          this.refreshDetailInformations(this.listOfAllOrders);
+          this.isSpinning = false;
+        },
+        error: () => this.isSpinning = false
+        
       });
   }
 
@@ -386,6 +398,75 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     return wavableOrderLines;
   }
 
+  
+  // we will load the client / supplier / item information 
+  // asyncronized
+  async refreshDetailInformations(orders: Order[]) {  
+    // const currentPageOrders = this.getCurrentPageOrders(); 
+    let index = 0;
+    this.loadingOrderDetailsRequest = 0;
+    while (index < orders.length) {
+
+      // we will need to make sure we are at max loading detail information
+      // for 10 orders at a time(each order may have 5 different request). 
+      // we will get error if we flush requests for
+      // too many orders into the server at a time
+      // console.log(`1. this.loadingOrderDetailsRequest: ${this.loadingOrderDetailsRequest}`);
+      
+      
+      while(this.loadingOrderDetailsRequest > 50) {
+        // sleep 50ms        
+        await this.delay(50);
+      } 
+      
+      this.refreshDetailInformation(orders[index]);
+      index++;
+    } 
+    while(this.loadingOrderDetailsRequest > 0) {
+      // sleep 50ms        
+      await this.delay(100);
+    }   
+  }
+ 
+  refreshDetailInformation(order: Order) {
+    
+      this.loadCustomer(order); 
+      
+  }
+
+  loadCustomer(order: Order) {
+      
+    if (order.billToCustomerId && order.billToCustomer == null) {
+      this.loadingOrderDetailsRequest++;
+      this.localCacheService.getCustomer(order.billToCustomerId).subscribe(
+        {
+          next: (res) => {
+            order.billToCustomer = res; 
+          
+            this.loadingOrderDetailsRequest--;
+          }
+        }
+      );      
+    } 
+    
+    if (order.shipToCustomerId && order.shipToCustomer == null) {
+      this.loadingOrderDetailsRequest++;
+      this.localCacheService.getCustomer(order.shipToCustomerId).subscribe(
+        {
+          next: (res) => {
+            order.shipToCustomer = res; 
+            
+            this.loadingOrderDetailsRequest--;
+          }
+        }
+      );      
+    } 
+  }
+
+  delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+  }
+  
   clearDisplay(): void {
     this.searchForm.reset();
 

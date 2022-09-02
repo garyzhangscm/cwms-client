@@ -6,18 +6,16 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ColumnItem } from '../../util/models/column-item';
-import { UtilService } from '../../util/services/util.service';
-import { Order } from '../models/order';
-import { PickWork } from '../models/pick-work';
-import { Shipment } from '../models/shipment';
+import { UtilService } from '../../util/services/util.service'; 
+import { PickWork } from '../models/pick-work'; 
 import { ShipmentLine } from '../models/shipment-line';
 import { ShortAllocation } from '../models/short-allocation';
 import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
-import { Wave } from '../models/wave';
-import { WaveStatus } from '../models/wave-status.enum';
+import { Wave } from '../models/wave'; 
 import { PickService } from '../services/pick.service';
 import { ShipmentLineService } from '../services/shipment-line.service';
 import { ShortAllocationService } from '../services/short-allocation.service';
@@ -172,7 +170,6 @@ export class OutboundWaveComponent implements OnInit {
   // Table data for display
   listOfAllWaves: Wave[] = [];
   listOfDisplayWaves: Wave[] = [];
-
 
 
   // list of record with allocation in process

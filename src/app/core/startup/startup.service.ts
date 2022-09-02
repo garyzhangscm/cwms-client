@@ -94,7 +94,7 @@ export class StartupService {
         this.settingService.setUser(res.user);
         // ACL：设置权限为全量
         this.aclService.setFull(true);
-        // 初始化菜单  
+        // 初始化菜单 
         this.menuService.add(res.menu);
         // 设置页面标题的后缀
         this.titleService.default = '';

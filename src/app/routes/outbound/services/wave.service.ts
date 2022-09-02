@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
 import { PrintingService } from '../../common/services/printing.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Order } from '../models/order';
@@ -58,19 +59,13 @@ export class WaveService {
   }
 
   findWaveCandidate(orderNumber?: string, customerName?: string): Observable<Order[]> {
-    let params = '';
+    let url = `outbound/waves/candidate?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`; 
     if (orderNumber != null) {
-      params = `orderNumber=${orderNumber}`;
+      url = `${url}&orderNumber=${orderNumber}`;
     }
     if (customerName != null) {
-      params = `&customerName=${customerName}`;
-    }
-
-    if (params.startsWith('&')) {
-      params = params.substring(1);
-    }
-
-    const url = 'outbound/waves/candidate' + (params.length > 0 ? '?' + params : '');
+      url = `${url}&customerName=${customerName}`; 
+    } 
 
     return this.http.get(url).pipe(map(res => res.data));
   }

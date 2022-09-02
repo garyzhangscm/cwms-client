@@ -6,10 +6,20 @@
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
         <nz-form-label for="number" [nzSpan]="6">
-          {{ 'order.number' | i18n }}
+          {{ 'shipment.number' | i18n }}
         </nz-form-label>
         <nz-form-control [nzSpan]="18">
           <input nz-input name="number" id="number" formControlName="number" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="number" [nzSpan]="6">
+          {{ 'order.number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <input nz-input name="orderNumber" id="orderNumber" formControlName="orderNumber" />
         </nz-form-control>
       </nz-form-item>
     </div>
