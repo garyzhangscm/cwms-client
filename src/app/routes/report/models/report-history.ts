@@ -1,7 +1,7 @@
 import { PrintPageOrientation } from "../../common/models/print-page-orientation.enum";
 import { Warehouse } from "../../warehouse-layout/models/warehouse";
-import { ReportType } from "./report-type.enum";
 import { ReportOrientation } from "./report-orientation.enum";
+import { ReportType } from "./report-type.enum";
 
 export interface ReportHistory {
 

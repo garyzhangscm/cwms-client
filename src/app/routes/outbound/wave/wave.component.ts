@@ -188,6 +188,7 @@ export class OutboundWaveComponent implements OnInit {
   shortAllocationStatus = ShortAllocationStatus;
 
   unpickModal!: NzModalRef;
+  isSpinning = false;
 
   resetForm(): void {
     this.searchForm.reset();
@@ -196,7 +197,7 @@ export class OutboundWaveComponent implements OnInit {
   }
 
   search(expandedWaveId?: number, tabSelectedIndex?: number): void {
-    this.searching = true;
+    this.isSpinning = true;
     this.searchResult = '';
     this.waveService.getWaves(this.searchForm.controls.number.value).subscribe(
       waveRes => {
@@ -204,7 +205,7 @@ export class OutboundWaveComponent implements OnInit {
         this.listOfDisplayWaves = this.calculateQuantities(waveRes);
 
         this.collapseAllRecord(expandedWaveId);
-        this.searching = false;
+        this.isSpinning = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
           rowCount: waveRes.length,
@@ -214,7 +215,7 @@ export class OutboundWaveComponent implements OnInit {
         }
       },
       () => {
-        this.searching = false;
+        this.isSpinning = false;
         this.searchResult = '';
       },
     );

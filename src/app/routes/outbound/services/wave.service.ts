@@ -24,8 +24,11 @@ export class WaveService {
     private printingService: PrintingService,
   ) {}
 
-  getWaves(number: string): Observable<Wave[]> {
-    const url = number ? `outbound/waves?number=${number}` : `outbound/waves`;
+  getWaves(number?: string): Observable<Wave[]> {
+    let url = `outbound/waves?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`
+    if (number) {
+      url = `${url}&number=${number}`;
+    } 
 
     return this.http.get(url).pipe(map(res => res.data));
   }

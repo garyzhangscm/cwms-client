@@ -694,7 +694,8 @@ export class InventoryInventoryComponent implements OnInit {
         this.printingService.printRemoteFileByName(
           "LPN Label",
           printResult.fileName,
-          ReportType.LPN_LABEL,
+          // ReportType.LPN_LABEL,
+          printResult.type,   // The report type may be LPN_LABEL , RECEIVING_LPN_LABEL or PRODUCTION_LINE_ASSIGNMENT_LABEL
           event.printerIndex,
           event.printerName,
           event.physicalCopyCount,
