@@ -1,7 +1,12 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
+import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzResultModule } from 'ng-zorro-antd/result';
+import { NzStepsModule } from 'ng-zorro-antd/steps';
 
 import { AlertRoutingModule } from './alert-routing.module';
+import { AlertAlertTemplateMaintenanceComponent } from './alert-template-maintenance/alert-template-maintenance.component';
+import { AlertAlertTemplateComponent } from './alert-template/alert-template.component';
 import { AlertAlertComponent } from './alert/alert.component';
 import { AlertConfigurationComponent } from './configuration/configuration.component';
 import { AlertSubscriptionMaintenanceComponent } from './subscription-maintenance/subscription-maintenance.component';
@@ -15,12 +20,17 @@ const COMPONENTS: Array<Type<void>> = [
   AlertAlertComponent,
   AlertSubscriptionMaintenanceComponent,
   AlertWebMessageAlertComponent,
-  AlertWebMessageAlertDetailComponent];
+  AlertWebMessageAlertDetailComponent,
+  AlertAlertTemplateComponent,
+  AlertAlertTemplateMaintenanceComponent];
 
 @NgModule({
   imports: [
     SharedModule,
-    AlertRoutingModule
+    AlertRoutingModule,
+    NzResultModule ,
+    NzDescriptionsModule,
+    NzStepsModule
   ],
   declarations: COMPONENTS,
 })

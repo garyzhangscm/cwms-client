@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { AlertAlertTemplateMaintenanceComponent } from './alert-template-maintenance/alert-template-maintenance.component';
+import { AlertAlertTemplateComponent } from './alert-template/alert-template.component';
 import { AlertAlertComponent } from './alert/alert.component';
 import { AlertConfigurationComponent } from './configuration/configuration.component';
 import { AlertSubscriptionMaintenanceComponent } from './subscription-maintenance/subscription-maintenance.component';
@@ -15,7 +17,9 @@ const routes: Routes = [
   { path: 'alert', component: AlertAlertComponent },
   { path: 'subscription-maintenance', component: AlertSubscriptionMaintenanceComponent },
   { path: 'web-message-alert', component: AlertWebMessageAlertComponent },
-  { path: 'web-message-alert-detail', component: AlertWebMessageAlertDetailComponent }];
+  { path: 'web-message-alert-detail', component: AlertWebMessageAlertDetailComponent },
+  { path: 'template', component: AlertAlertTemplateComponent },
+  { path: 'template/maintenance', component: AlertAlertTemplateMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
