@@ -1,4 +1,4 @@
-import { HttpParams } from '@angular/common/http';
+import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -17,8 +17,9 @@ export class BillOfMaterialService {
 
   getBillOfMaterials(number?: string, itemName?: string): Observable<BillOfMaterial[]> {
     let url = `workorder/bill-of-materials?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
     if (number) {
-      url = `${url}&number=${number}`;
+      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number)}`;
     }
     if (itemName) {
       url = `${url}&itemName=${itemName}`;

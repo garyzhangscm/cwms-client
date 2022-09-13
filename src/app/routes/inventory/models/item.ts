@@ -12,6 +12,7 @@ export interface Item {
   client?: Client;
   itemFamily?: ItemFamily;
   itemPackageTypes: ItemPackageType[];
+  defaultItemPackageType? : ItemPackageType
   allowCartonization?: boolean;
   unitCost?: number;
   allowAllocationByLPN?: boolean;

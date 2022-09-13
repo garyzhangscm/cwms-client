@@ -7,4 +7,5 @@ export interface ItemPackageType {
   itemUnitOfMeasures: ItemUnitOfMeasure[];
   warehouseId?: number;
   companyId: number;
+  stockItemUnitOfMeasure? : ItemUnitOfMeasure;
 }

@@ -33,7 +33,12 @@ export class ItemService {
     }
     return this.http.get(url).pipe(map(res => res.data));
   }
-  getItems(name?: string, clients?: Client[], itemFamilies?: ItemFamily[], companyItem?: boolean, warehouseSpecificItem?: boolean, clientIds?: string): Observable<Item[]> {
+  getItems(name?: string, 
+    clients?: Client[], 
+    itemFamilies?: ItemFamily[], 
+    companyItem?: boolean, 
+    warehouseSpecificItem?: boolean, 
+    clientIds?: string, description?: string): Observable<Item[]> {
     
     const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
 
@@ -43,6 +48,9 @@ export class ItemService {
 
     if (name) {
       url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name.trim())}`;
+    }
+    if (description) {
+      url = `${url}&description=${httpUrlEncodingCodec.encodeValue(description.trim())}`;
     }
     if (clients && clients.length > 0) {
       url = `${url}&clientIds=${clients.join(',')}`;

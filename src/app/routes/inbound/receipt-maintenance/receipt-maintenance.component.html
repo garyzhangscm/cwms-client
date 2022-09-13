@@ -131,6 +131,10 @@
           
           <st #st [data]="listOfAllReceiptLines"  [columns]="columns"   [scroll]="{ x: '2715px' }">
             
+            <!-- item description -->
+            <ng-template st-row="descriptionColumn" let-item let-index="index"> 
+              <ellipsis length="100" tooltip>{{ item.item.description }}</ellipsis>
+            </ng-template>
             <!--   action colummn  --> 
             <ng-template st-row="actionColumnTitle" type="title" let-c>
               {{ 'action' | i18n }}

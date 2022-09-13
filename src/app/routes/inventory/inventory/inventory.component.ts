@@ -351,6 +351,8 @@ export class InventoryInventoryComponent implements OnInit {
     
     await this.loadAllocateByPicksInformation(inventory);
 
+    await this.loadStockUnitOfMeasure(inventory);
+
     
   }
   
@@ -494,6 +496,24 @@ export class InventoryInventoryComponent implements OnInit {
       )
     }
   } 
+  
+  async loadStockUnitOfMeasure(inventory: Inventory) {
+    if (inventory.itemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId != null &&
+      inventory.itemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null) {
+ 
+        this.loadingDetailsRequest++;
+        this.localCacheService.getUnitOfMeasure(inventory.itemPackageType.stockItemUnitOfMeasure.unitOfMeasureId!)
+              .subscribe({
+                next: (unitOfMeasureRes) => {
+                  inventory.itemPackageType!.stockItemUnitOfMeasure!.unitOfMeasure = unitOfMeasureRes;
+                  this.loadingDetailsRequest--;
+                
+                }, 
+                error: () => this.loadingDetailsRequest--
+              }) 
+    }
+  } 
+  
 
   onCurrentPageDataChange(listOfCurrentPageData: readonly  Inventory[]): void {
     this.listOfDisplayInventories = listOfCurrentPageData;

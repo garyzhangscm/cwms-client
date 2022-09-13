@@ -13,8 +13,7 @@ import { PrintPageOrientation } from '../../common/models/print-page-orientation
 import { Supplier } from '../../common/models/supplier';
 import { ClientService } from '../../common/services/client.service';
 import { PrintingService } from '../../common/services/printing.service';
-import { SupplierService } from '../../common/services/supplier.service';
-import { NewNumberValidator } from '../../directives/newNumberValidator';
+import { SupplierService } from '../../common/services/supplier.service'; 
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { ItemPackageType } from '../../inventory/models/item-package-type';
@@ -1136,8 +1135,14 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       type: 'checkbox'
     },
     { title: this.i18n.fanyi("receipt.line.number"), index: 'number',  iif: () => this.isChoose('number'), width: 150 },    
-    { title: this.i18n.fanyi("item"), index: 'item.name',  iif: () => this.isChoose('itemName'), width: 150 },    
-    { title: this.i18n.fanyi("item.description"), index: 'item.description',  iif: () => this.isChoose('itemDescription'), width: 150 },    
+    { title: this.i18n.fanyi("item"), index: 'item.name',  iif: () => this.isChoose('itemName'), width: 100 },    
+    // { title: this.i18n.fanyi("item.description"), index: 'item.description',  iif: () => this.isChoose('itemDescription'), width: 150 },   
+    {
+      title: this.i18n.fanyi("item.description"), 
+      render: 'descriptionColumn',
+      iif: () => this.isChoose('itemDescription'), width: 150 
+    },    
+
     { title: this.i18n.fanyi("receipt.line.expectedQuantity"), index: 'expectedQuantity',  iif: () => this.isChoose('expectedQuantity'), width: 150 },    
     { title: this.i18n.fanyi("receipt.line.receivedQuantity"), index: 'receivedQuantity', iif: () => this.isChoose('receivedQuantity'), width: 150 },    
     { title: this.i18n.fanyi("receipt.line.overReceivingQuantity"), index: 'overReceivingQuantity',  iif: () => this.isChoose('overReceivingQuantity'), width: 150 },  

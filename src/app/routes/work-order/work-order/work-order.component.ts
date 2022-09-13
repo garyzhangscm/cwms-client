@@ -26,6 +26,7 @@ import { ShortAllocationService } from '../../outbound/services/short-allocation
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { ReportType } from '../../report/models/report-type.enum';
 import { ColumnItem } from '../../util/models/column-item';
+import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
 import { WebClientConfigurationService } from '../../util/services/web-client-configuration.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
@@ -80,6 +81,18 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       showSort: true,
       sortOrder: null,
       sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      rowspan: 2,
+      colspan: 1,
+    }, {
+      name: 'description',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: WorkOrder, b: WorkOrder) => this.utilService.compareNullableObjField(a.item?.description, b.item?.description, 'description'),
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -293,6 +306,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     private itemService: ItemService,
     private inventoryStatusService: InventoryStatusService,
     private billOfMaterialService: BillOfMaterialService,
+    private localCacheService: LocalCacheService,
   ) { }
   workOrderStatuses = WorkOrderStatus;
   // Form related data and functions
@@ -493,18 +507,21 @@ export class WorkOrderWorkOrderComponent implements OnInit {
             // add the result to a map so we can assign it to 
             // the work order / work order line later on
             itemRes.forEach(
-              item => itemMap.set(item.id!, item)
-            )
+              item =>  itemMap.set(item.id!, item)
+            );
             workOrders.forEach(
               workOrder => {
                 // only assign if we get the item from the server
                 if (itemMap.has(workOrder.itemId!)) {
                   workOrder.item = itemMap.get(workOrder.itemId!)
+                  this.loadDefaultStockUom(workOrder.item!);
+                  
                 }
                 workOrder.workOrderLines.forEach(
                   workOrderLine => {                    
                     if (itemMap.has(workOrderLine.itemId!)) {
                       workOrderLine.item = itemMap.get(workOrderLine.itemId!)
+                      this.loadDefaultStockUom(workOrderLine.item!);
                     }
                   }
                 )
@@ -513,6 +530,21 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           }
         })
       }
+  }
+  loadDefaultStockUom(item: Item) {
+
+    // load the default item package type's stock item unit of measure
+    // so that we can show the stock unit of measure in the screenshot
+    if (item.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId != null &&
+                  item.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null ) {
+        
+        this.localCacheService.getUnitOfMeasure(item.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId)
+            .subscribe({
+              next: (unitOfMeasureRes) => { 
+                    item.defaultItemPackageType!.stockItemUnitOfMeasure!.unitOfMeasure = unitOfMeasureRes;
+              }
+            })
+    }
   }
   loadInventoryStatusInformation(workOrders: WorkOrder[]) {
     // we will reasonablly assume there's very few inventory status

@@ -69,7 +69,18 @@
 
           <td>{{ data.number }}</td>
           <td>{{ data.item?.name }}</td>
-          <td>{{ data.expectedQuantity }}</td>
+          <td>{{ data.expectedQuantity }} 
+            <nz-skeleton-element 
+              *ngIf="data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                  && data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+              nzType="input"
+              [nzActive]="true"
+              [nzSize]="'small'"
+              style="width:75px"
+            ></nz-skeleton-element> 
+            <strong>{{data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
+
+          </td>
           <td>
             <button nz-button nzType="primary"
               (click)="openNewWorkOrderModal(data, tplCreatingWorkOrderModalTitle, tplCreatingWorkOrderModalContent)">
@@ -106,7 +117,18 @@
         <td>{{ billOfMaterialLine.number }}</td>
         <td>{{ billOfMaterialLine.item!.name }}</td>
         <td>{{ billOfMaterialLine.item!.description }}</td>
-        <td>{{ billOfMaterialLine.expectedQuantity }}</td>
+        <td>{{ billOfMaterialLine.expectedQuantity }}
+          <nz-skeleton-element 
+          *ngIf="billOfMaterialLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+              && billOfMaterialLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+          nzType="input"
+          [nzActive]="true"
+          [nzSize]="'small'"
+          style="width:75px"
+        ></nz-skeleton-element> 
+        <strong>{{billOfMaterialLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
+
+        </td>
         <td>{{ billOfMaterialLine.inventoryStatus!.name }}</td>
       </tr>
     </tbody>

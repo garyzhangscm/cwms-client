@@ -150,7 +150,16 @@
               style="width:75px"
             ></nz-skeleton-element> 
             {{ data.location?.name }}</td>
-          <td>{{ data.quantity }}</td>
+          <td>{{ data.quantity }}  
+            <nz-skeleton-element 
+            *ngIf="data.itemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                && data.itemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+          <strong>{{data.itemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong> </td>
           <td>
             <a nz-tooltip nzTooltipTitle="{{ 'INVENTORY-STATUS-' + data.inventoryStatus!.name | i18n }}">{{
               'INVENTORY-STATUS-' + data.inventoryStatus!.name | i18n}}</a>
@@ -254,7 +263,7 @@
               style="width:75px"
             ></nz-skeleton-element> 
             {{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
-          <td>{{ itemUnitOfMeasure.quantity }}</td>
+          <td>{{ itemUnitOfMeasure.quantity }} </td>
           <td>{{ itemUnitOfMeasure.weight }}</td>
           <td>{{ itemUnitOfMeasure.length }}</td>
           <td>{{ itemUnitOfMeasure.width }}</td>

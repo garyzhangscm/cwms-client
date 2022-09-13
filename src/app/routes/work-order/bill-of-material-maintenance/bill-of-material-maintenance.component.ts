@@ -139,9 +139,7 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
   billOfMaterialNumberOnBlur(event: Event): void {
     this.currentBillOfMaterial.number = (event.target as HTMLInputElement).value;
   }
-  itemNameOnBlur(event: Event): void {
-    const itemName: string = (event.target as HTMLInputElement).value;
-    console.log(`Item of BOM change to ${itemName.trim()}`);
+  bomItemChanged(itemName: string): void {
     if (itemName.trim() === '') {
       this.currentBillOfMaterial.item = {
         id: undefined,
@@ -208,6 +206,17 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
       });
     }
   }
+  itemNameOnBlur(event: Event): void {
+    const itemName: string = (event.target as HTMLInputElement).value;
+    console.log(`Item of BOM change to ${itemName.trim()}`);
+    this.bomItemChanged(itemName);
+    
+  }
+  processItemQueryResult(selectedItemName: any): void {
+    console.log(`Item of BOM change to ${selectedItemName.trim()}`);
+    this.bomItemChanged(selectedItemName);
+
+  }
   getEmptyBillOfMaterial(): BillOfMaterial {
     return {
       id: undefined,
@@ -249,9 +258,12 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
   }
 
   // BOM Line related functions
-  bomLineItemNameChanged(event: Event, billOfMaterialLine: BillOfMaterialLine): void {
+  bomLineItemNameOnBlur(event: Event, billOfMaterialLine: BillOfMaterialLine): void {
     const itemName: string = (event.target as HTMLInputElement).value.trim();
     console.log(`Item of billOfMaterialLine change to ${itemName}`);
+    this.bomLineItemNameChanged(itemName, billOfMaterialLine);
+  }
+  bomLineItemNameChanged(itemName: string, billOfMaterialLine: BillOfMaterialLine): void { 
     if (itemName === '') {
       billOfMaterialLine.item = {
         id: undefined,
@@ -285,6 +297,10 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
         });
       });
     }
+  }
+  processBomLineItemQueryResult(itemName: any, billOfMaterialLine: BillOfMaterialLine ): void {
+    
+    this.bomLineItemNameChanged(itemName, billOfMaterialLine);
   }
   removeBOMLine(billOfMaterialLine: BillOfMaterialLine): void {
     this.mapOfNewLineExpectedQuantity[billOfMaterialLine.number!] = 0;

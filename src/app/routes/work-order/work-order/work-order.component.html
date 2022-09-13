@@ -125,17 +125,118 @@
                   style="width:75px"
                 ></nz-skeleton-element>
               {{ data.item?.name }}</td>
-            <td>{{ data.expectedQuantity }}</td>
-            <td>{{ data.producedQuantity }}</td>
-            <td>{{ data.qcQuantity }}</td>
+              <td>
+                <nz-skeleton-element 
+                    *ngIf="data.item === undefined || data.item === null"
+                    nzType="input"
+                    [nzActive]="true"
+                    [nzSize]="'small'"
+                    style="width:150px"
+                  ></nz-skeleton-element>
+                  <ellipsis length="50" tooltip>{{ data.item?.description }}</ellipsis> </td>
+            <td>{{ data.expectedQuantity }}
+              <nz-skeleton-element 
+                  *ngIf="data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                      && data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                  nzType="input"
+                  [nzActive]="true"
+                  [nzSize]="'small'"
+                  style="width:75px"
+                ></nz-skeleton-element> 
+                <strong>{{data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
+
+            </td>
+            <td>{{ data.producedQuantity }}
+              <nz-skeleton-element 
+                  *ngIf="data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                      && data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                  nzType="input"
+                  [nzActive]="true"
+                  [nzSize]="'small'"
+                  style="width:75px"
+                ></nz-skeleton-element> 
+                <strong>{{data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong></td>
+            <td>{{ data.qcQuantity }}
+              <nz-skeleton-element 
+                  *ngIf="data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                      && data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                  nzType="input"
+                  [nzActive]="true"
+                  [nzSize]="'small'"
+                  style="width:75px"
+                ></nz-skeleton-element> 
+                <strong>{{data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong></td>
             <td>{{ data.qcPercentage }}</td>
-            <td>{{ data.qcQuantityRequested }}</td>
-            <td>{{ data.qcQuantityCompleted }}</td>
-            <td>{{ data.totalLineExpectedQuantity }}</td>
-            <td>{{ data.totalLineOpenQuantity }}</td>
-            <td>{{ data.totalLineInprocessQuantity }}</td>
-            <td>{{ data.totalLineDeliveredQuantity }}</td>
-            <td>{{ data.totalLineConsumedQuantity }}</td>
+            <td>{{ data.qcQuantityRequested }}
+              <nz-skeleton-element 
+                  *ngIf="data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                      && data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                  nzType="input"
+                  [nzActive]="true"
+                  [nzSize]="'small'"
+                  style="width:75px"
+                ></nz-skeleton-element> 
+                <strong>{{data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong></td>
+            <td>{{ data.qcQuantityCompleted }}
+              <nz-skeleton-element 
+                  *ngIf="data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                      && data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                  nzType="input"
+                  [nzActive]="true"
+                  [nzSize]="'small'"
+                  style="width:75px"
+                ></nz-skeleton-element> 
+                <strong>{{data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong></td>
+            <td>{{ data.totalLineExpectedQuantity }}
+              <nz-skeleton-element 
+                  *ngIf="data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                      && data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                  nzType="input"
+                  [nzActive]="true"
+                  [nzSize]="'small'"
+                  style="width:75px"
+                ></nz-skeleton-element> 
+                <strong>{{data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong></td>
+            <td>{{ data.totalLineOpenQuantity }}
+              <nz-skeleton-element 
+                  *ngIf="data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                      && data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                  nzType="input"
+                  [nzActive]="true"
+                  [nzSize]="'small'"
+                  style="width:75px"
+                ></nz-skeleton-element> 
+                <strong>{{data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong></td>
+            <td>{{ data.totalLineInprocessQuantity }}
+              <nz-skeleton-element 
+                  *ngIf="data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                      && data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                  nzType="input"
+                  [nzActive]="true"
+                  [nzSize]="'small'"
+                  style="width:75px"
+                ></nz-skeleton-element> 
+                <strong>{{data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong></td>
+            <td>{{ data.totalLineDeliveredQuantity }}
+              <nz-skeleton-element 
+                  *ngIf="data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                      && data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                  nzType="input"
+                  [nzActive]="true"
+                  [nzSize]="'small'"
+                  style="width:75px"
+                ></nz-skeleton-element> 
+                <strong>{{data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong></td>
+            <td>{{ data.totalLineConsumedQuantity }}
+              <nz-skeleton-element 
+                  *ngIf="data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                      && data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                  nzType="input"
+                  [nzActive]="true"
+                  [nzSize]="'small'"
+                  style="width:75px"
+                ></nz-skeleton-element> 
+                <strong>{{data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong></td>
 
             
             <td nzRight>
@@ -262,15 +363,96 @@
                               [nzSize]="'small'"
                               style="width:75px"
                             ></nz-skeleton-element>
-                            {{ workOrderLine.item?.description }}</td>
-                        <td>{{ workOrderLine.expectedQuantity }}</td>
-                        <td>{{ workOrderLine.openQuantity }}</td>
-                        <td>{{ workOrderLine.inprocessQuantity }}</td>
-                        <td>{{ workOrderLine.deliveredQuantity }}</td>
-                        <td>{{ workOrderLine.consumedQuantity }}</td>
-                        <td>{{ workOrderLine.scrappedQuantity }}</td>
-                        <td>{{ workOrderLine.returnedQuantity }}</td>
-                        <td>{{ workOrderLine.sparePartQuantity }}</td>
+                            <ellipsis length="100" tooltip>{{ workOrderLine.item?.description }}</ellipsis>
+                            </td>
+                        <td>{{ workOrderLine.expectedQuantity }}
+                            <nz-skeleton-element 
+                              *ngIf="workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                                  && workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                              nzType="input"
+                              [nzActive]="true"
+                              [nzSize]="'small'"
+                              style="width:75px"
+                            ></nz-skeleton-element> 
+                            <strong>{{workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
+                        </td>
+                        <td>{{ workOrderLine.openQuantity }}
+                          <nz-skeleton-element 
+                            *ngIf="workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                                && workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                            nzType="input"
+                            [nzActive]="true"
+                            [nzSize]="'small'"
+                            style="width:75px"
+                          ></nz-skeleton-element> 
+                          <strong>{{workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
+                        </td>
+                        <td>{{ workOrderLine.inprocessQuantity }}
+                          <nz-skeleton-element 
+                            *ngIf="workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                                && workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                            nzType="input"
+                            [nzActive]="true"
+                            [nzSize]="'small'"
+                            style="width:75px"
+                          ></nz-skeleton-element> 
+                          <strong>{{workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
+                        </td>
+                        <td>{{ workOrderLine.deliveredQuantity }}
+                          <nz-skeleton-element 
+                            *ngIf="workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                                && workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                            nzType="input"
+                            [nzActive]="true"
+                            [nzSize]="'small'"
+                            style="width:75px"
+                          ></nz-skeleton-element> 
+                          <strong>{{workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
+                        </td>
+                        <td>{{ workOrderLine.consumedQuantity }}
+                          <nz-skeleton-element 
+                            *ngIf="workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                                && workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                            nzType="input"
+                            [nzActive]="true"
+                            [nzSize]="'small'"
+                            style="width:75px"
+                          ></nz-skeleton-element> 
+                          <strong>{{workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
+                        </td>
+                        <td>{{ workOrderLine.scrappedQuantity }}
+                          <nz-skeleton-element 
+                            *ngIf="workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                                && workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                            nzType="input"
+                            [nzActive]="true"
+                            [nzSize]="'small'"
+                            style="width:75px"
+                          ></nz-skeleton-element> 
+                          <strong>{{workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
+                        </td>
+                        <td>{{ workOrderLine.returnedQuantity }}
+                          <nz-skeleton-element 
+                            *ngIf="workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                                && workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                            nzType="input"
+                            [nzActive]="true"
+                            [nzSize]="'small'"
+                            style="width:75px"
+                          ></nz-skeleton-element> 
+                          <strong>{{workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
+                        </td>
+                        <td>{{ workOrderLine.sparePartQuantity }}
+                          <nz-skeleton-element 
+                            *ngIf="workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                                && workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                            nzType="input"
+                            [nzActive]="true"
+                            [nzSize]="'small'"
+                            style="width:75px"
+                          ></nz-skeleton-element> 
+                          <strong>{{workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
+                        </td>
                         <td>{{ 'INVENTORY-STATUS-' + workOrderLine.inventoryStatus?.name | i18n}}</td>
                         <td>{{ 'ALLOCATION-STRATEGY-TYPE-' + workOrderLine.allocationStrategyType | i18n}}</td>
                         <td>

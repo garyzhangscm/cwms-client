@@ -8,7 +8,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { NzUploadChangeParam, NzUploadFile } from 'ng-zorro-antd/upload';
+import {  NzUploadFile } from 'ng-zorro-antd/upload';
 import { Observable, Observer } from 'rxjs';
 
 import { Client } from '../../common/models/client';
@@ -266,7 +266,8 @@ export class InventoryItemComponent implements OnInit {
     this.searchForm = this.fb.group({
       clientId: [null],
       taggedItemFamilies: [null],
-      itemName: [null]
+      itemName: [null],
+      itemDescription: [null]
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
@@ -296,7 +297,8 @@ export class InventoryItemComponent implements OnInit {
     this.isSpinning = true; 
     this.itemService
       .getItems(this.searchForm.value.itemName, undefined, this.searchForm.value.taggedItemFamilies, 
-        undefined,undefined, this.searchForm.value.clientId)
+        undefined,undefined, this.searchForm.value.clientId, 
+        this.searchForm.value.itemDescription)
       .subscribe(
         itemRes => {
           this.items = itemRes;

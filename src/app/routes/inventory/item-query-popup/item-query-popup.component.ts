@@ -356,6 +356,7 @@ export class InventoryItemQueryPopupComponent implements OnInit {
     console.log(`this.threePartyLogisticsFlag ${this.threePartyLogisticsFlag}`)
 
     // initiate the select control
+    this.itemFamilies = [];
     this.itemFamilyService.loadItemFamilies().subscribe((itemFamilyList: ItemFamily[]) => {
       itemFamilyList.forEach(itemFamily =>
         this.itemFamilies.push({ label: itemFamily.description, value: itemFamily.id!.toString() }),
