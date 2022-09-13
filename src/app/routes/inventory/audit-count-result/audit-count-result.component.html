@@ -80,12 +80,12 @@
             [ngModel]="data.inventory!.inventoryStatus!.id!" (ngModelChange)="inventoryStatusChanged($event, data)"
             nzShowSearch nzAllowClear>
             <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
-              nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | i18n }}" [nzValue]="inventoryStatus?.id">
+              [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus?.id">
             </nz-option>
           </nz-select>
 
           <span *ngIf="data.inventory?.id">
-            {{ 'INVENTORY-STATUS-' + data.inventory?.inventoryStatus?.name | i18n }}
+            {{ data.inventory?.inventoryStatus?.description}}
           </span>
         </td>
         <td><input type="text" [(ngModel)]="data.countQuantity" name="result-{{ i }}" /></td>

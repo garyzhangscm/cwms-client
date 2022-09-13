@@ -62,7 +62,7 @@
           <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
             [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
             [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
-            [nzShowFilter]="column.showFilter" [rowspan]="column.rowspan!" [colspan]="column.colspan!">
+            [nzShowFilter]="column.showFilter" [rowspan]="column.rowspan!" [colspan]="column.colspan!" >
             {{ column.name | i18n }}
           </th>
           <th rowspan="2" nzRight>
@@ -131,7 +131,7 @@
                     nzType="input"
                     [nzActive]="true"
                     [nzSize]="'small'"
-                    style="width:150px"
+                    style="width:75px"
                   ></nz-skeleton-element>
                   <ellipsis length="50" tooltip>{{ data.item?.description }}</ellipsis> </td>
             <td>{{ data.expectedQuantity }}
@@ -453,7 +453,7 @@
                           ></nz-skeleton-element> 
                           <strong>{{workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
                         </td>
-                        <td>{{ 'INVENTORY-STATUS-' + workOrderLine.inventoryStatus?.name | i18n}}</td>
+                        <td>{{ workOrderLine.inventoryStatus?.description}}</td>
                         <td>{{ 'ALLOCATION-STRATEGY-TYPE-' + workOrderLine.allocationStrategyType | i18n}}</td>
                         <td>
                             <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
@@ -502,7 +502,7 @@
                         <td>{{ workOrderByProduct.item?.description }}</td>
                         <td>{{ workOrderByProduct.expectedQuantity }}</td>
                         <td>{{ workOrderByProduct.producedQuantity }}</td>
-                        <td>{{ 'INVENTORY-STATUS-' + workOrderByProduct.inventoryStatus!.name | i18n}}</td>
+                        <td>{{ workOrderByProduct.inventoryStatus!.description }}</td>
                       </tr>
                     </tbody>
                   </nz-table>
@@ -893,7 +893,7 @@
                         <td>{{ inventory.item?.description }}</td>
                         <td>{{ inventory.itemPackageType?.name }}</td>
                         <td>{{ inventory.quantity }}</td>
-                        <td>{{ 'INVENTORY-STATUS-' + inventory.inventoryStatus?.name | i18n}}</td>
+                        <td>{{  inventory.inventoryStatus?.description}}</td>
                         <td>
                           <button nz-button [disabled]="!isInventoryUnpickable(data, inventory)"
                             (click)="openUnpickModal(data, inventory, tplUnpickModalTitle, tplUnpickModalContent)">
@@ -952,7 +952,7 @@
                         <td>{{ inventory.item?.description }}</td>
                         <td>{{ inventory.itemPackageType?.name }}</td>
                         <td>{{ inventory.quantity }}</td>
-                        <td>{{ 'INVENTORY-STATUS-' + inventory.inventoryStatus?.name | i18n}}</td>
+                        <td>{{  inventory.inventoryStatus?.description }}</td>
 
                         <td>
                           <p *ngFor="let inventoryMovement of inventory.inventoryMovements; let i = index">
@@ -1064,7 +1064,7 @@
                         <td>{{ inventory.item?.description }}</td>
                         <td>{{ inventory.itemPackageType?.name }}</td>
                         <td>{{ inventory.quantity }}</td>
-                        <td>{{ 'INVENTORY-STATUS-' + inventory.inventoryStatus?.name | i18n}}</td>
+                        <td>{{  inventory.inventoryStatus?.description }}</td>
 
                         <td>
                           <p *ngFor="let inventoryMovement of inventory.inventoryMovements; let i = index">
@@ -1158,7 +1158,7 @@
                         <td>{{ inventory.item?.description }}</td>
                         <td>{{ inventory.itemPackageType?.name }}</td>
                         <td>{{ inventory.quantity }}</td>
-                        <td>{{ 'INVENTORY-STATUS-' + inventory.inventoryStatus?.name | i18n}}</td>
+                        <td>{{  inventory.inventoryStatus?.description }}</td>
                         <td>
                           <p *ngFor="let inventoryMovement of inventory.inventoryMovements; let i = index">
                             {{ i+1 }} - {{ inventoryMovement.location?.name}}

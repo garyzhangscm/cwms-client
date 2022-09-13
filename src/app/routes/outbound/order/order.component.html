@@ -243,7 +243,7 @@
                       style="width:75px"
                     ></nz-skeleton-element> 
                     <span *ngIf="orderLine.inventoryStatus != null" >
-                      {{ 'INVENTORY-STATUS-' + orderLine.inventoryStatus?.name | i18n}}
+                      {{  orderLine.inventoryStatus?.description}}
                     </span>
                     </td>
                   <td><span *ngIf="orderLine.allocationStrategyType != null">

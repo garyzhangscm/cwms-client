@@ -161,8 +161,8 @@
           ></nz-skeleton-element> 
           <strong>{{data.itemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong> </td>
           <td>
-            <a nz-tooltip nzTooltipTitle="{{ 'INVENTORY-STATUS-' + data.inventoryStatus!.name | i18n }}">{{
-              'INVENTORY-STATUS-' + data.inventoryStatus!.name | i18n}}</a>
+            <a nz-tooltip [nzTooltipTitle]="data.inventoryStatus!.description">{{
+              data.inventoryStatus!.description}}</a>
           </td>
 
           <td>

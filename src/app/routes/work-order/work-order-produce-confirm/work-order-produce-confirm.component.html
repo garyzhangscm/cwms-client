@@ -289,7 +289,7 @@
           <td>{{ billOfMaterialLine.item?.name }}</td>
           <td>{{ billOfMaterialLine.item?.description }}</td>
           <td>{{ billOfMaterialLine.expectedQuantity }}</td>
-          <td>{{ 'INVENTORY-STATUS-' + billOfMaterialLine.inventoryStatus?.name | i18n}}</td>
+          <td>{{ billOfMaterialLine.inventoryStatus?.description }}</td>
         </tr>
       </tbody>
     </nz-table>

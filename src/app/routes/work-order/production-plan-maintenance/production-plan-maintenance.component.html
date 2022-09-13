@@ -114,7 +114,7 @@
           <td>{{ orderLine.shippedQuantity }}</td>
           <td>{{ orderLine.productionPlanInprocessQuantity }}</td>
           <td>{{ orderLine.productionPlanProducedQuantity }}</td>
-          <td>{{ 'INVENTORY-STATUS-' + orderLine.inventoryStatus?.name | i18n }}</td>
+          <td>{{ orderLine.inventoryStatus?.description }}</td>
         </tr>
       </tbody>
     </nz-table>
@@ -211,7 +211,7 @@
                 Otherwise, we allow the user to select a valid inventory status
               -->
               <span *ngIf="data.orderLine !== null">
-                {{ 'INVENTORY-STATUS-' + data.orderLine?.inventoryStatus?.name | i18n }}
+                {{ data.orderLine?.inventoryStatus?.description }}
               </span>
 
               <span *ngIf="data.orderLine === null">
@@ -223,7 +223,7 @@
                     <nz-select nz-input [ngModel]="data.inventoryStatus?.name"
                       (ngModelChange)="inventoryStatusChange($event, data)" style="width: 250px">
                       <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
-                        nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | i18n}}"
+                        [nzLabel]="inventoryStatus.description"
                         [nzValue]="inventoryStatus.name">
                       </nz-option>
                     </nz-select>
@@ -405,7 +405,7 @@
           <td>{{ productionPlanLine.orderLine?.inprocessQuantity }}</td>
           <td>{{ productionPlanLine.orderLine?.shippedQuantity }}</td>
           <td>
-            {{ 'INVENTORY-STATUS-' + productionPlanLine.inventoryStatus?.name | i18n }}
+            {{ productionPlanLine.inventoryStatus?.description }}
           </td>
           <td>
             {{ productionPlanLine.billOfMaterial?.number}}

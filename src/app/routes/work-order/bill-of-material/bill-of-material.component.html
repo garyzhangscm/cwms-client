@@ -69,6 +69,7 @@
 
           <td>{{ data.number }}</td>
           <td>{{ data.item?.name }}</td>
+          <td> <ellipsis length="100" tooltip>{{ data.item?.description }}</ellipsis> </td>
           <td>{{ data.expectedQuantity }} 
             <nz-skeleton-element 
               *ngIf="data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
@@ -116,7 +117,9 @@
       <tr *ngFor="let billOfMaterialLine of data.billOfMaterialLines">
         <td>{{ billOfMaterialLine.number }}</td>
         <td>{{ billOfMaterialLine.item!.name }}</td>
-        <td>{{ billOfMaterialLine.item!.description }}</td>
+        <td>
+          <ellipsis length="100" tooltip>{{ billOfMaterialLine.item?.description }}</ellipsis>
+        </td>
         <td>{{ billOfMaterialLine.expectedQuantity }}
           <nz-skeleton-element 
           *ngIf="billOfMaterialLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
@@ -179,7 +182,7 @@
           <td>{{ byProduct.item?.name }}</td>
           <td>{{ byProduct.item?.description }}</td>
           <td>{{ byProduct.expectedQuantity }}</td>
-          <td>{{ 'INVENTORY-STATUS-' + byProduct.inventoryStatus?.name | i18n}}</td>
+          <td>{{   byProduct.inventoryStatus?.description}}</td>
         </tr>
       </tbody>
 

@@ -103,7 +103,7 @@
           <nz-select style="width: 150px" [ngModel]="inventory.inventoryStatus?.id"
             (ngModelChange)="inventoryStatusChanged($event, inventory)"  >
             <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
-              nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | i18n }}" [nzValue]="inventoryStatus?.id">
+              [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus?.id">
             </nz-option>
           </nz-select>
         </td>

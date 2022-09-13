@@ -102,8 +102,8 @@
         <td>{{ data.quantity }}</td>
         <td>{{ data.newQuantity }}</td>
         <td>
-          <a nz-tooltip nzTooltipTitle="{{ 'INVENTORY-STATUS-' + data.inventoryStatus.name | i18n }}">{{
-            'INVENTORY-STATUS-' + data.inventoryStatus.name | i18n}}</a>
+          <a nz-tooltip [nzTooltipTitle]="data.inventoryStatus.description">{{
+            data.inventoryStatus.description}}</a>
         </td>
         <td> {{ 'INVENTORY-QUANTITY-CHANGE-TYPE-' + data.inventoryQuantityChangeType | i18n}} </td>
         <td> {{ 'INVENTORY-ADJUSTMENT-REQUEST-' + data.status | i18n}} </td>

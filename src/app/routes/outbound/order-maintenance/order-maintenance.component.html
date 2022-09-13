@@ -357,13 +357,13 @@
                                 [(ngModel)]="data.inventoryStatus!.id" (ngModelChange)="inventoryStatusChanged(data)"
                                 >
                                 <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
-                                    nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | i18n }}"
+                                    [nzLabel]="inventoryStatus.description"
                                     [nzValue]="inventoryStatus?.id">
                                 </nz-option>
                             </nz-select>
 
                             <span *ngIf="data.id">
-                                {{ 'INVENTORY-STATUS-' + data.inventoryStatus?.name | i18n }}
+                                {{  data.inventoryStatus?.description}}
                             </span>
                         </td>
                         <td>

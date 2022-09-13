@@ -158,15 +158,14 @@
           </td>
           <td>{{ billOfMaterialLine.item?.description }}</td>
           <td>
-            <span *ngIf="billOfMaterialLine.id !== undefined && billOfMaterialLine.id !== null">{{
-              'INVENTORY-STATUS-' + billOfMaterialLine.inventoryStatus?.name | i18n
-              }}</span>
+            <span *ngIf="billOfMaterialLine.id !== undefined && billOfMaterialLine.id !== null"> 
+              {{billOfMaterialLine.inventoryStatus?.description}} </span>
 
             <nz-input-group nzCompact *ngIf="billOfMaterialLine.id === undefined || billOfMaterialLine.id === null">
               <nz-select nz-input [ngModel]="billOfMaterialLine.inventoryStatus?.name"
                 (ngModelChange)="inventoryStatusChange($event, billOfMaterialLine)" style="width: 150px">
                 <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
-                  nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | i18n }}" [nzValue]="inventoryStatus.name">
+                  [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.name">
                 </nz-option>
               </nz-select>
             </nz-input-group>
@@ -271,15 +270,14 @@
           </td>
           <td>{{ byProduct.item?.description }}</td>
           <td>
-            <span *ngIf="byProduct.id != null">{{
-              'INVENTORY-STATUS-' + byProduct.inventoryStatus?.name | i18n
+            <span *ngIf="byProduct.id != null">{{ byProduct.inventoryStatus?.description
               }}</span>
 
             <nz-input-group nzCompact *ngIf="byProduct.id == null">
               <nz-select nz-input [ngModel]="byProduct.inventoryStatus?.name"
                 (ngModelChange)="byProductInventoryStatusChange($event, byProduct)" style="width: 150px">
                 <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
-                  nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | i18n }}" [nzValue]="inventoryStatus.name">
+                  [nzLabel]=" inventoryStatus.description" [nzValue]="inventoryStatus.name">
                 </nz-option>
               </nz-select>
             </nz-input-group>
@@ -420,7 +418,7 @@
           <td>
             {{ mapOfNewByProductExpectedQuantity[byProduct.itemId!] }}
           </td>
-          <td>{{ 'INVENTORY-STATUS-' + byProduct.inventoryStatus!.name! | i18n }}</td>
+          <td>{{  byProduct.inventoryStatus!.description }}</td>
         </tr>
       </tbody>
     </nz-table>

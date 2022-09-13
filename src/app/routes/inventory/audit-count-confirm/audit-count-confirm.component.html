@@ -54,7 +54,7 @@
         <td>{{ data.location?.name }}</td>
         <td>{{ data.quantity }}</td>
         <td>
-          {{ 'INVENTORY-STATUS-' + data.inventory?.inventoryStatus?.name | i18n }}
+          {{ data.inventory?.inventoryStatus?.description }}
         </td>
         <td>
           {{ data.countQuantity}}</td>

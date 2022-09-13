@@ -128,7 +128,7 @@
                     <nz-descriptions-item nzTitle="{{'quantity' | i18n}}">
                       {{ returnMaterialRequest.quantity + "" | i18n}}</nz-descriptions-item>
                     <nz-descriptions-item nzTitle="{{'inventory-status' | i18n}}">
-                      {{'INVENTORY-STATUS-' + returnMaterialRequest.inventoryStatus?.name | i18n}}
+                      {{ returnMaterialRequest.inventoryStatus?.description }}
                     </nz-descriptions-item>
                     <nz-descriptions-item nzTitle="{{'item-package-type' | i18n}}">
                       {{returnMaterialRequest.itemPackageType?.name}}</nz-descriptions-item>

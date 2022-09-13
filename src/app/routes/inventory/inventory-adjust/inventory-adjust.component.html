@@ -313,7 +313,7 @@
           <nz-select nz-input [(ngModel)]="currentInventory.inventoryStatus!.name"
             (ngModelChange)="inventoryStatusChange()" style="width: 250px">
             <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
-              nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | i18n }}" [nzValue]="inventoryStatus.name">
+              [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.name">
             </nz-option>
           </nz-select>
         </nz-form-control>

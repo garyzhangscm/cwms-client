@@ -144,7 +144,7 @@
                     <td>{{ inventory.item?.description }}</td>
                     <td>
                         <span *ngIf="inventory.inventoryStatus != null" >
-                        {{ 'INVENTORY-STATUS-' + inventory.inventoryStatus?.name | i18n}}
+                        {{ inventory.inventoryStatus?.description}}
                         </span>
                     </td>
                     <td>{{ inventory.quantity }}</td>

@@ -136,7 +136,7 @@
                   <nz-descriptions-item nzTitle="{{'quantity' | i18n}}">
                     {{ returnMaterialRequest.quantity }}</nz-descriptions-item>
                   <nz-descriptions-item nzTitle="{{'inventory-status' | i18n}}">
-                    {{'INVENTORY-STATUS-' + returnMaterialRequest.inventoryStatus?.name | i18n}}
+                    {{ returnMaterialRequest.inventoryStatus?.description }}
                   </nz-descriptions-item>
                   <nz-descriptions-item nzTitle="{{'item-package-type' | i18n}}">
                     {{returnMaterialRequest.itemPackageType?.name}}</nz-descriptions-item>
@@ -250,7 +250,7 @@
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
             <nz-select nz-input formControlName="inventoryStatus" style="width: 250px">
               <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
-                nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | i18n}}" [nzValue]="inventoryStatus.name">
+                [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.name">
               </nz-option>
             </nz-select>
           </nz-form-control>

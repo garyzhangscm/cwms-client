@@ -47,6 +47,16 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
       filterFn: null,
       showFilter: false
     }, {
+      name: 'item.description',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: BillOfMaterial, b: BillOfMaterial) => this.utilService.compareNullableObjField(a.item, b.item, 'description'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },{
       name: 'bill-of-material.expectedQuantity',
       showSort: true,
       sortOrder: null,

@@ -105,7 +105,7 @@
                 -->
                 <nz-select nz-input formControlName="inventoryStatus" style="width: 250px" required>
                     <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
-                    nzLabel="{{ 'INVENTORY-STATUS-' + inventoryStatus.name | i18n}}" [nzValue]="inventoryStatus.id">
+                    [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.id">
                     </nz-option>
                 </nz-select>
                 </nz-form-control>

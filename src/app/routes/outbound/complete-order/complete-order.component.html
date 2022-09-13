@@ -111,7 +111,7 @@
                         <td> {{ data.item?.name }} </td>
                         <td> {{ data.item?.description }} </td>                        
                         <td> {{ data.expectedQuantity }} </td> 
-                        <td> {{ 'INVENTORY-STATUS-' + data.inventoryStatus?.name | i18n }} </td>
+                        <td> {{   data.inventoryStatus?.description }} </td>
                         <td> {{ data.shippedQuantity }} </td> 
                         <td> 
                             <div class="row">
@@ -210,7 +210,7 @@
                         <td> {{ data.item?.name }} </td>
                         <td> {{ data.item?.description }} </td>                        
                         <td> {{ data.expectedQuantity }} </td> 
-                        <td> {{ 'INVENTORY-STATUS-' + data.inventoryStatus?.name | i18n }} </td>
+                        <td> {{  data.inventoryStatus?.description }} </td>
                         <td> {{ data.shippedQuantity }} </td> 
                         <td>  {{shippedQuantityMap.get(data.number)}}
                         </td> 
