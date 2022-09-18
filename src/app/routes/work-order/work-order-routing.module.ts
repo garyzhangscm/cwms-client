@@ -20,6 +20,10 @@ import { WorkOrderPrePrintLpnLabelComponent } from './pre-print-lpn-label/pre-pr
 import { WorkOrderProduceTransactionComponent } from './produce-transaction/produce-transaction.component';
 import { WorkOrderProductionKanbanComponent } from './production-kanban/production-kanban.component';
 import { WorkOrderProductionLineMaintenanceComponent } from './production-line-maintenance/production-line-maintenance.component';
+import { WorkOrderProductionLineMonitorMaintenanceComponent } from './production-line-monitor-maintenance/production-line-monitor-maintenance.component';
+import { WorkOrderProductionLineMonitorTransactionComponent } from './production-line-monitor-transaction/production-line-monitor-transaction.component';
+import { WorkOrderProductionLineMonitorComponent } from './production-line-monitor/production-line-monitor.component';
+import { WorkOrderProductionLineStatusComponent } from './production-line-status/production-line-status.component';
 import { WorkOrderProductionLineComponent } from './production-line/production-line.component';
 import { WorkOrderProductionPlanMaintenanceComponent } from './production-plan-maintenance/production-plan-maintenance.component';
 import { WorkOrderProductionPlanComponent } from './production-plan/production-plan.component';
@@ -87,7 +91,11 @@ const routes: Routes = [
   { path: 'mps-export', component: WorkOrderMpsExportComponent },
   { path: 'mrp-maintenance', component: WorkOrderMrpMaintenanceComponent },
   { path: 'line/spare-part-maintenance', component: WorkOrderWorkOrderLineSparePartMaintenanceComponent },
-  { path: 'work-order/maintenance', component: WorkOrderWorkOrderMaintenanceComponent }];
+  { path: 'work-order/maintenance', component: WorkOrderWorkOrderMaintenanceComponent },
+  { path: 'production-line-monitor', component: WorkOrderProductionLineMonitorComponent },
+  { path: 'production-line-monitor/maintenance', component: WorkOrderProductionLineMonitorMaintenanceComponent },
+  { path: 'production-line-monitor/transaction', component: WorkOrderProductionLineMonitorTransactionComponent },
+  { path: 'production-line-status', component: WorkOrderProductionLineStatusComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

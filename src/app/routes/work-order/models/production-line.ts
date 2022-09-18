@@ -8,7 +8,7 @@ export interface ProductionLine {
   id?: number;
   name: string;
 
-  warehouseId: number;
+  warehouseId?: number;
   warehouse?: Warehouse;
 
   inboundStageLocationId?: number;
@@ -18,12 +18,12 @@ export interface ProductionLine {
   productionLineLocationId?: number;
   productionLineLocation?: WarehouseLocation;
 
-  productionLineAssignments: ProductionLineAssignment[];
-  workOrderExclusiveFlag: boolean;
-  enabled: boolean;
-  genericPurpose: boolean;
+  productionLineAssignments?: ProductionLineAssignment[];
+  workOrderExclusiveFlag?: boolean;
+  enabled?: boolean;
+  genericPurpose?: boolean;
 
   productionLineCapacities: ProductionLineCapacity[];
   
-  model: string;
+  model?: string;
 }

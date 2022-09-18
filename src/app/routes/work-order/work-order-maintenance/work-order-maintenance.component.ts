@@ -211,6 +211,23 @@ export class WorkOrderWorkOrderMaintenanceComponent implements OnInit {
     }
   }
   
+  itemNameOnBlur(event: Event): void {
+    const itemName: string = (event.target as HTMLInputElement).value;
+    console.log(`Item of BOM change to ${itemName.trim()}`);
+    this.getItemByName(itemName).subscribe(
+      {
+        next: (itemsRes) => {
+          if (itemsRes.length > 0) {
+
+            this.currentWorkOrder.itemId = itemsRes[0].id;
+            this.currentWorkOrder.item = itemsRes[0];
+          }
+        }
+      }
+    )
+    
+  }
+  
   processWorkOrderItemQueryResult(itemName: any): void {
     console.log(`start to query with item name ${itemName}`);
     this.getItemByName(itemName).subscribe(
@@ -226,6 +243,23 @@ export class WorkOrderWorkOrderMaintenanceComponent implements OnInit {
     )
     
     
+  }
+  workOrderLineItemNameOnBlur(event: Event, workOrderLine: WorkOrderLine): void {
+    const itemName: string = (event.target as HTMLInputElement).value.trim();
+    console.log(`Item of billOfMaterialLine change to ${itemName}`);
+    workOrderLine.itemId = undefined;
+    workOrderLine.item = undefined;
+    this.getItemByName(itemName).subscribe(
+      {
+        next: (itemsRes) => {
+          if (itemsRes.length > 0) {
+
+            workOrderLine.itemId = itemsRes[0].id;
+            workOrderLine.item = itemsRes[0];
+          }
+        }
+      }
+    ) 
   }
  
   // BOM Line related functions
