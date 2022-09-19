@@ -11,6 +11,7 @@ export interface ProductionLineStatus {
     active: boolean;
 
     lastCycleTime: number;
+    totalCycles: number;
 
     averageCycleTime: number;
 

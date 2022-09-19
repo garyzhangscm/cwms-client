@@ -33,6 +33,7 @@ export class WorkOrderProductionLineStatusComponent implements OnInit {
       title: this.i18n.fanyi("lastCycleTime"),  
       render: 'lastCycleTimeColumn', 
     },
+    { title: this.i18n.fanyi("totalCycles"),  index: 'totalCycles'   },   
     {
       title: this.i18n.fanyi("lastCycleHappensTiming"),  
       render: 'lastCycleHappensTimingColumn', 
