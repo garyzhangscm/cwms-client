@@ -1,14 +1,115 @@
-import { Component, OnInit } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { formatDate } from '@angular/common';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { FormGroup, FormBuilder } from '@angular/forms';
+import { I18NService } from '@core';
+import { STComponent, STColumn } from '@delon/abc/st';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+
+import { ProductionLine } from '../models/production-line';
+import { ProductionLineStatus } from '../models/production-line-status';
+import { ProductionLineService } from '../services/production-line.service';
 
 @Component({
   selector: 'app-work-order-production-line-status',
   templateUrl: './production-line-status.component.html',
+  styleUrls: ['./production-line-status.component.less'],
 })
 export class WorkOrderProductionLineStatusComponent implements OnInit {
+  searchForm!: FormGroup;
+  searching = false;
+  searchResult = '';
+  listOfProductionLineStatus: ProductionLineStatus[] = [];
+  availableProductionLines: ProductionLine[] = []; 
+  
+  isSpinning = false;
 
-  constructor(private http: _HttpClient) { }
+  @ViewChild('st', { static: true })
+  st!: STComponent;
+  columns: STColumn[] = [
+     
+    { title: this.i18n.fanyi("production-line"),  index: 'productionLine.name'   },    
+    { title: this.i18n.fanyi("active"),  index: 'active'   },   
+    {
+      title: this.i18n.fanyi("lastCycleTime"),  
+      render: 'lastCycleTimeColumn', 
+    },
+    {
+      title: this.i18n.fanyi("lastCycleHappensTiming"),  
+      render: 'lastCycleHappensTimingColumn', 
+    },
+    {
+      title: this.i18n.fanyi("averageCycleTime"),  
+      render: 'averageCycleTimeColumn', 
+    },
+    {
+      title: this.i18n.fanyi("startTime"),  
+      render: 'startTimeColumn', 
+    },
+    {
+      title: this.i18n.fanyi("endTime"),  
+      render: 'endTimeColumn', 
+    }
+  ]; 
 
-  ngOnInit(): void { }
+  constructor(
+    private fb: FormBuilder,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private productionLineService: ProductionLineService,
+    private titleService: TitleService,  ) { }
+
+  ngOnInit(): void {
+      this.titleService.setTitle(this.i18n.fanyi('menu.main.work-order.production-line-status'));
+      // initiate the search form
+      this.searchForm = this.fb.group({ 
+        productionLine: [null], 
+        transactionDateTimeRanger: [null], 
+      }); 
+      this.loadAllProductionLines(); 
+  }
+
+  resetForm(): void {
+    this.searchForm.reset();
+    this.listOfProductionLineStatus = []; 
+  }
+
+  loadAllProductionLines() : void {
+
+    this.productionLineService.getProductionLines().subscribe(
+      {
+        next: (productionLineRes) => this.availableProductionLines = productionLineRes
+      }
+    )
+  } 
+  search(): void {
+    this.isSpinning = true;
+    this.searchResult = '';
+     
+    let startTime : Date = this.searchForm.controls.transactionDateTimeRanger.value ? 
+        this.searchForm.controls.transactionDateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.controls.transactionDateTimeRanger.value ? 
+        this.searchForm.controls.transactionDateTimeRanger.value[1] : undefined;  
+
+    this.productionLineService.getProductionLineStatus( 
+      this.searchForm.controls.productionLine.value,
+      startTime, endTime,  ).subscribe({
+
+        next: (productionLineStatusRes) => {
+            this.listOfProductionLineStatus = productionLineStatusRes;
+            this.isSpinning = false;
+            this.searchResult = this.i18n.fanyi('search_result_analysis', {
+              currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+              rowCount: productionLineStatusRes.length,
+            });
+        
+        },
+        error: () => { 
+            this.isSpinning = false;
+            this.searchResult = ''; 
+        }
+
+
+    });
+  }
+   
 
 }

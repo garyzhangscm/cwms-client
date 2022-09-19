@@ -33,6 +33,10 @@ const alainConfig: AlainConfig = {
       /resource\/assets/,
     ],
   },
+  xlsx: {
+    url: 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js',
+    modules: [`https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/cpexcel.js`]
+  }
 };
 
 const alainModules: any[] = [AlainThemeModule.forRoot(), DelonACLModule.forRoot()];

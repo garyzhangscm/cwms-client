@@ -1,7 +1,6 @@
 import { ProductionLine } from "./production-line";
-import { ProductionLineMonitor } from "./production-line-monitor";
 
-export interface ProductionLineMonitorTransaction {
+export interface ProductionLineStatus {
     
     productionLine: ProductionLine;
 
@@ -15,6 +14,5 @@ export interface ProductionLineMonitorTransaction {
 
     averageCycleTime: number;
 
-    
-    createdTime: Date;
+    lastCycleHappensTiming: Date;
 }

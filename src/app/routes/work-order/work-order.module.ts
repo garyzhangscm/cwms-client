@@ -2,6 +2,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { NgModule, Type } from '@angular/core';
 import { EllipsisModule } from '@delon/abc/ellipsis';
 import { STModule } from '@delon/abc/st';
+import { XlsxModule } from '@delon/abc/xlsx';
 import { SharedModule } from '@shared'; 
 import { GoogleChartsModule } from 'angular-google-charts';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
@@ -142,7 +143,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzEmptyModule , 
     NzTreeViewModule ,
     NzTreeModule,
-    EllipsisModule
+    EllipsisModule,
+    XlsxModule
 
   ],
   declarations: [

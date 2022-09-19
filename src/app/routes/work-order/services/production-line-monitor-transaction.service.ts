@@ -43,4 +43,15 @@ export class ProductionLineMonitorTransactionService {
 
     return this.http.get(url).pipe(map(res => res.data));
   }  
+  
+  addProductionLineMonitorTransaction(
+    productionLineMonitorName: string,
+    cycleTime: number
+  ): Observable<ProductionLineMonitorTransaction> {
+    let url =  `workorder/production-line-monitor-transactions?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    
+    url = `${url}&productionLineMonitorName=${productionLineMonitorName}`;
+    url = `${url}&cycleTime=${cycleTime}`;
+    return this.http.put(url).pipe(map(res => res.data));
+  }
 }

@@ -1,16 +1,21 @@
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { DateTimeService } from '../../util/services/date-time.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ProductionLine } from '../models/production-line';
+import { ProductionLineStatus } from '../models/production-line-status';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductionLineService {
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
+  constructor(private http: _HttpClient, 
+    private dateTimeService: DateTimeService,
+    private warehouseService: WarehouseService) {}
 
   getProductionLines(name?: string): Observable<ProductionLine[]> {
     const url = name
@@ -73,5 +78,26 @@ export class ProductionLineService {
       productionLineIds: productionLineIds.join(','),
     };
     return this.http.delete('workorder/production-lines', params).pipe(map(res => res.data));
+  }
+  
+  getProductionLineStatus(name?: string, 
+    startTime?: Date, endTime?:Date,): Observable<ProductionLineStatus[]> {
+    const productionLineIds: number[] = [];
+     
+    let url =  `workorder/production-lines/status?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+    
+    if (name) {
+      url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name.trim())}`;
+    } 
+    if (startTime) {
+      url = `${url}&startTime=${this.dateTimeService.getISODateTimeString(startTime)}`;
+    }
+    if (endTime) {
+      url = `${url}&endTime=${this.dateTimeService.getISODateTimeString(endTime)}`;
+    }
+
+    return this.http.get(url).pipe(map(res => res.data));
   }
 }

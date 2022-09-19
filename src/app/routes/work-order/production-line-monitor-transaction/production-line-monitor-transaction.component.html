@@ -44,7 +44,7 @@
         <div nz-col [nzSpan]="12" >
           <nz-form-item nzFlex>
             <nz-form-label [nzSpan]="6" nzFor="transactionDateTimeRanger">
-              {{ 'date-time' | i18n }}
+              {{ 'date-time-range' | i18n }}
             </nz-form-label>
             <nz-form-control [nzSpan]="18">
               <nz-range-picker [nzShowTime]="{ nzHideDisabledOptions: true }" nzFormat="yyyy-MM-dd HH:mm:ss"
@@ -78,13 +78,29 @@
   <!-- Table to Display the result  -->
 
   <div class="search-result-list"> 
-    
-    <st #st [data]="listOfProductionLineMonitorTransactions"   > 
+    <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;">
+
+      <button nz-button (click)="st.export()">Export</button> 
+    </div>
+    <st #st [data]="listOfProductionLineMonitorTransactions"  [columns]="columns" > 
+      <ng-template st-row="cycleTimeColumn" let-item let-index="index"> 
+            
+        {{ item.cycleTime | number}} <strong>S</strong>
+      </ng-template>
+      <ng-template st-row="createdTimeColumn" let-item let-index="index"> 
+            
+        {{ item.createdTime  | date:'M/d/yy, h:mm:ss a':'+0000'}} 
+      </ng-template>
     </st>
     
     <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
       {{searchResult}}
     </div> 
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;"> 
+      <button nz-button (click)="createFakeData(10)"> 
+        {{ 'add' | i18n }}
+      </button>
+    </div>
   </div>
       
 </nz-spin>

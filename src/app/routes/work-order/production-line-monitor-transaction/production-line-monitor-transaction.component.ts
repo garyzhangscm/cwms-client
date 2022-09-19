@@ -1,10 +1,10 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { FormGroup, FormBuilder } from '@angular/forms'; 
 import { I18NService } from '@core';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import { STComponent, STColumn } from '@delon/abc/st';
+import { XlsxService } from '@delon/abc/xlsx';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 
 import { ProductionLine } from '../models/production-line';
 import { ProductionLineMonitor } from '../models/production-line-monitor';
@@ -29,12 +29,32 @@ export class WorkOrderProductionLineMonitorTransactionComponent implements OnIni
   
   isSpinning = false;
 
+  @ViewChild('st', { static: false })
+  st!: STComponent;
+  columns: STColumn[] = [
+     
+    { title: this.i18n.fanyi("production-line-monitor"),  index: 'productionLineMonitor.name'   },    
+    { title: this.i18n.fanyi("production-line-monitor"),  index: 'productionLineMonitor.description'   },  
+    { title: this.i18n.fanyi("production-line"),  index: 'productionLine.name'   },    
+    {
+      title: this.i18n.fanyi("cycleTime"),  
+      render: 'cycleTimeColumn', 
+    },
+    {
+      title: this.i18n.fanyi("createdTime"),  
+      render: 'createdTimeColumn', 
+    }
+
+    
+  ]; 
+
   constructor(
     private fb: FormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private productionLineMonitorTransactionService: ProductionLineMonitorTransactionService, 
     private productionLineService: ProductionLineService,
     private productionLineMonitorService: ProductionLineMonitorService,
+    private xlsx: XlsxService,
     private titleService: TitleService,  ) { }
 
   ngOnInit(): void {
@@ -105,4 +125,34 @@ export class WorkOrderProductionLineMonitorTransactionComponent implements OnIni
   }
   
 
+  createFakeData(count: number) {
+    console.log(`create fake data: ${count}`);
+    let cycleTime = (Math.random() * 5 + 30);
+    if (count > 0) {
+
+      this.isSpinning = true;
+      setTimeout(() => {
+  
+        this.productionLineMonitorTransactionService.addProductionLineMonitorTransaction("TEST111", cycleTime)
+        .subscribe({
+          next: () =>  this.createFakeData(count - 1),
+          error: () => {}
+        })
+      }, cycleTime * 1000); 
+    }
+    else {
+      
+      this.isSpinning = false;
+    }
+  }
+  export() {
+    this.xlsx.export({
+      sheets: [
+        {
+          data: this.listOfProductionLineMonitorTransactions,
+          name: 'monitor-transaction',
+        },
+      ],
+    });
+  }
 }
