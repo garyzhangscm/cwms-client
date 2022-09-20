@@ -222,7 +222,7 @@
                     {{ 'inventory.attributeChange' | i18n }}</a>
                 </li>
                 <li nz-menu-item>
-                  <a (click)="openMoveInventoryModal(data, tplInventoryMoveModalTitle, tplInventoryMoveModalContent )">
+                  <a (click)="openMoveInventoryModal(data, tplInventoryMoveModalTitle, tplInventoryMoveModalContent)">
                     {{ 'moveInventory' | i18n }}</a>
                 </li>
                 <li nz-menu-item><a
@@ -286,6 +286,10 @@
     <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;"> 
     
       <button nz-button nzDanger (click)="removeSelectedInventory()">{{'delete' | i18n}}</button>
+      
+      <nz-divider nzType="vertical"></nz-divider> 
+      <button nz-button [nzType]="'primary'"  (click)="openBatchMoveInventoryModal(tplInventoryMoveModalTitle, tplInventoryMoveModalContent)">
+        {{'moveInventory' | i18n}}</button>
     </div>
   </ng-template>
 </nz-spin>
@@ -335,11 +339,11 @@
 
 <!-- Modal for inventory movement-->
 <ng-template #tplInventoryMoveModalTitle>
-  <span>{{ 'page.modal.delete.header.title' | i18n}}</span>
+  <span>{{ 'move' | i18n}}</span>
 </ng-template>
 <ng-template #tplInventoryMoveModalContent>
   <form nz-form [formGroup]="inventoryMovementForm">
-    <div nz-row [nzGutter]="24">
+    <div nz-row [nzGutter]="24" *ngIf="!batchMovement">
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
@@ -378,7 +382,7 @@
       </div>
     </div>
 
-    <div nz-row [nzGutter]="24">
+    <div nz-row [nzGutter]="24"  *ngIf="!batchMovement">
 
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
@@ -418,10 +422,10 @@
       </div>
     </div>
 
-    <div nz-row [nzGutter]="24">
+    <div nz-row [nzGutter]="24" >
 
 
-      <div nz-col [nzSpan]="8">
+      <div nz-col [nzSpan]="8" *ngIf="!batchMovement">
         <nz-form-item nzFlex>
           <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationName">
             {{ 'location' | i18n }}

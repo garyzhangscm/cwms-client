@@ -20,6 +20,7 @@ import { ColumnItem } from '../../util/models/column-item';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
+import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { Inventory } from '../models/inventory';
@@ -176,6 +177,8 @@ export class InventoryInventoryComponent implements OnInit {
 
   mapOfInprocessInventoryId: { [key: string]: boolean } = {};
 
+  // whether we are move inventory in a batch
+  batchMovement = false;
   
   loadingDetailsRequest = 0;
 
@@ -601,7 +604,7 @@ export class InventoryInventoryComponent implements OnInit {
   openMoveInventoryModal(
     inventory: Inventory,
     tplInventoryMoveModalTitle: TemplateRef<{}>,
-    tplInventoryMoveModalContent: TemplateRef<{}>,
+    tplInventoryMoveModalContent: TemplateRef<{}>, 
   ): void {
     this.mapOfInprocessInventoryId[inventory.id!] = true;
     this.inventoryMovementForm = this.fb.group({
@@ -616,6 +619,7 @@ export class InventoryInventoryComponent implements OnInit {
       immediateMove: [false],
     });
 
+    this.batchMovement = false;
     // Load the location
     this.inventoryMoveModal = this.modalService.create({
       nzTitle: tplInventoryMoveModalTitle,
@@ -633,6 +637,45 @@ export class InventoryInventoryComponent implements OnInit {
           this.inventoryMovementForm.controls.destinationLocation.value,
           this.inventoryMovementForm.controls.immediateMove.value,
         );
+      },
+
+      nzWidth: 1000,
+    });
+  }
+  
+  openBatchMoveInventoryModal( 
+    tplInventoryMoveModalTitle: TemplateRef<{}>,
+    tplInventoryMoveModalContent: TemplateRef<{}>, 
+  ): void { 
+    this.inventoryMovementForm = this.fb.group({
+       
+      destinationLocation: [null],
+      immediateMove: [false],
+    });
+
+    this.batchMovement = true;
+    // Load the location
+    this.inventoryMoveModal = this.modalService.create({
+      nzTitle: tplInventoryMoveModalTitle,
+      nzContent: tplInventoryMoveModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.inventoryMoveModal.destroy(); 
+      },
+      nzOnOk: () => {
+        
+        this.inventoryMoveModal.updateConfig({ 
+          nzOkDisabled: true,
+          nzOkLoading: true
+        });
+        this.moveInventoryInBatch(
+          this.getSelectedInventory(),
+          this.inventoryMovementForm.controls.destinationLocation.value,
+          this.inventoryMovementForm.controls.immediateMove.value,
+        );
+        return false;
       },
 
       nzWidth: 1000,
@@ -663,6 +706,36 @@ export class InventoryInventoryComponent implements OnInit {
     }
   }
 
+  moveInventoryInBatch(inventories: Inventory[], destinationLocationName: string, immediateMove: boolean): void {
+    this.isSpinning = true;
+    this.locationService.getLocations(undefined, undefined, destinationLocationName).subscribe({
+      next: (locationsRes) => {
+
+        this.moveInventoryInBatchSteps(inventories, locationsRes[0], immediateMove, inventories.length - 1);
+        
+      }, 
+      error: () => this.isSpinning = false
+    });  
+  }
+  moveInventoryInBatchSteps(inventories: Inventory[], location: WarehouseLocation, immediateMove: boolean, index: number): void {
+
+    // stop if we already process all the items in the list
+    if (index < 0) {
+      this.isSpinning = false;
+      this.messageService.success(this.i18n.fanyi('message.action.success'));
+      this.inventoryMoveModal.destroy(); 
+      this.search();
+      return;
+    }
+    // process the inventory at the index and recursively call to process the next
+    this.inventoryService.move(inventories[index], location, immediateMove).subscribe({
+      next: () => { 
+        this.moveInventoryInBatchSteps(inventories, location, immediateMove, index - 1);
+  
+      }, 
+      error: () => this.isSpinning = false
+    });
+  }
   moveInventory(inventory: Inventory, destinationLocationName: string, immediateMove: boolean): void {
     this.locationService.getLocations(undefined, undefined, destinationLocationName).subscribe(location => {
       this.inventoryService.move(inventory, location[0], immediateMove).subscribe(
