@@ -115,25 +115,51 @@
                     <th>{{"time-unit" | i18n}}</th>
                     <th>{{ 'production-line.staff-count' | i18n }}</th>
                   </thead>
-      <tbody>
-        <tr *ngFor="let productionLineCapacity of data.productionLineCapacities">
+                  <tbody>
+                    <tr *ngFor="let productionLineCapacity of data.productionLineCapacities">
 
-          <td>{{ productionLineCapacity.item?.name }}</td>
-          <td>{{ productionLineCapacity.mould?.name }}</td>
-          <td>{{ productionLineCapacity.capacity }}</td>
-          <td>
-            {{ productionLineCapacity.unitOfMeasure?.description }}</td>
-          <td>{{ productionLineCapacity.capacityUnit }}</td>
-          <td>{{ productionLineCapacity.staffCount }}</td>
+                      <td>{{ productionLineCapacity.item?.name }}</td>
+                      <td>{{ productionLineCapacity.mould?.name }}</td>
+                      <td>{{ productionLineCapacity.capacity }}</td>
+                      <td>
+                        {{ productionLineCapacity.unitOfMeasure?.description }}</td>
+                      <td>{{ productionLineCapacity.capacityUnit }}</td>
+                      <td>{{ productionLineCapacity.staffCount }}</td>
 
-        </tr>
+                    </tr>
 
-      </tbody>
-    </nz-table>
-    </nz-tab>
-    </nz-tabset>
-    </tr>
-    </ng-template>
+                  </tbody>
+                </nz-table>
+              </nz-tab>
+              <nz-tab nzTitle=" {{ 'work-order' | i18n }}">
+                <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="data.productionLineAssignments!" nzSize="middle"
+                  [nzShowPagination]="false">
+
+                  <thead>
+
+                    <th>{{"work-order" | i18n}}</th>
+                    <th>{{"item" | i18n}}</th>
+                    <th>{{"quantity" | i18n}}</th>
+                    <th>{{"openQuantity" | i18n}}</th>
+                    <th>{{"mould" | i18n}}</th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let productionLineAssignment of data.productionLineAssignments">
+
+                      <td>{{ productionLineAssignment.workOrderNumber }}</td>
+                      <td>{{ productionLineAssignment.workOrderItemName }}</td>
+                      <td>{{ productionLineAssignment.quantity }}</td>
+                      <td>{{ productionLineAssignment.openQuantity }}</td>
+                      <td>{{ productionLineAssignment.mould?.name }}</td>
+
+                    </tr>
+
+                  </tbody>
+                </nz-table>
+              </nz-tab>
+            </nz-tabset>
+          </tr>
+        </ng-template>
     </tbody>
     </nz-table>
 

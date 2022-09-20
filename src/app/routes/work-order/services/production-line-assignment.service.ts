@@ -17,6 +17,18 @@ export class ProductionLineAssignmentService {
     private warehouseService: WarehouseService,) { }
 
 
+  getProductionLineAssignments(productionLineId?: number, productionLineIds?: string): Observable<ProductionLineAssignment[]> {
+    let url = `workorder/production-line-assignments?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    
+    if (productionLineId) {
+      url = `${url}&productionLineId=${productionLineId}`;
+    }
+    if (productionLineIds) {
+      url = `${url}&productionLineIds=${productionLineIds}`;
+    } 
+    return this.http.get(url).pipe(map(res => res.data));
+  }
+
   getProductionLineAssignment(productionLineAssignmentId: number): Observable<ProductionLineAssignment> {
       const url = `workorder/production-line-assignment/${productionLineAssignmentId}`;
       return this.http.get(url).pipe(map(res => res.data));

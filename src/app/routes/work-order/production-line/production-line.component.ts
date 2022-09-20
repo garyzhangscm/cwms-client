@@ -4,16 +4,14 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzMessageService } from 'ng-zorro-antd/message'; 
 
 import { ColumnItem } from '../../util/models/column-item';
-import { UtilService } from '../../util/services/util.service';
-import { LocationGroup } from '../../warehouse-layout/models/location-group';
-import { LocationGroupType } from '../../warehouse-layout/models/location-group-type';
-import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { LocalCacheService } from '../../util/services/local-cache.service';
+import { UtilService } from '../../util/services/util.service'; 
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { ProductionLine } from '../models/production-line';
+import { ProductionLineAssignmentService } from '../services/production-line-assignment.service';
 import { ProductionLineService } from '../services/production-line.service';
 
 @Component({
@@ -131,6 +129,8 @@ export class WorkOrderProductionLineComponent implements OnInit {
     private utilService: UtilService,
     private locationService: LocationService,
     private activatedRoute: ActivatedRoute,
+    private productionLineAssignmentService: ProductionLineAssignmentService,
+    private localCacheService: LocalCacheService,
   ) { }
 
   // Form related data and functions
@@ -156,13 +156,44 @@ export class WorkOrderProductionLineComponent implements OnInit {
   onExpandChange(productionLine: ProductionLine, expanded: boolean): void {
     if (expanded) {
       this.expandSet.add(productionLine.id!);
-      // this.showProductionLineDetails(productionLine);
+      this.showProductionLineDetails(productionLine);
     } else {
       this.expandSet.delete(productionLine.id!);
     }
   }
 
 
+  showProductionLineDetails(productionLine: ProductionLine) : void {
+    if (productionLine.productionLineAssignments != null && productionLine.productionLineAssignments.length > 0) {
+      // if we already have the production assignment setup, then skip
+      return;
+    }
+    this.isSpinning = true;
+    this.productionLineAssignmentService.getProductionLineAssignments(productionLine.id!)
+    .subscribe({
+      next: (productionLineAssignmentsRes) => {
+        productionLine.productionLineAssignments = productionLineAssignmentsRes;
+
+        productionLine.productionLineAssignments.filter(
+          productionLineAssignment => productionLineAssignment.workOrderItemId != null
+        ).forEach(
+          productionLineAssignment => {
+            this.localCacheService.getItem(productionLineAssignment.workOrderItemId!).subscribe(
+              {
+                next: (itemRes) => {
+                  productionLineAssignment.workOrderItemName = itemRes.name;
+                  this.isSpinning = false;
+                },
+                error: () => this.isSpinning = false
+              }
+            )
+          }
+        )
+        
+      }, 
+      error: () => this.isSpinning = false
+    })
+  }
   search(): void {
     this.isSpinning = true;
     this.searchResult = '';

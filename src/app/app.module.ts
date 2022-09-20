@@ -115,7 +115,12 @@ import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
     ...GLOBAL_THIRD_MODULES,
     ...FORM_MODULES
   ],
-  providers: [...LANG_PROVIDES, ...INTERCEPTOR_PROVIDES, ...I18NSERVICE_PROVIDES, ...APPINIT_PROVIDES, { provide: NZ_I18N, useValue: en_US }],
+  providers: [
+    ...LANG_PROVIDES, 
+    ...INTERCEPTOR_PROVIDES, 
+    ...I18NSERVICE_PROVIDES, 
+    ...APPINIT_PROVIDES, 
+    { provide: NZ_I18N, useValue: en_US },  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

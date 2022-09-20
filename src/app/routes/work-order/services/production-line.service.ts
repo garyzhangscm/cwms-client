@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { DateTimeService } from '../../util/services/date-time.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ProductionLine } from '../models/production-line';
+import { ProductionLineAttribute } from '../models/production-line-attribute';
 import { ProductionLineStatus } from '../models/production-line-status';
 
 @Injectable({
@@ -99,5 +100,24 @@ export class ProductionLineService {
     }
 
     return this.http.get(url).pipe(map(res => res.data));
+  }
+  getProductionLineAttributes(name: string, 
+    productionLineIds?: string): Observable<ProductionLineAttribute[]> { 
+     
+    let url =  `workorder/production-lines/attribute?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+     
+    url = `${url}&name=${name.trim()}`; 
+    
+    if (productionLineIds) {
+      url = `${url}&productionLineIds=${productionLineIds}`;
+    }
+    return this.http.get(url).pipe(map(res => res.data));
+  }
+  
+  getProductionLineItemAttributes(productionLineIds?: string): Observable<ProductionLineAttribute[]> { 
+     return this.getProductionLineAttributes("item", productionLineIds);
+  }
+  getProductionLineCapacityAttributes(productionLineIds?: string): Observable<ProductionLineAttribute[]> { 
+     return this.getProductionLineAttributes("capacity", productionLineIds);
   }
 }

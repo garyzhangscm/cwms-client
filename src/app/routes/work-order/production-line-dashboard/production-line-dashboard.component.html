@@ -1,0 +1,52 @@
+<page-header></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'"> 
+  
+  <!-- Table to Display the result  -->
+
+  <div class="search-result-list"> 
+    
+    <st #st [data]="listOfProductionLineStatus"  [columns]="columns" > 
+      <ng-template st-row="statusColumn" let-item let-index="index"> 
+          <span style="background-color: red;" *ngIf="!item.active"> {{"stopped" | i18n}} </span>
+          <span style="background-color: green;" *ngIf="item.active"> {{"running" | i18n}} </span>
+      </ng-template>
+      <ng-template st-row="averageCycleTimeColumn" let-item let-index="index"> 
+            
+        {{ item.averageCycleTime | number}} <strong>S</strong>
+      </ng-template>
+      <ng-template st-row="moldCountColumn" let-item let-index="index"> 
+            
+        {{ item.totalCycles | number}}  
+      </ng-template>
+      <ng-template st-row="itemColumn" let-item let-index="index"> 
+            
+        <nz-skeleton-element 
+          *ngIf="item.productionLine.id && mapOfItems[item.productionLine.id!] == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+        {{ mapOfItems[item.productionLine.id!]  }}  
+      </ng-template>
+      <ng-template st-row="laborNeedColumn" let-item let-index="index"> 
+            
+        <nz-skeleton-element 
+          *ngIf="item.productionLine.id && mapOfCapacities[item.productionLine.id!] == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+        {{ mapOfCapacities[item.productionLine.id!] }}  
+      </ng-template>
+       
+       
+    </st>
+     
+  </div>
+      
+</nz-spin>
+
+ 
