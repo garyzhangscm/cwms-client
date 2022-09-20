@@ -3,7 +3,13 @@
 <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'"> 
   
   <!-- Table to Display the result  -->
-
+  <nz-card  [nzExtra]="refreshTemplate"> 
+  </nz-card>
+  
+  <ng-template #refreshTemplate>
+    <button  nz-button nzType="text" (click)="refresh()">
+      {{'Refresh' | i18n}}</button>
+  </ng-template>
   <div class="search-result-list"> 
     
     <st #st [data]="listOfProductionLineStatus"  [columns]="columns" > 

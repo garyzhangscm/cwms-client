@@ -73,29 +73,32 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit {
 
   ngOnInit(): void {
       this.titleService.setTitle(this.i18n.fanyi('menu.main.work-order.production-line-dashboard')); 
-      // this.search();
       
-      let currentDateTime = new Date(); 
-      let shiftStart =  formatDate(currentDateTime, "YYYY-MM-dd", this.i18n.defaultLang)
-      // shiftStart = `${shiftStart}T16:00:00.000Z`;
-      shiftStart = `${shiftStart}T16:00:00`;
+      this.refresh();
+      
+
+  }
+  refresh() : void{
+    let currentDateTime = new Date(); 
+    let shiftStart =  formatDate(currentDateTime, "YYYY-MM-dd", this.i18n.defaultLang)
+    // shiftStart = `${shiftStart}T16:00:00.000Z`;
+    shiftStart = `${shiftStart}T16:00:00`;
+    // console.log(`shiftStart ${shiftStart}`);
+    let shiftStartDateTime = new Date(shiftStart); 
+    if (currentDateTime.getHours() < 16) {
+      // we are before today's shift start time, then 
+      // we should calculate the performance from yesterday's 4PM
+      shiftStartDateTime.setDate(shiftStartDateTime.getDate() - 1);
+
+    }
+    shiftStartDateTime.setDate(shiftStartDateTime.getDate() - 10);
+    // console.log(`shiftStartDateTime: ${JSON.stringify(shiftStartDateTime)}`);
+    
+      // console.log(`shiftStart: ${JSON.stringify(new Date(shiftStart))}`);
+      
+      // console.log(`current date time ${JSON.stringify(currentDateTime)}`);
       // console.log(`shiftStart ${shiftStart}`);
-      let shiftStartDateTime = new Date(shiftStart); 
-      if (currentDateTime.getHours() < 16) {
-        // we are before today's shift start time, then 
-        // we should calculate the performance from yesterday's 4PM
-        shiftStartDateTime.setDate(shiftStartDateTime.getDate() - 1);
-
-      }
-      shiftStartDateTime.setDate(shiftStartDateTime.getDate() - 10);
-      // console.log(`shiftStartDateTime: ${JSON.stringify(shiftStartDateTime)}`);
-      
-        // console.log(`shiftStart: ${JSON.stringify(new Date(shiftStart))}`);
-        
-        // console.log(`current date time ${JSON.stringify(currentDateTime)}`);
-        // console.log(`shiftStart ${shiftStart}`);
-      this.search(shiftStartDateTime, currentDateTime);
-
+    this.search(shiftStartDateTime, currentDateTime);
   }
   
   search(startTime: Date, endTime: Date): void {
