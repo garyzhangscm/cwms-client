@@ -77,9 +77,9 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit {
       
       let currentDateTime = new Date(); 
       let shiftStart =  formatDate(currentDateTime, "YYYY-MM-dd", this.i18n.defaultLang)
-      shiftStart = `${shiftStart}T16:00:00.000Z`;
-      
-      console.log(`shiftStart ${shiftStart}`);
+      // shiftStart = `${shiftStart}T16:00:00.000Z`;
+      shiftStart = `${shiftStart}T16:00:00`;
+      // console.log(`shiftStart ${shiftStart}`);
       let shiftStartDateTime = new Date(shiftStart); 
       if (currentDateTime.getHours() < 16) {
         // we are before today's shift start time, then 
@@ -88,7 +88,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit {
 
       }
       shiftStartDateTime.setDate(shiftStartDateTime.getDate() - 10);
-      console.log(`shiftStartDateTime: ${JSON.stringify(shiftStartDateTime)}`);
+      // console.log(`shiftStartDateTime: ${JSON.stringify(shiftStartDateTime)}`);
       
         // console.log(`shiftStart: ${JSON.stringify(new Date(shiftStart))}`);
         
