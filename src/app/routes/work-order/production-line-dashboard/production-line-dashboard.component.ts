@@ -7,7 +7,9 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 
 import { ProductionLine } from '../models/production-line';
 import { ProductionLineStatus } from '../models/production-line-status';
+import { ProductionLineAssignmentService } from '../services/production-line-assignment.service';
 import { ProductionLineService } from '../services/production-line.service';
+import { WorkOrderProduceTransactionService } from '../services/work-order-produce-transaction.service';
 
 @Component({
   selector: 'app-work-order-production-line-dashboard',
@@ -58,12 +60,15 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit {
   // value: lazy loaded information
   mapOfItems: { [key: number]: string } = {};
   mapOfCapacities: { [key: number]: string } = {};
+  mapOfItemScanned: { [key: number]: number } = {};
 
 
   constructor(
     private fb: FormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private productionLineService: ProductionLineService,
+    private productionLineAssignmentService: ProductionLineAssignmentService,
+    private workOrderProduceTransactionService: WorkOrderProduceTransactionService,
     private titleService: TitleService,  ) { }
 
   ngOnInit(): void {
@@ -109,9 +114,10 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit {
                               
                 this.mapOfItems[productionLineStatus.productionLine.id!] = "";
                 this.mapOfCapacities[productionLineStatus.productionLine.id!] = "";
+                this.mapOfItemScanned[productionLineStatus.productionLine.id!] = 0;
               }
             )
-            this.loadDetailInformation();
+            this.loadDetailInformation(startTime, endTime);
         
         },
         error: () => { 
@@ -122,10 +128,11 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit {
     }); 
   }
 
-  loadDetailInformation() {
+  loadDetailInformation(startTime: Date, endTime: Date) {
     // load the item information
     this.loadItemInformation();
     this.loadCapacityInformation();
+    this.loadProducedInventoryInformation(startTime, endTime);
     
   }
   loadItemInformation() {
@@ -157,4 +164,70 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit {
     );
   }
 
+  loadProducedInventoryInformation(startTime: Date, endTime: Date) {
+    this.productionLineService.getProductionLineTotalProcedInventoryQuantity(
+      undefined, startTime, endTime
+    ).subscribe(
+      {
+        next: (productionLineAttributeRes) => {
+
+          productionLineAttributeRes.forEach(
+            productionLineAttribute => {
+              this.mapOfItemScanned[productionLineAttribute.productionLine.id!] = +productionLineAttribute.value
+            }
+          )
+        }
+      }
+    );
+    /**
+     * 
+     * 
+    this.productionLineService.getProductionLineCapacityAttributes().subscribe(
+      {
+        next: (productionLineAttributeRes) => {
+
+          productionLineAttributeRes.forEach(
+            productionLineAttribute => {
+              console.log(`start to get produced inventory information for production line ${productionLineAttribute.productionLine.name} `)
+                this.productionLineAssignmentService.getProductionLineAssignments(productionLineAttribute.productionLine.id!)
+                .subscribe({
+                  next: (productionLineAssignmentsRes) => { 
+
+                    // for each assignment, find the produce transaction with the production line and work order
+                    // in the specific time span
+                    productionLineAssignmentsRes.forEach(
+                      productionLineAssignment => {
+                        console.log(`production line ${productionLineAttribute.productionLine.name}, work order ${productionLineAssignment.workOrderNumber} `)
+                        this.workOrderProduceTransactionService.getWorkOrderProduceTransaction(
+                          productionLineAssignment.workOrderNumber, 
+                          productionLineAttribute.productionLine.id,  
+                           startTime, endTime).subscribe(
+                          {
+                            next: (workOrderProduceTransactionRes) => {
+                              let totalProducedInventoryCount = 0;
+                              workOrderProduceTransactionRes.forEach(
+                                workOrderProduceTransaction => { 
+                                      workOrderProduceTransaction.workOrderProducedInventories.forEach(
+                                        inventory => totalProducedInventoryCount += (inventory.quantity == null ? 0 :  inventory.quantity)
+                                      );
+                                }
+                              )
+                              this.mapOfCapacities[productionLineAttribute.productionLine.id!] = totalProducedInventoryCount.toString();
+                              
+                            }, 
+                          }
+                        )
+                      }
+                    )
+                    
+                  }, 
+                  error: () => this.isSpinning = false
+                })
+            }
+          )
+        }
+      }
+    );
+     */
+  }
 }

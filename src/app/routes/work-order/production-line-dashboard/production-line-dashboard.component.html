@@ -15,10 +15,6 @@
             
         {{ item.averageCycleTime | number}} <strong>S</strong>
       </ng-template>
-      <ng-template st-row="moldCountColumn" let-item let-index="index"> 
-            
-        {{ item.totalCycles | number}}  
-      </ng-template>
       <ng-template st-row="itemColumn" let-item let-index="index"> 
             
         <nz-skeleton-element 
@@ -30,6 +26,36 @@
           ></nz-skeleton-element> 
         {{ mapOfItems[item.productionLine.id!]  }}  
       </ng-template>
+      
+      <ng-template st-row="moldCountColumn" let-item let-index="index"> 
+            
+        {{ item.totalCycles | number}}  
+      </ng-template>
+
+      <ng-template st-row="itemScannedColumn" let-item let-index="index"> 
+            
+        <nz-skeleton-element 
+          *ngIf="item.productionLine.id && mapOfItemScanned[item.productionLine.id!] == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+        {{ mapOfItemScanned[item.productionLine.id!]   }}  
+      </ng-template>
+      
+      <ng-template st-row="differenceColumn" let-item let-index="index"> 
+            
+        <nz-skeleton-element 
+          *ngIf="item.productionLine.id && mapOfItemScanned[item.productionLine.id!] == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+        {{ mapOfItemScanned[item.productionLine.id!]  - item.totalCycles }}  
+      </ng-template>
+
       <ng-template st-row="laborNeedColumn" let-item let-index="index"> 
             
         <nz-skeleton-element 

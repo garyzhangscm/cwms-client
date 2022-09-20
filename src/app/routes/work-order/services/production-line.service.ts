@@ -102,7 +102,7 @@ export class ProductionLineService {
     return this.http.get(url).pipe(map(res => res.data));
   }
   getProductionLineAttributes(name: string, 
-    productionLineIds?: string): Observable<ProductionLineAttribute[]> { 
+    productionLineIds?: string ): Observable<ProductionLineAttribute[]> { 
      
     let url =  `workorder/production-lines/attribute?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
      
@@ -110,7 +110,7 @@ export class ProductionLineService {
     
     if (productionLineIds) {
       url = `${url}&productionLineIds=${productionLineIds}`;
-    }
+    } 
     return this.http.get(url).pipe(map(res => res.data));
   }
   
@@ -119,5 +119,25 @@ export class ProductionLineService {
   }
   getProductionLineCapacityAttributes(productionLineIds?: string): Observable<ProductionLineAttribute[]> { 
      return this.getProductionLineAttributes("capacity", productionLineIds);
+  }
+  getProductionLineTotalProcedInventoryQuantity(productionLineIds?: string,       
+    startTime?: Date, endTime?:Date, date?: Date): Observable<ProductionLineAttribute[]> {
+
+      let url =  `workorder/production-lines/produced-inventory/total-quantity?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+        
+      
+      if (productionLineIds) {
+        url = `${url}&productionLineIds=${productionLineIds}`;
+      } 
+      if (startTime) {
+        url = `${url}&startTime=${this.dateTimeService.getISODateTimeString(startTime)}`;
+      }
+      if (endTime) {
+        url = `${url}&endTime=${this.dateTimeService.getISODateTimeString(endTime)}`;
+      }
+      if (date) {
+        url = `${url}&date=${this.dateTimeService.getISODateString(date)}`;
+      }
+      return this.http.get(url).pipe(map(res => res.data));
   }
 }
