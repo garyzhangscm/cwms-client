@@ -109,11 +109,11 @@
         <td>{{ data.workOrderLine?.consumedQuantity }}</td>
         <td>{{ data.workOrderLine?.inventoryStatus?.name }}</td>
         <td><input nz-input [(ngModel)]="data.adjustedConsumedQuantity" (ngModelChange)="resetWorkOrderLineStatus(data)"
-            [disabled]="data.workOrderLine!.deliveredQuantity === data.workOrderLine!.consumedQuantity"
+            [disabled]="data.workOrderLine!.deliveredQuantity! <= data.workOrderLine!.consumedQuantity!"
             style="width: 100px;" />
         </td>
         <td><input nz-input [(ngModel)]="data.scrappedQuantity" (ngModelChange)="resetWorkOrderLineStatus(data)"
-            [disabled]="data.workOrderLine!.deliveredQuantity === data.workOrderLine!.consumedQuantity"
+            [disabled]="data.workOrderLine!.deliveredQuantity! <= data.workOrderLine!.consumedQuantity!"
             style="width: 100px;" />
         </td>
         <td>
@@ -153,7 +153,7 @@
 
 
           <button nz-button nzType="primary" nz-dropdown [nzDropdownMenu]="balanceQuantityActionTpl"
-            [disabled]="data.workOrderLine!.deliveredQuantity === data.workOrderLine!.consumedQuantity">
+            [disabled]="data.workOrderLine!.deliveredQuantity! <= data.workOrderLine!.consumedQuantity!">
             {{ 'complete' | i18n }}
             <i nz-icon nzType="down"></i>
           </button>

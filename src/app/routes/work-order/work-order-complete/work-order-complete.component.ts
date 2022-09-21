@@ -93,7 +93,7 @@ export class WorkOrderWorkOrderCompleteComponent implements OnInit {
       // the delivered quantity  = consumed quantity + returned quantity + scrapped quantity
       // When initial the page, we should only have the delivered quantity and consumed quantity
       this.mapOfWorkOrderLineStatus[workOrderLine.id!] =
-        workOrderLine.deliveredQuantity === workOrderLine.consumedQuantity;
+        workOrderLine.deliveredQuantity! <= workOrderLine.consumedQuantity!;
     });
 
     // init the work order KPI transaction
@@ -269,7 +269,7 @@ export class WorkOrderWorkOrderCompleteComponent implements OnInit {
       .reduce((a, b) => a! + b!, 0)!;
 
     if (
-      workOrderLineCompleteTransaction.workOrderLine!.deliveredQuantity ===
+      workOrderLineCompleteTransaction.workOrderLine!.deliveredQuantity! <=
       +workOrderLineCompleteTransaction.adjustedConsumedQuantity! +
       +workOrderLineCompleteTransaction.scrappedQuantity! +
       +returnedMaterialRequestQuantity
