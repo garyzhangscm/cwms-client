@@ -7,11 +7,13 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 import { Client } from '../../common/models/client';
+import { Unit } from '../../common/models/unit';
 import { UnitOfMeasure } from '../../common/models/unit-of-measure';
+import { UnitType } from '../../common/models/unit-type';
 import { ClientService } from '../../common/services/client.service';
 import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
-import { newItemUOMQuantityValidator } from '../../directives/newItemUOMQuantityValidator';
-import { ReportRoutingModule } from '../../report/report-routing.module';
+import { UnitService } from '../../common/services/unit.service';
+import { newItemUOMQuantityValidator } from '../../directives/newItemUOMQuantityValidator'; 
 import { UtilService } from '../../util/services/util.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -37,6 +39,15 @@ export class InventoryItemMaintenanceComponent implements OnInit {
   
   validItemFamilies: ItemFamily[] = [];
   allocationRoundUpStrategyTypes = AllocationRoundUpStrategyType;
+  lengthUnits: Unit[] = [];
+  weightUnits: Unit[] = [];
+  defaultLengthUnit?: Unit;
+  defaultWeightUnit?: Unit;
+
+  newUnitOfMeasureLengthUnit?: Unit;
+  newUnitOfMeasureWidthUnit?: Unit;
+  newUnitOfMeasureHeightUnit?: Unit;
+  newUnitOfMeasureWeightUnit?: Unit;
 
   itemPackageTypesExpandSet = new Set<number>();
   mapOfRemovableItemPackageTypes: { [key: number]: boolean } = {};
@@ -79,6 +90,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     private itemPackageTypeService: ItemPackageTypeService,
     private clientService: ClientService,
     private utilService: UtilService,
+    private unitService: UnitService,
   ) { 
 
     this.currentWarehouseName = warehouseService.getCurrentWarehouse().name;
@@ -89,6 +101,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
       if (params.id) {
         this.itemService.getItem(params.id).subscribe(itemRes => {
           this.currentItem = itemRes;
+          this.setupUnit(this.currentItem);
           this.newItem = false;
           if (this.currentItem.warehouseId) {            
                this.warehouseSpecific = "YES";
@@ -132,7 +145,85 @@ export class InventoryItemMaintenanceComponent implements OnInit {
       next: (clientRes) => this.availableClients = clientRes
        
     });
+
+    this.loadUnits();
   }
+
+  loadUnits() {
+    this.unitService.loadUnits().subscribe({
+      next: (unitsRes) => {
+        unitsRes.forEach(
+          unit => {
+            if (unit.type === UnitType.LENGTH) {
+              this.lengthUnits.push(unit);
+              if(unit.baseUnitFlag) {
+                this.defaultLengthUnit = unit;
+                console.log(`defaultLengthUnit: ${this.defaultLengthUnit?.name}`);
+              }
+            }
+            else if (unit.type === UnitType.WEIGHT) {
+              this.weightUnits.push(unit);
+              if(unit.baseUnitFlag) {
+                this.defaultWeightUnit = unit;
+                console.log(`defaultWeightUnit: ${this.defaultWeightUnit?.name}`);
+              }
+            }
+          }
+        )
+      }
+    })    
+  }
+
+  
+  setupUnit(item: Item) : void {
+    // backwards compatibility, in case the unit of the width / length / height
+    // and weight is not setup yet. we will load the default unit
+    item.itemPackageTypes.forEach(
+      itemPackageType => {
+        itemPackageType.itemUnitOfMeasures.forEach(
+          itemUnitOfMeasure => {
+            if (!itemUnitOfMeasure.lengthUnit) {
+              this.loadLengthUnit(itemUnitOfMeasure, "lengthUnit");
+
+            }
+            if (!itemUnitOfMeasure.widthUnit) {
+              this.loadLengthUnit(itemUnitOfMeasure, "widthUnit");
+
+            }
+            if (!itemUnitOfMeasure.heightUnit) {
+              this.loadLengthUnit(itemUnitOfMeasure, "heightUnit");
+
+            }
+            if (!itemUnitOfMeasure.weightUnit) {
+              this.loadWeightUnit(itemUnitOfMeasure, "weightUnit");
+
+            }
+          }
+        )
+      }
+    )
+  }
+  loadLengthUnit(obj: any, key: string) {
+    this.loadUnitByType(obj, key, UnitType.LENGTH) 
+  }
+  loadWeightUnit(obj: any, key: string) {
+    this.loadUnitByType(obj, key, UnitType.WEIGHT) 
+  }
+  
+  loadUnitByType(obj: any, key: string, unitType: UnitType) {
+    this.unitService.loadUnits().subscribe({
+      next: (unitsRes) => {
+        unitsRes.forEach(
+          unit => {
+            if (unit.type === unitType && unit.baseUnitFlag === true) {
+              obj[key] = unit.name; 
+            }
+          }
+        )
+      }
+    })    
+  }
+  
 
   loadMapOfRemovableItemPackageTypes(): void {
     this.currentItem.itemPackageTypes.forEach(itemPackageType => {
@@ -250,6 +341,11 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     this.createItemUOMForm();
     this.creatingItemUOMInProcess = false;
 
+    this.newUnitOfMeasureLengthUnit = this.defaultLengthUnit;
+    this.newUnitOfMeasureWidthUnit = this.defaultLengthUnit;
+    this.newUnitOfMeasureHeightUnit = this.defaultLengthUnit;
+    this.newUnitOfMeasureWeightUnit = this.defaultWeightUnit;
+
     // load the available UOM
     // will only display the UOM when it is not in the item package type yet
     this.availableUnitOfMeasuresForAdding = this.availableUnitOfMeasures.filter(
@@ -268,6 +364,19 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     });
   }
 
+  weightUnitSelected(unit: Unit) { 
+    this.newUnitOfMeasureWeightUnit = unit;
+  } 
+  lengthUnitSelected(unit: Unit) { 
+    this.newUnitOfMeasureLengthUnit = unit;
+  } 
+  widthUnitSelected(unit: Unit) { 
+    this.newUnitOfMeasureWidthUnit = unit;
+  } 
+  heightUnitSelected(unit: Unit) { 
+    this.newUnitOfMeasureHeightUnit = unit;
+  } 
+
   closeItemUOMModal(): void {
     this.creatingItemUOMInProcess = false;
     this.itemUOMModal.destroy();
@@ -280,10 +389,10 @@ export class InventoryItemMaintenanceComponent implements OnInit {
         this.currentItemPackageType,
         this.itemUOMForm.controls.unitOfMeasure.value,
         this.itemUOMForm.controls.quantity.value,
-        this.itemUOMForm.controls.weight.value,
-        this.itemUOMForm.controls.length.value,
-        this.itemUOMForm.controls.width.value,
-        this.itemUOMForm.controls.height.value,
+        this.itemUOMForm.controls.weight.value, this.newUnitOfMeasureWeightUnit!.name,
+        this.itemUOMForm.controls.length.value, this.newUnitOfMeasureLengthUnit!.name,
+        this.itemUOMForm.controls.width.value, this.newUnitOfMeasureWidthUnit!.name,
+        this.itemUOMForm.controls.height.value, this.newUnitOfMeasureHeightUnit!.name, 
         this.itemUOMForm.controls.defaultForInboundReceiving.value,
         this.itemUOMForm.controls.defaultForWorkOrderReceiving.value,
         this.itemUOMForm.controls.trackingLpnUOM.value,
@@ -314,9 +423,13 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     unitOfMeasureName: string,
     quantity: number,
     weight: number,
+    weightUnit: string,
     length: number,
+    lengthUnit: string,
     width: number,
+    widthUnit: string,
     height: number,
+    heightUnit: string,
     defaultForInboundReceiving: boolean,
     defaultForWorkOrderReceiving: boolean,
     trackingLpnUOM: boolean,
@@ -334,10 +447,10 @@ export class InventoryItemMaintenanceComponent implements OnInit {
               companyId: this.companyService.getCurrentCompany()!.id,
               unitOfMeasureId: unitOfMeasure === null ? undefined : unitOfMeasure.id,
               quantity,
-              weight,
-              length: length === null ? 0 : length,
-              width: width === null ? 0 : width,
-              height: height === null ? 0 : height,
+              weight,weightUnit,
+              length: length === null ? 0 : length, lengthUnit,
+              width: width === null ? 0 : width, widthUnit,
+              height: height === null ? 0 : height, heightUnit,
               defaultForInboundReceiving: defaultForInboundReceiving === null ? false : defaultForInboundReceiving,
               defaultForWorkOrderReceiving: defaultForWorkOrderReceiving === null ? false : defaultForWorkOrderReceiving,
               trackingLpn: trackingLpnUOM === null ? false : trackingLpnUOM,

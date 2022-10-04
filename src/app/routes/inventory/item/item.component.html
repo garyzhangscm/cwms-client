@@ -73,7 +73,7 @@
     </div>
     
     <st #st [data]="items" [columns]="columns" [footer]="tableFoot" [expand]="expand" 
-         expandAccordion
+         expandAccordion   (change)="itemTableChanged($event)"
         [scroll]="{ x: '1800px'}">
       
         <!-- item description -->
@@ -124,10 +124,10 @@
                 <tr *ngFor="let data of itemPackageTypeTable.data">
                   <td>{{ data.unitOfMeasure?.name }}</td>
                   <td>{{ data.quantity }}</td>
-                  <td>{{ data.weight }}</td>
-                  <td>{{ data.length }}</td>
-                  <td>{{ data.width }}</td>
-                  <td>{{ data.height }}</td>
+                  <td>{{ data.weight }} <strong>{{ data.weightUnit }}</strong> </td>
+                  <td>{{ data.length }} <strong>{{ data.lengthUnit }}</strong></td>
+                  <td>{{ data.width }} <strong>{{ data.widthUnit }}</strong></td>
+                  <td>{{ data.height }} <strong>{{ data.heightUnit }}</strong></td>
                   <td>{{ data.defaultForInboundReceiving }}</td>
                   <td>{{ data.defaultForWorkOrderReceiving }}</td>
                   <td>{{ data.trackingLpn }}</td>

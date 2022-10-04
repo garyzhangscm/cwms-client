@@ -306,10 +306,10 @@
                     <tr *ngFor="let itemUnitOfMeasure of data.itemUnitOfMeasures">
                       <td>{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
                       <td>{{ itemUnitOfMeasure.quantity }}</td>
-                      <td>{{ itemUnitOfMeasure.weight }}</td>
-                      <td>{{ itemUnitOfMeasure.length }}</td>
-                      <td>{{ itemUnitOfMeasure.width }}</td>
-                      <td>{{ itemUnitOfMeasure.height }}</td>
+                      <td>{{ itemUnitOfMeasure.weight }} <strong>{{ itemUnitOfMeasure.weightUnit }}</strong></td>
+                      <td>{{ itemUnitOfMeasure.length }} <strong>{{ itemUnitOfMeasure.lengthUnit }}</strong></td>
+                      <td>{{ itemUnitOfMeasure.width }} <strong>{{ itemUnitOfMeasure.widthUnit }}</strong></td>
+                      <td>{{ itemUnitOfMeasure.height }} <strong>{{ itemUnitOfMeasure.heightUnit }}</strong></td>
                       <td>{{ itemUnitOfMeasure.defaultForInboundReceiving }}</td>
                       <td>{{ itemUnitOfMeasure.defaultForWorkOrderReceiving }}</td>
                       <td>{{ itemUnitOfMeasure.trackingLpn }}</td>
@@ -403,10 +403,10 @@
             <tr *ngFor="let data of innerTable.data">
               <td>{{ data.unitOfMeasure?.name }}</td>
               <td>{{ data.quantity }}</td>
-              <td>{{ data.weight }}</td>
-              <td>{{ data.length }}</td>
-              <td>{{ data.width }}</td>
-              <td>{{ data.height }}</td>
+              <td>{{ data.weight }} <strong>{{ data.weightUnit }}</strong></td>
+              <td>{{ data.length }} <strong>{{ data.lengthUnit }}</strong></td>
+              <td>{{ data.width }} <strong>{{ data.widthUnit }}</strong></td>
+              <td>{{ data.height }} <strong>{{ data.heightUnit }}</strong></td>
               <td>{{ data.defaultForInboundReceiving }}</td>
               <td>{{ data.defaultForWorkOrderReceiving }}</td>
               <td>{{ data.trackingLpn }}</td>
@@ -506,6 +506,15 @@
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <nz-input-group nzSize="large">
               <nz-input-number [nzStep]="0.01" formControlName="weight" name="weight"></nz-input-number>
+              <a nz-dropdown [nzDropdownMenu]="weightUnitMenu" style="padding-left: 5px;">
+                {{newUnitOfMeasureWeightUnit!.name}}
+                <span nz-icon nzType="down"></span>
+              </a>
+              <nz-dropdown-menu #weightUnitMenu="nzDropdownMenu">
+                <ul nz-menu nzSelectable>
+                  <li nz-menu-item *ngFor="let weightUnit of weightUnits" (click)="weightUnitSelected(weightUnit)">{{ weightUnit.name }}</li> 
+                </ul>
+              </nz-dropdown-menu>
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>
@@ -521,6 +530,15 @@
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <nz-input-group nzSize="large">
               <nz-input-number [nzStep]="0.01" formControlName="length" name="length"></nz-input-number>
+              <a nz-dropdown [nzDropdownMenu]="lengthUnitMenu" style="padding-left: 5px;">
+                {{newUnitOfMeasureLengthUnit!.name}}
+                <span nz-icon nzType="down"></span>
+              </a>
+              <nz-dropdown-menu #lengthUnitMenu="nzDropdownMenu">
+                <ul nz-menu nzSelectable>
+                  <li nz-menu-item *ngFor="let lengthUnit of lengthUnits" (click)="lengthUnitSelected(lengthUnit)">{{ lengthUnit.name }}</li> 
+                </ul>
+              </nz-dropdown-menu>
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>
@@ -533,6 +551,15 @@
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <nz-input-group nzSize="large">
               <nz-input-number [nzStep]="0.01" formControlName="width" name="width"></nz-input-number>
+              <a nz-dropdown [nzDropdownMenu]="widthUnitMenu" style="padding-left: 5px;">
+                {{newUnitOfMeasureWidthUnit!.name}}
+                <span nz-icon nzType="down"></span>
+              </a>
+              <nz-dropdown-menu #widthUnitMenu="nzDropdownMenu">
+                <ul nz-menu nzSelectable>
+                  <li nz-menu-item *ngFor="let lengthUnit of lengthUnits" (click)="widthUnitSelected(lengthUnit)">{{ lengthUnit.name }}</li> 
+                </ul>
+              </nz-dropdown-menu>
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>
@@ -545,6 +572,15 @@
           <nz-form-control [nzSm]="14" [nzXs]="24">
             <nz-input-group nzSize="large">
               <nz-input-number [nzStep]="0.01" formControlName="height" name="height"></nz-input-number>
+              <a nz-dropdown [nzDropdownMenu]="heightUnitMenu" style="padding-left: 5px;">
+                {{newUnitOfMeasureHeightUnit!.name}}
+                <span nz-icon nzType="down"></span>
+              </a>
+              <nz-dropdown-menu #heightUnitMenu="nzDropdownMenu">
+                <ul nz-menu nzSelectable>
+                  <li nz-menu-item *ngFor="let lengthUnit of lengthUnits" (click)="heightUnitSelected(lengthUnit)">{{ lengthUnit.name }}</li> 
+                </ul>
+              </nz-dropdown-menu>
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>

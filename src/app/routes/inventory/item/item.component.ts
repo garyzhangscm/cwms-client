@@ -3,7 +3,7 @@ import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { STColumn, STComponent } from '@delon/abc/st';
+import { STChange, STColumn, STComponent } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -12,7 +12,9 @@ import {  NzUploadFile } from 'ng-zorro-antd/upload';
 import { Observable, Observer } from 'rxjs';
 
 import { Client } from '../../common/models/client';
+import { UnitType } from '../../common/models/unit-type';
 import { ClientService } from '../../common/services/client.service';
+import { UnitService } from '../../common/services/unit.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { Item } from '../models/item';
@@ -257,7 +259,8 @@ export class InventoryItemComponent implements OnInit {
     private messageService: NzMessageService,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
-    private utilService: UtilService
+    private utilService: UtilService,
+    private unitService: UnitService,
   ) {}
 
   ngOnInit(): void {
@@ -300,7 +303,7 @@ export class InventoryItemComponent implements OnInit {
         undefined,undefined, this.searchForm.value.clientId, 
         this.searchForm.value.itemDescription)
       .subscribe(
-        itemRes => {
+        itemRes => { 
           this.items = itemRes;
           this.listOfDisplayItems = itemRes;
 
@@ -316,6 +319,64 @@ export class InventoryItemComponent implements OnInit {
           this.searchResult = '';
         }
       );
+  }
+
+  
+  itemTableChanged(event: STChange) : void { 
+    if (event.type === 'expand' && event.expand.expand === true) {
+      
+      this.loadUnit(event.expand);
+    }
+
+  }
+  loadUnit(item: Item) : void {
+    // backwards compatibility, in case the unit of the width / length / height
+    // and weight is not setup yet. we will load the default unit
+    item.itemPackageTypes.forEach(
+      itemPackageType => {
+        itemPackageType.itemUnitOfMeasures.forEach(
+          itemUnitOfMeasure => {
+            if (!itemUnitOfMeasure.lengthUnit) {
+              this.loadLengthUnit(itemUnitOfMeasure, "lengthUnit");
+
+            }
+            if (!itemUnitOfMeasure.widthUnit) {
+              this.loadLengthUnit(itemUnitOfMeasure, "widthUnit");
+
+            }
+            if (!itemUnitOfMeasure.heightUnit) {
+              this.loadLengthUnit(itemUnitOfMeasure, "heightUnit");
+
+            }
+            if (!itemUnitOfMeasure.weightUnit) {
+              this.loadWeightUnit(itemUnitOfMeasure, "weightUnit");
+
+            }
+          }
+        )
+      }
+    )
+  }
+
+  loadLengthUnit(obj: any, key: string) {
+    this.loadUnitByType(obj, key, UnitType.LENGTH) 
+  }
+  loadWeightUnit(obj: any, key: string) {
+    this.loadUnitByType(obj, key, UnitType.WEIGHT) 
+  }
+  
+  loadUnitByType(obj: any, key: string, unitType: UnitType) {
+    this.unitService.loadUnits().subscribe({
+      next: (unitsRes) => {
+        unitsRes.forEach(
+          unit => {
+            if (unit.type === unitType && unit.baseUnitFlag === true) {
+              obj[key] = unit.name; 
+            }
+          }
+        )
+      }
+    })    
   }
 
   currentPageDataChange($event: Item[]): void {
@@ -478,8 +539,8 @@ export class InventoryItemComponent implements OnInit {
   }
 
   columnChoosingChanged(): void{
-    console.log(`my model changed!\n ${JSON.stringify(this.customColumns)}`);
-    if (this.st.columns !== undefined) {
+    
+    if (this.st != null && this.st.columns != null) {
       this.st.resetColumns({ emitReload: true });
 
     }
