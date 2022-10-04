@@ -153,7 +153,7 @@
                       *ngIf='currentAllocationConfiguration !== undefined' nz-input [(ngModel)]="currentAllocationConfiguration.locationGroupId"
                         style="width: 250px"  (ngModelChange)="locationGroupChanged()"   >
                       <nz-option *ngFor="let locationGroup of validLocationGroups"
-                          [nzLabel]="locationGroup.description" [nzValue]="locationGroup.id">
+                          [nzLabel]="locationGroup.description!" [nzValue]="locationGroup.id">
                           </nz-option>
                     </nz-select> 
                 

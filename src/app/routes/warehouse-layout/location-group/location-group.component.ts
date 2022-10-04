@@ -51,7 +51,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
       name: 'location-group-type',
       showSort: true,
       sortOrder: null,
-      sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareNullableString(a.locationGroupType.description, b.locationGroupType.description),
+      sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareNullableString(a.locationGroupType!.description, b.locationGroupType!.description),
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -118,7 +118,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
       name: 'location-group.volume-tracking-policy',
       showSort: true,
       sortOrder: null,
-      sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareNullableString(a.volumeTrackingPolicy.toString(), b.volumeTrackingPolicy.toString()),
+      sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareNullableString(a.volumeTrackingPolicy!.toString(), b.volumeTrackingPolicy!.toString()),
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -129,7 +129,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
       name: 'location-group.inventory-consolidation-strategy',
       showSort: true,
       sortOrder: null,
-      sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareNullableString(a.inventoryConsolidationStrategy.toString(), b.inventoryConsolidationStrategy.toString()),
+      sortFn: (a: LocationGroup, b: LocationGroup) => this.utilService.compareNullableString(a.inventoryConsolidationStrategy!.toString(), b.inventoryConsolidationStrategy!.toString()),
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -316,7 +316,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
     this.editCache[id] = {
       data: { ...this.listOfAllLocationGroups[index] },
       edit: false,
-      locationGroupTypeName: this.listOfAllLocationGroups[index].locationGroupType.name,
+      locationGroupTypeName: this.listOfAllLocationGroups[index].locationGroupType!.name,
     };
   }
 
@@ -324,7 +324,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
     const index = this.listOfAllLocationGroups.findIndex(item => item.id === +id);
 
     // setup the location group type if the type is changed
-    if (this.editCache[id].data.locationGroupType.name !== this.editCache[id].locationGroupTypeName) {
+    if (this.editCache[id].data.locationGroupType!.name !== this.editCache[id].locationGroupTypeName) {
       const matchedLocationGroupType = this.locationGroupTypes.filter(locationGroupType => {
         return locationGroupType.name === this.editCache[id].locationGroupTypeName;
       });
@@ -341,10 +341,10 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
 
   updateEditCache(): void {
     this.listOfAllLocationGroups.forEach(item => {
-      this.editCache[item.id] = {
+      this.editCache[item.id!] = {
         edit: false,
         data: { ...item },
-        locationGroupTypeName: item.locationGroupType.name,
+        locationGroupTypeName: item.locationGroupType!.name,
       };
     });
   }

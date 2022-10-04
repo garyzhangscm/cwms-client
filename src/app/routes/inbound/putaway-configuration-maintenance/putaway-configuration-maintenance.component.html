@@ -142,7 +142,7 @@
           </nz-form-label>
           <nz-form-control [nzSpan]="18">
             <nz-select   [(ngModel)]="currentPutawayConfiguration.locationGroupId" (ngModelChange)="locationGroupChanged()">
-              <nz-option *ngFor="let locationGroup of validLocationGroups" [nzLabel]="locationGroup.description"
+              <nz-option *ngFor="let locationGroup of validLocationGroups" [nzLabel]="locationGroup.description!"
                 [nzValue]="locationGroup.id"></nz-option>
             </nz-select>
           </nz-form-control>

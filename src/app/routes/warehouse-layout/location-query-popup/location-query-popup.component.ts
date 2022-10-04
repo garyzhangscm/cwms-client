@@ -27,7 +27,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     {
       name: 'location.name',
       sortOrder: null,
-      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.name.localeCompare(b.name),
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.name!.localeCompare(b.name!),
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -40,7 +40,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     {
       name: 'location-group',
       sortOrder: null,
-      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.locationGroup!.name.localeCompare(b.locationGroup!.name),
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.locationGroup!.name!.localeCompare(b.locationGroup!.name!),
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -50,7 +50,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     {
       name: 'location.aisle',
       sortOrder: null,
-      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.aisle.localeCompare(b.aisle),
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.aisle!.localeCompare(b.aisle!),
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -60,7 +60,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     {
       name: 'location.length',
       sortOrder: null,
-      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.length - b.length,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.length! - b.length!,
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -70,7 +70,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     {
       name: 'location.width',
       sortOrder: null,
-      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.width - b.width,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.width! - b.width!,
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -80,7 +80,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     {
       name: 'location.height',
       sortOrder: null,
-      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.height - b.height,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.height! - b.height!,
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -90,7 +90,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     {
       name: 'location.capacity',
       sortOrder: null,
-      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.capacity - b.capacity,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.capacity! - b.capacity!,
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -100,7 +100,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     {
       name: 'location.fillPercentage',
       sortOrder: null,
-      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.fillPercentage - b.fillPercentage,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.fillPercentage! - b.fillPercentage!,
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -110,7 +110,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     {
       name: 'location.currentVolume',
       sortOrder: null,
-      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.currentVolume - b.currentVolume,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.currentVolume! - b.currentVolume!,
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -120,7 +120,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     {
       name: 'location.pendingVolume',
       sortOrder: null,
-      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.pendingVolume - b.pendingVolume,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.pendingVolume! - b.pendingVolume!,
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -130,7 +130,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     {
       name: 'location.putawaySequence',
       sortOrder: null,
-      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.putawaySequence - b.putawaySequence,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.putawaySequence! - b.putawaySequence!,
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -140,7 +140,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     {
       name: 'location.pickSequence',
       sortOrder: null,
-      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.pickSequence - b.pickSequence,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.pickSequence! - b.pickSequence!,
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -150,7 +150,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     {
       name: 'location.countSequence',
       sortOrder: null,
-      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.countSequence - b.countSequence,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.countSequence! - b.countSequence!,
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -186,7 +186,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     {
       name: 'location.reservedCode',
       sortOrder: null,
-      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.reservedCode.localeCompare(b.reservedCode),
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => a.reservedCode!.localeCompare(b.reservedCode!),
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -285,7 +285,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
 
 
   isAnyRecordChecked(): boolean {
-    return this.listOfDisplayLocations.some(location => this.setOfCheckedId.has(location.id));
+    return this.listOfDisplayLocations.some(location => this.setOfCheckedId.has(location.id!));
   }
 
   openQueryModal(
@@ -330,7 +330,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     // get the selected record
     if (this.isAnyRecordChecked()) {
       this.recordSelected.emit(
-        this.listOfDisplayLocations.filter(location => (this.setOfCheckedId.has(location.id)))[0].name,
+        this.listOfDisplayLocations.filter(location => (this.setOfCheckedId.has(location.id!)))[0].name,
       );
     } else {
       this.recordSelected.emit('');

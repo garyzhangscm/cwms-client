@@ -32,7 +32,7 @@
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <nz-select nzShowSearch nzAllowClear formControlName="fromLocationGroup">
-            <nz-option *ngFor="let locationGroup of availableLocationGroups" [nzLabel]="locationGroup.name"
+            <nz-option *ngFor="let locationGroup of availableLocationGroups" [nzLabel]="locationGroup.name!"
               [nzValue]="locationGroup.id"></nz-option>
           </nz-select>
         </nz-form-control>
@@ -46,7 +46,7 @@
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
           <nz-select nzShowSearch nzAllowClear formControlName="toLocationGroup">
-            <nz-option *ngFor="let locationGroup of availableLocationGroups" [nzLabel]="locationGroup.name"
+            <nz-option *ngFor="let locationGroup of availableLocationGroups" [nzLabel]="locationGroup.name!"
               [nzValue]="locationGroup.id"></nz-option>
           </nz-select>
         </nz-form-control>

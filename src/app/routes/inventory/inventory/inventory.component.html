@@ -24,7 +24,7 @@
         </nz-form-label>
         <nz-form-control [nzSpan]="18">
           <nz-select   formControlName="locationGroups" nzAllowClear >
-            <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description"
+            <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description!"
               [nzValue]="locationGroup.id"></nz-option>
           </nz-select>
         </nz-form-control>

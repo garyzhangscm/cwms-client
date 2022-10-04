@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { WarehouseLayoutLocationGroupMaintenanceConfirmComponent } from './location-group-maintenance-confirm/location-group-maintenance-confirm.component';
 import { WarehouseLayoutLocationGroupMaintenanceComponent } from './location-group-maintenance/location-group-maintenance.component';
 import { WarehouseLayoutLocationGroupComponent } from './location-group/location-group.component';
+import { WarehouseLayoutLocationMaintenanceComponent } from './location-maintenance/location-maintenance.component';
 import { WarehouseLayoutLocationQueryPopupComponent } from './location-query-popup/location-query-popup.component';
 import { WarehouseLayoutWarehouseConfigurationComponent } from './warehouse-configuration/warehouse-configuration.component';
 import { WarehouseLayoutWarehouseLayoutMaintenanceComponent } from './warehouse-layout-maintenance/warehouse-layout-maintenance.component';
@@ -31,7 +32,8 @@ const routes: Routes = [
   { path: 'warehouse-location', component: WarehouseLayoutWarehouseLocationComponent },
   { path: 'location-query-popup', component: WarehouseLayoutLocationQueryPopupComponent },
   { path: 'warehouse-layout-maintenance', component: WarehouseLayoutWarehouseLayoutMaintenanceComponent },
-  { path: 'warehouse-configuration', component: WarehouseLayoutWarehouseConfigurationComponent }];
+  { path: 'warehouse-configuration', component: WarehouseLayoutWarehouseConfigurationComponent },
+  { path: 'location/maintenance', component: WarehouseLayoutLocationMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

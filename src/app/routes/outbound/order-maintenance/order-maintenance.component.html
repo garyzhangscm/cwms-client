@@ -81,7 +81,7 @@
                 </nz-form-label>
                 <nz-form-control [nzSpan]="12" nzHasFeedback  >
                     <nz-select [(ngModel)]="currentOrder!.stageLocationGroupId" (ngModelChange)="stageLocationGroupChange()">
-                        <nz-option *ngFor="let loocationGroup of avaiableLocationGroups" [nzValue]="loocationGroup.id" [nzLabel]="loocationGroup.description"></nz-option>
+                        <nz-option *ngFor="let loocationGroup of avaiableLocationGroups" [nzValue]="loocationGroup.id" [nzLabel]="loocationGroup.description!"></nz-option>
                       </nz-select>
 
                 </nz-form-control>
@@ -95,7 +95,7 @@
                 <nz-form-control [nzSpan]="12" nzHasFeedback  >
                     
                         <nz-select [(ngModel)]="currentOrder!.stageLocationId">
-                            <nz-option *ngFor="let location of avaiableLocations" [nzValue]="location.id" [nzLabel]="location.name"></nz-option>
+                            <nz-option *ngFor="let location of avaiableLocations" [nzValue]="location.id!" [nzLabel]="location.name!"></nz-option>
                         </nz-select>
 
                       

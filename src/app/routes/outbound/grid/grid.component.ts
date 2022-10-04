@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { GridConfiguration } from '../models/grid-configuration';
 import { GridDistributionWork } from '../models/grid-distribution-work';
@@ -187,7 +188,7 @@ export class OutboundGridComponent implements OnInit {
         }
         currentRow.cells.push({
           gridLocationConfigurationId: gridLocationConfiguration.id,
-          locationName: gridLocationConfiguration.location.name,
+          locationName: gridLocationConfiguration.location.name!,
           columnSpan: gridLocationConfiguration.columnSpan,
           status: CellStatus.OPEN,
           progress:

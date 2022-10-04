@@ -262,7 +262,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     });
     this.locationGroupService.loadLocationGroups().subscribe((locationGroupList: LocationGroup[]) => {
       locationGroupList.forEach(locationGroup =>
-        this.locationGroups.push({ label: locationGroup.description, value: locationGroup.id.toString() }),
+        this.locationGroups.push({ label: locationGroup.description!, value: locationGroup.id!.toString() }),
       );
     });
 
@@ -308,7 +308,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
           if (expand) {
             // expand all the result
             this.listOfDisplayLocations.forEach(location => {
-              this.expandSet.add(location.id);
+              this.expandSet.add(location.id!);
               this.showInventoryDetails(location);
             });
           }
@@ -329,10 +329,10 @@ export class InventoryInventoryAdjustComponent implements OnInit {
 
   onExpandChange(location: WarehouseLocation, checked: boolean): void {
     if (checked) {
-      this.expandSet.add(location.id);
+      this.expandSet.add(location.id!);
       this.showInventoryDetails(location);
     } else {
-      this.expandSet.delete(location.id);
+      this.expandSet.delete(location.id!);
     }
   }
 
@@ -344,8 +344,8 @@ export class InventoryInventoryAdjustComponent implements OnInit {
 
   showInventoryDetails(location: WarehouseLocation): void {
     console.log(`expanded: ${JSON.stringify(location)}`);
-    this.inventoryService.getInventoriesByLocationId(location.id).subscribe(inventories => {
-      this.mapOfInventories[location.id] = [...inventories];
+    this.inventoryService.getInventoriesByLocationId(location.id!).subscribe(inventories => {
+      this.mapOfInventories[location.id!] = [...inventories];
     });
   }
 
@@ -511,9 +511,9 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.emptyLocationlModal.afterOpen.subscribe(() => this.initInventoryList(location));
   }
   initInventoryList(location: WarehouseLocation) {   
-    this.inventoryService.getInventoriesByLocationId(location.id).subscribe({
+    this.inventoryService.getInventoriesByLocationId(location.id!).subscribe({
       next: (inventories) => {
-        this.mapOfInventories[location.id] = [...inventories]; 
+        this.mapOfInventories[location.id!] = [...inventories]; 
         this.emptyLocationInventoryCount = this.mapOfInventories[location.id!].length;
         this.emptyLocationCurrentInventoryIndex = 0;
         this.emptyLocationlModal.updateConfig({ 
@@ -526,7 +526,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.emptyLocationlModal.updateConfig({ 
       nzOkLoading: true,
     }); 
-    this.removeInventoryFromList(location.name, this.mapOfInventories[location.id!])
+    this.removeInventoryFromList(location.name!, this.mapOfInventories[location.id!])
     
   }
   // remove the first inventory from the list

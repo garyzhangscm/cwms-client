@@ -1,11 +1,14 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UnitType } from '../../common/models/unit-type';
+import { UnitService } from '../../common/services/unit.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { LocationGroup } from '../models/location-group';
@@ -90,7 +93,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       listOfFilter: [],
       filterFn: null,
       showFilter: false,
-      width: '15100px0px'
+      width: '100px'
     }, {
       name: 'location.capacity',
       showSort: true,
@@ -240,6 +243,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
 
 
   constructor(
+    private activatedRoute: ActivatedRoute,
     private fb: FormBuilder,
     private locationService: LocationService,
     private locationGroupTypeService: LocationGroupTypeService,
@@ -248,6 +252,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
     private modalService: NzModalService,
     private messageService: NzMessageService,
     private utilService: UtilService,
+    private unitService: UnitService,
   ) { }
   ngOnInit(): void {
     // initiate the search form
@@ -255,6 +260,13 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       taggedLocationGroupTypes: [null],
       taggedLocationGroups: [null],
       locationName: [null],
+    });
+
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.name) {
+        this.searchForm.controls.locationName.setValue(params.name);
+        this.search();
+      } 
     });
 
     // initiate the select control
@@ -265,6 +277,52 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       this.locationGroups = locationGroupList;
     });
   }
+
+  
+  loadUnits(locations: WarehouseLocation[]) : void {
+    locations.forEach(
+      location => this.loadUnit(location)
+    );
+  }
+  loadUnit(location: WarehouseLocation) : void {
+    // backwards compatibility, in case the unit of the width / length / height
+    // and capacity is not setup yet. we will load the default unit 
+
+    if (!location.lengthUnit) {
+      this.loadLengthUnit(location, "lengthUnit");
+    }
+    if (!location.widthUnit) {
+      this.loadLengthUnit(location, "widthUnit");
+    }
+    if (!location.heightUnit) {
+      this.loadLengthUnit(location, "heightUnit");
+    }
+    if (!location.capacityUnit) {
+      this.loadVolumeUnit(location, "capacityUnit");
+    }
+  }
+
+  loadLengthUnit(obj: any, key: string) {
+    this.loadUnitByType(obj, key, UnitType.LENGTH) 
+  }
+  loadVolumeUnit(obj: any, key: string) {
+    this.loadUnitByType(obj, key, UnitType.VOLUME) 
+  }
+  
+  loadUnitByType(obj: any, key: string, unitType: UnitType) {
+    this.unitService.loadUnits().subscribe({
+      next: (unitsRes) => {
+        unitsRes.forEach(
+          unit => {
+            if (unit.type === unitType && unit.baseUnitFlag === true) {
+              obj[key] = unit.name; 
+            }
+          }
+        )
+      }
+    })    
+  }
+
 
   resetForm(): void {
     this.searchForm.reset();
@@ -283,6 +341,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       )
       .subscribe(
         locationRes => {
+          this.loadUnits(locationRes);
           this.listOfAllLocations = locationRes;
           this.listOfDisplayLocations = locationRes;
           this.updateEditCache();
@@ -315,7 +374,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   }
 
   onAllChecked(value: boolean): void {
-    this.listOfDisplayLocations!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.listOfDisplayLocations!.forEach(item => this.updateCheckedSet(item.id!, value));
     this.refreshCheckedStatus();
   }
 
@@ -325,8 +384,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   }
 
   refreshCheckedStatus(): void {
-    this.checked = this.listOfDisplayLocations!.every(item => this.setOfCheckedId.has(item.id));
-    this.indeterminate = this.listOfDisplayLocations!.some(item => this.setOfCheckedId.has(item.id)) && !this.checked;
+    this.checked = this.listOfDisplayLocations!.every(item => this.setOfCheckedId.has(item.id!));
+    this.indeterminate = this.listOfDisplayLocations!.some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
   }
 
 
@@ -354,7 +413,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   getSelectedLocations(): WarehouseLocation[] {
     const selectedLocations: WarehouseLocation[] = [];
     this.listOfAllLocations.forEach((location: WarehouseLocation) => {
-      if (this.setOfCheckedId.has(location.id)) {
+      if (this.setOfCheckedId.has(location.id!)) {
         selectedLocations.push(location);
       }
     });
@@ -370,7 +429,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
     this.editCache[id] = {
       data: { ...this.listOfAllLocations[index] },
       edit: false,
-      locationGroupName: this.listOfAllLocations[index].locationGroup!.name,
+      locationGroupName: this.listOfAllLocations[index].locationGroup!.name!,
     };
   }
 
@@ -395,10 +454,10 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
 
   updateEditCache(): void {
     this.listOfAllLocations.forEach(item => {
-      this.editCache[item.id] = {
+      this.editCache[item.id!] = {
         edit: false,
         data: { ...item },
-        locationGroupName: item.locationGroup!.name,
+        locationGroupName: item.locationGroup!.name!,
       };
     });
   }

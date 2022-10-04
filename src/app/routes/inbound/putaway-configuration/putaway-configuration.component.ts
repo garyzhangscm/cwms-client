@@ -64,7 +64,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
     {
       name: 'location',
       sortOrder: null,
-      sortFn: (a: PutawayConfiguration, b: PutawayConfiguration) => a.location!.name.localeCompare(b.location!.name),
+      sortFn: (a: PutawayConfiguration, b: PutawayConfiguration) => a.location!.name!.localeCompare(b.location!.name!),
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -74,7 +74,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
     {
       name: 'location-group',
       sortOrder: null,
-      sortFn: (a: PutawayConfiguration, b: PutawayConfiguration) => a.locationGroup!.name.localeCompare(b.locationGroup!.name),
+      sortFn: (a: PutawayConfiguration, b: PutawayConfiguration) => a.locationGroup!.name!.localeCompare(b.locationGroup!.name!),
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],

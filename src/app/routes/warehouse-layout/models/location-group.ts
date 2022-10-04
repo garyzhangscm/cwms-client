@@ -5,21 +5,21 @@ import { LocationVolumeTrackingPolicy } from './location-volume-tracking-policy.
 import { Warehouse } from './warehouse';
 
 export interface LocationGroup {
-  id: number;
-  name: string;
-  description: string;
-  warehouse: Warehouse;
-  locationGroupType: LocationGroupType;
-  locationCount: number;
-  pickable: boolean;
-  storable: boolean;
-  countable: boolean;
-  adjustable: boolean;
-  trackingVolume: boolean;
-  allowEmptyLocation: boolean;
-  trackingLocationUtilization: boolean;
-  itemVolumeTrackingLevel: ItemVolumeTrackingLevel;
-  volumeTrackingPolicy: LocationVolumeTrackingPolicy;
-  inventoryConsolidationStrategy: InventoryConsolidationStrategy; 
+  id?: number;
+  name?: string;
+  description?: string;
+  warehouse?: Warehouse;
+  locationGroupType?: LocationGroupType;
+  locationCount?: number;
+  pickable?: boolean;
+  storable?: boolean;
+  countable?: boolean;
+  adjustable?: boolean;
+  trackingVolume?: boolean;
+  allowEmptyLocation?: boolean;
+  trackingLocationUtilization?: boolean;
+  itemVolumeTrackingLevel?: ItemVolumeTrackingLevel;
+  volumeTrackingPolicy?: LocationVolumeTrackingPolicy;
+  inventoryConsolidationStrategy?: InventoryConsolidationStrategy; 
 
 }

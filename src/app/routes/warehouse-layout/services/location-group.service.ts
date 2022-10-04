@@ -59,7 +59,7 @@ export class LocationGroupService {
   removeLocationGroups(locationgroups: LocationGroup[]): Observable<LocationGroup[]> {
     const locationGroupIds: number[] = [];
     locationgroups.forEach(locationGroup => {
-      locationGroupIds.push(locationGroup.id);
+      locationGroupIds.push(locationGroup.id!);
     });
     const params = {
       locationGroupIds: locationGroupIds.join(','),

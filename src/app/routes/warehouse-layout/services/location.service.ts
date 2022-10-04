@@ -38,7 +38,7 @@ export class LocationService {
   }
 
   addLocation(location: WarehouseLocation): Observable<WarehouseLocation> {
-    return this.http.post('layout/locations', location).pipe(map(res => res.data));
+    return this.http.post(`layout/locations?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`, location).pipe(map(res => res.data));
   }
 
   changeLocation(location: WarehouseLocation): Observable<WarehouseLocation> {
@@ -53,7 +53,7 @@ export class LocationService {
   removeLocations(locations: WarehouseLocation[]): Observable<WarehouseLocation[]> {
     const locationIds: number[] = [];
     locations.forEach(location => {
-      locationIds.push(location.id);
+      locationIds.push(location.id!);
     });
     const params = {
       locationIds: locationIds.join(','),

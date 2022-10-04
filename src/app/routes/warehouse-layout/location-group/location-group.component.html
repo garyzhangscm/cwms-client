@@ -30,7 +30,7 @@
         </nz-form-label>
         <nz-form-control [nzSpan]="20">
           <nz-select nzMode="tags" [(ngModel)]="selectedLocationGroups" name="selectedLocationGroups">
-            <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description"
+            <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description!"
               [nzValue]="locationGroup.id"></nz-option>
           </nz-select>
         </nz-form-control>
@@ -72,7 +72,7 @@
 
           <td>
 
-            {{ data.locationGroupType.description }}
+            {{ data.locationGroupType!.description! }}
           </td>
 
 

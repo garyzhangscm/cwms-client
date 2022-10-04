@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzModalService } from 'ng-zorro-antd/modal';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
@@ -129,7 +130,7 @@ export class InventoryMovementPathComponent implements OnInit {
       .subscribe(movementPaths => {
         this.listOfAllMovementPath = movementPaths;
         this.listOfDisplayMovementPath = movementPaths;
-        console.log('movement path res:\n' + JSON.stringify(movementPaths));
+        console.log(`movement path res:\n${  JSON.stringify(movementPaths)}`);
       });
   }
 

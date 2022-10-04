@@ -45,12 +45,12 @@
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'location-group-type' | i18n}}" nzSpan="3">
         <div>
-          <nz-tag [nzColor]="'#2db7f5'" style="font-size: 14px">{{currentLocationGroup.locationGroupType.description}}
+          <nz-tag [nzColor]="'#2db7f5'" style="font-size: 14px">{{currentLocationGroup.locationGroupType!.description}}
           </nz-tag>
-          <nz-tag [nzColor]="'#2db7f5'" *ngIf="currentLocationGroup.locationGroupType.fourWallInventory"
+          <nz-tag [nzColor]="'#2db7f5'" *ngIf="currentLocationGroup.locationGroupType!.fourWallInventory"
             style="font-size: 14px">
             {{'location-group-type.four_wall_inventory' | i18n}}</nz-tag>
-          <nz-tag [nzColor]="'#2db7f5'" *ngIf="currentLocationGroup.locationGroupType.virtual" style="font-size: 14px">
+          <nz-tag [nzColor]="'#2db7f5'" *ngIf="currentLocationGroup.locationGroupType!.virtual" style="font-size: 14px">
             {{'location-group-type.virtual' | i18n}}</nz-tag>
         </div>
       </nz-descriptions-item>
