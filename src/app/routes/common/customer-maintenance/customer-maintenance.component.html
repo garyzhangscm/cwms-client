@@ -33,8 +33,7 @@
   </div>
 </div>
 
-<nz-card [nzActions]="[cardFoot]">
-  <form nz-form>
+<nz-card [nzActions]="[cardFoot]"> 
     <div nz-row [nzGutter]="24">
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
@@ -54,6 +53,18 @@
           <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
             nzErrorTip="{{ 'error.form.field.clientDescription.required' | i18n }}">
             <input nz-input [(ngModel)]="currentCustomer!.description" id="description" name="description" required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'listPickEnabledFlag' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <label nz-checkbox [(ngModel)]="currentCustomer!.listPickEnabledFlag"></label>
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -80,10 +91,7 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-    </div>
-
-  </form>
-
+    </div> 
 </nz-card>
 
 <ng-template #cardFoot>

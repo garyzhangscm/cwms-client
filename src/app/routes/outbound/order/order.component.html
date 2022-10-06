@@ -227,8 +227,29 @@
                       style="width:75px"
                     ></nz-skeleton-element> 
                     {{ orderLine.item?.name }}</td>
-                  <td>{{ orderLine.expectedQuantity }}</td>
-                  <td>{{ orderLine.openQuantity }}</td>
+                  <td>{{ orderLine.expectedQuantity }}
+                    <nz-skeleton-element 
+                        *ngIf="orderLine.item.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                            && orderLine.item.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                        nzType="input"
+                        [nzActive]="true"
+                        [nzSize]="'small'"
+                        style="width:75px"
+                      ></nz-skeleton-element> 
+                      <strong>{{orderLine.item.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
+
+                  </td>
+                  <td>{{ orderLine.openQuantity }}
+                    <nz-skeleton-element 
+                        *ngIf="orderLine.item.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                            && orderLine.item.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                        nzType="input"
+                        [nzActive]="true"
+                        [nzSize]="'small'"
+                        style="width:75px"
+                      ></nz-skeleton-element> 
+                      <strong>{{orderLine.item.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
+                    </td>
                   <td>{{ orderLine.inprocessQuantity }}</td>
                   <td>{{ orderLine.productionPlanInprocessQuantity }}</td>
                   <td>{{ orderLine.productionPlanProducedQuantity }}</td>

@@ -26,7 +26,8 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
     private warehouseConfigurationService: WarehouseConfigurationService) {
       this.currentWarehouseConfiguration = {        
         warehouse: this.warehouseService.getCurrentWarehouse(),
-        threePartyLogisticsFlag: false
+        threePartyLogisticsFlag: false,
+        listPickEnabledFlag: false,
       }
   }
 

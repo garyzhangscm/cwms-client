@@ -14,4 +14,6 @@ export interface Client {
   addressPostcode: string;
   warehouseId?: number;
   companyId: number;
+  
+  listPickEnabledFlag?: boolean;
 }

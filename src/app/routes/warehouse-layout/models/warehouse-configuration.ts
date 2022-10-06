@@ -7,4 +7,5 @@ export interface WarehouseConfiguration {
     warehouse: Warehouse;
     
     threePartyLogisticsFlag: boolean;
+    listPickEnabledFlag: boolean;
 }

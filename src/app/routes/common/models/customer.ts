@@ -14,4 +14,5 @@ export interface Customer {
   addressLine1: string;
   addressLine2?: string;
   addressPostcode: string;
+  listPickEnabledFlag?: boolean;
 }

@@ -31,6 +31,7 @@ export class CommonCustomerMaintenanceComponent implements OnInit {
     addressLine1: '',
     addressLine2: '',
     addressPostcode: '',
+    listPickEnabledFlag: false,
   };
 
   constructor(private router: Router,
@@ -59,5 +60,12 @@ export class CommonCustomerMaintenanceComponent implements OnInit {
     sessionStorage.setItem('customer-maintenance.customer', JSON.stringify(this.currentCustomer));
     const url = '/common/customer-maintenance/address';
     this.router.navigateByUrl(url);
+  }
+
+  
+  listPickEnabledFlagChanged(listPickEnabledFlagChecked : boolean)   {
+    this.currentCustomer!.listPickEnabledFlag = listPickEnabledFlagChecked; 
+    console.log(`listPickEnabledFlagChecked is changed to ${listPickEnabledFlagChecked}`);
+    console.log(`this.currentCustomer!: ${JSON.stringify(this.currentCustomer!)}`);
   }
 }

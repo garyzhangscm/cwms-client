@@ -43,15 +43,19 @@ export class CustomerService {
   
 
   getCustomer(customerId: number): Observable<Customer> {
+    /**
+     * 
+     * 
     const data = this.gzLocalStorageService.getItem(`common.customer.${  customerId}`);
     if (data !== null) {
       return of(data);
     }
 
+     */
     return this.http
       .get(`common/customers/${  customerId}`)
-      .pipe(map(res => res.data))
-      .pipe(tap(res => this.gzLocalStorageService.setItem(`common.customer.${  customerId}`, res)));
+      .pipe(map(res => res.data));
+      // .pipe(tap(res => this.gzLocalStorageService.setItem(`common.customer.${  customerId}`, res)));
   }
 
   addCustomer(customer: Customer): Observable<Customer> {

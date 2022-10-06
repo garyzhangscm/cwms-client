@@ -19,6 +19,7 @@
 </ng-template>
 
 
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 <div nz-row style="padding: 50px">
   <div nz-col nzSpan="12" nzOffset="6">
     <nz-steps [nzCurrent]="2" [nzSize]="'default'" (nzIndexChange)="onStepIndexChange($event)">
@@ -43,6 +44,12 @@
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'description' | i18n}}" nzSpan="2">
         {{currentCustomer?.description}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'listPickEnabledFlag' | i18n}}" nzSpan="2">
+        <span nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"
+            *ngIf="currentCustomer?.listPickEnabledFlag"></span>
+        <span nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"
+            *ngIf="!currentCustomer?.listPickEnabledFlag"></span> 
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'contactor.firstname' | i18n}}">
         {{currentCustomer?.contactorFirstname}}
@@ -74,7 +81,7 @@
     </nz-descriptions>
   </nz-card>
 </ng-container>
-
+</nz-spin>
 
 <ng-template #actionSave>
   <button nz-button nzType="primary" (click)="save()">{{ 'confirm' | i18n}}</button>

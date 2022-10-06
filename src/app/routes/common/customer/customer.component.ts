@@ -1,11 +1,13 @@
 import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 import { ColumnItem } from '../../util/models/column-item';
+import { UtilService } from '../../util/services/util.service';
 import { Customer } from '../models/customer';
 import { Supplier } from '../models/supplier';
 import { CustomerService } from '../services/customer.service';
@@ -33,6 +35,16 @@ export class CommonCustomerComponent implements OnInit {
       name: 'description',
       sortOrder: null,
       sortFn: (a: Customer, b: Customer) => a.description.localeCompare(b.description),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'listPickEnabledFlag',
+      sortOrder: null,
+      sortFn: (a: Customer, b: Customer) => this.utilService.compareNullableObjField(a, b, "listPickEnabledFlag"),
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -171,12 +183,22 @@ export class CommonCustomerComponent implements OnInit {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private fb: FormBuilder,
+    private activatedRoute: ActivatedRoute,
+    private utilService: UtilService,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
     this.searchForm = this.fb.group({
       name: [null], 
     }); 
+    
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.name) {
+        this.searchForm.controls.name.setValue(params.name);
+        this.search();
+      }
+    });
   }
   resetForm(): void {
     this.searchForm.reset();
@@ -279,5 +301,20 @@ export class CommonCustomerComponent implements OnInit {
   }
   refresh(): void {
     this.search(true);
+  }
+  // before we start modify the customer, let's setup the 
+  // customer and save it in the session
+  // so that the modify page can get from the session
+  setupSessionCustomer(id: number) : void {
+    this.clearSessionCustomer();
+    this.customerService.getCustomer(id).subscribe({
+      next: (customerRes) => {
+
+        sessionStorage.setItem('customer-maintenance.customer', JSON.stringify(customerRes));
+        this.router.navigateByUrl(`/common/customer-maintenance`);
+      }
+    })
+    
+
   }
 }

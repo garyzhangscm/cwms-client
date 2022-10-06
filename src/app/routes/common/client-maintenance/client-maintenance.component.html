@@ -75,6 +75,16 @@
     <div nz-row [nzGutter]="24">
 
       <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="14">
+            {{ 'listPickEnabledFlag' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="10">
+            <label nz-checkbox [(ngModel)]="currentClient!.listPickEnabledFlag"></label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
           <nz-form-label [nzSpan]="8" nzFor="contactor.firstname">
             {{ 'contactor.firstname' | i18n }}
@@ -218,6 +228,10 @@
         </nz-descriptions-item>
         <nz-descriptions-item nzTitle="{{'description' | i18n}}" nzSpan="2">
           {{currentClient?.description}}
+        </nz-descriptions-item>
+
+        <nz-descriptions-item nzTitle="{{'listPickEnabledFlag' | i18n}}" nzSpan="2">
+          {{currentClient?.listPickEnabledFlag}}
         </nz-descriptions-item>
         <nz-descriptions-item nzTitle="{{'contactor.firstname' | i18n}}">
           {{currentClient?.contactorFirstname}}

@@ -46,7 +46,8 @@ export class CommonClientMaintenanceComponent implements OnInit {
         addressLine1: '',
         addressLine2: '',
         addressPostcode: '',
-        companyId: this.companyService.getCurrentCompany()!.id
+        companyId: this.companyService.getCurrentCompany()!.id,
+        listPickEnabledFlag: false,
       };
   }
 
