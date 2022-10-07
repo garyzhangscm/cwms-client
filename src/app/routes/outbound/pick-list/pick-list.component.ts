@@ -5,6 +5,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ColumnItem } from '../../util/models/column-item';
@@ -116,8 +117,6 @@ export class OutboundPickListComponent implements OnInit {
   listOfDisplayPickLists: PickList[] = [];
 
 
-
-
   // list of record with printing in process
   mapOfPrintingInProcessId: { [key: string]: boolean } = {};
 
@@ -128,6 +127,8 @@ export class OutboundPickListComponent implements OnInit {
   mapOfPickedInventory: { [key: string]: Inventory[] } = {};
 
   unpickModal!: NzModalRef;
+
+  isSpinning = false;
 
   constructor(
     private fb: FormBuilder,
@@ -244,8 +245,16 @@ export class OutboundPickListComponent implements OnInit {
     }
   }
   showPicks(pickList: PickList): void {
-    this.pickService.getPicksByPickList(pickList.id).subscribe(pickRes => {
-      this.mapOfPicks[pickList.id] = [...pickRes];
+    this.isSpinning = true;
+    this.pickService.getPicksByPickList(pickList.id).subscribe({
+
+       next: (pickRes) => {
+
+        this.mapOfPicks[pickList.id] = [...pickRes];
+        this.isSpinning = false;
+       }, 
+       error: () => this.isSpinning = false
+
     });
   }
   showPickedInventory(pickList: PickList): void {
@@ -322,6 +331,11 @@ export class OutboundPickListComponent implements OnInit {
   onExpandChange(id: number, checked: boolean): void {
     if (checked) {
       this.expandSet.add(id);
+      this.listOfDisplayPickLists.forEach(pickList => {
+        if (pickList.id === id) {
+          this.showPickListDetails(pickList);
+        }
+      });
     } else {
       this.expandSet.delete(id);
     }

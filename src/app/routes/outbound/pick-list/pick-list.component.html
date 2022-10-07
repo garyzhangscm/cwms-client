@@ -1,5 +1,7 @@
 <page-header></page-header>
 
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 <!-- Form to query the result  -->
 <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
   <div nz-row [nzGutter]="24">
@@ -105,87 +107,87 @@
                     {{ 'action' | i18n }}
                   </th>
                 </thead>
-    <tbody>
-      <tr *ngFor="let pick of mapOfPicks[data.id!]">
-        <td>{{ pick.number }}</td>
-        <td>{{ pick.pickListNumber }}</td>
-        <td>{{ pick.sourceLocation?.name }}</td>
-        <td>{{ pick.destinationLocation?.name }}</td>
-        <td>{{ pick.item?.name }}</td>
-        <td>{{ pick.item?.description }}</td>
-        <td>{{ pick.quantity }}</td>
-        <td>{{ pick.pickedQuantity }}</td>
+                <tbody>
+                  <tr *ngFor="let pick of mapOfPicks[data.id!]">
+                    <td>{{ pick.number }}</td>
+                    <td>{{ pick.pickListNumber }}</td>
+                    <td>{{ pick.sourceLocation?.name }}</td>
+                    <td>{{ pick.destinationLocation?.name }}</td>
+                    <td>{{ pick.item?.name }}</td>
+                    <td>{{ pick.item?.description }}</td>
+                    <td>{{ pick.quantity }}</td>
+                    <td>{{ pick.pickedQuantity }}</td>
 
-        <td>
-          <button nz-button (click)="cancelPick(data, pick)" [disabled]="pick.quantity === pick.pickedQuantity">
-            {{ 'cancel' | i18n }}
-          </button>
-        </td>
-      </tr>
+                    <td>
+                      <button nz-button (click)="cancelPick(data, pick)" [disabled]="pick.quantity === pick.pickedQuantity">
+                        {{ 'cancel' | i18n }}
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </nz-table>
+
+            </nz-tab>
+
+            <nz-tab nzTitle=" {{ 'picked-inventory' | i18n }}">
+              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="false"
+                [nzData]="mapOfPickedInventory[data.id!]">
+                <thead>
+                  <th>
+                    {{ 'pick.number' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'location' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'lpn' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'item' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'item.description' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'item.package-type' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'quantity' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'inventory.status' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'action' | i18n }}
+                  </th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let inventory of mapOfPickedInventory[data.id!]">
+                    <td>{{ inventory.pick?.number }}</td>
+                    <td>{{ inventory.location?.name }}</td>
+                    <td>{{ inventory.lpn }}</td>
+                    <td>{{ inventory.item?.name }}</td>
+                    <td>{{ inventory.item?.description }}</td>
+                    <td>{{ inventory.itemPackageType?.name }}</td>
+                    <td>{{ inventory.quantity }}</td>
+                    <td>{{ inventory.inventoryStatus?.name }}</td>
+                    <td>
+                      <button nz-button (click)="openUnpickModal(data, inventory, tplUnpickModalTitle, tplUnpickModalContent)">
+                        {{ 'unpick' | i18n }}
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </nz-table>
+            </nz-tab>
+          </nz-tabset>
+
+        </tr>
+      </ng-template>
     </tbody>
   </nz-table>
-
-  </nz-tab>
-
-  <nz-tab nzTitle=" {{ 'picked-inventory' | i18n }}">
-    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="false"
-      [nzData]="mapOfPickedInventory[data.id!]">
-      <thead>
-        <th>
-          {{ 'pick.number' | i18n }}
-        </th>
-        <th>
-          {{ 'location' | i18n }}
-        </th>
-        <th>
-          {{ 'lpn' | i18n }}
-        </th>
-        <th>
-          {{ 'item' | i18n }}
-        </th>
-        <th>
-          {{ 'item.description' | i18n }}
-        </th>
-        <th>
-          {{ 'item.package-type' | i18n }}
-        </th>
-        <th>
-          {{ 'quantity' | i18n }}
-        </th>
-        <th>
-          {{ 'inventory.status' | i18n }}
-        </th>
-        <th>
-          {{ 'action' | i18n }}
-        </th>
-      </thead>
-      <tbody>
-        <tr *ngFor="let inventory of mapOfPickedInventory[data.id!]">
-          <td>{{ inventory.pick?.number }}</td>
-          <td>{{ inventory.location?.name }}</td>
-          <td>{{ inventory.lpn }}</td>
-          <td>{{ inventory.item?.name }}</td>
-          <td>{{ inventory.item?.description }}</td>
-          <td>{{ inventory.itemPackageType?.name }}</td>
-          <td>{{ inventory.quantity }}</td>
-          <td>{{ inventory.inventoryStatus?.name }}</td>
-          <td>
-            <button nz-button (click)="openUnpickModal(data, inventory, tplUnpickModalTitle, tplUnpickModalContent)">
-              {{ 'unpick' | i18n }}
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </nz-table>
-  </nz-tab>
-  </nz-tabset>
-
-  </tr>
-  </ng-template>
-  </tbody>
-  </nz-table>
 </div>
-
+</nz-spin>
 
 
 
