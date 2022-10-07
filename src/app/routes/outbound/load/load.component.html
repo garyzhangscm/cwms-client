@@ -204,6 +204,177 @@
                 </tbody>
               </nz-table>
             </nz-tab> 
+            
+            <nz-tab nzTitle=" {{ 'pick' | i18n }}">
+              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="true"
+                [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[item.id!]" #pickTable>
+                <thead>
+                  
+                  <th   [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
+                  (nzCheckedChange)="onAllChecked($event, item.id!)" nzWidth="60px"></th>
+                  <th>
+                    {{ 'pick.number' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'list-pick.number' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'cartonization.number' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'sourceLocation' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'destinationLocation' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'item' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'item.description' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'pick.quantity' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'pick.pickedQuantity' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'pick.allocated-lpn' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'action' | i18n }}
+                  </th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let pick of pickTable.data">
+                    
+                    <td [nzChecked]="setOfCheckedId.has(pick.id!)" [nzDisabled]="pick.quantity === pick.pickedQuantity"
+                      (nzCheckedChange)="onItemChecked(pick.id!, item.id!, $event)"></td>
+                    <td>{{ pick.number }}</td>
+                    <td><a routerLink="/outbound/pick-list" routerLinkActive="active"
+                        [queryParams]="{number : pick.pickListNumber}">{{ pick.pickListNumber }}</a></td>
+                    <td><a routerLink="/outbound/cartonization" routerLinkActive="active"
+                        [queryParams]="{number : pick.cartonizationNumber}">{{ pick.cartonizationNumber }}</a></td>
+                    <td>{{ pick.sourceLocation?.name }}</td>
+                    <td>{{ pick.destinationLocation?.name }}</td>
+                    <td>{{ pick.item?.name }}</td>
+                    <td>{{ pick.item?.description }}</td>
+                    <td>{{ pick.quantity }}</td>
+                    <td>{{ pick.pickedQuantity }}</td>
+                    <td>{{ pick.lpn }}</td>
+                    <td>
+                      <button nz-button (click)="cancelPick(pick)"
+                        [disabled]="pick.quantity === pick.pickedQuantity  || item.status === trailerAppointmentStatusEnum.COMPLETED">
+                        {{ 'cancel' | i18n }}
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </nz-table>
+
+              <ng-template #pickTableFoot>
+                <div nz-row nzType="flex" nzJustify="start">
+                   
+                  <button nz-button (click)="confirmPicks(item)"
+                    [disabled]="mapOfPicks[item.id!]?.length === 0  || item.status === trailerAppointmentStatusEnum.COMPLETED">
+                    {{ 'confirm' | i18n }}
+                  </button>
+                  <button nz-button (click)="cancelSelectedPick(item)" 
+                  [disabled]="item.status === trailerAppointmentStatusEnum.COMPLETED">
+                        {{ 'cancel' | i18n }}
+                      </button>
+                </div>
+              </ng-template>
+            </nz-tab>
+            
+            <nz-tab nzTitle=" {{ 'short-allocation' | i18n }}">
+              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="mapOfShortAllocations[item.id!]" nzSize="middle"
+                [nzShowPagination]="true" #shortAllocationTable>
+                <thead>
+                  <th>
+                    {{ 'item' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'item.description' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'short-allocation.quantity' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'short-allocation.openQuantity' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'short-allocation.inprocessQuantity' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'short-allocation.deliveredQuantity' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'short-allocation.status' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'short-allocation.allocationCount' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'short-allocation.lastAllocationDatetime' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'action' | i18n }}
+                  </th>
+                </thead>
+                <tbody >
+                  <tr *ngFor="let shortAllocation of shortAllocationTable.data">
+
+                    <td>{{ shortAllocation.item?.name }}</td>
+                    <td>{{ shortAllocation.item?.description }}</td>
+                    <td>{{ shortAllocation.quantity }}</td>
+                    <td>{{ shortAllocation.openQuantity }}</td>
+                    <td><a routerLink="/outbound/pick" routerLinkActive="active"
+                        [queryParams]="{shortAllocationId : shortAllocation.id}">
+                        {{ shortAllocation.inprocessQuantity }}
+                      </a></td>
+                    <td>{{ shortAllocation.deliveredQuantity }}</td>
+                    <td>{{ 'SHORT-ALLOCATION-STATUS-' +shortAllocation.status | i18n}}</td>
+                    <td>{{ shortAllocation.allocationCount }}</td>
+
+                    <td>
+                      <span *ngIf="shortAllocation.lastAllocationDatetime">
+                        {{ shortAllocation.lastAllocationDatetime[1] }}/{{ shortAllocation.lastAllocationDatetime[2] }}/{{
+                        shortAllocation.lastAllocationDatetime[0] }}
+                        {{ shortAllocation.lastAllocationDatetime[3] }}:{{ shortAllocation.lastAllocationDatetime[4] }}:{{
+                        shortAllocation.lastAllocationDatetime[5] }}
+                      </span>
+                    </td>
+                    <td>
+                      
+                      <button nz-button nz-dropdown [nzDropdownMenu]="shortAllocationMenu" nzType="primary">
+                        {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+                      <nz-dropdown-menu #shortAllocationMenu="nzDropdownMenu">
+                        <ul nz-menu> 
+
+                          <li nz-menu-item *ngIf="isShortAllocationAllocatable(shortAllocation) && item.status != trailerAppointmentStatusEnum.COMPLETED">
+                            <a   (click)="allocateShortAllocation(shortAllocation)">{{ 'allocate' | i18n }}</a>
+                          </li>
+                          
+                          <li nz-menu-item *ngIf="item.status != trailerAppointmentStatusEnum.COMPLETED">
+                            <a  (click)="openCreateWorkOrderModel(shortAllocation, tplCreateWorkOrderModalTitle, tplCreateWorkOrderModalContent)">
+                              {{ 'create-work-order' | i18n }}</a>
+                          </li>
+                          
+                          
+                          <li nz-menu-item *ngIf="item.status != trailerAppointmentStatusEnum.COMPLETED">
+                            <a  (click)="cancelShortAllocation(shortAllocation)">{{ 'cancel' | i18n }}</a>
+                          </li>
+                        </ul>
+                      </nz-dropdown-menu> 
+  
+
+                    </td>
+                  </tr>
+                </tbody>
+              </nz-table>
+            </nz-tab>
           </nz-tabset>
         </ng-template>
   
@@ -241,3 +412,94 @@
     </div>
   </ng-template>
   
+
+ 
+<!-- Modal for create work order for short allocation-->
+<ng-template #tplCreateWorkOrderModalTitle>
+  <span>{{ 'create-work-order' | i18n}}</span>
+</ng-template>
+<ng-template #tplCreateWorkOrderModalContent>
+  <form nz-form [formGroup]="createWorkOrderForm">
+    
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="8">
+            {{ 'item.name' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16" nzHasFeedback  >
+            <input nz-input formControlName="itemName" /> 
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="12">
+            {{ 'short-allocation.quantity' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback  >
+            <input nz-input formControlName="shortQuantity"> 
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="8">
+            {{ 'bom' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16" nzHasFeedback  >
+              <nz-select   formControlName="bom" >
+                  <nz-option *ngFor="let bom of availableBOM" [nzValue]="bom.id" [nzLabel]="bom.number!"></nz-option>
+                </nz-select>
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="12">
+            {{ 'work-order.number' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback  >
+            <input  appFkey variable="work-order-number" nz-input formControlName="workOrderNumber" 
+            (nextNumberAvailableEvent)="workOrderNumberChanged($event)"/> 
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="8">
+            {{ 'quantity' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16" nzHasFeedback  >
+            <input nz-input formControlName="workOrderQuantity"> 
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    
+    <div nz-col [nzSpan]="24" *ngIf="displayBom !== null">
+      <div><strong>{{'bill-of-material' | i18n}}</strong></div>
+      <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #BOMDetailTable
+        [nzData]="displayBom!.billOfMaterialLines" nzSize="middle" [nzShowPagination]="false" nzBordered>
+        <thead>
+          <tr>
+            <th>{{ 'item.name' | i18n}}</th>
+            <th>{{ 'quantity' | i18n }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let billOfMaterialLine of BOMDetailTable.data">
+            <td>{{ billOfMaterialLine.item?.name }}</td>
+            <td>{{ billOfMaterialLine.expectedQuantity }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </form>
+</ng-template>

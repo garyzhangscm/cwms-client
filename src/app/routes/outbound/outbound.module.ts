@@ -41,6 +41,8 @@ import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
+import { OutboundListPickConfigurationComponent } from './list-pick-configuration/list-pick-configuration.component';
+import { OutboundListPickConfigurationMaintenanceComponent } from './list-pick-configuration-maintenance/list-pick-configuration-maintenance.component';
 
 const COMPONENTS: Array<Type<void>> = [
   OutboundOrderComponent,
@@ -70,7 +72,9 @@ const COMPONENTS: Array<Type<void>> = [
   OutboundOutboundOrderPopupQueryComponent,
   OutboundAllocationConfigurationMaintenanceComponent,
   OutboundLoadComponent,
-  OutboundOrderDocumentComponent];
+  OutboundOrderDocumentComponent,
+  OutboundListPickConfigurationComponent,
+  OutboundListPickConfigurationMaintenanceComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { CartonizationConfiguration } from '../models/cartonization-configuration';
 import { _HttpClient } from '@delon/theme';
-import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { CartonizationConfiguration } from '../models/cartonization-configuration';
 
 @Injectable({
   providedIn: 'root',

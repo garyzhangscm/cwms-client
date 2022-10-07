@@ -150,6 +150,37 @@ export class PickService {
       workOrderNumber,
     );
   }
+  getPicksByLoad(trailerAppointmentId: number): Observable<PickWork[]> {
+    return this.getPicks(
+      
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      trailerAppointmentId
+    );
+  }
   getPicksByWave(waveId: number): Observable<PickWork[]> {
     return this.getPicks(undefined, undefined, undefined, undefined, waveId);
   }
@@ -371,6 +402,7 @@ export class PickService {
     workOrderLineIds?: string, 
     openPickOnly?: boolean,
     loadDetails?: boolean,
+    trailerAppointmentId?: number,
   ): Observable<PickWork[]> {
     
     const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
@@ -386,6 +418,11 @@ export class PickService {
     if (shipmentId) {
       url = `${url}&shipmentId=${shipmentId}`;
     }
+
+    if (trailerAppointmentId) {
+      url = `${url}&trailerAppointmentId=${trailerAppointmentId}`;
+    }
+    
     if (workOrderId) {
       url = `${url}&workOrderId=${workOrderId}`;
     }

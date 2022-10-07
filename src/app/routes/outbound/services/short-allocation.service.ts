@@ -20,6 +20,10 @@ export class ShortAllocationService {
   getShortAllocationsByOrder(orderId: number): Observable<ShortAllocation[]> {
     return this.getShortAllocations(undefined, orderId, undefined, undefined);
   }
+  getShortAllocationsByLoad(trailerAppointId: number): Observable<ShortAllocation[]> {
+    return this.getShortAllocations(undefined,
+      undefined,undefined,undefined,undefined,undefined,trailerAppointId);
+  }
   getShortAllocationsByWorkOrder(workOrder: WorkOrder): Observable<ShortAllocation[]> {
     let workOrderLineIds : string = 
         workOrder.workOrderLines.filter(workOrderLine => workOrderLine.id !== undefined && workOrderLine.id !== null)
@@ -46,7 +50,9 @@ export class ShortAllocationService {
     workOrderId?: number,
     shipmentId?: number,
     waveId?: number,
-    workOrderLineIds?: string
+    workOrderLineIds?: string, 
+    trailerAppointmentId?: number,
+    loadDetails?: boolean,
   ): Observable<ShortAllocation[]> {
     let url = `outbound/shortAllocations?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
 
@@ -63,12 +69,23 @@ export class ShortAllocationService {
     if (shipmentId) {
       url = `${url}&shipmentId=${shipmentId}`;
     }
+    if (trailerAppointmentId) {
+      url = `${url}&trailerAppointmentId=${trailerAppointmentId}`;
+    }
     if (waveId) {
       url = `${url}&waveId=${waveId}`;
     }
     if (workOrderLineIds) {
       url = `${url}&workOrderLineIds=${workOrderLineIds}`;
 
+    }
+    if (loadDetails != null) {
+
+      url = `${url}&loadDetails=${loadDetails}`;
+    }
+    else {
+
+      url = `${url}&loadDetails=true`;
     }
 
     return this.http.get(url).pipe(map(res => res.data));

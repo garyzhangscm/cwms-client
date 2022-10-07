@@ -1,5 +1,6 @@
 <page-header></page-header>
 
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 <!-- Form to query the result  -->
 <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
   <div nz-row [nzGutter]="24">
@@ -7,21 +8,28 @@
 
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
-        <nz-form-label for="orderNumber" [nzSm]="3" [nzXs]="3">
+        <nz-form-label for="orderNumber" [nzSpan]="6">
           {{ 'order.number' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSpan]="14">
+        <nz-form-control [nzSpan]="18">
           <input nz-input name="orderNumber" id="orderNumber" formControlName="orderNumber" />
         </nz-form-control>
       </nz-form-item>
     </div>
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
-        <nz-form-label for="itemNumber" [nzSm]="3" [nzXs]="3">
+        <nz-form-label for="itemNumber" [nzSpan]="6">
           {{ 'item' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSpan]="14">
-          <input nz-input name="itemNumber" id="itemNumber" formControlName="itemNumber" />
+        <nz-form-control [nzSpan]="18">
+          <nz-input-group nzSearch [nzAddOnAfter]="itemSuffixIconButton">
+            <input nz-input name="itemNumber" id="itemNumber" formControlName="itemNumber"  />
+          </nz-input-group>
+
+          <ng-template #itemSuffixIconButton>
+            <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)" >
+            </app-inventory-item-query-popup>
+          </ng-template> 
         </nz-form-control>
       </nz-form-item>
     </div>
@@ -105,7 +113,7 @@
     </tbody>
   </nz-table>
 </div>
-
+</nz-spin>
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start">
     <button nz-button nzDanger (click)="cancelSelectedShortAllocations()">

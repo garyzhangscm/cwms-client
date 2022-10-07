@@ -4,6 +4,8 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+
+import { ItemService } from '../../inventory/services/item.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { PickWork } from '../models/pick-work';
@@ -143,14 +145,24 @@ export class OutboundShortAllocationComponent implements OnInit {
   setOfCheckedId = new Set<number>();
   checked = false;
   indeterminate = false;
+  isSpinning = false;
+
   constructor(
     private fb: FormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private shortAllocationService: ShortAllocationService,
     private messageService: NzMessageService,
-    private utilService: UtilService,
+    private utilService: UtilService, 
   ) { }
+
+  ngOnInit(): void {
+    // initiate the search form
+    this.searchForm = this.fb.group({
+      orderNumber: [null],
+      itemNumber: [null],
+    });
+  }
 
   // Form related data and functions
   searchForm!: FormGroup;
@@ -169,12 +181,20 @@ export class OutboundShortAllocationComponent implements OnInit {
   }
 
   search(): void {
+    this.isSpinning = true;
     this.shortAllocationService
       .getShortAllocations(this.searchForm.controls.orderNumber.value, this.searchForm.controls.itemNumber.value)
-      .subscribe(shortAllocationRes => {
-        this.listOfAllShortAllocations = shortAllocationRes;
-        this.listOfDisplayShortAllocations = shortAllocationRes;
+      .subscribe({
+
+        next: (shortAllocationRes) => {
+          this.listOfAllShortAllocations = shortAllocationRes;
+          this.listOfDisplayShortAllocations = shortAllocationRes;
+          this.isSpinning = false;
+        }, 
+        error: () => this.isSpinning = false
+
       });
+         
   }
   updateCheckedSet(id: number, checked: boolean): void {
     if (checked) {
@@ -236,14 +256,6 @@ export class OutboundShortAllocationComponent implements OnInit {
     return selectedShortAllocations;
   }
 
-  ngOnInit(): void {
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      orderNumber: [null],
-      itemNumber: [null],
-    });
-  }
-
   cancelShortAllocation(shortAllocation: ShortAllocation): void {
     this.shortAllocationService.cancelShortAllocations([shortAllocation]).subscribe(shortAllocationRes => {
       this.messageService.success(this.i18n.fanyi('message.action.success'));
@@ -261,5 +273,11 @@ export class OutboundShortAllocationComponent implements OnInit {
       this.messageService.success(this.i18n.fanyi('message.action.success'));
       this.search();
     });
+  }
+  
+  processItemQueryResult(selectedItemName: any): void {
+    this.searchForm.controls.itemNumber.setValue(selectedItemName);
+    
+
   }
 }

@@ -13,7 +13,11 @@ import { OutboundCartonizationComponent } from './cartonization/cartonization.co
 import { OutboundCompleteOrderComponent } from './complete-order/complete-order.component';
 import { OutboundGridMaintenanceComponent } from './grid-maintenance/grid-maintenance.component';
 import { OutboundGridComponent } from './grid/grid.component';
+import { OutboundListPickConfigurationMaintenanceComponent } from './list-pick-configuration-maintenance/list-pick-configuration-maintenance.component';
+import { OutboundListPickConfigurationComponent } from './list-pick-configuration/list-pick-configuration.component';
+import { OutboundLoadComponent } from './load/load.component';
 import { OutboundOrderActivityComponent } from './order-activity/order-activity.component';
+import { OutboundOrderDocumentComponent } from './order-document/order-document.component';
 import { OutboundOrderMaintenanceComponent } from './order-maintenance/order-maintenance.component';
 import { OutboundOrderComponent } from './order/order.component';
 import { OutboundOutboundOrderPopupQueryComponent } from './outbound-order-popup-query/outbound-order-popup-query.component';
@@ -28,8 +32,6 @@ import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
-import { OutboundLoadComponent } from './load/load.component';
-import { OutboundOrderDocumentComponent } from './order-document/order-document.component';
 
 const routes: Routes = [
   { path: 'order', component: OutboundOrderComponent, canActivate: [AuthGuard]  },
@@ -62,7 +64,9 @@ const routes: Routes = [
   { path: 'outbound-order-popup-query', component: OutboundOutboundOrderPopupQueryComponent },
   { path: 'allocation-configuration/maintenance', component: OutboundAllocationConfigurationMaintenanceComponent },
   { path: 'load', component: OutboundLoadComponent },
-  { path: 'order-document', component: OutboundOrderDocumentComponent }];
+  { path: 'order-document', component: OutboundOrderDocumentComponent },
+  { path: 'list-pick-configuration', component: OutboundListPickConfigurationComponent },
+  { path: 'list-pick-configuration/maintenance', component: OutboundListPickConfigurationMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
