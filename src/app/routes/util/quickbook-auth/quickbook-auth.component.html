@@ -8,7 +8,7 @@
     <div nz-row [nzGutter]="24">
       <div nz-col [nzSpan]="12">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSm]="3" [nzXs]="3" nzFor="authCode">
+          <nz-form-label [nzSpan]="6" nzFor="authCode">
             {{ 'authCode' | i18n }}
           </nz-form-label>
           <nz-form-control [nzSpan]="18">
@@ -20,7 +20,7 @@
     <div nz-row [nzGutter]="24">
       <div nz-col [nzSpan]="12">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSm]="3" [nzXs]="3" nzFor="realmId">
+          <nz-form-label [nzSpan]="6" nzFor="realmId">
             {{ 'realmId' | i18n }}
           </nz-form-label>
           <nz-form-control [nzSpan]="18">
@@ -55,4 +55,24 @@
       {{ 'Sync' | i18n }}
     </button>
   </div>
+  <!--
+
+
+  <nz-card nzTitle="webhook testing">
+
+    <div style="padding-top: 25px; padding-bottom: 25px">
+      <p>Signature:</p>
+      <input nz-input   [(ngModel)]="signature" />
+    </div>
+    <div style="padding-top: 25px; padding-bottom: 25px"> 
+      <p>Payload:</p>
+      <textarea nz-input  [(ngModel)]="payload" [nzAutosize]="{ minRows: 3, maxRows: 999 }"></textarea>
+    </div>
+    <div style="padding-top: 25px; padding-bottom: 25px">
+      <button nz-button nzType="primary" (click)="sendWebhook()">>
+        {{ 'Send Webhook' | i18n }}
+      </button>
+    </div>
+  </nz-card>
+  -->
 </nz-spin>

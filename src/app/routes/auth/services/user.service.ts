@@ -102,7 +102,7 @@ export class UserService {
     params = params.append('username', username);
     params = params.append('firstname', firstname);
     params = params.append('lastname', lastname);
-    return this.http.post(`resource//users/${existingUserId}/copy?companyId=${this.companyService.getCurrentCompany()!.id}`, null, params).pipe(map(res => res.data));
+    return this.http.post(`resource/users/${existingUserId}/copy?companyId=${this.companyService.getCurrentCompany()!.id}`, null, params).pipe(map(res => res.data));
   }
 
 }

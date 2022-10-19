@@ -70,16 +70,21 @@
   <div class="search-result-list">
     <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
       <app-util-table-column-selection [myModel]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+      <button nz-button (click)="st.export(items, { filename: 'items.xlsx', sheetname: 'items' })">Export</button>
     </div>
     
     <st #st [data]="items" [columns]="columns" [footer]="tableFoot" [expand]="expand" 
-         expandAccordion   (change)="itemTableChanged($event)"
+         expandAccordion   (change)="itemTableChanged($event)"  [widthMode]="{ type: 'strict' }" 
         [scroll]="{ x: '1800px'}">
       
         <!-- item description -->
+        <!--
+
         <ng-template st-row="descriptionColumn" let-item let-index="index"> 
             <ellipsis length="100" tooltip>{{ item.description }}</ellipsis>
         </ng-template>
+
+        -->
       <!--   action colummn  --> 
       <ng-template st-row="actionColumnTitle" type="title" let-c>
         {{ 'action' | i18n }}

@@ -20,6 +20,9 @@ export class UtilQuickbookAuthComponent implements OnInit {
   currentSyncEntity: QuickbookEntity = QuickbookEntity.Vendor;
   syncTransactionDays: number = 1;
 
+  payload = "";
+  signature = "";
+
   constructor(private http: _HttpClient, 
     private quickbookService: QuickbookService, 
     private messageService: NzMessageService,
@@ -115,17 +118,37 @@ export class UtilQuickbookAuthComponent implements OnInit {
   syncEntity() {
     this.isSpinning = true;
     console.log(`start to sync entity ${this.currentSyncEntity}`);
-    this.quickbookService.syncEntity(this.currentSyncEntity).subscribe(
+    this.quickbookService.syncEntity(this.currentSyncEntity, this.syncTransactionDays).subscribe(
       {
         next: (affectEntityNumber) => {
           this.isSpinning = false;
           this.messageService.success("sync success");
+
           console.log(`sync ${affectEntityNumber} ${this.currentSyncEntity}`);
         }, 
         error: () => {
           
           this.isSpinning = false;
           this.messageService.success("sync fail"); 
+        }
+      }
+    )
+
+  }
+
+  sendWebhook() {
+    this.isSpinning = true;
+    console.log(`start to send web hook request \n payload: ${this.payload}`);
+    this.quickbookService.sendWebhook(this.signature, this.payload).subscribe(
+      {
+        next: () => {
+          this.isSpinning = false;
+          this.messageService.success("webhook test data sent success"); 
+        }, 
+        error: () => {
+          
+          this.isSpinning = false;
+          this.messageService.success("webhook test data sent fail"); 
         }
       }
     )

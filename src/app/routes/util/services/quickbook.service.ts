@@ -1,3 +1,4 @@
+import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -57,5 +58,27 @@ export class QuickbookService {
     }
           
     return this.http.post(url).pipe(map(res => res.data));
+  }
+
+  sendWebhook(signature: string, payload: string): Observable<string> {
+      
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+    let url = `quickbook/webhook`; 
+    // url = `${url}?companyId=${this.companyService.getCurrentCompany()!.id}`;
+    // url = `${url}&warehouseId=${this.warehouserService.getCurrentWarehouse().id}`; 
+    
+    let params = new HttpParams();
+    // params = params.append('signature', httpUrlEncodingCodec.encodeValue(signature.trim()));
+    // params = params.append('payload', httpUrlEncodingCodec.encodeValue(payload.trim()));
+    
+    params = params.append('signature', signature.trim());
+    params = params.append('payload', payload.trim());
+    // url = `${url}&signature=${httpUrlEncodingCodec.encodeValue(signature.trim())}`;
+    // url = `${url}&payload=${httpUrlEncodingCodec.encodeValue(payload.trim())}`;
+
+    return this.http.post(url, {
+      signature: signature.trim(),
+      payload: payload.trim()
+    }, ).pipe(map(res => res.data));
   }
 }
