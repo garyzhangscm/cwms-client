@@ -238,7 +238,7 @@ export class BillingInvoiceMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/billing/invoice?number=${invoiceRes.number}`);
-          }, 2500);
+          }, 500);
         },
         error: () => this.isSpinning = false
       }

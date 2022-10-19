@@ -185,7 +185,7 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
         setTimeout(() => {
           this.isSpinning= false; 
           this.router.navigateByUrl(`/transportation/trailer?number=${this.currentTrailer.number}`);
-        }, 2500);
+        }, 500);
       }, 
       error: () => this.isSpinning = false
     })

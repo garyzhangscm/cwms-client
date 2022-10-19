@@ -204,7 +204,7 @@ export class WorkOrderDeassignProductionLineComponent implements OnInit {
         setTimeout(() => {
           this.isSpinning = false;
           this.router.navigateByUrl(`/work-order/work-order?number=${this.currentWorkOrder?.number}`);
-        }, 2500);
+        }, 500);
       },
       error: () => {
         this.isSpinning = false;

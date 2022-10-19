@@ -56,7 +56,7 @@ export class ReportPrinterTypeMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/report/printer-type?name=${printerTypeRes.name}`);
-          }, 2500);
+          }, 500);
         }, 
         error: () => this.isSpinning = false
       });

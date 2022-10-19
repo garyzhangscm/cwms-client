@@ -202,7 +202,7 @@ export class WorkOrderWorkOrderCompleteConfirmComponent implements OnInit {
           this.router.navigateByUrl(
             `/work-order/work-order?number=${this.workOrderCompleteTransaction.workOrder!.number}`,
           );
-        }, 2500);
+        }, 500);
       });
   }
 }

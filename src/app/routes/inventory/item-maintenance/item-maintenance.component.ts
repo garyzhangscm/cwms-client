@@ -283,10 +283,10 @@ export class InventoryItemMaintenanceComponent implements OnInit {
         next: (itemRes) => {
 
           this.messageService.success(this.i18n.fanyi('message.item.changed'));
-          this.isSpinning = false;
           setTimeout(() => {
+            this.isSpinning = false;
             this.router.navigateByUrl(`/inventory/item?name=${itemRes.name}`);
-          }, 2500);
+          }, 500);
         }, 
         error: () => this.isSpinning = false
       }); 
@@ -297,10 +297,11 @@ export class InventoryItemMaintenanceComponent implements OnInit {
       this.itemService.addItem(this.currentItem).subscribe({
 
         next: (itemRes) => {
-          this.messageService.success(this.i18n.fanyi('message.item.added'));
           setTimeout(() => {
+            this.messageService.success(this.i18n.fanyi('message.item.added'));
+            this.isSpinning = false;
             this.router.navigateByUrl(`/inventory/item?name=${itemRes.name}`);
-          }, 2500);
+          }, 500);
 
         }, 
         error: () => this.isSpinning = false 

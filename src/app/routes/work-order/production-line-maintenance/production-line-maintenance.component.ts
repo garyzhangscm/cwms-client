@@ -275,7 +275,7 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/work-order/production-line?name=${this.currentProductionLine.name}`);
-          }, 2500);
+          }, 500);
         });
     }
     else {
@@ -286,7 +286,7 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/work-order/production-line?name=${this.currentProductionLine.name}`);
-          }, 2500);
+          }, 500);
         });
     }
   }

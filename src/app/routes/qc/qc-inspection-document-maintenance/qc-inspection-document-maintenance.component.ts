@@ -129,7 +129,7 @@ export class QcQcInspectionDocumentMaintenanceComponent implements OnInit {
         setTimeout(() => {
           this.isSpinning = false;
           this.router.navigateByUrl(`/qc/inspection?number=${this.currentQCInspectionRequest?.number}`);
-        }, 2500);
+        }, 500);
       },
       error: () => {
         this.isSpinning = false;

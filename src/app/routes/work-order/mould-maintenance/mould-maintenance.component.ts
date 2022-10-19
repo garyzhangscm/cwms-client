@@ -86,7 +86,7 @@ export class WorkOrderMouldMaintenanceComponent implements OnInit {
           this.messageService.success(this.i18n.fanyi('message.save.complete'));
           setTimeout(() => {
             this.router.navigateByUrl(`/work-order/mould?name=${this.currentMould.name}`);
-          }, 2500);
+          }, 500);
         });
     }
     else {
@@ -96,7 +96,7 @@ export class WorkOrderMouldMaintenanceComponent implements OnInit {
           this.messageService.success(this.i18n.fanyi('message.save.complete'));
           setTimeout(() => {
             this.router.navigateByUrl(`/work-order/mould?name=${this.currentMould.name}`);
-          }, 2500);
+          }, 500);
         });
     }
   }

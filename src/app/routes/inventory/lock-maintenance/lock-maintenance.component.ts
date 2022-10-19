@@ -86,11 +86,11 @@ export class InventoryLockMaintenanceComponent implements OnInit {
           {
             next: () => {
 
-              this.isSpinning = false
               this.messageService.success(this.i18n.fanyi('message.save.complete'));
               setTimeout(() => {
+                this.isSpinning = false
                 this.router.navigateByUrl(`/inventory/lock?name=${this.currentInventoryLock.name}`);
-              }, 2500);
+              }, 500);
             }, 
             error: () => this.isSpinning = false
           }
@@ -104,11 +104,11 @@ export class InventoryLockMaintenanceComponent implements OnInit {
           {
             next: () => {
 
-              this.isSpinning = false
               this.messageService.success(this.i18n.fanyi('message.save.complete'));
               setTimeout(() => {
+                this.isSpinning = false
                 this.router.navigateByUrl(`/inventory/lock?name=${this.currentInventoryLock.name}`);
-              }, 2500);
+              }, 500);
             }, 
             error: () => this.isSpinning = false
           }

@@ -189,7 +189,7 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
         setTimeout(() => {
           this.isSpinning = false;
           this.router.navigateByUrl(`/work-order/work-order?number=${this.currentProductionLineAssignment?.workOrder.number}`);
-        }, 2500);
+        }, 500);
       },
       error: () => {
         this.isSpinning = false;
@@ -251,7 +251,7 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/work-order/work-order?number=${this.currentProductionLineAssignment?.workOrder.number}`);
-          }, 2500);
+          }, 500);
         }, 
         error: () => this.isSpinning = false
       })

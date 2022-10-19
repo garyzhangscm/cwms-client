@@ -170,7 +170,7 @@ export class WarehouseLayoutLocationMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/warehouse-layout/warehouse-location?name=${locationRes.name}`);
-          }, 2500);
+          }, 500);
         }, 
         error: () => this.isSpinning = false
       }); 
@@ -184,7 +184,7 @@ export class WarehouseLayoutLocationMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/warehouse-layout/warehouse-location?name=${locationRes.name}`);
-          }, 2500);
+          }, 500);
         }, 
         error: () => this.isSpinning = false
       }); 

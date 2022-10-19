@@ -139,7 +139,7 @@ export class ReportPrinterMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/report/printer?name=${printerRes.name}`);
-          }, 2500);
+          }, 500);
         }, 
         error: () => this.isSpinning = false
       }); 
@@ -153,7 +153,7 @@ export class ReportPrinterMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/report/printer?name=${printerRes.name}`);
-          }, 2500);
+          }, 500);
         }, 
         error: () => this.isSpinning = false
       }); 

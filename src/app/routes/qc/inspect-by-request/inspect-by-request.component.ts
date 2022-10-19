@@ -123,11 +123,11 @@ toggleCollapse(): void {
     qcInspectionRequests.push(this.qcInspectionRequest!);
     this.qcInspectionRequestService.saveQCInspectionRequest(qcInspectionRequests).subscribe({
       next: () => {
-        this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi('message.save.complete'));
         setTimeout(() => {
+          this.isSpinning = false;
           this.router.navigateByUrl(`/qc/inspection?number=${this.qcInspectionRequest?.number}&type=${QcInspectionRequestType.BY_ITEM}&result=${this.qcInspectionRequest?.qcInspectionResult}`);
-        }, 2500);
+        }, 500);
       },
       error: () => this.isSpinning = false
     }) 

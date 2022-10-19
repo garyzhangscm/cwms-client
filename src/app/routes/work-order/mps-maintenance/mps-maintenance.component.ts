@@ -1415,7 +1415,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
               setTimeout(() => {
                 this.isSpinning = false;
                 this.router.navigateByUrl(`/work-order/mps?number=${this.currentMPS?.number}`);
-              }, 2500);
+              }, 500);
             },
             error: () => this.isSpinning = false
           })
@@ -1429,7 +1429,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
               setTimeout(() => {
                 this.isSpinning = false;
                 this.router.navigateByUrl(`/work-order/mps?number=${this.currentMPS?.number}`);
-              }, 2500);
+              }, 500);
             },
             error: () => this.isSpinning = false
           })

@@ -108,7 +108,10 @@
       <!--   item details  -->
       <ng-template #expand let-item let-index="index" let-column="column">
          
-        <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
+        <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'"> 
+          <nz-tab *ngIf="item.itemPackageTypes == null || item.itemPackageTypes.length == 0" nzTitle="No Package Type">
+             No package type is defined yet, please maintain the item package type
+          </nz-tab>
           <nz-tab *ngFor="let itemPackageType of item.itemPackageTypes" [nzTitle]="itemPackageType.name!">
             <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #itemPackageTypeTable
               [nzData]="itemPackageType.itemUnitOfMeasures" nzSize="middle" [nzShowPagination]="false">

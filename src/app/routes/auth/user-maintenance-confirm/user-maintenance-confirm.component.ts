@@ -75,14 +75,14 @@ export class AuthUserMaintenanceConfirmComponent implements OnInit {
 
       this.userService.changeUser(this.currentUser!).subscribe(userRes => {
         this.messageService.success(this.i18n.fanyi('message.action.success'));
-        setTimeout(() => this.goToNextPage(), 2000);
+        setTimeout(() => this.goToNextPage(), 500);
       });
     }
     else {
 
       this.userService.addUser(this.currentUser!).subscribe(userRes => {
         this.messageService.success(this.i18n.fanyi('message.action.success'));
-        setTimeout(() => this.goToNextPage(), 2000);
+        setTimeout(() => this.goToNextPage(), 500);
       });
     }
   }

@@ -144,7 +144,7 @@ export class WorkOrderWorkOrderMaintenanceComponent implements OnInit {
               this.isSpinning = false;
               this.messageService.success(this.i18n.fanyi('message.save.complete'));
               this.router.navigateByUrl(`/work-order/work-order?number=${this.currentWorkOrder.number}`);
-            }, 2500);
+            }, 500);
           },
           error: () => this.isSpinning = false
 
@@ -157,7 +157,7 @@ export class WorkOrderWorkOrderMaintenanceComponent implements OnInit {
               this.isSpinning = false;
               this.messageService.success(this.i18n.fanyi('message.create.complete'));
               this.router.navigateByUrl(`/work-order/work-order?number=${this.currentWorkOrder.number}`);
-            }, 2500);
+            }, 500);
           },
           error: () => this.isSpinning = false
 

@@ -66,7 +66,7 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
         setTimeout(() => {
           this.isSpinning = false;
           this.router.navigateByUrl(`/work-order/work-order`);
-        }, 2500);
+        }, 500);
       }
       
       this.isSpinning = true;
@@ -81,7 +81,7 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
             setTimeout(() => {
               this.isSpinning = false;
               this.router.navigateByUrl(`/work-order/work-order`);
-            }, 2500);
+            }, 500);
 
           }
         }
@@ -243,7 +243,7 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/work-order/work-order?number=${workOrderLine.workOrderNumber}`);
-          }, 2500);
+          }, 500);
         }, 
         error: () => this.isSpinning = false
       }); 

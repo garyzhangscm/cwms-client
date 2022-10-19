@@ -322,7 +322,7 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
         setTimeout(() => {
           this.isSpinning = false;
           this.router.navigateByUrl(`/work-order/mrp?number=${this.currentMRP!.number}`);
-        }, 2500);
+        }, 500);
       },
       error: () => this.isSpinning = false
     })

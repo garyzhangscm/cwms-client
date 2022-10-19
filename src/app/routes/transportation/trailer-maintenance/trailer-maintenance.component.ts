@@ -98,7 +98,7 @@ export class CommonTrailerMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning= false; 
             this.router.navigateByUrl(`/transportation/trailer?number=${trailerRes.number}`);
-          }, 2500);
+          }, 500);
         }, 
         error: () => {
           this.isSpinning= false; }
@@ -107,11 +107,11 @@ export class CommonTrailerMaintenanceComponent implements OnInit {
     else {
       this.trailerService.changeTrailer(this.currentTrailer).subscribe({
       next: (trailerRes) => {
-        this.isSpinning= false; 
         this.messageService.success(this.i18n.fanyi('message.action.success'));
         setTimeout(() => {
+          this.isSpinning= false; 
           this.router.navigateByUrl(`/transportation/trailer?number=${trailerRes.number}`);
-        }, 2500);
+        }, 500);
       }, 
       error: () => {
         this.isSpinning= false; }

@@ -43,7 +43,7 @@ export class CommonSupplierMaintenanceConfirmComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/common/supplier?name=${supplierRes.name}`);
-          }, 2500);
+          }, 500);
         }, 
         error: () => this.isSpinning = false
       });

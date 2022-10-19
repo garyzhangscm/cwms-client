@@ -77,7 +77,7 @@ export class OutboundCompleteOrderComponent implements OnInit {
         setTimeout(() => {
           this.isSpinning = false;
           this.router.navigateByUrl(`/outbound/order?number=${this.currentOrder?.number}`);
-        }, 2500);
+        }, 500);
       }, 
       error: () => this.isSpinning = false
     })

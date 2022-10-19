@@ -136,7 +136,7 @@ export class CommonClientMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/common/client?name=${this.currentClient.name}`);
-          }, 2500);
+          }, 500);
         }, 
         error: () => this.isSpinning = false
       });

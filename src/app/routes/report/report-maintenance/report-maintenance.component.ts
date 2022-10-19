@@ -138,7 +138,7 @@ export class ReportReportMaintenanceComponent implements OnInit {
         setTimeout(() => {
           this.isSpinning = false;
           this.router.navigateByUrl(`/report/report?type=${reportRes.type}`);
-        }, 2500);
+        }, 500);
       });
     } else {
       this.isSpinning = true;
@@ -147,7 +147,7 @@ export class ReportReportMaintenanceComponent implements OnInit {
         setTimeout(() => {
           this.isSpinning = false;
           this.router.navigateByUrl(`/report/report?type=${reportRes.type}`);
-        }, 2500);
+        }, 500);
       });
     }
   }

@@ -223,7 +223,7 @@ loadUnitOfMeasure() {
             setTimeout(() => {
               this.isSpinning = false;
               this.router.navigateByUrl(`/outbound/allocation-configuration?sequence=${allocationConfigurationRes.sequence}`);
-            }, 2500);
+            }, 500);
           },
           error: () => this.isSpinning = false
 
@@ -240,7 +240,7 @@ loadUnitOfMeasure() {
             setTimeout(() => {
               this.isSpinning = false;
               this.router.navigateByUrl(`/outbound/allocation-configuration?sequence=${allocationConfigurationRes.sequence}`);
-            }, 2500);
+            }, 500);
           },
           error: () => this.isSpinning = false
 

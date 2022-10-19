@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { User } from '../models/user';
@@ -106,7 +107,7 @@ export class AuthWorkingTeamMaintenanceConfirmComponent implements OnInit {
   confirm(): void {
     this.workingTeamService.addWorkingTeam(this.currentWorkingTeam!).subscribe(workingTeamRes => {
       this.messageService.success(this.i18n.fanyi('message.new.complete'));
-      setTimeout(() => this.goToNextPage(), 2000);
+      setTimeout(() => this.goToNextPage(), 500);
     });
   }
 

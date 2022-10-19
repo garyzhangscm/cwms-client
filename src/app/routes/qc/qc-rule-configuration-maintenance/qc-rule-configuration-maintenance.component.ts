@@ -163,11 +163,11 @@ loadInventoryStatus() {
       this.qcRuleConfigurationService.addQCRuleConfiguration(this.currentQCRuleConfiguration)
         .subscribe({
           next: () => {
-            this.isSpinning = false;
             this.messageService.success(this.i18n.fanyi('message.save.complete'));
             setTimeout(() => {
+              this.isSpinning = false;
               this.router.navigateByUrl(`/qc/rules/configuration`);
-            }, 2500);
+            }, 500);
           },
           error: () => this.isSpinning = false
 
@@ -180,11 +180,11 @@ loadInventoryStatus() {
       this.qcRuleConfigurationService.changeQCRuleConfiguration(this.currentQCRuleConfiguration)
         .subscribe({
           next: () => {
-            this.isSpinning = false;
             this.messageService.success(this.i18n.fanyi('message.save.complete'));
             setTimeout(() => {
+              this.isSpinning = false;
               this.router.navigateByUrl(`/qc/rules/configuration`);
-            }, 2500);
+            }, 500);
           },
           error: () => this.isSpinning = false
 

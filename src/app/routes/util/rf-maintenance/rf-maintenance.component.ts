@@ -59,11 +59,11 @@ export class UtilRfMaintenanceComponent implements OnInit {
     this.isSpinning= true; 
     this.rfService.addRf(this.currentRF).subscribe({
       next: (rfRes) => {
-        this.isSpinning= false; 
         this.messageService.success(this.i18n.fanyi('message.action.success'));
         setTimeout(() => {
+          this.isSpinning= false; 
           this.router.navigateByUrl(`/util/rf?rfCode=${rfRes.rfCode}`);
-        }, 2500);
+        }, 500);
       }, 
       error: () => {
         this.isSpinning= false; }

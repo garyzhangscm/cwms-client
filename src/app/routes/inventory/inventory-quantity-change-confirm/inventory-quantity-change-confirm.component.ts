@@ -62,7 +62,7 @@ export class InventoryInventoryQuantityChangeConfirmComponent implements OnInit 
               `/inventory/inventory-adjust?locationName=${inventoryRes.location!.name}&expand=true`,
             );
           }
-        }, 2500);
+        }, 500);
       }, 
       () => this.isSpinning = false);
   }

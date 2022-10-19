@@ -86,11 +86,11 @@ confirm(): void {
       this.departmentService.addDepartment(this.currentDepartment)
         .subscribe({
           next: () => {
-            this.isSpinning = false;
             this.messageService.success(this.i18n.fanyi('message.save.complete'));
             setTimeout(() => {
+              this.isSpinning = false;
               this.router.navigateByUrl(`/auth/department?name=${this.currentDepartment.name}`);
-            }, 2500);
+            }, 500);
           },
           error: () => this.isSpinning = false
 
@@ -103,11 +103,11 @@ confirm(): void {
       this.departmentService.changeDepartment(this.currentDepartment)
         .subscribe({
           next: () => {
-            this.isSpinning = false;
             this.messageService.success(this.i18n.fanyi('message.save.complete'));
             setTimeout(() => {
+              this.isSpinning = false;
               this.router.navigateByUrl(`/auth/department?name=${this.currentDepartment.name}`);
-            }, 2500);
+            }, 500);
           },
           error: () => this.isSpinning = false
 

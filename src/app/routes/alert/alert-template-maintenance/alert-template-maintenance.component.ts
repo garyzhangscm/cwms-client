@@ -91,7 +91,7 @@ export class AlertAlertTemplateMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/alert/template?type=${alertTemplateRes.type}&deliveryChannel=${alertTemplateRes.deliveryChannel}`);
-          }, 2500);
+          }, 500);
         }, 
         error: () => this.isSpinning = false
       }); 
@@ -105,7 +105,7 @@ export class AlertAlertTemplateMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/alert/template?type=${alertTemplateRes.type}&deliveryChannel=${alertTemplateRes.deliveryChannel}`);
-          }, 2500);
+          }, 500);
         }, 
         error: () => this.isSpinning = false
       }); 

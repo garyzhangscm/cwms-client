@@ -274,7 +274,7 @@ export class InboundCustomerReturnOrderMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/inbound/customer-return?number=${this.currentCustomerReturnOrder?.number}`);
-          }, 2500);
+          }, 500);
         },
         error: () => {
           this.isSpinning = false;

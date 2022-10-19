@@ -109,7 +109,7 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
           this.isSpinning = false;
           this.messageService.success(this.i18n.fanyi('message.save.complete'));
           this.router.navigateByUrl(`/work-order/bill-of-material?number=${this.currentBillOfMaterial.number}`);
-        }, 2500);
+        }, 500);
       });
     } else {
       this.billOfMeasureService.addBillOfMaterial(this.currentBillOfMaterial).subscribe(billOfMaterialRes => { 
@@ -117,7 +117,7 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
           this.isSpinning = false;
           this.messageService.success(this.i18n.fanyi('message.create.complete'));
           this.router.navigateByUrl(`/work-order/bill-of-material?number=${this.currentBillOfMaterial.number}`);
-        }, 2500);
+        }, 500);
       });
     }
   }

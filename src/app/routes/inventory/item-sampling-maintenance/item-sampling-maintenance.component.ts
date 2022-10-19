@@ -163,7 +163,7 @@ export class InventoryItemSamplingMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/inventory/item-sampling?number=${this.currentItemSampling.number}`);
-          }, 2500);
+          }, 500);
         },
         error: () => {
           this.isSpinning = false;
@@ -179,7 +179,7 @@ export class InventoryItemSamplingMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/inventory/item-sampling?number=${this.currentItemSampling.number}`);
-          }, 2500);
+          }, 500);
         },
         error: () => {
           this.isSpinning = false;
@@ -276,7 +276,7 @@ export class InventoryItemSamplingMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/inventory/item-sampling?number=${this.currentItemSampling?.number}`);
-          }, 2500);
+          }, 500);
         }, 
         error: () => this.isSpinning = false
       })

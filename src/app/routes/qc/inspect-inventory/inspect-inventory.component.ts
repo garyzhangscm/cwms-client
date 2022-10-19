@@ -195,11 +195,11 @@ refreshInventoryQCResultMap() {
     )
     this.qcInspectionRequestService.saveQCInspectionRequest(this.qcInspectionRequests).subscribe({
       next: () => {
-        this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi('message.save.complete'));
         setTimeout(() => {
+          this.isSpinning = false;
           this.router.navigateByUrl(`/qc/inspection`);
-        }, 2500);
+        }, 500);
       },
       error: () => this.isSpinning = false
     }) 

@@ -91,7 +91,7 @@ export class ReportReportPrinterConfigurationMaintenanceComponent implements OnI
           this.messageService.success(this.i18n.fanyi('message.action.success'));
           setTimeout(() => {
             this.router.navigateByUrl(`/report/report-printer-configuration`);
-          }, 2500);
+          }, 500);
         })
     }
     else {
@@ -101,7 +101,7 @@ export class ReportReportPrinterConfigurationMaintenanceComponent implements OnI
           this.messageService.success(this.i18n.fanyi('message.action.success'));
           setTimeout(() => {
             this.router.navigateByUrl(`/report/report-printer-configuration`);
-          }, 2500);
+          }, 500);
         })
     }
   }

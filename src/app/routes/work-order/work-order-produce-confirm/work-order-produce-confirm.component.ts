@@ -138,7 +138,7 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
           this.savingInProcess = false;
           this.isSpinning = false;
           this.router.navigateByUrl(`/work-order/work-order?number=${workOrderProduceTransactionRes.workOrder!.number}`);
-        }, 2500);
+        }, 500);
       },
       error => {
         console.log(`error: ${JSON.stringify(error)}`);

@@ -180,11 +180,11 @@ export class QcQcInspectionRequestMaintenanceComponent implements OnInit {
           {
             next: () => {
 
-              this.isSpinning = false;
               this.messageService.success(this.i18n.fanyi('message.save.complete'));
               setTimeout(() => {
+                this.isSpinning = false;
                 this.router.navigateByUrl(`/qc/inspection?number=${this.currentQCInspectionRequest.number}&type=${QcInspectionRequestType.BY_ITEM}&result=${QCInspectionResult.PENDING}`);
-              }, 2500);
+              }, 500);
             }
           });
     }
@@ -196,11 +196,11 @@ export class QcQcInspectionRequestMaintenanceComponent implements OnInit {
           {
             next: () => {
 
-              this.isSpinning = false;
               this.messageService.success(this.i18n.fanyi('message.save.complete'));
               setTimeout(() => {
+                this.isSpinning = false;
                 this.router.navigateByUrl(`/qc/inspection?number=${this.currentQCInspectionRequest.number}&type=${QcInspectionRequestType.BY_ITEM}&result=${QCInspectionResult.PENDING}`);
-              }, 2500);
+              }, 500);
             }
           });
     }

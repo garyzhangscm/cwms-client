@@ -152,11 +152,11 @@ export class InboundPutawayConfigurationMaintenanceComponent implements OnInit {
       this.putawayConfigurationService.addPutawayConfiguration(this.currentPutawayConfiguration)
         .subscribe({
           next: () => {
-            this.isSpinning = false;
             this.messageService.success(this.i18n.fanyi('message.save.complete'));
             setTimeout(() => {
+              this.isSpinning = false;
               this.router.navigateByUrl(`/inbound/putaway-configuration`);
-            }, 2500);
+            }, 500);
           },
           error: () => this.isSpinning = false
 
@@ -169,11 +169,11 @@ export class InboundPutawayConfigurationMaintenanceComponent implements OnInit {
       this.putawayConfigurationService.changePutawayConfiguration(this.currentPutawayConfiguration)
         .subscribe({
           next: () => {
-            this.isSpinning = false;
             this.messageService.success(this.i18n.fanyi('message.save.complete'));
             setTimeout(() => {
+              this.isSpinning = false;
               this.router.navigateByUrl(`/inbound/putaway-configuration`);
-            }, 2500);
+            }, 500);
           },
           error: () => this.isSpinning = false
 

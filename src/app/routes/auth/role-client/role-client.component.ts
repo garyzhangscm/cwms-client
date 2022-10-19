@@ -165,7 +165,7 @@ export class AuthRoleClientComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(this.previousPage!);
-          }, 2500);
+          }, 500);
         }, 
         error: () => this.isSpinning = false
       });

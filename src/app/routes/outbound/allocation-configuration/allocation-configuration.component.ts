@@ -216,7 +216,7 @@ export class OutboundAllocationConfigurationComponent implements OnInit {
         setTimeout(() => {
           this.isSpinning = false; 
           this.search();
-        }, 2500);
+        }, 500);
       }, 
       error: () => this.isSpinning = false
     })

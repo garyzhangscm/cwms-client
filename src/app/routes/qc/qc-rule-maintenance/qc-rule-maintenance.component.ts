@@ -124,7 +124,7 @@ export class QcQcRuleMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/qc/rules?name=${this.currentQCRule?.name}`);
-          }, 2500);
+          }, 500);
         },
         error: () => {
           this.isSpinning = false;

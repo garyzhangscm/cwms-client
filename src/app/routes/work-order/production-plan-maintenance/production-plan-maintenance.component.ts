@@ -314,7 +314,7 @@ export class WorkOrderProductionPlanMaintenanceComponent implements OnInit {
       this.messageService.success(this.i18n.fanyi('message.production-plan.added'));
       setTimeout(() => {
         this.router.navigateByUrl(`/work-order/production-plan?number=${this.currentProductionPlan.number}`);
-      }, 2500);
+      }, 500);
     });
   }
   previousStep(): void {

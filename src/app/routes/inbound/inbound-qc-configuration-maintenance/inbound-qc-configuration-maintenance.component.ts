@@ -156,11 +156,11 @@ export class InboundInboundQcConfigurationMaintenanceComponent implements OnInit
       this.inboundQCConfigurationService.addInboundQcConfiguration(this.currentQCConfiguration)
         .subscribe({
           next: () => {
-            this.isSpinning = false;
             this.messageService.success(this.i18n.fanyi('message.save.complete'));
             setTimeout(() => {
+              this.isSpinning = false;
               this.router.navigateByUrl(`/inbound/inbound-qc-configuration`);
-            }, 2500);
+            }, 500);
           },
           error: () => this.isSpinning = false
 
@@ -177,7 +177,7 @@ export class InboundInboundQcConfigurationMaintenanceComponent implements OnInit
             this.messageService.success(this.i18n.fanyi('message.save.complete'));
             setTimeout(() => {
               this.router.navigateByUrl(`/inbound/inbound-qc-configuration`);
-            }, 2500);
+            }, 500);
           },
           error: () => this.isSpinning = false
 

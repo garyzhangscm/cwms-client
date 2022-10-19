@@ -116,7 +116,7 @@ export class CommonTractorMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning= false; 
             this.router.navigateByUrl(`/transportation/tractor?number=${tractorRes.number}`);
-          }, 2500);
+          }, 500);
         }, 
         error: () => {
           this.isSpinning= false; }
@@ -129,7 +129,7 @@ export class CommonTractorMaintenanceComponent implements OnInit {
         this.messageService.success(this.i18n.fanyi('message.action.success'));
         setTimeout(() => {
           this.router.navigateByUrl(`/transportation/tractor?number=${tractorRes.number}`);
-        }, 2500);
+        }, 500);
       }, 
       error: () => {
         this.isSpinning= false; }

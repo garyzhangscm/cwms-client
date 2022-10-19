@@ -312,12 +312,12 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
 
     this.workOrderService.assignProductionLine(this.workOrder.id!, this.currentProductionLineAssignments)
       .subscribe(productionLineAssignments => {
-        this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi('message.save.complete'));
         setTimeout(() => {
+          this.isSpinning = false;
 
           this.router.navigateByUrl(`/work-order/work-order?number=${this.workOrder.number}`);
-        }, 2500);
+        }, 500);
       }, () => {
         this.isSpinning = false;
       });

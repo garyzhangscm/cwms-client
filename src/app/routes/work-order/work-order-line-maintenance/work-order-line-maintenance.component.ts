@@ -171,7 +171,7 @@ export class WorkOrderWorkOrderLineMaintenanceComponent implements OnInit {
         setTimeout(() => {
           this.savingInProcess = false;
           this.router.navigateByUrl(`/work-order/work-order?number=${this.currentWorkOrder.number}`);
-        }, 2500);
+        }, 500);
       },
       () => {
         this.messageService.success(this.i18n.fanyi('message.work-order.line.modify-error'));

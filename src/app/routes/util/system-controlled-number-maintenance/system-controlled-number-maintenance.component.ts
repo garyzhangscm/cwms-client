@@ -77,11 +77,11 @@ export class UtilSystemControlledNumberMaintenanceComponent implements OnInit {
       this.systemControlledNumberService.changeSystemControlledNumber(this.currentSystemControlledNumber)
           .subscribe({
             next: (systemControlledNumberRes) => {
-              this.isSpinning= false; 
               this.messageService.success(this.i18n.fanyi('message.action.success'));
               setTimeout(() => {
+                this.isSpinning= false; 
                 this.router.navigateByUrl(`/util/system-controlled-number?variable=${systemControlledNumberRes.variable}`);
-              }, 2500);
+              }, 500);
             }, 
             error: () => {
               this.isSpinning= false; 
@@ -92,11 +92,11 @@ export class UtilSystemControlledNumberMaintenanceComponent implements OnInit {
       this.systemControlledNumberService.addSystemControlledNumber(this.currentSystemControlledNumber)
           .subscribe({
             next: (systemControlledNumberRes) => {
-              this.isSpinning= false; 
               this.messageService.success(this.i18n.fanyi('message.action.success'));
               setTimeout(() => {
+                this.isSpinning= false; 
                 this.router.navigateByUrl(`/util/system-controlled-number?variable=${systemControlledNumberRes.variable}`);
-              }, 2500);
+              }, 500);
             }, 
             error: () => {
               this.isSpinning= false; 

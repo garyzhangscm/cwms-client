@@ -109,7 +109,7 @@ export class OutboundListPickConfigurationMaintenanceComponent implements OnInit
               url = `${url}&client=${listPickConfigurationRes.client?.name}`;
             }
             this.router.navigateByUrl(url);
-          }, 2500);
+          }, 500);
         }, 
         error: () => this.isSpinning = false
       }); 
@@ -130,7 +130,7 @@ export class OutboundListPickConfigurationMaintenanceComponent implements OnInit
               url = `${url}&client=${listPickConfigurationRes.client?.name}`;
             }
             this.router.navigateByUrl(url);
-          }, 2500);
+          }, 500);
         }, 
         error: () => this.isSpinning = false
       }); 

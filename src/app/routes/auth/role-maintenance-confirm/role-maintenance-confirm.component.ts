@@ -279,7 +279,7 @@ export class AuthRoleMaintenanceConfirmComponent implements OnInit {
         setTimeout(() => {
           this.isSpinning = false;
           this.goToNextPage();
-        }, 2500);
+        }, 500);
       }, 
       error: () => this.isSpinning = false
     });

@@ -483,11 +483,11 @@ export class WorkOrderQcRuleConfigurationMaintenanceComponent implements OnInit 
       this.workOrderQcRuleConfigurationService.addQCRuleConfiguration(this.currentQCRuleConfiguration)
         .subscribe({
           next: () => {
-            this.isSpinning = false;
             this.messageService.success(this.i18n.fanyi('message.save.complete'));
             setTimeout(() => {
+              this.isSpinning = false;
               this.router.navigateByUrl(`/work-order/qc-rule-configuration`);
-            }, 2500);
+            }, 500);
           },
           error: () => this.isSpinning = false
 
@@ -500,11 +500,11 @@ export class WorkOrderQcRuleConfigurationMaintenanceComponent implements OnInit 
       this.workOrderQcRuleConfigurationService.changeQCRuleConfiguration(this.currentQCRuleConfiguration)
         .subscribe({
           next: () => {
-            this.isSpinning = false;
             this.messageService.success(this.i18n.fanyi('message.save.complete'));
             setTimeout(() => {
+              this.isSpinning = false;
               this.router.navigateByUrl(`/work-order/qc-rule-configuration`);
-            }, 2500);
+            }, 500);
           },
           error: () => this.isSpinning = false
 

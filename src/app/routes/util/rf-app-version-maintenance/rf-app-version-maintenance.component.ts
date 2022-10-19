@@ -175,7 +175,7 @@ export class UtilRfAppVersionMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/util/rf-app-version?versionNumber=${this.currentRFAppVersion?.versionNumber}`);
-          }, 2500);
+          }, 500);
         },
         error: () => {
           this.isSpinning = false;
@@ -191,7 +191,7 @@ export class UtilRfAppVersionMaintenanceComponent implements OnInit {
           setTimeout(() => {
             this.isSpinning = false;
             this.router.navigateByUrl(`/util/rf-app-version?versionNumber=${this.currentRFAppVersion?.versionNumber}`);
-          }, 2500);
+          }, 500);
         },
         error: () => {
           this.isSpinning = false;
