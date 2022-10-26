@@ -249,7 +249,7 @@
         </nz-form-label>
         <nz-form-control [nzSpan]="18" [nzErrorTip]="itemNumberErrorTpl">
           <nz-input-group nzSearch [nzAddOnAfter]="itemSuffixIconButton">
-            <input variable="item-name" appExistingNumberValidator nz-input (blur)="itemNumberChanged($event)"
+            <input variable="item-name" appNewNumberValidator nz-input (blur)="itemNumberChanged($event)"
               [ngModel]="currentInventory.item?.name" id="itemNumber" name="itemNumber" required
               [ngModelOptions]="{updateOn: 'blur'}" #itemNumberModel="ngModel" />
           </nz-input-group>

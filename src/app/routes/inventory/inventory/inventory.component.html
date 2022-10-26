@@ -94,6 +94,31 @@
         </nz-form-item>
       </div>
     </div>
+    <div nz-row [nzGutter]="24">
+      
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'inventory-status' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+
+              
+              <nz-select formControlName="inventoryStatus" nzAllowClear >
+            
+              <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
+                  [nzLabel]="inventoryStatus.description"
+                  [nzValue]="inventoryStatus.id">
+              </nz-option>
+          </nz-select>
+          
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    
+    </div>
+
     <div nz-row>
       <div nz-col [nzSpan]="24" class="search-area">
         <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">

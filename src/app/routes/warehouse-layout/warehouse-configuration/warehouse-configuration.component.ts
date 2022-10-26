@@ -3,6 +3,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { PrintingStrategy } from '../models/printing-strategy.enum';
 import { WarehouseConfiguration } from '../models/warehouse-configuration';
 import { CompanyService } from '../services/company.service';
 import { WarehouseConfigurationService } from '../services/warehouse-configuration.service';
@@ -17,6 +18,8 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
 
   isSpinning = false;
   currentWarehouseConfiguration: WarehouseConfiguration;
+  
+  printingStrategyList = PrintingStrategy;
 
   constructor(private http: _HttpClient, 
     private companyService: CompanyService,

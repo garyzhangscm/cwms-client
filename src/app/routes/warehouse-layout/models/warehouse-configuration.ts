@@ -1,3 +1,4 @@
+import { PrintingStrategy } from "./printing-strategy.enum";
 import { Warehouse } from "./warehouse";
 
 export interface WarehouseConfiguration {
@@ -8,4 +9,6 @@ export interface WarehouseConfiguration {
     
     threePartyLogisticsFlag: boolean;
     listPickEnabledFlag: boolean;
+
+    printingStrategy?: PrintingStrategy;
 }

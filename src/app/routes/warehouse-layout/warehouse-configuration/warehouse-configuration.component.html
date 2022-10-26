@@ -25,6 +25,24 @@
                 </nz-form-control>
             </nz-form-item>
           </div>
+        </div>
+        <div nz-row [nzGutter]="24"> 
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="6">
+                {{ 'printing-strategy' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18">
+
+
+                  <nz-select [(ngModel)]="currentWarehouseConfiguration.printingStrategy">
+                    <nz-option *ngFor="let printingStrategy of printingStrategyList | keys" [nzValue]="printingStrategy.key"
+                      nzLabel="{{ 'PRINTING-STRATEGY-' + printingStrategy.key | i18n }}"></nz-option>
+                  </nz-select>
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>
 
         </div> 
     </nz-card>

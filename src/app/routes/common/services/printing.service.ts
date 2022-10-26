@@ -6,7 +6,11 @@ import { environment } from '@env/environment';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { ReportHistory } from '../../report/models/report-history';
 import { ReportType } from '../../report/models/report-type.enum';
+import { PrintingRequestService } from '../../report/services/printing-request.service';
+import { LocalCacheService } from '../../util/services/local-cache.service';
+import { PrintingStrategy } from '../../warehouse-layout/models/printing-strategy.enum';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { PrintPageOrientation } from '../models/print-page-orientation.enum';
@@ -24,7 +28,9 @@ export class PrintingService {
     public lodopService: LodopService,
     private warehouseService: WarehouseService,
     private http: _HttpClient,
-    private companyService: CompanyService
+    private companyService: CompanyService,
+    private localCacheService: LocalCacheService,
+    private printingRequestService: PrintingRequestService
   ) {
     this.lodopService.cog.url = 'http://localhost:18000/CLodopfuncs.js';
     this.lodopService.lodop.subscribe(({ lodop, ok }) => {
@@ -65,6 +71,59 @@ export class PrintingService {
     return allLocalPrinters;
   }
 
+  printFileByName(
+    name: string,
+    fileName: string,
+    type: ReportType,
+    printerIndex: number,
+    printerName: string,
+    physicalCopyCount: number,
+    pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
+    pageSize: PrintPageSize = PrintPageSize.A4,
+    findPrinterBy?: string, 
+    reportHistory?: ReportHistory,
+  ): void {
+
+    this.localCacheService.getWarehouseConfiguration().subscribe(
+      {
+        next: (warehouseConfigRes) => {
+
+          console.log(`warehouseConfigRes: ${warehouseConfigRes?.printingStrategy}`);
+
+          // by default, we will print from the server
+          if (warehouseConfigRes == null || 
+                warehouseConfigRes?.printingStrategy == PrintingStrategy.SERVER_PRINTER) { 
+            this.printRemoteFileByName(
+              name, fileName, type, printerIndex, printerName, 
+              physicalCopyCount, pageOrientation, pageSize, findPrinterBy
+            );
+          }
+          else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_SERVER_DATA) { 
+            // save the request to the save so the local installed printing service will
+            // print it later on
+            
+            if (reportHistory) {
+              
+                this.savePrintingRequest(reportHistory, printerName, physicalCopyCount);
+            }
+          }
+          
+        }, 
+      }
+    )
+  }
+
+  savePrintingRequest(reportHistory: ReportHistory, 
+    printerName: string, copies: number) : void {
+
+      this.printingRequestService.generatePrintingRequestByReportHistory(
+        reportHistory.id, 
+        printerName, copies
+      ).subscribe({
+        next: () => console.log(` printing request sent`)
+      })
+       
+  }
   printRemoteFileByName(
     name: string,
     fileName: string,

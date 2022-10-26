@@ -25,7 +25,9 @@ import { LocationGroupService } from '../../warehouse-layout/services/location-g
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { Inventory } from '../models/inventory';
 import { InventoryMovement } from '../models/inventory-movement';
+import { InventoryStatus } from '../models/inventory-status';
 import { ItemFamily } from '../models/item-family';
+import { InventoryStatusService } from '../services/inventory-status.service';
 import { InventoryService } from '../services/inventory.service';
 import { ItemFamilyService } from '../services/item-family.service';
 
@@ -172,6 +174,7 @@ export class InventoryInventoryComponent implements OnInit {
 
   isCollapse = false;
   isSpinning = false;
+  validInventoryStatuses: InventoryStatus[] = [];
 
   inventoryMoveModal!: NzModalRef;
 
@@ -213,7 +216,8 @@ export class InventoryInventoryComponent implements OnInit {
     private utilService: UtilService,
     private printingService: PrintingService,
     private router: Router,
-    private localCacheService: LocalCacheService
+    private localCacheService: LocalCacheService,
+    private inventoryStatusService: InventoryStatusService,
   ) { }
 
   ngOnInit(): void {
@@ -238,7 +242,12 @@ export class InventoryInventoryComponent implements OnInit {
     this.locationGroupService.loadLocationGroups().subscribe((locationGroupList: LocationGroup[]) => {
       this.locationGroups = locationGroupList;
     });
+    
+    this.inventoryStatusService
+    .loadInventoryStatuses()
+    .subscribe(inventoryStatuses => (this.validInventoryStatuses = inventoryStatuses)); 
   }
+   
 
   resetForm(): void {
     this.searchForm.reset();
@@ -277,7 +286,7 @@ export class InventoryInventoryComponent implements OnInit {
           this.searchForm.value.location,
           this.searchForm.value.lpn,
           false,
-          undefined,
+          this.searchForm.value.inventoryStatus,
           this.searchForm.value.locationGroups
         )
         .subscribe(
@@ -586,6 +595,7 @@ export class InventoryInventoryComponent implements OnInit {
       itemName: [null],
       location: [null],
       lpn: [null],
+      inventoryStatus: [null],
     });
 
     // initiate the select control
@@ -784,7 +794,7 @@ export class InventoryInventoryComponent implements OnInit {
         const printFileUrl
           = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
         console.log(`will print file: ${printFileUrl}`);
-        this.printingService.printRemoteFileByName(
+        this.printingService.printFileByName(
           "LPN Label",
           printResult.fileName,
           // ReportType.LPN_LABEL,
@@ -794,7 +804,8 @@ export class InventoryInventoryComponent implements OnInit {
           event.physicalCopyCount,
           PrintPageOrientation.Landscape,
           PrintPageSize.A4,
-          inventory.location?.locationGroup?.name);
+          inventory.location?.locationGroup?.name, 
+          printResult);
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("report.print.printed"));
       },

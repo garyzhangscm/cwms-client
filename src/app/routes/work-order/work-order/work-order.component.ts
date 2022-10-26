@@ -1215,7 +1215,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         const printFileUrl
           = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
         console.log(`will print file: ${printFileUrl}`);
-        this.printingService.printRemoteFileByName(
+        this.printingService.printFileByName(
           "Work Order Assignment Report",
           printResult.fileName,
           ReportType.PRODUCTION_LINE_ASSIGNMENT_REPORT,
@@ -1224,7 +1224,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           event.physicalCopyCount,
           PrintPageOrientation.Portrait,
           PrintPageSize.Letter,
-          productionLineAssignment.productionLine.name);
+          productionLineAssignment.productionLine.name, 
+          printResult);
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("report.print.printed"));
       },
