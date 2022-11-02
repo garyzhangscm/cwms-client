@@ -58,6 +58,9 @@
   <div class="search-result-list"> 
     
     <st #st [data]="listOfProductionLineMonitors"  [columns]="columns" >
+        <ng-template st-row="lastHeartBeatTimeColumn" let-item let-index="index"> 
+            {{ item.lastHeartBeatTime | date:'M/d/yy, h:mm:ss a':'+0000'  }}
+        </ng-template>
         <ng-template st-row="actionColumn" let-item let-index="index"> 
             
             <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">

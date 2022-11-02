@@ -91,8 +91,10 @@ export class PrintingService {
           console.log(`warehouseConfigRes: ${warehouseConfigRes?.printingStrategy}`);
 
           // by default, we will print from the server
-          if (warehouseConfigRes == null || 
+          if (warehouseConfigRes?.printingStrategy == null ||
                 warehouseConfigRes?.printingStrategy == PrintingStrategy.SERVER_PRINTER) { 
+           
+            console.log(`will print remote file from server`);
             this.printRemoteFileByName(
               name, fileName, type, printerIndex, printerName, 
               physicalCopyCount, pageOrientation, pageSize, findPrinterBy
@@ -103,6 +105,7 @@ export class PrintingService {
             // print it later on
             
             if (reportHistory) {
+              console.log(`will save request to the server`);
               
                 this.savePrintingRequest(reportHistory, printerName, physicalCopyCount);
             }

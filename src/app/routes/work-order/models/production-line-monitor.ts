@@ -10,4 +10,6 @@ export interface ProductionLineMonitor {
     description: string;
 
     productionLine?: ProductionLine;
+
+    lastHeartBeatTime?: Date;
 }

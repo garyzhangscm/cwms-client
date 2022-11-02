@@ -34,6 +34,10 @@ export class WorkOrderProductionLineMonitorComponent implements OnInit {
     { title: this.i18n.fanyi("description"),  index: 'description'   },  
     { title: this.i18n.fanyi("production-line"),  index: 'productionLine.name'   },  
     {
+      title: this.i18n.fanyi("lastHeartBeatTime"),  
+      render: 'lastHeartBeatTimeColumn', 
+    },
+    {
       title: this.i18n.fanyi("action"),  
       render: 'actionColumn', 
     }
