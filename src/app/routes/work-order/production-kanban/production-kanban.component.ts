@@ -1,4 +1,4 @@
-import { Inject , ChangeDetectorRef, Component, OnInit, ViewChild, } from '@angular/core';
+import { Inject , ChangeDetectorRef, Component, OnInit, ViewChild, OnDestroy, } from '@angular/core';
 import { I18NService } from '@core';
 import { STChange, STColumn, STComponent, STPage, } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -17,7 +17,7 @@ import { ProductionLineService } from '../services/production-line.service';
   styleUrls: ['./production-kanban.component.less'],
   //changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WorkOrderProductionKanbanComponent implements OnInit {
+export class WorkOrderProductionKanbanComponent implements OnInit, OnDestroy {
   productionLineKanbanDataList: ProductionLineKanbanData[] = [];
   displayProductionLineKanbanDataList: ProductionLineKanbanData[] = [];
   productionLines: ProductionLine[] = [];

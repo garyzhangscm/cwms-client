@@ -1,3 +1,4 @@
+import { formatDate } from "@angular/common";
 import { Component, Inject, OnInit } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -35,6 +36,7 @@ export class WorkOrderWorkOrderConfigurationComponent implements OnInit {
   
       overConsumeIsAllowed: false,
       overProduceIsAllowed: false,
+      productionShiftSchedules: [],
     }
     workOrderConfigurationService.getWorkOrderConfiguration().subscribe(
       {
@@ -54,12 +56,47 @@ export class WorkOrderWorkOrderConfigurationComponent implements OnInit {
 
   
   saveConfiguration(): void {
+    this.setupShiftStartAndEndTime();
     this.workOrderConfigurationService.saveWorkOrderConfiguration(this.currentWorkOrderConfiguration!).subscribe(
       res => {
 
         this.messageService.success(this.i18n.fanyi('message.action.success'));
       }
     )
+  }
+  setupShiftStartAndEndTime() {
+    // convert the data time into a string of time only format with HH:mm:ss
+    this.currentWorkOrderConfiguration?.productionShiftSchedules.forEach(
+      productionShiftSchedule => {
+        productionShiftSchedule.shiftStartTime = formatDate(
+          productionShiftSchedule.shiftStartDateTime!, "HH:mm:ss", "en-US"
+        );
+        productionShiftSchedule.shiftEndTime = formatDate(
+          productionShiftSchedule.shiftEndDateTime!, "HH:mm:ss", "en-US"
+        );
+      }
+    )
+  }
+
+  removeShiftSchedule(index: number) {
+    console.log(`will remove the shift from index ${index}`);
+    this.currentWorkOrderConfiguration?.productionShiftSchedules.splice(index, 1);
+  }
+
+  addShiftSchedule() {
+    var currentTime = new Date();
+
+    currentTime.setMinutes(0, 0, 0);
+
+    this.currentWorkOrderConfiguration!.productionShiftSchedules = [
+      ...this.currentWorkOrderConfiguration!.productionShiftSchedules,
+      {        
+          warehouseId: this.warehouseService.getCurrentWarehouse().id,      
+          shiftStartDateTime: currentTime,   
+          shiftEndDateTime: currentTime,  
+          shiftEndNextDay: false,
+      }
+    ]
   }
 
 }

@@ -245,6 +245,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
   validClients: Client[] = [];
   validSuppliers: Supplier[] = [];
+  filterValidSuppliers: Supplier[] = []; 
 
   listOfAllReceiptLines: ReceiptLine[] = [];
   listOfDisplayReceiptLines: ReceiptLine[] = [];
@@ -339,7 +340,20 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       .subscribe(inventoryStatuses => (this.availableInventoryStatuses = inventoryStatuses));
 
     this.clientService.getClients().subscribe(clients => (this.validClients = clients));
-    this.supplierService.loadSuppliers().subscribe(suppliers => (this.validSuppliers = suppliers));
+    this.supplierService.loadSuppliers().subscribe(suppliers => {
+      this.validSuppliers = [...suppliers];
+      this.filterValidSuppliers = [...suppliers]
+    });
+  }
+  onSupplierChange(value: string): void {
+    if (value == null || value == "") {
+      this.filterValidSuppliers = [...this.validSuppliers];
+    }
+    else {
+      this.filterValidSuppliers = this.filterValidSuppliers.filter(
+        supplier => supplier.description.toLowerCase().indexOf(value.toLowerCase()) !== -1);
+
+    }
   }
 
   saveReceipt(): void {

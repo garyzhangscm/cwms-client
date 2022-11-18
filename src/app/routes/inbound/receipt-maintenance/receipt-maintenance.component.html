@@ -71,7 +71,8 @@
               nzErrorTip="{{ 'error.form.field.required' | i18n }}">
               <nz-input-group nzSize="large" [nzSuffix]="searchIcon">
                 <input nz-input formControlName="supplier" id="supplier" name="supplier"
-                  [nzAutocomplete]="supplierAutoCompleteTpl" />
+                  [nzAutocomplete]="supplierAutoCompleteTpl" 
+                  (ngModelChange)="onSupplierChange($event)"/>
               </nz-input-group>
             </nz-form-control>
           </nz-form-item>
@@ -92,7 +93,7 @@
         </ng-template>
         
         <nz-autocomplete #supplierAutoCompleteTpl>
-          <nz-auto-option *ngFor="let supplier of validSuppliers" [nzLabel]="supplier.description" [nzValue]="supplier.name">
+          <nz-auto-option *ngFor="let supplier of filterValidSuppliers" [nzLabel]="supplier.description" [nzValue]="supplier.name">
             {{ supplier.description }}
           </nz-auto-option>
         </nz-autocomplete>

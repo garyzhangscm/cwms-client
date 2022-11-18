@@ -1,3 +1,4 @@
+import { ProductionShiftSchedule } from "./production-shift-schedule";
 import { WorkOrderMaterialConsumeTiming } from "./work-order-material-consume-timing";
 
 export interface WorkOrderConfiguration {
@@ -10,5 +11,7 @@ export interface WorkOrderConfiguration {
 
     overConsumeIsAllowed: boolean;
     overProduceIsAllowed: boolean;
+
+    productionShiftSchedules: ProductionShiftSchedule[];
 
 }

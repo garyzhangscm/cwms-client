@@ -42,6 +42,42 @@
         </nz-form-item>
     </div>
 </div>
+<nz-card nzTitle="shift schedule">
+    <ul nz-list   nzBordered nzSize="large"> 
+        <li nz-list-item *ngFor="let item of currentWorkOrderConfiguration!.productionShiftSchedules, let i = index" nzNoFlex>
+          <ul nz-list-item-actions>
+            <nz-list-item-action>
+              <a (click)="removeShiftSchedule(i)">{{"remove" | i18n}}</a>
+            </nz-list-item-action>
+          </ul>
+          <span style="padding-left: 20px;">
+            <nz-time-picker [(ngModel)]="currentWorkOrderConfiguration!.productionShiftSchedules[i].shiftStartDateTime" 
+            ></nz-time-picker>
+
+          </span> 
+              
+          <span style="padding-left: 20px;">
+            to
+          </span>
+          <span style="padding-left: 20px;">
+
+            <nz-time-picker [(ngModel)]="currentWorkOrderConfiguration!.productionShiftSchedules[i].shiftEndDateTime" 
+            ></nz-time-picker>
+          </span>
+          <span style="padding-left: 20px;">
+
+            <label nz-checkbox [(ngModel)]="currentWorkOrderConfiguration!.productionShiftSchedules[i].shiftEndNextDay" >
+                <span> {{ 'shift end next day?' | i18n }}</span>
+              </label>
+          </span>
+        </li>
+        <nz-list-footer>
+            <button nz-button nzType="primary" (click)="addShiftSchedule()">
+            {{ 'add' | i18n }}
+          </button>
+        </nz-list-footer>
+      </ul>
+</nz-card>
 
 
 <div nz-row nzType="flex" nzJustify="start">

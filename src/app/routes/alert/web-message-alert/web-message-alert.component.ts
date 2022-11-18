@@ -43,7 +43,8 @@ export class AlertWebMessageAlertComponent implements OnInit {
     this.pageTitle = this.i18n.fanyi('web-message-alert');
   }
 
-  url = `${environment.api.baseUrl}resource/web-message-alerts`;
+  url = `./resource/web-message-alerts`;
+
   params = { companyId: this.companySerive.getCurrentCompany()!.id, 
     username: this.userService.getCurrentUsername()};
   

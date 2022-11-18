@@ -120,6 +120,9 @@ export class ProductionLineService {
   getProductionLineCapacityAttributes(productionLineIds?: string): Observable<ProductionLineAttribute[]> { 
      return this.getProductionLineAttributes("capacity", productionLineIds);
   }
+  getProductionLineStaffCountAttributes(productionLineIds?: string): Observable<ProductionLineAttribute[]> { 
+     return this.getProductionLineAttributes("staffCount", productionLineIds);
+  }
   getProductionLineTotalProcedInventoryQuantity(productionLineIds?: string,       
     startTime?: Date, endTime?:Date, date?: Date): Observable<ProductionLineAttribute[]> {
 

@@ -1,9 +1,10 @@
 import { DatePipe, formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { Subscription, interval } from 'rxjs';
 
 import { ProductionLine } from '../models/production-line';
 import { ProductionLineStatus } from '../models/production-line-status';
@@ -16,9 +17,12 @@ import { WorkOrderProduceTransactionService } from '../services/work-order-produ
   templateUrl: './production-line-dashboard.component.html',
   styleUrls: ['./production-line-dashboard.component.less'],
 })
-export class WorkOrderProductionLineDashboardComponent implements OnInit { 
+export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDestroy{ 
   listOfProductionLineStatus: ProductionLineStatus[] = []; 
   
+  refreshCountCycle = 10;
+  countDownNumber = this.refreshCountCycle;
+
   isSpinning = false;
 
   @ViewChild('st', { static: true })
@@ -54,21 +58,31 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit {
       title: this.i18n.fanyi("laborNeed"),  
       render: 'laborNeedColumn', 
     },
+    {
+      title: this.i18n.fanyi("goalQuantity"),  
+      render: 'capacityColumn', 
+    },
+    {
+      title: this.i18n.fanyi("achievingRate"),  
+      render: 'achievingRateColumn', 
+    },
   ]; 
 
   // key: productionLineId
   // value: lazy loaded information
   mapOfItems: { [key: number]: string } = {};
-  mapOfCapacities: { [key: number]: string } = {};
+  mapOfCapacities: { [key: number]: number } = {};
+  mapOfStaffCount: { [key: number]: string } = {};
   mapOfItemScanned: { [key: number]: number } = {};
 
 
+  countDownsubscription!: Subscription;
+  loadingData = false;
+  
   constructor(
     private fb: FormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
-    private productionLineService: ProductionLineService,
-    private productionLineAssignmentService: ProductionLineAssignmentService,
-    private workOrderProduceTransactionService: WorkOrderProduceTransactionService,
+    private productionLineService: ProductionLineService, 
     private titleService: TitleService,  ) { }
 
   ngOnInit(): void {
@@ -76,8 +90,35 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit {
       
       this.refresh();
       
+    this.countDownsubscription = interval(1000).subscribe(x => {
+      this.handleCountDownEvent();
+    })
+      
 
   }
+  
+  handleCountDownEvent(): void {
+    // don't count down when we are loading data
+    if (this.loadingData) {
+      
+      this.resetCountDownNumber();
+      return;
+    }
+    this.countDownNumber--;
+    if (this.countDownNumber <= 0) {
+      this.resetCountDownNumber();
+      this.refresh();
+    }
+  }
+  resetCountDownNumber() {
+    this.countDownNumber = this.refreshCountCycle;
+  }
+  
+  ngOnDestroy() {
+    this.countDownsubscription.unsubscribe();
+
+  }
+
   refresh() : void{
     let currentDateTime = new Date(); 
     let shiftStart =  formatDate(currentDateTime, "YYYY-MM-dd", this.i18n.defaultLang)
@@ -103,6 +144,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit {
   
   search(startTime: Date, endTime: Date): void {
     this.isSpinning = true; 
+    this.loadingData = true;
        
 
     this.productionLineService.getProductionLineStatus( 
@@ -116,11 +158,13 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit {
               productionLineStatus => {
                               
                 this.mapOfItems[productionLineStatus.productionLine.id!] = "";
-                this.mapOfCapacities[productionLineStatus.productionLine.id!] = "";
+                this.mapOfCapacities[productionLineStatus.productionLine.id!] = 0;
+                this.mapOfStaffCount[productionLineStatus.productionLine.id!] = "";
                 this.mapOfItemScanned[productionLineStatus.productionLine.id!] = 0;
               }
             )
             this.loadDetailInformation(startTime, endTime);
+            this.loadingData = false;
         
         },
         error: () => { 
@@ -135,6 +179,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit {
     // load the item information
     this.loadItemInformation();
     this.loadCapacityInformation();
+    this.loadStaffCountInformation();
     this.loadProducedInventoryInformation(startTime, endTime);
     
   }
@@ -159,7 +204,21 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit {
 
           productionLineAttributeRes.forEach(
             productionLineAttribute => {
-              this.mapOfCapacities[productionLineAttribute.productionLine.id!] = productionLineAttribute.value
+              this.mapOfCapacities[productionLineAttribute.productionLine.id!] = +productionLineAttribute.value
+            }
+          )
+        }
+      }
+    );
+  }
+  loadStaffCountInformation() {
+    this.productionLineService.getProductionLineStaffCountAttributes().subscribe(
+      {
+        next: (productionLineAttributeRes) => {
+
+          productionLineAttributeRes.forEach(
+            productionLineAttribute => {
+              this.mapOfStaffCount[productionLineAttribute.productionLine.id!] = productionLineAttribute.value
             }
           )
         }
