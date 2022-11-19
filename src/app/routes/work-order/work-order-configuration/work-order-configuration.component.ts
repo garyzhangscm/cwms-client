@@ -6,6 +6,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { ProductionShiftSchedule } from "../models/production-shift-schedule";
 import { WorkOrderConfiguration } from '../models/work-order-configuration';
 import { WorkOrderMaterialConsumeTiming } from '../models/work-order-material-consume-timing';
 import { WorkOrderConfigurationService } from '../services/work-order-configuration.service';
@@ -21,6 +22,8 @@ export class WorkOrderWorkOrderConfigurationComponent implements OnInit {
 
   
   currentWorkOrderConfiguration: WorkOrderConfiguration | undefined; 
+
+  isSpinning = false;
 
   constructor(private http: _HttpClient,
     private workOrderConfigurationService: WorkOrderConfigurationService,
@@ -46,6 +49,10 @@ export class WorkOrderWorkOrderConfigurationComponent implements OnInit {
                 this.currentWorkOrderConfiguration = configuration;
                 this.currentWorkOrderConfiguration.companyId = companyService.getCurrentCompany()!.id;
                 this.currentWorkOrderConfiguration.warehouseId = warehouseService.getCurrentWarehouse().id;
+                configuration.productionShiftSchedules.forEach(
+                  productionShiftSchedule =>
+                      this.setupShiftStartAndEndDateTime(productionShiftSchedule)
+                )
             }
           }
       });
@@ -56,13 +63,16 @@ export class WorkOrderWorkOrderConfigurationComponent implements OnInit {
 
   
   saveConfiguration(): void {
+    this.isSpinning = true;
     this.setupShiftStartAndEndTime();
-    this.workOrderConfigurationService.saveWorkOrderConfiguration(this.currentWorkOrderConfiguration!).subscribe(
-      res => {
+    this.workOrderConfigurationService.saveWorkOrderConfiguration(this.currentWorkOrderConfiguration!).subscribe({
+      next: () => {
 
+        this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi('message.action.success'));
-      }
-    )
+      }, 
+      error: () =>  this.isSpinning = false
+    });  
   }
   setupShiftStartAndEndTime() {
     // convert the data time into a string of time only format with HH:mm:ss
@@ -76,6 +86,16 @@ export class WorkOrderWorkOrderConfigurationComponent implements OnInit {
         );
       }
     )
+  }
+  
+  setupShiftStartAndEndDateTime(productionShiftSchedule: ProductionShiftSchedule) {
+
+    // convert the shift start and end time from string to date, 
+    // date will be today's date
+      
+    productionShiftSchedule.shiftStartDateTime = new Date(`1990-01-01 ${productionShiftSchedule.shiftStartTime}`);
+    productionShiftSchedule.shiftEndDateTime = new Date(`1990-01-01 ${productionShiftSchedule.shiftEndTime}`);
+
   }
 
   removeShiftSchedule(index: number) {

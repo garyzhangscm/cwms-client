@@ -1,4 +1,6 @@
 <page-header></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="12">
         <nz-form-item nzFlex>
@@ -85,3 +87,4 @@
         {{ 'confirm' | i18n }}
     </button>
 </div>
+</nz-spin>

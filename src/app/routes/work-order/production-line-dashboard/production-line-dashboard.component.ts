@@ -1,16 +1,16 @@
-import { DatePipe, formatDate } from '@angular/common';
+import {  formatDate } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import {  FormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { differenceInSeconds} from 'date-fns';
 import { Subscription, interval } from 'rxjs';
 
-import { ProductionLine } from '../models/production-line';
 import { ProductionLineStatus } from '../models/production-line-status';
-import { ProductionLineAssignmentService } from '../services/production-line-assignment.service';
+import { ProductionShiftSchedule } from '../models/production-shift-schedule';
 import { ProductionLineService } from '../services/production-line.service';
-import { WorkOrderProduceTransactionService } from '../services/work-order-produce-transaction.service';
+import { WorkOrderConfigurationService } from '../services/work-order-configuration.service';
 
 @Component({
   selector: 'app-work-order-production-line-dashboard',
@@ -75,6 +75,8 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
   mapOfStaffCount: { [key: number]: string } = {};
   mapOfItemScanned: { [key: number]: number } = {};
 
+  currentShiftStartTime? : Date;
+
 
   countDownsubscription!: Subscription;
   loadingData = false;
@@ -83,19 +85,77 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
     private fb: FormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private productionLineService: ProductionLineService, 
+    private workOrderConfigurationService: WorkOrderConfigurationService,
     private titleService: TitleService,  ) { }
 
   ngOnInit(): void {
       this.titleService.setTitle(this.i18n.fanyi('menu.main.work-order.production-line-dashboard')); 
       
-      this.refresh();
-      
-    this.countDownsubscription = interval(1000).subscribe(x => {
-      this.handleCountDownEvent();
-    })
-      
+      // load the production shift schedule so we will only calculate the 
+      // KPI for current shift
+      this.workOrderConfigurationService.getWorkOrderConfiguration().subscribe(
+        {
+          next: (configuration) => 
+            {
+              if (configuration) {    
+                  this.setupCurrentShiftTime(configuration.productionShiftSchedules);
+                  this.refresh();
+                  this.countDownsubscription = interval(1000).subscribe(x => {
+                    this.handleCountDownEvent();
+                  })
+                    
+              }
+            }
+        });
+
 
   }
+
+  setupCurrentShiftTime(productionShiftSchedules : ProductionShiftSchedule[]): void {
+    // the shift schedule has the time only, let's check if current time is within certain 
+    // shift
+    productionShiftSchedules.forEach(
+      productionShiftSchedule => this.setupCurrentShift(productionShiftSchedule)
+    )
+  }
+  setupCurrentShift(productionShiftSchedule : ProductionShiftSchedule): void {
+    var now = new Date(); 
+    var today = formatDate(now, "YYYY-MM-DD", "en-US");
+    var tomorrow = formatDate(now.setDate(now.getDate() + 1), "YYYY-MM-DD", "en-US");
+    var now = new Date(); 
+    var yesterday = formatDate(now.setDate(now.getDate() - 1), "YYYY-MM-DD", "en-US");
+
+    if (productionShiftSchedule.shiftEndNextDay) {
+      // ok the shift end in next day, then we will check if current time is within
+      // the start end and the end time of next day
+      var shiftStart =   new Date(`${today} ${productionShiftSchedule.shiftStartTime}`);
+      var shiftEnd =   new Date(`${tomorrow} ${productionShiftSchedule.shiftStartTime}`);
+      //differenceInSeconds return the first time - second time in seconds
+      if (differenceInSeconds(now, shiftStart) >= 0 && differenceInSeconds(now, shiftEnd) <= 0) { 
+        this.currentShiftStartTime = shiftStart;
+      }
+      else {
+        // the shift may start from yesterday while we are still in the shift
+        
+        shiftStart =   new Date(`${yesterday} ${productionShiftSchedule.shiftStartTime}`);
+        shiftEnd =   new Date(`${today} ${productionShiftSchedule.shiftStartTime}`);
+        if (differenceInSeconds(now, shiftStart) >= 0 && differenceInSeconds(now, shiftEnd) <= 0) { 
+          this.currentShiftStartTime = shiftStart;
+        }
+      }
+    }
+    else {
+      // shift start and end in the same day
+      var shiftStart =   new Date(`${today} ${productionShiftSchedule.shiftStartTime}`);
+      var shiftEnd =   new Date(`${today} ${productionShiftSchedule.shiftStartTime}`);
+      //differenceInSeconds return the first time - second time in seconds
+      if (differenceInSeconds(now, shiftStart) >= 0 && differenceInSeconds(now, shiftEnd) <= 0) { 
+        this.currentShiftStartTime = shiftStart;
+      }
+    }
+  
+  }
+   
   
   handleCountDownEvent(): void {
     // don't count down when we are loading data

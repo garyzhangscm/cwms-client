@@ -4,120 +4,130 @@
   
   
 
-  <!-- Table to Display the result  -->
-  <nz-card  [nzExtra]="refreshTemplate" nzTitle="Count down: {{ countDownNumber }}"> 
-  </nz-card>
-  
-  <ng-template #countDownTemplate>
-    
-    <div nz-row>
-      Count down: {{ countDownNumber }}
-    </div>
-  </ng-template>
-  <ng-template #refreshTemplate>
-    <!--
+  <div *ngIf="currentShiftStartTime == null">
 
-    <button  nz-button nzType="text" (click)="refresh()">
-      {{'Refresh' | i18n}}</button>
-    -->
-    
-    Refresh Cycle(in seconds): <nz-input-number   [nzMin]="1" [nzMax]="9999" [nzStep]="1"   [(ngModel)]="refreshCountCycle" >
-      </nz-input-number> 
-  </ng-template>
-  <div class="search-result-list"> 
-    
-    <st #st [data]="listOfProductionLineStatus"  [columns]="columns" ps="999"> 
-      <ng-template st-row="statusColumn" let-item let-index="index"> 
-          <span style="background-color: red;" *ngIf="!item.active"> {{"stopped" | i18n}} </span>
-          <span style="background-color: green;" *ngIf="item.active"> {{"running" | i18n}} </span>
-      </ng-template>
-      <ng-template st-row="averageCycleTimeColumn" let-item let-index="index"> 
-            
-        {{ item.averageCycleTime | number}} <strong>S</strong>
-      </ng-template>
-      <ng-template st-row="itemColumn" let-item let-index="index"> 
-            
-        <nz-skeleton-element 
-          *ngIf="item.productionLine.id && mapOfItems[item.productionLine.id!] == null"
-            nzType="input"
-            [nzActive]="true"
-            [nzSize]="'small'"
-            style="width:75px"
-          ></nz-skeleton-element> 
-        {{ mapOfItems[item.productionLine.id!]  }}  
-      </ng-template>
-      
-      <ng-template st-row="moldCountColumn" let-item let-index="index"> 
-            
-        {{ item.totalCycles | number}}  
-      </ng-template>
-
-      <ng-template st-row="itemScannedColumn" let-item let-index="index"> 
-            
-        <nz-skeleton-element 
-          *ngIf="item.productionLine.id && mapOfItemScanned[item.productionLine.id!] == null"
-            nzType="input"
-            [nzActive]="true"
-            [nzSize]="'small'"
-            style="width:75px"
-          ></nz-skeleton-element> 
-        {{ mapOfItemScanned[item.productionLine.id!]   }}  
-      </ng-template>
-      
-      <ng-template st-row="differenceColumn" let-item let-index="index"> 
-            
-        <nz-skeleton-element 
-          *ngIf="item.productionLine.id && (mapOfItemScanned[item.productionLine.id!] == null || mapOfCapacities[item.productionLine.id!] == null)"
-            nzType="input"
-            [nzActive]="true"
-            [nzSize]="'small'"
-            style="width:75px"
-          ></nz-skeleton-element> 
-        {{  mapOfCapacities[item.productionLine.id!]  - mapOfItemScanned[item.productionLine.id!]  }}  
-      </ng-template>
-
-      <ng-template st-row="laborNeedColumn" let-item let-index="index"> 
-            
-        <nz-skeleton-element 
-          *ngIf="item.productionLine.id && mapOfStaffCount[item.productionLine.id!] == null"
-            nzType="input"
-            [nzActive]="true"
-            [nzSize]="'small'"
-            style="width:75px"
-          ></nz-skeleton-element> 
-        {{ mapOfStaffCount[item.productionLine.id!] }}  
-      </ng-template>
-       
-      <ng-template st-row="capacityColumn" let-item let-index="index"> 
-            
-        <nz-skeleton-element 
-          *ngIf="item.productionLine.id && mapOfCapacities[item.productionLine.id!] == null"
-            nzType="input"
-            [nzActive]="true"
-            [nzSize]="'small'"
-            style="width:75px"
-          ></nz-skeleton-element> 
-        {{ mapOfCapacities[item.productionLine.id!] }}  
-      </ng-template>
-       
-      
-      <ng-template st-row="achievingRateColumn" let-item let-index="index"> 
-            
-        <nz-skeleton-element 
-          *ngIf="item.productionLine.id && (mapOfItemScanned[item.productionLine.id!] == null || mapOfCapacities[item.productionLine.id!] == null) "
-            nzType="input"
-            [nzActive]="true"
-            [nzSize]="'small'"
-            style="width:75px"
-          ></nz-skeleton-element> 
-        {{   mapOfItemScanned[item.productionLine.id!] / mapOfCapacities[item.productionLine.id!]  |  percent:'1.2-5'}}  
-      </ng-template>
-       
-       
-    </st>
-     
+    <nz-result nzStatus="warning" [nzIcon]="'info-circle'" nzTitle="{{'shift time is not setup' | i18n}}"> 
+      <div nz-result-extra>
+        please go to <a routerLink="/work-order/work-order-configuration" routerLinkActive="active">Work Order Configuration</a> page to setup the shift time
+      </div>
+    </nz-result>
   </div>
+  <div *ngIf="currentShiftStartTime != null">
+
+    <!-- Table to Display the result  -->
+    <nz-card  [nzExtra]="refreshTemplate" nzTitle="Count down: {{ countDownNumber }}"> 
+    </nz-card>
+    
+    <ng-template #countDownTemplate>
       
+      <div nz-row>
+        Count down: {{ countDownNumber }}
+      </div>
+    </ng-template>
+    <ng-template #refreshTemplate>
+      <!--
+
+      <button  nz-button nzType="text" (click)="refresh()">
+        {{'Refresh' | i18n}}</button>
+      -->
+      
+      Refresh Cycle(in seconds): <nz-input-number   [nzMin]="1" [nzMax]="9999" [nzStep]="1"   [(ngModel)]="refreshCountCycle" >
+        </nz-input-number> 
+    </ng-template>
+    <div class="search-result-list"> 
+      
+      <st #st [data]="listOfProductionLineStatus"  [columns]="columns" ps="999"> 
+        <ng-template st-row="statusColumn" let-item let-index="index"> 
+            <span style="background-color: red;" *ngIf="!item.active"> {{"stopped" | i18n}} </span>
+            <span style="background-color: green;" *ngIf="item.active"> {{"running" | i18n}} </span>
+        </ng-template>
+        <ng-template st-row="averageCycleTimeColumn" let-item let-index="index"> 
+              
+          {{ item.averageCycleTime | number}} <strong>S</strong>
+        </ng-template>
+        <ng-template st-row="itemColumn" let-item let-index="index"> 
+              
+          <nz-skeleton-element 
+            *ngIf="item.productionLine.id && mapOfItems[item.productionLine.id!] == null"
+              nzType="input"
+              [nzActive]="true"
+              [nzSize]="'small'"
+              style="width:75px"
+            ></nz-skeleton-element> 
+          {{ mapOfItems[item.productionLine.id!]  }}  
+        </ng-template>
+        
+        <ng-template st-row="moldCountColumn" let-item let-index="index"> 
+              
+          {{ item.totalCycles | number}}  
+        </ng-template>
+
+        <ng-template st-row="itemScannedColumn" let-item let-index="index"> 
+              
+          <nz-skeleton-element 
+            *ngIf="item.productionLine.id && mapOfItemScanned[item.productionLine.id!] == null"
+              nzType="input"
+              [nzActive]="true"
+              [nzSize]="'small'"
+              style="width:75px"
+            ></nz-skeleton-element> 
+          {{ mapOfItemScanned[item.productionLine.id!]   }}  
+        </ng-template>
+        
+        <ng-template st-row="differenceColumn" let-item let-index="index"> 
+              
+          <nz-skeleton-element 
+            *ngIf="item.productionLine.id && (mapOfItemScanned[item.productionLine.id!] == null || mapOfCapacities[item.productionLine.id!] == null)"
+              nzType="input"
+              [nzActive]="true"
+              [nzSize]="'small'"
+              style="width:75px"
+            ></nz-skeleton-element> 
+          {{  mapOfCapacities[item.productionLine.id!]  - mapOfItemScanned[item.productionLine.id!]  }}  
+        </ng-template>
+
+        <ng-template st-row="laborNeedColumn" let-item let-index="index"> 
+              
+          <nz-skeleton-element 
+            *ngIf="item.productionLine.id && mapOfStaffCount[item.productionLine.id!] == null"
+              nzType="input"
+              [nzActive]="true"
+              [nzSize]="'small'"
+              style="width:75px"
+            ></nz-skeleton-element> 
+          {{ mapOfStaffCount[item.productionLine.id!] }}  
+        </ng-template>
+        
+        <ng-template st-row="capacityColumn" let-item let-index="index"> 
+              
+          <nz-skeleton-element 
+            *ngIf="item.productionLine.id && mapOfCapacities[item.productionLine.id!] == null"
+              nzType="input"
+              [nzActive]="true"
+              [nzSize]="'small'"
+              style="width:75px"
+            ></nz-skeleton-element> 
+          {{ mapOfCapacities[item.productionLine.id!] }}  
+        </ng-template>
+        
+        
+        <ng-template st-row="achievingRateColumn" let-item let-index="index"> 
+              
+          <nz-skeleton-element 
+            *ngIf="item.productionLine.id && (mapOfItemScanned[item.productionLine.id!] == null || mapOfCapacities[item.productionLine.id!] == null) "
+              nzType="input"
+              [nzActive]="true"
+              [nzSize]="'small'"
+              style="width:75px"
+            ></nz-skeleton-element> 
+          {{   mapOfItemScanned[item.productionLine.id!] / mapOfCapacities[item.productionLine.id!]  |  percent:'1.2-5'}}  
+        </ng-template>
+        
+        
+      </st>
+      
+    </div>
+  </div>      
 </nz-spin>
 
  
