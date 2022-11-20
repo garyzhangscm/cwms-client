@@ -14,6 +14,13 @@ import { environment } from '@env/environment';
 const alainConfig: AlainConfig = {
   st: { modal: { size: 'lg' } },
   pageHeader: { homeI18n: 'home' },
+  chart: { 
+    // 以下是默认配置，如果项目无法外网访问，可以根据 `angular.json` 配置将依赖包直接使用 `./assets***` 路径
+    libs: [
+      'https://gw.alipayobjects.com/os/lib/antv/g2/4.1.4/dist/g2.min.js',
+      'https://gw.alipayobjects.com/os/lib/antv/data-set/0.11.7/dist/data-set.js',
+    ],
+  },
   lodop: {
     license: `A59B099A586B3851E0F0D7FDBF37B603`,
     licenseA: `C94CEE276DB2187AE6B65D56B3FC2848`

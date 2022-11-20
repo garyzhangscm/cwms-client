@@ -1,0 +1,31 @@
+<page-header></page-header>
+
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'"> 
+
+
+    <div *ngIf="currentShiftStartTime == null || currentShiftEndTime == null">
+
+        <nz-result nzStatus="warning" [nzIcon]="'info-circle'" nzTitle="{{'shift time is not setup' | i18n}}"> 
+          <div nz-result-extra>
+            please go to <a routerLink="/work-order/work-order-configuration" routerLinkActive="active">Work Order Configuration</a> page to setup the shift time
+          </div>
+        </nz-result>
+      </div>
+    
+    <div *ngIf="currentShiftStartTime != null &&  currentShiftEndTime != null"> 
+        <nz-card>
+            <div nz-card-grid [ngStyle]="gridStyle" *ngFor="let productionLineStatus of listOfProductionLineStatus">
+                        
+                <g2-pie percent="{{mapOfItemScanned[productionLineStatus.productionLine.id!] * 100 / mapOfCapacities[productionLineStatus.productionLine.id!] }}" subTitle="{{productionLineStatus.productionLine.name}}" 
+                total="{{   mapOfItemScanned[productionLineStatus.productionLine.id!] / mapOfCapacities[productionLineStatus.productionLine.id!]  |  percent:'1.2-5'}} " 
+                height="130">
+            </g2-pie>
+            </div>
+        </nz-card>
+    </div>
+
+
+
+
+</nz-spin>

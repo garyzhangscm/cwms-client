@@ -3,6 +3,8 @@ import { NgModule, Type } from '@angular/core';
 import { EllipsisModule } from '@delon/abc/ellipsis';
 import { STModule } from '@delon/abc/st';
 import { XlsxModule } from '@delon/abc/xlsx';
+import { G2BarModule } from '@delon/chart/bar';
+import { G2PieModule } from '@delon/chart/pie';
 import { SharedModule } from '@shared'; 
 import { GoogleChartsModule } from 'angular-google-charts';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
@@ -42,10 +44,12 @@ import { WorkOrderMrpComponent } from './mrp/mrp.component';
 import { WorkOrderPrePrintLpnLabelComponent } from './pre-print-lpn-label/pre-print-lpn-label.component';
 import { WorkOrderProduceTransactionComponent } from './produce-transaction/produce-transaction.component';
 import { WorkOrderProductionKanbanComponent } from './production-kanban/production-kanban.component';
+import { WorkOrderProductionLineDashboardComponent } from './production-line-dashboard/production-line-dashboard.component';
 import { WorkOrderProductionLineMaintenanceComponent } from './production-line-maintenance/production-line-maintenance.component';
 import { WorkOrderProductionLineMonitorMaintenanceComponent } from './production-line-monitor-maintenance/production-line-monitor-maintenance.component';
 import { WorkOrderProductionLineMonitorTransactionComponent } from './production-line-monitor-transaction/production-line-monitor-transaction.component';
 import { WorkOrderProductionLineMonitorComponent } from './production-line-monitor/production-line-monitor.component';
+import { WorkOrderProductionLineStatusDisplayComponent } from './production-line-status-display/production-line-status-display.component';
 import { WorkOrderProductionLineStatusComponent } from './production-line-status/production-line-status.component';
 import { WorkOrderProductionLineComponent } from './production-line/production-line.component';
 import { WorkOrderProductionPlanMaintenanceComponent } from './production-plan-maintenance/production-plan-maintenance.component';
@@ -72,7 +76,7 @@ import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspect
 import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component'; 
 import { WorkOrderRoutingModule } from './work-order-routing.module';
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
-import { WorkOrderProductionLineDashboardComponent } from './production-line-dashboard/production-line-dashboard.component';
+
 
 const COMPONENTS: Array<Type<void>> = [
   WorkOrderWorkOrderComponent,
@@ -121,7 +125,8 @@ const COMPONENTS: Array<Type<void>> = [
   WorkOrderProductionLineMonitorMaintenanceComponent,
   WorkOrderProductionLineMonitorTransactionComponent,
   WorkOrderProductionLineStatusComponent,
-  WorkOrderProductionLineDashboardComponent];
+  WorkOrderProductionLineDashboardComponent,
+  WorkOrderProductionLineStatusDisplayComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
@@ -146,8 +151,9 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzTreeViewModule ,
     NzTreeModule,
     EllipsisModule,
-    XlsxModule
-
+    XlsxModule,
+    G2BarModule,
+    G2PieModule
   ],
   declarations: [
     ...COMPONENTS,
