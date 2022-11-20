@@ -4,7 +4,7 @@
   
   
 
-  <div *ngIf="currentShiftStartTime == null">
+  <div *ngIf="currentShiftStartTime == null || currentShiftEndTime == null">
 
     <nz-result nzStatus="warning" [nzIcon]="'info-circle'" nzTitle="{{'shift time is not setup' | i18n}}"> 
       <div nz-result-extra>
@@ -12,10 +12,13 @@
       </div>
     </nz-result>
   </div>
-  <div *ngIf="currentShiftStartTime != null">
+  <div *ngIf="currentShiftStartTime != null &&  currentShiftEndTime != null">
 
     <!-- Table to Display the result  -->
     <nz-card  [nzExtra]="refreshTemplate" nzTitle="Count down: {{ countDownNumber }}"> 
+      <div>Current shift: 
+        <strong>{{ currentShiftStartTime  | date:'M/d/yy, h:mm:ss a' }}</strong> - 
+        <strong>{{ currentShiftEndTime  | date:'M/d/yy, h:mm:ss a' }}</strong></div>
     </nz-card>
     
     <ng-template #countDownTemplate>
