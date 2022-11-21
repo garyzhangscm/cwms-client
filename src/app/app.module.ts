@@ -11,11 +11,16 @@ import { en_US, NZ_DATE_LOCALE, NZ_I18N, en_US as zorroLang } from 'ng-zorro-ant
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
 import { IconDefinition } from '@ant-design/icons-angular';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-
+ 
+import { CommonModule } from '@angular/common';
+import * as PlotlyJS from 'plotly.js-dist-min';
+import { PlotlyModule } from 'angular-plotly.js';
 
 import { CheckCircleTwoTone, CloseCircleTwoTone, WarningTwoTone} from '@ant-design/icons-angular/icons';
 
 const icons: IconDefinition[] = [ CheckCircleTwoTone, CloseCircleTwoTone, WarningTwoTone ];
+
+PlotlyModule.plotlyjs = PlotlyJS;
 
 // #region default language
 // 参考：https://ng-alain.com/docs/i18n
@@ -111,7 +116,7 @@ import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
     STWidgetModule,
     NzNotificationModule,
     FormsModule,
-    GooglePlaceModule,
+    GooglePlaceModule,CommonModule, PlotlyModule,
     ...GLOBAL_THIRD_MODULES,
     ...FORM_MODULES
   ],

@@ -1,12 +1,14 @@
-import { ScrollingModule } from '@angular/cdk/scrolling';
-import { NgModule, Type } from '@angular/core';
+import { ScrollingModule } from '@angular/cdk/scrolling'; 
+import { NgModule, Type  } from '@angular/core';
 import { EllipsisModule } from '@delon/abc/ellipsis';
 import { STModule } from '@delon/abc/st';
 import { XlsxModule } from '@delon/abc/xlsx';
 import { G2BarModule } from '@delon/chart/bar';
 import { G2PieModule } from '@delon/chart/pie';
 import { SharedModule } from '@shared'; 
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { GoogleChartsModule } from 'angular-google-charts';
+import { PlotlyModule } from 'angular-plotly.js';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzCalendarModule } from 'ng-zorro-antd/calendar';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
@@ -21,6 +23,8 @@ import { NzTransferModule } from 'ng-zorro-antd/transfer';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
 import { NzTreeViewModule } from 'ng-zorro-antd/tree-view';
 import { CountdownModule } from 'ngx-countdown';
+import * as PlotlyJS from 'plotly.js-dist-min';
+
 
 import { CommonModule } from '../common/common.module';
 import { DirectivesModule } from '../directives/directives.module';
@@ -76,6 +80,9 @@ import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspect
 import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component'; 
 import { WorkOrderRoutingModule } from './work-order-routing.module';
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
+
+
+PlotlyModule.plotlyjs = PlotlyJS;
 
 
 const COMPONENTS: Array<Type<void>> = [
@@ -152,8 +159,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzTreeModule,
     EllipsisModule,
     XlsxModule,
-    G2BarModule,
-    G2PieModule
+    NgxChartsModule,
+    PlotlyModule
   ],
   declarations: [
     ...COMPONENTS,

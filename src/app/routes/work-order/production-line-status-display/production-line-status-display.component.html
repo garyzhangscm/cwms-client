@@ -14,13 +14,56 @@
       </div>
     
     <div *ngIf="currentShiftStartTime != null &&  currentShiftEndTime != null"> 
+      
+
+        
         <nz-card>
             <div nz-card-grid [ngStyle]="gridStyle" *ngFor="let productionLineStatus of listOfProductionLineStatus">
+              <h1>{{productionLineStatus.productionLine.name}}</h1> 
+              <h3><i>{{mapOfItems[productionLineStatus.productionLine.id!]}}</i> </h3>
+              <div>{{ "goalQuantity" | i18n}}: {{mapOfCapacities[productionLineStatus.productionLine.id!]}}, 
+                {{"itemScanned" | i18n}}: {{mapOfItemScanned[productionLineStatus.productionLine.id!]}},  
+                {{"achievingRate" | i18n}}: {{   mapOfItemScanned[productionLineStatus.productionLine.id!] / mapOfCapacities[productionLineStatus.productionLine.id!]  |  percent:'1.2-2'}}  </div>
                         
+                <!--
+
                 <g2-pie percent="{{mapOfItemScanned[productionLineStatus.productionLine.id!] * 100 / mapOfCapacities[productionLineStatus.productionLine.id!] }}" subTitle="{{productionLineStatus.productionLine.name}}" 
-                total="{{   mapOfItemScanned[productionLineStatus.productionLine.id!] / mapOfCapacities[productionLineStatus.productionLine.id!]  |  percent:'1.2-5'}} " 
+                total="{{   mapOfItemScanned[productionLineStatus.productionLine.id!] / mapOfCapacities[productionLineStatus.productionLine.id!]  |  percent:'1.2-2'}} " 
                 height="130">
             </g2-pie>
+
+                <div id="prod-line-{{productionLineStatus.productionLine.id!}}"></div>
+
+                -->
+                
+                <!--
+
+                   https://swimlane.gitbook.io/ngx-charts/
+
+              <ngx-charts-pie-chart 
+              [view]="view" 
+              [results]="mapOfResults[productionLineStatus.productionLine.id!]" 
+              [gradient]="gradient" 
+              [labels]="showLabels"
+              [doughnut]="isDoughnut"
+              [legend]="showLegend" 
+              [legendPosition]="legendPosition"
+              (select)="onSelect($event)"
+              (activate)="onActivate($event)"
+              (deactivate)="onDeactivate($event)" 
+              *ngIf=" mapOfItemScanned[productionLineStatus.productionLine.id!] / mapOfCapacities[productionLineStatus.productionLine.id!] > 90"
+              >
+            </ngx-charts-pie-chart>
+                -->
+
+                <!--
+                  https://plotly.com/javascript/pie-charts/
+                -->
+                <div style="align-content: center;" *ngIf="mapOfGraphs[productionLineStatus.productionLine.id!].data != null">
+                  <plotly-plot [data]="mapOfGraphs[productionLineStatus.productionLine.id!].data" [layout]="mapOfGraphs[productionLineStatus.productionLine.id!].layout"></plotly-plot>
+
+                </div>
+
             </div>
         </nz-card>
     </div>
