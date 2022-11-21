@@ -363,7 +363,8 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
                               insidetextorientation: 'radial',
                               insidetextfont: {size: 18},
                               marker: {
-                                colors: ['#808080', '#00FF00']
+                                // colors: ['#D0D3D4', '#00FF00']
+                                colors: ['#F7F9F9', '#00FF00']
                               },
                             },
                         ],
@@ -387,7 +388,8 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
                             insidetextorientation: 'radial',
                             insidetextfont: {size: 18},
                             marker: {
-                              colors: ['#808080', '#FF0000']
+                              // colors: ['#D0D3D4', '#FF0000']
+                              colors: ['#F7F9F9', '#FF0000']
                             },
                           },
                         ],
