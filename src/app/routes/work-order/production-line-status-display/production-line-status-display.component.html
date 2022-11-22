@@ -1,7 +1,6 @@
 <page-header></page-header>
 
 
-<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'"> 
 
 
     <div *ngIf="currentShiftStartTime == null || currentShiftEndTime == null">
@@ -15,10 +14,33 @@
     
     <div *ngIf="currentShiftStartTime != null &&  currentShiftEndTime != null"> 
       
+      <nz-card  [nzExtra]="showConfigurationTemplate" nzTitle="Count down: {{ countDownNumber }}"> 
+        <div *ngIf="showConfiguration">
+          
+          <span style="padding-left: 20px">Count per page: </span><nz-input-number   [nzMin]="1" [nzMax]="99" [nzStep]="1"   [(ngModel)]="countPerPage" 
+          (ngModelChange)="configurationChanged()">
+          </nz-input-number> 
+          <span style="padding-left: 20px">Column Count: </span><nz-input-number   [nzMin]="1" [nzMax]="5" [nzStep]="1"   [(ngModel)]="columnCount" 
+          (ngModelChange)="configurationChanged()">
+          </nz-input-number> 
+          
+          <span style="padding-left: 20px">Refresh Cycle(in seconds): </span><nz-input-number   [nzMin]="1" [nzMax]="9999" [nzStep]="1"   [(ngModel)]="refreshCountCycle" >
+          </nz-input-number> 
+
+        </div>
+        
+      </nz-card>
+      
+      <ng-template #showConfigurationTemplate>
+        <label nz-checkbox [(ngModel)]="showConfiguration" >
+          <span> {{ 'showConfiguration' | i18n }}</span>
+        </label>
+      </ng-template>
 
         
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'"> 
         <nz-card>
-            <div nz-card-grid [ngStyle]="gridStyle" *ngFor="let productionLineStatus of listOfProductionLineStatus">
+            <div nz-card-grid [ngStyle]="gridStyle" *ngFor="let productionLineStatus of listOfDisplayProductionLineStatus">
               <h1>{{productionLineStatus.productionLine.name}}</h1> 
               <h3><i>{{mapOfItems[productionLineStatus.productionLine.id!]}}</i> </h3>
               <div>{{ "goalQuantity" | i18n}}: {{mapOfCapacities[productionLineStatus.productionLine.id!]}}, 
@@ -58,17 +80,27 @@
 
                 <!--
                   https://plotly.com/javascript/pie-charts/
-                -->
-                <div style="align-content: center;" *ngIf="mapOfGraphs[productionLineStatus.productionLine.id!].data != null">
-                  <plotly-plot [data]="mapOfGraphs[productionLineStatus.productionLine.id!].data" [layout]="mapOfGraphs[productionLineStatus.productionLine.id!].layout"></plotly-plot>
+                --> 
+                <div nz-row nzJustify="center" *ngIf="mapOfGraphs[productionLineStatus.productionLine.id!].data != null && mapOfItems[productionLineStatus.productionLine.id!] != ''">
+                  <div nz-col [nzSpan]="displayColSpan">
+                    <plotly-plot [data]="mapOfGraphs[productionLineStatus.productionLine.id!].data" [layout]="mapOfGraphs[productionLineStatus.productionLine.id!].layout"></plotly-plot>
 
-                </div>
+                  </div>
+                  
+                </div> 
+                <nz-result nzStatus="warning" [nzIcon]="'info-circle'" nzTitle="{{'no working item' | i18n}}"
+                *ngIf="mapOfGraphs[productionLineStatus.productionLine.id!].data == null || mapOfItems[productionLineStatus.productionLine.id!] == ''"
+                > 
+                  <div nz-result-extra>
+                     There's no item on this production line at this moment
+                  </div>
+                </nz-result>
 
             </div>
         </nz-card>
+        
+</nz-spin>
     </div>
 
 
 
-
-</nz-spin>

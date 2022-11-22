@@ -10,6 +10,7 @@ import { interval, Subscription } from 'rxjs';
 
 import { ProductionLineStatus } from '../models/production-line-status';
 import { ProductionShiftSchedule } from '../models/production-shift-schedule';
+import { WorkOrderConfiguration } from '../models/work-order-configuration';
 import { ProductionLineService } from '../services/production-line.service';
 import { WorkOrderConfigurationService } from '../services/work-order-configuration.service';
 
@@ -41,10 +42,9 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
   };
 
   listOfProductionLineStatus: ProductionLineStatus[] = []; 
-  
-  refreshCountCycle = 10;
-  countDownNumber = this.refreshCountCycle;
+  listOfDisplayProductionLineStatus: ProductionLineStatus[] = []; 
 
+  workOrderConfiguration?: WorkOrderConfiguration
   isSpinning = false;
 
   currentShiftStartTime? : Date;
@@ -65,7 +65,19 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
     width: '33%',
     textAlign: 'center'
   }; 
+
+  // configuration of how to display the result
+  countPerPage = 1;
+  totalPages = 0;
+  currentPage = 1;
+  columnCount = 1;
+  displayColSpan = 10;
  
+  // default to show 5 seconds per page
+  refreshCountCycle = 5;
+  countDownNumber = this.refreshCountCycle;
+  showConfiguration = false;
+
   /***
 
   single: any[] = [
@@ -123,6 +135,11 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
     private workOrderConfigurationService: WorkOrderConfigurationService,
     ) { 
     
+    this.gridStyle = {
+      width: `${(100 / this.columnCount)}%`,
+      textAlign: 'center'
+    }; 
+
 
   }
 
@@ -132,8 +149,8 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
       {
         next: (configuration) => 
           {
-            if (configuration) {    
-                this.setupCurrentShiftTime(configuration.productionShiftSchedules);
+            if (configuration) {   
+                this.workOrderConfiguration = configuration; 
                 this.refresh();
                 this.countDownsubscription = interval(1000).subscribe(x => {
                   this.handleCountDownEvent();
@@ -146,8 +163,7 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
   }
   
   handleCountDownEvent(): void {
-    return;
-
+     
     // don't count down when we are loading data
     if (this.loadingData) {
       
@@ -157,8 +173,42 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
     this.countDownNumber--;
     if (this.countDownNumber <= 0) {
       this.resetCountDownNumber();
+      // show next page when the count down is done
+      this.nextPage();
+    } 
+
+  }
+  nextPage() {
+    // if we haven't setup yet
+    // or we are at the last page, then refresh the whole dataset
+    if (this.totalPages == 0 || this.currentPage >= this.totalPages) {
+
       this.refresh();
     }
+    else {
+      // go to next page
+      this.currentPage++;
+      // console.log(`current page: ${this.currentPage}`);
+      this.setupDisplayProductionLineStatus();
+    }
+  }
+  setupDisplayProductionLineStatus() {
+    // get the production lines that to be displayed in the current page
+
+    let startIndex = (this.currentPage - 1) * this.countPerPage;
+    let endIndex = this.currentPage * this.countPerPage - 1;
+    
+    // console.log(`show items: ${startIndex}, ${endIndex}`);
+    this.listOfDisplayProductionLineStatus = this.listOfProductionLineStatus.slice(startIndex, endIndex + 1);
+    // console.log(`this.listOfDisplayProductionLineStatus: ${this.listOfDisplayProductionLineStatus.length}`);
+
+    // setup the length and width of each pie based on the page's configuration
+    this.listOfDisplayProductionLineStatus.forEach(
+      displayProductionLineStatus => {
+        this.setupPieDisplay(displayProductionLineStatus.productionLine.id!);
+      }
+    )
+
   }
   resetCountDownNumber() {
     this.countDownNumber = this.refreshCountCycle;
@@ -169,14 +219,33 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
 
   }
 
+  configurationChanged() {
+    // refresh the display when the configuration is changed
+    // setup the rows and columns
+    this.gridStyle = {
+      width: `${(100 / this.columnCount)}%`,
+      textAlign: 'center'
+    }; 
+
+    this.displayColSpan = 10 + (this.columnCount - 1) * 12;
+    
+    this.totalPages = this.listOfProductionLineStatus.length / this.countPerPage; 
+    if (this.currentPage > this.totalPages) {
+      this.currentPage = this.totalPages;
+    }
+    console.log(`total pages : ${this.totalPages}, current page: ${this.currentPage }`);
+    // setup pages
+    this.setupDisplayProductionLineStatus();
+  }
   
-  setupCurrentShiftTime(productionShiftSchedules : ProductionShiftSchedule[]): void {
+  setupCurrentShiftTime(): void {
     // the shift schedule has the time only, let's check if current time is within certain 
     // shift
-    productionShiftSchedules.forEach(
+    this.workOrderConfiguration?.productionShiftSchedules.forEach(
       productionShiftSchedule => this.setupCurrentShift(productionShiftSchedule)
     )
   }
+  // discover which shift we are in so we can get the right data to display
   setupCurrentShift(productionShiftSchedule : ProductionShiftSchedule): void {
     var now = new Date(); 
     var today = formatDate(now, "YYYY-MM-dd", "en-US");
@@ -228,9 +297,10 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
   
   }
 
-  
+  // get the latest data
   refresh() : void{
     
+    this.setupCurrentShiftTime();
     if (this.currentShiftStartTime != null) {
 
       this.search(this.currentShiftStartTime!, new Date());
@@ -242,6 +312,7 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
     this.loadingData = true;
        
 
+    // get the production line status
     this.productionLineService.getProductionLineStatus( 
       undefined,
       startTime, endTime,  ).subscribe({
@@ -249,6 +320,7 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
         next: (productionLineStatusRes) => {
             this.listOfProductionLineStatus = productionLineStatusRes;
             this.isSpinning = false; 
+            // setup the default value for all the details
             this.listOfProductionLineStatus.forEach(
               productionLineStatus => {
 
@@ -259,6 +331,7 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
                 this.mapOfItemScanned[productionLineStatus.productionLine.id!] = 0;
               }
             )
+            // load the details
             this.loadDetailInformation(startTime, endTime);
             this.loadingData = false;       
         
@@ -296,6 +369,7 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
     );
   }  
 
+  // get the capacity(goal) and item scanned(actual produced quantity)
   setupDisplay(startTime: Date, endTime: Date) {
     
     this.isSpinning = true; 
@@ -340,70 +414,19 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
                     ];    
                      */
                     // if 90% complete, show green, else show red
-                    let completeRate = this.mapOfItemScanned[productionLineCapacityAttribute.productionLine.id!] /
-                                           this.mapOfCapacities[productionLineCapacityAttribute.productionLine.id!];
-                    let openQuantity = this.mapOfCapacities[productionLineCapacityAttribute.productionLine.id!] - 
-                          this.mapOfItemScanned[productionLineCapacityAttribute.productionLine.id!];
-                    if (openQuantity < 0) {
-                      openQuantity = 0;
-                    }
-                    // console.log(`${productionLineCapacityAttribute.productionLine.name} complete rate: ${completeRate}`);
-                    if (completeRate > 0.9)
-                    {
-                      this.mapOfGraphs[productionLineCapacityAttribute.productionLine.id!] = {
 
-                          data: [ 
-                            { values: [
-                                  openQuantity
-                                  , 
-                                  this.mapOfItemScanned[productionLineCapacityAttribute.productionLine.id!]],
-                              labels:[ 'Open', 'Completed'] ,
-                              type: 'pie', 
-                              textinfo: 'label+percent', 
-                              insidetextorientation: 'radial',
-                              insidetextfont: {size: 18},
-                              marker: {
-                                // colors: ['#D0D3D4', '#00FF00']
-                                colors: ['#F7F9F9', '#00FF00']
-                              },
-                            },
-                        ],
-                        layout: {
-                          width: 400, height: 400,   
-                          showlegend: false
-                        }
-                      }
-                    }
-                    else {
-                      this.mapOfGraphs[productionLineCapacityAttribute.productionLine.id!] = {
-
-                        data: [ 
-                          { values: [
-                                openQuantity
-                                , 
-                                this.mapOfItemScanned[productionLineCapacityAttribute.productionLine.id!]],
-                            labels:[ 'Open', 'Completed'] ,
-                            type: 'pie', 
-                            textinfo: 'label+percent', 
-                            insidetextorientation: 'radial',
-                            insidetextfont: {size: 18},
-                            marker: {
-                              // colors: ['#D0D3D4', '#FF0000']
-                              colors: ['#F7F9F9', '#FF0000']
-                            },
-                          },
-                        ],
-                        layout: {
-                          width: 400, height: 400,   
-                          showlegend: false
-                        }
-                      }
-
-                    }
+                    // setup the pie display 
+                    this.setupPieDisplay(productionLineCapacityAttribute.productionLine.id!);
                   
                     
                   }
                 );
+
+                // display the first page after we refresh and load everything
+                this.totalPages = productionLineTotalProcedInventoryAttributeRes.length / this.countPerPage; 
+                console.log(`total pages : ${this.totalPages}, this.displayColSpan: ${this.displayColSpan}`);
+                this.currentPage = 1;
+                this.setupDisplayProductionLineStatus();
                 
                 this.isSpinning = false; 
               }, 
@@ -414,6 +437,57 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
         error: () => this.isSpinning = false
       }
     );
+  }
+
+  setupPieDisplay(productionLineId : number) {
+
+    let completeRate = this.mapOfItemScanned[productionLineId] /
+            this.mapOfCapacities[productionLineId];
+    let openQuantity = this.mapOfCapacities[productionLineId] - 
+            this.mapOfItemScanned[productionLineId];
+    if (openQuantity < 0) {
+      openQuantity = 0;
+    }
+
+    // setup the pie's size based on how many columns 
+    // we would like to display in one row
+
+    let length = 600 - 60 * (this.columnCount);
+
+    // if complete rate is more than 90%, then 
+    // show the pie as green
+    // otherwise, show the pie as red
+    let colors = ['#F7F9F9', '#FF0000'];
+    if (completeRate > 0.9)
+    {
+      colors = ['#F7F9F9', '#00FF00'];
+    }
+ 
+    // setup the data and layout for each pie
+    this.mapOfGraphs[productionLineId] = {
+
+        data: [ 
+          { 
+            values: [
+              openQuantity, 
+              this.mapOfItemScanned[productionLineId]
+            ],
+            labels:[ 'Open', 'Completed'] ,
+            type: 'pie', 
+            textinfo: 'label+percent', 
+            insidetextorientation: 'radial',
+            insidetextfont: {size: 18},
+            marker: {
+              // colors: ['#D0D3D4', '#00FF00']
+              colors: colors
+            },
+          },
+        ],
+        layout: {
+          width: length, height: length,   
+          showlegend: false,  
+        },
+    }; 
   }
 
   

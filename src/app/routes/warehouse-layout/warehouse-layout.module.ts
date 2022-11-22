@@ -1,10 +1,12 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
+import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 
 import { DirectivesModule } from '../directives/directives.module'; 
+import { WarehouseLayoutLocationDashboardComponent } from './location-dashboard/location-dashboard.component';
 import { WarehouseLayoutLocationGroupMaintenanceConfirmComponent } from './location-group-maintenance-confirm/location-group-maintenance-confirm.component';
 import { WarehouseLayoutLocationGroupMaintenanceComponent } from './location-group-maintenance/location-group-maintenance.component';
 import { WarehouseLayoutLocationGroupComponent } from './location-group/location-group.component';
@@ -29,7 +31,8 @@ const COMPONENTS: Array<Type<void>> = [
   WarehouseLayoutLocationQueryPopupComponent,
   WarehouseLayoutWarehouseLayoutMaintenanceComponent,
   WarehouseLayoutWarehouseConfigurationComponent,
-  WarehouseLayoutLocationMaintenanceComponent];
+  WarehouseLayoutLocationMaintenanceComponent,
+  WarehouseLayoutLocationDashboardComponent];
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
@@ -41,7 +44,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     DirectivesModule,
     NzDescriptionsModule,
     NzStepsModule, 
-    GooglePlaceModule
+    GooglePlaceModule,
+    NzResultModule,
   ],
   declarations: [
     ...COMPONENTS,

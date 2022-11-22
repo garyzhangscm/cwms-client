@@ -4,6 +4,7 @@ import { SharedModule } from '@shared';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzImageModule } from 'ng-zorro-antd/image';
+import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 
@@ -29,6 +30,7 @@ import { InventoryInventoryAllocationSummaryComponent } from './inventory-alloca
 import { InventoryInventoryAttributeChangeConfirmComponent } from './inventory-attribute-change-confirm/inventory-attribute-change-confirm.component';
 import { InventoryInventoryAttributeChangeComponent } from './inventory-attribute-change/inventory-attribute-change.component';
 import { InventoryInventoryConfigurationComponent } from './inventory-configuration/inventory-configuration.component';
+import { InventoryInventoryDashboardComponent } from './inventory-dashboard/inventory-dashboard.component';
 import { InventoryInventoryMoveComponent } from './inventory-move/inventory-move.component';
 import { InventoryInventoryQuantityChangeConfirmComponent } from './inventory-quantity-change-confirm/inventory-quantity-change-confirm.component';
 import { InventoryInventoryQuantityChangeComponent } from './inventory-quantity-change/inventory-quantity-change.component';
@@ -96,7 +98,8 @@ const COMPONENTS: Array<Type<void>> = [
   InventoryLockMaintenanceComponent,
   InventoryLocationUtilizationSnapshotComponent,
   InventoryInventoryStatusComponent,
-  InventoryInventoryStatusMaintenanceComponent];
+  InventoryInventoryStatusMaintenanceComponent,
+  InventoryInventoryDashboardComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
@@ -112,6 +115,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     UtilModule,
     NzSkeletonModule,NzIconModule ,
     EllipsisModule,
+    NzResultModule,
   ],
   declarations: [
     ...COMPONENTS,
