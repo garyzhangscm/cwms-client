@@ -1,5 +1,6 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
+import { PlotlyModule } from 'angular-plotly.js';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
@@ -46,6 +47,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzStepsModule, 
     GooglePlaceModule,
     NzResultModule,
+    PlotlyModule
   ],
   declarations: [
     ...COMPONENTS,

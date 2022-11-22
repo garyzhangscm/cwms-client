@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { LocationGroup } from '../models/location-group';
+import { StorageLocationGroupUtilization } from '../models/storage-location-group-utilization';
 import { WarehouseService } from './warehouse.service';
 
 @Injectable({
@@ -67,7 +68,13 @@ export class LocationGroupService {
     return this.http.delete('layout/locationgroups', params).pipe(map(res => res.data));
   }
   getQCLocationGroups(): Observable<LocationGroup[]> {
-    let url = `layout//locationgroups/qc?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    let url = `layout/locationgroups/qc?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+ 
+    return this.http.get(url).pipe(map(res => res.data));
+  }
+  
+  getStorageLocationGroupUtilization(): Observable<StorageLocationGroupUtilization[]> {
+    let url = `layout/locationgroups/utilization/storage?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
  
     return this.http.get(url).pipe(map(res => res.data));
   }

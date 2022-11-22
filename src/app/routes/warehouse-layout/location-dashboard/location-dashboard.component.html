@@ -1,9 +1,17 @@
 <page-header></page-header>
 
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 
-<nz-result nzStatus="warning" [nzIcon]="'info-circle'" nzTitle="{{'Under Construction' | i18n}}" 
-> 
-  <div nz-result-extra>
-    Stay tuned. We are working on this page.
-  </div>
-</nz-result>
+    <nz-card nzTitle="location utilization" *ngIf="locationUtilizationData.length > 0">
+
+        <plotly-plot [data]="locationUtilizationData" [layout]="locationUtilizationLayout"></plotly-plot>
+
+    </nz-card>
+    
+    <nz-result nzStatus="warning" [nzIcon]="'info-circle'" nzTitle="{{'No location group is volume tracked' | i18n}}" 
+    *ngIf="locationUtilizationData.length == 0"> 
+    <div nz-result-extra>
+        There's no location group that is setup as volume tracked. In order to see the utilization, please make sure the locations are volume tracked. 
+    </div>
+    </nz-result>
+</nz-spin>
