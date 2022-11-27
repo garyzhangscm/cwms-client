@@ -1,8 +1,14 @@
 <page-header></page-header>
+ 
 
-<nz-result nzStatus="warning" [nzIcon]="'info-circle'" nzTitle="{{'Under Construction' | i18n}}" 
-> 
-  <div nz-result-extra>
-    Stay tuned. We are working on this page.
-  </div>
-</nz-result>
+
+
+<nz-spin [nzSpinning]="isSummaryByVelocitySpinning" [nzSize]="'large'">
+
+  <nz-card nzTitle="Inventory Summary By Velocity" *ngIf="inventorySnapshotSummaryByVelocityData.length > 0">
+
+      <plotly-plot [data]="inventorySnapshotSummaryByVelocityData" [layout]="inventorySnapshotSummaryByVelocityLayout"></plotly-plot>
+
+  </nz-card>
+   
+</nz-spin>

@@ -1,6 +1,7 @@
 import { NgModule, Type } from '@angular/core';
 import { EllipsisModule } from '@delon/abc/ellipsis';
 import { SharedModule } from '@shared';
+import { PlotlyModule } from 'angular-plotly.js';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzImageModule } from 'ng-zorro-antd/image';
@@ -116,6 +117,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzSkeletonModule,NzIconModule ,
     EllipsisModule,
     NzResultModule,
+    PlotlyModule,
   ],
   declarations: [
     ...COMPONENTS,

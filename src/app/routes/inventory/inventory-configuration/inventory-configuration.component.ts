@@ -33,12 +33,15 @@ export class InventoryInventoryConfigurationComponent implements OnInit {
       next: (inventoryConfigurationRes) => {
         inventoryConfigurationRes.forEach(
           inventoryConfiguration => {
+            if (inventoryConfiguration != null) {
 
-            // set the warehouse and company first so we will override with 
-            // the warehouse specific rules
-            inventoryConfiguration.companyId = this.companyService.getCurrentCompany()!.id;
-            inventoryConfiguration.warehouseId = this.warehouseService.getCurrentWarehouse().id;
-            this.inventoryConfigurationMap.set(inventoryConfiguration.type, inventoryConfiguration);
+              // set the warehouse and company first so we will override with 
+              // the warehouse specific rules
+              inventoryConfiguration.companyId = this.companyService.getCurrentCompany()!.id;
+              inventoryConfiguration.warehouseId = this.warehouseService.getCurrentWarehouse().id;
+              this.inventoryConfigurationMap.set(inventoryConfiguration.type, inventoryConfiguration);
+            }
+
             
           }
         )

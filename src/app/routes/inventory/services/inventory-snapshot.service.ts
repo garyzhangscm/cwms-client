@@ -3,9 +3,11 @@ import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { DateTimeService } from '../../util/services/date-time.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { InventorySnapshot } from '../models/inventory-snapshot';
 import { InventorySnapshotDetail } from '../models/inventory-snapshot-detail';
+import { InventorySnapshotSummary } from '../models/inventory-snapshot-summary';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +16,8 @@ export class InventorySnapshotService {
 
   constructor(
     private http: _HttpClient,  
-    private warehouseService: WarehouseService, 
+    private warehouseService: WarehouseService,  
+    private dateTimeService: DateTimeService,
   ) {}
 
   
@@ -43,6 +46,40 @@ export class InventorySnapshotService {
       .pipe(map(res => res.data));
       
   }
+  
+  getInventorySnapshotSummaryByVelocity(startTime?: Date, endTime?:Date): Observable<InventorySnapshotSummary[]> {
+    let url = `inventory/inventory_snapshot/summary/by-velocity?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    
+    
+    if (startTime) {
+      url = `${url}&startTime=${this.dateTimeService.getISODateTimeString(startTime)}`;
+    }
+    if (endTime) {
+      url = `${url}&endTime=${this.dateTimeService.getISODateTimeString(endTime)}`;
+    }
+
+    return this.http
+      .get(url)
+      .pipe(map(res => res.data));
+      
+  }
+  getInventorySnapshotSummaryByABCCategory(startTime?: Date, endTime?:Date): Observable<InventorySnapshotSummary[]> {
+    let url = `inventory/inventory_snapshot/summary/by-abc-category?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    
+    
+    if (startTime) {
+      url = `${url}&startTime=${this.dateTimeService.getISODateTimeString(startTime)}`;
+    }
+    if (endTime) {
+      url = `${url}&endTime=${this.dateTimeService.getISODateTimeString(endTime)}`;
+    }
+
+    return this.http
+      .get(url)
+      .pipe(map(res => res.data));
+      
+  }
+  
   
   generateInventorySnapshot(): Observable<InventorySnapshot> {
     // if we can find the value in local storage, we get it from their.
