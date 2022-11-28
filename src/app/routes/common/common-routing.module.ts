@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from '../auth/guard/auth.guard';
+import { CommonAbcCategoryComponent } from './abc-category/abc-category.component';
 import { CommonClientAddressMaintenanceComponent } from './client-address-maintenance/client-address-maintenance.component';
 import { CommonClientMaintenanceConfimComponent } from './client-maintenance-confim/client-maintenance-confim.component';
 import { CommonClientMaintenanceComponent } from './client-maintenance/client-maintenance.component';
@@ -18,6 +19,7 @@ import { CommonSupplierComponent } from './supplier/supplier.component';
 import { CommonUnitOfMeasureConfirmComponent } from './unit-of-measure-confirm/unit-of-measure-confirm.component';
 import { CommonUnitOfMeasureMaintenanceComponent } from './unit-of-measure-maintenance/unit-of-measure-maintenance.component';
 import { CommonUnitOfMeasureComponent } from './unit-of-measure/unit-of-measure.component';
+import { CommonVelocityComponent } from './velocity/velocity.component';
 
 const routes: Routes = [
   { path: 'client', component: CommonClientComponent, canActivate: [AuthGuard] },
@@ -35,7 +37,9 @@ const routes: Routes = [
   { path: 'customer-maintenance', component: CommonCustomerMaintenanceComponent },
   { path: 'customer-maintenance/confirm', component: CommonCustomerMaintenanceConfirmComponent },
   { path: 'customer-maintenance/address', component: CommonCustomerAddressMaintenanceComponent },
-  { path: 'print-button', component: CommonPrintButtonComponent },];
+  { path: 'print-button', component: CommonPrintButtonComponent },
+  { path: 'abc-category', component: CommonAbcCategoryComponent },
+  { path: 'velocity', component: CommonVelocityComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

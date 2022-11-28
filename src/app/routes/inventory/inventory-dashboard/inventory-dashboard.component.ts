@@ -1,3 +1,4 @@
+import { formatDate } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 
@@ -50,7 +51,7 @@ export class InventoryInventoryDashboardComponent implements OnInit {
           inventorySnapshotSummary => {
             velocities.add(inventorySnapshotSummary.groupByValue);
             inventorySnapshotBatches.add(inventorySnapshotSummary.batchNumber);
-            inventorySnapshotBatchCompleteTimes.set(inventorySnapshotSummary.batchNumber, inventorySnapshotSummary.completeTime);
+            inventorySnapshotBatchCompleteTimes.set(inventorySnapshotSummary.batchNumber, formatDate(inventorySnapshotSummary.completeTime, "YYYY-MM-DD", 'en-US'));
             quantityByVelocity.set(`${inventorySnapshotSummary.batchNumber}-${inventorySnapshotSummary.groupByValue}`, 
                 inventorySnapshotSummary.inventoryQuantity
             );

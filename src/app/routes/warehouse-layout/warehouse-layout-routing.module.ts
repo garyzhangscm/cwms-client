@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { WarehouseLayoutLocationDashboardComponent } from './location-dashboard/location-dashboard.component';
 import { WarehouseLayoutLocationGroupMaintenanceConfirmComponent } from './location-group-maintenance-confirm/location-group-maintenance-confirm.component';
 import { WarehouseLayoutLocationGroupMaintenanceComponent } from './location-group-maintenance/location-group-maintenance.component';
 import { WarehouseLayoutLocationGroupComponent } from './location-group/location-group.component';
@@ -12,7 +13,6 @@ import { WarehouseLayoutWarehouseLocationComponent } from './warehouse-location/
 import { WarehouseLayoutWarehouseMaintenanceConfirmComponent } from './warehouse-maintenance-confirm/warehouse-maintenance-confirm.component';
 import { WarehouseLayoutWarehouseMaintenanceComponent } from './warehouse-maintenance/warehouse-maintenance.component';
 import { WarehouseLayoutWarehouseComponent } from './warehouse/warehouse.component';
-import { WarehouseLayoutLocationDashboardComponent } from './location-dashboard/location-dashboard.component';
 
 const routes: Routes = [
   { path: 'warehouse', component: WarehouseLayoutWarehouseComponent },

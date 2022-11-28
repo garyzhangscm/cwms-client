@@ -23,6 +23,8 @@ import { OutboundCartonizationComponent } from './cartonization/cartonization.co
 import { OutboundCompleteOrderComponent } from './complete-order/complete-order.component';
 import { OutboundGridMaintenanceComponent } from './grid-maintenance/grid-maintenance.component';
 import { OutboundGridComponent } from './grid/grid.component';
+import { OutboundListPickConfigurationMaintenanceComponent } from './list-pick-configuration-maintenance/list-pick-configuration-maintenance.component';
+import { OutboundListPickConfigurationComponent } from './list-pick-configuration/list-pick-configuration.component';
 import { OutboundLoadComponent } from './load/load.component';
 import { OutboundOrderActivityComponent } from './order-activity/order-activity.component';
 import { OutboundOrderDocumentComponent } from './order-document/order-document.component';
@@ -41,8 +43,6 @@ import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
-import { OutboundListPickConfigurationComponent } from './list-pick-configuration/list-pick-configuration.component';
-import { OutboundListPickConfigurationMaintenanceComponent } from './list-pick-configuration-maintenance/list-pick-configuration-maintenance.component';
 
 const COMPONENTS: Array<Type<void>> = [
   OutboundOrderComponent,

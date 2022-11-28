@@ -8,6 +8,7 @@ import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 
 import { DirectivesModule } from '../directives/directives.module';
 import { UtilModule } from '../util/util.module';
+import { CommonAbcCategoryComponent } from './abc-category/abc-category.component';
 import { CommonClientAddressMaintenanceComponent } from './client-address-maintenance/client-address-maintenance.component';
 import { CommonClientMaintenanceConfimComponent } from './client-maintenance-confim/client-maintenance-confim.component';
 import { CommonClientMaintenanceComponent } from './client-maintenance/client-maintenance.component';
@@ -25,6 +26,7 @@ import { CommonSupplierComponent } from './supplier/supplier.component';
 import { CommonUnitOfMeasureConfirmComponent } from './unit-of-measure-confirm/unit-of-measure-confirm.component';
 import { CommonUnitOfMeasureMaintenanceComponent } from './unit-of-measure-maintenance/unit-of-measure-maintenance.component';
 import { CommonUnitOfMeasureComponent } from './unit-of-measure/unit-of-measure.component';
+import { CommonVelocityComponent } from './velocity/velocity.component';
 
 const COMPONENTS: Array<Type<void>> = [
   CommonClientComponent,
@@ -42,7 +44,9 @@ const COMPONENTS: Array<Type<void>> = [
   CommonCustomerMaintenanceComponent,
   CommonCustomerMaintenanceConfirmComponent,
   CommonCustomerAddressMaintenanceComponent,
-  CommonPrintButtonComponent, ];
+  CommonPrintButtonComponent, 
+  CommonAbcCategoryComponent,
+  CommonVelocityComponent];
 
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];

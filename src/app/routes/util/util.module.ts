@@ -34,7 +34,7 @@ import { UtilTableColumnSelectionComponent } from './table-column-selection/tabl
 import { UtilTestDataInitComponent } from './test-data-init/test-data-init.component';
 import { UtilTesterComponent } from './tester/tester.component';
 import { UtilRoutingModule } from './util-routing.module';
-import { UtilWorkOrderQueryPopupComponent } from './work-order-query-popup/work-order-query-popup.component';
+import { UtilWorkOrderQueryPopupComponent } from './work-order-query-popup/work-order-query-popup.component'; 
 
 const COMPONENTS: Array<Type<void>> = [
   UtilFileUploadComponent,  
@@ -61,7 +61,7 @@ const COMPONENTS: Array<Type<void>> = [
   UtilQuickbookAuthComponent,
   UtilQuickbookPermissionComponent,
   UtilQuickbookOnlineConfigurationComponent,
-  UtilRfConfigurationComponent];
+  UtilRfConfigurationComponent, ];
   
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];

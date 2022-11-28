@@ -18,6 +18,7 @@ import { InventoryInventoryAllocationSummaryComponent } from './inventory-alloca
 import { InventoryInventoryAttributeChangeConfirmComponent } from './inventory-attribute-change-confirm/inventory-attribute-change-confirm.component';
 import { InventoryInventoryAttributeChangeComponent } from './inventory-attribute-change/inventory-attribute-change.component';
 import { InventoryInventoryConfigurationComponent } from './inventory-configuration/inventory-configuration.component';
+import { InventoryInventoryDashboardComponent } from './inventory-dashboard/inventory-dashboard.component';
 import { InventoryInventoryMoveComponent } from './inventory-move/inventory-move.component';
 import { InventoryInventoryQuantityChangeConfirmComponent } from './inventory-quantity-change-confirm/inventory-quantity-change-confirm.component';
 import { InventoryInventoryQuantityChangeComponent } from './inventory-quantity-change/inventory-quantity-change.component';
@@ -42,7 +43,6 @@ import { InventoryMovementPathMaintenanceComponent } from './movement-path-maint
 import { InventoryMovementPathComponent } from './movement-path/movement-path.component';
 import { InventoryReplenishmentComponent } from './replenishment/replenishment.component';
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
-import { InventoryInventoryDashboardComponent } from './inventory-dashboard/inventory-dashboard.component';
 
 const routes: Routes = [
   { path: 'inventory', component: InventoryInventoryComponent, canActivate: [AuthGuard] },
