@@ -79,6 +79,22 @@ export class InventorySnapshotService {
       .pipe(map(res => res.data));
       
   }
+  getInventorySnapshotSummaryQuantity(startTime?: Date, endTime?:Date): Observable<InventorySnapshotSummary[]> {
+    let url = `inventory/inventory_snapshot/summary/quantity?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    
+    
+    if (startTime) {
+      url = `${url}&startTime=${this.dateTimeService.getISODateTimeString(startTime)}`;
+    }
+    if (endTime) {
+      url = `${url}&endTime=${this.dateTimeService.getISODateTimeString(endTime)}`;
+    }
+
+    return this.http
+      .get(url)
+      .pipe(map(res => res.data));
+      
+  }
   
   
   generateInventorySnapshot(): Observable<InventorySnapshot> {

@@ -1,4 +1,6 @@
+import { ABCCategory } from '../../common/models/abc-category';
 import { Client } from '../../common/models/client';
+import { Velocity } from '../../common/models/velocity';
 import { AllocationRoundUpStrategyType } from './allocation-round-up-strategy-type.enum';
 import { ItemFamily } from './item-family';
 import { ItemPackageType } from './item-package-type';
@@ -32,5 +34,9 @@ export interface Item {
   imageUrl?: string;
   thumbnailUrl?: string;
 
+  abcCategoryId?: number;
+  abcCategory?: ABCCategory;
+  velocityId?: number;
+  velocity?: Velocity;
 
 }

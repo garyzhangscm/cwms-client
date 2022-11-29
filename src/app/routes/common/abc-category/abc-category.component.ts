@@ -107,7 +107,7 @@ export class CommonAbcCategoryComponent implements OnInit {
           nzWidth: 1000,
     });
     
-  }
+  } 
 
   addABCCategory(): void {
     this.isSpinning = true; 

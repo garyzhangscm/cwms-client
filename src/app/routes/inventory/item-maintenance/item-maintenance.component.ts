@@ -6,13 +6,17 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { ABCCategory } from '../../common/models/abc-category';
 import { Client } from '../../common/models/client';
 import { Unit } from '../../common/models/unit';
 import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { UnitType } from '../../common/models/unit-type';
+import { Velocity } from '../../common/models/velocity';
+import { AbcCategoryService } from '../../common/services/abc-category.service';
 import { ClientService } from '../../common/services/client.service';
 import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
 import { UnitService } from '../../common/services/unit.service';
+import { VelocityService } from '../../common/services/velocity.service';
 import { newItemUOMQuantityValidator } from '../../directives/newItemUOMQuantityValidator'; 
 import { UtilService } from '../../util/services/util.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
@@ -72,6 +76,8 @@ export class InventoryItemMaintenanceComponent implements OnInit {
   companyItem?: Item;
   warehouseSpecificItem?: Item;
   availableClients: Client[] = [];
+  availableVelocities: Velocity[] = [];
+  availableABCCategories: ABCCategory[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -91,6 +97,8 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     private clientService: ClientService,
     private utilService: UtilService,
     private unitService: UnitService,
+    private abcCategoryService: AbcCategoryService,
+    private velocityService: VelocityService,
   ) { 
 
     this.currentWarehouseName = warehouseService.getCurrentWarehouse().name;
@@ -143,6 +151,14 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     // initiate the select control
     this.clientService.getClients().subscribe({
       next: (clientRes) => this.availableClients = clientRes
+       
+    });
+    this.abcCategoryService.loadABCCategories().subscribe({
+      next: (abcCategoryRes) => this.availableABCCategories = abcCategoryRes
+       
+    });
+    this.velocityService.loadVelocities().subscribe({
+      next: (velocityRes) => this.availableVelocities = velocityRes
        
     });
 
@@ -603,6 +619,25 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     }
     else {
       this.currentItem.clientId = undefined;
+    }
+  }
+  
+  velocityChanged() {
+    if (this.currentItem.velocityId) {
+
+      this.currentItem.velocity = this.availableVelocities.find(velocity => velocity.id == this.currentItem.velocityId)
+    }
+    else {
+      this.currentItem.velocity = undefined;
+    }
+  }
+  abcCategoryChanged() {
+    if (this.currentItem.abcCategoryId) {
+
+      this.currentItem.abcCategory = this.availableABCCategories.find(abcCategory => abcCategory.id == this.currentItem.abcCategoryId)
+    }
+    else {
+      this.currentItem.abcCategory = undefined;
     }
   }
 }

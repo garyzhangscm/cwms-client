@@ -4,7 +4,7 @@
 
 <div class="search-result-list"> 
     
-    <st #st [data]="abcCategories" [columns]="columns"  [footer]="tableFoot"  >
+    <st #st [data]="abcCategories" [columns]="columns"  [footer]="tableFoot"  [header]="tableHeader" >
         <ng-template st-row="actionColumn" let-item let-index="index"> 
         
             <button nz-button (click)="removeABCCategory(item)"  nzDanger>
@@ -15,6 +15,14 @@
   
   </div>
 
+  <ng-template #tableHeader> 
+      
+      <div nz-row nzType="flex" nzJustify="end" style="padding: 15px;"> 
+        <a (click)="search()">
+          {{ 'refresh' | i18n }}
+        </a>
+      </div>
+  </ng-template>
   
 <ng-template #tableFoot>
     <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">

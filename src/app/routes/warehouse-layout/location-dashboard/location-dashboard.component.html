@@ -4,6 +4,9 @@
 
     <nz-card nzTitle="location utilization" *ngIf="locationUtilizationData.length > 0">
 
+                <!--
+                  https://plotly.com/javascript/pie-charts/
+                --> 
         <plotly-plot [data]="locationUtilizationData" [layout]="locationUtilizationLayout"></plotly-plot>
 
     </nz-card>

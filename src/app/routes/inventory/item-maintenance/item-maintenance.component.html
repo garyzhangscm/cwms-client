@@ -231,6 +231,32 @@
         </nz-form-control>
       </nz-form-item>
     </div>
+    <div nz-col [nzSpan]="8" >
+      <nz-form-item nzFlex>
+        <nz-form-label for="velocity" [nzSpan]="6">
+          {{ 'velocity' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <nz-select [(ngModel)]="currentItem.velocityId" (ngModelChange)="velocityChanged()" style="width: 150px">
+            <nz-option *ngFor="let velocity of availableVelocities" [nzLabel]="velocity.description" [nzValue]="velocity.id"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8" >
+      <nz-form-item nzFlex>
+        <nz-form-label for="abcCategory" [nzSpan]="6">
+          {{ 'abc-category' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <nz-select [(ngModel)]="currentItem.abcCategoryId" (ngModelChange)="abcCategoryChanged()"  style="width: 150px">
+            <nz-option *ngFor="let abcCategory of availableABCCategories" [nzLabel]="abcCategory.description" [nzValue]="abcCategory.id"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
   </div>
 </div>
 
@@ -379,6 +405,8 @@
         {{ currentItem.allocationRoundUpStrategyValue }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'unit-cost' | i18n }}">{{ currentItem.unitCost }} </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'abc-category' | i18n }}">{{ currentItem.abcCategory?.description }} </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'velocity' | i18n }}">{{ currentItem.velocity?.description }} </nz-descriptions-item>
     </nz-descriptions>
   </nz-card>
   <nz-card>
