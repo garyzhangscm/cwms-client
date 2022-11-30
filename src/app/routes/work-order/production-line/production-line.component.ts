@@ -76,6 +76,28 @@ export class WorkOrderProductionLineComponent implements OnInit {
       ],
       filterFn: (list: boolean[], productionLine: ProductionLine) => list.some(workOrderExclusiveFlag => productionLine.workOrderExclusiveFlag === workOrderExclusiveFlag),
       showFilter: true
+    },    
+    {
+      name: 'report-printer',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: ProductionLine, b: ProductionLine) => this.utilService.compareNullableString(a.reportPrinterName, b.reportPrinterName),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'label-printer',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: ProductionLine, b: ProductionLine) => this.utilService.compareNullableString(a.labelPrinterName, b.labelPrinterName),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
     },
     {
       name: 'enabled',

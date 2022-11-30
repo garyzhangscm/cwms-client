@@ -163,6 +163,38 @@
 
   </div>
 
+
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="6">
+          {{ 'report-printer' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <nz-select nz-input  [(ngModel)]="currentProductionLine.reportPrinterName" style="width: 250px">
+            <nz-option *ngFor="let availablePrint of availablePrinters" [nzLabel]="availablePrint.name"
+              [nzValue]="availablePrint.name">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="6">
+          {{ 'label-printer' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <nz-select nz-input  [(ngModel)]="currentProductionLine.labelPrinterName" style="width: 250px">
+            <nz-option *ngFor="let availablePrint of availablePrinters" [nzLabel]="availablePrint.name"
+              [nzValue]="availablePrint.name">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
 </div>
 
 <!--  Assign item to this production line , along with the capacity-->
@@ -263,6 +295,13 @@
 
       <nz-descriptions-item nzTitle="{{'production-line.model' | i18n}}">
         {{currentProductionLine.model + ""| i18n}}</nz-descriptions-item>
+        
+      <nz-descriptions-item nzTitle="{{'report-printer' | i18n}}">
+        {{currentProductionLine.reportPrinterName + ""| i18n}}</nz-descriptions-item>
+        
+      <nz-descriptions-item nzTitle="{{'label-printer' | i18n}}">
+        {{currentProductionLine.labelPrinterName + ""| i18n}}</nz-descriptions-item>
+
       <nz-descriptions-item nzTitle="{{ 'production-line.generic-purpose' | i18n }}">
         {{currentProductionLine.genericPurpose + ""| i18n}}</nz-descriptions-item>
     </nz-descriptions>

@@ -4,13 +4,16 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ItemService } from '../../inventory/services/item.service';
+import { Printer } from '../../report/models/printer';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
+import { WarehouseConfigurationService } from '../../warehouse-layout/services/warehouse-configuration.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { BillOfMaterial } from '../models/bill-of-material';
 import { ProductionLine } from '../models/production-line';
@@ -58,6 +61,11 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
 
   
   expandSet = new Set<number>(); 
+  newLPNPrintLabelAtProducingFlag: boolean = false;
+  printingNewLPNLabel: boolean = true;
+  availablePrinters: Printer[] = [];
+  labelPrinterName = "";
+
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -67,9 +75,11 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
     private billOfMaterialService: BillOfMaterialService,
     private inventoryStatusService: InventoryStatusService,
     private inventoryService: InventoryService,
+    private printingService: PrintingService,
     private warehouseService: WarehouseService,
     private companyService: CompanyService,
     private messageService: NzMessageService,
+    private warehouseConfigurationService: WarehouseConfigurationService,
     private router: Router,
   ) {
     this.pageTitle = this.i18n.fanyi('page.work-order.produce');
@@ -89,7 +99,49 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
       }
     });
     this.loadAvailableInventoryStatus();
+
+    this.warehouseConfigurationService.getWarehouseConfiguration().subscribe({
+      next: (warehouseConfiguration) => {
+          this.newLPNPrintLabelAtProducingFlag = warehouseConfiguration.newLPNPrintLabelAtProducingFlag
+      }
+    })
+
+    
+    this.loadAvaiablePrinters();
   }
+
+  
+  loadAvaiablePrinters(): void {
+    console.log(`start to load avaiable printers`)
+    if (this.warehouseService.getServerSidePrintingFlag() == true) {
+      console.log(`will get printer from server`)
+      this.printingService.getAllServerPrinters().subscribe(printers => {
+        printers.forEach(
+          (printer, index) => {
+            this.availablePrinters.push({
+              id: index, name: printer, description: printer, warehouseId: this.warehouseService.getCurrentWarehouse().id
+            });
+
+          });
+      })
+
+    }
+    else {
+
+      console.log(`will get printer from local tools`)
+      this.printingService.getAllLocalPrinters().forEach(
+        (printer, index) => {
+          this.availablePrinters.push({
+            id: index, name: printer, description: printer, warehouseId: this.warehouseService.getCurrentWarehouse().id
+          });
+
+        });
+    }
+
+    //console.log(`availablePrinters: ${JSON.stringify(this.availablePrinters)}`);
+
+  }
+
   loadMatchedBillOfMaterial(workOrder: WorkOrder) : void {
 
     this.billOfMaterialService.findMatchedBillOfMaterialByItemName(workOrder.item!.name)
@@ -282,7 +334,7 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
   }
 
   getEmptyWorkOrderProducedInventory(): WorkOrderProducedInventory {
-    return {
+    let inventory : WorkOrderProducedInventory = {
       id: undefined,
 
       lpn: '',
@@ -304,6 +356,31 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
       },
     };
+
+    // let's make the default item package type and inventory status
+    if (this.currentWorkOrder.item != null) {
+      if (this.currentWorkOrder.item.defaultItemPackageType != null) {
+
+        inventory.itemPackageTypeId = this.currentWorkOrder.item.defaultItemPackageType.id;
+        inventory.itemPackageType = this.currentWorkOrder.item.defaultItemPackageType;
+      }
+      else if (this.currentWorkOrder.item.itemPackageTypes.length == 1) {
+        
+        inventory.itemPackageTypeId = this.currentWorkOrder.item.itemPackageTypes[0].id;
+        inventory.itemPackageType = this.currentWorkOrder.item.itemPackageTypes[0];
+      }
+    }
+    this.inventoryStatusService.getAvailableInventoryStatuses().subscribe(
+      {
+        next: (availableInventoryStatuses) => {
+          if (availableInventoryStatuses.length > 0) {
+            inventory.inventoryStatusId = availableInventoryStatuses[0].id;
+            inventory.inventoryStatus = availableInventoryStatuses[0];
+          }
+        }
+      }
+    )
+    return inventory;
   }
   onConsumeByBomQuantityChanged(consumeByBomQuantity: string): void {
     this.consumeByBomQuantity = consumeByBomQuantity;
@@ -360,7 +437,14 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
     }
   }
 
+  removeProducedInventory(index: number) : void {
+    this.workOrderProduceTransaction.workOrderProducedInventories.splice(index, 1);
+  }
+
   productionLineChanged(productionLineName: string) { 
+    
+    this.labelPrinterName = "";
+
     const productionLineAssignments: ProductionLineAssignment[] | undefined =
       this.currentWorkOrder.productionLineAssignments?.filter(
         productionLineAssignment => productionLineAssignment.productionLine.name === productionLineName
@@ -369,6 +453,11 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
       productionLineAssignments.length > 0) {
 
       this.workOrderProduceTransaction.productionLine = productionLineAssignments[0].productionLine; 
+
+      // setup the label printer based on the default printer for the production line
+      if (this.workOrderProduceTransaction.productionLine.labelPrinterName != null) {
+          this.labelPrinterName = this.workOrderProduceTransaction.productionLine.labelPrinterName;
+      }
     }
     else {
       this.workOrderProduceTransaction.productionLine = undefined;

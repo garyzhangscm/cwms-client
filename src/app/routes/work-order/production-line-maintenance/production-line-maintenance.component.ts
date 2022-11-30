@@ -6,8 +6,10 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { TimeUnit } from '../../common/models/time-unit.enum';
 import { UnitOfMeasure } from '../../common/models/unit-of-measure';
+import { PrintingService } from '../../common/services/printing.service';
 import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
 import { ItemService } from '../../inventory/services/item.service';
+import { Printer } from '../../report/models/printer';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
@@ -38,6 +40,8 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
   pageTitle: string;
   newProductionLine = true;
 
+  availablePrinters: Printer[] = [];
+
 
   // All UOM maintained in the system
   availableUnitOfMeasures: UnitOfMeasure[] = [];
@@ -59,6 +63,7 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
     private messageService: NzMessageService,
     private router: Router,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private printingService: PrintingService,
     private activatedRoute: ActivatedRoute,
     private unitOfMeasureService: UnitOfMeasureService,
     private itemService: ItemService,
@@ -123,21 +128,32 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
   ngOnInit(): void {
 
 
+    this.availablePrinters = [];
+    
+    this.loadAvaiablePrinters();
+
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.id) {
+        this.isSpinning = true;
         // Get the production line by ID
         this.productionLineService.getProductionLine(params.id)
-          .subscribe(productionLine => {
-            this.currentProductionLine = productionLine;
-            this.refreshListOfProductionLineCapacityItemData();
-
-            this.newProductionLine = false;
+          .subscribe({
+            next: (productionLine) => {
+              this.currentProductionLine = productionLine;
+              this.refreshListOfProductionLineCapacityItemData();
+  
+              this.newProductionLine = false;
+              this.isSpinning = false;
+            },
+            error: () => this.isSpinning = false
           });
       }
       else {
         // this.currentProductionLine = this.createEmptyProductionLine();
+        this.isSpinning = true;
         this.refreshListOfProductionLineCapacityItemData();
         this.newProductionLine = true;
+        this.isSpinning = false;
       }
     });
 
@@ -149,6 +165,37 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
     // Load all moulds
     this.mouldService.getMoulds().subscribe(mouldsRes =>
       this.availableMoulds = mouldsRes);
+  }
+
+  loadAvaiablePrinters(): void {
+    console.log(`start to load avaiable printers`)
+    if (this.warehouseService.getServerSidePrintingFlag() == true) {
+      console.log(`will get printer from server`)
+      this.printingService.getAllServerPrinters().subscribe(printers => {
+        printers.forEach(
+          (printer, index) => {
+            this.availablePrinters.push({
+              id: index, name: printer, description: printer, warehouseId: this.warehouseService.getCurrentWarehouse().id
+            });
+
+          });
+      })
+
+    }
+    else {
+
+      console.log(`will get printer from local tools`)
+      this.printingService.getAllLocalPrinters().forEach(
+        (printer, index) => {
+          this.availablePrinters.push({
+            id: index, name: printer, description: printer, warehouseId: this.warehouseService.getCurrentWarehouse().id
+          });
+
+        });
+    }
+
+    //console.log(`availablePrinters: ${JSON.stringify(this.availablePrinters)}`);
+
   }
 
   refreshListOfProductionLineCapacityItemData() {

@@ -26,4 +26,8 @@ export interface ProductionLine {
   productionLineCapacities: ProductionLineCapacity[];
   
   model?: string;
+
+  
+  reportPrinterName?: string;
+  labelPrinterName?: string;
 }

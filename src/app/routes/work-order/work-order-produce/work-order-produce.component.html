@@ -56,7 +56,36 @@
 
         </nz-form-control>
       </nz-form-item>
-    </div>
+    </div> 
+  </div>
+  <div nz-row [nzGutter]="24" 
+      *ngIf="workOrderProduceTransaction !== undefined && workOrderProduceTransaction.productionLine !== undefined && newLPNPrintLabelAtProducingFlag == true">
+      
+      <div nz-col [nzSpan]="6">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="18">
+            {{ 'newLPNPrintLabelAtProducingFlag' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="6">
+                <label nz-checkbox [(ngModel)]="printingNewLPNLabel"></label>
+            </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6">
+            {{ 'report-printer' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <nz-select nz-input  [(ngModel)]="labelPrinterName" style="width: 250px">
+              <nz-option *ngFor="let availablePrint of availablePrinters" [nzLabel]="availablePrint.name"
+                [nzValue]="availablePrint.name">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
   </div>
 </nz-card>
 <!-- Table to show inventory  -->
@@ -75,13 +104,15 @@
         <th>{{ 'work-order.expected-quantity' | i18n }}</th>
         <th>{{ 'work-order.produced-quantity' | i18n }}</th>
         <th>{{ 'quantity' | i18n }}</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let inventory of inventoryTable.data; let i = index">
         <td>
           <div class="row">
-            <input appFkey variable="lpn" type="text" [ngModel]="inventory?.lpn" (blur)="lpnChanged($event, inventory)"
+            <input appFkey variable="lpn" type="text" [ngModel]="inventory?.lpn" 
+              (blur)="lpnChanged($event, inventory)" style="width: 120px"
               name="lpn-{{ i }}" id="lpn-{{ i }}" />
           </div>
         </td>
@@ -109,7 +140,11 @@
         </td>
         <td>{{ currentWorkOrder?.expectedQuantity }}</td>
         <td>{{ currentWorkOrder?.producedQuantity }}</td>
-        <td><input type="text" [(ngModel)]="inventory.quantity" name="result-{{ i }}" /></td>
+        <td><input type="text" [(ngModel)]="inventory.quantity" name="result-{{ i }}"  style="width: 100px" /></td>
+        <td>
+          <button nz-button nzDanger (click)="removeProducedInventory(i)">
+            {{ 'remove' | i18n }}
+          </button></td>
       </tr>
     </tbody>
   </nz-table>

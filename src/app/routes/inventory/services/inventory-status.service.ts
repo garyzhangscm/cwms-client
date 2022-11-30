@@ -55,6 +55,9 @@ export class InventoryStatusService {
     const url = `inventory/inventory-statuses?${params}`;
     return this.http.get(url).pipe(map(res => res.data));
   }
+  getAvailableInventoryStatuses(): Observable<InventoryStatus[]> {
+    return this.getInventoryStatuses(undefined, true);
+  }
   getInventoryStatus(id: number): Observable<InventoryStatus> {
     return this.http.get(`inventory/inventory-statuses/${id}`).pipe(map(res => res.data));
   }
