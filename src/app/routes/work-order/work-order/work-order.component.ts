@@ -495,6 +495,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           workOrder.workOrderLines.forEach(
             workOrderLine => itemIdSet.add(workOrderLine.itemId!)
           )
+          workOrder.workOrderByProducts.forEach(
+            workOrderByProduct => itemIdSet.add(workOrderByProduct.itemId!)
+          )
         }
       )
       if (itemIdSet.size > 0) {
@@ -522,6 +525,14 @@ export class WorkOrderWorkOrderComponent implements OnInit {
                     if (itemMap.has(workOrderLine.itemId!)) {
                       workOrderLine.item = itemMap.get(workOrderLine.itemId!)
                       this.loadDefaultStockUom(workOrderLine.item!);
+                    }
+                  }
+                )
+                workOrder.workOrderByProducts.forEach(
+                  byProduct => {                    
+                    if (itemMap.has(byProduct.itemId!)) {
+                      byProduct.item = itemMap.get(byProduct.itemId!)
+                      this.loadDefaultStockUom(byProduct.item!);
                     }
                   }
                 )
@@ -564,6 +575,13 @@ export class WorkOrderWorkOrderComponent implements OnInit {
                   workOrderLine => {                    
                     if (inventoryStatusMap.has(workOrderLine.inventoryStatusId!)) {
                       workOrderLine.inventoryStatus = inventoryStatusMap.get(workOrderLine.inventoryStatusId!)
+                    }
+                  }
+                );
+                workOrder.workOrderByProducts.forEach(
+                  byProduct => {                    
+                    if (inventoryStatusMap.has(byProduct.inventoryStatusId!)) {
+                      byProduct.inventoryStatus = inventoryStatusMap.get(byProduct.inventoryStatusId!)
                     }
                   }
                 )
@@ -1135,6 +1153,21 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     });
   }
 
+  reverseByProduct(workOrder: WorkOrder, inventory: Inventory): void { 
+    
+    this.isSpinning = true;
+
+    this.workOrderService.reverseByProduct(workOrder, inventory.lpn!)
+      .subscribe(workOrderRes => {
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.search()
+
+      },
+        () => this.isSpinning = false);
+
+    
+  }
   reverseProduction(workOrder: WorkOrder, inventory: Inventory): void { 
     
     this.isSpinning = true;
@@ -1516,4 +1549,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     });
   }
     
+  modifyWorkOrder(workOrder: WorkOrder) : void{
+
+    this.router.navigateByUrl(`/work-order/work-order/maintenance?id=${workOrder.id}`);
+  }
 }

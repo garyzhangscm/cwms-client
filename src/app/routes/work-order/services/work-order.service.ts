@@ -116,6 +116,14 @@ export class WorkOrderService {
     let url = `workorder/work-orders/${workOrder.id}/reverse-production?lpn=${httpUrlEncodingCodec.encodeValue(lpn.trim())}`; 
     return this.http.post(url).pipe(map(res => res.data)); 
   }
+  
+  reverseByProduct(workOrder: WorkOrder, lpn: string): Observable<WorkOrder> {
+    
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+    
+    let url = `workorder/work-orders/${workOrder.id}/reverse-by-product?lpn=${httpUrlEncodingCodec.encodeValue(lpn.trim())}`; 
+    return this.http.post(url).pipe(map(res => res.data)); 
+  }
 
 
   getReturnedInventory(workOrder: WorkOrder): Observable<Inventory[]> {

@@ -30,7 +30,7 @@
             {{ 'status' | i18n }}
           </nz-form-label>
           <nz-form-control [nzSpan]="16">
-            <nz-select formControlName="status">
+            <nz-select formControlName="status" nzAllowClear>
                <nz-option
                    *ngFor="let status of workOrderStatuses  | keys"
                     [nzValue]="status.key"
@@ -265,6 +265,9 @@
                       [queryParams]="{workOrderId : data.id!}">{{ 'work-order.deassign-production-line' | i18n }}</a>
                   </li>
                   <li nz-menu-item *ngIf="isWorkOrderChangable(data)">
+                    <a (click)="modifyWorkOrder(data)">{{ 'modify' | i18n }}</a>
+                  </li>
+                  <li nz-menu-item *ngIf="isWorkOrderChangable(data)">
                     <a (click)="changeWorkOrderLine(data)">{{ 'work-order.modify-line' | i18n }}</a>
                   </li>
                   <li nz-menu-item *ngIf="isWorkOrderAllocatable(data)">
@@ -478,8 +481,7 @@
 
               <nz-tab nzTitle=" {{ 'work-order.by-product' | i18n }}"
                 *ngIf="isTabVisible('work-order.work-order.work-order.by-product')">
-                
-                <nz-spin [nzSpinning]="isProducedByProductSpinning" [nzSize]="'large'">
+                 
                   <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="data.workOrderByProducts" nzSize="middle"
                     [nzShowPagination]="false">
   
@@ -498,15 +500,52 @@
                     <tbody>
   
                       <tr *ngFor="let workOrderByProduct of data.workOrderByProducts">
-                        <td>{{ workOrderByProduct.item?.name }}</td>
-                        <td>{{ workOrderByProduct.item?.description }}</td>
-                        <td>{{ workOrderByProduct.expectedQuantity }}</td>
-                        <td>{{ workOrderByProduct.producedQuantity }}</td>
-                        <td>{{ workOrderByProduct.inventoryStatus!.description }}</td>
+                        <td>
+                          
+                          <nz-skeleton-element 
+                              *ngIf="workOrderByProduct.item === undefined || workOrderByProduct.item === null"
+                              nzType="input"
+                              [nzActive]="true"
+                              [nzSize]="'small'"
+                              style="width:75px"
+                            ></nz-skeleton-element> 
+                            {{ workOrderByProduct.item?.name }}</td>
+                        <td>
+                          <nz-skeleton-element 
+                              *ngIf="workOrderByProduct.item === undefined || workOrderByProduct.item === null"
+                              nzType="input"
+                              [nzActive]="true"
+                              [nzSize]="'small'"
+                              style="width:75px"
+                            ></nz-skeleton-element> 
+                            {{ workOrderByProduct.item?.description }}</td>
+                        <td>{{ workOrderByProduct.expectedQuantity }}
+                          <nz-skeleton-element 
+                            *ngIf="workOrderByProduct.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                                && workOrderByProduct.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                            nzType="input"
+                            [nzActive]="true"
+                            [nzSize]="'small'"
+                            style="width:75px"
+                          ></nz-skeleton-element> 
+                          <strong>{{workOrderByProduct.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
+
+                        </td>
+                        <td>{{ workOrderByProduct.producedQuantity }}
+                          <nz-skeleton-element 
+                            *ngIf="workOrderByProduct.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                                && workOrderByProduct.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+                            nzType="input"
+                            [nzActive]="true"
+                            [nzSize]="'small'"
+                            style="width:75px"
+                          ></nz-skeleton-element> 
+                          <strong>{{workOrderByProduct.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
+                        </td>
+                        <td>{{ workOrderByProduct.inventoryStatus?.description }}</td>
                       </tr>
                     </tbody>
-                  </nz-table>
-                </nz-spin>
+                  </nz-table> 
                 
               </nz-tab>
 
@@ -1072,39 +1111,35 @@
                           </p>
                         </td>
                         <td>
+                          
+                          <button nz-button nz-dropdown [nzDropdownMenu]="receivedInventoryActionTpl">
+                            {{ 'action' | i18n }}<i nz-icon nzType="down"></i>
+                          </button>
 
-                          <button nz-button nzType="primary"
-                            *ngIf="inventoryReadyForPutaway(data, inventory) && inventory.inventoryMovements?.length === 0"
-                            (click)="allocateLocation(data, inventory)">{{ 'allocateLocation' | i18n }}</button>
-
-
-                          <div *ngIf="inventory.inventoryMovements && inventory.inventoryMovements.length > 0">
-                            <button nz-button nzType="primary" (click)="reallocateLocation(data, inventory)">{{ 'reallocateLocation'
-                              | i18n }}</button>
-                            <nz-divider nzType="vertical"></nz-divider>
-                            <button nz-button nzType="primary" *ngIf="inventory.inventoryMovements?.length === 1"
-                              (click)="confirmPutaway(data, 0, inventory)">{{ 'putaway' | i18n }}</button>
-
-                            <button nz-button nz-dropdown [nzDropdownMenu]="putawayDestinationTpl"
-                              *ngIf="inventory.inventoryMovements && inventory.inventoryMovements.length > 1">
-                              {{ 'putaway' | i18n }}<i nz-icon nzType="down"></i></button>
-                            <nz-dropdown-menu #putawayDestinationTpl="nzDropdownMenu">
-                              <ul nz-menu>
-                                <li nz-menu-item *ngFor="let inventoryMovement of inventory.inventoryMovements; let i=index">
-                                  <a (click)="confirmPutaway(data, i, inventory)">
-                                    {{ i+1 }} - {{ inventoryMovement.location?.name}}</a>
-                                </li>
-                              </ul>
-                            </nz-dropdown-menu>
-
-
-                          </div>
-
-
-                          <button nz-button nzType="primary"
-                            (click)="openManualPutawayModal(data, inventory, tplManualPutawayModalTitle, tplManualPutawayModalContent)">
-                            {{ 'putaway.manual' | i18n }}</button>
-
+                          <nz-dropdown-menu #receivedInventoryActionTpl="nzDropdownMenu">
+                            <ul nz-menu>
+                              <li nz-menu-item >
+                                <a (click)="reverseByProduct(data, inventory)">{{ 'reverseProduction' | i18n }}</a>
+                              </li>
+                          
+                              <li nz-menu-item *ngIf="inventoryReadyForPutaway(data, inventory) && inventory.inventoryMovements?.length === 0">
+                                <a (click)="allocateLocation(data, inventory)">{{
+                                  'allocateLocation' | i18n }}</a>
+                              </li>
+                              <li nz-menu-item *ngIf="inventory.inventoryMovements && inventory.inventoryMovements.length > 0">
+                                <a (click)="reallocateLocation(data, inventory)">{{
+                                  'reallocateLocation' | i18n }}</a>
+                              </li>
+                              <li nz-menu-item *ngIf="inventory.inventoryMovements && inventory.inventoryMovements.length > 0">
+                                <a (click)="confirmPutaway(data, 0, inventory)">{{
+                                  'putaway' | i18n }}</a>
+                              </li>
+                              <li nz-menu-item>
+                                <a (click)="openManualPutawayModal(data, inventory, tplManualPutawayModalTitle, tplManualPutawayModalContent)">{{
+                                  'putaway.manual' | i18n }}</a>
+                              </li>
+                            </ul>
+                          </nz-dropdown-menu>   
                         </td>
                       </tr>
                     </tbody>

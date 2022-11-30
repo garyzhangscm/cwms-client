@@ -373,6 +373,24 @@ export class WorkOrderWorkOrderMaintenanceComponent implements OnInit {
     return maxSequence;
   }
 
+  byProductItemNameOnBlur(event: Event, byProduct: WorkOrderByProduct): void {
+    const itemName: string = (event.target as HTMLInputElement).value.trim();
+    console.log(`Item of by production change to ${itemName}`);
+    byProduct.itemId = undefined;
+    byProduct.item = undefined;
+    this.getItemByName(itemName).subscribe(
+      {
+        next: (itemsRes) => {
+          if (itemsRes.length > 0) {
+
+            byProduct.itemId = itemsRes[0].id;
+            byProduct.item = itemsRes[0];
+          }
+        }
+      }
+    ) 
+  }
+
   // By Product related functions
   processWorkOrderByProductItemQueryResult(itemName: string, byProduct: WorkOrderByProduct): void {
     
@@ -446,6 +464,7 @@ export class WorkOrderWorkOrderMaintenanceComponent implements OnInit {
         trackingExpirationDateFlag: undefined,
       },
       expectedQuantity: 0,
+      producedQuantity: 0,
 
       inventoryStatusId: undefined,
       inventoryStatus: undefined,

@@ -3,7 +3,7 @@
 <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
     <nz-card>        
         <div nz-row [nzGutter]="24"> 
-          <div nz-col [nzSpan]="8">
+          <div nz-col [nzSpan]="6">
             <nz-form-item>
                 <nz-form-label [nzSpan]="3">
                 {{ 'threePartyLogisticsFlag' | i18n }}
@@ -14,13 +14,75 @@
                 </nz-form-control>
             </nz-form-item>
           </div>
-          <div nz-col [nzSpan]="8">
+          <div nz-col [nzSpan]="6">
             <nz-form-item>
-                <nz-form-label [nzSpan]="6">
+                <nz-form-label [nzSpan]="12">
                 {{ 'listPickEnabledFlag' | i18n }}
                 </nz-form-label>
-                <nz-form-control [nzSpan]="18">
+                <nz-form-control [nzSpan]="12">
                     <label nz-checkbox [(ngModel)]="currentWarehouseConfiguration.listPickEnabledFlag"></label>
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>
+          
+          <div nz-col [nzSpan]="6">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="18">
+                {{ 'newLPNPrintLabelAtReceivingFlag' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="6">
+                    <label nz-checkbox [(ngModel)]="currentWarehouseConfiguration.newLPNPrintLabelAtReceivingFlag"></label>
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>
+          
+          <div nz-col [nzSpan]="6">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="18">
+                {{ 'newLPNPrintLabelAtProducingFlag' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="6">
+                    <label nz-checkbox [(ngModel)]="currentWarehouseConfiguration.newLPNPrintLabelAtProducingFlag"></label>
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>  
+        
+        <div nz-row [nzGutter]="24"> 
+          
+          <div nz-col [nzSpan]="6">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="18">
+                {{ 'newLPNPrintLabelAtAdjustmentFlag' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="6">
+                    <label nz-checkbox [(ngModel)]="currentWarehouseConfiguration.newLPNPrintLabelAtAdjustmentFlag"></label>
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="12">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="18">
+                {{ 'reuseLPNAfterRemovedFlag' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="6">
+                    <label nz-checkbox [(ngModel)]="currentWarehouseConfiguration.reuseLPNAfterRemovedFlag"></label>
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>
+          
+          <div nz-col [nzSpan]="6">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="18">
+                {{ 'reuseLPNAfterShippedFlag' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="6">
+                    <label nz-checkbox [(ngModel)]="currentWarehouseConfiguration.reuseLPNAfterShippedFlag"></label>
 
                 </nz-form-control>
             </nz-form-item>
@@ -35,7 +97,7 @@
                 <nz-form-control [nzSpan]="18">
 
 
-                  <nz-select [(ngModel)]="currentWarehouseConfiguration.printingStrategy">
+                  <nz-select [(ngModel)]="currentWarehouseConfiguration.printingStrategy" nzAllowClear>
                     <nz-option *ngFor="let printingStrategy of printingStrategyList | keys" [nzValue]="printingStrategy.key"
                       nzLabel="{{ 'PRINTING-STRATEGY-' + printingStrategy.key | i18n }}"></nz-option>
                   </nz-select>

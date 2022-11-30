@@ -11,4 +11,12 @@ export interface WarehouseConfiguration {
     listPickEnabledFlag: boolean;
 
     printingStrategy?: PrintingStrategy;
+
+    
+    newLPNPrintLabelAtReceivingFlag: boolean;
+    newLPNPrintLabelAtProducingFlag: boolean;
+    newLPNPrintLabelAtAdjustmentFlag: boolean;
+    
+    reuseLPNAfterRemovedFlag: boolean;
+    reuseLPNAfterShippedFlag: boolean;
 }

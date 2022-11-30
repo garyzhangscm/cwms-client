@@ -31,6 +31,12 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
         warehouse: this.warehouseService.getCurrentWarehouse(),
         threePartyLogisticsFlag: false,
         listPickEnabledFlag: false,
+        newLPNPrintLabelAtReceivingFlag: false,
+        newLPNPrintLabelAtProducingFlag: false,
+        newLPNPrintLabelAtAdjustmentFlag: false,
+        
+        reuseLPNAfterRemovedFlag: false,
+        reuseLPNAfterShippedFlag: false,
       }
   }
 

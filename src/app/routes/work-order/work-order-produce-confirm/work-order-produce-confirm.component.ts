@@ -56,8 +56,22 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
 
     this.workOrderProduceTransaction = JSON.parse(sessionStorage.getItem('currentWorkOrderProduceTransaction')!);
 
+    // skip all the transaction with 0 quantity
+    this.removeZeroQuantity();
+
     this.setupWorkOrderConsumptionInformation(); 
     this.savingInProcess = false;
+  }
+
+  removeZeroQuantity() {
+    this.workOrderProduceTransaction.workOrderProducedInventories = 
+      this.workOrderProduceTransaction.workOrderProducedInventories.filter(
+        workOrderProducedInventory => workOrderProducedInventory.quantity != null && workOrderProducedInventory.quantity > 0
+      );
+      this.workOrderProduceTransaction.workOrderByProductProduceTransactions = 
+        this.workOrderProduceTransaction.workOrderByProductProduceTransactions.filter(
+          byProduct => byProduct.quantity != null && byProduct.quantity > 0
+        );
   }
   setupWorkOrderConsumptionInformation(): void {
     let workOrderProducedQuantity = 0;

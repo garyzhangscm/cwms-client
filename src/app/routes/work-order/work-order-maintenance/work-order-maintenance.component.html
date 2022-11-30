@@ -39,7 +39,7 @@
           <input appFkey variable="work-order-number" nz-input [(ngModel)]="currentWorkOrder.number"
             appNewNumberValidator 
             (nextNumberAvailableEvent)="workOrderNumberChanged($event)"  required #bomNumber="ngModel"
-            [ngModelOptions]="{ updateOn: 'blur' }" />
+            [ngModelOptions]="{ updateOn: 'blur' }" [disabled]="!newWorkOrder"/>
 
           <ng-template #bomNumberErrorTpl let-control>
             <div *ngIf="bomNumber!.invalid != null  && (bomNumber!.dirty != null  || bomNumber!.touched != null )">
@@ -62,7 +62,7 @@
         <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
             
             <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" style="width: 100%;">
-                <input nz-input [(ngModel)]="currentWorkOrder.item!.name" (blur)="itemNameOnBlur($event)" />
+                <input nz-input [(ngModel)]="currentWorkOrder.item!.name" (blur)="itemNameOnBlur($event)" [disabled]="!newWorkOrder"/>
               </nz-input-group>
               <ng-template #suffixIconButton>
                 <app-inventory-item-query-popup (recordSelected)="processWorkOrderItemQueryResult($event)">
@@ -150,13 +150,13 @@
           <td>{{ workOrderLine.expectedQuantity }}</td>
           <td>
             <!-- Allow the user to change the quantity of an existing work order line-->
-            <nz-input-group nzCompact>
+            <nz-input-group nzCompact *ngIf="newWorkOrder">
               <input nz-input [(ngModel)]="mapOfNewLineExpectedQuantity[workOrderLine.number!]"
                 style="width: 50%;" />
             </nz-input-group>
           </td>
           <td>
-            <button nz-button nzDanger (click)="removeWorkOrderLine(workOrderLine)">
+            <button nz-button nzDanger (click)="removeWorkOrderLine(workOrderLine)" *ngIf="newWorkOrder" >
               {{ 'delete' | i18n }}
             </button>
           </td>
@@ -165,7 +165,7 @@
     </nz-table>
   </div>
   <div nz-row nzJustify="start" style="padding: 15px;">
-    <button nz-button nzType="primary" (click)="addNewWorkOrderLine()">
+    <button nz-button nzType="primary" (click)="addNewWorkOrderLine()" *ngIf="newWorkOrder" >
       {{ 'add' | i18n }}
     </button>
   </div>
@@ -197,7 +197,8 @@
           </td>
 
           <td>
-            <button nz-button nzDanger (click)="removeInstruction(workOrderInstruction)">
+            <button nz-button nzDanger (click)="removeInstruction(workOrderInstruction)"
+                *ngIf="newWorkOrder" >
               {{ 'delete' | i18n }}
             </button>
           </td>
@@ -206,7 +207,7 @@
     </nz-table>
   </div>
   <div nz-row nzJustify="start" style="padding-top: 15px;">
-    <button nz-button nzType="primary" (click)="addNewInstruction()">
+    <button nz-button nzType="primary" (click)="addNewInstruction()" *ngIf="newWorkOrder" >
       {{ 'add' | i18n }}
     </button>
   </div>
@@ -241,7 +242,8 @@
 
             <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" 
                 nzCompact nzCompact *ngIf="byProduct.id == null">
-                <input nz-input [(ngModel)]="byProduct.item!.name"  style="width: 150px;"/>
+                <input nz-input [(ngModel)]="byProduct.item!.name"  style="width: 150px;"
+                (blur)="byProductItemNameOnBlur($event, byProduct)"/>
               </nz-input-group>
               <ng-template #suffixIconButton>
                 <app-inventory-item-query-popup (recordSelected)="processWorkOrderByProductItemQueryResult($event, byProduct)">
