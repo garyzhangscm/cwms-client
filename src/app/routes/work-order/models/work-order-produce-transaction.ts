@@ -16,4 +16,8 @@ export interface WorkOrderProduceTransaction {
   workOrderByProductProduceTransactions: WorkOrderByProductProduceTransaction[];
   workOrderKPITransactions: WorkOrderKpiTransaction[];
   productionLine?: ProductionLine;
+
+  printingNewLPNLabel?: boolean;
+  labelPrinterName?: string;
+  labelPrinterIndex?: number;
 }

@@ -2,11 +2,16 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { environment } from '@env/environment'; 
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
+import { PrintPageSize } from '../../common/models/print-page-size.enum';
+import { PrintingService } from '../../common/services/printing.service';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ItemService } from '../../inventory/services/item.service';
+import { ReportType } from '../../report/models/report-type.enum';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { WorkOrderLineConsumeTransaction } from '../models/work-order-line-consume-transaction';
@@ -40,6 +45,7 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
   pageTitle: string;
   
   expandSet = new Set<number>(); 
+  
 
   constructor(
     private workOrderProduceTransactionService: WorkOrderProduceTransactionService,
@@ -47,6 +53,8 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
     private titleService: TitleService,
     private router: Router,
     private messageService: NzMessageService,
+    private workOrderService: WorkOrderService,
+    private printingService: PrintingService
   ) {
     this.pageTitle = this.i18n.fanyi('page.work-order.produce.confirm');
   }
@@ -143,11 +151,20 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
   }
 
   saveWorkOrderProduceResults(): void {
+    
     this.savingInProcess = true;
     this.isSpinning = true;
     this.workOrderProduceTransactionService.saveWorkOrderProduceTransaction(this.workOrderProduceTransaction).subscribe(
       workOrderProduceTransactionRes => {
-        this.messageService.success(this.i18n.fanyi('message.work-order.produced-success'));
+        this.messageService.success(this.i18n.fanyi('message.work-order.produced-success')); 
+
+        if (this.workOrderProduceTransaction.printingNewLPNLabel == true 
+            && this.workOrderProduceTransaction.labelPrinterName != ""
+            && this.workOrderProduceTransaction.labelPrinterIndex != null
+            && this.workOrderProduceTransaction.labelPrinterIndex > -1) {
+          // we will print the lpn label for all lpns
+          this.printNewLPNLabels(workOrderProduceTransactionRes);
+        } 
         setTimeout(() => {
           this.savingInProcess = false;
           this.isSpinning = false;
@@ -160,6 +177,69 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
         this.isSpinning = false;
       },
     );
+  }
+  
+  printNewLPNLabels(workOrderProduceTransaction : WorkOrderProduceTransaction) { 
+    let lpnQuantityMap : Map<string, number> = new Map();
+    // setup the LPN quantity map
+    // add the produced inventory and by product to the map
+    // so we can start to print the LPN
+    workOrderProduceTransaction.workOrderProducedInventories.forEach(
+      inventory => {
+        let quantity = 0;
+        if (lpnQuantityMap.has(inventory.lpn!)) {
+          quantity = lpnQuantityMap.get(inventory.lpn!)!;
+        }
+        lpnQuantityMap.set(inventory.lpn!, quantity + inventory.quantity!);
+      }
+    );
+    workOrderProduceTransaction.workOrderByProductProduceTransactions.forEach(
+      inventory => {
+        let quantity = 0;
+        if (lpnQuantityMap.has(inventory.lpn!)) {
+          quantity = lpnQuantityMap.get(inventory.lpn!)!;
+        }
+        lpnQuantityMap.set(inventory.lpn!, quantity + inventory.quantity!);
+      }
+    );
+    console.log(`lpnQuantityMap: ${JSON.stringify(lpnQuantityMap)}`)
+    console.log(`lpnQuantityMap.size: ${lpnQuantityMap.size}`)
+    console.log(`this.workOrderProduceTransaction.labelPrinterName: ${this.workOrderProduceTransaction.labelPrinterName}`)
+    lpnQuantityMap.forEach((value, key) => {
+      console.log(`(value, key): ${value}, ${key}`);
+      // value : quantity
+      // key: production line name
+      this.workOrderService.generatePrePrintLPNLabelInBatch(
+        workOrderProduceTransaction.workOrder!.id!, key, value, 1, 
+        workOrderProduceTransaction.productionLine!.name, 1, this.workOrderProduceTransaction.labelPrinterName)
+        .subscribe({
+          next: (printResult) => {
+            // send the result to the printer
+            const printFileUrl
+              = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
+            console.log(`will print file: ${printFileUrl}`);
+            this.printingService.printFileByName(
+              "Work Order LPN Label",
+              printResult.fileName,
+              ReportType.PRODUCTION_LINE_ASSIGNMENT_LABEL,
+              this.workOrderProduceTransaction.labelPrinterIndex!,
+              this.workOrderProduceTransaction.labelPrinterName!,
+              // event.physicalCopyCount,
+              1, // we will always only print one copy. If the user want to print multiple copies
+                  // the paramter will be passed into the 'generate' command instead of the print command
+                  // so that we will have labels printed in uncollated format, not collated format 
+              PrintPageOrientation.Portrait,
+              PrintPageSize.Letter,
+              workOrderProduceTransaction.productionLine!.name, 
+              printResult);
+            
+              // this.isSpinning = false;
+              //this.messageService.success(this.i18n.fanyi("report.print.printed"));
+              
+          }, 
+          error: () => this.isSpinning = false
+        })
+    })
   }
 
   onIndexChange(index: number): void {

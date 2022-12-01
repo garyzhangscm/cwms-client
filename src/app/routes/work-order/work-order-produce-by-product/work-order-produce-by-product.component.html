@@ -55,13 +55,14 @@
         <th>{{ 'work-order.by-product.expectedQuantity' | i18n }}</th>
         <th>{{ 'work-order.by-product.producedQuantity' | i18n }}</th>
         <th>{{ 'quantity' | i18n }}</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let workOrderByProductProduceTransaction of inventoryTable.data; let i = index">
         <td>
           <div class="row">
-            <input appFkey variable="lpn" type="text" [ngModel]="workOrderByProductProduceTransaction?.lpn"
+            <input appFkey variable="lpn" style="width: 120px" type="text" [ngModel]="workOrderByProductProduceTransaction?.lpn"
               (blur)="lpnChanged($event, workOrderByProductProduceTransaction)" name="lpn-{{ i }}" id="lpn-{{ i }}" />
           </div>
         </td>
@@ -97,7 +98,12 @@
         </td>
         <td>{{ workOrderByProductProduceTransaction.workOrderByProduct?.expectedQuantity }}</td>
         <td>{{ workOrderByProductProduceTransaction.workOrderByProduct?.producedQuantity }}</td>
-        <td><input type="text" [(ngModel)]="workOrderByProductProduceTransaction.quantity" name="result-{{ i }}" /></td>
+        <td><input type="text" [(ngModel)]="workOrderByProductProduceTransaction.quantity" style="width: 120px" name="result-{{ i }}" /></td>
+        
+        <td>
+          <button nz-button nzDanger (click)="removeByProductInventory(i)">
+            {{ 'remove' | i18n }}
+          </button></td>
       </tr>
     </tbody>
   </nz-table>

@@ -59,7 +59,7 @@
     </div> 
   </div>
   <div nz-row [nzGutter]="24" 
-      *ngIf="workOrderProduceTransaction !== undefined && workOrderProduceTransaction.productionLine !== undefined && newLPNPrintLabelAtProducingFlag == true">
+      *ngIf="workOrderProduceTransaction !== undefined && workOrderProduceTransaction.productionLine !== undefined && workOrderProduceTransaction.printingNewLPNLabel == true">
       
       <div nz-col [nzSpan]="6">
         <nz-form-item>
@@ -67,7 +67,7 @@
             {{ 'newLPNPrintLabelAtProducingFlag' | i18n }}
             </nz-form-label>
             <nz-form-control [nzSpan]="6">
-                <label nz-checkbox [(ngModel)]="printingNewLPNLabel"></label>
+                <label nz-checkbox [(ngModel)]="workOrderProduceTransaction.printingNewLPNLabel"></label>
             </nz-form-control>
         </nz-form-item>
       </div>
@@ -78,7 +78,7 @@
             {{ 'report-printer' | i18n }}
           </nz-form-label>
           <nz-form-control [nzSpan]="18">
-            <nz-select nz-input  [(ngModel)]="labelPrinterName" style="width: 250px">
+            <nz-select nz-input  [(ngModel)]="workOrderProduceTransaction.labelPrinterName" style="width: 250px" (ngModelChange)="labelPrinterChanged()">
               <nz-option *ngFor="let availablePrint of availablePrinters" [nzLabel]="availablePrint.name"
                 [nzValue]="availablePrint.name">
               </nz-option>

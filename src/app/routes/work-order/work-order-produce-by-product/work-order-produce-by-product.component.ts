@@ -129,7 +129,7 @@ export class WorkOrderWorkOrderProduceByProductComponent implements OnInit {
   }
 
   getEmptyWorkOrderByProductProducedInventory(): WorkOrderByProductProduceTransaction {
-    return {
+    let workOrderByProductProduceTransaction: WorkOrderByProductProduceTransaction = {
       id: undefined,
       lpn: '',
       workOrderByProduct: undefined,
@@ -154,13 +154,46 @@ export class WorkOrderWorkOrderProduceByProductComponent implements OnInit {
       locationId: undefined,
       location: undefined,
     };
+    if (this.workOrderProduceTransaction.workOrder?.workOrderByProducts.length == 1 && 
+      this.workOrderProduceTransaction.workOrder?.workOrderByProducts[0].item != null) {
+      // there's only one work order by product, then we will fill in the item by default
+      this.itemChanged(this.workOrderProduceTransaction.workOrder?.workOrderByProducts[0].item.name, 
+        workOrderByProductProduceTransaction);
+    }
+    
+    this.inventoryStatusService.getAvailableInventoryStatuses().subscribe(
+      {
+        next: (availableInventoryStatuses) => {
+          if (availableInventoryStatuses.length > 0) {
+            workOrderByProductProduceTransaction.inventoryStatusId = availableInventoryStatuses[0].id;
+            workOrderByProductProduceTransaction.inventoryStatus = availableInventoryStatuses[0];
+          }
+        }
+      }
+    )
+
+    return workOrderByProductProduceTransaction;
   }
 
   itemChanged(itemName: string, workOrderByProductProduceTransaction: WorkOrderByProductProduceTransaction): void {
-    console.log(`Item name changed to ${itemName}`);
+    // console.log(`Item name changed to ${itemName}`);
     const workOrderByProduct = this.mapOfWorkOrderByProduct[itemName];
-    console.log(`we got workOrderByProduct: ${JSON.stringify(workOrderByProduct)}`);
+    // console.log(`we got workOrderByProduct: ${JSON.stringify(workOrderByProduct)}`);
     workOrderByProductProduceTransaction.workOrderByProduct = workOrderByProduct;
+
+    // if the item only have one item package type, then fill in the default one
+    if (workOrderByProduct.item != null) {
+      if (workOrderByProduct.item.defaultItemPackageType != null) {
+
+        workOrderByProductProduceTransaction.itemPackageTypeId = workOrderByProduct.item.defaultItemPackageType.id;
+        workOrderByProductProduceTransaction.itemPackageType = workOrderByProduct.item.defaultItemPackageType;
+      }
+      else if (workOrderByProduct.item.itemPackageTypes.length == 1) {
+        
+        workOrderByProductProduceTransaction.itemPackageTypeId = workOrderByProduct.item.itemPackageTypes[0].id;
+        workOrderByProductProduceTransaction.itemPackageType = workOrderByProduct.item.itemPackageTypes[0];
+      }
+    }
   }
 
   addKPIInfo(): void {
@@ -190,5 +223,14 @@ export class WorkOrderWorkOrderProduceByProductComponent implements OnInit {
         );
         break;
     }
+  }
+
+  
+  removeByProductInventory(index: number) : void { 
+    this.workOrderProduceTransaction.workOrderByProductProduceTransactions.splice(index, 1);
+
+    // will need to expand the array and assign it back so it will refresh the table display
+    this.workOrderProduceTransaction.workOrderByProductProduceTransactions = [
+      ...this.workOrderProduceTransaction.workOrderByProductProduceTransactions]; 
   }
 }

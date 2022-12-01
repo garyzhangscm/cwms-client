@@ -61,10 +61,8 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
 
   
   expandSet = new Set<number>(); 
-  newLPNPrintLabelAtProducingFlag: boolean = false;
-  printingNewLPNLabel: boolean = true;
-  availablePrinters: Printer[] = [];
-  labelPrinterName = "";
+  newLPNPrintLabelAtProducingFlag: boolean = false; 
+  availablePrinters: Printer[] = []; 
 
 
   constructor(
@@ -99,12 +97,6 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
       }
     });
     this.loadAvailableInventoryStatus();
-
-    this.warehouseConfigurationService.getWarehouseConfiguration().subscribe({
-      next: (warehouseConfiguration) => {
-          this.newLPNPrintLabelAtProducingFlag = warehouseConfiguration.newLPNPrintLabelAtProducingFlag
-      }
-    })
 
     
     this.loadAvaiablePrinters();
@@ -168,12 +160,20 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
           workOrderByProductProduceTransactions: [],
           workOrderKPITransactions: [],
           productionLine: undefined,
+          printingNewLPNLabel: false,
+          labelPrinterName: ""
     }; 
     if (this.workOrderProduceTransaction.consumeByBomQuantity && 
         this.consumeByWorkOrderBOM) {
         this.workOrderProduceTransaction.consumeByBom =
             this.workOrderProduceTransaction.workOrder?.billOfMaterial;
     }
+    
+    this.warehouseConfigurationService.getWarehouseConfiguration().subscribe({
+      next: (warehouseConfiguration) => {
+          this.workOrderProduceTransaction.printingNewLPNLabel = warehouseConfiguration.newLPNPrintLabelAtProducingFlag
+      }
+    })
   }
 
   consumeByWorkOrderBOMChanged() {
@@ -437,13 +437,16 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
     }
   }
 
-  removeProducedInventory(index: number) : void {
+  removeProducedInventory(index: number) : void { 
     this.workOrderProduceTransaction.workOrderProducedInventories.splice(index, 1);
+
+    // will need to expand the array and assign it back so it will refresh the table display
+    this.workOrderProduceTransaction.workOrderProducedInventories = [...this.workOrderProduceTransaction.workOrderProducedInventories]; 
   }
 
   productionLineChanged(productionLineName: string) { 
     
-    this.labelPrinterName = "";
+    this.workOrderProduceTransaction.labelPrinterName = "";
 
     const productionLineAssignments: ProductionLineAssignment[] | undefined =
       this.currentWorkOrder.productionLineAssignments?.filter(
@@ -456,12 +459,19 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
 
       // setup the label printer based on the default printer for the production line
       if (this.workOrderProduceTransaction.productionLine.labelPrinterName != null) {
-          this.labelPrinterName = this.workOrderProduceTransaction.productionLine.labelPrinterName;
+        this.workOrderProduceTransaction.labelPrinterName = this.workOrderProduceTransaction.productionLine.labelPrinterName;
+        // setup the label printer index as well. The local printing plug in may need the index as well
+        
+        this.labelPrinterChanged();
       }
     }
     else {
       this.workOrderProduceTransaction.productionLine = undefined;
     }
+  }
+  labelPrinterChanged() {
+    this.workOrderProduceTransaction.labelPrinterIndex = this.availablePrinters.findIndex(printer => printer.name == this.workOrderProduceTransaction.labelPrinterName);
+     
   }
   
   loadNonpickedInventory(workOrderLineConsumeTransaction: WorkOrderLineConsumeTransaction) {
