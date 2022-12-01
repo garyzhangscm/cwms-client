@@ -163,9 +163,29 @@ export class ReportReportComponent implements OnInit {
 
   setupReportUrl(reports: Report[]): void {
     reports.forEach(report => {
-      
-      let fileUrl = `${environment.api.baseUrl}/resource/reports/templates?fileName=${
-        this.isLabel(report.type!) ? `${report.fileName  }.prn` : `${report.fileName  }.jrxml` }`;
+      let fileUrl = `${environment.api.baseUrl}/resource/reports/templates?`;
+      if(this.isLabel(report.type!)) {
+
+        if (report.fileName.endsWith(".prn")) {
+
+          fileUrl = `${fileUrl}fileName=${report.fileName}`;
+        }
+        else {
+          
+          fileUrl = `${fileUrl}fileName=${report.fileName}.prn`;
+        }
+      }
+      else {
+
+        if (report.fileName.endsWith(".jrxml")) {
+
+          fileUrl = `${fileUrl}fileName=${report.fileName}`;
+        }
+        else {
+          
+          fileUrl = `${fileUrl}fileName=${report.fileName}.jrxml`;
+        }
+      } 
 
       if (report.companyId) {
         fileUrl = `${fileUrl}&companyId=${report.companyId}`;
