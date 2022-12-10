@@ -1553,4 +1553,57 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
     this.router.navigateByUrl(`/work-order/work-order/maintenance?id=${workOrder.id}`);
   }
+
+  
+  printLPNReport(event: any, inventory: Inventory) {
+
+    this.isSpinning = true;
+    
+    // console.log(`start to print lPN label for inventory \n${inventory}`);
+    this.inventoryService.generateLPNLabel(
+      inventory.lpn!, event.physicalCopyCount, event.printerName)
+      .subscribe(printResult => {
+
+        // send the result to the printer
+        const printFileUrl
+          = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
+        console.log(`will print file: ${printFileUrl}`);
+        this.printingService.printFileByName(
+          "LPN Label",
+          printResult.fileName,
+          // ReportType.LPN_LABEL,
+          printResult.type,   // The report type may be LPN_LABEL , RECEIVING_LPN_LABEL or PRODUCTION_LINE_ASSIGNMENT_LABEL
+          event.printerIndex,
+          event.printerName,
+          event.physicalCopyCount,
+          PrintPageOrientation.Landscape,
+          PrintPageSize.A4,
+          inventory.location?.locationGroup?.name, 
+          printResult);
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi("report.print.printed"));
+      },
+        () => {
+          this.isSpinning = false;
+        },
+
+      );
+
+  }
+  previewLPNReport(inventory: Inventory): void {
+
+
+    this.isSpinning = true;
+    this.inventoryService.generateLPNLabel(inventory.lpn!)
+      .subscribe(printResult => {
+        // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+        this.isSpinning = false;
+        this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
+
+      },
+        () => {
+          this.isSpinning = false;
+        },
+      );
+  }
 }

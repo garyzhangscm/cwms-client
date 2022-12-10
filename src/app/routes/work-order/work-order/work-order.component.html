@@ -1039,6 +1039,11 @@
                             </ul>
                           </nz-dropdown-menu>
                           
+                          <nz-divider nzType="vertical"></nz-divider>
+                          <cwms-common-print-button style='padding-left: 20px;' (print)="printLPNReport($event, inventory)"
+                            (preview)="previewLPNReport(inventory)">
+                          </cwms-common-print-button>
+                          
                         </td>
                       </tr>
                     </tbody>
@@ -1104,14 +1109,12 @@
                         <td>{{ inventory.itemPackageType?.name }}</td>
                         <td>{{ inventory.quantity }}</td>
                         <td>{{  inventory.inventoryStatus?.description }}</td>
-
                         <td>
                           <p *ngFor="let inventoryMovement of inventory.inventoryMovements; let i = index">
                             {{ i+1 }} - {{ inventoryMovement.location?.name}}
                           </p>
                         </td>
-                        <td>
-                          
+                        <td>                          
                           <button nz-button nz-dropdown [nzDropdownMenu]="receivedInventoryActionTpl">
                             {{ 'action' | i18n }}<i nz-icon nzType="down"></i>
                           </button>
@@ -1140,6 +1143,11 @@
                               </li>
                             </ul>
                           </nz-dropdown-menu>   
+                          
+                          <nz-divider nzType="vertical"></nz-divider>
+                          <cwms-common-print-button style='padding-left: 20px;' (print)="printLPNReport($event, inventory)"
+                            (preview)="previewLPNReport(inventory)">
+                          </cwms-common-print-button>
                         </td>
                       </tr>
                     </tbody>

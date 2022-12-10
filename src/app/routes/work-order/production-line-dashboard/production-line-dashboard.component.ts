@@ -125,12 +125,14 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
 
     // console.log(`check if we are in the shift ${productionShiftSchedule.shiftStartTime} ~ ${productionShiftSchedule.shiftEndTime}, shift end next day? ${productionShiftSchedule.shiftEndNextDay}`);
     if (productionShiftSchedule.shiftEndNextDay) {
-      var tomorrow = formatDate(now.setDate(now.getDate() + 1), "YYYY-MM-dd", "en-US");
+      var tomorrow = formatDate(new Date().setDate(now.getDate() + 1), "YYYY-MM-dd", "en-US");
       // ok the shift end in next day, then we will check if current time is within
       // the start end and the end time of next day
       var shiftStart =   new Date(`${today} ${productionShiftSchedule.shiftStartTime}`);
-      var shiftEnd =   new Date(`${tomorrow} ${productionShiftSchedule.shiftStartTime}`);
+      var shiftEnd =   new Date(`${tomorrow} ${productionShiftSchedule.shiftEndTime}`);
       // console.log(`1. check shift with date, [${shiftStart}, ${shiftEnd}]`);
+      // console.log(`1.1. differenceInSeconds(now, shiftStart): ${differenceInSeconds(now, shiftStart)}`);
+      // console.log(`1.2. differenceInSeconds(now, shiftEnd): ${differenceInSeconds(now, shiftEnd)}`);
       //differenceInSeconds return the first time - second time in seconds
       if (differenceInSeconds(now, shiftStart) >= 0 && differenceInSeconds(now, shiftEnd) <= 0) { 
 
@@ -139,13 +141,14 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
         // console.log(`1. current shift is set to, [${this.currentShiftStartTime}, ${this.currentShiftEndTime}]`);
       }
       else {
-        // the shift may start from yesterday while we are still in the shift
-        var now = new Date(); 
-        var yesterday = formatDate(now.setDate(now.getDate() - 1), "YYYY-MM-dd", "en-US");
+        // the shift may start from yesterday while we are still in the shift 
+        var yesterday = formatDate(new Date().setDate(now.getDate() - 1), "YYYY-MM-dd", "en-US");
         
         shiftStart =   new Date(`${yesterday} ${productionShiftSchedule.shiftStartTime}`);
-        shiftEnd =   new Date(`${today} ${productionShiftSchedule.shiftStartTime}`);
+        shiftEnd =   new Date(`${today} ${productionShiftSchedule.shiftEndTime}`);
         // console.log(`2. get shift with date [${shiftStart}, ${shiftEnd}]`);
+        // console.log(`2.1. differenceInSeconds(now, shiftStart): ${differenceInSeconds(now, shiftStart)}`);
+        // console.log(`2.2. differenceInSeconds(now, shiftEnd): ${differenceInSeconds(now, shiftEnd)}`);
         if (differenceInSeconds(now, shiftStart) >= 0 && differenceInSeconds(now, shiftEnd) <= 0) { 
           this.currentShiftStartTime = shiftStart;
           this.currentShiftEndTime = shiftEnd;
@@ -160,6 +163,10 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
       // console.log(`3. will setup start time by ${today} ${productionShiftSchedule.shiftEndTime}`)
       var shiftEnd =   new Date(`${today} ${productionShiftSchedule.shiftEndTime}`);
       // console.log(`3. get shift with date [${shiftStart}, ${shiftEnd}]`);
+      
+      // console.log(`3. get shift with date [${shiftStart}, ${shiftEnd}]`);
+      // console.log(`3.1. differenceInSeconds(now, shiftStart): ${differenceInSeconds(now, shiftStart)}`);
+      // console.log(`3.2. differenceInSeconds(now, shiftEnd): ${differenceInSeconds(now, shiftEnd)}`);
       //differenceInSeconds return the first time - second time in seconds
       if (differenceInSeconds(now, shiftStart) >= 0 && differenceInSeconds(now, shiftEnd) <= 0) { 
         this.currentShiftStartTime = shiftStart;
