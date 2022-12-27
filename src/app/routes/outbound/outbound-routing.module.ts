@@ -32,6 +32,7 @@ import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
+import { OutboundParcelByOrderComponent } from './parcel-by-order/parcel-by-order.component';
 
 const routes: Routes = [
   { path: 'order', component: OutboundOrderComponent, canActivate: [AuthGuard]  },
@@ -66,7 +67,8 @@ const routes: Routes = [
   { path: 'load', component: OutboundLoadComponent },
   { path: 'order-document', component: OutboundOrderDocumentComponent },
   { path: 'list-pick-configuration', component: OutboundListPickConfigurationComponent },
-  { path: 'list-pick-configuration/maintenance', component: OutboundListPickConfigurationMaintenanceComponent }];
+  { path: 'list-pick-configuration/maintenance', component: OutboundListPickConfigurationMaintenanceComponent },
+  { path: 'parcel-by-order', component: OutboundParcelByOrderComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

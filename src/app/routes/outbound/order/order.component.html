@@ -551,6 +551,11 @@
                 [queryParams]="{id : item.id}">
                 {{ 'upload-document' | i18n }}</a> 
             </li>
+            <li nz-menu-item >
+              <a routerLink="/outbound/parcel-by-order" routerLinkActive="active"
+                [queryParams]="{id : item.id}">
+                {{ 'ship-parcel' | i18n }}</a> 
+            </li>
           </ul>
         </nz-dropdown-menu>
       </ng-template>
