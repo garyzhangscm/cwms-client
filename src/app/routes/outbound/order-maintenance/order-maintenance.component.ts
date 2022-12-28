@@ -397,6 +397,8 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   }
 
   copyAddressInformation(order: Order, customer: Customer) {
+    order.shipToContactorFirstname = customer.contactorFirstname;
+    order.shipToContactorLastname = customer.contactorLastname;
     order.shipToAddressCountry = customer.addressCountry;
     order.shipToAddressState  = customer.addressState;
     order.shipToAddressCounty = customer.addressCounty;

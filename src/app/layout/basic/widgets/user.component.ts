@@ -95,6 +95,8 @@ export class HeaderUserComponent {
   changePasswordRequestForm!: FormGroup;
   changePasswordRequestModal!: NzModalRef;
   newAlertCount = 0;
+
+  getUserWebMessageFunction?: any;
   
   @ViewChild('tplChangePasswordModalTitle', { static: true })
   tplChangePasswordModalTitle!: TemplateRef<any>;
@@ -128,10 +130,14 @@ export class HeaderUserComponent {
 
   reloadUserInreadWebMessageAlertCount() {
 
-    this.webMessageAlertService.getUserInreadWebMessageAlertCount().subscribe({
-      next: (count) => this.newAlertCount = count,
-      error: () => {}
-    }) 
+    // only continue if the user already login 
+    if (this.tokenService.get() != null && this.tokenService.get()?.token != null) {
+
+      this.webMessageAlertService.getUserInreadWebMessageAlertCount().subscribe({
+        next: (count) => this.newAlertCount = count,
+        error: () => {}
+      }) 
+    }
   }
   logout(): void {
     this.tokenService.clear();

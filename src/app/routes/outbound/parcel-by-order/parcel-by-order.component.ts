@@ -1,7 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -35,6 +36,8 @@ export class OutboundParcelByOrderComponent implements OnInit {
     private orderService: OrderService, 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private parcelService: ParcelService,
+    private messageService: NzMessageService,
+    private router: Router, 
     private warehouseService: WarehouseService) { 
       this.currentWarehouse = warehouseService.getCurrentWarehouse();
       this.pageTitle = this.i18n.fanyi('parcel-by-order');
@@ -84,11 +87,17 @@ export class OutboundParcelByOrderComponent implements OnInit {
   }
   confirm() {
     this.isSpinning = true;
-    this.parcelService.confirmEasyPostShipment(this.currentEasyPostShipment!.id, this.currentEasyPostShipment!.selectedRate)
+    this.parcelService.confirmEasyPostShipment(this.currentOrder!.id!, 
+      this.currentEasyPostShipment!.id, this.currentEasyPostShipment!.selectedRate)
     .subscribe({
-      next: (shipmentRes) => {
-        console.log(`parcel shipment is confirmed`);
-        this.isSpinning = false;
+      next: () => {
+        console.log(`parcel shipment is confirmed`); 
+        
+        this.messageService.success(this.i18n.fanyi('message.save.complete'));
+        setTimeout(() => {
+          this.isSpinning = false;
+          this.router.navigateByUrl(`/outbound/order?number=${this.currentOrder?.number}`);
+        }, 500);
       }, 
       error: () => this.isSpinning = false
     })

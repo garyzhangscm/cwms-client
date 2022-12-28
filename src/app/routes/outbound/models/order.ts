@@ -39,8 +39,8 @@ export interface Order {
   billToCustomer?: Customer;
 
   // Ship to Address
-  shipTocontactorFirstname?: string;
-  shipTocontactorLastname?: string;
+  shipToContactorFirstname?: string;
+  shipToContactorLastname?: string;
 
   shipToAddressCountry?: string;
   shipToAddressState?: string;

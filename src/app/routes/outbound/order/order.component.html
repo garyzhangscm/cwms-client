@@ -514,6 +514,60 @@
               </nz-list-item>
             </nz-list>
           </nz-tab>
+          
+          <nz-tab nzTitle=" {{ 'parcel-package' | i18n }}">
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="mapOfParcelPackages[item.id!]" nzSize="middle"
+              [nzShowPagination]="true" #parcelPackageTable>
+              <thead>
+                <th>
+                  {{ 'trackingCode' | i18n }}
+                </th>
+                <th>
+                  {{ 'status' | i18n }}
+                </th>
+                <th>
+                  {{ 'size' | i18n }}
+                </th>
+                <th>
+                  {{ 'weight' | i18n }}
+                </th>
+                <th>
+                  {{ 'carrier' | i18n }}
+                </th>
+                <th>
+                  {{ 'service' | i18n }}
+                </th>
+                <th>
+                  {{ 'deliveryDays' | i18n }}
+                </th>
+                <th>
+                  {{ 'rate' | i18n }}
+                </th>
+                <th>
+                  {{ 'insurance' | i18n }}
+                </th>
+                <th>
+                  {{ 'label' | i18n }}
+                </th>
+              </thead>
+              <tbody >
+                <tr *ngFor="let packages of parcelPackageTable.data">
+
+                  <td><a [href]="packages.trackingUrl" target="_blank">{{ packages.trackingCode }}</a> </td> 
+                  
+                  <td>{{ packages.status }}</td>
+                  <td>{{ packages.length }} x {{ packages.width }} x {{ packages.height }}</td>
+                  <td>{{ packages.weight }}</td>
+                  <td>{{ packages.carrier }}</td>
+                  <td>{{ packages.service }}</td>
+                  <td>{{ packages.deliveryDays }}</td>
+                  <td>{{ packages.rate | currency: 'USD' }} </td>
+                  <td>{{ packages.insurance | currency: 'USD' }}</td>
+                  <td><a [href]="packages.labelUrl" target="_blank">{{ 'print-label' | i18n }}</a></td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </nz-tab>
         </nz-tabset>
       </ng-template>
 

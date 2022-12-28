@@ -8,8 +8,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-
-import { Customer } from '../../common/models/customer';
+ 
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { PrintPageSize } from '../../common/models/print-page-size.enum'; 
 import { PrintingService } from '../../common/services/printing.service';
@@ -17,10 +16,8 @@ import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { Printer } from '../../report/models/printer';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
-import { ReportType } from '../../report/models/report-type.enum';
-import { ColumnItem } from '../../util/models/column-item';
-import { LocalCacheService } from '../../util/services/local-cache.service';
-import { UtilService } from '../../util/services/util.service';
+import { ReportType } from '../../report/models/report-type.enum'; 
+import { LocalCacheService } from '../../util/services/local-cache.service'; 
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
@@ -33,11 +30,13 @@ import { OrderCategory } from '../models/order-category';
 import { OrderDocument } from '../models/order-document';
 import { OrderLine } from '../models/order-line';
 import { OrderStatus } from '../models/order-status.enum';
+import { ParcelPackage } from '../models/parcel-package';
 import { PickWork } from '../models/pick-work';
 import { ShortAllocation } from '../models/short-allocation';
 import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
 import { OrderDocumentService } from '../services/order-document.service';
 import { OrderService } from '../services/order.service';
+import { ParcelPackageService } from '../services/parcel-package.service';
 import { PickService } from '../services/pick.service';
 import { ShipmentLineService } from '../services/shipment-line.service';
 import { ShortAllocationService } from '../services/short-allocation.service';
@@ -49,167 +48,7 @@ import { ShortAllocationService } from '../services/short-allocation.service';
   styleUrls: ['./order.component.less'],
 })
 export class OutboundOrderComponent implements OnInit {
-/**
- * 
- *  
-  listOfColumns: ColumnItem[] = [
-    {
-      name: 'order.number',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Order, b: Order) => this.utilService.compareNullableString(a.number, b.number),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false,
-      rowspan: 2,
-      colspan: 1,
-    },{
-      name: 'order.category',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Order, b: Order) => this.utilService.compareNullableString(a.number, b.number),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false,
-      rowspan: 2,
-      colspan: 1,
-    },  {
-      name: 'status',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Order, b: Order) => this.utilService.compareNullableString(a.status.toString(), b.status.toString()),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false,
-      rowspan: 2,
-      colspan: 1,
-    }, {
-      name: 'shipToCustomer',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Order, b: Order) => this.utilService.compareNullableObjField(a.shipToCustomer, b.shipToCustomer, 'name'),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false,
-      rowspan: 2,
-      colspan: 1,
-    }, {
-      name: 'order.billToCustomer',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Order, b: Order) => this.utilService.compareNullableObjField(a.billToCustomer, b.billToCustomer, 'name'),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false,
-      rowspan: 2,
-      colspan: 1,
-    }, {
-      name: 'order.totalItemCount',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalItemCount, b.totalItemCount),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false,
-      rowspan: 2,
-      colspan: 1,
-    }, {
-      name: 'order.totalOrderQuantity',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalExpectedQuantity, b.totalExpectedQuantity),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false,
-      rowspan: 2,
-      colspan: 1,
-    }, {
-      name: 'order.totalOpenQuantity',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalOpenQuantity, b.totalOpenQuantity),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false,
-      rowspan: 2,
-      colspan: 1,
-    }, {
-      name: 'shipment.stage.locationGroup',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Order, b: Order) => this.utilService.compareNullableObjField(a.stageLocationGroup, b.stageLocationGroup, "name"),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false,
-      rowspan: 2,
-      colspan: 1,
-    }, {
-      name: 'shipment.stage.location',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Order, b: Order) => this.utilService.compareNullableObjField(a.stageLocation, b.stageLocation, "name"),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false,
-      rowspan: 2,
-      colspan: 1,
-    }, {
-      name: 'order.totalInprocessQuantity',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalInprocessQuantity, b.totalInprocessQuantity),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false,
-      rowspan: 1,
-      colspan: 3,
-    }, {
-      name: 'order.totalShippedQuantity',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Order, b: Order) => this.utilService.compareNullableNumber(a.totalShippedQuantity, b.totalShippedQuantity),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false,
-      rowspan: 2,
-      colspan: 1,
-    },
-
-  ];
-  expandSet = new Set<number>();
-  listOfSelection = [
-    {
-      text: this.i18n.fanyi(`select-all-rows`),
-      onSelect: () => {
-        //this.onAllChecked(true);
-      }
-    },
-  ];
-  */
+ 
   setOfCheckedId = new Set<number>();
   checked = false;
   indeterminate = false;
@@ -239,6 +78,7 @@ export class OutboundOrderComponent implements OnInit {
     private router: Router,
     private pickService: PickService,
     private shortAllocationService: ShortAllocationService,
+    private parcelPackageService: ParcelPackageService,
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
     private inventoryService: InventoryService, 
@@ -277,6 +117,8 @@ export class OutboundOrderComponent implements OnInit {
   // list of record with printing in process
   mapOfPicks: { [key: string]: PickWork[] } = {};
   mapOfShortAllocations: { [key: string]: ShortAllocation[] } = {};
+  
+  mapOfParcelPackages: { [key: string]: ParcelPackage[] } = {};
 
   mapOfPickedInventory: { [key: string]: Inventory[] } = {};
 
@@ -825,6 +667,7 @@ export class OutboundOrderComponent implements OnInit {
       this.showPicks(order);
       this.showShortAllocations(order);
       this.showPickedInventory(order);
+      this.showParcelPackages(order);
     // }
   }
 
@@ -854,6 +697,15 @@ export class OutboundOrderComponent implements OnInit {
           shortAllocation => shortAllocation.status != ShortAllocationStatus.CANCELLED
         )
       } );
+  }
+  showParcelPackages(order: Order): void {
+    this.parcelPackageService
+      .getAll(order.id!)
+      .subscribe({
+        next: (packageRes) => {
+          this.mapOfParcelPackages[order.id!] = packageRes;
+        }
+      });
   }
   showPickedInventory(order: Order): void {
     // Get all the picks and then load the pikced inventory

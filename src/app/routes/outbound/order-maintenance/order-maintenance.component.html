@@ -247,13 +247,37 @@
           </div>
 
           <div *ngIf="existingCustomer === 'false'">
+            
+            <div nz-row [nzGutter]="24" >
+              <div nz-col [nzSpan]="8">            
+                <nz-form-item nzFlex>
+                  <nz-form-label [nzSpan]="4">
+                    {{ 'firstname' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="20" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                    <input nz-input [(ngModel)]="newCustomer!.contactorFirstname" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div nz-col [nzSpan]="8">            
+                <nz-form-item nzFlex>
+                  <nz-form-label [nzSpan]="4">
+                    {{ 'lastname' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="20" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                    <input nz-input [(ngModel)]="newCustomer!.contactorLastname" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
             <div nz-row [nzGutter]="24" >
               <div nz-col [nzSpan]="24">            
                 <nz-form-item nzFlex>
-                  <nz-form-label [nzSpan]="2">
+                  <nz-form-label [nzSpan]="1">
                     {{ 'address' | i18n }}
                   </nz-form-label>
-                  <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                  <nz-form-control [nzSpan]="20" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
                     <input nz-input ngx-google-places-autocomplete (onAddressChange)="handleNewCustomerAddressChange($event)" />
                   </nz-form-control>
                 </nz-form-item>

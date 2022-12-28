@@ -111,7 +111,7 @@
         {{ order?.shipToCustomer?.contactorFirstname }} {{ order?.shipToCustomer?.contactorLastname }}
       </span>
       <span *ngIf="order?.shipToCustomer === null">
-        {{ order?.shipTocontactorFirstname }} {{ order?.shipTocontactorLastname }}
+        {{ order?.shipToContactorFirstname }} {{ order?.shipToContactorLastname }}
       </span>
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="{{'shipToCustomer?.address' | i18n}}">

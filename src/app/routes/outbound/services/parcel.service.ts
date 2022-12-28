@@ -34,13 +34,14 @@ export class ParcelService {
     return this.http.post(`outbound/parcel/easy-post/shipment`, null, params).pipe(map(res => res.data));
   }
 
-  confirmEasyPostShipment(shipmentId: string,
+  confirmEasyPostShipment(orderId: number, shipmentId: string,
     rate: EasyPostRate): Observable<EasyPostShipment> {
      
      
     let params = new HttpParams();
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);
     params = params.append('shipmentId', shipmentId); 
+    params = params.append('orderId', orderId); 
     
     return this.http.post(`outbound/parcel/easy-post/shipment-confirm`, rate, params).pipe(map(res => res.data));
   }
