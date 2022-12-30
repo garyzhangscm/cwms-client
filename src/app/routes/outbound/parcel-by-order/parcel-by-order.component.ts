@@ -48,8 +48,13 @@ export class OutboundParcelByOrderComponent implements OnInit {
     
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.id) {
+        this.isSpinning = true;
         this.orderService.getOrder(params.id).subscribe({
-          next: (orderRes) => this.currentOrder = orderRes
+          next: (orderRes) => {
+            this.currentOrder = orderRes;
+            this.isSpinning = false;
+          },
+          error: () => this.isSpinning = false
         })
       }
     });
@@ -67,6 +72,19 @@ export class OutboundParcelByOrderComponent implements OnInit {
         // load the rate for the your input
         this.loadRate();
       }
+  }
+  readyForNextStep() : boolean {
+    
+    if (this.stepIndex == 0) {
+        // only allow the user to continue if the user fill in the length / width / height
+        return this.packageLength > 0 && this.packageWidth > 0 && this.packageHeight > 0 && this.packageWeight > 0;
+    }
+    else if (this.stepIndex == 1) {
+      // only allow the user to continue if the user choose a rate
+      return this.currentEasyPostShipment?.selectedRate != null;
+
+    };
+    return true;
   }
 
 

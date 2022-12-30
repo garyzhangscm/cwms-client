@@ -202,11 +202,11 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
         lpnQuantityMap.set(inventory.lpn!, quantity + inventory.quantity!);
       }
     );
-    console.log(`lpnQuantityMap: ${JSON.stringify(lpnQuantityMap)}`)
-    console.log(`lpnQuantityMap.size: ${lpnQuantityMap.size}`)
-    console.log(`this.workOrderProduceTransaction.labelPrinterName: ${this.workOrderProduceTransaction.labelPrinterName}`)
+    // console.log(`lpnQuantityMap: ${JSON.stringify(lpnQuantityMap)}`)
+    // console.log(`lpnQuantityMap.size: ${lpnQuantityMap.size}`)
+    // console.log(`this.workOrderProduceTransaction.labelPrinterName: ${this.workOrderProduceTransaction.labelPrinterName}`)
     lpnQuantityMap.forEach((value, key) => {
-      console.log(`(value, key): ${value}, ${key}`);
+      // console.log(`(value, key): ${value}, ${key}`);
       // value : quantity
       // key: production line name
       this.workOrderService.generatePrePrintLPNLabelInBatch(

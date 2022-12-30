@@ -210,7 +210,7 @@
             <span>{{ 'steps.previous' | i18n }}</span>
         </button>
         <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
-        <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 2">
+        <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 2" [disabled]="!readyForNextStep()">
             <span>{{ 'steps.next' | i18n }}</span>
         </button>
         <nz-divider nzType="vertical"></nz-divider>
