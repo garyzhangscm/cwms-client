@@ -54,9 +54,18 @@ export class PrintingService {
     return this.lodop!.GET_PRINTER_COUNT();
   }
 
-  getAllServerPrinters(): Observable<string[]> {
+  getAllServerPrinters(printingStrategy?: PrintingStrategy): Observable<string[]> {
     const url = 'resource/server-printers';
-    return this.http.get(url).pipe(map(res => res.data));
+    
+    let params = new HttpParams();
+    
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);
+    
+    if (printingStrategy) {
+      params = params.append('printingStrategy', printingStrategy);
+
+    } 
+    return this.http.get(url, printingStrategy).pipe(map(res => res.data));
   }
   getAllLocalPrinters(): string[] {
     var allLocalPrinters: string[] = [];

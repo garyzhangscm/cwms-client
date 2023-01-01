@@ -8,6 +8,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 import { Printer } from '../../report/models/printer';
+import { PrintingStrategy } from '../../warehouse-layout/models/printing-strategy.enum';
+import { WarehouseConfigurationService } from '../../warehouse-layout/services/warehouse-configuration.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service'; 
 import { PrintingService } from '../services/printing.service';
 
@@ -33,6 +35,8 @@ export class CommonPrintButtonComponent implements OnInit {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private warehouseService: WarehouseService,
+    private warehouseConfigurationService: WarehouseConfigurationService,
+    private messageService: NzMessageService,
     private printingService: PrintingService) { }
 
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
@@ -80,32 +84,41 @@ export class CommonPrintButtonComponent implements OnInit {
 
   loadAvaiablePrinters(): void {
     console.log(`start to load avaiable printers`)
-    if (this.warehouseService.getServerSidePrintingFlag() == true) {
-      console.log(`will get printer from server`)
-      this.printingService.getAllServerPrinters().subscribe(printers => {
-        printers.forEach(
-          (printer, index) => {
-            this.availablePrinters.push({
-              id: index, name: printer, description: printer, warehouseId: this.warehouseService.getCurrentWarehouse().id
+    this.warehouseConfigurationService.getWarehouseConfiguration().subscribe({
+      next: (warehouseConfiguration) => {
+
+        if (warehouseConfiguration.printingStrategy === PrintingStrategy.SERVER_PRINTER ||
+          warehouseConfiguration.printingStrategy === PrintingStrategy.LOCAL_PRINTER_SERVER_DATA) {
+
+          console.log(`will get printer from server`)
+          this.printingService.getAllServerPrinters().subscribe(printers => {
+            printers.forEach(
+              (printer, index) => {
+                this.availablePrinters.push({
+                  id: index, name: printer, description: printer, warehouseId: this.warehouseService.getCurrentWarehouse().id
+                });
+    
+              });
+          })
+        } 
+        else  if (warehouseConfiguration.printingStrategy === PrintingStrategy.LOCAL_PRINTER_LOCAL_DATA) {
+          
+          console.log(`will get printer from local tools`)
+          this.printingService.getAllLocalPrinters().forEach(
+            (printer, index) => {
+              this.availablePrinters.push({
+                id: index, name: printer, description: printer, warehouseId: this.warehouseService.getCurrentWarehouse().id
+              });
+
             });
+        }
+        else {
+          
+          this.messageService.error(this.i18n.fanyi('not-able-to-load-printers'));
 
-          });
-      })
-
-    }
-    else {
-
-      console.log(`will get printer from local tools`)
-      this.printingService.getAllLocalPrinters().forEach(
-        (printer, index) => {
-          this.availablePrinters.push({
-            id: index, name: printer, description: printer, warehouseId: this.warehouseService.getCurrentWarehouse().id
-          });
-
-        });
-    }
-
-    //console.log(`availablePrinters: ${JSON.stringify(this.availablePrinters)}`);
+        }
+      }
+    }) 
 
   }
 
