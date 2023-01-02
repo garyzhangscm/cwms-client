@@ -21,8 +21,8 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
   
   printingStrategyList = PrintingStrategy;
 
-  constructor(private http: _HttpClient, 
-    private companyService: CompanyService,
+  constructor(
+    
     private warehouseService: WarehouseService,
     private messageService: NzMessageService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,

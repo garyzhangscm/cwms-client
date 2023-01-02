@@ -2,7 +2,7 @@ import { EasyPostCarrier } from "./easy-post-carrier";
 
 export interface EasyPostConfiguration {
     
-    id: number;
+    id?: number;
 
     warehouseId: number;
 

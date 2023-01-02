@@ -2,12 +2,12 @@ import { Carrier } from "./carrier";
 
 export interface EasyPostCarrier {
     
-    id: number;
+    id?: number;
 
     warehouseId: number;
 
     carrierId: number;
-    carrier: Carrier;
+    carrier?: Carrier;
     accountNumber: string;
  
 }
