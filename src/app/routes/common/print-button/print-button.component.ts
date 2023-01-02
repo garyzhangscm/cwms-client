@@ -91,7 +91,7 @@ export class CommonPrintButtonComponent implements OnInit {
           warehouseConfiguration.printingStrategy === PrintingStrategy.LOCAL_PRINTER_SERVER_DATA) {
 
           console.log(`will get printer from server`)
-          this.printingService.getAllServerPrinters().subscribe(printers => {
+          this.printingService.getAllServerPrinters(warehouseConfiguration.printingStrategy).subscribe(printers => {
             printers.forEach(
               (printer, index) => {
                 this.availablePrinters.push({

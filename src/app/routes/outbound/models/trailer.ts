@@ -1,14 +1,9 @@
-import { Stop } from './stop';
-
-import { TrailerType } from './trailer-type.enum';
-
-import { Carrier } from '../../common/models/carrier';
-
-import { CarrierServiceLevel } from '../../common/models/carrier-service-level';
-
+import { Carrier } from '../../transportation/models/carrier';
+import { CarrierServiceLevel } from '../../transportation/models/carrier-service-level';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
-
+import { Stop } from './stop';
 import { TrailerStatus } from './trailer-status.enum';
+import { TrailerType } from './trailer-type.enum';
 
 export interface Trailer {
   id: number;

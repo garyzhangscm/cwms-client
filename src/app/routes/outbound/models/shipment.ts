@@ -1,7 +1,8 @@
-import { Carrier } from '../../common/models/carrier';
-import { CarrierServiceLevel } from '../../common/models/carrier-service-level';
+ 
 import { Client } from '../../common/models/client';
 import { Customer } from '../../common/models/customer';
+import { Carrier } from '../../transportation/models/carrier';
+import { CarrierServiceLevel } from '../../transportation/models/carrier-service-level';
 import { ShipmentLine } from './shipment-line';
 import { ShipmentStatus } from './shipment-status.enum';
 

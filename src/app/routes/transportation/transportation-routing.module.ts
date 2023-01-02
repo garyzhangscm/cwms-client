@@ -8,6 +8,9 @@ import { CommonTractorComponent } from './tractor/tractor.component';
 import { TransportationTrailerAppointmentMaintenanceComponent } from './trailer-appointment-maintenance/trailer-appointment-maintenance.component';
 import { CommonTrailerMaintenanceComponent } from './trailer-maintenance/trailer-maintenance.component';
 import { CommonTrailerComponent } from './trailer/trailer.component';
+import { TransportationCarrierComponent } from './carrier/carrier.component';
+import { TransportationEasyPostComponent } from './easy-post/easy-post.component';
+import { TransportationCarrierMaintenanceComponent } from './carrier-maintenance/carrier-maintenance.component';
 
 const routes: Routes = [
   { path: 'tractor', component: CommonTractorComponent },
@@ -16,7 +19,10 @@ const routes: Routes = [
   { path: 'trailer/maintenance', component: CommonTrailerMaintenanceComponent },
   { path: 'trailer/appointment/maintenance', component: TransportationTrailerAppointmentMaintenanceComponent },
   { path: 'tractor/appointment/maintenance', component: TransportationTractorAppointmentMaintenanceComponent },
-  { path: 'tractor/schedule', component: TransportationTractorScheduleComponent }];
+  { path: 'tractor/schedule', component: TransportationTractorScheduleComponent },
+  { path: 'carrier', component: TransportationCarrierComponent },
+  { path: 'easy-post', component: TransportationEasyPostComponent },
+  { path: 'carrier-maintenance', component: TransportationCarrierMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

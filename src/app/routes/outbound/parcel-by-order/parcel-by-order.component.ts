@@ -93,7 +93,7 @@ export class OutboundParcelByOrderComponent implements OnInit {
     this.parcelService.createEasyPostShipment(
       this.currentOrder!.id!, 
       this.packageLength, this.packageWidth, this.packageHeight, 
-      this.packageWeight
+      this.packageWeight,  
     ).subscribe({
       next: (shipmentRes) => {
 
@@ -122,7 +122,21 @@ export class OutboundParcelByOrderComponent implements OnInit {
   }
 
   rateSelected(rate: EasyPostRate) {
-    console.log(`the user chose rate: ${JSON.stringify(rate)}`);
+    // console.log(`the user chose rate: ${JSON.stringify(rate)}`);
+    console.log(`the user chose rate: ${rate.carrier}`);
+    console.log(`this.currentOrder?.carrier?.name: ${this.currentOrder?.carrier?.name}`);
+
+    // see if the orders has specific carrier and service level
+    if (this.currentOrder?.carrier?.name != null && this.currentOrder.carrier.name != rate.carrier) {
+      // check if the carrier matches
+      this.messageService.error(this.i18n.fanyi("selected-carrier-doesnot-match-with-order"));
+      return;
+    }
+    if (this.currentOrder?.carrierServiceLevel != null && this.currentOrder.carrierServiceLevel.name != rate.service) {
+      // check if the carrier matches
+      this.messageService.error(this.i18n.fanyi("selected-carrier-carrier-doesnot-match-with-order"));
+      return;
+    }
 
     this.currentEasyPostShipment!.selectedRate = rate;
   }

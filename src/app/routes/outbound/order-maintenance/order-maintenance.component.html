@@ -27,7 +27,7 @@
     </nz-steps>
 
     <!-- Let the user input the order information -->
-    <div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
+    <div class="small-card" *ngIf="stepIndex === 0 && currentOrder != null" style="padding-top: 20px;"  >
  
 
         <div nz-row [nzGutter]="24">
@@ -41,7 +41,7 @@
         
 
                   <input appFkey variable="order-number" type="text" nz-input [(ngModel)]="currentOrder!.number" required 
-                    (blur)="orderNumberChange($event)"/>
+                    (blur)="orderNumberChange($event)" [disabled]="!newOrder"/>
                   <ng-template #orderNumberErrorTpl let-control>  
                       <ng-container *ngIf="orderNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
                       <ng-container *ngIf="orderNumberValidateStatus === 'numberExists'">Order Number already exists</ng-container>
@@ -59,7 +59,7 @@
                 <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
         
                     <nz-select style="width: 250px"   [(ngModel)]="currentOrder!.category"
-                    (ngModelChange)="orderCategoryChanged()" >
+                    (ngModelChange)="orderCategoryChanged()" [disabled]="!newOrder">
                     <nz-option
                               *ngFor="let orderCategory of orderCategories  | keys"
                               [nzValue]="orderCategory.key"
@@ -103,6 +103,38 @@
               </nz-form-item>
             </div>
         </div>
+        
+        <div nz-row [nzGutter]="24">
+          <div nz-col [nzSpan]="10">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="12">
+                {{ 'carrier' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12" nzHasFeedback  >
+                  <nz-select [(ngModel)]="currentOrder!.carrierId" (ngModelChange)="carrierChange()" nzAllowClear >
+                      <nz-option *ngFor="let carrier of avaiableCarriers" [nzValue]="carrier.id" [nzLabel]="carrier.description!"></nz-option>
+                    </nz-select>
+
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="10" >
+            <nz-form-item>
+              <nz-form-label [nzSpan]="12">
+                {{ 'service' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12" nzHasFeedback  >
+                  
+                      <nz-select [(ngModel)]="currentOrder!.carrierServiceLevelId" (ngModelChange)="carrierServiceChange()" nzAllowClear>
+                          <nz-option *ngFor="let serviceLevel of avaiableServiceLevel" [nzValue]="serviceLevel.id!" [nzLabel]="serviceLevel.name!"></nz-option>
+                      </nz-select>
+
+                    
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+      </div>
+
         <nz-card   nzTitle="{{ 'ORDER-CATEGORY-WAREHOUSE_TRANSFER_ORDER' | i18n}}" 
           *ngIf="currentOrder!.category === orderCategories.WAREHOUSE_TRANSFER_ORDER">
           
@@ -426,8 +458,15 @@
     <div class="small-card" *ngIf="stepIndex === 2" style="padding-top: 20px;">
 
         <nz-descriptions nzTitle="{{ 'order' | i18n}} - {{  currentOrder?.number }}" nzBordered>
-            <nz-descriptions-item nzTitle="{{ 'order.category' | i18n}}"> 
+            <nz-descriptions-item nzTitle="{{ 'order.category' | i18n}}" nzSpan="3"> 
                 {{ 'ORDER-CATEGORY-' + currentOrder?.category |i18n}}
+            </nz-descriptions-item> 
+            
+            <nz-descriptions-item nzTitle="{{ 'carrier' | i18n}}"> 
+              {{  currentOrder?.carrier?.name }}
+            </nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'service' | i18n}}"> 
+              {{  currentOrder?.carrierServiceLevel?.name }}
             </nz-descriptions-item> 
         </nz-descriptions>
         

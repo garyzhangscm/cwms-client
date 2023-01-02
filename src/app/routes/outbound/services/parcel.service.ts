@@ -20,7 +20,7 @@ export class ParcelService {
     length: number, 
     width: number,
     height: number,
-    weight: number): Observable<EasyPostShipment> {
+    weight: number, ): Observable<EasyPostShipment> {
      
      
     let params = new HttpParams();
@@ -29,7 +29,7 @@ export class ParcelService {
     params = params.append('length', length);
     params = params.append('width', width);
     params = params.append('height', height);
-    params = params.append('weight', weight);
+    params = params.append('weight', weight); 
     
     return this.http.post(`outbound/parcel/easy-post/shipment`, null, params).pipe(map(res => res.data));
   }

@@ -1,8 +1,8 @@
 import { CarrierServiceLevelType } from './carrier-service-level-type.enum';
 
 export interface CarrierServiceLevel {
-  id: number;
+  id?: number;
   name: string;
-  description: string;
-  type: CarrierServiceLevelType;
+  description?: string;
+  type?: CarrierServiceLevelType;
 }

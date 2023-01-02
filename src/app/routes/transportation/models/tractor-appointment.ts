@@ -1,6 +1,7 @@
-import { Carrier } from "../../common/models/carrier";
-import { CarrierServiceLevel } from "../../common/models/carrier-service-level";
+ 
 import { WarehouseLocation } from "../../warehouse-layout/models/warehouse-location"; 
+import { Carrier } from "./carrier";
+import { CarrierServiceLevel } from "./carrier-service-level";
 import { TractorAppointmentType } from "./tractor-appointment-type.enum";
 import { TractorCategory } from "./tractor-category.enum";
 import { TractorStatus } from "./tractor-status.enum";

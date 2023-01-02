@@ -1,8 +1,9 @@
-import { Carrier } from '../../common/models/carrier';
-import { CarrierServiceLevel } from '../../common/models/carrier-service-level';
+ 
 import { Client } from '../../common/models/client';
 import { Customer } from '../../common/models/customer';
 import { Supplier } from '../../common/models/supplier';
+import { Carrier } from '../../transportation/models/carrier';
+import { CarrierServiceLevel } from '../../transportation/models/carrier-service-level';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';

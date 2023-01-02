@@ -55,50 +55,47 @@
         <nz-card  nzTitle="{{'fill-in-package-information-to-get-rate' | i18n}}">
     
             <div nz-row [nzGutter]="24">
-                <div nz-col [nzSpan]="8">
+                <div nz-col [nzSpan]="6">
                   <nz-form-item>
                     <nz-form-label [nzSpan]="12">
                       {{ 'length' | i18n }}
                     </nz-form-label>
                     <nz-form-control [nzSpan]="12" nzHasFeedback > 
-                        <nz-input-number [(ngModel)]="packageLength" ></nz-input-number>
+                        <nz-input-number [(ngModel)]="packageLength" ></nz-input-number> in
                     </nz-form-control>
                   </nz-form-item>
                 </div>
                 
-                <div nz-col [nzSpan]="8">
+                <div nz-col [nzSpan]="6">
                     <nz-form-item>
                       <nz-form-label [nzSpan]="12">
                         {{ 'width' | i18n }}
                       </nz-form-label>
                       <nz-form-control [nzSpan]="12" nzHasFeedback > 
-                          <nz-input-number [(ngModel)]="packageWidth" ></nz-input-number>
+                          <nz-input-number [(ngModel)]="packageWidth" ></nz-input-number> in
                       </nz-form-control>
                     </nz-form-item>
                   </div>
-                  <div nz-col [nzSpan]="8">
+                  <div nz-col [nzSpan]="6">
                     <nz-form-item>
                       <nz-form-label [nzSpan]="12">
                         {{ 'height' | i18n }}
                       </nz-form-label>
                       <nz-form-control [nzSpan]="12" nzHasFeedback > 
-                          <nz-input-number [(ngModel)]="packageHeight" ></nz-input-number>
+                          <nz-input-number [(ngModel)]="packageHeight" ></nz-input-number> in
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div><div nz-col [nzSpan]="6">
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="12">
+                        {{ 'weight' | i18n }}
+                      </nz-form-label>
+                      <nz-form-control [nzSpan]="12" nzHasFeedback > 
+                          <nz-input-number [(ngModel)]="packageWeight" ></nz-input-number> lb
                       </nz-form-control>
                     </nz-form-item>
                   </div>
-            </div>
-            <div nz-row [nzGutter]="24">
-                <div nz-col [nzSpan]="8">
-                  <nz-form-item>
-                    <nz-form-label [nzSpan]="12">
-                      {{ 'weight' | i18n }}
-                    </nz-form-label>
-                    <nz-form-control [nzSpan]="12" nzHasFeedback > 
-                        <nz-input-number [(ngModel)]="packageWeight" ></nz-input-number>
-                    </nz-form-control>
-                  </nz-form-item>
-                </div>
-                </div>
+            </div> 
             
     
     
@@ -108,6 +105,9 @@
     <!-- Let the user choose the service and rate  -->
     <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
         <div  *ngIf="currentEasyPostShipment != null">
+          <h3>{{'carrier'}}: {{currentOrder!.carrier == null? "N/A" : currentOrder!.carrier!.name}}, 
+            {{'service'}}: {{currentOrder!.carrierServiceLevel == null? "N/A" : currentOrder!.carrierServiceLevel!.name}}
+          </h3>
 
             <nz-card nzTitle="{{'selected-rate' | i18n}}" >
                 <nz-descriptions nzBordered="true" *ngIf="currentEasyPostShipment.selectedRate != null">

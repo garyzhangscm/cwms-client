@@ -94,7 +94,7 @@
     </div>
     
     <st #st [data]="listOfAllOrders"  [columns]="columns" [expand]="expand"  expandAccordion
-    (change)="orderTableChanged($event)" [scroll]="{ x: '2865px' }">
+    (change)="orderTableChanged($event)" [scroll]="{ x: '3165px' }">
       <!-- more details about the supplier -->
       <ng-template st-row="supplierColumn" let-item let-index="index">
         
@@ -116,6 +116,44 @@
             {{item.supplier?.addressPostcode}} <br>
             </address>
         </ng-template>
+
+      </ng-template>
+      
+      <ng-template st-row="carrierColumn" let-item let-index="index">
+        
+        <nz-skeleton-element 
+            *ngIf="item.carrierId && item.carrier == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+        <a nz-tooltip [nzTooltipTitle]="carrierDetailsTemplate">{{ item.carrier?.name }}</a>
+        
+        <ng-template #carrierDetailsTemplate>
+          <div>{{item.carrier.name}} - {{item.carrier.description}}</div>
+          <div *ngIf="item.carrier.contactorFirstname != null || item.carrier.contactorLastname != null">
+            {{item.carrier.contactorFirstname}} - {{item.carrier.contactorLastname}}</div>
+          <address *ngIf="item.carrier.addressLine1 != null || item.carrier.addressLine2 != null  || item.carrier.addressCity != null  || item.carrier.addressState != null">  
+            {{item.carrier?.addressLine1}} <br>
+            {{item.carrier?.addressLine2}} <br>
+            {{item.carrier?.addressCity}},  {{item.carrier?.addressState}} <br>
+            {{item.carrier?.addressPostcode}} <br>
+            </address>
+        </ng-template>
+
+      </ng-template>
+      
+      <ng-template st-row="carrierServiceColumn" let-item let-index="index">
+        
+        <nz-skeleton-element 
+            *ngIf="item.carrierServiceLevelId && item.carrierServiceLevel == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+        <a>{{ item.carrierServiceLevel?.name }}</a>
 
       </ng-template>
       <!-- more details about the shipping to customer -->
@@ -583,6 +621,11 @@
         <nz-dropdown-menu #menu="nzDropdownMenu">
           <ul nz-menu> 
 
+            <li nz-menu-item>
+              <a routerLink="/outbound/order-maintenance" routerLinkActive="active"
+                [queryParams]="{id : item.id}">
+                {{ 'modify' | i18n }}</a> 
+            </li>
             <li nz-menu-item *ngIf="isOrderAllocatable(item)">
               <a  (click)="allocateOrder(item)">{{ 'allocate' | i18n }}</a>
             </li>

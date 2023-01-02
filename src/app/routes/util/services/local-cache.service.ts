@@ -22,6 +22,9 @@ import { ItemFamilyService } from '../../inventory/services/item-family.service'
 import { ItemService } from '../../inventory/services/item.service';
 import { PickWork } from '../../outbound/models/pick-work';
 import { PickService } from '../../outbound/services/pick.service';
+import { Carrier } from '../../transportation/models/carrier';
+import { CarrierServiceLevel } from '../../transportation/models/carrier-service-level';
+import { CarrierService } from '../../transportation/services/carrier.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { WarehouseConfiguration } from '../../warehouse-layout/models/warehouse-configuration';
@@ -67,6 +70,7 @@ export class LocalCacheService {
     private inventoryLockService: InventoryLockService,
     private pickService: PickService,
     private itemService: ItemService, 
+    private carrierService: CarrierService,
     private warehouserConfigurationService: WarehouseConfigurationService) { }
 
     getWarehouseConfiguration() : Observable<WarehouseConfiguration> {
@@ -145,6 +149,26 @@ export class LocalCacheService {
       })));
  
   }  
+  getCarrier(id: number) : Observable<Carrier> {
+    
+    
+    const cacheKey = `carrier-${id}`;
+    const data = this.load(cacheKey)
+
+    // Return data from cache
+    if (data !== null) {
+        return of<Carrier>(data)
+    }
+    
+    return this.carrierService.getCarrier(id)
+        .pipe(tap(res => this.save({
+          key: cacheKey,
+          data: res,
+          expirationMins: this.defaultCacheTime
+      })));
+ 
+  }  
+   
   
   getCustomer(id: number) : Observable<Customer> {
     

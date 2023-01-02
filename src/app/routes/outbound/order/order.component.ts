@@ -136,6 +136,28 @@ export class OutboundOrderComponent implements OnInit {
   avaiableLocations: WarehouseLocation[] = [];
 
   loadingOrderDetailsRequest = 0;
+
+  
+  ngOnInit(): void {
+    this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.order'));
+    // initiate the search form
+    this.searchForm = this.fb.group({
+      number: [null],
+      orderStatus: [null],
+      completeTimeRanger: [null],
+      completeDate: [null],
+      orderCategory: [null]
+    });
+
+    // IN case we get the number passed in, refresh the display
+    // and show the order information
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.number) {
+        this.searchForm.controls.number.setValue(params.number);
+        this.search();
+      }
+    });
+  }
  
   resetForm(): void {
     this.searchForm.reset();
@@ -244,6 +266,8 @@ export class OutboundOrderComponent implements OnInit {
       this.loadClient(order); 
      
       this.loadSupplier(order);
+
+      this.loadCarrier(order);
       
       this.loadCustomer(order); 
       
@@ -271,6 +295,25 @@ export class OutboundOrderComponent implements OnInit {
     } 
   }
   
+  loadCarrier(order: Order) {
+     
+    if (order.carrierId && order.carrier == null) {
+      this.loadingOrderDetailsRequest++;
+      this.localCacheService.getCarrier(order.carrierId).subscribe(
+        {
+          next: (res) => {
+            order.carrier = res; 
+            // load the carrier service level as well
+            if (order.carrierServiceLevelId) {
+              order.carrierServiceLevel = res.carrierServiceLevels.find(service => service.id === order.carrierServiceLevelId)
+            }
+          
+            this.loadingOrderDetailsRequest--;
+          }
+        }
+      );      
+    }  
+  }
   loadSupplier(order: Order) {
      
     if (order.supplierId && order.supplier == null) {
@@ -497,26 +540,6 @@ export class OutboundOrderComponent implements OnInit {
   }
   
    */
-  ngOnInit(): void {
-    this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.order'));
-    // initiate the search form
-    this.searchForm = this.fb.group({
-      number: [null],
-      orderStatus: [null],
-      completeTimeRanger: [null],
-      completeDate: [null],
-      orderCategory: [null]
-    });
-
-    // IN case we get the number passed in, refresh the display
-    // and show the order information
-    this.activatedRoute.queryParams.subscribe(params => {
-      if (params.number) {
-        this.searchForm.controls.number.setValue(params.number);
-        this.search();
-      }
-    });
-  }
 
   allocateOrder(order: Order): void {
     this.isSpinning = true;
@@ -980,6 +1003,18 @@ export class OutboundOrderComponent implements OnInit {
       iif: () => this.isChoose('supplier'), width: 150
     },
     {
+      title: this.i18n.fanyi("carrier"),
+      // renderTitle: 'customTitle',
+      render: 'carrierColumn',
+      iif: () => this.isChoose('carrier'), width: 150
+    },
+    {
+      title: this.i18n.fanyi("service"),
+      // renderTitle: 'customTitle',
+      render: 'carrierServiceColumn',
+      iif: () => this.isChoose('carrierService'), width: 150
+    },
+    {
       title: this.i18n.fanyi("shipToCustomer"),
       // renderTitle: 'customTitle',
       render: 'shipToCustomerColumn',
@@ -1025,6 +1060,8 @@ export class OutboundOrderComponent implements OnInit {
     { label: this.i18n.fanyi("order.category"), value: 'category', checked: true },
     { label: this.i18n.fanyi("status"), value: 'status', checked: true },
     { label: this.i18n.fanyi("supplier"), value: 'supplier', checked: true },
+    { label: this.i18n.fanyi("carrier"), value: 'carrier', checked: true },
+    { label: this.i18n.fanyi("carrierService"), value: 'carrierService', checked: true },
     { label: this.i18n.fanyi("shipToCustomer"), value: 'shipToCustomer', checked: true },
     { label: this.i18n.fanyi("order.billToCustomer"), value: 'billToCustomer', checked: true },
     { label: this.i18n.fanyi("order.totalItemCount"), value: 'totalItemCount', checked: true },

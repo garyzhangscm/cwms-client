@@ -3,9 +3,13 @@ import { SharedModule } from '@shared';
 import { NzCalendarModule } from 'ng-zorro-antd/calendar';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
+import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 
 import { DirectivesModule } from '../directives/directives.module';
 import { UtilModule } from '../util/util.module';
+import { TransportationCarrierMaintenanceComponent } from './carrier-maintenance/carrier-maintenance.component';
+import { TransportationCarrierComponent } from './carrier/carrier.component';
+import { TransportationEasyPostComponent } from './easy-post/easy-post.component';
 import { TransportationTractorAppointmentMaintenanceComponent } from './tractor-appointment-maintenance/tractor-appointment-maintenance.component';
 import { CommonTractorMaintenanceComponent } from './tractor-maintenance/tractor-maintenance.component';
 import { TransportationTractorScheduleComponent } from './tractor-schedule/tractor-schedule.component';
@@ -22,7 +26,10 @@ const COMPONENTS: Array<Type<void>> = [
   CommonTrailerMaintenanceComponent,
   TransportationTrailerAppointmentMaintenanceComponent,
   TransportationTractorAppointmentMaintenanceComponent,
-  TransportationTractorScheduleComponent];
+  TransportationTractorScheduleComponent,
+  TransportationCarrierComponent,
+  TransportationEasyPostComponent,
+  TransportationCarrierMaintenanceComponent];
 
 @NgModule({
   imports: [
@@ -33,6 +40,7 @@ const COMPONENTS: Array<Type<void>> = [
     NzStepsModule,
     UtilModule,
     NzCalendarModule,
+    GooglePlaceModule,
   ],
   declarations: COMPONENTS,
 })

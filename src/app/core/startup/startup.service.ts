@@ -68,6 +68,10 @@ export class StartupService {
     if (warehouseId) {
       siteInformationUrl = `${siteInformationUrl}&warehouseId=${warehouseId}`;
     }
+    else if (this.warehouseService.getCurrentWarehouse() != null) {
+      siteInformationUrl = `${siteInformationUrl}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+
+    }
 
 
     const defaultLang = this.i18n.defaultLang;

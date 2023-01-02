@@ -14,6 +14,9 @@ import { SupplierService } from '../../common/services/supplier.service';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { ItemService } from '../../inventory/services/item.service';
+import { Carrier } from '../../transportation/models/carrier';
+import { CarrierServiceLevel } from '../../transportation/models/carrier-service-level';
+import { CarrierService } from '../../transportation/services/carrier.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
@@ -58,6 +61,8 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   avaiableLocations: WarehouseLocation[] = [];
   orderNumberValidateStatus = 'warning'; 
 
+  avaiableCarriers: Carrier[] = [];
+  avaiableServiceLevel: CarrierServiceLevel[] = [];
 
   stepIndex = 0; 
   isSpinning = false;
@@ -80,6 +85,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     private locationGroupTypeService: LocationGroupTypeService, 
     private locationService: LocationService, 
     private customerService: CustomerService,
+    private carrierService: CarrierService,
     private supplierService: SupplierService) { 
 
     this.pageTitle = this.i18n.fanyi('menu.main.outbound.order-maintenance');
@@ -94,12 +100,17 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
             this.currentOrder = orderRes; 
 
             this.newOrder = false;
+            this.orderNumberValidateStatus = 'success';
+            // reload the carrier and service level drop down just in case the order 
+            // has the carrier and service setup
+            this.loadCarriers();
           });
       }
       else {
         // this.currentProductionLine = this.createEmptyProductionLine();
         this.currentOrder = this.getEmptyOrder();
         this.newOrder = true;
+        this.loadCarriers();
       }
     });
     this.loadAvailableInventoryStatus();
@@ -112,6 +123,31 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     //this.loadScript('https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDkPmh0PEC7JTCutUhWuN3BUU38M2fvR5s&sensor=false&language=en');
   }
 
+  loadCarriers(): void {
+
+    this.carrierService.loadCarriers().subscribe(
+      {
+        next: (carrierRes) => {
+          this.avaiableCarriers = carrierRes; 
+          if (this.currentOrder?.carrierId) {
+            // if the current order has both the carrier and service level setup
+            // load both the carrier and service level 
+            
+            this.avaiableServiceLevel = [];
+
+            this.avaiableCarriers.filter(
+              carrier => carrier.id === this.currentOrder!.carrierId
+            ).forEach(
+              carrier => {
+                this.avaiableServiceLevel = [...this.avaiableServiceLevel, ...carrier.carrierServiceLevels]; 
+              }
+            )
+
+          }
+        } ,         
+      }
+    )
+  }
   loadShippingStageLocationGroups(): void {
 
     this.locationGroupTypeService.loadLocationGroupTypes(true).subscribe(
@@ -445,6 +481,39 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
  
   }
 
+  carrierChange(): void {
+    console.log( `carrier ID is changed to ${this.currentOrder!.carrierId}`) ;
+
+      // reset the carrier's service level when the carrier is changed
+      this.currentOrder!.carrierServiceLevelId = undefined;
+      this.currentOrder!.carrierServiceLevel == undefined;
+
+    this.avaiableServiceLevel = [];
+    if (this.currentOrder!.carrierId == null) {
+      this.currentOrder!.carrier == undefined;
+      // clear the service level if the carrier is cleared;
+      return;
+    }
+    this.avaiableCarriers.filter(
+      carrier => carrier.id === this.currentOrder!.carrierId
+    ).forEach(
+      carrier => {
+        this.avaiableServiceLevel = [...this.avaiableServiceLevel, ...carrier.carrierServiceLevels];
+        this.currentOrder!.carrier = carrier; 
+      }
+    )
+  } 
+  carrierServiceChange(): void {
+    
+    this.currentOrder!.carrierServiceLevel == undefined;
+    this.avaiableServiceLevel.filter(
+      service => service.id === this.currentOrder!.carrierServiceLevelId
+    ).forEach(
+      service => { 
+        this.currentOrder!.carrierServiceLevel = service; 
+      }
+    )
+  }
   stageLocationGroupChange(): void {
       console.log( `location group id is changed to ${this.currentOrder!.stageLocationGroupId}`) ;
 
