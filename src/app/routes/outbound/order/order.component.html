@@ -564,6 +564,9 @@
                   {{ 'status' | i18n }}
                 </th>
                 <th>
+                  {{ 'shippedDate' | i18n }}
+                </th>
+                <th>
                   {{ 'size' | i18n }}
                 </th>
                 <th>
@@ -594,6 +597,7 @@
                   <td><a [href]="packages.trackingUrl" target="_blank">{{ packages.trackingCode }}</a> </td> 
                   
                   <td>{{ packages.status }}</td>
+                  <td>{{ packages.createdTime | date:'M/d/yy, h:mm:ss a':'+0000'}} </td>
                   <td>{{ packages.length }} x {{ packages.width }} x {{ packages.height }}</td>
                   <td>{{ packages.weight }}</td>
                   <td>{{ packages.carrier }}</td>

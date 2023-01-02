@@ -29,4 +29,5 @@ export interface ParcelPackage {
   labelUrl: string;
 
   insurance: string;
+  createdTime?: Date;
 }

@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
@@ -139,5 +139,32 @@ export class OutboundParcelByOrderComponent implements OnInit {
     }
 
     this.currentEasyPostShipment!.selectedRate = rate;
+  }
+
+  getLogo(rate: EasyPostRate) : string{
+    if (rate.carrier.startsWith("UPS")) {
+      return "https://www.ups.com/assets/resources/webcontent/images/ups-logo.svg";
+    }
+    else if (rate.carrier.startsWith("USPS")) {
+      return "https://logodownload.org/wp-content/uploads/2021/03/united-states-postal-service-usps-logo-0.png";
+    }
+    else {
+      return "";
+    }
+
+  }
+  isBestRate(rate: EasyPostRate) : boolean{
+
+    // return true if there's no other rate that is better then current rate
+    return !this.currentEasyPostShipment?.rates.some(
+      existingRate => existingRate.rate < rate.rate
+    )
+  }
+  getBackgroundColor(rate: EasyPostRate) : string{
+
+    if (this.isBestRate(rate)) {
+      return "lawngreen";
+    }
+    return "";
   }
 }
