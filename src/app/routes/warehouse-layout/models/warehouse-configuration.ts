@@ -19,4 +19,6 @@ export interface WarehouseConfiguration {
     
     reuseLPNAfterRemovedFlag: boolean;
     reuseLPNAfterShippedFlag: boolean;
+
+    billingRequestEnabledFlag: boolean;
 }

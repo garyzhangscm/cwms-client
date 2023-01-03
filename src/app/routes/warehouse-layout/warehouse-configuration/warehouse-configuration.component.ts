@@ -37,6 +37,7 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
         
         reuseLPNAfterRemovedFlag: false,
         reuseLPNAfterShippedFlag: false,
+        billingRequestEnabledFlag: false,
       }
   }
 

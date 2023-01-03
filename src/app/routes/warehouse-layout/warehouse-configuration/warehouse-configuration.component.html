@@ -55,10 +55,10 @@
           
           <div nz-col [nzSpan]="6">
             <nz-form-item>
-                <nz-form-label [nzSpan]="18">
+                <nz-form-label [nzSpan]="20">
                 {{ 'newLPNPrintLabelAtAdjustmentFlag' | i18n }}
                 </nz-form-label>
-                <nz-form-control [nzSpan]="6">
+                <nz-form-control [nzSpan]="4">
                     <label nz-checkbox [(ngModel)]="currentWarehouseConfiguration.newLPNPrintLabelAtAdjustmentFlag"></label>
 
                 </nz-form-control>
@@ -89,6 +89,18 @@
           </div>
         </div>
         <div nz-row [nzGutter]="24"> 
+          
+          <div nz-col [nzSpan]="7">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="10">
+                {{ 'billingRequestEnabledFlag' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="6">
+                    <label nz-checkbox [(ngModel)]="currentWarehouseConfiguration.billingRequestEnabledFlag"></label>
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>
           <div nz-col [nzSpan]="8">
             <nz-form-item>
                 <nz-form-label [nzSpan]="6">
