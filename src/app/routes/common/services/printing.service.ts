@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Lodop, LodopService } from '@delon/abc/lodop';
 import { _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -30,7 +31,8 @@ export class PrintingService {
     private http: _HttpClient,
     private companyService: CompanyService,
     private localCacheService: LocalCacheService,
-    private printingRequestService: PrintingRequestService
+    private printingRequestService: PrintingRequestService,
+    private messageService: NzMessageService,
   ) {
     this.lodopService.cog.url = 'http://localhost:18000/CLodopfuncs.js';
     this.lodopService.lodop.subscribe(({ lodop, ok }) => {
@@ -60,12 +62,13 @@ export class PrintingService {
     let params = new HttpParams();
     
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);
+    console.log(`printing strategy: ${printingStrategy}`)
     
     if (printingStrategy) {
       params = params.append('printingStrategy', printingStrategy);
 
     } 
-    return this.http.get(url, printingStrategy).pipe(map(res => res.data));
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
   getAllLocalPrinters(): string[] {
     var allLocalPrinters: string[] = [];
@@ -80,6 +83,37 @@ export class PrintingService {
     return allLocalPrinters;
   }
 
+  // print the file by URL. The URL may be a 3rd party URL
+  // such as a parcel label from UPS / USPS / Fedex / etc
+
+  printFileByURL(url: string, reportType: ReportType, printerName: string, physicalCopyCount: number) : void{
+    
+    this.localCacheService.getWarehouseConfiguration().subscribe(
+      {
+        next: (warehouseConfigRes) => {
+
+          console.log(`warehouseConfigRes: ${warehouseConfigRes?.printingStrategy}`);
+
+          // by default, we will print from the server
+          if (warehouseConfigRes?.printingStrategy == null ||
+                warehouseConfigRes?.printingStrategy == PrintingStrategy.SERVER_PRINTER) { 
+            this.messageService.error("print from server by URL is not supported");
+          }
+          else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_SERVER_DATA) { 
+            // save the request to the save so the local installed printing service will
+            // print it later on 
+              console.log(`will save request to the server`);
+              this.savePrintingRequestByUrl(url, reportType, printerName, physicalCopyCount); 
+          }
+          else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_LOCAL_DATA) {  
+              
+            this.messageService.error("print from local by URL is not supported");
+          }
+          
+        }, 
+      }
+    )
+  }
   printFileByName(
     name: string,
     fileName: string,
@@ -104,7 +138,7 @@ export class PrintingService {
                 warehouseConfigRes?.printingStrategy == PrintingStrategy.SERVER_PRINTER) { 
            
             console.log(`will print remote file from server`);
-            this.printRemoteFileByName(
+            this.printFromServer(
               name, fileName, type, printerIndex, printerName, 
               physicalCopyCount, pageOrientation, pageSize, findPrinterBy
             );
@@ -118,6 +152,12 @@ export class PrintingService {
               
                 this.savePrintingRequest(reportHistory, printerName, physicalCopyCount);
             }
+          }
+          else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_LOCAL_DATA) {  
+              
+                this.printFromLocal(
+                  name, fileName, type, printerIndex, printerName, 
+                  physicalCopyCount, pageOrientation, pageSize, findPrinterBy); 
           }
           
         }, 
@@ -136,7 +176,20 @@ export class PrintingService {
       })
        
   }
-  printRemoteFileByName(
+  savePrintingRequestByUrl(url: string, reportType: ReportType, 
+    printerName: string, copies: number) : void {
+
+      this.printingRequestService.generatePrintingRequestByUrl(
+        url, reportType, 
+        printerName, copies
+      ).subscribe({
+        next: () => console.log(` printing request sent`)
+      })
+       
+  }
+
+
+  printFromServer(
     name: string,
     fileName: string,
     type: ReportType,
@@ -146,18 +199,10 @@ export class PrintingService {
     pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
     pageSize: PrintPageSize = PrintPageSize.A4,
     findPrinterBy?: string
-  ): void {
-    let url = `${environment.api.baseUrl}/resource/report-histories/download`;
-
-    url = `${url}/${this.warehouseService.getCurrentWarehouse().companyId}`;
-    url = `${url}/${this.warehouseService.getCurrentWarehouse().id}`;
-    url = `${url}/${type}`;
-    url = `${url}/${fileName}`;
-
-    if (this.warehouseService.getServerSidePrintingFlag()) {
+  ): void { 
       console.log(`will print from the server side`);
       let params = new HttpParams();
-      url = `/resource/report-histories/print/${this.companyService.getCurrentCompany()?.id}/${
+      const url = `/resource/report-histories/print/${this.companyService.getCurrentCompany()?.id}/${
         this.warehouseService.getCurrentWarehouse().id
       }/${type}/${fileName}`;
       if (findPrinterBy) {
@@ -174,29 +219,37 @@ export class PrintingService {
         .pipe(map(res => res.data))
         .subscribe(res => {
           console.log(` file printed!`);
-        });
-    } else {
-      console.log(`will print from the client side`);
-      this.printRemoteFileByPath(name, url, printerIndex, physicalCopyCount, pageOrientation, pageSize);
-    }
+        }); 
   }
 
-  printRemoteFileByPath(
+  printFromLocal(    
     name: string,
-    remoteFileUrl: string,
+    fileName: string,
+    type: ReportType,
     printerIndex: number,
+    printerName: string,
     physicalCopyCount: number,
     pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
-    pageSize: PrintPageSize = PrintPageSize.A4
+    pageSize: PrintPageSize = PrintPageSize.A4,
+    findPrinterBy?: string 
   ): void {
+    
+    let url = `${environment.api.baseUrl}/resource/report-histories/download`;
+
+    url = `${url}/${this.warehouseService.getCurrentWarehouse().companyId}`;
+    url = `${url}/${this.warehouseService.getCurrentWarehouse().id}`;
+    url = `${url}/${type}`;
+    url = `${url}/${fileName}`;
+
+
     console.log(`start to print remote file in orientation: ${pageOrientation}`);
-    console.log(`START TO PRINT ${remoteFileUrl}`);
+    console.log(`START TO PRINT ${url}`);
     const LODOP = this.lodop!;
     //LODOP.PRINT_INITA(0, 0, 810, 610, name);
     LODOP.PRINT_INIT(name);
     LODOP.SET_PRINT_PAGESIZE(pageOrientation, 2100, 2970, pageSize);
     LODOP.SET_PRINTER_INDEX(printerIndex);
-    LODOP.ADD_PRINT_PDF(-30, 0, '100%', '100%', remoteFileUrl);
+    LODOP.ADD_PRINT_PDF(-30, 0, '100%', '100%', url);
     // LODOP.ADD_PRINT_PDF(0,0,"100%","100%","http://localhost:8000/CLodopDemos/PDFDemo.pdf");
     // LODOP.ADD_PRINT_PDF(-30,0,"100%","100%","e:\\AAA.pdf");
     LODOP.SET_PRINT_COPIES(physicalCopyCount);

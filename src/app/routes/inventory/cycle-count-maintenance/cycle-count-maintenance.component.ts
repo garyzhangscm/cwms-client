@@ -979,7 +979,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
       .subscribe(printResult => {
 
         // send the result to the printer
-        this.printingService.printRemoteFileByName(
+        this.printingService.printFileByName(
           "Cycle Count Sheet",
           printResult.fileName,
           ReportType.CYCLE_COUNT_SHEET,
@@ -1089,7 +1089,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
       .subscribe(printResult => {
 
         // send the result to the printer
-        this.printingService.printRemoteFileByName(
+        this.printingService.printFileByName(
           "Audit Count Sheet",
           printResult.fileName,
           ReportType.AUDIT_COUNT_SHEET,

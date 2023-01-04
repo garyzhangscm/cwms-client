@@ -17,6 +17,7 @@ import { InventoryService } from '../../inventory/services/inventory.service';
 import { Printer } from '../../report/models/printer';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { ReportType } from '../../report/models/report-type.enum'; 
+import { EasyPostConfigurationService } from '../../transportation/services/easy-post-configuration.service';
 import { LocalCacheService } from '../../util/services/local-cache.service'; 
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
@@ -90,6 +91,7 @@ export class OutboundOrderComponent implements OnInit {
     private shipmentLineService: ShipmentLineService,
     private billOfMaterialService: BillOfMaterialService,
     private orderDocumentService: OrderDocumentService,
+    private easyPostConfigurationService: EasyPostConfigurationService,
   ) { }
 
   printerModal!: NzModalRef;
@@ -564,7 +566,7 @@ export class OutboundOrderComponent implements OnInit {
         const printFileUrl
           = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
         console.log(`will print file: ${printFileUrl}`);
-        this.printingService.printRemoteFileByName(
+        this.printingService.printFileByName(
           "Packing Slip",
           printResult.fileName,
           ReportType.PACKING_SLIP,
@@ -615,7 +617,7 @@ export class OutboundOrderComponent implements OnInit {
         const printFileUrl
           = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
         console.log(`will print file: ${printFileUrl}`);
-        this.printingService.printRemoteFileByName(
+        this.printingService.printFileByName(
           "Bill Of Lading",
           printResult.fileName,
           ReportType.BILL_OF_LADING,
@@ -877,7 +879,7 @@ export class OutboundOrderComponent implements OnInit {
       .subscribe(printResult => {
 
         // send the result to the printer
-        this.printingService.printRemoteFileByName(
+        this.printingService.printFileByName(
           "order pick sheet",
           printResult.fileName,
           ReportType.ORDER_PICK_SHEET,
@@ -1272,5 +1274,43 @@ export class OutboundOrderComponent implements OnInit {
       })
     
    
+  }
+
+  
+  printParcelLabel(event: any, parcelPackage: ParcelPackage): void {
+    this.isSpinning = true;  
+    
+    this.easyPostConfigurationService.getConfiguration().subscribe({
+      next: (easyPostConfiguration) => {
+
+        // get the configuration for the current carrier and see 
+        // what type of report needs to be printed
+        easyPostConfiguration.carriers.filter(
+          easyPostCarrier => easyPostCarrier.carrier?.name === parcelPackage.carrier 
+        ).forEach(
+          easyPostCarrier => {
+
+            console.log(`start to print parcel level for carrier ${easyPostCarrier.carrier?.name}, report type: ${easyPostCarrier.reportType}`)
+            // send the result to the printer
+            this.printingService.printFileByURL( 
+              parcelPackage.labelUrl,
+              easyPostCarrier.reportType,
+              event.printerName,
+              event.physicalCopyCount)
+          } 
+        )
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi("report.print.printed")); 
+
+
+      }, 
+      error: () => this.isSpinning = false
+    })
+
+  }
+
+  previewParcelLevel(parcelPackage: ParcelPackage): void {
+    window.open(parcelPackage.labelUrl, '_blank');
+    // this.router.navigateByUrl(parcelPackage.labelUrl, );
   }
 }

@@ -592,20 +592,30 @@
                 </th>
               </thead>
               <tbody >
-                <tr *ngFor="let packages of parcelPackageTable.data">
+                <tr *ngFor="let parcelPackage of parcelPackageTable.data">
 
-                  <td><a [href]="packages.trackingUrl" target="_blank">{{ packages.trackingCode }}</a> </td> 
+                  <td><a [href]="parcelPackage.trackingUrl" target="_blank">{{ parcelPackage.trackingCode }}</a> </td> 
                   
-                  <td>{{ packages.status }}</td>
-                  <td>{{ packages.createdTime | date:'M/d/yy, h:mm:ss a':'+0000'}} </td>
-                  <td>{{ packages.length }} x {{ packages.width }} x {{ packages.height }}</td>
-                  <td>{{ packages.weight }}</td>
-                  <td>{{ packages.carrier }}</td>
-                  <td>{{ packages.service }}</td>
-                  <td>{{ packages.deliveryDays }}</td>
-                  <td>{{ packages.rate | currency: 'USD' }} </td>
-                  <td>{{ packages.insurance | currency: 'USD' }}</td>
-                  <td><a [href]="packages.labelUrl" target="_blank">{{ 'print-label' | i18n }}</a></td>
+                  <td>{{ parcelPackage.status }}</td>
+                  <td>{{ parcelPackage.createdTime | date:'M/d/yy, h:mm:ss a':'+0000'}} </td>
+                  <td>{{ parcelPackage.length }} in x {{ parcelPackage.width }} in x {{ parcelPackage.height }} in</td>
+                  <td>{{ parcelPackage.weight }} lb </td>
+                  <td>{{ parcelPackage.carrier }}</td>
+                  <td>{{ parcelPackage.service }}</td>
+                  <td>{{ parcelPackage.deliveryDays }}</td>
+                  <td>{{ parcelPackage.rate | currency: 'USD' }} </td>
+                  <td>{{ parcelPackage.insurance | currency: 'USD' }}</td>
+                  <td>
+                    
+                      <cwms-common-print-button style="padding-left: 20px;" (print)="printParcelLabel( $event, parcelPackage)"
+                      (preview)="previewParcelLevel(parcelPackage)">
+                      </cwms-common-print-button>
+
+                    <!--
+                      <a [href]="packages.labelUrl" target="_blank">{{ 'print-label' | i18n }}</a>
+
+                    -->  
+                    </td>
                 </tr>
               </tbody>
             </nz-table>

@@ -1054,7 +1054,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
         console.log(` PDF file generated, will try to print it`);
         // send the result to the printer
-        this.printingService.printRemoteFileByName(
+        this.printingService.printFileByName(
           "work order pick sheet",
           printResult.fileName,
           ReportType.ORDER_PICK_SHEET,
@@ -1300,7 +1300,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         const printFileUrl
           = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
         console.log(`will print file: ${printFileUrl}`);
-        this.printingService.printRemoteFileByName(
+        this.printingService.printFileByName(
           "Work Order Assignment Report",
           printResult.fileName,
           ReportType.PRODUCTION_LINE_ASSIGNMENT_REPORT,

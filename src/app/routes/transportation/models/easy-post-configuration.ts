@@ -10,4 +10,5 @@ export interface EasyPostConfiguration {
     webhookSecret: string;
     
     carriers: EasyPostCarrier[];
+    
 }

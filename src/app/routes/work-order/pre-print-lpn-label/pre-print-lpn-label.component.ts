@@ -176,7 +176,7 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
           const printFileUrl
             = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
           console.log(`will print file: ${printFileUrl}`);
-          this.printingService.printRemoteFileByName(
+          this.printingService.printFileByName(
             "Work Order LPN Label",
             printResult.fileName,
             ReportType.PRODUCTION_LINE_ASSIGNMENT_LABEL,
@@ -206,7 +206,7 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
           const printFileUrl
             = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
           console.log(`will print file: ${printFileUrl}`);
-          this.printingService.printRemoteFileByName(
+          this.printingService.printFileByName(
             "Receiving LPN Label",
             printResult.fileName,
             ReportType.RECEIVING_LPN_LABEL,
@@ -236,7 +236,7 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
           const printFileUrl
             = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
           console.log(`will print file: ${printFileUrl}`);
-          this.printingService.printRemoteFileByName(
+          this.printingService.printFileByName(
             "Receiving LPN Report",
             printResult.fileName,
             ReportType.RECEIVING_LPN_REPORT,

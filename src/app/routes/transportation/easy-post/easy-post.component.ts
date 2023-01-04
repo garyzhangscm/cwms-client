@@ -5,6 +5,7 @@ import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { ReportType } from '../../report/models/report-type.enum';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Carrier } from '../models/carrier';
 import { CarrierServiceLevelType } from '../models/carrier-service-level-type.enum';
@@ -27,6 +28,7 @@ export class TransportationEasyPostComponent implements OnInit {
   avaiableCarriers: Carrier[] = [];
   addCarrierModal!: NzModalRef;
   addCarrierForm!: FormGroup;
+  reportTypes = ReportType;
   
 
   constructor(
@@ -131,6 +133,7 @@ export class TransportationEasyPostComponent implements OnInit {
        
       carrier: [null],
       accountNumber: [null],
+      type: [null]
     });
 
     // only show the carriers that is
@@ -182,6 +185,7 @@ export class TransportationEasyPostComponent implements OnInit {
           this.addCarrier( 
             this.addCarrierForm.controls.carrier.value,
             this.addCarrierForm.controls.accountNumber.value,
+            this.addCarrierForm.controls.type.value,
           ); 
           this.addCarrierModal.destroy(); 
           return false;
@@ -190,7 +194,7 @@ export class TransportationEasyPostComponent implements OnInit {
       nzWidth: 1000,
     });
   }
-  addCarrier(carrierId: number, accountNumber: string) {
+  addCarrier(carrierId: number, accountNumber: string, reportType: ReportType) {
     
     // if this is a new configuration that is not saved yet, let's just add it locally
     // to the confiugration so the carrier will be saved when the configuration is saved
@@ -199,6 +203,7 @@ export class TransportationEasyPostComponent implements OnInit {
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
       carrierId:carrierId,  
       accountNumber: accountNumber,
+      reportType: reportType
     };
 
     if (this.currentEasyPostConfiguration.id) {

@@ -67,7 +67,7 @@ export class ReportPrinterMaintenanceComponent implements OnInit {
             this.newPrinter = true
             this.currentPrinter = this.getEmptyPrinter();
             
-            this.loadAvaiablePrinters();
+            // this.loadAvaiablePrinters();
             this.titleService.setTitle(this.i18n.fanyi('page.report.printer.new'));
             this.pageTitle = this.i18n.fanyi('page.report.printer.new'); 
           }

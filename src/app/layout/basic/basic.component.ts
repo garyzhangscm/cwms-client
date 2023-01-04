@@ -14,8 +14,8 @@ import { WarehouseService } from 'src/app/routes/warehouse-layout/services/wareh
   template: `
     <layout-default [options]="options" [asideUser]="asideUserTpl" [content]="contentTpl">
       
-    <layout-default-header-item direction="left"  >
-        <div  >
+      <layout-default-header-item direction="left"  >
+        <div>
         <nz-select [(ngModel)]="currentWarehouseId" (ngModelChange)="warehouseChanged()">
           <nz-option *ngFor="let warehouse of warehouses" [nzValue]="warehouse.id" [nzLabel]="warehouse.name"></nz-option> 
         </nz-select>
@@ -31,6 +31,21 @@ import { WarehouseService } from 'src/app/routes/warehouse-layout/services/wareh
       </layout-default-header-item>    
       <layout-default-header-item direction="right">
         <header-user></header-user>
+      </layout-default-header-item>
+      <layout-default-header-item direction="right">
+        <!--
+
+        <div>
+          <a href="https://claytechs.gitbook.io/wms-user-manual/" target="_blank">
+          <span nz-icon [nzType]="'question-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"></span>
+          </a></div>
+
+        -->
+        <div>
+          <a href="https://claytechs.gitbook.io/wms-user-manual/" target="_blank">
+            <i nz-icon [nzType]="'question-circle'" style="font-size: 20px; color: #000000;" ></i> 
+          </a>
+        </div>
       </layout-default-header-item>
       <ng-template #asideUserTpl>
         <div nz-dropdown nzTrigger="click" [nzDropdownMenu]="userMenu" class="alain-default__aside-user">

@@ -7,9 +7,11 @@ import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
+import { PrintPageSize } from '../../common/models/print-page-size.enum';
 import { PrintingService } from '../../common/services/printing.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ReportOrientation } from '../models/report-orientation.enum';
+import { ReportType } from '../models/report-type.enum';
 import { ReportHistoryService } from '../services/report-history.service';
 
 @Component({
@@ -25,6 +27,7 @@ export class ReportReportPreviewComponent implements OnInit {
   pageTitle = '';
   pdfUrl = '';
   fileName = '';
+  type?: ReportType;
 
   constructor(
     private http: _HttpClient,
@@ -60,6 +63,7 @@ export class ReportReportPreviewComponent implements OnInit {
 
       this.pdfUrl = url;
       this.fileName = params.fileName;
+      this.type = params.type;
       console.log(`start to get pdf from ${this.pdfUrl}`);
     });
     this.pageTitle = this.i18n.fanyi('report.preview');
@@ -67,12 +71,15 @@ export class ReportReportPreviewComponent implements OnInit {
   }
 
   printReport(event: any): void {
-    this.printingService.printRemoteFileByPath(
+    this.printingService.printFileByName(      
       this.fileName,
-      this.pdfUrl,
+      this.fileName,
+      this.type!,
       event.printerIndex,
+      "",
       event.physicalCopyCount,
-      this.printingOrientation
+      this.printingOrientation,
+      PrintPageSize.A4
     );
     this.messageService.success(this.i18n.fanyi('report.print.printed'));
   }

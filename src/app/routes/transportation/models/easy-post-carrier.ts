@@ -1,3 +1,4 @@
+import { ReportType } from "../../report/models/report-type.enum";
 import { Carrier } from "./carrier";
 
 export interface EasyPostCarrier {
@@ -9,5 +10,7 @@ export interface EasyPostCarrier {
     carrierId: number;
     carrier?: Carrier;
     accountNumber: string;
+
+    reportType: ReportType;
  
 }

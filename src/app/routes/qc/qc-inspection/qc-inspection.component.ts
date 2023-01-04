@@ -312,7 +312,7 @@ export class QcQcInspectionComponent implements OnInit {
         const printFileUrl
           = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
         console.log(`will print file: ${printFileUrl}`);
-        this.printingService.printRemoteFileByName(
+        this.printingService.printFileByName(
           "LPN Label",
           printResult.fileName,
           ReportType.LPN_REPORT,

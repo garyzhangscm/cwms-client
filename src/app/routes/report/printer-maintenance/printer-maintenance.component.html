@@ -33,13 +33,15 @@
           {{ 'printer' | i18n }}
         </nz-form-label>
         <nz-form-control [nzSpan]="18">
-          
+          <!--
+
           <nz-select nzAllowClear [(ngModel)]="currentPrinter" style="width: 300px;" *ngIf="newPrinter" >
             <nz-option *ngFor="let printer of availablePrinters" [nzValue]="printer"
                 [nzLabel]="printer.name">
             </nz-option>
             </nz-select>
-            <input nz-input [ngModel]="currentPrinter.name"  *ngIf="!newPrinter" disabled/>
+          -->
+            <input nz-input [(ngModel)]="currentPrinter.name"  [disabled]="!newPrinter"/>
         </nz-form-control>
       </nz-form-item>
     </div>
