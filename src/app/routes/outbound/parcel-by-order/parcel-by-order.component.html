@@ -33,11 +33,18 @@
         <div nz-row [nzGutter]="24" *ngIf="currentOrder != null">
             <div nz-col [nzSpan]="12">
             <nz-card nzTitle="{{'ship-from' | i18n}}">
-                <address>   
+                <address *ngIf="easyPostConfiguration != null && easyPostConfiguration.useWarehouseAddressAsShipFromFlag == true">   
+                  {{currentWarehouse.contactorFirstname }}  {{currentWarehouse.contactorLastname }}<br>
                     {{currentWarehouse.addressLine1 }} <br>
                     {{currentWarehouse.addressLine2 }} <br>
                     {{currentWarehouse.addressCity }}, {{currentWarehouse.addressState }} {{currentWarehouse.addressPostcode }} <br> 
                     </address>
+                <address *ngIf="easyPostConfiguration != null && easyPostConfiguration.useWarehouseAddressAsShipFromFlag == false">   
+                       {{easyPostConfiguration.contactorFirstname }}  {{easyPostConfiguration.contactorLastname }}<br>
+                        {{easyPostConfiguration.addressLine1 }} <br>
+                        {{easyPostConfiguration.addressLine2 }} <br>
+                        {{easyPostConfiguration.addressCity }}, {{easyPostConfiguration.addressState }} {{easyPostConfiguration.addressPostcode }} <br> 
+                </address>
             </nz-card>
             </div>
             <div nz-col [nzSpan]="12">
@@ -195,11 +202,18 @@
         <nz-descriptions nzBordered="true" >
                 
             <nz-descriptions-item   nzSpan="3" nzTitle="{{ 'ship-from' | i18n }}">
-                <address>   
-                    {{currentWarehouse.addressLine1 }} <br>
-                    {{currentWarehouse.addressLine2 }} <br>
-                    {{currentWarehouse.addressCity }}, {{currentWarehouse.addressState }} {{currentWarehouse.addressPostcode }} <br> 
-                    </address>
+              <address *ngIf="easyPostConfiguration != null && easyPostConfiguration.useWarehouseAddressAsShipFromFlag == true">   
+                {{currentWarehouse.contactorFirstname }}  {{currentWarehouse.contactorLastname }}<br>
+                  {{currentWarehouse.addressLine1 }} <br>
+                  {{currentWarehouse.addressLine2 }} <br>
+                  {{currentWarehouse.addressCity }}, {{currentWarehouse.addressState }} {{currentWarehouse.addressPostcode }} <br> 
+                  </address>
+              <address *ngIf="easyPostConfiguration != null && easyPostConfiguration.useWarehouseAddressAsShipFromFlag == false">   
+                     {{easyPostConfiguration.contactorFirstname }}  {{easyPostConfiguration.contactorLastname }}<br>
+                      {{easyPostConfiguration.addressLine1 }} <br>
+                      {{easyPostConfiguration.addressLine2 }} <br>
+                      {{easyPostConfiguration.addressCity }}, {{easyPostConfiguration.addressState }} {{easyPostConfiguration.addressPostcode }} <br> 
+              </address>
             </nz-descriptions-item> 
             <nz-descriptions-item nzSpan="3" nzTitle="{{ 'ship-to' | i18n }}">
     

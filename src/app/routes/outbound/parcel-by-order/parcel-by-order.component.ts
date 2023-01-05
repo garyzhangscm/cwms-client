@@ -4,6 +4,8 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { EasyPostConfiguration } from '../../transportation/models/easy-post-configuration';
+import { EasyPostConfigurationService } from '../../transportation/services/easy-post-configuration.service';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { EasyPostRate } from '../models/easy-post-rate';
@@ -29,6 +31,7 @@ export class OutboundParcelByOrderComponent implements OnInit {
   packageWidth = 0; 
   packageHeight = 0; 
   packageWeight = 0; 
+  easyPostConfiguration?: EasyPostConfiguration;
 
 
   constructor(private http: _HttpClient, 
@@ -38,7 +41,8 @@ export class OutboundParcelByOrderComponent implements OnInit {
     private parcelService: ParcelService,
     private messageService: NzMessageService,
     private router: Router, 
-    private warehouseService: WarehouseService) { 
+    private warehouseService: WarehouseService, 
+    private easyPostConfigurationService: EasyPostConfigurationService) { 
       this.currentWarehouse = warehouseService.getCurrentWarehouse();
       this.pageTitle = this.i18n.fanyi('parcel-by-order');
 
@@ -58,6 +62,10 @@ export class OutboundParcelByOrderComponent implements OnInit {
         })
       }
     });
+
+    this.easyPostConfigurationService.getConfiguration().subscribe({
+      next: (configurationRes) => this.easyPostConfiguration = configurationRes
+    })
 
   }
 

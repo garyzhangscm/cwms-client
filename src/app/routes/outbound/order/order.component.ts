@@ -1285,22 +1285,26 @@ export class OutboundOrderComponent implements OnInit {
 
         // get the configuration for the current carrier and see 
         // what type of report needs to be printed
-        easyPostConfiguration.carriers.filter(
-          easyPostCarrier => easyPostCarrier.carrier?.name === parcelPackage.carrier 
-        ).forEach(
-          easyPostCarrier => {
+        const easyPostCarrier  = 
+            easyPostConfiguration.carriers.find(
+              easyPostCarrier =>  easyPostCarrier.carrier?.name === parcelPackage.carrier  
+            )
+        if (easyPostCarrier == null) {
+          this.isSpinning = false;
+          this.messageService.error(`${parcelPackage.carrier}  ${this.i18n.fanyi("not-defined-by-easy-post")}`);
+        }
+        else {
 
-            console.log(`start to print parcel level for carrier ${easyPostCarrier.carrier?.name}, report type: ${easyPostCarrier.reportType}`)
-            // send the result to the printer
-            this.printingService.printFileByURL( 
-              parcelPackage.labelUrl,
-              easyPostCarrier.reportType,
-              event.printerName,
-              event.physicalCopyCount)
-          } 
-        )
-        this.isSpinning = false;
-        this.messageService.success(this.i18n.fanyi("report.print.printed")); 
+          console.log(`start to print parcel level for carrier ${easyPostCarrier.carrier?.name}, report type: ${easyPostCarrier.reportType}`)
+          // send the result to the printer
+          this.printingService.printFileByURL( 
+            parcelPackage.labelUrl,
+            easyPostCarrier.reportType,
+            event.printerName,
+            event.physicalCopyCount) ;
+            this.isSpinning = false;
+            this.messageService.success(this.i18n.fanyi("report.print.printed")); 
+        } 
 
 
       }, 

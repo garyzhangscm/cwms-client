@@ -1,3 +1,4 @@
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -17,6 +18,14 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
   warehouseForm!: FormGroup;
   isSpinning = false;
   warehouseAddress?: Address;
+  addressLine1 = "";
+  addressLine2? = "";
+  addressCity = "";
+  addressState = "";
+  addressPostcode = "";
+  addressCountry = "";
+  addressCounty? = "";
+  
 
   constructor(
     private fb: FormBuilder,
@@ -31,12 +40,36 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.warehouseForm = this.fb.group({
-      warehouseId: new FormControl({ value: '', disabled: true }),
-      name: new FormControl('', Validators.required),
-      size: ['', Validators.required],
-      address: ['', Validators.required],
-    });
+    if (this.activatedRoute.snapshot.params.id) {
+
+      this.warehouseForm = this.fb.group({
+        warehouseId: new FormControl({ value: '', disabled: true }),
+        name: new FormControl('', Validators.required),
+        size: ['', Validators.required],
+        contactorFirstname: [null],
+        contactorLastname: [null],
+        address: [null],
+      });
+    }
+    else {
+      
+      this.warehouseForm = this.fb.group({
+        warehouseId: new FormControl({ value: '', disabled: true }),
+        name: new FormControl('', Validators.required),
+        size: ['', Validators.required],
+        contactorFirstname: [null],
+        contactorLastname: [null],
+        address: ['', Validators.required],
+      });
+    }
+    this.addressLine1 = "";
+    this.addressLine2 = "";
+    this.addressCity = "";
+    this.addressState = "";
+    this.addressPostcode = "";
+    this.addressCountry = "";
+    this.addressCounty = "";
+
     this.activatedRoute.queryParams.subscribe(params => {
       // We are in process of adding / changing a warehouse
       // and we already fill in all the information. Let's
@@ -66,6 +99,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
 
     this.warehouseForm.controls.warehouseId.setValue(warehouse.id);
     this.warehouseForm.patchValue(warehouse);
+    this.loadCurrentAddress(warehouse);
 
     return true;
   }
@@ -75,8 +109,19 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
       this.warehouseService.getWarehouse(+warehouseId).subscribe((warehouse: Warehouse) => {
         this.warehouseForm.controls.warehouseId.setValue(warehouseId);
         this.warehouseForm.patchValue(warehouse);
+        this.loadCurrentAddress(warehouse);
       });
     }
+  }
+  loadCurrentAddress(warehouse: Warehouse) {
+    this.addressLine1 = warehouse.addressLine1;
+    this.addressLine2 = warehouse.addressLine2;
+    this.addressCity = warehouse.addressCity;
+    this.addressState = warehouse.addressState;
+    this.addressPostcode = warehouse.addressPostcode;
+    this.addressCountry = warehouse.addressCountry;
+    this.addressCounty = warehouse.addressCounty;
+    
   }
 
   setupPageTitle(): void {
@@ -89,35 +134,55 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
     }
   }
   goToConfirmPage(): void {
-    if (this.warehouseForm.valid && this.warehouseAddress != undefined) {
+    // for a new warehouse, warehouse address is required 
+    if (this.warehouseForm.valid) {
       const warehouse: Warehouse = this.warehouseForm.value;
       warehouse.id = this.warehouseForm.controls.warehouseId.value; 
-      this.warehouseAddress!.address_components.forEach(
-        addressComponent => {
-          if (addressComponent.types[0] === 'street_number') {
-              warehouse.addressLine1 = `${addressComponent.long_name} ${warehouse.addressLine1}`;
+      warehouse.addressLine1 = this.addressLine1;
+      warehouse.addressLine2 = this.addressLine2;
+      warehouse.addressCity = this.addressCity;
+      warehouse.addressState = this.addressState;
+      warehouse.addressPostcode = this.addressPostcode;
+      warehouse.addressCountry = this.addressCountry;
+      warehouse.addressCounty = this.addressCounty;
+
+      if (warehouse.id == null && this.warehouseAddress == null)  {
+        // make sure the warehouseAddress is not null for a new warehouse
+        // clear the address control and show the error
+        this.warehouseForm.controls.address.reset();
+        this.displayFormError(this.warehouseForm);
+        
+        return;
+      }
+      if (this.warehouseAddress != null) {
+
+        this.warehouseAddress!.address_components.forEach(
+          addressComponent => {
+            if (addressComponent.types[0] === 'street_number') {
+                warehouse.addressLine1 = `${addressComponent.long_name} ${warehouse.addressLine1}`;
+            }
+            else if  (addressComponent.types[0] === 'route') {
+              warehouse.addressLine1 = `${warehouse.addressLine1} ${addressComponent.long_name}`;
+            }
+            else if  (addressComponent.types[0] === 'locality') {
+              warehouse.addressCity = `${addressComponent.long_name}`;
+            }
+            else if  (addressComponent.types[0] === 'administrative_area_level_2') {
+              warehouse.addressCounty = `${addressComponent.long_name}`;
+            }
+            else if  (addressComponent.types[0] === 'administrative_area_level_1') {
+              warehouse.addressState = `${addressComponent.long_name}`;
+            }
+            else if  (addressComponent.types[0] === 'country') {
+              warehouse.addressCountry = `${addressComponent.long_name}`;
+            }
+            else if  (addressComponent.types[0] === 'postal_code') {
+              warehouse.addressPostcode = `${addressComponent.long_name}`;
+            }
           }
-          else if  (addressComponent.types[0] === 'route') {
-            warehouse.addressLine1 = `${warehouse.addressLine1} ${addressComponent.long_name}`;
-          }
-          else if  (addressComponent.types[0] === 'locality') {
-            warehouse.addressCity = `${addressComponent.long_name}`;
-          }
-          else if  (addressComponent.types[0] === 'administrative_area_level_2') {
-            warehouse.addressCounty = `${addressComponent.long_name}`;
-          }
-          else if  (addressComponent.types[0] === 'administrative_area_level_1') {
-            warehouse.addressState = `${addressComponent.long_name}`;
-          }
-          else if  (addressComponent.types[0] === 'country') {
-            warehouse.addressCountry = `${addressComponent.long_name}`;
-          }
-          else if  (addressComponent.types[0] === 'postal_code') {
-            warehouse.addressPostcode = `${addressComponent.long_name}`;
-          }
-        }
-  
-      )
+    
+        )
+      }
 
       sessionStorage.setItem('warehouse-maintenance.warehouse', JSON.stringify(warehouse));
       const url = this.warehouseForm.controls.warehouseId.value
@@ -125,13 +190,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
         : '/warehouse-layout/warehouse-maintenance/confirm';
 
       this.router.navigateByUrl(url);
-    } else if (this.warehouseAddress === undefined) {
- 
-      // clear the address control and show the error
-      this.warehouseForm.controls.address.reset();
-      this.displayFormError(this.warehouseForm);
-
-    }
+    }  
     else {
       this.displayFormError(this.warehouseForm);
     }
@@ -146,18 +205,8 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
     }
   }
 
-  handleAddressChange(address: Address) { 
-    console.log(`address.formatted_address: ${address.formatted_address}`); 
+  handleAddressChange(address: Address) {  
     this.warehouseAddress = address;
-    address.address_components.forEach(
-      addressComponent => {
-        console.log(`addressComponent.long_name: ${addressComponent.long_name}, short_name: ${addressComponent.short_name}, types: ${addressComponent.types}`)
-
-        if (addressComponent.types[0] === 'street_number') {
-
-        }
-      }
-
-    )
+     
   }
 }

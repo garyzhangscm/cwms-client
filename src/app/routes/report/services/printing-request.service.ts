@@ -40,12 +40,12 @@ export class PrintingRequestService {
     const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
     
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);
-    params = params.append('reportUrl', reportUrl);
+    params = params.append('url', httpUrlEncodingCodec.encodeValue(reportUrl.trim()));
     params = params.append('printerName',  httpUrlEncodingCodec.encodeValue(printerName.trim()));
     params = params.append('reportType',  reportType);
     params = params.append('copies', copies);
  
-    return this.http.put(url).pipe(map(res => res.data));
+    return this.http.put(url, undefined, params).pipe(map(res => res.data));
   }
   
   

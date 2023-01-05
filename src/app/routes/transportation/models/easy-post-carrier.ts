@@ -12,5 +12,6 @@ export interface EasyPostCarrier {
     accountNumber: string;
 
     reportType: ReportType;
+    printerName?: string;
  
 }

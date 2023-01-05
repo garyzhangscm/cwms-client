@@ -36,36 +36,60 @@
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24">
+        <nz-form-label [nzSpan]="8">
           id
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
+        <nz-form-control [nzSpan]="16">
           <input nz-input formControlName="warehouseId" />
         </nz-form-control>
       </nz-form-item>
     </div>
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24">
+        <nz-form-label [nzSpan]="8">
           {{ 'name' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+        <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
           <input nz-input formControlName="name" />
         </nz-form-control>
       </nz-form-item>
     </div>
     <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24">
+        <nz-form-label [nzSpan]="8">
           {{ 'size' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+        <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
           <input nz-input type="number" formControlName="size" />
         </nz-form-control>
       </nz-form-item>
     </div>
   </div>
-  
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="8">
+          {{ 'contactorFirstname' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <input nz-input  formControlName="contactorFirstname" />
+        </nz-form-control>
+      </nz-form-item>
+    </div><div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="8">
+          {{ 'contactorLastname' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <input nz-input  formControlName="contactorLastname" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+   
+  <div nz-row [nzGutter]="24" *ngIf="addressLine1 != ''" style="padding: 20px;">
+      {{'current-address'}}: <strong>{{addressLine1}} {{addressLine2}}, {{addressCity}}, {{addressState}} {{addressPostcode}}</strong>
+  </div>
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="24">
       <nz-form-item nzFlex>

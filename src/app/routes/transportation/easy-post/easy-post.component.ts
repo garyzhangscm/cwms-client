@@ -4,8 +4,11 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { Address } from 'ngx-google-places-autocomplete/objects/address';
 
+import { Printer } from '../../report/models/printer';
 import { ReportType } from '../../report/models/report-type.enum';
+import { PrinterService } from '../../report/services/printer.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Carrier } from '../models/carrier';
 import { CarrierServiceLevelType } from '../models/carrier-service-level-type.enum';
@@ -29,6 +32,10 @@ export class TransportationEasyPostComponent implements OnInit {
   addCarrierModal!: NzModalRef;
   addCarrierForm!: FormGroup;
   reportTypes = ReportType;
+  printers: Printer[] = [];
+  
+  shipFromAddress?: Address;
+  returnAddress?: Address;
   
 
   constructor(
@@ -38,12 +45,15 @@ export class TransportationEasyPostComponent implements OnInit {
     private messageService: NzMessageService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private carrierService: CarrierService,
-    private easyPostConfigurationService: EasyPostConfigurationService) { 
+    private easyPostConfigurationService: EasyPostConfigurationService, 
+    private pirnterService: PrinterService) { 
       this.currentEasyPostConfiguration = {        
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
         apiKey: "",
         webhookSecret:  "",    
         carriers: [],
+        useWarehouseAddressAsShipFromFlag: true,
+        useWarehouseAddressAsReturnFlag: true,
       }
   }
 
@@ -59,6 +69,11 @@ export class TransportationEasyPostComponent implements OnInit {
         } ,         
       }
     )
+
+    // load all the printers
+    this.pirnterService.getPrinters().subscribe({
+      next: (printerRes) => this.printers = printerRes
+    })
   }
 
   // load the configuration for current warehouse
@@ -80,7 +95,97 @@ export class TransportationEasyPostComponent implements OnInit {
         error: () => this.isSpinning = false
       }); 
   }
+  setupShipFromAddress(address: Address) {
+    this.currentEasyPostConfiguration.addressLine1 = "";
+    this.currentEasyPostConfiguration.addressCity = "";
+    this.currentEasyPostConfiguration.addressCounty = "";
+    this.currentEasyPostConfiguration.addressState = "";
+    this.currentEasyPostConfiguration.addressCountry = "";
+    this.currentEasyPostConfiguration.addressPostcode = "";
+    address.address_components.forEach(
+      addressComponent => {
+        if (addressComponent.types[0] === 'street_number') {
+            this.currentEasyPostConfiguration.addressLine1 = `${addressComponent.long_name} ${this.currentEasyPostConfiguration.addressLine1}`;
+        }
+        else if  (addressComponent.types[0] === 'route') {
+          this.currentEasyPostConfiguration.addressLine1 = `${this.currentEasyPostConfiguration.addressLine1} ${addressComponent.long_name}`;
+        }
+        else if  (addressComponent.types[0] === 'locality') {
+          this.currentEasyPostConfiguration.addressCity = `${addressComponent.long_name}`;
+        }
+        else if  (addressComponent.types[0] === 'administrative_area_level_2') {
+          this.currentEasyPostConfiguration.addressCounty = `${addressComponent.long_name}`;
+        }
+        else if  (addressComponent.types[0] === 'administrative_area_level_1') {
+          this.currentEasyPostConfiguration.addressState = `${addressComponent.long_name}`;
+        }
+        else if  (addressComponent.types[0] === 'country') {
+          this.currentEasyPostConfiguration.addressCountry = `${addressComponent.long_name}`;
+        }
+        else if  (addressComponent.types[0] === 'postal_code') {
+          this.currentEasyPostConfiguration.addressPostcode = `${addressComponent.long_name}`;
+        }
+      }
+
+    )
+  }
+  
+  setupReturnAddress(address: Address) {
+    this.currentEasyPostConfiguration.returnAddressLine1 = "";
+    this.currentEasyPostConfiguration.returnAddressCity = "";
+    this.currentEasyPostConfiguration.returnAddressCounty = "";
+    this.currentEasyPostConfiguration.returnAddressState = "";
+    this.currentEasyPostConfiguration.returnAddressCountry = "";
+    this.currentEasyPostConfiguration.returnAddressPostcode = "";
+    address.address_components.forEach(
+      addressComponent => {
+        if (addressComponent.types[0] === 'street_number') {
+            this.currentEasyPostConfiguration.returnAddressLine1 = `${addressComponent.long_name} ${this.currentEasyPostConfiguration.returnAddressLine1}`;
+        }
+        else if  (addressComponent.types[0] === 'route') {
+          this.currentEasyPostConfiguration.returnAddressLine1 = `${this.currentEasyPostConfiguration.returnAddressLine1} ${addressComponent.long_name}`;
+        }
+        else if  (addressComponent.types[0] === 'locality') {
+          this.currentEasyPostConfiguration.returnAddressCity = `${addressComponent.long_name}`;
+        }
+        else if  (addressComponent.types[0] === 'administrative_area_level_2') {
+          this.currentEasyPostConfiguration.returnAddressCounty = `${addressComponent.long_name}`;
+        }
+        else if  (addressComponent.types[0] === 'administrative_area_level_1') {
+          this.currentEasyPostConfiguration.returnAddressState = `${addressComponent.long_name}`;
+        }
+        else if  (addressComponent.types[0] === 'country') {
+          this.currentEasyPostConfiguration.returnAddressCountry = `${addressComponent.long_name}`;
+        }
+        else if  (addressComponent.types[0] === 'postal_code') {
+          this.currentEasyPostConfiguration.returnAddressPostcode = `${addressComponent.long_name}`;
+        }
+      }
+
+    )
+  }
   confirm() {
+
+    if (!this.currentEasyPostConfiguration.useWarehouseAddressAsShipFromFlag) {
+        if (this.shipFromAddress == null ) {
+          this.messageService.error("ship-from-address-required");
+          return;
+        }
+        else {
+          this.setupShipFromAddress(this.shipFromAddress);
+        }
+    }
+    if (!this.currentEasyPostConfiguration.useWarehouseAddressAsReturnFlag){
+        if (this.returnAddress == null ) {
+          this.messageService.error("return-address-required");
+          return;
+        }
+        else {
+          this.setupReturnAddress(this.returnAddress);
+        }
+
+    }
+    
     this.isSpinning = true;
     this.easyPostConfigurationService.addConfiguration(this.currentEasyPostConfiguration)
     .subscribe({
@@ -133,7 +238,8 @@ export class TransportationEasyPostComponent implements OnInit {
        
       carrier: [null],
       accountNumber: [null],
-      type: [null]
+      type: [null],
+      printerName: [null],
     });
 
     // only show the carriers that is
@@ -224,5 +330,13 @@ export class TransportationEasyPostComponent implements OnInit {
       this.currentEasyPostConfiguration.carriers = [...this.currentEasyPostConfiguration.carriers, carrier];
     }
   }
-
+ 
+  handleShipFromAddressChange(address: Address) {  
+    this.shipFromAddress = address;
+     
+  }
+  handleReturnAddressChange(address: Address) {  
+    this.shipFromAddress = address;
+     
+  }
 }

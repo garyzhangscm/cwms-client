@@ -44,6 +44,10 @@
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'size' | i18n}}">{{currentWarehouse.size}}
       </nz-descriptions-item>
+      
+      <nz-descriptions-item nzTitle="{{ 'contactor' | i18n }}">
+        {{ currentWarehouse.contactorFirstname }}   {{ currentWarehouse.contactorLastname }} 
+      </nz-descriptions-item> 
       <nz-descriptions-item nzTitle="{{ 'country' | i18n }}">
         {{ currentWarehouse.addressCountry }}
       </nz-descriptions-item>

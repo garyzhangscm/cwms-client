@@ -6,6 +6,10 @@ export interface Warehouse {
   size: string;
   companyId: number;
 
+  
+  contactorFirstname?: string;
+  contactorLastname?: string;
+
   addressLine1: string;
   addressLine2?: string;
   addressCountry: string;
