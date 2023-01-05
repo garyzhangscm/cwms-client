@@ -174,24 +174,24 @@
              -->
 
              <nz-card nzTitle="{{'other-rate' | i18n}}">
-             <nz-list >
-              <nz-list-item *ngFor="let rate of currentEasyPostShipment.rates" [ngStyle]="{'background-color': getBackgroundColor(rate)}">
-                <ng-container > 
-                  <nz-list-item-meta>
-                    <nz-list-item-meta-avatar [nzSrc]="getLogo(rate)"></nz-list-item-meta-avatar>
-                    <nz-list-item-meta-title>
-                      <a (click)="rateSelected(rate)">{{rate.carrier}} - {{rate.service}}</a>
-                    </nz-list-item-meta-title>
-                    <nz-list-item-meta-description>
-                      {{ rate.rate  }}  {{ rate.currency  }}
-                    </nz-list-item-meta-description> 
-                  </nz-list-item-meta>
-                  <ul nz-list-item-actions>
-                    <nz-list-item-action *ngIf="isBestRate(rate)"><strong>{{'best-rate' | i18n}}</strong></nz-list-item-action> 
-                  </ul>
-                </ng-container> 
-              </nz-list-item> 
-            </nz-list>
+              <nz-list >
+                <nz-list-item *ngFor="let rate of currentEasyPostShipment.rates" [ngStyle]="{'background-color': getBackgroundColor(rate)}">
+                  <ng-container > 
+                    <nz-list-item-meta>
+                      <nz-list-item-meta-avatar [nzSrc]="getLogo(rate)"></nz-list-item-meta-avatar>
+                      <nz-list-item-meta-title>
+                        <a (click)="rateSelected(rate)">{{rate.carrier}} - {{rate.service}}</a>
+                      </nz-list-item-meta-title>
+                      <nz-list-item-meta-description>
+                        {{ rate.rate  }}  {{ rate.currency  }}
+                      </nz-list-item-meta-description> 
+                    </nz-list-item-meta>
+                    <ul nz-list-item-actions>
+                      <nz-list-item-action *ngIf="isBestRate(rate)"><strong>{{'best-rate' | i18n}}</strong></nz-list-item-action> 
+                    </ul>
+                  </ng-container> 
+                </nz-list-item> 
+              </nz-list>
           </nz-card>
 
         </div>

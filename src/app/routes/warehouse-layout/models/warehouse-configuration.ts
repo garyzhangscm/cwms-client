@@ -21,4 +21,12 @@ export interface WarehouseConfiguration {
     reuseLPNAfterShippedFlag: boolean;
 
     billingRequestEnabledFlag: boolean;
+    
+    workingOnSundayFlag: boolean;
+    workingOnMondayFlag: boolean;
+    workingOnTuesdayFlag: boolean;
+    workingOnWednesdayFlag: boolean;
+    workingOnThursdayFlag: boolean;
+    workingOnFridayFlag: boolean;
+    workingOnSaturdayFlag: boolean;
 }

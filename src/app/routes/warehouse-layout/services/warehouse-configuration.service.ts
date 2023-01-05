@@ -24,7 +24,7 @@ export class WarehouseConfigurationService {
 
     if (!refresh) {
       const data = this.gzLocalStorageService.getItem(localStorageKey);
-      if (data !== null) {
+      if (data != null) {
         return of(data);
       }
     }

@@ -79,16 +79,16 @@
         <h4>{{ 'role.name' | i18n}} : {{ currentRole?.name}}</h4>
         </ng-template>
         <ng-template #cardFoot>
-        <div nz-row nzType="flex" nzJustify="center" *ngIf="!newRole">
-            <button nz-button nzType="primary" (click)="assignClients()">
-            {{ 'confirm' | i18n }}
-            </button>
-        </div>
-        <div nz-row nzType="flex" nzJustify="center" *ngIf="newRole">
-            <button nz-button nzType="primary" (click)="goToNextPage()">
-            {{ 'steps.next' | i18n }} :
-            {{ 'steps.confirm.title' | i18n }}
-            </button>
-        </div>
+            <div nz-row nzType="flex" nzJustify="center" *ngIf="!newRole">
+                <button nz-button nzType="primary" (click)="assignClients()">
+                {{ 'confirm' | i18n }}
+                </button>
+            </div>
+            <div nz-row nzType="flex" nzJustify="center" *ngIf="newRole">
+                <button nz-button nzType="primary" (click)="goToNextPage()">
+                {{ 'steps.next' | i18n }} :
+                {{ 'steps.confirm.title' | i18n }}
+                </button>
+            </div>
         </ng-template>
 </nz-spin>

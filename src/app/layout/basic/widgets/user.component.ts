@@ -8,6 +8,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { WebMessageAlertService } from 'src/app/routes/alert/services/web-message-alert.service';
 import { UserService } from 'src/app/routes/auth/services/user.service';
+import { GzLocalStorageService } from 'src/app/routes/util/services/gz-local-storage.service';
 
 @Component({
   selector: 'header-user',
@@ -34,19 +35,23 @@ import { UserService } from 'src/app/routes/auth/services/user.service';
     </div>
     <nz-dropdown-menu #userMenu="nzDropdownMenu">
       <div nz-menu class="width-sm">    
-        <div nz-menu-item (click)="logout()">
-          <i nz-icon nzType="logout" class="mr-sm"></i>
-          {{ 'menu.account.logout' | i18n }}
-        </div>
         
         <div nz-menu-item (click)="openChangePasswordModal()">
-          <i nz-icon nzType="key" class="mr-sm"></i>
+          <i nz-icon nzType="lock" class="mr-sm"></i>
           {{ 'menu.account.change-password' | i18n }}
         </div>
         
         <div nz-menu-item (click)="openWebMessageAlertPage()">
-          <i nz-icon nzType="key" class="mr-sm"></i>
+          <i nz-icon nzType="message" class="mr-sm"></i>
           {{ 'web-message-alert' | i18n }} <nz-badge nzDot></nz-badge>
+        </div>
+        <div nz-menu-item (click)="clearLocalCache()">
+          <i nz-icon nzType="close" class="mr-sm"></i>
+          {{ 'clear-local-cache' | i18n }}
+        </div>
+        <div nz-menu-item (click)="logout()">
+          <i nz-icon nzType="logout" class="mr-sm"></i>
+          {{ 'menu.account.logout' | i18n }}
         </div>
       </div>
     </nz-dropdown-menu>
@@ -111,10 +116,12 @@ export class HeaderUserComponent {
     private router: Router, 
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService, 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private messageService: NzMessageService,
     private userService: UserService, 
     public msg: NzMessageService,    
     private fb: FormBuilder,
     private modalService: NzModalService,
+    private gzLocalStorageService: GzLocalStorageService,
     private webMessageAlertService: WebMessageAlertService) {  
       this.setWebMessageAlertTimer();
     }
@@ -203,5 +210,9 @@ export class HeaderUserComponent {
     
     this.router.navigateByUrl('alert/web-message-alert');
 
+  }
+  clearLocalCache() {
+    this.gzLocalStorageService.clear();
+    this.messageService.success("local-cache-cleared");
   }
 }
