@@ -1,3 +1,4 @@
+import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
@@ -9,6 +10,7 @@ import { Address } from 'ngx-google-places-autocomplete/objects/address';
 import { Printer } from '../../report/models/printer';
 import { ReportType } from '../../report/models/report-type.enum';
 import { PrinterService } from '../../report/services/printer.service';
+import { DateTimeService } from '../../util/services/date-time.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Carrier } from '../models/carrier';
 import { CarrierServiceLevelType } from '../models/carrier-service-level-type.enum';
@@ -44,7 +46,8 @@ export class TransportationEasyPostComponent implements OnInit {
     private fb: FormBuilder,
     private messageService: NzMessageService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private carrierService: CarrierService,
+    private carrierService: CarrierService,  
+    private dateTimeService: DateTimeService,
     private easyPostConfigurationService: EasyPostConfigurationService, 
     private pirnterService: PrinterService) { 
       this.currentEasyPostConfiguration = {        
@@ -240,6 +243,11 @@ export class TransportationEasyPostComponent implements OnInit {
       accountNumber: [null],
       type: [null],
       printerName: [null],
+      printParcelLabelAfterManifest: [null],
+      labelCopyCount: [null],
+      schedulePickupAfterManifest: [null],
+      minPickupTime: [null],
+      maxPickupTime: [null],
     });
 
     // only show the carriers that is
@@ -259,9 +267,7 @@ export class TransportationEasyPostComponent implements OnInit {
         return true;
       }
     )];
-    console.log(`this.avaiableCarriers.length: ${this.avaiableCarriers.length}`);
-    console.log(`this.allCarriers.length: ${this.allCarriers.length}`);
-
+    
     if (this.avaiableCarriers.length == 0) {
       this.messageService.error(this.i18n.fanyi('no-more-carrier-to-add-to-easy-port'));
       return;
@@ -288,10 +294,18 @@ export class TransportationEasyPostComponent implements OnInit {
             nzOkDisabled: true,
             nzOkLoading: true
           });
+          console.log(`this.addCarrierForm.controls.minPickupTime.value: ${this.addCarrierForm.controls.minPickupTime.value}`);
+          console.log(`this.addCarrierForm.controls.maxPickupTime.value: ${this.addCarrierForm.controls.maxPickupTime.value}`);
           this.addCarrier( 
             this.addCarrierForm.controls.carrier.value,
             this.addCarrierForm.controls.accountNumber.value,
             this.addCarrierForm.controls.type.value,
+            this.addCarrierForm.controls.printerName.value,
+            this.addCarrierForm.controls.printParcelLabelAfterManifest.value,
+            this.addCarrierForm.controls.labelCopyCount.value,
+            this.addCarrierForm.controls.schedulePickupAfterManifest.value,
+            this.addCarrierForm.controls.minPickupTime.value,
+            this.addCarrierForm.controls.maxPickupTime.value,
           ); 
           this.addCarrierModal.destroy(); 
           return false;
@@ -300,18 +314,30 @@ export class TransportationEasyPostComponent implements OnInit {
       nzWidth: 1000,
     });
   }
-  addCarrier(carrierId: number, accountNumber: string, reportType: ReportType) {
+  addCarrier(carrierId: number, accountNumber: string, reportType: ReportType, 
+    printerName: string, printParcelLabelAfterManifest: boolean,
+    labelCopyCount: number, 
+    schedulePickupAfterManifest: boolean, minPickupTime: string, maxPickupTime: string) {
     
     // if this is a new configuration that is not saved yet, let's just add it locally
     // to the confiugration so the carrier will be saved when the configuration is saved
 
+    console.log(`minPickupTime: ${formatDate(minPickupTime, 'HHmm', 'en-US')}`);
+    console.log(`maxPickupTime: ${formatDate(maxPickupTime, 'HHmm', 'en-US')}`);
     const carrier : EasyPostCarrier = {        
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
       carrierId:carrierId,  
       accountNumber: accountNumber,
-      reportType: reportType
+      reportType: reportType,
+      printerName: printerName,
+      printParcelLabelAfterManifestFlag: printParcelLabelAfterManifest,
+      labelCopyCount: labelCopyCount == null ? 1 : labelCopyCount,
+      schedulePickupAfterManifestFlag: schedulePickupAfterManifest,
+      minPickupTime: formatDate(minPickupTime, 'HHmm', 'en-US'),
+      maxPickupTime: formatDate(maxPickupTime, 'HHmm', 'en-US'),
     };
 
+    console.log(`EasyPostCarrier: ${JSON.stringify(carrier)}`);
     if (this.currentEasyPostConfiguration.id) {
 
       this.isSpinning = true;
@@ -336,7 +362,7 @@ export class TransportationEasyPostComponent implements OnInit {
      
   }
   handleReturnAddressChange(address: Address) {  
-    this.shipFromAddress = address;
+    this.returnAddress = address;
      
   }
 }

@@ -13,5 +13,12 @@ export interface EasyPostCarrier {
 
     reportType: ReportType;
     printerName?: string;
+
+    printParcelLabelAfterManifestFlag: boolean;
+    labelCopyCount?: number;
+    schedulePickupAfterManifestFlag: boolean;
+    
+    minPickupTime?: string;
+    maxPickupTime?: string;
  
 }

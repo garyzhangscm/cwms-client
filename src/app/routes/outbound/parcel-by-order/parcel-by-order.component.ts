@@ -4,6 +4,8 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { PrintingService } from '../../common/services/printing.service';
+import { EasyPostCarrier } from '../../transportation/models/easy-post-carrier';
 import { EasyPostConfiguration } from '../../transportation/models/easy-post-configuration';
 import { EasyPostConfigurationService } from '../../transportation/services/easy-post-configuration.service';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
@@ -42,6 +44,7 @@ export class OutboundParcelByOrderComponent implements OnInit {
     private messageService: NzMessageService,
     private router: Router, 
     private warehouseService: WarehouseService, 
+    private printingService: PrintingService,
     private easyPostConfigurationService: EasyPostConfigurationService) { 
       this.currentWarehouse = warehouseService.getCurrentWarehouse();
       this.pageTitle = this.i18n.fanyi('parcel-by-order');
@@ -116,14 +119,32 @@ export class OutboundParcelByOrderComponent implements OnInit {
     this.parcelService.confirmEasyPostShipment(this.currentOrder!.id!, 
       this.currentEasyPostShipment!.id, this.currentEasyPostShipment!.selectedRate)
     .subscribe({
-      next: () => {
+      next: (easyPostShipment) => {
         console.log(`parcel shipment is confirmed`); 
-        
-        this.messageService.success(this.i18n.fanyi('message.save.complete'));
+
+        const easyPostCarrier = this.easyPostConfiguration?.carriers.find(
+          carrier => carrier.carrier?.name === this.currentEasyPostShipment!.selectedRate.carrier
+        );
+        if (easyPostCarrier && easyPostCarrier.printParcelLabelAfterManifestFlag) {
+          // let's check if we will need to print the parcel label automatically
+          if (easyPostCarrier.printerName == null) {
+            
+            this.messageService.success(this.i18n.fanyi('parcel-shipment-saved-no-printer-config')); 
+          }
+          else {
+            this.printParcelLabel(easyPostCarrier, easyPostShipment);
+            this.messageService.success(this.i18n.fanyi('parcel-shipment-saved-parcel-label-printed'));  
+
+          }
+        }else {
+
+          this.messageService.success(this.i18n.fanyi('parcel-shipment-created')); 
+        }
         setTimeout(() => {
           this.isSpinning = false;
           this.router.navigateByUrl(`/outbound/order?number=${this.currentOrder?.number}`);
         }, 500);
+        
       }, 
       error: () => this.isSpinning = false
     })
@@ -174,5 +195,15 @@ export class OutboundParcelByOrderComponent implements OnInit {
       return "lawngreen";
     }
     return "";
+  }
+
+  
+  printParcelLabel(easyPostCarrier: EasyPostCarrier, easyPostShipment: EasyPostShipment): void { 
+    
+    this.printingService.printFileByURL( 
+      easyPostShipment.postageLabel.labelUrl,
+      easyPostCarrier.reportType,
+      easyPostCarrier.printerName!,
+      easyPostCarrier.labelCopyCount == null ? 1 : easyPostCarrier.labelCopyCount); 
   }
 }
