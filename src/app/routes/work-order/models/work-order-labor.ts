@@ -10,7 +10,7 @@ export interface WorkOrderLabor {
     username: string;
     productionLine: ProductionLine;
 
-    lastCheckInTime: number[];
-    lastCheckOutTime: number[];
+    lastCheckInTime: Date;
+    lastCheckOutTime: Date;
     workOrderLaborStatus: WorkOrderLaborStatus;
 }

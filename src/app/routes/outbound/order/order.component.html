@@ -505,10 +505,7 @@
 
                   <td>
                     <span *ngIf="shortAllocation.lastAllocationDatetime">
-                      {{ shortAllocation.lastAllocationDatetime[1] }}/{{ shortAllocation.lastAllocationDatetime[2] }}/{{
-                      shortAllocation.lastAllocationDatetime[0] }}
-                      {{ shortAllocation.lastAllocationDatetime[3] }}:{{ shortAllocation.lastAllocationDatetime[4] }}:{{
-                      shortAllocation.lastAllocationDatetime[5] }}
+                      {{ shortAllocation.lastAllocationDatetime | date:'MM/dd/yyyy, hh:mm:ss'}}
                     </span>
                   </td>
                   <td>

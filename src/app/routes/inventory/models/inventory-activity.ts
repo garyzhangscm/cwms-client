@@ -21,7 +21,7 @@ export interface InventoryActivity {
   inventoryStatus: InventoryStatus;
 
   type: InventoryActivityType;
-  activityDateTime: number[];
+  activityDateTime: Date;
   username: string;
   valueType: string;
   fromValue: string;

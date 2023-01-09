@@ -15,8 +15,8 @@ export interface IntegrationWorkOrderByProductConfirmation {
   
 
   status: IntegrationStatus;
-  insertTime: number[];
-  lastUpdateTime: number[];
+  insertTime: Date;
+  lastUpdateTime: Date;
   errorMessage: string;
   
   createdTime:  Date;

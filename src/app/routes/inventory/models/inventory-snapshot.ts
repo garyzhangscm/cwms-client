@@ -8,8 +8,8 @@ export interface InventorySnapshot {
     warehouseId: number;
     batchNumber: string;
 
-    startTime: number[];
-    completeTime: number[];
+    startTime: Date;
+    completeTime: Date;
 
     status: InventorySnapshotStatus;
 

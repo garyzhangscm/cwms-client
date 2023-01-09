@@ -18,8 +18,8 @@ export interface IntegrationReceiptLineConfirmation {
   overReceivingPercent: number;
 
   status: IntegrationStatus;
-  insertTime: number[];
-  lastUpdateTime: number[];
+  insertTime: Date;
+  lastUpdateTime: Date;
   errorMessage: string;
   
   createdTime:  Date;

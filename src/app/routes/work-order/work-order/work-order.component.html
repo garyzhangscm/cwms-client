@@ -683,11 +683,7 @@
                         <td>{{ 'WORK-ORDER-KPI-TRANSACTION-TYPE-' + workOrderKPITransaction.type | i18n }}</td>
                         <td>
 
-                          {{ workOrderKPITransaction.createdTime![1] }}/{{ workOrderKPITransaction.createdTime![2] }}/{{
-                          workOrderKPITransaction.createdTime![0] }}
-                          {{ workOrderKPITransaction.createdTime![3] }}:{{
-                          workOrderKPITransaction.createdTime![4]
-                          }}:{{ workOrderKPITransaction.createdTime![5] }}
+                          {{ workOrderKPITransaction.createdTime! | date:'MM/dd/yyyy, hh:mm:ss'}}
 
                         </td>
                       </tr>
@@ -865,10 +861,7 @@
 
                         <td>
                           <span *ngIf="shortAllocation.lastAllocationDatetime">
-                            {{ shortAllocation.lastAllocationDatetime[1] }}/{{ shortAllocation.lastAllocationDatetime[2] }}/{{
-                            shortAllocation.lastAllocationDatetime[0] }}
-                            {{ shortAllocation.lastAllocationDatetime[3] }}:{{ shortAllocation.lastAllocationDatetime[4] }}:{{
-                            shortAllocation.lastAllocationDatetime[5] }}
+                            {{ shortAllocation.lastAllocationDatetime  | date:'MM/dd/yyyy, hh:mm:ss'}}
                           </span>
                         </td>
                         <td>

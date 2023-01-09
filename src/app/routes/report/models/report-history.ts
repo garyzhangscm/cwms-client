@@ -10,7 +10,7 @@ export interface ReportHistory {
     warehouseId: number;
     warehouse: Warehouse;
     
-    printedDate: number[];
+    printedDate: Date;
     printedUsername: string;
 
     

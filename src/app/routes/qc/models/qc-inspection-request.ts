@@ -24,7 +24,7 @@ export interface QcInspectionRequest {
 
     qcUsername?: string;
 
-    qcTime?: number[];
+    qcTime?: Date;
     qcInspectionRequestItems: QCInspectionRequestItem[];
 
     

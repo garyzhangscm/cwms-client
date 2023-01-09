@@ -29,6 +29,9 @@ export class UtilService {
   // 3                    hour
   // 4                    minute
   // 5                    second
+
+  /**
+   * 
   compareDateTime(dateTime1: number[], dateTime2: number[]): number{
 
     const indexList = [0, 1, 2, 3, 4, 5];
@@ -38,7 +41,19 @@ export class UtilService {
       }
     }
     return 0;  
-  }
+  } 
+   */
+  compareDateTime(dateTime1: Date, dateTime2: Date): number{
+
+    if (dateTime1.getTime() < dateTime2.getTime())  {
+
+      return -1;
+    }
+    else if (dateTime1.getTime() > dateTime2.getTime())  {
+      return 1;
+    }
+    return 0;  
+  } 
   
   compareBoolean(a?: boolean, b?: boolean): number{
 

@@ -78,14 +78,8 @@
           <td [nzExpand]="expandSet.has(data.id!)" (nzExpandChange)="onExpandChange(data.id!, $event)"></td>
           <td>{{ data.batchNumber }}</td>
           <td>{{ 'INVENTORY-SNAPSHOT-STATUS-' + data.status | i18n}} </td>
-          <td> {{ data.startTime[1] | number: '2.0-0' }}/{{ data.startTime[2] | number: '2.0-0' }}/{{ data.startTime[0]
-            }}
-            {{ data.startTime[3] | number: '2.0-0' }}:{{ data.startTime[4] | number: '2.0-0' }}:{{ data.startTime[5] |
-            number: '2.0-0' }}</td>
-          <td>{{ data.completeTime[1] | number: '2.0-0' }}/{{ data.completeTime[2] | number: '2.0-0' }}/{{
-            data.completeTime[0] }}
-            {{ data.completeTime[3] | number: '2.0-0' }}:{{ data.completeTime[4] | number: '2.0-0' }}:{{
-            data.completeTime[5] | number: '2.0-0' }}</td>
+          <td> {{ data.startTime | date:'MM/dd/yyyy, hh:mm:ss'}}</td>
+          <td>{{ data.completeTime | date:'MM/dd/yyyy, hh:mm:ss'}}</td>
           <td>
 
             {{ 'download' | i18n }} : 

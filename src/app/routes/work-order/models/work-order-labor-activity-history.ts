@@ -14,5 +14,5 @@ export interface WorkOrderLaborActivityHistory {
     username: string;
     originalValue: string;
     newValue: string;
-    activityTime: number[];
+    activityTime: Date;
 }

@@ -91,14 +91,13 @@ export class ProductionLineService {
     
     if (name) {
       url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name.trim())}`;
-    } 
+    }  
     if (startTime) {
       url = `${url}&startTime=${this.dateTimeService.getISODateTimeString(startTime)}`;
     }
     if (endTime) {
       url = `${url}&endTime=${this.dateTimeService.getISODateTimeString(endTime)}`;
-    }
-
+    } 
     return this.http.get(url).pipe(map(res => res.data));
   }
   getProductionLineAttributes(name: string, 

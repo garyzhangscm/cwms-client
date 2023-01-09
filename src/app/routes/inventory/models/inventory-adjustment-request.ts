@@ -26,9 +26,9 @@ export interface InventoryAdjustmentRequest {
   inventoryQuantityChangeType: InventoryQuantityChangeType;
   status: InventoryAdjustmentRequestStatus;
   requestedByUsername: string;
-  requestedByDateTime: number[];
+  requestedByDateTime: Date;
   processedByUsername: string;
-  processedByDateTime: number[];
+  processedByDateTime: Date;
   documentNumber: string;
   comment: string;
 }

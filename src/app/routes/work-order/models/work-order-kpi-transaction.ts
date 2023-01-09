@@ -18,5 +18,5 @@ export interface WorkOrderKpiTransaction {
   workOrder?: WorkOrder;
   workOrderCompleteTransaction?: WorkOrderCompleteTransaction;
   workOrderProduceTransaction?: WorkOrderProduceTransaction;
-  createdTime?: number[];
+  createdTime?: Date;
 }

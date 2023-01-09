@@ -15,7 +15,7 @@ export interface OrderActivity {
     number: string;
     transactionGroupId: string;
 
-    activityDateTime: number[];
+    activityDateTime: Date;
 
     username: string;
     rfCode: string;

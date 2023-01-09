@@ -20,7 +20,7 @@ export interface ShortAllocation {
   deliveredQuantity: number;
   allocationCount: number;
   status: ShortAllocationStatus;
-  lastAllocationDatetime: number[];
+  lastAllocationDatetime: Date;
 
   orderNumber: string;
   workOrderNumber: string;

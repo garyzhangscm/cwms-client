@@ -16,5 +16,5 @@ export interface WorkOrderQcResult {
     qcUsername: string;
 
     qcRFCode: string;
-    qcTime: number[];
+    qcTime: Date;
 }

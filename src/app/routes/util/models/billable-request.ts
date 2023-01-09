@@ -18,7 +18,7 @@ export interface BillableRequest {
     rate: number;
 
     
-    createdTime?: number[];
+    createdTime?: Date;
 
 
 }

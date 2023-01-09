@@ -204,10 +204,7 @@
              data.inventoryStatus.description}}</a>
         </td>
         <td> {{ 'INVENTORY-ACTIVITY-TYPE-' + data.type | i18n}} </td>
-        <td> {{ data.activityDateTime[1] | number: '2.0-0' }}/{{ data.activityDateTime[2] | number: '2.0-0' }}/{{
-          data.activityDateTime[0] }}
-          {{ data.activityDateTime[3] | number: '2.0-0' }}:{{ data.activityDateTime[4] | number: '2.0-0' }}:{{
-          data.activityDateTime[5] | number: '2.0-0' }}
+        <td> {{ data.activityDateTime | date:'MM/dd/yyyy, hh:mm:ss'}} 
         </td>
         <td> {{ data.username }} </td>
         <td> {{ data.rfCode }} </td>
