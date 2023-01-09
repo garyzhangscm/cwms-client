@@ -594,7 +594,7 @@
                   <td><a [href]="parcelPackage.trackingUrl" target="_blank">{{ parcelPackage.trackingCode }}</a> </td> 
                   
                   <td>{{ parcelPackage.status }}</td>
-                  <td>{{ parcelPackage.createdTime | date:'M/d/yy, h:mm:ss a':'+0000'}} </td>
+                  <td>{{ parcelPackage.createdTime | date:'MM/dd/yyyy, hh:mm:ss'}} </td>
                   <td>{{ parcelPackage.length }} in x {{ parcelPackage.width }} in x {{ parcelPackage.height }} in</td>
                   <td>{{ parcelPackage.weight }} lb </td>
                   <td>{{ parcelPackage.carrier }}</td>

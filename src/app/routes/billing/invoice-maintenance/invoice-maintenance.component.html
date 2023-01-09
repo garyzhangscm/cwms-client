@@ -151,9 +151,9 @@
               <tbody>
                   <tr *ngFor="let data of billingRequestLine.data">  
                         <td  >
-                            {{ data.startTime  | date:'M/d/yy, h:mm:ss a':'+0000' }}  </td>
+                            {{ data.startTime | date:'MM/dd/yyyy, hh:mm:ss'}}   </td>
                         <td  >
-                            {{ data.endTime   | date:'M/d/yy, h:mm:ss a':'+0000' }}  </td>
+                            {{ data.endTime  | date:'MM/dd/yyyy, hh:mm:ss'}}  </td>
                         <td  >
                             {{ data.totalAmount}}  </td>
                         <td  >
@@ -190,10 +190,10 @@
                 {{currentInvoice.referenceNumber}}
             </nz-descriptions-item>
             <nz-descriptions-item nzTitle="{{'startTime' | i18n}}">
-                {{currentInvoice.startTime | date:'M/d/yy, h:mm:ss a':'+0000' }}
+                {{currentInvoice.startTime | date:'MM/dd/yyyy, hh:mm:ss'}} 
             </nz-descriptions-item>
             <nz-descriptions-item nzTitle="{{'endTime' | i18n}}">
-                {{currentInvoice.endTime | date:'M/d/yy, h:mm:ss a':'+0000' }}
+                {{currentInvoice.endTime | date:'MM/dd/yyyy, hh:mm:ss'}} 
             </nz-descriptions-item>
             <nz-descriptions-item nzTitle="{{'totalCharge' | i18n}}">
                 {{currentInvoice.totalCharge}}
@@ -245,9 +245,9 @@
                     <tbody>
                         <tr *ngFor="let data of invoieLine.data">  
                             <td  >
-                                {{ data.startTime  | date:'M/d/yy, h:mm:ss a':'+0000'  }}  </td>
+                                {{ data.startTime | date:'MM/dd/yyyy, hh:mm:ss'}}   </td>
                             <td  >
-                                {{ data.endTime  | date:'M/d/yy, h:mm:ss a':'+0000'  }}  </td>
+                                {{ data.endTime | date:'MM/dd/yyyy, hh:mm:ss'}}  </td>
                             <td  >
                                 {{ data.totalAmount}}  </td>
                             <td  >

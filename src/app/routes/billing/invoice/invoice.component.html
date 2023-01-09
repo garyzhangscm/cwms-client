@@ -62,13 +62,13 @@
           <!--   startTimeColumn colummn  -->  
         <ng-template st-row="startTimeColumn" let-item let-index="index"> 
               
-            {{ item.startTime  | date:'M/d/yy, h:mm:ss a':'+0000'}} 
+            {{ item.startTime  | date:'MM/dd/yyyy, hh:mm:ss'}} 
         </ng-template>
         <!--   endTimeColumn colummn  -->  
         <ng-template st-row="endTimeColumn" let-item let-index="index"> 
           
 
-              {{ item.endTime  | date:'M/d/yy, h:mm:ss a':'+0000'}} 
+              {{ item.endTime  | date:'MM/dd/yyyy, hh:mm:ss'}} 
         </ng-template>
         <!--   endTimeColumn colummn  -->  
         <ng-template st-row="actionColumn" let-item let-index="index"> 

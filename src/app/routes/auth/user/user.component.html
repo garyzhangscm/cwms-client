@@ -49,7 +49,7 @@
         <td>{{ data.department?.name }} </td>
         <td>{{ data.position }} </td>
         <td>
-          {{ data.onBoardTime  | date:'MM/dd/yyyy':'+0000'}}
+          {{ data.onBoardTime  | date:'MM/dd/yyyy, hh:mm:ss'}} 
           </td>
         <td>{{ data.enabled + '' | i18n }}</td>
         <td>{{ data.locked + '' | i18n}}</td>

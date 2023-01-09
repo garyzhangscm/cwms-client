@@ -17,8 +17,8 @@
     <!-- Table to Display the result  -->
     <nz-card  [nzExtra]="refreshTemplate" nzTitle="Count down: {{ countDownNumber }}"> 
       <div>Current shift: 
-        <strong>{{ currentShiftStartTime  | date:'M/d/yy, h:mm:ss a' }}</strong> - 
-        <strong>{{ currentShiftEndTime  | date:'M/d/yy, h:mm:ss a' }}</strong></div>
+        <strong>{{ currentShiftStartTime  | date:'MM/dd/yyyy, hh:mm:ss'}} </strong> - 
+        <strong>{{ currentShiftEndTime  | date:'MM/dd/yyyy, hh:mm:ss'}} </strong></div>
     </nz-card>
     
     <ng-template #countDownTemplate>
