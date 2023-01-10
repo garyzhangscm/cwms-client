@@ -18,6 +18,8 @@ import { AuthWorkingTeamMaintenanceComponent } from './working-team-maintenance/
 import { AuthWorkingTeamUserComponent } from './working-team-user/working-team-user.component';
 import { AuthWorkingTeamComponent } from './working-team/working-team.component';
 import { AuthRoleClientComponent } from './role-client/role-client.component';
+import { AuthUserWarehouseComponent } from './user-warehouse/user-warehouse.component';
+import { AuthWarehouseUserComponent } from './warehouse-user/warehouse-user.component';
 
 const routes: Routes = [
   { path: 'user', component: AuthUserComponent, canActivate: [AuthGuard] },
@@ -35,7 +37,9 @@ const routes: Routes = [
   { path: 'working-team/user', component: AuthWorkingTeamUserComponent },
   { path: 'department', component: AuthDepartmentComponent },
   { path: 'department/maintenance', component: AuthDepartmentMaintenanceComponent },
-  { path: 'role-client', component: AuthRoleClientComponent }];
+  { path: 'role-client', component: AuthRoleClientComponent },
+  { path: 'user-warehouse', component: AuthUserWarehouseComponent },
+  { path: 'warehouse-user', component: AuthWarehouseUserComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
