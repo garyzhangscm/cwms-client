@@ -75,13 +75,24 @@
           <input nz-input  formControlName="contactorFirstname" />
         </nz-form-control>
       </nz-form-item>
-    </div><div nz-col [nzSpan]="8">
+    </div>
+    <div nz-col [nzSpan]="8">
       <nz-form-item nzFlex>
         <nz-form-label [nzSpan]="8">
           {{ 'contactorLastname' | i18n }}
         </nz-form-label>
         <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
           <input nz-input  formControlName="contactorLastname" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="8">
+          {{ 'phone' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <input nz-input  formControlName="addressPhone" />
         </nz-form-control>
       </nz-form-item>
     </div>

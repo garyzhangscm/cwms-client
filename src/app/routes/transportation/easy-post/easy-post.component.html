@@ -155,6 +155,20 @@
         <div *ngIf="currentEasyPostConfiguration.carriers == null || currentEasyPostConfiguration.carriers.length == 0">
             <strong>{{'no-easy-post-carrier-setup' | i18n}}</strong>
         </div>
+        
+        <div class="search-result-list"> 
+          
+          <st #st [data]="currentEasyPostConfiguration.carriers" [columns]="columns" >
+            <ng-template st-row="actionColumn" let-item let-index="index"> 
+              
+              <button nz-button nzDanger="true" (click)="removeCarrier(item)">
+                  {{ 'remove' | i18n }}  </button> 
+            </ng-template>
+          </st>
+        
+        </div>
+        <!--
+          
         <nz-list *ngIf="currentEasyPostConfiguration.carriers && currentEasyPostConfiguration.carriers.length > 0">
             <nz-list-item *ngFor="let carrier of currentEasyPostConfiguration.carriers">
               <ng-container > 
@@ -172,6 +186,8 @@
               </ng-container> 
             </nz-list-item> 
           </nz-list>
+          
+        -->
           <ng-template #actionAddCarrier>
               <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle">
                   <button nz-button nzType="primary" (click)="openAddCarrierModal(tplAddCarrierModalTitle, tplAddCarrierModalContent)" >

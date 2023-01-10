@@ -1,7 +1,8 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { I18NService } from '@core';
+import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
@@ -40,6 +41,25 @@ export class TransportationEasyPostComponent implements OnInit {
   returnAddress?: Address;
   
 
+  @ViewChild('st', { static: true })
+  st!: STComponent;
+  columns: STColumn[] = [
+    { title: this.i18n.fanyi("carrier"),  index: 'carrier.name' , }, 
+    { title: this.i18n.fanyi("accountNumber"),  index: 'accountNumber' , }, 
+    { title: this.i18n.fanyi("report.type"),  index: 'reportType' , }, 
+    { title: this.i18n.fanyi("printer"),  index: 'printerName' , }, 
+    { title: this.i18n.fanyi("printParcelLabelAfterManifest"),  index: 'printParcelLabelAfterManifestFlag' , type: 'yn' }, 
+    { title: this.i18n.fanyi("labelCopyCount"),  index: 'labelCopyCount' , }, 
+    { title: this.i18n.fanyi("schedulePickupAfterManifest"),  index: 'schedulePickupAfterManifestFlag' , type: 'yn'}, 
+    { title: this.i18n.fanyi("minPickupTime"),  index: 'minPickupTime' , }, 
+    { title: this.i18n.fanyi("maxPickupTime"),  index: 'maxPickupTime' , }, 
+    {
+      title: this.i18n.fanyi("action"),   
+      render: 'actionColumn', 
+    }
+  ]; 
+
+  
   constructor(
     private warehouseService: WarehouseService,
     private modalService: NzModalService,
@@ -231,24 +251,45 @@ export class TransportationEasyPostComponent implements OnInit {
       )]
     }
   }
-
+  
   
   openAddCarrierModal( 
     tplAddCarrierModalTitle: TemplateRef<{}>,
     tplAddCarrierModalContent: TemplateRef<{}>, 
-  ): void { 
-    this.addCarrierForm = this.fb.group({
+    easyPostCarrier?: EasyPostCarrier
+  ): void {
+    // if easy post carrier is passed in, then we are modify an existing carrier 
+    if (easyPostCarrier) {
+
+      // form to modify an existing carrier
+      this.addCarrierForm = this.fb.group({
        
-      carrier: [null],
-      accountNumber: [null],
-      type: [null],
-      printerName: [null],
-      printParcelLabelAfterManifest: [null],
-      labelCopyCount: [null],
-      schedulePickupAfterManifest: [null],
-      minPickupTime: [null],
-      maxPickupTime: [null],
-    });
+        carrier: new FormControl({ value: easyPostCarrier.carrier?.name, disabled: true }),
+        accountNumber: [easyPostCarrier.accountNumber],
+        type: [easyPostCarrier.reportType],
+        printerName: [easyPostCarrier.printerName],
+        printParcelLabelAfterManifest: [easyPostCarrier.printParcelLabelAfterManifestFlag],
+        labelCopyCount: [easyPostCarrier.labelCopyCount],
+        schedulePickupAfterManifest: [easyPostCarrier.schedulePickupAfterManifestFlag],
+        minPickupTime: [easyPostCarrier.minPickupTime],
+        maxPickupTime: [easyPostCarrier.maxPickupTime],
+      });
+    }
+    else {
+      // form to add a new carrier
+      this.addCarrierForm = this.fb.group({
+       
+        carrier: [null],
+        accountNumber: [null],
+        type: [null],
+        printerName: [null],
+        printParcelLabelAfterManifest: [null],
+        labelCopyCount: [null],
+        schedulePickupAfterManifest: [null],
+        minPickupTime: [null],
+        maxPickupTime: [null],
+      });
+    }
 
     // only show the carriers that is
     // 1. provide parcel service
@@ -365,4 +406,5 @@ export class TransportationEasyPostComponent implements OnInit {
     this.returnAddress = address;
      
   }
+  
 }

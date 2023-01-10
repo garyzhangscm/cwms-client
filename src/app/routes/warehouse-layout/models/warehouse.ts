@@ -18,4 +18,5 @@ export interface Warehouse {
   addressCity: string;
   addressDistrict?: string;
   addressPostcode: string; 
+  addressPhone?: string;
 }

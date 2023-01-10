@@ -48,6 +48,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
         size: ['', Validators.required],
         contactorFirstname: [null],
         contactorLastname: [null],
+        addressPhone: [null],
         address: [null],
       });
     }
@@ -59,6 +60,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
         size: ['', Validators.required],
         contactorFirstname: [null],
         contactorLastname: [null],
+        addressPhone: [null],
         address: ['', Validators.required],
       });
     }

@@ -1559,9 +1559,10 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
     this.isSpinning = true;
     
+    
     // console.log(`start to print lPN label for inventory \n${inventory}`);
     this.inventoryService.generateLPNLabel(
-      inventory.lpn!, event.physicalCopyCount, event.printerName)
+      inventory.lpn!, inventory.quantity, event.printerName)
       .subscribe(printResult => {
 
         // send the result to the printer
