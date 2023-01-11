@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -19,13 +20,22 @@ export class WarehouseService {
   }
 
   getWarehouse(id: number): Observable<Warehouse> {
-    return this.http.get(`layout/warehouses/${  id}`).pipe(map(res => res.data));
+    
+    let params = new HttpParams();
+    params = params.append('warehouseId', id);
+    return this.http.get(`layout/warehouses/${  id}`, params).pipe(map(res => res.data));
   }
 
   getWarehouseByUser(companyCode: string, username: string): Observable<Warehouse[]> {
+
     const url = `layout/warehouses/accessible/${companyCode}/${username}`;
+    
+    let params = new HttpParams();
+    
+    params = params.append('companyCode', companyCode);
+    
     console.log(`start to get warehouse from ${url}`);
-    return this.http.get(url).pipe(map(res => res.data));
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 
   addWarehouse(warehouse: Warehouse): Observable<Warehouse> {

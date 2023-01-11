@@ -6,9 +6,12 @@ import { _HttpClient } from '@delon/theme';
   templateUrl: './warehouse-user.component.html',
 })
 export class AuthWarehouseUserComponent implements OnInit {
+ 
 
   constructor(private http: _HttpClient) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void { 
+    console.log(`TO-DO: warehouse access`)
+  }
 
 }
