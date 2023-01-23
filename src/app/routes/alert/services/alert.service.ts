@@ -1,4 +1,4 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -18,30 +18,33 @@ export class AlertService {
 
   getAlerts(type?: string, status?: string, keyWords?: string, 
     startTime?: Date, endTime?:Date, date?: Date): Observable<Alert[]> {
-    let url = `resource/alerts?companyId=${this.companyService.getCurrentCompany()?.id}`;
-    console.log(`keywards: ${keyWords}`)
-    if (type) {
-      url = `${url}&type=${type}`;
+      
+    let params = new HttpParams();
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();  
+
+    params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
+     
+    if (type) { 
+      params = params.append('type', httpUrlEncodingCodec.encodeValue(type.trim())); 
     }
 
-    if (status) {
-      url = `${url}&status=${status}`;
+    if (status) { 
+      params = params.append('status', httpUrlEncodingCodec.encodeValue(status.trim())); 
     }
-    if (keyWords) {
-      const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
-      url = `${url}&keyWords=${httpUrlEncodingCodec.encodeValue(keyWords.trim())}`;
+    if (keyWords) {  
+      params = params.append('keyWords', httpUrlEncodingCodec.encodeValue(keyWords.trim())); 
     }
     
     if (startTime) {
-      url = `${url}&startTime=${this.dateTimeService.getISODateTimeString(startTime)}`;
+      params = params.append('startTime', this.dateTimeService.getISODateTimeString(startTime));  
     }
     if (endTime) {
-      url = `${url}&endTime=${this.dateTimeService.getISODateTimeString(endTime)}`;
+      params = params.append('endTime', this.dateTimeService.getISODateTimeString(endTime));  
     }
     if (date) {
-      url = `${url}&date=${this.dateTimeService.getISODateString(date)}`;
+      params = params.append('date', this.dateTimeService.getISODateString(date));  
     }
-    return this.http.get(url).pipe(map(res => res.data));
+    return this.http.get(`resource/alerts`, params).pipe(map(res => res.data));
   }
 
   getAlert(id: number): Observable<Alert> {

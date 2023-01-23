@@ -43,7 +43,7 @@ import { WarehouseService } from 'src/app/routes/warehouse-layout/services/wareh
         -->
         <div>
           <a href="https://claytechs.gitbook.io/wms-user-manual/" target="_blank">
-            <i nz-icon [nzType]="'question-circle'" style="font-size: 20px; color: #000000;" ></i> 
+            <i nz-icon [nzType]="'question-circle'" style="font-size: 20px; color: #ffffff;" ></i> 
           </a>
         </div>
       </layout-default-header-item>

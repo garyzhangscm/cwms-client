@@ -1,3 +1,4 @@
+import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -25,52 +26,54 @@ export class InventoryActivityService {
     location?: string,
     lpn?: string,
     inventoryActivityType?: InventoryActivityType,
-    beginDateTime?: Date,
-    endDateTime?: Date,
+    beginDate?: Date,
+    endDate?: Date,
     date?: Date,
     username?: string,
-    rfCode?: string,
+    rfCode?: string, 
   ): Observable<InventoryActivity[]> {
-    let params = '';
+    
+    let params = new HttpParams();
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+     
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+
     if (itemName) {
-      params = `itemName=${itemName}`;
+      params = params.append('itemName', httpUrlEncodingCodec.encodeValue(itemName.trim())); 
     }
     if (clients && clients.length > 0) {
-      params = `${params}&clients=${clients.join(',')}`;
+      params = params.append('clients', httpUrlEncodingCodec.encodeValue(clients.join(',')));  
     }
     if (itemFamilies && itemFamilies.length > 0) {
-      params = `${params}&item_families=${itemFamilies.join(',')}`;
+      params = params.append('item_families', httpUrlEncodingCodec.encodeValue(itemFamilies.join(',')));  
     }
     if (location) {
-      params = `${params}&location=${location}`;
+      params = params.append('location', httpUrlEncodingCodec.encodeValue(location.trim()));   
     }
     if (lpn) {
-      params = `${params}&lpn=${lpn}`;
+      params = params.append('lpn', httpUrlEncodingCodec.encodeValue(lpn.trim()));   
     }
     if (inventoryActivityType) {
-      params = `${params}&inventoryActivityType=${inventoryActivityType}`;
+      params = params.append('inventoryActivityType',inventoryActivityType);   
+    } 
+    
+    if (beginDate) {
+      params = params.append('beginDate', this.dateTimeService.getISODateString(beginDate));   
     }
-    if (beginDateTime) {
-      params = `${params}&beginDateTime=${this.dateTimeService.getISODateTimeString(beginDateTime)}`;
-    }
-    if (endDateTime) {
-      params = `${params}&endDateTime=${this.dateTimeService.getISODateTimeString(endDateTime)}`;
-    }
-    if (date) {
-      params = `${params}&date=${this.dateTimeService.getISODateString(date)}`;
-    }
-    if (username) {
-      params = `${params}&username=${username}`;
-    }
-    if (rfCode) {
-      params = `${params}&rfCode=${rfCode}`;
-    }
-    params = `${params}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    if (params.startsWith('&')) {
-      params = params.substring(1);
+    if (endDate) {
+      params = params.append('endDate', this.dateTimeService.getISODateString(endDate));   
     }
 
-    const url = `inventory/inventory-activities${  params.length > 0 ? `?${  params}` : ''}`;
-    return this.http.get(url).pipe(map(res => res.data));
+    if (date) {
+      params = params.append('date', this.dateTimeService.getISODateString(date));   
+    }
+    if (username) {
+      params = params.append('username', httpUrlEncodingCodec.encodeValue(username.trim()));   
+    }
+    if (rfCode) {
+      params = params.append('rfCode', httpUrlEncodingCodec.encodeValue(rfCode.trim()));   
+    } 
+    
+    return this.http.get(`inventory/inventory-activities`, params).pipe(map(res => res.data));
   }
 }

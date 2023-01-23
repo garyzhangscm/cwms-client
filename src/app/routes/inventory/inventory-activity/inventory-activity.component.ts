@@ -261,7 +261,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
     this.searchResult = '';
     
     let startTime : Date = this.searchForm.controls.activityDateTimeRanger.value ? 
-        this.searchForm.controls.activityDateTimeRanger.value[0] : undefined; 
+        this.searchForm.controls.activityDateTimeRanger.value[0] : undefined;  
     let endTime : Date = this.searchForm.controls.activityDateTimeRanger.value ? 
         this.searchForm.controls.activityDateTimeRanger.value[1] : undefined; 
     let specificDate : Date = this.searchForm.controls.activityDate.value;
@@ -275,9 +275,10 @@ export class InventoryInventoryActivityComponent implements OnInit {
         this.searchForm.value.lpn,
         this.searchForm.value.type,
         startTime,
-        endTime,specificDate,
+        endTime,        
+        specificDate,
         this.searchForm.value.username,
-        this.searchForm.value.rfCode
+        this.searchForm.value.rfCode,  
       )
       .subscribe(
         inventoryActivityRes => {
