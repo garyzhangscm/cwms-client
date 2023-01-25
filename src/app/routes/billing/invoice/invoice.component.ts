@@ -9,6 +9,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { Client } from '../../common/models/client';
 import { ClientService } from '../../common/services/client.service';
+import { LocalCacheService } from '../../util/services/local-cache.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Invoice } from '../models/invoice';
 import { InvoiceService } from '../services/invoice.service';
@@ -20,6 +21,7 @@ import { InvoiceService } from '../services/invoice.service';
 })
 export class BillingInvoiceComponent implements OnInit {
   isSpinning = false;
+  threePartyLogisticsFlag = false;
 
   @ViewChild('st', { static: true })
   st!: STComponent;
@@ -39,6 +41,16 @@ export class BillingInvoiceComponent implements OnInit {
         render: 'endTimeColumn', width: 200,
         iif: () => this.isChoose('endTime') 
     },  
+    {
+        title: this.i18n.fanyi("invoiceDate"), 
+        render: 'invoiceDateColumn', width: 200,
+        iif: () => this.isChoose('invoiceDate') 
+    },  
+    {
+        title: this.i18n.fanyi("dueDate"), 
+        render: 'dueDateColumn', width: 200,
+        iif: () => this.isChoose('dueDate') 
+    },  
     { title: this.i18n.fanyi("totalCharge"),  index: 'totalCharge' , 
         iif: () => this.isChoose('totalCharge') },    
     { title: this.i18n.fanyi("comment"),  index: 'comment' , 
@@ -56,6 +68,8 @@ export class BillingInvoiceComponent implements OnInit {
     { label: this.i18n.fanyi("referenceNumber"), value: 'referenceNumber', checked: true },
     { label: this.i18n.fanyi("startTime"), value: 'startTime', checked: true },
     { label: this.i18n.fanyi("endTime"), value: 'endTime', checked: true },
+    { label: this.i18n.fanyi("invoiceDate"), value: 'startTime', checked: false },
+    { label: this.i18n.fanyi("dueDate"), value: 'endTime', checked: false },
     { label: this.i18n.fanyi("totalCharge"), value: 'totalCharge', checked: true },
     { label: this.i18n.fanyi("comment"), value: 'comment', checked: true }, 
   ];
@@ -84,8 +98,22 @@ export class BillingInvoiceComponent implements OnInit {
     private messageService: NzMessageService,
     private warehouseService: WarehouseService,
     private clientService: ClientService,
+    private localCacheService: LocalCacheService,
     private router: Router, 
-    private fb: FormBuilder,) { }
+    private fb: FormBuilder,) { 
+      this.localCacheService.getWarehouseConfiguration().subscribe({
+        next: (warehouseConfigRes) => {
+  
+          if (warehouseConfigRes && warehouseConfigRes.threePartyLogisticsFlag) {
+            this.threePartyLogisticsFlag = true;
+          }
+          else {
+            this.threePartyLogisticsFlag = false;
+          }
+          
+        },
+      });
+    }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('invoice'));

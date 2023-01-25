@@ -19,4 +19,8 @@ export interface Invoice {
     endTime?: Date;
     lines: InvoiceLine[];
     totalCharge: number;
+
+    invoiceDate?: Date;
+    dueDate?: Date;
+    fileName?: string;
 }
