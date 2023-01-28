@@ -7,6 +7,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 import { Client } from '../../common/models/client';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
@@ -23,6 +24,7 @@ import { ItemService } from '../../inventory/services/item.service';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { ReportType } from '../../report/models/report-type.enum';
 import { ColumnItem } from '../../util/models/column-item';
+import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { LocationService } from '../../warehouse-layout/services/location.service';
@@ -259,7 +261,9 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   manualPutawayModal!: NzModalRef;
 
   currentInventory!: Inventory;
-  availableInventoryStatuses: InventoryStatus[] = [];
+  validInventoryStatuses: InventoryStatus[] = [];
+  availableInventoryStatus?: InventoryStatus;
+
 
   currentReceiptLine!: ReceiptLine;
   currentReceivingLine!: ReceiptLine;
@@ -271,6 +275,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   printingPutawayWork = false;
   displayItemPackageType: ItemPackageType | undefined;
   receivingInProcess = false;
+
+  threePartyLogisticsFlag = false;
 
   
   reverseInventoryForm!: FormGroup;
@@ -308,6 +314,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     private router: Router,
     private printingService: PrintingService,
     private messageService: NzMessageService,
+    private localCacheService: LocalCacheService,
+    private notification: NzNotificationService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inbound.receipt.title');
   }
@@ -337,12 +345,31 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
     this.inventoryStatusService
       .loadInventoryStatuses()
-      .subscribe(inventoryStatuses => (this.availableInventoryStatuses = inventoryStatuses));
+      .subscribe(inventoryStatuses => (this.validInventoryStatuses = inventoryStatuses));
+    this.inventoryStatusService.getAvailableInventoryStatuses()
+    .subscribe(inventoryStatuses => {
+      if (inventoryStatuses.length > 0) {
+        this.availableInventoryStatus = inventoryStatuses[0];
+      }
+    });
 
     this.clientService.getClients().subscribe(clients => (this.validClients = clients));
     this.supplierService.loadSuppliers().subscribe(suppliers => {
       this.validSuppliers = [...suppliers];
       this.filterValidSuppliers = [...suppliers]
+    });
+
+    
+    this.localCacheService.getWarehouseConfiguration().subscribe({
+      next: (warehouseConfigRes) => {
+
+        if (warehouseConfigRes && warehouseConfigRes.threePartyLogisticsFlag) {
+          this.threePartyLogisticsFlag = true;
+        }
+        else {
+          this.threePartyLogisticsFlag = false;
+        }  
+      },  
     });
   }
   onSupplierChange(value: string): void {
@@ -743,12 +770,31 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     return selectedInventories;
   }
 
+  validateItemReadyForReceiving(receiptLine: ReceiptLine) : string {
+    if (receiptLine.item == null) {
+      return this.i18n.fanyi("no-item-on-receipt-line");
+    }
+    if (receiptLine.item!.itemPackageTypes == null || receiptLine.item!.itemPackageTypes.length == 0) {
+      return this.i18n.fanyi("no-item-packate-type-setup");
+    }
+
+
+    return '';
+  }
+
   openReceivingModal(
     receiptLine: ReceiptLine,
     tplReceivingModalTitle: TemplateRef<{}>,
     tplReceivingModalContent: TemplateRef<{}>,
     tplReceivingModalFooter: TemplateRef<{}>,
   ): void {
+    // make sure the item is ready for receiving
+    const itemNotReadyError = this.validateItemReadyForReceiving(receiptLine);
+    if (itemNotReadyError != null && itemNotReadyError != '') {
+
+      this.showError(this.i18n.fanyi("item-not-ready-for-receiving"), itemNotReadyError);
+      return;
+    }
     this.createReceivingForm(receiptLine);
     this.receivingInProcess = false;
 
@@ -757,7 +803,6 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       nzTitle: tplReceivingModalTitle,
       nzContent: tplReceivingModalContent,
       nzFooter: tplReceivingModalFooter,
-
       nzWidth: 1000,
     });
     this.receivingModal.afterOpen.subscribe(() => this.setupDefaultInventoryValue());
@@ -838,13 +883,17 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       this.receivingForm!.controls.itemPackageType.setValue(this.currentReceivingLine.item!.itemPackageTypes[0].id);
       this.displayItemPackageType = this.currentReceivingLine.item!.itemPackageTypes[0];
     }
-    if (this.availableInventoryStatuses.length === 1) {
-      this.receivingForm!.controls.inventoryStatus.setValue(this.availableInventoryStatuses[0].id);
+    if (this.validInventoryStatuses.length === 1) {
+      this.receivingForm!.controls.inventoryStatus.setValue(this.validInventoryStatuses[0].id);
+    }
+    else if (this.availableInventoryStatus != null) {
+      this.receivingForm!.controls.inventoryStatus.setValue(this.availableInventoryStatus.id);
+
     }
   }
 
   inventoryStatusChange(newInventoryStatusName: string): void {
-    this.availableInventoryStatuses.forEach(inventoryStatus => {
+    this.validInventoryStatuses.forEach(inventoryStatus => {
       if (inventoryStatus.name === newInventoryStatusName) {
         this.currentInventory!.inventoryStatus = inventoryStatus;
       }
@@ -897,7 +946,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
 
   createReceivingInventory(receiptLine: ReceiptLine, receiptLocation: WarehouseLocation): Inventory {
-    const inventoryStatus = this.availableInventoryStatuses
+    const inventoryStatus = this.validInventoryStatuses
       .filter(
         availableInventoryStatus => availableInventoryStatus.id === this.receivingForm.controls.inventoryStatus.value,
       )
@@ -1149,8 +1198,13 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       type: 'checkbox'
     },
     { title: this.i18n.fanyi("receipt.line.number"), index: 'number',  iif: () => this.isChoose('number'), width: 150 },    
-    { title: this.i18n.fanyi("item"), index: 'item.name',  iif: () => this.isChoose('itemName'), width: 100 },    
-    // { title: this.i18n.fanyi("item.description"), index: 'item.description',  iif: () => this.isChoose('itemDescription'), width: 150 },   
+    { title: this.i18n.fanyi("item"), index: 'item.name',  iif: () => this.isChoose('itemName'), width: 100 , 
+            type: "link", click: (record: STData) =>    
+                this.router.navigateByUrl(
+                  `inventory/item?name=${record["item"]["name"]}`,
+                )
+    },
+        // { title: this.i18n.fanyi("item.description"), index: 'item.description',  iif: () => this.isChoose('itemDescription'), width: 150 },   
     {
       title: this.i18n.fanyi("item.description"), 
       render: 'descriptionColumn',
@@ -1245,5 +1299,12 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
       nzWidth: 1000,
     });
+  }
+
+  showError(title: string, errorMessage: string): void {
+    this.notification.error(
+      title, errorMessage,
+      { nzPlacement: 'topRight' }
+    );
   }
 }

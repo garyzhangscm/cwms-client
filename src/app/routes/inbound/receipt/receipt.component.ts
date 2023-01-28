@@ -158,6 +158,8 @@ export class InboundReceiptComponent implements OnInit {
   listOfDisplayReceipts: Receipt[] = [];
   receiptStatusList = ReceiptStatus;
 
+  threePartyLogisticsFlag = false;
+  loadingOrderDetailsRequest = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -190,6 +192,19 @@ export class InboundReceiptComponent implements OnInit {
 
     
     this.supplierService.loadSuppliers().subscribe(suppliers => (this.validSuppliers = suppliers));
+
+    
+    this.localCacheService.getWarehouseConfiguration().subscribe({
+      next: (warehouseConfigRes) => {
+
+        if (warehouseConfigRes && warehouseConfigRes.threePartyLogisticsFlag) {
+          this.threePartyLogisticsFlag = true;
+        }
+        else {
+          this.threePartyLogisticsFlag = false;
+        }  
+      },  
+    });
   }
 
   resetForm(): void {
@@ -238,12 +253,37 @@ export class InboundReceiptComponent implements OnInit {
       },
     );
   }
+  
+  delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+  }
+
   // we will load the client / supplier / item information 
   // asyncronized
-  refreshDetailInformations(receipts: Receipt[]) { 
-    receipts.forEach(
-      receipt => this.refreshDetailInformation(receipt)
-    );
+  async refreshDetailInformations(receipts: Receipt[]) { 
+    
+    let index = 0;
+    this.loadingOrderDetailsRequest = 0;
+    while (index < receipts.length) {
+
+      // we will need to make sure we are at max loading detail information
+      // for 10 receipt at a time(each receipt may have 3 different request). 
+      // we will get error if we flush requests for
+      // too many receipts into the server at a time 
+      
+      
+      while(this.loadingOrderDetailsRequest > 50) {
+        // sleep 50ms        
+        await this.delay(50);
+      } 
+      
+      this.refreshDetailInformation(receipts[index]);
+      index++;
+    } 
+    
+    // refresh the table while everything is loaded
+    // console.log(`mnaually refresh the table`);   
+    // this.st.reload();  
   }
   refreshDetailInformation(receipt: Receipt) {
   
@@ -256,9 +296,14 @@ export class InboundReceiptComponent implements OnInit {
   loadClient(receipt: Receipt) {
      
     if (receipt.clientId && receipt.client == null) {
+      this.loadingOrderDetailsRequest++;
       this.localCacheService.getClient(receipt.clientId).subscribe(
         {
-          next: (clientRes) => receipt.client = clientRes
+          next: (clientRes) => {
+            receipt.client = clientRes;
+            
+            this.loadingOrderDetailsRequest--;
+          }
         }
       );
       
@@ -267,10 +312,14 @@ export class InboundReceiptComponent implements OnInit {
   
   loadSupplier(receipt: Receipt) { 
     if (receipt.supplierId && receipt.supplier == null) {
+      this.loadingOrderDetailsRequest++;
       
       this.localCacheService.getSupplier(receipt.supplierId).subscribe(
         {
-          next: (supplierRes) => receipt.supplier = supplierRes
+          next: (supplierRes) => {
+            receipt.supplier = supplierRes;
+            this.loadingOrderDetailsRequest--;
+          }
         }
       );
     }
@@ -285,11 +334,13 @@ export class InboundReceiptComponent implements OnInit {
 
   loadItem(receiptLine: ReceiptLine) { 
     if (receiptLine.itemId && receiptLine.item == null) { 
+      this.loadingOrderDetailsRequest++;
        
       this.localCacheService.getItem(receiptLine.itemId).subscribe(
         {
           next: (itemRes) => { 
             receiptLine.item = itemRes; 
+            this.loadingOrderDetailsRequest--;
           }
         }
       );
