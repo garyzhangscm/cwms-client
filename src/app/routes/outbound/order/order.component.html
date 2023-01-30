@@ -51,13 +51,25 @@
     
     <div nz-row [nzGutter]="24">
       
-
-      <div nz-col [nzSpan]="12" >
+      <div nz-col [nzSpan]="8" >
         <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="5" nzFor="completeTimeRanger">
+          <nz-form-label [nzSpan]="8" nzFor="customers">
+            {{ 'customer' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <nz-select nzShowSearch nzAllowClear  formControlName="customer">
+              <nz-option *ngFor="let customer of validCustomers" [nzLabel]="customer.name" [nzValue]="customer.id"></nz-option> 
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8" >
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="completeTimeRanger">
             {{ 'complete-time' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18">
+          <nz-form-control [nzSpan]="16">
             <nz-range-picker [nzShowTime]="{ nzHideDisabledOptions: true }" nzFormat="yyyy-MM-dd HH:mm:ss"
               formControlName="completeTimeRanger" name="completeTimeRanger">
             </nz-range-picker>
@@ -65,12 +77,14 @@
         </nz-form-item>
       </div>
 
-      <div nz-col [nzSpan]="12"  >
+      
+
+      <div nz-col [nzSpan]="8"  >
         <nz-form-item nzFlex>
-          <nz-form-label [nzSpan]="5" nzFor="completeDate">
+          <nz-form-label [nzSpan]="8" nzFor="completeDate">
             {{ 'complete-time' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18">
+          <nz-form-control [nzSpan]="16">
             <nz-date-picker formControlName="completeDate" name="completeDate"></nz-date-picker>
           </nz-form-control>
         </nz-form-item>

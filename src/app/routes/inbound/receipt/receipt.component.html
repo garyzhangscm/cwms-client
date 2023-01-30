@@ -38,22 +38,14 @@
           {{ 'supplier' | i18n }}
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
-          nzErrorTip="{{ 'error.form.field.required' | i18n }}">
-          <nz-input-group nzSize="large"  >
-            <input nz-input formControlName="supplier" id="supplier" name="supplier"
-              [nzAutocomplete]="supplierAutoCompleteTpl" />
-          </nz-input-group>
+          nzErrorTip="{{ 'error.form.field.required' | i18n }}"> 
+            <nz-select nzShowSearch nzAllowClear formControlName="supplier" id="supplier" name="supplier">
+              <nz-option *ngFor="let supplier of validSuppliers"  [nzLabel]="supplier.description" [nzValue]="supplier.name"></nz-option>
+              <nz-option nzLabel="Lucy" nzValue="lucy"></nz-option>
+              <nz-option nzLabel="Tom" nzValue="tom"></nz-option>
+            </nz-select> 
         </nz-form-control>
-      </nz-form-item>
-      
-      <ng-template #searchIcon>
-        <i nz-icon nzType="search"></i>
-      </ng-template>
-      <nz-autocomplete #supplierAutoCompleteTpl>
-        <nz-auto-option *ngFor="let supplier of validSuppliers" [nzLabel]="supplier.description" [nzValue]="supplier.name">
-          {{ supplier.description }}
-        </nz-auto-option>
-      </nz-autocomplete>
+      </nz-form-item> 
     </div>
 
   </div>

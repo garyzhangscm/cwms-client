@@ -16,6 +16,7 @@ import { UnitType } from '../../common/models/unit-type';
 import { ClientService } from '../../common/services/client.service';
 import { UnitService } from '../../common/services/unit.service';
 import { ColumnItem } from '../../util/models/column-item';
+import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
 import { Item } from '../models/item';
 import { ItemFamily } from '../models/item-family';
@@ -239,6 +240,8 @@ export class InventoryItemComponent implements OnInit {
   searching = false;
   searchResult = '';
 
+  threePartyLogisticsFlag = false;
+
   imageUploadDestination = '';
   uploadImageModal!: NzModalRef;
   uploadingImageItem!: Item;
@@ -261,6 +264,7 @@ export class InventoryItemComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private utilService: UtilService,
     private unitService: UnitService,
+    private localCacheService: LocalCacheService,
   ) {}
 
   ngOnInit(): void {
@@ -288,7 +292,21 @@ export class InventoryItemComponent implements OnInit {
     this.itemFamilyService.loadItemFamilies().subscribe((itemFamilyList: ItemFamily[]) => {
       itemFamilyList.forEach(itemFamily => this.itemFamilies.push({ label: itemFamily.description, value: itemFamily.id!.toString() }));
     });
-    console.log(`imageServerUrl: ${this.imageServerUrl}`);
+    
+    // console.log(`imageServerUrl: ${this.imageServerUrl}`);
+
+    this.localCacheService.getWarehouseConfiguration().subscribe({
+      next: (warehouseConfigRes) => {
+
+        if (warehouseConfigRes && warehouseConfigRes.threePartyLogisticsFlag) {
+          this.threePartyLogisticsFlag = true;
+        }
+        else {
+          this.threePartyLogisticsFlag = false;
+        }
+        
+      },
+    });
   }
 
   resetForm(): void {

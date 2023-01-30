@@ -31,39 +31,44 @@ export class OrderService {
 
   getOrders(number?: string, loadDetails?: boolean, orderStatus?: OrderStatus, 
     startCompleteTime?: Date, endCompleteTime?:Date, specificCompleteDate?: Date, category?: OrderCategory, 
-    customerName?: string,): Observable<Order[]> {
-    let url = `outbound/orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
-    if (number) {
+    customerName?: string, customerId?: number): Observable<Order[]> {
       
-      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number)}`; 
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+    let params = new HttpParams();
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);
+
+    let url = `outbound/orders`;
+    
+    if (number) { 
+      params = params.append('number', httpUrlEncodingCodec.encodeValue(number)); 
     }
     if (loadDetails != null) {
-      url = `${url}&loadDetails=${loadDetails}`;
-
+      params = params.append('loadDetails', loadDetails);  
     }
     if (category) {
-      url = `${url}&category=${category}`;
+      params = params.append('category', category);   
 
     }
     if (orderStatus) {
-      url = `${url}&status=${orderStatus}`;
+      params = params.append('status', orderStatus);    
     }
     if (customerName) {
-      url = `${url}&customerName=${httpUrlEncodingCodec.encodeValue(customerName)}`; 
+      params = params.append('customerName', httpUrlEncodingCodec.encodeValue(customerName));  
+    }
+    if (customerId != null) {
+      params = params.append('customerId', customerId);  
     }
     
     if (startCompleteTime) {
-      url = `${url}&startCompleteTime=${this.dateTimeService.getISODateTimeString(startCompleteTime)}`;
+      params = params.append('startCompleteTime', this.dateTimeService.getISODateTimeString(startCompleteTime));  
     }
     if (endCompleteTime) {
-      url = `${url}&endCompleteTime=${this.dateTimeService.getISODateTimeString(endCompleteTime)}`;
+      params = params.append('endCompleteTime', this.dateTimeService.getISODateTimeString(endCompleteTime));   
     }
     if (specificCompleteDate) {
-      url = `${url}&specificCompleteDate=${this.dateTimeService.getISODateString(specificCompleteDate)}`;
+      params = params.append('specificCompleteDate', this.dateTimeService.getISODateTimeString(specificCompleteDate));    
     }
-    return this.http.get(url).pipe(map(res => res.data));
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 
   getOrder(id: number): Observable<Order> {

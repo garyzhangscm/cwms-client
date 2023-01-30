@@ -28,6 +28,7 @@ export class BillingVendorInvoiceMaintenanceComponent implements OnInit {
   
   fileList: NzUploadFile[] = [];
   threePartyLogisticsFlag = false;
+  
 
   templateFileUploadUrl = '';
   acceptUploadedFileTypes = '.pdf'; 

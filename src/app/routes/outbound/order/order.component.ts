@@ -8,9 +8,11 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
- 
+
+import { Customer } from '../../common/models/customer';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { PrintPageSize } from '../../common/models/print-page-size.enum'; 
+import { CustomerService } from '../../common/services/customer.service';
 import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
@@ -65,6 +67,8 @@ export class OutboundOrderComponent implements OnInit {
 
   createWorkOrderModal!: NzModalRef;
   createWorkOrderForm!: FormGroup;
+
+  validCustomers: Customer[] = [];
   
   // show the BOM details when the user choose
   // a bom to create work order for short allocation
@@ -92,6 +96,7 @@ export class OutboundOrderComponent implements OnInit {
     private billOfMaterialService: BillOfMaterialService,
     private orderDocumentService: OrderDocumentService,
     private easyPostConfigurationService: EasyPostConfigurationService,
+    private customerService: CustomerService,
   ) { }
 
   printerModal!: NzModalRef;
@@ -146,6 +151,7 @@ export class OutboundOrderComponent implements OnInit {
     this.searchForm = this.fb.group({
       number: [null],
       orderStatus: [null],
+      customer: [null],
       completeTimeRanger: [null],
       completeDate: [null],
       orderCategory: [null]
@@ -159,6 +165,10 @@ export class OutboundOrderComponent implements OnInit {
         this.search();
       }
     });
+
+    this.customerService.loadCustomers().subscribe({
+      next: (customerRes) => this.validCustomers = customerRes
+    })
   }
  
   resetForm(): void {
@@ -184,7 +194,9 @@ export class OutboundOrderComponent implements OnInit {
       this.searchForm.controls.orderStatus.value, 
       startCompleteTime, 
       endCompleteTime, specificCompleteDate,       
-      this.searchForm.controls.orderCategory.value).subscribe(
+      this.searchForm.controls.orderCategory.value,
+      undefined, 
+      this.searchForm.controls.customer.value).subscribe(
       orderRes => {
  
 

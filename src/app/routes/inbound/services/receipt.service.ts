@@ -1,4 +1,4 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -103,14 +103,21 @@ export class ReceiptService {
   }
 
 
-  printReceivingDocument(receipt: Receipt, locale?: string): Observable<ReportHistory> {
+  printReceivingDocument(receipt: Receipt, locale?: string, printerName?: string): Observable<ReportHistory> {
 
 
+    let params = new HttpParams();
     if (!locale) {
       locale = this.i18n.defaultLang;
     }
+    params = params.append('locale', locale);
 
-    return this.http.post(`inbound/receipts/${receipt.id}/receiving-document?locale=${locale}`).pipe(map(res => res.data));
+    if (printerName) {
+      
+        params = params.append('printerName', printerName);
+    }
+
+    return this.http.post(`inbound/receipts/${receipt.id}/receiving-document`, null, params).pipe(map(res => res.data));
   }
 
   printPutawayDocument(receipt: Receipt, inventoryIds: number[], notPutawayInventoryOnly = false, locale?: string): Observable<ReportHistory> {
