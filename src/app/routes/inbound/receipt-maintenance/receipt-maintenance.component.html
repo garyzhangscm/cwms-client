@@ -503,10 +503,10 @@
     <div nz-row [nzGutter]="24">
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemPackageType">
+          <nz-form-label [nzSpan]="12" nzFor="itemPackageType">
             {{ 'item.package-type' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
 
             <nz-select nz-input formControlName="itemPackageType" required>
               <nz-option *ngFor=" let availableItemPackageType of currentReceivingLine.item!.itemPackageTypes!"
@@ -519,10 +519,10 @@
 
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="quantity">
+          <nz-form-label [nzSpan]="8" nzFor="quantity">
             {{ 'quantity' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
             <input nz-input formControlName="quantity" />
           </nz-form-control>
         </nz-form-item>
@@ -530,13 +530,18 @@
 
       <div nz-col [nzSpan]="8">
         <nz-form-item nzFlex>
-          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationName">
+          <nz-form-label [nzSpan]="8" nzFor="locationName">
             {{ 'location' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
-            <nz-input-group nzSize="large">
-              <input nz-input formControlName="locationName" />
+          <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-group nzSize="large" nzSearch [nzAddOnAfter]="suffixIconButton">
+              <input nz-input formControlName="locationName"/>
             </nz-input-group>
+            
+            <ng-template #suffixIconButton>
+              <app-warehouse-layout-location-query-popup (recordSelected)="processLocationQueryResult($event)">
+              </app-warehouse-layout-location-query-popup>
+            </ng-template>
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -678,127 +683,134 @@
   <span>{{ 'page.modal.putaway.manual' | i18n}}</span>
 </ng-template>
 <ng-template #tplManualPutawayModalContent>
-  <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="8">
-      <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNumber">
-          {{ 'item' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-          <nz-input-group nzSize="large">
-            <input nz-input [ngModel]="currentInventory?.item!.name" disabled />
-          </nz-input-group>
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-    <div nz-col [nzSpan]="16">
-      <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemDescription">
-          {{ 'item.description' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-          <nz-input-group nzSize="large">
-            <input nz-input [ngModel]="currentInventory?.item!.description" disabled />
-          </nz-input-group>
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-  </div>
-
-  <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="8">
-      <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
-          {{ 'lpn' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-          <nz-input-group nzSize="large">
-            <input nz-input [ngModel]="currentInventory.lpn" disabled />
-          </nz-input-group>
-        </nz-form-control>
-      </nz-form-item>
+  
+  <form nz-form>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNumber" >
+            {{ 'item' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input [ngModel]="currentInventory?.item!.name" disabled name="itemNumber"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="16">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemDescription">
+            {{ 'item.description' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input [ngModel]="currentInventory?.item!.description" disabled name="itemDescription"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
     </div>
 
-    <div nz-col [nzSpan]="16">
-      <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
-          {{ 'inventory.status' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-          <input nz-input [ngModel]="currentInventory.inventoryStatus?.name" disabled />
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
+            {{ 'lpn' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input [ngModel]="currentInventory.lpn" disabled name="lpn"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
 
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-  </div>
+      <div nz-col [nzSpan]="16">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="inventoryStatus">
+            {{ 'inventory.status' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input nz-input [ngModel]="currentInventory.inventoryStatus?.name" disabled name="inventoryStatus"/>
 
-  <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="8">
-      <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemPackageType">
-          {{ 'item.package-type' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-
-          <input nz-input [ngModel]="currentInventory.itemPackageType?.name" disabled />
-
-        </nz-form-control>
-      </nz-form-item>
-    </div>
-
-    <div nz-col [nzSpan]="8">
-      <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="quantity">
-          {{ 'quantity' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-          <nz-input-group nzSize="large">
-            <input nz-input [ngModel]="currentInventory.quantity" disabled />
-          </nz-input-group>
-        </nz-form-control>
-      </nz-form-item>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
     </div>
 
-    <div nz-col [nzSpan]="8">
-      <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationName">
-          {{ 'location' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
-          <nz-input-group nzSize="large">
-            <input nz-input [(ngModel)]="currentInventory.locationName" id="locationName" name="locationName" />
-          </nz-input-group>
-        </nz-form-control>
-      </nz-form-item>
-    </div>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="12" nzFor="itemPackageType">
+            {{ 'item.package-type' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12">
 
-  </div>
-  <div nz-col [nzSpan]="24" *ngIf="currentInventory.itemPackageType">
-    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #itemPackageTypeDetailTable2
-      [nzData]="currentInventory.itemPackageType!.itemUnitOfMeasures!" nzSize="middle" [nzShowPagination]="false"
-      nzBordered>
-      <thead>
-        <tr>
-          <th>{{ 'unitOfMeasure' | i18n}}</th>
-          <th>{{ 'quantity' | i18n }}</th>
-          <th>{{ 'weight' | i18n }}</th>
-          <th>{{ 'length' | i18n }}</th>
-          <th>{{ 'width' | i18n }}</th>
-          <th>{{ 'height' | i18n }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let itemUnitOfMeasure of itemPackageTypeDetailTable2.data">
-          <td>{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
-          <td>{{ itemUnitOfMeasure.quantity }}</td>
-          <td>{{ itemUnitOfMeasure.weight }}</td>
-          <td>{{ itemUnitOfMeasure.length }}</td>
-          <td>{{ itemUnitOfMeasure.width }}</td>
-          <td>{{ itemUnitOfMeasure.height }}</td>
-        </tr>
-      </tbody>
-    </nz-table>
-  </div>
+            <input nz-input [ngModel]="currentInventory.itemPackageType?.name" disabled name="itemPackageType"/>
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="quantity">
+            {{ 'quantity' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input [ngModel]="currentInventory.quantity" disabled name="quantity"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="locationName">
+            {{ 'location' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-group nzSize="large" [nzAddOnAfter]="locationIconButton">
+              <input nz-input [(ngModel)]="currentInventory.locationName"  name="locationName" />
+            </nz-input-group>
+            <ng-template #locationIconButton>
+              <app-warehouse-layout-location-query-popup (recordSelected)="processPutawayLocationQueryResult($event)">
+              </app-warehouse-layout-location-query-popup>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>
+    <div nz-col [nzSpan]="24" *ngIf="currentInventory.itemPackageType">
+      <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #itemPackageTypeDetailTable2
+        [nzData]="currentInventory.itemPackageType!.itemUnitOfMeasures!" nzSize="middle" [nzShowPagination]="false"
+        nzBordered>
+        <thead>
+          <tr>
+            <th>{{ 'unitOfMeasure' | i18n}}</th>
+            <th>{{ 'quantity' | i18n }}</th>
+            <th>{{ 'weight' | i18n }}</th>
+            <th>{{ 'length' | i18n }}</th>
+            <th>{{ 'width' | i18n }}</th>
+            <th>{{ 'height' | i18n }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let itemUnitOfMeasure of itemPackageTypeDetailTable2.data">
+            <td>{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
+            <td>{{ itemUnitOfMeasure.quantity }}</td>
+            <td>{{ itemUnitOfMeasure.weight }}</td>
+            <td>{{ itemUnitOfMeasure.length }}</td>
+            <td>{{ itemUnitOfMeasure.width }}</td>
+            <td>{{ itemUnitOfMeasure.height }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </form>
 
 </ng-template>
 

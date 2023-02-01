@@ -28,7 +28,7 @@ export class PrintingRequestService {
     params = params.append('printerName',  httpUrlEncodingCodec.encodeValue(printerName.trim()));
     params = params.append('copies', copies);
 
-    return this.http.put(url).pipe(map(res => res.data));
+    return this.http.put(url, undefined, params).pipe(map(res => res.data));
   }
   generatePrintingRequestByUrl(
     reportUrl: string, reportType: ReportType, 

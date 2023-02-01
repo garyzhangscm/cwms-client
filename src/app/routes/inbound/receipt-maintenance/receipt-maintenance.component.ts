@@ -11,6 +11,7 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 import { Client } from '../../common/models/client';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
+import { PrintPageSize } from '../../common/models/print-page-size.enum';
 import { Supplier } from '../../common/models/supplier';
 import { ClientService } from '../../common/services/client.service';
 import { PrintingService } from '../../common/services/printing.service';
@@ -689,7 +690,10 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
           ReportType.PUTAWAY_DOCUMENT,
           event.printerIndex,
           event.printerName,
-          event.physicalCopyCount, PrintPageOrientation.Landscape);
+          event.physicalCopyCount, PrintPageOrientation.Landscape,
+          PrintPageSize.A4,
+          this.currentReceipt.number, 
+          printResult);
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("report.print.printed"));
       },
@@ -825,7 +829,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       itemNumber: new FormControl({ value: receiptLine.item!.name, disabled: true }),
       itemDescription: new FormControl({ value: receiptLine.item!.description, disabled: true }),
       lpn:   ['', Validators.required],
-      inventoryStatus: ['', Validators.required],
+      inventoryStatus: [''],
       itemPackageType: ['', Validators.required],
       quantity: ['', Validators.required],
       locationName: ['']
@@ -1095,7 +1099,11 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
           ReportType.RECEIVING_DOCUMENT,
           event.printerIndex,
           event.printerName,
-          event.physicalCopyCount, PrintPageOrientation.Landscape);
+          event.physicalCopyCount, 
+          PrintPageOrientation.Landscape,
+          PrintPageSize.A4,
+          this.currentReceipt.number, 
+          printResult);
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("report.print.printed"));
       },
@@ -1243,7 +1251,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
 
   columnChoosingChanged(): void{ 
-    if (this.st !== undefined && this.st.columns !== undefined) {
+    if (this.st != null && this.st.columns != null) {
       this.st!.resetColumns({ emitReload: true });
 
     }
@@ -1266,6 +1274,11 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
 
   
+  processLocationQueryResult(selectedLocationName: any): void {
+    // console.log(`start to query with location name ${selectedLocationName}`);
+    this.receivingForm.controls.locationName.setValue(selectedLocationName);
+  }
+
   openRecalculateQCModal(
     receiptLine: ReceiptLine,
     tplRecalculateQCModalTitle: TemplateRef<{}>,
@@ -1306,5 +1319,11 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       title, errorMessage,
       { nzPlacement: 'topRight' }
     );
+  }
+
+  
+  processPutawayLocationQueryResult(selectedLocationName: any): void {
+    // console.log(`start to query with location name ${selectedLocationName}`);
+    this.currentInventory.locationName = selectedLocationName;
   }
 }

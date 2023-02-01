@@ -587,7 +587,8 @@ export class OutboundOrderComponent implements OnInit {
           event.physicalCopyCount,
           PrintPageOrientation.Portrait,
           PrintPageSize.Letter,
-          order.number);
+          order.number, 
+          printResult);
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("report.print.printed"));
       },
@@ -638,7 +639,8 @@ export class OutboundOrderComponent implements OnInit {
           event.physicalCopyCount,
           PrintPageOrientation.Portrait,
           PrintPageSize.Letter,
-          order.number);
+          order.number, 
+          printResult);
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("report.print.printed"));
       },
@@ -897,7 +899,10 @@ export class OutboundOrderComponent implements OnInit {
           ReportType.ORDER_PICK_SHEET,
           event.printerIndex,
           event.printerName,
-          event.physicalCopyCount, PrintPageOrientation.Landscape);
+          event.physicalCopyCount, PrintPageOrientation.Landscape,
+          PrintPageSize.A4,
+          order.number,
+          printResult);
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("report.print.printed"));
       });

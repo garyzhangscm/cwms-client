@@ -1060,7 +1060,10 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           ReportType.ORDER_PICK_SHEET,
           event.printerIndex,
           event.printerName,
-          event.physicalCopyCount, PrintPageOrientation.Landscape);
+          event.physicalCopyCount, PrintPageOrientation.Landscape, 
+          PrintPageSize.Letter,
+          workOrder.number,
+          printResult);
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("report.print.printed"));
       },
@@ -1309,7 +1312,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           event.physicalCopyCount,
           PrintPageOrientation.Portrait,
           PrintPageSize.Letter,
-          productionLineAssignment.productionLine.name);
+          productionLineAssignment.productionLine.name, 
+          printResult);
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("report.print.printed"));
       },

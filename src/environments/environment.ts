@@ -12,9 +12,9 @@ export const environment = {
   useHash: true, // # in the URL
   api: {
     //  AWS Prod
-    // baseUrl: 'http://k8s-staging-zuulserv-707034e5d3-1189264454.us-west-1.elb.amazonaws.com/api/', 
+    baseUrl: 'http://k8s-staging-zuulserv-707034e5d3-1742879131.us-west-1.elb.amazonaws.com/api/', 
     // baseUrl: 'https://prod.claytechsuite.com/api/', 
-    baseUrl: 'https://staging.claytechsuite.com/api/', 
+    // baseUrl: 'https://staging.claytechsuite.com/api/', 
     
     // baseUrl: 'http://dualstack.k8s-prod-webclien-8aaf75f256-1586881181.us-west-1.elb.amazonaws.com./#/passport/login',
     // baseUrl: 'http://gateway.claytechsuite.com/api/',

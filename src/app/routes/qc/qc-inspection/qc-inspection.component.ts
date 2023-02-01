@@ -321,7 +321,8 @@ export class QcQcInspectionComponent implements OnInit {
           event.physicalCopyCount,
           PrintPageOrientation.Landscape,
           PrintPageSize.A4,
-          qcInspectionRequest.number);
+          qcInspectionRequest.number, 
+          printResult);
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("report.print.printed"));
       },

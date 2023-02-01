@@ -188,7 +188,8 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
                 // so that we will have labels printed in uncollated format, not collated format 
             PrintPageOrientation.Portrait,
             PrintPageSize.Letter,
-            this.currentProductionLineAssignment.productionLine.name);
+            this.currentProductionLineAssignment.productionLine.name, 
+            printResult);
           
             this.isSpinning = false;
           this.messageService.success(this.i18n.fanyi("report.print.printed"));
@@ -218,7 +219,8 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
                 // so that we will have labels printed in uncollated format, not collated format
             PrintPageOrientation.Portrait,
             PrintPageSize.Letter,
-            this.currentReceiptLine?.receiptNumber);
+            this.currentReceiptLine?.receiptNumber, 
+            printResult);
           
             this.isSpinning = false;
           this.messageService.success(this.i18n.fanyi("report.print.printed"));
@@ -248,7 +250,8 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
                 // so that we will have labels printed in uncollated format, not collated format
             PrintPageOrientation.Portrait,
             PrintPageSize.Letter,
-            this.currentReceiptLine?.receiptNumber);
+            this.currentReceiptLine?.receiptNumber, 
+            printResult);
           
             this.isSpinning = false;
           this.messageService.success(this.i18n.fanyi("report.print.printed"));

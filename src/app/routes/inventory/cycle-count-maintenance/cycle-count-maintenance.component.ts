@@ -7,6 +7,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
+import { PrintPageSize } from '../../common/models/print-page-size.enum';
 import { PrintingService } from '../../common/services/printing.service';
 import { Receipt } from '../../inbound/models/receipt';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
@@ -985,7 +986,10 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
           ReportType.CYCLE_COUNT_SHEET,
           event.printerIndex,
           event.printerName,
-          event.physicalCopyCount, PrintPageOrientation.Landscape);
+          event.physicalCopyCount, PrintPageOrientation.Landscape,
+          PrintPageSize.A4,
+          this.requestForm.controls.batchId.value, 
+          printResult);
         this.isSpinning = false;
         this.message.success(this.i18n.fanyi("report.print.printed"));
       },
@@ -1095,7 +1099,10 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
           ReportType.AUDIT_COUNT_SHEET,
           event.printerIndex,
           event.printerName,
-          event.physicalCopyCount, PrintPageOrientation.Landscape);
+          event.physicalCopyCount, PrintPageOrientation.Landscape,
+          PrintPageSize.A4,
+          this.requestForm.controls.batchId.value, 
+          printResult);
         this.isSpinning = false;
         this.message.success(this.i18n.fanyi("report.print.printed"));
       },

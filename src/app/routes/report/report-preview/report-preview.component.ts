@@ -79,7 +79,8 @@ export class ReportReportPreviewComponent implements OnInit {
       "",
       event.physicalCopyCount,
       this.printingOrientation,
-      PrintPageSize.A4
+      PrintPageSize.A4,
+      
     );
     this.messageService.success(this.i18n.fanyi('report.print.printed'));
   }
