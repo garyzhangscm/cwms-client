@@ -241,6 +241,10 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   listOfAllLocations: WarehouseLocation[] = [];
   listOfDisplayLocations: WarehouseLocation[] = [];
 
+  // count for loading location details
+  // 
+  loadingLocationDetailsRequest = 0;
+
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -279,10 +283,32 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   }
 
   
-  loadUnits(locations: WarehouseLocation[]) : void {
-    locations.forEach(
-      location => this.loadUnit(location)
-    );
+  delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+  }
+
+  async loadUnits(locations: WarehouseLocation[]) {
+    
+    // const currentPageOrders = this.getCurrentPageOrders(); 
+    let index = 0;
+    this.loadingLocationDetailsRequest = 0;
+    while (index < locations.length) {
+
+      // we will need to make sure we are at max loading detail information
+      // for 10 orders at a time(each order may have 5 different request). 
+      // we will get error if we flush requests for
+      // too many orders into the server at a time
+      // console.log(`1. this.loadingOrderDetailsRequest: ${this.loadingOrderDetailsRequest}`);
+      
+      
+      while(this.loadingLocationDetailsRequest > 50) {
+        // sleep 50ms        
+        await this.delay(50);
+      } 
+      
+      this.loadUnit(locations[index]);
+      index++;
+    }  
   }
   loadUnit(location: WarehouseLocation) : void {
     // backwards compatibility, in case the unit of the width / length / height
@@ -310,6 +336,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   }
   
   loadUnitByType(obj: any, key: string, unitType: UnitType) {
+    
+    this.loadingLocationDetailsRequest++;
     this.unitService.loadUnits().subscribe({
       next: (unitsRes) => {
         unitsRes.forEach(
@@ -319,7 +347,9 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
             }
           }
         )
-      }
+        this.loadingLocationDetailsRequest--;
+      }, 
+      error: () => this.loadingLocationDetailsRequest--
     })    
   }
 

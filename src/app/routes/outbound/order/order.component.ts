@@ -303,7 +303,8 @@ export class OutboundOrderComponent implements OnInit {
           next: (res) => {
             order.client = res;
             this.loadingOrderDetailsRequest--;
-          }
+          }, 
+          error: () => this.loadingOrderDetailsRequest--
         }
       );      
     } 
@@ -323,7 +324,8 @@ export class OutboundOrderComponent implements OnInit {
             }
           
             this.loadingOrderDetailsRequest--;
-          }
+          }, 
+          error: () => this.loadingOrderDetailsRequest--
         }
       );      
     }  
@@ -338,7 +340,8 @@ export class OutboundOrderComponent implements OnInit {
             order.supplier = res; 
           
             this.loadingOrderDetailsRequest--;
-          }
+          }, 
+          error: () => this.loadingOrderDetailsRequest--
         }
       );      
     }  
@@ -354,7 +357,8 @@ export class OutboundOrderComponent implements OnInit {
             order.billToCustomer = res; 
           
             this.loadingOrderDetailsRequest--;
-          }
+          }, 
+          error: () => this.loadingOrderDetailsRequest--
         }
       );      
     } 
@@ -367,7 +371,8 @@ export class OutboundOrderComponent implements OnInit {
             order.shipToCustomer = res; 
              
             this.loadingOrderDetailsRequest--;
-          }
+          }, 
+          error: () => this.loadingOrderDetailsRequest--
         }
       );      
     } 
@@ -382,7 +387,8 @@ export class OutboundOrderComponent implements OnInit {
           next: (res) => {
             order.stageLocationGroup = res;
             this.loadingOrderDetailsRequest--;
-          }
+          }, 
+          error: () => this.loadingOrderDetailsRequest--
         }
       );      
     } 
@@ -394,7 +400,8 @@ export class OutboundOrderComponent implements OnInit {
             order.stageLocation = res;
           
             this.loadingOrderDetailsRequest--;
-          }
+          }, 
+          error: () => this.loadingOrderDetailsRequest--
         }
       );      
     } 
