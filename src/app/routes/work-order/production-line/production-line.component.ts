@@ -194,7 +194,8 @@ export class WorkOrderProductionLineComponent implements OnInit {
     this.productionLineAssignmentService.getProductionLineAssignments(productionLine.id!)
     .subscribe({
       next: (productionLineAssignmentsRes) => {
-        productionLine.productionLineAssignments = productionLineAssignmentsRes;
+        productionLine.productionLineAssignments = productionLineAssignmentsRes; 
+        this.isSpinning = false;
 
         productionLine.productionLineAssignments.filter(
           productionLineAssignment => productionLineAssignment.workOrderItemId != null
@@ -203,10 +204,8 @@ export class WorkOrderProductionLineComponent implements OnInit {
             this.localCacheService.getItem(productionLineAssignment.workOrderItemId!).subscribe(
               {
                 next: (itemRes) => {
-                  productionLineAssignment.workOrderItemName = itemRes.name;
-                  this.isSpinning = false;
-                },
-                error: () => this.isSpinning = false
+                  productionLineAssignment.workOrderItemName = itemRes.name; 
+                }, 
               }
             )
           }

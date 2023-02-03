@@ -34,6 +34,8 @@ export class UtilFileUploadComponent implements OnInit {
   selectedFileUploadType?: FileUploadType;
   fileUploadDisabled = false;
 
+  removeExistingInventory = true;
+
   allowedFileTypes: Array<{ label: string; value: string }> = [];
 
   ngOnInit(): void {

@@ -11,15 +11,13 @@
               nzErrorTip="{{ 'error.form.field.required' | i18n }}">
               <input nz-input formControlName="cron" id="cron" name="cron" />
             </nz-form-control>
-            <button nz-button nzType="primary" nzShape="circle" nz-popover
+            
+            <a  nz-popover
               nzPopoverTitle="{{ 'inventory-snapshot.configuration.cron' | i18n }}" [nzPopoverContent]="cronDescription"
               nzPopoverPlacement="rightTop">
-
-              <i nz-icon nzType="question" nzTheme="outline"></i>
-            </button>
-
+              <i nz-icon [nzType]="'question-circle'"   style="font-size: 25px; padding-left: 20px;"></i> 
+            </a> 
           </nz-form-item>
-
 
         </div>
       </div>
@@ -33,12 +31,12 @@
               nzErrorTip="{{ 'error.form.field.required' | i18n }}">
               <input nz-input formControlName="locationUtilizationCron" id="locationUtilizationCron" name="locationUtilizationCron" />
             </nz-form-control>
-            <button nz-button nzType="primary" nzShape="circle" nz-popover
+            
+            <a nz-popover
               nzPopoverTitle="{{ 'location-utilization-snapshot.configuration.cron' | i18n }}" [nzPopoverContent]="locationUtilizationCronDescription"
               nzPopoverPlacement="rightTop">
-
-              <i nz-icon nzType="question" nzTheme="outline"></i>
-            </button>
+              <i nz-icon [nzType]="'question-circle'"   style="font-size: 25px; padding-left: 20px;"></i> 
+            </a> 
 
           </nz-form-item>
 

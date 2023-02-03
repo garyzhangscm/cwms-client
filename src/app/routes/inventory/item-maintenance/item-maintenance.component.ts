@@ -80,8 +80,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
   availableABCCategories: ABCCategory[] = [];
 
   constructor(
-    private fb: FormBuilder,
-    private http: _HttpClient,
+    private fb: FormBuilder, 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private messageService: NzMessageService,

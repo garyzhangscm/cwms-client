@@ -35,10 +35,13 @@ export class InventoryInventorySnapshotConfigurationComponent implements OnInit 
     this.inventorySnapshotConfigurationService
       .getInventorySnapshotConfiguration()
       .subscribe(inventorySnapshotConfiguration => {
-        this.configurationForm.controls.cron.setValue(
-          inventorySnapshotConfiguration.cron);
+        if (inventorySnapshotConfiguration) {
+
+          this.configurationForm.controls.cron.setValue(
+            inventorySnapshotConfiguration.cron);
           this.configurationForm.controls.locationUtilizationCron.setValue(
-            inventorySnapshotConfiguration.locationUtilizationSnapshotCron);
+              inventorySnapshotConfiguration.locationUtilizationSnapshotCron);
+        }
       })
 
   }

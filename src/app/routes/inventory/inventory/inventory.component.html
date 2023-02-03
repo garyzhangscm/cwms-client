@@ -315,6 +315,11 @@
       <nz-divider nzType="vertical"></nz-divider> 
       <button nz-button [nzType]="'primary'"  (click)="openBatchMoveInventoryModal(tplInventoryMoveModalTitle, tplInventoryMoveModalContent)">
         {{'moveInventory' | i18n}}</button>
+        
+      <nz-divider nzType="vertical"></nz-divider> 
+      <button nz-button nzType="primary" routerLink="/util/file-upload/inventory" routerLinkActive="active">
+        {{ 'file-upload' | i18n }}
+      </button>
     </div>
   </ng-template>
 </nz-spin>

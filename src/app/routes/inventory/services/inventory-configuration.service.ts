@@ -21,40 +21,28 @@ export class InventoryConfigurationService {
   ) {}
 
   
-  getInventoryConfigurations(    
-    type?: InventoryConfigurationType,
-  ): Observable<InventoryConfiguration[]> {
+  getInventoryConfigurations(     
+  ): Observable<InventoryConfiguration> {
     let url = `inventory/inventory_configuration?companyId=${this.companyService.getCurrentCompany()!.id}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    if (type) {
-      url = `&type=${type}`;
-    }
-     
     
     return this.http.get(url).pipe(map(res => res.data));
   }
-
-  getInventoryByType(type: InventoryConfigurationType,): Observable<InventoryConfiguration> {
-  const url = `inventory/inventory_configuration/${type}?companyId=${this.companyService.getCurrentCompany()!.id}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-  
-  
-    return this.http.get(url).pipe(map(res => res.data));
-  }
-  
-  saveInventoryConfigurations(    
-    inventoryConfigurations: InventoryConfiguration[],
-  ): Observable<InventoryConfiguration[]> {
+ 
+  addInventoryConfiguration(    
+    inventoryConfigurations: InventoryConfiguration,
+  ): Observable<InventoryConfiguration> {
     let url = `inventory/inventory_configuration?companyId=${this.companyService.getCurrentCompany()!.id}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
      
     
     return this.http.put(url, inventoryConfigurations).pipe(map(res => res.data));
   }
   
-  saveInventoryConfiguration(    
+  changeInventoryConfiguration(    
     inventoryConfiguration: InventoryConfiguration,
   ): Observable<InventoryConfiguration> {
-    let url = `inventory/inventory_configuration/${inventoryConfiguration.type}?companyId=${this.companyService.getCurrentCompany()!.id}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    let url = `inventory/inventory_configuration/${inventoryConfiguration.id}?companyId=${this.companyService.getCurrentCompany()!.id}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
      
     
-    return this.http.put(url, inventoryConfiguration).pipe(map(res => res.data));
+    return this.http.post(url, inventoryConfiguration).pipe(map(res => res.data));
   }
 }
