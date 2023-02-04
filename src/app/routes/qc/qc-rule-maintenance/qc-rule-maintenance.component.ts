@@ -90,6 +90,7 @@ export class QcQcRuleMaintenanceComponent implements OnInit {
     return {
       id: undefined,   
       checkPoint: "",
+      enabled: true,
   
       qcRuleItemType: QCRuleItemType.YESNO,
       expectedValue: "",
@@ -133,6 +134,11 @@ export class QcQcRuleMaintenanceComponent implements OnInit {
       }); 
   }
  
+  disableQCRuleItem(qcRuleItem: QCRuleItem, disabled: boolean) {
+
+    qcRuleItem.enabled = !disabled;
+  }
+
   qcRuleNameChange() {  
     if (this.currentQCRule!.name) {
       // THE USER input the order number, let's make sure it is not exists yet

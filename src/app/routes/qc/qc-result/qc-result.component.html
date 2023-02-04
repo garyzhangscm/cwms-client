@@ -71,6 +71,9 @@
                   {{ 'qcRule.checkPoint' | i18n }}
                 </th> 
                 <th>
+                  {{ 'enabled' | i18n }}
+                </th> 
+                <th>
 
                   {{ 'qcRule.qcRuleItemType' | i18n }}
                 </th>
@@ -92,6 +95,7 @@
               <tbody>
                 <tr *ngFor="let qcInspectionRequestItemOption of qcInspectionRequestItemOptionTable.data">
                   <td>{{ qcInspectionRequestItemOption.qcRuleItem.checkPoint }}</td> 
+                  <td>{{ qcInspectionRequestItemOption.qcRuleItem.enabled }}</td> 
 
 
                   <td>{{ 'QC-RULE-ITEM-TYPE-' + qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType | i18n }}</td>

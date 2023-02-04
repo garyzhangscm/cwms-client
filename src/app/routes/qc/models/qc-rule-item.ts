@@ -7,6 +7,8 @@ export interface QCRuleItem {
 
     checkPoint: string;
 
+    enabled: boolean;
+
 
     qcRuleItemType: QCRuleItemType;
 
