@@ -1,4 +1,4 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -198,11 +198,14 @@ export class WorkOrderService {
 
 
   printOrderPickSheet(workOrder: WorkOrder, locale?: string): Observable<ReportHistory> {
+    let params = new HttpParams();
+
     if (!locale) {
       locale = this.i18n.defaultLang;
     }
-
-    return this.http.post(`workorder/work-orders/${workOrder.id}/pick-report?locale=${locale}`).pipe(map(res => res.data));
+    params = params.append('locale', locale);
+    
+    return this.http.post(`workorder/work-orders/${workOrder.id}/pick-report`, null, params).pipe(map(res => res.data));
   }
 
   changeWorkOrderConsumeMethod(workOrderId: number, 

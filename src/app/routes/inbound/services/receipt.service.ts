@@ -122,15 +122,21 @@ export class ReceiptService {
 
   printPutawayDocument(receipt: Receipt, inventoryIds: number[], notPutawayInventoryOnly = false, locale?: string): Observable<ReportHistory> {
 
+    const url = `inbound/receipts/${receipt.id}/putaway-document`
 
+    let params = new HttpParams();
     if (!locale) {
       locale = this.i18n.defaultLang;
-    }
-    let url = `inbound/receipts/${receipt.id}/putaway-document?locale=${locale}`
+    }    
+    params = params.append('locale', locale);
+
     if (inventoryIds.length > 0) {
-      url = `${url}&inventoryIds=${inventoryIds.join(',')}`;
+      params = params.append('inventoryIds', inventoryIds.join(','));
+      // url = `${url}&inventoryIds=${inventoryIds.join(',')}`;
     }
-    url = `${url}&notPutawayInventoryOnly=${notPutawayInventoryOnly}`;
-    return this.http.post(url).pipe(map(res => res.data));
+    // url = `${url}&notPutawayInventoryOnly=${notPutawayInventoryOnly}`;
+    params = params.append('notPutawayInventoryOnly', notPutawayInventoryOnly);
+
+    return this.http.post(url, null, params).pipe(map(res => res.data));
   }
 }

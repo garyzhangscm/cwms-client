@@ -86,7 +86,7 @@
           <div class="clearfix">
               <nz-upload
               [nzAction]="imageFileUploadUrl"
-              [nzHeaders]="{ authorization: 'authorization-text' }"
+              [nzHeaders]="{ authorization: 'Bearer ' + authToken }"
               nzListType="picture-card"
               [nzAccept]="acceptUploadedFileTypes"
                (nzChange)="handleUploadChange($event)"

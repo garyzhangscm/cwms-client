@@ -1,5 +1,8 @@
-import { Injectable } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { HttpParams } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { I18NService } from '@core';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+import { locale } from 'moment-timezone';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -14,7 +17,8 @@ export class ProductionLineAssignmentService {
 
   constructor(
     private http: _HttpClient,
-    private warehouseService: WarehouseService,) { }
+    private warehouseService: WarehouseService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) { }
 
 
   getProductionLineAssignments(productionLineId?: number, productionLineIds?: string): Observable<ProductionLineAssignment[]> {
@@ -34,14 +38,28 @@ export class ProductionLineAssignmentService {
       return this.http.get(url).pipe(map(res => res.data));
   }
 
-  generateroductionLineAssignmentReport(productionLineAssignmentId: number): Observable<ReportHistory> {
+  generateroductionLineAssignmentReport(productionLineAssignmentId: number, locale?: string): Observable<ReportHistory> {
+    
+    let params = new HttpParams();
+    if (!locale) {
+      locale = this.i18n.defaultLang;
+    }
+    params = params.append('locale', locale);
+    
     const url = `workorder/production-line-assignments/${productionLineAssignmentId}/report`;
-    return this.http.post(url).pipe(map(res => res.data));
+    return this.http.post(url, null, params).pipe(map(res => res.data));
   }
 
   
-  generateroductionLineAssignmentLabel(productionLineAssignmentId: number): Observable<ReportHistory> {
+  generateroductionLineAssignmentLabel(productionLineAssignmentId: number, locale?: string): Observable<ReportHistory> {
+    let params = new HttpParams();
+
+    if (!locale) {
+      locale = this.i18n.defaultLang;
+    }
+    params = params.append('locale', locale);
+
     const url = `workorder/production-line-assignments/${productionLineAssignmentId}/label`;
-    return this.http.post(url).pipe(map(res => res.data));
+    return this.http.post(url, null, params).pipe(map(res => res.data));
   }
 }

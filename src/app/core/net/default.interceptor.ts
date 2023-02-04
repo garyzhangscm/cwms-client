@@ -39,6 +39,7 @@ const CODEMESSAGE: { [key: number]: string } = {
   504: '网关超时。'
 };
 
+
 /**
  * 默认HTTP拦截器，其注册细节见 `app.module.ts`
  */

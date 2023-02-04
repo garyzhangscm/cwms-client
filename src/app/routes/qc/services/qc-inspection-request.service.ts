@@ -1,6 +1,8 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
+import { Inject, Injectable } from '@angular/core';
+import { I18NService } from '@core';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+import { locale } from 'moment-timezone';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -15,7 +17,8 @@ import { QCInspectionResult } from '../models/qc-inspection-result';
 })
 export class QcInspectionRequestService {
 
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
+  constructor(private http: _HttpClient, private warehouseService: WarehouseService, 
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) {}
 
   getQCInspectionRequests(inventoryId? : number, inventoryIds?: string, lpn?: string,  number?: string, 
     type?: string, qcInspectionResult?: string) : Observable<QcInspectionRequest[]> {
@@ -118,9 +121,17 @@ export class QcInspectionRequestService {
   }
 
   
-  generateQCInspectionRequestReport(id: number) : Observable<ReportHistory>{
+  generateQCInspectionRequestReport(id: number, locale?: string) : Observable<ReportHistory>{
+    
+    let params = new HttpParams();
+
+    if (!locale) {
+      locale = this.i18n.defaultLang;
+    }
+    params = params.append('locale', locale);
+    
     const url = `inventory/qc-inspection-requests/${id}/report`;
-    return this.http.post(url).pipe(map(res => res.data));
+    return this.http.post(url, null, params).pipe(map(res => res.data));
   }
 
   changeQCInspectionDocument(qcInspectionRequest: QcInspectionRequest)  : Observable<QcInspectionRequest>{

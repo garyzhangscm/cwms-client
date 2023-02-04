@@ -108,27 +108,39 @@ export class OrderService {
   }
 
   printOrderPickSheet(order: Order, locale?: string): Observable<ReportHistory> {
+    
+    let params = new HttpParams();
+
     if (!locale) {
       locale = this.i18n.defaultLang;
     }
+    params = params.append('locale', locale);
 
-    return this.http.post(`outbound/orders/${order.id}/pick-report?locale=${locale}`).pipe(map(res => res.data));
+    return this.http.post(`outbound/orders/${order.id}/pick-report`, null, params).pipe(map(res => res.data));
   }
  
   generateOrderPackingList(order: Order, locale?: string): Observable<ReportHistory> {
+     
+    let params = new HttpParams();
+
     if (!locale) {
       locale = this.i18n.defaultLang;
     }
+    params = params.append('locale', locale);
 
-    return this.http.post(`outbound/orders/${order.id}/packing-list-report?locale=${locale}`).pipe(map(res => res.data));
+    return this.http.post(`outbound/orders/${order.id}/packing-list-report`, null, params).pipe(map(res => res.data));
   }
   
   generateOrderBillOfLading(order: Order, locale?: string): Observable<ReportHistory> {
+    
+    let params = new HttpParams();
+
     if (!locale) {
       locale = this.i18n.defaultLang;
     }
+    params = params.append('locale', locale);
 
-    return this.http.post(`outbound/orders/${order.id}/bill-of-lading-report?locale=${locale}`).pipe(map(res => res.data));
+    return this.http.post(`outbound/orders/${order.id}/bill-of-lading-report`, null, params).pipe(map(res => res.data));
   }
 
   stageOrder(order: Order): Observable<Order> {

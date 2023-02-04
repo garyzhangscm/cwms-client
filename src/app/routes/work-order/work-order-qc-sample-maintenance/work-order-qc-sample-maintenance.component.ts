@@ -1,6 +1,7 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, Injector, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
+import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -40,8 +41,10 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
   acceptUploadedFileTypes = '.jpg,.svg,.png';
   previewImage: string | undefined = '';
   previewVisible = false;
+
+  authToken: string | undefined | null;
   
-  constructor(private http: _HttpClient, 
+  constructor(private http: _HttpClient, private injector: Injector, 
     private workOrderQcSampleService: WorkOrderQcSampleService, 
     private activatedRoute: ActivatedRoute,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -58,8 +61,16 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
         
       }
       this.pageTitle = this.i18n.fanyi('work-order.qc-sample-maintenance');
+      
+      this.authToken = this.tokenSrv.get()?.token;
     }
 
+    
+  private get tokenSrv(): ITokenService {
+    return this.injector.get(DA_SERVICE_TOKEN);
+  }
+
+  
   ngOnInit(): void { 
     
     this.fileList = [];
@@ -202,7 +213,7 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
   }
 
   getImageUrl(imageFileName: string) : string {
-    return `${environment.api.baseUrl}workorder/qc-samples/images/${this.warehouseService.getCurrentWarehouse().id}/${this.currentProductionLineAssignment?.id}/${imageFileName}`;
+    return `${environment.api.baseUrl}workorder/qc-samples/images/${this.warehouseService.getCurrentWarehouse().id}/${this.currentProductionLineAssignment?.id}/${imageFileName}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
 
     
   }
