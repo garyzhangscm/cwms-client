@@ -196,7 +196,7 @@
         <nz-tabset  >
           <nz-tab *ngFor="let qcRuleConfig of item.workOrderQCRuleConfigurationRules" [nzTitle]="qcRuleConfig.qcRule.name!" >
             <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="qcRuleConfig.qcRule.qcRuleItems" nzSize="middle"
-              [nzShowPagination]="false" #qcRuleItemTable>
+              #qcRuleItemTable>
               <thead>
                 <th>
                   {{ 'qcRule.checkPoint' | i18n }}

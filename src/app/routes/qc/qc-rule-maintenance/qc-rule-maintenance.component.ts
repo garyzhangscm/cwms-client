@@ -83,6 +83,7 @@ export class QcQcRuleMaintenanceComponent implements OnInit {
   
   addExtraQCRuleItem(): void {
     this.currentQCRule!.qcRuleItems = [...this.currentQCRule!.qcRuleItems, this.getEmptyQCRuleItem()];
+    console.log(`add an extra qc item, now we have ${this.currentQCRule!.qcRuleItems.length} rules`);
   }
 
   getEmptyQCRuleItem(): QCRuleItem {

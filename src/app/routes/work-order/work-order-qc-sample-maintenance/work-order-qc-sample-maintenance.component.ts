@@ -127,21 +127,30 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
   }
   
   loadImages() {
-    this.currentWorkOrderQcSample.imageUrls.split(",").forEach(
-      imageUrl => {
-        
-      this.fileList = [
-        ...this.fileList,
-        {
-          uid: imageUrl,
-          name: imageUrl,
-          status: 'done',
-          response: '', // custom error message to show
-          url: this.getImageUrl(imageUrl)
+    console.log(`start to load images from files ${this.currentWorkOrderQcSample.imageUrls}`);
+    if (this.currentWorkOrderQcSample.imageUrls.trim().length == 0) {
+      this.fileList = [];
+      
+    }
+    else {
+
+      this.currentWorkOrderQcSample.imageUrls.split(",").forEach(
+        imageUrl => {
+          
+        console.log(`this.getImageUrl(imageUrl) for file ${imageUrl} is ${this.getImageUrl(imageUrl)}`);
+        this.fileList = [
+          ...this.fileList,
+          {
+            uid: imageUrl,
+            name: imageUrl,
+            status: 'done',
+            response: '', // custom error message to show
+            url: this.getImageUrl(imageUrl)
+          }
+        ];
         }
-      ];
-      }
-    )
+      )
+    }
   }
  
   sampleNumberChange(event: Event) {  

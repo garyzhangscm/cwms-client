@@ -39,19 +39,12 @@ import { WorkOrderService } from '../services/work-order.service';
   styleUrls: ['./qc-rule-configuration.component.less'],
 })
 export class WorkOrderQcRuleConfigurationComponent implements OnInit {
-  constructor(private http: _HttpClient,    
+  constructor(
     private fb: FormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
-    private messageService: NzMessageService,
-    private workOrderQcRuleConfigurationService: WorkOrderQcRuleConfigurationService,
-    private warehouseService: WarehouseService,
-    private itemService: ItemService, 
-    private localCacheService: LocalCacheService,
-    private inventoryStatusService: InventoryStatusService,
-    private inventoryLockService: InventoryLockService,
-    private itemFamilyService: ItemFamilyService, 
-    private orderService: OrderService,
-    private customerService: CustomerService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,  
+    private workOrderQcRuleConfigurationService: WorkOrderQcRuleConfigurationService, 
+    private localCacheService: LocalCacheService, 
+    private orderService: OrderService, 
     private router: Router,
     private productionLineService: ProductionLineService,
     

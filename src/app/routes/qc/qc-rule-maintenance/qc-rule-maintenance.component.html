@@ -18,7 +18,7 @@
     </nz-breadcrumb>
 </ng-template>
 
-<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'" *ngIf="currentQCRule != null">
 
     <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
         <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
@@ -75,8 +75,8 @@
         <!-- Table to show inventory  -->
 
         <div class="search-result-list" *ngIf="currentQCRule" > 
-            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="currentQCRule!.qcRuleItems"
-                [nzFooter]="qcRuleItemTableFoot" #qcRuleItemTable>
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="currentQCRule!.qcRuleItems"
+                [nzFooter]="qcRuleItemTableFoot" #qcRuleItemTable nzShowPagination="false" [nzPageSize]=9999>
                 <thead>
                     <tr> 
                         <th>
