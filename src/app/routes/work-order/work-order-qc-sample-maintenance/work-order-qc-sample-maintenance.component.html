@@ -29,45 +29,55 @@
     <!-- Let the user input the order information -->
     <nz-card class="small-card" *ngIf="stepIndex === 0 && currentWorkOrderQcSample !== undefined && currentProductionLineAssignment !== undefined" 
     style="margin-top: 20px;"  [nzExtra]="removeQCSampleTemplate">
+
+      <div *ngIf="showAddNewSampleQuestion">
+        <nz-list nzBordered [nzHeader]="showAddNewSampleQuestionTemplate"> 
+        </nz-list>
+        <ng-template #showAddNewSampleQuestionTemplate>
+          There's sample setup for the work order, choose whether to <a (click)="loadLastSample()">load the last sample</a>, or <a  (click)="createNewSample()">create new sample</a>
+        </ng-template>
+      </div>
+      <div *ngIf="!showAddNewSampleQuestion">
+
         <div nz-row [nzGutter]="24">
-            <div nz-col [nzSpan]="8">
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="6">
+                {{ 'number' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="sampleNumberErrorTpl" [nzValidateStatus]="sampleNumberValidateStatus"
+              >
+                <input  appFkey variable="work-order-qc-sample-number"  type="text" nz-input [(ngModel)]="currentWorkOrderQcSample!.number" required 
+                  (blur)="sampleNumberChange($event)" [disabled]="!newSample"/>
+                <ng-template #sampleNumberErrorTpl let-control>  
+                    <ng-container *ngIf="sampleNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
+                    <ng-container *ngIf="sampleNumberValidateStatus === 'numberExists'">Sample number already exists</ng-container>
+                            
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+      
+          <div nz-col [nzSpan]="8">
               <nz-form-item>
                 <nz-form-label [nzSpan]="6">
-                  {{ 'number' | i18n }}
-                </nz-form-label>
-                <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="sampleNumberErrorTpl" [nzValidateStatus]="sampleNumberValidateStatus"
-                >
-                  <input  appFkey variable="work-order-qc-sample-number"  type="text" nz-input [(ngModel)]="currentWorkOrderQcSample!.number" required 
-                    (blur)="sampleNumberChange($event)" [disabled]="!newSample"/>
-                  <ng-template #sampleNumberErrorTpl let-control>  
-                      <ng-container *ngIf="sampleNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
-                      <ng-container *ngIf="sampleNumberValidateStatus === 'numberExists'">Sample number already exists</ng-container>
-                              
-                  </ng-template>
-                </nz-form-control>
-              </nz-form-item>
-            </div>
-        
-            <div nz-col [nzSpan]="8">
-                <nz-form-item>
-                  <nz-form-label [nzSpan]="6">
-                    {{ 'work-order' | i18n }}
-                  </nz-form-label>
-                  <nz-form-control [nzSpan]="18" >                    
-                    <input   type="text" nz-input [ngModel]="currentProductionLineAssignment!.workOrder?.number" disabled/>        
-                  </nz-form-control>
-                </nz-form-item>
-              </div>
-            <div nz-col [nzSpan]="8">
-              <nz-form-item>
-                <nz-form-label [nzSpan]="6">
-                  {{ 'production-line' | i18n }}
+                  {{ 'work-order' | i18n }}
                 </nz-form-label>
                 <nz-form-control [nzSpan]="18" >                    
-                  <input   type="text" nz-input [ngModel]="currentProductionLineAssignment!.productionLine?.name" disabled/>        
+                  <input   type="text" nz-input [ngModel]="currentProductionLineAssignment!.workOrder?.number" disabled/>        
                 </nz-form-control>
               </nz-form-item>
             </div>
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="6">
+                {{ 'production-line' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="18" >                    
+                <input   type="text" nz-input [ngModel]="currentProductionLineAssignment!.productionLine?.name" disabled/>        
+              </nz-form-control>
+            </nz-form-item>
+          </div>
         </div>
 
         <div nz-row [nzGutter]="24">
@@ -85,11 +95,10 @@
           -->
           <div class="clearfix">
               <nz-upload
-              [nzAction]="imageFileUploadUrl"
-              [nzHeaders]="{ authorization: 'Bearer ' + authToken }" 
+              [nzAction]="imageFileUploadUrl" 
               nzListType="picture-card"
               [nzAccept]="acceptUploadedFileTypes"
-               (nzChange)="handleUploadChange($event)"
+              (nzChange)="handleUploadChange($event)"
               [nzFileList]="fileList"
               [nzShowButton]="fileList.length < 8"
               [nzPreview]="handlePreview"
@@ -113,9 +122,10 @@
           </div>
 
         </div>
-        <ng-template #removeQCSampleTemplate>
-          <a *ngIf="newSample == false"  (click)="removeQCExample()">{{'remove' | i18n}}</a>
-        </ng-template>
+      </div>
+      <ng-template #removeQCSampleTemplate>
+        <a *ngIf="newSample == false && !showAddNewSampleQuestion"  (click)="removeQCExample()">{{'remove' | i18n}}</a>
+      </ng-template>
     </nz-card>
  
     <!-- Let the user confirm the result -->
@@ -142,15 +152,15 @@
 
 
     <div class="steps-action" style="padding-top: 15px;">
-        <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+        <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0 && !showAddNewSampleQuestion">
             <span>{{ 'steps.previous' | i18n }}</span>
         </button>
         <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
-        <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1">
+        <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1 && !showAddNewSampleQuestion">
             <span>{{ 'steps.next' | i18n }}</span>
         </button>
         <nz-divider nzType="vertical"></nz-divider>
-        <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 1">
+        <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 1 && !showAddNewSampleQuestion">
             <span> {{ 'confirm' | i18n }}</span>
         </button>
     </div>

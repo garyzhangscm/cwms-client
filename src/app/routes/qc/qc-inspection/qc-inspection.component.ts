@@ -78,8 +78,10 @@ export class QcQcInspectionComponent implements OnInit {
       number: [null], 
       lpn: [null], 
       // itemName: [null], 
-      qcInspectionRequestType: [QcInspectionRequestType.BY_INVENTORY],
-      qcInspectionResult: [QCInspectionResult.PENDING]
+      // qcInspectionRequestType: [QcInspectionRequestType.BY_INVENTORY],
+      // qcInspectionResult: [QCInspectionResult.PENDING]
+      qcInspectionRequestType: [null],
+      qcInspectionResult: [null]
     }); 
 
     

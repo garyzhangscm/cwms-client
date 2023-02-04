@@ -42,9 +42,13 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
   previewImage: string | undefined = '';
   previewVisible = false;
 
-  authToken: string | undefined | null;
+  // if there's already qc sample exists for this work order
+  // prompt to ask if the user would like to add a new sample
+  // or modify existing sample
+  showAddNewSampleQuestion = false;
+ 
   
-  constructor(private http: _HttpClient, private injector: Injector, 
+  constructor(
     private workOrderQcSampleService: WorkOrderQcSampleService, 
     private activatedRoute: ActivatedRoute,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -54,26 +58,24 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
     private workOrderService: WorkOrderService,
     private messageService: NzMessageService,
     private router: Router,) { 
-      this.currentWorkOrderQcSample = {        
-        number: "", 
-        imageUrls: "",
-        warehouseId: this.warehouseService.getCurrentWarehouse().id,
-        
-      }
+      this.currentWorkOrderQcSample = this.getEmptyQCSample();
       this.pageTitle = this.i18n.fanyi('work-order.qc-sample-maintenance');
-      
-      this.authToken = this.tokenSrv.get()?.token;
-    }
-
-    
-  private get tokenSrv(): ITokenService {
-    return this.injector.get(DA_SERVICE_TOKEN);
+       
   }
 
-  
+  getEmptyQCSample() : WorkOrderQcSample {
+    return {        
+      number: "", 
+      imageUrls: "",
+      warehouseId: this.warehouseService.getCurrentWarehouse().id,
+      
+    }
+  }
+   
   ngOnInit(): void { 
     
     this.fileList = [];
+    this.showAddNewSampleQuestion = false; 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.productionLineAssignmentId) {
 
@@ -84,6 +86,7 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
           params.productionLineAssignmentId
         ).subscribe({
           next: (productionLineAssignmentRes) => {
+            this.showAddNewSampleQuestion = true; 
             this.currentProductionLineAssignment = productionLineAssignmentRes;
             this.currentWorkOrderQcSample.productionLineAssignment = productionLineAssignmentRes;
             // setup the work order. 
@@ -276,6 +279,32 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
         error: () => this.isSpinning = false
       })
     }
+  }
+
+  /**
+   * Load the last sample for modification. If we are here, we should already have the 
+   * last sample loaded in the this.currentWorkOrderQcSample, we just need to disable
+   * the showAddNewSampleQuestion to show the last qc sample
+   */
+  loadLastSample() {
+    this.showAddNewSampleQuestion = false;
+
+  }
+  /**
+   * Create a new QC sample even there's existing samples, at this point, we should already have the 
+   * last sample loaded in the this.currentWorkOrderQcSample, we will need to clear and create an
+   * empty QC sample 
+   */
+  createNewSample() {
+    this.showAddNewSampleQuestion = false;
+    this.currentWorkOrderQcSample = this.getEmptyQCSample();
+    
+    this.sampleNumberValidateStatus = 'warning'; 
+    this.newSample = true;
+    
+    this.currentWorkOrderQcSample.productionLineAssignment = this.currentProductionLineAssignment;
+    this.loadImages();
+
   }
 
 }
