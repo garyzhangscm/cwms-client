@@ -50,6 +50,7 @@ import { WorkOrderWorkOrderQcInspectionResultComponent } from './work-order-qc-i
 import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspection/work-order-qc-inspection.component'; 
 import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component'; 
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
+import { WorkOrderSiloMonitorComponent } from './silo-monitor/silo-monitor.component';
 
 const routes: Routes = [
   { path: 'work-order', component: WorkOrderWorkOrderComponent, canActivate: [AuthGuard] },
@@ -99,7 +100,8 @@ const routes: Routes = [
   { path: 'production-line-monitor/transaction', component: WorkOrderProductionLineMonitorTransactionComponent },
   { path: 'production-line-status', component: WorkOrderProductionLineStatusComponent },
   { path: 'production-line-dashboard', component: WorkOrderProductionLineDashboardComponent },
-  { path: 'production-line-status/display', component: WorkOrderProductionLineStatusDisplayComponent }];
+  { path: 'production-line-status/display', component: WorkOrderProductionLineStatusDisplayComponent },
+  { path: 'silo-monitor', component: WorkOrderSiloMonitorComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
