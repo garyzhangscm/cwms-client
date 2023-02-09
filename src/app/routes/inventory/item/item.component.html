@@ -102,6 +102,9 @@
             <li nz-menu-item >
               <a   (click)='removeItem(item)'>{{ 'delete' | i18n }}</a>
             </li>
+            <li nz-menu-item adminVisible>
+              <a   (click)='processItemOverride(item.id!)'>{{ 'process-item-override' | i18n }}</a>
+            </li>
           </ul>
         </nz-dropdown-menu>
       </ng-template>
@@ -287,6 +290,12 @@
     <button nz-button nzType="primary" routerLink="/inventory/item/maintenance" routerLinkActive="active">
       {{ 'add' | i18n }}
     </button>
+
+    
+    <nz-divider nzType="vertical"></nz-divider>
+    <button  nz-button nzType="primary" (click)="processItemOverride()" adminVisible>
+      {{ 'process-item-override' | i18n }}
+    </button> 
   </div>
 </ng-template>
 

@@ -572,4 +572,16 @@ export class InventoryItemComponent implements OnInit {
 
     }
   }
+
+  processItemOverride(itemId?: number) {
+    this.isSpinning = true;
+    this.itemService.processItemOverride(itemId).subscribe({
+      next: () => {
+        
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.isSpinning = false;
+      }, 
+      error: () => this.isSpinning = false
+    })
+  }
 }

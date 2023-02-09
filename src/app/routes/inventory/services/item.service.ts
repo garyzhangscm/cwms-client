@@ -1,4 +1,4 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -99,5 +99,17 @@ export class ItemService {
       item_ids: itemIds.join(','),
     };
     return this.http.delete('inventory/items', params).pipe(map(res => res.data));
+  }
+
+  processItemOverride(itemId?: number): Observable<string> {
+    
+    let params = new HttpParams();
+    const url = `inventory/items/process-item-override`;
+    if (itemId != null) {
+
+      params = params.append("itemId", itemId);
+    }
+    params = params.append("warehouseId", this.warehouseService.getCurrentWarehouse().id);
+    return this.http.post(url, null, params).pipe(map(res => res.data));
   }
 }

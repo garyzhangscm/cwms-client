@@ -876,5 +876,6 @@ export class InventoryInventoryComponent implements OnInit {
     });
     return selectedInventory;
   }
+ 
 
 }

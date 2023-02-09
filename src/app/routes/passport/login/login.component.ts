@@ -184,6 +184,7 @@ export class UserLoginComponent implements OnDestroy {
         res.user.expired = +new Date() + 1000 * 60 * 1000;
         this.tokenService.set(res.user);
 
+
         // get the company information
         this.companyService.getCompanies(this.companyCode.value).subscribe(companiesRes => {
           console.log(`company res length: ${companiesRes.length}`);
@@ -194,6 +195,8 @@ export class UserLoginComponent implements OnDestroy {
 
         this.warehouseService.getWarehouse(this.warehouseId.value).subscribe((warehouse: Warehouse) => {
           this.warehouseService.setCurrentWarehouse(warehouse);
+          // setup the current user
+          this.userService.setupCurrentUser();
           // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
           this.startupSrv.load(warehouse.id).subscribe(() => {
             /***

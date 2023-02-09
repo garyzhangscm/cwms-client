@@ -4,6 +4,7 @@ import { MenuService, _HttpClient , SettingsService } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { User } from '../models/user';
@@ -16,6 +17,7 @@ export class UserService {
   constructor(private http: _HttpClient, 
     private warehouseService: WarehouseService, 
     private companyService: CompanyService, 
+    private gzLocalStorageService: GzLocalStorageService,
               private menuService: MenuService, 
               private settings: SettingsService) {}
 
@@ -28,7 +30,7 @@ export class UserService {
     } else if (workingTeamName) {
       url = `${url}&workingTeamName=${workingTeamName}`;
     }
-    console.log(`start to get users from ${url}`);
+    
 
     return this.http.get(url).pipe(map(res => res.data));
   }
@@ -86,7 +88,53 @@ export class UserService {
   }
 
   getCurrentUsername() : string {
-     return this.settings.user.name!;
+    
+    return this.settings.user.name!;
+  }
+
+  getUserByNameSynchronous(username: string): Promise<User[]> {
+    return  this.getUsers(username).toPromise();
+  }
+  setCurrentUser(user: User): void { 
+    this.gzLocalStorageService.setItem('current_user',  user) 
+  }
+  setupCurrentUser() {
+    if (this.getCurrentUsername()) {
+      this.getUsers(this.getCurrentUsername()).subscribe({
+        next: (usersRes) => {
+          if (usersRes.length > 0) {
+            this.setCurrentUser(usersRes[0]);
+          }
+
+        }
+      })
+    }
+  }
+
+  async isCurrentUserAdmin(): Promise<boolean> {
+    let user : User | undefined = await this.getCurrentUser();
+    return user != null &&  user.admin == true
+  }
+
+  async getCurrentUser(): Promise<User | undefined>{ 
+    let user: User | undefined = undefined;
+
+    const data: User = this.gzLocalStorageService.getItem('current_user'); 
+    if (data != null && data.username == this.getCurrentUsername()) {  
+      user = data;
+    }
+    else if (this.getCurrentUsername()) {
+
+      let users: User[] = await this.getUserByNameSynchronous(this.getCurrentUsername());
+       
+      if (users.length > 0) {
+        this.setCurrentUser(users[0]);
+        user = users[0];
+        // console.log(` will return the first user that match with the name \n${JSON.stringify(user)}`);
+      } 
+    } 
+    return user;
+ 
   }
 
   addTempUser(username: string, firstname: string, lastname: string) : Observable<User> {
