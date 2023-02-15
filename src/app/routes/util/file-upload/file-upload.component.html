@@ -26,131 +26,139 @@
   </a>
 </ng-template>
 
-<ng-container>
-  <nz-card>
-    <form nz-form [formGroup]="loadFileForm">
-      <div nz-row [nzGutter]="24">
-        <div nz-col [nzSpan]="12">
-          <nz-form-item nzFlex>
-            <nz-form-label for="fileType" [nzSm]="3" [nzXs]="3" nzRequired="true">
-              {{ 'file-upload.filetype' | i18n }}
-            </nz-form-label>
-            
-            <nz-form-control [nzSpan]="14">
-              <nz-select
-                nzPlaceHolder="{{ 'placeholder.file-upload.filetype' | i18n }}"
-                name="Type"
-                formControlName="fileTypeSelector"
-                (ngModelChange)="selectedFileTypeChanged($event)"
-                [nzDisabled]="!fromMenu"
-              >
-                <nz-option
-                  *ngFor="let fileType of allowedFileTypes"
-                  [nzLabel]="fileType.label"
-                  [nzValue]="fileType.value"
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <ng-container>
+    <nz-card>
+      <form nz-form [formGroup]="loadFileForm">
+        <div nz-row [nzGutter]="24">
+          <div nz-col [nzSpan]="12">
+            <nz-form-item nzFlex>
+              <nz-form-label for="fileType" [nzSm]="3" [nzXs]="3" nzRequired="true">
+                {{ 'file-upload.filetype' | i18n }}
+              </nz-form-label>
+              
+              <nz-form-control [nzSpan]="14">
+                <nz-select
+                  nzPlaceHolder="{{ 'placeholder.file-upload.filetype' | i18n }}"
+                  name="Type"
+                  formControlName="fileTypeSelector"
+                  (ngModelChange)="selectedFileTypeChanged($event)"
+                  [nzDisabled]="!fromMenu"
                 >
-                </nz-option>
-              </nz-select>
-            </nz-form-control>
-          </nz-form-item>
+                  <nz-option
+                    *ngFor="let fileType of allowedFileTypes"
+                    [nzLabel]="fileType.label"
+                    [nzValue]="fileType.value"
+                  >
+                  </nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="12">
+            <nz-form-item>
+              <nz-upload [nzAction]="selectedFileUploadUrl" (nzChange)="handleChange($event)">
+                <button nz-button [disabled]="fileUploadDisabled">
+                  <i nz-icon nzType="upload"></i>
+                  {{ 'file-upload' | i18n }}
+                </button>
+              </nz-upload>
+
+              <!--
+
+              <nz-upload nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                [nzHeaders]="{ authorization: 'authorization-text' }" (nzChange)="handleChange($event)">
+                <button nz-button><i nz-icon nzType="upload"></i>Click to Upload</button>
+              </nz-upload>
+              -->
+            </nz-form-item>
+          </div>
         </div>
-        <div nz-col [nzSpan]="12">
-          <nz-form-item>
-            <nz-upload [nzAction]="selectedFileUploadType?.destinationUrl" (nzChange)="handleChange($event)">
-              <button nz-button [disabled]="fileUploadDisabled">
-                <i nz-icon nzType="upload"></i>
-                {{ 'file-upload' | i18n }}
-              </button>
-            </nz-upload>
 
-            <!--
+        <div nz-row [nzGutter]="24">
+          <div nz-col [nzSpan]="12">
+            <nz-form-item nzFlex>
+              <nz-form-label for="fileType" [nzSpan]="4"> {{ 'file-upload.template-file' | i18n }} </nz-form-label
+              >
+              <!--
 
-            <nz-upload nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-              [nzHeaders]="{ authorization: 'authorization-text' }" (nzChange)="handleChange($event)">
-              <button nz-button><i nz-icon nzType="upload"></i>Click to Upload</button>
-            </nz-upload>
-            -->
-          </nz-form-item>
-        </div>
-      </div>
-
-      <div nz-row [nzGutter]="24">
-        <div nz-col [nzSpan]="12">
-          <nz-form-item nzFlex>
-            <nz-form-label for="fileType" [nzSpan]="4"> {{ 'file-upload.template-file' | i18n }} </nz-form-label
-            >
-            <!--
-
-            <button
-              down-file
-              [http-data]="data"
-              [http-url]="selectedFileUploadType?.templateFileUrl"
-              nz-button
-              [file-name]="selectedFileUploadType?.name + '.csv'"
-              [disabled]="selectedFileUploadType === null || selectedFileUploadType?.templateFileUrl === ''"
-            >
-              {{ 'download' | i18n }}
-            </button>
-
-            -->
-            <div  *ngIf="selectedFileUploadType?.templateFileUrl != null">
-
-              <button nz-button 
+              <button
                 down-file
-                nzType="primary" 
-                [http-url]="selectedFileUploadType!.templateFileUrl"
-                [file-name]="selectedFileUploadType!.name"
-                  nzShape="round">
-                  <i nz-icon nzType="download"></i>
-                      {{ 'download' | i18n }} 
+                [http-data]="data"
+                [http-url]="selectedFileUploadType?.templateFileUrl"
+                nz-button
+                [file-name]="selectedFileUploadType?.name + '.csv'"
+                [disabled]="selectedFileUploadType === null || selectedFileUploadType?.templateFileUrl === ''"
+              >
+                {{ 'download' | i18n }}
               </button>
-            </div>
+
+              -->
+              <div  *ngIf="selectedFileUploadType?.templateFileUrl != null">
+
+                <button nz-button 
+                  down-file
+                  nzType="primary" 
+                  [http-url]="selectedFileUploadType!.templateFileUrl"
+                  [file-name]="selectedFileUploadType!.name"
+                    nzShape="round">
+                    <i nz-icon nzType="download"></i>
+                        {{ 'download' | i18n }} 
+                </button>
+              </div>
 
 
-            
-          </nz-form-item>
+              
+            </nz-form-item>
+          </div>
         </div>
-      </div>
-    </form>
-  </nz-card>
+      </form>
+    </nz-card>
 
-  <div class="search-result-list" *ngIf="selectedFileUploadType">
-    <nz-table
-    [nzScroll]="{ x: 'true', y: 'true' }" 
-      #rowSelectionTable
-      nzShowSizeChanger
-      [nzData]="selectedFileUploadType!.columns"
-      nzShowPagination="false"
-      nzFrontPagination="false"
-    >
-      <thead>
-        <tr>
-          <td>
-            {{ 'file-upload.template-file.column-name' | i18n }}
-          </td>
-          <td>
-            {{ 'description' | i18n }}
-          </td>
-          <td>
-            {{ 'file-upload.template-file.column-type' | i18n }}
-          </td>
-          <td>
-            {{ 'file-upload.template-file.column-max-length' | i18n }}
-          </td>
-          <td>
-            {{ 'file-upload.template-file.column-nullable' | i18n }}
-          </td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let data of rowSelectionTable.data">
-          <td>{{ data.name }}</td>
-          <td>{{ data.description }}</td>
-          <td>{{ data.type }}</td>
-          <td>{{ data.maxLength }}</td>
-          <td>{{ data.nullable + '' | i18n }}</td>
-        </tr>
-      </tbody>
-    </nz-table>
-  </div>
-</ng-container>
+    <div class="search-result-list" *ngIf="selectedFileUploadType">
+      <nz-table
+      [nzScroll]="{ x: 'true', y: 'true' }" 
+        #rowSelectionTable
+        nzShowSizeChanger
+        [nzData]="selectedFileUploadType!.columns"
+        nzShowPagination="false"
+        nzFrontPagination="false"
+      >
+        <thead>
+          <tr>
+            <td>
+              {{ 'file-upload.template-file.column-name' | i18n }}
+            </td>
+            <td>
+              {{ 'description' | i18n }}
+            </td>
+            <td>
+              {{ 'file-upload.template-file.column-type' | i18n }}
+            </td>
+            <td>
+              {{ 'file-upload.template-file.column-max-length' | i18n }}
+            </td>
+            <td>
+              {{ 'file-upload.template-file.column-nullable' | i18n }}
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of rowSelectionTable.data">
+            <td>{{ data.name }}</td>
+            <td>{{ data.description }}</td>
+            <td>{{ data.type }}</td>
+            <td>{{ data.maxLength }}</td>
+            <td>{{ data.nullable + '' | i18n }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </ng-container>
+</nz-spin>
+
+<nz-modal [nzVisible]="fileUploadProgress < 100" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+  <ng-container *nzModalContent> 
+    <nz-progress [nzPercent]="fileUploadProgress" nzType="circle"></nz-progress>
+  </ng-container>
+</nz-modal>
