@@ -154,7 +154,9 @@ export class OutboundOrderComponent implements OnInit {
       customer: [null],
       completeTimeRanger: [null],
       completeDate: [null],
-      orderCategory: [null]
+      orderCategory: [null],
+      createdTimeRanger: [null],
+      createdDate: [null],
     });
 
     // IN case we get the number passed in, refresh the display
@@ -187,6 +189,12 @@ export class OutboundOrderComponent implements OnInit {
     let endCompleteTime : Date = this.searchForm.controls.completeTimeRanger.value ? 
         this.searchForm.controls.completeTimeRanger.value[1] : undefined; 
     let specificCompleteDate : Date = this.searchForm.controls.completeDate.value;
+    
+    let startCreatedTime : Date = this.searchForm.controls.createdTimeRanger.value ? 
+        this.searchForm.controls.createdTimeRanger.value[0] : undefined; 
+    let endCreatedTime : Date = this.searchForm.controls.createdTimeRanger.value ? 
+        this.searchForm.controls.createdTimeRanger.value[1] : undefined; 
+    let specificCreatedDate : Date = this.searchForm.controls.createdDate.value;
 
     this.orderService.getOrders(
       this.searchForm.controls.number.value, 
@@ -196,7 +204,8 @@ export class OutboundOrderComponent implements OnInit {
       endCompleteTime, specificCompleteDate,       
       this.searchForm.controls.orderCategory.value,
       undefined, 
-      this.searchForm.controls.customer.value).subscribe(
+      this.searchForm.controls.customer.value, 
+      startCreatedTime, endCreatedTime, specificCreatedDate).subscribe(
       orderRes => {
  
 
@@ -918,12 +927,18 @@ export class OutboundOrderComponent implements OnInit {
   previewReport(order: Order): void {
     this.isSpinning = true;
     console.log(`start to preview ${order.number}`);
-    this.orderService.printOrderPickSheet(order, this.i18n.currentLang).subscribe(printResult => {
-      // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
-      this.isSpinning = false;
-      this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
-
-    });
+    
+    this.orderService.printOrderPickSheet(order, this.i18n.currentLang).subscribe({
+      next: (printResult)=> {
+        // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+        this.isSpinning = false;
+        sessionStorage.setItem("report_previous_page", `outbound/order?number=${order.number}`);
+        
+        this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
+  
+      }, 
+      error: () => this.isSpinning = false
+    });  
   }
  
   

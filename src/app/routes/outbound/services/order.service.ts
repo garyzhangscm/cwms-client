@@ -31,7 +31,8 @@ export class OrderService {
 
   getOrders(number?: string, loadDetails?: boolean, orderStatus?: OrderStatus, 
     startCompleteTime?: Date, endCompleteTime?:Date, specificCompleteDate?: Date, category?: OrderCategory, 
-    customerName?: string, customerId?: number): Observable<Order[]> {
+    customerName?: string, customerId?: number, 
+    startCreatedTime?: Date, endCreatedTime?:Date, specificCreatedDate?: Date,): Observable<Order[]> {
       
     const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
     let params = new HttpParams();
@@ -66,8 +67,19 @@ export class OrderService {
       params = params.append('endCompleteTime', this.dateTimeService.getISODateTimeString(endCompleteTime));   
     }
     if (specificCompleteDate) {
-      params = params.append('specificCompleteDate', this.dateTimeService.getISODateTimeString(specificCompleteDate));    
+      params = params.append('specificCompleteDate', this.dateTimeService.getISODateString(specificCompleteDate));    
     }
+    
+    if (startCreatedTime) {
+      params = params.append('startCreatedTime', this.dateTimeService.getISODateTimeString(startCreatedTime));  
+    }
+    if (endCreatedTime) {
+      params = params.append('endCreatedTime', this.dateTimeService.getISODateTimeString(endCreatedTime));   
+    }
+    if (specificCreatedDate) {
+      params = params.append('specificCreatedDate', this.dateTimeService.getISODateString(specificCreatedDate));    
+    }
+
     return this.http.get(url, params).pipe(map(res => res.data));
   }
 

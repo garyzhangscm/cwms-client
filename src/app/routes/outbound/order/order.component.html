@@ -82,7 +82,7 @@
       <div nz-col [nzSpan]="8"  >
         <nz-form-item nzFlex>
           <nz-form-label [nzSpan]="8" nzFor="completeDate">
-            {{ 'complete-time' | i18n }}
+            {{ 'complete-date' | i18n }}
           </nz-form-label>
           <nz-form-control [nzSpan]="16">
             <nz-date-picker formControlName="completeDate" name="completeDate"></nz-date-picker>
@@ -90,6 +90,36 @@
         </nz-form-item>
       </div>
     </div>
+    
+    <div nz-row [nzGutter]="24">
+
+      <div nz-col [nzSpan]="8" >
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="createdTimeRanger">
+            {{ 'created-time' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <nz-range-picker [nzShowTime]="{ nzHideDisabledOptions: true }" nzFormat="yyyy-MM-dd HH:mm:ss"
+              formControlName="createdTimeRanger" name="createdTimeRanger">
+            </nz-range-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      
+
+      <div nz-col [nzSpan]="8"  >
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="createdDate">
+            {{ 'created-date' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <nz-date-picker formControlName="createdDate" name="createdDate"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
     <div nz-row>
       <div nz-col [nzSpan]="24" class="search-area">
         <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
