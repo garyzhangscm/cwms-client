@@ -300,6 +300,11 @@ export class DefaultInterceptor implements HttpInterceptor {
            console.log('reloging required')
            this.toLogin();
         }
+        if (err.status === 403) {
+           console.log('company is disabled')
+           this.notification.error(`${err.status}: ${err.url}`, this.i18n.fanyi(errortext));
+           // this.toLogin();
+        }
         else {
 
           this.notification.error(`${err.status}: ${err.url}`, this.i18n.fanyi(errortext));

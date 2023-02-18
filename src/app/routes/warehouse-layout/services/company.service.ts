@@ -64,4 +64,12 @@ export class CompanyService {
   getCurrentCompany(): Company | null{
     return JSON.parse(localStorage.getItem('current_company')!);
   }
+  
+  enableCompany(id: number): Observable<Company> {
+    return this.http.post(`layout/companies/${id}/enable`).pipe(map(res => res.data));
+  }
+  disableCompany(id: number): Observable<Company> {
+    return this.http.post(`layout/companies/${id}/disable`).pipe(map(res => res.data));
+  }
+
 }
