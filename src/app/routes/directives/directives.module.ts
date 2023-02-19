@@ -14,23 +14,22 @@ const COMPONENTS: Array<Type<void>> = [];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
-  imports: [
-    SharedModule,
-    DirectivesRoutingModule
-  ],
-  declarations: [
-    ...COMPONENTS,
-    ...COMPONENTS_NOROUNT, 
-    FkeyDirective, 
-    AdminVisibleDirective, 
-    AdminEnabledDirective, 
-    AdminAccessDirective, 
-    NewNumberValidator ,
-    ExistingNumberValidator
-  ],
-  exports: [FkeyDirective, NewNumberValidator, 
-    AdminAccessDirective, AdminEnabledDirective, 
-    AdminVisibleDirective, ExistingNumberValidator],
-  entryComponents: COMPONENTS_NOROUNT,
+    imports: [
+        SharedModule,
+        DirectivesRoutingModule
+    ],
+    declarations: [
+        ...COMPONENTS,
+        ...COMPONENTS_NOROUNT,
+        FkeyDirective,
+        AdminVisibleDirective,
+        AdminEnabledDirective,
+        AdminAccessDirective,
+        NewNumberValidator,
+        ExistingNumberValidator
+    ],
+    exports: [FkeyDirective, NewNumberValidator,
+        AdminAccessDirective, AdminEnabledDirective,
+        AdminVisibleDirective, ExistingNumberValidator]
 })
 export class DirectivesModule { }

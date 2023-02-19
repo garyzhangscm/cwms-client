@@ -52,22 +52,21 @@ const COMPONENTS: Array<Type<void>> = [
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
-  imports: [
-    SharedModule,
-    CommonRoutingModule,
-    NzDescriptionsModule,
-    DirectivesModule,
-    NzStepsModule,
-    NzAutocompleteModule,
-    GooglePlaceModule,    
-    UtilModule,
-    NzResultModule ,
-  ],
-  declarations: [
-    ...COMPONENTS,
-    ...COMPONENTS_NOROUNT
-  ],
-  exports: [CommonPrintButtonComponent],
-  entryComponents: COMPONENTS_NOROUNT
+    imports: [
+        SharedModule,
+        CommonRoutingModule,
+        NzDescriptionsModule,
+        DirectivesModule,
+        NzStepsModule,
+        NzAutocompleteModule,
+        GooglePlaceModule,
+        UtilModule,
+        NzResultModule,
+    ],
+    declarations: [
+        ...COMPONENTS,
+        ...COMPONENTS_NOROUNT
+    ],
+    exports: [CommonPrintButtonComponent]
 })
 export class CommonModule { }
