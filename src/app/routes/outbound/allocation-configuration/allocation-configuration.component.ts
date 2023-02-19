@@ -22,7 +22,7 @@ import { AllocationConfigurationService } from '../services/allocation-configura
 })
 export class OutboundAllocationConfigurationComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<AllocationConfiguration>> = [
     {
       name: 'sequence',
       showSort: true,

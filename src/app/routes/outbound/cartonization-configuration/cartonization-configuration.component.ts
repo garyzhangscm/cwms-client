@@ -20,7 +20,7 @@ import { CartonizationConfigurationService } from '../services/cartonization-con
 })
 export class OutboundCartonizationConfigurationComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<CartonizationConfiguration>> = [
     {
       name: 'sequence',
       showSort: true,

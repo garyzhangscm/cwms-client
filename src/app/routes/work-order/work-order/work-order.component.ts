@@ -51,7 +51,7 @@ import { WorkOrderService } from '../services/work-order.service';
 })
 export class WorkOrderWorkOrderComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<WorkOrder>> = [
     {
       name: 'work-order.number',
       showSort: true,
@@ -151,7 +151,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       rowspan: 1,
       colspan: 5,
     }];
-  listOfStatisticsColumns: ColumnItem[] = [{
+  listOfStatisticsColumns: Array<ColumnItem<WorkOrder>> = [{
     name: 'work-order.totalLineExpectedQuantity',
     showSort: true,
     sortOrder: null,
@@ -226,7 +226,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     **/
   ];
   
-  listOfQCColumns: ColumnItem[] = [{
+  listOfQCColumns: Array<ColumnItem<WorkOrder>> = [{
     name: 'qcQuantity',
     showSort: true,
     sortOrder: null,

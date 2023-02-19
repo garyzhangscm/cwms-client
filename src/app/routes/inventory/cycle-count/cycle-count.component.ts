@@ -15,7 +15,7 @@ import { CycleCountBatchService } from '../services/cycle-count-batch.service';
 })
 export class InventoryCycleCountComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<CycleCountBatch>> = [
     {
       name: 'cycle-count.batchId',
       showSort: true,

@@ -20,7 +20,7 @@ import { PutawayConfigurationService } from '../services/putaway-configuration.s
   styleUrls: ['./putaway-configuration.component.less'],
 })
 export class InboundPutawayConfigurationComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<PutawayConfiguration>> = [
     {
       name: 'sequence',
       sortOrder: null,

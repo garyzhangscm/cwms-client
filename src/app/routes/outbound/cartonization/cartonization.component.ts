@@ -5,6 +5,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ColumnItem } from '../../util/models/column-item';
@@ -23,7 +24,7 @@ import { PickService } from '../services/pick.service';
 })
 export class OutboundCartonizationComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<Cartonization>> = [
     {
       name: 'cartonization.number',
       showSort: true,
@@ -131,7 +132,6 @@ export class OutboundCartonizationComponent implements OnInit {
   // Table data for display
   listOfAllCartonization: Cartonization[] = [];
   listOfDisplayCartonization: Cartonization[] = [];
-
 
 
   // list of record with printing in process

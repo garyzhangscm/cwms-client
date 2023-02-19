@@ -23,7 +23,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
 
   isSpinning = false;
   loadingOrderDetailsRequest = 0;
-  listOfOrderTableColumns: ColumnItem[] = [
+  listOfOrderTableColumns: Array<ColumnItem<Order>> = [
     {
       name: 'order.number',
       showSort: true,
@@ -118,7 +118,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   orderTableChecked = false;
   orderTableIndeterminate = false;
 
-  listOfOrderLineTableColumns: ColumnItem[] = [
+  listOfOrderLineTableColumns: Array<ColumnItem<OrderLine>> = [
     {
       name: 'order.number',
       showSort: true,

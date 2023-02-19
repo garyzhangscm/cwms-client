@@ -20,7 +20,7 @@ import { InventorySnapshotService } from '../services/inventory-snapshot.service
 })
 export class InventoryInventorySnapshotComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<InventorySnapshot>> = [
     {
       name: 'inventory-snapshot.batch-number',
       showSort: true,

@@ -28,7 +28,7 @@ import { ShortAllocationService } from '../services/short-allocation.service';
   styleUrls: ['./shipment.component.less'],
 })
 export class OutboundShipmentComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<Shipment>> = [
     {
       name: 'shipment.number',
       showSort: true,

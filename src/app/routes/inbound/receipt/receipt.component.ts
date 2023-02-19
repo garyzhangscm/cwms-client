@@ -27,7 +27,7 @@ import { ReceiptService } from '../services/receipt.service';
   styleUrls: ['./receipt.component.less'],
 })
 export class InboundReceiptComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<Receipt>> = [
     {
       name: 'receipt.number',
       showSort: true,

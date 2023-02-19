@@ -17,7 +17,7 @@ import { MouldService } from '../services/mould.service';
 })
 export class WorkOrderMouldComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<Mould>> = [
     {
       name: 'name',
       showSort: true,

@@ -87,7 +87,18 @@
   </nz-card>
   
   <nz-card nzTitle="{{ 'steps.role.assign-clients.title' | i18n }}"  [nzActions]="[cardFoot]">
-    
+    <div nz-row style="padding: 10px" *ngIf="currentRole != null">                    
+      <div nz-col nzSpan="12"  >
+          <label nz-checkbox [ngModel]="currentRole.nonClientDataAccessible" disabled="true" >
+              {{ "nonClientDataAccessible" | i18n}}</label> 
+        </div>  
+    </div>
+    <div nz-row style="padding: 10px" *ngIf="currentRole != null">                    
+        <div nz-col nzSpan="12" >
+            <label nz-checkbox [ngModel]="currentRole.allClientAccess"  disabled="true" >
+                {{ "allClientAccess" | i18n}}</label> 
+        </div>  
+    </div>
       <nz-table [nzScroll]="{ x: '100vw' }"  nzShowSizeChanger [nzData]="currentRole!.clientAccesses"
       #clientTable>
       <thead>

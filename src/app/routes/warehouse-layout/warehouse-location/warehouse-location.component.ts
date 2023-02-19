@@ -26,7 +26,7 @@ import { LocationService } from '../services/location.service';
 })
 export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<WarehouseLocation>> = [
     {
       name: 'location.name',
       showSort: true,

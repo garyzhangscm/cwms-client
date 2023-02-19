@@ -21,7 +21,7 @@ import { IntegrationClientDataService } from '../services/integration-client-dat
   styleUrls: ['./integration-data-client.component.less'],
 })
 export class IntegrationIntegrationDataClientComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: Array<ColumnItem<IntegrationClientData>> = [    
     {
           name: 'id',
           showSort: true,

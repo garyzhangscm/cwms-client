@@ -19,7 +19,7 @@ import { IntegrationItemPackageTypeDataService } from '../services/integration-i
 })
 export class IntegrationIntegrationDataItemPackageTypeComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: Array<ColumnItem<IntegrationItemPackageTypeData>> = [    
     {
           name: 'id',
           showSort: true,

@@ -19,7 +19,7 @@ import { IntegrationItemUnitOfMeasureDataService } from '../services/integration
   styleUrls: ['./integration-data-item-unit-of-measure.component.less'],
 })
 export class IntegrationIntegrationDataItemUnitOfMeasureComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: Array<ColumnItem<IntegrationItemUnitOfMeasureData>> = [    
     {
           name: 'id',
           showSort: true,

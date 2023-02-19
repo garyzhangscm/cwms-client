@@ -22,7 +22,7 @@ import { WorkOrderService } from '../services/work-order.service';
   styleUrls: ['./production-plan.component.less'],
 })
 export class WorkOrderProductionPlanComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<ProductionPlan>> = [
     {
       name: 'production-plan.number',
       showSort: true,

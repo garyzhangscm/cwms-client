@@ -23,7 +23,7 @@ import { ItemService } from '../services/item.service';
 export class InventoryItemQueryPopupComponent implements OnInit {
   scrollX = '100vw';
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<Item>> = [
     {
       name: 'name',
       showSort: true,

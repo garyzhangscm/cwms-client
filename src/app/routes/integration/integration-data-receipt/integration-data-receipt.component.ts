@@ -18,7 +18,7 @@ import { IntegrationReceiptService } from '../services/integration-receipt.servi
   styleUrls: ['./integration-data-receipt.component.less'],
 })
 export class IntegrationIntegrationDataReceiptComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: Array<ColumnItem<IntegrationReceipt>> = [    
     {
           name: 'id',
           showSort: true,

@@ -3,8 +3,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
+import { NzMessageService } from 'ng-zorro-antd/message'; 
 
 import { Client } from '../../common/models/client';
 import { ColumnItem } from '../../util/models/column-item';
@@ -17,7 +17,7 @@ import { User } from '../models/user';
 import { MenuService } from '../services/menu.service';
 import { RoleService } from '../services/role.service';
 import { UserService } from '../services/user.service';
-
+ 
 
 @Component({
   selector: 'app-auth-role',
@@ -25,11 +25,11 @@ import { UserService } from '../services/user.service';
   styleUrls: ['./role.component.less'],
 })
 export class AuthRoleComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<Role>> = [
     {
       name: 'name',
       sortOrder: null,
-      sortFn: (a: Role, b: Role) => a.name.localeCompare(b.name),
+      sortFn: (a: Role, b: Role )  =>  a.name.localeCompare(b.name),
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
@@ -57,7 +57,7 @@ export class AuthRoleComponent implements OnInit {
       showFilter: false
     },
   ];
-  listOfSubTableColumns: ColumnItem[] = [
+  listOfSubTableColumns: Array<ColumnItem<User>> = [
     {
       name: 'username',
       sortOrder: null,
@@ -121,7 +121,7 @@ export class AuthRoleComponent implements OnInit {
   ];
 
 
-  listOfMenuTableColumns: ColumnItem[] = [
+  listOfMenuTableColumns: Array<ColumnItem<Menu>> = [
     {
       name: 'menuGroup',
       sortOrder: null,
@@ -185,7 +185,7 @@ export class AuthRoleComponent implements OnInit {
   ];
 
   
-  listOfClientColumns: ColumnItem[] = [
+  listOfClientColumns: Array<ColumnItem<Client>> = [
     {
       name: 'name',
       sortOrder: null,

@@ -15,7 +15,7 @@ import { UserService } from '../services/user.service';
   templateUrl: './user-maintenance-confirm.component.html',
 })
 export class AuthUserMaintenanceConfirmComponent implements OnInit {
-  listOfRoleTableColumns: ColumnItem[] = [
+  listOfRoleTableColumns: Array<ColumnItem<Role>> = [
     {
       name: 'name',
       sortOrder: null,

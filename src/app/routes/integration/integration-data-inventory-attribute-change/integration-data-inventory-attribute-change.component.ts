@@ -17,7 +17,7 @@ import { IntegrationInventoryAttributeChangeConfirmationService } from '../servi
   styleUrls: ['./integration-data-inventory-attribute-change.component.less'],
 })
 export class IntegrationIntegrationDataInventoryAttributeChangeComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: Array<ColumnItem<IntegrationInventoryAttributeChangeConfirmation>> = [    
     {
           name: 'id',
           showSort: true,

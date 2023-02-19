@@ -35,7 +35,7 @@ import { ItemService } from '../services/item.service';
 })
 export class InventoryInventoryAdjustComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<WarehouseLocation>> = [
     {
       name: 'location.name',
       showSort: true,

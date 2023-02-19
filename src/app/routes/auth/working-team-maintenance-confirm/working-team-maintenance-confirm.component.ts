@@ -16,7 +16,7 @@ import { WorkingTeamService } from '../services/working-team.service';
 })
 export class AuthWorkingTeamMaintenanceConfirmComponent implements OnInit {
 
-  listOfUserTableColumns: ColumnItem[] = [
+  listOfUserTableColumns: Array<ColumnItem<User>> = [
     {
       name: 'username',
       sortOrder: null,

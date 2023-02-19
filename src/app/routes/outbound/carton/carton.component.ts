@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { Carton } from '../models/carton';
@@ -14,7 +15,7 @@ import { CartonService } from '../services/carton.service';
   styleUrls: ['./carton.component.less'],
 })
 export class OutboundCartonComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<Carton>> = [
     {
       name: 'name',
       showSort: true,

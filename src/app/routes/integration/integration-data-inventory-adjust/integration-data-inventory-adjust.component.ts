@@ -20,7 +20,7 @@ import { IntegrationInventoryAdjustmentConfirmationService } from '../services/i
 })
 export class IntegrationIntegrationDataInventoryAdjustComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: Array<ColumnItem<IntegrationInventoryAdjustmentConfirmation>> = [    
     {
           name: 'id',
           showSort: true,

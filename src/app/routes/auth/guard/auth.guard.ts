@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, CanDeactivate, CanLoad, Route, Router, RouterStateSnapshot, UrlSegment, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
+
 import { UserService } from '../services/user.service';
 
 @Injectable({
@@ -23,7 +24,7 @@ export class AuthGuard implements CanActivate, CanActivateChild, CanDeactivate<u
         return true;
       } 
       else {
-        return this.router.parseUrl('/dashboard/v1');
+        return this.router.parseUrl('/dashboard/welcome');
       }
   }
   canActivateChild(

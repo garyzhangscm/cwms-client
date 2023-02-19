@@ -21,7 +21,7 @@ import { IntegrationWorkOrderConfirmationService } from '../services/integration
 export class IntegrationIntegrationDataWorkOrderConfirmComponent implements OnInit {
 
   
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: Array<ColumnItem<IntegrationWorkOrderConfirmation>> = [    
     {
           name: 'id',
           showSort: true,

@@ -24,7 +24,7 @@ import { LocationGroupService } from '../services/location-group.service';
 })
 export class WarehouseLayoutLocationGroupComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<LocationGroup>> = [
     {
       name: 'name',
       showSort: true,

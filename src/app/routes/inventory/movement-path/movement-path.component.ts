@@ -19,7 +19,7 @@ import { MovementPathService } from '../services/movement-path.service';
 })
 export class InventoryMovementPathComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<MovementPath>> = [
     {
       name: 'sequence',
       showSort: true,

@@ -19,7 +19,7 @@ import { IntegrationReceiptConfirmationService } from '../services/integration-r
   styleUrls: ['./integration-data-receipt-confirm.component.less'],
 })
 export class IntegrationIntegrationDataReceiptConfirmComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: Array<ColumnItem<IntegrationReceiptConfirmation>> = [    
     {
           name: 'id',
           showSort: true,

@@ -21,7 +21,7 @@ import { ProductionLineService } from '../services/production-line.service';
 })
 export class WorkOrderProductionLineComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<ProductionLine>> = [
     {
       name: 'production-line.name',
       showSort: true,

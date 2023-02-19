@@ -18,7 +18,7 @@ import { ItemFamilyService } from '../services/item-family.service';
 })
 export class InventoryItemFamilyComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<ItemFamily>> = [
     {
       name: 'item-family.name',
       showSort: true,

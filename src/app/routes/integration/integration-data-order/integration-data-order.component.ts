@@ -18,7 +18,7 @@ import { IntegrationOrderService } from '../services/integration-order.service';
   styleUrls: ['./integration-data-order.component.less'],
 })
 export class IntegrationIntegrationDataOrderComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: Array<ColumnItem<IntegrationOrder>> = [    
     {
           name: 'id',
           showSort: true,

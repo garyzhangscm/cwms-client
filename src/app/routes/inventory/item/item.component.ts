@@ -29,7 +29,7 @@ import { ItemService } from '../services/item.service';
   styleUrls: ['./item.component.less']
 })
 export class InventoryItemComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<Item>> = [
     {
       name: 'thumbnail',
       showSort: true,

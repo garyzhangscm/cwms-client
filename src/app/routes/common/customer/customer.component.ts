@@ -20,7 +20,7 @@ import { SupplierService } from '../services/supplier.service';
   styleUrls: ['./customer.component.less'],
 })
 export class CommonCustomerComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<Customer>> = [
     {
       name: 'name',
       sortOrder: null,

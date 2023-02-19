@@ -19,7 +19,7 @@ import { IntegrationItemDataService } from '../services/integration-item-data.se
 })
 export class IntegrationIntegrationDataItemComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: Array<ColumnItem<IntegrationItemData>> = [    
     {
           name: 'id',
           showSort: true,

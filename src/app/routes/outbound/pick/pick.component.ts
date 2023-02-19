@@ -21,7 +21,7 @@ import { PickService } from '../services/pick.service';
 })
 export class OutboundPickComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<PickWork>> = [
     {
       name: 'pick.number',
       showSort: true,

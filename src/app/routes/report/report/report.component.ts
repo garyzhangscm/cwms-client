@@ -20,7 +20,7 @@ import { ReportService } from '../services/report.service';
   styleUrls: ['./report.component.less']
 })
 export class ReportReportComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<Report>> = [
     {
       name: 'type',
       showSort: true,

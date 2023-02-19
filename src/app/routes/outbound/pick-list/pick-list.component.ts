@@ -24,7 +24,7 @@ import { ShortAllocationService } from '../services/short-allocation.service';
 })
 export class OutboundPickListComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<PickList>> = [
     {
       name: 'pick-list.number',
       showSort: true,

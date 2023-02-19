@@ -33,7 +33,7 @@
 </div>
 
 
-<ng-container>
+<ng-container *ngIf="currentLocationGroup">
   <nz-card nzTitle="{{currentLocationGroup.name }}" [nzActions]="[actionSave]">
     <nz-descriptions nzTitle="{{'location-group' | i18n}}" nzBordered>
 
@@ -43,7 +43,7 @@
       <nz-descriptions-item nzTitle="{{'description' | i18n}}" nzSpan="2">
         {{currentLocationGroup.description}}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'location-group-type' | i18n}}" nzSpan="3">
+      <nz-descriptions-item nzTitle="{{'location-group-type' | i18n}}" nzSpan="3" *ngIf="currentLocationGroup.locationGroupType">
         <div>
           <nz-tag [nzColor]="'#2db7f5'" style="font-size: 14px">{{currentLocationGroup.locationGroupType!.description}}
           </nz-tag>

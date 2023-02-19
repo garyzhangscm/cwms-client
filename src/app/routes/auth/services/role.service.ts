@@ -1,4 +1,4 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
@@ -68,11 +68,21 @@ export class RoleService {
   }
   
   processClients(roleId: number, assignedClientIds: number[], deassignedClientIds: number[], 
-    nonClientDataAccessible: boolean) { 
-      const url = `resource/roles/${roleId}/clients?assigned=${assignedClientIds.join(
-        ',',
-      )}&deassigned=${deassignedClientIds.join(',')}&nonClientDataAccessible=${nonClientDataAccessible}`;
-      return this.http.post(url).pipe(map(res => res.data)); 
+    nonClientDataAccessible: boolean, 
+    allClientAccess: boolean) { 
+
+      
+    let params = new HttpParams();
+    const url = `resource/roles/${roleId}/clients`;
+      
+    params = params.append('companyId', this.warehouseService.getCurrentWarehouse()!.companyId); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);
+    params = params.append('assigned', assignedClientIds.join(',')); 
+    params = params.append('deassigned', deassignedClientIds.join(',')); 
+    params = params.append('nonClientDataAccessible', nonClientDataAccessible); 
+    params = params.append('allClientAccess', allClientAccess); 
+
+    return this.http.post(url, undefined, params).pipe(map(res => res.data)); 
   }
 
 

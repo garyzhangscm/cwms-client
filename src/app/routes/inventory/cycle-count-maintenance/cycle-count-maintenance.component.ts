@@ -38,7 +38,7 @@ import { ItemService } from '../services/item.service';
 export class InventoryCycleCountMaintenanceComponent implements OnInit {
 
 
-  listOfOpenCycleCountTableColumns: ColumnItem[] = [
+  listOfOpenCycleCountTableColumns: Array<ColumnItem<CycleCountRequest>> = [
     {
       name: 'cycle-count.batchId',
       showSort: true,
@@ -75,7 +75,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   openCycleCountTableChecked = false;
   openCycleCountTableIndeterminate = false;
 
-  listOfCycleCountResultTableColumns: ColumnItem[] = [
+  listOfCycleCountResultTableColumns: Array<ColumnItem<CycleCountResult>> = [
     {
       name: 'cycle-count.batchId',
       showSort: true,
@@ -145,7 +145,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
     },
   ];
 
-  listOfCancelledCycleCountTableColumns: ColumnItem[] = [
+  listOfCancelledCycleCountTableColumns: Array<ColumnItem<CycleCountRequest>> = [
     {
       name: 'cycle-count.batchId',
       showSort: true,
@@ -183,7 +183,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   cancelledCycleCountTableIndeterminate = false;
 
 
-  listOfOpenAuditCountTableColumns: ColumnItem[] = [
+  listOfOpenAuditCountTableColumns: Array<ColumnItem<AuditCountRequest>> = [
     {
       name: 'cycle-count.batchId',
       showSort: true,
@@ -220,7 +220,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   openAuditCountTableChecked = false;
   openAuditCountTableIndeterminate = false;
 
-  listOfAuditCountResultsTableColumns: ColumnItem[] = [
+  listOfAuditCountResultsTableColumns: Array<ColumnItem<AuditCountResult>> = [
     {
       name: 'cycle-count.batchId',
       showSort: true,

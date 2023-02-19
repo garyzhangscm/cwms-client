@@ -6,6 +6,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { Report } from '../models/report';
@@ -19,7 +20,7 @@ import { ReportService } from '../services/report.service';
   styleUrls: ['./report-history.component.less'],
 })
 export class ReportReportHistoryComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<ReportHistory>> = [
     {
       name: 'type',
       showSort: true,
@@ -106,8 +107,6 @@ export class ReportReportHistoryComponent implements OnInit {
   searching = false;
   searchResult = '';
 
-
-
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllReportHistories = [];
@@ -138,16 +137,10 @@ export class ReportReportHistoryComponent implements OnInit {
           this.searchResult = '';
         },
       );
-  }
-
-
-
+  } 
   currentPageDataChange($event: ReportHistory[]): void {
     this.listOfDisplayReportHistories! = $event;
-  }
-
-
-
+  } 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.report.report-history'));
     // initiate the search form

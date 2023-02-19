@@ -42,7 +42,7 @@ import { ReceiptService } from '../services/receipt.service';
   templateUrl: './receipt-maintenance.component.html',
 })
 export class InboundReceiptMaintenanceComponent implements OnInit {
-  listOfReceiptLineTableColumns: ColumnItem[] = [
+  listOfReceiptLineTableColumns: Array<ColumnItem<ReceiptLine>> = [
     {
       name: 'receipt.line.number',
       showSort: true,
@@ -122,7 +122,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     },
   ];
 
-  listOfReceivedInventoryTableColumns: ColumnItem[] = [
+  listOfReceivedInventoryTableColumns: Array<ColumnItem<Inventory>> = [
     {
       name: 'lpn',
       showSort: true,

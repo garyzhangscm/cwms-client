@@ -23,7 +23,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
 
   scrollX = '100vw';
 
-  locationNameColumn: ColumnItem =
+  locationNameColumn: ColumnItem<WarehouseLocation> =
     {
       name: 'location.name',
       sortOrder: null,
@@ -36,7 +36,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
 
     };
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<WarehouseLocation>> = [
     {
       name: 'location-group',
       sortOrder: null,

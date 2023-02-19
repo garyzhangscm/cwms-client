@@ -31,7 +31,7 @@ export class AuthUserComponent implements OnInit {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.auth.user'));
   }
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<User>> = [
     {
       name: 'username',
       sortOrder: null,

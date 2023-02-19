@@ -18,7 +18,7 @@ import { ClientService } from '../services/client.service';
   styleUrls: ['./client.component.less'],
 })
 export class CommonClientComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<Client>> = [
     {
       name: 'name',
       sortOrder: null,

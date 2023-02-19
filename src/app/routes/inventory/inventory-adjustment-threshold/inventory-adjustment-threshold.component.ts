@@ -21,7 +21,7 @@ import { ItemFamilyService } from '../services/item-family.service';
   styleUrls: ['./inventory-adjustment-threshold.component.less'],
 })
 export class InventoryInventoryAdjustmentThresholdComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<InventoryAdjustmentThreshold>> = [
     {
       name: 'item',
       showSort: true,

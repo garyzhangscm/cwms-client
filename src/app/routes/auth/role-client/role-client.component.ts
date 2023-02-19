@@ -157,7 +157,12 @@ export class AuthRoleClientComponent implements OnInit {
       accessibleClientId => !currentAssignedClientIds.some(id => accessibleClientId === +id),
     );
 
-    this.roleService.processClients(this.currentRole!.id, newlyAssignedClientIds, newlyDeassignedClientIds, this.currentRole!.nonClientDataAccessible).subscribe(
+    this.roleService.processClients(
+      this.currentRole!.id, 
+      newlyAssignedClientIds, 
+      newlyDeassignedClientIds, 
+      this.currentRole!.nonClientDataAccessible, 
+      this.currentRole!.allClientAccess).subscribe(
       {
         next: () => {
           

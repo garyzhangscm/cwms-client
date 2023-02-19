@@ -18,7 +18,7 @@ import { TrailerService } from '../services/trailer.service';
   styleUrls: ['./trailer.component.less'],
 })
 export class OutboundTrailerComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<Trailer>> = [
     {
       name: 'trailer.number',
       showSort: true,

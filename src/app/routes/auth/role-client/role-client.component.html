@@ -60,6 +60,12 @@
                             {{ "nonClientDataAccessible" | i18n}}</label> 
                     </div>  
                 </div>
+                <div nz-row style="padding: 10px" *ngIf="currentRole != null">                    
+                    <div nz-col nzSpan="12" nzOffset="6">
+                        <label nz-checkbox [(ngModel)]="currentRole.allClientAccess"  >
+                            {{ "allClientAccess" | i18n}}</label> 
+                    </div>  
+                </div>
                 <div nz-row style="padding: 10px">
                     <div nz-col nzSpan="12" nzOffset="6">
                         <nz-transfer [nzDataSource]="clientsList" nzShowSearch [nzFilterOption]="transferListFilterOption"

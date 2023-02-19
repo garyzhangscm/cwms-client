@@ -6,6 +6,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
+
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { ReportHistory } from '../models/report-history';
@@ -20,7 +21,7 @@ import { ReportPrinterConfigurationService } from '../services/report-printer-co
   styleUrls: ['./report-printer-configuration.component.less'],
 })
 export class ReportReportPrinterConfigurationComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<ReportPrinterConfiguration>> = [
     {
       name: 'report.type',
       showSort: true,
@@ -78,9 +79,7 @@ export class ReportReportPrinterConfigurationComponent implements OnInit {
   searchResult = '';
   reportTypes = ReportType;
   isSpinning = false;
-
-
-
+ 
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllReportPrinterConfiguration = [];
@@ -111,16 +110,11 @@ export class ReportReportPrinterConfigurationComponent implements OnInit {
           this.searchResult = '';
         },
       );
-  }
-
-
-
+  } 
   currentPageDataChange($event: ReportPrinterConfiguration[]): void {
     this.listOfDisplayReportPrinterConfiguration! = $event;
   }
-
-
-
+ 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.report.report-printer-configuration'));
     // initiate the search form

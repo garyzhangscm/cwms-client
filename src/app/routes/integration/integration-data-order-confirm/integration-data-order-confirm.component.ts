@@ -19,7 +19,7 @@ import { IntegrationOrderConfirmationService } from '../services/integration-ord
   styleUrls: ['./integration-data-order-confirm.component.less'],
 })
 export class IntegrationIntegrationDataOrderConfirmComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: Array<ColumnItem<IntegrationOrderConfirmation>> = [    
     {
           name: 'id',
           showSort: true,

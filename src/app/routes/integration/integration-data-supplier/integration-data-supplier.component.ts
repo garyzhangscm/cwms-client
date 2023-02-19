@@ -22,7 +22,7 @@ import { IntegrationSupplierDataService } from '../services/integration-supplier
 })
 export class IntegrationIntegrationDataSupplierComponent implements OnInit {
   
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: Array<ColumnItem<IntegrationSupplierData>> = [    
     {
           name: 'id',
           showSort: true,

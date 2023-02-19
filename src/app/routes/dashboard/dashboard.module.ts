@@ -24,8 +24,10 @@ import { DashboardRoutingModule } from './dashboard-routing.module';
 import { DashboardMonitorComponent } from './monitor/monitor.component';
 import { DashboardV1Component } from './v1/v1.component';
 import { DashboardWorkplaceComponent } from './workplace/workplace.component';
+import { DashboardWelcomeComponent } from './welcome/welcome.component';
 
-const COMPONENTS = [DashboardV1Component, DashboardAnalysisComponent, DashboardMonitorComponent, DashboardWorkplaceComponent];
+const COMPONENTS = [DashboardV1Component, DashboardAnalysisComponent, DashboardMonitorComponent, DashboardWorkplaceComponent,
+  DashboardWelcomeComponent];
 
 @NgModule({
   imports: [

@@ -20,7 +20,7 @@ import { WorkingTeamService } from '../services/working-team.service';
   styleUrls: ['./working-team.component.less'],
 })
 export class AuthWorkingTeamComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<WorkingTeam>> = [
     {
       name: 'name',
       sortOrder: null,
@@ -57,7 +57,7 @@ export class AuthWorkingTeamComponent implements OnInit {
   ];
 
 
-  listOfUserTableColumns: ColumnItem[] = [
+  listOfUserTableColumns: Array<ColumnItem<User>> = [
     {
       name: 'username',
       sortOrder: null,

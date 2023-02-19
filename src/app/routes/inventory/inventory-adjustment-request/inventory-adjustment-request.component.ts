@@ -25,7 +25,7 @@ import { InventoryAdjustmentRequestService } from '../services/inventory-adjustm
   styleUrls: ['./inventory-adjustment-request.component.less'],
 })
 export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<InventoryAdjustmentRequest>> = [
     {
       name: 'inventory-adjustment-request.inventory-id',
       showSort: true,

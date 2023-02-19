@@ -14,4 +14,5 @@ export interface Role {
   users?: User[];
   clientAccesses: RoleClientAccess[]; 
   nonClientDataAccessible: boolean;
+  allClientAccess: boolean;
 }

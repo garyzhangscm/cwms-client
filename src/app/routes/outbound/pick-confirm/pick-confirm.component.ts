@@ -31,7 +31,7 @@ import { WaveService } from '../services/wave.service';
 export class OutboundPickConfirmComponent implements OnInit {
 
   isSpinning = false;
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<PickWork>> = [
     {
       name: 'pick.number',
       showSort: true,

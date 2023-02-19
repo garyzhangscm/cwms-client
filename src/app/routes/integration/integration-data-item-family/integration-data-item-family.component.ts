@@ -18,7 +18,7 @@ import { IntegrationItemFamilyDataService } from '../services/integration-item-f
   styleUrls: ['./integration-data-item-family.component.less'],
 })
 export class IntegrationIntegrationDataItemFamilyComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: Array<ColumnItem<IntegrationItemFamilyData>> = [    
     {
           name: 'id',
           showSort: true,

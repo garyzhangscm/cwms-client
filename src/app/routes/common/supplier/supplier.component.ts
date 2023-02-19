@@ -17,7 +17,7 @@ import { SupplierService } from '../services/supplier.service';
   styleUrls: ['./supplier.component.less'],
 })
 export class CommonSupplierComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<Supplier>> = [
     {
       name: 'name',
       showSort: true,

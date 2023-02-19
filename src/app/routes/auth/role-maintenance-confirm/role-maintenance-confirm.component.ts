@@ -24,7 +24,7 @@ interface MenuTreeNode {
   templateUrl: './role-maintenance-confirm.component.html',
 })
 export class AuthRoleMaintenanceConfirmComponent implements OnInit {
-  listOfUserTableColumns: ColumnItem[] = [
+  listOfUserTableColumns: Array<ColumnItem<User>> = [
     {
       name: 'username',
       sortOrder: null,
@@ -93,7 +93,7 @@ export class AuthRoleMaintenanceConfirmComponent implements OnInit {
     }
   ];
 
-  listOfClientColumns: ColumnItem[] = [
+  listOfClientColumns: Array<ColumnItem<Client>> = [
     {
       name: 'name',
       sortOrder: null,

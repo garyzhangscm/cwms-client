@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzModalService } from 'ng-zorro-antd/modal';
+
 import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
 import { ColumnItem } from '../../util/models/column-item';
@@ -23,7 +24,7 @@ import { ItemFamilyService } from '../services/item-family.service';
 })
 export class InventoryEmergencyReplenishmentConfigComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<EmergencyReplenishmentConfiguration>> = [
     {
       name: 'sequence',
       showSort: true,

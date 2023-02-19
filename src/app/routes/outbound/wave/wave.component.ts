@@ -28,7 +28,7 @@ import { WaveService } from '../services/wave.service';
 })
 export class OutboundWaveComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<Wave>> = [
     {
       name: 'wave.number',
       showSort: true,

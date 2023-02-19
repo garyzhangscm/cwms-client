@@ -21,7 +21,7 @@ import { ShortAllocationService } from '../services/short-allocation.service';
 })
 export class OutboundShortAllocationComponent implements OnInit {
 
-  listOfColumns: ColumnItem[] = [
+  listOfColumns: Array<ColumnItem<ShortAllocation>> = [
     {
       name: 'order.number',
       showSort: true,

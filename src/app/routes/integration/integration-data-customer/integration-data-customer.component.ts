@@ -22,7 +22,7 @@ import { IntegrationCustomerDataService } from '../services/integration-customer
   styleUrls: ['./integration-data-customer.component.less'],
 })
 export class IntegrationIntegrationDataCustomerComponent implements OnInit {
-  listOfColumns: ColumnItem[] = [    
+  listOfColumns: Array<ColumnItem<IntegrationCustomerData>> = [    
     {
           name: 'id',
           showSort: true,
