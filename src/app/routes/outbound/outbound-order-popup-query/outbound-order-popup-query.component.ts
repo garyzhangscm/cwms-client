@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, EventEmitter, Inject, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms'; 
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms'; 
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
@@ -31,7 +31,7 @@ export class OutboundOutboundOrderPopupQueryComponent implements OnInit {
   scrollX = '100vw';
  
   queryModal!: NzModalRef;
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   
   @ViewChild('st', { static: false })
@@ -107,7 +107,7 @@ export class OutboundOutboundOrderPopupQueryComponent implements OnInit {
   @Input() customerName?: string = '';
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private orderService: OrderService,

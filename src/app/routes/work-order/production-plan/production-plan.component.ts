@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -89,7 +89,7 @@ export class WorkOrderProductionPlanComponent implements OnInit {
   expandSet = new Set<number>();
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private workOrderService: WorkOrderService,
@@ -101,7 +101,7 @@ export class WorkOrderProductionPlanComponent implements OnInit {
   ) { }
 
   // Form related data and functions
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   newWorkOrder: WorkOrder = {
     id: undefined,
     number: undefined,

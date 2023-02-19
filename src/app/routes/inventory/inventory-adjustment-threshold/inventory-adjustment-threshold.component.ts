@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -125,7 +125,7 @@ export class InventoryInventoryAdjustmentThresholdComponent implements OnInit {
   inventoryQuantityChangeTypes = InventoryQuantityChangeType;
 
   // Form related data and functions
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   searching = false;
 
@@ -141,7 +141,7 @@ export class InventoryInventoryAdjustmentThresholdComponent implements OnInit {
   }
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private inventoryAdjustmentThresholdService: InventoryAdjustmentThresholdService,
     private clientService: ClientService,
     private itemFamilyService: ItemFamilyService,

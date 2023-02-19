@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -130,7 +130,7 @@ export class AuthWorkingTeamComponent implements OnInit {
   searchResult = '';
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private activatedRoute: ActivatedRoute,
     private workingTeamService: WorkingTeamService,
     private userService: UserService,
@@ -141,7 +141,7 @@ export class AuthWorkingTeamComponent implements OnInit {
   ) { }
 
   // Form related data and functions
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   // Table data for display
   listOfAllWorkingTeams: WorkingTeam[] = [];

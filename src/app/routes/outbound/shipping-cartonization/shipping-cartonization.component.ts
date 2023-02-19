@@ -1,5 +1,5 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -27,7 +27,7 @@ interface PackingItem {
   ],
 })
 export class OutboundShippingCartonizationComponent implements OnInit {
-  shippingCartonizationQueryForm!: FormGroup;
+  shippingCartonizationQueryForm!: UntypedFormGroup;
   avaiableShippingCartons: Carton[] = [];
   listOfPackingItems: PackingItem[] = [];
   lastConfirmedItemName = '';
@@ -37,7 +37,7 @@ export class OutboundShippingCartonizationComponent implements OnInit {
   @ViewChild('itemNameTextBox', { static: true }) itemNameTextBox!: ElementRef;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private shippingCartonizationService: ShippingCartonizationService,
     private messageService: NzMessageService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,

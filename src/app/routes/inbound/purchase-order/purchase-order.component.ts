@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
@@ -50,7 +50,7 @@ export class InboundPurchaseOrderComponent implements OnInit {
   ]; 
 
   
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   purchaseOrders: PurchaseOrder[] = [];
   searchResult = "";
   validSuppliers: Supplier[] = [];
@@ -66,7 +66,7 @@ export class InboundPurchaseOrderComponent implements OnInit {
     private localCacheService: LocalCacheService,
     private supplierService: SupplierService,
     private receiptService: ReceiptService,
-    private fb: FormBuilder,) { }
+    private fb: UntypedFormBuilder,) { }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inbound.purchaseOrder'));

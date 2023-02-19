@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -40,7 +40,7 @@ export class CommonAbcCategoryComponent implements OnInit {
 
   
   newABCCategoryModal!: NzModalRef;
-  newABCCategoryForm!: FormGroup;
+  newABCCategoryForm!: UntypedFormGroup;
 
   constructor( 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -50,7 +50,7 @@ export class CommonAbcCategoryComponent implements OnInit {
     private router: Router, 
     private modalService: NzModalService,
     private warehouseService: WarehouseService,
-    private fb: FormBuilder,) { }
+    private fb: UntypedFormBuilder,) { }
 
   ngOnInit(): void { 
     this.search();

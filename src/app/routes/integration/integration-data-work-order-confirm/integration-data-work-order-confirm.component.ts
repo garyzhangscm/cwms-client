@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { differenceInMilliseconds } from 'date-fns';
@@ -170,7 +170,7 @@ export class IntegrationIntegrationDataWorkOrderConfirmComponent implements OnIn
         ];
         expandSet = new Set<number>();
         
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   searching = false;
   isSpinning = false;
@@ -184,7 +184,7 @@ export class IntegrationIntegrationDataWorkOrderConfirmComponent implements OnIn
   integrationStatusList = IntegrationStatus;
  
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private integrationWorkOrderConfirmationService: IntegrationWorkOrderConfirmationService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private messageService: NzMessageService,

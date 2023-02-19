@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -55,7 +55,7 @@ export class UtilSystemControlledNumberComponent implements OnInit {
   }
 
   
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   systemControlledNumbers: SystemControlledNumber[] = [];
   searchResult = "";
    
@@ -65,7 +65,7 @@ export class UtilSystemControlledNumberComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private systemControlledNumberService: SystemControlledNumberService,
     private messageService: NzMessageService,
-    private fb: FormBuilder,) { }
+    private fb: UntypedFormBuilder,) { }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.util.sys-controlled-num'));

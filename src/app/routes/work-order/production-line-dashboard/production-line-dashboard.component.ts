@@ -1,6 +1,6 @@
 import {  formatDate } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import {  FormBuilder } from '@angular/forms';
+import {  UntypedFormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -83,7 +83,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
   loadingData = false;
   
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private productionLineService: ProductionLineService, 
     private workOrderConfigurationService: WorkOrderConfigurationService,

@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
@@ -19,17 +19,17 @@ import { MasterProductionScheduleService } from '../services/master-production-s
 })
 export class WorkOrderMpsComponent implements OnInit {
 
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   
   listOfAllMPSs: MasterProductionSchedule[] = [];
   isSpinning = false;
   searchResult= "";
  
   removeMPSModal!: NzModalRef;
-  removeMPSForm!: FormGroup;
+  removeMPSForm!: UntypedFormGroup;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private masterProductionScheduleService: MasterProductionScheduleService,
@@ -153,7 +153,7 @@ export class WorkOrderMpsComponent implements OnInit {
   ): void {
     
     this.removeMPSForm = this.fb.group({
-      moveSuccessor: new FormControl({ value: true, disabled: false }),
+      moveSuccessor: new UntypedFormControl({ value: true, disabled: false }),
     });
 
 

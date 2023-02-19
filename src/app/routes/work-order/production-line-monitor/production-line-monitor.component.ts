@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -18,7 +18,7 @@ import { ProductionLineService } from '../services/production-line.service';
   styleUrls: ['./production-line-monitor.component.less'],
 })
 export class WorkOrderProductionLineMonitorComponent implements OnInit {
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   searching = false;
   searchResult = '';
   listOfProductionLineMonitors: ProductionLineMonitor[] = [];
@@ -44,7 +44,7 @@ export class WorkOrderProductionLineMonitorComponent implements OnInit {
   ]; 
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private productionLineMonitorService: ProductionLineMonitorService, 
     private productionLineService: ProductionLineService, 

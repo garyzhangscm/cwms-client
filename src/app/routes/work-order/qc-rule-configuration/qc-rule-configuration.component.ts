@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -40,7 +40,7 @@ import { WorkOrderService } from '../services/work-order.service';
 })
 export class WorkOrderQcRuleConfigurationComponent implements OnInit {
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,  
     private workOrderQcRuleConfigurationService: WorkOrderQcRuleConfigurationService, 
     private localCacheService: LocalCacheService, 
@@ -56,7 +56,7 @@ listOfAllQCRuleConfiguration: WorkOrderQcRuleConfiguration[] = [];
 
 searchResult = '';
 isSpinning = false;
-searchForm!: FormGroup;
+searchForm!: UntypedFormGroup;
 validproductionLines: ProductionLine[] = []; 
 loadingQCConfigurationDetailsRequest = 0;
 

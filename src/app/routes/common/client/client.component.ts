@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -166,7 +166,7 @@ export class CommonClientComponent implements OnInit {
   editId = -1;
   editCol = '';
   isSpinning = false;
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   @ViewChild(NzInputDirective, { static: false, read: ElementRef }) inputElement: ElementRef | undefined;
 
@@ -175,7 +175,7 @@ export class CommonClientComponent implements OnInit {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private messageService: NzMessageService,
     private activatedRoute: ActivatedRoute,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private modalService: NzModalService) { 
       this.localCacheService.getWarehouseConfiguration().subscribe({
         next: (warehouseConfigRes) => {

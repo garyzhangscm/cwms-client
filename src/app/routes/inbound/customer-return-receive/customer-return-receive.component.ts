@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { AbstractControl , FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl , UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -27,7 +27,7 @@ export class InboundCustomerReturnReceiveComponent implements OnInit {
   pageTitle: string;
   isSpinning = false;
 
-  receivingForm!: FormGroup;
+  receivingForm!: UntypedFormGroup;
   availableInventoryStatuses: InventoryStatus[] = [];
   receivingItem?: Item;
 
@@ -36,7 +36,7 @@ export class InboundCustomerReturnReceiveComponent implements OnInit {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private customerReturnOrderService: CustomerReturnOrderService,
     private customerReturnOrderLineService: CustomerReturnOrderLineService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private router: Router,
     private locationService: LocationService,
     private messageService: NzMessageService, 
@@ -132,7 +132,7 @@ export class InboundCustomerReturnReceiveComponent implements OnInit {
       csrLine => csrLine.itemId === item.id!
     );
   }
-  displayReceivingFormError(fromGroup: FormGroup): void {
+  displayReceivingFormError(fromGroup: UntypedFormGroup): void {
     // tslint:disable-next-line: forin
     for (const i in fromGroup.controls) {
       fromGroup.controls[i].markAsDirty();

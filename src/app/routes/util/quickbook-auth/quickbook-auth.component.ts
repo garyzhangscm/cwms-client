@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
@@ -26,14 +26,14 @@ export class UtilQuickbookAuthComponent implements OnInit {
   constructor(private http: _HttpClient, 
     private quickbookService: QuickbookService, 
     private messageService: NzMessageService,
-    private fb: FormBuilder,) { 
+    private fb: UntypedFormBuilder,) { 
       this.currentQBOToken = {
 
       }
     }
 
     
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   ngOnInit(): void {
     this.searchForm = this.fb.group({
       authCode: [null],

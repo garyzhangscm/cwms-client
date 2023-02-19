@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -28,7 +28,7 @@ export class WorkOrderWorkOrderCompleteComponent implements OnInit {
   currentWorkOrder!: WorkOrder;
 
   pageTitle = '';
-  returnMaterialForm!: FormGroup;
+  returnMaterialForm!: UntypedFormGroup;
   returnMaterialModal!: NzModalRef;
   availableInventoryStatuses: InventoryStatus[] = [];
   returningWorkOrderLine!: WorkOrderLine;
@@ -41,7 +41,7 @@ export class WorkOrderWorkOrderCompleteComponent implements OnInit {
     private titleService: TitleService,
     private workOrderService: WorkOrderService,
     private inventoryStatusService: InventoryStatusService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private modalService: NzModalService,
     private locationService: LocationService,
     private router: Router,
@@ -128,8 +128,8 @@ export class WorkOrderWorkOrderCompleteComponent implements OnInit {
     tplReturnMaterialModalContent: TemplateRef<{}>,
   ): void {
     this.returnMaterialForm = this.fb.group({
-      itemNumber: new FormControl({ value: workOrderLineCompleteTransaction.workOrderLine!.item!.name, disabled: true }),
-      itemDescription: new FormControl({
+      itemNumber: new UntypedFormControl({ value: workOrderLineCompleteTransaction.workOrderLine!.item!.name, disabled: true }),
+      itemDescription: new UntypedFormControl({
         value: workOrderLineCompleteTransaction.workOrderLine!.item!.description,
         disabled: true,
       }),

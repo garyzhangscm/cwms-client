@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
@@ -44,14 +44,14 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
   openStops: Stop[] = [];
   assignShipmentModal!: NzModalRef;
   
-  openShipmentSearchForm!: FormGroup; 
+  openShipmentSearchForm!: UntypedFormGroup; 
   openShipmentTableSearchResult = "";
   openShipments: Shipment[] = [];
   assignOrderModal!: NzModalRef;
   openShipmentSearching = false;
 
   
-  openOrderSearchForm!: FormGroup; 
+  openOrderSearchForm!: UntypedFormGroup; 
   openOrderTableSearchResult = "";
   openOrders: Order[] = [];
   newAppointment = true;
@@ -72,7 +72,7 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
     private messageService: NzMessageService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private fb: FormBuilder,) { }
+    private fb: UntypedFormBuilder,) { }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('trailer.maintenance'));

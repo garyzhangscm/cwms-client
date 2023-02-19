@@ -1,7 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
@@ -39,7 +39,7 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
   currentMPS?: MasterProductionSchedule;
   pageTitle = "MRP.maintenance";
   isSpinning = false;
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   
   availableProductionLines: ProductionLine[] = [];
   stepIndex = 0;
@@ -55,11 +55,11 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
   itemTreeNodes: NzTreeNodeOptions[] = [];
 
   
-  addMRPForm!: FormGroup;
+  addMRPForm!: UntypedFormGroup;
   addMRPModal!: NzModalRef;
 
   constructor(private http: _HttpClient,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private materialRequirementsPlanningService: MaterialRequirementsPlanningService,

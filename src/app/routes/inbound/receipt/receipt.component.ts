@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -149,7 +149,7 @@ export class InboundReceiptComponent implements OnInit {
   receiptStatus = ReceiptStatus;
 
   // Form related data and functions
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   searching = false;
   searchResult = '';
 
@@ -162,7 +162,7 @@ export class InboundReceiptComponent implements OnInit {
   loadingOrderDetailsRequest = 0;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private receiptService: ReceiptService,

@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, EventEmitter, Inject, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STData } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -61,7 +61,7 @@ export class UtilWorkOrderQueryPopupComponent implements OnInit {
 
   // Form related data and functions
   queryModal!: NzModalRef;
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   searching = false;
   queryInProcess = false;
@@ -78,7 +78,7 @@ export class UtilWorkOrderQueryPopupComponent implements OnInit {
   @Output() recordSelected: EventEmitter<any> = new EventEmitter();
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private workOrderService: WorkOrderService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,

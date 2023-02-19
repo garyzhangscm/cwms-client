@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { STChange, STColumn, STComponent } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -21,7 +21,7 @@ import { InventoryService } from '../services/inventory.service';
 })
 export class InventoryInventoryAllocationSummaryComponent implements OnInit {
 
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   listOfAllInventoryAllocationSummary: InventoryAllocationSummary[] = [];
   mapOfInventory: { [key: string]: Inventory[] } = {};
   mapOfPicks: { [key: string]: PickWork[] } = {};
@@ -76,7 +76,7 @@ export class InventoryInventoryAllocationSummaryComponent implements OnInit {
 
 
   constructor(private http: _HttpClient, 
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private pickService: PickService,

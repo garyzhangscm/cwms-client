@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -33,7 +33,7 @@ export class UtilBillableRequestComponent implements OnInit {
   ]; 
 
   
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   billableRequests: BillableRequest[] = [];
   searchResult = "";
    
@@ -43,7 +43,7 @@ export class UtilBillableRequestComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private billableRequestService: BillableRequestService,
     private messageService: NzMessageService,
-    private fb: FormBuilder,) { }
+    private fb: UntypedFormBuilder,) { }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.util.billable-request'));

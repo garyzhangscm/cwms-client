@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import { I18NService } from '@core';
 import { STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -30,7 +30,7 @@ export class AlertSubscriptionComponent implements OnInit {
   currentAlertSubscription?: AlertSubscription;
 
   keyWordsFilterModal!: NzModalRef;
-  keyWordsFilterForm!: FormGroup;
+  keyWordsFilterForm!: UntypedFormGroup;
 
   lastKeyWordControllerIndex: number = 0;
 
@@ -38,7 +38,7 @@ export class AlertSubscriptionComponent implements OnInit {
     private alertSubscriptionService: AlertSubscriptionService, 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private messageService: NzMessageService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private modalService: NzModalService,
     private userService: UserService ) { }
 
@@ -197,7 +197,7 @@ export class AlertSubscriptionComponent implements OnInit {
       return;
     }
   }
-  changeKeyWordsFilter(alertSubscription: AlertSubscription, keyWordsFilterForm: FormGroup) {
+  changeKeyWordsFilter(alertSubscription: AlertSubscription, keyWordsFilterForm: UntypedFormGroup) {
     let keyWords : string[] = [];
     for (const field in keyWordsFilterForm.controls) { 
       // 'field' is a string
@@ -229,12 +229,12 @@ export class AlertSubscriptionComponent implements OnInit {
 
     // add existing keyword to the form
     alertSubscription.keyWords!.forEach((keyWord, index) => {
-      group[`${index}`] = new FormControl(keyWord);
+      group[`${index}`] = new UntypedFormControl(keyWord);
        
     });
 
     // add a empty text box at the last 
-    group[`${alertSubscription.keyWords!.length}`] = new FormControl('');
+    group[`${alertSubscription.keyWords!.length}`] = new UntypedFormControl('');
 
 
     return this.fb.group(group
@@ -242,7 +242,7 @@ export class AlertSubscriptionComponent implements OnInit {
   }
   addKeyWord() {
     const nextKeyWordIndex = Object.keys(this.keyWordsFilterForm.controls).length;
-    this.keyWordsFilterForm.addControl(`${nextKeyWordIndex}`, new FormControl(''));
+    this.keyWordsFilterForm.addControl(`${nextKeyWordIndex}`, new UntypedFormControl(''));
 
     // point the last control index to the new value so that we can 
     // re-render the modal with right form

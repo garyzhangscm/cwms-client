@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -137,7 +137,7 @@ export class OutboundTrailerComponent implements OnInit {
   indeterminate = false;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private trailerService: TrailerService,
@@ -146,7 +146,7 @@ export class OutboundTrailerComponent implements OnInit {
   ) { }
 
   // Form related data and functions
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   // Table data for display
   listOfAllTrailers: Trailer[] = [];

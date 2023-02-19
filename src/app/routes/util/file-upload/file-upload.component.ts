@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -21,7 +21,7 @@ export class UtilFileUploadComponent implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private fileUploadOperationService: FileUploadOperationService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private webLocation: Location,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
@@ -31,7 +31,7 @@ export class UtilFileUploadComponent implements OnInit {
   
   fileTypes = ['.csv'];
 
-  loadFileForm!: FormGroup;
+  loadFileForm!: UntypedFormGroup;
   fromMenu = false;
   pageTitle = '';
   selectedFileUploadType?: FileUploadType;

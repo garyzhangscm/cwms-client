@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { saveAs } from 'file-saver';
@@ -70,7 +70,7 @@ export class InventoryInventorySnapshotComponent implements OnInit {
 
   inventorySnapshotStatuses!: InventorySnapshotStatus;
   // Form related data and functions
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   expandSet = new Set<number>();
 
   searching = false;
@@ -83,7 +83,7 @@ export class InventoryInventorySnapshotComponent implements OnInit {
   listOfDisplayInventorySnapshots: InventorySnapshot[] = [];
 
   constructor(private http: _HttpClient,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private inventorySnapshotService: InventorySnapshotService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,

@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
@@ -156,9 +156,9 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
   newMPSInterval?: Interval;
 
   addMPSDateModal!: NzModalRef;
-  addMPSDateForm!: FormGroup;
+  addMPSDateForm!: UntypedFormGroup;
   modifyMPSDateModal!: NzModalRef;
-  modifyMPSDateForm!: FormGroup;
+  modifyMPSDateForm!: UntypedFormGroup;
 
   // confirm
   // see if we will need to move the successor
@@ -172,7 +172,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
   originalMPSLastDate: Date|undefined = undefined;
   
   constructor(private http: _HttpClient, 
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private masterProductionScheduleService: MasterProductionScheduleService,
@@ -858,10 +858,10 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
   
   showModifyMPSDateModal(productionLineId: number, interval: Interval) {
     this.modifyMPSDateForm = this.fb.group({
-      movedDays: new FormControl({ value: 0, disabled: false }),
-      extendedDays: new FormControl({ value: 0, disabled: false }),
-      moveSuccessor: new FormControl({ value: true, disabled: false }),
-      moveCutoffDate: new FormControl({ value: true, disabled: false }),
+      movedDays: new UntypedFormControl({ value: 0, disabled: false }),
+      extendedDays: new UntypedFormControl({ value: 0, disabled: false }),
+      moveSuccessor: new UntypedFormControl({ value: true, disabled: false }),
+      moveCutoffDate: new UntypedFormControl({ value: true, disabled: false }),
     });
 
     

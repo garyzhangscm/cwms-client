@@ -1,5 +1,5 @@
 import { Component,  ElementRef,  OnInit, ViewChild,  } from '@angular/core';
-import { FormBuilder , FormGroup } from '@angular/forms';
+import { UntypedFormBuilder , UntypedFormGroup } from '@angular/forms';
 import { _HttpClient } from '@delon/theme'; 
 import {  ChartSelectionChangedEvent, ChartType, Row } from 'angular-google-charts';
 import { differenceInCalendarDays, addDays, parseISO, Interval} from 'date-fns';
@@ -70,7 +70,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
 
   isSpinning = false;
   
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   availableProductionLines: ProductionLine[] = []; 
 
   // default we will show 90 days record 
@@ -102,7 +102,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
  
    
   constructor(private http: _HttpClient, 
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private masterProductionScheduleService: MasterProductionScheduleService,  
     private productionLineService: ProductionLineService, private utilService: UtilService) { }
 

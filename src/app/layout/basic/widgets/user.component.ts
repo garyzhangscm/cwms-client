@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject, TemplateRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
@@ -97,7 +97,7 @@ import { GzLocalStorageService } from 'src/app/routes/util/services/gz-local-sto
 })
 export class HeaderUserComponent {
   
-  changePasswordRequestForm!: FormGroup;
+  changePasswordRequestForm!: UntypedFormGroup;
   changePasswordRequestModal!: NzModalRef;
   newAlertCount = 0;
 
@@ -119,7 +119,7 @@ export class HeaderUserComponent {
     private messageService: NzMessageService,
     private userService: UserService, 
     public msg: NzMessageService,    
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private modalService: NzModalService,
     private gzLocalStorageService: GzLocalStorageService,
     private webMessageAlertService: WebMessageAlertService) {  

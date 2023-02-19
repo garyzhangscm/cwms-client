@@ -1,6 +1,6 @@
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService } from '@delon/theme';
@@ -15,7 +15,7 @@ import { WarehouseService } from '../services/warehouse.service';
 })
 export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
   pageTitle: string;
-  warehouseForm!: FormGroup;
+  warehouseForm!: UntypedFormGroup;
   isSpinning = false;
   warehouseAddress?: Address;
   addressLine1 = "";
@@ -28,7 +28,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
   
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private warehouseService: WarehouseService,
@@ -43,8 +43,8 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
     if (this.activatedRoute.snapshot.params.id) {
 
       this.warehouseForm = this.fb.group({
-        warehouseId: new FormControl({ value: '', disabled: true }),
-        name: new FormControl('', Validators.required),
+        warehouseId: new UntypedFormControl({ value: '', disabled: true }),
+        name: new UntypedFormControl('', Validators.required),
         size: ['', Validators.required],
         contactorFirstname: [null],
         contactorLastname: [null],
@@ -55,8 +55,8 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
     else {
       
       this.warehouseForm = this.fb.group({
-        warehouseId: new FormControl({ value: '', disabled: true }),
-        name: new FormControl('', Validators.required),
+        warehouseId: new UntypedFormControl({ value: '', disabled: true }),
+        name: new UntypedFormControl('', Validators.required),
         size: ['', Validators.required],
         contactorFirstname: [null],
         contactorLastname: [null],
@@ -198,7 +198,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
     }
   }
 
-  displayFormError(fromGroup: FormGroup): void {
+  displayFormError(fromGroup: UntypedFormGroup): void {
     console.log(`validateForm`);
     // tslint:disable-next-line: forin
     for (const i in fromGroup.controls) {

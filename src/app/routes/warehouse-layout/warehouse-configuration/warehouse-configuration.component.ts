@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -32,14 +32,14 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
   holidayYears: string[] = [];
   holidays: WarehouseHoliday[][] = [];
    
-  addHolidayForm!: FormGroup;
+  addHolidayForm!: UntypedFormGroup;
 
   constructor(
     
     private warehouseService: WarehouseService,
     private messageService: NzMessageService, 
     private warehouseHolidayService: WarehouseHolidayService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private warehouseConfigurationService: WarehouseConfigurationService) {
       this.currentWarehouseConfiguration = {        

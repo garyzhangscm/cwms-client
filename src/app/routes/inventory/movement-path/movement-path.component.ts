@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -90,7 +90,7 @@ export class InventoryMovementPathComponent implements OnInit {
 
 
   // Form related data and functions
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   // Table data for display
   listOfAllMovementPath: MovementPath[] = [];
@@ -106,7 +106,7 @@ export class InventoryMovementPathComponent implements OnInit {
   }
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private movementPathService: MovementPathService,
     private locationGroupService: LocationGroupService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,

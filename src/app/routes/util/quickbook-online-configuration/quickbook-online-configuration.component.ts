@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -24,7 +24,7 @@ export class UtilQuickbookOnlineConfigurationComponent implements OnInit {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private warehouseService: WarehouseService,
     private companyService: CompanyService,
-    private fb: FormBuilder,) { 
+    private fb: UntypedFormBuilder,) { 
       this.currentQBOConfiguration = {
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
         companyId: this.companyService.getCurrentCompany()!.id,
@@ -33,7 +33,7 @@ export class UtilQuickbookOnlineConfigurationComponent implements OnInit {
     }
 
     
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   ngOnInit(): void {
     this.searchForm = this.fb.group({
       clientId: [null],

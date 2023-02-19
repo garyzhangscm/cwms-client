@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
 import { Client } from '../../common/models/client';
@@ -15,7 +15,7 @@ import { CycleCountBatchService } from '../services/cycle-count-batch.service';
 })
 export class InventoryCountConfigComponent implements OnInit {
   // Form related data and functions
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   // Table data for display
   cycleCountBatches: CycleCountBatch[] = [];
   listOfDisplayCycleCountBatches: CycleCountBatch[] = [];
@@ -31,7 +31,7 @@ export class InventoryCountConfigComponent implements OnInit {
     this.isCollapse = !this.isCollapse;
   }
 
-  constructor(private fb: FormBuilder, private cycleCountBatchService: CycleCountBatchService) {}
+  constructor(private fb: UntypedFormBuilder, private cycleCountBatchService: CycleCountBatchService) {}
 
   resetForm(): void {
     this.searchForm.reset();

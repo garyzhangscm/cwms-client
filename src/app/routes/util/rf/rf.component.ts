@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -36,7 +36,7 @@ export class UtilRfComponent implements OnInit {
   ]; 
 
   
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   rfs: RF[] = [];
   searchResult = "";
    
@@ -46,7 +46,7 @@ export class UtilRfComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private rfService: RfService,
     private messageService: NzMessageService,
-    private fb: FormBuilder,) { }
+    private fb: UntypedFormBuilder,) { }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.util.rf'));

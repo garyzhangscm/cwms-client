@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -232,7 +232,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   locationGroupTypes: LocationGroupType[] = [];
   locationGroups: LocationGroup[] = [];
   // Form related data and functions
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   searching = false;
   searchResult = '';
@@ -248,7 +248,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private locationService: LocationService,
     private locationGroupTypeService: LocationGroupTypeService,
     private locationGroupService: LocationGroupService,

@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms'; 
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms'; 
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { XlsxService } from '@delon/abc/xlsx';
@@ -20,7 +20,7 @@ import { ProductionLineService } from '../services/production-line.service';
 })
 export class WorkOrderProductionLineMonitorTransactionComponent implements OnInit {
 
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   searching = false;
   searchResult = '';
   listOfProductionLineMonitorTransactions: ProductionLineMonitorTransaction[] = [];
@@ -49,7 +49,7 @@ export class WorkOrderProductionLineMonitorTransactionComponent implements OnIni
   ]; 
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private productionLineMonitorTransactionService: ProductionLineMonitorTransactionService, 
     private productionLineService: ProductionLineService,

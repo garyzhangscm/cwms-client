@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -16,7 +16,7 @@ import { LocationGroupTypeService } from '../services/location-group-type.servic
 })
 export class WarehouseLayoutLocationGroupMaintenanceComponent implements OnInit {
   pageTitle: string;
-  locationGroupForm!: FormGroup;
+  locationGroupForm!: UntypedFormGroup;
   selectedLocationGroupType!: LocationGroupType;
 
   locationGroupTypes: Array<{ label: string; value: string }> = [];
@@ -29,7 +29,7 @@ export class WarehouseLayoutLocationGroupMaintenanceComponent implements OnInit 
     private router: Router,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private locationGroupTypeService: LocationGroupTypeService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.location-group-maintenance.header.title');
@@ -37,16 +37,16 @@ export class WarehouseLayoutLocationGroupMaintenanceComponent implements OnInit 
 
   ngOnInit(): void {
     this.locationGroupForm = this.fb.group({
-      name: new FormControl('', Validators.required),
-      description: new FormControl('', Validators.required),
-      type: new FormControl(null, Validators.required),
-      storable: new FormControl(false, Validators.required),
-      pickable: new FormControl(false, Validators.required),
-      countable: new FormControl(false, Validators.required),
-      adjustable: new FormControl(false, Validators.required),
-      trackingVolume: new FormControl(false, Validators.required),
-      volumeTrackingPolicy: new FormControl(null),
-      inventoryConsolidationStrategy: new FormControl(null, Validators.required),
+      name: new UntypedFormControl('', Validators.required),
+      description: new UntypedFormControl('', Validators.required),
+      type: new UntypedFormControl(null, Validators.required),
+      storable: new UntypedFormControl(false, Validators.required),
+      pickable: new UntypedFormControl(false, Validators.required),
+      countable: new UntypedFormControl(false, Validators.required),
+      adjustable: new UntypedFormControl(false, Validators.required),
+      trackingVolume: new UntypedFormControl(false, Validators.required),
+      volumeTrackingPolicy: new UntypedFormControl(null),
+      inventoryConsolidationStrategy: new UntypedFormControl(null, Validators.required),
     });
     this.locationGroupTypeService.loadLocationGroupTypes().subscribe((locationGroupTypeList: LocationGroupType[]) => {
       locationGroupTypeList.forEach(locationGroupType =>
@@ -80,7 +80,7 @@ export class WarehouseLayoutLocationGroupMaintenanceComponent implements OnInit 
     }
   }
 
-  displayFormError(fromGroup: FormGroup): void {
+  displayFormError(fromGroup: UntypedFormGroup): void {
     // tslint:disable-next-line: forin
     for (const i in fromGroup.controls) {
       fromGroup.controls[i].markAsDirty();

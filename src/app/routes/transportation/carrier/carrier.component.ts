@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
@@ -19,7 +19,7 @@ export class TransportationCarrierComponent implements OnInit {
 
   isSpinning = false;
   
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   listOfCarriers: Carrier[] = [];
   searchResult = '';
 
@@ -41,7 +41,7 @@ export class TransportationCarrierComponent implements OnInit {
   ];
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private carrierService: CarrierService,
     private messageService: NzMessageService,

@@ -1,5 +1,5 @@
 import { Component, Inject, Injector, OnDestroy, Optional, TemplateRef, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { I18NService, StartupService } from '@core';
 import { ReuseTabService } from '@delon/abc/reuse-tab';
@@ -25,11 +25,11 @@ import { WarehouseService } from '../../warehouse-layout/services/warehouse.serv
 export class UserLoginComponent implements OnDestroy {
   singleCompanySystem = true;
   defaultCompanyCode = '';
-  changePasswordRequestForm!: FormGroup;
+  changePasswordRequestForm!: UntypedFormGroup;
   changePasswordRequestModal!: NzModalRef;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private router: Router,
     private settingsService: SettingsService,
     private socialService: SocialService,
@@ -79,7 +79,7 @@ export class UserLoginComponent implements OnDestroy {
   get warehouseId(): AbstractControl {
     return this.form.controls.warehouseId;
   }
-  form: FormGroup;
+  form: UntypedFormGroup;
   error = '';
   type = 0;
 

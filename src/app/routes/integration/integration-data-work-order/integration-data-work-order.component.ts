@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -17,7 +17,7 @@ import { IntegrationWorkOrderDataService } from '../services/integration-work-or
   styleUrls: ['./integration-data-work-order.component.less'],
 })
 export class IntegrationIntegrationDataWorkOrderComponent implements OnInit {
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   searching = false;
   isSpinning = false;
@@ -122,7 +122,7 @@ export class IntegrationIntegrationDataWorkOrderComponent implements OnInit {
   ]
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private integrationWorkOrderService: IntegrationWorkOrderDataService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private utilService: UtilService,

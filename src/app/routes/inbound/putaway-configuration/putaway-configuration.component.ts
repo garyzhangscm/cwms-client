@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -116,7 +116,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
   indeterminate = false;
   isSpinning = false;
   // Form related data and functions
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   // Table data for display
   listOfAllPutawayConfiguration: PutawayConfiguration[] = [];
@@ -136,7 +136,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
   searchResult = '';
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private putawayConfigurationService: PutawayConfigurationService,
     private inventoryStatusService: InventoryStatusService,
     private itemService: ItemService,

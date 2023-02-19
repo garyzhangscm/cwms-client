@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
@@ -17,7 +17,7 @@ import { MaterialRequirementsPlanningService } from '../services/material-requir
   styleUrls: ['./mrp.component.less'],
 })
 export class WorkOrderMrpComponent implements OnInit {
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   
   listOfAllMRPs: MaterialRequirementsPlanning[] = [];
   isSpinning = false;
@@ -25,7 +25,7 @@ export class WorkOrderMrpComponent implements OnInit {
   loadingMRPDetailsRequest = 0;
   
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private materialRequirementsPlanningService: MaterialRequirementsPlanningService,

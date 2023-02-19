@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ALAIN_I18N_TOKEN, TitleService } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -194,7 +194,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
   operationInProcess = false;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private locationGroupTypeService: LocationGroupTypeService,
     private locationGroupService: LocationGroupService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,

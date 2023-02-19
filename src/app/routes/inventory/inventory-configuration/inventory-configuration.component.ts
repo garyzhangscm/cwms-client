@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, TemplateRef } from '@angular/core'; 
-import { FormGroup,  Validators, FormBuilder, AbstractControl } from '@angular/forms';
+import { UntypedFormGroup,  Validators, UntypedFormBuilder, AbstractControl } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -27,7 +27,7 @@ export class InventoryInventoryConfigurationComponent implements OnInit {
 
   currentInventoryConfiguration!: InventoryConfiguration;
   
-  itemUOMForm!: FormGroup;
+  itemUOMForm!: UntypedFormGroup;
   itemUOMModal!: NzModalRef;
   creatingItemUOMInProcess = false;
   
@@ -52,7 +52,7 @@ export class InventoryInventoryConfigurationComponent implements OnInit {
   availableUnitOfMeasuresForAdding: UnitOfMeasure[] = [];
   
   constructor( 
-    private fb: FormBuilder, 
+    private fb: UntypedFormBuilder, 
     private inventoryConfigurationService: InventoryConfigurationService,
     private warehouseService: WarehouseService,
     private companyService: CompanyService,
@@ -261,7 +261,7 @@ export class InventoryInventoryConfigurationComponent implements OnInit {
       this.displayFormError(this.itemUOMForm);
     }
   } 
-  displayFormError(fromGroup: FormGroup): void {
+  displayFormError(fromGroup: UntypedFormGroup): void {
     console.log(`validateForm`);
     // tslint:disable-next-line: forin
     for (const i in fromGroup.controls) {

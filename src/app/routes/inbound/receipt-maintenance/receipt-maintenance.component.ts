@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STData } from '@delon/abc/st';
@@ -230,8 +230,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   receivedInventoryTableIndeterminate = false;
   newBatch = false;
 
-  receiptForm!: FormGroup;
-  receivingForm!: FormGroup;
+  receiptForm!: UntypedFormGroup;
+  receivingForm!: UntypedFormGroup;
   pageTitle: string;
   currentReceipt: Receipt = {
     id: undefined,
@@ -280,10 +280,10 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   threePartyLogisticsFlag = false;
 
   
-  reverseInventoryForm!: FormGroup;
+  reverseInventoryForm!: UntypedFormGroup;
   reverseInventoryModal!: NzModalRef;
   
-  recalculateQCForm!: FormGroup;
+  recalculateQCForm!: UntypedFormGroup;
   recalculateQCModal!: NzModalRef;
   formatterPercent = (value: number): string => `${value} %`;
   parserPercent = (value: string): string => value.replace(' %', '');
@@ -298,7 +298,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private receiptService: ReceiptService,
     private receiptLineService: ReceiptLineService,
     private clientService: ClientService,
@@ -826,8 +826,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.displayItemPackageType = undefined;
     this.currentReceivingLine = receiptLine;
     this.receivingForm = this.fb.group({
-      itemNumber: new FormControl({ value: receiptLine.item!.name, disabled: true }),
-      itemDescription: new FormControl({ value: receiptLine.item!.description, disabled: true }),
+      itemNumber: new UntypedFormControl({ value: receiptLine.item!.name, disabled: true }),
+      itemDescription: new UntypedFormControl({ value: receiptLine.item!.description, disabled: true }),
       lpn:   ['', Validators.required],
       inventoryStatus: [''],
       itemPackageType: ['', Validators.required],
@@ -941,7 +941,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       this.isSpinning = false;
     }
   }
-  displayReceivingFormError(fromGroup: FormGroup): void {
+  displayReceivingFormError(fromGroup: UntypedFormGroup): void {
     // tslint:disable-next-line: forin
     for (const i in fromGroup.controls) {
       fromGroup.controls[i].markAsDirty();
@@ -1167,11 +1167,11 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   ): void {
     
     this.reverseInventoryForm = this.fb.group({
-      lpn: new FormControl({ value: inventory.lpn, disabled: true }),
-      reverseQCQuantity: new FormControl({ 
+      lpn: new UntypedFormControl({ value: inventory.lpn, disabled: true }),
+      reverseQCQuantity: new UntypedFormControl({ 
         value: inventory.inboundQCRequired === true ? true : false, 
         disabled: inventory.inboundQCRequired === true ? false: true }),
-      allowReuseLPN: new FormControl({ value: false, disabled: false }),
+      allowReuseLPN: new UntypedFormControl({ value: false, disabled: false }),
     });
 
     // Load the location
@@ -1286,10 +1286,10 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   ): void {
     
     this.recalculateQCForm = this.fb.group({
-      qcQuantity: new FormControl({ value: receiptLine.qcQuantity, disabled: true }),
-      newQCQuantity: new FormControl({ value: receiptLine.qcQuantity, disabled: false}),
-      qcPercentage: new FormControl({ value: receiptLine.qcPercentage, disabled: true }),
-      newQCPercentage: new FormControl({ value: receiptLine.qcPercentage, disabled: false }),
+      qcQuantity: new UntypedFormControl({ value: receiptLine.qcQuantity, disabled: true }),
+      newQCQuantity: new UntypedFormControl({ value: receiptLine.qcQuantity, disabled: false}),
+      qcPercentage: new UntypedFormControl({ value: receiptLine.qcPercentage, disabled: true }),
+      newQCPercentage: new UntypedFormControl({ value: receiptLine.qcPercentage, disabled: false }),
     });
 
     // Load the location

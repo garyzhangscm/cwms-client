@@ -1,5 +1,5 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { XlsxService } from '@delon/abc/xlsx';
@@ -37,7 +37,7 @@ export class WorkOrderMpsExportComponent implements OnInit {
 
   isSpinning = false;
   availableProductionLines: ProductionLine[] = []; 
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   exportType = MPSExportType.BY_PRODUCTION_LINE; 
   mpsExportTypes = MPSExportType;
   
@@ -45,7 +45,7 @@ export class WorkOrderMpsExportComponent implements OnInit {
   mpsByItemViewData: MPSByItemView[] = [];
   
   constructor(private http: _HttpClient, 
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private masterProductionScheduleService: MasterProductionScheduleService,  
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private productionLineService: ProductionLineService, private xlsx: XlsxService) { }

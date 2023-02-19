@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, EventEmitter, Inject, Input, OnInit, Output, TemplateRef } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
@@ -198,7 +198,7 @@ export class InventoryItemQueryPopupComponent implements OnInit {
 
   // Form related data and functions
   queryModal!: NzModalRef;
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   searching = false;
   queryInProcess = false;
@@ -219,7 +219,7 @@ export class InventoryItemQueryPopupComponent implements OnInit {
   @Output() recordSelected: EventEmitter<any> = new EventEmitter();
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private itemService: ItemService,
     private itemFamilyService: ItemFamilyService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -347,7 +347,7 @@ export class InventoryItemQueryPopupComponent implements OnInit {
   createQueryForm(): void {
     // initiate the search form
     this.searchForm = this.fb.group({
-      clientId: new FormControl({ value: this.clientId, disabled: false }),
+      clientId: new UntypedFormControl({ value: this.clientId, disabled: false }),
       taggedItemFamilies: [null],
       itemName: [null],
     });

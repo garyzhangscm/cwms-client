@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { differenceInMilliseconds } from 'date-fns';
@@ -217,7 +217,7 @@ export class IntegrationIntegrationDataItemUnitOfMeasureComponent implements OnI
 
   // Form related data and functions
   // Form related data and functions
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   searching = false;
   isSpinning = false;
@@ -242,7 +242,7 @@ export class IntegrationIntegrationDataItemUnitOfMeasureComponent implements OnI
   }
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private integrationItemUnitOfMeasureDataService: IntegrationItemUnitOfMeasureDataService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private utilService: UtilService,

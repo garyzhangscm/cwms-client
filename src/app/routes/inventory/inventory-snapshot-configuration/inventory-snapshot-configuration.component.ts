@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -16,7 +16,7 @@ import { InventorySnapshotService } from '../services/inventory-snapshot.service
 })
 export class InventoryInventorySnapshotConfigurationComponent implements OnInit {
 
-  configurationForm!: FormGroup;
+  configurationForm!: UntypedFormGroup;
   isSpinning = false;
   constructor(private http: _HttpClient,
     private warehouseService: WarehouseService,
@@ -24,7 +24,7 @@ export class InventoryInventorySnapshotConfigurationComponent implements OnInit 
     private message: NzMessageService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private inventorySnapshotConfigurationService: InventorySnapshotConfigurationService,
-    private fb: FormBuilder,) { }
+    private fb: UntypedFormBuilder,) { }
 
   ngOnInit(): void {
     this.configurationForm = this.fb.group({

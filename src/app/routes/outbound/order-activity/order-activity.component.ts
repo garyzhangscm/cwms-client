@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -17,7 +17,7 @@ import { OrderActivityService } from '../services/order-activity.service';
   styleUrls: ['./order-activity.component.less'],
 })
 export class OutboundOrderActivityComponent implements OnInit {
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
  
 
   // Table data for display
@@ -33,7 +33,7 @@ export class OutboundOrderActivityComponent implements OnInit {
   }
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private orderActivityService: OrderActivityService, 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private titleService: TitleService, 

@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -24,7 +24,7 @@ export class WorkOrderProduceTransactionComponent implements OnInit {
   isCollapse = false;
 
   // Form related data and functions
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   searchResult = '';
 
   // Table data for display
@@ -32,7 +32,7 @@ export class WorkOrderProduceTransactionComponent implements OnInit {
   productionLines: ProductionLine[] = [];
     
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private workOrderProduceTransactionService: WorkOrderProduceTransactionService, 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,

@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -19,7 +19,7 @@ import { UserService } from '../services/user.service';
 })
 export class AuthUserComponent implements OnInit {
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private userService: UserService,
     private titleService: TitleService,
@@ -131,7 +131,7 @@ export class AuthUserComponent implements OnInit {
   ];
 
   // Form related data and functions
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   // Table data for display
   listOfAllUsers: User[] = [];
@@ -146,10 +146,10 @@ export class AuthUserComponent implements OnInit {
   searching = false;
   searchResult = '';
   
-  newTempUserForm!: FormGroup;
+  newTempUserForm!: UntypedFormGroup;
   newTempUserModal!: NzModalRef;
   
-  copyUserForm!: FormGroup;
+  copyUserForm!: UntypedFormGroup;
   copyUserModal!: NzModalRef;
 
   resetForm(): void {
@@ -256,7 +256,7 @@ export class AuthUserComponent implements OnInit {
     tplCopyUserModalContent: TemplateRef<{}>,
   ): void { 
     this.copyUserForm = this.fb.group({
-      copyFromUsername: new FormControl({ value: existingUser.username, disabled: true }),
+      copyFromUsername: new UntypedFormControl({ value: existingUser.username, disabled: true }),
       username:  [null],
       firstname:  [null],
       lastname:  [null],

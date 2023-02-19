@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, EventEmitter, Inject, OnInit, Output, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
@@ -199,7 +199,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
   locationGroups: LocationGroup[] = [];
   // Form related data and functions
   queryModal!: NzModalRef;
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   searching = false;
   queryInProcess = false;
@@ -219,7 +219,7 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
   @Output() readonly recordSelected: EventEmitter<any> = new EventEmitter();
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private locationService: LocationService,
     private locationGroupTypeService: LocationGroupTypeService,
     private locationGroupService: LocationGroupService,

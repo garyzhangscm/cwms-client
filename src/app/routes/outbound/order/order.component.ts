@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
@@ -57,7 +57,7 @@ export class OutboundOrderComponent implements OnInit {
   indeterminate = false;
  
   orderReassignShippingStageLocationModal!: NzModalRef;
-  orderReassignShippingStageLocationForm!: FormGroup;
+  orderReassignShippingStageLocationForm!: UntypedFormGroup;
 
 
   orderStatuses = OrderStatus;
@@ -66,7 +66,7 @@ export class OutboundOrderComponent implements OnInit {
   availableBOM: BillOfMaterial[] = [];
 
   createWorkOrderModal!: NzModalRef;
-  createWorkOrderForm!: FormGroup;
+  createWorkOrderForm!: UntypedFormGroup;
 
   validCustomers: Customer[] = [];
   
@@ -75,7 +75,7 @@ export class OutboundOrderComponent implements OnInit {
   displayBom: BillOfMaterial | undefined;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private orderService: OrderService,
@@ -100,12 +100,12 @@ export class OutboundOrderComponent implements OnInit {
   ) { }
 
   printerModal!: NzModalRef;
-  printerForm!: FormGroup;
+  printerForm!: UntypedFormGroup;
   availablePrinters: Printer[] = [];
 
   // Form related data and functions
-  searchForm!: FormGroup;
-  unpickForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
+  unpickForm!: UntypedFormGroup;
 
   searching = false;
   searchResult = '';
@@ -821,13 +821,13 @@ export class OutboundOrderComponent implements OnInit {
     tplUnpickModalContent: TemplateRef<{}>,
   ): void {
     this.unpickForm = this.fb.group({
-      lpn: new FormControl({ value: inventory.lpn, disabled: true }),
-      itemNumber: new FormControl({ value: inventory.item!.name, disabled: true }),
-      itemDescription: new FormControl({ value: inventory.item!.description, disabled: true }),
-      inventoryStatus: new FormControl({ value: inventory.inventoryStatus!.name, disabled: true }),
-      itemPackageType: new FormControl({ value: inventory.itemPackageType!.name, disabled: true }),
-      quantity: new FormControl({ value: inventory.quantity, disabled: true }),
-      locationName: new FormControl({ value: inventory.location!.name, disabled: true }),
+      lpn: new UntypedFormControl({ value: inventory.lpn, disabled: true }),
+      itemNumber: new UntypedFormControl({ value: inventory.item!.name, disabled: true }),
+      itemDescription: new UntypedFormControl({ value: inventory.item!.description, disabled: true }),
+      inventoryStatus: new UntypedFormControl({ value: inventory.inventoryStatus!.name, disabled: true }),
+      itemPackageType: new UntypedFormControl({ value: inventory.itemPackageType!.name, disabled: true }),
+      quantity: new UntypedFormControl({ value: inventory.quantity, disabled: true }),
+      locationName: new UntypedFormControl({ value: inventory.location!.name, disabled: true }),
       destinationLocation: [null],
       immediateMove: [null],
     });
@@ -962,10 +962,10 @@ export class OutboundOrderComponent implements OnInit {
   ): void { 
     this.loadShippingStageLocationGroups();
     this.orderReassignShippingStageLocationForm = this.fb.group({
-      currentStageLocationGroup: new FormControl({ value: order.stageLocationGroup?.description, disabled: true}),
-      currentStageLocation: new FormControl({ value:  order.stageLocation?.name, disabled: true}),
-      stageLocationGroupId: new FormControl({ value: order.stageLocationGroupId }),
-      stageLocationId: new FormControl({ value:  order.stageLocationGroupId }),
+      currentStageLocationGroup: new UntypedFormControl({ value: order.stageLocationGroup?.description, disabled: true}),
+      currentStageLocation: new UntypedFormControl({ value:  order.stageLocation?.name, disabled: true}),
+      stageLocationGroupId: new UntypedFormControl({ value: order.stageLocationGroupId }),
+      stageLocationId: new UntypedFormControl({ value:  order.stageLocationGroupId }),
     });
 
     // Load the location
@@ -1232,11 +1232,11 @@ export class OutboundOrderComponent implements OnInit {
           else {
             // open the modal
             this.createWorkOrderForm = this.fb.group({
-              itemName: new FormControl({ value: shortAllocation.item.name, disabled: true}),
-              shortQuantity: new FormControl({ value:  shortAllocation.openQuantity, disabled: true}),
-              bom: new FormControl(),
-              workOrderNumber: new FormControl(),
-              workOrderQuantity: new FormControl({ value: shortAllocation.openQuantity, disabled: false }),
+              itemName: new UntypedFormControl({ value: shortAllocation.item.name, disabled: true}),
+              shortQuantity: new UntypedFormControl({ value:  shortAllocation.openQuantity, disabled: true}),
+              bom: new UntypedFormControl(),
+              workOrderNumber: new UntypedFormControl(),
+              workOrderQuantity: new UntypedFormControl({ value: shortAllocation.openQuantity, disabled: false }),
             });
             this.displayBom = undefined;
             this.setupDefaultDisplayBOM();

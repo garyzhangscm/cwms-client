@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -22,7 +22,7 @@ import { TractorService } from '../services/tractor.service';
 })
 export class TransportationTractorScheduleComponent implements OnInit { 
   pageTitle = '';
-  addScheduleForm!: FormGroup;
+  addScheduleForm!: UntypedFormGroup;
   currentTractor!: Tractor;
   isSpinning = false;
   tractorAppointmentTypes = TractorAppointmentType;
@@ -37,7 +37,7 @@ export class TransportationTractorScheduleComponent implements OnInit {
     private titleService: TitleService, 
     private dateTimeService: DateTimeService,
     private warehouseService: WarehouseService,
-    private fb: FormBuilder,) {
+    private fb: UntypedFormBuilder,) {
       this.titleService.setTitle(this.i18n.fanyi('tractor.schedule'));
       this.pageTitle = this.i18n.fanyi('tractor.schedule'); 
     }

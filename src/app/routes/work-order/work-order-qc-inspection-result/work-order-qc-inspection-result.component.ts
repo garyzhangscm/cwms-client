@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -20,7 +20,7 @@ import { WorkOrderQcResultService } from '../services/work-order-qc-result.servi
 })
 export class WorkOrderWorkOrderQcInspectionResultComponent implements OnInit {
   constructor(private http: _HttpClient,    
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService, 
     private messageService: NzMessageService,
@@ -37,7 +37,7 @@ export class WorkOrderWorkOrderQcInspectionResultComponent implements OnInit {
 
   searchResult = '';
   isSpinning = false;
-  searchForm!: FormGroup; 
+  searchForm!: UntypedFormGroup; 
 
   ngOnInit(): void { 
 

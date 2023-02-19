@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -46,7 +46,7 @@ export class CommonTrailerComponent implements OnInit {
   ];
 
  
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   trailers: Trailer[] = [];
   searchResult = "";
 
@@ -55,7 +55,7 @@ export class CommonTrailerComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private trailerService: TrailerService,
     private messageService: NzMessageService, 
-    private fb: FormBuilder,) { }
+    private fb: UntypedFormBuilder,) { }
 
   ngOnInit(): void {  
     // initiate the search form

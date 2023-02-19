@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
@@ -31,7 +31,7 @@ export class OutboundLoadComponent implements OnInit {
 
   
   trailerAppointmentStatus = TrailerAppointmentStatus; 
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   searchResult = '';
   listOfAllTrailerAppointments: TrailerAppointment[] = [];
   isSpinning = false;
@@ -50,7 +50,7 @@ export class OutboundLoadComponent implements OnInit {
   indeterminate = false;
   
   createWorkOrderModal!: NzModalRef;
-  createWorkOrderForm!: FormGroup;
+  createWorkOrderForm!: UntypedFormGroup;
   
   // show the BOM details when the user choose
   // a bom to create work order for short allocation
@@ -85,7 +85,7 @@ export class OutboundLoadComponent implements OnInit {
     private modalService: NzModalService,
     private shortAllocationService: ShortAllocationService,
     private billOfMaterialService: BillOfMaterialService,
-    private fb: FormBuilder,) { }
+    private fb: UntypedFormBuilder,) { }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.load'));
@@ -413,11 +413,11 @@ export class OutboundLoadComponent implements OnInit {
           else {
             // open the modal
             this.createWorkOrderForm = this.fb.group({
-              itemName: new FormControl({ value: shortAllocation.item.name, disabled: true}),
-              shortQuantity: new FormControl({ value:  shortAllocation.openQuantity, disabled: true}),
-              bom: new FormControl(),
-              workOrderNumber: new FormControl(),
-              workOrderQuantity: new FormControl({ value: shortAllocation.openQuantity, disabled: false }),
+              itemName: new UntypedFormControl({ value: shortAllocation.item.name, disabled: true}),
+              shortQuantity: new UntypedFormControl({ value:  shortAllocation.openQuantity, disabled: true}),
+              bom: new UntypedFormControl(),
+              workOrderNumber: new UntypedFormControl(),
+              workOrderQuantity: new UntypedFormControl({ value: shortAllocation.openQuantity, disabled: false }),
             });
             this.displayBom = undefined;
             this.setupDefaultDisplayBOM();

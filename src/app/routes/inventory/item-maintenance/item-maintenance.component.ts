@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -63,7 +63,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
   // current item package type
   availableUnitOfMeasuresForAdding: UnitOfMeasure[] = [];
 
-  itemUOMForm!: FormGroup;
+  itemUOMForm!: UntypedFormGroup;
   itemUOMModal!: NzModalRef;
   creatingItemUOMInProcess = false;
   // global variable. Setup when we are adding
@@ -80,7 +80,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
   availableABCCategories: ABCCategory[] = [];
 
   constructor(
-    private fb: FormBuilder, 
+    private fb: UntypedFormBuilder, 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private messageService: NzMessageService,
@@ -334,7 +334,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
   }
   createItemUOMForm(): void {
     this.itemUOMForm = this.fb.group({
-      itemPackageType: new FormControl({ value: this.currentItemPackageType.name, disabled: true }),
+      itemPackageType: new UntypedFormControl({ value: this.currentItemPackageType.name, disabled: true }),
 
       unitOfMeasure: [null, Validators.required],
       quantity: [null, [Validators.required, newItemUOMQuantityValidator(this.currentItemPackageType)]],
@@ -422,7 +422,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
   validateNewItemUOMQuantity(itemPackageType: ItemPackageType, itemUOMQuantity: number): boolean {
     return true;
   }
-  displayFormError(fromGroup: FormGroup): void {
+  displayFormError(fromGroup: UntypedFormGroup): void {
     console.log(`validateForm`);
     // tslint:disable-next-line: forin
     for (const i in fromGroup.controls) {

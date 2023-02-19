@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -221,7 +221,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
   itemFamilies: Array<{ label: string; value: string }> = [];
   inventoryActivityTypes!: InventoryActivityType;
   // Form related data and functions
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   searching = false;
   searchResult = '';
@@ -239,7 +239,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
   }
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private inventoryActivityService: InventoryActivityService,
     private clientService: ClientService,
     private itemFamilyService: ItemFamilyService,

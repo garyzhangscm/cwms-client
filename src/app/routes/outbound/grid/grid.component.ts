@@ -1,5 +1,5 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -98,7 +98,7 @@ export class OutboundGridComponent implements OnInit {
   gridRows: RowData[] = [];
   listOfDistributionWork: GridDistributionWork[] = [];
 
-  gridQueryForm!: FormGroup;
+  gridQueryForm!: UntypedFormGroup;
   showDistributionWork = false;
   refresh = true;
   gridDisplaySpan = 24;
@@ -116,7 +116,7 @@ export class OutboundGridComponent implements OnInit {
   @ViewChild('itemNameTextBox', { static: true }) itemNameTextBox!: ElementRef;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private gridConfigurationService: GridConfigurationService,
     private gridLocationConfigurationService: GridLocationConfigurationService,
     private gridDistributionWorkService: GridDistributionWorkService,

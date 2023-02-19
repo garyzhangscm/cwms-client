@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -32,11 +32,11 @@ export class UtilDataInitComponent implements OnInit {
   ]; 
 
   
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   dataInitialRequests: DataInitialRequest[] = [];
   searchResult = "";
   
-  dataInitialRequestForm!: FormGroup;
+  dataInitialRequestForm!: UntypedFormGroup;
   dataInitialRequestModal!: NzModalRef;
    
   constructor(private http: _HttpClient,
@@ -46,7 +46,7 @@ export class UtilDataInitComponent implements OnInit {
     private dataInitialRequestService: DataInitialRequestService,
     private messageService: NzMessageService,
     private modalService: NzModalService,
-    private fb: FormBuilder,) { }
+    private fb: UntypedFormBuilder,) { }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.util.data-initial'));

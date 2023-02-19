@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -85,7 +85,7 @@ export class BillingInvoiceComponent implements OnInit {
     }
   }
   
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   invoices: Invoice[] = []; 
   searchResult = '';
   availableClients: Client[] = [];
@@ -100,7 +100,7 @@ export class BillingInvoiceComponent implements OnInit {
     private clientService: ClientService,
     private localCacheService: LocalCacheService,
     private router: Router, 
-    private fb: FormBuilder,) { 
+    private fb: UntypedFormBuilder,) { 
       this.localCacheService.getWarehouseConfiguration().subscribe({
         next: (warehouseConfigRes) => {
   

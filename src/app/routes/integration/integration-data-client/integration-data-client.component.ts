@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { differenceInMilliseconds } from 'date-fns';
@@ -206,7 +206,7 @@ export class IntegrationIntegrationDataClientComponent implements OnInit {
 
   // Form related data and functions
   // Form related data and functions
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   searching = false;
   searchResult = '';
@@ -222,14 +222,14 @@ export class IntegrationIntegrationDataClientComponent implements OnInit {
 
 
   integrationDataModal!: NzModalRef;
-  integrationDataForm!: FormGroup;
+  integrationDataForm!: UntypedFormGroup;
 
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
   }
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private integrationClientDataService: IntegrationClientDataService,
     private clientService: ClientService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,

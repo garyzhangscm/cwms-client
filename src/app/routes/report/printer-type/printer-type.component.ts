@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -31,7 +31,7 @@ export class ReportPrinterTypeComponent implements OnInit {
   ];  
  
   
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   printerTypes: PrinterType[] = [];
 
   searchResult = "";
@@ -44,7 +44,7 @@ export class ReportPrinterTypeComponent implements OnInit {
     private printerTypeService: PrinterTypeService,
     private messageService: NzMessageService,
     private router: Router, 
-    private fb: FormBuilder,) { }
+    private fb: UntypedFormBuilder,) { }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.report.printer-type'));

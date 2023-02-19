@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -19,7 +19,7 @@ import { WorkOrderLaborService } from '../services/work-order-labor.service';
 })
 export class WorkOrderLaborActivityComponent implements OnInit {
   constructor(private http: _HttpClient,    
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private workOrderLaborService: WorkOrderLaborService,
     private workOrderLaborActivityHistoryService: WorkOrderLaborActivityHistoryService,
@@ -33,7 +33,7 @@ export class WorkOrderLaborActivityComponent implements OnInit {
 
   searchResult = '';
   isSpinning = false;
-  searchForm!: FormGroup; 
+  searchForm!: UntypedFormGroup; 
 
   ngOnInit(): void { 
 

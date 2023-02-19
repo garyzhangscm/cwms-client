@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormGroup , FormBuilder } from '@angular/forms';
+import { FormGroup , UntypedFormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -39,7 +39,7 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
 
   isSpinning = false;
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private workOrderService: WorkOrderService,
     private warehouseService: WarehouseService,

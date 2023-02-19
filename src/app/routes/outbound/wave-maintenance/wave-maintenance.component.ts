@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -226,7 +226,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   orderLineTableIndeterminate = false;
 
 
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   newWave = true;
 
@@ -258,7 +258,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private waveService: WaveService,
     private message: NzMessageService,
     private router: Router,

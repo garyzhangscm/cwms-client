@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -33,7 +33,7 @@ export class TransportationEasyPostComponent implements OnInit {
   allCarriers: Carrier[] = [];
   avaiableCarriers: Carrier[] = [];
   addCarrierModal!: NzModalRef;
-  addCarrierForm!: FormGroup;
+  addCarrierForm!: UntypedFormGroup;
   reportTypes = ReportType;
   printers: Printer[] = [];
   
@@ -63,7 +63,7 @@ export class TransportationEasyPostComponent implements OnInit {
   constructor(
     private warehouseService: WarehouseService,
     private modalService: NzModalService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private messageService: NzMessageService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private carrierService: CarrierService,  
@@ -264,7 +264,7 @@ export class TransportationEasyPostComponent implements OnInit {
       // form to modify an existing carrier
       this.addCarrierForm = this.fb.group({
        
-        carrier: new FormControl({ value: easyPostCarrier.carrier?.name, disabled: true }),
+        carrier: new UntypedFormControl({ value: easyPostCarrier.carrier?.name, disabled: true }),
         accountNumber: [easyPostCarrier.accountNumber],
         type: [easyPostCarrier.reportType],
         printerName: [easyPostCarrier.printerName],

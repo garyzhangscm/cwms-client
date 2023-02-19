@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -35,14 +35,14 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
   
   availableInventoryStatuses: InventoryStatus[] = [];
 
-  sparePartDetailForm!: FormGroup;
+  sparePartDetailForm!: UntypedFormGroup;
   sparePartDetailModal!: NzModalRef; 
 
   currentSparePart?: WorkOrderLineSparePart;
   pageTitle = "";
 
   constructor(
-    private fb: FormBuilder, 
+    private fb: UntypedFormBuilder, 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private messageService: NzMessageService,
@@ -130,7 +130,7 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
 
   createSparePartDetailForm(): void {
     this.sparePartDetailForm = this.fb.group({
-      name: new FormControl({ value: this.currentSparePart!.name, disabled: true }),
+      name: new UntypedFormControl({ value: this.currentSparePart!.name, disabled: true }),
 
       itemName: [null, Validators.required],
       inventoryStatus: [null, Validators.required],

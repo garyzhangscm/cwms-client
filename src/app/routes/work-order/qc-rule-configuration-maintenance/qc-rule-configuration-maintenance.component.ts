@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder , FormGroup } from '@angular/forms';
+import { UntypedFormBuilder , FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -75,7 +75,7 @@ export class WorkOrderQcRuleConfigurationMaintenanceComponent implements OnInit 
 
   constructor(private http: _HttpClient,
     private companyService: CompanyService,
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private workOrderQcRuleConfigurationService: WorkOrderQcRuleConfigurationService,
     private messageService: NzMessageService,
     private router: Router,

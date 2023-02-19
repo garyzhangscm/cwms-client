@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
@@ -62,7 +62,7 @@ export class InventoryItemSamplingComponent implements OnInit {
   ];
 
  
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   itemSamplingList: ItemSampling[] = [];
   searchResult = "";
   // list of record with printing in process
@@ -80,7 +80,7 @@ export class InventoryItemSamplingComponent implements OnInit {
     private modalService: NzModalService,
     private companyService: CompanyService,
     private nzImageService: NzImageService,
-    private fb: FormBuilder,) { }
+    private fb: UntypedFormBuilder,) { }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.item-sampling'));

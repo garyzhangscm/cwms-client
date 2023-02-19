@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -72,13 +72,13 @@ export class UtilDataTransferComponent implements OnInit {
 
 
   validCompanies: Company[] = [];
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   dataTransferRequests: DataTransferRequest[] = [];
   searchResult = "";
   
-  dataImportRequestForm!: FormGroup;
+  dataImportRequestForm!: UntypedFormGroup;
   dataImportRequestModal!: NzModalRef;
-  dataExportRequestForm!: FormGroup;
+  dataExportRequestForm!: UntypedFormGroup;
   dataExportRequestModal!: NzModalRef;
    
   constructor(private http: _HttpClient,
@@ -89,7 +89,7 @@ export class UtilDataTransferComponent implements OnInit {
     private messageService: NzMessageService,
     private modalService: NzModalService,
     private companyService: CompanyService,
-    private fb: FormBuilder,) { }
+    private fb: UntypedFormBuilder,) { }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.util.data-transfer'));

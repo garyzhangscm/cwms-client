@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -285,7 +285,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
 
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private workOrderService: WorkOrderService,
@@ -310,11 +310,11 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   ) { }
   workOrderStatuses = WorkOrderStatus;
   // Form related data and functions
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
   searching = false;
   searchResult = '';
   allocating = false;
-  unpickForm!: FormGroup;
+  unpickForm!: UntypedFormGroup;
   unpickModal!: NzModalRef;
   currentInventory!: Inventory;
   manualPutawayModal!: NzModalRef; 
@@ -371,7 +371,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   materialConsumeTimings = WorkOrderMaterialConsumeTiming;
   currentWorkOrderMaterialConsumeTiming?: WorkOrderMaterialConsumeTiming;
 
-  recalculateQCForm!: FormGroup;
+  recalculateQCForm!: UntypedFormGroup;
   recalculateQCModal!: NzModalRef;
   formatterPercent = (value: number): string => `${value} %`;
   parserPercent = (value: string): string => value.replace(' %', '');
@@ -865,16 +865,16 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     const consumedQuantity = this.getConsumedQuantity(workOrder, inventory.item!.id!);
 
     this.unpickForm = this.fb.group({
-      deliveredQuantity: new FormControl({ value: deliveredQuantity, disabled: true }),
-      consumedQuantity: new FormControl({ value: consumedQuantity, disabled: true }),
+      deliveredQuantity: new UntypedFormControl({ value: deliveredQuantity, disabled: true }),
+      consumedQuantity: new UntypedFormControl({ value: consumedQuantity, disabled: true }),
       overrideConsumedQuantity: [null],
-      lpn: new FormControl({ value: inventory.lpn, disabled: true }),
-      itemNumber: new FormControl({ value: inventory.item!.name, disabled: true }),
-      itemDescription: new FormControl({ value: inventory.item!.description, disabled: true }),
-      inventoryStatus: new FormControl({ value: inventory.inventoryStatus!.name, disabled: true }),
-      itemPackageType: new FormControl({ value: inventory.itemPackageType!.name, disabled: true }),
-      quantity: new FormControl({ value: inventory.quantity, disabled: true }),
-      locationName: new FormControl({ value: inventory.location!.name, disabled: true }),
+      lpn: new UntypedFormControl({ value: inventory.lpn, disabled: true }),
+      itemNumber: new UntypedFormControl({ value: inventory.item!.name, disabled: true }),
+      itemDescription: new UntypedFormControl({ value: inventory.item!.description, disabled: true }),
+      inventoryStatus: new UntypedFormControl({ value: inventory.inventoryStatus!.name, disabled: true }),
+      itemPackageType: new UntypedFormControl({ value: inventory.itemPackageType!.name, disabled: true }),
+      quantity: new UntypedFormControl({ value: inventory.quantity, disabled: true }),
+      locationName: new UntypedFormControl({ value: inventory.location!.name, disabled: true }),
       destinationLocation: [null],
       immediateMove: [null],
     });
@@ -1525,10 +1525,10 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   ): void {
     
     this.recalculateQCForm = this.fb.group({
-      qcQuantity: new FormControl({ value: workOrder.qcQuantity, disabled: true }),
-      newQCQuantity: new FormControl({ value: workOrder.qcQuantity, disabled: false}),
-      qcPercentage: new FormControl({ value: workOrder.qcPercentage, disabled: true }),
-      newQCPercentage: new FormControl({ value: workOrder.qcPercentage, disabled: false }),
+      qcQuantity: new UntypedFormControl({ value: workOrder.qcQuantity, disabled: true }),
+      newQCQuantity: new UntypedFormControl({ value: workOrder.qcQuantity, disabled: false}),
+      qcPercentage: new UntypedFormControl({ value: workOrder.qcPercentage, disabled: true }),
+      newQCPercentage: new UntypedFormControl({ value: workOrder.qcPercentage, disabled: false }),
     });
 
     // Load the location

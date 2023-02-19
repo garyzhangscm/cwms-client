@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -194,7 +194,7 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
   inventoryQuantityChangeTypes = InventoryQuantityChangeType;
   inventoryAdjustmentRequestStatuses = InventoryAdjustmentRequestStatus;
   // Form related data and functions
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
   searching = false;
   searchResult = '';
@@ -207,7 +207,7 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
   listOfDisplayInventoryAdjustmentRequests: InventoryAdjustmentRequest[] = [];
   currentProcessingRequest: InventoryAdjustmentRequest | undefined = undefined;
 
-  inventoryAdjustmentRequestProcessForm!: FormGroup;
+  inventoryAdjustmentRequestProcessForm!: UntypedFormGroup;
 
   inventoryAdjustmentRequestModal!: NzModalRef;
 
@@ -218,7 +218,7 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
   }
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private inventoryAdjustmentRequestService: InventoryAdjustmentRequestService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
@@ -300,17 +300,17 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
     tplRequestProcessModalFooter: TemplateRef<{}>,
   ): void {
     this.inventoryAdjustmentRequestProcessForm = this.fb.group({
-      lpn: new FormControl({ value: inventoryAdjustmentRequest.lpn, disabled: true }),
-      itemNumber: new FormControl({ value: inventoryAdjustmentRequest.item.name, disabled: true }),
-      itemDescription: new FormControl({ value: inventoryAdjustmentRequest.item.description, disabled: true }),
-      inventoryStatus: new FormControl({ value: inventoryAdjustmentRequest.inventoryStatus.name, disabled: true }),
-      itemPackageType: new FormControl({ value: inventoryAdjustmentRequest.itemPackageType.name, disabled: true }),
-      quantity: new FormControl({ value: inventoryAdjustmentRequest.quantity, disabled: true }),
-      newQuantity: new FormControl({ value: inventoryAdjustmentRequest.newQuantity, disabled: true }),
-      locationName: new FormControl({ value: inventoryAdjustmentRequest.location.name, disabled: true }),
-      documentNumber: new FormControl({ value: inventoryAdjustmentRequest.documentNumber, disabled: true }),
-      approved: new FormControl({ value: true, disabled: false }),
-      comment: new FormControl({ value: inventoryAdjustmentRequest.comment, disabled: true }),
+      lpn: new UntypedFormControl({ value: inventoryAdjustmentRequest.lpn, disabled: true }),
+      itemNumber: new UntypedFormControl({ value: inventoryAdjustmentRequest.item.name, disabled: true }),
+      itemDescription: new UntypedFormControl({ value: inventoryAdjustmentRequest.item.description, disabled: true }),
+      inventoryStatus: new UntypedFormControl({ value: inventoryAdjustmentRequest.inventoryStatus.name, disabled: true }),
+      itemPackageType: new UntypedFormControl({ value: inventoryAdjustmentRequest.itemPackageType.name, disabled: true }),
+      quantity: new UntypedFormControl({ value: inventoryAdjustmentRequest.quantity, disabled: true }),
+      newQuantity: new UntypedFormControl({ value: inventoryAdjustmentRequest.newQuantity, disabled: true }),
+      locationName: new UntypedFormControl({ value: inventoryAdjustmentRequest.location.name, disabled: true }),
+      documentNumber: new UntypedFormControl({ value: inventoryAdjustmentRequest.documentNumber, disabled: true }),
+      approved: new UntypedFormControl({ value: true, disabled: false }),
+      comment: new UntypedFormControl({ value: inventoryAdjustmentRequest.comment, disabled: true }),
     });
     this.requestInProcess = false;
     this.readyForProcessingRequest = false;

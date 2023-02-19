@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -84,9 +84,9 @@ export class OutboundCartonComponent implements OnInit {
   ];
 
   // Form related data and functions
-  searchForm!: FormGroup;
+  searchForm!: UntypedFormGroup;
 
-  creatingCartonForm!: FormGroup;
+  creatingCartonForm!: UntypedFormGroup;
   // Table data for display
   listOfAllCartons: Carton[] = [];
   listOfDisplayCartons: Carton[] = [];
@@ -100,7 +100,7 @@ export class OutboundCartonComponent implements OnInit {
   editCol!: string | null;
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private cartonService: CartonService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
 
@@ -181,7 +181,7 @@ export class OutboundCartonComponent implements OnInit {
       this.displayFormError(this.creatingCartonForm);
     }
   }
-  displayFormError(fromGroup: FormGroup): void {
+  displayFormError(fromGroup: UntypedFormGroup): void {
     // tslint:disable-next-line: forin
     for (const i in fromGroup.controls) {
       fromGroup.controls[i].markAsDirty();
