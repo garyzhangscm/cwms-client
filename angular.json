@@ -5,7 +5,6 @@
   },
   "version": 1,
   "newProjectRoot": "projects",
-  
   "projects": {
     "ng-alain": {
       "projectType": "application",
@@ -29,10 +28,18 @@
             "main": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
-            "assets": ["src/assets", "src/favicon.ico"],
-            "styles": ["src/styles.less"],
+            "assets": [
+              "src/assets",
+              "src/favicon.ico"
+            ],
+            "styles": [
+              "src/styles.less"
+            ],
             "scripts": [],
-            "allowedCommonJsDependencies": ["ajv", "ajv-formats"]
+            "allowedCommonJsDependencies": [
+              "ajv",
+              "ajv-formats"
+            ]
           },
           "configurations": {
             "production": {
@@ -98,13 +105,18 @@
             "tsConfig": "tsconfig.spec.json",
             "scripts": [],
             "styles": [],
-            "assets": ["src/assets"]
+            "assets": [
+              "src/assets"
+            ]
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         },
         "e2e": {
@@ -120,6 +132,14 @@
           }
         }
       }
+    }
+  },
+  "schematics": {
+    "@angular-eslint/schematics:application": {
+      "setParserOptionsProject": true
+    },
+    "@angular-eslint/schematics:library": {
+      "setParserOptionsProject": true
     }
   }
 }
