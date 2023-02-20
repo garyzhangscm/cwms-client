@@ -142,6 +142,9 @@
                   <th>
                     {{ 'lpn' | i18n }}
                   </th>
+                  <th *ngIf="threePartyLogisticsFlag">
+                    {{ 'client' | i18n }}
+                  </th>
                   <th>
                     {{ 'item' | i18n }}
                   </th>
@@ -159,6 +162,7 @@
                 <tbody>
                   <tr *ngFor="let inventory of mapOfInventories[data.id!]">
                     <td>{{ inventory.lpn }}</td>
+                    <td  *ngIf="threePartyLogisticsFlag">{{ inventory.client?.name }}</td>
                     <td>{{ inventory.item?.name }}</td>
                     <td>{{ inventory.itemPackageType?.name }}</td>
                     <td>{{ inventory.quantity }}</td>
@@ -220,7 +224,7 @@
           {{ 'client' | i18n }}
         </nz-form-label>
         <nz-form-control [nzSpan]="18">
-          <nz-select [(ngModel)]="currentInventory.clientId">
+          <nz-select [ngModel]="currentInventory.clientId" (ngModelChange)="addInventoryClientIdChanged($event)">
             <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
           </nz-select>
         </nz-form-control>
@@ -312,7 +316,7 @@
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
           <nz-select nz-input [(ngModel)]="currentInventory.inventoryStatus!.name"
             (ngModelChange)="inventoryStatusChange()" style="width: 250px">
-            <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
+            <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
               [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.name">
             </nz-option>
           </nz-select>

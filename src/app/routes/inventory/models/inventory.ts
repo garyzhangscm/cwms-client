@@ -1,3 +1,4 @@
+import { Client } from '../../common/models/client';
 import { PickWork } from '../../outbound/models/pick-work';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
@@ -9,6 +10,7 @@ import { ItemPackageType } from './item-package-type';
 export interface Inventory {
   id?: number;
   lpn?: string;
+  client?: Client;
   clientId?: number;
   locationId?: number;
   location?: WarehouseLocation;

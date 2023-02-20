@@ -160,6 +160,8 @@ export class InboundReceiptComponent implements OnInit {
 
   threePartyLogisticsFlag = false;
   loadingOrderDetailsRequest = 0;
+  
+  availableClients: Client[] = []; 
 
   constructor(
     private fb: UntypedFormBuilder,
@@ -172,6 +174,7 @@ export class InboundReceiptComponent implements OnInit {
     private utilService: UtilService,
     private localCacheService: LocalCacheService,
     private supplierService: SupplierService,
+    private clientService: ClientService,
   ) { }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inbound.receipt'));
@@ -199,6 +202,13 @@ export class InboundReceiptComponent implements OnInit {
 
         if (warehouseConfigRes && warehouseConfigRes.threePartyLogisticsFlag) {
           this.threePartyLogisticsFlag = true;
+
+          // only initial the client list in a 3pl environment
+          
+          this.clientService.getClients().subscribe({
+            next: (clientRes) => this.availableClients = clientRes
+            
+          });
         }
         else {
           this.threePartyLogisticsFlag = false;

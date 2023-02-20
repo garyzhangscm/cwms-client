@@ -3,6 +3,7 @@ import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, Validators } fro
 import { Router } from '@angular/router';
 import { I18NService, StartupService } from '@core';
 import { ReuseTabService } from '@delon/abc/reuse-tab';
+import { ACLService } from '@delon/acl';
 import { DA_SERVICE_TOKEN, ITokenService, SocialOpenType, SocialService } from '@delon/auth';
 import { ALAIN_I18N_TOKEN, SettingsService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
@@ -46,6 +47,7 @@ export class UserLoginComponent implements OnDestroy {
     private companyService: CompanyService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private injector: Injector, 
+    private aclService: ACLService,
   ) {
     this.form = fb.group({
       companyCode: [null, [Validators.required, Validators.minLength(1)]],
@@ -212,6 +214,14 @@ export class UserLoginComponent implements OnDestroy {
             this.userService.getUsers(res.user.name).subscribe({
               next: (userInfoRes) => {
                 if (userInfoRes.length === 1) {
+                  // setup the ACL controller to full is the user is system admin or admin
+                  if (userInfoRes[0].systemAdmin || userInfoRes[0].admin) {
+                    this.aclService.setFull(true);
+                  }
+                  else {
+                    // for non admin user, we will setup the ACL based on the menu access
+                    this.aclService.setFull(false);
+                  }
 
                   if (userInfoRes[0].changePasswordAtNextLogon === true) {
                     // force the user to change the password before continue

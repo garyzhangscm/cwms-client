@@ -12,7 +12,11 @@ const routes: Routes = [
   { path: '', redirectTo: 'welcome', pathMatch: 'full' },
   { path: 'v1', component: DashboardV1Component , 
       canActivate: [ACLGuard], 
-    data: { guard: 'dashboard/v1' as ACLGuardType  }},
+    data: { guard:  {
+      role: [ '/dashboard/v1' ], 
+    } as ACLGuardType,
+    guard_url: '/exception/403'
+  }},
   { path: 'analysis', component: DashboardAnalysisComponent },
   { path: 'monitor', component: DashboardMonitorComponent },
   { path: 'workplace', component: DashboardWorkplaceComponent }

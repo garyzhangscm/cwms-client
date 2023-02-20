@@ -48,7 +48,9 @@ export class WarehouseLayoutLocationMaintenanceComponent implements OnInit {
     private messageService: NzMessageService,
     private router: Router,
     private unitService: UnitService,
-  ) {}
+  ) {
+    this.currentLocation = this.getEmptyLocation();
+  }
 
   ngOnInit(): void { 
     this.stepIndex = 0;

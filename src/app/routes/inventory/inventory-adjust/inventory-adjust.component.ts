@@ -13,6 +13,7 @@ import { ReasonCodeType } from '../../common/models/reason-code-type.enum';
 import { ClientService } from '../../common/services/client.service';
 import { ReasonCodeService } from '../../common/services/reason-code.service';
 import { ColumnItem } from '../../util/models/column-item';
+import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { LocationGroupType } from '../../warehouse-layout/models/location-group-type';
@@ -34,6 +35,8 @@ import { ItemService } from '../services/item.service';
   styleUrls: ['./inventory-adjust.component.less'],
 })
 export class InventoryInventoryAdjustComponent implements OnInit {
+
+  threePartyLogisticsFlag = false;
 
   listOfColumns: Array<ColumnItem<WarehouseLocation>> = [
     {
@@ -203,6 +206,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     private messageService: NzMessageService,
     private utilService: UtilService,
     private clientService: ClientService,
+    private localCacheService: LocalCacheService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inventory.adjust.header.title');
   }
@@ -216,7 +220,9 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   isSpinning = false;
   currentInventory!: Inventory;
   addInventoryModal!: NzModalRef;
-  availableInventoryStatuses!: InventoryStatus[];
+  
+  validInventoryStatuses: InventoryStatus[] = [];
+  availableInventoryStatus?: InventoryStatus; 
 
   searching = false;
   searchResult = '';
@@ -276,13 +282,32 @@ export class InventoryInventoryAdjustComponent implements OnInit {
 
     this.inventoryStatusService
       .loadInventoryStatuses()
-      .subscribe(inventoryStatuses => (this.availableInventoryStatuses = inventoryStatuses));
+      .subscribe(inventoryStatuses => (this.validInventoryStatuses = inventoryStatuses));
 
-      
+    
+      this.inventoryStatusService.getAvailableInventoryStatuses()
+      .subscribe(inventoryStatuses => {
+        if (inventoryStatuses.length > 0) {
+          this.availableInventoryStatus = inventoryStatuses[0];
+        }
+      });
+
     // initiate the select control
     this.clientService.getClients().subscribe({
       next: (clientRes) => this.availableClients = clientRes
        
+    });
+
+    // check if 3pl is enabled
+    this.localCacheService.getWarehouseConfiguration().subscribe({
+      next: (warehouseConfigRes) => {
+        if (warehouseConfigRes && warehouseConfigRes.threePartyLogisticsFlag) {
+          this.threePartyLogisticsFlag = true;
+        }
+        else {
+          this.threePartyLogisticsFlag = false;
+        } 
+      },  
     });
   }
   resetForm(): void {
@@ -343,7 +368,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
 
 
   showInventoryDetails(location: WarehouseLocation): void {
-    console.log(`expanded: ${JSON.stringify(location)}`);
+    // console.log(`expanded: ${JSON.stringify(location)}`);
     this.inventoryService.getInventoriesByLocationId(location.id!).subscribe(inventories => {
       this.mapOfInventories[location.id!] = [...inventories];
     });
@@ -382,9 +407,13 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   }
 
   removeInventory(): void {
-    this.inventoryService.adjustDownInventory(this.inventoryToBeRemoved).subscribe(res => {
-      this.search();
-    });
+    this.inventoryService.adjustDownInventory(this.inventoryToBeRemoved).subscribe({
+      next: () => {
+        // refresh only that location
+        this.searchForm.controls.location.setValue(this.inventoryToBeRemoved.locationName);
+        this.search(true);
+      }
+    }); 
 
     this.inventoryRemovalModal.destroy();
   }
@@ -555,11 +584,17 @@ export class InventoryInventoryAdjustComponent implements OnInit {
 
   lpnChanged(event: Event): void {
     this.currentInventory.lpn = (event.target as HTMLInputElement).value;
-  }
-  setupDefaultInventoryValue(): void {
-    if (this.availableInventoryStatuses.length === 1) {
-      this.currentInventory.inventoryStatus = this.availableInventoryStatuses[0];
+  } 
+
+  setupDefaultInventoryValue(): void { 
+     
+    if (this.validInventoryStatuses.length === 1) {
+      this.currentInventory.inventoryStatus = this.validInventoryStatuses[0];
     }
+    else if (this.availableInventoryStatus != null) {
+      this.currentInventory.inventoryStatus = this.availableInventoryStatus;
+
+    } 
   }
 
   itemNumberChanged(event: Event): void {
@@ -567,13 +602,10 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     if (itemNumber.length == 0) {
       return;
     }
+    
+    this.newInventoryItemChanged(itemNumber);;
 
-    this.itemService.getItems(itemNumber).subscribe(itemRes => {
-      if (itemRes.length > 0) {
-        // with a name, we should only get one item information
-        this.currentInventory.item = itemRes[0];
-      }
-    });
+    
   }
   itemPackageTypeChange( ): void {
     const newItemPackageTypeName: string = this.currentInventory.itemPackageType!.name!;
@@ -586,17 +618,17 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   }
   inventoryStatusChange( ): void {
     const newInventoryStatusName: string = this.currentInventory.inventoryStatus!.name;
-    console.log(`Inventory status name changed to ${JSON.stringify(newInventoryStatusName)}`);
-    this.availableInventoryStatuses.forEach(inventoryStatus => {
+    // console.log(`Inventory status name changed to ${JSON.stringify(newInventoryStatusName)}`);
+    this.validInventoryStatuses.forEach(inventoryStatus => {
       if (inventoryStatus.name === newInventoryStatusName) {
-        console.log(`Inventory status changed to ${JSON.stringify(inventoryStatus)}`);
+        // console.log(`Inventory status changed to ${JSON.stringify(inventoryStatus)}`);
         this.currentInventory.inventoryStatus = inventoryStatus;
       }
     });
   }
 
   addInventory(inventory: Inventory): void {
-    console.log(`Start to add inventory: ${JSON.stringify(inventory)}`);
+    // console.log(`Start to add inventory: ${JSON.stringify(inventory)}`);
     this.isSpinning = true;
     this.inventoryService.addInventory(inventory, this.documentNumber, this.comment).subscribe(inventoryRes => {
       // display the newly added inventory
@@ -620,12 +652,45 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.searchForm.controls.location.setValue(selectedLocationName);
   }
   processItemQueryResult(selectedItemName: any): void {
-    this.itemService.getItems(selectedItemName).subscribe(itemRes => {
-      if (itemRes.length > 0) {
-        // with a name, we should only get one item information
-        this.currentInventory.item = itemRes[0];
-      }
-    });
+    this.newInventoryItemChanged(selectedItemName);
 
   }
+
+  newInventoryItemChanged(newItemName: string): void {
+    // make sure we already have a client id in a 3pl environment
+    if (this.threePartyLogisticsFlag && this.currentInventory.clientId == null) {
+
+      // do nothing, we will force the user to choose a client
+      this.currentInventory.item!.name = newItemName;
+      return;
+    }
+    this.itemService.getItems(newItemName, undefined, undefined, undefined, undefined, 
+      this.currentInventory.clientId?.toString()).subscribe(
+      {
+        next: (itemRes) => {
+          if (itemRes.length > 0) {
+            // with a name, we should only get one item information
+            this.currentInventory.item = itemRes[0];
+            if (this.currentInventory.item!.itemPackageTypes.length === 1) {
+              this.currentInventory.itemPackageType = this.currentInventory.item!.itemPackageTypes[0];
+            }
+          }
+        }, 
+        error: () => {
+ 
+        }
+    });
+  } 
+
+  addInventoryClientIdChanged(clientId: number) {
+    console.log(`client id is changed to ${clientId}`);
+    console.log(`this.currentInventory.item?.name ${this.currentInventory.item?.name}`);
+    this.currentInventory.clientId = clientId;
+    if (clientId != null && this.currentInventory.item?.name) { 
+
+        this.newInventoryItemChanged(this.currentInventory.item?.name); 
+    }
+
+  }
+
 }

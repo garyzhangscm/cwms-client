@@ -41,36 +41,39 @@ export class ItemService {
     clientIds?: string, description?: string): Observable<Item[]> {
     
     const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+    let params = new HttpParams(); 
 
-    let url = `inventory/items?companyId=${this.companyService.getCurrentCompany()!.id}`;
-    
-    url = `${url}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`; 
+    const url = `inventory/items`;
 
-    if (name) {
-      url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name.trim())}`;
+    params = params.append("companyId", this.companyService.getCurrentCompany()!.id);
+     
+    params = params.append("warehouseId", this.warehouseService.getCurrentWarehouse().id);
+
+    if (name) { 
+      params = params.append("name", httpUrlEncodingCodec.encodeValue(name.trim()));
     }
     if (description) {
-      url = `${url}&description=${httpUrlEncodingCodec.encodeValue(description.trim())}`;
+      params = params.append("description", httpUrlEncodingCodec.encodeValue(description.trim())); 
     }
-    if (clients && clients.length > 0) {
-      url = `${url}&clientIds=${clients.join(',')}`;
+    if (clients && clients.length > 0) { 
+      params = params.append("clientIds",clients.join(',') );
     }
-    else if(clientIds) {      
-      url = `${url}&clientIds=${clientIds}`;
+    else if(clientIds) {       
+      params = params.append("clientIds", clientIds);
     }
-    if (itemFamilies && itemFamilies.length > 0) {
-      url = `${url}&itemFamilyIds=${itemFamilies.join(',')}`;
+    if (itemFamilies && itemFamilies.length > 0) { 
+      params = params.append("itemFamilyIds", itemFamilies.join(','));
     }
-    if (companyItem != null) {
-      url = `${url}&globalItem=${companyItem}`;
+    if (companyItem != null) { 
+      params = params.append("globalItem", companyItem);
     }
-    if (warehouseSpecificItem != null) {
-      url = `${url}&warehouseSpecificItem=${warehouseSpecificItem}`;
+    if (warehouseSpecificItem != null) { 
+      params = params.append("warehouseSpecificItem", warehouseSpecificItem);
     }
 
     console.log(`start to get item by url\n ${url}`);
     
-    return this.http.get(url).pipe(map(res => res.data));
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
   getItem(itemId: number): Observable<Item> {
     return this.http.get(`inventory/items/${itemId}`).pipe(map(res => res.data));

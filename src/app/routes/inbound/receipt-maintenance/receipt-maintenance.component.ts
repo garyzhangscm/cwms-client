@@ -347,6 +347,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.inventoryStatusService
       .loadInventoryStatuses()
       .subscribe(inventoryStatuses => (this.validInventoryStatuses = inventoryStatuses));
+      
     this.inventoryStatusService.getAvailableInventoryStatuses()
     .subscribe(inventoryStatuses => {
       if (inventoryStatuses.length > 0) {

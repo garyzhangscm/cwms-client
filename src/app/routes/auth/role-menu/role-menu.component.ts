@@ -177,9 +177,18 @@ export class AuthRoleMenuComponent implements OnInit {
       accessibleMenuId => !currentAssignedMenuIds.some(id => accessibleMenuId === +id),
     );
 
-    this.roleService.processMenus(this.currentRole!.id, newlyAssignedMenuIds, newlyDeassignedMenuIds).subscribe(res => {
-      this.processingMenu = false;
-      this.message.success(this.i18n.fanyi('message.action.success'));
+    this.roleService.processMenus(this.currentRole!.id, newlyAssignedMenuIds, newlyDeassignedMenuIds).subscribe(
+      {
+        next: () => {
+          
+          this.processingMenu = false;
+          this.message.success(this.i18n.fanyi('message.action.success'));
+          
+          setTimeout(() => {
+            this.return();
+          }, 500);
+        }, 
+        error: () =>  this.processingMenu = false
     });
   }
 

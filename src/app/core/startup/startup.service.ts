@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, Injector } from '@angular/core';
 import { Router } from '@angular/router';
-import { ACLService } from '@delon/acl';
+import { ACLService, ACLType } from '@delon/acl';
 import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
-import { ALAIN_I18N_TOKEN, MenuService, SettingsService, TitleService } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, Menu, MenuService, SettingsService, TitleService } from '@delon/theme';
 import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzIconService } from 'ng-zorro-antd/icon';
 import { Observable, zip } from 'rxjs';
@@ -97,9 +97,13 @@ export class StartupService {
         // 用户信息：包括姓名、头像、邮箱地址
         this.settingService.setUser(res.user);
         // ACL：设置权限为全量
-        this.aclService.setFull(true);
+        // this.aclService.setFull(true);
+
         // 初始化菜单 
         this.menuService.add(res.menu);
+        // setup the ACL based on the user's accessible menu
+        this.setupMenuBasedACL(res.menu);
+
         // 设置页面标题的后缀
         this.titleService.default = '';
         this.titleService.suffix = res.app.name;
@@ -125,6 +129,21 @@ export class StartupService {
     );
   }
 
+  setupMenuBasedACL(accessibleMenu : Menu[]) {
+
+    accessibleMenu.forEach(
+      menu => {
+        if (menu.children && menu.children.length > 0) {
+          this.setupMenuBasedACL(menu.children);
+        }
+        if (menu.link && menu.link.length > 0) {
+          this.aclService.attachRole([menu.link]);
+        }
+
+      }
+    )
+
+  }
 
   private goToLoginForm() {
     // Before we go back to login form, we may need to at least load the langugue
@@ -135,4 +154,6 @@ export class StartupService {
       setTimeout(() => this.injector.get(Router).navigateByUrl('/passport/login'));
     });
   }
+
+  
 }
