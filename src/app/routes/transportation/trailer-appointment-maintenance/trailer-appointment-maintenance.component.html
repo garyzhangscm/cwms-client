@@ -1,6 +1,6 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
-  <a routerLink="/transportation/trailer" routerLinkActive="active" [queryParams]="{number: currentTrailer?.number}">{{ 'return' | i18n
+  <a routerLink="/transportation/trailer" routerLinkActive="active" [queryParams]="{number: currentTrailer.number}">{{ 'return' | i18n
     }}</a>
 </ng-template>
 <ng-template #breadcrumb>
@@ -28,14 +28,14 @@
         <div *ngIf="currentAppointment != null">
             <nz-descriptions nzBordered>
                 <nz-descriptions-item nzTitle="{{ 'number' | i18n}}">
-                {{currentAppointment?.number}}
+                {{currentAppointment.number}}
                 </nz-descriptions-item>
                 <nz-descriptions-item nzTitle="{{ 'description' | i18n}}">
-                {{currentAppointment?.description}}
+                {{currentAppointment.description}}
                 </nz-descriptions-item>
                 <nz-descriptions-item nzTitle="{{ 'type' | i18n}}">
                     <span *ngIf="currentAppointment?.type != null">
-                        {{'TRAILER-APPOINTMENT-TYPE-' + currentAppointment?.type | i18n}} </span>
+                        {{'TRAILER-APPOINTMENT-TYPE-' + currentAppointment.type | i18n}} </span>
                 </nz-descriptions-item>
           </nz-descriptions>
           <div nz-row nzType="flex" nzJustify="end" style="padding: 15px;">                

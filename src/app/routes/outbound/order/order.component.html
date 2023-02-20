@@ -408,10 +408,10 @@
                       [queryParams]="{number : pick.pickListNumber}">{{ pick.pickListNumber }}</a></td>
                   <td><a routerLink="/outbound/cartonization" routerLinkActive="active"
                       [queryParams]="{number : pick.cartonizationNumber}">{{ pick.cartonizationNumber }}</a></td>
-                  <td>{{ pick.sourceLocation?.name }}</td>
-                  <td>{{ pick.destinationLocation?.name }}</td>
-                  <td>{{ pick.item?.name }}</td>
-                  <td>{{ pick.item?.description }}</td>
+                  <td>{{ pick.sourceLocation.name }}</td>
+                  <td>{{ pick.destinationLocation.name }}</td>
+                  <td>{{ pick.item.name }}</td>
+                  <td>{{ pick.item.description }}</td>
                   <td>{{ pick.quantity }}</td>
                   <td>{{ pick.pickedQuantity }}</td>
                   <td>{{ pick.lpn }}</td>
@@ -432,7 +432,7 @@
                   (preview)="previewReport(item)">
                 </cwms-common-print-button>
                 <button nz-button (click)="confirmPicks(item)"
-                  [disabled]="mapOfPicks[item.id!]?.length === 0 || item.status === orderStatusEnum.COMPLETE">
+                  [disabled]="mapOfPicks[item.id!].length === 0 || item.status === orderStatusEnum.COMPLETE">
                   {{ 'confirm' | i18n }}
                 </button>
                 <button nz-button (click)="cancelSelectedPick(item)"
@@ -535,8 +535,8 @@
               <tbody >
                 <tr *ngFor="let shortAllocation of shortAllocationTable.data">
 
-                  <td>{{ shortAllocation.item?.name }}</td>
-                  <td>{{ shortAllocation.item?.description }}</td>
+                  <td>{{ shortAllocation.item.name }}</td>
+                  <td>{{ shortAllocation.item.description }}</td>
                   <td>{{ shortAllocation.quantity }}</td>
                   <td>{{ shortAllocation.openQuantity }}</td>
                   <td><a routerLink="/outbound/pick" routerLinkActive="active"

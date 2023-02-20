@@ -144,7 +144,7 @@
                     <td>{{ inventory.item?.description }}</td>
                     <td>
                         <span *ngIf="inventory.inventoryStatus != null" >
-                        {{ inventory.inventoryStatus?.description}}
+                        {{ inventory.inventoryStatus.description}}
                         </span>
                     </td>
                     <td>{{ inventory.quantity }}</td>
@@ -192,10 +192,10 @@
                     <tr *ngFor="let pick of pickTable.data"> 
                     <td>{{ pick.number }}</td> 
                     <td>{{ pick.orderNumber }}</td> 
-                    <td>{{ pick.sourceLocation?.name }}</td>
-                    <td>{{ pick.destinationLocation?.name }}</td>
-                    <td>{{ pick.item?.name }}</td>
-                    <td>{{ pick.item?.description }}</td>
+                    <td>{{ pick.sourceLocation.name }}</td>
+                    <td>{{ pick.destinationLocation.name }}</td>
+                    <td>{{ pick.item.name }}</td>
+                    <td>{{ pick.item.description }}</td>
                     <td>{{ pick.quantity }}</td>
                     <td>{{ pick.pickedQuantity }}</td>
                     <td>{{ pick.lpn }}</td> 

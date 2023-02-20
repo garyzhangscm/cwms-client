@@ -219,7 +219,7 @@
               <td [nzChecked]="setOfOpenCycleCountTableCheckedId.has(data.id!)"
                 (nzCheckedChange)="onOpenCycleCountTableItemChecked(data.id!, $event)"></td>
               <td>{{ data.batchId }}</td>
-              <td>{{ data.location?.name }}</td>
+              <td>{{ data.location.name }}</td>
               <td>
                 <button nz-button
                   (click)="openCountResultModal(data, tplCycleCountRequestConfirmModalTitle, tplCycleCountRequestConfirmModalContent)"
@@ -341,7 +341,7 @@
               <td [nzChecked]="setOfCancelledCycleCountTableCheckedId.has(data.id!)"
                 (nzCheckedChange)="onCancelledCycleCountTableItemChecked(data.id!, $event)"></td>
               <td>{{ data.batchId }}</td>
-              <td>{{ data.location?.name }}</td>
+              <td>{{ data.location.name }}</td>
             </tr>
           </tbody>
         </nz-table>
@@ -393,10 +393,10 @@
                 (nzCheckedChange)="onOpenAuditCountTableItemChecked(data.id!, $event)"></td>
 
               <td>{{ data.batchId }}</td>
-              <td>{{ data.location?.name }}</td>
+              <td>{{ data.location.name }}</td>
               <td>
                 <a nz-button nzType="primary" routerLink="/inventory/count/audit-count-result" routerLinkActive="active"
-                  [queryParams]="{batchId : data.batchId, locationId: data.location?.id}">
+                  [queryParams]="{batchId : data.batchId, locationId: data.location.id}">
                   {{ 'cycle-count.complete' | i18n }}</a>
               </td>
             </tr>
@@ -477,8 +477,8 @@
                   [queryParams]="{refresh : true, lpn: data.lpn}" routerLinkActive="active">
                   {{ data.lpn }}</a>
               </td>
-              <td>{{ data.item?.name }}</td>
-              <td>{{ data.item?.description }}</td>
+              <td>{{ data.item.name }}</td>
+              <td>{{ data.item.description }}</td>
               <td>{{ data.quantity }}</td>
               <td>{{ data.countQuantity }}</td>
             </tr>
@@ -523,7 +523,7 @@
         <tr *ngFor="let data of inventoriesTable.data; let i = index">
           <td>{{ data.location?.name }}</td>
           <td>
-            <input *ngIf="data.item != null" type="text" [ngModel]="data.item?.name"
+            <input *ngIf="data.item != null" type="text" [ngModel]="data.item.name"
               (blur)="countResultItemNameBlur($event, data)" name="itemName-{{i}}">
           </td>
           <td>{{ data.item?.description }}</td>

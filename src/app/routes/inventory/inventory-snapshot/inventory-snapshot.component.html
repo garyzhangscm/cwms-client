@@ -107,9 +107,9 @@
                 </thead>
     <tbody>
       <tr *ngFor="let inventorySnapshotDetail of innerTable.data">
-        <td>{{ inventorySnapshotDetail.item?.name }}</td>
-        <td>{{ inventorySnapshotDetail.itemPackageType?.name }}</td>
-        <td>{{ inventorySnapshotDetail.inventoryStatus?.name }}</td>
+        <td>{{ inventorySnapshotDetail.item.name }}</td>
+        <td>{{ inventorySnapshotDetail.itemPackageType.name }}</td>
+        <td>{{ inventorySnapshotDetail.inventoryStatus.name }}</td>
         <td>{{ inventorySnapshotDetail.locationGroupTypeName }}</td>
         <td>{{ inventorySnapshotDetail.quantity }}</td>
       </tr>

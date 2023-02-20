@@ -1,7 +1,7 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
   <a routerLink="/work-order/work-order" routerLinkActive="active"
-    [queryParams]="{ number: currentWorkOrder?.number }">{{ 'return' | i18n }}</a>
+    [queryParams]="{ number: currentWorkOrder.number }">{{ 'return' | i18n }}</a>
 </ng-template>
 <ng-template #breadcrumb>
   <nz-breadcrumb>
@@ -121,7 +121,7 @@
         <a nz-button nzType="link" (click)="addKPIInfo()">
           {{ 'steps.work-order-produce.user-kpi.title' | i18n }}</a>
         <button nz-button nzType="primary" routerLink="/work-order/work-order/produce/confirm" routerLinkActive="active"
-          [queryParams]="{ id: currentWorkOrder?.id }" (click)="saveCurrentWorkOrderResults()">
+          [queryParams]="{ id: currentWorkOrder.id }" (click)="saveCurrentWorkOrderResults()">
           {{ 'confirm' | i18n }}
         </button>
       </nz-content>

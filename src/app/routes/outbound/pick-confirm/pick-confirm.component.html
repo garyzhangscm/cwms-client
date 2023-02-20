@@ -47,20 +47,20 @@
 <!-- Display Work Order Informaiton -->
 <nz-card *ngIf="type === 'workOrder'">
   <nz-descriptions nzTitle="{{'work-order' | i18n}}" nzBordered>
-    <nz-descriptions-item nzTitle="{{'work-order.number' | i18n}}">{{workOrder?.number}}
+    <nz-descriptions-item nzTitle="{{'work-order.number' | i18n}}">{{workOrder.number}}
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{'status' | i18n}}">{{workOrder?.status}}
+    <nz-descriptions-item nzTitle="{{'status' | i18n}}">{{workOrder.status}}
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="{{'production-line' | i18n}}">
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{'item' | i18n}}">{{workOrder?.item?.name}}
+    <nz-descriptions-item nzTitle="{{'item' | i18n}}">{{workOrder.item?.name}}
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="{{'item.description' | i18n}}">
-      {{workOrder?.item?.description}}</nz-descriptions-item>
+      {{workOrder.item?.description}}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="{{'work-order.expected-quantity' | i18n}}">
-      {{workOrder?.expectedQuantity}}</nz-descriptions-item>
+      {{workOrder.expectedQuantity}}</nz-descriptions-item>
     <nz-descriptions-item nzTitle="{{'work-order.produced-quantity' | i18n}}">
-      {{workOrder?.producedQuantity}}</nz-descriptions-item>
+      {{workOrder.producedQuantity}}</nz-descriptions-item>
   </nz-descriptions>
 </nz-card>
 
@@ -68,9 +68,9 @@
 <!-- Display Pick List Informaiton -->
 <nz-card *ngIf="type === 'pickList'">
   <nz-descriptions nzTitle="{{'pick-list' | i18n}}" nzBordered>
-    <nz-descriptions-item nzTitle="{{'pick-list.number' | i18n}}">{{pickList?.number}}
+    <nz-descriptions-item nzTitle="{{'pick-list.number' | i18n}}">{{pickList.number}}
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{'status' | i18n}}">{{'PICK-LIST-STATUS-' + pickList?.status | i18n}}
+    <nz-descriptions-item nzTitle="{{'status' | i18n}}">{{'PICK-LIST-STATUS-' + pickList.status | i18n}}
     </nz-descriptions-item>
   </nz-descriptions>
 </nz-card>
@@ -78,19 +78,19 @@
 <!-- Display Cartonization Informaiton -->
 <nz-card *ngIf="type === 'cartonization'">
   <nz-descriptions nzTitle="{{'cartonization' | i18n}}" nzBordered>
-    <nz-descriptions-item nzTitle="{{'cartonization.number' | i18n}}">{{cartonization?.number}}
+    <nz-descriptions-item nzTitle="{{'cartonization.number' | i18n}}">{{cartonization.number}}
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="{{'status' | i18n}}">
-      {{'CARTONIZATION-STATUS-' + cartonization?.status | i18n}}
+      {{'CARTONIZATION-STATUS-' + cartonization.status | i18n}}
     </nz-descriptions-item>
   </nz-descriptions>
 </nz-card>
 <!-- Display Wave Informaiton -->
 <nz-card *ngIf="type === 'wave'">
   <nz-descriptions nzTitle="{{'wave' | i18n}}" nzBordered>
-    <nz-descriptions-item nzTitle="{{'wave.number' | i18n}}">{{wave?.number}}
+    <nz-descriptions-item nzTitle="{{'wave.number' | i18n}}">{{wave.number}}
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{'status' | i18n}}">{{'WAVE-STATUS-' + wave?.status! | i18n}}
+    <nz-descriptions-item nzTitle="{{'status' | i18n}}">{{'WAVE-STATUS-' + wave.status! | i18n}}
     </nz-descriptions-item>
   </nz-descriptions>
 </nz-card>
@@ -100,43 +100,43 @@
 <nz-card *ngIf="type === 'order'">
   <nz-descriptions nzTitle="{{'order' | i18n}}" nzBordered>
     <nz-descriptions-item nzTitle="{{'order.number' | i18n}}">
-      {{order?.number}}
+      {{order.number}}
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="{{'shipToCustomer' | i18n}}">
-      {{ order?.shipToCustomer?.name}}
+      {{ order.shipToCustomer?.name}}
     </nz-descriptions-item>
 
     <nz-descriptions-item nzTitle="{{'shipToCustomer.name' | i18n}}">
       <span *ngIf="order?.shipToCustomer !== null">
-        {{ order?.shipToCustomer?.contactorFirstname }} {{ order?.shipToCustomer?.contactorLastname }}
+        {{ order.shipToCustomer?.contactorFirstname }} {{ order.shipToCustomer?.contactorLastname }}
       </span>
       <span *ngIf="order?.shipToCustomer === null">
-        {{ order?.shipToContactorFirstname }} {{ order?.shipToContactorLastname }}
+        {{ order.shipToContactorFirstname }} {{ order.shipToContactorLastname }}
       </span>
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="{{'shipToCustomer?.address' | i18n}}">
       <div *ngIf="order?.shipToCustomer !== null">
         <span>
-          {{ order?.shipToCustomer?.addressLine1 }}
+          {{ order.shipToCustomer?.addressLine1 }}
         </span>
         <span *ngIf="order?.shipToCustomer?.addressLine2 != null">
-          , {{ order?.shipToCustomer?.addressLine2 }}
+          , {{ order.shipToCustomer?.addressLine2 }}
         </span>
         <div>
-          {{ order?.shipToCustomer?.addressCity }}, {{ order?.shipToCustomer?.addressState }}
-          {{ order?.shipToCustomer?.addressPostcode }}
+          {{ order.shipToCustomer?.addressCity }}, {{ order.shipToCustomer?.addressState }}
+          {{ order.shipToCustomer?.addressPostcode }}
         </div>
       </div>
       <div *ngIf="order?.shipToCustomer === null">
         <span>
-          {{ order?.shipToAddressLine1 }}
+          {{ order.shipToAddressLine1 }}
         </span>
         <span *ngIf="order?.shipToAddressLine2 != null">
-          , {{ order?.shipToAddressLine2 }}
+          , {{ order.shipToAddressLine2 }}
         </span>
         <div>
-          {{ order?.shipToAddressCity }}, {{ order?.shipToAddressState }}
-          {{ order?.shipToAddressPostcode }}
+          {{ order.shipToAddressCity }}, {{ order.shipToAddressState }}
+          {{ order.shipToAddressPostcode }}
         </div>
       </div>
     </nz-descriptions-item>
@@ -147,43 +147,43 @@
 <nz-card *ngIf="type === 'shipment'">
   <nz-descriptions nzTitle="{{'shipment' | i18n}}" nzBordered>
     <nz-descriptions-item nzTitle="{{'shipment.number' | i18n}}">
-      {{shipment?.number}}
+      {{shipment.number}}
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="{{'shipToCustomer' | i18n}}">
-      {{ shipment?.shipToCustomer?.name}}
+      {{ shipment.shipToCustomer.name}}
     </nz-descriptions-item>
 
     <nz-descriptions-item nzTitle="{{'shipToCustomer.name' | i18n}}">
       <span *ngIf="shipment?.shipToCustomer !== null">
-        {{ shipment?.shipToCustomer?.contactorFirstname }} {{ shipment?.shipToCustomer?.contactorLastname }}
+        {{ shipment.shipToCustomer.contactorFirstname }} {{ shipment.shipToCustomer.contactorLastname }}
       </span>
       <span *ngIf="order?.shipToCustomer === null">
-        {{ shipment?.shipTocontactorFirstname }} {{ shipment?.shipTocontactorLastname }}
+        {{ shipment.shipTocontactorFirstname }} {{ shipment.shipTocontactorLastname }}
       </span>
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="{{'shipToCustomer.address' | i18n}}">
       <div *ngIf="shipment?.shipToCustomer !== null">
         <span>
-          {{ shipment?.shipToCustomer?.addressLine1 }}
+          {{ shipment.shipToCustomer.addressLine1 }}
         </span>
         <span *ngIf="shipment?.shipToCustomer?.addressLine2 != null">
-          , {{ shipment?.shipToCustomer?.addressLine2 }}
+          , {{ shipment.shipToCustomer.addressLine2 }}
         </span>
         <div>
-          {{ shipment?.shipToCustomer?.addressCity }}, {{ shipment?.shipToCustomer?.addressState }}
-          {{ shipment?.shipToCustomer?.addressPostcode }}
+          {{ shipment.shipToCustomer.addressCity }}, {{ shipment.shipToCustomer.addressState }}
+          {{ shipment.shipToCustomer.addressPostcode }}
         </div>
       </div>
       <div *ngIf="shipment?.shipToCustomer === null">
         <span>
-          {{ shipment?.shipToAddressLine1 }}
+          {{ shipment.shipToAddressLine1 }}
         </span>
         <span *ngIf="shipment?.shipToAddressLine2 != null">
-          , {{ shipment?.shipToAddressLine2 }}
+          , {{ shipment.shipToAddressLine2 }}
         </span>
         <div>
-          {{ shipment?.shipToAddressCity }}, {{ shipment?.shipToAddressState }}
-          {{ shipment?.shipToAddressPostcode }}
+          {{ shipment.shipToAddressCity }}, {{ shipment.shipToAddressState }}
+          {{ shipment.shipToAddressPostcode }}
         </div>
       </div>
     </nz-descriptions-item>
@@ -221,10 +221,10 @@
           [nzDisabled]="mapOfConfirmedQuantity[data.number] === 0"></td>
 
         <td>{{ data.number }}</td>
-        <td>{{ data.sourceLocation?.name }}</td>
-        <td>{{ data.destinationLocation?.name }}</td>
-        <td>{{ data.item?.name }}</td>
-        <td>{{ data.item?.description }}</td>
+        <td>{{ data.sourceLocation.name }}</td>
+        <td>{{ data.destinationLocation.name }}</td>
+        <td>{{ data.item.name }}</td>
+        <td>{{ data.item.description }}</td>
         <td>{{ data.quantity }}</td>
         <td>{{ data.pickedQuantity }}</td>
         <td>

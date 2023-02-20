@@ -1,13 +1,15 @@
-import { formatDate } from '@angular/common';
-import { LEADING_TRIVIA_CHARS } from '@angular/compiler/src/render3/view/template';
+import { formatDate } from '@angular/common'; 
 import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+// import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+// import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
 
 import { Client } from '../../common/models/client';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
@@ -427,7 +429,14 @@ export class InventoryInventoryComponent implements OnInit {
     if (inventoryMovement.locationId && inventoryMovement.location == null) {
 
       this.loadingDetailsRequest++;
+      /**
+       * 
       inventoryMovement.location =  await this.localCacheService.getLocation(inventoryMovement.locationId!).toPromise().finally(
+        () => this.loadingDetailsRequest--
+      );
+       * 
+       */
+      inventoryMovement.location =  await lastValueFrom(this.localCacheService.getLocation(inventoryMovement.locationId!)).finally(
         () => this.loadingDetailsRequest--
       );
     } 

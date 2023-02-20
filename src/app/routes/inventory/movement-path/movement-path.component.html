@@ -98,10 +98,10 @@
 
           <td [nzExpand]="expandSet.has(data.id!)" (nzExpandChange)="onExpandChange(data.id!, $event)"></td>
           <td>{{ data.sequence }}</td>
-          <td>{{ data.fromLocation?.name }}</td>
-          <td>{{ data.fromLocationGroup?.name }}</td>
-          <td>{{ data.toLocation?.name }}</td>
-          <td>{{ data.toLocationGroup?.name }}</td>
+          <td>{{ data.fromLocation.name }}</td>
+          <td>{{ data.fromLocationGroup.name }}</td>
+          <td>{{ data.toLocation.name }}</td>
+          <td>{{ data.toLocationGroup.name }}</td>
           <td></td>
         </tr>
         <tr [nzExpand]="expandSet.has(data.id!)">
@@ -124,8 +124,8 @@
     <tbody>
       <tr *ngFor="let movementPathDetail of data.movementPathDetails">
         <td>{{ movementPathDetail.sequence }}</td>
-        <td>{{ movementPathDetail.hopLocation?.name }}</td>
-        <td>{{ movementPathDetail.hopLocationGroup?.name }}</td>
+        <td>{{ movementPathDetail.hopLocation.name }}</td>
+        <td>{{ movementPathDetail.hopLocationGroup.name }}</td>
         <td>{{ movementPathDetail.strategy }}</td>
       </tr>
 

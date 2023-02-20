@@ -74,13 +74,13 @@
       <tr *ngFor="let data of rowSelectionTable.data">
         <td>{{ data.id! }}</td>
         <td>{{ data.sequence }}</td>
-        <td>{{ data.unitOfMeasure?.name }}</td>
-        <td>{{ data.item?.name }}</td>
-        <td>{{ data.itemFamily?.name }}</td>
-        <td>{{ data.sourceLocation?.name }}</td>
-        <td>{{ data.sourceLocationGroup?.name }}</td>
-        <td>{{ data.destinationLocation?.name }}</td>
-        <td>{{ data.destinationLocationGroup?.name }}</td>
+        <td>{{ data.unitOfMeasure.name }}</td>
+        <td>{{ data.item.name }}</td>
+        <td>{{ data.itemFamily.name }}</td>
+        <td>{{ data.sourceLocation.name }}</td>
+        <td>{{ data.sourceLocationGroup.name }}</td>
+        <td>{{ data.destinationLocation.name }}</td>
+        <td>{{ data.destinationLocationGroup.name }}</td>
       </tr>
     </tbody>
   </nz-table>

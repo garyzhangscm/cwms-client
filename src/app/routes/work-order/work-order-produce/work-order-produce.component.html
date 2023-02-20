@@ -1,7 +1,7 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
   <a routerLink="/work-order/work-order" routerLinkActive="active"
-    [queryParams]="{ number: currentWorkOrder?.number }">{{ 'return' | i18n }}</a>
+    [queryParams]="{ number: currentWorkOrder.number }">{{ 'return' | i18n }}</a>
 </ng-template>
 <ng-template #breadcrumb>
   <nz-breadcrumb>
@@ -47,7 +47,7 @@
           {{ 'production-line' | i18n }}
         </nz-form-label>
         <nz-form-control [nzSpan]="14">
-          <nz-select style="width: 150px" [ngModel]="workOrderProduceTransaction?.productionLine?.name"
+          <nz-select style="width: 150px" [ngModel]="workOrderProduceTransaction.productionLine?.name"
             (ngModelChange)="productionLineChanged($event)">
             <nz-option *ngFor="let productionLineAssignment of currentWorkOrder?.productionLineAssignments"
               [nzLabel]="productionLineAssignment.productionLine.name"
@@ -138,8 +138,8 @@
             </nz-option>
           </nz-select>
         </td>
-        <td>{{ currentWorkOrder?.expectedQuantity }}</td>
-        <td>{{ currentWorkOrder?.producedQuantity }}</td>
+        <td>{{ currentWorkOrder.expectedQuantity }}</td>
+        <td>{{ currentWorkOrder.producedQuantity }}</td>
         <td><input type="text" [(ngModel)]="inventory.quantity" name="result-{{ i }}"  style="width: 100px" /></td>
         <td>
           <button nz-button nzDanger (click)="removeProducedInventory(i)">
@@ -189,7 +189,7 @@
       </nz-radio-group>
     <div *ngIf="consumeByWorkOrderBOM === 'true'" style="padding-top: 20px;">  
       {{ 'work-order.bill-of-material' | i18n}} : 
-      <span *ngIf="workOrderProduceTransaction.workOrder!.consumeByBom" >{{ workOrderProduceTransaction.workOrder!.consumeByBom?.number }} </span>
+      <span *ngIf="workOrderProduceTransaction.workOrder!.consumeByBom" >{{ workOrderProduceTransaction.workOrder!.consumeByBom.number }} </span>
       <span *ngIf="workOrderProduceTransaction.workOrder!.consumeByBom === undefined || workOrderProduceTransaction.workOrder!.consumeByBom === null" >N/A</span>
           
     </div>

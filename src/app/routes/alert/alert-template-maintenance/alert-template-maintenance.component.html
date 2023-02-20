@@ -1,6 +1,6 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
-  <a routerLink="/alert/template" routerLinkActive="active" [queryParams]="{type:currentAlertTemplate?.type, deliveryChannel: currentAlertTemplate?.deliveryChannel}">{{ 'return' | i18n
+  <a routerLink="/alert/template" routerLinkActive="active" [queryParams]="{type:currentAlertTemplate.type, deliveryChannel: currentAlertTemplate.deliveryChannel}">{{ 'return' | i18n
     }}</a>
 </ng-template>
 <ng-template #breadcrumb>

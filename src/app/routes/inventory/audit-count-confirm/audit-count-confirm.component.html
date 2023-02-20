@@ -38,23 +38,23 @@
     </thead>
     <tbody>
       <tr *ngFor="let data of inventoryTable.data; let i = index">
-        <td>{{ data.inventory?.id }}</td>
+        <td>{{ data.inventory.id }}</td>
         <td>
-          {{ data.inventory?.lpn }}
+          {{ data.inventory.lpn }}
         </td>
         <td>
-          {{ data.inventory?.item?.name }}
+          {{ data.inventory.item?.name }}
         </td>
         <td>
-          {{ data.inventory?.item?.description }}
+          {{ data.inventory.item?.description }}
         </td>
         <td>
-          {{ data.inventory?.itemPackageType?.name }}
+          {{ data.inventory.itemPackageType?.name }}
         </td>
-        <td>{{ data.location?.name }}</td>
+        <td>{{ data.location.name }}</td>
         <td>{{ data.quantity }}</td>
         <td>
-          {{ data.inventory?.inventoryStatus?.description }}
+          {{ data.inventory.inventoryStatus?.description }}
         </td>
         <td>
           {{ data.countQuantity}}</td>

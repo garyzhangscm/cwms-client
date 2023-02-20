@@ -573,7 +573,7 @@
                   <tbody>
 
                     <tr *ngFor="let productionLineAssignment of data.productionLineAssignments">
-                      <td [nzAlign]="'center'">{{ productionLineAssignment.productionLine?.name }}</td>
+                      <td [nzAlign]="'center'">{{ productionLineAssignment.productionLine.name }}</td>
                       <td [nzAlign]="'center'">{{ productionLineAssignment.mould?.name }}</td>
                       <td [nzAlign]="'center'">{{ productionLineAssignment.quantity }}</td>
                       <td [nzAlign]="'center'">{{ productionLineAssignment.openQuantity }}</td>
@@ -731,9 +731,9 @@
                   <tbody>
 
                     <tr *ngFor="let assignment of data.assignments">
-                      <td>{{ assignment.user?.username }}</td>
-                      <td>{{ assignment.user?.firstname }}</td>
-                      <td>{{ assignment.user?.lastname }}</td>
+                      <td>{{ assignment.user.username }}</td>
+                      <td>{{ assignment.user.firstname }}</td>
+                      <td>{{ assignment.user.lastname }}</td>
                     </tr>
                   </tbody>
                 </nz-table>
@@ -772,12 +772,12 @@
 
                       <tr *ngFor="let pick of pickTable.data">
                         <td>{{ pick.number }}</td>
-                        <td>{{ pick.sourceLocation?.locationGroup?.description }}</td>
-                        <td>{{ pick.sourceLocation?.name }}</td>
-                        <td>{{ pick.destinationLocation?.locationGroup?.description }}</td>
-                        <td>{{ pick.destinationLocation?.name }}</td>
-                        <td>{{ pick.item?.name }}</td>
-                        <td>{{ pick.item?.description }}</td>
+                        <td>{{ pick.sourceLocation.locationGroup?.description }}</td>
+                        <td>{{ pick.sourceLocation.name }}</td>
+                        <td>{{ pick.destinationLocation.locationGroup?.description }}</td>
+                        <td>{{ pick.destinationLocation.name }}</td>
+                        <td>{{ pick.item.name }}</td>
+                        <td>{{ pick.item.description }}</td>
                         <td>{{ pick.quantity }}</td>
                         <td>{{ pick.pickedQuantity }}</td>
                         <td>
@@ -847,8 +847,8 @@
                     <tbody >
                       <tr *ngFor="let shortAllocation of shortAllocationTable.data">
 
-                        <td>{{ shortAllocation.item?.name }}</td>
-                        <td>{{ shortAllocation.item?.description }}</td>
+                        <td>{{ shortAllocation.item.name }}</td>
+                        <td>{{ shortAllocation.item.description }}</td>
                         <td>{{ shortAllocation.quantity }}</td>
                         <td>{{ shortAllocation.openQuantity }}</td>
                         <td><a routerLink="/outbound/pick" routerLinkActive="active"
@@ -988,7 +988,7 @@
 
                         <td>
                           <p *ngFor="let inventoryMovement of inventory.inventoryMovements; let i = index">
-                            {{ i+1 }} - {{ inventoryMovement.location?.name}}
+                            {{ i+1 }} - {{ inventoryMovement.location.name}}
                           </p>
                         </td>
                         <td>
@@ -1019,7 +1019,7 @@
                                 <ul>
                                   <li nz-menu-item *ngFor="let inventoryMovement of inventory.inventoryMovements; let i=index">
                                     <a (click)="confirmPutaway(data, i, inventory)">
-                                      {{ i+1 }} - {{ inventoryMovement.location?.name}}</a>
+                                      {{ i+1 }} - {{ inventoryMovement.location.name}}</a>
                                   </li>
                                 </ul>
                               </li>
@@ -1104,7 +1104,7 @@
                         <td>{{  inventory.inventoryStatus?.description }}</td>
                         <td>
                           <p *ngFor="let inventoryMovement of inventory.inventoryMovements; let i = index">
-                            {{ i+1 }} - {{ inventoryMovement.location?.name}}
+                            {{ i+1 }} - {{ inventoryMovement.location.name}}
                           </p>
                         </td>
                         <td>                          
@@ -1197,7 +1197,7 @@
                         <td>{{  inventory.inventoryStatus?.description }}</td>
                         <td>
                           <p *ngFor="let inventoryMovement of inventory.inventoryMovements; let i = index">
-                            {{ i+1 }} - {{ inventoryMovement.location?.name}}
+                            {{ i+1 }} - {{ inventoryMovement.location.name}}
                           </p>
                         </td>
                         <td>
@@ -1221,7 +1221,7 @@
                               <ul nz-menu>
                                 <li nz-menu-item *ngFor="let inventoryMovement of inventory.inventoryMovements; let i=index">
                                   <a (click)="confirmPutaway(data, i, inventory)">
-                                    {{ i+1 }} - {{ inventoryMovement.location?.name}}</a>
+                                    {{ i+1 }} - {{ inventoryMovement.location.name}}</a>
                                 </li>
                               </ul>
                             </nz-dropdown-menu>
@@ -1448,7 +1448,7 @@
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24">
           <nz-input-group nzSize="large">
-            <input nz-input [ngModel]="currentInventory?.item?.name" disabled />
+            <input nz-input [ngModel]="currentInventory.item?.name" disabled />
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
@@ -1460,7 +1460,7 @@
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24">
           <nz-input-group nzSize="large">
-            <input nz-input [ngModel]="currentInventory?.item?.description" disabled />
+            <input nz-input [ngModel]="currentInventory.item?.description" disabled />
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>

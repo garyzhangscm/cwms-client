@@ -1,9 +1,9 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
   <a routerLink="/outbound/list-pick-configuration" routerLinkActive="active" 
-  [queryParams]="{pickType:currentListPickConfiguration?.pickType, 
-    customer: currentListPickConfiguration?.customer?.name, 
-    client: currentListPickConfiguration?.client?.name}">{{ 'return' | i18n
+  [queryParams]="{pickType:currentListPickConfiguration.pickType, 
+    customer: currentListPickConfiguration.customer?.name, 
+    client: currentListPickConfiguration.client?.name}">{{ 'return' | i18n
     }}</a>
 </ng-template>
 <ng-template #breadcrumb>

@@ -22,17 +22,17 @@
     <nz-descriptions nzBordered>
 
       <nz-descriptions-item nzTitle="{{'lpn' | i18n}}">
-        {{currentInventory?.lpn}}
+        {{currentInventory.lpn}}
       </nz-descriptions-item>
 
       <nz-descriptions-item nzTitle="{{'location' | i18n}}" nzSpan="2">
-        {{currentInventory?.location?.name}}
+        {{currentInventory.location?.name}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'item' | i18n}}">
-        {{currentInventory?.item?.name}}
+        {{currentInventory.item?.name}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'item.description' | i18n}}" nzSpan="2">
-        {{currentInventory?.item?.description}}
+        {{currentInventory.item?.description}}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'item.package-type' | i18n}}" nzSpan="3">
         <nz-card *ngIf='currentInventory !== undefined' [nzTitle]="inventoryPackageTypes">
@@ -74,7 +74,7 @@
 
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{'quantity' | i18n}}">
-        {{currentInventory?.quantity}}
+        {{currentInventory.quantity}}
 
       </nz-descriptions-item>
 

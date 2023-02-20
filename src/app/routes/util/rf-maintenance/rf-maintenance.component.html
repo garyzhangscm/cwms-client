@@ -1,6 +1,6 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
-  <a routerLink="/util/rf" routerLinkActive="active" [queryParams]="{rfCode:currentRF?.rfCode}">{{ 'return' | i18n
+  <a routerLink="/util/rf" routerLinkActive="active" [queryParams]="{rfCode: currentRF.rfCode}">{{ 'return' | i18n
     }}</a>
 </ng-template>
 <ng-template #breadcrumb>

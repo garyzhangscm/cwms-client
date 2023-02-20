@@ -1,7 +1,7 @@
 import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MenuService, _HttpClient , SettingsService } from '@delon/theme';
-import { Observable, of } from 'rxjs';
+import { firstValueFrom, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
@@ -93,7 +93,7 @@ export class UserService {
   }
 
   getUserByNameSynchronous(username: string): Promise<User[]> {
-    return  this.getUsers(username).toPromise();
+    return firstValueFrom(this.getUsers(username));
   }
   setCurrentUser(user: User): void { 
     this.gzLocalStorageService.setItem('current_user',  user) 

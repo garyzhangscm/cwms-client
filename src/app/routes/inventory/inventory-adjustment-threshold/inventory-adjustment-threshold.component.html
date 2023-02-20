@@ -123,12 +123,12 @@
     </thead>
     <tbody>
       <tr *ngFor="let data of rowSelectionTable.data">
-        <td>{{ data.item?.name }}</td>
-        <td>{{ data.itemFamily?.name }}</td>
-        <td>{{ data.client?.name }}</td>
+        <td>{{ data.item.name }}</td>
+        <td>{{ data.itemFamily.name }}</td>
+        <td>{{ data.client.name }}</td>
         <td>{{ data.type }}</td>
-        <td>{{ data.user?.username }}</td>
-        <td>{{ data.role?.name }}</td>
+        <td>{{ data.user.username }}</td>
+        <td>{{ data.role.name }}</td>
         <td>{{ data.quantityThreshold }}</td>
         <td>{{ data.costThreshold }}</td>
         <td>{{ data.enabled + ''| i18n}}</td>

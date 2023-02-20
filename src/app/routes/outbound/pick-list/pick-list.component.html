@@ -61,10 +61,10 @@
           <td>{{ data.totalPickedQuantity }}</td>
           <td>
             <button nz-button nzType="primary" (click)="printPickSheets(data)"
-              [nzLoading]="mapOfPrintingInProcessId[data.id!]" [disabled]="data.picks?.length === 0">
+              [nzLoading]="mapOfPrintingInProcessId[data.id!]" [disabled]="data.picks.length === 0">
               {{ 'print' | i18n }}
             </button>
-            <button nz-button (click)="confirmPicks(data)" [disabled]="data.picks?.length === 0">
+            <button nz-button (click)="confirmPicks(data)" [disabled]="data.picks.length === 0">
               {{ 'confirm' | i18n }}
             </button>
           </td>
@@ -111,10 +111,10 @@
                   <tr *ngFor="let pick of mapOfPicks[data.id!]">
                     <td>{{ pick.number }}</td>
                     <td>{{ pick.pickListNumber }}</td>
-                    <td>{{ pick.sourceLocation?.name }}</td>
-                    <td>{{ pick.destinationLocation?.name }}</td>
-                    <td>{{ pick.item?.name }}</td>
-                    <td>{{ pick.item?.description }}</td>
+                    <td>{{ pick.sourceLocation.name }}</td>
+                    <td>{{ pick.destinationLocation.name }}</td>
+                    <td>{{ pick.item.name }}</td>
+                    <td>{{ pick.item.description }}</td>
                     <td>{{ pick.quantity }}</td>
                     <td>{{ pick.pickedQuantity }}</td>
 

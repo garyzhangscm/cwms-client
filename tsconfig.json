@@ -30,7 +30,13 @@
         "src/environments/*"
       ]
     },
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false, 
+    // to solve the issue 
+    //  This module is declared with 'export =', and can only be used with a default import when using the 'allowSyntheticDefaultImports' flag.
+    // "resolveJsonModule": true,
+    // "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    // "strictPropertyInitialization": false
   },
   "angularCompilerOptions": {
     "strictInjectionParameters": true,

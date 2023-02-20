@@ -100,8 +100,8 @@
         <td>{{ shipmentLine.shipment?.number }}</td>
         <td>{{ shipmentLine.number }}</td>
         <td>{{ shipmentLine.orderNumber }}</td>
-        <td>{{ shipmentLine.orderLine?.number }}</td>
-        <td>{{ shipmentLine.orderLine?.item?.name }}</td>
+        <td>{{ shipmentLine.orderLine.number }}</td>
+        <td>{{ shipmentLine.orderLine.item?.name }}</td>
         <td>{{ shipmentLine.quantity }}</td>
         <td>{{ shipmentLine.shippedQuantity }}</td>
       </tr>
@@ -142,10 +142,10 @@
       <tbody>
         <tr *ngFor="let pick of mapOfPicks[data.id!]">
           <td>{{ pick.number }}</td>
-          <td>{{ pick.sourceLocation?.name }}</td>
-          <td>{{ pick.destinationLocation?.name }}</td>
-          <td>{{ pick.item?.name }}</td>
-          <td>{{ pick.item?.description }}</td>
+          <td>{{ pick.sourceLocation.name }}</td>
+          <td>{{ pick.destinationLocation.name }}</td>
+          <td>{{ pick.item.name }}</td>
+          <td>{{ pick.item.description }}</td>
           <td>{{ pick.quantity }}</td>
           <td>{{ pick.pickedQuantity }}</td>
           <td>
@@ -160,10 +160,10 @@
     <ng-template #pickTableFoot>
       <div nz-row nzType="flex" nzJustify="start">
         <button nz-button nzType="primary" (click)="printPickSheets(data)"
-          [nzLoading]="mapOfPrintingInProcessId[data.id!]" [disabled]="mapOfPicks[data.id!!]?.length === 0">
+          [nzLoading]="mapOfPrintingInProcessId[data.id!]" [disabled]="mapOfPicks[data.id!!].length === 0">
           {{ 'print' | i18n }}
         </button>
-        <button nz-button (click)="confirmPicks(data)" [disabled]="mapOfPicks[data.id!!]?.length === 0">
+        <button nz-button (click)="confirmPicks(data)" [disabled]="mapOfPicks[data.id!!].length === 0">
           {{ 'confirm' | i18n }}
         </button>
       </div>
@@ -256,8 +256,8 @@
       </thead>
       <tbody *ngFor="let shortAllocation of mapOfShortAllocations[data.id!!]">
         <tr *ngIf="shortAllocation.status !== shortAllocationStatus.CANCELLED">
-          <td>{{ shortAllocation.item?.name }}</td>
-          <td>{{ shortAllocation.item?.description }}</td>
+          <td>{{ shortAllocation.item.name }}</td>
+          <td>{{ shortAllocation.item.description }}</td>
           <td>{{ shortAllocation.quantity }}</td>
           <td>{{ shortAllocation.openQuantity }}</td>
           <td>{{ shortAllocation.inprocessQuantity }}</td>

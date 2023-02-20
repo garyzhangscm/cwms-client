@@ -1,6 +1,6 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
-  <a routerLink="/outbound/order" routerLinkActive="active" [queryParams]="{number:currentOrder?.number}">{{ 'return' | i18n
+  <a routerLink="/outbound/order" routerLinkActive="active" [queryParams]="{number:currentOrder.number}">{{ 'return' | i18n
     }}</a>
 </ng-template>
 <ng-template #breadcrumb>

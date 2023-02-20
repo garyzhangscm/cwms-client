@@ -54,8 +54,8 @@
 
         <td>{{ data.number }}</td>
         <td>{{ data.status }}</td>
-        <td>{{ data.carrier?.name }}</td>
-        <td>{{ data.carrierServiceLevel?.name }}</td>
+        <td>{{ data.carrier.name }}</td>
+        <td>{{ data.carrierServiceLevel.name }}</td>
 
         <td>{{ data.driverFirstName }}</td>
         <td>{{ data.driverLastName }}</td>
@@ -63,7 +63,7 @@
         <td>{{ data.licensePlateNumber }}</td>
         <td>{{ data.size }}</td>
         <td>{{ data.type }}</td>
-        <td>{{ data.location?.name }}</td>
+        <td>{{ data.location.name }}</td>
         <td>
 
           <button nz-button (click)="checkInTrailer(data)">

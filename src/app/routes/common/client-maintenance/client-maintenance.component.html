@@ -221,44 +221,44 @@
   <!-- confirm information -->
   <div class="small-card" *ngIf="stepIndex === 2" style="padding-top: 20px;">
     
-    <nz-card nzTitle="{{ currentClient?.name }}" >
+    <nz-card nzTitle="{{ currentClient.name }}" >
       <nz-descriptions nzBordered>
 
-        <nz-descriptions-item nzTitle="{{'name' | i18n}}">{{currentClient?.name}}
+        <nz-descriptions-item nzTitle="{{'name' | i18n}}">{{currentClient.name}}
         </nz-descriptions-item>
         <nz-descriptions-item nzTitle="{{'description' | i18n}}" nzSpan="2">
-          {{currentClient?.description}}
+          {{currentClient.description}}
         </nz-descriptions-item>
 
         <nz-descriptions-item nzTitle="{{'listPickEnabledFlag' | i18n}}" nzSpan="2">
-          {{currentClient?.listPickEnabledFlag}}
+          {{currentClient.listPickEnabledFlag}}
         </nz-descriptions-item>
         <nz-descriptions-item nzTitle="{{'contactor.firstname' | i18n}}">
-          {{currentClient?.contactorFirstname}}
+          {{currentClient.contactorFirstname}}
         </nz-descriptions-item>
         <nz-descriptions-item nzTitle="{{'contactor.lastname' | i18n}}" nzSpan="2">
-          {{currentClient?.contactorLastname}}
+          {{currentClient.contactorLastname}}
         </nz-descriptions-item>
         <nz-descriptions-item nzTitle="{{ 'country' | i18n }}">
-          {{ currentClient?.addressCountry }}
+          {{ currentClient.addressCountry }}
         </nz-descriptions-item>
         <nz-descriptions-item nzTitle="{{ 'state' | i18n }}">
-          {{ currentClient?.addressState }}
+          {{ currentClient.addressState }}
         </nz-descriptions-item>
         <nz-descriptions-item nzTitle="{{ 'county' | i18n }}">
-          {{ currentClient?.addressCounty }}
+          {{ currentClient.addressCounty }}
         </nz-descriptions-item>
         <nz-descriptions-item nzTitle="{{ 'city' | i18n }}">
-          {{ currentClient?.addressCity }}
+          {{ currentClient.addressCity }}
         </nz-descriptions-item>
         <nz-descriptions-item nzTitle="{{ 'postcode' | i18n }}" nzSpan="2">
-          {{ currentClient?.addressPostcode }}
+          {{ currentClient.addressPostcode }}
         </nz-descriptions-item>
         <nz-descriptions-item nzTitle="{{ 'address.line1' | i18n }}" nzSpan="2">
-          {{ currentClient?.addressLine1 }}
+          {{ currentClient.addressLine1 }}
         </nz-descriptions-item>
         <nz-descriptions-item nzTitle="{{ 'address.line2' | i18n }}">
-          {{ currentClient?.addressLine2 }}
+          {{ currentClient.addressLine2 }}
         </nz-descriptions-item>
       </nz-descriptions>
     </nz-card>

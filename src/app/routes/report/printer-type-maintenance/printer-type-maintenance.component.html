@@ -1,6 +1,6 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
-  <a routerLink="/report/printer-type" routerLinkActive="active" [queryParams]="{name:currentPrinterType?.name}">{{ 'return' | i18n
+  <a routerLink="/report/printer-type" routerLinkActive="active" [queryParams]="{name: currentPrinterType.name}">{{ 'return' | i18n
     }}</a>
 </ng-template>
 <ng-template #breadcrumb>

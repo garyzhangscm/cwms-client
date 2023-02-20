@@ -1,6 +1,6 @@
 <page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
 <ng-template #returnLink>
-  <a routerLink="/warehouse-layout/warehouse-location" routerLinkActive="active" [queryParams]="{name:currentLocation?.name}">{{ 'return' | i18n
+  <a routerLink="/warehouse-layout/warehouse-location" routerLinkActive="active" [queryParams]="{name: currentLocation.name}">{{ 'return' | i18n
     }}</a>
 </ng-template>
 <ng-template #breadcrumb>
