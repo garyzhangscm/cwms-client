@@ -28,6 +28,16 @@ export interface Item {
   shelfLifeDays?: number;
   trackingExpirationDateFlag?: boolean;
 
+  
+  trackingColorFlag?: boolean;
+  defaultColor?: string;
+
+  trackingProductSizeFlag?: boolean;
+  defaultProductSize?: string;
+
+  trackingStyleFlag?: boolean;
+  defaultStyle?: string;
+
   warehouseId?: number;
   companyId: number;
 

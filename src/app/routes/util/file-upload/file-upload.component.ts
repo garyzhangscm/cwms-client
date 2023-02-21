@@ -100,7 +100,13 @@ export class UtilFileUploadComponent implements OnInit {
   handleChange(info: NzUploadChangeParam): void {  
     if (info.file.status === 'uploading') {
       // this.isSpinning = true;
-      this.fileUploadProgress = 0;
+      
+      if (this.selectedFileUploadType?.name == 'inventory') { 
+          this.fileUploadProgress = 0;
+      }
+      else {
+        this.isSpinning = true;
+      }
       console.log(info.file, info.fileList);
     }
     else if (info.file.status === 'done') { 
@@ -141,6 +147,7 @@ export class UtilFileUploadComponent implements OnInit {
     else {
       
       this.fileUploadProgress = 100;
+      this.isSpinning = false;
       this.msg.success(`${info.file.name} file uploaded successfully`);
     }
   }

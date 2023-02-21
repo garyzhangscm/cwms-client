@@ -136,7 +136,7 @@
 
   <!-- Table to Display the result  -->
   <div class="search-result-list">
-    <nz-table [nzScroll]="{ x: '100vw'}" #rowSelectionTable nzShowSizeChanger nzShowPagination
+    <nz-table [nzScroll]="{ x: '2200px'}" #rowSelectionTable nzShowSizeChanger nzShowPagination
       [nzData]="inventories" [nzFooter]="tableFoot" (nzCurrentPageDataChange)="onCurrentPageDataChange($event)">
       <thead>
         <tr>
@@ -151,7 +151,7 @@
           </th>
 
 
-          <th nzWidth="20%" nzRight>{{ 'action' | i18n }}</th>
+          <th nzWidth="360px" nzRight>{{ 'action' | i18n }}</th>
         </tr>
       </thead>
       <tbody>
@@ -175,21 +175,36 @@
               style="width:75px"
             ></nz-skeleton-element> 
             {{ data.location?.name }}</td>
-          <td>{{ data.quantity }}  
-            <nz-skeleton-element 
-            *ngIf="data.itemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
-                && data.itemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
-            nzType="input"
-            [nzActive]="true"
-            [nzSize]="'small'"
-            style="width:75px"
-          ></nz-skeleton-element> 
-          <strong>{{data.itemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong> </td>
+          <td> 
+              {{ data.displayQuantity }}  
+              <nz-skeleton-element 
+              *ngIf="data.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasureId 
+                  && data.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure == null"
+              nzType="input"
+              [nzActive]="true"
+              [nzSize]="'small'"
+              style="width:75px"
+            ></nz-skeleton-element>  
+              <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList">
+                {{data.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure?.name}}<span nz-icon nzType="down"></span>
+              </a>
+              <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
+                <ul nz-menu nzSelectable>
+                  <li nz-menu-item *ngFor="let itemUnitOfMeasure of data.itemPackageType?.itemUnitOfMeasures" 
+                  (click)="changeDisplayItemUnitOfMeasure(data, itemUnitOfMeasure)">
+                    {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                  </li> 
+                </ul>
+              </nz-dropdown-menu> 
+          </td>
           <td>
             <a nz-tooltip [nzTooltipTitle]="data.inventoryStatus!.description">{{
               data.inventoryStatus!.description}}</a>
           </td>
 
+          <td>{{ data.color }}</td>
+          <td>{{ data.productSize }}</td>
+          <td>{{ data.style }}</td>
           <td>
             <span *ngIf="data.lockedForAdjust === false">{{ (data.lockedForAdjust + '') | i18n }}</span>
             <span *ngIf="data.lockedForAdjust === true"><a routerLink="/inventory/inventory-adjustment-request"
@@ -231,7 +246,7 @@
               </li>
             </ol>
           </td>
-          <td nzRight>
+          <td nzRight nzWidth="360px" >
             <button nz-button nz-dropdown [nzDropdownMenu]="actions" [nzLoading]="mapOfInprocessInventoryId[data.id!]"
               *ngIf="data.lockedForAdjust === false">{{ 'action' | i18n }}<i nz-icon nzType="down"></i></button>
             <nz-dropdown-menu #actions="nzDropdownMenu">

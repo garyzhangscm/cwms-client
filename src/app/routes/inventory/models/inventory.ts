@@ -21,6 +21,7 @@ export interface Inventory {
   warehouse?: Warehouse;
   itemPackageType?: ItemPackageType;
   quantity?: number;
+  displayQuantity?:number; // quantity by the display UOM
   inventoryStatus?: InventoryStatus;
   inventoryMovements?: InventoryMovement[];
   lockedForAdjust?: boolean;
@@ -33,4 +34,9 @@ export interface Inventory {
   receiptId?: number;
   receiptLineId?: number;
   inboundQCRequired?: boolean;
+
+  
+  color?: string;
+  productSize?: string;
+  style?: string;
 }

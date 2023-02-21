@@ -29,6 +29,7 @@ import { Inventory } from '../models/inventory';
 import { InventoryMovement } from '../models/inventory-movement';
 import { InventoryStatus } from '../models/inventory-status';
 import { ItemFamily } from '../models/item-family';
+import { ItemUnitOfMeasure } from '../models/item-unit-of-measure';
 import { InventoryStatusService } from '../services/inventory-status.service';
 import { InventoryService } from '../services/inventory.service';
 import { ItemFamilyService } from '../services/item-family.service';
@@ -108,6 +109,39 @@ export class InventoryInventoryComponent implements OnInit {
       showFilter: false
     },
     {
+      name: 'color',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.color, b.color),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'productSize',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.productSize, b.productSize),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'style',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.style, b.style),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
       name: 'inventory.locked-for-adjustment',
       showSort: true,
       sortOrder: null,
@@ -118,6 +152,7 @@ export class InventoryInventoryComponent implements OnInit {
       filterFn: null,
       showFilter: false
     },
+    
     {
       name: 'inventory.pick-id',
       showSort: true,
@@ -265,7 +300,7 @@ export class InventoryInventoryComponent implements OnInit {
     this.setOfCheckedId.clear();
     if (id) {
       this.inventoryService.getInventoryById(id).subscribe(
-        inventoryRes => {
+        inventoryRes => { 
           this.processInventoryQueryResult([inventoryRes]);
           this.isSpinning = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
@@ -361,13 +396,40 @@ export class InventoryInventoryComponent implements OnInit {
     // load the Unit of Measure for each item unit of measure of each package type
     this.loadUnitOfMeasure(inventory);
 
+    // calculate the display quantity based on the display UOM
+    this.calculateDisplayQuantity(inventory);
+
     await this.loadPicksInformation(inventory);
     
     await this.loadAllocateByPicksInformation(inventory);
 
     await this.loadStockUnitOfMeasure(inventory);
 
+    await this.loadDisplayUnitOfMeasure(inventory);
+
     
+  }
+
+  calculateDisplayQuantity(inventory: Inventory) : void {
+    // see if we have the display UOM setup
+    if (inventory.itemPackageType?.displayItemUnitOfMeasure) {
+      let displayItemUnitOfMeasureQuantity  = inventory.itemPackageType.displayItemUnitOfMeasure.quantity;
+
+      if (inventory.quantity! % displayItemUnitOfMeasureQuantity! ==0) {
+        inventory.displayQuantity = inventory.quantity! / displayItemUnitOfMeasureQuantity!
+      }
+      else {
+        // the inventory's quantity can't be devided by the display uom, we will display the quantity in 
+        // stock uom
+        inventory.displayQuantity = inventory.quantity;
+        inventory.itemPackageType.displayItemUnitOfMeasure = inventory.itemPackageType.stockItemUnitOfMeasure;
+      }
+    }
+    else {
+      // there's no display UOM setup for this inventory, we will display
+      // by the quantity
+      inventory.displayQuantity = inventory.quantity;
+    }
   }
   
   async loadLocation(inventory: Inventory) {
@@ -536,6 +598,23 @@ export class InventoryInventoryComponent implements OnInit {
   } 
   
 
+  async loadDisplayUnitOfMeasure(inventory: Inventory) {
+    if (inventory.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasureId != null &&
+      inventory.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure == null) {
+ 
+        this.loadingDetailsRequest++;
+        this.localCacheService.getUnitOfMeasure(inventory.itemPackageType.displayItemUnitOfMeasure.unitOfMeasureId!)
+              .subscribe({
+                next: (unitOfMeasureRes) => {
+                  inventory.itemPackageType!.displayItemUnitOfMeasure!.unitOfMeasure = unitOfMeasureRes;
+                  this.loadingDetailsRequest--;
+                
+                }, 
+                error: () => this.loadingDetailsRequest--
+              }) 
+    }
+  } 
+  
   onCurrentPageDataChange(listOfCurrentPageData: readonly  Inventory[]): void {
     this.listOfDisplayInventories = listOfCurrentPageData;
   }
@@ -886,5 +965,21 @@ export class InventoryInventoryComponent implements OnInit {
     return selectedInventory;
   }
  
+  changeDisplayItemUnitOfMeasure(inventory: Inventory, itemUnitOfMeasure: ItemUnitOfMeasure) {
+
+    
+    // see if the inventory's quantity can be divided by the item unit of measure
+    // if so, we are allowed to change the display UOM and quantity
+    if (inventory.quantity! % itemUnitOfMeasure.quantity! == 0) {
+
+      inventory.displayQuantity = inventory.quantity! / itemUnitOfMeasure.quantity!;
+      inventory.itemPackageType!.displayItemUnitOfMeasure = itemUnitOfMeasure;
+    }
+    else {
+      this.messageService.error(`can't change the display quantity as the inventory's quantity ${ 
+          inventory.quantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
+          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+    }
+  }
 
 }

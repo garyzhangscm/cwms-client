@@ -216,7 +216,91 @@ export class InventoryItemComponent implements OnInit {
         list.some(trackingExpirationDateFlag => item.trackingExpirationDateFlag === trackingExpirationDateFlag),
       showFilter: true,
       width: '150px'
-    }
+    },
+    {
+      name: 'trackingColorFlag',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) => this.utilService.compareBoolean(a.trackingColorFlag, b.trackingColorFlag),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false }
+      ],
+      filterFn: (list: boolean[], item: Item) =>
+        list.some(trackingColorFlag => item.trackingColorFlag === trackingColorFlag),
+      showFilter: true,
+      width: '150px'
+    },{
+      name: 'defaultColor',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) =>
+        this.utilService.compareNullableString(a.defaultColor?.toString(), b.defaultColor?.toString()),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      width: '150px'
+    },
+    {
+      name: 'trackingProductSizeFlag',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) => this.utilService.compareBoolean(a.trackingProductSizeFlag, b.trackingProductSizeFlag),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false }
+      ],
+      filterFn: (list: boolean[], item: Item) =>
+        list.some(trackingProductSizeFlag => item.trackingProductSizeFlag === trackingProductSizeFlag),
+      showFilter: true,
+      width: '150px'
+    },{
+      name: 'defaultProductSize',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) =>
+        this.utilService.compareNullableString(a.defaultProductSize?.toString(), b.defaultProductSize?.toString()),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      width: '150px'
+    },
+    {
+      name: 'trackingStyleFlag',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) => this.utilService.compareBoolean(a.trackingStyleFlag, b.trackingStyleFlag),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [
+        { text: this.i18n.fanyi('true'), value: true },
+        { text: this.i18n.fanyi('false'), value: false }
+      ],
+      filterFn: (list: boolean[], item: Item) =>
+        list.some(trackingStyleFlag => item.trackingStyleFlag === trackingStyleFlag),
+      showFilter: true,
+      width: '150px'
+    },{
+      name: 'defaultStyle',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Item, b: Item) =>
+        this.utilService.compareNullableString(a.defaultStyle?.toString(), b.defaultStyle?.toString()),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      width: '150px'
+    },
   ];
   expandSet = new Set<number>();
 
@@ -534,6 +618,17 @@ export class InventoryItemComponent implements OnInit {
     { title: this.i18n.fanyi("shelfLifeDays"), index: 'shelfLifeDays', iif: () => this.isChoose('shelfLifeDays'), },
     { title: this.i18n.fanyi("trackingExpirationDateFlag"), index: 'trackingExpirationDateFlag', iif: () => this.isChoose('trackingExpirationDateFlag'),
     type:"yn" },
+    
+    { title: this.i18n.fanyi("trackingColorFlag"), index: 'trackingColorFlag', iif: () => this.isChoose('trackingColorFlag'),
+    type:"yn" },
+    { title: this.i18n.fanyi("defaultColor"), index: 'defaultColor', iif: () => this.isChoose('defaultColor'), },
+    { title: this.i18n.fanyi("trackingProductSizeFlag"), index: 'trackingProductSizeFlag', iif: () => this.isChoose('trackingProductSizeFlag'),
+    type:"yn" },
+    { title: this.i18n.fanyi("defaultProductSize"), index: 'defaultProductSize', iif: () => this.isChoose('defaultProductSize'), },
+    { title: this.i18n.fanyi("trackingStyleFlag"), index: 'trackingStyleFlag', iif: () => this.isChoose('trackingStyleFlag'),
+    type:"yn" },
+    { title: this.i18n.fanyi("defaultStyle"), index: 'defaultStyle', iif: () => this.isChoose('defaultStyle')},
+
     {
       title: 'action',
       renderTitle: 'actionColumnTitle',
@@ -559,6 +654,12 @@ export class InventoryItemComponent implements OnInit {
     { label: this.i18n.fanyi("trackingManufactureDateFlag"), value: 'trackingManufactureDateFlag', checked: true },
     { label: this.i18n.fanyi("shelfLifeDays"), value: 'shelfLifeDays', checked: true },
     { label: this.i18n.fanyi("trackingExpirationDateFlag"), value: 'trackingExpirationDateFlag', checked: true },
+    { label: this.i18n.fanyi("trackingColorFlag"), value: 'trackingColorFlag', checked: true },
+    { label: this.i18n.fanyi("defaultColor"), value: 'defaultColor', checked: true },
+    { label: this.i18n.fanyi("trackingProductSizeFlag"), value: 'trackingProductSizeFlag', checked: true },
+    { label: this.i18n.fanyi("defaultProductSize"), value: 'defaultProductSize', checked: true },
+    { label: this.i18n.fanyi("trackingStyleFlag"), value: 'trackingStyleFlag', checked: true },
+    { label: this.i18n.fanyi("defaultStyle"), value: 'defaultStyle', checked: true },
   ];
 
   isChoose(key: string): boolean {

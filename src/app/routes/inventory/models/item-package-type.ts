@@ -8,4 +8,5 @@ export interface ItemPackageType {
   warehouseId?: number;
   companyId: number;
   stockItemUnitOfMeasure? : ItemUnitOfMeasure;
+  displayItemUnitOfMeasure? : ItemUnitOfMeasure;
 }
