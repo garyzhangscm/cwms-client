@@ -1,4 +1,4 @@
-import { HttpUrlEncodingCodec, HttpParams } from '@angular/common/http';
+import {  HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { DataTransferRequest } from '../models/data-transfer-request';
 import { DataTransferRequestStatus } from '../models/data-transfer-request-status';
 import { DataTransferRequestType } from '../models/data-transfer-request-type';
+import { UtilService } from './util.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,20 +15,20 @@ import { DataTransferRequestType } from '../models/data-transfer-request-type';
 export class DataTransferRequestService {
 
   constructor(
-    private http: _HttpClient
+    private http: _HttpClient ,
+    private utilService: UtilService,
   ) {}
 
   
   getDataTransferRequests(number?: string, companyCode?: string, companyId?: number, status?: DataTransferRequestStatus): Observable<DataTransferRequest[]> {
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+     
 
     let url = `admin/data-transfer`;
     if (number) {
-      url = `${url}?number=${httpUrlEncodingCodec.encodeValue(number)}`;
+      url = `${url}?number=${this.utilService.encodeValue(number)}`;
     }
     if (companyCode) {
-      url = `${url}?companyCode=${httpUrlEncodingCodec.encodeValue(companyCode)}`;
+      url = `${url}?companyCode=${this.utilService.encodeValue(companyCode)}`;
     }
     if (companyId) {
       url = `${url}?companyId=${companyId}`;

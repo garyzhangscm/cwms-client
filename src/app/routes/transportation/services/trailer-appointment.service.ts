@@ -1,10 +1,11 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { DateTimeService } from '../../util/services/date-time.service';
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { TrailerAppointment } from '../models/trailer-appointment';
 import { TrailerAppointmentStatus } from '../models/trailer-appointment-status.enum';
@@ -17,6 +18,7 @@ export class TrailerAppointmentService {
   constructor(
     private http: _HttpClient, 
     private warehouseService: WarehouseService,   
+    private utilService: UtilService,
     private dateTimeService: DateTimeService,
   ) {}
  
@@ -26,10 +28,9 @@ export class TrailerAppointmentService {
      ): Observable<TrailerAppointment[]> {
     
     let url = `common/trailer-appointments?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+ 
     if (number) {
-      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number.trim())}`;
+      url = `${url}&number=${this.utilService.encodeValue(number.trim())}`;
     }
     if (type) {
       url = `${url}&type=${type}`;

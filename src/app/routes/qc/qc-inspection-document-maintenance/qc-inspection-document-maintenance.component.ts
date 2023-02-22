@@ -1,4 +1,5 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+
+
 import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -7,6 +8,7 @@ import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile, NzUploadChangeParam } from 'ng-zorro-antd/upload';
 
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { WorkOrderQcSample } from '../../work-order/models/work-order-qc-sample';
 import { QcInspectionRequest } from '../models/qc-inspection-request';
@@ -48,6 +50,7 @@ export class QcQcInspectionDocumentMaintenanceComponent implements OnInit {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private titleService: TitleService,
     private warehouseService: WarehouseService, 
+    private utilService: UtilService,
     private messageService: NzMessageService,
     private router: Router,) { 
       this.currentQCInspectionRequest = {        
@@ -142,10 +145,9 @@ export class QcQcInspectionDocumentMaintenanceComponent implements OnInit {
   }
 
   getDocumentUrl(documentFileName: string) : string {
+     
     
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
-    
-    return `${environment.api.baseUrl}inventory/qc-inspection-requests/documents/${this.warehouseService.getCurrentWarehouse().id}/${this.currentQCInspectionRequest?.id}/${httpUrlEncodingCodec.encodeValue(documentFileName.trim())}`;
+    return `${environment.api.baseUrl}inventory/qc-inspection-requests/documents/${this.warehouseService.getCurrentWarehouse().id}/${this.currentQCInspectionRequest?.id}/${this.utilService.encodeValue(documentFileName.trim())}`;
 
     
   }

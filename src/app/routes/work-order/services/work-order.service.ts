@@ -1,4 +1,4 @@
-import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -9,6 +9,7 @@ import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { PickWork } from '../../outbound/models/pick-work';
 import { ReportHistory } from '../../report/models/report-history';
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ProductionLine } from '../models/production-line';
 import { ProductionLineAllocationRequest } from '../models/production-line-allocation-request';
@@ -29,20 +30,20 @@ export class WorkOrderService {
     private http: _HttpClient,
     private warehouseService: WarehouseService,
     private printingService: PrintingService,
+    private utilService: UtilService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
   ) { }
 
   getWorkOrders(number?: string, itemName?: string, productionPlanId?: number, statusList?:string, loadDetails?: boolean): Observable<WorkOrder[]> {
     
     let url = `workorder/work-orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+     
 
     if (number) {
-      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number.trim())}`;
+      url = `${url}&number=${this.utilService.encodeValue(number.trim())}`;
     }
     if (itemName) {
-      url = `${url}&itemName=${httpUrlEncodingCodec.encodeValue(itemName.trim())}`;
+      url = `${url}&itemName=${this.utilService.encodeValue(itemName.trim())}`;
     }
     if (productionPlanId) {
       url = `${url}&productionPlanId=${productionPlanId}`;
@@ -110,18 +111,16 @@ export class WorkOrderService {
 
   
   reverseProduction(workOrder: WorkOrder, lpn: string): Observable<WorkOrder> {
+     
     
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
-    
-    let url = `workorder/work-orders/${workOrder.id}/reverse-production?lpn=${httpUrlEncodingCodec.encodeValue(lpn.trim())}`; 
+    let url = `workorder/work-orders/${workOrder.id}/reverse-production?lpn=${this.utilService.encodeValue(lpn.trim())}`; 
     return this.http.post(url).pipe(map(res => res.data)); 
   }
   
   reverseByProduct(workOrder: WorkOrder, lpn: string): Observable<WorkOrder> {
+     
     
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
-    
-    let url = `workorder/work-orders/${workOrder.id}/reverse-by-product?lpn=${httpUrlEncodingCodec.encodeValue(lpn.trim())}`; 
+    let url = `workorder/work-orders/${workOrder.id}/reverse-by-product?lpn=${this.utilService.encodeValue(lpn.trim())}`; 
     return this.http.post(url).pipe(map(res => res.data)); 
   }
 

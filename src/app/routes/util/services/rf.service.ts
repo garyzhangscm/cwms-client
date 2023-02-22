@@ -1,14 +1,12 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { Client } from '../../common/models/client';
-import { Item } from '../../inventory/models/item';
-import { ItemFamily } from '../../inventory/models/item-family';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { RF } from '../models/rf';
+import { UtilService } from './util.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,16 +16,16 @@ export class RfService {
   constructor(
     private http: _HttpClient, 
     private warehouseService: WarehouseService,
+    private utilService: UtilService
   ) {}
 
   
   getRFs(rfCode?: string): Observable<RF[]> {
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+     
 
     let url = `resource/rfs?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (rfCode) {
-      url = `${url}&rfCode=${httpUrlEncodingCodec.encodeValue(rfCode)}`;
+      url = `${url}&rfCode=${this.utilService.encodeValue(rfCode)}`;
     }
      
     

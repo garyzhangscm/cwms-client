@@ -1,10 +1,11 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+ 
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';   
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
 import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
+import { UtilService } from '../../util/services/util.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Client } from '../models/client';
@@ -18,6 +19,7 @@ export class ClientService {
     private gzLocalStorageService: GzLocalStorageService,
     private warehouseService: WarehouseService,
     private companyService: CompanyService,
+    private utilService: UtilService
   ) {}
 
   loadClients(refresh: boolean = false): Observable<Client[]> {
@@ -38,10 +40,9 @@ export class ClientService {
   getClients(name?: string): Observable<Client[]> {
 
     let url = `common/clients?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&companyId=${this.companyService.getCurrentCompany()!.id}`;
-
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+ 
     if (name) {
-      url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name.trim())}`;
+      url = `${url}&name=${this.utilService.encodeValue(name.trim())}`;
     }
     return this.http
       .get(url)

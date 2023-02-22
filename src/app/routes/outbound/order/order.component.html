@@ -432,7 +432,7 @@
                   (preview)="previewReport(item)">
                 </cwms-common-print-button>
                 <button nz-button (click)="confirmPicks(item)"
-                  [disabled]="mapOfPicks[item.id!].length === 0 || item.status === orderStatusEnum.COMPLETE">
+                  [disabled]="(mapOfPicks[item.id!] && mapOfPicks[item.id!].length === 0) || item.status === orderStatusEnum.COMPLETE">
                   {{ 'confirm' | i18n }}
                 </button>
                 <button nz-button (click)="cancelSelectedPick(item)"

@@ -1,4 +1,4 @@
-import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -9,6 +9,7 @@ import { PrintableBarcode } from '../../common/models/printable-barcode';
 import { PrintingService } from '../../common/services/printing.service';
 import { ReportHistory } from '../../report/models/report-history';
 import { DateTimeService } from '../../util/services/date-time.service';
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Order } from '../models/order';
 import { OrderCategory } from '../models/order-category';
@@ -27,21 +28,21 @@ export class OrderService {
     private warehouseService: WarehouseService,
     private dateTimeService: DateTimeService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private utilService: UtilService
   ) { }
 
   getOrders(number?: string, loadDetails?: boolean, orderStatus?: OrderStatus, 
     startCompleteTime?: Date, endCompleteTime?:Date, specificCompleteDate?: Date, category?: OrderCategory, 
     customerName?: string, customerId?: number, 
     startCreatedTime?: Date, endCreatedTime?:Date, specificCreatedDate?: Date,): Observable<Order[]> {
-      
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+       
     let params = new HttpParams();
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);
 
     let url = `outbound/orders`;
     
     if (number) { 
-      params = params.append('number', httpUrlEncodingCodec.encodeValue(number)); 
+      params = params.append('number', this.utilService.encodeHttpParameter(number)); 
     }
     if (loadDetails != null) {
       params = params.append('loadDetails', loadDetails);  
@@ -54,7 +55,7 @@ export class OrderService {
       params = params.append('status', orderStatus);    
     }
     if (customerName) {
-      params = params.append('customerName', httpUrlEncodingCodec.encodeValue(customerName));  
+      params = params.append('customerName', this.utilService.encodeHttpParameter(customerName));  
     }
     if (customerId != null) {
       params = params.append('customerId', customerId);  
@@ -190,10 +191,9 @@ export class OrderService {
   getOpenOrdersForStop(number?: string): Observable<Order[]> {
     let url = `outbound/orders/open-for-stop?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     
-    if (number) {
-      const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+    if (number) { 
       
-      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number)}`; 
+      url = `${url}&number=${this.utilService.encodeValue(number)}`; 
     }
     return this.http.get(url).pipe(map(res => res.data));
   }

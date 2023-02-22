@@ -1,10 +1,12 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+
+
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { DateTimeService } from '../../util/services/date-time.service';
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { OrderActivity } from '../models/order-activity';
 
@@ -15,6 +17,7 @@ export class OrderActivityService {
 
   constructor(private http: _HttpClient, 
     private warehouseService: WarehouseService, 
+    private utilService: UtilService,
     private dateTimeService: DateTimeService) {}
 
   getOrderActivities( 
@@ -34,9 +37,7 @@ export class OrderActivityService {
     shortAllocationId?: number
     
   ): Observable<OrderActivity[]> {
-    let url = `outbound/order-activities?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
-   
+    let url = `outbound/order-activities?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`; 
     if (beginDateTime) {
       url = `${url}&beginDateTime=${this.dateTimeService.getISODateTimeString(beginDateTime)}`;
     }
@@ -48,23 +49,23 @@ export class OrderActivityService {
     }
 
     if (username) {
-      url = `${url}&username=${httpUrlEncodingCodec.encodeValue(username.trim())}`;
+      url = `${url}&username=${this.utilService.encodeValue(username.trim())}`;
     }
     if (rfCode) {
-      url = `${url}&rfCode=${httpUrlEncodingCodec.encodeValue(rfCode.trim())}`;
+      url = `${url}&rfCode=${this.utilService.encodeValue(rfCode.trim())}`;
     }
     
     if (orderNumber) {
-      url = `${url}&orderNumber=${httpUrlEncodingCodec.encodeValue(orderNumber.trim())}`;
+      url = `${url}&orderNumber=${this.utilService.encodeValue(orderNumber.trim())}`;
     }
     if (shipmentNumber) {
-      url = `${url}&shipmentNumber=${httpUrlEncodingCodec.encodeValue(shipmentNumber.trim())}`;
+      url = `${url}&shipmentNumber=${this.utilService.encodeValue(shipmentNumber.trim())}`;
     }
     if (shipmentLineNumber) {
-      url = `${url}&shipmentLineNumber=${httpUrlEncodingCodec.encodeValue(shipmentLineNumber.trim())}`;
+      url = `${url}&shipmentLineNumber=${this.utilService.encodeValue(shipmentLineNumber.trim())}`;
     }
     if (pickNumber) {
-      url = `${url}&pickNumber=${httpUrlEncodingCodec.encodeValue(pickNumber.trim())}`;
+      url = `${url}&pickNumber=${this.utilService.encodeValue(pickNumber.trim())}`;
     }
  
     

@@ -1,9 +1,10 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ProductionLineMonitor } from '../models/production-line-monitor';
 
@@ -11,20 +12,20 @@ import { ProductionLineMonitor } from '../models/production-line-monitor';
   providedIn: 'root'
 })
 export class ProductionLineMonitorService {
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
+  constructor(private http: _HttpClient, private warehouseService: WarehouseService, 
+    private utilService: UtilService) {}
 
   getProductionLineMonitors(name?: string, description?: string, productionLineName?: string): Observable<ProductionLineMonitor[]> {
     let url =  `workorder/production-line-monitors?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+     
     if (name) {
-      url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name.trim())}`;
+      url = `${url}&name=${this.utilService.encodeValue(name.trim())}`;
     }
     if (description) {
-      url = `${url}&description=${httpUrlEncodingCodec.encodeValue(description.trim())}`;
+      url = `${url}&description=${this.utilService.encodeValue(description.trim())}`;
     }
     if (productionLineName) {
-      url = `${url}&productionLineName=${httpUrlEncodingCodec.encodeValue(productionLineName.trim())}`;
+      url = `${url}&productionLineName=${this.utilService.encodeValue(productionLineName.trim())}`;
     }
 
     return this.http.get(url).pipe(map(res => res.data));

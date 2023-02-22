@@ -1,4 +1,4 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { DataInitialRequest } from '../models/data-initial-request';
+import { UtilService } from './util.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,17 +14,15 @@ import { DataInitialRequest } from '../models/data-initial-request';
 export class DataInitialRequestService {
   constructor(
     private http: _HttpClient, 
-    private warehouseService: WarehouseService,
+    private utilService: UtilService,
   ) {}
 
   
   getDataInitialRequests(companyName?: string): Observable<DataInitialRequest[]> {
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
-
+     
     let url = `admin/data/company/initiate`;
     if (companyName) {
-      url = `${url}?companyName=${httpUrlEncodingCodec.encodeValue(companyName)}`;
+      url = `${url}?companyName=${this.utilService.encodeValue(companyName)}`;
     }
      
     

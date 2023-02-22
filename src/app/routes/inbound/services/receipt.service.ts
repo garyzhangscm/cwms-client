@@ -1,4 +1,4 @@
-import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -9,6 +9,7 @@ import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { ReportHistory } from '../../report/models/report-history';
 import { DateTimeService } from '../../util/services/date-time.service';
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Receipt } from '../models/receipt';
@@ -24,18 +25,17 @@ export class ReceiptService {
     private warehouseService: WarehouseService, 
     private dateTimeService: DateTimeService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private utilService: UtilService
   ) { }
 
   getReceipts(number?: string, loadDetails?: boolean, statusList?: string, 
     supplierName?: string, 
     checkInStartTime?: Date, checkInEndTime?:Date, checkInSpecificDate?: Date, purchaseOrderId?: number): Observable<Receipt[]> {
     let url = `inbound/receipts?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
-    
+     
 
     if (number) {
-      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number.trim())}`;
+      url = `${url}&number=${this.utilService.encodeValue(number.trim())}`;
     }
     if (loadDetails !== undefined && loadDetails!= null) {
       url = `${url}&loadDetails=${loadDetails}`;

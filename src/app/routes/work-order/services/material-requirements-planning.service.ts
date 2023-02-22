@@ -1,9 +1,10 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service'; 
 import { MaterialRequirementsPlanning } from '../models/material-requirements-planning';
 
@@ -12,20 +13,20 @@ import { MaterialRequirementsPlanning } from '../models/material-requirements-pl
 })
 export class MaterialRequirementsPlanningService {
 
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
+  constructor(private http: _HttpClient, private warehouseService: WarehouseService, 
+    private utilService: UtilService) {}
 
   getMRPs(number?: string, description?: string, mpsNumber?: string): Observable<MaterialRequirementsPlanning[]> {
     let url = `workorder/material-requirements-planning?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+     
     if (number) {
-      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number.trim())}`;
+      url = `${url}&number=${this.utilService.encodeValue(number.trim())}`;
     }
     if (description) {
-      url = `${url}&description=${httpUrlEncodingCodec.encodeValue(description.trim())}`;
+      url = `${url}&description=${this.utilService.encodeValue(description.trim())}`;
     }
     if (mpsNumber) {
-      url = `${url}&mpsNumber=${httpUrlEncodingCodec.encodeValue(mpsNumber.trim())}`;
+      url = `${url}&mpsNumber=${this.utilService.encodeValue(mpsNumber.trim())}`;
     }
 
     return this.http.get(url).pipe(map(res => res.data));

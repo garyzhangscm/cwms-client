@@ -1,4 +1,4 @@
-import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -8,6 +8,7 @@ import { map } from 'rxjs/operators';
 
 import { Inventory } from '../../inventory/models/inventory';
 import { ReportHistory } from '../../report/models/report-history';
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { QcInspectionRequest } from '../models/qc-inspection-request';
 import { QCInspectionResult } from '../models/qc-inspection-result';
@@ -18,7 +19,8 @@ import { QCInspectionResult } from '../models/qc-inspection-result';
 export class QcInspectionRequestService {
 
   constructor(private http: _HttpClient, private warehouseService: WarehouseService, 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) {}
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private utilService: UtilService) {}
 
   getQCInspectionRequests(inventoryId? : number, inventoryIds?: string, lpn?: string,  number?: string, 
     type?: string, qcInspectionResult?: string) : Observable<QcInspectionRequest[]> {
@@ -94,10 +96,9 @@ export class QcInspectionRequestService {
 
   getQCInspectionResult(lpn?: string, workOrderQCSampleNumber?: string, number?: string) : Observable<QcInspectionRequest[]> {
     let url = `inventory/qc-inspection-requests/result?warehouseId=${this.warehouseService.getCurrentWarehouse()!.id}`;
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+     
     if (lpn) {
-      url = `${url}&lpn=${httpUrlEncodingCodec.encodeValue(lpn.trim())}`;
+      url = `${url}&lpn=${this.utilService.encodeValue(lpn.trim())}`;
     }
     
     if (workOrderQCSampleNumber) {
@@ -106,7 +107,7 @@ export class QcInspectionRequestService {
      
 
     if (number) {
-      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number.trim())}`;
+      url = `${url}&number=${this.utilService.encodeValue(number.trim())}`;
     }
     
     
@@ -135,10 +136,9 @@ export class QcInspectionRequestService {
   }
 
   changeQCInspectionDocument(qcInspectionRequest: QcInspectionRequest)  : Observable<QcInspectionRequest>{
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+     
 
-    const url = `inventory/qc-inspection-requests/${qcInspectionRequest.id}/change-document-urls?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&documentUrls=${httpUrlEncodingCodec.encodeValue(qcInspectionRequest.documentUrls.trim())}`;
+    const url = `inventory/qc-inspection-requests/${qcInspectionRequest.id}/change-document-urls?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&documentUrls=${this.utilService.encodeValue(qcInspectionRequest.documentUrls.trim())}`;
     return this.http.post(url).pipe(map(res => res.data));
   }
    

@@ -1,9 +1,10 @@
-import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { BillOfMaterial } from '../models/bill-of-material';
 import { ProductionLine } from '../models/production-line';
@@ -13,13 +14,13 @@ import { WorkOrder } from '../models/work-order';
   providedIn: 'root',
 })
 export class BillOfMaterialService {
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
+  constructor(private http: _HttpClient, private warehouseService: WarehouseService, 
+    private utilService: UtilService) {}
 
   getBillOfMaterials(number?: string, itemName?: string): Observable<BillOfMaterial[]> {
-    let url = `workorder/bill-of-materials?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+    let url = `workorder/bill-of-materials?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`; 
     if (number) {
-      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number)}`;
+      url = `${url}&number=${this.utilService.encodeValue(number)}`;
     }
     if (itemName) {
       url = `${url}&itemName=${itemName}`;

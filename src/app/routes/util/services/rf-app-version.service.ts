@@ -1,4 +1,4 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { RFAppVersion } from '../models/rf-app-version';
+import { UtilService } from './util.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,16 +15,16 @@ export class RfAppVersionService {
   constructor(
     private http: _HttpClient, 
     private cmopanyService: CompanyService,
+    private utilService: UtilService,
   ) {}
 
   
   getRFAppVersions(isLatestVersion?: boolean, versionNumber?: string): Observable<RFAppVersion[]> {
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+     
 
     let url = `resource/rf-app-versions?companyId=${this.cmopanyService.getCurrentCompany()!.id}`;
     if (versionNumber) {
-      url = `${url}&versionNumber=${httpUrlEncodingCodec.encodeValue(versionNumber)}`;
+      url = `${url}&versionNumber=${this.utilService.encodeValue(versionNumber)}`;
     }
      
     if (isLatestVersion) {

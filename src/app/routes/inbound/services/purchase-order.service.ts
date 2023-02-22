@@ -1,9 +1,10 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { PurchaseOrder } from '../models/purchase-order';
 
@@ -15,30 +16,33 @@ export class PurchaseOrderService {
   constructor(
     private http: _HttpClient,
     private warehouseService: WarehouseService,  
+    private utilService: UtilService
   ) { }
 
   getPurchaseOrders(number?: string,  statusList?: string, 
     supplierName?: string, loadDetails?: boolean,): Observable<PurchaseOrder[]> {
-    let url = `inbound/purchase-orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+     
     
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
-    
+    let params = new HttpParams();
+
+    const url = `inbound/purchase-orders`;
+    params = params.append("warehouseId", this.warehouseService.getCurrentWarehouse().id); 
 
     if (number) {
-      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number.trim())}`;
+      params = params.append("number", this.utilService.encodeHttpParameter(number.trim())); 
     }
     if (loadDetails !== undefined && loadDetails!= null) {
-      url = `${url}&loadDetails=${loadDetails}`;
+      params = params.append("loadDetails",loadDetails); 
     }
     if (statusList) {
-      url = `${url}&purchasOrderStatusList=${statusList}`;
+      params = params.append("purchasOrderStatusList", statusList); 
     }
     if (supplierName) {
-      url = `${url}&supplierName=${supplierName}`;
+      params = params.append("supplierName", this.utilService.encodeHttpParameter(supplierName.trim())); 
     }
  
 
-    return this.http.get(url).pipe(map(res => res.data));
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 
   getPurchaseOrder(id: number): Observable<PurchaseOrder> {

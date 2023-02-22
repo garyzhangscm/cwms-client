@@ -1,9 +1,10 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { UtilService } from '../../util/services/util.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { PrinterType } from '../models/printer-type';
 
@@ -12,13 +13,13 @@ import { PrinterType } from '../models/printer-type';
 })
 export class PrinterTypeService {
 
-  constructor(private http: _HttpClient, private companyService: CompanyService) {}
+  constructor(private http: _HttpClient, private companyService: CompanyService, 
+    private utilService: UtilService) {}
 
   getPrinterTypes(name?: string): Observable<PrinterType[]> {
     let url = `resource/printer-types?companyId=${this.companyService.getCurrentCompany()!.id}`;
-    if (name) {
-      const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
-      url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name.trim())}`;
+    if (name) { 
+      url = `${url}&name=${this.utilService.encodeValue(name.trim())}`;
     } 
 
     return this.http.get(url).pipe(map(res => res.data));

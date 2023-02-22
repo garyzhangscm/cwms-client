@@ -1,4 +1,4 @@
-import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 
 import { Client } from '../../common/models/client';
 import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
+import { UtilService } from '../../util/services/util.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Item } from '../models/item';
@@ -17,7 +18,7 @@ import { ItemFamily } from '../models/item-family';
 export class ItemService {
   constructor(
     private http: _HttpClient,
-    private gzLocalStorageService: GzLocalStorageService,
+    private utilService: UtilService,
     private warehouseService: WarehouseService,
     private companyService: CompanyService,
   ) {}
@@ -38,9 +39,7 @@ export class ItemService {
     itemFamilies?: ItemFamily[], 
     companyItem?: boolean, 
     warehouseSpecificItem?: boolean, 
-    clientIds?: string, description?: string): Observable<Item[]> {
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+    clientIds?: string, description?: string): Observable<Item[]> { 
     let params = new HttpParams(); 
 
     const url = `inventory/items`;
@@ -50,10 +49,10 @@ export class ItemService {
     params = params.append("warehouseId", this.warehouseService.getCurrentWarehouse().id);
 
     if (name) { 
-      params = params.append("name", httpUrlEncodingCodec.encodeValue(name.trim()));
+      params = params.append("name", this.utilService.encodeHttpParameter(name.trim()));
     }
     if (description) {
-      params = params.append("description", httpUrlEncodingCodec.encodeValue(description.trim())); 
+      params = params.append("description", this.utilService.encodeHttpParameter(description.trim())); 
     }
     if (clients && clients.length > 0) { 
       params = params.append("clientIds",clients.join(',') );

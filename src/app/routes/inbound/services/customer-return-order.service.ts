@@ -1,4 +1,4 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+ 
 import { Inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
 import { _HttpClient, ALAIN_I18N_TOKEN } from '@delon/theme';
@@ -8,6 +8,7 @@ import { map } from 'rxjs/operators';
 import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { ReportHistory } from '../../report/models/report-history';
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { CustomerReturnOrder } from '../models/customer-return-order';
 
@@ -21,17 +22,16 @@ export class CustomerReturnOrderService {
     private http: _HttpClient,
     private warehouseService: WarehouseService,
     private printingService: PrintingService,
+    private utilService: UtilService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
   ) { }
 
   getCustomerReturnOrders(number?: string, loadDetails?: boolean, statusList?: string,): Observable<CustomerReturnOrder[]> {
     let url = `inbound/customer-return-orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
-    
 
     if (number) {
-      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number.trim())}`;
+      url = `${url}&number=${this.utilService.encodeValue(number.trim())}`;
     }
     if (loadDetails !== undefined && loadDetails!= null) {
       url = `${url}&loadDetails=${loadDetails}`;

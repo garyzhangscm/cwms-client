@@ -1,9 +1,10 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
+import { UtilService } from '../../util/services/util.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service'; 
 import { Trailer } from '../models/trailer';
@@ -17,15 +18,15 @@ export class TrailerService {
   constructor(
     private http: _HttpClient, 
     private warehouseService: WarehouseService,
+    private utilService: UtilService,
     private companyService: CompanyService,) { }
 
   getTrailers(number?: string): Observable<Trailer[]> {
     
     let url = `common/trailers?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&companyId=${this.companyService.getCurrentCompany()!.id}`;
-
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+ 
     if (number) {
-      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number.trim())}`;
+      url = `${url}&number=${this.utilService.encodeValue(number.trim())}`;
     }
     return this.http
       .get(url)

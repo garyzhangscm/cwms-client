@@ -1,10 +1,11 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+ 
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
 import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { InventoryStatus } from '../models/inventory-status';
 
@@ -15,6 +16,7 @@ export class InventoryStatusService {
   constructor(
     private http: _HttpClient,
     private gzLocalStorageService: GzLocalStorageService,
+    private utilService: UtilService,
     private warehouseService: WarehouseService,
   ) {}
 
@@ -44,9 +46,8 @@ export class InventoryStatusService {
   getInventoryStatuses(name?: string, availableStatusFlag?: boolean): Observable<InventoryStatus[]> {
     let params = `warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     
-    if (name) {
-      const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
-      params = `${params}&itemName=${httpUrlEncodingCodec.encodeValue(name.trim())}`;
+    if (name) { 
+      params = `${params}&itemName=${this.utilService.encodeValue(name.trim())}`;
     }
     if (availableStatusFlag != null) {
       params = `${params}&availableStatusFlag=${availableStatusFlag}`;

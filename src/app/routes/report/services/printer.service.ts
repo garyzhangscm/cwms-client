@@ -1,9 +1,10 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Printer } from '../models/printer';
 
@@ -12,16 +13,16 @@ import { Printer } from '../models/printer';
 })
 export class PrinterService {
 
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
+  constructor(private http: _HttpClient, private warehouseService: WarehouseService, 
+    private utilService: UtilService) {}
 
   getPrinters(name?: string, printerType?: string): Observable<Printer[]> {
-    let url = `resource/printers?warehouseId=${this.warehouseService.getCurrentWarehouse()!.id}`;
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+    let url = `resource/printers?warehouseId=${this.warehouseService.getCurrentWarehouse()!.id}`; 
     if (name) {
-      url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name.trim())}`;
+      url = `${url}&name=${this.utilService.encodeValue(name.trim())}`;
     } 
     if (printerType) { 
-      url = `${url}&printerType=${httpUrlEncodingCodec.encodeValue(printerType.trim())}`;
+      url = `${url}&printerType=${this.utilService.encodeValue(printerType.trim())}`;
     } 
 
 

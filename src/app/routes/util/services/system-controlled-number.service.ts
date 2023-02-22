@@ -1,4 +1,4 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { SystemControlledNumber } from '../models/system-controlled-number';
+import { UtilService } from './util.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,16 +15,16 @@ export class SystemControlledNumberService {
   constructor(
     private http: _HttpClient, 
     private warehouseService: WarehouseService,
+    private utilService: UtilService
   ) {}
 
   
   getSystemControlledNumbers(variable?: string): Observable<SystemControlledNumber[]> {
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+     
 
     let url = `common/system-controlled-numbers?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (variable) {
-      url = `${url}&variable=${httpUrlEncodingCodec.encodeValue(variable)}`;
+      url = `${url}&variable=${this.utilService.encodeValue(variable)}`;
     }
      
     

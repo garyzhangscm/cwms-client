@@ -1,9 +1,10 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseLocation } from '../models/warehouse-location';
 import { WarehouseService } from './warehouse.service';
 
@@ -11,11 +12,11 @@ import { WarehouseService } from './warehouse.service';
   providedIn: 'root',
 })
 export class LocationService {
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
+  constructor(private http: _HttpClient, private warehouseService: WarehouseService, 
+    private utilService: UtilService) {}
 
   getLocations(locationGroupTypes?: string, locationGroupIds?: string, name?: string, emptyReservedCodeOnly?: boolean): Observable<WarehouseLocation[]> {
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+     
 
     let url = `layout/locations?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (locationGroupTypes) {
@@ -25,7 +26,7 @@ export class LocationService {
       url = `${url}&locationGroupIds=${locationGroupIds}`;
     }
     if (name) {
-      url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name)}`;
+      url = `${url}&name=${this.utilService.encodeValue(name)}`;
     }
     if (emptyReservedCodeOnly !== undefined) {
       url = `${url}&emptyReservedCodeOnly=${emptyReservedCodeOnly}`;

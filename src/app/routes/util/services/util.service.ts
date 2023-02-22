@@ -1,3 +1,4 @@
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { Client } from '../../common/models/client';
@@ -254,5 +255,36 @@ export class UtilService {
       imageUrl: item.imageUrl,
       thumbnailUrl: item.thumbnailUrl,
     }
+  }
+
+  /**
+   * Encode the param for url. 
+   * Note: if you use HttpParams to pass the parameters, the framework will encode the value
+   * so you don't need to invoke this command
+   *
+   * @param param 
+   * @returns 
+   */
+  encodeValue(param: string) : string {
+
+    // replace % with * for generic search
+    param = param.replace('%', '*');
+
+    
+    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();  
+
+    return httpUrlEncodingCodec.encodeValue(param.trim());
+  }
+  
+  /**
+   * replace the % with * as now we both support the % and * as wildcard
+   *
+   * @param param 
+   * @returns 
+   */
+  encodeHttpParameter(param: string) : string {
+
+    // replace % with * for generic search
+    return param.replace('%', '*'); 
   }
 }

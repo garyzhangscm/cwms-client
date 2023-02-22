@@ -1,9 +1,10 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+ 
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ItemSampling } from '../models/item-sampling';
 
@@ -14,20 +15,20 @@ export class ItemSamplingService {
   constructor(
     private http: _HttpClient,
     private warehouseService: WarehouseService,
+    private utilService: UtilService
   ) { }
 
   getItemSamplings(number?: string, itemName?: string, itemId?: number, enabled?: boolean, currentSampleOnly?: boolean): Observable<ItemSampling[]> {
     
     let url = `inventory/item-sampling?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+     
     
     if (number) {
-      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number.trim())}`;
+      url = `${url}&number=${this.utilService.encodeValue(number.trim())}`;
     }
     
     if (itemName) {
-      url = `${url}&itemName=${httpUrlEncodingCodec.encodeValue(itemName.trim())}`;
+      url = `${url}&itemName=${this.utilService.encodeValue(itemName.trim())}`;
     }
     if (itemId) {
       url = `${url}&itemId=${itemId}`;
@@ -43,16 +44,14 @@ export class ItemSamplingService {
   
   getItemSamplingsForDisplay(number?: string, itemName?: string, itemId?: number, enabled?: boolean, currentSampleOnly?: boolean): Observable<ItemSampling[]> {
     
-    let url = `inventory/item-sampling/display?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+    let url = `inventory/item-sampling/display?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`; 
     
     if (number) {
-      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number.trim())}`;
+      url = `${url}&number=${this.utilService.encodeValue(number.trim())}`;
     }
     
     if (itemName) {
-      url = `${url}&itemName=${httpUrlEncodingCodec.encodeValue(itemName.trim())}`;
+      url = `${url}&itemName=${this.utilService.encodeValue(itemName.trim())}`;
     }
     if (itemId) {
       url = `${url}&itemId=${itemId}`;
@@ -122,13 +121,12 @@ export class ItemSamplingService {
   }
   
   getPreviousItemSamplingForDisplay(itemName?: string, itemId?: number): Observable<ItemSampling[]> {
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+     
      
     let url = `inventory/item-sampling/previous/display?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     
     if (itemName) {
-      url = `${url}&itemName=${httpUrlEncodingCodec.encodeValue(itemName.trim())}`;
+      url = `${url}&itemName=${this.utilService.encodeValue(itemName.trim())}`;
     }
     if (itemId) {
       url = `${url}&itemId=${itemId}`;

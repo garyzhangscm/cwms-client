@@ -221,6 +221,7 @@ export class InventoryInventoryComponent implements OnInit {
   batchMovement = false;
   
   loadingDetailsRequest = 0;
+  threePartyLogisticsFlag = false;
 
   listOfSelection = [
     {
@@ -283,6 +284,26 @@ export class InventoryInventoryComponent implements OnInit {
     this.inventoryStatusService
     .loadInventoryStatuses()
     .subscribe(inventoryStatuses => (this.validInventoryStatuses = inventoryStatuses)); 
+  }
+   
+
+  initClientAssignment(): void {
+    
+    this.isSpinning = true;
+    this.localCacheService.getWarehouseConfiguration().subscribe({
+      next: (warehouseConfigRes) => {
+
+        if (warehouseConfigRes && warehouseConfigRes.threePartyLogisticsFlag) {
+          this.threePartyLogisticsFlag = true;
+        }
+        else {
+          this.threePartyLogisticsFlag = false;
+        } 
+        this.isSpinning = false;
+      }, 
+      error: () => this.isSpinning = false
+    });
+    
   }
    
 

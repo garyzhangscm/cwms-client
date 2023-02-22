@@ -1,9 +1,10 @@
-import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Printer } from '../models/printer';
 import { PrintingRequest } from '../models/printing-request';
@@ -14,7 +15,8 @@ import { ReportType } from '../models/report-type.enum';
 })
 export class PrintingRequestService {
 
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
+  constructor(private http: _HttpClient, private warehouseService: WarehouseService, 
+    private utilService: UtilService) {}
 
   generatePrintingRequestByReportHistory(
     reportHistoryId: number,
@@ -22,10 +24,10 @@ export class PrintingRequestService {
   ): Observable<PrintingRequest> {
     let url = `resource/printing-requests/by-report-history`;
     let params = new HttpParams();
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+    
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);
     params = params.append('reportHistoryId', reportHistoryId); 
-    params = params.append('printerName',  httpUrlEncodingCodec.encodeValue(printerName.trim()));
+    params = params.append('printerName',  this.utilService.encodeHttpParameter(printerName.trim()));
     params = params.append('copies', copies);
 
     return this.http.put(url, undefined, params).pipe(map(res => res.data));
@@ -36,12 +38,11 @@ export class PrintingRequestService {
   ): Observable<PrintingRequest> {
     let url = `resource/printing-requests/by-url`;
     
-    let params = new HttpParams();
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+    let params = new HttpParams(); 
     
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);
-    params = params.append('url', httpUrlEncodingCodec.encodeValue(reportUrl.trim()));
-    params = params.append('printerName',  httpUrlEncodingCodec.encodeValue(printerName.trim()));
+    params = params.append('url', this.utilService.encodeHttpParameter(reportUrl.trim()));
+    params = params.append('printerName',  this.utilService.encodeHttpParameter(printerName.trim()));
     params = params.append('reportType',  reportType);
     params = params.append('copies', copies);
  

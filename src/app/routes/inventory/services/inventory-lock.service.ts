@@ -1,9 +1,10 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+ 
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Inventory } from '../models/inventory';
 import { InventoryLock } from '../models/inventory-lock';
@@ -17,16 +18,16 @@ export class InventoryLockService {
   constructor(
     private http: _HttpClient,
     private warehouseService: WarehouseService,
+    private utilService: UtilService
   ) { }
 
   getInventoryLocks(name?: string): Observable<InventoryLock[]> {
     
     let url = `inventory/inventory-lock?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+     
     
     if (name) {
-      url = `${url}&name=${httpUrlEncodingCodec.encodeValue(name.trim())}`;
+      url = `${url}&name=${this.utilService.encodeValue(name.trim())}`;
     }
     
     

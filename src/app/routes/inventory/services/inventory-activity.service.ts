@@ -1,4 +1,4 @@
-import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 
 import { Client } from '../../common/models/client';
 import { DateTimeService } from '../../util/services/date-time.service';
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Inventory } from '../models/inventory';
 import { InventoryActivity } from '../models/inventory-activity';
@@ -18,6 +19,7 @@ import { ItemFamily } from '../models/item-family';
 export class InventoryActivityService {
   constructor(private http: _HttpClient, 
     private warehouseService: WarehouseService, 
+    private utilService: UtilService,
     private dateTimeService: DateTimeService) {}
   getInventoryActivities(
     clients?: Client[],
@@ -33,25 +35,24 @@ export class InventoryActivityService {
     rfCode?: string, 
   ): Observable<InventoryActivity[]> {
     
-    let params = new HttpParams();
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+    let params = new HttpParams(); 
      
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
 
     if (itemName) {
-      params = params.append('itemName', httpUrlEncodingCodec.encodeValue(itemName.trim())); 
+      params = params.append('itemName', this.utilService.encodeHttpParameter(itemName.trim())); 
     }
     if (clients && clients.length > 0) {
-      params = params.append('clients', httpUrlEncodingCodec.encodeValue(clients.join(',')));  
+      params = params.append('clients', this.utilService.encodeHttpParameter(clients.join(',')));  
     }
     if (itemFamilies && itemFamilies.length > 0) {
-      params = params.append('item_families', httpUrlEncodingCodec.encodeValue(itemFamilies.join(',')));  
+      params = params.append('item_families', this.utilService.encodeHttpParameter(itemFamilies.join(',')));  
     }
     if (location) {
-      params = params.append('location', httpUrlEncodingCodec.encodeValue(location.trim()));   
+      params = params.append('location', this.utilService.encodeHttpParameter(location.trim()));   
     }
     if (lpn) {
-      params = params.append('lpn', httpUrlEncodingCodec.encodeValue(lpn.trim()));   
+      params = params.append('lpn', this.utilService.encodeHttpParameter(lpn.trim()));   
     }
     if (inventoryActivityType) {
       params = params.append('inventoryActivityType',inventoryActivityType);   
@@ -68,10 +69,10 @@ export class InventoryActivityService {
       params = params.append('date', this.dateTimeService.getISODateString(date));   
     }
     if (username) {
-      params = params.append('username', httpUrlEncodingCodec.encodeValue(username.trim()));   
+      params = params.append('username', this.utilService.encodeHttpParameter(username.trim()));   
     }
     if (rfCode) {
-      params = params.append('rfCode', httpUrlEncodingCodec.encodeValue(rfCode.trim()));   
+      params = params.append('rfCode', this.utilService.encodeHttpParameter(rfCode.trim()));   
     } 
     
     return this.http.get(`inventory/inventory-activities`, params).pipe(map(res => res.data));

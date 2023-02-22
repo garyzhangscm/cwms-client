@@ -1,4 +1,4 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 
 import { GanttTask } from '../../util/models/gantt-task';
 import { DateTimeService } from '../../util/services/date-time.service';
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { MasterProductionSchedule } from '../models/master-production-schedule';
 
@@ -14,20 +15,20 @@ import { MasterProductionSchedule } from '../models/master-production-schedule';
 })
 export class MasterProductionScheduleService {
   constructor(private http: _HttpClient, private warehouseService: WarehouseService, 
-    private dateTimeService: DateTimeService) {}
+    private dateTimeService: DateTimeService, 
+    private utilService: UtilService) {}
 
   getMasterProductionSchedules(number?: string, description?: string, productionLineId?: number,
      productionLineIds?: string, itemName?:string,     
     beginDateTime?: Date,
-    endDateTime?: Date, ): Observable<MasterProductionSchedule[]> {
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+    endDateTime?: Date, ): Observable<MasterProductionSchedule[]> { 
     
     let url = `workorder/master-production-schedules?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (number) {
-      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number.trim())}`;
+      url = `${url}&number=${this.utilService.encodeValue(number.trim())}`;
     }
     if (description) {
-      url = `${url}&description=${httpUrlEncodingCodec.encodeValue(description.trim())}`;
+      url = `${url}&description=${this.utilService.encodeValue(description.trim())}`;
     }
 
     if (productionLineId) {

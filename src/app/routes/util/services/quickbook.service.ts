@@ -1,4 +1,4 @@
-import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { QuickbookOnlineToken } from '../models/quickbook-online-token';
+import { UtilService } from './util.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class QuickbookService {
   constructor(
     private http: _HttpClient, 
     private companyService: CompanyService,
+    private utilService: UtilService,
     private warehouserService: WarehouseService) { }
 
     
@@ -61,20 +63,19 @@ export class QuickbookService {
   }
 
   sendWebhook(signature: string, payload: string): Observable<string> {
-      
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+       
     let url = `quickbook/webhook`; 
     // url = `${url}?companyId=${this.companyService.getCurrentCompany()!.id}`;
     // url = `${url}&warehouseId=${this.warehouserService.getCurrentWarehouse().id}`; 
     
     let params = new HttpParams();
-    // params = params.append('signature', httpUrlEncodingCodec.encodeValue(signature.trim()));
-    // params = params.append('payload', httpUrlEncodingCodec.encodeValue(payload.trim()));
+    // params = params.append('signature', this.utilService.encodeHttpParameter(signature.trim()));
+    // params = params.append('payload', this.utilService.encodeHttpParameter(payload.trim()));
     
     params = params.append('signature', signature.trim());
     params = params.append('payload', payload.trim());
-    // url = `${url}&signature=${httpUrlEncodingCodec.encodeValue(signature.trim())}`;
-    // url = `${url}&payload=${httpUrlEncodingCodec.encodeValue(payload.trim())}`;
+    // url = `${url}&signature=${this.utilService.encodeHttpParameter(signature.trim())}`;
+    // url = `${url}&payload=${this.utilService.encodeHttpParameter(payload.trim())}`;
 
     return this.http.post(url, {
       signature: signature.trim(),

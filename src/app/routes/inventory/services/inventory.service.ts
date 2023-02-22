@@ -1,4 +1,4 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+ 
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { Client } from '../../common/models/client'; 
 import { ReportHistory } from '../../report/models/report-history';
 import { SystemControlledNumberService } from '../../util/services/system-controlled-number.service';
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Inventory } from '../models/inventory';
@@ -20,6 +21,7 @@ export class InventoryService {
     private http: _HttpClient,
     private warehouseService: WarehouseService,
     private systemControlledNumberService: SystemControlledNumberService,
+    private utilService: UtilService
   ) {}
 
   getInventories(
@@ -33,11 +35,10 @@ export class InventoryService {
     locationGroupId?: number
   ): Observable<Inventory[]> {
     let params = `warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+     
 
     if (itemName) {
-      params = `${params}&itemName=${httpUrlEncodingCodec.encodeValue(itemName.trim())}`;
+      params = `${params}&itemName=${this.utilService.encodeValue(itemName.trim())}`;
     }
     if (client) {
       params = `${params}&client=${client.id}`;
@@ -46,10 +47,10 @@ export class InventoryService {
       params = `${params}&item_families=${itemFamilies.join(',')}`;
     }
     if (locationName) {
-      params = `${params}&location=${httpUrlEncodingCodec.encodeValue(locationName.trim())}`;
+      params = `${params}&location=${this.utilService.encodeValue(locationName.trim())}`;
     }
     if (lpn) {
-      params = `${params}&lpn=${httpUrlEncodingCodec.encodeValue(lpn.trim())}`;
+      params = `${params}&lpn=${this.utilService.encodeValue(lpn.trim())}`;
     } 
     if (locationGroupId) {
       params = `${params}&locationGroupId=${locationGroupId}`;
@@ -190,11 +191,10 @@ export class InventoryService {
     let url = `inventory/inventories/available-for-mps/inventory-ignore-order?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (itemId) {    
       url = `${url}&itemId=${itemId}`;
-    }
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+    } 
 
     if (itemName) {
-      url = `${url}&itemName=${httpUrlEncodingCodec.encodeValue(itemName.trim())}`;
+      url = `${url}&itemName=${this.utilService.encodeValue(itemName.trim())}`;
     }
     return this.http.get(url).pipe(map(res => res.data));
   }

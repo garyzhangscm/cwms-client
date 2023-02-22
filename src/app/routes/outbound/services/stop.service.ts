@@ -1,9 +1,10 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Stop } from '../models/stop';
 
@@ -11,15 +12,15 @@ import { Stop } from '../models/stop';
   providedIn: 'root',
 })
 export class StopService {
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
+  constructor(private http: _HttpClient, private warehouseService: WarehouseService, 
+    private utilService: UtilService) {}
 
   getStops(number?: string, trailerAppointmentId?: number, sequence?: number ): Observable<Stop[]> {
     let url = `outbound/stops?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+ 
     if (number) {
       
-      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number)}`; 
+      url = `${url}&number=${this.utilService.encodeValue(number)}`; 
     }
     if (trailerAppointmentId != null) {
       

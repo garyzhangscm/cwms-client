@@ -1,10 +1,11 @@
-import { HttpParams, HttpUrlEncodingCodec } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { DateTimeService } from '../../util/services/date-time.service';
+import { UtilService } from '../../util/services/util.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { Alert } from '../models/alert';
 
@@ -14,25 +15,25 @@ import { Alert } from '../models/alert';
 export class AlertService {
 
   constructor(private http: _HttpClient, private companyService: CompanyService, 
-    private dateTimeService: DateTimeService,) {}
+    private dateTimeService: DateTimeService,
+    private utilService: UtilService) {}
 
   getAlerts(type?: string, status?: string, keyWords?: string, 
     startTime?: Date, endTime?:Date, date?: Date): Observable<Alert[]> {
       
-    let params = new HttpParams();
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();  
+    let params = new HttpParams(); 
 
     params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
      
     if (type) { 
-      params = params.append('type', httpUrlEncodingCodec.encodeValue(type.trim())); 
+      params = params.append('type', this.utilService.encodeHttpParameter(type.trim())); 
     }
 
     if (status) { 
-      params = params.append('status', httpUrlEncodingCodec.encodeValue(status.trim())); 
+      params = params.append('status', this.utilService.encodeHttpParameter(status.trim())); 
     }
     if (keyWords) {  
-      params = params.append('keyWords', httpUrlEncodingCodec.encodeValue(keyWords.trim())); 
+      params = params.append('keyWords', this.utilService.encodeHttpParameter(keyWords.trim())); 
     }
     
     if (startTime) {

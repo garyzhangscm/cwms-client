@@ -1,9 +1,10 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Shipment } from '../models/shipment';
 
@@ -11,17 +12,17 @@ import { Shipment } from '../models/shipment';
   providedIn: 'root',
 })
 export class ShipmentService {
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
+  constructor(private http: _HttpClient, private warehouseService: WarehouseService, 
+    private utilService: UtilService) {}
 
   getShipments(number?: string, orderNumber?: string): Observable<Shipment[]> {
     let url = `outbound/shipments?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+     
     if (number) {
-      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number)}`;
+      url = `${url}&number=${this.utilService.encodeValue(number)}`;
     }
     if (orderNumber) {
-      url = `${url}&orderNumber=${httpUrlEncodingCodec.encodeValue(orderNumber)}`;
+      url = `${url}&orderNumber=${this.utilService.encodeValue(orderNumber)}`;
     }
 
     return this.http.get(url).pipe(map(res => res.data));
@@ -79,13 +80,12 @@ export class ShipmentService {
 
   getOpenShpimentsForStop(number?: string, orderNumber?: string): Observable<Shipment[]> {
     let url = `outbound/shipments/open-for-stop?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec();
+     
     if (number) {
-      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number)}`;
+      url = `${url}&number=${this.utilService.encodeValue(number)}`;
     }
     if (orderNumber) {
-      url = `${url}&orderNumber=${httpUrlEncodingCodec.encodeValue(orderNumber)}`;
+      url = `${url}&orderNumber=${this.utilService.encodeValue(orderNumber)}`;
     }
 
     return this.http.get(url).pipe(map(res => res.data));

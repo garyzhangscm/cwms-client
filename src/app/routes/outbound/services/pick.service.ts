@@ -1,10 +1,11 @@
-import { HttpUrlEncodingCodec } from '@angular/common/http';
+
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Inventory } from '../../inventory/models/inventory';
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ProductionLine } from '../../work-order/models/production-line';
 import { WorkOrder } from '../../work-order/models/work-order';
@@ -14,7 +15,9 @@ import { PickWork } from '../models/pick-work';
   providedIn: 'root',
 })
 export class PickService {
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService) {}
+  constructor(private http: _HttpClient, 
+    private warehouseService: WarehouseService, 
+    private utilService: UtilService) {}
 
   getPicksByOrder(orderId: number): Observable<PickWork[]> {
     return this.getPicks(undefined, orderId);
@@ -404,12 +407,11 @@ export class PickService {
     loadDetails?: boolean,
     trailerAppointmentId?: number,
   ): Observable<PickWork[]> {
-    
-    const httpUrlEncodingCodec = new HttpUrlEncodingCodec(); 
+     
     
     let url = `outbound/picks?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     if (number) {
-      url = `${url}&number=${httpUrlEncodingCodec.encodeValue(number.trim())}`;
+      url = `${url}&number=${this.utilService.encodeValue(number.trim())}`;
     }
 
     if (orderId) {
@@ -452,34 +454,34 @@ export class PickService {
     }
 
     if (orderNumber) {
-      url = `${url}&orderNumber=${httpUrlEncodingCodec.encodeValue(orderNumber.trim())}`;
+      url = `${url}&orderNumber=${this.utilService.encodeValue(orderNumber.trim())}`;
     }
 
     if (shipmentNumber) {
-      url = `${url}&shipmentNumber=${httpUrlEncodingCodec.encodeValue(shipmentNumber.trim())}`;
+      url = `${url}&shipmentNumber=${this.utilService.encodeValue(shipmentNumber.trim())}`;
     }
 
     if (workOrderNumber) {
-      url = `${url}&workOrderNumber=${httpUrlEncodingCodec.encodeValue(workOrderNumber.trim())}`;
+      url = `${url}&workOrderNumber=${this.utilService.encodeValue(workOrderNumber.trim())}`;
     }
     if (waveNumber) {
-      url = `${url}&waveNumber=${httpUrlEncodingCodec.encodeValue(waveNumber.trim())}`;
+      url = `${url}&waveNumber=${this.utilService.encodeValue(waveNumber.trim())}`;
     }
 
     if (pickListNumber) {
-      url = `${url}&pickListNumber=${httpUrlEncodingCodec.encodeValue(pickListNumber.trim())}`;
+      url = `${url}&pickListNumber=${this.utilService.encodeValue(pickListNumber.trim())}`;
     }
     if (cartonizationNumber) {
-      url = `${url}&cartonizationNumber=${httpUrlEncodingCodec.encodeValue(cartonizationNumber.trim())}`;
+      url = `${url}&cartonizationNumber=${this.utilService.encodeValue(cartonizationNumber.trim())}`;
     }
     if (itemNumber) {
-      url = `${url}&itemNumber=${httpUrlEncodingCodec.encodeValue(itemNumber.trim())}`;
+      url = `${url}&itemNumber=${this.utilService.encodeValue(itemNumber.trim())}`;
     }
     if (sourceLocationName) {
-      url = `${url}&sourceLocationName=${httpUrlEncodingCodec.encodeValue(sourceLocationName.trim())}`;
+      url = `${url}&sourceLocationName=${this.utilService.encodeValue(sourceLocationName.trim())}`;
     }
     if (destinationLocationName) {
-      url = `${url}&destinationLocationName=${httpUrlEncodingCodec.encodeValue(destinationLocationName.trim())}`;
+      url = `${url}&destinationLocationName=${this.utilService.encodeValue(destinationLocationName.trim())}`;
     }
     if (containerId) {
       url = `${url}&containerId=${containerId}`;
