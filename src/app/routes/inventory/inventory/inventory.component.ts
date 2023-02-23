@@ -284,6 +284,8 @@ export class InventoryInventoryComponent implements OnInit {
     this.inventoryStatusService
     .loadInventoryStatuses()
     .subscribe(inventoryStatuses => (this.validInventoryStatuses = inventoryStatuses)); 
+
+    this.initClientAssignment();
   }
    
 

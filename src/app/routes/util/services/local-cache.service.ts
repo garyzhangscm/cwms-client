@@ -74,7 +74,7 @@ export class LocalCacheService {
     private warehouserConfigurationService: WarehouseConfigurationService) { }
 
     getWarehouseConfiguration() : Observable<WarehouseConfiguration> {
-      const cacheKey = `warehouse-config-${this.warehouseService.getCurrentWarehouse}`;
+      const cacheKey = `warehouse-config-${this.warehouseService.getCurrentWarehouse().id}`;
       const data = this.load(cacheKey)
   
       // Return data from cache

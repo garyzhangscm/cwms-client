@@ -59,6 +59,8 @@ export class UtilFileUploadComponent implements OnInit {
         this.allowedFileTypes.push({ label: fileUploadType.description, value: fileUploadType.name }),
       );
 
+      console.log(`${JSON.stringify(this.allowedFileTypes)}`)
+
       this.activatedRoute.queryParams.subscribe(params => {
         if (this.activatedRoute.snapshot.params.filetype) {
           this.loadFileForm.get('fileTypeSelector')!.setValue(this.activatedRoute.snapshot.params.filetype);

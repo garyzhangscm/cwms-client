@@ -9,9 +9,11 @@ import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { Client } from '../../common/models/client';
 import { Customer } from '../../common/models/customer';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { PrintPageSize } from '../../common/models/print-page-size.enum'; 
+import { ClientService } from '../../common/services/client.service';
 import { CustomerService } from '../../common/services/customer.service';
 import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
@@ -97,6 +99,7 @@ export class OutboundOrderComponent implements OnInit {
     private orderDocumentService: OrderDocumentService,
     private easyPostConfigurationService: EasyPostConfigurationService,
     private customerService: CustomerService,
+    private clientService: ClientService
   ) { }
 
   printerModal!: NzModalRef;
@@ -136,6 +139,8 @@ export class OutboundOrderComponent implements OnInit {
   orderStatusEnum = OrderStatus;
 
   isSpinning = false;
+  threePartyLogisticsFlag = false;
+  availableClients: Client[] = [];
 
   
   avaiableLocationGroups: LocationGroup[] = [];
@@ -171,7 +176,38 @@ export class OutboundOrderComponent implements OnInit {
     this.customerService.loadCustomers().subscribe({
       next: (customerRes) => this.validCustomers = customerRes
     })
+
+    
+    this.initClientAssignment();
+    
   }
+
+  initClientAssignment(): void {
+    
+    this.isSpinning = true;
+    
+    // initiate the select control
+    this.clientService.getClients().subscribe({
+      next: (clientRes) => this.availableClients = clientRes
+       
+    });
+
+    this.localCacheService.getWarehouseConfiguration().subscribe({
+      next: (warehouseConfigRes) => {
+
+        if (warehouseConfigRes && warehouseConfigRes.threePartyLogisticsFlag) {
+          this.threePartyLogisticsFlag = true;
+        }
+        else {
+          this.threePartyLogisticsFlag = false;
+        } 
+        this.isSpinning = false;
+      }, 
+      error: () => this.isSpinning = false
+    });
+    
+  }
+
  
   resetForm(): void {
     this.searchForm.reset();
@@ -1037,6 +1073,7 @@ export class OutboundOrderComponent implements OnInit {
       iif: () => this.isChoose('category'), width: 150},
     { title: this.i18n.fanyi("status"), index: 'status',fixed: 'left', iif: () => this.isChoose('status'), width: 150 },   
     
+    { title: this.i18n.fanyi("client"), index: 'client.name', iif: () => this.threePartyLogisticsFlag && this.isChoose('client'), width: 150},
     {
       title: this.i18n.fanyi("supplier"),
       // renderTitle: 'customTitle',
@@ -1062,10 +1099,22 @@ export class OutboundOrderComponent implements OnInit {
       iif: () => this.isChoose('shipToCustomer'), width: 150
     },
     {
+      title: this.i18n.fanyi("shipToCustomer"),
+      // renderTitle: 'customTitle',
+      render: 'shipToCustomeAddressColumn',
+      iif: () => this.isChoose('shipToCustomerAddress'), width: 150
+    },
+    {
       title: this.i18n.fanyi("order.billToCustomer"),
       // renderTitle: 'customTitle',
       render: 'billToCustomerColumn',
       iif: () => this.isChoose('billToCustomer'), width: 150
+    },
+    {
+      title: this.i18n.fanyi("order.billToCustomer"),
+      // renderTitle: 'customTitle',
+      render: 'billToCustomerAddressColumn',
+      iif: () => this.isChoose('billToCustomerAddress'), width: 150
     },
     { title: this.i18n.fanyi("order.totalItemCount"), index: 'totalItemCount', iif: () => this.isChoose('totalItemCount'), width: 150},
     { title: this.i18n.fanyi("order.totalOrderQuantity"), index: 'totalExpectedQuantity', iif: () => this.isChoose('totalExpectedQuantity'), width: 150 },
@@ -1085,7 +1134,7 @@ export class OutboundOrderComponent implements OnInit {
     { title: this.i18n.fanyi("order.totalShippedQuantity"), index: 'totalShippedQuantity', iif: () => this.isChoose('totalShippedQuantity'), width: 100},     
     {
       title: 'action',
-      renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 
+      renderTitle: 'actionColumnTitle',fixed: 'right',width: 50, 
       render: 'actionColumn',
     },
     {
@@ -1101,10 +1150,13 @@ export class OutboundOrderComponent implements OnInit {
     { label: this.i18n.fanyi("order.category"), value: 'category', checked: true },
     { label: this.i18n.fanyi("status"), value: 'status', checked: true },
     { label: this.i18n.fanyi("supplier"), value: 'supplier', checked: true },
+    { label: this.i18n.fanyi("client"), value: 'client', checked: true },
     { label: this.i18n.fanyi("carrier"), value: 'carrier', checked: true },
     { label: this.i18n.fanyi("carrierService"), value: 'carrierService', checked: true },
     { label: this.i18n.fanyi("shipToCustomer"), value: 'shipToCustomer', checked: true },
+    { label: this.i18n.fanyi("shipToCustomer"), value: 'shipToCustomerAddress', checked: true },
     { label: this.i18n.fanyi("order.billToCustomer"), value: 'billToCustomer', checked: true },
+    { label: this.i18n.fanyi("order.billToCustomer"), value: 'billToCustomerAddress', checked: true },
     { label: this.i18n.fanyi("order.totalItemCount"), value: 'totalItemCount', checked: true },
     { label: this.i18n.fanyi("order.totalOrderQuantity"), value: 'totalExpectedQuantity', checked: true },
     { label: this.i18n.fanyi("order.totalOpenQuantity"), value: 'totalOpenQuantity', checked: true },

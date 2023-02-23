@@ -118,6 +118,19 @@
           </nz-form-control>
         </nz-form-item>
       </div>
+      
+      <div nz-col [nzSpan]="8" *ngIf="threePartyLogisticsFlag">
+        <nz-form-item nzFlex>
+          <nz-form-label for="client" [nzSpan]="6">
+            {{ 'client' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <nz-select formControlName="client">
+              <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
     </div>
 
     <div nz-row>
@@ -138,7 +151,7 @@
     </div>
     
     <st #st [data]="listOfAllOrders"  [columns]="columns" [expand]="expand"  expandAccordion
-    (change)="orderTableChanged($event)" [scroll]="{ x: '3165px' }">
+    (change)="orderTableChanged($event)" [scroll]="{ x: '3455px' }">
       <!-- more details about the supplier -->
       <ng-template st-row="supplierColumn" let-item let-index="index">
         
@@ -224,6 +237,19 @@
 
       </ng-template>
       
+      <ng-template st-row="shipToCustomeAddressColumn" let-item let-index="index">
+           
+          <address>  
+            {{item.shipToContactorFirstname}} {{item.shipToContactorLastname}}<br>
+            {{item.shipToAddressLine1}} <br>
+            {{item.shipToAddressLine2}} <br>
+            {{item.shipToAddressCity}},  {{item.shipToAddressState}} <br>
+            {{item.shipToAddressPostcode}} <br>
+            </address> 
+
+      </ng-template>
+
+      
       <ng-template st-row="billToCustomerColumn" let-item let-index="index">
         
         <nz-skeleton-element 
@@ -246,6 +272,18 @@
         </ng-template>
 
       </ng-template>
+      
+      <ng-template st-row="billToCustomerAddressColumn" let-item let-index="index">
+           
+        <address>  
+          {{item.billToContactorFirstname}} {{item.billToContactorLastname}}<br>
+          {{item.billToAddressLine1}} <br>
+          {{item.billToAddressLine2}} <br>
+          {{item.billToAddressCity}},  {{item.billToAddressState}} <br>
+          {{item.billToAddressPostcode}} <br>
+          </address> 
+
+    </ng-template>
       
       <!-- more details about the order number -->
       <ng-template st-row="orderNumberColumn" let-item let-index="index">
@@ -746,6 +784,10 @@
       <button nz-button nzType="primary" routerLink="/outbound/order-maintenance" routerLinkActive="active">
         {{ 'add' | i18n }}
       </button>
+      <nz-divider nzType="vertical"></nz-divider> 
+      <button  nz-button nzType="primary" routerLink="/util/file-upload/orders" routerLinkActive="active">
+        {{ 'file-upload' | i18n }}
+      </button> 
     </div>
   </div>
 <!--    
