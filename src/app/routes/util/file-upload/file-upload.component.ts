@@ -43,7 +43,7 @@ export class UtilFileUploadComponent implements OnInit {
   // use the key so we can track the progress.
   fileUploadProgressKey = '';
   fileUploadProgress = 100;
-  removeExistingInventory = true;
+  removeExistingInventory = false;
 
   allowedFileTypes: Array<{ label: string; value: string }> = [];
 
@@ -85,7 +85,7 @@ export class UtilFileUploadComponent implements OnInit {
             
             
             this.selectedFileUploadType = fileUploadType;
-            this.selectedFileUploadUrl = `${this.selectedFileUploadType.destinationUrl}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+            this.selectedFileUploadUrl = `${this.selectedFileUploadType.destinationUrl}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&removeExistingInventory=${this.removeExistingInventory}`;
           });
       });
     }

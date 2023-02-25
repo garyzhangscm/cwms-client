@@ -75,6 +75,18 @@
           </div>
         </div>
 
+        <div nz-row [nzGutter]="24" *ngIf="selectedFileUploadType?.name == 'inventory'">
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="10">
+                {{ 'removeExistingInventory' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="10">
+                <label nz-checkbox [(ngModel)]="removeExistingInventory" ></label>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
         <div nz-row [nzGutter]="24">
           <div nz-col [nzSpan]="12">
             <nz-form-item nzFlex>
