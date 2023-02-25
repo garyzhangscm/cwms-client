@@ -30,37 +30,46 @@ export class ReceiptService {
 
   getReceipts(number?: string, loadDetails?: boolean, statusList?: string, 
     supplierName?: string, 
-    checkInStartTime?: Date, checkInEndTime?:Date, checkInSpecificDate?: Date, purchaseOrderId?: number): Observable<Receipt[]> {
-    let url = `inbound/receipts?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    checkInStartTime?: Date, checkInEndTime?:Date, checkInSpecificDate?: Date, purchaseOrderId?: number, 
+    clientName?: string, clientId?: string): Observable<Receipt[]> {
+    const url = `inbound/receipts`;
      
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
 
     if (number) {
-      url = `${url}&number=${this.utilService.encodeValue(number.trim())}`;
+      params = params.append('number', this.utilService.encodeHttpParameter(number.trim()));  
     }
     if (loadDetails !== undefined && loadDetails!= null) {
-      url = `${url}&loadDetails=${loadDetails}`;
+      params = params.append('loadDetails', loadDetails);  
     }
     if (statusList) {
-      url = `${url}&receipt_status_list=${statusList}`;
+      params = params.append('receipt_status_list', statusList);  
     }
     if (supplierName) {
-      url = `${url}&supplierName=${supplierName}`;
+      params = params.append('supplierName', supplierName);  
+    }
+    if (clientName) {
+      params = params.append('clientName', clientName);  
+    }
+    if (clientId) {
+      params = params.append('clientId', clientId);  
     }
     if (purchaseOrderId) {
-      url = `${url}&purchaseOrderId=${purchaseOrderId}`;
+      params = params.append('purchaseOrderId', purchaseOrderId);  
     }
 
     if (checkInStartTime) {
-      url = `${url}&checkInStartTime=${this.dateTimeService.getISODateTimeString(checkInStartTime)}`;
+      params = params.append('checkInStartTime', this.dateTimeService.getISODateTimeString(checkInStartTime));  
     }
     if (checkInEndTime) {
-      url = `${url}&checkInEndTime=${this.dateTimeService.getISODateTimeString(checkInEndTime)}`;
+      params = params.append('checkInEndTime', this.dateTimeService.getISODateTimeString(checkInEndTime));  
     }
     if (checkInSpecificDate) {
-      url = `${url}&checkInDate=${this.dateTimeService.getISODateString(checkInSpecificDate)}`;
+      params = params.append('checkInDate', this.dateTimeService.getISODateString(checkInSpecificDate));  
     }
 
-    return this.http.get(url).pipe(map(res => res.data));
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 
   getReceipt(id: number): Observable<Receipt> {

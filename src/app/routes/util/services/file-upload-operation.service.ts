@@ -18,13 +18,13 @@ export class FileUploadOperationService {
   getFileUploadTypes(): Observable<FileUploadType[]> {
     return this.http.get('resource/file-upload/types').pipe(map(res => res.data));
   }
-  
-  getInventoryFileUploadProgress(key: string): Observable<number> {
+   
+  getFileUploadProgress(url: string, key: string): Observable<number> {
     
     let params = new HttpParams();
     params = params.append("warehouseId", this.warehouseService.getCurrentWarehouse().id);
     params = params.append("key", key);
 
-    return this.http.get(`inventory/inventories/upload/progress`, params).pipe(map(res => res.data));
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 }

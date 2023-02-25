@@ -103,7 +103,9 @@ export class UtilFileUploadComponent implements OnInit {
     if (info.file.status === 'uploading') {
       // this.isSpinning = true;
       
-      if (this.selectedFileUploadType?.name == 'inventory') { 
+      if (this.selectedFileUploadType?.name == 'inventory' || 
+        this.selectedFileUploadType?.name == 'receiving-inventories'  || 
+        this.selectedFileUploadType?.name == 'putaway' ) { 
           this.fileUploadProgress = 0;
       }
       else {
@@ -123,11 +125,12 @@ export class UtilFileUploadComponent implements OnInit {
 
   checkFileUploadProgress(info: NzUploadChangeParam) {
 
-    if (this.selectedFileUploadType?.name == 'inventory') { 
+    if (this.selectedFileUploadType?.trackingProgressUrl != null &&
+      this.selectedFileUploadType?.trackingProgressUrl.length > 0) { 
       
       // this.isSpinning = true;
       setTimeout(() => {  
-        this.fileUploadOperationService.getInventoryFileUploadProgress(info.file.response.data).subscribe({
+        this.fileUploadOperationService.getFileUploadProgress(this.selectedFileUploadType?.trackingProgressUrl!, info.file.response.data).subscribe({
           next: (progress) => {
             this.fileUploadProgress = progress;
             if (progress >= 100) {

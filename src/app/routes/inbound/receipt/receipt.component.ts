@@ -180,6 +180,7 @@ export class InboundReceiptComponent implements OnInit {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inbound.receipt'));
     // initiate the search form
     this.searchForm = this.fb.group({
+      client: [null],
       number: [null],
       statusList: [null],
       supplier: [null],
@@ -236,10 +237,12 @@ export class InboundReceiptComponent implements OnInit {
         this.searchForm.controls.checkInDateTimeRanger.value[1] : undefined; 
     let checkInSpecificDate : Date = this.searchForm.controls.checkInDate.value;
 
-    this.receiptService.getReceipts(this.searchForm!.controls.number.value, false,       
+    this.receiptService.getReceipts(this.searchForm!.controls.number.value, true,       
       this.searchForm!.controls.statusList.value,       
       this.searchForm!.controls.supplier.value,
-      checkInStartTime, checkInEndTime, checkInSpecificDate).subscribe(
+      checkInStartTime, checkInEndTime, checkInSpecificDate, 
+         undefined,
+      this.searchForm!.controls.client.value).subscribe(
       receiptRes => {
 
         this.searching = false;
@@ -248,12 +251,10 @@ export class InboundReceiptComponent implements OnInit {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
           rowCount: receiptRes.length,
         });
-
         
         this.refreshDetailInformations(receiptRes);
         this.listOfAllReceipts = this.calculateQuantities(receiptRes);
         this.listOfDisplayReceipts = this.calculateQuantities(receiptRes);
-
 
       },
       () => {
@@ -290,6 +291,8 @@ export class InboundReceiptComponent implements OnInit {
       this.refreshDetailInformation(receipts[index]);
       index++;
     } 
+
+    receipts = [...receipts];
     
     // refresh the table while everything is loaded
     // console.log(`mnaually refresh the table`);   
@@ -463,9 +466,10 @@ export class InboundReceiptComponent implements OnInit {
   }
   
   onExpandChange(receipt: Receipt, checked: boolean): void { 
+    console.log(`expanded for receipt ${receipt.number}, expanded? ${checked} `)
     if (checked) {
       this.expandSet.add(receipt.id!);
-      // this.loadItems(receipt);
+      this.loadItems(receipt);
     } else {
       this.expandSet.delete(receipt.id!);
     }

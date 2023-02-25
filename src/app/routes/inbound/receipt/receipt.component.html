@@ -11,7 +11,7 @@
         </nz-form-label>
         <nz-form-control [nzSpan]="18">
           <nz-select formControlName="client">
-            <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client"></nz-option>
+            <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -231,9 +231,33 @@
     <button nz-button nzDanger (click)="removeSelectedReceipts()">
       {{ 'delete' | i18n }}
     </button>
+    <nz-divider nzType="vertical"></nz-divider> 
     <button nz-button nzType="primary" routerLink="/inbound/receipt-maintenance" routerLinkActive="active">
       {{ 'add' | i18n }}
     </button>
+    <nz-divider nzType="vertical"></nz-divider> 
+    
+    <button  
+        nz-button nz-dropdown [nzDropdownMenu]="uploadFileMenu" nzType="primary">
+        {{ 'file-upload' | i18n }} <i nz-icon nzType="down"></i></button>
+      <nz-dropdown-menu #uploadFileMenu="nzDropdownMenu">
+        <ul nz-menu> 
+          <li nz-menu-item  >                  
+            
+            <a  routerLink="/util/file-upload/receipts" routerLinkActive="active" >
+            {{ 'receipt' | i18n }}</a>
+          </li>
+          <li nz-menu-item  >   
+            <a  routerLink="/util/file-upload/receiving-inventories" routerLinkActive="active" >
+            {{ 'receiving-inventory' | i18n }}</a>
+          </li>
+          <li nz-menu-item  >   
+            <a  routerLink="/util/file-upload/putaway" routerLinkActive="active" >
+            {{ 'putaway' | i18n }}</a>
+          </li>
+          
+        </ul>
+      </nz-dropdown-menu> 
   </div>
 </div>
 

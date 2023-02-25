@@ -56,7 +56,7 @@
             </nz-form-label>
             <nz-form-control [nzSpan]="18">
               <nz-select  formControlName="client" id="client" name="client">
-                <nz-option *ngFor="let client of validClients" [nzLabel]="client.name" [nzValue]="client"></nz-option>
+                <nz-option *ngFor="let client of validClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
               </nz-select>
             </nz-form-control>
             

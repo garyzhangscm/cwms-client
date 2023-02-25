@@ -6,5 +6,6 @@ export interface FileUploadType {
   description: string;
   destinationUrl: string;
   templateFileUrl: string;
+  trackingProgressUrl: string;
   columns: FileUploadTemplateColumn[];
 }

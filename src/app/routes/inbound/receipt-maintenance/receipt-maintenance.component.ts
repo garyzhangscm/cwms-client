@@ -333,7 +333,14 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     });
     this.receiptForm.controls.receiptId.disable();
 
+    this.clientService.getClients().subscribe({
+      next: (clientRes) => {
+        this.validClients = clientRes;
+      }, 
+    }); 
+    
     this.activatedRoute.queryParams.subscribe(params => {
+      
       if (params.receiptNumber) { 
         this.loadReceipt(params.receiptNumber); 
         this.newBatch = false;
@@ -355,7 +362,6 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       }
     });
 
-    this.clientService.getClients().subscribe(clients => (this.validClients = clients));
     this.supplierService.loadSuppliers().subscribe(suppliers => {
       this.validSuppliers = [...suppliers];
       this.filterValidSuppliers = [...suppliers]
@@ -416,7 +422,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       this.receiptService.addReceipt(this.currentReceipt).subscribe({
         next: (res) => {
           this.currentReceipt = res;
-          this.setupDisplay();
+          this.setupDisplayForExistingReceipt();
           this.message.success(this.i18n.fanyi('message.new.complete'));
 
           this.receiptForm!.controls.receiptId.setValue(res.id);
@@ -466,7 +472,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     // this.receiptForm.controls.supplier.setValue('');
   }
 
-  setupDisplay(): void {
+  setupDisplayForExistingReceipt(): void {
     this.listOfAllReceiptLines = this.currentReceipt.receiptLines;
     this.listOfDisplayReceiptLines = this.currentReceipt.receiptLines;
 
@@ -474,8 +480,9 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.receiptForm!.controls.receiptId.disable();
     this.receiptForm!.controls.receiptNumber.setValue(this.currentReceipt.number);
     this.receiptForm!.controls.receiptNumber.disable();
+    this.receiptForm!.controls.client.disable();
 
-    this.receiptForm!.controls.client.setValue(this.currentReceipt.client ? this.currentReceipt.client.name : '');
+    this.receiptForm!.controls.client.setValue(this.currentReceipt.client ? this.currentReceipt.client.id : '');
     this.receiptForm!.controls.supplier.setValue(this.currentReceipt.supplier ? this.currentReceipt.supplier.name : '');
 
     this.loadReceivedInventory(this.currentReceipt);
@@ -505,9 +512,11 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     
     this.isSpinning = true;
     this.receiptService.getReceipts(receiptNumber).subscribe(receipts => {
+       
+
       if (receipts.length > 0) {
         this.currentReceipt = receipts[0];
-        this.setupDisplay();
+        this.setupDisplayForExistingReceipt();
       } else {
         this.clearDisplay();
         // in case the receipt doesn't exists yet, let's set the
