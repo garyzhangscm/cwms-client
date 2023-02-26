@@ -8,6 +8,7 @@ import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
+import { NzTransferModule } from 'ng-zorro-antd/transfer';
 
 import { CommonModule } from '../common/common.module';
 import { DirectivesModule } from '../directives/directives.module'; 
@@ -32,6 +33,8 @@ import { InventoryInventoryAttributeChangeConfirmComponent } from './inventory-a
 import { InventoryInventoryAttributeChangeComponent } from './inventory-attribute-change/inventory-attribute-change.component';
 import { InventoryInventoryConfigurationComponent } from './inventory-configuration/inventory-configuration.component';
 import { InventoryInventoryDashboardComponent } from './inventory-dashboard/inventory-dashboard.component';
+import { InventoryInventoryMixRestrictionMaintenanceComponent } from './inventory-mix-restriction-maintenance/inventory-mix-restriction-maintenance.component';
+import { InventoryInventoryMixRestrictionComponent } from './inventory-mix-restriction/inventory-mix-restriction.component';
 import { InventoryInventoryMoveComponent } from './inventory-move/inventory-move.component';
 import { InventoryInventoryQuantityChangeConfirmComponent } from './inventory-quantity-change-confirm/inventory-quantity-change-confirm.component';
 import { InventoryInventoryQuantityChangeComponent } from './inventory-quantity-change/inventory-quantity-change.component';
@@ -100,7 +103,9 @@ const COMPONENTS: Array<Type<void>> = [
   InventoryLocationUtilizationSnapshotComponent,
   InventoryInventoryStatusComponent,
   InventoryInventoryStatusMaintenanceComponent,
-  InventoryInventoryDashboardComponent];
+  InventoryInventoryDashboardComponent,
+  InventoryInventoryMixRestrictionComponent,
+  InventoryInventoryMixRestrictionMaintenanceComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
@@ -116,7 +121,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     UtilModule,
     NzSkeletonModule,NzIconModule ,
     EllipsisModule,
-    NzResultModule,
+    NzResultModule,    
+    NzTransferModule,
     PlotlyModule,
   ],
   declarations: [

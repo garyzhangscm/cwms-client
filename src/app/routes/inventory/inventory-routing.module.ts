@@ -19,6 +19,8 @@ import { InventoryInventoryAttributeChangeConfirmComponent } from './inventory-a
 import { InventoryInventoryAttributeChangeComponent } from './inventory-attribute-change/inventory-attribute-change.component';
 import { InventoryInventoryConfigurationComponent } from './inventory-configuration/inventory-configuration.component';
 import { InventoryInventoryDashboardComponent } from './inventory-dashboard/inventory-dashboard.component';
+import { InventoryInventoryMixRestrictionMaintenanceComponent } from './inventory-mix-restriction-maintenance/inventory-mix-restriction-maintenance.component';
+import { InventoryInventoryMixRestrictionComponent } from './inventory-mix-restriction/inventory-mix-restriction.component';
 import { InventoryInventoryMoveComponent } from './inventory-move/inventory-move.component';
 import { InventoryInventoryQuantityChangeConfirmComponent } from './inventory-quantity-change-confirm/inventory-quantity-change-confirm.component';
 import { InventoryInventoryQuantityChangeComponent } from './inventory-quantity-change/inventory-quantity-change.component';
@@ -88,7 +90,9 @@ const routes: Routes = [
   { path: 'location-utilization-snapshot', component: InventoryLocationUtilizationSnapshotComponent },
   { path: 'status', component: InventoryInventoryStatusComponent },
   { path: 'status/maintenance', component: InventoryInventoryStatusMaintenanceComponent },
-  { path: 'inventory-dashboard', component: InventoryInventoryDashboardComponent }];
+  { path: 'inventory-dashboard', component: InventoryInventoryDashboardComponent },
+  { path: 'mix-restriction', component: InventoryInventoryMixRestrictionComponent },
+  { path: 'mix-restriction/maintenance', component: InventoryInventoryMixRestrictionMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

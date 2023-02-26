@@ -19,13 +19,13 @@ import { AuthRoleComponent } from './role/role.component';
 import { AuthUserMaintenanceConfirmComponent } from './user-maintenance-confirm/user-maintenance-confirm.component';
 import { AuthUserMaintenanceComponent } from './user-maintenance/user-maintenance.component';
 import { AuthUserRoleComponent } from './user-role/user-role.component';
+import { AuthUserWarehouseComponent } from './user-warehouse/user-warehouse.component';
 import { AuthUserComponent } from './user/user.component';
+import { AuthWarehouseUserComponent } from './warehouse-user/warehouse-user.component';
 import { AuthWorkingTeamMaintenanceConfirmComponent } from './working-team-maintenance-confirm/working-team-maintenance-confirm.component';
 import { AuthWorkingTeamMaintenanceComponent } from './working-team-maintenance/working-team-maintenance.component';
 import { AuthWorkingTeamUserComponent } from './working-team-user/working-team-user.component';
 import { AuthWorkingTeamComponent } from './working-team/working-team.component';
-import { AuthUserWarehouseComponent } from './user-warehouse/user-warehouse.component';
-import { AuthWarehouseUserComponent } from './warehouse-user/warehouse-user.component';
 
 const COMPONENTS: Array<Type<void>> = [
   AuthUserComponent,

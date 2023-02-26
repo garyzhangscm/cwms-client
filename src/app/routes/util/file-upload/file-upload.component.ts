@@ -1,14 +1,16 @@
 import { Location } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
+import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
 
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { FileUploadResult } from '../models/file-upload-result';
 import { FileUploadType } from '../models/file-upload-type';
 import { FileUploadOperationService } from '../services/file-upload-operation.service';
 
@@ -18,6 +20,18 @@ import { FileUploadOperationService } from '../services/file-upload-operation.se
   styleUrls: ['./file-upload.component.less'],
 })
 export class UtilFileUploadComponent implements OnInit {
+
+  
+  @ViewChild('st', { static: true })
+  st!: STComponent;
+  columns: STColumn[] = [
+    
+    { title: this.i18n.fanyi("lineNumber"), index:"lineNumber" },  
+    { title: this.i18n.fanyi("record"), index:"record" },  
+    { title: this.i18n.fanyi("result"), index:"result" },  
+    { title: this.i18n.fanyi("errorMessage"), index:"errorMessage" },   
+  ]; 
+  
   constructor(
     private activatedRoute: ActivatedRoute,
     private fileUploadOperationService: FileUploadOperationService,
@@ -38,21 +52,25 @@ export class UtilFileUploadComponent implements OnInit {
   selectedFileUploadUrl = '';
   fileUploadDisabled = false;
   isSpinning = false;
+  showResultModal = false;
 
   // when we upload a bulky files, we will need to 
   // use the key so we can track the progress.
   fileUploadProgressKey = '';
   fileUploadProgress = 100;
   removeExistingInventory = false;
+  fileUploadResults: FileUploadResult[] = [];
 
   allowedFileTypes: Array<{ label: string; value: string }> = [];
 
   ngOnInit(): void {
     this.loadFileForm = this.fb.group({
       fileTypeSelector: [null],
+      removeExistingInventory: [null],
     });
 
     this.fileUploadDisabled = true; 
+    this.showResultModal = false;
 
     this.fileUploadOperationService.getFileUploadTypes().subscribe((fileUploadTypes: FileUploadType[]) => {
       fileUploadTypes.forEach(fileUploadType =>
@@ -137,6 +155,7 @@ export class UtilFileUploadComponent implements OnInit {
               // this.isSpinning = false;
               this.msg.success(`${info.file.name} file uploaded successfully`);
 
+              this.showResult(info.file.response.data);
             }
             else {
               // OK, we are not done yet, let's call the same command again
@@ -144,7 +163,11 @@ export class UtilFileUploadComponent implements OnInit {
               this.checkFileUploadProgress(info);
             }
           }, 
-          error: () =>  this.fileUploadProgress = 100
+          error: () =>  {
+            this.fileUploadProgress = 100;
+            
+            this.showResult(info.file.response.data);
+          }
           //this.isSpinning = false
         })
       }, 1000);
@@ -152,6 +175,7 @@ export class UtilFileUploadComponent implements OnInit {
     else {
       
       this.fileUploadProgress = 100;
+      this.showResult(info.file.response.data);
       this.isSpinning = false;
       this.msg.success(`${info.file.name} file uploaded successfully`);
     }
@@ -162,5 +186,32 @@ export class UtilFileUploadComponent implements OnInit {
   }
   handleOk() {
     return false;
+  }
+
+  showResult(key: string) {
+    console.log(`check if we will need to show the result`);
+    console.log(`this.selectedFileUploadType?.resultUrl: ${this.selectedFileUploadType?.resultUrl}`);
+
+    if (this.selectedFileUploadType?.resultUrl && this.selectedFileUploadType?.resultUrl.length > 0) {
+      // the file upload type provide an end point to show the result, let's display the result to the user
+      this.showResultModal = true;
+      this.fileUploadResults = [];
+      this.fileUploadOperationService.getFileUploadResult(
+        this.selectedFileUploadType?.resultUrl!, key).subscribe({
+       
+          next: (fileUploadResultRes) => this.fileUploadResults = fileUploadResultRes
+
+      });
+    }
+    else {
+      
+       this.showResultModal = false;
+    }
+  }
+  
+  closeResultModal() {
+    console.log(`close the result modal`)
+    this.showResultModal = false;
+
   }
 }
