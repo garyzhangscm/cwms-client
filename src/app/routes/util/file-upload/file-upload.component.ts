@@ -60,6 +60,9 @@ export class UtilFileUploadComponent implements OnInit {
   fileUploadResults: FileUploadResult[] = [];
 
   removeExistingInventory = false;
+  resultTotal = 0;
+  resultSuccess = 0;
+  resultFail = 0;
 
   allowedFileTypes: Array<{ label: string; value: string }> = [];
 
@@ -119,9 +122,8 @@ export class UtilFileUploadComponent implements OnInit {
     if (info.file.status === 'uploading') {
       // this.isSpinning = true;
       
-      if (this.selectedFileUploadType?.name == 'inventory' || 
-        this.selectedFileUploadType?.name == 'receiving-inventories'  || 
-        this.selectedFileUploadType?.name == 'putaway' ) { 
+      if (this.selectedFileUploadType?.trackingProgressUrl  != null &&
+            this.selectedFileUploadType?.trackingProgressUrl.length > 0) { 
           this.fileUploadProgress = 0;
       }
       else {
@@ -187,17 +189,29 @@ export class UtilFileUploadComponent implements OnInit {
   }
 
   showResult(key: string) {
-    console.log(`check if we will need to show the result`);
-    console.log(`this.selectedFileUploadType?.resultUrl: ${this.selectedFileUploadType?.resultUrl}`);
+    // console.log(`check if we will need to show the result`);
+    // console.log(`this.selectedFileUploadType?.resultUrl: ${this.selectedFileUploadType?.resultUrl}`);
 
     if (this.selectedFileUploadType?.resultUrl && this.selectedFileUploadType?.resultUrl.length > 0) {
       // the file upload type provide an end point to show the result, let's display the result to the user
       this.showResultModal = true;
       this.fileUploadResults = [];
+      this.resultTotal = 0;
+      this.resultSuccess = 0;
+      this.resultFail = 0;
+    
       this.fileUploadOperationService.getFileUploadResult(
         this.selectedFileUploadType?.resultUrl!, key).subscribe({
        
-          next: (fileUploadResultRes) => this.fileUploadResults = fileUploadResultRes
+          next: (fileUploadResultRes) => {
+            this.fileUploadResults = fileUploadResultRes;
+            this.resultTotal = this.fileUploadResults.length;
+            this.resultSuccess = this.fileUploadResults.filter(
+              result => result.result = 'success'
+            ).length;
+            this.resultFail = this.resultTotal - this.resultSuccess;
+          
+          }
 
       });
     }

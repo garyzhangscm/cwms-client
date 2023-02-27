@@ -151,7 +151,7 @@
               {{ 'file-upload.template-file.column-max-length' | i18n }}
             </td>
             <td>
-              {{ 'file-upload.template-file.column-nullable' | i18n }}
+              {{ 'optional' | i18n }}
             </td>
           </tr>
         </thead>
@@ -180,9 +180,17 @@
   <ng-container *nzModalContent> 
     <h3>{{'result' | i18n}}</h3>
     
-    <st #st [data]="fileUploadResults" [columns]="columns" >
+    <st #st [data]="fileUploadResults" [columns]="columns" ps="5"  [footer]="tableFoot">
 
 
     </st>
+    <ng-template #tableFoot>
+    
+      <div nz-row nzType="flex" nzJustify="start">
+        {{'total' | i18n}}: <strong>{{resultTotal}}</strong>, 
+        {{'success' | i18n}}:  <span nz-typography nzType="success">{{resultSuccess}}</span> , 
+        {{'fail' | i18n}}: <span nz-typography nzType="danger">{{resultFail}}</span>, 
+      </div>
+    </ng-template>
   </ng-container>
 </nz-modal>
