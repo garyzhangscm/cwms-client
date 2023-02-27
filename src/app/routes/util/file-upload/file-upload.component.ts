@@ -7,8 +7,7 @@ import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
-
-import { Warehouse } from '../../warehouse-layout/models/warehouse';
+ 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { FileUploadResult } from '../models/file-upload-result';
 import { FileUploadType } from '../models/file-upload-type';
@@ -57,16 +56,16 @@ export class UtilFileUploadComponent implements OnInit {
   // when we upload a bulky files, we will need to 
   // use the key so we can track the progress.
   fileUploadProgressKey = '';
-  fileUploadProgress = 100;
-  removeExistingInventory = false;
+  fileUploadProgress = 100; 
   fileUploadResults: FileUploadResult[] = [];
+
+  removeExistingInventory = false;
 
   allowedFileTypes: Array<{ label: string; value: string }> = [];
 
   ngOnInit(): void {
     this.loadFileForm = this.fb.group({
-      fileTypeSelector: [null],
-      removeExistingInventory: [null],
+      fileTypeSelector: [null], 
     });
 
     this.fileUploadDisabled = true; 
@@ -76,8 +75,7 @@ export class UtilFileUploadComponent implements OnInit {
       fileUploadTypes.forEach(fileUploadType =>
         this.allowedFileTypes.push({ label: fileUploadType.description, value: fileUploadType.name }),
       );
-
-      console.log(`${JSON.stringify(this.allowedFileTypes)}`)
+ 
 
       this.activatedRoute.queryParams.subscribe(params => {
         if (this.activatedRoute.snapshot.params.filetype) {
@@ -213,5 +211,13 @@ export class UtilFileUploadComponent implements OnInit {
     console.log(`close the result modal`)
     this.showResultModal = false;
 
+  }
+
+  removeExistingInventoryChanged() {
+    console.log(`removeExistingInventory is changed to ${this.removeExistingInventory}`)
+    if (this.selectedFileUploadType) {
+      this.selectedFileUploadUrl = `${this.selectedFileUploadType.destinationUrl}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&removeExistingInventory=${this.removeExistingInventory}`;
+    }
+    
   }
 }

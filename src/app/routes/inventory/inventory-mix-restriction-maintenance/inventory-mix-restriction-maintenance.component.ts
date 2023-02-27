@@ -8,11 +8,9 @@ import { TransferItem } from 'ng-zorro-antd/transfer';
 
 import { Client } from '../../common/models/client'; 
 import { ClientService } from '../../common/services/client.service'; 
-import { LocalCacheService } from '../../util/services/local-cache.service';
-import { UtilService } from '../../util/services/util.service';
+import { LocalCacheService } from '../../util/services/local-cache.service'; 
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
-import { LocationGroupType } from '../../warehouse-layout/models/location-group-type';
-import { CompanyService } from '../../warehouse-layout/services/company.service';
+import { LocationGroupType } from '../../warehouse-layout/models/location-group-type'; 
 import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
@@ -50,8 +48,7 @@ export class InventoryInventoryMixRestrictionMaintenanceComponent implements OnI
   assignedText: string = "";
 
 
-  constructor(
-    private fb: UntypedFormBuilder, 
+  constructor( 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private messageService: NzMessageService,
@@ -77,10 +74,7 @@ export class InventoryInventoryMixRestrictionMaintenanceComponent implements OnI
       byLocationLines: [],
     }
   }
-
-  removeLine(line: InventoryMixRestrictionLine, index: number) {
-
-  }
+ 
   ngOnInit(): void {
 
     
@@ -127,20 +121,29 @@ export class InventoryInventoryMixRestrictionMaintenanceComponent implements OnI
   } 
   
   setupLines(inventoryMixRestriction: InventoryMixRestriction) {
+    inventoryMixRestriction.byLocationLines = [];
+    inventoryMixRestriction.byLPNLines = [];
+
     inventoryMixRestriction.lines.forEach(
       line => {
         if (line.type === InventoryMixRestrictionLineType.BY_LOCATION) {
           inventoryMixRestriction.byLocationLines = [...inventoryMixRestriction.byLocationLines, 
             line
           ];
+          // inventoryMixRestriction.byLocationLines.push(line);
         }
         else if (line.type === InventoryMixRestrictionLineType.BY_LPN) {
           inventoryMixRestriction.byLPNLines = [...inventoryMixRestriction.byLPNLines, 
             line
           ];
+          //inventoryMixRestriction.byLPNLines.push(line);
         }
       }
     );
+
+    console.log(`inventoryMixRestriction.lines: ${inventoryMixRestriction.lines.length}`)
+    console.log(`inventoryMixRestriction.byLocationLines: ${inventoryMixRestriction.byLocationLines.length}`)
+    console.log(`inventoryMixRestriction.byLPNLines: ${inventoryMixRestriction.byLPNLines.length}`)
  
   }
   
@@ -358,7 +361,7 @@ export class InventoryInventoryMixRestrictionMaintenanceComponent implements OnI
           key: inventoryAttribute,
           title: this.i18n.fanyi(`INVENTORY_ATTRIBUTE-${inventoryAttribute}`),
           direction: 
-              this.currentInventoryMixRestriction.byLPNLines.some(line => line.attribute == inventoryAttribute) ?
+              this.currentInventoryMixRestriction.byLocationLines.some(line => line.attribute == inventoryAttribute) ?
               'right' : 'left'
         }]
       }

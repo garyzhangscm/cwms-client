@@ -65,7 +65,7 @@ export class InventoryMixRestrictionService {
 
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id); 
 
-    return this.http.post(`inventory/inventory-mix-restriction/${inventoryMixRestriction.id}}`, 
+    return this.http.post(`inventory/inventory-mix-restriction/${inventoryMixRestriction.id}`, 
     inventoryMixRestriction, params).pipe(map(res => res.data));
   }
   removeInventoryMixRestriction(id: number): Observable<InventoryMixRestriction> {

@@ -74,7 +74,7 @@
             </nz-form-item>
           </div>
         </div>
-
+      </form>
         <div nz-row [nzGutter]="24" *ngIf="selectedFileUploadType?.name == 'inventory'">
           <div nz-col [nzSpan]="8">
             <nz-form-item>
@@ -82,7 +82,7 @@
                 {{ 'removeExistingInventory' | i18n }}
               </nz-form-label>
               <nz-form-control [nzSpan]="10">
-                <label nz-checkbox  formControlName="removeExistingInventory"></label>
+                <label nz-checkbox [(ngModel)]="removeExistingInventory" (ngModelChange)="removeExistingInventoryChanged()" ></label>
               </nz-form-control>
             </nz-form-item>
           </div>
@@ -124,7 +124,7 @@
             </nz-form-item>
           </div>
         </div> 
-        </form>
+    
     </nz-card>
 
     <div class="search-result-list" *ngIf="selectedFileUploadType">
@@ -176,7 +176,7 @@
 </nz-modal>
 
 
-<nz-modal [nzVisible]="showResultModal" nzWidth="300 px" (nzOnCancel)="closeResultModal()" (nzOnOk)="closeResultModal()" >
+<nz-modal [nzVisible]="showResultModal" nzWidth="300" (nzOnCancel)="closeResultModal()" (nzOnOk)="closeResultModal()" >
   <ng-container *nzModalContent> 
     <h3>{{'result' | i18n}}</h3>
     
