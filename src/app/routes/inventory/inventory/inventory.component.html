@@ -215,8 +215,7 @@
                 routerLinkActive="active" [queryParams]="{inventoryId : data.id!}">{{ (data.lockedForAdjust + '') | i18n
                 }}</a></span>
           </td>
-          <td>
-            
+          <td>            
             <nz-skeleton-element 
               *ngIf="data.pickId && data.pick == null"
               nzType="input"

@@ -194,6 +194,33 @@
               
               <st #st [data]="data.receiptLines"  [columns]="receiptLineTableColumns"   [scroll]="{ x: '1315px' }">
                 
+                <ng-template st-row="expectedQuantityColumn" let-item let-index="index"> 
+ 
+                  {{ item.displayExpectedQuantity }}  
+                  <nz-skeleton-element 
+                    *ngIf="item.item?.defaultItemPackageType?.displayItemUnitOfMeasure?.unitOfMeasureId 
+                        && item.item?.defaultItemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure == null"
+                  nzType="input"
+                  [nzActive]="true"
+                  [nzSize]="'small'"
+                  style="width:75px"
+                ></nz-skeleton-element>  
+                  <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList" 
+                    *ngIf="item.item?.defaultItemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure != null">
+                    {{item.item?.defaultItemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure?.name}}
+                    <span nz-icon nzType="down"></span>
+                  </a>
+                  <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
+                    <ul nz-menu nzSelectable>
+                      <li nz-menu-item *ngFor="let itemUnitOfMeasure of item.item?.defaultItemPackageType?.itemUnitOfMeasures" 
+                      (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(item, itemUnitOfMeasure)">
+                        {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                      </li> 
+                    </ul>
+                  </nz-dropdown-menu> 
+
+                </ng-template>
+
                 <ng-template st-row="itemNameColumn" let-item let-index="index"> 
 
                   <nz-skeleton-element 

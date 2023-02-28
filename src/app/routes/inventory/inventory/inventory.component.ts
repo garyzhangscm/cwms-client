@@ -451,7 +451,7 @@ export class InventoryInventoryComponent implements OnInit {
     else {
       // there's no display UOM setup for this inventory, we will display
       // by the quantity
-      inventory.displayQuantity = inventory.quantity;
+      inventory.displayQuantity = inventory.quantity; 
     }
   }
   
