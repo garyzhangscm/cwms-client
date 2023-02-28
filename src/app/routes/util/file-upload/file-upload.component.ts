@@ -207,7 +207,7 @@ export class UtilFileUploadComponent implements OnInit {
             this.fileUploadResults = fileUploadResultRes;
             this.resultTotal = this.fileUploadResults.length;
             this.resultSuccess = this.fileUploadResults.filter(
-              result => result.result = 'success'
+              result => result.result == 'success'
             ).length;
             this.resultFail = this.resultTotal - this.resultSuccess;
           

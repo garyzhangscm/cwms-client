@@ -12,8 +12,8 @@ import { Client } from '../../common/models/client';
 import { Supplier } from '../../common/models/supplier';
 import { ClientService } from '../../common/services/client.service';
 import { SupplierService } from '../../common/services/supplier.service';
-import { ItemUnitOfMeasure } from '../../inventory/models/item-unit-of-measure';
-import { ItemService } from '../../inventory/services/item.service';
+import { Inventory } from '../../inventory/models/inventory';
+import { ItemUnitOfMeasure } from '../../inventory/models/item-unit-of-measure'; 
 import { ColumnItem } from '../../util/models/column-item';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
@@ -145,6 +145,7 @@ export class InboundReceiptComponent implements OnInit {
   checked = false;
   indeterminate = false;
   isSpinning = false;
+  isReceivedInventorySpinning = false;
   validSuppliers: Supplier[] = [];
 
   receiptStatus = ReceiptStatus;
@@ -163,6 +164,9 @@ export class InboundReceiptComponent implements OnInit {
   loadingOrderDetailsRequest = 0;
   
   availableClients: Client[] = []; 
+
+  
+  listOfAllReceivedInventory: { [receiptNumber: string]: Inventory[] } = {};
 
   constructor(
     private fb: UntypedFormBuilder,
@@ -313,12 +317,12 @@ export class InboundReceiptComponent implements OnInit {
   calculateDisplayQuantiies(receipt: Receipt) : void { 
     receipt.receiptLines.forEach(
       receiptLine => {
-          this.calculateDisplayQuantity(receiptLine);
+          this.calculateReceiptLineDisplayQuantity(receiptLine);
       }
     )
   }
   
-  calculateDisplayQuantity(receiptLine: ReceiptLine) : void { 
+  calculateReceiptLineDisplayQuantity(receiptLine: ReceiptLine) : void { 
         // console.log(`>> start to calculate the display quantity for receipt line ${receiptLine.number}`)
         // console.log(`>> receiptLine.item? ${receiptLine.item == null}`)
         // console.log(`>> receiptLine.item?.defaultItemPackageType? ${receiptLine.item?.defaultItemPackageType == null}`)
@@ -418,7 +422,7 @@ export class InboundReceiptComponent implements OnInit {
           next: (itemRes) => { 
             receiptLine.item = itemRes; 
 
-            this.calculateDisplayQuantity(receiptLine);
+            this.calculateReceiptLineDisplayQuantity(receiptLine);
             this.loadingOrderDetailsRequest--;
           }
         }
@@ -426,7 +430,7 @@ export class InboundReceiptComponent implements OnInit {
     }
     else if (receiptLine.item != null) {
       // console.log(`item is not null:\n${JSON.stringify(receiptLine.item)}`)
-      this.calculateDisplayQuantity(receiptLine);
+      this.calculateReceiptLineDisplayQuantity(receiptLine);
     }
   }
 
@@ -540,6 +544,7 @@ export class InboundReceiptComponent implements OnInit {
     if (checked) {
       this.expandSet.add(receipt.id!);
       this.loadItems(receipt);
+      this.loadReceivedInventory(receipt);
       
     } else {
       this.expandSet.delete(receipt.id!);
@@ -561,8 +566,8 @@ export class InboundReceiptComponent implements OnInit {
     }, 
     { title: this.i18n.fanyi("receipt.line.expectedQuantity"), 
     
-        render: 'expectedQuantityColumn',  width: 150 },    
-    { title: this.i18n.fanyi("receipt.line.receivedQuantity"), index: 'receivedQuantity' , width: 150 },    
+        render: 'expectedQuantityColumn',  width: 150 },     
+    { title: this.i18n.fanyi("receipt.line.receivedQuantity"),  render: 'receivedQuantityColumn',  width: 150 },    
     { title: this.i18n.fanyi("receipt.line.overReceivingQuantity"), index: 'overReceivingQuantity' , width: 150 },  
     { title: this.i18n.fanyi("receipt.line.overReceivingPercent"), index: 'overReceivingPercent' , width: 150 },      
     { title: this.i18n.fanyi("qcQuantity"), index: 'qcQuantity' , width: 150 },      
@@ -601,6 +606,84 @@ export class InboundReceiptComponent implements OnInit {
       this.messageService.error(`can't change the display quantity as the line's received quantity ${ 
         receiptLine.displayReceivedQuantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
           }'s quantity ${  itemUnitOfMeasure.quantity}`);
+    }
+  }
+
+  @ViewChild('stInventory', { static: false })
+  stInventory!: STComponent;
+  receivedInventoryTableColumns: STColumn[] = [ 
+    { title: this.i18n.fanyi("lpn"), index: 'lpn', width: 150 },    
+    {
+      title: this.i18n.fanyi("item"), index: 'item.name' ,  width: 150,
+    },
+    {
+      title: this.i18n.fanyi("item.description"),  index: 'item.description' ,  width: 150,
+    }, 
+    { title: this.i18n.fanyi("quantity"), 
+    
+        render: 'quantityColumn',  width: 150 },     
+    { title: this.i18n.fanyi("inventory.status"),  index: 'inventoryStatus.name' ,  width: 150 },   
+    { title: this.i18n.fanyi("color"), index: 'color' , width: 150 },       
+    { title: this.i18n.fanyi("productSize"), index: 'productSize' , width: 150 },       
+    { title: this.i18n.fanyi("style"), index: 'style' , width: 150 },        
+    { title: this.i18n.fanyi("location"), index: 'location.name' , width: 150 },       
+    { title: this.i18n.fanyi("nextLocation"), 
+    render: 'nextLocationColumn',  width: 150 },       
+    // { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 },       
+  ];
+
+
+  loadReceivedInventory(receipt: Receipt) {
+    this.listOfAllReceivedInventory[receipt.number] = [];
+    this.isReceivedInventorySpinning = true;
+    this.receiptService.getReceivedInventory(receipt).subscribe({
+      next: (inventories) => {
+        this.listOfAllReceivedInventory[receipt.number] = inventories; 
+        this.listOfAllReceivedInventory[receipt.number].forEach(
+          inventory => this.calculateInventoryDisplayQuantity(inventory)
+        )
+        this.isReceivedInventorySpinning = false;
+      }, 
+    }); 
+
+  }
+  
+  changeDisplayItemUnitOfMeasure(inventory: Inventory, itemUnitOfMeasure: ItemUnitOfMeasure) {
+
+    
+    // see if the inventory's quantity can be divided by the item unit of measure
+    // if so, we are allowed to change the display UOM and quantity
+    if (inventory.quantity! % itemUnitOfMeasure.quantity! == 0) {
+
+      inventory.displayQuantity = inventory.quantity! / itemUnitOfMeasure.quantity!;
+      inventory.itemPackageType!.displayItemUnitOfMeasure = itemUnitOfMeasure;
+    }
+    else {
+      this.messageService.error(`can't change the display quantity as the inventory's quantity ${ 
+          inventory.quantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
+          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+    }
+  }
+  
+  calculateInventoryDisplayQuantity(inventory: Inventory) : void {
+    // see if we have the display UOM setup
+    if (inventory.itemPackageType?.displayItemUnitOfMeasure) {
+      let displayItemUnitOfMeasureQuantity  = inventory.itemPackageType.displayItemUnitOfMeasure.quantity;
+
+      if (inventory.quantity! % displayItemUnitOfMeasureQuantity! ==0) {
+        inventory.displayQuantity = inventory.quantity! / displayItemUnitOfMeasureQuantity!
+      }
+      else {
+        // the inventory's quantity can't be devided by the display uom, we will display the quantity in 
+        // stock uom
+        inventory.displayQuantity = inventory.quantity;
+        inventory.itemPackageType.displayItemUnitOfMeasure = inventory.itemPackageType.stockItemUnitOfMeasure;
+      }
+    }
+    else {
+      // there's no display UOM setup for this inventory, we will display
+      // by the quantity
+      inventory.displayQuantity = inventory.quantity; 
     }
   }
 }
