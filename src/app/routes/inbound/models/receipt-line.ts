@@ -1,3 +1,4 @@
+import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { Item } from '../../inventory/models/item';
 import { PurchaseOrderLine } from './purchase-order-line';
 
@@ -11,7 +12,10 @@ export interface ReceiptLine {
   expectedQuantity?: number;
   receivedQuantity?: number;
   displayExpectedQuantity?: number;
+  displayUnitOfMeasureForExpectedQuantity?: UnitOfMeasure;
   displayReceivedQuantity?: number;
+  displayUnitOfMeasureForReceivedQuantity?: UnitOfMeasure;
+
   overReceivingQuantity?: number;
   overReceivingPercent?: number;
   

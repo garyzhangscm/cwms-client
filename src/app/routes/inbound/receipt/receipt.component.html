@@ -198,16 +198,15 @@
  
                   {{ item.displayExpectedQuantity }}  
                   <nz-skeleton-element 
-                    *ngIf="item.item?.defaultItemPackageType?.displayItemUnitOfMeasure?.unitOfMeasureId 
-                        && item.item?.defaultItemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure == null"
+                    *ngIf="item.displayUnitOfMeasureForExpectedQuantity == null"
                   nzType="input"
                   [nzActive]="true"
                   [nzSize]="'small'"
                   style="width:75px"
                 ></nz-skeleton-element>  
                   <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList" 
-                    *ngIf="item.item?.defaultItemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure != null">
-                    {{item.item?.defaultItemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure?.name}}
+                    *ngIf="item.displayUnitOfMeasureForExpectedQuantity != null">
+                    {{item.displayUnitOfMeasureForExpectedQuantity.name}}
                     <span nz-icon nzType="down"></span>
                   </a>
                   <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">

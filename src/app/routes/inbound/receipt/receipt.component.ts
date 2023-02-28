@@ -319,36 +319,47 @@ export class InboundReceiptComponent implements OnInit {
   }
   
   calculateDisplayQuantity(receiptLine: ReceiptLine) : void { 
-        console.log(`>> start to calculate the display quantity for receipt line ${receiptLine.number}`)
-        console.log(`>> receiptLine.item? ${receiptLine.item == null}`)
-        console.log(`>> receiptLine.item?.defaultItemPackageType? ${receiptLine.item?.defaultItemPackageType == null}`)
-        console.log(`>> receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure ${receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure == null}`)
-        console.log(`>> receiptLine.item? ${JSON.stringify(receiptLine.item)}`)
+        // console.log(`>> start to calculate the display quantity for receipt line ${receiptLine.number}`)
+        // console.log(`>> receiptLine.item? ${receiptLine.item == null}`)
+        // console.log(`>> receiptLine.item?.defaultItemPackageType? ${receiptLine.item?.defaultItemPackageType == null}`)
+        // console.log(`>> receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure ${receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure == null}`)
+        // console.log(`>> receiptLine.item? ${JSON.stringify(receiptLine.item)}`)
           // see if we have the display UOM setup
+          // if the display item unit of measure is setup for the item
+          // then we will update the display quantity accordingly.
+          // the same logic for both expected quantity and received quantity
+          // 1. if the quantity can be divided by the display UOM's quantity, then display
+          //    the quantity in display UOM and setup the display UOM for each quantity accordingly
+          // 2. otherwise, setup teh quantity in stock UOM and use the stock UOM as the display quantity
+          //    for each quantity
           if (receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure) {
-            console.log(`>> found displayItemUnitOfMeasure: ${receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure?.name}`)
+            // console.log(`>> found displayItemUnitOfMeasure: ${receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure?.name}`)
             let displayItemUnitOfMeasureQuantity  = receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.quantity;
 
-            console.log(`>> with quantity ${displayItemUnitOfMeasureQuantity}`)
+            // console.log(`>> with quantity ${displayItemUnitOfMeasureQuantity}`)
 
             if (receiptLine.expectedQuantity! % displayItemUnitOfMeasureQuantity! ==0) {
+              receiptLine.displayUnitOfMeasureForExpectedQuantity = receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure;
               receiptLine.displayExpectedQuantity = receiptLine.expectedQuantity! / displayItemUnitOfMeasureQuantity!
             }
             else {
               // the receipt line's quantity can't be devided by the display uom, we will display the quantity in 
               // stock uom
               receiptLine.displayExpectedQuantity! = receiptLine.expectedQuantity!;
-              receiptLine.item!.defaultItemPackageType!.displayItemUnitOfMeasure = receiptLine.item!.defaultItemPackageType!.stockItemUnitOfMeasure;
+              // receiptLine.item!.defaultItemPackageType!.displayItemUnitOfMeasure = receiptLine.item!.defaultItemPackageType!.stockItemUnitOfMeasure;
+              receiptLine.displayUnitOfMeasureForExpectedQuantity = receiptLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure;
             }
             
             if (receiptLine.receivedQuantity! % displayItemUnitOfMeasureQuantity! ==0) {
               receiptLine.displayReceivedQuantity = receiptLine.receivedQuantity! / displayItemUnitOfMeasureQuantity!
+              receiptLine.displayUnitOfMeasureForReceivedQuantity = receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure;
             }
             else {
               // the receipt line's quantity can't be devided by the display uom, we will display the quantity in 
               // stock uom
               receiptLine.displayReceivedQuantity! = receiptLine.receivedQuantity!;
-              receiptLine.item!.defaultItemPackageType!.displayItemUnitOfMeasure = receiptLine.item!.defaultItemPackageType!.stockItemUnitOfMeasure;
+              // receiptLine.item!.defaultItemPackageType!.displayItemUnitOfMeasure = receiptLine.item!.defaultItemPackageType!.stockItemUnitOfMeasure;
+              receiptLine.displayUnitOfMeasureForReceivedQuantity = receiptLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure;
             }
           }
           else {
@@ -567,7 +578,7 @@ export class InboundReceiptComponent implements OnInit {
     if (receiptLine.expectedQuantity! % itemUnitOfMeasure.quantity! == 0) {
 
       receiptLine.displayExpectedQuantity = receiptLine.expectedQuantity! / itemUnitOfMeasure.quantity!;
-      receiptLine.item!.defaultItemPackageType!.displayItemUnitOfMeasure = itemUnitOfMeasure;
+      receiptLine.displayUnitOfMeasureForExpectedQuantity = itemUnitOfMeasure.unitOfMeasure;
     }
     else {
       this.messageService.error(`can't change the display quantity as the line's expected quantity ${ 
@@ -584,7 +595,7 @@ export class InboundReceiptComponent implements OnInit {
     if (receiptLine.receivedQuantity! % itemUnitOfMeasure.quantity! == 0) {
 
       receiptLine.displayReceivedQuantity = receiptLine.receivedQuantity! / itemUnitOfMeasure.quantity!;
-      receiptLine.item!.defaultItemPackageType!.displayItemUnitOfMeasure = itemUnitOfMeasure;
+      receiptLine.displayUnitOfMeasureForReceivedQuantity = itemUnitOfMeasure.unitOfMeasure;
     }
     else {
       this.messageService.error(`can't change the display quantity as the line's received quantity ${ 
