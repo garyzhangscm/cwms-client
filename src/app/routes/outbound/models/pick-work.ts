@@ -25,4 +25,8 @@ export interface PickWork {
   lpn?: string;
   workOrderLineId?: number; 
   workOrderNumber?: string;
+  
+  color?:string;
+  productSize?:string;
+  style?:string;
 }

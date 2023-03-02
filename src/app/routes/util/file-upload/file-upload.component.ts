@@ -26,9 +26,10 @@ export class UtilFileUploadComponent implements OnInit {
   columns: STColumn[] = [
     
     { title: this.i18n.fanyi("lineNumber"), index:"lineNumber" },  
-    { title: this.i18n.fanyi("record"), index:"record" },  
+    { title: this.i18n.fanyi("record"), 
+    render: 'recordColumn' },  
     { title: this.i18n.fanyi("result"), index:"result" },  
-    { title: this.i18n.fanyi("errorMessage"), index:"errorMessage" },   
+    { title: this.i18n.fanyi("errorMessage"), render: 'errorMessageColumn' },   
   ]; 
   
   constructor(

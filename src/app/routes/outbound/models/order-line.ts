@@ -1,3 +1,4 @@
+import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { Item } from '../../inventory/models/item';
 import { AllocationStrategyType } from './allocation-strategy-type.enum';
@@ -13,6 +14,12 @@ export interface OrderLine {
 
   expectedQuantity: number;
   openQuantity: number;
+  
+  displayExpectedQuantity?: number;
+  displayUnitOfMeasureForExpectedQuantity?: UnitOfMeasure;
+  displayOpenQuantity?: number;
+  displayUnitOfMeasureForOpenQuantity?: UnitOfMeasure;
+
   inprocessQuantity: number;
   shippedQuantity: number;
   productionPlanInprocessQuantity: number;
@@ -21,4 +28,8 @@ export interface OrderLine {
 
   inventoryStatusId?: number;
   inventoryStatus?: InventoryStatus;
+
+  color?:string;
+  productSize?:string;
+  style?:string;
 }

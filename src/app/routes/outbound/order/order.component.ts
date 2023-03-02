@@ -17,6 +17,7 @@ import { ClientService } from '../../common/services/client.service';
 import { CustomerService } from '../../common/services/customer.service';
 import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
+import { ItemUnitOfMeasure } from '../../inventory/models/item-unit-of-measure';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { Printer } from '../../report/models/printer';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
@@ -477,12 +478,57 @@ export class OutboundOrderComponent implements OnInit {
         {
           next: (res) => {
             orderLine.item = res;
+            this.calculateOrderLineDisplayQuantity(orderLine);
             this.loadingOrderDetailsRequest--;
+
+
           }
         }
       );      
+    }
+    else if (orderLine.item != null) { 
+      this.calculateOrderLineDisplayQuantity(orderLine);
     } 
   }
+  
+  calculateOrderLineDisplayQuantity(ordertLine: OrderLine) : void {  
+      if (ordertLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure) {
+        // console.log(`>> found displayItemUnitOfMeasure: ${receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure?.name}`)
+        let displayItemUnitOfMeasureQuantity  = ordertLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.quantity;
+
+        // console.log(`>> with quantity ${displayItemUnitOfMeasureQuantity}`)
+
+        if (ordertLine.expectedQuantity! % displayItemUnitOfMeasureQuantity! ==0) {
+          ordertLine.displayUnitOfMeasureForExpectedQuantity = ordertLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure;
+          ordertLine.displayExpectedQuantity = ordertLine.expectedQuantity! / displayItemUnitOfMeasureQuantity!
+        }
+        else {
+          // the receipt line's quantity can't be devided by the display uom, we will display the quantity in 
+          // stock uom
+          ordertLine.displayExpectedQuantity! = ordertLine.expectedQuantity!;
+          // receiptLine.item!.defaultItemPackageType!.displayItemUnitOfMeasure = receiptLine.item!.defaultItemPackageType!.stockItemUnitOfMeasure;
+          ordertLine.displayUnitOfMeasureForExpectedQuantity = ordertLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure;
+        }
+        
+        if (ordertLine.openQuantity! % displayItemUnitOfMeasureQuantity! ==0) {
+          ordertLine.displayOpenQuantity = ordertLine.openQuantity! / displayItemUnitOfMeasureQuantity!
+          ordertLine.displayUnitOfMeasureForOpenQuantity = ordertLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure;
+        }
+        else {
+          // the receipt line's quantity can't be devided by the display uom, we will display the quantity in 
+          // stock uom
+          ordertLine.displayOpenQuantity! = ordertLine.openQuantity!;
+          // receiptLine.item!.defaultItemPackageType!.displayItemUnitOfMeasure = receiptLine.item!.defaultItemPackageType!.stockItemUnitOfMeasure;
+          ordertLine.displayUnitOfMeasureForOpenQuantity = ordertLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure;
+        }
+      }
+      else {
+        // there's no display UOM setup for this inventory, we will display
+        // by the quantity
+        ordertLine.displayExpectedQuantity! = ordertLine.expectedQuantity!;
+        ordertLine.displayOpenQuantity! = ordertLine.openQuantity!;
+      }  
+}
 
   calculateStatisticQuantities(order: Order) {
     order.totalLineCount = order.orderLines.length;
@@ -1132,9 +1178,8 @@ export class OutboundOrderComponent implements OnInit {
       ],width: 100
     },
     { title: this.i18n.fanyi("order.totalShippedQuantity"), index: 'totalShippedQuantity', iif: () => this.isChoose('totalShippedQuantity'), width: 100},     
-    {
-      title: 'action',
-      renderTitle: 'actionColumnTitle',fixed: 'right',width: 50, 
+    { 
+      title: this.i18n.fanyi("action"),fixed: 'right',width: 50, 
       render: 'actionColumn',
     },
     {
@@ -1407,5 +1452,39 @@ export class OutboundOrderComponent implements OnInit {
   previewParcelLevel(parcelPackage: ParcelPackage): void {
     window.open(parcelPackage.labelUrl, '_blank');
     // this.router.navigateByUrl(parcelPackage.labelUrl, );
+  }
+
+  changeDisplayItemUnitOfMeasureForExpectedQuantity(orderLine: OrderLine, itemUnitOfMeasure: ItemUnitOfMeasure) {
+
+    
+    // see if the inventory's quantity can be divided by the item unit of measure
+    // if so, we are allowed to change the display UOM and quantity
+    if (orderLine.expectedQuantity! % itemUnitOfMeasure.quantity! == 0) {
+
+      orderLine.displayExpectedQuantity = orderLine.expectedQuantity! / itemUnitOfMeasure.quantity!;
+      orderLine.displayUnitOfMeasureForExpectedQuantity = itemUnitOfMeasure.unitOfMeasure;
+    }
+    else {
+      this.messageService.error(`can't change the display quantity as the line's expected quantity ${ 
+        orderLine.expectedQuantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
+          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+    }
+  }
+  
+  changeDisplayItemUnitOfMeasureForOpenQuantity(orderLine: OrderLine, itemUnitOfMeasure: ItemUnitOfMeasure) {
+
+    
+    // see if the inventory's quantity can be divided by the item unit of measure
+    // if so, we are allowed to change the display UOM and quantity
+    if (orderLine.openQuantity! % itemUnitOfMeasure.quantity! == 0) {
+
+      orderLine.displayOpenQuantity = orderLine.openQuantity! / itemUnitOfMeasure.quantity!;
+      orderLine.displayUnitOfMeasureForOpenQuantity = itemUnitOfMeasure.unitOfMeasure;
+    }
+    else {
+      this.messageService.error(`can't change the display quantity as the line's expected quantity ${ 
+        orderLine.openQuantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
+          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+    }
   }
 }

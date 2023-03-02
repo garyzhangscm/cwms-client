@@ -369,6 +369,7 @@ export class InboundReceiptComponent implements OnInit {
           else {
             // there's no display UOM setup for this inventory, we will display
             // by the quantity
+              receiptLine.displayExpectedQuantity = receiptLine.expectedQuantity!;
               receiptLine.displayReceivedQuantity! = receiptLine.receivedQuantity!;
           }  
   }

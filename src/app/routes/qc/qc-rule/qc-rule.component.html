@@ -60,6 +60,9 @@
                 <th>
                   {{ 'qcRule.expectedValue' | i18n }}
                 </th> 
+                <th>
+                  {{ 'enabled' | i18n }}
+                </th> 
                 
               </thead>
               <tbody>
@@ -68,6 +71,7 @@
                   <td>{{ 'QC-RULE-ITEM-TYPE-' + qcRuleItem.qcRuleItemType | i18n }}</td>
                   <td>{{ 'QC-RULE-ITEM-COMPARATOR-' + qcRuleItem.qcRuleItemComparator  | i18n}}</td>
                   <td>{{ qcRuleItem.expectedValue }}</td>
+                  <td>{{ qcRuleItem.enabled }}</td>
                 </tr>
               </tbody>
             </nz-table>

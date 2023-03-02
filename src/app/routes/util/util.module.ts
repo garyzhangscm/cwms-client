@@ -7,7 +7,8 @@ import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
-
+import { EllipsisModule } from '@delon/abc/ellipsis';
+import { NzTypographyModule } from 'ng-zorro-antd/typography';
 
 import { UtilBillableRequestComponent } from './billable-request/billable-request.component';
 import { UtilCompanyMaintenanceComponent } from './company-maintenance/company-maintenance.component';
@@ -76,7 +77,9 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzSkeletonModule ,
     NzEmptyModule,
     ScrollingModule,
-    DownFileModule
+    DownFileModule, 
+    EllipsisModule, 
+    NzTypographyModule 
   ],
   declarations: [
     ...COMPONENTS,

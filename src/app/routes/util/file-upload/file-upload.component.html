@@ -180,8 +180,20 @@
   <ng-container *nzModalContent> 
     <h3>{{'result' | i18n}}</h3>
     
-    <st #st [data]="fileUploadResults" [columns]="columns" ps="5"  [footer]="tableFoot">
+    <st #st [data]="fileUploadResults" [columns]="columns" ps="5"  [footer]="tableFoot" >
 
+      <ng-template st-row="recordColumn" let-item let-index="index"> 
+        <p
+          nz-typography
+          nzEllipsis
+          nzCopyable
+          [nzContent]="item.record"
+        ></p>
+      </ng-template>
+      <ng-template st-row="errorMessageColumn" let-item let-index="index">
+        <ellipsis length="100" tooltip>{{ item.errorMessage }}</ellipsis>
+
+      </ng-template>
 
     </st>
     <ng-template #tableFoot>
