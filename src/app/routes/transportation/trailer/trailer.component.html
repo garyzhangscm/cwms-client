@@ -35,7 +35,7 @@
       </div>
       
       <st #st [data]="trailers" [columns]="columns" [footer]="tableFoot"    
-      [expand]="expand"   expandAccordion> 
+      [expand]="expand" (change)="trailerTableChanged($event)"  expandAccordion> 
       
         <!--   action colummn  --> 
         <ng-template st-row="actionColumnTitle" type="title" let-c>
@@ -88,6 +88,66 @@
                         {{'TRAILER-APPOINTMENT-TYPE-' + item.currentAppointment.type | i18n}} </span>
                 </nz-descriptions-item>
               </nz-descriptions>
+
+              <!--Show stops only if we have a trailer apppointment-->
+              <nz-tabset *ngIf="item.currentAppointment">
+                <nz-tab nzTitle="{{'stop' | i18n}}">
+                
+                  <st #stStops [data]="mapOfStops[item.id!]" [columns]="stopColumns"    > 
+                      
+                      <ng-template st-row="addressColumn" let-stop let-index="index"> 
+                      
+                        <address>  
+                        {{stop.contactorFirstname}} {{stop.contactorLastname}}<br>
+                        {{stop.addressLine1}} <br>
+                        {{stop.addressLine2}} <br>
+                        {{stop.addressCity}},  {{stop.addressState}} <br>
+                        {{stop.addressPostcode}} <br>
+                        </address>
+                      </ng-template>
+                      <ng-template st-row="actionColumn" let-stop let-index="index"> 
+                        
+                        <button nz-button nzDanger (click)="removeStopFromTrailerAppointment(stop)">
+                          {{ 'remove' | i18n }} </button> 
+                      </ng-template>
+                      <!--   current appointment --> 
+                  </st>
+                </nz-tab> 
+                <nz-tab nzTitle="{{'order' | i18n}}">
+                
+                  <st #stOrders [data]="mapOfOrders[item.id!]" [columns]="orderColumns"    > 
+                       
+                      <ng-template st-row="actionColumn" let-stop let-index="index"> 
+                        
+                        <button nz-button nzDanger (click)="removeStopFromTrailerAppointment(stop)">
+                          {{ 'remove' | i18n }} </button> 
+                      </ng-template>
+                      <!--   current appointment --> 
+                  </st>
+                </nz-tab> 
+                <nz-tab nzTitle="{{'shipment' | i18n}}">
+                
+                  <st #stShipments [data]="mapOfShipments[item.id!]" [columns]="shipmentColumns"    > 
+                      
+                      <ng-template st-row="addressColumn" let-stop let-index="index"> 
+                      
+                        <address>  
+                        {{stop.contactorFirstname}} {{stop.contactorLastname}}<br>
+                        {{stop.addressLine1}} <br>
+                        {{stop.addressLine2}} <br>
+                        {{stop.addressCity}},  {{stop.addressState}} <br>
+                        {{stop.addressPostcode}} <br>
+                        </address>
+                      </ng-template>
+                      <ng-template st-row="actionColumn" let-stop let-index="index"> 
+                        
+                        <button nz-button nzDanger (click)="removeStopFromTrailerAppointment(stop)">
+                          {{ 'remove' | i18n }} </button> 
+                      </ng-template>
+                      <!--   current appointment --> 
+                  </st>
+                </nz-tab> 
+              </nz-tabset>
             </nz-tab>
           </nz-tabset>
         </ng-template>

@@ -3,12 +3,14 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { STComponent, STColumn } from '@delon/abc/st';
+import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
 
-import { CompanyService } from '../../warehouse-layout/services/company.service';
+import { Order } from '../../outbound/models/order';
+import { Shipment } from '../../outbound/models/shipment';
+import { Stop } from '../../outbound/models/stop';
+import { StopService } from '../../outbound/services/stop.service';
 import { Trailer } from '../models/trailer';
 import { TrailerService } from '../services/trailer.service';
 
@@ -37,6 +39,7 @@ export class CommonTrailerComponent implements OnInit {
     },
   ]; 
   
+  
   customColumns = [
 
     { label: this.i18n.fanyi("number"), value: 'number', checked: true },
@@ -45,16 +48,59 @@ export class CommonTrailerComponent implements OnInit {
     
   ];
 
+  
+  @ViewChild('stStops', { static: false })
+  stStops!: STComponent;
+  stopColumns: STColumn[] = [
+    { title: this.i18n.fanyi("number"),  index: 'number' ,   }, 
+    { title: this.i18n.fanyi("sequence"),  index: 'sequence' ,   }, 
+    { title: this.i18n.fanyi("address"),  render: 'addressColumn' }, 
+    { title: this.i18n.fanyi("shipmentCount"),  index: 'shipmentCount' ,   }, 
+    { title: this.i18n.fanyi("orderCount"),  index: 'orderCount' ,   }, 
+    {
+      title: 'action',
+      renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 
+      render: 'actionColumn',
+    },
+  ]; 
+
  
+  @ViewChild('stOrders', { static: false })
+  stOrders!: STComponent;
+  orderColumns: STColumn[] = [
+    { title: this.i18n.fanyi("number"),  index: 'number' ,   },  
+    {
+      title: 'action',
+      renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 
+      render: 'actionColumn',
+    },
+  ]; 
+ 
+  @ViewChild('stShipments', { static: false })
+  stShipments!: STComponent;
+  shipmentColumns: STColumn[] = [
+    { title: this.i18n.fanyi("number"),  index: 'number' ,   },  
+    {
+      title: 'action',
+      renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 
+      render: 'actionColumn',
+    },
+  ]; 
+
+
   searchForm!: UntypedFormGroup;
   trailers: Trailer[] = [];
   searchResult = "";
+  mapOfStops: { [key: string]: Stop[] } = {};
+  mapOfOrders: { [key: string]: Order[] } = {};
+  mapOfShipments: { [key: string]: Shipment[] } = {};
 
   constructor(private http: _HttpClient,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private activatedRoute: ActivatedRoute,
     private trailerService: TrailerService,
     private messageService: NzMessageService, 
+    private stopService: StopService,
     private fb: UntypedFormBuilder,) { }
 
   ngOnInit(): void {  
@@ -128,5 +174,47 @@ export class CommonTrailerComponent implements OnInit {
       },
     });
   }
+ 
+  
+  trailerTableChanged(event: STChange) : void { 
+    if (event.type === 'expand' && event.expand.expand === true) {
+      
+      this.showTrailerDetails(event.expand);
+    }
 
+  } 
+
+  showTrailerDetails(trailer: Trailer): void {  
+    if (trailer.currentAppointment) {
+      this.stopService.getStops(undefined, trailer.currentAppointment.id).subscribe({
+        next: (stopsRes) => {
+          // calculate the number of orders and shipments in the stop
+          this.mapOfStops[trailer.id!] = [];
+          this.mapOfShipments[trailer.id!] = [];
+          stopsRes.forEach(
+            stop => {
+              this.mapOfShipments[trailer.id!] = [...this.mapOfShipments[trailer.id!], 
+                ...stop.shipments];
+
+              stop.shipmentCount = stop.shipments.length;
+              let orderNumbers = new Set<string>();
+              stop.shipments.forEach(
+                shipment => {
+                  shipment.shipmentLines.forEach(
+                    shipmentLine => orderNumbers.add(shipmentLine.orderNumber)
+                  )
+                }
+              )
+              stop.orderCount = orderNumbers.size;
+            }
+          )
+          this.mapOfStops[trailer.id!] = stopsRes;
+        }
+      })
+    }
+     
+  }
+  removeStopFromTrailerAppointment(stop: Stop) {
+    console.log(`we will remove stop ${stop.sequence} from the trailer appointment`)
+  }
 }

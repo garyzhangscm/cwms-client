@@ -1,4 +1,5 @@
 
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -16,21 +17,24 @@ export class StopService {
     private utilService: UtilService) {}
 
   getStops(number?: string, trailerAppointmentId?: number, sequence?: number ): Observable<Stop[]> {
-    let url = `outbound/stops?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    const url = `outbound/stops`;
  
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+
     if (number) {
       
-      url = `${url}&number=${this.utilService.encodeValue(number)}`; 
+      params = params.append('number', number);  
     }
     if (trailerAppointmentId != null) {
       
-      url = `${url}&trailerAppointmentId=${trailerAppointmentId}`; 
+      params = params.append('trailerAppointmentId', trailerAppointmentId);  
     }
     if (sequence != null) {
       
-      url = `${url}&sequence=${sequence}`; 
+      params = params.append('sequence', sequence);  
     }
-    return this.http.get(url).pipe(map(res => res.data));
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 
   getStop(id: number): Observable<Stop> {
