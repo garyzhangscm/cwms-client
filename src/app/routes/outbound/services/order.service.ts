@@ -34,7 +34,8 @@ export class OrderService {
   getOrders(number?: string, loadDetails?: boolean, orderStatus?: OrderStatus, 
     startCompleteTime?: Date, endCompleteTime?:Date, specificCompleteDate?: Date, category?: OrderCategory, 
     customerName?: string, customerId?: number, 
-    startCreatedTime?: Date, endCreatedTime?:Date, specificCreatedDate?: Date,): Observable<Order[]> {
+    startCreatedTime?: Date, endCreatedTime?:Date, specificCreatedDate?: Date,
+    trailerAppointmentId?: number): Observable<Order[]> {
        
     let params = new HttpParams();
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);
@@ -59,6 +60,9 @@ export class OrderService {
     }
     if (customerId != null) {
       params = params.append('customerId', customerId);  
+    }
+    if (trailerAppointmentId != null) {
+      params = params.append('trailerAppointmentId', trailerAppointmentId);  
     }
     
     if (startCompleteTime) {
@@ -207,5 +211,13 @@ export class OrderService {
   }
   isOutsourcingOrder(order: Order): boolean {
     return order.category === OrderCategory.OUTSOURCING_ORDER
+  }
+
+  getOrdersByTrailerAppointment(trailerAppointmentId: number) : Observable<Order[]> {
+    return this.getOrders(undefined, true, undefined, 
+      undefined, undefined, undefined, undefined, 
+      undefined, undefined, 
+      undefined, undefined, undefined,
+      trailerAppointmentId);
   }
 }

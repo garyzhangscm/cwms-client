@@ -100,9 +100,8 @@
                         <address>  
                         {{stop.contactorFirstname}} {{stop.contactorLastname}}<br>
                         {{stop.addressLine1}} <br>
-                        {{stop.addressLine2}} <br>
-                        {{stop.addressCity}},  {{stop.addressState}} <br>
-                        {{stop.addressPostcode}} <br>
+                        <div *ngIf="stop.addressLine2">{{stop.addressLine2}}</div>  
+                        {{stop.addressCity}},  {{stop.addressState}} {{stop.addressPostcode}} 
                         </address>
                       </ng-template>
                       <ng-template st-row="actionColumn" let-stop let-index="index"> 
@@ -117,31 +116,75 @@
                 
                   <st #stOrders [data]="mapOfOrders[item.id!]" [columns]="orderColumns"    > 
                        
-                      <ng-template st-row="actionColumn" let-stop let-index="index"> 
+                      <ng-template st-row="numberColumn" let-order let-index="index">  
+                        <a  routerLink="/outbound/order" routerLinkActive="active" [queryParams]="{number : order.number}">
+                          {{ order.number }}</a> 
+                      </ng-template>
+                      <ng-template st-row="addressColumn" let-order let-index="index"> 
+                      
+                        <address>  
+                        {{order.shipToContactorFirstname}} {{order.shipToContactorLastname}}<br>
+                        {{order.shipToAddressLine1}} <br>
+                        <div *ngIf="order.shipToAddressLine2">{{order.shipToAddressLine2}}</div> 
+                        {{order.shipToAddressCity}},  {{order.shipToAddressState}} {{order.shipToAddressPostcode}}   
                         
-                        <button nz-button nzDanger (click)="removeStopFromTrailerAppointment(stop)">
+                        </address>
+                      </ng-template>
+                      <ng-template st-row="inProcessColumn" let-order  >  
+                        <nz-progress [nzPercent]="(order.totalInprocessQuantity * 100.0/ order.totalExpectedQuantity) | number: '1.0-2'" nzStatus="normal"></nz-progress> 
+                      </ng-template>
+                      <ng-template st-row="shippedColumn" let-order>   
+                        <nz-progress [nzPercent]="(order.totalShippedQuantity  * 100.0/ order.totalExpectedQuantity) | number: '1.0-2'" nzStatus="normal"></nz-progress>   
+                      </ng-template>
+
+                      
+                      <ng-template st-row="actionColumn" let-order> 
+                        
+                        <button nz-button nzDanger (click)="removeOrderFromTrailerAppointment(order)">
                           {{ 'remove' | i18n }} </button> 
                       </ng-template>
-                      <!--   current appointment --> 
                   </st>
                 </nz-tab> 
                 <nz-tab nzTitle="{{'shipment' | i18n}}">
                 
                   <st #stShipments [data]="mapOfShipments[item.id!]" [columns]="shipmentColumns"    > 
                       
-                      <ng-template st-row="addressColumn" let-stop let-index="index"> 
+                    <ng-template st-row="numberColumn" let-shipment let-index="index">  
+                      <a  routerLink="/outbound/shipment" routerLinkActive="active" [queryParams]="{number : shipment.number}">
+                        {{ shipment.number }}</a> 
+                    </ng-template>
+                      <ng-template st-row="addressColumn" let-shipment> 
                       
                         <address>  
-                        {{stop.contactorFirstname}} {{stop.contactorLastname}}<br>
-                        {{stop.addressLine1}} <br>
-                        {{stop.addressLine2}} <br>
-                        {{stop.addressCity}},  {{stop.addressState}} <br>
-                        {{stop.addressPostcode}} <br>
+                        {{shipment.shipTocontactorFirstname}} {{shipment.shipTocontactorLastname}}<br>
+                        {{shipment.shipToAddressLine1}} <br>
+                        <div *ngIf="shipment.shipToAddressLine2">{{shipment.shipToAddressLine2}} </div> 
+                        {{shipment.shipToAddressCity}},  {{shipment.shipToAddressState}} {{shipment.shipToAddressPostcode}} 
                         </address>
                       </ng-template>
-                      <ng-template st-row="actionColumn" let-stop let-index="index"> 
+                      
+                      <ng-template st-row="inProcessColumn" let-shipment>  
+                        <nz-progress [nzPercent]="(shipment.totalInprocessQuantity  * 100.0/ shipment.totalQuantity) | number: '1.0-2'" nzStatus="normal"></nz-progress> 
+                      </ng-template>
+                      
+                      <ng-template st-row="stagedColumn" let-shipment>   
+                        <nz-progress [nzPercent]="(shipment.totalStagedQuantity  * 100.0/ shipment.totalQuantity) | number: '1.0-2'" nzStatus="normal"></nz-progress>  
+                      </ng-template>
+
+                     
+                      <ng-template st-row="loadedColumn" let-shipment>   
+                        <nz-progress [nzPercent]="(shipment.totalLoadedQuantity  * 100.0/ shipment.totalQuantity) | number: '1.0-2'" nzStatus="normal"></nz-progress>   
+                      </ng-template>
+
+                   
+                      <ng-template st-row="shippedColumn" let-shipment>   
+                        <nz-progress [nzPercent]="(shipment.totalShippedQuantity  * 100.0/ shipment.totalQuantity) | number: '1.0-2'" nzStatus="normal"></nz-progress>   
+                      </ng-template>
+
+
+                      <ng-template st-row="actionColumn" let-shipment> 
                         
-                        <button nz-button nzDanger (click)="removeStopFromTrailerAppointment(stop)">
+                        <button nz-button nzDanger  (click)="removeShipmentFromTrailerAppointment(shipment)">
                           {{ 'remove' | i18n }} </button> 
                       </ng-template>
                       <!--   current appointment --> 

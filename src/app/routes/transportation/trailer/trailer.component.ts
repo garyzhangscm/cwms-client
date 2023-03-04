@@ -10,6 +10,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { Order } from '../../outbound/models/order';
 import { Shipment } from '../../outbound/models/shipment';
 import { Stop } from '../../outbound/models/stop';
+import { OrderService } from '../../outbound/services/order.service';
 import { StopService } from '../../outbound/services/stop.service';
 import { Trailer } from '../models/trailer';
 import { TrailerService } from '../services/trailer.service';
@@ -33,7 +34,7 @@ export class CommonTrailerComponent implements OnInit {
     { title: this.i18n.fanyi("size"),  index: 'size' , 
     iif: () => this.isChoose('size')  }, 
     {
-      title: 'action',
+      title: this.i18n.fanyi('action'),
       renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 
       render: 'actionColumn',
     },
@@ -52,14 +53,13 @@ export class CommonTrailerComponent implements OnInit {
   @ViewChild('stStops', { static: false })
   stStops!: STComponent;
   stopColumns: STColumn[] = [
-    { title: this.i18n.fanyi("number"),  index: 'number' ,   }, 
+    { title: this.i18n.fanyi("number"),  render: 'numberColumn',   },  
     { title: this.i18n.fanyi("sequence"),  index: 'sequence' ,   }, 
     { title: this.i18n.fanyi("address"),  render: 'addressColumn' }, 
     { title: this.i18n.fanyi("shipmentCount"),  index: 'shipmentCount' ,   }, 
     { title: this.i18n.fanyi("orderCount"),  index: 'orderCount' ,   }, 
     {
-      title: 'action',
-      renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 
+      title: this.i18n.fanyi('action'), fixed: 'right',width: 210, 
       render: 'actionColumn',
     },
   ]; 
@@ -68,10 +68,12 @@ export class CommonTrailerComponent implements OnInit {
   @ViewChild('stOrders', { static: false })
   stOrders!: STComponent;
   orderColumns: STColumn[] = [
-    { title: this.i18n.fanyi("number"),  index: 'number' ,   },  
+    { title: this.i18n.fanyi("number"),  render: 'numberColumn',   },  
+    { title: this.i18n.fanyi("address"),  render: 'addressColumn',   },  
+    { title: this.i18n.fanyi("inProcess"),  render: 'inProcessColumn' }, 
+    { title: this.i18n.fanyi("shipped"),  render: 'shippedColumn' }, 
     {
-      title: 'action',
-      renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 
+      title: this.i18n.fanyi('action'), fixed: 'right',width: 210, 
       render: 'actionColumn',
     },
   ]; 
@@ -80,9 +82,13 @@ export class CommonTrailerComponent implements OnInit {
   stShipments!: STComponent;
   shipmentColumns: STColumn[] = [
     { title: this.i18n.fanyi("number"),  index: 'number' ,   },  
+    { title: this.i18n.fanyi("address"),  render: 'addressColumn' }, 
+    { title: this.i18n.fanyi("inProcess"),  render: 'inProcessColumn' }, 
+    { title: this.i18n.fanyi("staged"),  render: 'stagedColumn' }, 
+    { title: this.i18n.fanyi("loaded"),  render: 'loadedColumn' }, 
+    { title: this.i18n.fanyi("shipped"),  render: 'shippedColumn' }, 
     {
-      title: 'action',
-      renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 
+      title: this.i18n.fanyi('action'), fixed: 'right',width: 210, 
       render: 'actionColumn',
     },
   ]; 
@@ -101,6 +107,7 @@ export class CommonTrailerComponent implements OnInit {
     private trailerService: TrailerService,
     private messageService: NzMessageService, 
     private stopService: StopService,
+    private orderService: OrderService,
     private fb: UntypedFormBuilder,) { }
 
   ngOnInit(): void {  
@@ -193,22 +200,26 @@ export class CommonTrailerComponent implements OnInit {
           this.mapOfShipments[trailer.id!] = [];
           stopsRes.forEach(
             stop => {
+              // load the shipment information
               this.mapOfShipments[trailer.id!] = [...this.mapOfShipments[trailer.id!], 
                 ...stop.shipments];
 
               stop.shipmentCount = stop.shipments.length;
-              let orderNumbers = new Set<string>();
-              stop.shipments.forEach(
-                shipment => {
-                  shipment.shipmentLines.forEach(
-                    shipmentLine => orderNumbers.add(shipmentLine.orderNumber)
-                  )
+
+              // load the order information
+              this.orderService.getOrdersByTrailerAppointment(trailer.currentAppointment!.id!).subscribe({
+                next: (ordersRes) => {
+                  this.calculateOrdersQuantities(ordersRes);
+                  this.mapOfOrders[trailer.id!] = ordersRes;
+                  stop.orderCount = ordersRes.length;
+
                 }
-              )
-              stop.orderCount = orderNumbers.size;
+              }) 
             }
           )
           this.mapOfStops[trailer.id!] = stopsRes;
+
+          this.calculateShipmentsQuantities(this.mapOfShipments[trailer.id!]);
         }
       })
     }
@@ -216,5 +227,82 @@ export class CommonTrailerComponent implements OnInit {
   }
   removeStopFromTrailerAppointment(stop: Stop) {
     console.log(`we will remove stop ${stop.sequence} from the trailer appointment`)
+  }
+
+  
+  calculateShipmentsQuantities(shipments: Shipment[]): void { 
+    shipments.forEach(shipment => {
+      
+        this.calculateShipmentQuantities(shipment)
+    })
+  }
+  calculateShipmentQuantities(shipment: Shipment): void { 
+      const existingItemIds = new Set();
+
+      shipment.totalLineCount = shipment.shipmentLines.length;
+      shipment.totalItemCount = 0;
+
+      shipment.totalQuantity = 0;
+      shipment.totalOpenQuantity = 0;
+      shipment.totalInprocessQuantity = 0;
+      shipment.totalStagedQuantity = 0;
+      shipment.totalLoadedQuantity = 0;
+      shipment.totalShippedQuantity = 0;
+
+      shipment.shipmentLines.forEach(shipmentLine => {
+        shipment.totalQuantity! += shipmentLine.quantity;
+        shipment.totalOpenQuantity! += shipmentLine.openQuantity;
+        shipment.totalInprocessQuantity! += shipmentLine.inprocessQuantity;
+        shipment.totalStagedQuantity! += shipmentLine.stagedQuantity;
+        shipment.totalLoadedQuantity! += shipmentLine.loadedQuantity;
+        shipment.totalShippedQuantity! += shipmentLine.shippedQuantity;
+        if (!existingItemIds.has(shipmentLine.orderLine.itemId)) {
+          existingItemIds.add(shipmentLine.orderLine.itemId);
+        }
+      });
+
+      shipment.totalItemCount = existingItemIds.size; 
+  }
+  
+  calculateOrdersQuantities(orders: Order[]) {
+
+    orders.forEach(
+      order => this.calculateOrderQuantities(order)
+    );
+  }
+  calculateOrderQuantities(order: Order) {
+    order.totalLineCount = order.orderLines.length;
+    
+    
+    order.totalExpectedQuantity = 0;
+    order.totalOpenQuantity = 0;
+    order.totalInprocessQuantity = 0;
+    order.totalShippedQuantity = 0;
+    order.totalPendingAllocationQuantity = 0;
+    order.totalPickedQuantity = 0;
+    order.totalOpenPickQuantity = 0;
+
+    order.orderLines.forEach( 
+        orderLine => {
+          order.totalExpectedQuantity! += orderLine.expectedQuantity;
+          order.totalOpenQuantity! += orderLine.openQuantity;
+          order.totalInprocessQuantity! += orderLine.inprocessQuantity;
+    
+          order.totalShippedQuantity! += orderLine.shippedQuantity;
+
+        } 
+    ); 
+     
+    console.log(`order: ${order.number}, totalExpectedQuantity: ${order.totalExpectedQuantity},
+    totalInprocessQuantity: ${order.totalInprocessQuantity}, totalShippedQuantity: ${order.totalShippedQuantity},`)
+
+  }
+
+
+  removeOrderFromTrailerAppointment(order: Order) {
+
+  }
+  removeShipmentFromTrailerAppointment(shipment: Shipment) {
+    
   }
 }

@@ -42,6 +42,7 @@ export interface Shipment {
   totalQuantity?: number;
   totalOpenQuantity?: number;
   totalInprocessQuantity?: number;
+  totalStagedQuantity?: number;
   totalLoadedQuantity?: number;
   totalShippedQuantity?: number;
 }

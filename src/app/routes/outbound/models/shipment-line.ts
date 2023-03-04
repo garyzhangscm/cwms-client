@@ -1,7 +1,7 @@
 import { OrderLine } from './order-line';
+import { PickWork } from './pick-work';
 import { Shipment } from './shipment';
 import { ShortAllocation } from './short-allocation';
-import { PickWork } from './pick-work';
 
 export interface ShipmentLine {
   id: number;
