@@ -19,4 +19,6 @@ export interface LocationUtilizationSnapshotBatch {
     completeTime: Date;
     status: LocationUtilizationSnapshotStatus;
     clientLocationUtilizationSnapshotBatches: ClientLocationUtilizationSnapshotBatch[];
+
+    capacityUnit?: string;
 }

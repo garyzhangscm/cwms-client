@@ -8,6 +8,7 @@ import { NzUploadFile } from 'ng-zorro-antd/upload';
 
 import { Client } from '../../common/models/client';
 import { ClientService } from '../../common/services/client.service';
+import { DateTimeService } from '../../util/services/date-time.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { BillingRequest } from '../models/billing-request';
@@ -77,6 +78,7 @@ export class BillingInvoiceMaintenanceComponent implements OnInit {
     private titleService: TitleService,
     private warehouseService: WarehouseService, 
     private companyService: CompanyService,
+    private dateTimeService: DateTimeService,
     private messageService: NzMessageService, 
     private clientService: ClientService,
     private billingRequestService: BillingRequestService,
@@ -157,7 +159,9 @@ export class BillingInvoiceMaintenanceComponent implements OnInit {
   generateBillingRequest() {
     this.isSpinning = true;
     this.billingRequests = [];
-    this.billingRequestService.generateBillingRequests(      
+    // convert the start time and end time to the beginining of the start date 
+    // and end of the end date and then convert to UTC 
+    this.billingRequestService.generateBillingRequests(
         this.currentInvoice.startTime!, 
         this.currentInvoice.endTime!,
         this.currentInvoice.clientId,

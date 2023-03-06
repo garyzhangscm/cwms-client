@@ -19,4 +19,5 @@ export interface LocationUtilizationSnapshot {
     
     locationUtilizationSnapshotDetails: LocationUtilizationSnapshotDetail[];
 
+    capacityUnit?: string;
 }

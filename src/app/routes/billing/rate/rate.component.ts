@@ -4,7 +4,10 @@ import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { Client } from '../../common/models/client';
+import { Unit } from '../../common/models/unit';
+import { UnitType } from '../../common/models/unit-type';
 import { ClientService } from '../../common/services/client.service';
+import { UnitService } from '../../common/services/unit.service';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -31,12 +34,15 @@ export class BillingRateComponent implements OnInit {
 
   billableCategories = BillableCategory;
   billingCycles = BillingCycle;
+ 
+  volumeUnits: Unit[] = [];
 
   constructor(private http: _HttpClient, 
     private companyService: CompanyService,
     private warehouseService: WarehouseService,
     private billingRateService: BillingRateService,
     private messageService: NzMessageService,
+    private unitService: UnitService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private clientService: ClientService) { }
 
@@ -50,7 +56,15 @@ export class BillingRateComponent implements OnInit {
     this.companySpecificFlag = true;
 
     this.loadBillingRate();
+
+    this.unitService.loadUnits().subscribe({
+      next: (unitRes) => this.volumeUnits = unitRes.filter(unit => unit.type == UnitType.VOLUME)
+    });
   }
+
+  formatterDollar = (value: number): string => `$ ${value}`;
+  parserDollar = (value: string): string => value.replace('$ ', '');
+  
   loadBillingRate() {
     if (this.selectedClient == null && this.companySpecificFlag == false) {
       // the user has not select any thing yet, let's not display the billing rate section
@@ -97,18 +111,34 @@ export class BillingRateComponent implements OnInit {
     for (let billableCategoryName in  BillableCategory) {
         if (isNaN(Number(billableCategoryName))) { 
           this.billingRates = [...this.billingRates, 
-          { 
-            companyId: this.companyService.getCurrentCompany()!.id,
-            warehouseId: this.selectedWarehouse? this.selectedWarehouse.id : undefined,
-            clientId: this.selectedClient? this.selectedClient.id : undefined,
-            billableCategory: (<any>BillableCategory)[billableCategoryName],
-            rate: 0,
-            billingCycle: BillingCycle.DAILY,
-            enabled: false,
-          }]
+
+            this.getEmptyBillingRate(billableCategoryName)
+          ]
       }
     } 
   }
+  
+  getEmptyBillingRate(billableCategoryName: string) : BillingRate {
+    let billableCategory = (<any>BillableCategory)[billableCategoryName];
+    return  { 
+      companyId: this.companyService.getCurrentCompany()!.id,
+      warehouseId: this.selectedWarehouse? this.selectedWarehouse.id : undefined,
+      clientId: this.selectedClient? this.selectedClient.id : undefined,
+      billableCategory: billableCategory,
+      rate: 0,
+      billingCycle: BillingCycle.DAILY,
+      rateUnit: this.getBillingRateUnit(billableCategory),
+      enabled: false,
+    };
+  }
+  getBillingRateUnit(billableCategory: BillableCategory) : Unit | undefined{
+    console.log(`start to get unit for billable category ${billableCategory}`) 
+
+    return this.unitService.getBaseUnit(this.volumeUnits,  UnitType.VOLUME);
+
+
+  }
+
   loadClients() {
     this.clientService.loadClients().subscribe(
       {

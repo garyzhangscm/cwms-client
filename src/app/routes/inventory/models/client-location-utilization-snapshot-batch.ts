@@ -17,4 +17,7 @@ export interface ClientLocationUtilizationSnapshotBatch {
     totalLocations: number;
     
     locationUtilizationSnapshots: LocationUtilizationSnapshot[];
+
+    
+    capacityUnit?: string;
 }

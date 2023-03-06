@@ -6,7 +6,7 @@ import { APP_INITIALIZER, LOCALE_ID, NgModule, Type } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SimpleInterceptor } from '@delon/auth';
-import { DELON_LOCALE, en_US as delonLang, ALAIN_I18N_TOKEN } from '@delon/theme';
+import { DELON_LOCALE, en_US as delonLang, ALAIN_I18N_TOKEN, DatePipe } from '@delon/theme';
 import { en_US, NZ_DATE_LOCALE, NZ_I18N, en_US as zorroLang } from 'ng-zorro-antd/i18n';
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
 import { IconDefinition } from '@ant-design/icons-angular';
@@ -125,7 +125,9 @@ import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
     ...INTERCEPTOR_PROVIDES, 
     ...I18NSERVICE_PROVIDES, 
     ...APPINIT_PROVIDES, 
-    { provide: NZ_I18N, useValue: en_US },  ],
+    { provide: NZ_I18N, useValue: en_US },  
+  DatePipe
+],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

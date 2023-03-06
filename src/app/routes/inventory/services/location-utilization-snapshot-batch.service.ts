@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -35,12 +36,31 @@ export class LocationUtilizationSnapshotBatchService {
   }
   generateLocationUtilizationSnapshotBatch(): Observable<LocationUtilizationSnapshotBatch> {
     // if we can find the value in local storage, we get it from their.
-    // otherwise we get from server
-    const url = `inventory/location-utilization-snapshot-batches?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    // otherwise we get from server 
  
+    const url = `inventory/location-utilization-snapshot-batches`;
+    
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);  
+
+    return this.http
+      .post(url, undefined, params)
+      .pipe(map(res => res.data));
+      
+  }
+  
+  removeLocationUtilizationSnapshotBatch(id: number): Observable<LocationUtilizationSnapshotBatch> {
+    // if we can find the value in local storage, we get it from their.
+    // otherwise we get from server
+    const url = `inventory/location-utilization-snapshot-batches/${id}`;
+    
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);  
     
     return this.http
-      .post(url)
+      .delete(url, params)
       .pipe(map(res => res.data));
       
   }

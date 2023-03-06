@@ -33,5 +33,8 @@ export class UnitService {
       .pipe(tap(res => this.gzLocalStorageService.setItem('common.unit', res)));
   }
   
+  getBaseUnit(units: Unit[], type: UnitType) : Unit | undefined {
+    return units.find(unit => unit.type == type && (unit.baseUnitFlag || unit.ratio == 1))
+  }
   
 }

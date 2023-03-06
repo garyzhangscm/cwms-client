@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { timeHours } from 'd3';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
@@ -33,16 +34,22 @@ export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
       iif: () => this.isChoose('number')  }, 
     { title: this.i18n.fanyi("status"),  index: 'status' , 
     iif: () => this.isChoose('status')  }, 
-    { title: this.i18n.fanyi("netVolume"),  index: 'netVolume' , 
+    { title: this.i18n.fanyi("netVolume"),  
+    render: 'netVolumeColum',
     iif: () => this.isChoose('netVolume')  }, 
-    { title: this.i18n.fanyi("grossVolume"),  index: 'grossVolume' , 
+    { title: this.i18n.fanyi("grossVolume"),  
+    render: 'grossVolumeColum',
     iif: () => this.isChoose('grossVolume')  }, 
     { title: this.i18n.fanyi("totalLocations"),  index: 'totalLocations' , 
     iif: () => this.isChoose('totalLocations')  }, 
-    { title: this.i18n.fanyi("startTime"),  index: 'startTime' , 
+    { title: this.i18n.fanyi("startTime"),  
+    render: 'startTimeColumn',
     iif: () => this.isChoose('startTime')  }, 
-    { title: this.i18n.fanyi("completeTime"),  index: 'completeTime' , 
+    { title: this.i18n.fanyi("completeTime"),  
+    render: 'completeTimeColumn',
     iif: () => this.isChoose('completeTime')  },  
+    { title: this.i18n.fanyi("action"),  
+    render: 'actionColumn', }
   ]; 
   
   customColumns = [
@@ -170,5 +177,21 @@ export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
       } ,
       error: () => this.isSpinning = false
     })
+  }
+
+  remove(locationUtilizationSnapshotBatch: LocationUtilizationSnapshotBatch) {
+    this.isSpinning = true;
+    this.locationUtilizationSnapshotBatchService.removeLocationUtilizationSnapshotBatch(locationUtilizationSnapshotBatch.id!)
+    .subscribe({
+      next: () => {
+
+        this.messageService.success(this.i18n.fanyi("message.action.success"));
+        this.isSpinning=false;
+        this.search();
+      }, 
+      error: () => this.isSpinning = false
+    })
+
+
   }
 }

@@ -8,6 +8,7 @@ import { WarehouseService } from '../../warehouse-layout/services/warehouse.serv
 import { InventorySnapshotConfiguration } from '../models/inventory-snapshot-configuration';
 import { InventorySnapshotConfigurationService } from '../services/inventory-snapshot-configuration.service';
 import { InventorySnapshotService } from '../services/inventory-snapshot.service';
+import { LocationUtilizationSnapshotBatchService } from '../services/location-utilization-snapshot-batch.service';
 
 @Component({
   selector: 'app-inventory-inventory-snapshot-configuration',
@@ -24,6 +25,7 @@ export class InventoryInventorySnapshotConfigurationComponent implements OnInit 
     private message: NzMessageService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private inventorySnapshotConfigurationService: InventorySnapshotConfigurationService,
+    private locationUtilizationSnapshotBatchService: LocationUtilizationSnapshotBatchService,
     private fb: UntypedFormBuilder,) { }
 
   ngOnInit(): void {
@@ -87,6 +89,24 @@ export class InventoryInventorySnapshotConfigurationComponent implements OnInit 
 
           this.isSpinning = false;
         })
+  }
+
+  
+  generateLocationUtilizationSnapshotBatch() {
+
+    this.isSpinning = true;
+    this.locationUtilizationSnapshotBatchService.generateLocationUtilizationSnapshotBatch()
+    .subscribe({
+      next: (locationUtilizationSnapshotBatch) => { 
+        this.isSpinning = false; 
+        this.message.success(
+          this.i18n.fanyi('location-utilization-snapshot.created.result', {
+            batchNumber: locationUtilizationSnapshotBatch.number
+          })
+        );
+      } ,
+      error: () => this.isSpinning = false
+    })
   }
 
 

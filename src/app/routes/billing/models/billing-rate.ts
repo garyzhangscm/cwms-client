@@ -1,3 +1,4 @@
+import { Unit } from "../../common/models/unit";
 import { BillableCategory } from "./billable-category";
 import { BillingCycle } from "./billing-cycle";
 
@@ -10,7 +11,10 @@ export interface BillingRate {
     billableCategory: BillableCategory;
 
     rate: number;
+    rateUnit?: Unit;
     billingCycle: BillingCycle;
     enabled: boolean;
+
+    rateAtTransaction?: boolean;
 
 }

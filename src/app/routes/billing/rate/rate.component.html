@@ -65,9 +65,20 @@
                 
                 <ul nz-list-item-actions>
                     <nz-list-item-action>
-                        <nz-input-number [(ngModel)]="billingRate.rate" [nzMin]="0" ></nz-input-number>
+                        
+                        <nz-input-number [(ngModel)]="billingRate.rate" [nzMin]="0" 
+                            [nzFormatter]="formatterDollar"
+                            [nzParser]="parserDollar"
+                            ></nz-input-number>
+                        /
+                        <nz-select [(ngModel)]="billingRate.rateUnit" style="width: 180px;">
+                            <nz-option *ngFor="let unit of volumeUnits"
+                                [nzValue]="unit"
+                                nzLabel="{{unit.description}}"  ></nz-option>
+                        </nz-select> 
                     </nz-list-item-action>
                     <nz-list-item-action>
+
                         <nz-select [(ngModel)]="billingRate.billingCycle">
                             <nz-option *ngFor="let billingCycle of billingCycles  | keys"
                                 [nzValue]="billingCycle.key"

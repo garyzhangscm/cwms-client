@@ -1,7 +1,8 @@
+
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root' 
 })
 export class DateTimeService {
 
@@ -19,5 +20,16 @@ export class DateTimeService {
 
   getISODateString(dateTime: Date) : string {
     return this.getISODateTimeString(dateTime).substring(0, 10);
+  } 
+  
+  getLocalDateString(dateTime: Date) : string { 
+    return `${dateTime.getFullYear()  }-${  dateTime.getMonth() + 1 }-${  dateTime.getDate()}`;
+  } 
+  
+  getDayStartTime(date: Date) : Date { 
+    return new Date(`${date.getFullYear()}-${  date.getMonth() + 1}-${date.getDate()}T00:00:00`);
+  } 
+  getDayEndTime(date: Date) : Date { 
+    return new Date(`${date.getFullYear()}-${  date.getMonth() + 1}-${date.getDate()}T23:59:00`);
   } 
 }

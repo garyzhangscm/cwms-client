@@ -1,5 +1,6 @@
 
 
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -37,22 +38,28 @@ export class BillingRequestService {
   }
   generateBillingRequests(startTime: Date, endTime: Date, clientId?: number, number?: string, 
     serialize?: boolean): Observable<BillingRequest[]> {
-    let url = `admin/billing-requests?companyId=${this.companyService.getCurrentCompany()!.id}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    let url = `admin/billing-requests`;
     
-    url = `${url}&startTime=${this.dateTimeService.getISODateTimeString(startTime)}`;
-    url = `${url}&endTime=${this.dateTimeService.getISODateTimeString(endTime)}`;
+    
+    let params = new HttpParams(); 
+    
+    params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+    params = params.append('startTime', this.dateTimeService.getLocalDateString(startTime)); 
+    params = params.append('endTime', this.dateTimeService.getLocalDateString(endTime)); 
+    
     
     if (clientId) {
-      url = `${url}&clientId=${clientId}`;
+      params = params.append('clientId', clientId);  
     }
      
     if (number) {
-      url = `${url}&number=${this.utilService.encodeValue(number.trim())}`;
+      params = params.append('number', this.utilService.encodeValue(number.trim()));  
     }  
     if (serialize != null) {
-      url = `${url}&serialize=${serialize}`;
+      params = params.append('serialize', serialize);  
     }
     
-    return this.http.post(url).pipe(map(res => res.data));
+    return this.http.post(url, undefined, params).pipe(map(res => res.data));
   }
 }
