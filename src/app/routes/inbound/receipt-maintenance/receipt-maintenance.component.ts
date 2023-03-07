@@ -1062,16 +1062,23 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
 
   allocateLocation(inventory: Inventory): void {
-    this.putawayConfigurationService.allocateLocation(inventory).subscribe(allocatedInventory => {
-      this.message.success(this.i18n.fanyi('message.allocate-location.success'));
-      this.listOfAllReceivedInventory.forEach(receivedInventory => {
-        if (receivedInventory.id === allocatedInventory.id) {
-          receivedInventory.inventoryMovements = allocatedInventory.inventoryMovements;
-        }
-      });
-      this.listOfDisplayReceivedInventory = this.listOfAllReceivedInventory;
-    });
+    this.isSpinning = true;
+    this.putawayConfigurationService.allocateLocation(inventory).subscribe({
+      next: (allocatedInventory) => {
+        this.message.success(this.i18n.fanyi('message.allocate-location.success'));
+        this.listOfAllReceivedInventory.forEach(receivedInventory => {
+          if (receivedInventory.id === allocatedInventory.id) {
+            receivedInventory.inventoryMovements = allocatedInventory.inventoryMovements;
+          }
+        });
+        this.listOfDisplayReceivedInventory = this.listOfAllReceivedInventory;
+        
+          this.isSpinning = false;
+      }, 
+      error: () => this.isSpinning = false
+    }); 
   }
+
   reallocateLocation(inventory: Inventory): void {
     this.putawayConfigurationService.reallocateLocation(inventory).subscribe(allocatedInventory => {
       this.message.success(this.i18n.fanyi('message.allocate-location.success'));
@@ -1085,9 +1092,17 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
 
   confirmPutaway(index: number, receivedInventory: Inventory): void {
+    this.isSpinning = true;
+
     this.inventoryService
       .move(receivedInventory, receivedInventory.inventoryMovements![index].location)
-      .subscribe(inventory => this.refreshReceiptResults(1));
+      .subscribe({
+        next: (inventory) => {
+          this.refreshReceiptResults(1);
+          this.isSpinning = false;
+        },
+        error: () => this.isSpinning = false
+      }); 
   }
   manualPutaway(receivedInventory: Inventory): void { }
   printReceipt(event: any): void {
