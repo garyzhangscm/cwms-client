@@ -560,6 +560,15 @@
                   {{ 'inventory.status' | i18n }}
                 </th>
                 <th>
+                  {{ 'color' | i18n }}
+                </th>
+                <th>
+                  {{ 'productSize' | i18n }}
+                </th>
+                <th>
+                  {{ 'style' | i18n }}
+                </th>
+                <th>
                   {{ 'action' | i18n }}
                 </th>
               </thead>
@@ -573,6 +582,9 @@
                   <td>{{ inventory.itemPackageType?.name }}</td>
                   <td>{{ inventory.quantity }}</td>
                   <td>{{ inventory.inventoryStatus?.name }}</td>
+                  <td>{{ inventory.color }}</td>
+                  <td>{{ inventory.productSize }}</td>
+                  <td>{{ inventory.style }}</td>
                   <td>
                     <button nz-button (click)="openUnpickModal(item, inventory, tplUnpickModalTitle, tplUnpickModalContent)"
                       [disabled]="item.status === orderStatusEnum.COMPLETE">

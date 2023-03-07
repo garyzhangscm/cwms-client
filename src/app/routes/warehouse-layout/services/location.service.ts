@@ -1,10 +1,12 @@
 
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { UtilService } from '../../util/services/util.service';
+import { LocationStatus } from '../models/location-status.enum';
 import { WarehouseLocation } from '../models/warehouse-location';
 import { WarehouseService } from './warehouse.service';
 
@@ -15,23 +17,31 @@ export class LocationService {
   constructor(private http: _HttpClient, private warehouseService: WarehouseService, 
     private utilService: UtilService) {}
 
-  getLocations(locationGroupTypes?: string, locationGroupIds?: string, name?: string, emptyReservedCodeOnly?: boolean): Observable<WarehouseLocation[]> {
+  getLocations(locationGroupTypes?: string, locationGroupIds?: string, name?: string, emptyReservedCodeOnly?: boolean, 
+    locationStatus?: LocationStatus): Observable<WarehouseLocation[]> {
      
 
-    let url = `layout/locations?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    const url = `layout/locations`;
+    
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+     
     if (locationGroupTypes) {
-      url = `${url}&locationGroupTypeIds=${locationGroupTypes}`;
+      params = params.append('locationGroupTypeIds', locationGroupTypes);  
     }
     if (locationGroupIds) {
-      url = `${url}&locationGroupIds=${locationGroupIds}`;
+      params = params.append('locationGroupIds', locationGroupIds);  
     }
     if (name) {
-      url = `${url}&name=${this.utilService.encodeValue(name)}`;
+      params = params.append('name', this.utilService.encodeValue(name));  
     }
     if (emptyReservedCodeOnly !== undefined) {
-      url = `${url}&emptyReservedCodeOnly=${emptyReservedCodeOnly}`;
+      params = params.append('emptyReservedCodeOnly', emptyReservedCodeOnly);  
     }
-    return this.http.get(url).pipe(map(res => res.data));
+    if (locationStatus) {
+      params = params.append('locationStatus', this.utilService.encodeValue(locationStatus));  
+    }
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 
   getLocation(id: number): Observable<WarehouseLocation> {

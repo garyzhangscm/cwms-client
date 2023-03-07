@@ -13,6 +13,7 @@ import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { LocationGroup } from '../models/location-group';
 import { LocationGroupType } from '../models/location-group-type';
+import { LocationStatus } from '../models/location-status.enum';
 import { WarehouseLocation } from '../models/warehouse-location';
 import { LocationGroupTypeService } from '../services/location-group-type.service';
 import { LocationGroupService } from '../services/location-group.service';
@@ -245,6 +246,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   // 
   loadingLocationDetailsRequest = 0;
 
+  locationStatuses = LocationStatus;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -264,6 +266,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       taggedLocationGroupTypes: [null],
       taggedLocationGroups: [null],
       locationName: [null],
+      // locationStatus: [null],
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
@@ -368,6 +371,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
         this.searchForm.controls.taggedLocationGroupTypes.value,
         this.searchForm.controls.taggedLocationGroups.value,
         this.searchForm.controls.locationName.value,
+        undefined,
+        // this.searchForm.controls.locationStatus.value,
       )
       .subscribe(
         locationRes => {
