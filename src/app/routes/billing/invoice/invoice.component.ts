@@ -51,7 +51,8 @@ export class BillingInvoiceComponent implements OnInit {
         render: 'dueDateColumn', width: 200,
         iif: () => this.isChoose('dueDate') 
     },  
-    { title: this.i18n.fanyi("totalCharge"),  index: 'totalCharge' , 
+    { title: this.i18n.fanyi("totalCharge"),   
+        render: 'totalChargeColumn',  
         iif: () => this.isChoose('totalCharge') },    
     { title: this.i18n.fanyi("comment"),  index: 'comment' , 
             iif: () => this.isChoose('comment') },    

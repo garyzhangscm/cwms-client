@@ -42,11 +42,15 @@ export class BillingRequestService {
     
     
     let params = new HttpParams(); 
-    
+ 
     params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
-    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
-    params = params.append('startTime', this.dateTimeService.getLocalDateString(startTime)); 
-    params = params.append('endTime', this.dateTimeService.getLocalDateString(endTime)); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+     
+    params = params.append('startTime',  
+        this.dateTimeService.getISODateTimeString(this.dateTimeService.getDayStartTime(startTime))); 
+    
+    params = params.append('endTime', 
+        this.dateTimeService.getISODateTimeString(this.dateTimeService.getDayEndTime(endTime))); 
     
     
     if (clientId) {

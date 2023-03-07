@@ -1,5 +1,6 @@
 
 import { Injectable } from '@angular/core';
+import moment from 'moment';
 
 @Injectable({
   providedIn: 'root' 
@@ -26,10 +27,14 @@ export class DateTimeService {
     return `${dateTime.getFullYear()  }-${  dateTime.getMonth() + 1 }-${  dateTime.getDate()}`;
   } 
   
-  getDayStartTime(date: Date) : Date { 
-    return new Date(`${date.getFullYear()}-${  date.getMonth() + 1}-${date.getDate()}T00:00:00`);
+  getDayStartTime(date: Date) : Date {  
+    return new Date(`${date.getFullYear()}-${  date.getMonth() + 1}-${date.getDate()}`); 
   } 
   getDayEndTime(date: Date) : Date { 
-    return new Date(`${date.getFullYear()}-${  date.getMonth() + 1}-${date.getDate()}T23:59:00`);
+    // console.log(`start get date via time zone ${Intl.DateTimeFormat().resolvedOptions().timeZone}`);
+
+    var date = new Date(`${date.getFullYear()}-${  date.getMonth() + 1}-${date.getDate()}`);
+    return new Date(date.getTime() + 86400000 - 1);
   } 
+   
 }

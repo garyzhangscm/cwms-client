@@ -49,8 +49,10 @@ export class BillingInvoiceMaintenanceComponent implements OnInit {
     },     
     { title: this.i18n.fanyi("rate"),  index: 'rate' ,  },  
     { title: this.i18n.fanyi("billingCycle"),  index: 'billingCycle' ,  },  
-    { title: this.i18n.fanyi("totalAmount"),  index: 'totalAmount' ,  },  
-    { title: this.i18n.fanyi("totalCharge"),  index: 'totalCharge' ,  },  
+    { title: this.i18n.fanyi("totalAmount"), 
+    render: 'totalAmountColumn',   },  
+    { title: this.i18n.fanyi("totalCharge"),  
+    render: 'totalChargeColumn',   },  
     
      
   ]; 
@@ -65,8 +67,10 @@ export class BillingInvoiceMaintenanceComponent implements OnInit {
     },    
     { title: this.i18n.fanyi("rate"),  index: 'rate' ,  },  
     { title: this.i18n.fanyi("billingCycle"),  index: 'billingCycle' ,  },  
-    { title: this.i18n.fanyi("totalAmount"),  index: 'totalAmount' ,  },  
-    { title: this.i18n.fanyi("totalCharge"),  index: 'totalCharge' ,  },  
+    { title: this.i18n.fanyi("totalAmount"), 
+    render: 'totalAmountColumn',   },  
+    { title: this.i18n.fanyi("totalCharge"),  
+    render: 'totalChargeColumn',   },  
     
      
   ]; 

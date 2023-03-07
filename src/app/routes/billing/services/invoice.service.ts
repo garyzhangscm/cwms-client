@@ -1,4 +1,5 @@
  
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -44,20 +45,30 @@ export class InvoiceService {
     clientId?: number, referenceNumber?: string, comment?: string): Observable<Invoice> {
  
 
-      let url = `admin/invoices/from-billing-request?companyId=${this.companyService.getCurrentCompany()!.id}`;
-      url = `${url}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-      url = `${url}&number=${this.utilService.encodeValue(number.trim())}`; 
-      url = `${url}&startTime=${this.dateTimeService.getISODateTimeString(startTime)}`; 
-      url = `${url}&endTime=${this.dateTimeService.getISODateTimeString(endTime)}`;  
+      const url = `admin/invoices/from-billing-request`;
+      
+      let params = new HttpParams(); 
+      
+      params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
+      params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+      params = params.append('number', this.utilService.encodeValue(number.trim())); 
+      // params = params.append('startTime', this.dateTimeService.getISODateString(startTime)); 
+      // params = params.append('endTime', this.dateTimeService.getISODateString(endTime));  
+  
+      params = params.append('startTime',  
+      this.dateTimeService.getISODateTimeString(this.dateTimeService.getDayStartTime(startTime))); 
+  
+      params = params.append('endTime', 
+          this.dateTimeService.getISODateTimeString(this.dateTimeService.getDayEndTime(endTime))); 
 
       if (clientId) {
-        url = `${url}&clientId=${clientId}`;
+        params = params.append('clientId', clientId);   
       }
       
       if (comment) {
-        url = `${url}&comment=${this.utilService.encodeValue(comment.trim())}`;
+        params = params.append('comment', this.utilService.encodeValue(comment.trim()));    
       }
 
-      return this.http.post(url, billingRequest).pipe(map(res => res.data));
+      return this.http.post(url, billingRequest, params).pipe(map(res => res.data));
   }
 }

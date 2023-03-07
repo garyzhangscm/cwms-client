@@ -122,7 +122,16 @@
           <ng-template st-row="billableCategoryColumn" let-item let-index="index"> 
               
             {{ 'BILLABLE-CATEGORY-' + item.billableCategory | i18n}} 
-        </ng-template>
+          </ng-template>
+          
+          <ng-template st-row="totalAmountColumn" let-item let-index="index"> 
+              
+            {{  item.totalAmount | number: '1.0-2'}} 
+          </ng-template>
+          <ng-template st-row="totalChargeColumn" let-item let-index="index"> 
+              
+            {{  item.totalCharge | number: '1.0-2'}} 
+          </ng-template>
         
         <!--   billing request lines -->
         <ng-template #expand let-item let-index="index" >
@@ -135,11 +144,8 @@
               <thead>
                   <tr> 
                     <th>
-                      {{ 'startTime' | i18n }}
-                    </th>
-                    <th>
-                      {{ 'endTime' | i18n }}
-                    </th>  
+                      {{ 'date' | i18n }}
+                    </th> 
                     <th>
                       {{ 'totalAmount' | i18n }}
                     </th>
@@ -151,13 +157,11 @@
               <tbody>
                   <tr *ngFor="let data of billingRequestLine.data">  
                         <td  >
-                            {{ data.startTime | date:'MM/dd/yyyy, hh:mm:ss'}}   </td>
+                            {{ data.date | date:'MM/dd/yyyy'}}   </td> 
                         <td  >
-                            {{ data.endTime  | date:'MM/dd/yyyy, hh:mm:ss'}}  </td>
+                            {{ data.totalAmount | number: '1.0-2'}}  </td>
                         <td  >
-                            {{ data.totalAmount}}  </td>
-                        <td  >
-                            {{ data.totalCharge}}  </td>
+                            {{ data.totalCharge | number: '1.0-2'}}  </td>
                   </tr>
               </tbody>
               </nz-table>
@@ -190,13 +194,13 @@
                 {{currentInvoice.referenceNumber}}
             </nz-descriptions-item>
             <nz-descriptions-item nzTitle="{{'startTime' | i18n}}">
-                {{currentInvoice.startTime | date:'MM/dd/yyyy, hh:mm:ss'}} 
+                {{currentInvoice.startTime | date:'MM/dd/yyyy'}} 
             </nz-descriptions-item>
             <nz-descriptions-item nzTitle="{{'endTime' | i18n}}">
-                {{currentInvoice.endTime | date:'MM/dd/yyyy, hh:mm:ss'}} 
+                {{currentInvoice.endTime | date:'MM/dd/yyyy'}} 
             </nz-descriptions-item>
             <nz-descriptions-item nzTitle="{{'totalCharge' | i18n}}">
-                {{currentInvoice.totalCharge}}
+                {{currentInvoice.totalCharge| number: '1.0-2'}}
             </nz-descriptions-item>
             <nz-descriptions-item nzTitle="{{'comment' | i18n}}">
                 {{currentInvoice.comment}}
@@ -217,6 +221,15 @@
                 {{ 'BILLABLE-CATEGORY-' + item.billableCategory | i18n}} 
             </ng-template>
             
+            <ng-template st-row="totalAmountColumn" let-item let-index="index"> 
+                
+              {{  item.totalAmount | number: '1.0-2'}} 
+            </ng-template>
+            <ng-template st-row="totalChargeColumn" let-item let-index="index"> 
+                
+              {{  item.totalCharge | number: '1.0-2'}} 
+            </ng-template>
+            
             
             <!--   billing request lines -->
             <ng-template #expand let-item let-index="index" >
@@ -229,11 +242,8 @@
                     <thead>
                         <tr> 
                         <th>
-                            {{ 'startTime' | i18n }}
-                        </th>
-                        <th>
-                            {{ 'endTime' | i18n }}
-                        </th>  
+                            {{ 'date' | i18n }}
+                        </th> 
                         <th>
                             {{ 'totalAmount' | i18n }}
                         </th>
@@ -245,13 +255,11 @@
                     <tbody>
                         <tr *ngFor="let data of invoieLine.data">  
                             <td  >
-                                {{ data.startTime | date:'MM/dd/yyyy, hh:mm:ss'}}   </td>
+                                {{ data.date | date:'MM/dd/yyyy'}}   </td> 
                             <td  >
-                                {{ data.endTime | date:'MM/dd/yyyy, hh:mm:ss'}}  </td>
+                                {{ data.totalAmount | number: '1.0-2'}}  </td>
                             <td  >
-                                {{ data.totalAmount}}  </td>
-                            <td  >
-                                {{ data.totalCharge}}  </td>
+                                {{ data.totalCharge | number: '1.0-2'}}  </td>
                         </tr>
                     </tbody>
                     </nz-table>

@@ -6,6 +6,8 @@ export interface BillingRequestLine {
 
     endTime: Date;
 
+    date: Date;
+
     totalAmount: number;
     totalCharge: number;
 }
