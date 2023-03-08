@@ -100,13 +100,13 @@
           <!--   createdTimeColumn colummn  -->  
         <ng-template st-row="createdTimeColumn" let-item let-index="index"> 
               
-            {{ item.createdTime  | date:'MM/dd/yyyy, hh:mm:ss'}} 
+            {{ item.createdTime  | date:'short'}} 
         </ng-template>
         <!--   lastSentTimeColumn colummn  -->  
         <ng-template st-row="lastSentTimeColumn" let-item let-index="index"> 
           
 
-              {{ item.lastModifiedTime  | date:'MM/dd/yyyy, hh:mm:ss'}} 
+              {{ item.lastModifiedTime  | date:'short'}} 
         </ng-template>
     </st>
   

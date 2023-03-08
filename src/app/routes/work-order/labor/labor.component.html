@@ -65,7 +65,7 @@
         
          <span *ngIf="item.lastCheckInTime">
 
-            {{ item.lastCheckInTime  | date:'MM/dd/yyyy, hh:mm:ss'}} 
+            {{ item.lastCheckInTime  | date:'short'}} 
          </span>
       </ng-template>
       
@@ -78,7 +78,7 @@
         
          <span *ngIf="item.lastCheckOutTime">
 
-            {{ item.lastCheckOutTime  | date:'MM/dd/yyyy, hh:mm:ss'}} 
+            {{ item.lastCheckOutTime  | date:'short'}} 
          </span>
       </ng-template>
 

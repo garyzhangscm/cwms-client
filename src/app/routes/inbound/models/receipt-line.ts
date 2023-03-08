@@ -1,6 +1,7 @@
 import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { Item } from '../../inventory/models/item';
 import { PurchaseOrderLine } from './purchase-order-line';
+import { ReceiptLineBillableActivity } from './receipt-line-billable-activity';
 
 export interface ReceiptLine {
   id?: number;
@@ -24,4 +25,5 @@ export interface ReceiptLine {
   qcQuantityRequested?: number;
 
   purchaseOrderLine?: PurchaseOrderLine;
+  receiptLineBillableActivities: ReceiptLineBillableActivity[];
 }

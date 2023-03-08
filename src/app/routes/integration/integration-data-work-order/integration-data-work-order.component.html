@@ -84,13 +84,13 @@
           <!--   insertTimeColumn colummn  -->  
           <ng-template st-row="insertTimeColumn" let-item let-index="index"> 
               
-                {{ item.createdTime  | date:'MM/dd/yyyy, hh:mm:ss'}} 
+                {{ item.createdTime  | date:'short'}} 
           </ng-template>
           <!--   lastUpdateTime colummn  -->  
           <ng-template st-row="lastUpdateTimeColumn" let-item let-index="index"> 
              
     
-                {{ item.lastModifiedTime  | date:'MM/dd/yyyy, hh:mm:ss'}} 
+                {{ item.lastModifiedTime  | date:'short'}} 
           </ng-template>
           <!--   errorMessage colummn  -->  
           <ng-template st-row="errorMessageColumn" let-item let-index="index"> 

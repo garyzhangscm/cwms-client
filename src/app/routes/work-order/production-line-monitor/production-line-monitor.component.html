@@ -59,7 +59,7 @@
     
     <st #st [data]="listOfProductionLineMonitors"  [columns]="columns" >
         <ng-template st-row="lastHeartBeatTimeColumn" let-item let-index="index"> 
-            {{ item.lastHeartBeatTime | date:'MM/dd/yyyy, hh:mm:ss'}} 
+            {{ item.lastHeartBeatTime | date:'short'}} 
         </ng-template>
         <ng-template st-row="actionColumn" let-item let-index="index"> 
             

@@ -105,7 +105,7 @@
                                 <ng-container *ngFor="let tractorSchedule of geDailySchedule(date)">
                                     <li>
                                         <nz-badge nzStatus="success">
-                                           {{tractorSchedule.checkInTime  | date:'MM/dd/yyyy, hh:mm:ss'}}  - {{tractorSchedule.dispatchTime  | date:'MM/dd/yyyy, hh:mm:ss'}}  : {{tractorSchedule.type}}
+                                           {{tractorSchedule.checkInTime  | date:'short'}}  - {{tractorSchedule.dispatchTime  | date:'short'}}  : {{tractorSchedule.type}}
                                         </nz-badge>
                                     </li>
                                 </ng-container>
@@ -119,10 +119,10 @@
                             <li>
                                 <nz-badge nzStatus="success">
                                     <span nz-tooltip [nzTooltipTitle]="titleTemplate">
-                                        {{tractorSchedule.checkInTime  | date:'MM/dd/yyyy, hh:mm:ss'}}  - {{tractorSchedule.dispatchTime   | date:'MM/dd/yyyy, hh:mm:ss'}}  : {{tractorSchedule.type}}
+                                        {{tractorSchedule.checkInTime  | date:'short'}}  - {{tractorSchedule.dispatchTime   | date:'short'}}  : {{tractorSchedule.type}}
                                 
                                         <ng-template #titleTemplate> 
-                                            {{tractorSchedule.checkInTime  | date:'MM/dd/yyyy, hh:mm:ss'}} - {{tractorSchedule.dispatchTime   | date:'MM/dd/yyyy, hh:mm:ss'}}  : {{tractorSchedule.type}}
+                                            {{tractorSchedule.checkInTime  | date:'short'}} - {{tractorSchedule.dispatchTime   | date:'short'}}  : {{tractorSchedule.type}}
                                 
                                         </ng-template>
                                     </span>

@@ -1,6 +1,7 @@
 import { Client } from '../../common/models/client';
 import { Supplier } from '../../common/models/supplier';
 import { PurchaseOrder } from './purchase-order';
+import { ReceiptBillableActivity } from './receipt-billable-activity';
 import { ReceiptLine } from './receipt-line';
 import { ReceiptStatus } from './receipt-status.enum';
 
@@ -20,4 +21,6 @@ export interface Receipt {
   totalExpectedQuantity?: number;
   totalReceivedQuantity?: number;
   purchaseOrder?: PurchaseOrder;
+  receiptBillableActivities: ReceiptBillableActivity[];
+  receiptLineBillableActivities: ReceiptBillableActivity[];
 }

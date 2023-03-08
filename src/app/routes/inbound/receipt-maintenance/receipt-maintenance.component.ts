@@ -244,6 +244,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     receiptStatus: ReceiptStatus.OPEN,
     receiptLines: [],
     allowUnexpectedItem: false,
+    receiptBillableActivities: [],
+    receiptLineBillableActivities: []
   };
 
   validClients: Client[] = [];
@@ -992,6 +994,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       receivedQuantity: 0,
       overReceivingQuantity: 0,
       overReceivingPercent: 0,
+      receiptLineBillableActivities: [],
     };
     // calculate the next line number
     this.receiptLineService

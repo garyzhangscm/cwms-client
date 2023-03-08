@@ -61,11 +61,11 @@
       </ng-template>
       <ng-template st-row="startTimeColumn" let-item let-index="index"> 
                 
-        {{ item.startTime  | date:'MM/dd/yyyy, hh:mm:ss'}} 
+        {{ item.startTime  | date:'short'}} 
       </ng-template>
       <ng-template st-row="completeTimeColumn" let-item let-index="index"> 
                 
-        {{ item.startTime  | date:'MM/dd/yyyy, hh:mm:ss'}} 
+        {{ item.startTime  | date:'short'}} 
       </ng-template>
       <ng-template st-row="actionColumn" let-item let-index="index"> 
            <button nz-button nzDanger (click)="remove(item)">{{'remove' | i18n}}</button> 

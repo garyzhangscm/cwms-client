@@ -79,7 +79,7 @@
      
         <ng-template st-row="completedTimeColumn" let-item let-index="index"> 
               
-            {{ item.completedTime  | date:'MM/dd/yyyy, hh:mm:ss'}} 
+            {{ item.completedTime  | date:'short'}} 
         </ng-template>
         <!--   order details  -->
         <ng-template #expand let-item let-index="index" >
@@ -340,7 +340,7 @@
 
                     <td>
                       <span *ngIf="shortAllocation.lastAllocationDatetime">
-                        {{ shortAllocation.lastAllocationDatetime | date:'MM/dd/yyyy, hh:mm:ss'}}
+                        {{ shortAllocation.lastAllocationDatetime | date:'short'}}
                       </span>
                     </td>
                     <td>

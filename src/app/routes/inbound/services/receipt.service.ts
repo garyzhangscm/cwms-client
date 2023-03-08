@@ -13,6 +13,8 @@ import { UtilService } from '../../util/services/util.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Receipt } from '../models/receipt';
+import { ReceiptBillableActivity } from '../models/receipt-billable-activity';
+import { ReceiptLineBillableActivity } from '../models/receipt-line-billable-activity';
 
 @Injectable({
   providedIn: 'root',
@@ -147,5 +149,45 @@ export class ReceiptService {
     params = params.append('notPutawayInventoryOnly', notPutawayInventoryOnly);
 
     return this.http.post(url, null, params).pipe(map(res => res.data));
+  }
+
+  
+  addReceiptBillableActivity(receiptId: number, 
+    receiptBillableActivity: ReceiptBillableActivity): Observable<ReceiptBillableActivity> {
+
+    const url = `inbound/receipts/${receiptId}/billable-activities`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+
+    return this.http.put(url, receiptBillableActivity, params).pipe(map(res => res.data));
+  }
+  removeReceiptBillableActivity(receiptId: number,  id: number): Observable<string> {
+
+    const url = `inbound/receipts/${receiptId}/billable-activities/${id}`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+
+    return this.http.delete(url, params).pipe(map(res => res.data));
+  }
+  addReceiptLineBillableActivity(receiptLineId: number, 
+    receiptLineBillableActivity: ReceiptLineBillableActivity): Observable<ReceiptLineBillableActivity> {
+
+    const url = `inbound/receipts/lines/${receiptLineId}/billable-activities`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+
+    return this.http.put(url, receiptLineBillableActivity, params).pipe(map(res => res.data));
+  }
+  removeReceiptLineBillableActivity(receiptLineId: number, id: number): Observable<string> {
+
+    const url = `inbound/receipts/lines/${receiptLineId}/billable-activities/${id}`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+
+    return this.http.delete(url, params).pipe(map(res => res.data));
   }
 }

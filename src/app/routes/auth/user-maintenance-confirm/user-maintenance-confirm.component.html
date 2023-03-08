@@ -63,7 +63,7 @@
       {{ 'WORKER-TYPE-' + currentUser!.workerType | i18n }}
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="{{ 'user.on-board-time' | i18n}}">
-      {{ currentUser!.onBoardTime  | date:'MM/dd/yyyy, hh:mm:ss'}} 
+      {{ currentUser!.onBoardTime  | date:'short'}} 
     </nz-descriptions-item>
 
     <nz-descriptions-item nzTitle="{{ 'enabled' | i18n}}">

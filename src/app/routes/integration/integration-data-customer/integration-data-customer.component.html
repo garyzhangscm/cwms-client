@@ -125,10 +125,10 @@
         <td>{{ 'INTEGRATION-STATUS-' + data.status | i18n}}</td>
         
         <td>
-          {{data.createdTime | date:'MM/dd/yyyy, hh:mm:ss'}} 
+          {{data.createdTime | date:'short'}} 
         </td>
         <td>
-          {{data.lastModifiedTime| date:'MM/dd/yyyy, hh:mm:ss'}} 
+          {{data.lastModifiedTime| date:'short'}} 
         </td>
         <td nzEllipsis>
           <a>

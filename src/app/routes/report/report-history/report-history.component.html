@@ -54,7 +54,7 @@
       <tr *ngFor="let data of reportHistoryTable.data">
         <td>{{ data.type }}</td>
         <td>{{ data.description }}</td>
-        <td> {{ data.printedDate | date:'MM/dd/yyyy, hh:mm:ss'}} 
+        <td> {{ data.printedDate | date:'short'}} 
         </td>
         <td>{{ data.printedUsername }}</td>
         <td>{{ 'REPORT-ORIENTATION_' + data.reportOrientation | i18n }}</td>

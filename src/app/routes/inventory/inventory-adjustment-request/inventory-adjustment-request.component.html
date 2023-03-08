@@ -108,10 +108,10 @@
         <td> {{ 'INVENTORY-QUANTITY-CHANGE-TYPE-' + data.inventoryQuantityChangeType | i18n}} </td>
         <td> {{ 'INVENTORY-ADJUSTMENT-REQUEST-' + data.status | i18n}} </td>
         <td> {{ data.requestedByUsername }} </td>
-        <td> {{ data.requestedByDateTime | date:'MM/dd/yyyy, hh:mm:ss'}}
+        <td> {{ data.requestedByDateTime | date:'short'}}
         </td>
         <td> <span *ngIf="data.processedByDateTime">
-            {{ data.processedByDateTime | date:'MM/dd/yyyy, hh:mm:ss'}}
+            {{ data.processedByDateTime | date:'short'}}
           </span>
         </td>
         <td> {{ data.processedByUsername }} </td>

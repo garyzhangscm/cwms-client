@@ -1,13 +1,15 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { BillableActivityType } from '../../billing/models/billable-activity-type';
+import { BillableActivityTypeService } from '../../billing/services/billable-activity-type.service';
 import { Client } from '../../common/models/client';
 import { Supplier } from '../../common/models/supplier';
 import { ClientService } from '../../common/services/client.service';
@@ -18,7 +20,9 @@ import { ColumnItem } from '../../util/models/column-item';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
 import { Receipt } from '../models/receipt';
+import { ReceiptBillableActivity } from '../models/receipt-billable-activity';
 import { ReceiptLine } from '../models/receipt-line';
+import { ReceiptLineBillableActivity } from '../models/receipt-line-billable-activity';
 import { ReceiptStatus } from '../models/receipt-status.enum';
 import { ReceiptService } from '../services/receipt.service';
 
@@ -168,6 +172,14 @@ export class InboundReceiptComponent implements OnInit {
   
   listOfAllReceivedInventory: { [receiptNumber: string]: Inventory[] } = {};
 
+  billableActivityReceipt?: Receipt;
+  billableActivityReceiptLine?: ReceiptLine; 
+  allBillableActivityTypes: BillableActivityType[] = [];
+  availableBillableActivityTypes: BillableActivityType[] = [];
+
+  billableActivityModal!: NzModalRef; 
+  billableActivityForm!: UntypedFormGroup;
+  addActivityInProcess = false;
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -180,6 +192,7 @@ export class InboundReceiptComponent implements OnInit {
     private localCacheService: LocalCacheService,
     private supplierService: SupplierService,
     private clientService: ClientService,
+    private billableActivityTypeService: BillableActivityTypeService,
   ) { }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inbound.receipt'));
@@ -221,6 +234,10 @@ export class InboundReceiptComponent implements OnInit {
         }  
       },  
     });
+
+    this.billableActivityTypeService.loadBillableActivityTypes(true).subscribe({
+      next: (billableActivityTypeRes) => this.allBillableActivityTypes = billableActivityTypeRes
+    })
   }
 
   resetForm(): void {
@@ -258,6 +275,10 @@ export class InboundReceiptComponent implements OnInit {
         });
         
         this.refreshDetailInformations(receiptRes);
+        // sum up the line's billable activity and save it to the receipt level
+        // for easy display
+        this.setupReceiptBillableActivities(receiptRes);
+        
         this.listOfAllReceipts = this.calculateQuantities(receiptRes);
         this.listOfDisplayReceipts = this.calculateQuantities(receiptRes);
 
@@ -269,7 +290,22 @@ export class InboundReceiptComponent implements OnInit {
       },
     );
   }
-  
+  setupReceiptBillableActivities(receipts: Receipt[]) {
+    receipts.forEach(
+
+      receipt => {
+        receipt.receiptLineBillableActivities = [];
+        receipt.receiptLines.forEach(
+          receiptLine => {
+            receipt.receiptLineBillableActivities = [
+              ...receipt.receiptLineBillableActivities, 
+              ...receiptLine.receiptLineBillableActivities!
+            ]
+          }
+        )
+      }
+    );
+  }
   delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
   }
@@ -558,11 +594,11 @@ export class InboundReceiptComponent implements OnInit {
   receiptLineTableColumns: STColumn[] = [ 
     { title: this.i18n.fanyi("receipt.line.number"), index: 'number', width: 150 },    
     {
-      title: this.i18n.fanyi("item"), 
+      title: this.i18n.fanyi("item"), width: 150, 
       render: 'itemNameColumn', 
     },
     {
-      title: this.i18n.fanyi("item.description"), 
+      title: this.i18n.fanyi("item.description"), width: 150, 
       render: 'itemDescriptionColumn', 
     }, 
     { title: this.i18n.fanyi("receipt.line.expectedQuantity"), 
@@ -573,7 +609,14 @@ export class InboundReceiptComponent implements OnInit {
     { title: this.i18n.fanyi("receipt.line.overReceivingPercent"), index: 'overReceivingPercent' , width: 150 },      
     { title: this.i18n.fanyi("qcQuantity"), index: 'qcQuantity' , width: 150 },      
     { title: this.i18n.fanyi("qcPercentage"), index: 'qcPercentage' , width: 150 },      
-    { title: this.i18n.fanyi("qcQuantityRequested"), index: 'qcQuantityRequested' , width: 150 },       
+    { title: this.i18n.fanyi("qcQuantityRequested"), index: 'qcQuantityRequested' , width: 150 },     
+    {
+      title: this.i18n.fanyi("action"), 
+      render: 'actionColumn', 
+      width: 250,
+      fixed: 'right',
+
+    },   
   ];
  
   changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine: ReceiptLine, itemUnitOfMeasure: ItemUnitOfMeasure) {
@@ -687,4 +730,263 @@ export class InboundReceiptComponent implements OnInit {
       inventory.displayQuantity = inventory.quantity; 
     }
   }
+
+  @ViewChild('stReceiptBillableActivityTable', { static: false })
+  stReceiptBillableActivityTable!: STComponent;
+  receiptBillableActivityTableColumns: STColumn[] = [ 
+    { title: this.i18n.fanyi("billable-activity-type"), index: 'billableActivityType.description', width: 150 },    
+    {
+      title: this.i18n.fanyi("rate"), index: 'rate' ,  width: 150,
+    }, 
+    {
+      title: this.i18n.fanyi("amount"), index: 'amount' ,  width: 150,
+    }, 
+    {
+      title: this.i18n.fanyi("totalCharge"), index: 'totalCharge' ,  width: 150,
+    }, 
+    { title: this.i18n.fanyi("activityTime"), render: 'activityTimeColumn', width: 150 }, 
+    { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 },       
+  ];
+
+  @ViewChild('stReceiptLineBillableActivityTable', { static: false })
+  stReceiptLineBillableActivityTable!: STComponent;
+  receiptLineBillableActivityTableColumns: STColumn[] = [ 
+    { title: this.i18n.fanyi("billable-activity-type"), index: 'billableActivityType.description', width: 150 },    
+    {
+      title: this.i18n.fanyi("rate"), index: 'rate' ,  width: 150,
+    }, 
+    {
+      title: this.i18n.fanyi("amount"), index: 'amount' ,  width: 150,
+    }, 
+    {
+      title: this.i18n.fanyi("totalCharge"), index: 'totalCharge' ,  width: 150,
+    }, 
+    { title: this.i18n.fanyi("activityTime"), render: 'activityTimeColumn', width: 150 },    
+    { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 },       
+  ];
+
+  removeReceiptBillableActivity(receipt: Receipt, 
+    receiptBillableActivity: ReceiptBillableActivity) {
+
+    this.receiptService.removeReceiptBillableActivity(
+      receipt.id!, receiptBillableActivity.id!
+    ).subscribe({
+      next: () => {
+
+        receipt.receiptBillableActivities = receipt.receiptBillableActivities.filter(
+          existingReceiptBillableActivity => existingReceiptBillableActivity.id != receiptBillableActivity.id
+        );
+      }
+    })
+  }
+
+  removeReceiptLineBillableActivity(receiptLine: ReceiptLine, 
+    receiptLineBillableActivity: ReceiptLineBillableActivity) {
+
+      this.isSpinning = true;
+      console.log(`start to remove receipt line billable activity`);
+
+      this.receiptService.removeReceiptLineBillableActivity(
+        receiptLine.id!, receiptLineBillableActivity.id!
+      ).subscribe({
+        next: () => {
+          
+          this.isSpinning = false;
+          
+          receiptLine.receiptLineBillableActivities = receiptLine.receiptLineBillableActivities.filter(
+            existingReceiptLineBillableActivity => existingReceiptLineBillableActivity.id != receiptLineBillableActivity.id
+          );
+          // this.searchForm!.controls.number.setValue(this.billableActivityReceipt!.number);
+          // this.search();
+        }
+      })
+  }
+ 
+  
+  openAddReceiptActivityModal(
+    receipt: Receipt,
+    tplBillableActivityModalTitle: TemplateRef<{}>,
+    tplBillableActivityModalContent: TemplateRef<{}>,
+    tplBillableActivityModalFooter: TemplateRef<{}>,
+  ): void {
+
+    this.openAddActivityModal(
+      receipt, 
+      undefined, 
+      tplBillableActivityModalTitle,
+      tplBillableActivityModalContent,
+      tplBillableActivityModalFooter,
+
+    )
+  }
+  
+  openAddReceiptLineActivityModal(
+    receipt: Receipt,
+    receiptLine: ReceiptLine,
+    tplBillableActivityModalTitle: TemplateRef<{}>,
+    tplBillableActivityModalContent: TemplateRef<{}>,
+    tplBillableActivityModalFooter: TemplateRef<{}>,
+  ): void {
+    this.openAddActivityModal(
+      receipt, 
+      receiptLine, 
+      tplBillableActivityModalTitle,
+      tplBillableActivityModalContent,
+      tplBillableActivityModalFooter,
+
+    )
+  }
+
+  openAddActivityModal(
+    receipt: Receipt,
+    receiptLine: ReceiptLine | undefined,
+    tplBillableActivityModalTitle: TemplateRef<{}>,
+    tplBillableActivityModalContent: TemplateRef<{}>,
+    tplBillableActivityModalFooter: TemplateRef<{}>,
+  ): void {
+    // make sure the item is ready for receiving  
+    this.billableActivityReceipt = receipt;
+    this.billableActivityReceiptLine = receiptLine;
+
+
+    this.availableBillableActivityTypes = this.allBillableActivityTypes;
+ /**
+  * 
+  * 
+    if (receiptLine) {
+
+      this.availableBillableActivityTypes =
+        this.allBillableActivityTypes.filter(
+          billableActivityType =>  
+             !receiptLine.receiptLineBillableActivities.some(
+                receiptLineBillableActivity => 
+                    receiptLineBillableActivity.billableActivityTypeId == billableActivityType.id
+            ));
+    }
+    else {
+
+      this.availableBillableActivityTypes =
+        this.allBillableActivityTypes.filter(
+          billableActivityType =>  
+            !receipt.receiptBillableActivities.some(
+                receiptBillableActivity => 
+                    receiptBillableActivity.billableActivityTypeId == billableActivityType.id
+            ));
+    }
+  * 
+  */
+
+
+    this.billableActivityForm = this.fb.group({ 
+      billableActivityType: ['', Validators.required],
+      activityTime:  ['', Validators.required],
+      rate: [''],
+      amount: [''],
+      totalCharge: ['', Validators.required],
+    });
+
+    // show the model
+    this.billableActivityModal = this.modalService.create({
+      nzTitle: tplBillableActivityModalTitle,
+      nzContent: tplBillableActivityModalContent,
+      nzFooter: tplBillableActivityModalFooter,
+      nzWidth: 1000,
+    });
+    
+  }
+  closeBillableActivityModal(): void {
+    this.billableActivityModal.destroy(); 
+  }
+  confirmBillableActivity(): void {  
+    
+    this.addActivityInProcess = true;
+    if (this.billableActivityForm.valid) {
+      
+      if (this.billableActivityReceiptLine) {
+
+        const receiptLineBillableActivity : ReceiptLineBillableActivity = {        
+          billableActivityTypeId: this.billableActivityForm.controls.billableActivityType.value,
+          activityTime: this.billableActivityForm.controls.activityTime.value,
+          rate: this.billableActivityForm.controls.rate.value,
+          amount: this.billableActivityForm.controls.amount.value,
+          totalCharge: this.billableActivityForm.controls.totalCharge.value,
+        }
+        this.receiptService.addReceiptLineBillableActivity(this.billableActivityReceiptLine.id!, 
+          receiptLineBillableActivity).subscribe({
+          next: () => {
+            
+            this.addActivityInProcess = false;
+            this.billableActivityModal.destroy();
+            
+            this.searchForm!.controls.number.setValue(this.billableActivityReceipt!.number);
+            this.search();
+          },
+          error: () => this.addActivityInProcess = false
+        });
+      }
+      else {
+
+        const receiptBillableActivity : ReceiptBillableActivity = {        
+          billableActivityTypeId: this.billableActivityForm.controls.billableActivityType.value,
+          activityTime: this.billableActivityForm.controls.activityTime.value,
+          rate: this.billableActivityForm.controls.rate.value,
+          amount: this.billableActivityForm.controls.amount.value,
+          totalCharge: this.billableActivityForm.controls.totalCharge.value,
+        }
+        this.receiptService.addReceiptBillableActivity(
+          this.billableActivityReceipt!.id!, receiptBillableActivity).subscribe({
+          next: () => {
+            this.addActivityInProcess = false;
+            this.billableActivityModal.destroy();
+            
+            this.searchForm!.controls.number.setValue(this.billableActivityReceipt!.number);
+            this.search();
+          }, 
+          error: () => this.addActivityInProcess = false
+        });
+      } 
+    } else {
+      this.displayBillableActivityFormError(this.billableActivityForm);
+      this.addActivityInProcess = false; 
+    }
+  }
+  displayBillableActivityFormError(fromGroup: UntypedFormGroup): void {
+    // tslint:disable-next-line: forin
+    for (const i in fromGroup.controls) {
+      fromGroup.controls[i].markAsDirty();
+      fromGroup.controls[i].updateValueAndValidity();
+    }
+  }
+  
+  recalculateTotalCharge(): void { 
+    
+    if (this.billableActivityForm.controls.rate.value != null &&
+      this.billableActivityForm.controls.amount.value != null) {
+
+        this.billableActivityForm!.controls.totalCharge.setValue(
+          this.billableActivityForm.controls.rate.value * 
+          this.billableActivityForm.controls.amount.value
+        );
+        
+      } 
+  }
+
+  
+  @ViewChild('stLineBillableActivityTable', { static: false })
+  stLineBillableActivityTable!: STComponent;
+  stLineBillableActivityTableColumns: STColumn[] = [ 
+    { title: this.i18n.fanyi("billable-activity-type"), index: 'billableActivityType.description', width: 150 },    
+    {
+      title: this.i18n.fanyi("rate"), index: 'rate' ,  width: 150,
+    }, 
+    {
+      title: this.i18n.fanyi("amount"), index: 'amount' ,  width: 150,
+    }, 
+    {
+      title: this.i18n.fanyi("totalCharge"), index: 'totalCharge' ,  width: 150,
+    }, 
+    { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 },       
+  ];
+
+
 }
