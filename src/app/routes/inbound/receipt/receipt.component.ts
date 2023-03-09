@@ -19,6 +19,7 @@ import { ItemUnitOfMeasure } from '../../inventory/models/item-unit-of-measure';
 import { ColumnItem } from '../../util/models/column-item';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Receipt } from '../models/receipt';
 import { ReceiptBillableActivity } from '../models/receipt-billable-activity';
 import { ReceiptLine } from '../models/receipt-line';
@@ -192,6 +193,7 @@ export class InboundReceiptComponent implements OnInit {
     private localCacheService: LocalCacheService,
     private supplierService: SupplierService,
     private clientService: ClientService,
+    private warehouseService: WarehouseService,
     private billableActivityTypeService: BillableActivityTypeService,
   ) { }
   ngOnInit(): void {
@@ -907,6 +909,8 @@ export class InboundReceiptComponent implements OnInit {
         const receiptLineBillableActivity : ReceiptLineBillableActivity = {        
           billableActivityTypeId: this.billableActivityForm.controls.billableActivityType.value,
           activityTime: this.billableActivityForm.controls.activityTime.value,
+          warehouseId: this.warehouseService.getCurrentWarehouse().id,
+          clientId:  this.billableActivityReceipt?.clientId,
           rate: this.billableActivityForm.controls.rate.value,
           amount: this.billableActivityForm.controls.amount.value,
           totalCharge: this.billableActivityForm.controls.totalCharge.value,
@@ -929,6 +933,8 @@ export class InboundReceiptComponent implements OnInit {
         const receiptBillableActivity : ReceiptBillableActivity = {        
           billableActivityTypeId: this.billableActivityForm.controls.billableActivityType.value,
           activityTime: this.billableActivityForm.controls.activityTime.value,
+          warehouseId: this.warehouseService.getCurrentWarehouse().id,
+          clientId:  this.billableActivityReceipt?.clientId,
           rate: this.billableActivityForm.controls.rate.value,
           amount: this.billableActivityForm.controls.amount.value,
           totalCharge: this.billableActivityForm.controls.totalCharge.value,

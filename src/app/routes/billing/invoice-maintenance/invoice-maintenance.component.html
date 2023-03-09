@@ -142,26 +142,41 @@
               <nz-table  nzShowPagination [nzData]="item!.billingRequestLines"
                   #billingRequestLine>
               <thead>
-                  <tr> 
+                  <tr>  
                     <th>
-                      {{ 'date' | i18n }}
+                      {{ 'startTime' | i18n }}
+                    </th> 
+                    <th>
+                      {{ 'endTime' | i18n }}
                     </th> 
                     <th>
                       {{ 'totalAmount' | i18n }}
                     </th>
                     <th>
                       {{ 'totalCharge' | i18n }}
-                    </th>  
+                    </th> 
+                    <th>
+                      {{ 'document-number' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'itemName' | i18n }}
+                    </th> 
                   </tr>
               </thead>
               <tbody>
-                  <tr *ngFor="let data of billingRequestLine.data">  
+                  <tr *ngFor="let data of billingRequestLine.data">   
                         <td  >
-                            {{ data.date | date:'MM/dd/yyyy'}}   </td> 
+                                {{ data.startTime | date:'short'}}   </td> 
+                        <td  >
+                                    {{ data.endTime | date:'short'}}   </td> 
                         <td  >
                             {{ data.totalAmount | number: '1.0-2'}}  </td>
                         <td  >
                             {{ data.totalCharge | number: '1.0-2'}}  </td>
+                        <td  >
+                                {{ data.documentNumber }}  </td>
+                        <td  >
+                                    {{ data.itemName  }}  </td>
                   </tr>
               </tbody>
               </nz-table>

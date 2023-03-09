@@ -2,7 +2,8 @@ import { BillableActivityType } from '../../billing/models/billable-activity-typ
 
 export interface ReceiptBillableActivity {
   id?: number;
-   
+  warehouseId: number;
+  clientId?: number;
   billableActivityTypeId?: number;
   billableActivityType?: BillableActivityType;
   activityTime?: Date;

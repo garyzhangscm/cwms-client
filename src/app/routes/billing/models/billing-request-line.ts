@@ -10,4 +10,9 @@ export interface BillingRequestLine {
 
     totalAmount: number;
     totalCharge: number;
+    rate: number;
+    
+
+    documentNumber?: string;
+    itemName?: string;
 }
