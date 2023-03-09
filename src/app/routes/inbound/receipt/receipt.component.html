@@ -210,7 +210,7 @@
                   <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" >
                     <nz-tab nzTitle="{{'receipt.line.billable-activity-type' | i18n}}">
                       <st #stLineBillableActivityTable [data]="receiptLine.receiptLineBillableActivities" 
-                        [columns]="stLineBillableActivityTableColumns"  >
+                        [columns]="receiptLineBillableActivityTableColumns"  >
     
                         <ng-template st-row="activityTimeColumn" let-billableActivity let-index="index">
                           {{ billableActivity.activityTime | date:'short'}} 
