@@ -151,7 +151,7 @@
     </div>
     
     <st #st [data]="listOfAllOrders"  [columns]="columns" [expand]="expand"  expandAccordion
-    (change)="orderTableChanged($event)" [scroll]="{ x: '3455px' }">
+    (change)="orderTableChanged($event)" [scroll]="{ x: '3355px' }">
       <!-- more details about the supplier -->
       <ng-template st-row="supplierColumn" let-item let-index="index">
         
@@ -286,20 +286,20 @@
     </ng-template>
       
       <!-- more details about the order number -->
-      <ng-template st-row="orderNumberColumn" let-item let-index="index">
-        <a nz-tooltip [nzTooltipTitle]="orderNumberTemplate">{{ item.number }}</a>
+      <ng-template st-row="orderNumberColumn" let-order let-index="index">
+        <a nz-tooltip [nzTooltipTitle]="orderNumberTemplate">{{ order.number }}</a>
         <ng-template #orderNumberTemplate>
-          {{item.number}}
+          {{order.number}}
         </ng-template>
 
       </ng-template>
 
       <!--   order details  -->
-      <ng-template #expand let-item let-index="index" >
+      <ng-template #expand let-order let-index="index" >
         
         <nz-tabset [nzSelectedIndex]="tabSelectedIndex">
           <nz-tab nzTitle=" {{ 'order.line' | i18n }}">
-            <nz-table [nzScroll]="{ x: '100vw'}" #innerTable [nzData]="item.orderLines" nzSize="middle"
+            <nz-table [nzScroll]="{ x: '100vw'}" #innerTable [nzData]="order.orderLines" nzSize="middle"
               [nzShowPagination]="false" #orderLineTable>
               <thead>
                 <th>
@@ -340,6 +340,9 @@
                 </th>
                 <th>
                   {{ 'order.line.allocationStrategyType' | i18n }}
+                </th>
+                <th>
+                  {{'action' | i18n}}
                 </th>
               </thead>
               <tbody>
@@ -427,6 +430,13 @@
                   <td><span *ngIf="orderLine.allocationStrategyType != null">
                     {{ 'ALLOCATION-STRATEGY-TYPE-' + orderLine.allocationStrategyType | i18n}}
                   </span></td>
+                  <td> 
+                    <button nz-button (click)="openAddOrderLineActivityModal(order, orderLine, tplBillableActivityModalTitle, 
+                        tplBillableActivityModalContent, tplBillableActivityModalFooter)">
+                    {{ 'billable-activity-type.add' | i18n }}
+                    </button>
+ 
+                  </td>
                 </tr>
               </tbody>
             </nz-table>
@@ -434,11 +444,11 @@
 
           <nz-tab nzTitle=" {{ 'pick' | i18n }}">
             <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="true"
-              [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[item.id!]" #pickTable>
+              [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[order.id!]" #pickTable>
               <thead>
                 
                 <th   [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
-                (nzCheckedChange)="onAllChecked($event, item.id!)" nzWidth="60px"></th>
+                (nzCheckedChange)="onAllChecked($event, order.id!)" nzWidth="60px"></th>
                 <th>
                   {{ 'pick.number' | i18n }}
                 </th>
@@ -486,7 +496,7 @@
                 <tr *ngFor="let pick of pickTable.data">
                   
                   <td [nzChecked]="setOfCheckedId.has(pick.id!)" [nzDisabled]="pick.quantity === pick.pickedQuantity"
-                    (nzCheckedChange)="onItemChecked(pick.id!, item.id!, $event)"></td>
+                    (nzCheckedChange)="onItemChecked(pick.id!, order.id!, $event)"></td>
                   <td>{{ pick.number }}</td>
                   <td><a routerLink="/outbound/pick-list" routerLinkActive="active"
                       [queryParams]="{number : pick.pickListNumber}">{{ pick.pickListNumber }}</a></td>
@@ -503,8 +513,8 @@
                   <td>{{ pick.pickedQuantity }}</td>
                   <td>{{ pick.lpn }}</td>
                   <td>
-                    <button nz-button (click)="cancelPick(item, pick)"
-                      [disabled]="pick.quantity === pick.pickedQuantity || item.status === orderStatusEnum.COMPLETE">
+                    <button nz-button (click)="cancelPick(order, pick)"
+                      [disabled]="pick.quantity === pick.pickedQuantity || order.status === orderStatusEnum.COMPLETE">
                       {{ 'cancel' | i18n }}
                     </button>
                   </td>
@@ -514,16 +524,16 @@
 
             <ng-template #pickTableFoot>
               <div nz-row nzType="flex" nzJustify="start">
-                <cwms-common-print-button [printingInProcess]="mapOfAllocationInProcessId[item.id!]"
-                  [printButtonDisabled]="!isOrderReadyForComplete(item)" (print)="printPickSheets(item, $event)"
-                  (preview)="previewReport(item)">
+                <cwms-common-print-button [printingInProcess]="mapOfAllocationInProcessId[order.id!]"
+                  [printButtonDisabled]="!isOrderReadyForComplete(order)" (print)="printPickSheets(order, $event)"
+                  (preview)="previewReport(order)">
                 </cwms-common-print-button>
-                <button nz-button (click)="confirmPicks(item)"
-                  [disabled]="(mapOfPicks[item.id!] && mapOfPicks[item.id!].length === 0) || item.status === orderStatusEnum.COMPLETE">
+                <button nz-button (click)="confirmPicks(order)"
+                  [disabled]="(mapOfPicks[order.id!] && mapOfPicks[order.id!].length === 0) || order.status === orderStatusEnum.COMPLETE">
                   {{ 'confirm' | i18n }}
                 </button>
-                <button nz-button (click)="cancelSelectedPick(item)"
-                      [disabled]="item.status === orderStatusEnum.COMPLETE">
+                <button nz-button (click)="cancelSelectedPick(order)"
+                      [disabled]="order.status === orderStatusEnum.COMPLETE">
                       {{ 'cancel' | i18n }}
                     </button>
               </div>
@@ -532,7 +542,7 @@
 
           <nz-tab nzTitle=" {{ 'picked-inventory' | i18n }}">
             <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="true"
-              [nzData]="mapOfPickedInventory[item.id!]" #pickedInventoryTable>
+              [nzData]="mapOfPickedInventory[order.id!]" #pickedInventoryTable>
               <thead>
                 
                 <th>
@@ -586,8 +596,8 @@
                   <td>{{ inventory.productSize }}</td>
                   <td>{{ inventory.style }}</td>
                   <td>
-                    <button nz-button (click)="openUnpickModal(item, inventory, tplUnpickModalTitle, tplUnpickModalContent)"
-                      [disabled]="item.status === orderStatusEnum.COMPLETE">
+                    <button nz-button (click)="openUnpickModal(order, inventory, tplUnpickModalTitle, tplUnpickModalContent)"
+                      [disabled]="order.status === orderStatusEnum.COMPLETE">
                       {{ 'unpick' | i18n }}
                     </button>
                   </td>
@@ -597,7 +607,7 @@
           </nz-tab>
 
           <nz-tab nzTitle=" {{ 'short-allocation' | i18n }}">
-            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="mapOfShortAllocations[item.id!]" nzSize="middle"
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="mapOfShortAllocations[order.id!]" nzSize="middle"
               [nzShowPagination]="true" #shortAllocationTable>
               <thead>
                 <th>
@@ -658,18 +668,18 @@
                     <nz-dropdown-menu #shortAllocationMenu="nzDropdownMenu">
                       <ul nz-menu> 
 
-                        <li nz-menu-item *ngIf="isShortAllocationAllocatable(shortAllocation) && item.status != orderStatusEnum.COMPLETE">
-                          <a   (click)="allocateShortAllocation(item, shortAllocation)">{{ 'allocate' | i18n }}</a>
+                        <li nz-menu-item *ngIf="isShortAllocationAllocatable(shortAllocation) && order.status != orderStatusEnum.COMPLETE">
+                          <a   (click)="allocateShortAllocation(order, shortAllocation)">{{ 'allocate' | i18n }}</a>
                         </li>
                         
-                        <li nz-menu-item *ngIf="item.status != orderStatusEnum.COMPLETE">
+                        <li nz-menu-item *ngIf="order.status != orderStatusEnum.COMPLETE">
                           <a  (click)="openCreateWorkOrderModel(shortAllocation, tplCreateWorkOrderModalTitle, tplCreateWorkOrderModalContent)">
                             {{ 'create-work-order' | i18n }}</a>
                         </li>
                         
                         
-                        <li nz-menu-item *ngIf="item.status != orderStatusEnum.COMPLETE">
-                          <a  (click)="cancelShortAllocation(item,shortAllocation)">{{ 'cancel' | i18n }}</a>
+                        <li nz-menu-item *ngIf="order.status != orderStatusEnum.COMPLETE">
+                          <a  (click)="cancelShortAllocation(order,shortAllocation)">{{ 'cancel' | i18n }}</a>
                         </li>
                       </ul>
                     </nz-dropdown-menu> 
@@ -682,7 +692,7 @@
           </nz-tab>
           <nz-tab nzTitle=" {{ 'order-document' | i18n }}">
             <nz-list nzBordered nzHeader="{{'files' | i18n}}" >
-              <nz-list-item *ngFor="let orderDocument of item.orderDocuments">
+              <nz-list-item *ngFor="let orderDocument of order.orderDocuments">
                 
                 <ul nz-list-item-actions>
                   <nz-list-item-action><a (click)="removeOrderDocument(orderDocument)">{{'remove' | i18n}}</a></nz-list-item-action>
@@ -694,7 +704,7 @@
           </nz-tab>
           
           <nz-tab nzTitle=" {{ 'parcel-package' | i18n }}">
-            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="mapOfParcelPackages[item.id!]" nzSize="middle"
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="mapOfParcelPackages[order.id!]" nzSize="middle"
               [nzShowPagination]="true" #parcelPackageTable>
               <thead>
                 <th>
@@ -765,50 +775,78 @@
 
 
       <!--   action colummn  -->  
-      <ng-template st-row="actionColumn" let-item let-index="index"> 
+      <ng-template st-row="actionColumn" let-order let-index="index"> 
         
-        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
-          {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
-        <nz-dropdown-menu #menu="nzDropdownMenu">
-          <ul nz-menu> 
+        <nz-list>
+          <nz-list-item>          
+            <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+              {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu> 
 
-            <li nz-menu-item>
-              <a routerLink="/outbound/order-maintenance" routerLinkActive="active"
-                [queryParams]="{id : item.id}">
-                {{ 'modify' | i18n }}</a> 
-            </li>
-            <li nz-menu-item *ngIf="isOrderAllocatable(item)">
-              <a  (click)="allocateOrder(item)">{{ 'allocate' | i18n }}</a>
-            </li>
-            <li nz-menu-item *ngIf="canReassignStageLocation(item)">
-              <a  (click)="openReassignStageLocationModel(item, tplOrderReassignShippingStageLocationModalTitle, tplOrderReassignShippingStageLocationModalContent)">
-                {{ 'order.assign-ship-stage-location' | i18n }}</a>
-            </li>
-            <li nz-menu-item *ngIf="isOrderReadyForComplete(item)">
-              <a  (click)="completeOrder(item)">{{ 'complete' | i18n }}</a>
-            </li>
-            <li nz-menu-item *ngIf="isOrderReadyForRemove(item)">
-              <a  (click)="removeOrder(item)">{{ 'remove' | i18n }}</a>
-            </li>
-            
-            <li nz-menu-item *ngIf="isAlreadyCompleted(item)">
-              <a  (click)="retriggerOrderConfirmationIntegration(item)">{{ 'retrigger-order-confirm-integration' | i18n }}</a>
-            </li>
-            <li nz-menu-item >
-              <a routerLink="/outbound/order-document" routerLinkActive="active"
-                [queryParams]="{id : item.id}">
-                {{ 'upload-document' | i18n }}</a> 
-            </li>
-            <li nz-menu-item >
-              <a routerLink="/outbound/parcel-by-order" routerLinkActive="active"
-                [queryParams]="{id : item.id}">
-                {{ 'ship-parcel' | i18n }}</a> 
-            </li>
-          </ul>
-        </nz-dropdown-menu>
+                <li nz-menu-item>
+                  <a routerLink="/outbound/order-maintenance" routerLinkActive="active"
+                    [queryParams]="{id : order.id}">
+                    {{ 'modify' | i18n }}</a> 
+                </li>
+                <li nz-menu-item *ngIf="isOrderAllocatable(order)">
+                  <a  (click)="allocateOrder(order)">{{ 'allocate' | i18n }}</a>
+                </li>
+                <li nz-menu-item *ngIf="canReassignStageLocation(order)">
+                  <a  (click)="openReassignStageLocationModel(order, tplOrderReassignShippingStageLocationModalTitle, tplOrderReassignShippingStageLocationModalContent)">
+                    {{ 'order.assign-ship-stage-location' | i18n }}</a>
+                </li>
+                <li nz-menu-item *ngIf="isOrderReadyForComplete(order)">
+                  <a  (click)="completeOrder(order)">{{ 'complete' | i18n }}</a>
+                </li>
+                <li nz-menu-item *ngIf="isOrderReadyForRemove(order)">
+                  <a  (click)="removeOrder(order)">{{ 'remove' | i18n }}</a>
+                </li>
+                
+                <li nz-menu-item *ngIf="isAlreadyCompleted(order)">
+                  <a  (click)="retriggerOrderConfirmationIntegration(order)">{{ 'retrigger-order-confirm-integration' | i18n }}</a>
+                </li>
+                <li nz-menu-item >
+                  <a routerLink="/outbound/order-document" routerLinkActive="active"
+                    [queryParams]="{id : order.id}">
+                    {{ 'upload-document' | i18n }}</a> 
+                </li>
+                <li nz-menu-item >
+                  <a routerLink="/outbound/parcel-by-order" routerLinkActive="active"
+                    [queryParams]="{id : order.id}">
+                    {{ 'ship-parcel' | i18n }}</a> 
+                </li>
+                <li nz-menu-item>
+                  <a (click)="openAddOrderActivityModal(order, tplBillableActivityModalTitle, 
+                      tplBillableActivityModalContent, tplBillableActivityModalFooter)" >
+                  {{ 'billable-activity-type.add' | i18n }}</a>
+                </li> 
+              </ul>
+            </nz-dropdown-menu>
+          </nz-list-item>
+          <nz-list-item>
+            {{ 'packing-slip' | i18n }}: 
+            <cwms-common-print-button style='padding-left: 20px;'
+              (print)="printPackingSlip($event, order)"
+              (preview)="previewPackingSlip(order)">
+            </cwms-common-print-button>
+          </nz-list-item>
+          
+          <nz-list-item >
+            {{ 'bill-of-lading' | i18n }}: 
+            <cwms-common-print-button style='padding-left: 20px;'
+              (print)="printBillOfLading($event, order)"
+              (preview)="previewBillOfLading(order)">
+            </cwms-common-print-button>
+          </nz-list-item>
+        </nz-list>
+        
       </ng-template>
         
       <!--   label print colummn  --> 
+      <!--
+
+
       <ng-template st-row="printColumnTitle" type="title" let-c>
         {{ 'print' | i18n }}
       </ng-template>
@@ -833,6 +871,7 @@
         
 
       </ng-template>
+      -->
     </st>
     
   <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
@@ -1187,4 +1226,101 @@
       </nz-table>
     </div>
   </form>
+</ng-template>
+
+
+<!-- Modal for add order / line activity  -->
+<ng-template #tplBillableActivityModalTitle>
+  <span>{{ 'billable-activity' | i18n}}</span>
+</ng-template>
+<ng-template #tplBillableActivityModalContent>
+  
+  <h2 nz-row [nzGutter]="24"  >
+    <div nz-col [nzSpan]="12">
+        {{'order' | i18n}} : {{billableActivityOrder?.number}}
+    </div>
+    <div nz-col [nzSpan]="12" *ngIf="billableActivityOrderLine">
+        {{'order.line' | i18n}} : {{billableActivityOrderLine.number}} - {{billableActivityOrderLine.item?.name}}
+    </div>
+  </h2>
+  <form nz-form [formGroup]="billableActivityForm">
+    <div nz-row [nzGutter]="24">
+
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="7"  >
+            {{ 'billable-activity-type' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="17" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}"> 
+            <nz-select nz-input formControlName="billableActivityType" style="width: 250px" required>
+              <nz-option *ngFor="let billableActivityType of billableActivityTypes"
+                [nzLabel]="billableActivityType.description!" [nzValue]="billableActivityType.id">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+      
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="7"  >
+            {{ 'activityTime' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="17" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}"> 
+            <nz-date-picker
+              nzShowTime
+              nzFormat="yyyy-MM-dd HH:mm:ss" formControlName="activityTime" name="activityTime"
+            ></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+    </div> 
+    <div nz-row [nzGutter]="24"> 
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24"  >
+            {{ 'rate' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24"  >
+            <nz-input-group nzSize="large">
+              <nz-input-number   formControlName="rate" (ngModelChange)="recalculateTotalCharge()"    [nzMin]="0" ></nz-input-number>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24"  >
+            {{ 'amount' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" >
+            <nz-input-group nzSize="large"> 
+              <nz-input-number  formControlName="amount" (ngModelChange)="recalculateTotalCharge()"  [nzMin]="0" ></nz-input-number>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8"  >
+            {{ 'totalCharge' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16"   nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-group nzSize="large">
+              <nz-input-number nz-input formControlName="totalCharge" [nzMin]="0" ></nz-input-number>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+    </div>
+ 
+  </form>
+</ng-template>
+
+<ng-template #tplBillableActivityModalFooter>
+  <button nz-button nzType="default" (click)="closeBillableActivityModal()" [nzLoading]="addActivityInProcess" >{{ 'cancel' |
+    i18n}}</button>
+  <button nz-button nzType="primary" (click)="confirmBillableActivity()" [nzLoading]="addActivityInProcess" >{{ 'confirm' |
+    i18n}}</button>
+
 </ng-template>

@@ -193,6 +193,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
       id: undefined,
       number: '',
 
+      orderBillableActivities: [],
       status: OrderStatus.OPEN,
       category: OrderCategory.SALES_ORDER,
       orderLines: [],
@@ -278,6 +279,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
       orderNumber: this.currentOrder!.number,
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
 
+      orderLineBillableActivities: [],
       expectedQuantity: 0,
       openQuantity: 0,
       inprocessQuantity: 0,

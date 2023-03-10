@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
@@ -9,6 +9,8 @@ import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { BillableActivityType } from '../../billing/models/billable-activity-type';
+import { BillableActivityTypeService } from '../../billing/services/billable-activity-type.service';
 import { Client } from '../../common/models/client';
 import { Customer } from '../../common/models/customer';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
@@ -29,18 +31,22 @@ import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-locat
 import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { BillOfMaterial } from '../../work-order/models/bill-of-material';
 import { BillOfMaterialService } from '../../work-order/services/bill-of-material.service';
 import { Order } from '../models/order';
+import { OrderBillableActivity } from '../models/order-billable-activity';
 import { OrderCategory } from '../models/order-category';
 import { OrderDocument } from '../models/order-document';
 import { OrderLine } from '../models/order-line';
+import { OrderLineBillableActivity } from '../models/order-line-billable-activity';
 import { OrderStatus } from '../models/order-status.enum';
 import { ParcelPackage } from '../models/parcel-package';
 import { PickWork } from '../models/pick-work';
 import { ShortAllocation } from '../models/short-allocation';
 import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
 import { OrderDocumentService } from '../services/order-document.service';
+import { OrderLineService } from '../services/order-line.service';
 import { OrderService } from '../services/order.service';
 import { ParcelPackageService } from '../services/parcel-package.service';
 import { PickService } from '../services/pick.service';
@@ -100,7 +106,10 @@ export class OutboundOrderComponent implements OnInit {
     private orderDocumentService: OrderDocumentService,
     private easyPostConfigurationService: EasyPostConfigurationService,
     private customerService: CustomerService,
-    private clientService: ClientService
+    private clientService: ClientService,
+    private billableActivityTypeService: BillableActivityTypeService,
+    private orderLineService: OrderLineService,
+    private warehouseService: WarehouseService,
   ) { }
 
   printerModal!: NzModalRef;
@@ -151,6 +160,15 @@ export class OutboundOrderComponent implements OnInit {
   loadingOrderDetailsRequest = 0;
 
   
+  billableActivityOrder?: Order;
+  billableActivityOrderLine?: OrderLine; 
+  billableActivityTypes: BillableActivityType[] = []; 
+
+  billableActivityModal!: NzModalRef; 
+  billableActivityForm!: UntypedFormGroup;
+  addActivityInProcess = false;
+
+  
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.order'));
     // initiate the search form
@@ -181,6 +199,9 @@ export class OutboundOrderComponent implements OnInit {
     
     this.initClientAssignment();
     
+    this.billableActivityTypeService.loadBillableActivityTypes(true).subscribe({
+      next: (billableActivityTypeRes) => this.billableActivityTypes = billableActivityTypeRes
+    });
   }
 
   initClientAssignment(): void {
@@ -1179,14 +1200,18 @@ export class OutboundOrderComponent implements OnInit {
     },
     { title: this.i18n.fanyi("order.totalShippedQuantity"), index: 'totalShippedQuantity', iif: () => this.isChoose('totalShippedQuantity'), width: 100},     
     { 
-      title: this.i18n.fanyi("action"),fixed: 'right',width: 50, 
+      title: this.i18n.fanyi("action"),fixed: 'right',width: 150, 
       render: 'actionColumn',
     },
+    /**
+     * 
     {
       title: 'print',
       renderTitle: 'printColumnTitle',fixed: 'right',width: 210, 
       render: 'printColumn',
     },
+     * 
+     */
    
   ];
   customColumns = [
@@ -1487,4 +1512,236 @@ export class OutboundOrderComponent implements OnInit {
           }'s quantity ${  itemUnitOfMeasure.quantity}`);
     }
   }
+
+  @ViewChild('stOrderBillableActivityTable', { static: false })
+  stOrderBillableActivityTable!: STComponent;
+  orderBillableActivityTableColumns: STColumn[] = [ 
+    { title: this.i18n.fanyi("billable-activity-type"), index: 'billableActivityType.description', width: 150 },    
+    {
+      title: this.i18n.fanyi("rate"), index: 'rate' ,  width: 150,
+    }, 
+    {
+      title: this.i18n.fanyi("amount"), index: 'amount' ,  width: 150,
+    }, 
+    {
+      title: this.i18n.fanyi("totalCharge"), index: 'totalCharge' ,  width: 150,
+    }, 
+    { title: this.i18n.fanyi("activityTime"), render: 'activityTimeColumn', width: 150 }, 
+    { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 },       
+  ];
+
+  @ViewChild('stOrderLineBillableActivityTable', { static: false })
+  stOrderLineBillableActivityTable!: STComponent;
+  orderLineBillableActivityTableColumns: STColumn[] = [ 
+    { title: this.i18n.fanyi("billable-activity-type"), index: 'billableActivityType.description', width: 150 },    
+    {
+      title: this.i18n.fanyi("rate"), index: 'rate' ,  width: 150,
+    }, 
+    {
+      title: this.i18n.fanyi("amount"), index: 'amount' ,  width: 150,
+    }, 
+    {
+      title: this.i18n.fanyi("totalCharge"), index: 'totalCharge' ,  width: 150,
+    }, 
+    { title: this.i18n.fanyi("activityTime"), render: 'activityTimeColumn', width: 150 },    
+    { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 },       
+  ];
+
+  removeOrderBillableActivity(order: Order, 
+    orderBillableActivity: OrderBillableActivity) {
+
+    this.orderService.removeOrderBillableActivity(
+      order.id!, orderBillableActivity.id!
+    ).subscribe({
+      next: () => {
+
+        order.orderBillableActivities = order.orderBillableActivities.filter(
+          existingOrderBillableActivity => existingOrderBillableActivity.id != orderBillableActivity.id
+        );
+      }
+    })
+  }
+
+  removeOrderLineBillableActivity(orderLine: OrderLine, 
+    orderLineBillableActivity: OrderLineBillableActivity) {
+
+      this.isSpinning = true;
+      // console.log(`start to remove order line billable activity`);
+
+      this.orderLineService.removeOrderLineBillableActivity(
+        orderLine.id!, orderLineBillableActivity.id!
+      ).subscribe({
+        next: () => {
+          
+          this.isSpinning = false;
+          
+          orderLine.orderLineBillableActivities = orderLine.orderLineBillableActivities.filter(
+            existingOrderLineBillableActivity => existingOrderLineBillableActivity.id != orderLineBillableActivity.id
+          ); 
+        }
+      })
+  }
+ 
+  
+  openAddOrderActivityModal(
+    order: Order,
+    tplBillableActivityModalTitle: TemplateRef<{}>,
+    tplBillableActivityModalContent: TemplateRef<{}>,
+    tplBillableActivityModalFooter: TemplateRef<{}>,
+  ): void {
+
+    this.openAddActivityModal(
+      order, 
+      undefined, 
+      tplBillableActivityModalTitle,
+      tplBillableActivityModalContent,
+      tplBillableActivityModalFooter,
+
+    )
+  }
+  
+  openAddOrderLineActivityModal(
+    order: Order,
+    orderLine: OrderLine,
+    tplBillableActivityModalTitle: TemplateRef<{}>,
+    tplBillableActivityModalContent: TemplateRef<{}>,
+    tplBillableActivityModalFooter: TemplateRef<{}>,
+  ): void {
+    this.openAddActivityModal(
+      order, 
+      orderLine, 
+      tplBillableActivityModalTitle,
+      tplBillableActivityModalContent,
+      tplBillableActivityModalFooter,
+
+    )
+  }
+
+  openAddActivityModal(
+    order: Order,
+    orderLine: OrderLine | undefined,
+    tplBillableActivityModalTitle: TemplateRef<{}>,
+    tplBillableActivityModalContent: TemplateRef<{}>,
+    tplBillableActivityModalFooter: TemplateRef<{}>,
+  ): void {
+    // make sure the item is ready for receiving  
+    this.billableActivityOrder = order;
+    this.billableActivityOrderLine = orderLine;
+  
+    this.billableActivityForm = this.fb.group({ 
+      billableActivityType: ['', Validators.required],
+      activityTime:  ['', Validators.required],
+      rate: [''],
+      amount: [''],
+      totalCharge: ['', Validators.required],
+    });
+
+    // show the model
+    this.billableActivityModal = this.modalService.create({
+      nzTitle: tplBillableActivityModalTitle,
+      nzContent: tplBillableActivityModalContent,
+      nzFooter: tplBillableActivityModalFooter,
+      nzWidth: 1000,
+    });
+    
+  }
+  closeBillableActivityModal(): void {
+    this.billableActivityModal.destroy(); 
+  }
+  confirmBillableActivity(): void {  
+    
+    this.addActivityInProcess = true;
+    if (this.billableActivityForm.valid) {
+      
+      if (this.billableActivityOrderLine) {
+
+        const orderLineBillableActivity : OrderLineBillableActivity = {        
+          billableActivityTypeId: this.billableActivityForm.controls.billableActivityType.value,
+          activityTime: this.billableActivityForm.controls.activityTime.value,
+          warehouseId: this.warehouseService.getCurrentWarehouse().id,
+          clientId:  this.billableActivityOrder?.clientId,
+          rate: this.billableActivityForm.controls.rate.value,
+          amount: this.billableActivityForm.controls.amount.value,
+          totalCharge: this.billableActivityForm.controls.totalCharge.value,
+        }
+        this.orderLineService.addOrderLineBillableActivity(this.billableActivityOrderLine.id!, 
+          orderLineBillableActivity).subscribe({
+          next: () => {
+            
+            this.addActivityInProcess = false;
+            this.billableActivityModal.destroy();
+            
+            this.searchForm!.controls.number.setValue(this.billableActivityOrder!.number);
+            this.search();
+          },
+          error: () => this.addActivityInProcess = false
+        });
+      }
+      else {
+
+        const orderBillableActivity : OrderBillableActivity = {        
+          billableActivityTypeId: this.billableActivityForm.controls.billableActivityType.value,
+          activityTime: this.billableActivityForm.controls.activityTime.value,
+          warehouseId: this.warehouseService.getCurrentWarehouse().id,
+          clientId:  this.billableActivityOrder?.clientId,
+          rate: this.billableActivityForm.controls.rate.value,
+          amount: this.billableActivityForm.controls.amount.value,
+          totalCharge: this.billableActivityForm.controls.totalCharge.value,
+        }
+        this.orderService.addOrderBillableActivity(
+          this.billableActivityOrder!.id!, orderBillableActivity).subscribe({
+          next: () => {
+            this.addActivityInProcess = false;
+            this.billableActivityModal.destroy();
+            
+            this.searchForm!.controls.number.setValue(this.billableActivityOrder!.number);
+            this.search();
+          }, 
+          error: () => this.addActivityInProcess = false
+        });
+      } 
+    } else {
+      this.displayBillableActivityFormError(this.billableActivityForm);
+      this.addActivityInProcess = false; 
+    }
+  }
+  displayBillableActivityFormError(fromGroup: UntypedFormGroup): void {
+    // tslint:disable-next-line: forin
+    for (const i in fromGroup.controls) {
+      fromGroup.controls[i].markAsDirty();
+      fromGroup.controls[i].updateValueAndValidity();
+    }
+  }
+  
+  recalculateTotalCharge(): void { 
+    
+    if (this.billableActivityForm.controls.rate.value != null &&
+      this.billableActivityForm.controls.amount.value != null) {
+
+        this.billableActivityForm!.controls.totalCharge.setValue(
+          this.billableActivityForm.controls.rate.value * 
+          this.billableActivityForm.controls.amount.value
+        );
+        
+      } 
+  }
+
+  
+  @ViewChild('stLineBillableActivityTable', { static: false })
+  stLineBillableActivityTable!: STComponent;
+  stLineBillableActivityTableColumns: STColumn[] = [ 
+    { title: this.i18n.fanyi("billable-activity-type"), index: 'billableActivityType.description', width: 150 },    
+    {
+      title: this.i18n.fanyi("rate"), index: 'rate' ,  width: 150,
+    }, 
+    {
+      title: this.i18n.fanyi("amount"), index: 'amount' ,  width: 150,
+    }, 
+    {
+      title: this.i18n.fanyi("totalCharge"), index: 'totalCharge' ,  width: 150,
+    }, 
+    { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 },       
+  ];
+
+
 }

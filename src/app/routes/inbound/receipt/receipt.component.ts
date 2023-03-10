@@ -239,7 +239,7 @@ export class InboundReceiptComponent implements OnInit {
 
     this.billableActivityTypeService.loadBillableActivityTypes(true).subscribe({
       next: (billableActivityTypeRes) => this.allBillableActivityTypes = billableActivityTypeRes
-    })
+    });
   }
 
   resetForm(): void {

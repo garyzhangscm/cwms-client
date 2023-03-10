@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -5,6 +6,7 @@ import { map } from 'rxjs/operators';
 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { OrderLine } from '../models/order-line';
+import { OrderLineBillableActivity } from '../models/order-line-billable-activity';
 
 @Injectable({
   providedIn: 'root',
@@ -48,5 +50,24 @@ export class OrderLineService {
   
     
     return this.http.get(url).pipe(map(res => res.data));
+  }
+  addOrderLineBillableActivity(orderLineId: number, 
+    orderLineBillableActivity: OrderLineBillableActivity): Observable<OrderLineBillableActivity> {
+
+    const url = `outbound/orders/lines/${orderLineId}/billable-activities`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+
+    return this.http.put(url, orderLineBillableActivity, params).pipe(map(res => res.data));
+  }
+  removeOrderLineBillableActivity(orderLineId: number, id: number): Observable<string> {
+
+    const url = `outbound/orders/lines/${orderLineId}/billable-activities/${id}`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+
+    return this.http.delete(url, params).pipe(map(res => res.data));
   }
 }

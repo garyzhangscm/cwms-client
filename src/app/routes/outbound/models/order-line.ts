@@ -2,6 +2,7 @@ import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { Item } from '../../inventory/models/item';
 import { AllocationStrategyType } from './allocation-strategy-type.enum';
+import { OrderLineBillableActivity } from './order-line-billable-activity';
 
 export interface OrderLine {
   id?: number;
@@ -32,4 +33,6 @@ export interface OrderLine {
   color?:string;
   productSize?:string;
   style?:string;
+
+  orderLineBillableActivities: OrderLineBillableActivity[];
 }

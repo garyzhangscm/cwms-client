@@ -7,6 +7,7 @@ import { CarrierServiceLevel } from '../../transportation/models/carrier-service
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { OrderBillableActivity } from './order-billable-activity';
 import { OrderCategory } from './order-category';
 import { OrderDocument } from './order-document';
 import { OrderLine } from './order-line';
@@ -91,5 +92,7 @@ export interface Order {
   stageLocationGroup?: LocationGroup;
   stageLocationId?: number;
   stageLocation?: WarehouseLocation;
+
+  orderBillableActivities: OrderBillableActivity[];
 
 }

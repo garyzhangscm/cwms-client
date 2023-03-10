@@ -12,6 +12,7 @@ import { DateTimeService } from '../../util/services/date-time.service';
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Order } from '../models/order';
+import { OrderBillableActivity } from '../models/order-billable-activity';
 import { OrderCategory } from '../models/order-category';
 import { OrderLine } from '../models/order-line';
 import { OrderStatus } from '../models/order-status.enum';
@@ -220,4 +221,26 @@ export class OrderService {
       undefined, undefined, undefined,
       trailerAppointmentId);
   }
+
+  addOrderBillableActivity(orderId: number, 
+    orderBillableActivity: OrderBillableActivity): Observable<OrderBillableActivity> {
+
+    const url = `outbound/orders/${orderId}/billable-activities`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+
+    return this.http.put(url, orderBillableActivity, params).pipe(map(res => res.data));
+  }
+  removeOrderBillableActivity(orderId: number,  id: number): Observable<string> {
+
+    const url = `outbound/orders/${orderId}/billable-activities/${id}`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+
+    return this.http.delete(url, params).pipe(map(res => res.data));
+  }
+  
+
 }
