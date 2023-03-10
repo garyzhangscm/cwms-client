@@ -299,6 +299,124 @@
         
         <nz-tabset [nzSelectedIndex]="tabSelectedIndex">
           <nz-tab nzTitle=" {{ 'order.line' | i18n }}">
+
+            <st #stOrderLine [data]="order.orderLines"  [columns]="stOrderLineTableColumns"  
+            [expand]="expand"  expandAccordion 
+            [scroll]="{ x: '1315px' }">
+             
+            
+             <!--   billable activity  -->
+             <ng-template #expand let-orderLine   >
+               
+               <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" >
+                 <nz-tab nzTitle="{{'order.line.billable-activity-type' | i18n}}">
+                   <st #stOrderLineBillableActivityTable [data]="orderLine.orderLineBillableActivities" 
+                     [columns]="orderLineBillableActivityTableColumns"  >
+ 
+                     <ng-template st-row="activityTimeColumn" let-billableActivity let-index="index">
+                       {{ billableActivity.activityTime | date:'short'}} 
+   
+                    </ng-template>
+                     <ng-template st-row="actionColumn" let-billableActivity let-index="index">
+                       <button nz-button nzDanger (click)="removeOrderLineBillableActivity(orderLine, billableActivity)">
+                        {{'remove' | i18n}}
+                       </button>
+  
+                    </ng-template>
+                   </st>
+                 </nz-tab>
+               </nz-tabset>
+             </ng-template>
+ 
+             <ng-template st-row="itemColumn" let-orderLine  >
+                <nz-skeleton-element 
+                  *ngIf="orderLine.itemId && orderLine.item == null"
+                  nzType="input"
+                  [nzActive]="true"
+                  [nzSize]="'small'"
+                  style="width:75px"
+                ></nz-skeleton-element> 
+                {{ orderLine.item?.name }}
+              </ng-template>
+
+              <ng-template st-row="displayExpectedQuantityColumn" let-orderLine  >
+                {{ orderLine.displayExpectedQuantity }}  
+                   <nz-skeleton-element 
+                      *ngIf="orderLine.displayUnitOfMeasureForExpectedQuantity == null"
+                      nzType="input"
+                      [nzActive]="true"
+                      [nzSize]="'small'"
+                      style="width:75px" ></nz-skeleton-element>  
+                    
+                      <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList1" 
+                             *ngIf="orderLine.displayUnitOfMeasureForExpectedQuantity != null">
+                             {{orderLine.displayUnitOfMeasureForExpectedQuantity.name}}
+                        <span nz-icon nzType="down"></span>
+                      </a>
+                     <nz-dropdown-menu #unitOfMeasureList1="nzDropdownMenu">
+                        <ul nz-menu nzSelectable>
+                          <li nz-menu-item *ngFor="let itemUnitOfMeasure of orderLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
+                               (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(orderLine, itemUnitOfMeasure)">
+                                 {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                          </li> 
+                        </ul>
+                    </nz-dropdown-menu> 
+              </ng-template>
+              
+              <ng-template st-row="displayExpectedQuantityColumn" let-orderLine  >
+             
+                  {{ orderLine.displayOpenQuantity }}  
+                  <nz-skeleton-element 
+                    *ngIf="orderLine.displayUnitOfMeasureForOpenQuantity == null"
+                    nzType="input"
+                    [nzActive]="true"
+                    [nzSize]="'small'"
+                    style="width:75px"
+                  ></nz-skeleton-element>  
+                  <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList2" 
+                    *ngIf="orderLine.displayUnitOfMeasureForOpenQuantity != null">
+                    {{orderLine.displayUnitOfMeasureForOpenQuantity.name}}
+                    <span nz-icon nzType="down"></span>
+                  </a>
+                  <nz-dropdown-menu #unitOfMeasureList2="nzDropdownMenu">
+                    <ul nz-menu nzSelectable>
+                      <li nz-menu-item *ngFor="let itemUnitOfMeasure of orderLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
+                      (click)="changeDisplayItemUnitOfMeasureForOpenQuantity(orderLine, itemUnitOfMeasure)">
+                        {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                      </li> 
+                    </ul>
+                  </nz-dropdown-menu> 
+              
+              </ng-template>
+              
+              <ng-template st-row="inventoryStatusColumn" let-orderLine  >
+              
+                <nz-skeleton-element 
+                  *ngIf="orderLine.inventoryStatusId && orderLine.inventoryStatus == null"
+                  nzType="input"
+                  [nzActive]="true"
+                  [nzSize]="'small'"
+                    style="width:75px"
+                  ></nz-skeleton-element> 
+                <span *ngIf="orderLine.inventoryStatus != null" >
+                    {{  orderLine.inventoryStatus?.description}}
+                </span>
+              
+              </ng-template>
+              <ng-template st-row="allocationStrategyTypeColumn" let-orderLine  >
+                <span *ngIf="orderLine.allocationStrategyType != null">
+                  {{ 'ALLOCATION-STRATEGY-TYPE-' + orderLine.allocationStrategyType | i18n}}
+                </span>
+              </ng-template>
+             <ng-template st-row="actionColumn" let-orderLine  >
+                
+                <button nz-button (click)="openAddOrderLineActivityModal(order, orderLine, tplBillableActivityModalTitle, 
+                    tplBillableActivityModalContent, tplBillableActivityModalFooter)">
+                  {{ 'billable-activity-type.add' | i18n }}
+                </button>
+              </ng-template>          
+          </st> 
+<!--
             <nz-table [nzScroll]="{ x: '100vw'}" #innerTable [nzData]="order.orderLines" nzSize="middle"
               [nzShowPagination]="false" #orderLineTable>
               <thead>
@@ -440,6 +558,8 @@
                 </tr>
               </tbody>
             </nz-table>
+
+          -->
           </nz-tab> 
 
           <nz-tab nzTitle=" {{ 'pick' | i18n }}">
@@ -690,6 +810,24 @@
               </tbody>
             </nz-table>
           </nz-tab>
+          
+          <nz-tab nzTitle="{{ 'order.billable-activity-type' | i18n }}"> 
+            <st #stOrderBillableActivityTable 
+                [data]="order.orderBillableActivities"  [columns]="orderBillableActivityTableColumns">
+                 
+              <ng-template st-row="activityTimeColumn" let-billableActivity let-index="index">
+                {{ billableActivity.activityTime | date:'short'}} 
+
+             </ng-template>
+              <ng-template st-row="actionColumn" let-billableActivity let-index="index">
+                 <button nz-button nzDanger (click)="removeOrderBillableActivity(order, billableActivity)">
+                  {{'remove' | i18n}}
+                 </button>
+
+              </ng-template>
+            </st>  
+          </nz-tab> 
+
           <nz-tab nzTitle=" {{ 'order-document' | i18n }}">
             <nz-list nzBordered nzHeader="{{'files' | i18n}}" >
               <nz-list-item *ngFor="let orderDocument of order.orderDocuments">
@@ -1283,7 +1421,9 @@
           </nz-form-label>
           <nz-form-control [nzSm]="14" [nzXs]="24"  >
             <nz-input-group nzSize="large">
-              <nz-input-number   formControlName="rate" (ngModelChange)="recalculateTotalCharge()"    [nzMin]="0" ></nz-input-number>
+              <nz-input-number   formControlName="rate" (ngModelChange)="recalculateTotalCharge()"  [nzFormatter]="formatterDollar"
+              [nzParser]="parserDollar"
+                [nzMin]="0" ></nz-input-number>
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>
@@ -1307,7 +1447,8 @@
           </nz-form-label>
           <nz-form-control [nzSpan]="16"   nzErrorTip="{{ 'error.form.field.required' | i18n }}">
             <nz-input-group nzSize="large">
-              <nz-input-number nz-input formControlName="totalCharge" [nzMin]="0" ></nz-input-number>
+              <nz-input-number nz-input formControlName="totalCharge" [nzFormatter]="formatterDollar"
+              [nzParser]="parserDollar" [nzMin]="0" ></nz-input-number>
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>

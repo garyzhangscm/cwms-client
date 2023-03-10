@@ -3,6 +3,8 @@ import { _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
+import { BillableActivityType } from '../../billing/models/billable-activity-type';
+import { BillableActivityTypeService } from '../../billing/services/billable-activity-type.service';
 import { Client } from '../../common/models/client';
 import { Customer } from '../../common/models/customer';
 import { Supplier } from '../../common/models/supplier';
@@ -71,6 +73,7 @@ export class LocalCacheService {
     private pickService: PickService,
     private itemService: ItemService, 
     private carrierService: CarrierService,
+    private billableActivityTypeService: BillableActivityTypeService,
     private warehouserConfigurationService: WarehouseConfigurationService) { }
 
     getWarehouseConfiguration() : Observable<WarehouseConfiguration> {
@@ -169,6 +172,25 @@ export class LocalCacheService {
  
   }  
    
+  getBillableActivityType(id: number) : Observable<BillableActivityType> {
+    
+    
+    const cacheKey = `billableActivityType-${id}`;
+    const data = this.load(cacheKey)
+
+    // Return data from cache
+    if (data !== null) {
+        return of<BillableActivityType>(data)
+    }
+    
+    return this.billableActivityTypeService.getBillableActivityType(id)
+        .pipe(tap(res => this.save({
+          key: cacheKey,
+          data: res,
+          expirationMins: this.defaultCacheTime
+      })));
+ 
+  }  
   
   getCustomer(id: number) : Observable<Customer> {
     

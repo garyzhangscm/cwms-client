@@ -357,6 +357,8 @@ export class OutboundOrderComponent implements OnInit {
       this.loadOrderLinesInfo(order); 
 
       this.calculateStatisticQuantities(order);
+      
+      this.loadBillableActivityInformation(order);
 
       // this.loadItems(receipt);
   }
@@ -412,6 +414,51 @@ export class OutboundOrderComponent implements OnInit {
         }
       );      
     }  
+  }
+
+  loadBillableActivityInformation(order: Order) {
+     order.orderBillableActivities.forEach(
+        orderBillableActivity => {
+
+          if (orderBillableActivity.billableActivityTypeId && orderBillableActivity.billableActivityType == null) {
+            this.loadingOrderDetailsRequest++;
+            this.localCacheService.getBillableActivityType(orderBillableActivity.billableActivityTypeId).subscribe(
+              {
+                next: (res) => {
+                  orderBillableActivity.billableActivityType = res; 
+                
+                  this.loadingOrderDetailsRequest--;
+                }, 
+                error: () => this.loadingOrderDetailsRequest--
+              }
+            );      
+          }  
+        }
+     );
+
+     
+     order.orderLines.forEach( 
+        orderLine => {
+           orderLine.orderLineBillableActivities.forEach(
+              orderLineBillableActivity => {
+                if (orderLineBillableActivity.billableActivityTypeId && orderLineBillableActivity.billableActivityType == null) {
+                  this.loadingOrderDetailsRequest++;
+                  this.localCacheService.getBillableActivityType(orderLineBillableActivity.billableActivityTypeId).subscribe(
+                    {
+                      next: (res) => {
+                        orderLineBillableActivity.billableActivityType = res; 
+                      
+                        this.loadingOrderDetailsRequest--;
+                      }, 
+                      error: () => this.loadingOrderDetailsRequest--
+                    }
+                  );      
+                }  
+              }
+           )
+        }
+     );
+
   }
 
   loadCustomer(order: Order) {
@@ -1518,13 +1565,29 @@ export class OutboundOrderComponent implements OnInit {
   orderBillableActivityTableColumns: STColumn[] = [ 
     { title: this.i18n.fanyi("billable-activity-type"), index: 'billableActivityType.description', width: 150 },    
     {
-      title: this.i18n.fanyi("rate"), index: 'rate' ,  width: 150,
+      title: this.i18n.fanyi("rate"), index: 'rate' , type:'currency',  width: 150,
+      currency: {
+        format: {
+          useAngular: true ,          
+          ngCurrency: {
+              display:  'symbol' ,  
+          },
+        }
+      }
     }, 
     {
       title: this.i18n.fanyi("amount"), index: 'amount' ,  width: 150,
     }, 
     {
-      title: this.i18n.fanyi("totalCharge"), index: 'totalCharge' ,  width: 150,
+      title: this.i18n.fanyi("totalCharge"), index: 'totalCharge', type:'currency' ,  width: 150,
+      currency: {
+        format: {
+          useAngular: true ,          
+          ngCurrency: {
+              display:  'symbol' ,  
+          },
+        }
+      }
     }, 
     { title: this.i18n.fanyi("activityTime"), render: 'activityTimeColumn', width: 150 }, 
     { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 },       
@@ -1546,6 +1609,7 @@ export class OutboundOrderComponent implements OnInit {
     { title: this.i18n.fanyi("activityTime"), render: 'activityTimeColumn', width: 150 },    
     { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 },       
   ];
+   
 
   removeOrderBillableActivity(order: Order, 
     orderBillableActivity: OrderBillableActivity) {
@@ -1726,22 +1790,33 @@ export class OutboundOrderComponent implements OnInit {
       } 
   }
 
-  
-  @ViewChild('stLineBillableActivityTable', { static: false })
-  stLineBillableActivityTable!: STComponent;
-  stLineBillableActivityTableColumns: STColumn[] = [ 
-    { title: this.i18n.fanyi("billable-activity-type"), index: 'billableActivityType.description', width: 150 },    
+   
+  @ViewChild('stOrderLine', { static: false })
+  stOrderLine!: STComponent;
+  stOrderLineTableColumns: STColumn[] = [ 
+    { title: this.i18n.fanyi("order.line.number"), index: 'number', width: 150 },  
+    { title: this.i18n.fanyi("item"), render: 'itemColumn',   width: 150 },  
+    { title: this.i18n.fanyi("color"), index: 'color', width: 150 },  
+    { title: this.i18n.fanyi("productSize"), index: 'productSize', width: 150 },  
+    { title: this.i18n.fanyi("style"), index: 'style', width: 150 },  
+    { title: this.i18n.fanyi("order.line.expectedQuantity"), render: 'displayExpectedQuantityColumn',  width: 150 },  
+    { title: this.i18n.fanyi("order.line.openQuantity"), render: 'displayOpenQuantityColumn', width: 150 },  
+    { title: this.i18n.fanyi("order.line.inprocessQuantity"), index: 'inprocessQuantity', width: 150 },  
+    { title: this.i18n.fanyi("production-plan.line.inprocessQuantity"), index: 'productionPlanInprocessQuantity', width: 150 },  
+    { title: this.i18n.fanyi("production-plan.line.producedQuantity"), index: 'productionPlanProducedQuantity', width: 150 },  
+    { title: this.i18n.fanyi("order.line.shippedQuantity"), index: 'shippedQuantity', width: 150 },  
+    { title: this.i18n.fanyi("inventory.status"), render: 'inventoryStatusColumn', width: 150 },  
+    { title: this.i18n.fanyi("order.line.allocationStrategyType"), render: 'allocationStrategyTypeColumn', width: 150 }, 
+      
     {
-      title: this.i18n.fanyi("rate"), index: 'rate' ,  width: 150,
-    }, 
-    {
-      title: this.i18n.fanyi("amount"), index: 'amount' ,  width: 150,
-    }, 
-    {
-      title: this.i18n.fanyi("totalCharge"), index: 'totalCharge' ,  width: 150,
-    }, 
-    { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 },       
+      title: this.i18n.fanyi("action"), 
+      render: 'actionColumn', 
+      width: 250,
+      fixed: 'right',
+
+    },   
   ];
-
-
+ 
+  formatterDollar = (value: number): string => `$ ${value}`;
+  parserDollar = (value: string): string => value.replace('$ ', '');
 }
