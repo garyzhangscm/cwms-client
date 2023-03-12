@@ -176,7 +176,7 @@
 </nz-modal>
 
 
-<nz-modal [nzVisible]="showResultModal" nzWidth=300 (nzOnCancel)="closeResultModal()" (nzOnOk)="closeResultModal()" >
+<nz-modal [nzVisible]="showResultModal" nzWidth=1 (nzOnCancel)="closeResultModal()" (nzOnOk)="closeResultModal()" >
   <ng-container *nzModalContent> 
     <h3>{{'result' | i18n}}</h3>
     
@@ -187,8 +187,8 @@
           nz-typography
           nzEllipsis
           nzCopyable
-          [nzContent]="item.record"
-        ></p>
+          [nzContent]="item.record" 
+        ></p> 
       </ng-template>
       <ng-template st-row="errorMessageColumn" let-item let-index="index">
         <ellipsis length="30" tooltip>{{ item.errorMessage }}</ellipsis>

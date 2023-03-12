@@ -19,6 +19,7 @@ import { SupplierService } from '../../common/services/supplier.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { ItemPackageType } from '../../inventory/models/item-package-type';
+import { ItemUnitOfMeasure } from '../../inventory/models/item-unit-of-measure';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ItemService } from '../../inventory/services/item.service';
@@ -269,7 +270,11 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
 
   currentReceiptLine!: ReceiptLine;
-  currentReceivingLine!: ReceiptLine;
+  currentReceivingLine!: ReceiptLine; 
+  currentReceivingInventory?: Inventory;
+  currentReceivingUnitOfMeasure?: ItemUnitOfMeasure;
+  currentReceivingLPNStatus = 'error';
+  currentReceivingQuantityStatus = 'error'; 
 
   receiptStatus = ReceiptStatus;
 
@@ -488,6 +493,65 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.receiptForm!.controls.supplier.setValue(this.currentReceipt.supplier ? this.currentReceipt.supplier.name : '');
 
     this.loadReceivedInventory(this.currentReceipt);
+
+    // setup the display quantity for each line
+    this.calculateDisplayQuanties(this.currentReceipt);
+
+  }
+
+  calculateDisplayQuanties(receipt: Receipt) : void { 
+    receipt.receiptLines.forEach(
+      receiptLine => {
+          this.calculateReceiptLineDisplayQuantity(receiptLine);
+      }
+    )
+  }
+  
+  calculateReceiptLineDisplayQuantity(receiptLine: ReceiptLine) : void { 
+         // see if we have the display UOM setup
+          // if the display item unit of measure is setup for the item
+          // then we will update the display quantity accordingly.
+          // the same logic for both expected quantity and received quantity
+          // 1. if the quantity can be divided by the display UOM's quantity, then display
+          //    the quantity in display UOM and setup the display UOM for each quantity accordingly
+          // 2. otherwise, setup teh quantity in stock UOM and use the stock UOM as the display quantity
+          //    for each quantity
+          if (receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure) {
+            // console.log(`>> found displayItemUnitOfMeasure: ${receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure?.name}`)
+            let displayItemUnitOfMeasureQuantity  = receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.quantity;
+
+            // console.log(`>> with quantity ${displayItemUnitOfMeasureQuantity}`)
+
+            if (receiptLine.expectedQuantity! % displayItemUnitOfMeasureQuantity! ==0) {
+              receiptLine.displayUnitOfMeasureForExpectedQuantity = receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure;
+              receiptLine.displayExpectedQuantity = receiptLine.expectedQuantity! / displayItemUnitOfMeasureQuantity!
+            }
+            else {
+              // the receipt line's quantity can't be devided by the display uom, we will display the quantity in 
+              // stock uom
+              receiptLine.displayExpectedQuantity! = receiptLine.expectedQuantity!;
+              // receiptLine.item!.defaultItemPackageType!.displayItemUnitOfMeasure = receiptLine.item!.defaultItemPackageType!.stockItemUnitOfMeasure;
+              receiptLine.displayUnitOfMeasureForExpectedQuantity = receiptLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure;
+            }
+            
+            if (receiptLine.receivedQuantity! % displayItemUnitOfMeasureQuantity! ==0) {
+              receiptLine.displayReceivedQuantity = receiptLine.receivedQuantity! / displayItemUnitOfMeasureQuantity!
+              receiptLine.displayUnitOfMeasureForReceivedQuantity = receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure;
+            }
+            else {
+              // the receipt line's quantity can't be devided by the display uom, we will display the quantity in 
+              // stock uom
+              receiptLine.displayReceivedQuantity! = receiptLine.receivedQuantity!;
+              // receiptLine.item!.defaultItemPackageType!.displayItemUnitOfMeasure = receiptLine.item!.defaultItemPackageType!.stockItemUnitOfMeasure;
+              receiptLine.displayUnitOfMeasureForReceivedQuantity = receiptLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure;
+            }
+          }
+          else {
+            // there's no display UOM setup for this inventory, we will display
+            // by the quantity
+              receiptLine.displayExpectedQuantity = receiptLine.expectedQuantity!;
+              receiptLine.displayReceivedQuantity! = receiptLine.receivedQuantity!;
+          }  
   }
 
   receiptNumberOnBlur(event: Event): void {
@@ -811,9 +875,16 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       this.showError(this.i18n.fanyi("item-not-ready-for-receiving"), itemNotReadyError);
       return;
     }
+
     this.createReceivingForm(receiptLine);
     this.receivingInProcess = false;
+    
+    // set those 2 field to status error to indicate those 2
+    // are required fields
+    this.currentReceivingLPNStatus = 'error';
+    this.currentReceivingQuantityStatus = 'error'; 
 
+    this.currentReceivingInventory = this.createEmptyReceivingInventory(receiptLine);
     // show the model
     this.receivingModal = this.modalService.create({
       nzTitle: tplReceivingModalTitle,
@@ -844,6 +915,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       inventoryStatus: [''],
       itemPackageType: ['', Validators.required],
       quantity: ['', Validators.required],
+      itemUnitOfMeasure: ['', Validators.required],
       locationName: ['']
     },
     {
@@ -891,13 +963,22 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     }
   }
 
+  lpnNumberChanged(newLPN: string) {
+    
+    this.currentReceivingInventory!.lpn = newLPN;
+  }
   receivingLPNChanged(event: Event): void {
     this.receivingForm!.controls.lpn.setValue((event.target as HTMLInputElement).value);
+    // this.currentInventory.lpn = 
   }
+  /**
+   * 
+   * 
   setupDefaultInventoryValue(): void {
     if (this.currentReceivingLine.item!.itemPackageTypes.length === 1) {
       this.receivingForm!.controls.itemPackageType.setValue(this.currentReceivingLine.item!.itemPackageTypes[0].id);
       this.displayItemPackageType = this.currentReceivingLine.item!.itemPackageTypes[0];
+      this.newInventoryItemPackageTypeChanged(this.currentReceivingLine.item!.itemPackageTypes[0].id!);
     }
     if (this.validInventoryStatuses.length === 1) {
       this.receivingForm!.controls.inventoryStatus.setValue(this.validInventoryStatuses[0].id);
@@ -907,15 +988,38 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
     }
   }
+   */
+  setupDefaultInventoryValue(): void {
+    if (this.currentReceivingLine.item!.itemPackageTypes.length === 1) {
+      // this.receivingForm!.controls.itemPackageType.setValue(this.currentReceivingLine.item!.itemPackageTypes[0].id);
+      this.currentReceivingInventory!.itemPackageType = this.currentReceivingLine.item!.itemPackageTypes[0];
+      this.displayItemPackageType = this.currentReceivingLine.item!.itemPackageTypes[0];
+      this.newInventoryItemPackageTypeChanged(this.currentReceivingLine.item!.itemPackageTypes[0].id!);
+    }
+    if (this.validInventoryStatuses.length === 1) {
+      this.currentReceivingInventory!.inventoryStatus = this.validInventoryStatuses[0];
+      // this.receivingForm!.controls.inventoryStatus.setValue(this.validInventoryStatuses[0].id);
+    }
+    else if (this.availableInventoryStatus != null) {
+      this.currentReceivingInventory!.inventoryStatus = this.availableInventoryStatus;
+      // this.receivingForm!.controls.inventoryStatus.setValue(this.availableInventoryStatus.id);
 
-  inventoryStatusChange(newInventoryStatusName: string): void {
-    this.validInventoryStatuses.forEach(inventoryStatus => {
-      if (inventoryStatus.name === newInventoryStatusName) {
-        this.currentInventory!.inventoryStatus = inventoryStatus;
-      }
-    });
+    }
   }
 
+  inventoryStatusChange(receivingInventoryStatusId: number): void {
+    this.currentReceivingInventory!.inventoryStatus = this.validInventoryStatuses.find(
+      inventoryStatus => inventoryStatus.id == receivingInventoryStatusId
+    ); 
+  }
+
+  /**
+   * receiving inventory with reactive form
+   * we may have issue with reactive form when the form is on the modal, which
+   * cause the select control not return the right value
+   * 
+   * 
+   * 
   receivingInventory(): void {
     if (this.receivingForm.valid) {
       // check if the location name is input. If so, we receive into that location
@@ -925,14 +1029,15 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
           ? this.currentReceipt.number
           : this.receivingForm.controls.locationName.value;
       this.locationService.getLocations(undefined, undefined, locationName).subscribe(locations => {
-        this.receiptLineService
+        const inventory =  this.createReceivingInventory(this.currentReceivingLine, locations[0]);
+        if (inventory != null) {
+          this.receiptLineService
           .receiveInventory(
             this.currentReceipt.id!,
             this.currentReceivingLine.id!,
-            this.createReceivingInventory(this.currentReceivingLine, locations[0]),
-          )
-          .subscribe(
-            () => {
+           inventory,
+          ).subscribe({
+            next: () => {
               this.message.success(this.i18n.fanyi('message.receiving.success'));
 
               this.receivingModal.destroy();
@@ -941,17 +1046,79 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
               this.refreshReceiptResults();
             },
-            () => {
-              this.receivingInProcess = false;
-              this.isSpinning = false;
-            },
-          );
+            error: 
+              () => {
+                this.receivingInProcess = false;
+                this.isSpinning = false;
+              },
+          });
+        }        
       });
     } else {
       this.displayReceivingFormError(this.receivingForm);
       this.receivingInProcess = false;
       this.isSpinning = false;
     }
+  }
+   * 
+   */
+  receivingInventory(): void {
+    // before we start receive inventory, let's first calculate the finaly quantity
+    // based on the user input quantity and the UOM
+    if (this.currentReceivingInventory!.quantity == null || this.currentReceivingInventory!.quantity == 0) {
+      this.message.error("please fill in quantity");
+      return;
+    }
+    if (this.currentReceivingInventory!.lpn == null ) {
+      this.message.error("please fill in LPN");
+      return;
+    }
+    // convert the receiving quantity into actual quantity
+    // based on the quantity input and the UOM
+    let actualReceivingInventory: Inventory = this.currentReceivingInventory!;
+    if (this.currentReceivingUnitOfMeasure && this.currentReceivingUnitOfMeasure!.quantity! > 1) {
+
+      // the user is receiving by a UOM, 
+      actualReceivingInventory = { 
+        lpn: this.currentReceivingInventory!.lpn,
+        item: this.currentReceivingInventory!.item,
+        itemPackageType: this.currentReceivingInventory!.itemPackageType,
+        inventoryStatus: this.currentReceivingInventory!.inventoryStatus,
+        quantity: this.currentReceivingInventory!.quantity * this.currentReceivingUnitOfMeasure!.quantity!,
+        locationId: this.currentReceivingInventory!.locationId,
+        location: this.currentReceivingInventory?.location
+      }
+
+    }
+    
+    // if (this.receivingForm.valid) { 
+      this.receiptLineService
+          .receiveInventory(
+            this.currentReceipt.id!,
+            this.currentReceivingLine.id!,
+            actualReceivingInventory
+          ).subscribe({
+            next: () => {
+              this.message.success(this.i18n.fanyi('message.receiving.success'));
+
+              this.receivingModal.destroy();
+              this.receivingInProcess = false;
+              this.isSpinning = false;
+
+              this.refreshReceiptResults();
+            },
+            error: 
+              () => {
+                this.receivingInProcess = false;
+                this.isSpinning = false;
+              },
+          });
+          
+    // } else {
+    //  this.displayReceivingFormError(this.receivingForm);
+    //  this.receivingInProcess = false;
+    //  this.isSpinning = false;
+    // }
   }
   displayReceivingFormError(fromGroup: UntypedFormGroup): void {
     // tslint:disable-next-line: forin
@@ -961,7 +1128,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     }
   }
 
-  createReceivingInventory(receiptLine: ReceiptLine, receiptLocation: WarehouseLocation): Inventory {
+  createReceivingInventory(receiptLine: ReceiptLine, receiptLocation: WarehouseLocation): Inventory | undefined {
     const inventoryStatus = this.validInventoryStatuses
       .filter(
         availableInventoryStatus => availableInventoryStatus.id === this.receivingForm.controls.inventoryStatus.value,
@@ -972,17 +1139,40 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
         existingItemPackageType => existingItemPackageType.id === this.receivingForm.controls.itemPackageType.value,
       )
       .pop();
+    
+    console.log(`this.receivingForm.controls.itemUnitOfMeasure.value: ${this.receivingForm.controls.itemUnitOfMeasure.value}`)
+    
+    const itemUnitOfMeasure = itemPackageType?.itemUnitOfMeasures.find(
+      itemUnitOfMeasure => itemUnitOfMeasure.id === this.receivingForm.controls.itemUnitOfMeasure.value,
+    )
 
+    console.log(`receive by item unit of measure \n ${JSON.stringify(itemUnitOfMeasure)}`)
+
+    if (itemUnitOfMeasure == null) {
+      this.messageService.error(this.i18n.fanyi("please choose UOM for receiving")); 
+      return undefined;
+    }
+    else {
+
+      return {
+        id: undefined,
+        lpn: this.receivingForm.controls.lpn.value,
+        location: receiptLocation,
+        locationName: receiptLocation.name,
+        item: receiptLine.item,
+        itemPackageType,
+        quantity: this.receivingForm.controls.quantity.value * itemUnitOfMeasure.quantity!,
+        inventoryStatus,
+      };
+    }
+  }
+  createEmptyReceivingInventory(receiptLine: ReceiptLine): Inventory {
+    
     return {
       id: undefined,
-      lpn: this.receivingForm.controls.lpn.value,
-      location: receiptLocation,
-      locationName: receiptLocation.name,
-      item: receiptLine.item,
-      itemPackageType,
-      quantity: this.receivingForm.controls.quantity.value,
-      inventoryStatus,
-    };
+      lpn: '', 
+      item: receiptLine.item,  
+    }; 
   }
 
   showAddReceiptLineModal(tplReceiptLineModalTitle: TemplateRef<{}>, tplReceiptLineModalContent: TemplateRef<{}>): void {
@@ -1247,8 +1437,10 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       iif: () => this.isChoose('itemDescription'), width: 150 
     },    
 
-    { title: this.i18n.fanyi("receipt.line.expectedQuantity"), index: 'expectedQuantity',  iif: () => this.isChoose('expectedQuantity'), width: 150 },    
-    { title: this.i18n.fanyi("receipt.line.receivedQuantity"), index: 'receivedQuantity', iif: () => this.isChoose('receivedQuantity'), width: 150 },    
+    { title: this.i18n.fanyi("receipt.line.expectedQuantity"), render: 'expectedQuantityColumn',
+        iif: () => this.isChoose('expectedQuantity'), width: 150 },    
+    { title: this.i18n.fanyi("receipt.line.receivedQuantity"), render: 'receivedQuantityColumn',
+        iif: () => this.isChoose('receivedQuantity'), width: 150 },    
     { title: this.i18n.fanyi("receipt.line.overReceivingQuantity"), index: 'overReceivingQuantity',  iif: () => this.isChoose('overReceivingQuantity'), width: 150 },  
     { title: this.i18n.fanyi("receipt.line.overReceivingPercent"), index: 'overReceivingPercent', iif: () => this.isChoose('overReceivingPercent'), width: 150 },      
     { title: this.i18n.fanyi("qcQuantity"), index: 'qcQuantity', iif: () => this.isChoose('qcQuantity'), width: 150 },      
@@ -1304,7 +1496,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   
   processLocationQueryResult(selectedLocationName: any): void {
     // console.log(`start to query with location name ${selectedLocationName}`);
-    this.receivingForm.controls.locationName.setValue(selectedLocationName);
+    // this.receivingForm.controls.locationName.setValue(selectedLocationName);
+    this.receivingInventoryLocationChanged(selectedLocationName);
   }
 
   openRecalculateQCModal(
@@ -1353,5 +1546,87 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   processPutawayLocationQueryResult(selectedLocationName: any): void {
     // console.log(`start to query with location name ${selectedLocationName}`);
     this.currentInventory.locationName = selectedLocationName;
+  }
+
+  
+  changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine: ReceiptLine, itemUnitOfMeasure: ItemUnitOfMeasure) {
+
+    
+    // see if the inventory's quantity can be divided by the item unit of measure
+    // if so, we are allowed to change the display UOM and quantity
+    if (receiptLine.expectedQuantity! % itemUnitOfMeasure.quantity! == 0) {
+
+      receiptLine.displayExpectedQuantity = receiptLine.expectedQuantity! / itemUnitOfMeasure.quantity!;
+      receiptLine.displayUnitOfMeasureForExpectedQuantity = itemUnitOfMeasure.unitOfMeasure;
+    }
+    else {
+      this.messageService.error(`can't change the display quantity as the line's expected quantity ${ 
+        receiptLine.expectedQuantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
+          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+    }
+  }
+  
+  changeDisplayItemUnitOfMeasureForReceivedQuantity(receiptLine: ReceiptLine, itemUnitOfMeasure: ItemUnitOfMeasure) {
+
+    
+    // see if the inventory's quantity can be divided by the item unit of measure
+    // if so, we are allowed to change the display UOM and quantity
+    if (receiptLine.receivedQuantity! % itemUnitOfMeasure.quantity! == 0) {
+
+      receiptLine.displayReceivedQuantity = receiptLine.receivedQuantity! / itemUnitOfMeasure.quantity!;
+      receiptLine.displayUnitOfMeasureForReceivedQuantity = itemUnitOfMeasure.unitOfMeasure;
+    }
+    else {
+      this.messageService.error(`can't change the display quantity as the line's received quantity ${ 
+        receiptLine.displayReceivedQuantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
+          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+    }
+  }
+
+  newInventoryItemPackageTypeChanged(itemPackageTypeId: number) {
+    this.currentReceivingInventory!.itemPackageType = 
+        this.currentReceivingLine.item!.itemPackageTypes!.find(
+          itemPackageType => itemPackageType.id = itemPackageTypeId
+        );
+    if (this.currentReceivingInventory!.itemPackageType) {
+      if (this.currentReceivingInventory!.itemPackageType.displayItemUnitOfMeasure) {
+        // set the display unit of measure
+        console.log(`set the display item unit of measure to \n${JSON.stringify(this.currentReceivingInventory!.itemPackageType.displayItemUnitOfMeasure)}`);
+
+        this.currentReceivingUnitOfMeasure = this.currentReceivingInventory!.itemPackageType.displayItemUnitOfMeasure;
+        // this.receivingForm!.controls.itemUnitOfMeasure.setValue(this.currentReceivingInventory!.itemPackageType.displayItemUnitOfMeasure.id);
+      }
+      else if (this.currentReceivingInventory!.itemPackageType.stockItemUnitOfMeasure) {
+        // set the display unit of measure
+        console.log(`set the display stock item unit of measure to \n${JSON.stringify(this.currentReceivingInventory!.itemPackageType.stockItemUnitOfMeasure)}`);
+
+        this.receivingForm!.controls.itemUnitOfMeasure.setValue(this.currentReceivingInventory!.itemPackageType.stockItemUnitOfMeasure.id);
+      }
+    }
+  }
+  
+  receivingUnitOfMeasureChanged(itemUnitOfMeasureId: number) {
+    this.currentReceivingUnitOfMeasure = 
+        this.currentReceivingInventory!.itemPackageType!.itemUnitOfMeasures.find(
+          itemUnitOfMeasure => itemUnitOfMeasure.id = itemUnitOfMeasureId
+        );
+     
+  } 
+  
+  receivingInventoryLocationChanged(locationName: string) {
+    if (locationName && locationName.length > 0) {
+
+      this.locationService.getLocations(undefined, undefined, locationName).subscribe({
+
+        next: (locationsRes) => {
+
+          if (locationsRes.length > 0) {
+            this.currentReceivingInventory!.location = locationsRes[0];
+            this.currentReceivingInventory!.locationId = locationsRes[0].id;
+          }
+        }
+      })
+    }
+
   }
 }

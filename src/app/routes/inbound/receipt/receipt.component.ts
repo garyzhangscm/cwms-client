@@ -66,18 +66,7 @@ export class InboundReceiptComponent implements OnInit {
       listOfFilter: [],
       filterFn: null,
       showFilter: false
-    },
-    {
-      name: 'supplier',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Receipt, b: Receipt) => this.utilService.compareNullableObjField(a.supplier, b.supplier, 'name'),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
+    }, 
     {
       name: 'status',
       showSort: true,
@@ -266,6 +255,7 @@ export class InboundReceiptComponent implements OnInit {
       this.searchForm!.controls.supplier.value,
       checkInStartTime, checkInEndTime, checkInSpecificDate, 
          undefined,
+         undefined,
       this.searchForm!.controls.client.value).subscribe(
       receiptRes => {
 
@@ -352,7 +342,7 @@ export class InboundReceiptComponent implements OnInit {
        
   }
   
-  calculateDisplayQuantiies(receipt: Receipt) : void { 
+  calculateDisplayQuanties(receipt: Receipt) : void { 
     receipt.receiptLines.forEach(
       receiptLine => {
           this.calculateReceiptLineDisplayQuantity(receiptLine);
@@ -361,12 +351,7 @@ export class InboundReceiptComponent implements OnInit {
   }
   
   calculateReceiptLineDisplayQuantity(receiptLine: ReceiptLine) : void { 
-        // console.log(`>> start to calculate the display quantity for receipt line ${receiptLine.number}`)
-        // console.log(`>> receiptLine.item? ${receiptLine.item == null}`)
-        // console.log(`>> receiptLine.item?.defaultItemPackageType? ${receiptLine.item?.defaultItemPackageType == null}`)
-        // console.log(`>> receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure ${receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure == null}`)
-        // console.log(`>> receiptLine.item? ${JSON.stringify(receiptLine.item)}`)
-          // see if we have the display UOM setup
+         // see if we have the display UOM setup
           // if the display item unit of measure is setup for the item
           // then we will update the display quantity accordingly.
           // the same logic for both expected quantity and received quantity

@@ -21,13 +21,13 @@ import { FileUploadOperationService } from '../services/file-upload-operation.se
 export class UtilFileUploadComponent implements OnInit {
 
   
-  @ViewChild('st', { static: true })
+  @ViewChild('st', { static: false })
   st!: STComponent;
   columns: STColumn[] = [
     
     { title: this.i18n.fanyi("lineNumber"), index:"lineNumber" },  
     { title: this.i18n.fanyi("record"), 
-    render: 'recordColumn' },  
+    render: 'recordColumn' , width: 150},  
     { title: this.i18n.fanyi("result"), index:"result" },  
     { title: this.i18n.fanyi("errorMessage"), render: 'errorMessageColumn' },   
   ]; 

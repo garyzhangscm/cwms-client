@@ -3,6 +3,7 @@ import { Supplier } from '../../common/models/supplier';
 import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 
 export interface ItemUnitOfMeasure {
+  id? : number;
   client?: Client;
   supplier?: Supplier;
   unitOfMeasureId?: number;

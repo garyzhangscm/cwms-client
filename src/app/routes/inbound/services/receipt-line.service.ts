@@ -28,6 +28,7 @@ export class ReceiptLineService {
   }
 
   receiveInventory(receiptId: number, receiptLineId: number, inventory: Inventory): Observable<Inventory> {
+     
     return this.http
       .post(`inbound/receipts/${receiptId}/lines/${receiptLineId}/receive`, inventory)
       .pipe(map(res => res.data));
