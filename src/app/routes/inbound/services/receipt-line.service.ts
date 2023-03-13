@@ -69,27 +69,32 @@ export class ReceiptLineService {
   generatePrePrintLPNLabelInBatch(receiptLineId: number, lpn: string, quantity?: number, count?: number, 
     copies?: number, printerName?: string) : Observable<ReportHistory> {
     
-    let url = `inbound/receipts/receipt-lines/${receiptLineId}/pre-print-lpn-label/batch?lpn=${lpn}`;
+    const url = `inbound/receipts/receipt-lines/${receiptLineId}/pre-print-lpn-label/batch`;
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id); 
+    params = params.append('lpn', lpn); 
+
     
-    if (count) {
-      url = `${url}&count=${count}`
+    if (count) { 
+      params = params.append('count', count); 
     }
-    else {      
-      url = `${url}&count=1`
+    else {       
+      params = params.append('count', 1); 
     }
 
-    if (quantity  && quantity > 0) {
-      url = `${url}&quantity=${quantity}`
+    if (quantity  && quantity > 0) { 
+      params = params.append('quantity', quantity); 
     }
-    if (copies) {
-      url = `${url}&copies=${copies}`
+    if (copies) { 
+      params = params.append('copies', copies); 
     }
-    if (printerName) {
-      url = `${url}&printerName=${printerName}`
+    if (printerName) { 
+      params = params.append('printerName', printerName); 
     }
     
     
-    return this.http.post(url).pipe(map(res => res.data));
+    return this.http.post(url, undefined, params).pipe(map(res => res.data));
   }
   generatePrePrintLPNReportInBatch(receiptLineId: number, lpn: string, quantity?: number, count?: number, 
     copies?: number, printerName?: string) : Observable<ReportHistory> {
