@@ -17,7 +17,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/alert/subscription' ], 
+        role: [ '/alert/subscription' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -26,7 +26,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/alert/configuration' ], 
+        role: [ '/alert/configuration' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -35,7 +35,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/alert/alert' ], 
+        role: [ '/alert/alert' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -44,7 +44,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/alert/subscription' ], 
+        role: [ '/alert/subscription', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -53,7 +53,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/alert/web-message-alert' ], 
+        role: [ '/alert/web-message-alert' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -62,7 +62,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/alert/web-message-alert' ], 
+        role: [ '/alert/web-message-alert', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -71,7 +71,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/alert/template' ], 
+        role: [ '/alert/template', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -80,7 +80,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/alert/template' ], 
+        role: [ '/alert/template' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }

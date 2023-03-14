@@ -52,7 +52,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/inventory' ], 
+        role: [ '/inventory/inventory', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -61,7 +61,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/count/config' ], 
+        role: [ '/inventory/count/config', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -70,7 +70,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/count/cycle-count' ], 
+        role: [ '/inventory/count/cycle-count' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -79,7 +79,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/replenishment/emergency/config' ], 
+        role: [ '/inventory/replenishment/emergency/config' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -88,7 +88,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/replenishment/trigger/config' ], 
+        role: [ '/inventory/replenishment/trigger/config', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -97,7 +97,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/replenishment' ], 
+        role: [ '/inventory/replenishment' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -106,7 +106,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/item' ], 
+        role: [ '/inventory/item', 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -115,7 +115,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/item-family' ], 
+        role: [ '/inventory/item-family' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -124,7 +124,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/item-family' ], 
+        role: [ '/inventory/item-family', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -133,7 +133,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/item-family' ], 
+        role: [ '/inventory/item-family', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -142,7 +142,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/inventory-adjust' ], 
+        role: [ '/inventory/inventory-adjust' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -151,7 +151,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/inventory' ], 
+        role: [ '/inventory/inventory' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -160,7 +160,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/inventory' ], 
+        role: [ '/inventory/inventory' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -169,7 +169,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/count/cycle-count-maintenance' ], 
+        role: [ '/inventory/count/cycle-count-maintenance', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -178,7 +178,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/count/cycle-count' ], 
+        role: [ '/inventory/count/cycle-count' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -187,7 +187,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/count/cycle-count' ], 
+        role: [ '/inventory/count/cycle-count' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -196,7 +196,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/movement-path' ], 
+        role: [ '/inventory/movement-path' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -205,7 +205,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/movement-path' ], 
+        role: [ '/inventory/movement-path' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -214,7 +214,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/movement-path' ], 
+        role: [ '/inventory/movement-path', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -223,7 +223,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/inventory' ], 
+        role: [ '/inventory/inventory' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -232,7 +232,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/inventory' ], 
+        role: [ '/inventory/inventory', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -241,7 +241,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/inventory-activity' ], 
+        role: [ '/inventory/inventory-activity' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -250,7 +250,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/inventory' , '/inventory/inventory-move'], 
+        role: [ '/inventory/inventory' , '/inventory/inventory-move', 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -259,7 +259,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/inventory-adjustment-request' ], 
+        role: [ '/inventory/inventory-adjustment-request', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -268,7 +268,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/inventory-adjustment-threshold' ], 
+        role: [ '/inventory/inventory-adjustment-threshold' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -279,7 +279,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/inventory-adjustment-threshold' ], 
+        role: [ '/inventory/inventory-adjustment-threshold', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -288,7 +288,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/inventory-adjustment-threshold' ], 
+        role: [ '/inventory/inventory-adjustment-threshold' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -297,7 +297,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/item' ], 
+        role: [ '/inventory/item' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -308,7 +308,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/configuration' ], 
+        role: [ '/inventory/configuration', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -317,7 +317,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/snapshot' ], 
+        role: [ '/inventory/snapshot' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -326,7 +326,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/inventory-snapshot-configuration' ], 
+        role: [ '/inventory/inventory-snapshot-configuration', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -335,7 +335,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/inventory-allocation-summary' ], 
+        role: [ '/inventory/inventory-allocation-summary' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -344,7 +344,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/item-sampling' ], 
+        role: [ '/inventory/item-sampling' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -353,7 +353,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/item-sampling' ], 
+        role: [ '/inventory/item-sampling', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -362,7 +362,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/lock' ], 
+        role: [ '/inventory/lock' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -371,7 +371,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/lock' ], 
+        role: [ '/inventory/lock' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -380,7 +380,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/location-utilization-snapshot' ], 
+        role: [ '/inventory/location-utilization-snapshot', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -389,7 +389,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/status' ], 
+        role: [ '/inventory/status' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -398,7 +398,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/status' ], 
+        role: [ '/inventory/status' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -407,7 +407,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/inventory-dashboard' ], 
+        role: [ '/inventory/inventory-dashboard' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -416,7 +416,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/mix-restriction' ], 
+        role: [ '/inventory/mix-restriction' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -425,7 +425,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/inventory/mix-restriction' ], 
+        role: [ '/inventory/mix-restriction' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }

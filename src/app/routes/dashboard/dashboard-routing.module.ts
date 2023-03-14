@@ -14,7 +14,7 @@ const routes: Routes = [
       canActivate: [ACLGuard], 
       data: { 
         guard:  {
-          role: [ '/dashboard/v1' ], 
+          role: [ '/dashboard/v1' , 'admin', 'system-admin' ], 
         } as ACLGuardType,
         guard_url: '/exception/403'
       }
@@ -23,7 +23,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/dashboard/analysis' ], 
+        role: [ '/dashboard/analysis', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -32,7 +32,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/dashboard/monitor' ], 
+        role: [ '/dashboard/monitor' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -41,7 +41,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/dashboard/workplace' ], 
+        role: [ '/dashboard/workplace' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }

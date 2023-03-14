@@ -25,7 +25,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/integration/integration-data' ], 
+        role: [ '/integration/integration-data' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -34,7 +34,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/integration/integration-data-client' ], 
+        role: [ '/integration/integration-data-client' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -43,7 +43,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/integration/integration-data-customer' ], 
+        role: [ '/integration/integration-data-customer' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -52,7 +52,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/integration/integration-data-item' ], 
+        role: [ '/integration/integration-data-item' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -61,7 +61,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/integration/integration-data-item-family' ], 
+        role: [ '/integration/integration-data-item-family', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -70,7 +70,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/integration/integration-data-item-package-type' ], 
+        role: [ '/integration/integration-data-item-package-type', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -79,7 +79,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/integration/integration-data-item-unit-of-measure' ], 
+        role: [ '/integration/integration-data-item-unit-of-measure', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -88,7 +88,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/integration/integration-data-supplier' ], 
+        role: [ '/integration/integration-data-supplier' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -97,7 +97,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/integration/integration-data-order' ], 
+        role: [ '/integration/integration-data-order' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -106,7 +106,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/integration/integration-data-receipt' ], 
+        role: [ '/integration/integration-data-receipt', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -115,7 +115,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/integration/integration-data-receipt-confirm' ], 
+        role: [ '/integration/integration-data-receipt-confirm' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -124,7 +124,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/integration/integration-data-order-confirm' ], 
+        role: [ '/integration/integration-data-order-confirm', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -133,7 +133,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/integration/integration-data-inventory-adjust' ], 
+        role: [ '/integration/integration-data-inventory-adjust', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -144,7 +144,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/integration/integration-data-inventory-attribute-change' ], 
+        role: [ '/integration/integration-data-inventory-attribute-change', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -153,7 +153,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/integration/integration-data-work-order-confirm' ], 
+        role: [ '/integration/integration-data-work-order-confirm' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -162,7 +162,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/integration/integration-data-work-order' ], 
+        role: [ '/integration/integration-data-work-order', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }

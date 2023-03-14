@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ACLGuard, ACLGuardType } from '@delon/acl';
 
 import { WarehouseLayoutLocationDashboardComponent } from './location-dashboard/location-dashboard.component';
 import { WarehouseLayoutLocationGroupMaintenanceConfirmComponent } from './location-group-maintenance-confirm/location-group-maintenance-confirm.component';
@@ -15,27 +16,139 @@ import { WarehouseLayoutWarehouseMaintenanceComponent } from './warehouse-mainte
 import { WarehouseLayoutWarehouseComponent } from './warehouse/warehouse.component';
 
 const routes: Routes = [
-  { path: 'warehouse', component: WarehouseLayoutWarehouseComponent },
-  { path: 'location-group', component: WarehouseLayoutLocationGroupComponent },
-  { path: 'warehouse-maintenance', component: WarehouseLayoutWarehouseMaintenanceComponent },
-  { path: 'warehouse-maintenance/confirm', component: WarehouseLayoutWarehouseMaintenanceConfirmComponent },
-  { path: 'warehouse-maintenance/:id', component: WarehouseLayoutWarehouseMaintenanceComponent },
-  { path: 'warehouse-maintenance/:id/confirm', component: WarehouseLayoutWarehouseMaintenanceConfirmComponent },
-  { path: 'location-group-maintenance', component: WarehouseLayoutLocationGroupMaintenanceComponent },
+  { path: 'warehouse', component: WarehouseLayoutWarehouseComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/warehouse-layout/warehouse', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'location-group', component: WarehouseLayoutLocationGroupComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/warehouse-layout/location-group', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'warehouse-maintenance', component: WarehouseLayoutWarehouseMaintenanceComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/warehouse-layout/warehouse-maintenance', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'warehouse-maintenance/confirm', component: WarehouseLayoutWarehouseMaintenanceConfirmComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/warehouse-layout/warehouse-maintenance', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'warehouse-maintenance/:id', component: WarehouseLayoutWarehouseMaintenanceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/warehouse-layout/warehouse-maintenance', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'warehouse-maintenance/:id/confirm', component: WarehouseLayoutWarehouseMaintenanceConfirmComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/warehouse-layout/warehouse-maintenance', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'location-group-maintenance', component: WarehouseLayoutLocationGroupMaintenanceComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/warehouse-layout/location-group', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
   {
     path: 'location-group-maintenance/confirm',
-    component: WarehouseLayoutLocationGroupMaintenanceConfirmComponent,
-  },
+    component: WarehouseLayoutLocationGroupMaintenanceConfirmComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/warehouse-layout/location-group', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
   {
     path: 'location-group-maintenance/:id/confirm',
-    component: WarehouseLayoutLocationGroupMaintenanceConfirmComponent,
-  },
-  { path: 'warehouse-location', component: WarehouseLayoutWarehouseLocationComponent },
-  { path: 'location-query-popup', component: WarehouseLayoutLocationQueryPopupComponent },
-  { path: 'warehouse-layout-maintenance', component: WarehouseLayoutWarehouseLayoutMaintenanceComponent },
-  { path: 'warehouse-configuration', component: WarehouseLayoutWarehouseConfigurationComponent },
-  { path: 'location/maintenance', component: WarehouseLayoutLocationMaintenanceComponent },
-  { path: 'location-dashboard', component: WarehouseLayoutLocationDashboardComponent }];
+    component: WarehouseLayoutLocationGroupMaintenanceConfirmComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/warehouse-layout/location-group', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'warehouse-location', component: WarehouseLayoutWarehouseLocationComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/warehouse-layout/warehouse-location', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'location-query-popup', component: WarehouseLayoutLocationQueryPopupComponent   
+  }, 
+  { path: 'warehouse-layout-maintenance', component: WarehouseLayoutWarehouseLayoutMaintenanceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/warehouse-layout/warehouse-layout-maintenance', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'warehouse-configuration', component: WarehouseLayoutWarehouseConfigurationComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/warehouse-layout/warehouse-configuration', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'location/maintenance', component: WarehouseLayoutLocationMaintenanceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/warehouse-layout/warehouse-location', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'location-dashboard', component: WarehouseLayoutLocationDashboardComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/warehouse-layout/location-dashboard', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

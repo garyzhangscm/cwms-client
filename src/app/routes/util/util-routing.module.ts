@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ACLGuard, ACLGuardType } from '@delon/acl';
 
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { UtilBillableRequestComponent } from './billable-request/billable-request.component';
@@ -29,32 +30,227 @@ import { UtilTesterComponent } from './tester/tester.component';
 import { UtilWorkOrderQueryPopupComponent } from './work-order-query-popup/work-order-query-popup.component'; 
 
 const routes: Routes = [
-  { path: 'file-upload', component: UtilFileUploadComponent, canActivate: [AuthGuard] },
-  { path: 'file-upload/:filetype', component: UtilFileUploadComponent },
-  { path: 'test-data-init', component: UtilTestDataInitComponent, canActivate: [AuthGuard] },
-  { path: 'icon-list', component: UtilIconListComponent, canActivate: [AuthGuard] },
-  { path: 'tester', component: UtilTesterComponent, canActivate: [AuthGuard] },
-  { path: 'system-configuration', component: UtilSystemConfigurationComponent }, 
-  { path: 'table-column-selection', component: UtilTableColumnSelectionComponent },
-  { path: 'rf', component: UtilRfComponent },
-  { path: 'rf/maintenance', component: UtilRfMaintenanceComponent },
-  { path: 'system-controlled-number', component: UtilSystemControlledNumberComponent },
-  { path: 'system-controlled-number/maintenance', component: UtilSystemControlledNumberMaintenanceComponent },
-  { path: 'data-init', component: UtilDataInitComponent },
-  { path: 'billable-request', component: UtilBillableRequestComponent },
-  { path: 'rf-app-version', component: UtilRfAppVersionComponent },
-  { path: 'rf-app-version/maintenance', component: UtilRfAppVersionMaintenanceComponent },
-  { path: 'company', component: UtilCompanyComponent },
-  { path: 'company-maintenance', component: UtilCompanyMaintenanceComponent },
-  { path: 'menu', component: UtilMenuComponent },
-  { path: 'company-menu', component: UtilCompanyMenuComponent },
-  { path: 'data-transfer', component: UtilDataTransferComponent },
-  { path: 'work-order-query-popup', component: UtilWorkOrderQueryPopupComponent },
-  { path: 'order-query-popup', component: UtilOrderQueryPopupComponent },
-  { path: 'quickbook-auth', component: UtilQuickbookAuthComponent },
-  { path: 'quickbook-permission', component: UtilQuickbookPermissionComponent },
-  { path: 'quickbook/configuration', component: UtilQuickbookOnlineConfigurationComponent },
-  { path: 'rf-configuration', component: UtilRfConfigurationComponent }, ];
+  { path: 'file-upload', component: UtilFileUploadComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/util/file-upload', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'file-upload/:filetype', component: UtilFileUploadComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/util/file-upload', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'test-data-init', component: UtilTestDataInitComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [   'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'icon-list', component: UtilIconListComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [   'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'tester', component: UtilTesterComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [  'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'system-configuration', component: UtilSystemConfigurationComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/util/system-configuration', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'table-column-selection', component: UtilTableColumnSelectionComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [   'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'rf', component: UtilRfComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/util/rf', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'rf/maintenance', component: UtilRfMaintenanceComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/util/rf', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'system-controlled-number', component: UtilSystemControlledNumberComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/util/system-controlled-number', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'system-controlled-number/maintenance', component: UtilSystemControlledNumberMaintenanceComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/util/system-controlled-number', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'data-init', component: UtilDataInitComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [  'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'billable-request', component: UtilBillableRequestComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/util/billable-request', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'rf-app-version', component: UtilRfAppVersionComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [   'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'rf-app-version/maintenance', component: UtilRfAppVersionMaintenanceComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [  'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'company', component: UtilCompanyComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [  'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'company-maintenance', component: UtilCompanyMaintenanceComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'menu', component: UtilMenuComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [  'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'company-menu', component: UtilCompanyMenuComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [   'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'data-transfer', component: UtilDataTransferComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [   'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'work-order-query-popup', component: UtilWorkOrderQueryPopupComponent  
+  },
+  { path: 'order-query-popup', component: UtilOrderQueryPopupComponent  ,  
+  },
+  { path: 'quickbook-auth', component: UtilQuickbookAuthComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/util/quickbook-auth', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'quickbook-permission', component: UtilQuickbookPermissionComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/util/quickbook-permission', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'quickbook/configuration', component: UtilQuickbookOnlineConfigurationComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/util/quickbook/configuration', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'rf-configuration', component: UtilRfConfigurationComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/util/rf-configuration', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

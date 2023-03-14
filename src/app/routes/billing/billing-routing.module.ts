@@ -16,7 +16,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/billing/rate' ], 
+        role: [ '/billing/rate' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -25,7 +25,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/billing/rate' ], 
+        role: [ '/billing/rate' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -34,7 +34,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/billing/invoice' ], 
+        role: [ '/billing/invoice' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -43,7 +43,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/billing/invoice' ], 
+        role: [ '/billing/invoice', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -52,7 +52,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/billing/invoice' ], 
+        role: [ '/billing/invoice' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -61,7 +61,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/billing/billable-activity-type' ], 
+        role: [ '/billing/billable-activity-type' , 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
@@ -70,7 +70,7 @@ const routes: Routes = [
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/billing/billable-activity-type' ], 
+        role: [ '/billing/billable-activity-type', 'admin', 'system-admin'  ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }

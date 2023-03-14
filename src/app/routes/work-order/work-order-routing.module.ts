@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ACLGuard, ACLGuardType } from '@delon/acl';
 
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { WorkOrderAssignProductionLineComponent } from './assign-production-line/assign-production-line.component';
@@ -31,6 +32,7 @@ import { WorkOrderProductionPlanMaintenanceComponent } from './production-plan-m
 import { WorkOrderProductionPlanComponent } from './production-plan/production-plan.component';
 import { WorkOrderQcRuleConfigurationMaintenanceComponent } from './qc-rule-configuration-maintenance/qc-rule-configuration-maintenance.component';
 import { WorkOrderQcRuleConfigurationComponent } from './qc-rule-configuration/qc-rule-configuration.component';
+import { WorkOrderSiloMonitorComponent } from './silo-monitor/silo-monitor.component';
 import { WorkOrderWorkOrderCompleteByProductComponent } from './work-order-complete-by-product/work-order-complete-by-product.component';
 import { WorkOrderWorkOrderCompleteConfirmComponent } from './work-order-complete-confirm/work-order-complete-confirm.component';
 import { WorkOrderWorkOrderCompleteKpiComponent } from './work-order-complete-kpi/work-order-complete-kpi.component';
@@ -50,58 +52,443 @@ import { WorkOrderWorkOrderQcInspectionResultComponent } from './work-order-qc-i
 import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspection/work-order-qc-inspection.component'; 
 import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component'; 
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
-import { WorkOrderSiloMonitorComponent } from './silo-monitor/silo-monitor.component';
 
 const routes: Routes = [
-  { path: 'work-order', component: WorkOrderWorkOrderComponent, canActivate: [AuthGuard] },
-  { path: 'production-line', component: WorkOrderProductionLineComponent, canActivate: [AuthGuard] },
-  { path: 'bill-of-material', component: WorkOrderBillOfMaterialComponent, canActivate: [AuthGuard] },
-  { path: 'work-order/produce', component: WorkOrderWorkOrderProduceComponent },
-  { path: 'work-order/produce/by-product', component: WorkOrderWorkOrderProduceByProductComponent },
-  { path: 'work-order/produce/kpi', component: WorkOrderWorkOrderProduceKpiComponent },
-  { path: 'work-order/produce/confirm', component: WorkOrderWorkOrderProduceConfirmComponent },
-  { path: 'work-order/line/complete', component: WorkOrderWorkOrderLineCompleteComponent },
-  { path: 'work-order/line/complete/confirm', component: WorkOrderWorkOrderLineCompleteConfirmComponent },
-  { path: 'work-order/complete', component: WorkOrderWorkOrderCompleteComponent },
-  { path: 'work-order/complete/by-product', component: WorkOrderWorkOrderCompleteByProductComponent },
-  { path: 'work-order/complete/kpi', component: WorkOrderWorkOrderCompleteKpiComponent },
-  { path: 'work-order/complete/confirm', component: WorkOrderWorkOrderCompleteConfirmComponent },
-  { path: 'production-plan', component: WorkOrderProductionPlanComponent, canActivate: [AuthGuard] },
-  { path: 'production-plan/maintenance', component: WorkOrderProductionPlanMaintenanceComponent },
-  { path: 'work-order/line/maintenance', component: WorkOrderWorkOrderLineMaintenanceComponent },
-  { path: 'bill-of-material/maintenance', component: WorkOrderBillOfMaterialMaintenanceComponent },
-  { path: 'work-order/assign-production-line', component: WorkOrderAssignProductionLineComponent },
-  { path: 'production-line-maintenance', component: WorkOrderProductionLineMaintenanceComponent },
-  { path: 'mould', component: WorkOrderMouldComponent },
-  { path: 'mould/maintenance', component: WorkOrderMouldMaintenanceComponent },
-  { path: 'production-kanban', component: WorkOrderProductionKanbanComponent },
-  { path: 'work-order/deassign-production-line', component: WorkOrderDeassignProductionLineComponent },
-  { path: 'work-order-configuration', component: WorkOrderWorkOrderConfigurationComponent },
-  { path: 'produce-transaction', component: WorkOrderProduceTransactionComponent },
-  { path: 'pre-print-lpn-label', component: WorkOrderPrePrintLpnLabelComponent },
-  { path: 'qc-sample-maintenance', component: WorkOrderWorkOrderQcSampleMaintenanceComponent },
-  { path: 'work-order-qc-inspection', component: WorkOrderWorkOrderQcInspectionComponent },
-  { path: 'work-order-qc-inspection-operation', component: WorkOrderWorkOrderQcInspectionOperationComponent },
-  { path: 'qc-inspection-result', component: WorkOrderWorkOrderQcInspectionResultComponent } ,
-  { path: 'qc-rule-configuration', component: WorkOrderQcRuleConfigurationComponent },
-  { path: 'qc-rule-configuration/maintenance', component: WorkOrderQcRuleConfigurationMaintenanceComponent },
-  { path: 'labor', component: WorkOrderLaborComponent },
-  { path: 'labor-activity', component: WorkOrderLaborActivityComponent },
-  { path: 'mps', component: WorkOrderMpsComponent },
-  { path: 'mrp', component: WorkOrderMrpComponent },
-  { path: 'mps-maintenance', component: WorkOrderMpsMaintenanceComponent },
-  { path: 'mps-view', component: WorkOrderMpsViewComponent },
-  { path: 'mps-export', component: WorkOrderMpsExportComponent },
-  { path: 'mrp-maintenance', component: WorkOrderMrpMaintenanceComponent },
-  { path: 'line/spare-part-maintenance', component: WorkOrderWorkOrderLineSparePartMaintenanceComponent },
-  { path: 'work-order/maintenance', component: WorkOrderWorkOrderMaintenanceComponent },
-  { path: 'production-line-monitor', component: WorkOrderProductionLineMonitorComponent },
-  { path: 'production-line-monitor/maintenance', component: WorkOrderProductionLineMonitorMaintenanceComponent },
-  { path: 'production-line-monitor/transaction', component: WorkOrderProductionLineMonitorTransactionComponent },
-  { path: 'production-line-status', component: WorkOrderProductionLineStatusComponent },
-  { path: 'production-line-dashboard', component: WorkOrderProductionLineDashboardComponent },
-  { path: 'production-line-status/display', component: WorkOrderProductionLineStatusDisplayComponent },
-  { path: 'silo-monitor', component: WorkOrderSiloMonitorComponent }];
+  { path: 'work-order', component: WorkOrderWorkOrderComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'production-line', component: WorkOrderProductionLineComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/production-line', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'bill-of-material', component: WorkOrderBillOfMaterialComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/bill-of-material', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'work-order/produce', component: WorkOrderWorkOrderProduceComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'work-order/produce/by-product', component: WorkOrderWorkOrderProduceByProductComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'work-order/produce/kpi', component: WorkOrderWorkOrderProduceKpiComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'work-order/produce/confirm', component: WorkOrderWorkOrderProduceConfirmComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'work-order/line/complete', component: WorkOrderWorkOrderLineCompleteComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'work-order/line/complete/confirm', component: WorkOrderWorkOrderLineCompleteConfirmComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'work-order/complete', component: WorkOrderWorkOrderCompleteComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'work-order/complete/by-product', component: WorkOrderWorkOrderCompleteByProductComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'work-order/complete/kpi', component: WorkOrderWorkOrderCompleteKpiComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'work-order/complete/confirm', component: WorkOrderWorkOrderCompleteConfirmComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'production-plan', component: WorkOrderProductionPlanComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/production-plan', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'production-plan/maintenance', component: WorkOrderProductionPlanMaintenanceComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/production-plan', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'work-order/line/maintenance', component: WorkOrderWorkOrderLineMaintenanceComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'bill-of-material/maintenance', component: WorkOrderBillOfMaterialMaintenanceComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/bill-of-material', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'work-order/assign-production-line', component: WorkOrderAssignProductionLineComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'production-line-maintenance', component: WorkOrderProductionLineMaintenanceComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/production-line', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'mould', component: WorkOrderMouldComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/mould', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'mould/maintenance', component: WorkOrderMouldMaintenanceComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/mould', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'production-kanban', component: WorkOrderProductionKanbanComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/production-kanban', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'work-order/deassign-production-line', component: WorkOrderDeassignProductionLineComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'work-order-configuration', component: WorkOrderWorkOrderConfigurationComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order-configuration', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'produce-transaction', component: WorkOrderProduceTransactionComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/produce-transaction', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'pre-print-lpn-label', component: WorkOrderPrePrintLpnLabelComponent ,  
+  }, 
+  { path: 'qc-sample-maintenance', component: WorkOrderWorkOrderQcSampleMaintenanceComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/qc-sample-maintenance', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'work-order-qc-inspection', component: WorkOrderWorkOrderQcInspectionComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order-qc-inspection', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'work-order-qc-inspection-operation', component: WorkOrderWorkOrderQcInspectionOperationComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order-qc-inspection', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'qc-inspection-result', component: WorkOrderWorkOrderQcInspectionResultComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/qc-inspection-result', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'qc-rule-configuration', component: WorkOrderQcRuleConfigurationComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/qc-rule-configuration', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'qc-rule-configuration/maintenance', component: WorkOrderQcRuleConfigurationMaintenanceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/qc-rule-configuration', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'labor', component: WorkOrderLaborComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/labor', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'labor-activity', component: WorkOrderLaborActivityComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/labor-activity', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'mps', component: WorkOrderMpsComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/mps', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'mrp', component: WorkOrderMrpComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/mrp', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'mps-maintenance', component: WorkOrderMpsMaintenanceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/mps', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'mps-view', component: WorkOrderMpsViewComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/mps-view', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'mps-export', component: WorkOrderMpsExportComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/mps-export', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'mrp-maintenance', component: WorkOrderMrpMaintenanceComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/mrp', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'line/spare-part-maintenance', component: WorkOrderWorkOrderLineSparePartMaintenanceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'work-order/maintenance', component: WorkOrderWorkOrderMaintenanceComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/work-order', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'production-line-monitor', component: WorkOrderProductionLineMonitorComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/production-line-monitor', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'production-line-monitor/maintenance', component: WorkOrderProductionLineMonitorMaintenanceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/production-line-monitor', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'production-line-monitor/transaction', component: WorkOrderProductionLineMonitorTransactionComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/production-line-monitor/transaction', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'production-line-status', component: WorkOrderProductionLineStatusComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/production-line-status', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'production-line-dashboard', component: WorkOrderProductionLineDashboardComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/production-line-dashboard', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'production-line-status/display', component: WorkOrderProductionLineStatusDisplayComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/production-line-status/display', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'silo-monitor', component: WorkOrderSiloMonitorComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/silo-monitor', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

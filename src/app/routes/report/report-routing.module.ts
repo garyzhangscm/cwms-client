@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ACLGuard, ACLGuardType } from '@delon/acl';
 
 import { ReportPrinterMaintenanceComponent } from './printer-maintenance/printer-maintenance.component';
 import { ReportPrinterTypeMaintenanceComponent } from './printer-type-maintenance/printer-type-maintenance.component';
@@ -14,16 +15,90 @@ import { ReportReportComponent } from './report/report.component';
 
 const routes: Routes = [
 
-  { path: 'report', component: ReportReportComponent },
-  { path: 'report-history', component: ReportReportHistoryComponent },
-  { path: 'report-preview', component: ReportReportPreviewComponent },
-  { path: 'report-maintenance', component: ReportReportMaintenanceComponent },
-  { path: 'report-printer-configuration', component: ReportReportPrinterConfigurationComponent },
-  { path: 'report-printer-configuration/maintenance', component: ReportReportPrinterConfigurationMaintenanceComponent },
-  { path: 'printer', component: ReportPrinterComponent },
-  { path: 'printer/maintenance', component: ReportPrinterMaintenanceComponent },
-  { path: 'printer-type', component: ReportPrinterTypeComponent },
-  { path: 'printer-type/maintenance', component: ReportPrinterTypeMaintenanceComponent }];
+  { path: 'report', component: ReportReportComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/report/report', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'report-history', component: ReportReportHistoryComponent   , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/report/report-history', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'report-preview', component: ReportReportPreviewComponent   
+  },
+  { path: 'report-maintenance', component: ReportReportMaintenanceComponent   , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/report/report-maintenance', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'report-printer-configuration', component: ReportReportPrinterConfigurationComponent   , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/report/report-printer-configuration', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'report-printer-configuration/maintenance', component: ReportReportPrinterConfigurationMaintenanceComponent   , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/report/report-printer-configuration', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'printer', component: ReportPrinterComponent   , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/report/printer', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'printer/maintenance', component: ReportPrinterMaintenanceComponent   , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/report/printer', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'printer-type', component: ReportPrinterTypeComponent   , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/report/printer-type', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'printer-type/maintenance', component: ReportPrinterTypeMaintenanceComponent   , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/report/printer-type', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
