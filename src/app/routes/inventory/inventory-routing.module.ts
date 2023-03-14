@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ACLGuard, ACLGuardType } from '@delon/acl';
 
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { InventoryAuditCountConfirmComponent } from './audit-count-confirm/audit-count-confirm.component';
@@ -47,52 +48,389 @@ import { InventoryReplenishmentComponent } from './replenishment/replenishment.c
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
 
 const routes: Routes = [
-  { path: 'inventory', component: InventoryInventoryComponent, canActivate: [AuthGuard] },
-  { path: 'count/config', component: InventoryCountConfigComponent },
-  { path: 'count/cycle-count', component: InventoryCycleCountComponent, canActivate: [AuthGuard]  },
-  { path: 'replenishment/emergency/config', component: InventoryEmergencyReplenishmentConfigComponent, canActivate: [AuthGuard]  },
-  { path: 'replenishment/trigger/config', component: InventoryTriggerReplenishmentConfigComponent, canActivate: [AuthGuard]  },
-  { path: 'replenishment', component: InventoryReplenishmentComponent, canActivate: [AuthGuard]  },
-  { path: 'item', component: InventoryItemComponent, canActivate: [AuthGuard] },
-  { path: 'item-family', component: InventoryItemFamilyComponent, canActivate: [AuthGuard] },
-  { path: 'item-family-maintenance', component: InventoryItemFamilyMaintenanceComponent },
-  { path: 'item-family-maintenance/confirm', component: InventoryItemFamilyMaintenanceConfirmComponent },
-  { path: 'inventory-adjust', component: InventoryInventoryAdjustComponent, canActivate: [AuthGuard] },
-  { path: 'inventory-attribute-change', component: InventoryInventoryAttributeChangeComponent },
-  { path: 'inventory-attribute-change/confirm', component: InventoryInventoryAttributeChangeConfirmComponent },
-  { path: 'count/cycle-count-maintenance', component: InventoryCycleCountMaintenanceComponent },
-  { path: 'count/audit-count-result', component: InventoryAuditCountResultComponent },
-  { path: 'count/audit-count-confirm', component: InventoryAuditCountConfirmComponent },
-  { path: 'movement-path', component: InventoryMovementPathComponent, canActivate: [AuthGuard]  },
-  { path: 'movement-path-maintenance', component: InventoryMovementPathMaintenanceComponent },
-  { path: 'movement-path-confirm', component: InventoryMovementPathConfirmComponent },
-  { path: 'inventory-quantity-change', component: InventoryInventoryQuantityChangeComponent },
-  { path: 'inventory-quantity-change/confirm', component: InventoryInventoryQuantityChangeConfirmComponent },
-  { path: 'inventory-activity', component: InventoryInventoryActivityComponent, canActivate: [AuthGuard]  },
-  { path: 'inventory-move', component: InventoryInventoryMoveComponent },
-  { path: 'inventory-adjustment-request', component: InventoryInventoryAdjustmentRequestComponent, canActivate: [AuthGuard]  },
-  { path: 'inventory-adjustment-threshold', component: InventoryInventoryAdjustmentThresholdComponent, canActivate: [AuthGuard]  },
+  { path: 'inventory', component: InventoryInventoryComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/inventory' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'count/config', component: InventoryCountConfigComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/count/config' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'count/cycle-count', component: InventoryCycleCountComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/count/cycle-count' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'replenishment/emergency/config', component: InventoryEmergencyReplenishmentConfigComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/replenishment/emergency/config' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'replenishment/trigger/config', component: InventoryTriggerReplenishmentConfigComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/replenishment/trigger/config' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'replenishment', component: InventoryReplenishmentComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/replenishment' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'item', component: InventoryItemComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/item' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'item-family', component: InventoryItemFamilyComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/item-family' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'item-family-maintenance', component: InventoryItemFamilyMaintenanceComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/item-family' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'item-family-maintenance/confirm', component: InventoryItemFamilyMaintenanceConfirmComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/item-family' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'inventory-adjust', component: InventoryInventoryAdjustComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/inventory-adjust' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'inventory-attribute-change', component: InventoryInventoryAttributeChangeComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/inventory' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'inventory-attribute-change/confirm', component: InventoryInventoryAttributeChangeConfirmComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/inventory' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'count/cycle-count-maintenance', component: InventoryCycleCountMaintenanceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/count/cycle-count-maintenance' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'count/audit-count-result', component: InventoryAuditCountResultComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/count/cycle-count' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'count/audit-count-confirm', component: InventoryAuditCountConfirmComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/count/cycle-count' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'movement-path', component: InventoryMovementPathComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/movement-path' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'movement-path-maintenance', component: InventoryMovementPathMaintenanceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/movement-path' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'movement-path-confirm', component: InventoryMovementPathConfirmComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/movement-path' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'inventory-quantity-change', component: InventoryInventoryQuantityChangeComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/inventory' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'inventory-quantity-change/confirm', component: InventoryInventoryQuantityChangeConfirmComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/inventory' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'inventory-activity', component: InventoryInventoryActivityComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/inventory-activity' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'inventory-move', component: InventoryInventoryMoveComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/inventory' , '/inventory/inventory-move'], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'inventory-adjustment-request', component: InventoryInventoryAdjustmentRequestComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/inventory-adjustment-request' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'inventory-adjustment-threshold', component: InventoryInventoryAdjustmentThresholdComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/inventory-adjustment-threshold' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
   {
     path: 'inventory-adjustment-threshold-maintenance',
-    component: InventoryInventoryAdjustmentThresholdMaintenanceComponent,
+    component: InventoryInventoryAdjustmentThresholdMaintenanceComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/inventory-adjustment-threshold' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
   },
-  { path: 'inventory-adjustment-threshold-confirm', component: InventoryInventoryAdjustmentThresholdConfirmComponent },
-  { path: 'item/maintenance', component: InventoryItemMaintenanceComponent },
-  { path: 'item-query-popup', component: InventoryItemQueryPopupComponent },
-  { path: 'configuration', component: InventoryInventoryConfigurationComponent },
-  { path: 'snapshot', component: InventoryInventorySnapshotComponent },
-  { path: 'inventory-snapshot-configuration', component: InventoryInventorySnapshotConfigurationComponent },
-  { path: 'inventory-allocation-summary', component: InventoryInventoryAllocationSummaryComponent },
-  { path: 'item-sampling', component: InventoryItemSamplingComponent },
-  { path: 'item-sampling/maintenance', component: InventoryItemSamplingMaintenanceComponent },
-  { path: 'lock', component: InventoryLockComponent },
-  { path: 'lock/maintenance', component: InventoryLockMaintenanceComponent },
-  { path: 'location-utilization-snapshot', component: InventoryLocationUtilizationSnapshotComponent },
-  { path: 'status', component: InventoryInventoryStatusComponent },
-  { path: 'status/maintenance', component: InventoryInventoryStatusMaintenanceComponent },
-  { path: 'inventory-dashboard', component: InventoryInventoryDashboardComponent },
-  { path: 'mix-restriction', component: InventoryInventoryMixRestrictionComponent },
-  { path: 'mix-restriction/maintenance', component: InventoryInventoryMixRestrictionMaintenanceComponent }];
+  { path: 'inventory-adjustment-threshold-confirm', component: InventoryInventoryAdjustmentThresholdConfirmComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/inventory-adjustment-threshold' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'item/maintenance', component: InventoryItemMaintenanceComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/item' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'item-query-popup', component: InventoryItemQueryPopupComponent,  
+  },
+  { path: 'configuration', component: InventoryInventoryConfigurationComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/configuration' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'snapshot', component: InventoryInventorySnapshotComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/snapshot' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'inventory-snapshot-configuration', component: InventoryInventorySnapshotConfigurationComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/inventory-snapshot-configuration' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'inventory-allocation-summary', component: InventoryInventoryAllocationSummaryComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/inventory-allocation-summary' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'item-sampling', component: InventoryItemSamplingComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/item-sampling' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'item-sampling/maintenance', component: InventoryItemSamplingMaintenanceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/item-sampling' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'lock', component: InventoryLockComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/lock' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'lock/maintenance', component: InventoryLockMaintenanceComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/lock' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'location-utilization-snapshot', component: InventoryLocationUtilizationSnapshotComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/location-utilization-snapshot' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'status', component: InventoryInventoryStatusComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/status' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'status/maintenance', component: InventoryInventoryStatusMaintenanceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/status' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'inventory-dashboard', component: InventoryInventoryDashboardComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/inventory-dashboard' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'mix-restriction', component: InventoryInventoryMixRestrictionComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/mix-restriction' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'mix-restriction/maintenance', component: InventoryInventoryMixRestrictionMaintenanceComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inventory/mix-restriction' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

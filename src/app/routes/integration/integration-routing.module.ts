@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ACLGuard, ACLGuardType } from '@delon/acl';
 
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { IntegrationIntegrationDataClientComponent } from './integration-data-client/integration-data-client.component';
@@ -20,25 +21,153 @@ import { IntegrationIntegrationDataWorkOrderComponent } from './integration-data
 import { IntegrationIntegrationDataComponent } from './integration-data/integration-data.component';
 
 const routes: Routes = [
-  { path: 'integration-data', component: IntegrationIntegrationDataComponent , canActivate: [AuthGuard] },
-  { path: 'integration-data-client', component: IntegrationIntegrationDataClientComponent },
-  { path: 'integration-data-customer', component: IntegrationIntegrationDataCustomerComponent },
-  { path: 'integration-data-item', component: IntegrationIntegrationDataItemComponent },
-  { path: 'integration-data-item-family', component: IntegrationIntegrationDataItemFamilyComponent },
-  { path: 'integration-data-item-package-type', component: IntegrationIntegrationDataItemPackageTypeComponent },
-  { path: 'integration-data-item-unit-of-measure', component: IntegrationIntegrationDataItemUnitOfMeasureComponent },
-  { path: 'integration-data-supplier', component: IntegrationIntegrationDataSupplierComponent },
-  { path: 'integration-data-order', component: IntegrationIntegrationDataOrderComponent },
-  { path: 'integration-data-receipt', component: IntegrationIntegrationDataReceiptComponent },
-  { path: 'integration-data-receipt-confirm', component: IntegrationIntegrationDataReceiptConfirmComponent },
-  { path: 'integration-data-order-confirm', component: IntegrationIntegrationDataOrderConfirmComponent },
-  { path: 'integration-data-inventory-adjust', component: IntegrationIntegrationDataInventoryAdjustComponent },
+  { path: 'integration-data', component: IntegrationIntegrationDataComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/integration/integration-data' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'integration-data-client', component: IntegrationIntegrationDataClientComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/integration/integration-data-client' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'integration-data-customer', component: IntegrationIntegrationDataCustomerComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/integration/integration-data-customer' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'integration-data-item', component: IntegrationIntegrationDataItemComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/integration/integration-data-item' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'integration-data-item-family', component: IntegrationIntegrationDataItemFamilyComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/integration/integration-data-item-family' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'integration-data-item-package-type', component: IntegrationIntegrationDataItemPackageTypeComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/integration/integration-data-item-package-type' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'integration-data-item-unit-of-measure', component: IntegrationIntegrationDataItemUnitOfMeasureComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/integration/integration-data-item-unit-of-measure' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'integration-data-supplier', component: IntegrationIntegrationDataSupplierComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/integration/integration-data-supplier' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'integration-data-order', component: IntegrationIntegrationDataOrderComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/integration/integration-data-order' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'integration-data-receipt', component: IntegrationIntegrationDataReceiptComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/integration/integration-data-receipt' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'integration-data-receipt-confirm', component: IntegrationIntegrationDataReceiptConfirmComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/integration/integration-data-receipt-confirm' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'integration-data-order-confirm', component: IntegrationIntegrationDataOrderConfirmComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/integration/integration-data-order-confirm' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'integration-data-inventory-adjust', component: IntegrationIntegrationDataInventoryAdjustComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/integration/integration-data-inventory-adjust' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
   {
     path: 'integration-data-inventory-attribute-change',
-    component: IntegrationIntegrationDataInventoryAttributeChangeComponent,
+    component: IntegrationIntegrationDataInventoryAttributeChangeComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/integration/integration-data-inventory-attribute-change' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
   },
-  { path: 'integration-data-work-order-confirm', component: IntegrationIntegrationDataWorkOrderConfirmComponent },
-  { path: 'integration-data-work-order', component: IntegrationIntegrationDataWorkOrderComponent }];
+  { path: 'integration-data-work-order-confirm', component: IntegrationIntegrationDataWorkOrderConfirmComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/integration/integration-data-work-order-confirm' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'integration-data-work-order', component: IntegrationIntegrationDataWorkOrderComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/integration/integration-data-work-order' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

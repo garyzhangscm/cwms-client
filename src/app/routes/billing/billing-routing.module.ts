@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ACLGuard, ACLGuardType } from '@delon/acl';
 
 import { BillingBillableActivityTypeMaintenanceComponent } from './billable-activity-type-maintenance/billable-activity-type-maintenance.component';
 import { BillingBillableActivityTypeComponent } from './billable-activity-type/billable-activity-type.component';
@@ -11,13 +12,70 @@ import { BillingVendorInvoiceMaintenanceComponent } from './vendor-invoice-maint
 
 const routes: Routes = [
 
-  { path: 'rate', component: BillingRateComponent },
-  { path: 'rate/maintenance', component: BillingRateMaintenanceComponent },
-  { path: 'invoice/maintenance', component: BillingInvoiceMaintenanceComponent },
-  { path: 'invoice', component: BillingInvoiceComponent }, 
-  { path: 'invoice/maintenance/vendor', component: BillingVendorInvoiceMaintenanceComponent },
-  { path: 'billable-activity-type', component: BillingBillableActivityTypeComponent },
-  { path: 'billable-activity-type/maintenance', component: BillingBillableActivityTypeMaintenanceComponent }];
+  { path: 'rate', component: BillingRateComponent   , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/billing/rate' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'rate/maintenance', component: BillingRateMaintenanceComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/billing/rate' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'invoice/maintenance', component: BillingInvoiceMaintenanceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/billing/invoice' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'invoice', component: BillingInvoiceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/billing/invoice' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'invoice/maintenance/vendor', component: BillingVendorInvoiceMaintenanceComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/billing/invoice' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'billable-activity-type', component: BillingBillableActivityTypeComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/billing/billable-activity-type' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'billable-activity-type/maintenance', component: BillingBillableActivityTypeMaintenanceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/billing/billable-activity-type' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }
+  ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

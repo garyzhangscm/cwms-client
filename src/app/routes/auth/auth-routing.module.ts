@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes  } from '@angular/router';
+import { ACLGuard, ACLGuardType } from '@delon/acl';
 
 import { AuthDepartmentMaintenanceComponent } from './department-maintenance/department-maintenance.component';
 import { AuthDepartmentComponent } from './department/department.component';
 import { AuthGuard } from './guard/auth.guard';
+import { AuthRoleClientComponent } from './role-client/role-client.component';
 import { AuthRoleMaintenanceConfirmComponent } from './role-maintenance-confirm/role-maintenance-confirm.component';
 import { AuthRoleMaintenanceComponent } from './role-maintenance/role-maintenance.component';
 import { AuthRoleMenuComponent } from './role-menu/role-menu.component';
@@ -12,34 +14,178 @@ import { AuthRoleComponent } from './role/role.component';
 import { AuthUserMaintenanceConfirmComponent } from './user-maintenance-confirm/user-maintenance-confirm.component';
 import { AuthUserMaintenanceComponent } from './user-maintenance/user-maintenance.component';
 import { AuthUserRoleComponent } from './user-role/user-role.component';
+import { AuthUserWarehouseComponent } from './user-warehouse/user-warehouse.component';
 import { AuthUserComponent } from './user/user.component';
+import { AuthWarehouseUserComponent } from './warehouse-user/warehouse-user.component';
 import { AuthWorkingTeamMaintenanceConfirmComponent } from './working-team-maintenance-confirm/working-team-maintenance-confirm.component';
 import { AuthWorkingTeamMaintenanceComponent } from './working-team-maintenance/working-team-maintenance.component';
 import { AuthWorkingTeamUserComponent } from './working-team-user/working-team-user.component';
 import { AuthWorkingTeamComponent } from './working-team/working-team.component';
-import { AuthRoleClientComponent } from './role-client/role-client.component';
-import { AuthUserWarehouseComponent } from './user-warehouse/user-warehouse.component';
-import { AuthWarehouseUserComponent } from './warehouse-user/warehouse-user.component';
 
 const routes: Routes = [
-  { path: 'user', component: AuthUserComponent, canActivate: [AuthGuard] },
-  { path: 'role', component: AuthRoleComponent, canActivate: [AuthGuard] },
-  { path: 'role-menu', component: AuthRoleMenuComponent},
-  { path: 'user-role', component: AuthUserRoleComponent },
-  { path: 'role-user', component: AuthRoleUserComponent },
-  { path: 'role/maintenance', component: AuthRoleMaintenanceComponent },
-  { path: 'user/maintenance', component: AuthUserMaintenanceComponent },
-  { path: 'role/maintenance/confirm', component: AuthRoleMaintenanceConfirmComponent },
-  { path: 'user/maintenance/confirm', component: AuthUserMaintenanceConfirmComponent },
-  { path: 'working-team', component: AuthWorkingTeamComponent, canActivate: [AuthGuard]  },
-  { path: 'working-team/maintenance', component: AuthWorkingTeamMaintenanceComponent },
-  { path: 'working-team/maintenance/confirm', component: AuthWorkingTeamMaintenanceConfirmComponent },
-  { path: 'working-team/user', component: AuthWorkingTeamUserComponent },
-  { path: 'department', component: AuthDepartmentComponent },
-  { path: 'department/maintenance', component: AuthDepartmentMaintenanceComponent },
-  { path: 'role-client', component: AuthRoleClientComponent },
-  { path: 'user-warehouse', component: AuthUserWarehouseComponent },
-  { path: 'warehouse-user', component: AuthWarehouseUserComponent }];
+  { path: 'user', component: AuthUserComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/auth/user' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'role', component: AuthRoleComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/auth/role' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'role-menu', component: AuthRoleMenuComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/auth/role' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'user-role', component: AuthUserRoleComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/auth/user',  '/auth/role'], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'role-user', component: AuthRoleUserComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/auth/user',  '/auth/role' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'role/maintenance', component: AuthRoleMaintenanceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/auth/role' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'user/maintenance', component: AuthUserMaintenanceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/auth/user' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'role/maintenance/confirm', component: AuthRoleMaintenanceConfirmComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/auth/role' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'user/maintenance/confirm', component: AuthUserMaintenanceConfirmComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/auth/user' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'working-team', component: AuthWorkingTeamComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/auth/working-team' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'working-team/maintenance', component: AuthWorkingTeamMaintenanceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/auth/working-team' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'working-team/maintenance/confirm', component: AuthWorkingTeamMaintenanceConfirmComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/auth/working-team' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'working-team/user', component: AuthWorkingTeamUserComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/auth/user' , '/auth/working-team'], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'department', component: AuthDepartmentComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/auth/department' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'department/maintenance', component: AuthDepartmentMaintenanceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/auth/department' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'role-client', component: AuthRoleClientComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/auth/role' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'user-warehouse', component: AuthUserWarehouseComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/auth/user' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'warehouse-user', component: AuthWarehouseUserComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/auth/user' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

@@ -12,15 +12,40 @@ const routes: Routes = [
   { path: '', redirectTo: 'welcome', pathMatch: 'full' },
   { path: 'v1', component: DashboardV1Component , 
       canActivate: [ACLGuard], 
-    data: { guard:  {
-      role: [ '/dashboard/v1' ], 
-    } as ACLGuardType,
-    guard_url: '/exception/403'
-  }},
-  { path: 'analysis', component: DashboardAnalysisComponent },
-  { path: 'monitor', component: DashboardMonitorComponent },
-  { path: 'workplace', component: DashboardWorkplaceComponent }
-,
+      data: { 
+        guard:  {
+          role: [ '/dashboard/v1' ], 
+        } as ACLGuardType,
+        guard_url: '/exception/403'
+      }
+  },
+  { path: 'analysis', component: DashboardAnalysisComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/dashboard/analysis' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'monitor', component: DashboardMonitorComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/dashboard/monitor' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'workplace', component: DashboardWorkplaceComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/dashboard/workplace' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
   { path: 'welcome', component: DashboardWelcomeComponent }];
 
 @NgModule({

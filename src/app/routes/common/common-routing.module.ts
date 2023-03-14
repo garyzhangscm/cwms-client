@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ACLGuard, ACLGuardType } from '@delon/acl';
 
 import { AuthGuard } from '../auth/guard/auth.guard';
 import { CommonAbcCategoryComponent } from './abc-category/abc-category.component';
@@ -22,24 +23,162 @@ import { CommonUnitOfMeasureComponent } from './unit-of-measure/unit-of-measure.
 import { CommonVelocityComponent } from './velocity/velocity.component';
 
 const routes: Routes = [
-  { path: 'client', component: CommonClientComponent, canActivate: [AuthGuard] },
-  { path: 'client-maintenance', component: CommonClientMaintenanceComponent },
-  { path: 'client-maintenance/address', component: CommonClientAddressMaintenanceComponent },
-  { path: 'client-maintenance/confirm', component: CommonClientMaintenanceConfimComponent },
-  { path: 'unit-of-measure', component: CommonUnitOfMeasureComponent, canActivate: [AuthGuard] },
-  { path: 'unit-of-measure-maintenance', component: CommonUnitOfMeasureMaintenanceComponent },
-  { path: 'unit-of-measure/confirm', component: CommonUnitOfMeasureConfirmComponent },
-  { path: 'supplier', component: CommonSupplierComponent, canActivate: [AuthGuard] },
-  { path: 'supplier-maintenance', component: CommonSupplierMaintenanceComponent },
-  { path: 'supplier-maintenance/address', component: CommonSupplierAddressMaintenanceComponent },
-  { path: 'supplier-maintenance/confirm', component: CommonSupplierMaintenanceConfirmComponent },
-  { path: 'customer', component: CommonCustomerComponent, canActivate: [AuthGuard] },
-  { path: 'customer-maintenance', component: CommonCustomerMaintenanceComponent },
-  { path: 'customer-maintenance/confirm', component: CommonCustomerMaintenanceConfirmComponent },
-  { path: 'customer-maintenance/address', component: CommonCustomerAddressMaintenanceComponent },
-  { path: 'print-button', component: CommonPrintButtonComponent },
-  { path: 'abc-category', component: CommonAbcCategoryComponent },
-  { path: 'velocity', component: CommonVelocityComponent }];
+  { path: 'client', component: CommonClientComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/common/client' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'client-maintenance', component: CommonClientMaintenanceComponent   , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/common/client' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'client-maintenance/address', component: CommonClientAddressMaintenanceComponent   , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/common/client' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'client-maintenance/confirm', component: CommonClientMaintenanceConfimComponent   , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/common/client' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'unit-of-measure', component: CommonUnitOfMeasureComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/common/unit-of-measure' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'unit-of-measure-maintenance', component: CommonUnitOfMeasureMaintenanceComponent   , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/common/unit-of-measure' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'unit-of-measure/confirm', component: CommonUnitOfMeasureConfirmComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/common/unit-of-measure' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'supplier', component: CommonSupplierComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/common/supplier' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'supplier-maintenance', component: CommonSupplierMaintenanceComponent   , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/common/supplier' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'supplier-maintenance/address', component: CommonSupplierAddressMaintenanceComponent   , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/common/supplier' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'supplier-maintenance/confirm', component: CommonSupplierMaintenanceConfirmComponent   , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/common/supplier' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'customer', component: CommonCustomerComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/common/customer' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'customer-maintenance', component: CommonCustomerMaintenanceComponent   , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/common/customer' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'customer-maintenance/confirm', component: CommonCustomerMaintenanceConfirmComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/common/customer' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'customer-maintenance/address', component: CommonCustomerAddressMaintenanceComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/common/customer' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'print-button', component: CommonPrintButtonComponent   ,  
+  },
+  { path: 'abc-category', component: CommonAbcCategoryComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/common/abc-category' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'velocity', component: CommonVelocityComponent   , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/common/velocity' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
