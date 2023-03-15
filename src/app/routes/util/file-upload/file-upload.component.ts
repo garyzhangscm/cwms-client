@@ -25,11 +25,11 @@ export class UtilFileUploadComponent implements OnInit {
   st!: STComponent;
   columns: STColumn[] = [
     
-    { title: this.i18n.fanyi("lineNumber"), index:"lineNumber" },  
+    { title: this.i18n.fanyi("lineNumber"), index:"lineNumber", width: "5%" },  
     { title: this.i18n.fanyi("record"), 
-    render: 'recordColumn' , width: 150},  
-    { title: this.i18n.fanyi("result"), index:"result" },  
-    { title: this.i18n.fanyi("errorMessage"), render: 'errorMessageColumn' },   
+    render: 'recordColumn' , width: "55%"},  
+    { title: this.i18n.fanyi("result"), index:"result" , width: "5%"},  
+    { title: this.i18n.fanyi("errorMessage"), render: 'errorMessageColumn' , width: "35%"},   
   ]; 
   
   constructor(

@@ -179,6 +179,41 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       filterFn: null,
       showFilter: false
     },
+    
+    {
+      name: 'color',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.color, b.color),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'productSize',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.productSize, b.productSize),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'style',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.style, b.style),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+
     {
       name: 'location',
       showSort: true,
@@ -1005,6 +1040,18 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       // this.receivingForm!.controls.inventoryStatus.setValue(this.availableInventoryStatus.id);
 
     }
+
+    console.log(`this.currentReceivingInventory!.item\n ${JSON.stringify(this.currentReceivingInventory!.item)}`);
+
+    if (this.currentReceivingInventory!.item?.trackingColorFlag) {
+      this.currentReceivingInventory!.color = this.currentReceivingInventory!.item.defaultColor;
+    }
+    if (this.currentReceivingInventory!.item?.trackingProductSizeFlag) {
+      this.currentReceivingInventory!.productSize = this.currentReceivingInventory!.item.defaultProductSize;
+    }
+    if (this.currentReceivingInventory!.item?.trackingStyleFlag) {
+      this.currentReceivingInventory!.style = this.currentReceivingInventory!.item.defaultStyle;
+    }
   }
 
   inventoryStatusChange(receivingInventoryStatusId: number): void {
@@ -1067,10 +1114,15 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     // based on the user input quantity and the UOM
     if (this.currentReceivingInventory!.quantity == null || this.currentReceivingInventory!.quantity == 0) {
       this.message.error("please fill in quantity");
+      
+      this.receivingInProcess = false;
+      this.isSpinning = false;
       return;
     }
     if (this.currentReceivingInventory!.lpn == null ) {
       this.message.error("please fill in LPN");
+      this.receivingInProcess = false;
+      this.isSpinning = false;
       return;
     }
     // convert the receiving quantity into actual quantity

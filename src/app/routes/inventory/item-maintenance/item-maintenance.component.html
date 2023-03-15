@@ -257,7 +257,78 @@
         </nz-form-control>
       </nz-form-item>
     </div>
+     
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">
+          {{ 'trackingColorFlag' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <label nz-checkbox [(ngModel)]="currentItem.trackingColorFlag"></label>
+        </nz-form-control>
+      </nz-form-item>
+    </div>     
+    
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">
+          {{ 'defaultColor' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16" >
+          <input nz-input [(ngModel)]="currentItem.defaultColor"  />
+        </nz-form-control>
+      </nz-form-item>
+    </div> 
   </div>
+  
+  <div nz-row [nzGutter]="24">      
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">
+          {{ 'trackingProductSizeFlag' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <label nz-checkbox [(ngModel)]="currentItem.trackingProductSizeFlag"></label>
+        </nz-form-control>
+      </nz-form-item>
+    </div>     
+    
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">
+          {{ 'defaultProductSize' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16" >
+          <input nz-input [(ngModel)]="currentItem.defaultProductSize"  />
+        </nz-form-control>
+      </nz-form-item>
+    </div> 
+  </div>
+  
+  <div nz-row [nzGutter]="24">      
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">
+          {{ 'trackingStyleFlag' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <label nz-checkbox [(ngModel)]="currentItem.trackingStyleFlag"></label>
+        </nz-form-control>
+      </nz-form-item>
+    </div>     
+    
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">
+          {{ 'defaultStyle' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16" >
+          <input nz-input [(ngModel)]="currentItem.defaultStyle"  />
+        </nz-form-control>
+      </nz-form-item>
+    </div> 
+  </div>
+
 </div>
 
 <!-- Maintain package type -->

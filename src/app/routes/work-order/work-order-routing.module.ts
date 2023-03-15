@@ -479,11 +479,11 @@ const routes: Routes = [
       guard_url: '/exception/403'
     }
   }, 
-  { path: 'silo-monitor', component: WorkOrderSiloMonitorComponent  , 
+  { path: 'silo', component: WorkOrderSiloMonitorComponent  , 
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
-        role: [ '/work-order/silo-monitor', 'admin', 'system-admin' ], 
+        role: [ '/work-order/silo', 'admin', 'system-admin' ], 
       } as ACLGuardType,
       guard_url: '/exception/403'
     }

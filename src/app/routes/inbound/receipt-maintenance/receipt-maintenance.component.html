@@ -332,6 +332,9 @@
               <td>{{ data.item?.description }}</td>
               <td>{{ data.quantity }}</td>
               <td>{{ data.inventoryStatus!.description}}</td>
+              <td>{{ data.color}}</td>
+              <td>{{ data.productSize}}</td>
+              <td>{{ data.style}}</td>
               <td>{{ data.location?.name }}</td>
               <td>
                 <p *ngFor="let inventoryMovement of data.inventoryMovements; let i = index">
@@ -773,6 +776,46 @@
               <app-warehouse-layout-location-query-popup (recordSelected)="processLocationQueryResult($event)">
               </app-warehouse-layout-location-query-popup>
             </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>
+    
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8" *ngIf="currentReceivingInventory.item?.trackingColorFlag">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="12" nzFor="color">
+            {{ 'color' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" >             
+            <input   nz-input
+              [(ngModel)]="currentReceivingInventory!.color"  name="color"    id="color" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+      <div nz-col [nzSpan]="8" *ngIf="currentReceivingInventory.item?.trackingProductSizeFlag">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="12" nzFor="productSize">
+            {{ 'productSize' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" >             
+            <input   nz-input
+              [(ngModel)]="currentReceivingInventory!.productSize"  name="productSize"    id="productSize" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+      <div nz-col [nzSpan]="8" *ngIf="currentReceivingInventory.item?.trackingStyleFlag">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="12" nzFor="style">
+            {{ 'style' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" >             
+            <input   nz-input
+              [(ngModel)]="currentReceivingInventory!.style"  name="style"    id="style" />
           </nz-form-control>
         </nz-form-item>
       </div>
