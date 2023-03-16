@@ -2,8 +2,8 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-
-import { Silo } from '../models/silo';
+ 
+import { SiloDevice } from '../models/silo-device';
 import { SiloService } from '../services/silo.service';
 
 @Component({
@@ -12,14 +12,18 @@ import { SiloService } from '../services/silo.service';
 })
 export class WorkOrderSiloMonitorComponent implements OnInit {
 
-  siloes: Silo[] = [];
+  siloeDevices: SiloDevice[] = [];
 
   @ViewChild('st', { static: true })
   st!: STComponent;
   columns: STColumn[] = [ 
-    { title: this.i18n.fanyi("MAX_VOLUME"), index: 'MAX_VOLUME' },    
-    { title: this.i18n.fanyi("DISTANCE"), index: 'DISTANCE'  },   
-    { title: this.i18n.fanyi("NAME"), index: 'NAME' },     
+    { title: this.i18n.fanyi("locationName"), index: 'LOCATION_NAME' },    
+    { title: this.i18n.fanyi("name"), index: 'NAME' },   
+    { title: this.i18n.fanyi("deviceId"), index: 'DEVICE_ID' },   
+    { title: this.i18n.fanyi("material"), index: 'MATERIAL' },   
+    { title: this.i18n.fanyi("distance"), index: 'DISTANCE'  },   
+    { title: this.i18n.fanyi("timeStamp"), index: 'SMU_TIMESTAMP' },     
+    { title: this.i18n.fanyi("statusCode"), index: 'STATUS_CDE' },     
   ];
   
   
@@ -30,8 +34,8 @@ export class WorkOrderSiloMonitorComponent implements OnInit {
   ngOnInit(): void { 
 
 
-    this.siloService.getSiloInformation().subscribe({
-      next: (res) => this.siloes = res,
+    this.siloService.getSiloDevices().subscribe({
+      next: (res) => this.siloeDevices = res,
       error: (error) => console.log(`error when request silo information\n ${error}`)
     })
   }
