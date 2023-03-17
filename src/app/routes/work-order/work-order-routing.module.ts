@@ -32,6 +32,7 @@ import { WorkOrderProductionPlanMaintenanceComponent } from './production-plan-m
 import { WorkOrderProductionPlanComponent } from './production-plan/production-plan.component';
 import { WorkOrderQcRuleConfigurationMaintenanceComponent } from './qc-rule-configuration-maintenance/qc-rule-configuration-maintenance.component';
 import { WorkOrderQcRuleConfigurationComponent } from './qc-rule-configuration/qc-rule-configuration.component';
+import { WorkOrderSiloConfigurationComponent } from './silo-configuration/silo-configuration.component';
 import { WorkOrderSiloMonitorComponent } from './silo-monitor/silo-monitor.component';
 import { WorkOrderWorkOrderCompleteByProductComponent } from './work-order-complete-by-product/work-order-complete-by-product.component';
 import { WorkOrderWorkOrderCompleteConfirmComponent } from './work-order-complete-confirm/work-order-complete-confirm.component';
@@ -487,8 +488,17 @@ const routes: Routes = [
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
+  },  
+  { path: 'silo-configuration', component: WorkOrderSiloConfigurationComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/silo-configuration', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
   }, 
-  ];
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
