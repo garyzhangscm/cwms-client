@@ -8,6 +8,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { BillableActivityType } from '../../billing/models/billable-activity-type';
 import { BillableActivityTypeService } from '../../billing/services/billable-activity-type.service';
 import { Client } from '../../common/models/client';
@@ -124,6 +125,7 @@ export class InboundReceiptComponent implements OnInit {
     },
   ];
 
+  displayOnly = false;
 
   listOfSelection = [
     {
@@ -184,7 +186,10 @@ export class InboundReceiptComponent implements OnInit {
     private clientService: ClientService,
     private warehouseService: WarehouseService,
     private billableActivityTypeService: BillableActivityTypeService,
-  ) { }
+    private userService: UserService
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/inbound/receipt");
+  }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inbound.receipt'));
     // initiate the search form

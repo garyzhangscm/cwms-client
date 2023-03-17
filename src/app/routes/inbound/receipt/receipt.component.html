@@ -126,9 +126,13 @@
           <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)"></td>
           <td [nzExpand]="expandSet.has(data.id!)" (nzExpandChange)="onExpandChange(data, $event)"></td>
 
-          <td><a routerLink="/inbound/receipt-maintenance" routerLinkActive="active"
-              [queryParams]="{receiptNumber : data.number}">
-              {{ data.number }}</a></td>
+          <td>
+            
+            <a routerLink="/inbound/receipt-maintenance" routerLinkActive="active"
+              [queryParams]="{receiptNumber : data.number}" *ngIf="!displayOnly">
+              {{ data.number }}</a>
+            <span *ngIf="displayOnly">{{data.number}}</span>
+            </td>
           <td>
             <nz-skeleton-element 
             *ngIf="data.clientId && data.client == null"
@@ -157,7 +161,7 @@
           <td>{{ data.totalExpectedQuantity }}</td>
           <td>{{ data.totalReceivedQuantity }}</td>
           <td>
-            <button  
+            <button  *ngIf="!displayOnly"
                 nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
               {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
               <nz-dropdown-menu #menu="nzDropdownMenu">
@@ -299,7 +303,7 @@
                    
 
                   <button nz-button (click)="openAddReceiptLineActivityModal(data, receiptLine, tplBillableActivityModalTitle, 
-                      tplBillableActivityModalContent, tplBillableActivityModalFooter)">
+                      tplBillableActivityModalContent, tplBillableActivityModalFooter)" *ngIf="!displayOnly">
                   {{ 'billable-activity-type.add' | i18n }}
                   </button>
 
@@ -349,7 +353,7 @@
 
                  </ng-template>
                   <ng-template st-row="actionColumn" let-billableActivity let-index="index">
-                     <button nz-button nzDanger (click)="removeReceiptBillableActivity(data, billableActivity)">
+                     <button nz-button nzDanger (click)="removeReceiptBillableActivity(data, billableActivity)" *ngIf="!displayOnly">
                       {{'remove' | i18n}}
                      </button>
 
@@ -363,7 +367,7 @@
       </ng-template>
     </tbody>
   </nz-table>
-  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
     <button nz-button nzDanger (click)="removeSelectedReceipts()">
       {{ 'delete' | i18n }}
     </button>
