@@ -23,7 +23,8 @@ export class AuthRoleMenuComponent implements OnInit {
   webMenuList: TransferItem[] = [];
   mobileMenuList: TransferItem[] = [];
   currentRole: Role | undefined;
-  accessibleMenuIds: number[] = [];
+  fullyAccessibleMenuIds: number[] = [];
+  displayOnlyAccessibleMenuIds: number[] = [];
   allMenus: MenuGroup[] | undefined;
   unassignedMenuText: string;
   assignedMenuText: string;
@@ -72,35 +73,21 @@ export class AuthRoleMenuComponent implements OnInit {
     // Get all menus and accessible menus by role
     this.menuService.getMenus().subscribe(menuRes => {
       this.allMenus = menuRes;
-      this.accessibleMenuIds = [];
-      // If we are not creating a new role, check which menus the existing
-      // role has access to
-      if (!this.newRole) {
-        this.roleService.getAccessibleMenus(this.currentRole!.id).subscribe(accessibleMenus => {
-          // console.log(`accessibleMenus: ${JSON.stringify(accessibleMenus)}`);
-          // Save all the accessible menus id so that
-          // we can show them in the right side of the transfer-able list control
-          // all the un-accessible menus will be displayed in the left side
-          accessibleMenus.forEach(menuGroup => {
-            menuGroup.children.forEach(menuSubGroup => {
-              menuSubGroup.children.forEach(menu => {
-                this.accessibleMenuIds.push(menu.id);
-              });
-            });
-          });
-          this.loadMenuList();
-        });
-      } else {
-        this.currentRole!.menuGroups.forEach(menuGroup => {
-          menuGroup.children.forEach(menuSubGroup => {
-            menuSubGroup.children.forEach(menu => {
-              this.accessibleMenuIds.push(menu.id);
-            });
-          });
-        });
-        console.log(`this.accessibleMenuIds:${this.accessibleMenuIds}`);
-        this.loadMenuList();
-      }
+      this.fullyAccessibleMenuIds = [];
+      this.displayOnlyAccessibleMenuIds = []; 
+  
+      this.currentRole!.roleMenus.forEach(
+          roleMenu => {
+            if (roleMenu.displayOnlyFlag) {
+              this.displayOnlyAccessibleMenuIds.push(roleMenu.menu.id);
+            }
+            else {              
+              this.fullyAccessibleMenuIds.push(roleMenu.menu.id);
+            }
+          }
+      );
+      this.loadMenuList();
+  
     });
   }
 
@@ -120,7 +107,8 @@ export class AuthRoleMenuComponent implements OnInit {
               description: `${this.i18n.fanyi(menuGroup.i18n)} / ${this.i18n.fanyi(
                 menuSubGroup.i18n,
               )} / ${this.i18n.fanyi(menu.i18n)}`,
-              direction: this.accessibleMenuIds.some(id => menu.id === id) ? 'right' : undefined,
+              direction: this.fullyAccessibleMenuIds.some(id => menu.id === id) ||
+                          this.displayOnlyAccessibleMenuIds.some(id => menu.id === id) ? 'right' : undefined,
             });
           }
           else {
@@ -133,7 +121,9 @@ export class AuthRoleMenuComponent implements OnInit {
               description: `${this.i18n.fanyi(menuGroup.i18n)} / ${this.i18n.fanyi(
                 menuSubGroup.i18n,
               )} / ${this.i18n.fanyi(menu.i18n)}`,
-              direction: this.accessibleMenuIds.some(id => menu.id === id) ? 'right' : undefined,
+              direction:  this.fullyAccessibleMenuIds.some(id => menu.id === id) ||
+                             this.displayOnlyAccessibleMenuIds.some(id => menu.id === id) ? 'right' : undefined,
+              displayOnly: this.displayOnlyAccessibleMenuIds.some(id => menu.id === id)
             });
           }
         });
@@ -168,16 +158,36 @@ export class AuthRoleMenuComponent implements OnInit {
     this.processingMenu = true;
     const currentAssignedMenuIds = [...this.webMenuList.filter(item => item.direction === 'right').map(item => item.key), 
        ...this.mobileMenuList.filter(item => item.direction === 'right').map(item => item.key)]; 
+
        
-    const newlyAssignedMenuIds = currentAssignedMenuIds.filter(
-      id => !this.accessibleMenuIds.some(accessibleMenuId => accessibleMenuId === +id),
-    );
+   //  const newlyAssignedFullyFunctionalMenuIds = currentAssignedMenuIds.filter(
+   //    id => !this.accessibleMenuIds.some(accessibleMenuId => accessibleMenuId === +id) 
+   //  );
+   const newlyAssignedFullyFunctionalWebMenuIds = 
+      [...this.webMenuList.filter(item => item.direction === 'right' && !item.displayOnly).map(item => item.key)]; 
+   
+    //  const newlyAssignedDisplayOnlyMenuIds = currentAssignedMenuIds.filter(
+    //    id => !this.accessibleMenuIds.some(accessibleMenuId => accessibleMenuId === +id),
+    //  );
+   const newlyAssignedDisplayOnlyWebMenuIds = 
+       [...this.webMenuList.filter(item => item.direction === 'right' && item.displayOnly).map(item => item.key)]; 
 
-    const newlyDeassignedMenuIds = this.accessibleMenuIds.filter(
+    const newlyDeassignedMenuIds = 
+    [...this.fullyAccessibleMenuIds.filter(
       accessibleMenuId => !currentAssignedMenuIds.some(id => accessibleMenuId === +id),
-    );
+      ),
+      ...this.displayOnlyAccessibleMenuIds.filter(
+        accessibleMenuId => !currentAssignedMenuIds.some(id => accessibleMenuId === +id),
+      ), 
+    ];
 
-    this.roleService.processMenus(this.currentRole!.id, newlyAssignedMenuIds, newlyDeassignedMenuIds).subscribe(
+    console.log(`start to assign menu with`);
+    console.log(`========    newlyAssignedFullyFunctionalWebMenuIds   ========== `);
+    console.log(`${JSON.stringify(newlyAssignedFullyFunctionalWebMenuIds)}`);
+    console.log(`========    newlyAssignedDisplayOnlyWebMenuIds   ========== `);
+    console.log(`${JSON.stringify(newlyAssignedDisplayOnlyWebMenuIds)}`);  
+    this.roleService.processMenus(this.currentRole!.id, newlyAssignedFullyFunctionalWebMenuIds, 
+      newlyAssignedDisplayOnlyWebMenuIds, newlyDeassignedMenuIds).subscribe(
       {
         next: () => {
           
@@ -189,7 +199,7 @@ export class AuthRoleMenuComponent implements OnInit {
           }, 500);
         }, 
         error: () =>  this.processingMenu = false
-    });
+    }); 
   }
 
   goToNextPage(): void {

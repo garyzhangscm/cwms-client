@@ -49,7 +49,16 @@
         <nz-transfer [nzDataSource]="webMenuList" nzShowSearch [nzFilterOption]="transferListFilterOption"
           (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
           (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
-          [nzTitles]="[ unassignedMenuText, assignedMenuText]">
+          [nzTitles]="[ unassignedMenuText, assignedMenuText]" [nzRender]="render">
+
+          
+          <ng-template #render let-menu> 
+            {{ menu.title }} 
+            <nz-switch *ngIf="menu.direction == 'right'" style="padding-left: 10px"
+            [(ngModel)]="menu.displayOnly" nzCheckedChildren="{{'displayOnly'|i18n}}" nzUnCheckedChildren="{{'displayOnly'|i18n}}"></nz-switch>
+      
+          </ng-template>
+
         </nz-transfer>
       </div>
     </div>

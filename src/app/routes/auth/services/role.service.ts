@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { UtilService } from '../../util/services/util.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { MenuGroup } from '../models/menu-group';
 import { MenuSubGroup } from '../models/menu-sub-group';
@@ -16,6 +17,7 @@ import { Role } from '../models/role';
 export class RoleService {
   constructor(private http: _HttpClient, 
     private warehouseService: WarehouseService, 
+    private companyService: CompanyService,
     private utilService: UtilService) {}
 
   getRoles(name?: string, enabled?: boolean): Observable<Role[]> {
@@ -48,16 +50,23 @@ export class RoleService {
     return this.http.get(`resource/roles/${id}/menus`).pipe(map(res => res.data));
   }
 
-  processMenus(roleId: number, assignedMenuIds: number[], deassignedMenuIds: number[]) {
-    if (assignedMenuIds.length === 0 && deassignedMenuIds.length === 0) {
+  processMenus(roleId: number, assignedFullyFunctionalMenuIds: number[], assignedDisplayOnlyMenuIds: number[], deassignedMenuIds: number[]) {
+    if (assignedFullyFunctionalMenuIds.length === 0 && deassignedMenuIds.length === 0
+        && assignedDisplayOnlyMenuIds.length === 0) {
       return of(`succeed`);
     } else {
-      const url = `resource/roles/${roleId}/menus?assigned=${assignedMenuIds.join(
-        ',',
-      )}&deassigned=${deassignedMenuIds.join(',')}`;
-      return this.http.post(url).pipe(map(res => res.data));
+      const url = `resource/roles/${roleId}/menus`
+      
+      
+      let params = new HttpParams(); 
+
+      params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
+      params = params.append('assignedFullyFunctionalMenuIds', assignedFullyFunctionalMenuIds.join(',')); 
+      params = params.append('assignedDisplayOnlyMenuIds', assignedDisplayOnlyMenuIds.join(',')); 
+      params = params.append('deassigned', deassignedMenuIds.join(',')); 
+      return this.http.post(url, null, params).pipe(map(res => res.data));
     }
-  }
+  } 
 
   processUsers(roleId: number, assignedUserIds: number[], deassignedUserIds: number[]) {
     if (assignedUserIds.length === 0 && deassignedUserIds.length === 0) {

@@ -29,6 +29,7 @@ export class AuthRoleMaintenanceComponent implements OnInit {
     clientAccesses:  [], 
     nonClientDataAccessible: false,
     allClientAccess:  true,
+    roleMenus: []
   };
 
   constructor(
