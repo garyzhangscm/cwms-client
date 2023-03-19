@@ -7,4 +7,5 @@ export interface SiloConfiguration {
     webAPIUsername: string;
     webAPIPassword: string;
     enabled: boolean;
+    inventoryInformationFromWMS: boolean;
 }

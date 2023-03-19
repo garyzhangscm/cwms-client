@@ -35,7 +35,8 @@ export class WorkOrderSiloConfigurationComponent implements OnInit {
           webAPIUrl:  "",
           webAPIUsername:  "",
           webAPIPassword:  "",
-          enabled: true
+          enabled: true,
+          inventoryInformationFromWMS: true
       }
 
   }
@@ -69,12 +70,12 @@ export class WorkOrderSiloConfigurationComponent implements OnInit {
       this.siloConfigurationService.changeSiloConfiguration(this.currentSiloConfiguration)
       .subscribe({
 
-        next: () =>  {
+        next: (siloConfigurationRes) =>  {
           this.messageService.success(this.i18n.fanyi('message.action.success'))
         
+          this.currentSiloConfiguration = siloConfigurationRes;
           this.isSpinning = false;
-
-          this.loadConfiguration();
+          // this.loadConfiguration();
         }
         , 
         error: () =>  this.isSpinning = false
@@ -84,11 +85,12 @@ export class WorkOrderSiloConfigurationComponent implements OnInit {
       this.siloConfigurationService.addSiloConfiguration(this.currentSiloConfiguration)
       .subscribe({
 
-        next: () =>  {
+        next: (siloConfigurationRes) =>  {
           this.messageService.success(this.i18n.fanyi('message.action.success'))
         
+          this.currentSiloConfiguration = siloConfigurationRes;
           this.isSpinning = false;
-          this.loadConfiguration();
+          // this.loadConfiguration();
         }
         , 
         error: () =>  this.isSpinning = false

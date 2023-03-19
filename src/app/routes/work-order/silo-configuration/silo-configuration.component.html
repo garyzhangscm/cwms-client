@@ -61,13 +61,23 @@
         </div>
     </div> 
     <div nz-row [nzGutter]="24" >
-        <div nz-col [nzSpan]="8">
-            <nz-form-item>
-              <nz-form-label [nzSpan]="14">
-                {{ 'enabled' | i18n }}
-              </nz-form-label>
+        <div nz-col [nzSpan]="2"> 
+        </div>
+        <div nz-col [nzSpan]="8"> 
+            <nz-form-item> 
               <nz-form-control [nzSpan]="10">
-                <label nz-checkbox [(ngModel)]="currentSiloConfiguration.enabled"></label>
+                <label nz-checkbox [(ngModel)]="currentSiloConfiguration.enabled">{{ 'enabled' | i18n }}</label>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+    </div>
+    <div nz-row [nzGutter]="24" >
+        <div nz-col [nzSpan]="2"> 
+        </div>
+        <div nz-col [nzSpan]="8">
+            <nz-form-item> 
+              <nz-form-control [nzSpan]="10">
+                <label nz-checkbox [(ngModel)]="currentSiloConfiguration.inventoryInformationFromWMS">{{ 'inventoryInformationFromWMS' | i18n }}</label>
               </nz-form-control>
             </nz-form-item>
           </div>
