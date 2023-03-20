@@ -1,11 +1,9 @@
 <page-header></page-header>
 
-<h1>Silo Monitor</h1>
-
-
 <st #st [data]="siloeDevices"  [columns]="columns"  >
 
-    <ng-template st-row="actionColumn" let-item let-index="index"> 
+    <ng-template st-row="itemColumn" let-siloDevice let-index="index"> 
+        {{ siloDevice.itemName != null ? siloDevice.itemName : siloDevice.MATERIAL }}
          
    </ng-template>
 </st>

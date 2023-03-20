@@ -6,5 +6,6 @@ export interface SiloDevice {
     DISTANCE: number;
     SMU_TIMESTAMP: number;
     STATUS_CDE: string;
+    itemName: string;
 
 }

@@ -20,7 +20,7 @@ export class WorkOrderSiloMonitorComponent implements OnInit {
     { title: this.i18n.fanyi("locationName"), index: 'LOCATION_NAME' },    
     { title: this.i18n.fanyi("name"), index: 'NAME' },   
     { title: this.i18n.fanyi("deviceId"), index: 'DEVICE_ID' },   
-    { title: this.i18n.fanyi("material"), index: 'MATERIAL' },   
+    { title: this.i18n.fanyi("material"), render: "itemColumn" },   
     { title: this.i18n.fanyi("distance"), index: 'DISTANCE' , type: "number"},   
     { title: this.i18n.fanyi("timeStamp"), index: 'SMU_TIMESTAMP', type: "date"},     
     { title: this.i18n.fanyi("statusCode"), index: 'STATUS_CDE' },     
