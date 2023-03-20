@@ -125,7 +125,7 @@ export class InboundReceiptComponent implements OnInit {
     },
   ];
 
-  displayOnly = false;
+  displayOnly = false; 
 
   listOfSelection = [
     {
@@ -189,6 +189,7 @@ export class InboundReceiptComponent implements OnInit {
     private userService: UserService
   ) { 
     this.displayOnly = userService.isCurrentPageDisplayOnly("/inbound/receipt");
+    console.log(`/inbound/receipt page is display? ${this.displayOnly}`)
   }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inbound.receipt'));

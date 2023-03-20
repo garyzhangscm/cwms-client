@@ -118,7 +118,7 @@
             </nz-table>
             </nz-tab>
             <nz-tab nzTitle="{{'menu.main.auth.menu' | i18n}}">
-                <nz-table  #menuTable [nzData]="data.menus" nzSize="middle"
+                <nz-table  #menuTable [nzData]="data.roleMenus" nzSize="middle"
                   [nzShowPagination]="true">
                   <thead>
                     <tr>
@@ -133,16 +133,17 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let menu of menuTable.data">
+                    <tr *ngFor="let roleMenu of menuTable.data">
                       <td>
-                        {{ menu.menuGroup }}</td>
-                      <td>{{ menu.menuSubGroup }}</td>
-                      <td>{{ menu.i18n | i18n }}</td>
-                      <td>{{ menu.sequence }} </td>
-                      <td>{{ menu.i18n }}</td>
-                      <td>{{ menu.link }}</td>
+                        {{ roleMenu.menu.menuGroup }}</td>
+                      <td>{{ roleMenu.menu.menuSubGroup }}</td>
+                      <td>{{ roleMenu.menu.i18n | i18n }}</td>
+                      <td>{{ roleMenu.menu.sequence }} </td>
+                      <td>{{ roleMenu.menu.i18n }}</td>
+                      <td>{{ roleMenu.menu.link }}</td>
+                      <td>{{ roleMenu.displayOnlyFlag }}</td>
                       <td>
-                        <button nz-button (click)="deassignMenu(data.id!, menu.id)">{{ 'role.unassign-menu' | i18n }}</button>
+                        <button nz-button (click)="deassignMenu(data.id!, roleMenu.menu.id)">{{ 'role.unassign-menu' | i18n }}</button>
                       </td>
                     </tr>
                   </tbody>

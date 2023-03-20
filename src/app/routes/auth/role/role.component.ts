@@ -13,6 +13,7 @@ import { UtilService } from '../../util/services/util.service';
 import { Menu } from '../models/menu';
 import { MenuGroup } from '../models/menu-group';
 import { Role } from '../models/role';
+import { RoleMenu } from '../models/role-menu';
 import { User } from '../models/user';
 import { MenuService } from '../services/menu.service';
 import { RoleService } from '../services/role.service';
@@ -121,11 +122,11 @@ export class AuthRoleComponent implements OnInit {
   ];
 
 
-  listOfMenuTableColumns: Array<ColumnItem<Menu>> = [
+  listOfMenuTableColumns: Array<ColumnItem<RoleMenu>> = [
     {
       name: 'menuGroup',
       sortOrder: null,
-      sortFn: (a: Menu, b: Menu) => a.menuGroup!.localeCompare(b.menuGroup!),
+      sortFn: (a: RoleMenu, b: RoleMenu) => a.menu.menuGroup!.localeCompare(b.menu.menuGroup!),
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
@@ -135,7 +136,7 @@ export class AuthRoleComponent implements OnInit {
     {
       name: 'menuSubGroup',
       sortOrder: null,
-      sortFn: (a: Menu, b: Menu) => a.menuSubGroup!.localeCompare(b.menuSubGroup!),
+      sortFn: (a: RoleMenu, b: RoleMenu) => a.menu.menuSubGroup!.localeCompare(b.menu.menuSubGroup!),
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
@@ -145,7 +146,7 @@ export class AuthRoleComponent implements OnInit {
     {
       name: 'name',
       sortOrder: null,
-      sortFn: (a: Menu, b: Menu) => a.i18n!.localeCompare(b.i18n!),
+      sortFn: (a: RoleMenu, b: RoleMenu) => a.menu.i18n!.localeCompare(b.menu.i18n!),
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
@@ -155,7 +156,7 @@ export class AuthRoleComponent implements OnInit {
     {
       name: 'sequence',
       sortOrder: null,
-      sortFn: (a: Menu, b: Menu) => a.sequence - b.sequence,
+      sortFn: (a: RoleMenu, b: RoleMenu) => a.menu.sequence - b.menu.sequence,
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
@@ -165,7 +166,7 @@ export class AuthRoleComponent implements OnInit {
     {
       name: 'menu.i18n',
       sortOrder: null,
-      sortFn: (a: Menu, b: Menu) => a.i18n!.localeCompare(b.i18n!),
+      sortFn: (a: RoleMenu, b: RoleMenu) => a.menu.i18n!.localeCompare(b.menu.i18n!),
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
@@ -175,7 +176,17 @@ export class AuthRoleComponent implements OnInit {
     {
       name: 'link',
       sortOrder: null,
-      sortFn: (a: Menu, b: Menu) => a.link!.localeCompare(b.link!),
+      sortFn: (a: RoleMenu, b: RoleMenu) => a.menu.link!.localeCompare(b.menu.link!),
+      sortDirections: ['ascend', 'descend', null],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'displayOnly',
+      sortOrder: null,
+      sortFn: (a: RoleMenu, b: RoleMenu) => this.utilService.compareBoolean(a.displayOnlyFlag, b.displayOnlyFlag),
       sortDirections: ['ascend', 'descend', null],
       filterMultiple: true,
       listOfFilter: [],
@@ -433,18 +444,18 @@ export class AuthRoleComponent implements OnInit {
     this.allMenus.forEach(menuGroup => {
       menuGroup.children.forEach(menuSubGroup => {
         menuSubGroup.children.forEach(menu => {
-          role.menus.forEach(assignedMenu => {
-            if (assignedMenu.id === menu.id) {
-              assignedMenu.menuGroup = this.i18n.fanyi(menuGroup.i18n);
-              assignedMenu.menuSubGroup = this.i18n.fanyi(menuSubGroup.i18n);
-              assignedMenu.overallSequence = menuGroup.sequence * 10000 + menuSubGroup.sequence * 100 + menu.sequence;
+          role.roleMenus.forEach(assignedMenu => {
+            if (assignedMenu.menu.id === menu.id) {
+              assignedMenu.menu.menuGroup = this.i18n.fanyi(menuGroup.i18n);
+              assignedMenu.menu.menuSubGroup = this.i18n.fanyi(menuSubGroup.i18n);
+              assignedMenu.menu.overallSequence = menuGroup.sequence * 10000 + menuSubGroup.sequence * 100 + menu.sequence;
             }
           });
         });
       });
     });
     // Let's sort the menus based on the sequence of menu group / menu sub group / menu
-    role.menus.sort((a, b) => a.overallSequence! - b.overallSequence!);
+    role.roleMenus.sort((a, b) => a.menu.overallSequence! - b.menu.overallSequence!);
     this.tabIndex = tabIndex;
 
     // load the client information
