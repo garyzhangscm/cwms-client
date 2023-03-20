@@ -5,6 +5,7 @@ import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { ItemService } from '../../inventory/services/item.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
@@ -147,14 +148,18 @@ export class OutboundShortAllocationComponent implements OnInit {
   indeterminate = false;
   isSpinning = false;
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private shortAllocationService: ShortAllocationService,
     private messageService: NzMessageService,
+    private userService: UserService,
     private utilService: UtilService, 
-  ) { }
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/short-allocation");
+  }
 
   ngOnInit(): void {
     // initiate the search form

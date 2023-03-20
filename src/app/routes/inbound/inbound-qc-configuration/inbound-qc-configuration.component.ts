@@ -5,13 +5,11 @@ import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
 
+import { UserService } from '../../auth/services/user.service';
 import { Supplier } from '../../common/models/supplier';
-import { SupplierService } from '../../common/services/supplier.service';
-import { ItemService } from '../../inventory/services/item.service';
+import { SupplierService } from '../../common/services/supplier.service'; 
 import { InboundQcConfiguration } from '../models/inbound-qc-configuration';
 import { InboundQcConfigurationService } from '../services/inbound-qc-configuration.service';
 
@@ -22,16 +20,17 @@ import { InboundQcConfigurationService } from '../services/inbound-qc-configurat
 })
 export class InboundInboundQcConfigurationComponent implements OnInit {
 
-  constructor(private http: _HttpClient,    
+  displayOnly = false;
+  constructor( 
               private fb: UntypedFormBuilder,
-              @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-              private modalService: NzModalService, 
-              private messageService: NzMessageService,
+              @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
               private inboundQCConfigurationService: InboundQcConfigurationService,
               private router: Router,
-              private supplierService: SupplierService,
-              private itemService: ItemService,
+              private supplierService: SupplierService, 
+              private userService: UserService,
               ) { 
+                
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/inbound/inbound-qc-configuration");
 
   }
 

@@ -5,6 +5,7 @@ import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 
+import { UserService } from '../../auth/services/user.service';
 import { AllocationTransactionHistory } from '../models/allocation-transaction-history';
 import { AllocationTransactionHistoryService } from '../services/allocation-transaction-history.service';
 
@@ -77,10 +78,15 @@ export class OutboundAllocationTransactionHistoryComponent implements OnInit {
   }
 
 
+  displayOnly = false;
   constructor(private http: _HttpClient,
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private allocationTransactionHistoryService: AllocationTransactionHistoryService) { }
+    private userService: UserService,
+    private allocationTransactionHistoryService: AllocationTransactionHistoryService) { 
+      
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/allocation-transaction-history");
+    }
 
   ngOnInit(): void { 
     this.searchForm = this.fb.group({

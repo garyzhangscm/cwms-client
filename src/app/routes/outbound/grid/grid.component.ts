@@ -4,6 +4,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { GridConfiguration } from '../models/grid-configuration';
 import { GridDistributionWork } from '../models/grid-distribution-work';
@@ -115,6 +116,7 @@ export class OutboundGridComponent implements OnInit {
 
   @ViewChild('itemNameTextBox', { static: true }) itemNameTextBox!: ElementRef;
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     private gridConfigurationService: GridConfigurationService,
@@ -123,7 +125,10 @@ export class OutboundGridComponent implements OnInit {
     private messageService: NzMessageService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private inventoryService: InventoryService,
-  ) { }
+    private userService: UserService,
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/grid");
+  }
 
   ngOnInit(): void {
     // Let's get all grids defined in the system

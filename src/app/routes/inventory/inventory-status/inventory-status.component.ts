@@ -8,6 +8,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { InventoryStatus } from '../models/inventory-status';
 import { InventoryStatusService } from '../services/inventory-status.service';
 
@@ -37,6 +38,7 @@ export class InventoryInventoryStatusComponent implements OnInit {
   searchForm!: UntypedFormGroup;
   searchResult = '';
 
+  displayOnly = false;
   constructor(private http: _HttpClient,
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
@@ -45,7 +47,11 @@ export class InventoryInventoryStatusComponent implements OnInit {
     private messageService: NzMessageService,
     private router: Router, 
     private activatedRoute: ActivatedRoute,
-    private titleService: TitleService,   ) { }
+    private titleService: TitleService,  
+    private userService: UserService, ) {
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/status");
+    
+    }
 
     ngOnInit(): void {
       this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.status'));

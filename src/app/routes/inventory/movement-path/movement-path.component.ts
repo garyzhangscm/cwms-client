@@ -4,6 +4,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
@@ -105,6 +106,7 @@ export class InventoryMovementPathComponent implements OnInit {
     this.isCollapse = !this.isCollapse;
   }
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     private movementPathService: MovementPathService,
@@ -112,7 +114,11 @@ export class InventoryMovementPathComponent implements OnInit {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private utilService: UtilService,
-  ) { }
+    private userService: UserService,
+  ) {
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/movement-path");
+  
+  }
 
   resetForm(): void {
     this.searchForm.reset();

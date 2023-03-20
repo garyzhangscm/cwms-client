@@ -4,6 +4,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { Carton } from '../models/carton';
@@ -99,14 +100,17 @@ export class OutboundCartonComponent implements OnInit {
   editId!: number;
   editCol!: string | null;
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     private cartonService: CartonService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-
+    private userService: UserService,
     private messageService: NzMessageService,
     private utilService: UtilService,
-  ) { }
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/carton");
+  }
 
   ngOnInit(): void {
     // initiate the search form

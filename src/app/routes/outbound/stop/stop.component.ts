@@ -7,6 +7,7 @@ import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { TrailerAppointment } from '../../transportation/models/trailer-appointment';
 import { TrailerAppointmentStatus } from '../../transportation/models/trailer-appointment-status.enum';
 import { TrailerAppointmentType } from '../../transportation/models/trailer-appointment-type.enum';
@@ -59,13 +60,17 @@ export class OutboundStopComponent implements OnInit {
    
   ];
 
+  displayOnly = false;
   constructor(private http: _HttpClient, 
     private stopService: StopService,
     private titleService: TitleService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private messageService: NzMessageService,
     private activatedRoute: ActivatedRoute, 
-    private fb: UntypedFormBuilder,) { }
+    private userService: UserService,
+    private fb: UntypedFormBuilder,) {
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/stop");
+     }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.stop'));

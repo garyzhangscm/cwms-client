@@ -8,6 +8,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { TrailerAppointment } from '../../transportation/models/trailer-appointment';
 import { TrailerAppointmentStatus } from '../../transportation/models/trailer-appointment-status.enum';
 import { TrailerAppointmentType } from '../../transportation/models/trailer-appointment-type.enum';
@@ -73,7 +74,8 @@ export class OutboundLoadComponent implements OnInit {
    
   ];
 
-  constructor(private http: _HttpClient, 
+  displayOnly = false;
+  constructor( 
     private trailerAppointmentService: TrailerAppointmentService,
     private titleService: TitleService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -85,7 +87,10 @@ export class OutboundLoadComponent implements OnInit {
     private modalService: NzModalService,
     private shortAllocationService: ShortAllocationService,
     private billOfMaterialService: BillOfMaterialService,
-    private fb: UntypedFormBuilder,) { }
+    private userService: UserService,
+    private fb: UntypedFormBuilder,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/load");
+    }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.load'));

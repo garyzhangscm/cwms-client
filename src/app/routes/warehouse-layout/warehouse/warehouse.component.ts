@@ -5,6 +5,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 
+import { UserService } from '../../auth/services/user.service';
 import { Warehouse } from '../models/warehouse';
 import { WarehouseService } from '../services/warehouse.service';
 
@@ -20,12 +21,16 @@ export class WarehouseLayoutWarehouseComponent implements OnInit {
   // Edit form on modal
   // warehouseForm: FormGroup;
 
+  displayOnly = false;
   constructor(
     private warehouseService: WarehouseService,
     private modalService: NzModalService,
     private message: NzMessageService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-  ) { }
+    private userService: UserService,
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/warehouse-layout/warehouse");
+  }
 
   ngOnInit(): void {
     this.listWarehouses();

@@ -7,6 +7,7 @@ import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { ListPickConfiguration } from '../models/list-pick-configuration';
@@ -53,6 +54,7 @@ export class OutboundListPickConfigurationComponent implements OnInit {
    
   clients: Client[] = [];
   
+  displayOnly = false;
   constructor(private http: _HttpClient,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
@@ -60,8 +62,11 @@ export class OutboundListPickConfigurationComponent implements OnInit {
     private listPickConfigurationService: ListPickConfigurationService,
     private messageService: NzMessageService,
     private router: Router, 
+    private userService: UserService,
     private localCacheService: LocalCacheService,
-    private fb: UntypedFormBuilder,) { }
+    private fb: UntypedFormBuilder,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/list-pick-configuration");
+    }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.list-pick-configuration'));

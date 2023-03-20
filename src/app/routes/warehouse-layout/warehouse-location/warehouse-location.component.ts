@@ -7,6 +7,7 @@ import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { UnitType } from '../../common/models/unit-type';
 import { UnitService } from '../../common/services/unit.service';
 import { ColumnItem } from '../../util/models/column-item';
@@ -248,6 +249,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
 
   locationStatuses = LocationStatus;
 
+  displayOnly = false;
   constructor(
     private activatedRoute: ActivatedRoute,
     private fb: UntypedFormBuilder,
@@ -259,7 +261,11 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
     private messageService: NzMessageService,
     private utilService: UtilService,
     private unitService: UnitService,
-  ) { }
+    private userService: UserService,
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/warehouse-layout/warehouse-location");
+  
+  }
   ngOnInit(): void {
     // initiate the search form
     this.searchForm = this.fb.group({

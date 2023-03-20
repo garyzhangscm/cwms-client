@@ -6,6 +6,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { saveAs } from 'file-saver';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { InventorySnapshot } from '../models/inventory-snapshot';
@@ -82,13 +83,17 @@ export class InventoryInventorySnapshotComponent implements OnInit {
   listOfAllInventorySnapshots: InventorySnapshot[] = [];
   listOfDisplayInventorySnapshots: InventorySnapshot[] = [];
 
+  displayOnly = false;
   constructor(private http: _HttpClient,
     private fb: UntypedFormBuilder,
     private inventorySnapshotService: InventorySnapshotService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private messageService: NzMessageService,
-    private utilService: UtilService,) { }
+    private utilService: UtilService,
+    private userService: UserService,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/snapshot");
+    }
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.snapshot'));

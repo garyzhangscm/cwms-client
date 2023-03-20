@@ -6,6 +6,7 @@ import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { ItemFamily } from '../models/item-family';
@@ -75,13 +76,18 @@ export class InventoryItemFamilyComponent implements OnInit {
 
   @ViewChild(NzInputDirective, { static: false, read: ElementRef }) inputElement!: ElementRef;
 
+  displayOnly = false;
   constructor(
     private itemFamilyService: ItemFamilyService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private messageService: NzMessageService,
     private utilService: UtilService,
-  ) { }
+    private userService: UserService,
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/item-family");
+  
+  }
 
   search(refresh: boolean = false): void {
     this.itemFamilyService.loadItemFamilies(refresh).subscribe(itemFamilyRes => {

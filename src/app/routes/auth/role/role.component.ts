@@ -322,6 +322,7 @@ export class AuthRoleComponent implements OnInit {
   searchResult = '';
 
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -332,8 +333,10 @@ export class AuthRoleComponent implements OnInit {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private utilService: UtilService,
-    private localCacheService: LocalCacheService,
-  ) { }
+    private localCacheService: LocalCacheService, 
+  ) {
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/auth/role");
+   }
 
   // Form related data and functions
   searchForm!: UntypedFormGroup;

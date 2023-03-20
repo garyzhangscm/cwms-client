@@ -7,6 +7,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService, NzModalState } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
 import { ReasonCode } from '../../common/models/reason-code';
 import { ReasonCodeType } from '../../common/models/reason-code-type.enum';
@@ -188,6 +189,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   ];
 
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     private locationService: LocationService,
@@ -207,7 +209,9 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     private utilService: UtilService,
     private clientService: ClientService,
     private localCacheService: LocalCacheService,
+    private userService: UserService,
   ) {
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/inventory-adjust");
     this.pageTitle = this.i18n.fanyi('page.inventory.adjust.header.title');
   }
 

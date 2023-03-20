@@ -4,11 +4,9 @@ import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
 
-import { InboundQcConfiguration } from '../../inbound/models/inbound-qc-configuration';
+import { UserService } from '../../auth/services/user.service'; 
 import { QCRule } from '../models/qc-rule';
 import { QcRuleService } from '../services/qc-rule.service';
 
@@ -18,15 +16,17 @@ import { QcRuleService } from '../services/qc-rule.service';
   styleUrls: ['./qc-rule.component.less'],
 })
 export class QcQcRuleComponent implements OnInit {
-  constructor(private http: _HttpClient,    
+  
+  displayOnly = false;
+  constructor(  
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private modalService: NzModalService, 
-    private messageService: NzMessageService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private qcRuleService: QcRuleService,
+    private userService: UserService,
     private router: Router, 
     private activatedRoute: ActivatedRoute,
     ) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/qc/rules");
 
 }
 

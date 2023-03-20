@@ -6,6 +6,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { Item } from '../../inventory/models/item';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
@@ -135,15 +136,20 @@ export class InboundPutawayConfigurationComponent implements OnInit {
   searching = false;
   searchResult = '';
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     private putawayConfigurationService: PutawayConfigurationService,
     private inventoryStatusService: InventoryStatusService,
     private itemService: ItemService,
     private modalService: NzModalService,
+    private userService: UserService,
     private router: Router,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-  ) { }
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/inbound/putaway-configuration");
+  
+  }
   ngOnInit(): void {
     // initiate the search form
     this.searchForm = this.fb.group({

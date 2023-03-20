@@ -9,6 +9,7 @@ import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { BillableActivityType } from '../../billing/models/billable-activity-type';
 import { BillableActivityTypeService } from '../../billing/services/billable-activity-type.service';
 import { Client } from '../../common/models/client';
@@ -83,6 +84,7 @@ export class OutboundOrderComponent implements OnInit {
   // a bom to create work order for short allocation
   displayBom: BillOfMaterial | undefined;
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -107,10 +109,14 @@ export class OutboundOrderComponent implements OnInit {
     private easyPostConfigurationService: EasyPostConfigurationService,
     private customerService: CustomerService,
     private clientService: ClientService,
+    private userService: UserService,
     private billableActivityTypeService: BillableActivityTypeService,
     private orderLineService: OrderLineService,
     private warehouseService: WarehouseService,
-  ) { }
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/order");
+  
+  }
 
   printerModal!: NzModalRef;
   printerForm!: UntypedFormGroup;

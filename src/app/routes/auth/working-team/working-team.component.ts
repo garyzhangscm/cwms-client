@@ -129,6 +129,7 @@ export class AuthWorkingTeamComponent implements OnInit {
   searching = false;
   searchResult = '';
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     private activatedRoute: ActivatedRoute,
@@ -137,8 +138,10 @@ export class AuthWorkingTeamComponent implements OnInit {
     private messageService: NzMessageService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
-    private utilService: UtilService,
-  ) { }
+    private utilService: UtilService, 
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/auth/working-team");
+  }
 
   // Form related data and functions
   searchForm!: UntypedFormGroup;

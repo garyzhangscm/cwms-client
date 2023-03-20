@@ -5,6 +5,7 @@ import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { Unit } from '../../common/models/unit';
 import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { UnitType } from '../../common/models/unit-type';
@@ -51,6 +52,7 @@ export class InventoryInventoryConfigurationComponent implements OnInit {
   // current item package type
   availableUnitOfMeasuresForAdding: UnitOfMeasure[] = [];
   
+  displayOnly = false;
   constructor( 
     private fb: UntypedFormBuilder, 
     private inventoryConfigurationService: InventoryConfigurationService,
@@ -60,7 +62,10 @@ export class InventoryInventoryConfigurationComponent implements OnInit {
     private unitOfMeasureService: UnitOfMeasureService,
     private modalService: NzModalService,
     private unitService: UnitService,
+    private userService: UserService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) { 
+
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/configuration");
 
       this.currentInventoryConfiguration = { 
         companyId: this.companyService.getCurrentCompany()!.id,

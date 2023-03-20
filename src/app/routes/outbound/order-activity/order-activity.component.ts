@@ -5,6 +5,7 @@ import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 
+import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
 import { InventoryActivity } from '../../inventory/models/inventory-activity';
 import { ItemFamily } from '../../inventory/models/item-family';
@@ -32,12 +33,16 @@ export class OutboundOrderActivityComponent implements OnInit {
     this.isCollapse = !this.isCollapse;
   }
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     private orderActivityService: OrderActivityService, 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private userService: UserService,
     private titleService: TitleService, 
-  ) { }
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/order-activity");
+  }
 
   resetForm(): void {
     this.searchForm.reset();

@@ -10,6 +10,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { RF } from '../../util/models/rf';
 import { Department } from '../models/department';
 import { DepartmentService } from '../services/department.service';
+import { UserService } from '../services/user.service';
 
 @Component({
   selector: 'app-auth-department',
@@ -46,6 +47,7 @@ export class AuthDepartmentComponent implements OnInit {
   departments: Department[] = [];
   searchResult = "";
    
+  displayOnly = false;
   constructor(private http: _HttpClient,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
@@ -53,7 +55,10 @@ export class AuthDepartmentComponent implements OnInit {
     private departmentService: DepartmentService,
     private messageService: NzMessageService,
     private router: Router, 
-    private fb: UntypedFormBuilder,) { }
+    private userService: UserService,
+    private fb: UntypedFormBuilder,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/auth/department");
+    }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.auth.department'));

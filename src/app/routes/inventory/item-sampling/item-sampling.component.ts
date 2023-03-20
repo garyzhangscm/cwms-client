@@ -10,6 +10,7 @@ import { NzImageService } from 'ng-zorro-antd/image';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { DataTransferRequestType } from '../../util/models/data-transfer-request-type';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { ItemSampling } from '../models/item-sampling';
@@ -71,6 +72,7 @@ export class InventoryItemSamplingComponent implements OnInit {
   mapOfPreviousItemSampling: { [key: number]: ItemSampling[] } = {};
    
    
+  displayOnly = false;
   constructor(private http: _HttpClient,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
@@ -80,7 +82,11 @@ export class InventoryItemSamplingComponent implements OnInit {
     private modalService: NzModalService,
     private companyService: CompanyService,
     private nzImageService: NzImageService,
-    private fb: UntypedFormBuilder,) { }
+    private fb: UntypedFormBuilder,
+    private userService: UserService,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/item-sampling");
+    
+    }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.item-sampling'));

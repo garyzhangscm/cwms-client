@@ -5,6 +5,7 @@ import { I18NService } from '@core';
 import { STChange, STColumn, STComponent } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 
+import { UserService } from '../../auth/services/user.service';
 import { PickWork } from '../../outbound/models/pick-work';
 import { PickService } from '../../outbound/services/pick.service';
 import { LocalCacheService } from '../../util/services/local-cache.service';
@@ -75,6 +76,7 @@ export class InventoryInventoryAllocationSummaryComponent implements OnInit {
   ];
 
 
+  displayOnly = false;
   constructor(private http: _HttpClient, 
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -82,7 +84,11 @@ export class InventoryInventoryAllocationSummaryComponent implements OnInit {
     private pickService: PickService,
     private inventoryService: InventoryService,
     private localCacheService: LocalCacheService,
-    private inventoryAllocationSummaryService: InventoryAllocationSummaryService) { }
+    private userService: UserService,
+    private inventoryAllocationSummaryService: InventoryAllocationSummaryService) {
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/inventory-allocation-summary");
+    
+    }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.order'));

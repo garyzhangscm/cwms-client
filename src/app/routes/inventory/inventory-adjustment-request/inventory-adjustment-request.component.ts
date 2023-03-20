@@ -7,6 +7,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
@@ -217,6 +218,7 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
     this.isCollapse = !this.isCollapse;
   }
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     private inventoryAdjustmentRequestService: InventoryAdjustmentRequestService,
@@ -226,7 +228,11 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
     private modalService: NzModalService,
     private activatedRoute: ActivatedRoute,
     private utilService: UtilService,
-  ) { }
+    private userService: UserService,
+  ) {
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/inventory-adjustment-request");
+  
+  }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.inventory-adjustment-request'));
     this.initSearchForm();

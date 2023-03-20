@@ -4,6 +4,7 @@ import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/form
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 
+import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { CycleCountBatch } from '../models/cycle-count-batch';
 import { CycleCountBatchService } from '../services/cycle-count-batch.service';
@@ -111,11 +112,16 @@ export class InventoryCycleCountComponent implements OnInit {
     this.isCollapse = !this.isCollapse;
   }
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     private cycleCountBatchService: CycleCountBatchService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-  ) { }
+    private userService: UserService,
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/count/cycle-count");
+  
+  }
 
   resetForm(): void {
     this.searchForm.reset();

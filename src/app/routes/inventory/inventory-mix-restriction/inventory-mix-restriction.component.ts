@@ -7,6 +7,7 @@ import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
 import { ClientService } from '../../common/services/client.service';
 import { LocalCacheService } from '../../util/services/local-cache.service';
@@ -52,6 +53,7 @@ export class InventoryInventoryMixRestrictionComponent implements OnInit {
     }
   ]; 
   
+  displayOnly = false;
   constructor(
     private clientService: ClientService,
     private fb: UntypedFormBuilder,
@@ -61,8 +63,11 @@ export class InventoryInventoryMixRestrictionComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private locationGroupService: LocationGroupService,
     private locationGroupTypeService: LocationGroupTypeService,
+    private userService: UserService,
     private inventoryMixRestrictionService: InventoryMixRestrictionService,
-  ) { }
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/mix-restriction");
+  }
   
 
   ngOnInit(): void { 

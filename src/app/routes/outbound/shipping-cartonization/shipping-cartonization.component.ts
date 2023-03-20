@@ -3,6 +3,8 @@ import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
+import { UserService } from '../../auth/services/user.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { Carton } from '../models/carton';
 import { CartonService } from '../services/carton.service';
@@ -36,14 +38,18 @@ export class OutboundShippingCartonizationComponent implements OnInit {
   @ViewChild('inventoryIdTextBox', { static: true }) inventoryIdTextBox!: ElementRef;
   @ViewChild('itemNameTextBox', { static: true }) itemNameTextBox!: ElementRef;
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     private shippingCartonizationService: ShippingCartonizationService,
     private messageService: NzMessageService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private inventoryService: InventoryService,
+    private userService: UserService,
     private cartonService: CartonService,
-  ) { }
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/shipping-cartonization");
+  }
 
   ngOnInit(): void {
     this.lastConfirmedItemName = '';

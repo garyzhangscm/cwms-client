@@ -8,6 +8,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { Trailer } from '../../outbound/models/trailer';
 import { OrderLineService } from '../../outbound/services/order-line.service';
 import { LocalCacheService } from '../../util/services/local-cache.service';
@@ -67,17 +68,17 @@ export class InboundCustomerReturnComponent implements OnInit {
   customerReturnOrders: CustomerReturnOrder[] = [];
   searchResult = "";
 
-  constructor(private http: _HttpClient,
+  displayOnly = false;
+  constructor( 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private activatedRoute: ActivatedRoute,
-    private customerReturnOrderService: CustomerReturnOrderService,
-    private messageService: NzMessageService, 
-    private fb: UntypedFormBuilder,
-    private modalService: NzModalService,   
-    private titleService: TitleService,
-    private utilService: UtilService,
+    private customerReturnOrderService: CustomerReturnOrderService, 
+    private fb: UntypedFormBuilder, 
+    private userService: UserService,
     private orderLineService: OrderLineService,
-    private localCacheService: LocalCacheService,) { }
+    private localCacheService: LocalCacheService,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/inbound/customer-return");
+    }
 
   ngOnInit(): void {  
     // initiate the search form

@@ -11,6 +11,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { lastValueFrom } from 'rxjs/internal/lastValueFrom';
 
+import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { PrintPageSize } from '../../common/models/print-page-size.enum';
@@ -239,6 +240,7 @@ export class InventoryInventoryComponent implements OnInit {
     this.isCollapse = !this.isCollapse;
   }
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     private inventoryService: InventoryService,
@@ -255,8 +257,12 @@ export class InventoryInventoryComponent implements OnInit {
     private printingService: PrintingService,
     private router: Router,
     private localCacheService: LocalCacheService,
+    private userService: UserService,
     private inventoryStatusService: InventoryStatusService,
-  ) { }
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/inventory");
+  
+  }
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.inventory'));

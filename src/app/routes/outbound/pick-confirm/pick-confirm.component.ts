@@ -6,6 +6,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { WorkOrder } from '../../work-order/models/work-order';
@@ -158,6 +159,7 @@ export class OutboundPickConfirmComponent implements OnInit {
   searching = false;
   containerId = '';
 
+  displayOnly = false;
   constructor(
     private activatedRoute: ActivatedRoute,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -170,11 +172,13 @@ export class OutboundPickConfirmComponent implements OnInit {
     private pickService: PickService,
     private pickListService: PickListService,
     private waveService: WaveService,
+    private userService: UserService,
     private cartonizationService: CartonizationService,
     private router: Router,
     private fb: UntypedFormBuilder,
     private utilService: UtilService,
   ) {
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/pick/confirm");
     this.pageTitle = this.i18n.fanyi('page.outbound.pick-confirm.title');
   }
 

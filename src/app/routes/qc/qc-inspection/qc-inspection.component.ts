@@ -6,9 +6,9 @@ import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzMessageService } from 'ng-zorro-antd/message'; 
 
+import { UserService } from '../../auth/services/user.service';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { PrintPageSize } from '../../common/models/print-page-size.enum';
 import { PrintingService } from '../../common/services/printing.service';
@@ -16,9 +16,7 @@ import { Inventory } from '../../inventory/models/inventory';
 import { ItemService } from '../../inventory/services/item.service';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { ReportType } from '../../report/models/report-type.enum';
-import { LocationGroup } from '../../warehouse-layout/models/location-group';
-import { LocationGroupType } from '../../warehouse-layout/models/location-group-type';
-import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
+import { LocationGroup } from '../../warehouse-layout/models/location-group'; 
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { QcInspectionRequest } from '../models/qc-inspection-request';
@@ -45,22 +43,22 @@ export class QcQcInspectionComponent implements OnInit {
   searchResult = '';
   qcInspectionByInventory = new Map();
 
-  constructor(private http: _HttpClient,    
+  displayOnly = false;
+  constructor(  
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private modalService: NzModalService, 
-    private messageService: NzMessageService,
-    private qcInspectionService: QcInspectionService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private messageService: NzMessageService, 
+    private userService: UserService,
     private router: Router, 
     private activatedRoute: ActivatedRoute,
     private locationService: LocationService,
-    private itemService: ItemService,
-    private locationGroupTypeService: LocationGroupTypeService,
+    private itemService: ItemService, 
     private qcInspectionRequestService: QcInspectionRequestService, 
     private locationGroupService: LocationGroupService,
     private printingService: PrintingService,
     ) { 
 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/qc/inspection");
   }
 
   listOfQCRequiredInventory: Inventory[] = [];

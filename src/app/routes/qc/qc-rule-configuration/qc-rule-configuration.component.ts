@@ -4,18 +4,15 @@ import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
 
+import { UserService } from '../../auth/services/user.service';
 import { Supplier } from '../../common/models/supplier';
-import { SupplierService } from '../../common/services/supplier.service';
-import { InboundQcConfiguration } from '../../inbound/models/inbound-qc-configuration';
+import { SupplierService } from '../../common/services/supplier.service'; 
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { ItemFamily } from '../../inventory/models/item-family';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
-import { ItemFamilyService } from '../../inventory/services/item-family.service';
-import { ItemService } from '../../inventory/services/item.service';
+import { ItemFamilyService } from '../../inventory/services/item-family.service'; 
 import { QCRuleConfiguration } from '../models/qc-rule-configuration';
 import { QcRuleConfigurationService } from '../services/qc-rule-configuration.service';
 
@@ -26,18 +23,18 @@ import { QcRuleConfigurationService } from '../services/qc-rule-configuration.se
 })
 export class QcQcRuleConfigurationComponent implements OnInit {
 
-  constructor(private http: _HttpClient,    
+  displayOnly = false;
+  constructor( 
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private modalService: NzModalService, 
-    private messageService: NzMessageService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private qcRuleConfigurationService: QcRuleConfigurationService,
     private router: Router,
-    private supplierService: SupplierService,
-    private itemService: ItemService,
+    private supplierService: SupplierService, 
     private inventoryStatusService: InventoryStatusService,
     private itemFamilyService: ItemFamilyService,
+    private userService: UserService,
     ) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/qc/rules/configuration");
 
 }
 

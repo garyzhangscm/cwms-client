@@ -7,6 +7,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { EmergencyReplenishmentConfiguration } from '../../inventory/models/emergency-replenishment-configuration';
 import { ItemFamily } from '../../inventory/models/item-family';
 import { ItemFamilyService } from '../../inventory/services/item-family.service';
@@ -137,6 +138,7 @@ export class OutboundAllocationConfigurationComponent implements OnInit {
     this.isCollapse = !this.isCollapse;
   }
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     private allocationConfigurationService: AllocationConfigurationService,
@@ -147,8 +149,11 @@ export class OutboundAllocationConfigurationComponent implements OnInit {
     private titleService: TitleService,
     private utilService: UtilService,
     private messageService: NzMessageService,
+    private userService: UserService,
     private activatedRoute: ActivatedRoute
-  ) { }
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/allocation-configuration");
+  }
 
   resetForm(): void {
     this.searchForm.reset();

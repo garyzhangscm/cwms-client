@@ -3,9 +3,9 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
-import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
-import { InventoryService } from '../../inventory/services/inventory.service';
+import { InventoryStatusService } from '../../inventory/services/inventory-status.service'; 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { QcConfiguration } from '../models/qc-configuration';
 import { QcConfigurationService } from '../services/qc-configuration.service';
@@ -19,13 +19,16 @@ export class QcQcConfigurationComponent implements OnInit {
 
   availableInventoryStatuses: InventoryStatus[] = [];
 
-  constructor(private http: _HttpClient,
+  displayOnly = false;
+  constructor( 
     private qcConfigurationService: QcConfigurationService,
     private warehouseService: WarehouseService,
     private inventoryStatusService: InventoryStatusService,
     private messageService: NzMessageService,
+    private userService: UserService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) {
 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/qc/configuration");
     this.currentQcConfiguration = {
  
       warehouseId: warehouseService.getCurrentWarehouse().id,

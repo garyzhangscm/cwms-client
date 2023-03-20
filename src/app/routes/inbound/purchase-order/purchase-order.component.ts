@@ -7,6 +7,7 @@ import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { Supplier } from '../../common/models/supplier';
 import { SupplierService } from '../../common/services/supplier.service';
 import { RF } from '../../util/models/rf';
@@ -57,16 +58,20 @@ export class InboundPurchaseOrderComponent implements OnInit {
 
   purchaseOrderStatusList = PurchaseOrderStatus;
    
-  constructor(private http: _HttpClient,
+  displayOnly = false;
+  constructor( 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
-    private purchaseOrderService: PurchaseOrderService,
-    private messageService: NzMessageService,
+    private purchaseOrderService: PurchaseOrderService, 
     private localCacheService: LocalCacheService,
+    private userService: UserService,
     private supplierService: SupplierService,
     private receiptService: ReceiptService,
-    private fb: UntypedFormBuilder,) { }
+    private fb: UntypedFormBuilder,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/inbound/purchase-order");
+    
+    }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inbound.purchaseOrder'));

@@ -7,6 +7,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
@@ -146,6 +147,7 @@ export class OutboundPickComponent implements OnInit {
   // local cache for performance purpose only
   loadingWorkOrderLineInProcess: Set<number> = new Set();
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -157,8 +159,11 @@ export class OutboundPickComponent implements OnInit {
     private router: Router,
     private utilService: UtilService,
     private localCacheService: LocalCacheService,
+    private userService: UserService,
     private workOrderService: WorkOrderService,
-  ) { }
+  ) {
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/pick");
+   }
 
   // Form related data and functions
   searchForm!: UntypedFormGroup;

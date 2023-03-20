@@ -5,6 +5,7 @@ import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { ReportType } from '../../report/models/report-type.enum';
 import { CarrierServiceLevelType } from '../../transportation/models/carrier-service-level-type.enum';
 import { EasyPostCarrier } from '../../transportation/models/easy-post-carrier';
@@ -34,6 +35,7 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
    
   addHolidayForm!: UntypedFormGroup;
 
+  displayOnly = false;
   constructor(
     
     private warehouseService: WarehouseService,
@@ -41,7 +43,11 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
     private warehouseHolidayService: WarehouseHolidayService,
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private userService: UserService,
     private warehouseConfigurationService: WarehouseConfigurationService) {
+      
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/warehouse-layout/warehouse-configuration");
+
       this.currentWarehouseConfiguration = {        
         warehouse: this.warehouseService.getCurrentWarehouse(),
         threePartyLogisticsFlag: false,

@@ -6,6 +6,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ColumnItem } from '../../util/models/column-item';
@@ -130,6 +131,7 @@ export class OutboundPickListComponent implements OnInit {
 
   isSpinning = false;
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -142,7 +144,10 @@ export class OutboundPickListComponent implements OnInit {
     private inventoryService: InventoryService,
     private pickListService: PickListService,
     private utilService: UtilService,
-  ) { }
+    private userService: UserService,
+  ) {
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/pick-list");
+   }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.pick-list'));
     // initiate the search form

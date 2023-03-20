@@ -4,6 +4,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
 import { ColumnItem } from '../../util/models/column-item';
@@ -137,6 +138,8 @@ export class InventoryEmergencyReplenishmentConfigComponent implements OnInit {
     this.isCollapse = !this.isCollapse;
   }
 
+  displayOnly = false;
+
   constructor(
     private fb: UntypedFormBuilder,
     private emergencyReplenishmentConfigurationService: EmergencyReplenishmentConfigurationService,
@@ -146,7 +149,11 @@ export class InventoryEmergencyReplenishmentConfigComponent implements OnInit {
     private modalService: NzModalService,
     private titleService: TitleService,
     private utilService: UtilService,
-  ) { }
+    private userService: UserService,
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/replenishment/emergency/config");
+  
+  }
 
   resetForm(): void {
     this.searchForm.reset();

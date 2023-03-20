@@ -7,6 +7,7 @@ import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { Alert } from '../models/alert';
 import { AlertDeliveryChannel } from '../models/alert-delivery-channel';
 import { AlertStatus } from '../models/alert-status';
@@ -46,6 +47,8 @@ export class AlertAlertTemplateComponent implements OnInit {
   alertTypes = AlertType; 
   alertDeliveryChannels = AlertDeliveryChannel;
    
+  displayOnly = false;
+
   constructor(private http: _HttpClient,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
@@ -53,7 +56,11 @@ export class AlertAlertTemplateComponent implements OnInit {
     private alertTemplateService: AlertTemplateService,
     private messageService: NzMessageService,
     private router: Router, 
-    private fb: UntypedFormBuilder,) { }
+    private fb: UntypedFormBuilder,
+    private userService: UserService) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/alert/alert-template");
+    
+  }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.alert.template'));

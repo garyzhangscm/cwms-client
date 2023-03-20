@@ -18,6 +18,7 @@ import { UserService } from '../services/user.service';
   styleUrls: ['./user.component.less'],
 })
 export class AuthUserComponent implements OnInit {
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -28,6 +29,7 @@ export class AuthUserComponent implements OnInit {
     private modalService: NzModalService,
     private messageService: NzMessageService,
   ) {
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/auth/user");
     this.titleService.setTitle(this.i18n.fanyi('menu.main.auth.user'));
   }
 

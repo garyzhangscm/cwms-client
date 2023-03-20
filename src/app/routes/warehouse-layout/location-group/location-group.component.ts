@@ -7,6 +7,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { I18NService } from 'src/app/core/i18n/i18n.service';
 
+import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { InventoryConsolidationStrategy } from '../models/inventory-consolidation-strategy.enum';
@@ -193,6 +194,7 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
   searching = false;
   operationInProcess = false;
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     private locationGroupTypeService: LocationGroupTypeService,
@@ -203,7 +205,10 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
     private utilService: UtilService,
-  ) { }
+    private userService: UserService,
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/warehouse-layout/location-group");
+  }
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.layout.location.group'));

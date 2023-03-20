@@ -1,15 +1,13 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
 
-import { QcInspectionRequest } from '../models/qc-inspection-request';
-import { QCRule } from '../models/qc-rule';
+import { UserService } from '../../auth/services/user.service';
+import { QcInspectionRequest } from '../models/qc-inspection-request'; 
 import { QCRuleItemType } from '../models/qc-rule-item-type';
 import { QcInspectionRequestService } from '../services/qc-inspection-request.service';
 
@@ -20,16 +18,16 @@ import { QcInspectionRequestService } from '../services/qc-inspection-request.se
 })
 export class QcQcResultComponent implements OnInit {
 
-  constructor(private http: _HttpClient,    
+  displayOnly = false;
+  constructor( 
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private modalService: NzModalService, 
-    private messageService: NzMessageService,
-    private qcInspectionRequestService: QcInspectionRequestService,
-    private router: Router, 
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private userService: UserService,
+    private qcInspectionRequestService: QcInspectionRequestService, 
     private activatedRoute: ActivatedRoute,
     ) { 
 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/qc/result");
   }
 
   listOfQCInspectionRequest: QcInspectionRequest[] = [];

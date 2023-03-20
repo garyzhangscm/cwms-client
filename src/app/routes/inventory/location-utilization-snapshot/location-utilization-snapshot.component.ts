@@ -9,6 +9,7 @@ import { timeHours } from 'd3';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { CustomerReturnOrder } from '../../inbound/models/customer-return-order';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
@@ -69,6 +70,7 @@ export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
   locationUtilizationSnapshotBatches: LocationUtilizationSnapshotBatch[] = [];
   searchResult = "";
 
+  displayOnly = false;
   constructor(private http: _HttpClient,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private activatedRoute: ActivatedRoute,
@@ -78,7 +80,11 @@ export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
     private modalService: NzModalService,   
     private titleService: TitleService,
     private utilService: UtilService,  
-    private localCacheService: LocalCacheService,) { }
+    private localCacheService: LocalCacheService,
+    private userService: UserService,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/location-utilization-snapshot");
+    
+    }
 
   ngOnInit(): void {  
     // initiate the search form
