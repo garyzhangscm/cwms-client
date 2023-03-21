@@ -268,10 +268,10 @@
     {{searchResult}}
   </div>
   
-  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
     
     
-    <button nz-button nz-dropdown [nzDropdownMenu]="uploadFileMenu" nzType="primary">
+    <button nz-button nz-dropdown [nzDropdownMenu]="uploadFileMenu" nzType="primary" >
       {{ 'file-upload' | i18n }} <i nz-icon nzType="down"></i></button>
     <nz-dropdown-menu #uploadFileMenu="nzDropdownMenu">
       <ul nz-menu> 
@@ -287,13 +287,13 @@
     </nz-dropdown-menu>
  
     <nz-divider nzType="vertical"></nz-divider>
-    <button nz-button nzType="primary" routerLink="/inventory/item/maintenance" routerLinkActive="active">
+    <button nz-button nzType="primary" routerLink="/inventory/item/maintenance" routerLinkActive="active" *ngIf="!displayOnly">
       {{ 'add' | i18n }}
     </button>
 
     
     <nz-divider nzType="vertical"></nz-divider>
-    <button  nz-button nzType="primary" (click)="processItemOverride()" adminVisible>
+    <button  nz-button nzType="primary" (click)="processItemOverride()" adminVisible *ngIf="!displayOnly">
       {{ 'process-item-override' | i18n }}
     </button> 
   </div>

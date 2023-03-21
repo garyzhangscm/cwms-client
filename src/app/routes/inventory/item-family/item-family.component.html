@@ -55,10 +55,10 @@
       {{'fresh' | i18n}}
     </a>
     <a nz-button nzType="primary" routerLink="/inventory/item-family-maintenance" routerLinkActive="active"
-      (click)="clearSessionItemFamily()">
+      (click)="clearSessionItemFamily()"  *ngIf="!displayOnly">
       {{'add' | i18n}}
     </a>
 
-    <button nz-button nzDanger (click)="removeSelectedItemFamilies()">{{'delete' | i18n}}</button>
+    <button nz-button nzDanger (click)="removeSelectedItemFamilies()" *ngIf="!displayOnly">{{'delete' | i18n}}</button>
   </div>
 </ng-template>

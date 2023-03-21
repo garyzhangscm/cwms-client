@@ -165,7 +165,7 @@
     </tbody>
     </nz-table>
 
-    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
       <button nz-button nzType="primary" routerLink="/work-order/production-line-maintenance" routerLinkActive="active"
         [nzLoading]="searching">
         {{'add' | i18n}}

@@ -85,7 +85,7 @@
       
     <div nz-row nzType="flex" nzJustify="start" style="padding-top: 20px">
        
-        <button nz-button nzType="primary" (click)="saveConfiguration()">
+        <button nz-button nzType="primary" (click)="saveConfiguration()" *ngIf="!displayOnly">
             {{ 'confirm' | i18n }}
         </button>
     </div>

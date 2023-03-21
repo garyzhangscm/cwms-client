@@ -48,7 +48,7 @@
   </nz-card>
 </nz-spin>
 <ng-template #cardFoot>
-  <div nz-row nzType="flex" [nzJustify]="'start'" style='padding-left: 20px;'>
+  <div nz-row nzType="flex" [nzJustify]="'start'" style='padding-left: 20px;'  *ngIf="!displayOnly">
     <button nz-button nzType="primary" (click)="saveConfiguration()">
       {{ 'confirm' | i18n }}
     </button>

@@ -72,7 +72,7 @@
       </tr>
     </tbody>
   </nz-table>
-  <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle">
+  <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle" *ngIf="!displayOnly">
 
     <a nz-button routerLink="/work-order/mould/maintenance" routerLinkActive="active">{{ 'new' | i18n }}</a>
     <nz-divider nzType="vertical"></nz-divider>

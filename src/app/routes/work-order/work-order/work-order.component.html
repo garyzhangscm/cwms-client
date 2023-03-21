@@ -1045,7 +1045,7 @@
 
                   <ng-template #receivedInventoryTableFoot>
 
-                    <div nz-row nzType="flex" nzJustify="start">
+                    <div nz-row nzType="flex" nzJustify="start" *ngIf="!displayOnly">
                       <button nz-button nzType="primary" (click)="printAllPutawayWork(mapOfProducedInventory[data.id!!])"
                         [nzLoading]="mapOfPrintingInProcessId[data.id!!]">
                         {{ 'print' | i18n }}
@@ -1247,7 +1247,7 @@
         </ng-template>
       </tbody>
     </nz-table>
-    <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle">
+    <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle" *ngIf="!displayOnly">
   
       <a nz-button routerLink="/work-order/work-order/maintenance" routerLinkActive="active">{{ 'new' | i18n }}</a> 
     </div>

@@ -107,7 +107,7 @@
         </tbody>
     </nz-table>
 
-    <div nz-row nzType="flex" nzJustify="start" style="padding-top: 20px">
+    <div nz-row nzType="flex" nzJustify="start" style="padding-top: 20px" *ngIf="!displayOnly">
        
         <button nz-button nzType="primary" (click)="saveConfiguration()">
             {{ 'confirm' | i18n }}

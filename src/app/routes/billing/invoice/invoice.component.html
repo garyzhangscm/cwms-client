@@ -142,18 +142,11 @@
     {{searchResult}}
   </div>
   
-  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
     
     <button nz-button nzType="primary" routerLink="/billing/invoice/maintenance" routerLinkActive="active">
       {{ 'generate-invoice' | i18n }}
-    </button>
-    <!--
-
-
-    <button nz-button nzType="primary" routerLink="/billing/invoice/maintenance/manual" routerLinkActive="active">
-      {{ 'manual-invoice' | i18n }}
-    </button>
-    -->
+    </button> 
   </div>
 </ng-template>
 

@@ -124,7 +124,7 @@
   </div>
   
   <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;"> 
-    <button nz-button nzType="primary" routerLink="/outbound/list-pick-configuration/maintenance" routerLinkActive="active">
+    <button nz-button nzType="primary" *ngIf="!displayOnly" routerLink="/outbound/list-pick-configuration/maintenance" routerLinkActive="active">
       {{ 'add' | i18n }}
     </button>
   </div>

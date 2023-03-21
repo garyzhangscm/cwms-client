@@ -188,7 +188,7 @@
     {{searchResult}}
   </div>
   
-  <div nz-row nzType="flex" nzJustify="start"> 
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="!displayOnly"> 
     <a nz-button nzType="primary" routerLink="/common/supplier-maintenance" routerLinkActive="active"
       (click)="clearSessionSupplier()">
       {{'add' | i18n}}

@@ -95,7 +95,7 @@
               </ng-container>
             </nz-list-item>
         </nz-list>
-        <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle">
+        <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle" *ngIf="!displayOnly">
             <button nz-button nzType="primary" (click)="confirm()" >
                 <span> {{ 'confirm' | i18n }}</span>
               </button>

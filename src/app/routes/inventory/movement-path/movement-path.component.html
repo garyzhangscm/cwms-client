@@ -139,7 +139,7 @@
 </div>
 
 <ng-template #tableFoot>
-  <div nz-row nzType="flex" nzJustify="start">
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="!displayOnly">
     <button nz-button nzDanger (click)="removeSelectedMovementPaths()">
       {{ 'delete' | i18n }}
     </button>

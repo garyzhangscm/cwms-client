@@ -186,7 +186,7 @@
 
 
     <ng-template #tableFoot>
-      <div nz-row nzType="flex" nzJustify="start"> 
+      <div nz-row nzType="flex" nzJustify="start" *ngIf="!displayOnly"> 
         <a nz-button nzType="primary" routerLink="/common/client-maintenance" routerLinkActive="active"
            >
           {{'add' | i18n}}

@@ -106,7 +106,7 @@
   </tbody>
   </nz-table>
 
-  <div nz-row nzType="flex" nzJustify="start" style="padding: 10px;">
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 10px;" *ngIf="!displayOnly">
 
     <a nz-button routerLink="/auth/working-team/maintenance" routerLinkActive="active">{{ 'new' | i18n }}</a>
   </div>

@@ -97,7 +97,7 @@
       {{searchResult}}
     </div>
     
-    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;"> 
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
         <button nz-button nzType="primary" (click)="generateLocationUtilizationSnapshotBatch()">
           {{ 'generate-snapshot' | i18n }}
         </button>

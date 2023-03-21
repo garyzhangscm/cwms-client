@@ -274,7 +274,7 @@
               </nz-table>
 
               <ng-template #pickTableFoot>
-                <div nz-row nzType="flex" nzJustify="start">
+                <div nz-row nzType="flex" nzJustify="start" *ngIf="!displayOnly">
                    
                   <button nz-button (click)="confirmPicks(item)"
                     [disabled]="mapOfPicks[item.id!].length === 0  || item.status === trailerAppointmentStatusEnum.COMPLETED">

@@ -112,7 +112,7 @@
 </div>
 </nz-spin>
 <ng-template #tableFoot>
-  <div nz-row nzType="flex" nzJustify="start">
+  <div nz-row nzType="flex" nzJustify="start"  *ngIf="!displayOnly">
     <button nz-button nzDanger (click)="cancelSelectedShortAllocations()">
       {{ 'delete' | i18n }}
     </button>

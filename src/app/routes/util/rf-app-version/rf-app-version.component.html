@@ -130,7 +130,7 @@
   
   <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
     
-    <button nz-button nzType="primary" routerLink="/util/rf-app-version/maintenance" routerLinkActive="active">
+    <button nz-button nzType="primary" routerLink="/util/rf-app-version/maintenance"  *ngIf="!displayOnly" routerLinkActive="active">
       {{ 'add' | i18n }}
     </button>
   </div>

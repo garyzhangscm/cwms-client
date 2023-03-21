@@ -61,7 +61,7 @@
         </th>
 
 
-        <th nzRight nzWidth="250px">{{'action' | i18n}}</th>
+        <th nzRight nzWidth="250px" *ngIf="!displayOnly">{{'action' | i18n}}</th>
       </tr>
     </thead>
     <tbody>
@@ -97,7 +97,7 @@
             {{ 'ITEM-VOLUME-TRACKING-LEVEL-' + data.itemVolumeTrackingLevel + '' | i18n}}
           </span></td>
 
-          <td nzRight>
+          <td nzRight *ngIf="!displayOnly">
             <a (click)="startEdit(data.id!)"
               *ngIf="!searching && !operationInProcess && data.locationGroupType?.virtual === false"> {{ 'modify' | i18n
               }}</a>
@@ -228,7 +228,7 @@
       </tr>
     </tbody>
   </nz-table>
-  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
     <button nz-button nzType="primary" routerLink="/warehouse-layout/location-group-maintenance"
       routerLinkActive="active" [nzLoading]="searching" [disabled]="operationInProcess">
       {{'add' | i18n}}

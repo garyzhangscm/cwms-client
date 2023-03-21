@@ -53,7 +53,7 @@
 
     </form>
     <div nz-row>
-      <div nz-col [nzSpan]="24" class="search-area">
+      <div nz-col [nzSpan]="24" class="search-area"  *ngIf="!displayOnly">
         <!--<button nz-button (click)="onUserInputInventoryIdEvent()">{{'search' | i18n}}</button>-->
         <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
         <button nz-button (click)="confirm()">{{ 'confirm' | i18n }}</button>

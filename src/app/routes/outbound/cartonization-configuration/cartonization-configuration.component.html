@@ -81,7 +81,7 @@
 
 
 <ng-template #tableFoot>
-  <div nz-row nzType="flex" nzJustify="start">
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="!displayOnly">
     <a nz-button nzType="primary" routerLink="/outbound/cartonization-configuration/maintenance"
       routerLinkActive="active">
       {{'add' | i18n}}

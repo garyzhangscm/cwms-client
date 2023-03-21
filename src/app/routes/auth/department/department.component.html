@@ -44,7 +44,7 @@
   
   <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
     
-    <button nz-button nzType="primary" routerLink="/auth/department/maintenance" routerLinkActive="active">
+    <button nz-button nzType="primary" routerLink="/auth/department/maintenance" routerLinkActive="active" *ngIf="!displayOnly">
       {{ 'add' | i18n }}
     </button>
   </div>

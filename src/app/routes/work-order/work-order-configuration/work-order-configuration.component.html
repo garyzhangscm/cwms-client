@@ -74,7 +74,7 @@
           </span>
         </li>
         <nz-list-footer>
-            <button nz-button nzType="primary" (click)="addShiftSchedule()">
+            <button nz-button nzType="primary" (click)="addShiftSchedule()" *ngIf="!displayOnly">
             {{ 'add' | i18n }}
           </button>
         </nz-list-footer>
@@ -83,7 +83,7 @@
 
 
 <div nz-row nzType="flex" nzJustify="start">
-    <button nz-button nzType="primary" (click)="saveConfiguration()">
+    <button nz-button nzType="primary" (click)="saveConfiguration()" *ngIf="!displayOnly">
         {{ 'confirm' | i18n }}
     </button>
 </div>

@@ -9,6 +9,7 @@ import { BillingInvoiceComponent } from './invoice/invoice.component';
 import { BillingRateMaintenanceComponent } from './rate-maintenance/rate-maintenance.component';
 import { BillingRateComponent } from './rate/rate.component';
 import { BillingVendorInvoiceMaintenanceComponent } from './vendor-invoice-maintenance/vendor-invoice-maintenance.component';
+import { BillingBillableActivityComponent } from './billable-activity/billable-activity.component';
 
 const routes: Routes = [
 
@@ -75,7 +76,8 @@ const routes: Routes = [
       guard_url: '/exception/403'
     }
   }
-  ];
+  ,
+  { path: 'billable-activity', component: BillingBillableActivityComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

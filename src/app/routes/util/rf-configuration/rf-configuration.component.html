@@ -53,7 +53,7 @@
         </nz-card>
        
       
-<button nz-button nzType="primary" (click)="saveConfiguration()">
+<button nz-button nzType="primary" (click)="saveConfiguration()"  *ngIf="!displayOnly">
     {{ 'save' | i18n }}
   </button>
       </nz-spin>

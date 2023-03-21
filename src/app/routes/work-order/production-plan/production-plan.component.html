@@ -196,7 +196,8 @@
   </tbody>
   </nz-table>
   <div nz-row nzType="flex" nzJustify="start" style="margin-top: 15px ">
-    <button nz-button nzType="primary" routerLink="/work-order/production-plan/maintenance" routerLinkActive="active">
+    <button nz-button nzType="primary" routerLink="/work-order/production-plan/maintenance"  *ngIf="!displayOnly"
+    routerLinkActive="active">
       {{ 'add' | i18n }}
     </button>
   </div>

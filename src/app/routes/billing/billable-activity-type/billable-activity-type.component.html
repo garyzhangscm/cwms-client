@@ -19,7 +19,7 @@
       {{'fresh' | i18n}}
     </a>
     <a nz-button nzType="primary" routerLink="/billing/billable-activity-type/maintenance" routerLinkActive="active"
-    >
+    *ngIf="!displayOnly">
       {{'add' | i18n}}
     </a> 
   </div>

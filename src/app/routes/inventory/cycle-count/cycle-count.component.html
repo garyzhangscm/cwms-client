@@ -61,7 +61,7 @@
         </tr>
       </tbody>
     </nz-table>
-    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
       <button nz-button nzType="primary" routerLink="/inventory/count/cycle-count-maintenance"
         routerLinkActive="active">
         {{ 'add' | i18n }}

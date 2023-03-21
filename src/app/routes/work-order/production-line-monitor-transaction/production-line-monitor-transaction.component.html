@@ -97,7 +97,7 @@
       {{searchResult}}
     </div> 
     <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;"> 
-      <button nz-button (click)="createFakeData(10)"> 
+      <button nz-button (click)="createFakeData(10)" *ngIf="!displayOnly"> 
         {{ 'add' | i18n }}
       </button>
     </div>

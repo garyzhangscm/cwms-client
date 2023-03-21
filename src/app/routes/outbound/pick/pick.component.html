@@ -171,7 +171,7 @@
 
       </tbody>
     </nz-table>
-    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
       <button nz-button nzDanger (click)="cancelSelectedPicks()">
         {{ 'delete' | i18n }}
       </button>

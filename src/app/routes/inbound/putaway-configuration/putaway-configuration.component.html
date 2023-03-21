@@ -114,7 +114,7 @@
       </tr>
     </tbody>
   </nz-table>
-  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
     <a nz-button nzType="primary" routerLink="/inbound/putaway-configuration-maintenance" routerLinkActive="active">
       {{'add' | i18n}}
     </a>

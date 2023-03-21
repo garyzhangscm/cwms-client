@@ -58,7 +58,7 @@
           <div nz-col [nzSpan]="12">
             <nz-form-item>
               <nz-upload [nzAction]="selectedFileUploadUrl" (nzChange)="handleChange($event)">
-                <button nz-button [disabled]="fileUploadDisabled">
+                <button nz-button [disabled]="fileUploadDisabled" *ngIf="!displayOnly">
                   <i nz-icon nzType="upload"></i>
                   {{ 'file-upload' | i18n }}
                 </button>

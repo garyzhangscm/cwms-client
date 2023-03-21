@@ -53,10 +53,10 @@
       {{'fresh' | i18n}}
     </a>
     <a nz-button nzType="primary" routerLink="/common/unit-of-measure-maintenance" routerLinkActive="active"
-      (click)="clearSessionUnitOfMeasure()">
+      (click)="clearSessionUnitOfMeasure()" *ngIf="!displayOnly">
       {{'add' | i18n}}
     </a>
 
-    <button nz-button nzDanger (click)="removeSelectedUnitOfMeasures()">{{'delete' | i18n}}</button>
+    <button nz-button nzDanger (click)="removeSelectedUnitOfMeasures()" *ngIf="!displayOnly">{{'delete' | i18n}}</button>
   </div>
 </ng-template>

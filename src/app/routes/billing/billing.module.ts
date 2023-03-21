@@ -12,6 +12,7 @@ import { BillingRateComponent } from './rate/rate.component';
 import { BillingVendorInvoiceMaintenanceComponent } from './vendor-invoice-maintenance/vendor-invoice-maintenance.component';
 import { BillingBillableActivityTypeComponent } from './billable-activity-type/billable-activity-type.component';
 import { BillingBillableActivityTypeMaintenanceComponent } from './billable-activity-type-maintenance/billable-activity-type-maintenance.component';
+import { BillingBillableActivityComponent } from './billable-activity/billable-activity.component';
 
 const COMPONENTS: Array<Type<void>> = [
   BillingRateComponent,
@@ -20,7 +21,8 @@ const COMPONENTS: Array<Type<void>> = [
   BillingInvoiceComponent, 
   BillingVendorInvoiceMaintenanceComponent,
   BillingBillableActivityTypeComponent,
-  BillingBillableActivityTypeMaintenanceComponent];
+  BillingBillableActivityTypeMaintenanceComponent,
+  BillingBillableActivityComponent];
 
 @NgModule({
   imports: [

@@ -195,9 +195,9 @@
   </ng-template>
   </tbody>
   </nz-table>
-  <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle">
+  <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle" *ngIf="!displayOnly">
 
-    <a nz-button routerLink="/work-order/bill-of-material/maintenance" routerLinkActive="active">{{ 'new' | i18n }}</a>
+    <a nz-button routerLink="/work-order/bill-of-material/maintenance"  *ngIf="!displayOnly"routerLinkActive="active">{{ 'new' | i18n }}</a>
     <nz-divider nzType="vertical"></nz-divider>
     <button nz-button nzType="primary" routerLink="/util/file-upload/BOMs" routerLinkActive="active">
       {{ 'file-upload' | i18n }}

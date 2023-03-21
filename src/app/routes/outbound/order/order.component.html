@@ -648,11 +648,11 @@
                   [printButtonDisabled]="!isOrderReadyForComplete(order)" (print)="printPickSheets(order, $event)"
                   (preview)="previewReport(order)">
                 </cwms-common-print-button>
-                <button nz-button (click)="confirmPicks(order)"
+                <button nz-button (click)="confirmPicks(order)"  *ngIf="!displayOnly"
                   [disabled]="(mapOfPicks[order.id!] && mapOfPicks[order.id!].length === 0) || order.status === orderStatusEnum.COMPLETE">
                   {{ 'confirm' | i18n }}
                 </button>
-                <button nz-button (click)="cancelSelectedPick(order)"
+                <button nz-button (click)="cancelSelectedPick(order)"  *ngIf="!displayOnly"
                       [disabled]="order.status === orderStatusEnum.COMPLETE">
                       {{ 'cancel' | i18n }}
                     </button>
@@ -1015,7 +1015,7 @@
   <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
     {{searchResult}}
   </div>
-    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;"> 
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
       <button nz-button nzType="primary" routerLink="/outbound/order-maintenance" routerLinkActive="active">
         {{ 'add' | i18n }}
       </button>
@@ -1459,7 +1459,7 @@
 </ng-template>
 
 <ng-template #tplBillableActivityModalFooter>
-  <button nz-button nzType="default" (click)="closeBillableActivityModal()" [nzLoading]="addActivityInProcess" >{{ 'cancel' |
+  <button   nzType="default" (click)="closeBillableActivityModal()" [nzLoading]="addActivityInProcess" >{{ 'cancel' |
     i18n}}</button>
   <button nz-button nzType="primary" (click)="confirmBillableActivity()" [nzLoading]="addActivityInProcess" >{{ 'confirm' |
     i18n}}</button>

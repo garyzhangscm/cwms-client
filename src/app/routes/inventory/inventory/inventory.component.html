@@ -326,7 +326,7 @@
     <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
       {{searchResult}}
     </div>
-    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;"> 
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
     
       <button nz-button nzDanger (click)="removeSelectedInventory()">{{'delete' | i18n}}</button>
       

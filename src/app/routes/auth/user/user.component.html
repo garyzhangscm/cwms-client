@@ -82,7 +82,7 @@
     </tbody>
   </nz-table>
 
-  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
     <a nz-button routerLink="/auth/user/maintenance" routerLinkActive="active">{{ 'new' | i18n }}</a>
     <nz-divider nzType="vertical"></nz-divider>
     <button nz-button (click)="openNewTempUserModal(tplNewTempUserModalTitle, tplNewTempUserModalContent )">{{'new-temp-user' | i18n}}</button>

@@ -74,7 +74,7 @@
     </div>  
   </form>
   
-  <div nz-row nzType="flex" nzJustify="start">
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="!displayOnly">
     <button nz-button nzType="primary" (click)="addKeyWord()">
       {{ 'add' | i18n }}
     </button>
