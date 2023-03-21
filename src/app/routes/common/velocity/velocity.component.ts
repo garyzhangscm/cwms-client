@@ -29,7 +29,8 @@ export class CommonVelocityComponent implements OnInit {
      
     {
       title: this.i18n.fanyi("action"), 
-      render: 'actionColumn',   
+      render: 'actionColumn',
+      iif: () => !this.displayOnly   
     },      
   ]; 
   

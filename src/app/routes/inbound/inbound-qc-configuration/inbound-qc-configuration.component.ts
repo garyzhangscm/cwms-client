@@ -118,6 +118,7 @@ export class InboundInboundQcConfigurationComponent implements OnInit {
       title: 'action',
       renderTitle: 'actionColumnTitle',fixed: 'right',width: 150, 
       render: 'actionColumn',
+      iif: () => !this.displayOnly
     },
    
   ];

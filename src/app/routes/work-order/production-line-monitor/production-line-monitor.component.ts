@@ -41,6 +41,7 @@ export class WorkOrderProductionLineMonitorComponent implements OnInit {
     {
       title: this.i18n.fanyi("action"),  
       render: 'actionColumn', 
+      iif: () => !this.displayOnly
     }
   ]; 
 

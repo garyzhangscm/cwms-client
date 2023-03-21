@@ -56,6 +56,7 @@ export class OutboundStopComponent implements OnInit {
     {
       title: this.i18n.fanyi("action"), fixed: 'right',width: 210, 
       render: 'actionColumn',
+      iif: () => !this.displayOnly
     }, 
    
   ];

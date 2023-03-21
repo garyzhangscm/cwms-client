@@ -49,7 +49,8 @@ export class InventoryInventoryMixRestrictionComponent implements OnInit {
     { title: this.i18n.fanyi("location"),  index: 'location.name' ,  }, 
     {
       title: this.i18n.fanyi("action"),  
-      render: 'actionColumn', width: 200,  
+      render: 'actionColumn', width: 200, 
+      iif: () => !this.displayOnly 
     }
   ]; 
   

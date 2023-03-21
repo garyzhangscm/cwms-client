@@ -154,7 +154,7 @@
           </th>
 
 
-          <th nzWidth="360px" nzRight>{{ 'action' | i18n }}</th>
+          <th nzWidth="360px" nzRight *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
         </tr>
       </thead>
       <tbody>
@@ -249,7 +249,7 @@
               </li>
             </ol>
           </td>
-          <td nzRight nzWidth="360px" >
+          <td nzRight nzWidth="360px"  *ngIf="!displayOnly">
             <button nz-button nz-dropdown [nzDropdownMenu]="actions" [nzLoading]="mapOfInprocessInventoryId[data.id!]"
               *ngIf="data.lockedForAdjust === false">{{ 'action' | i18n }}<i nz-icon nzType="down"></i></button>
             <nz-dropdown-menu #actions="nzDropdownMenu">

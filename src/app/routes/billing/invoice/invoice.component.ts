@@ -61,6 +61,7 @@ export class BillingInvoiceComponent implements OnInit {
       title: this.i18n.fanyi("action"),  
       render: 'actionColumn', width: 200, 
       fixed: 'right',
+      iif: () => !this.displayOnly
     }
   ]; 
   

@@ -89,6 +89,7 @@ columns: STColumn[] = [
     title: 'action',
     renderTitle: 'actionColumnTitle' ,
     render: 'actionColumn',
+    iif: () => !this.displayOnly
   },
 
 ];

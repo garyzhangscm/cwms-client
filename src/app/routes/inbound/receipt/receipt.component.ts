@@ -608,6 +608,7 @@ export class InboundReceiptComponent implements OnInit {
       render: 'actionColumn', 
       width: 250,
       fixed: 'right',
+      iif: () => !this.displayOnly
 
     },   
   ];
@@ -738,7 +739,8 @@ export class InboundReceiptComponent implements OnInit {
       title: this.i18n.fanyi("totalCharge"), index: 'totalCharge' ,  width: 150,
     }, 
     { title: this.i18n.fanyi("activityTime"), render: 'activityTimeColumn', width: 150 }, 
-    { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 },       
+    { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 ,
+      iif: () => !this.displayOnly},       
   ];
 
   @ViewChild('stReceiptLineBillableActivityTable', { static: false })
@@ -755,7 +757,8 @@ export class InboundReceiptComponent implements OnInit {
       title: this.i18n.fanyi("totalCharge"), index: 'totalCharge' ,  width: 150,
     }, 
     { title: this.i18n.fanyi("activityTime"), render: 'activityTimeColumn', width: 150 },    
-    { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 },       
+    { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 , 
+    iif: () => !this.displayOnly},       
   ];
 
   removeReceiptBillableActivity(receipt: Receipt, 
@@ -982,7 +985,8 @@ export class InboundReceiptComponent implements OnInit {
     {
       title: this.i18n.fanyi("totalCharge"), index: 'totalCharge' ,  width: 150,
     }, 
-    { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 },       
+    { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150, 
+    iif: () => !this.displayOnly },       
   ];
 
 

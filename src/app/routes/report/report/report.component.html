@@ -70,7 +70,7 @@
 
 
 
-        <th>
+        <th *ngIf="!displayOnly">
           {{ 'action' | i18n }}
         </th>
       </tr>
@@ -103,7 +103,7 @@
             </nz-list-item> 
           </nz-list>
         </td>
-        <td nzRight>
+        <td nzRight *ngIf="!displayOnly">
           <button nz-button nz-dropdown [nzDropdownMenu]="actions" [disabled]="data.companyId === null && data.warehouseId === null" >
             {{ 'action' | i18n }}<i nz-icon nzType="down"></i></button>
           <nz-dropdown-menu #actions="nzDropdownMenu" >

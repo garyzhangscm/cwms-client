@@ -54,7 +54,7 @@
           </th>
 
 
-          <th>
+          <th *ngIf="!displayOnly">
             {{ 'action' | i18n }}
           </th>
         </tr>
@@ -75,7 +75,7 @@
             <td>{{ data.labelPrinterName }}</td>
             <td>{{ data.enabled + "" | i18n }}</td>
             <td>{{ data.genericPurpose + "" | i18n }}</td>
-            <td>
+            <td *ngIf="!displayOnly">
               
               <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
                 {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>

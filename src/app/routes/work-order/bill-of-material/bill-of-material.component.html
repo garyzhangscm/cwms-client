@@ -54,7 +54,7 @@
         </th>
 
 
-        <th>
+        <th *ngIf="!displayOnly">
           {{ 'action' | i18n }}
         </th>
       </tr>
@@ -82,7 +82,7 @@
             <strong>{{data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
 
           </td>
-          <td>
+          <td *ngIf="!displayOnly">
             <button nz-button nzType="primary"
               (click)="openNewWorkOrderModal(data, tplCreatingWorkOrderModalTitle, tplCreatingWorkOrderModalContent)">
               {{ 'bill-of-material.create-work-order' | i18n }}

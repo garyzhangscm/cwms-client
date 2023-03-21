@@ -36,7 +36,7 @@
           [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
           {{ column.name | i18n }}
         </th>
-        <th>{{ 'action' | i18n }}</th>
+        <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
       </tr>
     </thead>
     <tbody>
@@ -53,7 +53,7 @@
           </td>
         <td>{{ data.enabled + '' | i18n }}</td>
         <td>{{ data.locked + '' | i18n}}</td>
-        <td>
+        <td *ngIf="!displayOnly">
           
           <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" [disabled]="data.systemAdmin === true || data.companyId! < 0">
             {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>

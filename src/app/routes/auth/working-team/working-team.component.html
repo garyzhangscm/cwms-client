@@ -40,7 +40,7 @@
         </th>
 
 
-        <th>{{ 'action' | i18n }}</th>
+        <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
       </tr>
     </thead>
     <tbody>
@@ -52,7 +52,7 @@
             {{ data.name }}</td>
           <td>{{ data.description }}</td>
           <td>{{ data.enabled + '' | i18n }}</td>
-          <td>
+          <td *ngIf="!displayOnly">
 
             <a nz-button routerLink="/auth/working-team/user" routerLinkActive="active"
               [queryParams]="{workingTeamId : data.id!}">{{ 'assign-user' | i18n }}</a>
@@ -77,7 +77,7 @@
                       {{ column.name | i18n }}
                     </th>
 
-                    <th>{{ 'action' | i18n }}</th>
+                    <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -89,7 +89,7 @@
                     <td>{{ user.email }} </td>
                     <td>{{ user.enabled + '' | i18n }}</td>
                     <td>{{ user.locked + '' | i18n}}</td>
-                    <td>
+                    <td *ngIf="!displayOnly">
                       <button nz-button (click)="deassignUser(data.id!, user.id!)">{{ 'working-team.unassign-user' | i18n
                         }}</button>
                     </td>

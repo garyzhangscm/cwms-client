@@ -57,6 +57,7 @@ export class TransportationEasyPostComponent implements OnInit {
     {
       title: this.i18n.fanyi("action"),   
       render: 'actionColumn', 
+      iif: () => !this.displayOnly
     }
   ]; 
 

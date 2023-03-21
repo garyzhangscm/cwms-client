@@ -28,6 +28,7 @@ export class ReportPrinterTypeComponent implements OnInit {
     {
       title: 'action', 
       render: 'actionColumn',
+      iif: () => !this.displayOnly
     },
   ];  
  

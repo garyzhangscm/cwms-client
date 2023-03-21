@@ -105,7 +105,7 @@
 
 
 
-          <th>
+          <th *ngIf="!displayOnly">
             {{ 'action' | i18n }}
           </th>
         </tr>
@@ -166,7 +166,7 @@
             {{ data.item.description }}</td>
           <td>{{ data.quantity }}</td>
           <td>{{ data.pickedQuantity }}</td>
-          <td></td>
+          <td *ngIf="!displayOnly"></td>
         </tr>
 
       </tbody>

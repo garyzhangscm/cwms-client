@@ -1255,6 +1255,7 @@ export class OutboundOrderComponent implements OnInit {
     { 
       title: this.i18n.fanyi("action"),fixed: 'right',width: 150, 
       render: 'actionColumn',
+      iif: () => !this.displayOnly
     },
     /**
      * 
@@ -1596,7 +1597,8 @@ export class OutboundOrderComponent implements OnInit {
       }
     }, 
     { title: this.i18n.fanyi("activityTime"), render: 'activityTimeColumn', width: 150 }, 
-    { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 },       
+    { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 , 
+    iif: () => !this.displayOnly},       
   ];
 
   @ViewChild('stOrderLineBillableActivityTable', { static: false })
@@ -1613,7 +1615,8 @@ export class OutboundOrderComponent implements OnInit {
       title: this.i18n.fanyi("totalCharge"), index: 'totalCharge' ,  width: 150,
     }, 
     { title: this.i18n.fanyi("activityTime"), render: 'activityTimeColumn', width: 150 },    
-    { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 },       
+    { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 , 
+    iif: () => !this.displayOnly},       
   ];
    
 
@@ -1819,6 +1822,7 @@ export class OutboundOrderComponent implements OnInit {
       render: 'actionColumn', 
       width: 250,
       fixed: 'right',
+      iif: () => !this.displayOnly
 
     },   
   ];

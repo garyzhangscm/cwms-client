@@ -86,7 +86,7 @@
         </th>
 
 
-        <th>
+        <th *ngIf="!displayOnly">
           {{ 'action' | i18n }}
         </th>
       </tr>
@@ -102,7 +102,7 @@
           <td>{{ data.fromLocationGroup.name }}</td>
           <td>{{ data.toLocation.name }}</td>
           <td>{{ data.toLocationGroup.name }}</td>
-          <td></td>
+          <td *ngIf="!displayOnly"></td>
         </tr>
         <tr [nzExpand]="expandSet.has(data.id!)">
 

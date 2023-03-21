@@ -50,7 +50,8 @@ export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
     render: 'completeTimeColumn',
     iif: () => this.isChoose('completeTime')  },  
     { title: this.i18n.fanyi("action"),  
-    render: 'actionColumn', }
+    render: 'actionColumn', 
+    iif: () => !this.displayOnly}
   ]; 
   
   customColumns = [

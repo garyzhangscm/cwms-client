@@ -84,7 +84,7 @@
           <th>{{ 'unit-of-measure.default-for-inbound-receiving' | i18n }}</th>
           <th>{{ 'unit-of-measure.default-for-workorder-receiving' | i18n }}</th>
           <th>{{ 'unit-of-measure.tracking_lpn' | i18n }}</th>
-          <th>{{ 'action' | i18n }}</th>
+          <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
         </thead>
         <tbody>
           <tr *ngFor="let itemUnitOfMeasure of currentInventoryConfiguration.itemDefaultPackageUOMS">
@@ -98,7 +98,7 @@
             <td>{{ itemUnitOfMeasure.defaultForWorkOrderReceiving }}</td>
             <td>{{ itemUnitOfMeasure.trackingLpn }}</td>
 
-            <td>
+            <td *ngIf="!displayOnly">
               <button nz-button (click)="removeItemUnitOfMeasure(itemUnitOfMeasure)">
                 {{ 'remove' | i18n }}
               </button>

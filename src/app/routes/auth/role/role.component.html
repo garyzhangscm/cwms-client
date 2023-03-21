@@ -40,7 +40,7 @@
 
 
 
-        <th>{{ 'action' | i18n }}</th>
+        <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
       </tr>
     </thead>
     <tbody>
@@ -51,7 +51,7 @@
             {{ data.name }}</td>
           <td>{{ data.description }}</td>
           <td>{{ data.enabled + '' | i18n }}</td>
-          <td>
+          <td *ngIf="!displayOnly">
 
             
             <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
@@ -98,7 +98,7 @@
                       {{ column.name | i18n }}
                     </th>
 
-                    <th>{{ 'action' | i18n }}</th>
+                    <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -110,7 +110,7 @@
                     <td>{{ user.email }} </td>
                     <td>{{ user.enabled + '' | i18n }}</td>
                     <td>{{ user.locked + '' | i18n}}</td>
-                    <td>
+                    <td *ngIf="!displayOnly">
                       <button nz-button (click)="deassignUser(data.id!, user.id!)">{{ 'role.unassign-user' | i18n }}</button>
                     </td>
                   </tr>
@@ -129,7 +129,7 @@
                         [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
                         {{ column.name | i18n }}
                       </th>
-                      <th>{{ 'action' | i18n }}</th>
+                      <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -142,7 +142,7 @@
                       <td>{{ roleMenu.menu.i18n }}</td>
                       <td>{{ roleMenu.menu.link }}</td>
                       <td>{{ roleMenu.displayOnlyFlag }}</td>
-                      <td>
+                      <td *ngIf="!displayOnly">
                         <button nz-button (click)="deassignMenu(data.id!, roleMenu.menu.id)">{{ 'role.unassign-menu' | i18n }}</button>
                       </td>
                     </tr>

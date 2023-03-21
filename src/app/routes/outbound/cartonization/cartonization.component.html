@@ -63,7 +63,7 @@
 
 
 
-        <th>
+        <th *ngIf="!displayOnly">
           {{ 'action' | i18n }}
         </th>
       </tr>
@@ -81,7 +81,7 @@
           <td>{{ data.totalLocationCount }}</td>
           <td>{{ data.totalQuantity }}</td>
           <td>{{ data.totalPickedQuantity }}</td>
-          <td>
+          <td *ngIf="!displayOnly">
             <button nz-button nzType="primary" (click)="printPickSheets(data)"
               [nzLoading]="mapOfPrintingInProcessId[data.id!]" [disabled]="data.picks.length === 0">
               {{ 'print' | i18n }}
@@ -128,7 +128,7 @@
                   <th>
                     {{ 'pick.pickedQuantity' | i18n }}
                   </th>
-                  <th>
+                  <th *ngIf="!displayOnly">
                     {{ 'action' | i18n }}
                   </th>
                 </thead>
@@ -144,7 +144,7 @@
         <td>{{ pick.quantity }}</td>
         <td>{{ pick.pickedQuantity }}</td>
 
-        <td>
+        <td *ngIf="!displayOnly">
           <button nz-button (click)="cancelPick(data, pick)" [disabled]="pick.quantity === pick.pickedQuantity">
             {{ 'cancel' | i18n }}
           </button>
@@ -183,7 +183,7 @@
         <th>
           {{ 'inventory.status' | i18n }}
         </th>
-        <th>
+        <th *ngIf="!displayOnly">
           {{ 'action' | i18n }}
         </th>
       </thead>
@@ -197,7 +197,7 @@
           <td>{{ inventory.itemPackageType?.name }}</td>
           <td>{{ inventory.quantity }}</td>
           <td>{{ inventory.inventoryStatus?.name }}</td>
-          <td>
+          <td *ngIf="!displayOnly">
             <button nz-button (click)="openUnpickModal(data, inventory, tplUnpickModalTitle, tplUnpickModalContent)">
               {{ 'unpick' | i18n }}
             </button>

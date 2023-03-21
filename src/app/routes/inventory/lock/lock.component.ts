@@ -41,6 +41,7 @@ export class InventoryLockComponent implements OnInit {
       title: 'action',
       renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 
       render: 'actionColumn',
+      iif: () => !this.displayOnly
     },
   ]; 
   

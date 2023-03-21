@@ -44,7 +44,7 @@
         </th>
 
 
-        <th>
+        <th *ngIf="!displayOnly">
           {{ 'action' | i18n }}
         </th>
       </tr>
@@ -65,7 +65,7 @@
           <td>{{ data.totalInprocessQuantity }}</td>
           <td>{{ data.totalStagedQuantity }}</td>
           <td>{{ data.totalShippedQuantity }}</td>
-          <td>
+          <td *ngIf="!displayOnly">
             <button nz-button nzType="primary" (click)="allocateWave(data)" [disabled]="!isWaveAllocatable(data)">
               {{ 'wave.allocate' | i18n }}
             </button>
@@ -135,7 +135,7 @@
         <th>
           {{ 'pick.pickedQuantity' | i18n }}
         </th>
-        <th>
+        <th *ngIf="!displayOnly">
           {{ 'action' | i18n }}
         </th>
       </thead>
@@ -148,7 +148,7 @@
           <td>{{ pick.item.description }}</td>
           <td>{{ pick.quantity }}</td>
           <td>{{ pick.pickedQuantity }}</td>
-          <td>
+          <td *ngIf="!displayOnly">
             <button nz-button (click)="cancelPick(data, pick)" [disabled]="pick.quantity === pick.pickedQuantity">
               {{ 'cancel' | i18n }}
             </button>
@@ -198,7 +198,7 @@
         <th>
           {{ 'inventory.status' | i18n }}
         </th>
-        <th>
+        <th *ngIf="!displayOnly">
           {{ 'action' | i18n }}
         </th>
       </thead>
@@ -212,7 +212,7 @@
           <td>{{ inventory.itemPackageType?.name }}</td>
           <td>{{ inventory.quantity }}</td>
           <td>{{ inventory.inventoryStatus?<div class="name"></div> }}</td>
-          <td>
+          <td *ngIf="!displayOnly">
             <button nz-button (click)="openUnpickModal(data, inventory, tplUnpickModalTitle, tplUnpickModalContent)">
               {{ 'unpick' | i18n }}
             </button>
@@ -250,7 +250,7 @@
         <th>
           {{ 'short-allocation.allocationCount' | i18n }}
         </th>
-        <th>
+        <th *ngIf="!displayOnly">
           {{ 'action' | i18n }}
         </th>
       </thead>
@@ -264,7 +264,7 @@
           <td>{{ shortAllocation.deliveredQuantity }}</td>
           <td>{{ shortAllocation.status }}</td>
           <td>{{ shortAllocation.allocationCount }}</td>
-          <td>
+          <td *ngIf="!displayOnly">
             <button nz-button (click)="cancelShortAllocation(data, shortAllocation)"
               *ngIf="shortAllocation.status !== shortAllocationStatus.COMPLETED">
               {{ 'cancel' | i18n }}

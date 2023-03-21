@@ -211,6 +211,7 @@ export class QcQcInspectionComponent implements OnInit {
       title: 'action',
       renderTitle: 'actionColumnTitle' ,
       render: 'actionColumn',fixed: 'right',width: 350, 
+      iif: () => !this.displayOnly
     },
 
   ];

@@ -62,7 +62,7 @@
           [nzShowFilter]="column.showFilter">
           {{ column.name | i18n }}
         </th>
-        <th width="20px">
+        <th width="20px" *ngIf="!displayOnly">
           {{ 'action' | i18n }}
         </th>
 
@@ -87,7 +87,7 @@
             </li>
           </ul>
         </td>
-        <td width="20px">
+        <td width="20px" *ngIf="!displayOnly">
           <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
           {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
           <nz-dropdown-menu #menu="nzDropdownMenu">

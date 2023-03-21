@@ -65,7 +65,7 @@
             [nzShowFilter]="column.showFilter" [rowspan]="column.rowspan!" [colspan]="column.colspan!" >
             {{ column.name | i18n }}
           </th>
-          <th rowspan="2" nzRight>
+          <th rowspan="2" nzRight *ngIf="!displayOnly">
             {{ 'action' | i18n }}
           </th> 
         </tr>
@@ -239,7 +239,7 @@
                 <strong>{{data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong></td>
 
             
-            <td nzRight>
+            <td nzRight *ngIf="!displayOnly">
               <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary"
                 [nzLoading]="mapOfAllocationInProcessId[data.id!!]" *ngIf="workOrderHasAnyAction(data)">
                 {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
@@ -341,7 +341,7 @@
                         {{ 'inventory.status' | i18n }}</th>
                       <th>
                         {{ 'allocationStrategyType' | i18n }}</th>
-                      <th>
+                      <th *ngIf="!displayOnly">
                           {{ 'action' | i18n }}</th>
                     </thead>
                     <tbody>
@@ -458,7 +458,7 @@
                         </td>
                         <td>{{ workOrderLine.inventoryStatus?.description}}</td>
                         <td>{{ 'ALLOCATION-STRATEGY-TYPE-' + workOrderLine.allocationStrategyType | i18n}}</td>
-                        <td>
+                        <td *ngIf="!displayOnly">
                             <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
                               {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
 
@@ -565,7 +565,7 @@
                     <th [nzAlign]="'center'">
                       {{ 'production-line.assignment.duration' | i18n }}
                     </th>
-                    <th>
+                    <th *ngIf="!displayOnly">
                       {{ 'action' | i18n }}
                     </th>
 
@@ -580,7 +580,7 @@
                       <td [nzAlign]="'center'">{{ productionLineAssignment.startTime | date:'MM/dd/yyyy'}}
                         - {{ productionLineAssignment.endTime | date:'MM/dd/yyyy'}}
                       </td>
-                      <td>
+                      <td *ngIf="!displayOnly">
 
                         
                         <nz-list>
@@ -765,7 +765,7 @@
                         {{ 'pick.quantity' | i18n }}</th>
                       <th>
                         {{ 'pick.pickedQuantity' | i18n }}</th>
-                      <th>
+                      <th *ngIf="!displayOnly">
                         {{ 'action' | i18n }}</th>
                     </thead>
                     <tbody>
@@ -780,7 +780,7 @@
                         <td>{{ pick.item.description }}</td>
                         <td>{{ pick.quantity }}</td>
                         <td>{{ pick.pickedQuantity }}</td>
-                        <td>
+                        <td *ngIf="!displayOnly">
                           <button nz-button (click)="cancelPick(data, pick)" [disabled]="pick.quantity === pick.pickedQuantity">
                             {{ 'cancel' | i18n }}
                           </button>
@@ -840,7 +840,7 @@
                       <th>
                         {{ 'short-allocation.lastAllocationDatetime' | i18n }}
                       </th>
-                      <th>
+                      <th *ngIf="!displayOnly">
                         {{ 'action' | i18n }}
                       </th>
                     </thead>
@@ -864,7 +864,7 @@
                             {{ shortAllocation.lastAllocationDatetime  | date:'short'}}
                           </span>
                         </td>
-                        <td>
+                        <td *ngIf="!displayOnly">
                           <button nz-button (click)="cancelShortAllocation(data, shortAllocation)"
                             [disabled]="shortAllocation.status !== shortAllocationStatus.PENDING || data.status === workOrderStatuses.COMPLETED">
                             {{ 'cancel' | i18n }}
@@ -913,7 +913,7 @@
                       <th>
                         {{ 'inventory.status' | i18n }}
                       </th>
-                      <th>
+                      <th *ngIf="!displayOnly">
                         {{ 'action' | i18n }}
                       </th>
                     </thead>
@@ -926,7 +926,7 @@
                         <td>{{ inventory.itemPackageType?.name }}</td>
                         <td>{{ inventory.quantity }}</td>
                         <td>{{  inventory.inventoryStatus?.description}}</td>
-                        <td>
+                        <td *ngIf="!displayOnly">
                           <button nz-button [disabled]="!isInventoryUnpickable(data, inventory)"
                             (click)="openUnpickModal(data, inventory, tplUnpickModalTitle, tplUnpickModalContent)">
                             {{ 'unpick' | i18n }}
@@ -972,7 +972,7 @@
                       </th>
                       <th>
                         {{'nextLocation' | i18n}}</th>
-                      <th>
+                      <th *ngIf="!displayOnly">
                         {{ 'action' | i18n }}
                       </th>
                     </thead>
@@ -991,7 +991,7 @@
                             {{ i+1 }} - {{ inventoryMovement.location.name}}
                           </p>
                         </td>
-                        <td>
+                        <td *ngIf="!displayOnly">
 
 
                           <button nz-button nz-dropdown [nzDropdownMenu]="receivedInventoryActionTpl">
@@ -1089,7 +1089,7 @@
                       </th>
                       <th>
                         {{'nextLocation' | i18n}}</th>
-                      <th>
+                      <th *ngIf="!displayOnly">
                         {{ 'action' | i18n }}
                       </th>
                     </thead>
@@ -1107,7 +1107,7 @@
                             {{ i+1 }} - {{ inventoryMovement.location.name}}
                           </p>
                         </td>
-                        <td>                          
+                        <td *ngIf="!displayOnly">                          
                           <button nz-button nz-dropdown [nzDropdownMenu]="receivedInventoryActionTpl">
                             {{ 'action' | i18n }}<i nz-icon nzType="down"></i>
                           </button>
@@ -1182,7 +1182,7 @@
                       </th>
                       <th>
                         {{'nextLocation' | i18n}}</th>
-                      <th>
+                      <th *ngIf="!displayOnly">
                         {{ 'action' | i18n }}
                       </th>
                     </thead>
@@ -1200,7 +1200,7 @@
                             {{ i+1 }} - {{ inventoryMovement.location.name}}
                           </p>
                         </td>
-                        <td>
+                        <td *ngIf="!displayOnly">
 
                           <button nz-button nzType="primary"
                             *ngIf="inventoryReadyForPutaway(data, inventory) && inventory.inventoryMovements && inventory.inventoryMovements.length === 0"

@@ -49,6 +49,7 @@ export class UtilRfAppVersionComponent implements OnInit {
       title: this.i18n.fanyi("action"),  
       renderTitle: 'actionColumnTitle',fixed: 'right',width: 110, 
       render: 'actionColumn',
+      iif: () => !this.displayOnly
     },  
     
   ]; 

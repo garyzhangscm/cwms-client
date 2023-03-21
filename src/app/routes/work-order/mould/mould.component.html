@@ -50,7 +50,7 @@
         </th>
 
 
-        <th>
+        <th *ngIf="!displayOnly">
           {{ 'action' | i18n }}
         </th>
       </tr>
@@ -60,7 +60,7 @@
 
         <td>{{ data.name }}</td>
         <td>{{ data.description }}</td>
-        <td>
+        <td *ngIf="!displayOnly">
           <a routerLink="/work-order/mould/maintenance" [queryParams]="{id: data.id!}" routerLinkActive="active"> {{
             'modify' | i18n }}</a>
 

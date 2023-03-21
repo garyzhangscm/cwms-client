@@ -210,7 +210,7 @@
 
 
 
-        <th>
+        <th *ngIf="!displayOnly">
           {{ 'action' | i18n }}
         </th>
       </tr>
@@ -231,7 +231,7 @@
           <input nz-input [(ngModel)]="mapOfConfirmedQuantity[data.number]"
             [disabled]="mapOfConfirmedQuantity[data.number] === 0 || confirming === true" style="width: 100px;" />
         </td>
-        <td>
+        <td *ngIf="!displayOnly">
           <button nz-button nzType="primary" (click)="confirmPick(data)"
             [disabled]="mapOfConfirmedQuantity[data.number] <= 0" [nzLoading]="confirming">
             {{ 'confirm' | i18n }}

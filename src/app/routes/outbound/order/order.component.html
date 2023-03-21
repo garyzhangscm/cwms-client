@@ -608,7 +608,7 @@
                 <th>
                   {{ 'pick.allocated-lpn' | i18n }}
                 </th>
-                <th>
+                <th *ngIf="!displayOnly">
                   {{ 'action' | i18n }}
                 </th>
               </thead>
@@ -632,7 +632,7 @@
                   <td>{{ pick.quantity }}</td>
                   <td>{{ pick.pickedQuantity }}</td>
                   <td>{{ pick.lpn }}</td>
-                  <td>
+                  <td *ngIf="!displayOnly">
                     <button nz-button (click)="cancelPick(order, pick)"
                       [disabled]="pick.quantity === pick.pickedQuantity || order.status === orderStatusEnum.COMPLETE">
                       {{ 'cancel' | i18n }}
@@ -698,7 +698,7 @@
                 <th>
                   {{ 'style' | i18n }}
                 </th>
-                <th>
+                <th *ngIf="!displayOnly">
                   {{ 'action' | i18n }}
                 </th>
               </thead>
@@ -715,7 +715,7 @@
                   <td>{{ inventory.color }}</td>
                   <td>{{ inventory.productSize }}</td>
                   <td>{{ inventory.style }}</td>
-                  <td>
+                  <td *ngIf="!displayOnly">
                     <button nz-button (click)="openUnpickModal(order, inventory, tplUnpickModalTitle, tplUnpickModalContent)"
                       [disabled]="order.status === orderStatusEnum.COMPLETE">
                       {{ 'unpick' | i18n }}
@@ -757,7 +757,7 @@
                 <th>
                   {{ 'short-allocation.lastAllocationDatetime' | i18n }}
                 </th>
-                <th>
+                <th *ngIf="!displayOnly">
                   {{ 'action' | i18n }}
                 </th>
               </thead>
@@ -781,7 +781,7 @@
                       {{ shortAllocation.lastAllocationDatetime | date:'short'}}
                     </span>
                   </td>
-                  <td>
+                  <td *ngIf="!displayOnly">
                     
                     <button nz-button nz-dropdown [nzDropdownMenu]="shortAllocationMenu" nzType="primary">
                       {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>

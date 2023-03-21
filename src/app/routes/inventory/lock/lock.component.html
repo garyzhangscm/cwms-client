@@ -102,7 +102,7 @@
                     <th>
                     {{ 'quantity' | i18n }}
                     </th>
-                    <th>
+                    <th *ngIf="!displayOnly">
                     {{ 'action' | i18n }}
                     </th>
                     
@@ -115,7 +115,7 @@
                         <td>{{ inventory.location?.locationGroup?.name }}</td>
                         <td>{{ inventory.location?.name }}</td>
                         <td>{{ inventory.quantity }}</td>
-                        <td>
+                        <td *ngIf="!displayOnly">
                             <button nz-button nzType="primary" (click)="unlockInventory(item, inventory)">
                                 {{ 'unlock-inventory' | i18n }}
                               </button></td>

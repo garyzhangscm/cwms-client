@@ -640,6 +640,7 @@ export class InventoryItemComponent implements OnInit {
       renderTitle: 'actionColumnTitle',
       render: 'actionColumn',
       fixed: 'right',width: 110, 
+      iif: () => !this.displayOnly
     },
   ];
   customColumns = [

@@ -50,7 +50,7 @@
                         {{ column.name | i18n }}
                     </th>
 
-                    <th>
+                    <th *ngIf="!displayOnly">
                         {{ 'action' | i18n }}
                     </th>
                 </tr>
@@ -62,7 +62,7 @@
 
                     <td>{{ data.printerName }}</td>
 
-                    <td>
+                    <td *ngIf="!displayOnly">
                         <a routerLink="/report/report-printer-configuration/maintenance" routerLinkActive="active"
                             [queryParams]="{id : data.id!}">{{'modify' | i18n}}</a>
                         <nz-divider nzType="vertical"></nz-divider>

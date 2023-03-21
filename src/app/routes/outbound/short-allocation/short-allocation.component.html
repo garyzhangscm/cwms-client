@@ -63,7 +63,7 @@
           {{ column.name | i18n }}
         </th>
 
-        <th>
+        <th *ngIf="!displayOnly">
           {{ 'action' | i18n }}
         </th>
       </tr>
@@ -92,7 +92,7 @@
             {{ shortAllocation.lastAllocationDatetime | date:'short'}}
           </span>
         </td>
-        <td>
+        <td *ngIf="!displayOnly">
           <button nz-button (click)="cancelShortAllocation(shortAllocation)"
             [disabled]="shortAllocation.status !== shortAllocationStatus.PENDING">
             {{ 'cancel' | i18n }}

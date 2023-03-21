@@ -118,7 +118,7 @@
         </th>
 
 
-        <th>{{ 'action' | i18n }}</th>
+        <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
       </tr>
     </thead>
     <tbody>
@@ -133,7 +133,7 @@
         <td>{{ data.costThreshold }}</td>
         <td>{{ data.enabled + ''| i18n}}</td>
 
-        <td>
+        <td *ngIf="!displayOnly">
 
         </td>
       </tr>

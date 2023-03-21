@@ -114,6 +114,7 @@ export class WorkOrderMpsComponent implements OnInit {
       title: 'action',
       fixed: 'right',width: 100, 
       render: 'actionColumn',
+      iif: () => !this.displayOnly
     }, 
    
   ];
