@@ -7,6 +7,7 @@ import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
 import { ClientService } from '../../common/services/client.service';
 import { LocalCacheService } from '../../util/services/local-cache.service';
@@ -91,17 +92,18 @@ export class BillingInvoiceComponent implements OnInit {
   searchResult = '';
   availableClients: Client[] = [];
    
-  constructor(private http: _HttpClient,
+  displayOnly = false;
+  constructor( 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
-    private invoiceService: InvoiceService,
-    private messageService: NzMessageService,
+    private invoiceService: InvoiceService, 
     private warehouseService: WarehouseService,
     private clientService: ClientService,
-    private localCacheService: LocalCacheService,
-    private router: Router, 
+    private userService: UserService,
+    private localCacheService: LocalCacheService, 
     private fb: UntypedFormBuilder,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/billing/invoice");
       this.localCacheService.getWarehouseConfiguration().subscribe({
         next: (warehouseConfigRes) => {
   

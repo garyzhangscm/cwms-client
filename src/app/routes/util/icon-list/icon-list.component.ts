@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 
+import { UserService } from '../../auth/services/user.service';
+
 @Component({
   selector: 'app-util-icon-list',
   templateUrl: './icon-list.component.html',
@@ -759,7 +761,11 @@ export class UtilIconListComponent implements OnInit {
     // 'euro',
     // 'gold',
   ];
-  constructor(private http: _HttpClient) {}
+  displayOnly = false;
+  constructor(
+    private userService: UserService,) {
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/util/icon-list");
+  }
 
   ngOnInit() {}
 }

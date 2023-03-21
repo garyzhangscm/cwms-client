@@ -7,6 +7,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { Customer } from '../../common/models/customer';
 import { Order } from '../../outbound/models/order';
 import { ColumnItem } from '../../util/models/column-item';
@@ -114,6 +115,7 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
   listOfDisplayBillOfMaterial: BillOfMaterial[] = [];
 
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -125,7 +127,10 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private utilService: UtilService,
-  ) { }
+    private userService: UserService,
+  ) {
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/bill-of-material");
+   }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('bill-of-material'));
     // initiate the search form

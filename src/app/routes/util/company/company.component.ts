@@ -6,6 +6,7 @@ import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 
+import { UserService } from '../../auth/services/user.service';
 import { PurchaseOrder } from '../../inbound/models/purchase-order';
 import { Company } from '../../warehouse-layout/models/company';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
@@ -38,12 +39,17 @@ export class UtilCompanyComponent implements OnInit {
   searchResult = ""; 
  
    
-  constructor(private http: _HttpClient,
+  displayOnly = false;
+  constructor( 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,    
     private companyService: CompanyService,
-    private fb: UntypedFormBuilder,) { }
+    private userService: UserService,
+    private fb: UntypedFormBuilder,) {
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/company");
+    
+    }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.util.company'));

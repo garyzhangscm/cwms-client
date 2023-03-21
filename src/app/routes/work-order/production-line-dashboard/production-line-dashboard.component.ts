@@ -7,6 +7,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { differenceInSeconds} from 'date-fns';
 import { Subscription, interval } from 'rxjs';
 
+import { UserService } from '../../auth/services/user.service';
 import { ProductionLineStatus } from '../models/production-line-status';
 import { ProductionShiftSchedule } from '../models/production-shift-schedule';
 import { ProductionLineService } from '../services/production-line.service';
@@ -82,12 +83,16 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
   countDownsubscription!: Subscription;
   loadingData = false;
   
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private productionLineService: ProductionLineService, 
     private workOrderConfigurationService: WorkOrderConfigurationService,
-    private titleService: TitleService,  ) { }
+    private titleService: TitleService, 
+    private userService: UserService, ) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/production-line-dashboard");
+    }
 
   ngOnInit(): void {
       this.titleService.setTitle(this.i18n.fanyi('menu.main.work-order.production-line-dashboard')); 

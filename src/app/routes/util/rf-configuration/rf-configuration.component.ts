@@ -4,6 +4,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { RfConfiguration } from '../models/rf-configuration';
 import { RfConfigurationService } from '../services/rf-configuration.service';
@@ -17,11 +18,15 @@ export class UtilRfConfigurationComponent implements OnInit {
   
   currentRFConfiguration: RfConfiguration;
 
-  constructor(private http: _HttpClient, 
+  displayOnly = false;
+  constructor( 
     private rfConfigurationService: RfConfigurationService,
     private messageService: NzMessageService,
+    private userService: UserService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private warehouseService: WarehouseService,  ) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/rf-configuration");
+
       this.currentRFConfiguration = {
         warehouseId: this.warehouseService.getCurrentWarehouse().id, 
 

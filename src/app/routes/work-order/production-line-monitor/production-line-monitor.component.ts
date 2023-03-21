@@ -7,6 +7,7 @@ import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { ProductionLine } from '../models/production-line';
 import { ProductionLineMonitor } from '../models/production-line-monitor';
 import { ProductionLineMonitorService } from '../services/production-line-monitor.service';
@@ -43,13 +44,17 @@ export class WorkOrderProductionLineMonitorComponent implements OnInit {
     }
   ]; 
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private productionLineMonitorService: ProductionLineMonitorService, 
     private productionLineService: ProductionLineService, 
     private activatedRoute: ActivatedRoute,
-    private titleService: TitleService,  ) { }
+    private titleService: TitleService, 
+    private userService: UserService, ) {
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/production-line-monitor");
+     }
 
   ngOnInit(): void {
       this.titleService.setTitle(this.i18n.fanyi('menu.main.work-order.production-line-monitor'));

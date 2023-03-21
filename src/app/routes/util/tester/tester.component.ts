@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { I18NService } from '@core';
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
+import { UserService } from '../../auth/services/user.service';
 import { TestScenarioStatus } from '../models/test-scenario-status.enum';
 import { TestScenarioSuit } from '../models/test-scenario-suit';
 import { TestScenarioSuitStatus } from '../models/test-scenario-suit-status.enum';
@@ -20,12 +22,15 @@ export class UtilTesterComponent implements OnInit {
 
   mapOfStepStatus: { [key: string]: string } = {};
 
+  displayOnly = false;
   constructor(
-    private http: _HttpClient,
+    private userService: UserService,
     private testScenarioSuitService: TestScenarioSuitService,
     private messageService: NzMessageService,
     private i18n: I18NService,
-  ) {}
+  ) {
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/util/tester");
+  }
 
   ngOnInit(): void {
     this.testScenarioSuitService.getTestScenarioSuit().subscribe(res => {

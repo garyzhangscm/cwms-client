@@ -3,6 +3,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
 import { Unit } from '../../common/models/unit';
 import { UnitType } from '../../common/models/unit-type';
@@ -37,14 +38,18 @@ export class BillingRateComponent implements OnInit {
  
   volumeUnits: Unit[] = [];
 
-  constructor(private http: _HttpClient, 
+  displayOnly = false;
+  constructor(
     private companyService: CompanyService,
     private warehouseService: WarehouseService,
     private billingRateService: BillingRateService,
     private messageService: NzMessageService,
     private unitService: UnitService,
+    private userService: UserService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private clientService: ClientService) { }
+    private clientService: ClientService) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/billing/rate");
+    }
 
   ngOnInit(): void { 
     this.loadClients();

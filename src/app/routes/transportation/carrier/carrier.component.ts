@@ -7,6 +7,7 @@ import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { Carrier } from '../models/carrier';
 import { CarrierService } from '../services/carrier.service';
 
@@ -40,14 +41,16 @@ export class TransportationCarrierComponent implements OnInit {
    
   ];
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private carrierService: CarrierService,
-    private messageService: NzMessageService,
-    private router: Router, 
+    private userService: UserService,
     private activatedRoute: ActivatedRoute,
-    private titleService: TitleService, ) { }
+    private titleService: TitleService, ) {
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/transportation/carrier");
+     }
 
     ngOnInit(): void {
       this.titleService.setTitle(this.i18n.fanyi('menu.main.transport.carrier'));

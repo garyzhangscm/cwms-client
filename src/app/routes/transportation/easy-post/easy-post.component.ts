@@ -8,6 +8,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Address } from 'ngx-google-places-autocomplete/objects/address';
 
+import { UserService } from '../../auth/services/user.service';
 import { Printer } from '../../report/models/printer';
 import { ReportType } from '../../report/models/report-type.enum';
 import { PrinterService } from '../../report/services/printer.service';
@@ -60,6 +61,7 @@ export class TransportationEasyPostComponent implements OnInit {
   ]; 
 
   
+  displayOnly = false;
   constructor(
     private warehouseService: WarehouseService,
     private modalService: NzModalService,
@@ -67,9 +69,11 @@ export class TransportationEasyPostComponent implements OnInit {
     private messageService: NzMessageService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private carrierService: CarrierService,  
-    private dateTimeService: DateTimeService,
+    private userService: UserService,
     private easyPostConfigurationService: EasyPostConfigurationService, 
     private pirnterService: PrinterService) { 
+      
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/transportation/easy-post");
       this.currentEasyPostConfiguration = {        
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
         apiKey: "",

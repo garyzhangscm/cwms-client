@@ -8,6 +8,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 import { Alert } from '../../alert/models/alert';
+import { UserService } from '../../auth/services/user.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ABCCategory } from '../models/abc-category';
 import { AbcCategoryService } from '../services/abc-category.service';
@@ -42,15 +43,17 @@ export class CommonAbcCategoryComponent implements OnInit {
   newABCCategoryModal!: NzModalRef;
   newABCCategoryForm!: UntypedFormGroup;
 
+  displayOnly = false;
   constructor( 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private titleService: TitleService, 
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private abcCategoryService: AbcCategoryService,
-    private messageService: NzMessageService,
-    private router: Router, 
+    private messageService: NzMessageService, 
     private modalService: NzModalService,
+    private userService: UserService,
     private warehouseService: WarehouseService,
-    private fb: UntypedFormBuilder,) { }
+    private fb: UntypedFormBuilder,) {
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/common/abc-category");
+     }
 
   ngOnInit(): void { 
     this.search();

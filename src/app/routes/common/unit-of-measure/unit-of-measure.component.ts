@@ -5,6 +5,7 @@ import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { UnitOfMeasure } from '../models/unit-of-measure';
 import { UnitOfMeasureService } from '../services/unit-of-measure.service';
 
@@ -43,11 +44,15 @@ export class CommonUnitOfMeasureComponent implements OnInit {
 
   @ViewChild(NzInputDirective, { static: false, read: ElementRef }) inputElement: ElementRef | undefined;
 
+  displayOnly = false;
   constructor(
     private unitOfMeasureService: UnitOfMeasureService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
-  ) { }
+    private userService: UserService,
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/common/unit-of-measure");
+  }
 
   search(refresh: boolean = false): void {
     this.unitOfMeasureService.loadUnitOfMeasures(refresh).subscribe(unitOfMeasureRes => {

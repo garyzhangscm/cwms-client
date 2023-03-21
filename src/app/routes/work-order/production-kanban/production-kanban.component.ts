@@ -5,6 +5,7 @@ import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { interval, Subscription } from 'rxjs';
 
+import { UserService } from '../../auth/services/user.service';
 import { ProductionLineKanbanData } from '../../work-order/models/production-line-kanban-data';
 import { ProductionLineKanbanService } from '../../work-order/services/production-line-kanban.service';
 import { ProductionLine } from '../models/production-line';
@@ -30,11 +31,14 @@ export class WorkOrderProductionKanbanComponent implements OnInit, OnDestroy {
 
   countDownNumber = 300;
   countDownsubscription!: Subscription;
+  displayOnly = false;
   constructor(
     public msg: NzMessageService, private cdr: ChangeDetectorRef,
     private productionLineKanbanService: ProductionLineKanbanService,
     private productionLineService: ProductionLineService,
+    private userService: UserService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService) {
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/production-kanban");
   }
 
   ngOnInit(): void {

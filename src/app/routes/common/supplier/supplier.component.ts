@@ -7,6 +7,7 @@ import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { Supplier } from '../models/supplier';
 import { SupplierService } from '../services/supplier.service';
@@ -178,13 +179,17 @@ export class CommonSupplierComponent implements OnInit {
 
   @ViewChild(NzInputDirective, { static: false, read: ElementRef }) inputElement: ElementRef | undefined;
 
+  displayOnly = false;
   constructor(
     private supplierService: SupplierService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private activatedRoute: ActivatedRoute,
     private fb: UntypedFormBuilder,
-  ) { }
+    private userService: UserService,
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/common/supplier");
+  }
 
   ngOnInit(): void {
     this.searchForm = this.fb.group({

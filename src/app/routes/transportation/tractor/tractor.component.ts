@@ -7,6 +7,7 @@ import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { Tractor } from '../models/tractor'; 
 import { TractorService } from '../services/tractor.service'; 
 
@@ -75,12 +76,16 @@ export class CommonTractorComponent implements OnInit {
   tractors: Tractor[] = [];
   searchResult = "";
 
-  constructor(private http: _HttpClient,
+  displayOnly = false;
+  constructor(
+    private userService: UserService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private activatedRoute: ActivatedRoute,
     private tractorService: TractorService,
     private messageService: NzMessageService, 
-    private fb: UntypedFormBuilder,) { }
+    private fb: UntypedFormBuilder,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/transportation/tractor");
+    }
 
   ngOnInit(): void { 
     // initiate the search form

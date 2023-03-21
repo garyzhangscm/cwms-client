@@ -3,6 +3,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { EmailAlertConfiguration } from '../models/email-alert-configuration';
 import { EmailAlertConfigurationService } from '../services/email-alert-configuration.service';
@@ -17,11 +18,14 @@ export class AlertConfigurationComponent implements OnInit {
   isSpinning = false;
 
 
-  constructor(private http: _HttpClient,
+  displayOnly = false;
+  constructor(
     private emailAlertConfigurationService: EmailAlertConfigurationService,    
     private messageService: NzMessageService,
+    private userService: UserService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private companyService: CompanyService) {
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/alert/configuration");
 
     this.currentEmailAlertConfiguration = {
 

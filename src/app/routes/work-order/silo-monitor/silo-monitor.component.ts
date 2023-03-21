@@ -2,7 +2,8 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
- 
+
+import { UserService } from '../../auth/services/user.service';
 import { SiloDevice } from '../models/silo-device';
 import { SiloService } from '../services/silo.service';
 
@@ -27,9 +28,13 @@ export class WorkOrderSiloMonitorComponent implements OnInit {
   ];
   
   
-  constructor(private http: _HttpClient, 
+  displayOnly = false;
+  constructor(
     private siloService: SiloService, 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) { }
+    private userService: UserService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/silo");
+    }
 
   ngOnInit(): void { 
 

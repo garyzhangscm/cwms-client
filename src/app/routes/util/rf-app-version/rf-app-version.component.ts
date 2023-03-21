@@ -8,6 +8,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { RF } from '../models/rf';
 import { RFAppVersion } from '../models/rf-app-version';
 import { RfAppVersionService } from '../services/rf-app-version.service';
@@ -67,13 +68,17 @@ export class UtilRfAppVersionComponent implements OnInit {
   rfAppVersions: RFAppVersion[] = [];
   searchResult = "";
    
-  constructor(private http: _HttpClient,
+  displayOnly = false;
+  constructor( 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
     private rfAppVersionService: RfAppVersionService,
     private messageService: NzMessageService,
-    private fb: UntypedFormBuilder,) { }
+    private userService: UserService,
+    private fb: UntypedFormBuilder,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/rf-app-version");
+    }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.util.rf-app-version'));

@@ -4,8 +4,9 @@ import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/form
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message'; 
-
+import { NzMessageService } from 'ng-zorro-antd/message';
+ 
+import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service'; 
@@ -143,17 +144,21 @@ export class WorkOrderProductionLineComponent implements OnInit {
   expandSet = new Set<number>();
 
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     private productionLineService: ProductionLineService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private messageService: NzMessageService,
     private utilService: UtilService,
+    private userService: UserService,
     private locationService: LocationService,
     private activatedRoute: ActivatedRoute,
     private productionLineAssignmentService: ProductionLineAssignmentService,
     private localCacheService: LocalCacheService,
-  ) { }
+  ) {
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/production-line");
+   }
 
   // Form related data and functions
   searchForm!: UntypedFormGroup;

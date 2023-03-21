@@ -7,6 +7,7 @@ import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { Printer } from '../models/printer';
 import { PrinterType } from '../models/printer-type';
 import { PrinterTypeService } from '../services/printer-type.service';
@@ -41,15 +42,17 @@ export class ReportPrinterComponent implements OnInit {
   searchResult = "";
   
    
-  constructor(private http: _HttpClient,
+  displayOnly = false;
+  constructor( 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
     private printerTypeService: PrinterTypeService,
-    private printerService: PrinterService,
-    private messageService: NzMessageService,
-    private router: Router, 
-    private fb: UntypedFormBuilder,) { }
+    private printerService: PrinterService, 
+    private userService: UserService,
+    private fb: UntypedFormBuilder,) {
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/report/printer");
+     }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.report.printer'));

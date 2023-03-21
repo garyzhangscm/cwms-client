@@ -6,6 +6,7 @@ import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { Customer } from '../models/customer';
@@ -178,6 +179,7 @@ export class CommonCustomerComponent implements OnInit {
 
   @ViewChild(NzInputDirective, { static: false, read: ElementRef }) inputElement: ElementRef | undefined;
 
+  displayOnly = false;
   constructor(
     private customerService: CustomerService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -186,7 +188,10 @@ export class CommonCustomerComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private utilService: UtilService,
     private router: Router,
-  ) { }
+    private userService: UserService,
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/common/customer");
+  }
 
   ngOnInit(): void {
     this.searchForm = this.fb.group({

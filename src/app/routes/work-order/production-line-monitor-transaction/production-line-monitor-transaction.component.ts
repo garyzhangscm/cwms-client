@@ -4,8 +4,9 @@ import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { XlsxService } from '@delon/abc/xlsx';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
-
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+ 
+import { UserService } from '../../auth/services/user.service';
 import { ProductionLine } from '../models/production-line';
 import { ProductionLineMonitor } from '../models/production-line-monitor';
 import { ProductionLineMonitorTransaction } from '../models/production-line-monitor-transaction';
@@ -48,6 +49,7 @@ export class WorkOrderProductionLineMonitorTransactionComponent implements OnIni
     
   ]; 
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
@@ -55,7 +57,10 @@ export class WorkOrderProductionLineMonitorTransactionComponent implements OnIni
     private productionLineService: ProductionLineService,
     private productionLineMonitorService: ProductionLineMonitorService,
     private xlsx: XlsxService,
-    private titleService: TitleService,  ) { }
+    private titleService: TitleService,  
+    private userService: UserService,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/production-line-monitor/transaction");
+    }
 
   ngOnInit(): void {
       this.titleService.setTitle(this.i18n.fanyi('menu.main.work-order.production-line-monitor-transaction'));

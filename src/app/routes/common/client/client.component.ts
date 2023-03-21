@@ -7,6 +7,7 @@ import { NzInputDirective } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { Client } from '../models/client';
@@ -170,13 +171,16 @@ export class CommonClientComponent implements OnInit {
 
   @ViewChild(NzInputDirective, { static: false, read: ElementRef }) inputElement: ElementRef | undefined;
 
+  displayOnly = false;
   constructor(private clientService: ClientService,
     private localCacheService: LocalCacheService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private messageService: NzMessageService,
     private activatedRoute: ActivatedRoute,
     private fb: UntypedFormBuilder,
+    private userService: UserService,
     private modalService: NzModalService) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/common/client");
       this.localCacheService.getWarehouseConfiguration().subscribe({
         next: (warehouseConfigRes) => {
 

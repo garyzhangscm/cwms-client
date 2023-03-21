@@ -2,7 +2,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
- 
+
+import { UserService } from '../../auth/services/user.service';
 import { UnitService } from '../../common/services/unit.service'; 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { SiloConfiguration } from '../models/silo-configuration';
@@ -20,12 +21,14 @@ export class WorkOrderSiloConfigurationComponent implements OnInit {
   isSpinning = false;
   
   
+  displayOnly = false;
   constructor(  
     private siloConfigurationService: SiloConfigurationService,
     private warehouseService: WarehouseService, 
-    private messageService: NzMessageService,  
-    private unitService: UnitService,
+    private messageService: NzMessageService,   
+    private userService: UserService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/silo-configuration");
 
       this.currentSiloConfiguration = { 
         

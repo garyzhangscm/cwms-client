@@ -5,6 +5,7 @@ import {  ChartSelectionChangedEvent, ChartType, Row } from 'angular-google-char
 import { differenceInCalendarDays, addDays, parseISO, Interval} from 'date-fns';
 import * as XLSX from 'xlsx';
 
+import { UserService } from '../../auth/services/user.service';
 import { ColorService } from '../../style/color.service';
 import { UtilService } from '../../util/services/util.service';
 import { MasterProductionScheduleLineDate } from '../models/master-production-schedule-line-date';
@@ -101,10 +102,16 @@ export class WorkOrderMpsViewComponent implements OnInit {
   chartOptions?: ChartOptions;
  
    
+  displayOnly = false;
   constructor(private http: _HttpClient, 
     private fb: UntypedFormBuilder,
+    private userService: UserService,
     private masterProductionScheduleService: MasterProductionScheduleService,  
-    private productionLineService: ProductionLineService, private utilService: UtilService) { }
+    private productionLineService: ProductionLineService, private utilService: UtilService) { 
+      
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/mps-view");
+
+    }
 
   ngOnInit(): void {  
      

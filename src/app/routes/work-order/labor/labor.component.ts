@@ -8,6 +8,7 @@ import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { QcInspectionRequest } from '../../qc/models/qc-inspection-request';
 import { ProductionLine } from '../models/production-line';
 import { WorkOrderLabor } from '../models/work-order-labor';
@@ -22,14 +23,17 @@ import { WorkOrderLaborService } from '../services/work-order-labor.service';
 })
 export class WorkOrderLaborComponent implements OnInit {
 
-  constructor(private http: _HttpClient,    
+  
+  displayOnly = false;
+  constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
-    private workOrderLaborService: WorkOrderLaborService,
-    private workOrderLaborActivityHistoryService: WorkOrderLaborActivityHistoryService,
+    private workOrderLaborService: WorkOrderLaborService, 
     private productionLineService: ProductionLineService, 
+    private userService: UserService,
     ) { 
 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/labor");
   }
 
   listOfLabors: WorkOrderLabor[] = [];

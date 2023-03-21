@@ -7,6 +7,7 @@ import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { Order } from '../../outbound/models/order';
 import { Shipment } from '../../outbound/models/shipment';
 import { Stop } from '../../outbound/models/stop';
@@ -101,14 +102,18 @@ export class CommonTrailerComponent implements OnInit {
   mapOfOrders: { [key: string]: Order[] } = {};
   mapOfShipments: { [key: string]: Shipment[] } = {};
 
-  constructor(private http: _HttpClient,
+  displayOnly = false;
+  constructor(
+    private userService: UserService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private activatedRoute: ActivatedRoute,
     private trailerService: TrailerService,
     private messageService: NzMessageService, 
     private stopService: StopService,
     private orderService: OrderService,
-    private fb: UntypedFormBuilder,) { }
+    private fb: UntypedFormBuilder,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/transportation/trailer");
+    }
 
   ngOnInit(): void {  
     // initiate the search form

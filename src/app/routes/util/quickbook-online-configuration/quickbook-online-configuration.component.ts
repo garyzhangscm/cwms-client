@@ -4,6 +4,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { QuickbookOnlineConfiguration } from '../models/quickbook-online-configuration';
@@ -18,13 +19,17 @@ export class UtilQuickbookOnlineConfigurationComponent implements OnInit {
   
   currentQBOConfiguration: QuickbookOnlineConfiguration;
 
-  constructor(private http: _HttpClient, 
+  displayOnly = false;
+  constructor(
     private quickbookConfigurationService: QuickbookOnlineConfigurationService, 
     private messageService: NzMessageService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private warehouseService: WarehouseService,
     private companyService: CompanyService,
+    private userService: UserService,
     private fb: UntypedFormBuilder,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/quickbook/configuration");
+
       this.currentQBOConfiguration = {
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
         companyId: this.companyService.getCurrentCompany()!.id,

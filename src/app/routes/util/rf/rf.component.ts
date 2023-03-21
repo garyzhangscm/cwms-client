@@ -7,6 +7,7 @@ import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { RF } from '../models/rf';
 import { RfService } from '../services/rf.service';
 
@@ -40,13 +41,17 @@ export class UtilRfComponent implements OnInit {
   rfs: RF[] = [];
   searchResult = "";
    
-  constructor(private http: _HttpClient,
+  displayOnly = false;
+  constructor( 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
     private rfService: RfService,
     private messageService: NzMessageService,
-    private fb: UntypedFormBuilder,) { }
+    private userService: UserService,
+    private fb: UntypedFormBuilder,) {
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/rf");
+     }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.util.rf'));

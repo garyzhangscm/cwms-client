@@ -8,6 +8,7 @@ import { differenceInSeconds} from 'date-fns';
 import * as PlotlyJS from 'plotly.js-dist-min';
 import { interval, Subscription } from 'rxjs';
 
+import { UserService } from '../../auth/services/user.service';
 import { ProductionLineStatus } from '../models/production-line-status';
 import { ProductionShiftSchedule } from '../models/production-shift-schedule';
 import { WorkOrderConfiguration } from '../models/work-order-configuration';
@@ -129,12 +130,15 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
 
    */
  
+  displayOnly = false;
   constructor(private http: _HttpClient, 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private productionLineService: ProductionLineService, 
+    private userService: UserService,
     private workOrderConfigurationService: WorkOrderConfigurationService,
     ) { 
     
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/production-line-status/display");
     this.gridStyle = {
       width: `${(100 / this.columnCount)}%`,
       textAlign: 'center'

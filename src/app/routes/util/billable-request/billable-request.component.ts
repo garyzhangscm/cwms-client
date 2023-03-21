@@ -7,6 +7,7 @@ import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { BillableRequest } from '../models/billable-request';
 import { BillableRequestService } from '../services/billable-request.service';
 
@@ -37,13 +38,16 @@ export class UtilBillableRequestComponent implements OnInit {
   billableRequests: BillableRequest[] = [];
   searchResult = "";
    
-  constructor(private http: _HttpClient,
+  displayOnly = false;
+  constructor( 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private titleService: TitleService,
-    private activatedRoute: ActivatedRoute,
-    private billableRequestService: BillableRequestService,
-    private messageService: NzMessageService,
-    private fb: UntypedFormBuilder,) { }
+    private titleService: TitleService, 
+    private billableRequestService: BillableRequestService, 
+    private userService: UserService,
+    private fb: UntypedFormBuilder,) {
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/billable-request");
+    
+    }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.util.billable-request'));

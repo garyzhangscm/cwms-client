@@ -5,6 +5,7 @@ import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 
+import { UserService } from '../../auth/services/user.service';
 import { ProductionLine } from '../models/production-line';
 import { ProductionLineStatus } from '../models/production-line-status';
 import { ProductionLineService } from '../services/production-line.service';
@@ -52,11 +53,15 @@ export class WorkOrderProductionLineStatusComponent implements OnInit {
     }
   ]; 
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private productionLineService: ProductionLineService,
-    private titleService: TitleService,  ) { }
+    private titleService: TitleService, 
+    private userService: UserService, ) {
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/production-line-status");
+    }
 
   ngOnInit(): void {
       this.titleService.setTitle(this.i18n.fanyi('menu.main.work-order.production-line-status'));

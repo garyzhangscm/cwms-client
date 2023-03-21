@@ -9,6 +9,7 @@ import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { Company } from '../../warehouse-layout/models/company';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { DataTransferRequest } from '../models/data-transfer-request';
@@ -81,15 +82,17 @@ export class UtilDataTransferComponent implements OnInit {
   dataExportRequestForm!: UntypedFormGroup;
   dataExportRequestModal!: NzModalRef;
    
-  constructor(private http: _HttpClient,
+  displayOnly = false;
+  constructor( 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private titleService: TitleService,
-    private activatedRoute: ActivatedRoute,
-    private dataTransferRequestService: DataTransferRequestService,
-    private messageService: NzMessageService,
+    private titleService: TitleService, 
+    private userService: UserService,
+    private dataTransferRequestService: DataTransferRequestService, 
     private modalService: NzModalService,
     private companyService: CompanyService,
-    private fb: UntypedFormBuilder,) { }
+    private fb: UntypedFormBuilder,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/data-transfer");
+    }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.util.data-transfer'));

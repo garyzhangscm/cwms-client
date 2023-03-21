@@ -7,6 +7,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { Report } from '../models/report';
@@ -85,17 +86,17 @@ export class ReportReportHistoryComponent implements OnInit {
     },
   ];
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private modalService: NzModalService,
-    private reportHistoryService: ReportHistoryService,
-    private message: NzMessageService,
-    private activatedRoute: ActivatedRoute,
-    private titleService: TitleService,
-    private router: Router,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private reportHistoryService: ReportHistoryService, 
+    private titleService: TitleService, 
     private utilService: UtilService,
-  ) { }
+    private userService: UserService,
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/report/report-history");
+  }
 
   // Form related data and functions
   searchForm!: UntypedFormGroup;

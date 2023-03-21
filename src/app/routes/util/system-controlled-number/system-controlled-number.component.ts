@@ -6,7 +6,8 @@ import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
- 
+
+import { UserService } from '../../auth/services/user.service';
 import { RF } from '../models/rf';
 import { SystemControlledNumber } from '../models/system-controlled-number';
 import { SystemControlledNumberService } from '../services/system-controlled-number.service';
@@ -59,13 +60,17 @@ export class UtilSystemControlledNumberComponent implements OnInit {
   systemControlledNumbers: SystemControlledNumber[] = [];
   searchResult = "";
    
-  constructor(private http: _HttpClient,
+  displayOnly = false;
+  constructor( 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
     private systemControlledNumberService: SystemControlledNumberService,
     private messageService: NzMessageService,
-    private fb: UntypedFormBuilder,) { }
+    private userService: UserService,
+    private fb: UntypedFormBuilder,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/system-controlled-number");
+    }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.util.sys-controlled-num'));

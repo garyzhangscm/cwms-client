@@ -7,6 +7,7 @@ import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { MaterialRequirementsPlanning } from '../models/material-requirements-planning';
 import { MaterialRequirementsPlanningService } from '../services/material-requirements-planning.service';
@@ -24,15 +25,18 @@ export class WorkOrderMrpComponent implements OnInit {
   searchResult= "";
   loadingMRPDetailsRequest = 0;
   
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private materialRequirementsPlanningService: MaterialRequirementsPlanningService,
-    private activatedRoute: ActivatedRoute,  
-    private messageService: NzMessageService, 
+    private activatedRoute: ActivatedRoute,   
     private localCacheService: LocalCacheService,
-  ) { }
+    private userService: UserService,
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/mrp");
+  }
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('MRP'));

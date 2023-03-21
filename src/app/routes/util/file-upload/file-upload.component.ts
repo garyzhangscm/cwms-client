@@ -7,7 +7,8 @@ import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
- 
+
+import { UserService } from '../../auth/services/user.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { FileUploadResult } from '../models/file-upload-result';
 import { FileUploadType } from '../models/file-upload-type';
@@ -32,6 +33,7 @@ export class UtilFileUploadComponent implements OnInit {
     { title: this.i18n.fanyi("errorMessage"), render: 'errorMessageColumn' , width: "35%"},   
   ]; 
   
+  displayOnly = false;
   constructor(
     private activatedRoute: ActivatedRoute,
     private fileUploadOperationService: FileUploadOperationService,
@@ -40,8 +42,11 @@ export class UtilFileUploadComponent implements OnInit {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private msg: NzMessageService,
+    private userService: UserService,
     private warehouseService: WarehouseService
-  ) {}
+  ) {
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/util/file-upload");
+  }
   
   fileTypes = ['.csv'];
 

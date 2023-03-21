@@ -8,6 +8,7 @@ import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { Customer } from '../../common/models/customer';
 import { Supplier } from '../../common/models/supplier';
 import { CustomerService } from '../../common/services/customer.service';
@@ -39,16 +40,20 @@ import { WorkOrderService } from '../services/work-order.service';
   styleUrls: ['./qc-rule-configuration.component.less'],
 })
 export class WorkOrderQcRuleConfigurationComponent implements OnInit {
+  
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,  
     private workOrderQcRuleConfigurationService: WorkOrderQcRuleConfigurationService, 
     private localCacheService: LocalCacheService, 
     private orderService: OrderService, 
+    private userService: UserService,
     private router: Router,
     private productionLineService: ProductionLineService,
     
     ) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/qc-rule-configuration");
 
 }
 

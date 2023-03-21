@@ -12,6 +12,7 @@ import { Menu } from '../../auth/models/menu';
 import { MenuGroup } from '../../auth/models/menu-group';
 import { MenuSubGroup } from '../../auth/models/menu-sub-group';
 import { MenuService } from '../../auth/services/menu.service'; 
+import { UserService } from '../../auth/services/user.service';
 import { UtilService } from '../services/util.service';
 
 @Component({
@@ -20,15 +21,20 @@ import { UtilService } from '../services/util.service';
   styleUrls: ['./menu.component.less'],
 })
 export class UtilMenuComponent implements OnInit {
+  
+  displayOnly = false;
+  
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
-    private messageService: NzMessageService,
-    private router: Router, 
+    private messageService: NzMessageService, 
     private activatedRoute: ActivatedRoute,
-    private titleService: TitleService,  
+    private titleService: TitleService, 
+    private userService: UserService, 
     private menuService: MenuService,
-  ) { }
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/util/menu");
+  }
  
 
   // Form related data and functions

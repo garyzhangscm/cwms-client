@@ -7,6 +7,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { ReportHistory } from '../models/report-history';
@@ -57,17 +58,18 @@ export class ReportReportPrinterConfigurationComponent implements OnInit {
     },
   ];
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private modalService: NzModalService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private reportPrinterConfigurationService: ReportPrinterConfigurationService,
-    private messageService: NzMessageService,
-    private activatedRoute: ActivatedRoute,
-    private titleService: TitleService,
-    private router: Router,
+    private messageService: NzMessageService, 
+    private titleService: TitleService, 
+    private userService: UserService,
     private utilService: UtilService,
-  ) { }
+  ) {
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/report/report-printer-configuration");
+   }
 
   // Form related data and functions
   searchForm!: UntypedFormGroup;

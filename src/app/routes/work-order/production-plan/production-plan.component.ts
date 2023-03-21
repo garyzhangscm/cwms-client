@@ -7,6 +7,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { ProductionPlan } from '../models/production-plan';
@@ -88,6 +89,7 @@ export class WorkOrderProductionPlanComponent implements OnInit {
   indeterminate = false;
   expandSet = new Set<number>();
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -98,7 +100,10 @@ export class WorkOrderProductionPlanComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
     private utilService: UtilService,
-  ) { }
+    private userService: UserService,
+  ) {
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/production-plan");
+   }
 
   // Form related data and functions
   searchForm!: UntypedFormGroup;

@@ -5,6 +5,7 @@ import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { BillableActivityType } from '../models/billable-activity-type';
 import { BillableActivityTypeService } from '../services/billable-activity-type.service';
@@ -41,11 +42,15 @@ export class BillingBillableActivityTypeComponent implements OnInit {
 
   
   isSpinning = false;
+  displayOnly = false;
   constructor(
     private billableActivityTypeService: BillableActivityTypeService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private userService: UserService,
     private messageService: NzMessageService,
-  ) { }
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/billing/billable-activity-type");
+  }
   ngOnInit(): void { 
     this.search(true);
   }

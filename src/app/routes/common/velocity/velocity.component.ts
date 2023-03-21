@@ -7,6 +7,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Velocity } from '../models/velocity';
 import { VelocityService } from '../services/velocity.service';
@@ -40,15 +41,18 @@ export class CommonVelocityComponent implements OnInit {
   newVelocityModal!: NzModalRef;
   newVelocityForm!: UntypedFormGroup;
 
+  
+  displayOnly = false;
   constructor( 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private titleService: TitleService, 
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private velocityService: VelocityService,
-    private messageService: NzMessageService,
-    private router: Router, 
+    private messageService: NzMessageService, 
     private modalService: NzModalService,
     private warehouseService: WarehouseService,
-    private fb: UntypedFormBuilder,) { }
+    private userService: UserService,
+    private fb: UntypedFormBuilder,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/common/velocity");
+    }
 
   ngOnInit(): void { 
     this.search();

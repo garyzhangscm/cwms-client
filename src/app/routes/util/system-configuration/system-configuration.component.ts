@@ -4,6 +4,7 @@ import { _HttpClient } from '@delon/theme';
 import { NzTreeHigherOrderServiceToken } from 'ng-zorro-antd/core/tree';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { SystemConfiguration } from '../models/system-configuration';
@@ -17,12 +18,16 @@ export class UtilSystemConfigurationComponent implements OnInit {
 
   currentSystemConfiguration: SystemConfiguration | undefined;
 
-  constructor(private http: _HttpClient,
+  displayOnly = false;
+  constructor( 
     private systemConfigurationService: SystemConfigurationService,
     private warehouseService: WarehouseService,
     private messageService: NzMessageService,
     private i18n: I18NService,
+    private userService: UserService,
     private companyService: CompanyService) {
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/system-configuration");
+
     this.currentSystemConfiguration = {
 
       companyId: companyService.getCurrentCompany()!.id,

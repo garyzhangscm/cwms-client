@@ -34,13 +34,16 @@ export class AlertSubscriptionComponent implements OnInit {
 
   lastKeyWordControllerIndex: number = 0;
 
-  constructor(private http: _HttpClient, 
+  displayOnly = false;
+  constructor(
     private alertSubscriptionService: AlertSubscriptionService, 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private messageService: NzMessageService,
     private fb: UntypedFormBuilder,
     private modalService: NzModalService,
-    private userService: UserService ) { }
+    private userService: UserService,  ) {
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/alert/subscription");
+     }
 
   ngOnInit(): void { 
 

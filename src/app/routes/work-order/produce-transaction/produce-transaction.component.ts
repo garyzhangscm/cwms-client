@@ -8,6 +8,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { ProductionLine } from '../models/production-line';
 import { WorkOrderProduceTransaction } from '../models/work-order-produce-transaction';
 import { ProductionLineService } from '../services/production-line.service';
@@ -31,16 +32,19 @@ export class WorkOrderProduceTransactionComponent implements OnInit {
   workOrderProduceTransaction: WorkOrderProduceTransaction[] = []; 
   productionLines: ProductionLine[] = [];
     
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     private workOrderProduceTransactionService: WorkOrderProduceTransactionService, 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private modalService: NzModalService,
-    private messageService: NzMessageService,
-    private titleService: TitleService,
-    private activatedRoute: ActivatedRoute, 
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private userService: UserService,
+    private titleService: TitleService, 
     private productionLineService: ProductionLineService
-  ) {}
+  ) {
+    
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/produce-transaction");
+
+  }
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.work-order.wo-produce-transaction'));

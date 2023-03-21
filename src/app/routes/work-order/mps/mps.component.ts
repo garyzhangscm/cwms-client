@@ -8,6 +8,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { UtilService } from '../../util/services/util.service';
 import { MasterProductionSchedule } from '../models/master-production-schedule';
 import { MasterProductionScheduleService } from '../services/master-production-schedule.service';
@@ -28,17 +29,19 @@ export class WorkOrderMpsComponent implements OnInit {
   removeMPSModal!: NzModalRef;
   removeMPSForm!: UntypedFormGroup;
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private masterProductionScheduleService: MasterProductionScheduleService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
-    private utilService: UtilService,
+    private activatedRoute: ActivatedRoute, 
     private messageService: NzMessageService,
     private modalService: NzModalService,
-  ) { }
+    private userService: UserService,
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/mps");
+  }
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('mps'));

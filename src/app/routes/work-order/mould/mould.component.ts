@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 
+import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { Mould } from '../models/mould';
@@ -57,15 +58,18 @@ export class WorkOrderMouldComponent implements OnInit {
   isSpinning = false;
 
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private mouldService: MouldService,
-    private activatedRoute: ActivatedRoute,
-    private router: Router,
+    private activatedRoute: ActivatedRoute, 
+    private userService: UserService,
     private utilService: UtilService,
-  ) { }
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/mould");
+  }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('mould'));
     // initiate the search form

@@ -4,6 +4,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from "../../auth/services/user.service";
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ProductionShiftSchedule } from "../models/production-shift-schedule";
@@ -25,12 +26,15 @@ export class WorkOrderWorkOrderConfigurationComponent implements OnInit {
 
   isSpinning = false;
 
-  constructor(private http: _HttpClient,
+  displayOnly = false;
+  constructor( 
     private workOrderConfigurationService: WorkOrderConfigurationService,
     private warehouseService: WarehouseService,
     private messageService: NzMessageService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private companyService: CompanyService) {
+    private userService: UserService,
+    private companyService: CompanyService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, ) {
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/work-order-configuration");
     this.currentWorkOrderConfiguration = {
 
       companyId: companyService.getCurrentCompany()!.id,

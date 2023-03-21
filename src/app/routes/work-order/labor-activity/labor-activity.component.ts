@@ -5,6 +5,7 @@ import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 
+import { UserService } from '../../auth/services/user.service';
 import { ProductionLine } from '../models/production-line';
 import { WorkOrderLabor } from '../models/work-order-labor';
 import { WorkOrderLaborActivityHistory } from '../models/work-order-labor-activity-history';
@@ -18,13 +19,16 @@ import { WorkOrderLaborService } from '../services/work-order-labor.service';
   styleUrls: ['./labor-activity.component.less'],
 })
 export class WorkOrderLaborActivityComponent implements OnInit {
-  constructor(private http: _HttpClient,    
+  
+  displayOnly = false;
+  constructor(
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
-    private workOrderLaborService: WorkOrderLaborService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,  
+    private userService: UserService,
     private workOrderLaborActivityHistoryService: WorkOrderLaborActivityHistoryService,
     private productionLineService: ProductionLineService, 
     ) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/labor-activity");
 
   }
 

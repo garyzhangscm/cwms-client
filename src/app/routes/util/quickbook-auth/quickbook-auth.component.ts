@@ -3,6 +3,7 @@ import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { UserService } from '../../auth/services/user.service';
 import { QuickbookEntity } from '../models/quickbook-entity.enum';
 import { QuickbookOnlineToken } from '../models/quickbook-online-token';
 import { QuickbookService } from '../services/quickbook.service';
@@ -23,10 +24,14 @@ export class UtilQuickbookAuthComponent implements OnInit {
   payload = "";
   signature = "";
 
+  displayOnly = false;
   constructor(private http: _HttpClient, 
     private quickbookService: QuickbookService, 
     private messageService: NzMessageService,
+    private userService: UserService,
     private fb: UntypedFormBuilder,) { 
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/quickbook-auth");
+
       this.currentQBOToken = {
 
       }

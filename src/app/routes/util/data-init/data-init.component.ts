@@ -8,6 +8,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { DataInitialRequest } from '../models/data-initial-request';
 import { DataInitialRequestService } from '../services/data-initial-request.service';
 
@@ -39,14 +40,17 @@ export class UtilDataInitComponent implements OnInit {
   dataInitialRequestForm!: UntypedFormGroup;
   dataInitialRequestModal!: NzModalRef;
    
-  constructor(private http: _HttpClient,
+  displayOnly = false;
+  constructor( 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private titleService: TitleService,
-    private activatedRoute: ActivatedRoute,
-    private dataInitialRequestService: DataInitialRequestService,
-    private messageService: NzMessageService,
+    private titleService: TitleService, 
+    private dataInitialRequestService: DataInitialRequestService, 
     private modalService: NzModalService,
-    private fb: UntypedFormBuilder,) { }
+    private userService: UserService,
+    private fb: UntypedFormBuilder,) {
+      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/data-init");
+    
+    }
 
   ngOnInit(): void { 
     this.titleService.setTitle(this.i18n.fanyi('menu.main.util.data-initial'));

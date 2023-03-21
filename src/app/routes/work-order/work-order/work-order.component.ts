@@ -8,6 +8,7 @@ import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserService } from '../../auth/services/user.service';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { PrintPageSize } from '../../common/models/print-page-size.enum';
 import { PrintingService } from '../../common/services/printing.service';
@@ -284,6 +285,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   shortAllocationStatus = ShortAllocationStatus;
 
 
+  displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -307,7 +309,11 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     private inventoryStatusService: InventoryStatusService,
     private billOfMaterialService: BillOfMaterialService,
     private localCacheService: LocalCacheService,
-  ) { }
+    private userService: UserService,
+    
+  ) { 
+    this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/work-order");
+  }
   workOrderStatuses = WorkOrderStatus;
   // Form related data and functions
   searchForm!: UntypedFormGroup;
