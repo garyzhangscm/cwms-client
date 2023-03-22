@@ -53,9 +53,9 @@
                 {{ 'BILLABLE-CATEGORY-' + item.billableCategory | i18n}} 
             </ng-template>
             
-            <ng-template st-row="totalAmountColumn" let-item let-index="index"> 
+            <ng-template st-row="rateColumn" let-item let-index="index"> 
                 
-                {{  item.totalAmount | currency: 'USD'}} 
+                {{  item.rate  | currency: 'USD'}} 
             </ng-template>
             <ng-template st-row="totalChargeColumn" let-item let-index="index"> 
                 
@@ -101,7 +101,7 @@
                             <td  >
                                 {{ data.totalAmount | number: '1.0-2'}}  </td>
                             <td  >
-                                {{ data.totalCharge | number: '1.0-2'}}  </td>
+                                {{ data.totalCharge | currency: 'USD'}}  </td>
                             <td  >
                                     {{ data.documentNumber }}  </td>
                             <td  >

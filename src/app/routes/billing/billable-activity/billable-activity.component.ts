@@ -45,9 +45,9 @@ export class BillingBillableActivityComponent implements OnInit {
       title: this.i18n.fanyi("billableCategory"), 
       render: 'billableCategoryColumn', 
     },     
-    { title: this.i18n.fanyi("rate"),  index: 'rate' ,  type: "currency" },  
+    { title: this.i18n.fanyi("rate"),  render: 'rateColumn' },  
     { title: this.i18n.fanyi("billingCycle"),  index: 'billingCycle' ,  },  
-    { title: this.i18n.fanyi("totalAmount"),   render: 'totalAmountColumn'},  
+    { title: this.i18n.fanyi("totalAmount"),  index: 'totalAmount' ,},  
     { title: this.i18n.fanyi("totalCharge"),   render: 'totalChargeColumn'},  
     
      

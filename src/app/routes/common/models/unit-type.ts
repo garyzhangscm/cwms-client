@@ -1,6 +1,7 @@
 export enum UnitType {
   LENGTH = 'LENGTH',
   VOLUME = 'VOLUME',
-  WEIGHT = 'WEIGHT'
+  WEIGHT = 'WEIGHT',
+  UNIT = 'UNIT'
   
 }

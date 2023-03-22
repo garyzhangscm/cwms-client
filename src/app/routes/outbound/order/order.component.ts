@@ -187,6 +187,7 @@ export class OutboundOrderComponent implements OnInit {
       orderCategory: [null],
       createdTimeRanger: [null],
       createdDate: [null],
+      client: [null],
     });
 
     // IN case we get the number passed in, refresh the display
@@ -269,29 +270,28 @@ export class OutboundOrderComponent implements OnInit {
       this.searchForm.controls.orderCategory.value,
       undefined, 
       this.searchForm.controls.customer.value, 
-      startCreatedTime, endCreatedTime, specificCreatedDate).subscribe(
-      orderRes => {
- 
+      startCreatedTime, endCreatedTime, specificCreatedDate, 
+      undefined, 
+      this.searchForm.controls.client.value).subscribe({
 
-        // this.collapseAllRecord(expandedOrderId);
-
-        this.isSpinning = false;
-        this.searchResult = this.i18n.fanyi('search_result_analysis', {
-          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
-          rowCount: orderRes.length,
-        });
-        
-        this.listOfAllOrders = this.calculateQuantities(orderRes);  
-        this.refreshDetailInformations(orderRes);
-        if (tabSelectedIndex) {
-          this.tabSelectedIndex = tabSelectedIndex;
-        }
-      },
-      () => {
-        this.isSpinning = false;
-        this.searchResult = '';
-      },
-    );
+        next: (orderRes) => {
+          this.isSpinning = false;
+          this.searchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: orderRes.length,
+          });
+          
+          this.listOfAllOrders = this.calculateQuantities(orderRes);  
+          this.refreshDetailInformations(orderRes);
+          if (tabSelectedIndex) {
+            this.tabSelectedIndex = tabSelectedIndex;
+          }
+        }, 
+        error: () => {
+          this.isSpinning = false;
+          this.searchResult = '';
+        },
+      });
   }
   
  
@@ -567,11 +567,12 @@ export class OutboundOrderComponent implements OnInit {
   
   calculateOrderLineDisplayQuantity(ordertLine: OrderLine) : void {  
       if (ordertLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure) {
-        // console.log(`>> found displayItemUnitOfMeasure: ${receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure?.name}`)
+        // console.log(`>> found displayItemUnitOfMeasure: ${ordertLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure?.name}`)
         let displayItemUnitOfMeasureQuantity  = ordertLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.quantity;
 
         // console.log(`>> with quantity ${displayItemUnitOfMeasureQuantity}`)
 
+        // console.log(`>> ordertLine.expectedQuantity ${ordertLine.expectedQuantity}`)
         if (ordertLine.expectedQuantity! % displayItemUnitOfMeasureQuantity! ==0) {
           ordertLine.displayUnitOfMeasureForExpectedQuantity = ordertLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure;
           ordertLine.displayExpectedQuantity = ordertLine.expectedQuantity! / displayItemUnitOfMeasureQuantity!
@@ -583,6 +584,7 @@ export class OutboundOrderComponent implements OnInit {
           // receiptLine.item!.defaultItemPackageType!.displayItemUnitOfMeasure = receiptLine.item!.defaultItemPackageType!.stockItemUnitOfMeasure;
           ordertLine.displayUnitOfMeasureForExpectedQuantity = ordertLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure;
         }
+        // console.log(`>> ordertLine.displayExpectedQuantity ${ordertLine.displayExpectedQuantity}`)
         
         if (ordertLine.openQuantity! % displayItemUnitOfMeasureQuantity! ==0) {
           ordertLine.displayOpenQuantity = ordertLine.openQuantity! / displayItemUnitOfMeasureQuantity!

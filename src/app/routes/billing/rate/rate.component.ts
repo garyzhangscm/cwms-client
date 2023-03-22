@@ -139,7 +139,30 @@ export class BillingRateComponent implements OnInit {
   getBillingRateUnit(billableCategory: BillableCategory) : Unit | undefined{
     console.log(`start to get unit for billable category ${billableCategory}`) 
 
-    return this.unitService.getBaseUnit(this.volumeUnits,  UnitType.VOLUME);
+    if (billableCategory === BillableCategory.STORAGE_FEE_BY_LOCATION_COUNT) {
+      console.log(`return location unit`)
+      return {        
+        type: UnitType.UNIT,
+        name: "Location",
+        description: "Location",        
+        ratio: 1,
+        baseUnitFlag: true,
+      }
+    }
+    else if (billableCategory === BillableCategory.STORAGE_FEE_BY_PALLET_COUNT) {
+      console.log(`return pallet unit`)
+      return {        
+        type: UnitType.UNIT,
+        name: "Pallet",
+        description: "Pallet",        
+        ratio: 1,
+        baseUnitFlag: true,
+      }
+    }
+    else {
+      return this.unitService.getBaseUnit(this.volumeUnits,  UnitType.VOLUME);
+
+    }
 
 
   }

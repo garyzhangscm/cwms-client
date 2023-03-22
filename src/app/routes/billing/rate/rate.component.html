@@ -71,7 +71,8 @@
                             [nzParser]="parserDollar"
                             ></nz-input-number>
                         /
-                        <nz-select [(ngModel)]="billingRate.rateUnit" style="width: 180px;">
+                        <nz-select 
+                            [(ngModel)]="billingRate.rateUnit" style="width: 180px;">
                             <nz-option *ngFor="let unit of volumeUnits"
                                 [nzValue]="unit"
                                 nzLabel="{{unit.description}}"  ></nz-option>

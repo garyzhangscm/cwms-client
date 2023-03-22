@@ -36,7 +36,7 @@ export class OrderService {
     startCompleteTime?: Date, endCompleteTime?:Date, specificCompleteDate?: Date, category?: OrderCategory, 
     customerName?: string, customerId?: number, 
     startCreatedTime?: Date, endCreatedTime?:Date, specificCreatedDate?: Date,
-    trailerAppointmentId?: number): Observable<Order[]> {
+    trailerAppointmentId?: number, clientId?: number): Observable<Order[]> {
        
     let params = new HttpParams();
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);
@@ -61,6 +61,9 @@ export class OrderService {
     }
     if (customerId != null) {
       params = params.append('customerId', customerId);  
+    }
+    if (clientId != null) {
+      params = params.append('clientId', clientId);  
     }
     if (trailerAppointmentId != null) {
       params = params.append('trailerAppointmentId', trailerAppointmentId);  
