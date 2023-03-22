@@ -152,7 +152,9 @@ export class OutboundAllocationConfigurationComponent implements OnInit {
     private userService: UserService,
     private activatedRoute: ActivatedRoute
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/allocation-configuration");
+    userService.isCurrentPageDisplayOnly("/outbound/allocation-configuration").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                  
   }
 
   resetForm(): void {

@@ -158,7 +158,9 @@ export class OutboundShortAllocationComponent implements OnInit {
     private userService: UserService,
     private utilService: UtilService, 
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/short-allocation");
+    userService.isCurrentPageDisplayOnly("/outbound/short-allocation").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                                
   }
 
   ngOnInit(): void {

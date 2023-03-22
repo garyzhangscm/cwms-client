@@ -260,7 +260,9 @@ export class InventoryInventoryComponent implements OnInit {
     private userService: UserService,
     private inventoryStatusService: InventoryStatusService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/inventory");
+    userService.isCurrentPageDisplayOnly("/inventory/inventory").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                       
   
   }
 

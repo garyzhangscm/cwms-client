@@ -28,7 +28,9 @@ export class UtilQuickbookOnlineConfigurationComponent implements OnInit {
     private companyService: CompanyService,
     private userService: UserService,
     private fb: UntypedFormBuilder,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/quickbook/configuration");
+      userService.isCurrentPageDisplayOnly("/util/quickbook/configuration").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                      
 
       this.currentQBOConfiguration = {
         warehouseId: this.warehouseService.getCurrentWarehouse().id,

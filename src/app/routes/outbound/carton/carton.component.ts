@@ -109,7 +109,9 @@ export class OutboundCartonComponent implements OnInit {
     private messageService: NzMessageService,
     private utilService: UtilService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/carton");
+    userService.isCurrentPageDisplayOnly("/outbound/carton").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                    
   }
 
   ngOnInit(): void {

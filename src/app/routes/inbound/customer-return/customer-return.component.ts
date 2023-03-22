@@ -78,7 +78,9 @@ export class InboundCustomerReturnComponent implements OnInit {
     private userService: UserService,
     private orderLineService: OrderLineService,
     private localCacheService: LocalCacheService,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/inbound/customer-return");
+      userService.isCurrentPageDisplayOnly("/inbound/customer-return").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );               
     }
 
   ngOnInit(): void {  

@@ -105,7 +105,10 @@ export class AlertAlertComponent implements OnInit {
     private router: Router, 
     private fb: UntypedFormBuilder,
     private userService: UserService) {
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/alert/alert");
+      
+    userService.isCurrentPageDisplayOnly("/alert/alert").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    ); 
   }
 
   ngOnInit(): void { 

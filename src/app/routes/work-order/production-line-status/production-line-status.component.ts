@@ -60,7 +60,9 @@ export class WorkOrderProductionLineStatusComponent implements OnInit {
     private productionLineService: ProductionLineService,
     private titleService: TitleService, 
     private userService: UserService, ) {
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/production-line-status");
+      userService.isCurrentPageDisplayOnly("/work-order/production-line-status").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                                           
     }
 
   ngOnInit(): void {

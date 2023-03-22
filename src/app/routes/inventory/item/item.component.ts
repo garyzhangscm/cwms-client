@@ -353,7 +353,9 @@ export class InventoryItemComponent implements OnInit {
     private localCacheService: LocalCacheService,
     private userService: UserService,
   ) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/item");
+    userService.isCurrentPageDisplayOnly("/inventory/item").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                                 
   
   }
 

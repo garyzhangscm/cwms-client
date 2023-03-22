@@ -180,7 +180,9 @@ export class CommonClientComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private userService: UserService,
     private modalService: NzModalService) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/common/client");
+      userService.isCurrentPageDisplayOnly("/common/client").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );             
       this.localCacheService.getWarehouseConfiguration().subscribe({
         next: (warehouseConfigRes) => {
 

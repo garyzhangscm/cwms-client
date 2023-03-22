@@ -85,7 +85,9 @@ export class InventoryItemSamplingComponent implements OnInit {
     private nzImageService: NzImageService,
     private fb: UntypedFormBuilder,
     private userService: UserService,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/item-sampling");
+      userService.isCurrentPageDisplayOnly("/inventory/item-sampling").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );             
     
     }
 

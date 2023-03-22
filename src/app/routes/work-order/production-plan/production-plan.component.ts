@@ -102,7 +102,9 @@ export class WorkOrderProductionPlanComponent implements OnInit {
     private utilService: UtilService,
     private userService: UserService,
   ) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/production-plan");
+    userService.isCurrentPageDisplayOnly("/work-order/production-plan").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                                             
    }
 
   // Form related data and functions

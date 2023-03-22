@@ -40,7 +40,9 @@ export class WorkOrderMpsComponent implements OnInit {
     private modalService: NzModalService,
     private userService: UserService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/mps");
+    userService.isCurrentPageDisplayOnly("/work-order/mps").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                                     
   }
 
   ngOnInit(): void {

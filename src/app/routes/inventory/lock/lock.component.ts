@@ -74,7 +74,9 @@ export class InventoryLockComponent implements OnInit {
     private nzImageService: NzImageService,
     private fb: UntypedFormBuilder,
     private userService: UserService) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/lock");
+      userService.isCurrentPageDisplayOnly("/inventory/lock").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );               
     
     }
 

@@ -113,8 +113,10 @@ export class OutboundOrderComponent implements OnInit {
     private billableActivityTypeService: BillableActivityTypeService,
     private orderLineService: OrderLineService,
     private warehouseService: WarehouseService,
-  ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/order");
+  ) {  
+    userService.isCurrentPageDisplayOnly("/outbound/order").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );
   
   }
 

@@ -251,7 +251,9 @@ export class InventoryInventoryActivityComponent implements OnInit {
     private utilService: UtilService,
     private userService: UserService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/inventory-activity");
+    userService.isCurrentPageDisplayOnly("/inventory/inventory-activity").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                        
   
   }
 

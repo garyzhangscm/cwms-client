@@ -138,7 +138,9 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
     private workOrderConfigurationService: WorkOrderConfigurationService,
     ) { 
     
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/production-line-status/display");
+      userService.isCurrentPageDisplayOnly("/work-order/production-line-status/display").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                                            
     this.gridStyle = {
       width: `${(100 / this.columnCount)}%`,
       textAlign: 'center'

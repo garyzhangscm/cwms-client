@@ -153,19 +153,26 @@ export class UserService {
     return this.http.post(`resource/users/${existingUserId}/copy?companyId=${this.companyService.getCurrentCompany()!.id}`, null, params).pipe(map(res => res.data));
   }
 
-  isCurrentPageDisplayOnly(link: string) : boolean {
+  async isCurrentPageDisplayOnly(link: string) : Promise<boolean> {
 
+    const isAdmin = await this.isCurrentUserAdmin();
+    if (isAdmin) {
+      console.log(`current user is admin and has full access to any page`);
+      return false;
+    }
     const currentPageMenu = this.menuService.find({ 
       url: link,
       recursive: true });
    
     if (currentPageMenu) {
         // console.log(`we found the matched menu by link ${link}`);
-        // console.log(`${currentPageMenu.i18n} - ${currentPageMenu.link} - ${currentPageMenu.displayOnly}`);
+        console.log(`${currentPageMenu.i18n} - ${currentPageMenu.link} - ${currentPageMenu.displayOnly}`);
+        // console.log(``)
         return currentPageMenu.displayOnly;
     }
-      // console.log(`we can't found the matched menu by link ${link}`);
-    return false;
+
+    console.log(`current user doesn't have access to this page`)
+    return true;
   }
  
 }

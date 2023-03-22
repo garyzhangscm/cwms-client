@@ -49,7 +49,9 @@ export class BillingBillableActivityTypeComponent implements OnInit {
     private userService: UserService,
     private messageService: NzMessageService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/billing/billable-activity-type");
+    userService.isCurrentPageDisplayOnly("/billing/billable-activity-type").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );         
   }
   ngOnInit(): void { 
     this.search(true);

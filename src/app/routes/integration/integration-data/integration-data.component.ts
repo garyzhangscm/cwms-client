@@ -13,7 +13,9 @@ export class IntegrationIntegrationDataComponent implements OnInit {
   displayOnly = false;
   constructor(
     private userService: UserService,) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/integration/integration-data");
+      userService.isCurrentPageDisplayOnly("/integration/integration-data").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                    
   }
 
   ngOnInit() {}

@@ -29,7 +29,9 @@ export class AuthUserComponent implements OnInit {
     private modalService: NzModalService,
     private messageService: NzMessageService,
   ) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/auth/user");
+    userService.isCurrentPageDisplayOnly("/auth/user").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );      
     this.titleService.setTitle(this.i18n.fanyi('menu.main.auth.user'));
   }
 

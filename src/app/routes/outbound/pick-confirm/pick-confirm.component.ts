@@ -178,7 +178,9 @@ export class OutboundPickConfirmComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private utilService: UtilService,
   ) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/pick/confirm");
+    userService.isCurrentPageDisplayOnly("/outbound/pick/confirm").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                            
     this.pageTitle = this.i18n.fanyi('page.outbound.pick-confirm.title');
   }
 

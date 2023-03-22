@@ -45,7 +45,9 @@ export class UtilBillableRequestComponent implements OnInit {
     private billableRequestService: BillableRequestService, 
     private userService: UserService,
     private fb: UntypedFormBuilder,) {
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/billable-request");
+      userService.isCurrentPageDisplayOnly("/util/billable-request").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                   
     
     }
 

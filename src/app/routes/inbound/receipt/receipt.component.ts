@@ -188,7 +188,9 @@ export class InboundReceiptComponent implements OnInit {
     private billableActivityTypeService: BillableActivityTypeService,
     private userService: UserService
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/inbound/receipt");
+    userService.isCurrentPageDisplayOnly("/inbound/receipt").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                   
     console.log(`/inbound/receipt page is display? ${this.displayOnly}`)
   }
   ngOnInit(): void {

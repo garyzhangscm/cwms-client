@@ -33,7 +33,9 @@ export class WorkOrderLaborComponent implements OnInit {
     private userService: UserService,
     ) { 
 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/labor");
+      userService.isCurrentPageDisplayOnly("/work-order/labor").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                                  
   }
 
   listOfLabors: WorkOrderLabor[] = [];

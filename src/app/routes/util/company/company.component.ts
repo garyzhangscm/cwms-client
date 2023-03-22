@@ -48,7 +48,10 @@ export class UtilCompanyComponent implements OnInit {
     private companyService: CompanyService,
     private userService: UserService,
     private fb: UntypedFormBuilder,) {
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/company");
+      userService.isCurrentPageDisplayOnly("/util/company").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                   
+     
     
     }
 

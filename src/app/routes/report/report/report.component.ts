@@ -112,7 +112,9 @@ export class ReportReportComponent implements OnInit {
     private utilService: UtilService,
     private userService: UserService,
   ) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/report/report");
+    userService.isCurrentPageDisplayOnly("/report/report").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );            
   }
 
   // Form related data and functions

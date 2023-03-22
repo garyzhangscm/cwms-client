@@ -146,7 +146,9 @@ export class OutboundPickListComponent implements OnInit {
     private utilService: UtilService,
     private userService: UserService,
   ) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/pick-list");
+    userService.isCurrentPageDisplayOnly("/outbound/pick-list").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                             
    }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.pick-list'));

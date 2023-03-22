@@ -85,7 +85,9 @@ export class CommonTractorComponent implements OnInit {
     private tractorService: TractorService,
     private messageService: NzMessageService, 
     private fb: UntypedFormBuilder,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/transportation/tractor");
+      userService.isCurrentPageDisplayOnly("/transportation/tractor").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                 
     }
 
   ngOnInit(): void { 

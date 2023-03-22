@@ -26,7 +26,9 @@ export class UtilSystemConfigurationComponent implements OnInit {
     private i18n: I18NService,
     private userService: UserService,
     private companyService: CompanyService) {
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/system-configuration");
+      userService.isCurrentPageDisplayOnly("/util/system-configuration").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                          
 
     this.currentSystemConfiguration = {
 

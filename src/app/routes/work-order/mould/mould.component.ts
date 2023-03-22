@@ -68,7 +68,9 @@ export class WorkOrderMouldComponent implements OnInit {
     private userService: UserService,
     private utilService: UtilService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/mould");
+    userService.isCurrentPageDisplayOnly("/work-order/mould").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                                    
   }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('mould'));

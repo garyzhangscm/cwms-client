@@ -140,7 +140,9 @@ export class AuthWorkingTeamComponent implements OnInit {
     private titleService: TitleService,
     private utilService: UtilService, 
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/auth/working-team");
+    userService.isCurrentPageDisplayOnly("/auth/working-team").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );       
   }
 
   // Form related data and functions

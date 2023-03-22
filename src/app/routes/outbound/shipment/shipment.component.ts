@@ -174,7 +174,9 @@ export class OutboundShipmentComponent implements OnInit {
     private userService: UserService,
     private utilService: UtilService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/shipment");
+    userService.isCurrentPageDisplayOnly("/outbound/shipment").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                              
   }
 
   // Form related data and functions

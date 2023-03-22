@@ -190,7 +190,9 @@ export class CommonCustomerComponent implements OnInit {
     private router: Router,
     private userService: UserService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/common/customer");
+    userService.isCurrentPageDisplayOnly("/common/customer").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );              
   }
 
   ngOnInit(): void {

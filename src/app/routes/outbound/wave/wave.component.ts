@@ -163,7 +163,9 @@ export class OutboundWaveComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private utilService: UtilService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/wave");
+    userService.isCurrentPageDisplayOnly("/outbound/wave").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                              
   }
 
   // Form related data and functions

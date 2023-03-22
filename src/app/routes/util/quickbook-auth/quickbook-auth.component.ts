@@ -30,7 +30,9 @@ export class UtilQuickbookAuthComponent implements OnInit {
     private messageService: NzMessageService,
     private userService: UserService,
     private fb: UntypedFormBuilder,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/quickbook-auth");
+      userService.isCurrentPageDisplayOnly("/util/quickbook-auth").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                     
 
       this.currentQBOToken = {
 

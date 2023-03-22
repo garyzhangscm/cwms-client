@@ -29,7 +29,9 @@ export class WarehouseLayoutWarehouseComponent implements OnInit {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private userService: UserService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/warehouse-layout/warehouse");
+    userService.isCurrentPageDisplayOnly("/warehouse-layout/warehouse").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                              
   }
 
   ngOnInit(): void {

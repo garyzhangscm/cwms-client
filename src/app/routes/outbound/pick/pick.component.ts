@@ -162,7 +162,9 @@ export class OutboundPickComponent implements OnInit {
     private userService: UserService,
     private workOrderService: WorkOrderService,
   ) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/pick");
+    userService.isCurrentPageDisplayOnly("/outbound/pick").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                           
    }
 
   // Form related data and functions

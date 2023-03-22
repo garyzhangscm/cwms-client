@@ -50,7 +50,9 @@ export class InventoryInventoryStatusComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,  
     private userService: UserService, ) {
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/status");
+      userService.isCurrentPageDisplayOnly("/inventory/status").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                                
     
     }
 

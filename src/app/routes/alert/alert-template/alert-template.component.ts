@@ -59,7 +59,9 @@ export class AlertAlertTemplateComponent implements OnInit {
     private router: Router, 
     private fb: UntypedFormBuilder,
     private userService: UserService) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/alert/alert-template");
+      userService.isCurrentPageDisplayOnly("/alert/alert-template").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );  
     
   }
 

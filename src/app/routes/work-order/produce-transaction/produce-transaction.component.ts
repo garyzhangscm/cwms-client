@@ -42,7 +42,10 @@ export class WorkOrderProduceTransactionComponent implements OnInit {
     private productionLineService: ProductionLineService
   ) {
     
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/produce-transaction");
+    userService.isCurrentPageDisplayOnly("/work-order/produce-transaction").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                                      
+  
 
   }
 

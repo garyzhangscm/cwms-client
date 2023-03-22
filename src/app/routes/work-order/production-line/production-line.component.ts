@@ -157,7 +157,9 @@ export class WorkOrderProductionLineComponent implements OnInit {
     private productionLineAssignmentService: ProductionLineAssignmentService,
     private localCacheService: LocalCacheService,
   ) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/production-line");
+    userService.isCurrentPageDisplayOnly("/work-order/production-line").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                                       
    }
 
   // Form related data and functions

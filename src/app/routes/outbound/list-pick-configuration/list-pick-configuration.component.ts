@@ -66,7 +66,9 @@ export class OutboundListPickConfigurationComponent implements OnInit {
     private userService: UserService,
     private localCacheService: LocalCacheService,
     private fb: UntypedFormBuilder,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/list-pick-configuration");
+      userService.isCurrentPageDisplayOnly("/outbound/list-pick-configuration").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                        
     }
 
   ngOnInit(): void { 

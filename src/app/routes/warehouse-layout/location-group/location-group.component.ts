@@ -207,7 +207,9 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
     private utilService: UtilService,
     private userService: UserService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/warehouse-layout/location-group");
+    userService.isCurrentPageDisplayOnly("/warehouse-layout/location-group").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                             
   }
 
   ngOnInit(): void {

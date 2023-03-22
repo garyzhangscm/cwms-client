@@ -25,7 +25,10 @@ export class AlertConfigurationComponent implements OnInit {
     private userService: UserService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private companyService: CompanyService) {
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/alert/configuration");
+      userService.isCurrentPageDisplayOnly("/alert/configuration").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );  
+     
 
     this.currentEmailAlertConfiguration = {
 

@@ -28,7 +28,9 @@ export class WorkOrderSiloConfigurationComponent implements OnInit {
     private messageService: NzMessageService,   
     private userService: UserService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/silo-configuration");
+      userService.isCurrentPageDisplayOnly("/work-order/silo-configuration").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                       
 
       this.currentSiloConfiguration = { 
         

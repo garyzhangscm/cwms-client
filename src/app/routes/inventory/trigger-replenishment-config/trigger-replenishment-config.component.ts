@@ -12,7 +12,9 @@ export class InventoryTriggerReplenishmentConfigComponent implements OnInit {
   displayOnly = false;
   constructor(private http: _HttpClient,
     private userService: UserService,) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/replenishment/trigger/config");
+      userService.isCurrentPageDisplayOnly("/inventory/replenishment/trigger/config").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                 
    }
 
   ngOnInit() { }

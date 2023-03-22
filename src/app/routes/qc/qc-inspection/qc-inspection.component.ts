@@ -58,7 +58,9 @@ export class QcQcInspectionComponent implements OnInit {
     private printingService: PrintingService,
     ) { 
 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/qc/inspection");
+      userService.isCurrentPageDisplayOnly("/qc/inspection").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );      
   }
 
   listOfQCRequiredInventory: Inventory[] = [];

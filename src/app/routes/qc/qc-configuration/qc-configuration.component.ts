@@ -28,7 +28,10 @@ export class QcQcConfigurationComponent implements OnInit {
     private userService: UserService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) {
 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/qc/configuration");
+      userService.isCurrentPageDisplayOnly("/qc/configuration").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                              
+      
     this.currentQcConfiguration = {
  
       warehouseId: warehouseService.getCurrentWarehouse().id,

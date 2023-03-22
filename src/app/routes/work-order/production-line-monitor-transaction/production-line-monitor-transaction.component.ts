@@ -59,7 +59,9 @@ export class WorkOrderProductionLineMonitorTransactionComponent implements OnIni
     private xlsx: XlsxService,
     private titleService: TitleService,  
     private userService: UserService,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/production-line-monitor/transaction");
+      userService.isCurrentPageDisplayOnly("/work-order/production-line-monitor/transaction").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                                          
     }
 
   ngOnInit(): void {

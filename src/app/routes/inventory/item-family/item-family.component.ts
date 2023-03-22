@@ -85,7 +85,9 @@ export class InventoryItemFamilyComponent implements OnInit {
     private utilService: UtilService,
     private userService: UserService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/item-family");
+    userService.isCurrentPageDisplayOnly("/inventory/item-family").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );            
   
   }
 

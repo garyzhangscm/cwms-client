@@ -48,7 +48,9 @@ export class OutboundShippingCartonizationComponent implements OnInit {
     private userService: UserService,
     private cartonService: CartonService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/shipping-cartonization");
+    userService.isCurrentPageDisplayOnly("/outbound/shipping-cartonization").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                               
   }
 
   ngOnInit(): void {

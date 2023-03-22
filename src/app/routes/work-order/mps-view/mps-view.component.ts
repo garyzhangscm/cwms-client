@@ -109,7 +109,9 @@ export class WorkOrderMpsViewComponent implements OnInit {
     private masterProductionScheduleService: MasterProductionScheduleService,  
     private productionLineService: ProductionLineService, private utilService: UtilService) { 
       
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/mps-view");
+      userService.isCurrentPageDisplayOnly("/work-order/mps-view").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                                      
 
     }
 

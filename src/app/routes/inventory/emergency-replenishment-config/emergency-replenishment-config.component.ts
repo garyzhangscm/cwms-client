@@ -151,7 +151,9 @@ export class InventoryEmergencyReplenishmentConfigComponent implements OnInit {
     private utilService: UtilService,
     private userService: UserService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/replenishment/emergency/config");
+    userService.isCurrentPageDisplayOnly("/inventory/replenishment/emergency/config").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                      
   
   }
 

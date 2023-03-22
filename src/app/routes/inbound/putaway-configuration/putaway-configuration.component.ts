@@ -147,7 +147,9 @@ export class InboundPutawayConfigurationComponent implements OnInit {
     private router: Router,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/inbound/putaway-configuration");
+    userService.isCurrentPageDisplayOnly("/inbound/putaway-configuration").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                  
   
   }
   ngOnInit(): void {

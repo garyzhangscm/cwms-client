@@ -104,7 +104,9 @@ export class BillingInvoiceComponent implements OnInit {
     private userService: UserService,
     private localCacheService: LocalCacheService, 
     private fb: UntypedFormBuilder,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/billing/invoice");
+      userService.isCurrentPageDisplayOnly("/billing/invoice").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );          
       this.localCacheService.getWarehouseConfiguration().subscribe({
         next: (warehouseConfigRes) => {
   

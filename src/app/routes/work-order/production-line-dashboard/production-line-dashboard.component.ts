@@ -91,7 +91,9 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
     private workOrderConfigurationService: WorkOrderConfigurationService,
     private titleService: TitleService, 
     private userService: UserService, ) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/production-line-dashboard");
+      userService.isCurrentPageDisplayOnly("/work-order/production-line-dashboard").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                                        
     }
 
   ngOnInit(): void {

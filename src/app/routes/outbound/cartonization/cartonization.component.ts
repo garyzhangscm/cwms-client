@@ -126,7 +126,9 @@ export class OutboundCartonizationComponent implements OnInit {
     private cartonizationService: CartonizationService,
     private utilService: UtilService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/cartonization");
+    userService.isCurrentPageDisplayOnly("/outbound/cartonization").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                     
   }
 
   // Form related data and functions

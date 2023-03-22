@@ -335,7 +335,9 @@ export class AuthRoleComponent implements OnInit {
     private utilService: UtilService,
     private localCacheService: LocalCacheService, 
   ) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/auth/role");
+    userService.isCurrentPageDisplayOnly("/auth/role").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );     
    }
 
   // Form related data and functions

@@ -764,7 +764,10 @@ export class UtilIconListComponent implements OnInit {
   displayOnly = false;
   constructor(
     private userService: UserService,) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/util/icon-list");
+      userService.isCurrentPageDisplayOnly("/util/icon-list").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                   
+         
   }
 
   ngOnInit() {}

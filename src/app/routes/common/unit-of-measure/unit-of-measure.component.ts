@@ -51,7 +51,9 @@ export class CommonUnitOfMeasureComponent implements OnInit {
     private modalService: NzModalService,
     private userService: UserService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/common/unit-of-measure");
+    userService.isCurrentPageDisplayOnly("/common/unit-of-measure").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                
   }
 
   search(refresh: boolean = false): void {

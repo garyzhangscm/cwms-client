@@ -116,7 +116,9 @@ export class CommonTrailerComponent implements OnInit {
     private stopService: StopService,
     private orderService: OrderService,
     private fb: UntypedFormBuilder,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/transportation/trailer");
+      userService.isCurrentPageDisplayOnly("/transportation/trailer").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                  
     }
 
   ngOnInit(): void {  

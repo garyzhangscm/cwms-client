@@ -119,7 +119,9 @@ export class InventoryCycleCountComponent implements OnInit {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private userService: UserService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/count/cycle-count");
+    userService.isCurrentPageDisplayOnly("/inventory/count/cycle-count").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                     
   
   }
 

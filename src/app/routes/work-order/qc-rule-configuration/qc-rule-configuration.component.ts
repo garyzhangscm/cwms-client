@@ -53,7 +53,9 @@ export class WorkOrderQcRuleConfigurationComponent implements OnInit {
     private productionLineService: ProductionLineService,
     
     ) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/qc-rule-configuration");
+      userService.isCurrentPageDisplayOnly("/work-order/qc-rule-configuration").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                                              
 
 }
 

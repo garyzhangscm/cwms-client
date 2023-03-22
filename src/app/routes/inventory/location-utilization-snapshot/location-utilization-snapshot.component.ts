@@ -81,7 +81,9 @@ export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
     private fb: UntypedFormBuilder, 
     private localCacheService: LocalCacheService,
     private userService: UserService,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/location-utilization-snapshot");
+      userService.isCurrentPageDisplayOnly("/inventory/location-utilization-snapshot").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );              
     
     }
 

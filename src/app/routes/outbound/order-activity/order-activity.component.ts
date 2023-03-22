@@ -41,7 +41,9 @@ export class OutboundOrderActivityComponent implements OnInit {
     private userService: UserService,
     private titleService: TitleService, 
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/order-activity");
+    userService.isCurrentPageDisplayOnly("/outbound/order-activity").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                          
   }
 
   resetForm(): void {

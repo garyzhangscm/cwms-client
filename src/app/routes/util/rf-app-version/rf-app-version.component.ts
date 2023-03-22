@@ -78,7 +78,9 @@ export class UtilRfAppVersionComponent implements OnInit {
     private messageService: NzMessageService,
     private userService: UserService,
     private fb: UntypedFormBuilder,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/rf-app-version");
+      userService.isCurrentPageDisplayOnly("/util/rf-app-version").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                        
     }
 
   ngOnInit(): void { 

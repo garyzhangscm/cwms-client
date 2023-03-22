@@ -312,7 +312,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     private userService: UserService,
     
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/work-order");
+    userService.isCurrentPageDisplayOnly("/work-order/work-order").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );
   }
   workOrderStatuses = WorkOrderStatus;
   // Form related data and functions

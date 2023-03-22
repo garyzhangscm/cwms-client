@@ -91,7 +91,10 @@ export class UtilDataTransferComponent implements OnInit {
     private modalService: NzModalService,
     private companyService: CompanyService,
     private fb: UntypedFormBuilder,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/data-transfer");
+      userService.isCurrentPageDisplayOnly("/util/data-transfer").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                   
+       
     }
 
   ngOnInit(): void { 

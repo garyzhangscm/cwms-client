@@ -34,7 +34,9 @@ export class QcQcRuleConfigurationComponent implements OnInit {
     private itemFamilyService: ItemFamilyService,
     private userService: UserService,
     ) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/qc/rules/configuration");
+      userService.isCurrentPageDisplayOnly("/qc/rules/configuration").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );         
 
 }
 

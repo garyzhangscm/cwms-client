@@ -38,7 +38,10 @@ export class WorkOrderProductionKanbanComponent implements OnInit, OnDestroy {
     private productionLineService: ProductionLineService,
     private userService: UserService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService) {
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/production-kanban");
+      userService.isCurrentPageDisplayOnly("/work-order/production-kanban").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                                      
+     
   }
 
   ngOnInit(): void {

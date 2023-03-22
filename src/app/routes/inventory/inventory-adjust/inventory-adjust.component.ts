@@ -211,7 +211,9 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     private localCacheService: LocalCacheService,
     private userService: UserService,
   ) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/inventory-adjust");
+    userService.isCurrentPageDisplayOnly("/inventory/inventory-adjust").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                         
     this.pageTitle = this.i18n.fanyi('page.inventory.adjust.header.title');
   }
 

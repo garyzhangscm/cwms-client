@@ -67,7 +67,9 @@ export class InventoryInventoryMixRestrictionComponent implements OnInit {
     private userService: UserService,
     private inventoryMixRestrictionService: InventoryMixRestrictionService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/mix-restriction");
+    userService.isCurrentPageDisplayOnly("/inventory/mix-restriction").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                              
   }
   
 

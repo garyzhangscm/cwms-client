@@ -25,7 +25,9 @@ export class UtilRfConfigurationComponent implements OnInit {
     private userService: UserService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private warehouseService: WarehouseService,  ) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/rf-configuration");
+      userService.isCurrentPageDisplayOnly("/util/rf-configuration").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                         
 
       this.currentRFConfiguration = {
         warehouseId: this.warehouseService.getCurrentWarehouse().id, 

@@ -54,7 +54,9 @@ export class WorkOrderProductionLineMonitorComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService, 
     private userService: UserService, ) {
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/production-line-monitor");
+      userService.isCurrentPageDisplayOnly("/work-order/production-line-monitor").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                                         
      }
 
   ngOnInit(): void {

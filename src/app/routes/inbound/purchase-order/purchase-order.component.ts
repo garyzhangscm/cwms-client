@@ -70,7 +70,9 @@ export class InboundPurchaseOrderComponent implements OnInit {
     private supplierService: SupplierService,
     private receiptService: ReceiptService,
     private fb: UntypedFormBuilder,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/inbound/purchase-order");
+      userService.isCurrentPageDisplayOnly("/inbound/purchase-order").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                 
     
     }
 

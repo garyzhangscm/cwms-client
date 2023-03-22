@@ -57,7 +57,9 @@ export class AuthDepartmentComponent implements OnInit {
     private router: Router, 
     private userService: UserService,
     private fb: UntypedFormBuilder,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/auth/department");
+      userService.isCurrentPageDisplayOnly("/auth/department").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );    
     }
 
   ngOnInit(): void { 

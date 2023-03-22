@@ -69,7 +69,9 @@ export class UtilSystemControlledNumberComponent implements OnInit {
     private messageService: NzMessageService,
     private userService: UserService,
     private fb: UntypedFormBuilder,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/system-controlled-number");
+      userService.isCurrentPageDisplayOnly("/util/system-controlled-number").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                           
     }
 
   ngOnInit(): void { 

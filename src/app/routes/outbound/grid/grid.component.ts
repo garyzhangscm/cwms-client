@@ -127,7 +127,9 @@ export class OutboundGridComponent implements OnInit {
     private inventoryService: InventoryService,
     private userService: UserService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/grid");
+    userService.isCurrentPageDisplayOnly("/outbound/grid").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                       
   }
 
   ngOnInit(): void {

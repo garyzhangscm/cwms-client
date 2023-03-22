@@ -30,7 +30,9 @@ export class InboundInboundQcConfigurationComponent implements OnInit {
               private userService: UserService,
               ) { 
                 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/inbound/inbound-qc-configuration");
+      userService.isCurrentPageDisplayOnly("/inbound/inbound-qc-configuration").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                
 
   }
 

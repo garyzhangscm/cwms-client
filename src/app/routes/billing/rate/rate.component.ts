@@ -48,7 +48,9 @@ export class BillingRateComponent implements OnInit {
     private userService: UserService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private clientService: ClientService) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/billing/rate");
+      userService.isCurrentPageDisplayOnly("/billing/rate").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );           
     }
 
   ngOnInit(): void { 

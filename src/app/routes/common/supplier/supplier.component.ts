@@ -188,7 +188,9 @@ export class CommonSupplierComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private userService: UserService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/common/supplier");
+    userService.isCurrentPageDisplayOnly("/common/supplier").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );               
   }
 
   ngOnInit(): void {

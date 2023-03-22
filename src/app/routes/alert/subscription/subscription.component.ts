@@ -42,7 +42,9 @@ export class AlertSubscriptionComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private modalService: NzModalService,
     private userService: UserService,  ) {
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/alert/subscription");
+      userService.isCurrentPageDisplayOnly("/alert/subscription").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );   
      }
 
   ngOnInit(): void { 

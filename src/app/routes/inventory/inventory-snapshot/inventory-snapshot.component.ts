@@ -92,7 +92,9 @@ export class InventoryInventorySnapshotComponent implements OnInit {
     private messageService: NzMessageService,
     private utilService: UtilService,
     private userService: UserService,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/snapshot");
+      userService.isCurrentPageDisplayOnly("/inventory/snapshot").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                               
     }
 
   ngOnInit(): void {

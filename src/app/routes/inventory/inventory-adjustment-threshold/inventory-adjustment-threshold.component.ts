@@ -152,7 +152,9 @@ export class InventoryInventoryAdjustmentThresholdComponent implements OnInit {
     private utilService: UtilService,
     private userService: UserService,
   ) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/inventory-adjustment-threshold");
+    userService.isCurrentPageDisplayOnly("/inventory/inventory-adjustment-threshold").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                           
   
   }
 

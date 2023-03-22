@@ -74,7 +74,9 @@ export class TransportationEasyPostComponent implements OnInit {
     private easyPostConfigurationService: EasyPostConfigurationService, 
     private pirnterService: PrinterService) { 
       
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/transportation/easy-post");
+      userService.isCurrentPageDisplayOnly("/transportation/easy-post").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                
       this.currentEasyPostConfiguration = {        
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
         apiKey: "",

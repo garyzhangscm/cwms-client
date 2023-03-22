@@ -86,7 +86,9 @@ export class InventoryInventoryAllocationSummaryComponent implements OnInit {
     private localCacheService: LocalCacheService,
     private userService: UserService,
     private inventoryAllocationSummaryService: InventoryAllocationSummaryService) {
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/inventory-allocation-summary");
+      userService.isCurrentPageDisplayOnly("/inventory/inventory-allocation-summary").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                            
     
     }
 

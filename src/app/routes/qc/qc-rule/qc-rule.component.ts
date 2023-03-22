@@ -26,7 +26,9 @@ export class QcQcRuleComponent implements OnInit {
     private router: Router, 
     private activatedRoute: ActivatedRoute,
     ) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/qc/rules");
+      userService.isCurrentPageDisplayOnly("/qc/rules").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );        
 
 }
 

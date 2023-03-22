@@ -27,7 +27,9 @@ export class QcQcResultComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     ) { 
 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/qc/result");
+      userService.isCurrentPageDisplayOnly("/qc/result").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );       
   }
 
   listOfQCInspectionRequest: QcInspectionRequest[] = [];

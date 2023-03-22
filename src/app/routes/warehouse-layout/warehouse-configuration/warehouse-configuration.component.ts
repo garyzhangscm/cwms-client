@@ -46,7 +46,9 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
     private userService: UserService,
     private warehouseConfigurationService: WarehouseConfigurationService) {
       
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/warehouse-layout/warehouse-configuration");
+      userService.isCurrentPageDisplayOnly("/warehouse-layout/warehouse-configuration").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                               
 
       this.currentWarehouseConfiguration = {        
         warehouse: this.warehouseService.getCurrentWarehouse(),

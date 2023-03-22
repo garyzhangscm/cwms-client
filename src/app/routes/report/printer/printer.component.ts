@@ -52,7 +52,9 @@ export class ReportPrinterComponent implements OnInit {
     private printerService: PrinterService, 
     private userService: UserService,
     private fb: UntypedFormBuilder,) {
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/report/printer");
+      userService.isCurrentPageDisplayOnly("/report/printer").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );          
      }
 
   ngOnInit(): void { 

@@ -45,7 +45,10 @@ export class UtilFileUploadComponent implements OnInit {
     private userService: UserService,
     private warehouseService: WarehouseService
   ) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/util/file-upload");
+    userService.isCurrentPageDisplayOnly("/util/file-upload").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                   
+      
   }
   
   fileTypes = ['.csv'];

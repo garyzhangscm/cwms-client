@@ -12,7 +12,10 @@ export class InventoryReplenishmentComponent implements OnInit {
   displayOnly = false;
   constructor(private http: _HttpClient,
     private userService: UserService,) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/replenishment");
+      userService.isCurrentPageDisplayOnly("/inventory/replenishment").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                
+     
    }
 
   ngOnInit() { }

@@ -90,7 +90,9 @@ export class OutboundLoadComponent implements OnInit {
     private billOfMaterialService: BillOfMaterialService,
     private userService: UserService,
     private fb: UntypedFormBuilder,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/load");
+      userService.isCurrentPageDisplayOnly("/outbound/load").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                         
     }
 
   ngOnInit(): void { 

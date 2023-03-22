@@ -35,7 +35,10 @@ export class WorkOrderMrpComponent implements OnInit {
     private localCacheService: LocalCacheService,
     private userService: UserService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/mrp");
+    userService.isCurrentPageDisplayOnly("/work-order/mrp").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                                      
+ 
   }
 
   ngOnInit(): void {

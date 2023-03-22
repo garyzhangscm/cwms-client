@@ -34,7 +34,10 @@ export class WorkOrderWorkOrderConfigurationComponent implements OnInit {
     private userService: UserService,
     private companyService: CompanyService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, ) {
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/work-order-configuration");
+      userService.isCurrentPageDisplayOnly("/work-order/work-order-configuration").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );
+      
     this.currentWorkOrderConfiguration = {
 
       companyId: companyService.getCurrentCompany()!.id,

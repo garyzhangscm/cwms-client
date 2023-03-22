@@ -48,7 +48,10 @@ export class UtilDataInitComponent implements OnInit {
     private modalService: NzModalService,
     private userService: UserService,
     private fb: UntypedFormBuilder,) {
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/util/data-init");
+      userService.isCurrentPageDisplayOnly("/util/data-init").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                   
+      
     
     }
 

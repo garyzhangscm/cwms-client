@@ -33,7 +33,9 @@ export class UtilMenuComponent implements OnInit {
     private userService: UserService, 
     private menuService: MenuService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/util/menu");
+    userService.isCurrentPageDisplayOnly("/util/menu").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                    
   }
  
 

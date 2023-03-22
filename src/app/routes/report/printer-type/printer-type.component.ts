@@ -48,7 +48,9 @@ export class ReportPrinterTypeComponent implements OnInit {
     private messageService: NzMessageService, 
     private userService: UserService,
     private fb: UntypedFormBuilder,) {
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/report/printer-type");
+      userService.isCurrentPageDisplayOnly("/report/printer-type").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );           
      }
 
   ngOnInit(): void { 

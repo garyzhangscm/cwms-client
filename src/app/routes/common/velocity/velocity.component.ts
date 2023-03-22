@@ -52,7 +52,9 @@ export class CommonVelocityComponent implements OnInit {
     private warehouseService: WarehouseService,
     private userService: UserService,
     private fb: UntypedFormBuilder,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/common/velocity");
+      userService.isCurrentPageDisplayOnly("/common/velocity").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );              
     }
 
   ngOnInit(): void { 

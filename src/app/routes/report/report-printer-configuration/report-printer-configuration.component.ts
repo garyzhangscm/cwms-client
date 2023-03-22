@@ -68,7 +68,9 @@ export class ReportReportPrinterConfigurationComponent implements OnInit {
     private userService: UserService,
     private utilService: UtilService,
   ) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/report/report-printer-configuration");
+    userService.isCurrentPageDisplayOnly("/report/report-printer-configuration").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );              
    }
 
   // Form related data and functions

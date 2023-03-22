@@ -65,7 +65,9 @@ export class BillingBillableActivityComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private localCacheService: LocalCacheService,
     private userService: UserService) {
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/billing/billable-activity");
+      userService.isCurrentPageDisplayOnly("/billing/billable-activity").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );        
   }
 
   ngOnInit(): void {  

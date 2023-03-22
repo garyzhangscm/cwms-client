@@ -29,7 +29,9 @@ export class UtilTesterComponent implements OnInit {
     private messageService: NzMessageService,
     private i18n: I18NService,
   ) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/util/tester");
+    userService.isCurrentPageDisplayOnly("/util/tester").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                            
   }
 
   ngOnInit(): void {

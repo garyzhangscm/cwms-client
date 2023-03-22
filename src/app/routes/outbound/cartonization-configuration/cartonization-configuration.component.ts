@@ -102,7 +102,9 @@ export class OutboundCartonizationConfigurationComponent implements OnInit {
     private userService: UserService,
     private utilService: UtilService,
   ) { 
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/cartonization-configuration");
+    userService.isCurrentPageDisplayOnly("/outbound/cartonization-configuration").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                      
   }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.cartonization-configuration'));

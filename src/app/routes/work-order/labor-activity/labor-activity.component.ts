@@ -28,7 +28,9 @@ export class WorkOrderLaborActivityComponent implements OnInit {
     private workOrderLaborActivityHistoryService: WorkOrderLaborActivityHistoryService,
     private productionLineService: ProductionLineService, 
     ) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/labor-activity");
+      userService.isCurrentPageDisplayOnly("/work-order/labor-activity").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                                   
 
   }
 

@@ -129,7 +129,9 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
     private utilService: UtilService,
     private userService: UserService,
   ) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/bill-of-material");
+    userService.isCurrentPageDisplayOnly("/work-order/bill-of-material").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                                 
    }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('bill-of-material'));

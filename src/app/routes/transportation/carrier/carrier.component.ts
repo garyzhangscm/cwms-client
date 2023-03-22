@@ -50,7 +50,9 @@ export class TransportationCarrierComponent implements OnInit {
     private userService: UserService,
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService, ) {
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/transportation/carrier");
+      userService.isCurrentPageDisplayOnly("/transportation/carrier").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );               
      }
 
     ngOnInit(): void {

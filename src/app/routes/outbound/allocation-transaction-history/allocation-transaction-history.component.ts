@@ -85,7 +85,9 @@ export class OutboundAllocationTransactionHistoryComponent implements OnInit {
     private userService: UserService,
     private allocationTransactionHistoryService: AllocationTransactionHistoryService) { 
       
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/outbound/allocation-transaction-history");
+      userService.isCurrentPageDisplayOnly("/outbound/allocation-transaction-history").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                   
     }
 
   ngOnInit(): void { 

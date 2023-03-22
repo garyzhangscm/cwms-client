@@ -65,7 +65,9 @@ export class InventoryInventoryConfigurationComponent implements OnInit {
     private userService: UserService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) { 
 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/configuration");
+      userService.isCurrentPageDisplayOnly("/inventory/configuration").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                             
 
       this.currentInventoryConfiguration = { 
         companyId: this.companyService.getCurrentCompany()!.id,

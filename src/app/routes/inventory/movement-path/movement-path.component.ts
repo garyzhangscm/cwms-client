@@ -116,7 +116,9 @@ export class InventoryMovementPathComponent implements OnInit {
     private utilService: UtilService,
     private userService: UserService,
   ) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/movement-path");
+    userService.isCurrentPageDisplayOnly("/inventory/movement-path").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                
   
   }
 

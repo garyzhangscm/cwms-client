@@ -230,7 +230,9 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
     private utilService: UtilService,
     private userService: UserService,
   ) {
-    this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/inventory-adjustment-request");
+    userService.isCurrentPageDisplayOnly("/inventory/inventory-adjustment-request").then(
+      displayOnlyFlag => this.displayOnly = displayOnlyFlag
+    );                          
   
   }
   ngOnInit(): void {

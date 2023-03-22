@@ -53,7 +53,9 @@ export class CommonAbcCategoryComponent implements OnInit {
     private userService: UserService,
     private warehouseService: WarehouseService,
     private fb: UntypedFormBuilder,) {
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/common/abc-category");
+      userService.isCurrentPageDisplayOnly("/common/abc-category").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );            
      }
 
   ngOnInit(): void { 

@@ -33,7 +33,9 @@ export class WorkOrderSiloMonitorComponent implements OnInit {
     private siloService: SiloService, 
     private userService: UserService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) { 
-      this.displayOnly = userService.isCurrentPageDisplayOnly("/work-order/silo");
+      userService.isCurrentPageDisplayOnly("/work-order/silo").then(
+        displayOnlyFlag => this.displayOnly = displayOnlyFlag
+      );                        
     }
 
   ngOnInit(): void { 
