@@ -65,7 +65,7 @@
       </ng-template>
       <ng-template st-row="completeTimeColumn" let-item let-index="index"> 
                 
-        {{ item.startTime  | date:'short'}} 
+        {{ item.completeTime  | date:'short'}} 
       </ng-template>
       <ng-template st-row="actionColumn" let-item let-index="index"> 
            <button nz-button nzDanger (click)="remove(item)">{{'remove' | i18n}}</button> 
@@ -87,6 +87,8 @@
                         {{snapshotByClient.grossVolume | number: '1.0-2'}} <strong>{{ snapshotByClient.capacityUnit }}</strong></nz-descriptions-item>
                         <nz-descriptions-item nzTitle="{{ 'totalLocations' | i18n}}">
                         {{snapshotByClient.totalLocations}}</nz-descriptions-item> 
+                        <nz-descriptions-item nzTitle="{{ 'totalLPNs' | i18n}}">
+                          {{snapshotByClient.totalLPNs}}</nz-descriptions-item> 
                     </nz-descriptions>
                 </nz-card>
               </nz-tab>

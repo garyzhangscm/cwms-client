@@ -1459,7 +1459,7 @@
 </ng-template>
 
 <ng-template #tplBillableActivityModalFooter>
-  <button   nzType="default" (click)="closeBillableActivityModal()" [nzLoading]="addActivityInProcess" >{{ 'cancel' |
+  <button nz-button nzType="default" (click)="closeBillableActivityModal()" [nzLoading]="addActivityInProcess" >{{ 'cancel' |
     i18n}}</button>
   <button nz-button nzType="primary" (click)="confirmBillableActivity()" [nzLoading]="addActivityInProcess" >{{ 'confirm' |
     i18n}}</button>

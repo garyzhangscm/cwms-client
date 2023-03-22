@@ -14,6 +14,7 @@ export interface LocationUtilizationSnapshotBatch {
     grossVolume: number;
  
     totalLocations: number;
+    totalLPNs: number;
     startTime: Date;
     
     completeTime: Date;

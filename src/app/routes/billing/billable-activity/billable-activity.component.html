@@ -45,7 +45,7 @@
     <div class="search-result-list"> 
         
         <st #st [data]="billingRequests" [columns]="columns"  [scroll]="{ x: '1024px' }"
-            [expand]="expand"  expandAccordion  (change)="billingRequestTableChanged($event)">
+            [expand]="expand"  expandAccordion  (change)="billingRequestTableChanged($event)" [footer]="tableFoot">
             
             <!--   billableCategoryColumn colummn  -->  
             <ng-template st-row="billableCategoryColumn" let-item let-index="index"> 
@@ -55,11 +55,11 @@
             
             <ng-template st-row="totalAmountColumn" let-item let-index="index"> 
                 
-                {{  item.totalAmount | number: '1.0-2'}} 
+                {{  item.totalAmount | currency: 'USD'}} 
             </ng-template>
             <ng-template st-row="totalChargeColumn" let-item let-index="index"> 
                 
-                {{  item.totalCharge | number: '1.0-2'}} 
+                {{  item.totalCharge | currency: 'USD'}} 
             </ng-template>
             
             <!--   billing request lines -->

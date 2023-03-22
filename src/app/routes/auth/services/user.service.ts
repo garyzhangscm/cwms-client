@@ -158,13 +158,14 @@ export class UserService {
     const currentPageMenu = this.menuService.find({ 
       url: link,
       recursive: true });
-      if (currentPageMenu) {
-        console.log(`we found the matched menu by link ${link}`);
-        console.log(`${currentPageMenu.i18n} - ${currentPageMenu.link} - ${currentPageMenu.displayOnly}`);
-        return currentPageMenu["displayOnly"];
-      }
-      console.log(`we can't found the matched menu by link ${link}`);
-      return false;
+   
+    if (currentPageMenu) {
+        // console.log(`we found the matched menu by link ${link}`);
+        // console.log(`${currentPageMenu.i18n} - ${currentPageMenu.link} - ${currentPageMenu.displayOnly}`);
+        return currentPageMenu.displayOnly;
+    }
+      // console.log(`we can't found the matched menu by link ${link}`);
+    return false;
   }
  
 }

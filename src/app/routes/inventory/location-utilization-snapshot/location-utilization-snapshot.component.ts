@@ -3,14 +3,12 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { STComponent, STColumn, STChange } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { timeHours } from 'd3';
+import { STComponent, STColumn } from '@delon/abc/st';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
-import { UserService } from '../../auth/services/user.service';
-import { CustomerReturnOrder } from '../../inbound/models/customer-return-order';
+import { UserService } from '../../auth/services/user.service'; 
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
 import { ClientLocationUtilizationSnapshotBatch } from '../models/client-location-utilization-snapshot-batch';
@@ -43,6 +41,8 @@ export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
     iif: () => this.isChoose('grossVolume')  }, 
     { title: this.i18n.fanyi("totalLocations"),  index: 'totalLocations' , 
     iif: () => this.isChoose('totalLocations')  }, 
+    { title: this.i18n.fanyi("totalLPNs"),  index: 'totalLPNs' , 
+    iif: () => this.isChoose('totalLPNs')  }, 
     { title: this.i18n.fanyi("startTime"),  
     render: 'startTimeColumn',
     iif: () => this.isChoose('startTime')  }, 
@@ -61,6 +61,7 @@ export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
     { label: this.i18n.fanyi("netVolume"), value: 'netVolume', checked: true },
     { label: this.i18n.fanyi("grossVolume"), value: 'grossVolume', checked: true },
     { label: this.i18n.fanyi("totalLocations"), value: 'totalLocations', checked: true },
+    { label: this.i18n.fanyi("totalLPNs"), value: 'totalLPNs', checked: true },
     { label: this.i18n.fanyi("startTime"), value: 'startTime', checked: true },      
     { label: this.i18n.fanyi("completeTime"), value: 'completeTime', checked: true },      
     
@@ -72,15 +73,12 @@ export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
   searchResult = "";
 
   displayOnly = false;
-  constructor(private http: _HttpClient,
+  constructor( 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private activatedRoute: ActivatedRoute,
     private locationUtilizationSnapshotBatchService: LocationUtilizationSnapshotBatchService,
     private messageService: NzMessageService, 
-    private fb: UntypedFormBuilder,
-    private modalService: NzModalService,   
-    private titleService: TitleService,
-    private utilService: UtilService,  
+    private fb: UntypedFormBuilder, 
     private localCacheService: LocalCacheService,
     private userService: UserService,) { 
       this.displayOnly = userService.isCurrentPageDisplayOnly("/inventory/location-utilization-snapshot");

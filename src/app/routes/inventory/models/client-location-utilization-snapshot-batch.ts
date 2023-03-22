@@ -15,6 +15,7 @@ export interface ClientLocationUtilizationSnapshotBatch {
     grossVolume: number;
  
     totalLocations: number;
+    totalLPNs: number;
     
     locationUtilizationSnapshots: LocationUtilizationSnapshot[];
 
