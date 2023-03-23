@@ -345,6 +345,8 @@ export class InventoryItemMaintenanceComponent implements OnInit {
       defaultForInboundReceiving: [false, Validators.required],
       defaultForWorkOrderReceiving: [false, Validators.required],
       trackingLpnUOM: [false, Validators.required],
+      defaultForDisplay: [false, Validators.required],
+      caseFlag: [false, Validators.required],
     });
   }
   openAddingItemUnitOfMeasureModal(
@@ -412,6 +414,8 @@ export class InventoryItemMaintenanceComponent implements OnInit {
         this.itemUOMForm.controls.defaultForInboundReceiving.value,
         this.itemUOMForm.controls.defaultForWorkOrderReceiving.value,
         this.itemUOMForm.controls.trackingLpnUOM.value,
+        this.itemUOMForm.controls.defaultForDisplay.value,
+        this.itemUOMForm.controls.caseFlag.value,
       );
 
       this.itemUOMModal.destroy();
@@ -449,6 +453,8 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     defaultForInboundReceiving: boolean,
     defaultForWorkOrderReceiving: boolean,
     trackingLpnUOM: boolean,
+    defaultForDisplay: boolean,
+    caseFlag: boolean,
   ): void {
     // Get the unit of measure first
     this.availableUnitOfMeasures
@@ -470,6 +476,8 @@ export class InventoryItemMaintenanceComponent implements OnInit {
               defaultForInboundReceiving: defaultForInboundReceiving === null ? false : defaultForInboundReceiving,
               defaultForWorkOrderReceiving: defaultForWorkOrderReceiving === null ? false : defaultForWorkOrderReceiving,
               trackingLpn: trackingLpnUOM === null ? false : trackingLpnUOM,
+              defaultForDisplay: defaultForDisplay === null ? false : defaultForDisplay,
+              caseFlag: caseFlag === null ? false : caseFlag,
             },
           ];
           itemPackageType.itemUnitOfMeasures.sort((a, b) => a.quantity! - b.quantity!);
@@ -612,12 +620,14 @@ export class InventoryItemMaintenanceComponent implements OnInit {
   } 
 
   clientChanged() {
-    if (this.currentItem.client) {
+    if (this.currentItem.clientId) {
 
-      this.currentItem.clientId = this.currentItem.client.id;
+      this.currentItem.client = this.availableClients.find(
+        availableClient => availableClient.id === this.currentItem.clientId
+      );
     }
     else {
-      this.currentItem.clientId = undefined;
+      this.currentItem.client = undefined;
     }
   }
   

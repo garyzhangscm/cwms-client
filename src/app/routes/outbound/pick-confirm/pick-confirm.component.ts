@@ -103,17 +103,7 @@ export class OutboundPickConfirmComponent implements OnInit {
       listOfFilter: [],
       filterFn: null,
       showFilter: false
-    }, {
-      name: 'pick.confirmQuantity',
-      showSort: false,
-      sortOrder: null,
-      sortFn: null,
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
+    },  
   ];
 
   listOfSelection = [

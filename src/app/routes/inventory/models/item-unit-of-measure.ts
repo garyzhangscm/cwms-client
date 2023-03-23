@@ -18,7 +18,8 @@ export interface ItemUnitOfMeasure {
   defaultForInboundReceiving?: boolean;
   defaultForWorkOrderReceiving?: boolean;
   trackingLpn?: boolean;
-
+  defaultForDisplay?: boolean;
+  caseFlag?: boolean;
   
   weightUnit?: string;
   lengthUnit?: string;

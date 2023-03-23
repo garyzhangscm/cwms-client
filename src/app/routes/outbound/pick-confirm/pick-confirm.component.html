@@ -193,7 +193,7 @@
 <!-- Table to Display the result  -->
 <div class="search-result-list">
 
-  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllPicks"
+  <nz-table [nzScroll]="{ x: '100vw'}" nzShowSizeChanger nzShowPagination [nzData]="listOfAllPicks"
     [nzFooter]="tableFoot" #pickTable>
     <thead>
       <tr>
@@ -204,13 +204,14 @@
         <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
           [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
           [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
-          [nzShowFilter]="column.showFilter">
+          [nzShowFilter]="column.showFilter" nzWidth="80px">
           {{ column.name | i18n }}
         </th>
 
-
-
-        <th *ngIf="!displayOnly">
+        <th  nzWidth="120px">{{'attribute' | i18n}}</th>
+        <th  nzRight nzWidth="120px">{{'pick.confirmQuantity' | i18n}}</th>
+ 
+        <th nzRight *ngIf="!displayOnly" nzWidth="120px">
           {{ 'action' | i18n }}
         </th>
       </tr>
@@ -227,11 +228,18 @@
         <td>{{ data.item.description }}</td>
         <td>{{ data.quantity }}</td>
         <td>{{ data.pickedQuantity }}</td>
-        <td>
+        <td nzWidth="120px">
+          <ul>
+            <li *ngIf="data.color != null">{{'color' | i18n}}: {{data.color}}</li>
+            <li *ngIf="data.productSize != null">{{'productSize' | i18n}}: {{data.productSize}}</li>
+            <li *ngIf="data.style != null">{{'style' | i18n}}: {{data.style}}</li>
+          </ul>
+        </td>
+        <td nzRight nzWidth="120px">
           <input nz-input [(ngModel)]="mapOfConfirmedQuantity[data.number]"
             [disabled]="mapOfConfirmedQuantity[data.number] === 0 || confirming === true" style="width: 100px;" />
         </td>
-        <td *ngIf="!displayOnly">
+        <td *ngIf="!displayOnly" nzRight nzWidth="120px">
           <button nz-button nzType="primary" (click)="confirmPick(data)"
             [disabled]="mapOfConfirmedQuantity[data.number] <= 0" [nzLoading]="confirming">
             {{ 'confirm' | i18n }}
