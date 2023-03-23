@@ -53,6 +53,10 @@
                 {{ 'BILLABLE-CATEGORY-' + item.billableCategory | i18n}} 
             </ng-template>
             
+            <ng-template st-row="totalAmountColumn" let-item let-index="index"> 
+                
+              {{  item.totalAmount   | number: '1.0-2'}} 
+          </ng-template>
             <ng-template st-row="rateColumn" let-item let-index="index"> 
                 
                 {{  item.rate  | currency: 'USD'}} 

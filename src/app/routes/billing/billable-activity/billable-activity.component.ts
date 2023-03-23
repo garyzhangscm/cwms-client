@@ -1,16 +1,11 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms'; 
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN,  _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
-
-import { Alert } from '../../alert/models/alert';
-import { AlertStatus } from '../../alert/models/alert-status';
-import { AlertType } from '../../alert/models/alert-type';
-import { AlertService } from '../../alert/services/alert.service';
+ 
 import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
 import { ClientService } from '../../common/services/client.service';
@@ -47,7 +42,7 @@ export class BillingBillableActivityComponent implements OnInit {
     },     
     { title: this.i18n.fanyi("rate"),  render: 'rateColumn' },  
     { title: this.i18n.fanyi("billingCycle"),  index: 'billingCycle' ,  },  
-    { title: this.i18n.fanyi("totalAmount"),  index: 'totalAmount' ,},  
+    { title: this.i18n.fanyi("totalAmount"),  render: 'totalAmountColumn' ,},  
     { title: this.i18n.fanyi("totalCharge"),   render: 'totalChargeColumn'},  
     
      

@@ -182,7 +182,7 @@ export class DefaultInterceptor implements HttpInterceptor {
 
   private handleData(ev: HttpResponseBase, req: HttpRequest<any>, next: HttpHandler): Observable<any> {
     this.checkStatus(ev);
-    console.log(`ev.status ${ev.status}`);
+    // console.log(`ev.status ${ev.status}`);
     // 业务处理：一些通用操作
     switch (ev.status) {
       case 200:

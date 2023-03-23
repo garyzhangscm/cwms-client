@@ -171,7 +171,7 @@ export class UserService {
         return currentPageMenu.displayOnly;
     }
 
-    console.log(`current user doesn't have access to this page`)
+    console.log(`current user doesn't have access to this page`);
     return true;
   }
  

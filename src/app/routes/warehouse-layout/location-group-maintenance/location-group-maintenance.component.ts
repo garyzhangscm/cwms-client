@@ -3,7 +3,7 @@ import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } 
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { SCHEMA_THIRDS_COMPONENTS } from '@shared';
+ 
 import { InventoryConsolidationStrategy } from '../models/inventory-consolidation-strategy.enum';
 import { LocationGroup } from '../models/location-group';
 import { LocationGroupType } from '../models/location-group-type';
