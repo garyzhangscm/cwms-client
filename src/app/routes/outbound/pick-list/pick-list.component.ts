@@ -277,8 +277,9 @@ export class OutboundPickListComponent implements OnInit {
     });
   }
 
-  cancelPick(pickList: PickList, pick: PickWork): void {
-    this.pickService.cancelPick(pick).subscribe(pickRes => {
+  cancelPick(pickList: PickList, pick: PickWork, 
+    errorLocation: boolean, generateCycleCount: boolean): void {
+    this.pickService.cancelPick(pick, errorLocation, generateCycleCount).subscribe(pickRes => {
       this.messageService.success(this.i18n.fanyi('message.action.success'));
       this.search(pickList.id, 0);
     });

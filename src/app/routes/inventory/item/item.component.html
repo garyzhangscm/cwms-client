@@ -77,6 +77,18 @@
          expandAccordion   (change)="itemTableChanged($event)"  [widthMode]="{ type: 'strict' }" 
         [scroll]="{ x: '3300px'}">
       
+        <ng-template st-row="receivingRateByUnitColumn" let-item let-index="index"> 
+                
+          {{  item.receivingRateByUnit  | currency: 'USD'}} 
+        </ng-template>
+        <ng-template st-row="shippingRateByUnitColumn" let-item let-index="index"> 
+                
+          {{  item.shippingRateByUnit  | currency: 'USD'}} 
+        </ng-template>
+        <ng-template st-row="handlingRateByUnitColumn" let-item let-index="index"> 
+                
+          {{  item.handlingRateByUnit  | currency: 'USD'}} 
+        </ng-template>
         <!-- item description -->
         <!--
 

@@ -446,8 +446,9 @@ export class OutboundShipmentComponent implements OnInit {
     return true;
   }
 
-  cancelPick(shipment: Shipment, pick: PickWork): void {
-    this.pickService.cancelPick(pick).subscribe(pickRes => {
+  cancelPick(shipment: Shipment, pick: PickWork, 
+    errorLocation: boolean, generateCycleCount: boolean): void {
+    this.pickService.cancelPick(pick, errorLocation, generateCycleCount).subscribe(pickRes => {
       this.messageService.success(this.i18n.fanyi('message.action.success'));
       // refresh the picked inventory
       this.search(shipment.id, 1);

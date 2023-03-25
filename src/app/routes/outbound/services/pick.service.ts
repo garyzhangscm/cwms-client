@@ -1,4 +1,5 @@
 
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -514,19 +515,29 @@ export class PickService {
     const url = `outbound/picks/${pick.id}`;
     return this.http.put(url, pick).pipe(map(res => res.data));
   }
-  cancelPick(pick: PickWork): Observable<PickWork> {
+  cancelPick(pick: PickWork, errorLocation: boolean, generateCycleCount: boolean): Observable<PickWork> {
     const url = `outbound/picks/${pick.id}`;
-    return this.http.delete(url).pipe(map(res => res.data));
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id); 
+    params = params.append(`errorLocation`, errorLocation);
+    params = params.append(`generateCycleCount`, generateCycleCount);
+
+    return this.http.delete(url, params).pipe(map(res => res.data));
   }
 
-  cancelPicks(picks: PickWork[]): Observable<PickWork[]> {
+  cancelPicks(picks: PickWork[], errorLocation: boolean, generateCycleCount: boolean): Observable<PickWork[]> {
     const pickIds: number[] = [];
     picks.forEach(pick => {
       pickIds.push(pick.id);
-    });
-    const params = {
-      pick_ids: pickIds.join(','),
-    };
+    }); 
+
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id); 
+    params = params.append(`errorLocation`, errorLocation);
+    params = params.append(`generateCycleCount`, generateCycleCount);
+    params = params.append(`pick_ids`, pickIds.join(','));
 
     return this.http.delete('outbound/picks', params).pipe(map(res => res.data));
   }

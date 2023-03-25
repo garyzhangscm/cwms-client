@@ -328,6 +328,39 @@
       </nz-form-item>
     </div> 
   </div>
+  
+  <div nz-row [nzGutter]="24">      
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">
+          {{ 'receivingRateByUnit' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <nz-input-number [(ngModel)]="currentItem.receivingRateByUnit"></nz-input-number> 
+        </nz-form-control>
+      </nz-form-item>
+    </div>   
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">
+          {{ 'shippingRateByUnit' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <nz-input-number [(ngModel)]="currentItem.shippingRateByUnit"></nz-input-number> 
+        </nz-form-control>
+      </nz-form-item>
+    </div>   
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">
+          {{ 'handlingRateByUnit' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <nz-input-number [(ngModel)]="currentItem.handlingRateByUnit"></nz-input-number> 
+        </nz-form-control>
+      </nz-form-item>
+    </div>   
+  </div>
 
 </div>
 
@@ -480,6 +513,9 @@
       <nz-descriptions-item nzTitle="{{ 'unit-cost' | i18n }}">{{ currentItem.unitCost }} </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'abc-category' | i18n }}">{{ currentItem.abcCategory?.description }} </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'velocity' | i18n }}">{{ currentItem.velocity?.description }} </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'receivingRateByUnit' | i18n }}">{{ currentItem.receivingRateByUnit }} </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'shippingRateByUnit' | i18n }}">{{ currentItem.shippingRateByUnit }} </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'handlingRateByUnit' | i18n }}">{{ currentItem.handlingRateByUnit }} </nz-descriptions-item>
     </nz-descriptions>
   </nz-card>
   <nz-card>

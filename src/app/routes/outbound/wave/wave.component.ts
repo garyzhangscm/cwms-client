@@ -465,8 +465,8 @@ export class OutboundWaveComponent implements OnInit {
     return wave.totalOpenQuantity! > 0;
   }
 
-  cancelPick(wave: Wave, pick: PickWork): void {
-    this.pickService.cancelPick(pick).subscribe(pickRes => {
+  cancelPick(wave: Wave, pick: PickWork, errorLocation: boolean, generateCycleCount: boolean): void {
+    this.pickService.cancelPick(pick, errorLocation, generateCycleCount).subscribe(pickRes => {
       this.messageService.success(this.i18n.fanyi('message.action.success'));
       // refresh the picked inventory
       this.search(wave.id, 1);

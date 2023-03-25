@@ -363,7 +363,8 @@ export class OutboundPickComponent implements OnInit {
   }
 
 
-  cancelSelectedPicks(): void {
+  cancelSelectedPicks(  
+    errorLocation: boolean, generateCycleCount: boolean): void {
     // make sure we have at least one checkbox checked
     const selectedPicks = this.getSelectedPicks();
     if (selectedPicks.length > 0) {
@@ -373,7 +374,7 @@ export class OutboundPickComponent implements OnInit {
         nzOkText: this.i18n.fanyi('confirm'),
         nzOkDanger: true,
         nzOnOk: () => {
-          this.pickService.cancelPicks(selectedPicks).subscribe(res => {
+          this.pickService.cancelPicks(selectedPicks, errorLocation, generateCycleCount).subscribe(res => {
             this.message.success(this.i18n.fanyi('message.pick.cancelled'));
             this.search();
           });

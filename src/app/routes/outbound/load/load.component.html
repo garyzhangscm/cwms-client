@@ -264,10 +264,27 @@
                     <td>{{ pick.pickedQuantity }}</td>
                     <td>{{ pick.lpn }}</td>
                     <td *ngIf="!displayOnly">
-                      <button nz-button (click)="cancelPick(pick)"
-                        [disabled]="pick.quantity === pick.pickedQuantity  || item.status === trailerAppointmentStatusEnum.COMPLETED">
-                        {{ 'cancel' | i18n }}
-                      </button>
+                      
+                      <button nz-button nz-dropdown [nzDropdownMenu]="cancelPicksOption" nzType="primary"
+                      (click)="cancelPick(pick, false, false)"   
+                      [disabled]="pick.quantity === pick.pickedQuantity  || item.status === trailerAppointmentStatusEnum.COMPLETED" >
+                      {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
+                      <nz-dropdown-menu #cancelPicksOption="nzDropdownMenu">
+                        <ul nz-menu>         
+                          <li nz-menu-item>
+                            <a (click)="cancelPick(pick, false, false)">
+                              {{ 'cancel-pick' | i18n }}</a> 
+                          </li>
+                          <li nz-menu-item>
+                            <a (click)="cancelPick(pick, true, false)">
+                              {{ 'cancel-pick-error-location' | i18n }}</a> 
+                          </li>  
+                          <li nz-menu-item>
+                            <a (click)="cancelPick(pick, true, true)">
+                              {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
+                          </li>
+                        </ul>
+                      </nz-dropdown-menu> 
                     </td>
                   </tr>
                 </tbody>
@@ -280,10 +297,27 @@
                     [disabled]="mapOfPicks[item.id!].length === 0  || item.status === trailerAppointmentStatusEnum.COMPLETED">
                     {{ 'confirm' | i18n }}
                   </button>
-                  <button nz-button (click)="cancelSelectedPick(item)" 
+                  
+                  <button nz-button nz-dropdown [nzDropdownMenu]="cancelPicksOption" nzType="primary"
+                  (click)="cancelSelectedPick(item, false, false)"   
                   [disabled]="item.status === trailerAppointmentStatusEnum.COMPLETED">
-                        {{ 'cancel' | i18n }}
-                      </button>
+                  {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
+                  <nz-dropdown-menu #cancelPicksOption="nzDropdownMenu">
+                    <ul nz-menu>         
+                      <li nz-menu-item>
+                        <a (click)="cancelSelectedPick(item, false, false)">
+                          {{ 'cancel-pick' | i18n }}</a> 
+                      </li>
+                      <li nz-menu-item>
+                        <a (click)="cancelSelectedPick(item, true, false)">
+                          {{ 'cancel-pick-error-location' | i18n }}</a> 
+                      </li>  
+                      <li nz-menu-item>
+                        <a (click)="cancelSelectedPick(item, true, true)">
+                          {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
+                      </li>
+                    </ul>
+                  </nz-dropdown-menu>  
                 </div>
               </ng-template>
             </nz-tab>

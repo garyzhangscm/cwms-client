@@ -278,8 +278,9 @@ export class OutboundCartonizationComponent implements OnInit {
     });
   }
 
-  cancelPick(cartonization: Cartonization, pick: PickWork): void {
-    this.pickService.cancelPick(pick).subscribe(pickRes => {
+  cancelPick(cartonization: Cartonization, pick: PickWork, 
+    errorLocation: boolean, generateCycleCount: boolean): void {
+    this.pickService.cancelPick(pick, errorLocation, generateCycleCount).subscribe(pickRes => {
       this.messageService.success(this.i18n.fanyi('message.action.success'));
       this.search(cartonization.id, 0);
     });

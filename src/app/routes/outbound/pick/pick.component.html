@@ -172,9 +172,26 @@
       </tbody>
     </nz-table>
     <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
-      <button nz-button nzDanger (click)="cancelSelectedPicks()">
-        {{ 'delete' | i18n }}
-      </button>
+
+      <button nz-button nz-dropdown [nzDropdownMenu]="cancelPickOption" nzDanger
+      (click)="cancelSelectedPicks(false, false)" >
+      {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
+      <nz-dropdown-menu #cancelPickOption="nzDropdownMenu">
+        <ul nz-menu>         
+          <li nz-menu-item>
+            <a (click)="cancelSelectedPicks(false, false)">
+              {{ 'cancel-pick' | i18n }}</a> 
+          </li>
+          <li nz-menu-item>
+            <a (click)="cancelSelectedPicks(true, false)">
+              {{ 'cancel-pick-error-location' | i18n }}</a> 
+          </li>  
+          <li nz-menu-item>
+            <a (click)="cancelSelectedPicks(true, true)">
+              {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
+          </li>
+        </ul>
+      </nz-dropdown-menu>  
       <button nz-button nzType="primary" (click)="confirmSelectedPicks()">
         {{ 'confirm' | i18n }}
       </button>

@@ -254,9 +254,28 @@
 </nz-spin>
 <ng-template #tableFoot>
   <div nz-row nzType="flex" nzJustify="start"  *ngIf="!displayOnly">
-    <button nz-button nzDanger (click)="cancelSelectedPicks()" [disabled]="allPicksFullyConfirmed">
-      {{ 'cancel' | i18n }}
-    </button>
+    
+    <button nz-button nz-dropdown [nzDropdownMenu]="cancelPickOption" nzDanger
+      (click)="cancelSelectedPicks(false, false)"
+      [disabled]="allPicksFullyConfirmed">
+    {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
+    <nz-dropdown-menu #cancelPickOption="nzDropdownMenu">
+      <ul nz-menu>         
+        <li nz-menu-item>
+          <a (click)="cancelSelectedPicks(false, false)">
+            {{ 'cancel-pick' | i18n }}</a> 
+        </li>
+        <li nz-menu-item>
+          <a (click)="cancelSelectedPicks(true, false)">
+            {{ 'cancel-pick-error-location' | i18n }}</a> 
+        </li>  
+        <li nz-menu-item>
+          <a (click)="cancelSelectedPicks(true, true)">
+            {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
+        </li>
+      </ul>
+    </nz-dropdown-menu> 
+ 
     <button nz-button nzType="primary" (click)="confirmPicks()" [nzLoading]="confirming"
       [disabled]="allPicksFullyConfirmed">
       {{ 'confirm' | i18n }}

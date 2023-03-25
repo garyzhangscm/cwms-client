@@ -314,9 +314,9 @@ export class OutboundLoadComponent implements OnInit {
     this.indeterminate = this.mapOfPicks[loadId].some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
   }
   
-  cancelPick(pick: PickWork): void {
+  cancelPick(pick: PickWork, errorLocation: boolean, generateCycleCount: boolean): void {
     this.isSpinning = true;
-    this.pickService.cancelPick(pick).subscribe({
+    this.pickService.cancelPick(pick, errorLocation, generateCycleCount).subscribe({
 
       next: () => {
 
@@ -332,7 +332,7 @@ export class OutboundLoadComponent implements OnInit {
     this.router.navigateByUrl(`/outbound/pick/confirm?type=load&id=${trailerAppointment.id}`);
   }
   
-  cancelSelectedPick(trailerAppointment: TrailerAppointment): void {
+  cancelSelectedPick(trailerAppointment: TrailerAppointment, errorLocation: boolean, generateCycleCount: boolean): void {
     this.isSpinning = true;
     const picks :PickWork[] = [];
     this.mapOfPicks[trailerAppointment.id!]
@@ -346,7 +346,7 @@ export class OutboundLoadComponent implements OnInit {
         this.isSpinning = false;
         return;
       }
-      this.pickService.cancelPicks(picks).subscribe({
+      this.pickService.cancelPicks(picks, errorLocation, generateCycleCount).subscribe({
         next: () => {
           this.messageService.success(this.i18n.fanyi("message.action.success"));
           this.isSpinning = false;

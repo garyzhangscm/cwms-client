@@ -49,4 +49,7 @@ export interface Item {
   velocityId?: number;
   velocity?: Velocity;
 
+  receivingRateByUnit?: number;
+  shippingRateByUnit?: number;
+  handlingRateByUnit?: number;
 }

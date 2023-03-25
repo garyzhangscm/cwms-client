@@ -781,9 +781,27 @@
                         <td>{{ pick.quantity }}</td>
                         <td>{{ pick.pickedQuantity }}</td>
                         <td *ngIf="!displayOnly">
-                          <button nz-button (click)="cancelPick(data, pick)" [disabled]="pick.quantity === pick.pickedQuantity">
-                            {{ 'cancel' | i18n }}
-                          </button>
+                          
+                            <button nz-button nz-dropdown [nzDropdownMenu]="cancelPickOption" nzDanger
+                            (click)="cancelPick(data, pick, false, false)"
+                            [disabled]="pick.quantity === pick.pickedQuantity">
+                            {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
+                            <nz-dropdown-menu #cancelPickOption="nzDropdownMenu">
+                              <ul nz-menu>         
+                                <li nz-menu-item>
+                                  <a (click)="cancelPick(data, pick,false, false)">
+                                    {{ 'cancel-pick' | i18n }}</a> 
+                                </li>
+                                <li nz-menu-item>
+                                  <a (click)="cancelPick(data, pick,true, false)">
+                                    {{ 'cancel-pick-error-location' | i18n }}</a> 
+                                </li>  
+                                <li nz-menu-item>
+                                  <a (click)="cancelPick(data, pick,true, true)">
+                                    {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
+                                </li>
+                              </ul>
+                            </nz-dropdown-menu>  
                         </td>
                       </tr>
                     </tbody>

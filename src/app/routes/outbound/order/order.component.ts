@@ -966,9 +966,9 @@ export class OutboundOrderComponent implements OnInit {
     return true;
   }
 
-  cancelPick(order: Order, pick: PickWork): void {
+  cancelPick(order: Order, pick: PickWork, errorLocation: boolean, generateCycleCount: boolean): void {
     this.isSpinning = true;
-    this.pickService.cancelPick(pick).subscribe(pickRes => {
+    this.pickService.cancelPick(pick, errorLocation, generateCycleCount).subscribe(pickRes => {
       this.messageService.success(this.i18n.fanyi('message.action.success'));
       this.isSpinning = false;
       this.search(order.id, 1);
@@ -1338,7 +1338,7 @@ export class OutboundOrderComponent implements OnInit {
 
   }
 
-  cancelSelectedPick(order: Order): void {
+  cancelSelectedPick(order: Order, errorLocation: boolean, generateCycleCount: boolean): void {
     this.isSpinning = true;
     const picks :PickWork[] = [];
     this.mapOfPicks[order.id!]
@@ -1352,7 +1352,7 @@ export class OutboundOrderComponent implements OnInit {
         this.isSpinning = false;
         return;
       }
-      this.pickService.cancelPicks(picks).subscribe({
+      this.pickService.cancelPicks(picks, errorLocation, generateCycleCount).subscribe({
         next: () => {
           this.messageService.success(this.i18n.fanyi("message.action.success"));
           this.isSpinning = false;

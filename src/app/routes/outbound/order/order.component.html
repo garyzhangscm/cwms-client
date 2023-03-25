@@ -633,10 +633,28 @@
                   <td>{{ pick.pickedQuantity }}</td>
                   <td>{{ pick.lpn }}</td>
                   <td *ngIf="!displayOnly">
-                    <button nz-button (click)="cancelPick(order, pick)"
+
+
+                    <button nz-button nz-dropdown [nzDropdownMenu]="cancelPickOption" nzType="primary"
+                      (click)="cancelPick(order, pick, false, false)"
                       [disabled]="pick.quantity === pick.pickedQuantity || order.status === orderStatusEnum.COMPLETE">
-                      {{ 'cancel' | i18n }}
-                    </button>
+                      {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
+                    <nz-dropdown-menu #cancelPickOption="nzDropdownMenu">
+                      <ul nz-menu>         
+                        <li nz-menu-item>
+                          <a (click)="cancelPick(order, pick, false, false)">
+                            {{ 'cancel-pick' | i18n }}</a> 
+                        </li>
+                        <li nz-menu-item>
+                          <a (click)="cancelPick(order, pick, true, false)">
+                            {{ 'cancel-pick-error-location' | i18n }}</a> 
+                        </li>  
+                        <li nz-menu-item>
+                          <a (click)="cancelPick(order, pick, true, true)">
+                            {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
+                        </li>
+                      </ul>
+                    </nz-dropdown-menu> 
                   </td>
                 </tr>
               </tbody>
@@ -652,10 +670,28 @@
                   [disabled]="(mapOfPicks[order.id!] && mapOfPicks[order.id!].length === 0) || order.status === orderStatusEnum.COMPLETE">
                   {{ 'confirm' | i18n }}
                 </button>
-                <button nz-button (click)="cancelSelectedPick(order)"  *ngIf="!displayOnly"
-                      [disabled]="order.status === orderStatusEnum.COMPLETE">
-                      {{ 'cancel' | i18n }}
-                    </button>
+
+                <button nz-button nz-dropdown [nzDropdownMenu]="cancelPicksOption" nzType="primary"
+                    (click)="cancelSelectedPick(order, false, false)"  *ngIf="!displayOnly"
+                      [disabled]="order.status === orderStatusEnum.COMPLETE" >
+                {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
+                <nz-dropdown-menu #cancelPicksOption="nzDropdownMenu">
+                  <ul nz-menu>         
+                    <li nz-menu-item>
+                      <a (click)="cancelSelectedPick(order, false, false)">
+                        {{ 'cancel-pick' | i18n }}</a> 
+                    </li>
+                    <li nz-menu-item>
+                      <a (click)="cancelSelectedPick(order, true, false)">
+                        {{ 'cancel-pick-error-location' | i18n }}</a> 
+                    </li>  
+                    <li nz-menu-item>
+                      <a (click)="cancelSelectedPick(order, true, true)">
+                        {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
+                    </li>
+                  </ul>
+                </nz-dropdown-menu>
+ 
               </div>
             </ng-template>
           </nz-tab>

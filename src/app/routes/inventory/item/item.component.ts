@@ -636,6 +636,15 @@ export class InventoryItemComponent implements OnInit {
     { title: this.i18n.fanyi("trackingStyleFlag"), index: 'trackingStyleFlag', iif: () => this.isChoose('trackingStyleFlag'),
     type:"yn" },
     { title: this.i18n.fanyi("defaultStyle"), index: 'defaultStyle', iif: () => this.isChoose('defaultStyle')},
+    { title: this.i18n.fanyi("receivingRateByUnit"), render: 'receivingRateByUnitColumn', 
+      iif: () => this.isChoose('receivingRateByUnit'), 
+    },
+    { title: this.i18n.fanyi("shippingRateByUnit"), render: 'shippingRateByUnitColumn', 
+      iif: () => this.isChoose('shippingRateByUnit'), 
+    },
+    { title: this.i18n.fanyi("handlingRateByUnit"), render: 'handlingRateByUnitColumn', 
+      iif: () => this.isChoose('handlingRateByUnit'), 
+    },
 
     {
       title: 'action',
@@ -669,6 +678,9 @@ export class InventoryItemComponent implements OnInit {
     { label: this.i18n.fanyi("defaultProductSize"), value: 'defaultProductSize', checked: true },
     { label: this.i18n.fanyi("trackingStyleFlag"), value: 'trackingStyleFlag', checked: true },
     { label: this.i18n.fanyi("defaultStyle"), value: 'defaultStyle', checked: true },
+    { label: this.i18n.fanyi("receivingRateByUnit"), value: 'receivingRateByUnit', checked: true },
+    { label: this.i18n.fanyi("shippingRateByUnit"), value: 'shippingRateByUnit', checked: true },
+    { label: this.i18n.fanyi("handlingRateByUnit"), value: 'handlingRateByUnit', checked: true },
   ];
 
   isChoose(key: string): boolean {

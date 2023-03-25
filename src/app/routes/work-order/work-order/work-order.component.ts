@@ -1231,9 +1231,10 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   }
 
 
-  cancelPick(workOrder: WorkOrder, pick: PickWork): void {
+  cancelPick(workOrder: WorkOrder, pick: PickWork, 
+    errorLocation: boolean, generateCycleCount: boolean): void {
     this.isSpinning = true;
-    this.pickService.cancelPick(pick).subscribe(pickRes => {
+    this.pickService.cancelPick(pick, errorLocation, generateCycleCount).subscribe(pickRes => {
       this.messageService.success(this.i18n.fanyi('message.action.success'));
       this.search(workOrder.id);
       this.isSpinning = false;
