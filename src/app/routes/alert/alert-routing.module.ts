@@ -50,6 +50,8 @@ const routes: Routes = [
     }
   },
   { path: 'web-message-alert', component: AlertWebMessageAlertComponent  , 
+  /**
+   * 
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
@@ -57,8 +59,13 @@ const routes: Routes = [
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
+   * 
+   */
   },
   { path: 'web-message-alert-detail', component: AlertWebMessageAlertDetailComponent , 
+  /**
+   * 
+   * 
     canActivate: [ACLGuard], 
     data: { 
       guard:  {
@@ -66,6 +73,7 @@ const routes: Routes = [
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
+   */
   },
   { path: 'template', component: AlertAlertTemplateComponent  , 
     canActivate: [ACLGuard], 
