@@ -1,6 +1,7 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnDestroy } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, OnDestroy } from '@angular/core';
 import { ActivationEnd, Router } from '@angular/router';
-import { _HttpClient } from '@delon/theme';
+import { I18NService } from '@core';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMenuModeType } from 'ng-zorro-antd/menu';
 import { fromEvent, Subscription } from 'rxjs';
 import { debounceTime, filter } from 'rxjs/operators';
@@ -19,8 +20,11 @@ export class ProAccountSettingsComponent implements AfterViewInit, OnDestroy {
   menus: Array<{ key: string; title: string; selected?: boolean }> = [
     {
       key: 'base',
-      title: '基本设置'
+      title: this.i18n.fanyi("basic-info")
     },
+    /**
+     * 
+     * 
     {
       key: 'security',
       title: '安全设置'
@@ -33,8 +37,11 @@ export class ProAccountSettingsComponent implements AfterViewInit, OnDestroy {
       key: 'notification',
       title: '新消息通知'
     }
+     */
   ];
-  constructor(private router: Router, private cdr: ChangeDetectorRef, private el: ElementRef<HTMLElement>) {
+  constructor(private router: Router, 
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private cdr: ChangeDetectorRef, private el: ElementRef<HTMLElement>) {
     this.router$ = this.router.events.pipe(filter(e => e instanceof ActivationEnd)).subscribe(() => this.setActive());
   }
 

@@ -16,6 +16,7 @@ export class AlertConfigurationComponent implements OnInit {
   currentEmailAlertConfiguration: EmailAlertConfiguration | undefined;
 
   isSpinning = false;
+  passwordVisible = false;
 
 
   displayOnly = false;

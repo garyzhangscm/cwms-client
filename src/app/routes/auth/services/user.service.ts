@@ -173,6 +173,15 @@ export class UserService {
 
     console.log(`current user doesn't have access to this page`);
     return true;
+  } 
+  
+  changeUserEmail(username: string, email: string) : Observable<User> {
+    let params = new HttpParams();
+    params = params.append('username', username);
+    params = params.append('email', email); 
+    params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
+
+    return this.http.post(`resource/user/change-email`, null, params).pipe(map(res => res.data));
   }
  
 }

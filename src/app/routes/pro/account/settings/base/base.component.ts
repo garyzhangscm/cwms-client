@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import { I18NService } from '@core';
+import { ALAIN_I18N_TOKEN, SettingsService, User, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { zip } from 'rxjs';
+import { UserService } from 'src/app/routes/auth/services/user.service';
 
 interface ProAccountSettingsUser {
   email: string;
@@ -33,17 +35,28 @@ interface ProAccountSettingsCity {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProAccountSettingsBaseComponent implements OnInit {
-  constructor(private http: _HttpClient, private cdr: ChangeDetectorRef, private msg: NzMessageService) {}
+  constructor(private http: _HttpClient, 
+    private settings: SettingsService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private cdr: ChangeDetectorRef, private msg: NzMessageService, 
+    private userService: UserService) {}
   avatar = '';
-  userLoading = true;
-  user!: ProAccountSettingsUser;
+  isSpinning = false;
+  // user!: ProAccountSettingsUser;
 
   // #region geo
 
   provinces: ProAccountSettingsCity[] = [];
   cities: ProAccountSettingsCity[] = [];
 
+  get user(): User {
+    return this.settings.user;
+  }
+
   ngOnInit(): void {
+    /**
+     * 
+     * 
     zip(this.http.get('/user/current'), this.http.get('/geo/province')).subscribe(
       ([user, province]: [ProAccountSettingsUser, ProAccountSettingsCity[]]) => {
         this.userLoading = false;
@@ -53,6 +66,8 @@ export class ProAccountSettingsBaseComponent implements OnInit {
         this.cdr.detectChanges();
       }
     );
+     * 
+     */
   }
 
   choProvince(pid: string, cleanCity: boolean = true): void {
@@ -68,7 +83,14 @@ export class ProAccountSettingsBaseComponent implements OnInit {
   // #endregion
 
   save(): boolean {
-    this.msg.success(JSON.stringify(this.user));
+    // this.isSpinning = true
+    // this.msg.success(JSON.stringify(this.user));
+    this.userService.changeUserEmail(this.settings.user.name!, this.settings.user.email!).subscribe({
+      next: () => {
+        // this.isSpinning = false;
+        this.msg.success(this.i18n.fanyi("message.action.success"));
+      },  
+    });
     return false;
   }
 }

@@ -57,7 +57,9 @@ import { WarehouseService } from 'src/app/routes/warehouse-layout/services/wareh
         </div>
         <nz-dropdown-menu #userMenu="nzDropdownMenu">
           <ul nz-menu>
+            <!--
             <li nz-menu-item routerLink="/pro/account/center">{{ 'menu.account.center' | i18n }}</li>
+-->
             <li nz-menu-item routerLink="/pro/account/settings">{{ 'menu.account.settings' | i18n }}</li>
           </ul>
         </nz-dropdown-menu>

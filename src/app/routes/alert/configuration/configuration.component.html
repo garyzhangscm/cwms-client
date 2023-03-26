@@ -38,13 +38,22 @@
                 </nz-form-control>
             </nz-form-item>
         </div>
+    </div> 
+    <div nz-row [nzGutter]="24">
         <div nz-col [nzSpan]="12">
             <nz-form-item nzFlex>
                 <nz-form-label [nzSpan]="6">
                     {{ 'password' | i18n }}
                 </nz-form-label>
-                <nz-form-control [nzSpan]="18">                
-                    <input nz-input type="password" [(ngModel)]="currentEmailAlertConfiguration!.password" /> 
+                <nz-form-control [nzSpan]="18">   
+                    <nz-input-group [nzSuffix]="suffixTemplate">             
+                        <input nz-input [type]="passwordVisible ? 'text' : 'password'"
+                        [(ngModel)]="currentEmailAlertConfiguration!.password" /> 
+                    </nz-input-group>
+                    <ng-template #suffixTemplate>
+                      <i nz-icon [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                        (click)="passwordVisible = !passwordVisible"></i>
+                    </ng-template>
                 </nz-form-control>
             </nz-form-item>
         </div>
