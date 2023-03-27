@@ -8,6 +8,7 @@ import { GzLocalStorageService } from '../../util/services/gz-local-storage.serv
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { User } from '../models/user';
+import { UserPermission } from '../models/user-permission';
 
 
 @Injectable({
@@ -184,4 +185,12 @@ export class UserService {
     return this.http.post(`resource/user/change-email`, null, params).pipe(map(res => res.data));
   }
  
+  getUserPermissionByWebPage(webPageUrl: string) : Observable<UserPermission[]> {
+    let params = new HttpParams();
+    params = params.append('webPageUrl', webPageUrl); 
+    params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id); 
+
+    return this.http.get(`resource/users/permission/by-web-page`, params).pipe(map(res => res.data));
+  }
 }

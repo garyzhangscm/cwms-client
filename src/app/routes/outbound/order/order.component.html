@@ -958,39 +958,40 @@
             <nz-dropdown-menu #menu="nzDropdownMenu">
               <ul nz-menu> 
 
-                <li nz-menu-item>
+                <li nz-menu-item 
+                *ngIf="!userPermissionMap.has('modify-order') || userPermissionMap.get('modify-order')">
                   <a routerLink="/outbound/order-maintenance" routerLinkActive="active"
                     [queryParams]="{id : order.id}">
                     {{ 'modify' | i18n }}</a> 
                 </li>
-                <li nz-menu-item *ngIf="isOrderAllocatable(order)">
+                <li nz-menu-item *ngIf="isOrderAllocatable(order) && (!userPermissionMap.has('allocate-order') || userPermissionMap.get('allocate-order'))">
                   <a  (click)="allocateOrder(order)">{{ 'allocate' | i18n }}</a>
                 </li>
-                <li nz-menu-item *ngIf="canReassignStageLocation(order)">
+                <li nz-menu-item *ngIf="canReassignStageLocation(order) && (!userPermissionMap.has('reassign-stage-location') || userPermissionMap.get('reassign-stage-location'))">
                   <a  (click)="openReassignStageLocationModel(order, tplOrderReassignShippingStageLocationModalTitle, tplOrderReassignShippingStageLocationModalContent)">
                     {{ 'order.assign-ship-stage-location' | i18n }}</a>
                 </li>
-                <li nz-menu-item *ngIf="isOrderReadyForComplete(order)">
+                <li nz-menu-item *ngIf="isOrderReadyForComplete(order) && (!userPermissionMap.has('complete-order') || userPermissionMap.get('complete-order'))">
                   <a  (click)="completeOrder(order)">{{ 'complete' | i18n }}</a>
                 </li>
-                <li nz-menu-item *ngIf="isOrderReadyForRemove(order)">
+                <li nz-menu-item *ngIf="isOrderReadyForRemove(order) && (!userPermissionMap.has('remove-order') || userPermissionMap.get('remove-order'))">
                   <a  (click)="removeOrder(order)">{{ 'remove' | i18n }}</a>
                 </li>
                 
-                <li nz-menu-item *ngIf="isAlreadyCompleted(order)">
+                <li nz-menu-item *ngIf="isAlreadyCompleted(order) && (!userPermissionMap.has('retrigger-order-confirm-integration') || userPermissionMap.get('retrigger-order-confirm-integration'))">
                   <a  (click)="retriggerOrderConfirmationIntegration(order)">{{ 'retrigger-order-confirm-integration' | i18n }}</a>
                 </li>
-                <li nz-menu-item >
+                <li nz-menu-item *ngIf="!userPermissionMap.has('upload-document') || userPermissionMap.get('upload-document')">
                   <a routerLink="/outbound/order-document" routerLinkActive="active"
                     [queryParams]="{id : order.id}">
                     {{ 'upload-document' | i18n }}</a> 
                 </li>
-                <li nz-menu-item >
+                <li nz-menu-item *ngIf="!userPermissionMap.has('ship-parcel') || userPermissionMap.get('ship-parcel')">
                   <a routerLink="/outbound/parcel-by-order" routerLinkActive="active"
                     [queryParams]="{id : order.id}">
                     {{ 'ship-parcel' | i18n }}</a> 
                 </li>
-                <li nz-menu-item>
+                <li nz-menu-item *ngIf="!userPermissionMap.has('add-order-billable-activity-type') || userPermissionMap.get('add-order-billable-activity-type')">
                   <a (click)="openAddOrderActivityModal(order, tplBillableActivityModalTitle, 
                       tplBillableActivityModalContent, tplBillableActivityModalFooter)" >
                   {{ 'billable-activity-type.add' | i18n }}</a>
@@ -1052,11 +1053,13 @@
     {{searchResult}}
   </div>
     <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
-      <button nz-button nzType="primary" routerLink="/outbound/order-maintenance" routerLinkActive="active">
+      <button nz-button nzType="primary" routerLink="/outbound/order-maintenance" routerLinkActive="active"
+      *ngIf="!userPermissionMap.has('add-order') || userPermissionMap.get('add-order')">
         {{ 'add' | i18n }}
       </button>
       <nz-divider nzType="vertical"></nz-divider> 
-      <button  nz-button nzType="primary" routerLink="/util/file-upload/orders" routerLinkActive="active">
+      <button  nz-button nzType="primary" routerLink="/util/file-upload/orders" routerLinkActive="active"
+      *ngIf="!userPermissionMap.has('file-upload') || userPermissionMap.get('file-upload')">
         {{ 'file-upload' | i18n }}
       </button> 
     </div>

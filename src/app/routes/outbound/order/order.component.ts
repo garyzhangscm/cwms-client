@@ -9,6 +9,7 @@ import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { UserPermission } from '../../auth/models/user-permission';
 import { UserService } from '../../auth/services/user.service';
 import { BillableActivityType } from '../../billing/models/billable-activity-type';
 import { BillableActivityTypeService } from '../../billing/services/billable-activity-type.service';
@@ -85,6 +86,8 @@ export class OutboundOrderComponent implements OnInit {
   displayBom: BillOfMaterial | undefined;
 
   displayOnly = false;
+  userPermissionMap: Map<string, boolean> = new Map<string, boolean>();
+
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -117,6 +120,13 @@ export class OutboundOrderComponent implements OnInit {
     userService.isCurrentPageDisplayOnly("/outbound/order").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
     );
+    userService.getUserPermissionByWebPage("/outbound/order").subscribe({
+      next: (userPermissionRes) => {
+        userPermissionRes.forEach(
+          userPermission => this.userPermissionMap.set(userPermission.permission.name, userPermission.allowAccess)
+        )
+      }
+    })
   
   }
 
