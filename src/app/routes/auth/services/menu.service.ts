@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
@@ -18,13 +19,25 @@ export class MenuService {
      }
 
   getMenus(): Observable<MenuGroup[]> {
-    return this.http.get(`resource/menus?companyId=${this.companyService.getCurrentCompany()!.id}`).pipe(map(res => res.data));
+    let params = new HttpParams(); 
+
+    params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
+
+    return this.http.get(`resource/menus`, params).pipe(map(res => res.data));
   }
   getWebMenus(): Observable<MenuGroup[]> {
-    return this.http.get(`resource/menus/web`).pipe(map(res => res.data));
+    let params = new HttpParams(); 
+
+    params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
+
+    return this.http.get(`resource/menus/web`, params).pipe(map(res => res.data));
   }
   getMobileMenus(): Observable<MenuGroup[]> {
-    return this.http.get(`resource/menus/mible`).pipe(map(res => res.data));
+    let params = new HttpParams(); 
+
+    params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
+
+    return this.http.get(`resource/menus/mible`, params).pipe(map(res => res.data));
   }
   isAccessible(menu: Menu, accessibleMenuGroups: MenuGroup[]): boolean {
     return accessibleMenuGroups.some(accessibleMenuGroup =>

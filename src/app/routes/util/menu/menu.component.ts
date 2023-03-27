@@ -116,7 +116,8 @@ export class UtilMenuComponent implements OnInit {
                                       sequence: menu.sequence,
                                       overallSequence: menu.overallSequence,
                                       enabled: menu.enabled,
-                                      systemAdminMenuFlag: menu.systemAdminMenuFlag
+                                      systemAdminMenuFlag: menu.systemAdminMenuFlag, 
+                                      name: menu.name
                                   }];
                           }
                         }
@@ -176,7 +177,8 @@ export class UtilMenuComponent implements OnInit {
                     sequence: menu.sequence,
                     overallSequence: menu.overallSequence,
                     enabled: menu.enabled,
-                    systemAdminMenuFlag: menu.systemAdminMenuFlag
+                    systemAdminMenuFlag: menu.systemAdminMenuFlag, 
+                    name: menu.name
                 }]
       
     );

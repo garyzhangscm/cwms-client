@@ -1,0 +1,12 @@
+<page-header></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <nz-card >
+        <nz-tree [nzData]="rolePermissions" nzBlockNode nzVirtualHeight="300px"
+        
+          nzCheckable
+          nzMultiple
+          ></nz-tree>
+    
+  </nz-card>
+</nz-spin>

@@ -26,6 +26,8 @@ import { AuthWorkingTeamMaintenanceConfirmComponent } from './working-team-maint
 import { AuthWorkingTeamMaintenanceComponent } from './working-team-maintenance/working-team-maintenance.component';
 import { AuthWorkingTeamUserComponent } from './working-team-user/working-team-user.component';
 import { AuthWorkingTeamComponent } from './working-team/working-team.component';
+import { AuthRolePermissionComponent } from './role-permission/role-permission.component';
+import { AuthPermissionComponent } from './permission/permission.component';
 
 const COMPONENTS: Array<Type<void>> = [
   AuthUserComponent,
@@ -45,7 +47,9 @@ const COMPONENTS: Array<Type<void>> = [
   AuthDepartmentMaintenanceComponent,
   AuthRoleClientComponent,
   AuthUserWarehouseComponent,
-  AuthWarehouseUserComponent];
+  AuthWarehouseUserComponent,
+  AuthRolePermissionComponent,
+  AuthPermissionComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

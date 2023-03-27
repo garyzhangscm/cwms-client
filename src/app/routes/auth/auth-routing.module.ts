@@ -5,10 +5,12 @@ import { ACLGuard, ACLGuardType } from '@delon/acl';
 import { AuthDepartmentMaintenanceComponent } from './department-maintenance/department-maintenance.component';
 import { AuthDepartmentComponent } from './department/department.component';
 import { AuthGuard } from './guard/auth.guard';
+import { AuthPermissionComponent } from './permission/permission.component';
 import { AuthRoleClientComponent } from './role-client/role-client.component';
 import { AuthRoleMaintenanceConfirmComponent } from './role-maintenance-confirm/role-maintenance-confirm.component';
 import { AuthRoleMaintenanceComponent } from './role-maintenance/role-maintenance.component';
 import { AuthRoleMenuComponent } from './role-menu/role-menu.component';
+import { AuthRolePermissionComponent } from './role-permission/role-permission.component';
 import { AuthRoleUserComponent } from './role-user/role-user.component';
 import { AuthRoleComponent } from './role/role.component';
 import { AuthUserMaintenanceConfirmComponent } from './user-maintenance-confirm/user-maintenance-confirm.component';
@@ -184,8 +186,9 @@ const routes: Routes = [
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
-  },
-  ];
+  }, 
+  { path: 'role-permission', component: AuthRolePermissionComponent },
+  { path: 'permission', component: AuthPermissionComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

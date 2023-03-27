@@ -277,6 +277,7 @@ export class AuthRoleMenuComponent implements OnInit {
             i18n: menu.i18n,
             link: menu.link,
             sequence: menu.sequence,
+            name: menu.name
           };
           // current item is assigned
           currentMenuSubGroup.children.push(currentMenu);

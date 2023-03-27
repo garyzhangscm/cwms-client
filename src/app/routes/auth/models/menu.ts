@@ -11,4 +11,5 @@ export interface Menu {
   overallSequence?: number;
   enabled?: boolean;
   systemAdminMenuFlag?: boolean;
+  name: string;
 }

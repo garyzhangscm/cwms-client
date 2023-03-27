@@ -73,6 +73,10 @@
                     <a  routerLink="/auth/role-client" routerLinkActive="active" [queryParams]="{roleId : data.id!}">{{
                       'assign-clients' | i18n }}</a> 
                 </li> 
+                <li nz-menu-item >                   
+                    <a  routerLink="/auth/role-permission" routerLinkActive="active" [queryParams]="{roleId : data.id!}">{{
+                      'assign-permission' | i18n }}</a> 
+                </li> 
                 <li nz-menu-item *ngIf="data.enabled === true">
                   <a  (click)="disableRole(data.id!)">{{ 'disable' | i18n }}</a>
                 </li>

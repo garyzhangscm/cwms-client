@@ -7,8 +7,7 @@ import { map } from 'rxjs/operators';
 import { UtilService } from '../../util/services/util.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { MenuGroup } from '../models/menu-group';
-import { MenuSubGroup } from '../models/menu-sub-group';
+import { MenuGroup } from '../models/menu-group'; 
 import { Role } from '../models/role';
 
 @Injectable({
