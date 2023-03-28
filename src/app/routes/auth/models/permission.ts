@@ -1,9 +1,10 @@
 import { Menu } from './menu'; 
 
 export interface Permission {
-  id: number;
+  id?: number;
   name: string;
   description: string;
-  menu: Menu; 
+  menu?: Menu; 
   menuName: string;
+  menuId: number;
 }

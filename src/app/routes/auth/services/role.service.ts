@@ -8,7 +8,9 @@ import { UtilService } from '../../util/services/util.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { MenuGroup } from '../models/menu-group'; 
+import { Permission } from '../models/permission';
 import { Role } from '../models/role';
+import { RolePermission } from '../models/role-permission';
 
 @Injectable({
   providedIn: 'root',
@@ -104,5 +106,15 @@ export class RoleService {
   deassignMenu(roleId: number, menuId: number) {
     const url = `resource/roles/${roleId}/menus?deassigned=${menuId}`;
     return this.http.post(url).pipe(map(res => res.data));
+  }
+
+  assginPermission(roleId: number, rolePermissions: RolePermission[]) {
+    const url = `resource/roles/${roleId}/permissions`;
+
+    let params = new HttpParams();       
+    params = params.append('companyId', this.warehouseService.getCurrentWarehouse()!.companyId); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);
+
+    return this.http.post(url, rolePermissions, params).pipe(map(res => res.data));
   }
 }

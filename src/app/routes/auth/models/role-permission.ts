@@ -3,7 +3,7 @@ import { Permission } from './permission';
 import { Role } from './role';
 
 export interface RolePermission {
-  id: number;
+  id?: number;
   role: Role;
   permission: Permission;
   allowAccess: boolean;

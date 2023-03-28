@@ -7,6 +7,8 @@ import { NzTreeNodeOptions } from 'ng-zorro-antd/tree';
 
 import { MenuGroup } from '../models/menu-group';
 import { Permission } from '../models/permission';
+import { Role } from '../models/role';
+import { RolePermission } from '../models/role-permission';
 import { MenuService } from '../services/menu.service';
 import { PermissionService } from '../services/permission.service';
 import { RoleService } from '../services/role.service';
@@ -17,8 +19,13 @@ import { RoleService } from '../services/role.service';
 })
 export class AuthRolePermissionComponent implements OnInit {
 
+  pageTitle = "";
+  previousPage = "";
   isSpinning = false;
   rolePermissions: NzTreeNodeOptions[] = [];
+  defaultCheckedKeys: string[] = [];
+  currentRole: Role | undefined;
+  currentRoleAccessibleMenuGroup: MenuGroup[] = [];
   
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -30,6 +37,7 @@ export class AuthRolePermissionComponent implements OnInit {
     private permissionService: PermissionService,
     private router: Router,) { 
     this.titleService.setTitle(this.i18n.fanyi('permission'));
+    this.pageTitle = this.i18n.fanyi('permission');
   }
 
   ngOnInit(): void { 
@@ -37,17 +45,27 @@ export class AuthRolePermissionComponent implements OnInit {
     this.isSpinning = true;
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.roleId) {
-        // load the accessible menus
-        this.menuService.getWebMenus().subscribe({
-          next: (accessibleMenus) => {
-            if (accessibleMenus.length > 0) {
-              // continue only if the user can access certain menu
-              this.setupMenuPermission(accessibleMenus);
-            }
+        this.roleService.getRole(params.roleId).subscribe({
+          next: (roleRes) => {
+            this.currentRole = roleRes;
+            this.previousPage = `/auth/role?name=${roleRes.name}`;
+            
+            // load the accessible menus
+            this.menuService.getWebMenus().subscribe({
+              next: (accessibleMenus) => {
+                this.currentRoleAccessibleMenuGroup = accessibleMenus;
 
+                if (accessibleMenus.length > 0) {
+                  // continue only if the user can access certain menu
+                  this.setupMenuPermission(this.currentRole!.rolePermissions, accessibleMenus);
+                }
+
+              }, 
+              error: () => this.isSpinning = false
+            });
           }, 
           error: () => this.isSpinning = false
-        });
+        }) 
       }
       else {
         this.isSpinning = false;
@@ -56,7 +74,10 @@ export class AuthRolePermissionComponent implements OnInit {
 
   }
 
-  setupMenuPermission(menuGroups: MenuGroup[]) {
+  return(): void {
+    this.router.navigateByUrl(this.previousPage!);
+  }
+  setupMenuPermission(rolePermissions: RolePermission[], menuGroups: MenuGroup[]) {
     
       let menuIdSet = new Set<number>();
       menuGroups.forEach(
@@ -76,14 +97,14 @@ export class AuthRolePermissionComponent implements OnInit {
       const menuIds = [...menuIdSet].join(',');
       this.permissionService.getPermissions(menuIds).subscribe({
         next: (permissions) => {
-          this.setupPermission(permissions);
+          this.setupPermission(rolePermissions, menuGroups, permissions);
           this.isSpinning = false;
 
         }
       })
   }
 
-  setupPermission(permissions:  Permission[]) {
+  setupPermission(existingRolePermissions: RolePermission[], menuGroups: MenuGroup[], permissions:  Permission[]) {
     let permissionMap: Map<string, Permission[]> = new Map();
 
     permissions.forEach(
@@ -103,31 +124,148 @@ export class AuthRolePermissionComponent implements OnInit {
 
     // setup the tree node for display
     this.rolePermissions = [];
-    for (let menuName of permissionMap.keys()) {
-        const treeNode: NzTreeNodeOptions = {
-          title: menuName,
-          key: menuName,
-          expanded: true,
+    this.defaultCheckedKeys = [];
+
+    menuGroups.forEach(
+      menuGroup => {
+        let menuGroupNode: NzTreeNodeOptions = {
+          title: menuGroup.text,
+          key: menuGroup.id.toString(),
+          expanded: false,
           children: [],
           isLeaf: false
         };
+        menuGroup.children.forEach(
+          menuSubGroup => {
 
-        permissionMap.get(menuName)?.forEach(
-          permission => {
-            treeNode.children = [...treeNode.children!, 
-            {              
-              title: permission.description,
-              key: permission.name,
+            let menuSubGroupNode: NzTreeNodeOptions = {
+              title: menuSubGroup.text,
+              key: menuSubGroup.id.toString(),
               expanded: false,
               children: [],
-              isLeaf: true
-            }]
+              isLeaf: false
+            };
+
+            menuSubGroup.children.forEach(
+              menu => {                
+                let menuNode: NzTreeNodeOptions = {
+                  title: menu.text,
+                  key: menu.id.toString(),
+                  expanded: false,
+                  children: [],
+                  isLeaf: false
+                };
+                
+                permissionMap.get(menu.name)?.forEach(
+                  permission => {
+                    const existingRolePermission = this.getExistsingRolePermission(
+                      existingRolePermissions, menu.id, permission.name
+                    ); 
+                    
+                    menuNode.children = [...menuNode.children!, 
+                    {              
+                      title: permission.description,
+                      key: `${menu.id.toString()}#${permission.name}`,
+                      expanded: false,
+                      children: [],
+                      isLeaf: true,
+                    }];
+                    if (existingRolePermission && existingRolePermission.allowAccess) {
+                      this.defaultCheckedKeys = [...this.defaultCheckedKeys, `${menu.id.toString()}#${permission.name}`]
+                    } 
+                  }
+                ); 
+                // attach the node only if there's sub - node
+                if (menuNode.children!.length > 0) {
+                  menuSubGroupNode.children = [...menuSubGroupNode.children!, 
+                    menuNode]; 
+                }
+              }
+            );
+
+            if (menuSubGroupNode.children!.length > 0) {
+              menuGroupNode.children = [...menuGroupNode.children!, 
+                menuSubGroupNode];
+            }
           }
         );
         
-        this.rolePermissions = [...this.rolePermissions, treeNode];
-    }
+        if (menuGroupNode.children!.length > 0) {
+          this.rolePermissions = [...this.rolePermissions, menuGroupNode];
+        }
+      }
+    );
+ 
 
   }
+ 
 
+  getExistsingRolePermission(existingRolePermissions: RolePermission[], menuId: number, permissionName: string) : RolePermission | undefined {
+
+    return existingRolePermissions.find(
+      rolePermission => rolePermission.permission.menu!.id == menuId && rolePermission.permission.name == permissionName
+    );
+  }
+
+  assignPermission() {
+    if (!this.currentRole) {
+      this.message.error(this.i18n.fanyi("cannot-get-current-role"));
+      return;
+    }
+    this.isSpinning = true;
+ 
+    let leafNodes :NzTreeNodeOptions[] = this.getLeafNodes(this.rolePermissions); 
+
+    let newRolePermissions = this.setupPermissions(leafNodes);
+    this.roleService.assginPermission(this.currentRole!.id, newRolePermissions).subscribe({
+      next: () => {
+        this.message.success(this.i18n.fanyi("message.action.success"));
+        this.isSpinning = false;
+
+      }, 
+      error: () => this.isSpinning = false
+    }) 
+  }
+  setupPermissions(nodes: NzTreeNodeOptions[]) : RolePermission[] {
+    let rolePermissions : RolePermission[] = [];
+
+    nodes.forEach(
+      node => {
+        // node's key should be menu id - permission.name
+        // node's title should be permission.description
+        let menuId = node.key.substring(0, node.key.indexOf("#"));
+        let permissionName = node.key.substring(node.key.indexOf("#") + 1); 
+        rolePermissions = [...rolePermissions, 
+        {        
+          role: this.currentRole!,
+          permission: {            
+            name: permissionName,
+            description: node.title,
+            menuName: "",
+            menuId: +menuId
+          },
+          allowAccess: node.checked == null ? false : node.checked
+        }]
+      }
+    )
+
+    return rolePermissions;
+  }
+
+  getLeafNodes(nodes: NzTreeNodeOptions[]) : NzTreeNodeOptions[] {
+    
+     let leafNodes :NzTreeNodeOptions[] = [];
+     nodes.forEach(
+      node => {
+        if (node.isLeaf) {
+          leafNodes = [...leafNodes, node];
+        }
+        else if (node.children && node.children.length > 0) {
+          leafNodes = [...leafNodes, ...this.getLeafNodes(node.children)];
+        }
+      }
+     )
+     return leafNodes;
+  }
+ 
 }

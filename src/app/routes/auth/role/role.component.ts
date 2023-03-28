@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message'; 
+import { NzTreeNodeOptions } from 'ng-zorro-antd/tree';
 
 import { Client } from '../../common/models/client';
 import { ColumnItem } from '../../util/models/column-item';
@@ -12,10 +13,13 @@ import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
 import { Menu } from '../models/menu';
 import { MenuGroup } from '../models/menu-group';
+import { Permission } from '../models/permission';
 import { Role } from '../models/role';
 import { RoleMenu } from '../models/role-menu';
+import { RolePermission } from '../models/role-permission';
 import { User } from '../models/user';
 import { MenuService } from '../services/menu.service';
+import { PermissionService } from '../services/permission.service';
 import { RoleService } from '../services/role.service';
 import { UserService } from '../services/user.service';
  
@@ -334,6 +338,7 @@ export class AuthRoleComponent implements OnInit {
     private titleService: TitleService,
     private utilService: UtilService,
     private localCacheService: LocalCacheService, 
+    private permissionService: PermissionService,
   ) {
     userService.isCurrentPageDisplayOnly("/auth/role").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
@@ -346,6 +351,9 @@ export class AuthRoleComponent implements OnInit {
   // Table data for display
   listOfAllRoles: Role[] = [];
   listOfDisplayRoles: Role[] = [];
+  
+  mapOfNzTreeNodeOptions: { [key: string]: NzTreeNodeOptions[] } = {};
+  mapOfDefaultCheckedKeys: { [key: string]: string[] } = {};
 
   allMenus: MenuGroup[] = [];
 
@@ -382,7 +390,7 @@ export class AuthRoleComponent implements OnInit {
         // refresh the content as well
         this.listOfAllRoles.forEach(role => {
           if (this.expandSet.has(role.id)) {
-            this.loadUserAndMenuAndClient(this.expandSet.has(role.id), role, tabIndex);
+            this.loadUserAndMenuAndClientAndPermission(this.expandSet.has(role.id), role, tabIndex);
           }
         });
       },
@@ -430,7 +438,7 @@ export class AuthRoleComponent implements OnInit {
     });
   }
 
-  loadUserAndMenuAndClient(expanded: boolean, role: Role, tabIndex: number = 0): void {
+  loadUserAndMenuAndClientAndPermission(expanded: boolean, role: Role, tabIndex: number = 0): void {
     if (expanded) {
       this.expandSet.add(role.id);
     } else {
@@ -474,6 +482,12 @@ export class AuthRoleComponent implements OnInit {
         }
       }
     )
+    // load the permissions
+    
+    if (this.allMenus.length > 0) {
+      // continue only if the user can access certain menu
+      this.setupMenuPermission(role.id, role.rolePermissions, this.allMenus);
+    }
   }
 
   deassignUser(roleId: number, userId: number): void {
@@ -491,11 +505,172 @@ export class AuthRoleComponent implements OnInit {
   onExpandChange(role: Role, checked: boolean): void {
     if (checked) {
       this.expandSet.add(role.id);
-      this.loadUserAndMenuAndClient(true, role);
+      this.loadUserAndMenuAndClientAndPermission(true, role);
     } else {
       this.expandSet.delete(role.id);
     }
 
 
+  }
+
+  
+  setupMenuPermission(roleId: number, rolePermissions: RolePermission[], menuGroups: MenuGroup[]) {
+    
+    let menuIdSet = new Set<number>();
+    menuGroups.forEach(
+      menuGroup => {
+        menuGroup.children.forEach(
+          menuSubGroup => {
+            menuSubGroup.children.forEach(
+              menu => {
+                menuIdSet.add(menu.id);
+              }
+            )
+          }
+        )
+      }
+    );
+    
+    const menuIds = [...menuIdSet].join(',');
+    this.permissionService.getPermissions(menuIds).subscribe({
+      next: (permissions) => {
+        this.setupPermission(roleId, rolePermissions, menuGroups, permissions); 
+      }
+    })
+    
+  }
+  
+  setupPermission(roleId: number, 
+    existingRolePermissions: RolePermission[], menuGroups: MenuGroup[], permissions:  Permission[]) {
+
+    let permissionMap: Map<string, Permission[]> = new Map();
+
+    permissions.forEach(
+      permission => {
+        let menuName = permission.menu? permission.menu.name : permission.menuName;
+        if (menuName) {
+          let menuPermissions: Permission[] = [];
+          if (permissionMap.has(menuName)) {
+            menuPermissions = permissionMap.get(menuName)!;
+          }
+          menuPermissions = [...menuPermissions, permission];
+          permissionMap.set(menuName, menuPermissions);
+
+        }
+      }
+    );
+
+    // setup the tree node for display
+    // setup the tree node for display
+    let rolePermissions : NzTreeNodeOptions[] = [];
+    let defaultCheckedKeys : string[] = [];
+ 
+    menuGroups.forEach(
+      menuGroup => {
+        let menuGroupNode: NzTreeNodeOptions = {
+          title: menuGroup.text,
+          key: menuGroup.id.toString(),
+          expanded: false,
+          children: [],
+          isLeaf: false,
+          disabled: true,
+        };
+        menuGroup.children.forEach(
+          menuSubGroup => {
+
+            let menuSubGroupNode: NzTreeNodeOptions = {
+              title: menuSubGroup.text,
+              key: menuSubGroup.id.toString(),
+              expanded: false,
+              children: [],
+              isLeaf: false,
+              disabled: true,
+            };
+
+            menuSubGroup.children.forEach(
+              menu => {                
+                let menuNode: NzTreeNodeOptions = {
+                  title: menu.text,
+                  key: menu.id.toString(),
+                  expanded: false,
+                  children: [],
+                  isLeaf: false,
+                  disabled: true,
+                };
+                
+                permissionMap.get(menu.name)?.forEach(
+                  permission => {
+                    const existingRolePermission = this.getExistsingRolePermission(
+                      existingRolePermissions, menu.id, permission.name
+                    ); 
+                    // console.log(`${menu.id.toString()}#${permission.name}: 
+                    // existingRolePermission? ${existingRolePermission != null}
+                    // existingRolePermission.allowAccess: ${existingRolePermission?.allowAccess}`);
+                    menuNode.children = [...menuNode.children!, 
+                    {              
+                      title: permission.description,
+                      key: `${menu.id.toString()}#${permission.name}`,
+                      expanded: false,
+                      children: [],
+                      isLeaf: true,
+                      disabled: true,
+                    }];
+                    if (existingRolePermission && existingRolePermission.allowAccess) {
+                      defaultCheckedKeys = [...defaultCheckedKeys, `${menu.id.toString()}#${permission.name}`]
+                    } 
+                  }
+                ); 
+                // attach the node only if there's sub - node
+                if (menuNode.children!.length > 0) {
+                  menuSubGroupNode.children = [...menuSubGroupNode.children!, 
+                    menuNode]; 
+                }
+              }
+            );
+
+            if (menuSubGroupNode.children!.length > 0) {
+              menuGroupNode.children = [...menuGroupNode.children!, 
+                menuSubGroupNode];
+            }
+          }
+        );
+        
+        if (menuGroupNode.children!.length > 0) {
+          rolePermissions = [...rolePermissions, menuGroupNode];
+        }
+      }
+    ); 
+ 
+
+    this.mapOfNzTreeNodeOptions[roleId] = [...rolePermissions];
+    this.mapOfDefaultCheckedKeys[roleId] = [...defaultCheckedKeys];
+    // this.setupNodesCheckStatus(this.rolePermissions);
+    // console.log(`=========   Tree    Node - ${roleId}============`)
+    // this.displayTreeNodes(this.mapOfNzTreeNodeOptions[roleId]);
+
+  }
+
+  displayTreeNodes(nodes: NzTreeNodeOptions[]) {
+    nodes.forEach(
+      node => this.displayTreeNode(0, node)
+    )
+  }
+  displayTreeNode(level: number, node: NzTreeNodeOptions) {
+    let prefix = "";
+    for (let i = 0; i < level; i++) {
+      prefix += ">"
+    }
+    console.log(`${prefix} node: ${node.title}`);
+    node.children?.forEach(
+      childNode => this.displayTreeNode(level +1, childNode)
+    )
+  }
+
+  getExistsingRolePermission(existingRolePermissions: RolePermission[], 
+    menuId: number, permissionName: string) : RolePermission | undefined {
+
+    return existingRolePermissions.find(
+      rolePermission => rolePermission.permission.menu!.id == menuId && rolePermission.permission.name == permissionName
+    );
   }
 }

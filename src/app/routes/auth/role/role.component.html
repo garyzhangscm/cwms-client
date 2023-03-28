@@ -205,6 +205,12 @@
                 </tbody>
               </nz-table>
             </nz-tab>
+            <nz-tab nzTitle="{{'permission' | i18n}}"> 
+              <nz-tree [nzData]="mapOfNzTreeNodeOptions[data.id!]"    
+                [nzCheckedKeys]="mapOfDefaultCheckedKeys[data.id!]"
+                nzCheckable
+                ></nz-tree>
+            </nz-tab>
          </nz-tabset>
 
 
