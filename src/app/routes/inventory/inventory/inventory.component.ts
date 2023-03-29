@@ -241,6 +241,7 @@ export class InventoryInventoryComponent implements OnInit {
   }
 
   displayOnly = false;
+  userPermissionMap: Map<string, boolean> = new Map<string, boolean>();
   constructor(
     private fb: UntypedFormBuilder,
     private inventoryService: InventoryService,
@@ -262,8 +263,14 @@ export class InventoryInventoryComponent implements OnInit {
   ) { 
     userService.isCurrentPageDisplayOnly("/inventory/inventory").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
-    );                       
-  
+    );      
+    userService.getUserPermissionByWebPage("/inventory/inventory").subscribe({
+      next: (userPermissionRes) => {
+        userPermissionRes.forEach(
+          userPermission => this.userPermissionMap.set(userPermission.permission.name, userPermission.allowAccess)
+        )
+      }
+    }); 
   }
 
   ngOnInit(): void {

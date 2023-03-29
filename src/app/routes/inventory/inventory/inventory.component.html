@@ -254,21 +254,26 @@
               *ngIf="data.lockedForAdjust === false">{{ 'action' | i18n }}<i nz-icon nzType="down"></i></button>
             <nz-dropdown-menu #actions="nzDropdownMenu">
               <ul nz-menu>
-                <li nz-menu-item>
+                <li nz-menu-item 
+                *ngIf="!userPermissionMap.has('adjust-inventory-quantity') || userPermissionMap.get('adjust-inventory-quantity')">
                   <a routerLink="/inventory/inventory-quantity-change" routerLinkActive="active"
-                    [queryParams]="{id : data.id!, by : 'inventory'}">
+                    [queryParams]="{id : data.id!, by : 'inventory'}" >
                     {{ 'adjustInventory' | i18n }}</a>
                 </li>
-                <li nz-menu-item>
+                <li nz-menu-item
+                *ngIf="!userPermissionMap.has('change-inventory-attribute') || userPermissionMap.get('change-inventory-attribute')">
                   <a routerLink="/inventory/inventory-attribute-change" routerLinkActive="active"
-                    [queryParams]="{id : data.id!}">
+                    [queryParams]="{id : data.id!}" >
                     {{ 'inventory.attributeChange' | i18n }}</a>
                 </li>
-                <li nz-menu-item>
-                  <a (click)="openMoveInventoryModal(data, tplInventoryMoveModalTitle, tplInventoryMoveModalContent)">
+                <li nz-menu-item
+                *ngIf="!userPermissionMap.has('move-inventory') || userPermissionMap.get('move-inventory')">
+                  <a (click)="openMoveInventoryModal(data, tplInventoryMoveModalTitle, tplInventoryMoveModalContent)" >
                     {{ 'moveInventory' | i18n }}</a>
                 </li>
-                <li nz-menu-item><a
+                <li nz-menu-item
+                  *ngIf="!userPermissionMap.has('remove-inventory') || userPermissionMap.get('remove-inventory')">
+                   <a
                     (click)="openRemoveInventoryModal(data, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
                     nzDanger>{{ 'removeInventory' | i18n }}</a></li>
 
@@ -328,14 +333,18 @@
     </div>
     <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
     
-      <button nz-button nzDanger (click)="removeSelectedInventory()">{{'delete' | i18n}}</button>
+      <button nz-button nzDanger (click)="removeSelectedInventory()"
+        *ngIf="!userPermissionMap.has('remove-inventory-in-batch') || userPermissionMap.get('remove-inventory-in-batch')">
+        {{'delete' | i18n}}</button>
       
       <nz-divider nzType="vertical"></nz-divider> 
-      <button nz-button [nzType]="'primary'"  (click)="openBatchMoveInventoryModal(tplInventoryMoveModalTitle, tplInventoryMoveModalContent)">
-        {{'moveInventory' | i18n}}</button>
+      <button nz-button [nzType]="'primary'"  (click)="openBatchMoveInventoryModal(tplInventoryMoveModalTitle, tplInventoryMoveModalContent)"
+        *ngIf="!userPermissionMap.has('move-inventory-in-batch') || userPermissionMap.get('move-inventory-in-batch')">
+          {{'moveInventory' | i18n}}</button>
         
       <nz-divider nzType="vertical"></nz-divider> 
-      <button  nz-button nzType="primary" routerLink="/util/file-upload/inventory" routerLinkActive="active">
+      <button  nz-button nzType="primary" routerLink="/util/file-upload/inventory" routerLinkActive="active"
+        *ngIf="!userPermissionMap.has('upload-inventory') || userPermissionMap.get('upload-inventory')">
         {{ 'file-upload' | i18n }}
       </button> 
     </div>

@@ -318,7 +318,8 @@
    
                     </ng-template>
                      <ng-template st-row="actionColumn" let-billableActivity let-index="index">
-                       <button nz-button nzDanger (click)="removeOrderLineBillableActivity(orderLine, billableActivity)">
+                       <button nz-button nzDanger (click)="removeOrderLineBillableActivity(orderLine, billableActivity)"
+                           *ngIf="!userPermissionMap.has('remove-order-line-billable-activity-type') || userPermissionMap.get('remove-order-line-billable-activity-type')">
                         {{'remove' | i18n}}
                        </button>
   
@@ -411,7 +412,8 @@
              <ng-template st-row="actionColumn" let-orderLine  >
                 
                 <button nz-button (click)="openAddOrderLineActivityModal(order, orderLine, tplBillableActivityModalTitle, 
-                    tplBillableActivityModalContent, tplBillableActivityModalFooter)">
+                    tplBillableActivityModalContent, tplBillableActivityModalFooter)"
+                    *ngIf="!userPermissionMap.has('add-order-line-billable-activity-type') || userPermissionMap.get('add-order-line-billable-activity-type')">
                   {{ 'billable-activity-type.add' | i18n }}
                 </button>
               </ng-template>          
@@ -637,7 +639,10 @@
 
                     <button nz-button nz-dropdown [nzDropdownMenu]="cancelPickOption" nzType="primary"
                       (click)="cancelPick(order, pick, false, false)"
-                      [disabled]="pick.quantity === pick.pickedQuantity || order.status === orderStatusEnum.COMPLETE">
+                      [disabled]="pick.quantity === pick.pickedQuantity || order.status === orderStatusEnum.COMPLETE"
+                      
+                      *ngIf="!userPermissionMap.has('cancel-single-pick') || userPermissionMap.get('cancel-single-pick')"
+                      >
                       {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
                     <nz-dropdown-menu #cancelPickOption="nzDropdownMenu">
                       <ul nz-menu>         
@@ -666,13 +671,13 @@
                   [printButtonDisabled]="!isOrderReadyForComplete(order)" (print)="printPickSheets(order, $event)"
                   (preview)="previewReport(order)">
                 </cwms-common-print-button>
-                <button nz-button (click)="confirmPicks(order)"  *ngIf="!displayOnly"
+                <button nz-button (click)="confirmPicks(order)"  *ngIf="!displayOnly && (!userPermissionMap.has('confirm-multiple-pick') || userPermissionMap.get('confirm-multiple-pick'))"
                   [disabled]="(mapOfPicks[order.id!] && mapOfPicks[order.id!].length === 0) || order.status === orderStatusEnum.COMPLETE">
                   {{ 'confirm' | i18n }}
                 </button>
 
                 <button nz-button nz-dropdown [nzDropdownMenu]="cancelPicksOption" nzType="primary"
-                    (click)="cancelSelectedPick(order, false, false)"  *ngIf="!displayOnly"
+                    (click)="cancelSelectedPick(order, false, false)"  *ngIf="!displayOnly && (!userPermissionMap.has('cancel-multiple-pick') || userPermissionMap.get('cancel-multiple-pick'))"
                       [disabled]="order.status === orderStatusEnum.COMPLETE" >
                 {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
                 <nz-dropdown-menu #cancelPicksOption="nzDropdownMenu">
@@ -753,7 +758,8 @@
                   <td>{{ inventory.style }}</td>
                   <td *ngIf="!displayOnly">
                     <button nz-button (click)="openUnpickModal(order, inventory, tplUnpickModalTitle, tplUnpickModalContent)"
-                      [disabled]="order.status === orderStatusEnum.COMPLETE">
+                      [disabled]="order.status === orderStatusEnum.COMPLETE"
+                      *ngIf=" !userPermissionMap.has('unpick') || userPermissionMap.get('unpick')">
                       {{ 'unpick' | i18n }}
                     </button>
                   </td>
@@ -824,17 +830,18 @@
                     <nz-dropdown-menu #shortAllocationMenu="nzDropdownMenu">
                       <ul nz-menu> 
 
-                        <li nz-menu-item *ngIf="isShortAllocationAllocatable(shortAllocation) && order.status != orderStatusEnum.COMPLETE">
+                        <li nz-menu-item *ngIf="isShortAllocationAllocatable(shortAllocation) && order.status != orderStatusEnum.COMPLETE && (!userPermissionMap.has('allocate-short-allocation') || userPermissionMap.get('allocate-short-allocation'))"
+                            >
                           <a   (click)="allocateShortAllocation(order, shortAllocation)">{{ 'allocate' | i18n }}</a>
                         </li>
                         
-                        <li nz-menu-item *ngIf="order.status != orderStatusEnum.COMPLETE">
+                        <li nz-menu-item *ngIf="order.status != orderStatusEnum.COMPLETE && (!userPermissionMap.has('create-work-order') || userPermissionMap.get('create-work-order'))">
                           <a  (click)="openCreateWorkOrderModel(shortAllocation, tplCreateWorkOrderModalTitle, tplCreateWorkOrderModalContent)">
                             {{ 'create-work-order' | i18n }}</a>
                         </li>
                         
                         
-                        <li nz-menu-item *ngIf="order.status != orderStatusEnum.COMPLETE">
+                        <li nz-menu-item *ngIf="order.status != orderStatusEnum.COMPLETE && (!userPermissionMap.has('cancel-short-allocation') || userPermissionMap.get('cancel-short-allocation'))">
                           <a  (click)="cancelShortAllocation(order,shortAllocation)">{{ 'cancel' | i18n }}</a>
                         </li>
                       </ul>
@@ -856,7 +863,8 @@
 
              </ng-template>
               <ng-template st-row="actionColumn" let-billableActivity let-index="index">
-                 <button nz-button nzDanger (click)="removeOrderBillableActivity(order, billableActivity)">
+                 <button nz-button nzDanger (click)="removeOrderBillableActivity(order, billableActivity)"
+                     *ngIf="!userPermissionMap.has('remove-order-billable-activity-type') || userPermissionMap.get('remove-order-billable-activity-type')">
                   {{'remove' | i18n}}
                  </button>
 
@@ -869,7 +877,10 @@
               <nz-list-item *ngFor="let orderDocument of order.orderDocuments">
                 
                 <ul nz-list-item-actions>
-                  <nz-list-item-action><a (click)="removeOrderDocument(orderDocument)">{{'remove' | i18n}}</a></nz-list-item-action>
+                  <nz-list-item-action>
+                    <a (click)="removeOrderDocument(orderDocument)"
+                    *ngIf="!userPermissionMap.has('remove-order-document') || userPermissionMap.get('remove-order-document')">
+                    {{'remove' | i18n}}</a></nz-list-item-action>
                 </ul>
                 <a [href]="getOrderDocumentFileUrl(orderDocument)" target="_blank" rel="noopener noreferrer" >
                     {{orderDocument.fileName}}</a>

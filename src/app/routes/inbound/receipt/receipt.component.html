@@ -129,7 +129,7 @@
           <td>
             
             <a routerLink="/inbound/receipt-maintenance" routerLinkActive="active"
-              [queryParams]="{receiptNumber : data.number}" *ngIf="!displayOnly">
+              [queryParams]="{receiptNumber : data.number}" *ngIf="!displayOnly && (!userPermissionMap.has('modify-receipt') || userPermissionMap.get('modify-receipt'))">
               {{ data.number }}</a>
             <span *ngIf="displayOnly">{{data.number}}</span>
             </td>
@@ -166,19 +166,19 @@
               {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
               <nz-dropdown-menu #menu="nzDropdownMenu">
                 <ul nz-menu> 
-                  <li nz-menu-item *ngIf="data.receiptStatus === receiptStatus.OPEN">                  
+                  <li nz-menu-item *ngIf="data.receiptStatus === receiptStatus.OPEN && (!userPermissionMap.has('check-in-receipt') || userPermissionMap.get('check-in-receipt'))">                  
                     
                     <a   nz-type="primary" (click)="checkInReceipt(data)"
                     >
                     {{ 'receipt.check-in' | i18n }}</a>
                   </li>
-                  <li nz-menu-item *ngIf="data.receiptStatus !== receiptStatus.CLOSED">                   
+                  <li nz-menu-item *ngIf="data.receiptStatus !== receiptStatus.CLOSED && (!userPermissionMap.has('complete-receipt') || userPermissionMap.get('complete-receipt'))">                   
                     
                     <a   nz-type="primary" (click)="closeReceipt(data)"
                     >
                     {{ 'complete' | i18n }}</a>
                   </li> 
-                  <li nz-menu-item>                   
+                  <li nz-menu-item *ngIf="!userPermissionMap.has('add-receipt-billable-activity') || userPermissionMap.get('add-receipt-billable-activity')">                   
                      
 
                     <a (click)="openAddReceiptActivityModal(data, tplBillableActivityModalTitle, 
@@ -213,7 +213,8 @@
       
                        </ng-template>
                         <ng-template st-row="actionColumn" let-billableActivity let-index="index">
-                          <button nz-button nzDanger (click)="removeReceiptLineBillableActivity(receiptLine, billableActivity)">
+                          <button nz-button nzDanger (click)="removeReceiptLineBillableActivity(receiptLine, billableActivity)"
+                              *ngIf="!userPermissionMap.has('remove-receipt-billable-activity') || userPermissionMap.get('remove-receipt-billable-activity')">
                            {{'remove' | i18n}}
                           </button>
      
@@ -303,7 +304,7 @@
                    
 
                   <button nz-button (click)="openAddReceiptLineActivityModal(data, receiptLine, tplBillableActivityModalTitle, 
-                      tplBillableActivityModalContent, tplBillableActivityModalFooter)" *ngIf="!displayOnly">
+                      tplBillableActivityModalContent, tplBillableActivityModalFooter)" *ngIf="!displayOnly && (!userPermissionMap.has('add-receipt-line-billable-activity') || userPermissionMap.get('add-receipt-line-billable-activity'))">
                   {{ 'billable-activity-type.add' | i18n }}
                   </button>
 
@@ -353,7 +354,8 @@
 
                  </ng-template>
                   <ng-template st-row="actionColumn" let-billableActivity let-index="index">
-                     <button nz-button nzDanger (click)="removeReceiptBillableActivity(data, billableActivity)" *ngIf="!displayOnly">
+                     <button nz-button nzDanger (click)="removeReceiptBillableActivity(data, billableActivity)" 
+                       *ngIf="!displayOnly && (!userPermissionMap.has('remove-receipt-line-billable-activity') || userPermissionMap.get('remove-receipt-line-billable-activity'))">
                       {{'remove' | i18n}}
                      </button>
 
@@ -368,11 +370,11 @@
     </tbody>
   </nz-table>
   <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
-    <button nz-button nzDanger (click)="removeSelectedReceipts()">
+    <button nz-button nzDanger (click)="removeSelectedReceipts()" *ngIf="!userPermissionMap.has('remove-multiple-receipt') || userPermissionMap.get('remove-multiple-receipt')">
       {{ 'delete' | i18n }}
     </button>
     <nz-divider nzType="vertical"></nz-divider> 
-    <button nz-button nzType="primary" routerLink="/inbound/receipt-maintenance" routerLinkActive="active">
+    <button nz-button nzType="primary" routerLink="/inbound/receipt-maintenance" routerLinkActive="active" *ngIf="!userPermissionMap.has('add-receipt') || userPermissionMap.get('add-receipt')">
       {{ 'add' | i18n }}
     </button>
     <nz-divider nzType="vertical"></nz-divider> 
@@ -382,16 +384,16 @@
         {{ 'file-upload' | i18n }} <i nz-icon nzType="down"></i></button>
       <nz-dropdown-menu #uploadFileMenu="nzDropdownMenu">
         <ul nz-menu> 
-          <li nz-menu-item  >                  
+          <li nz-menu-item  *ngIf="!userPermissionMap.has('upload-receipt') || userPermissionMap.get('upload-receipt')">                  
             
             <a  routerLink="/util/file-upload/receipts" routerLinkActive="active" >
             {{ 'receipt' | i18n }}</a>
           </li>
-          <li nz-menu-item  >   
+          <li nz-menu-item  *ngIf="!userPermissionMap.has('upload-receiving-inventory') || userPermissionMap.get('upload-receiving-inventory')">   
             <a  routerLink="/util/file-upload/receiving-inventories" routerLinkActive="active" >
             {{ 'receiving-inventory' | i18n }}</a>
           </li>
-          <li nz-menu-item  >   
+          <li nz-menu-item *ngIf="!userPermissionMap.has('upload-putaway-inventory') || userPermissionMap.get('upload-putaway-inventory')">   
             <a  routerLink="/util/file-upload/putaway-inventories" routerLinkActive="active" >
             {{ 'putaway' | i18n }}</a>
           </li>

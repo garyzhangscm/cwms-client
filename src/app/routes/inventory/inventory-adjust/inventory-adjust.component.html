@@ -110,12 +110,12 @@
             <nz-dropdown-menu #actions="nzDropdownMenu">
               <ul nz-menu>
                 
-                <li nz-menu-item>
+                <li nz-menu-item *ngIf="!userPermissionMap.has('add-inventory') || userPermissionMap.get('add-inventory')">
                   <a
                     (click)="openAddInventoryModal(data, tplAddInventoryModalTitle, tplAddInventoryModalContent)"
                      >{{ 'addInventory' | i18n }}</a>
                 </li> 
-                <li nz-menu-item *ngIf="data.locationGroup?.allowEmptyLocation">
+                <li nz-menu-item *ngIf="data.locationGroup?.allowEmptyLocation && (!userPermissionMap.has('empty-location') || userPermissionMap.get('empty-location'))">
                   <a
                   (click)="openEmptyLocationModal(data, tplEmptyLocationModalTitle, tplEmptyLocationModalContent)"
                   nzDanger
@@ -171,19 +171,21 @@
                       <button nz-button nz-dropdown [nzDropdownMenu]="actions">{{ 'action' | i18n }}<i nz-icon nzType="down"></i></button>
                       <nz-dropdown-menu #actions="nzDropdownMenu">
                         <ul nz-menu>
-                          <li nz-menu-item>
+                          <li nz-menu-item
+                          *ngIf="!userPermissionMap.has('adjust-inventory-quantity') || userPermissionMap.get('adjust-inventory-quantity')">
                             <a  routerLink="/inventory/inventory-quantity-change" routerLinkActive="active"
                               [queryParams]="{id : inventory.id, by : 'inventory-adjust'}">
                               {{ 'adjustInventory' | i18n }}</a>
                           </li>
-                          <li nz-menu-item>                            
+                          <li nz-menu-item 
+                          *ngIf="!userPermissionMap.has('change-inventory-attribute') || userPermissionMap.get('change-inventory-attribute')">                            
                             <a routerLink="/inventory/inventory-attribute-change" routerLinkActive="active"
                             [queryParams]="{id : inventory.id}">
                             {{ 'inventory.attributeChange' | i18n }}</a>
                           </li>
-                          <li nz-menu-item>
-                            <a
-                              (click)="openRemoveInventoryModal(inventory, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
+                          <li nz-menu-item
+                          *ngIf="!userPermissionMap.has('remove-inventory') || userPermissionMap.get('remove-inventory')">
+                            <a (click)="openRemoveInventoryModal(inventory, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
                               nzDanger>{{ 'removeInventory' | i18n }}</a>
                           </li> 
 

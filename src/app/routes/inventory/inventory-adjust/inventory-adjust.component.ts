@@ -190,6 +190,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
 
 
   displayOnly = false;
+  userPermissionMap: Map<string, boolean> = new Map<string, boolean>();
   constructor(
     private fb: UntypedFormBuilder,
     private locationService: LocationService,
@@ -213,7 +214,14 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   ) {
     userService.isCurrentPageDisplayOnly("/inventory/inventory-adjust").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
-    );                         
+    );
+    userService.getUserPermissionByWebPage("/inventory/inventory-adjust").subscribe({
+      next: (userPermissionRes) => {
+        userPermissionRes.forEach(
+          userPermission => this.userPermissionMap.set(userPermission.permission.name, userPermission.allowAccess)
+        )
+      }
+    }); 
     this.pageTitle = this.i18n.fanyi('page.inventory.adjust.header.title');
   }
 

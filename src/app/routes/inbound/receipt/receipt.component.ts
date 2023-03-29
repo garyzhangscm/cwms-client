@@ -125,7 +125,6 @@ export class InboundReceiptComponent implements OnInit {
     },
   ];
 
-  displayOnly = false; 
 
   listOfSelection = [
     {
@@ -172,6 +171,11 @@ export class InboundReceiptComponent implements OnInit {
   billableActivityModal!: NzModalRef; 
   billableActivityForm!: UntypedFormGroup;
   addActivityInProcess = false;
+
+
+  displayOnly = false; 
+  userPermissionMap: Map<string, boolean> = new Map<string, boolean>();
+
   constructor(
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
@@ -191,7 +195,13 @@ export class InboundReceiptComponent implements OnInit {
     userService.isCurrentPageDisplayOnly("/inbound/receipt").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
     );                   
-    console.log(`/inbound/receipt page is display? ${this.displayOnly}`)
+    userService.getUserPermissionByWebPage("/inbound/receipt").subscribe({
+      next: (userPermissionRes) => {
+        userPermissionRes.forEach(
+          userPermission => this.userPermissionMap.set(userPermission.permission.name, userPermission.allowAccess)
+        )
+      }
+    }); 
   }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inbound.receipt'));

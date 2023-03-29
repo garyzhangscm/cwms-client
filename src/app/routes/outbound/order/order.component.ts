@@ -70,7 +70,6 @@ export class OutboundOrderComponent implements OnInit {
   orderReassignShippingStageLocationModal!: NzModalRef;
   orderReassignShippingStageLocationForm!: UntypedFormGroup;
 
-
   orderStatuses = OrderStatus;
   orderCategories = OrderCategory;
 
