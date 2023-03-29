@@ -8,6 +8,7 @@ import { NzTreeNodeOptions } from 'ng-zorro-antd/tree';
 import { MenuGroup } from '../models/menu-group';
 import { Permission } from '../models/permission';
 import { Role } from '../models/role';
+import { RoleMenu } from '../models/role-menu';
 import { RolePermission } from '../models/role-permission';
 import { MenuService } from '../services/menu.service';
 import { PermissionService } from '../services/permission.service';
@@ -25,7 +26,7 @@ export class AuthRolePermissionComponent implements OnInit {
   rolePermissions: NzTreeNodeOptions[] = [];
   defaultCheckedKeys: string[] = [];
   currentRole: Role | undefined;
-  currentRoleAccessibleMenuGroup: MenuGroup[] = [];
+  currentUserAccessibleMenuGroup: MenuGroup[] = [];
   
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -48,21 +49,46 @@ export class AuthRolePermissionComponent implements OnInit {
         this.roleService.getRole(params.roleId).subscribe({
           next: (roleRes) => {
             this.currentRole = roleRes;
-            this.previousPage = `/auth/role?name=${roleRes.name}`;
+            this.previousPage = `/auth/role?name=${roleRes.name}`; 
             
-            // load the accessible menus
+            // load  the accessible menus of current user and 
+            // then loop through the menus that both accessible
+            // by the current user and assign to the current role
+            // 1. accessibleMenus / currentUserAccessibleMenuGroup: menu that
+            //    accesible to the current user
+            // 2. this.currentRole!.roleMenus: accessbile menu by current role
             this.menuService.getWebMenus().subscribe({
               next: (accessibleMenus) => {
-                this.currentRoleAccessibleMenuGroup = accessibleMenus;
+                this.currentUserAccessibleMenuGroup = accessibleMenus;
+                
+                // available role menus: all the menus that both
+                // 1. accessible to the current role
+                // 2. accessible to the current user
+                let availableRoleMenus: RoleMenu[] = [];
 
                 if (accessibleMenus.length > 0) {
                   // continue only if the user can access certain menu
-                  this.setupMenuPermission(this.currentRole!.rolePermissions, accessibleMenus);
+                  accessibleMenus.forEach(menuGroup => {
+                    menuGroup.children.forEach(menuSubGroup => {
+                      menuSubGroup.children.forEach(menu => {
+                        this.currentRole!.roleMenus.forEach(assignedMenu => {
+                          if (assignedMenu.menu.id === menu.id) {
+                            assignedMenu.menu.menuGroup = this.i18n.fanyi(menuGroup.i18n);
+                            assignedMenu.menu.menuSubGroup = this.i18n.fanyi(menuSubGroup.i18n);
+                            assignedMenu.menu.overallSequence = menuGroup.sequence * 10000 + menuSubGroup.sequence * 100 + menu.sequence;
+                            availableRoleMenus = [...availableRoleMenus, assignedMenu];
+                          }
+                        });
+                      });
+                    });
+                  });
+
+                  this.setupMenuPermission(this.currentRole!.rolePermissions, accessibleMenus,  availableRoleMenus);
                 }
 
               }, 
               error: () => this.isSpinning = false
-            });
+            }); 
           }, 
           error: () => this.isSpinning = false
         }) 
@@ -73,13 +99,19 @@ export class AuthRolePermissionComponent implements OnInit {
     });
 
   }
+  
 
   return(): void {
     this.router.navigateByUrl(this.previousPage!);
   }
-  setupMenuPermission(rolePermissions: RolePermission[], menuGroups: MenuGroup[]) {
+  setupMenuPermission(rolePermissions: RolePermission[], menuGroups: MenuGroup[], availableRoleMenus: RoleMenu[]) {
     
       let menuIdSet = new Set<number>();
+      availableRoleMenus.forEach(
+        roleMenu => menuIdSet.add(roleMenu.menu.id)
+      ) 
+/**
+ * 
       menuGroups.forEach(
         menuGroup => {
           menuGroup.children.forEach(
@@ -93,18 +125,21 @@ export class AuthRolePermissionComponent implements OnInit {
           )
         }
       );
-      
+ * 
+ */
+       
       const menuIds = [...menuIdSet].join(',');
       this.permissionService.getPermissions(menuIds).subscribe({
         next: (permissions) => {
-          this.setupPermission(rolePermissions, menuGroups, permissions);
+          this.setupPermission(rolePermissions, menuGroups, availableRoleMenus, permissions);
           this.isSpinning = false;
 
         }
       })
   }
 
-  setupPermission(existingRolePermissions: RolePermission[], menuGroups: MenuGroup[], permissions:  Permission[]) {
+  setupPermission(existingRolePermissions: RolePermission[], menuGroups: MenuGroup[], 
+    availableRoleMenus: RoleMenu[], permissions:  Permission[]) {
     let permissionMap: Map<string, Permission[]> = new Map();
 
     permissions.forEach(
@@ -146,7 +181,15 @@ export class AuthRolePermissionComponent implements OnInit {
               isLeaf: false
             };
 
-            menuSubGroup.children.forEach(
+            menuSubGroup.children.filter(menu => {
+                // only continue if the menu is accessbile for both 
+                // current role and current user, and it nos display only
+                let roleMenu = availableRoleMenus.find(
+                  availableRoleMenu => availableRoleMenu.menu.id == menu.id
+                );
+                return roleMenu != null && !roleMenu.displayOnlyFlag;
+            })
+            .forEach(
               menu => {                
                 let menuNode: NzTreeNodeOptions = {
                   title: menu.text,

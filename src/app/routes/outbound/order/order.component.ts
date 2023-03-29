@@ -126,7 +126,7 @@ export class OutboundOrderComponent implements OnInit {
           userPermission => this.userPermissionMap.set(userPermission.permission.name, userPermission.allowAccess)
         )
       }
-    })
+    });
   
   }
 

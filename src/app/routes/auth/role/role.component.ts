@@ -454,6 +454,11 @@ export class AuthRoleComponent implements OnInit {
     // role.menus only stored the menus without the menugroup and sub group information
     // Let's fix this so we can display the information about this 2
 
+    // available role menus: all the menus that both
+    // 1. accessible to the current role
+    // 2. accessible to the current user
+    let availableRoleMenus: RoleMenu[] = [];
+
     this.allMenus.forEach(menuGroup => {
       menuGroup.children.forEach(menuSubGroup => {
         menuSubGroup.children.forEach(menu => {
@@ -462,6 +467,7 @@ export class AuthRoleComponent implements OnInit {
               assignedMenu.menu.menuGroup = this.i18n.fanyi(menuGroup.i18n);
               assignedMenu.menu.menuSubGroup = this.i18n.fanyi(menuSubGroup.i18n);
               assignedMenu.menu.overallSequence = menuGroup.sequence * 10000 + menuSubGroup.sequence * 100 + menu.sequence;
+              availableRoleMenus = [...availableRoleMenus, assignedMenu];
             }
           });
         });
@@ -486,7 +492,7 @@ export class AuthRoleComponent implements OnInit {
     
     if (this.allMenus.length > 0) {
       // continue only if the user can access certain menu
-      this.setupMenuPermission(role.id, role.rolePermissions, this.allMenus);
+      this.setupMenuPermission(role.id, role.rolePermissions, this.allMenus, availableRoleMenus);
     }
   }
 
@@ -514,9 +520,15 @@ export class AuthRoleComponent implements OnInit {
   }
 
   
-  setupMenuPermission(roleId: number, rolePermissions: RolePermission[], menuGroups: MenuGroup[]) {
+  setupMenuPermission(roleId: number, rolePermissions: RolePermission[], menuGroups: MenuGroup[], 
+    availableRoleMenus: RoleMenu[]) {
     
     let menuIdSet = new Set<number>();
+    availableRoleMenus.forEach(
+      roleMenu => menuIdSet.add(roleMenu.menu.id)
+    ) ;
+    /**
+     * 
     menuGroups.forEach(
       menuGroup => {
         menuGroup.children.forEach(
@@ -530,18 +542,21 @@ export class AuthRoleComponent implements OnInit {
         )
       }
     );
+     * 
+     */
     
     const menuIds = [...menuIdSet].join(',');
     this.permissionService.getPermissions(menuIds).subscribe({
       next: (permissions) => {
-        this.setupPermission(roleId, rolePermissions, menuGroups, permissions); 
+        this.setupPermission(roleId, rolePermissions, menuGroups, availableRoleMenus, permissions); 
       }
     })
     
   }
   
   setupPermission(roleId: number, 
-    existingRolePermissions: RolePermission[], menuGroups: MenuGroup[], permissions:  Permission[]) {
+    existingRolePermissions: RolePermission[], menuGroups: MenuGroup[], 
+    availableRoleMenus: RoleMenu[], permissions:  Permission[]) {
 
     let permissionMap: Map<string, Permission[]> = new Map();
 
@@ -587,7 +602,14 @@ export class AuthRoleComponent implements OnInit {
               disabled: true,
             };
 
-            menuSubGroup.children.forEach(
+            menuSubGroup.children.filter(menu => {
+              // only continue if the menu is accessbile for both 
+              // current role and current user, and it nos display only
+              let roleMenu = availableRoleMenus.find(
+                availableRoleMenu => availableRoleMenu.menu.id == menu.id
+              );
+              return roleMenu != null && !roleMenu.displayOnlyFlag;
+          }).forEach(
               menu => {                
                 let menuNode: NzTreeNodeOptions = {
                   title: menu.text,

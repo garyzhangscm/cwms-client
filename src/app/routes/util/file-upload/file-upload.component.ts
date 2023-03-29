@@ -34,6 +34,7 @@ export class UtilFileUploadComponent implements OnInit {
   ]; 
   
   displayOnly = false;
+  userPermissionMap: Map<string, boolean> = new Map<string, boolean>();
   constructor(
     private activatedRoute: ActivatedRoute,
     private fileUploadOperationService: FileUploadOperationService,
@@ -47,7 +48,8 @@ export class UtilFileUploadComponent implements OnInit {
   ) {
     userService.isCurrentPageDisplayOnly("/util/file-upload").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
-    );                   
+    );                  
+    
       
   }
   
@@ -73,6 +75,11 @@ export class UtilFileUploadComponent implements OnInit {
   resultSuccess = 0;
   resultFail = 0;
 
+  // if the user come from other web page(not directly from menu)
+  // but the option is not allowed by the role permission
+  optionAllowed = true;
+  urlFileUploadType = "";
+
   allowedFileTypes: Array<{ label: string; value: string }> = [];
 
   ngOnInit(): void {
@@ -82,26 +89,59 @@ export class UtilFileUploadComponent implements OnInit {
 
     this.fileUploadDisabled = true; 
     this.showResultModal = false;
+    this.isSpinning = true;
+    this.userService.getUserPermissionByWebPage("/util/file-upload").subscribe({
+      next: (userPermissionRes) => {
+        userPermissionRes.forEach(
+          userPermission => this.userPermissionMap.set(userPermission.permission.name, userPermission.allowAccess)
+        ) 
 
-    this.fileUploadOperationService.getFileUploadTypes().subscribe((fileUploadTypes: FileUploadType[]) => {
-      fileUploadTypes.forEach(fileUploadType =>
-        this.allowedFileTypes.push({ label: fileUploadType.description, value: fileUploadType.name }),
-      );
- 
+        this.fileUploadOperationService.getFileUploadTypes().subscribe((fileUploadTypes: FileUploadType[]) => { 
+          fileUploadTypes.filter(fileUploadType => {
+            return this.userPermissionMap.has(fileUploadType.name) && this.userPermissionMap.get(fileUploadType.name) == true
+          })
+          .forEach(fileUploadType =>
+            this.allowedFileTypes.push({ label: fileUploadType.description, value: fileUploadType.name }),
+          );
+     
+     
+          this.activatedRoute.queryParams.subscribe(params => { 
+            if (this.activatedRoute.snapshot.params.filetype) {
+              // if the file type from the url is not allowed
+              // show error message 
+              if (!this.userPermissionMap.has(this.activatedRoute.snapshot.params.filetype) ||
+                   this.userPermissionMap.get(this.activatedRoute.snapshot.params.filetype) == false) {
+                this.urlFileUploadType = this.activatedRoute.snapshot.params.filetype;
+                this.optionAllowed = false;
+                this.fromMenu = false;
+                this.pageTitle = this.i18n.fanyi('menu.main.util.file-upload');
+                this.titleService.setTitle(this.i18n.fanyi('menu.main.util.file-upload')); 
+                this.fileUploadDisabled = true;
+              }
+              else {
+                this.optionAllowed = true;
+                this.loadFileForm.get('fileTypeSelector')!.setValue(this.activatedRoute.snapshot.params.filetype);
+                this.fromMenu = false;
+                this.pageTitle = this.i18n.fanyi('menu.main.util.file-upload');
+                this.titleService.setTitle(this.i18n.fanyi('menu.main.util.file-upload'));
+                this.setupFileUploadUrl();
+                this.fileUploadDisabled = false;
 
-      this.activatedRoute.queryParams.subscribe(params => {
-        if (this.activatedRoute.snapshot.params.filetype) {
-          this.loadFileForm.get('fileTypeSelector')!.setValue(this.activatedRoute.snapshot.params.filetype);
-          this.fromMenu = false;
-          this.pageTitle = this.i18n.fanyi('menu.main.util.file-upload');
-          this.titleService.setTitle(this.i18n.fanyi('menu.main.util.file-upload'));
-          this.setupFileUploadUrl();
-          this.fileUploadDisabled = false;
-        } else {
-          this.fromMenu = true;
-        }
-      });
-    });
+              }
+            } else {
+              this.fromMenu = true;
+              this.optionAllowed = true;
+            }
+          }); 
+           this.isSpinning = false;
+        }); 
+      }, 
+      error: () => {
+        this.isSpinning = false;
+        this.optionAllowed = false;
+      }
+    }); 
+
   }
 
   setupFileUploadUrl(): void { 
@@ -242,5 +282,5 @@ export class UtilFileUploadComponent implements OnInit {
       this.selectedFileUploadUrl = `${this.selectedFileUploadType.destinationUrl}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&removeExistingInventory=${this.removeExistingInventory}`;
     }
     
-  }
+  } 
 }

@@ -11,7 +11,7 @@ export interface Role {
   companyId: number;
   description: string;
   enabled: boolean;
-  menuGroups: MenuGroup[];
+  menuGroups: MenuGroup[];  // obsoleted
   menus: Menu[];
   users?: User[];
   clientAccesses: RoleClientAccess[]; 

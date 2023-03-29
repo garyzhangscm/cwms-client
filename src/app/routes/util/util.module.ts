@@ -1,13 +1,14 @@
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { NgModule, Type } from '@angular/core';
 import { DownFileModule } from '@delon/abc/down-file';
+import { EllipsisModule } from '@delon/abc/ellipsis';
 import { SharedModule } from '@shared';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
-import { EllipsisModule } from '@delon/abc/ellipsis';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 
 import { UtilBillableRequestComponent } from './billable-request/billable-request.component';
@@ -79,7 +80,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     ScrollingModule,
     DownFileModule, 
     EllipsisModule, 
-    NzTypographyModule 
+    NzTypographyModule, 
+    NzResultModule
   ],
   declarations: [
     ...COMPONENTS,

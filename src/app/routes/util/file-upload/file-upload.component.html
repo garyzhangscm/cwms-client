@@ -26,7 +26,7 @@
   </a>
 </ng-template>
 
-<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<nz-spin *ngIf="optionAllowed" [nzSpinning]="isSpinning" [nzSize]="'large'">
   <ng-container>
     <nz-card>
       <form nz-form [formGroup]="loadFileForm">
@@ -168,6 +168,15 @@
     </div>
   </ng-container>
 </nz-spin>
+<nz-result  *ngIf="!optionAllowed"
+  nzTitle="{{'Upload ' + urlFileUploadType + ' is not allowed' }} "
+  nzStatus="error"
+  nzSubTitle="Option Not Allowed"
+  > 
+<div nz-result-extra>
+  <button nz-button nzType="primary" (click)="back()">{{'return' | i18n}}</button> 
+</div>
+</nz-result>
 
 <nz-modal [nzVisible]="fileUploadProgress < 100" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
   <ng-container *nzModalContent> 
