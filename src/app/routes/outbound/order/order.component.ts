@@ -85,7 +85,30 @@ export class OutboundOrderComponent implements OnInit {
   displayBom: BillOfMaterial | undefined;
 
   displayOnly = false;
-  userPermissionMap: Map<string, boolean> = new Map<string, boolean>();
+  userPermissionMap: Map<string, boolean> = new Map<string, boolean>([
+    ['add-order', false],
+    ['file-upload', false],
+    ['modify-order', false],
+    ['allocate-order', false],
+    ['reassign-stage-location', false],
+    ['complete-order', false],
+    ['remove-order', false],
+    ['retrigger-order-confirm-integration', false],
+    ['upload-document', false],
+    ['ship-parcel', false],
+    ['add-order-billable-activity-type', false],
+    ['add-order-line-billable-activity-type', false],
+    ['cancel-single-pick', false],
+    ['cancel-multiple-pick', false],
+    ['confirm-multiple-pick', false],
+    ['unpick', false],
+    ['allocate-short-allocation', false],
+    ['create-work-order', false],
+    ['cancel-short-allocation', false],
+    ['remove-order-billable-activity-type', false],
+    ['remove-order-document', false],
+    ['remove-order-line-billable-activity-type', false],
+  ]);
 
   constructor(
     private fb: UntypedFormBuilder,

@@ -34,7 +34,19 @@ export class UtilFileUploadComponent implements OnInit {
   ]; 
   
   displayOnly = false;
-  userPermissionMap: Map<string, boolean> = new Map<string, boolean>();
+  userPermissionMap: Map<string, boolean> = new Map<string, boolean>([
+    ['items', false],
+    ['BOMs', false],
+    ['inventory', false],
+    ['itemUnitOfMeasure', false],
+    ['locations', false],
+    ['orders', false],
+    ['putaway-inventories', false],
+    ['receipts', false],
+    ['receiving-inventories', false],
+    ['shipping-trailer-appointment', false],
+  ]);
+  
   constructor(
     private activatedRoute: ActivatedRoute,
     private fileUploadOperationService: FileUploadOperationService,
@@ -178,13 +190,13 @@ export class UtilFileUploadComponent implements OnInit {
       else {
         this.isSpinning = true;
       }
-      console.log(info.file, info.fileList);
+      // console.log(info.file, info.fileList);
     }
     else if (info.file.status === 'done') { 
       this.checkFileUploadProgress(info);
       
     } else if (info.file.status === 'error') {
-      console.log(`${info.file.name} file upload failed.`);
+      // console.log(`${info.file.name} file upload failed.`);
       this.displayFileUploadError(`${info.file.name} file upload failed.`)
     }
   } 
@@ -198,7 +210,7 @@ export class UtilFileUploadComponent implements OnInit {
 
   checkFileUploadProgress(info: NzUploadChangeParam) {
 
-    console.log(`info.file.response: ${JSON.stringify(info.file.response)}`);
+    // console.log(`info.file.response: ${JSON.stringify(info.file.response)}`);
 
     if (info.file.response.result != null && info.file.response.result != 0) {
         // we get error 
@@ -222,7 +234,7 @@ export class UtilFileUploadComponent implements OnInit {
             }
             else {
               // OK, we are not done yet, let's call the same command again
-              console.log(`${info.file.name} upload progress: ${progress}`);
+              // console.log(`${info.file.name} upload progress: ${progress}`);
               this.checkFileUploadProgress(info);
             }
           }, 
@@ -285,13 +297,13 @@ export class UtilFileUploadComponent implements OnInit {
   }
   
   closeResultModal() {
-    console.log(`close the result modal`)
+    //  console.log(`close the result modal`)
     this.showResultModal = false;
 
   }
 
   removeExistingInventoryChanged() {
-    console.log(`removeExistingInventory is changed to ${this.removeExistingInventory}`)
+    //  console.log(`removeExistingInventory is changed to ${this.removeExistingInventory}`)
     if (this.selectedFileUploadType) {
       this.selectedFileUploadUrl = `${this.selectedFileUploadType.destinationUrl}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&removeExistingInventory=${this.removeExistingInventory}`;
     }

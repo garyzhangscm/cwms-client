@@ -167,7 +167,7 @@ export class UserService {
    
     if (currentPageMenu) {
         // console.log(`we found the matched menu by link ${link}`);
-        console.log(`${currentPageMenu.i18n} - ${currentPageMenu.link} - ${currentPageMenu.displayOnly}`);
+        // console.log(`${currentPageMenu.i18n} - ${currentPageMenu.link} - ${currentPageMenu.displayOnly}`);
         // console.log(``)
         return currentPageMenu.displayOnly;
     }

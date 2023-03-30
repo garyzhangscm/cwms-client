@@ -241,7 +241,16 @@ export class InventoryInventoryComponent implements OnInit {
   }
 
   displayOnly = false;
-  userPermissionMap: Map<string, boolean> = new Map<string, boolean>();
+  userPermissionMap: Map<string, boolean> = new Map<string, boolean>([
+    ['adjust-inventory-quantity', false],
+    ['change-inventory-attribute', false],
+    ['move-inventory', false],
+    ['remove-inventory', false],
+    ['remove-inventory-in-batch', false],
+    ['move-inventory-in-batch', false],
+    ['upload-inventory', false],
+  ]);
+  
   constructor(
     private fb: UntypedFormBuilder,
     private inventoryService: InventoryService,

@@ -131,7 +131,7 @@
             <a routerLink="/inbound/receipt-maintenance" routerLinkActive="active"
               [queryParams]="{receiptNumber : data.number}" *ngIf="!displayOnly && (!userPermissionMap.has('modify-receipt') || userPermissionMap.get('modify-receipt'))">
               {{ data.number }}</a>
-            <span *ngIf="displayOnly">{{data.number}}</span>
+            <span *ngIf="displayOnly || userPermissionMap.get('modify-receipt') == false">{{data.number}}</span>
             </td>
           <td>
             <nz-skeleton-element 
@@ -162,7 +162,9 @@
           <td>{{ data.totalReceivedQuantity }}</td>
           <td *ngIf="!displayOnly">
             <button
-                nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+                nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary"
+                *ngIf="userPermissionMap.get('check-in-receipt') == false && userPermissionMap.has('complete-receipt') == false
+                  && userPermissionMap.has('add-receipt-billable-activity') == false ">
               {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
               <nz-dropdown-menu #menu="nzDropdownMenu">
                 <ul nz-menu> 

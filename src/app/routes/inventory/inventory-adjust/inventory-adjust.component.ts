@@ -190,7 +190,14 @@ export class InventoryInventoryAdjustComponent implements OnInit {
 
 
   displayOnly = false;
-  userPermissionMap: Map<string, boolean> = new Map<string, boolean>();
+  userPermissionMap: Map<string, boolean> = new Map<string, boolean>([
+    ['add-inventory', false],
+    ['empty-location', false],
+    ['adjust-inventory-quantity', false],
+    ['change-inventory-attribute', false],
+    ['remove-inventory', false],
+  ]);
+
   constructor(
     private fb: UntypedFormBuilder,
     private locationService: LocationService,

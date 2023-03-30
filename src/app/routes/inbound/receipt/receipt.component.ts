@@ -174,7 +174,23 @@ export class InboundReceiptComponent implements OnInit {
 
 
   displayOnly = false; 
-  userPermissionMap: Map<string, boolean> = new Map<string, boolean>();
+
+  // initial the user permission map so that all the permission is disable
+  // by default
+  userPermissionMap: Map<string, boolean> = new Map<string, boolean>([
+    ['modify-receipt', false],
+    ['check-in-receipt', false],
+    ['complete-receipt', false],
+    ['add-receipt-billable-activity', false],
+    ['remove-receipt-billable-activity', false],
+    ['add-receipt-line-billable-activity', false],
+    ['remove-receipt-line-billable-activity', false],
+    ['remove-multiple-receipt', false],
+    ['add-receipt', false],
+    ['upload-receipt', false],
+    ['upload-receiving-inventory', false],
+    ['upload-putaway-inventory', false],
+  ]);
 
   constructor(
     private fb: UntypedFormBuilder,
