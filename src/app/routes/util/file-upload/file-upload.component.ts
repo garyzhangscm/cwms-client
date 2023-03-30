@@ -184,15 +184,29 @@ export class UtilFileUploadComponent implements OnInit {
       this.checkFileUploadProgress(info);
       
     } else if (info.file.status === 'error') {
-      this.isSpinning = false;
-      this.fileUploadProgress = 100;
-      this.msg.error(`${info.file.name} file upload failed.`);
+      console.log(`${info.file.name} file upload failed.`);
+      this.displayFileUploadError(`${info.file.name} file upload failed.`)
     }
   } 
 
+  displayFileUploadError(errorMessage: string) {
+
+    this.isSpinning = false;
+    this.fileUploadProgress = 100;
+    this.msg.error(errorMessage);
+  }
+
   checkFileUploadProgress(info: NzUploadChangeParam) {
 
-    if (this.selectedFileUploadType?.trackingProgressUrl != null &&
+    console.log(`info.file.response: ${JSON.stringify(info.file.response)}`);
+
+    if (info.file.response.result != null && info.file.response.result != 0) {
+        // we get error 
+        this.displayFileUploadError(info.file.response.message);
+        return;
+
+    }
+    else if (this.selectedFileUploadType?.trackingProgressUrl != null &&
       this.selectedFileUploadType?.trackingProgressUrl.length > 0) { 
       
       // this.isSpinning = true;
