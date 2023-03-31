@@ -46,6 +46,7 @@ import { InventoryMovementPathMaintenanceComponent } from './movement-path-maint
 import { InventoryMovementPathComponent } from './movement-path/movement-path.component';
 import { InventoryReplenishmentComponent } from './replenishment/replenishment.component';
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
+import { InventoryInventoryAgingSnapshotComponent } from './inventory-aging-snapshot/inventory-aging-snapshot.component';
 
 const routes: Routes = [
   { path: 'inventory', component: InventoryInventoryComponent , 
@@ -430,7 +431,8 @@ const routes: Routes = [
       guard_url: '/exception/403'
     }
   },
-  ];
+  ,
+  { path: 'inventory-aging-snapshot', component: InventoryInventoryAgingSnapshotComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

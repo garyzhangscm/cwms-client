@@ -68,6 +68,10 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
         workingOnThursdayFlag: false,
         workingOnFridayFlag: false,
         workingOnSaturdayFlag: false,
+
+        
+        locationUtilizationSnapshotEnabled: false,
+        inventoryAgingSnapshotEnabled: false,
       }
   }
 
