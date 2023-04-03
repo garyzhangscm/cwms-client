@@ -52,7 +52,7 @@ export class InventoryAgingSnapshotService {
   removeInventoryAgingSnapshot(id: number): Observable<InventoryAgingSnapshot> {
     // if we can find the value in local storage, we get it from their.
     // otherwise we get from server
-    const url = `inventory/location-utilization-snapshot-batches/${id}`;
+    const url = `inventory/inventory-aging-snapshots/${id}`;
     
     let params = new HttpParams(); 
 

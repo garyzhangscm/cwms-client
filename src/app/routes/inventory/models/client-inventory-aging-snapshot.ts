@@ -1,3 +1,4 @@
+import { Client } from "../../common/models/client";
 import { InventoryAgingSnapshotDetail } from "./inventory-aging-snapshot-detail";
 
 export interface ClientInventoryAgingSnapshot {
