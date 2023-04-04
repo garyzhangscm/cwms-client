@@ -9,13 +9,10 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { UserService } from '../../auth/services/user.service';
 import { LocalCacheService } from '../../util/services/local-cache.service';
-import { ClientInventoryAgingSnapshot } from '../models/client-inventory-aging-snapshot';
-import { ClientLocationUtilizationSnapshotBatch } from '../models/client-location-utilization-snapshot-batch';
+import { ClientInventoryAgingSnapshot } from '../models/client-inventory-aging-snapshot'; 
 import { InventoryAgingSnapshot } from '../models/inventory-aging-snapshot';
-import { InventoryAgingSnapshotStatus } from '../models/inventory-aging-snapshot-status';
-import { LocationUtilizationSnapshotBatch } from '../models/location-utilization-snapshot-batch';
-import { InventoryAgingSnapshotService } from '../services/inventory-aging-snapshot.service';
-import { LocationUtilizationSnapshotBatchService } from '../services/location-utilization-snapshot-batch.service';
+import { InventoryAgingSnapshotStatus } from '../models/inventory-aging-snapshot-status'; 
+import { InventoryAgingSnapshotService } from '../services/inventory-aging-snapshot.service'; 
 
 @Component({
   selector: 'app-inventory-inventory-aging-snapshot',
