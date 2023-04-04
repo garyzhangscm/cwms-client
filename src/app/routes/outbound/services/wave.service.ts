@@ -1,9 +1,12 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { PrintingService } from '../../common/services/printing.service';
+import { DateTimeService } from '../../util/services/date-time.service';
+import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Order } from '../models/order';
 import { OrderLine } from '../models/order-line';
@@ -21,7 +24,9 @@ export class WaveService {
     private http: _HttpClient,
     private warehouseService: WarehouseService,
     private pickService: PickService,
+    private dateTimeService: DateTimeService,
     private printingService: PrintingService,
+    private utilService: UtilService
   ) {}
 
   getWaves(number?: string): Observable<Wave[]> {
@@ -61,26 +66,53 @@ export class WaveService {
     return this.http.delete('outbound/waves', params).pipe(map(res => res.data));
   }
 
-  findWaveCandidate(orderNumber?: string, customerName?: string): Observable<Order[]> {
-    let url = `outbound/waves/candidate?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`; 
-    if (orderNumber != null) {
-      url = `${url}&orderNumber=${orderNumber}`;
-    }
-    if (customerName != null) {
-      url = `${url}&customerName=${customerName}`; 
-    } 
+  findWaveCandidate(orderNumber?: string, clientId?: number, 
+    customerName?: string, customerId?: number, 
+    startCreatedTime?: Date, endCreatedTime?:Date, specificCreatedDate?: Date): Observable<Order[]> {
 
-    return this.http.get(url).pipe(map(res => res.data));
+    const url = `outbound/waves/candidate`; 
+
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+
+    if (orderNumber != null) {
+       params = params.append('orderNumber', orderNumber);  
+    } 
+    if (customerName) {
+      params = params.append('customerName', this.utilService.encodeHttpParameter(customerName));  
+    }
+    if (customerId != null) {
+      params = params.append('customerId', customerId);  
+    }
+    if (clientId != null) {
+      params = params.append('clientId', clientId);  
+    }  
+    
+    if (startCreatedTime) {
+      params = params.append('startCreatedTime', this.dateTimeService.getISODateTimeString(startCreatedTime));  
+    }
+    if (endCreatedTime) {
+      params = params.append('endCreatedTime', this.dateTimeService.getISODateTimeString(endCreatedTime));   
+    }
+    if (specificCreatedDate) {
+      params = params.append('specificCreatedDate', this.dateTimeService.getISODateString(specificCreatedDate));    
+    }
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 
-  createWaveWithOrderLines(waveNumber: string, orderLines: OrderLine[]): Observable<Wave> {
-    let url = `outbound/waves/plan?`;
-    url = `${url}warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+  planWaveWithOrderLines(waveNumber: string, orderLines: OrderLine[]): Observable<Wave> {
+    const url = `outbound/waves/plan`;
+
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+    
     if (waveNumber) {
-      url = `${url}&waveNumber=${waveNumber}`;
+      params = params.append('waveNumber', waveNumber);  
     }
     const orderLineIds = orderLines.map(orderLine => orderLine.id);
-    return this.http.post(url, orderLineIds).pipe(map(res => res.data));
+    return this.http.post(url, orderLineIds, params).pipe(map(res => res.data));
   }
 
   allocateWave(wave: Wave): Observable<Wave> {

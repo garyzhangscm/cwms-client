@@ -5,8 +5,10 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
+import { Client } from '../../common/models/client';
 import { Customer } from '../../common/models/customer';
-import { Item } from '../../inventory/models/item';
+import { ClientService } from '../../common/services/client.service';
+import { CustomerService } from '../../common/services/customer.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
@@ -18,11 +20,15 @@ import { WaveService } from '../services/wave.service';
 @Component({
   selector: 'app-outbound-wave-maintenance',
   templateUrl: './wave-maintenance.component.html',
+  styleUrls: ['./wave-maintenance.component.less'],
 })
 export class OutboundWaveMaintenanceComponent implements OnInit {
-
+  hideCriteria = false;
   isSpinning = false;
   loadingOrderDetailsRequest = 0;
+  waveNumberModalVisible = false;
+  selectedWavableOrderLine: OrderLine[] = [];
+
   listOfOrderTableColumns: Array<ColumnItem<Order>> = [
     {
       name: 'order.number',
@@ -228,6 +234,8 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
 
   searchForm!: UntypedFormGroup;
 
+  newWaveNumberForm!: UntypedFormGroup;
+
   newWave = true;
 
   pageTitle: string;
@@ -252,6 +260,10 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
 
   listOfAllOrderLines: OrderLine[] = [];
   listOfDisplayOrderLines: OrderLine[] = [];
+  validCustomers: Customer[] = [];
+  
+  threePartyLogisticsFlag = false;
+  availableClients: Client[] = [];
 
 
   constructor(
@@ -264,19 +276,22 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     private router: Router,
     private utilService: UtilService,
     private localCacheService: LocalCacheService,
+    private customerService: CustomerService,
+    private clientService: ClientService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.outbound.wave.title');
   }
 
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('page.outbound.wave.title'));
-
+ 
     this.searchForm = this.fb.group({
-      waveNumber: [null],
-      orderNumber: [null],
-      customerName: [null],
-    });
-    this.searchForm.controls.waveNumber.enable();
+      orderNumber: [null], 
+      customer: [null],  
+      createdTimeRanger: [null],
+      createdDate: [null],
+      client: [null],
+    }); 
     this.newWave = true;
 
     this.activatedRoute.queryParams.subscribe(params => {
@@ -284,6 +299,32 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
         this.loadWave(params.id);
       }
     });
+
+    
+    this.customerService.loadCustomers().subscribe({
+      next: (customerRes) => this.validCustomers = customerRes
+    });
+    
+
+    this.localCacheService.getWarehouseConfiguration().subscribe({
+      next: (warehouseConfigRes) => {
+
+        if (warehouseConfigRes && warehouseConfigRes.threePartyLogisticsFlag) {
+          this.threePartyLogisticsFlag = true;
+          // initiate the select control
+          this.clientService.getClients().subscribe({
+            next: (clientRes) => this.availableClients = clientRes
+             
+          });
+        }
+        else {
+          this.threePartyLogisticsFlag = false;
+        } 
+        this.isSpinning = false;
+      }, 
+      error: () => this.isSpinning = false
+    });
+
   }
 
   loadWave(waveId: number): void {
@@ -292,11 +333,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     });
   }
   setupWaveInformation(wave: Wave): void {
-    this.currentWave = this.setupWaveQuantities(wave);
-    console.log(`wave: ${JSON.stringify(wave)}`);
-
-    this.searchForm.controls.waveNumber.setValue(this.currentWave.number);
-    this.searchForm.controls.waveNumber.disable();
+    this.currentWave = this.setupWaveQuantities(wave);  
     this.newWave = false;
   }
   setupWaveQuantities(wave: Wave): Wave {
@@ -345,8 +382,20 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
 
   findWaveCandidate(): void {
     this.isSpinning = true;
+    
+    let startCreatedTime : Date = this.searchForm.controls.createdTimeRanger.value ? 
+        this.searchForm.controls.createdTimeRanger.value[0] : undefined; 
+    let endCreatedTime : Date = this.searchForm.controls.createdTimeRanger.value ? 
+        this.searchForm.controls.createdTimeRanger.value[1] : undefined; 
+    let specificCreatedDate : Date = this.searchForm.controls.createdDate.value;
+
     this.waveService
-      .findWaveCandidate(this.searchForm.controls.orderNumber.value, this.searchForm.controls.customerName.value)
+      .findWaveCandidate(this.searchForm.controls.orderNumber.value, 
+        this.searchForm.controls.client.value, 
+        undefined,
+        this.searchForm.controls.customer.value, 
+        startCreatedTime, 
+        endCreatedTime, specificCreatedDate)
       .subscribe({
 
         next: (wavableOrders)  => {
@@ -538,16 +587,30 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     this.orderLineTableIndeterminate = this.listOfDisplayOrderLines!.some(item => this.setOfOrderLineTableCheckedId.has(item.id!)) && !this.orderLineTableChecked;
   }
 
+  openNewWaveNumberModal() {
+    if (this.selectedWavableOrderLine.length == 0) {
+      this.message.error(this.i18n.fanyi("no-order-selected"));
+      this.waveNumberModalVisible = false;
+      return;
+    }
 
+    this.waveNumberModalVisible = true;
+    this.newWaveNumberForm = this.fb.group({
+      waveNumber: [null], 
+    });
+
+  }
+ 
   createWaveWithOrders(): void {
-    const wavableOrderLines = this.getWavableOrderLines(this.getSelectedOrders());
-    this.waveService
-      .createWaveWithOrderLines(this.searchForm.controls.waveNumber.value, wavableOrderLines)
-      .subscribe(wave => {
-        this.message.info(this.i18n.fanyi('message.new.complete'));
-        this.setupWaveInformation(wave);
-        this.findWaveCandidate();
-      });
+    this.selectedWavableOrderLine = this.getWavableOrderLines(this.getSelectedOrders());
+    if (!this.newWave) {
+
+      this.planWaveWithOrderLines(this.currentWave.number, this.selectedWavableOrderLine);
+    }
+    else {
+      this.openNewWaveNumberModal();
+
+    }
   }
 
   getSelectedOrders(): Order[] {
@@ -561,14 +624,16 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   }
 
   createWaveWithOrderLines(): void {
-    const wavableOrderLines = this.getSelectedOrderLines();
-    this.waveService
-      .createWaveWithOrderLines(this.searchForm.controls.waveNumber.value, wavableOrderLines)
-      .subscribe(wave => {
-        this.message.info(this.i18n.fanyi('message.new.complete'));
-        this.setupWaveInformation(wave);
-        this.findWaveCandidate();
-      });
+    this.selectedWavableOrderLine = this.getSelectedOrderLines(); 
+    
+    if (!this.newWave) {
+
+      this.planWaveWithOrderLines(this.currentWave.number, this.selectedWavableOrderLine);
+    }
+    else {
+      this.openNewWaveNumberModal();
+
+    }
   }
 
   getSelectedOrderLines(): OrderLine[] {
@@ -581,16 +646,33 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     return selectedOrderLines;
   }
 
-  setWaveNumber(event: Event): void {
-    this.searchForm.controls.waveNumber.setValue((event.target as HTMLInputElement).value);
+  setWaveNumber(newReceiptNumber: string): void {
+    this.newWaveNumberForm.controls.waveNumber.setValue(newReceiptNumber);
   }
 
   returnToPreviousPage(): void {
-    console.log(`this.searchForm.controls.waveNumber.value: ${this.searchForm.controls.waveNumber.value}`);
-    if (this.searchForm.controls.waveNumber.value) {
-      this.router.navigateByUrl(`outbound/wave?number=${this.searchForm.controls.waveNumber.value}`);
-    } else {
-      this.router.navigateByUrl('outbound/wave');
-    }
+     
+      this.router.navigateByUrl('outbound/wave'); 
+  }
+
+  cancelNewWave() {
+
+    this.waveNumberModalVisible = false;
+  }
+  createNewWave() {
+    this.planWaveWithOrderLines(
+      this.newWaveNumberForm.controls.waveNumber.value, 
+      this.selectedWavableOrderLine);
+  }
+  planWaveWithOrderLines(waveNumber: string, orderLiens: OrderLine[]) {
+
+    this.waveService
+      .planWaveWithOrderLines(waveNumber, orderLiens)
+      .subscribe(wave => {
+        this.message.info(this.i18n.fanyi('message.action.success'));
+        this.setupWaveInformation(wave);
+        this.findWaveCandidate();
+        this.waveNumberModalVisible = false;
+      });
   }
 }
