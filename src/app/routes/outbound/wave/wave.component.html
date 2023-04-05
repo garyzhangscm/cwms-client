@@ -53,7 +53,7 @@
       <ng-template ngFor let-data [ngForOf]="nestedTable.data">
         <tr>
           <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)"></td>
-          <td [nzExpand]="expandSet.has(data.id!)" (nzExpandChange)="onExpandChange(data.id!, $event)"></td>
+          <td [nzExpand]="expandSet.has(data.id!)" (nzExpandChange)="onExpandChange(data.id!, data, $event)"></td>
           <td> <a routerLink="/outbound/wave-maintenance" routerLinkActive="active" [queryParams]="{id : data.id!}">{{
               data.number }}</a></td>
           <td>{{ 'WAVE-STATUS-' + data.status | i18n}}</td>
@@ -97,7 +97,7 @@
                 </thead>
     <tbody>
       <tr *ngFor="let shipmentLine of mapOfShipmentLines[data.id!]">
-        <td>{{ shipmentLine.shipment?.number }}</td>
+        <td>{{ shipmentLine.shipmentNumber }}</td>
         <td>{{ shipmentLine.number }}</td>
         <td>{{ shipmentLine.orderNumber }}</td>
         <td>{{ shipmentLine.orderLine.number }}</td>
@@ -178,10 +178,10 @@
     <ng-template #pickTableFoot>
       <div nz-row nzType="flex" nzJustify="start" *ngIf="!displayOnly">
         <button nz-button nzType="primary" (click)="printPickSheets(data)"
-          [nzLoading]="mapOfPrintingInProcessId[data.id!]" [disabled]="mapOfPicks[data.id!!].length === 0">
+          [nzLoading]="mapOfPrintingInProcessId[data.id!]" [disabled]="mapOfPicks[data.id!] == null || mapOfPicks[data.id!].length === 0">
           {{ 'print' | i18n }}
         </button>
-        <button nz-button (click)="confirmPicks(data)" [disabled]="mapOfPicks[data.id!!].length === 0">
+        <button nz-button (click)="confirmPicks(data)" [disabled]="mapOfPicks[data.id!] == null || mapOfPicks[data.id!].length === 0">
           {{ 'confirm' | i18n }}
         </button>
       </div>

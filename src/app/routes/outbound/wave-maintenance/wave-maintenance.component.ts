@@ -293,6 +293,11 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
       client: [null],
     }); 
     this.newWave = true;
+    this.listOfAllOrders = [];
+    this.listOfDisplayOrders  = [];
+  
+    this.listOfAllOrderLines  = [];
+    this.listOfDisplayOrderLines  = [];
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.id) {
@@ -651,8 +656,14 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   }
 
   returnToPreviousPage(): void {
-     
-      this.router.navigateByUrl('outbound/wave'); 
+     if (this.currentWave) {
+      
+      this.router.navigateByUrl(`outbound/wave?number=${this.currentWave.number}`); 
+     }
+     else {
+      this.router.navigateByUrl(`outbound/wave`); 
+
+     }
   }
 
   cancelNewWave() {
@@ -670,9 +681,16 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
       .planWaveWithOrderLines(waveNumber, orderLiens)
       .subscribe(wave => {
         this.message.info(this.i18n.fanyi('message.action.success'));
-        this.setupWaveInformation(wave);
-        this.findWaveCandidate();
-        this.waveNumberModalVisible = false;
+        if (this.newWave) {
+
+          this.router.navigateByUrl(`/outbound/wave-maintenance?id=${wave.id}`);
+        }
+        else {
+
+          this.setupWaveInformation(wave);
+          this.findWaveCandidate();
+          this.waveNumberModalVisible = false;
+        } 
       });
   }
 }

@@ -15,6 +15,7 @@ export interface ShipmentLine {
   loadedQuantity: number;
   shippedQuantity: number;
   shipment?: Shipment;
+  shipmentNumber?: string;
 
   picks: PickWork[];
   shortAllocation: ShortAllocation;

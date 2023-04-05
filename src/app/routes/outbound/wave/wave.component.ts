@@ -400,9 +400,11 @@ export class OutboundWaveComponent implements OnInit {
     this.indeterminate = this.listOfDisplayWaves!.some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
   }
 
-  onExpandChange(id: number, checked: boolean): void {
+  onExpandChange(id: number, wave: Wave,checked: boolean): void {
     if (checked) {
       this.expandSet.add(id);
+
+      this.showWaveDetails(wave);
     } else {
       this.expandSet.delete(id);
     }
@@ -456,10 +458,18 @@ export class OutboundWaveComponent implements OnInit {
   }
 
   allocateWave(wave: Wave): void {
-    this.waveService.allocateWave(wave).subscribe(waveRes => {
-      this.messageService.success(this.i18n.fanyi('message.wave.allocated'));
-      this.search();
-    });
+    this.isSpinning = true;
+
+    this.waveService.allocateWave(wave).subscribe({
+
+      next: () => {
+        this.messageService.success(this.i18n.fanyi('message.wave.allocated'));
+        this.isSpinning = false;
+        this.search();
+      }, 
+      error: () => this.isSpinning = false
+
+    }); 
   }
   isWaveAllocatable(wave: Wave): boolean {
     return wave.totalOpenQuantity! > 0;
