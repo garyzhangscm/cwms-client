@@ -145,7 +145,7 @@
               [nzSize]="'small'"
               style="width:75px"
             ></nz-skeleton-element> 
-            {{ data.destinationLocation.name }}</td>
+            {{ data.destinationLocation?.name }}</td>
           <td>
             <nz-skeleton-element 
               *ngIf="data.itemId && data.item == null"

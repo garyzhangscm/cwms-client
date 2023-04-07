@@ -30,12 +30,18 @@ export class WaveService {
   ) {}
 
   getWaves(number?: string): Observable<Wave[]> {
-    let url = `outbound/waves?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`
-    if (number) {
-      url = `${url}&number=${number}`;
-    } 
+    const url = `outbound/waves`;
+    
+    let params = new HttpParams(); 
 
-    return this.http.get(url).pipe(map(res => res.data));
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+
+    if (number) {
+      params = params.append('number', number);  
+    } 
+    params = params.append('loadAttribute', false);  
+
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 
   getWave(id: number): Observable<Wave> {
@@ -178,7 +184,7 @@ export class WaveService {
                         <tr>
                           <th>${pick.number}</th>
                           <th>${pick.sourceLocation.name}</th>
-                          <th>${pick.destinationLocation.name}</th>
+                          <th>${pick.destinationLocation?.name}</th>
                           <th>${pick.item.name}</th>
                           <th>${pick.item.description}</th>
                           <th>${pick.quantity}</th>

@@ -118,6 +118,9 @@
           {{ 'pick.number' | i18n }}
         </th>
         <th>
+          {{ 'status' | i18n }}
+        </th>
+        <th>
           {{ 'sourceLocation' | i18n }}
         </th>
         <th>
@@ -142,8 +145,9 @@
       <tbody>
         <tr *ngFor="let pick of mapOfPicks[data.id!]">
           <td>{{ pick.number }}</td>
+          <td>{{ 'PICK-STATUS-' + pick.status | i18n }}</td>
           <td>{{ pick.sourceLocation.name }}</td>
-          <td>{{ pick.destinationLocation.name }}</td>
+          <td>{{ pick.destinationLocation?.name }}</td>
           <td>{{ pick.item.name }}</td>
           <td>{{ pick.item.description }}</td>
           <td>{{ pick.quantity }}</td>

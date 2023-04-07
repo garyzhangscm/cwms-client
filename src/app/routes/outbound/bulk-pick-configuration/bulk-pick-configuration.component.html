@@ -1,0 +1,60 @@
+<page-header></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    <nz-card>        
+        <div nz-row [nzGutter]="24"> 
+          <div nz-col [nzSpan]="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="3">
+                {{ 'enabledForOutbound' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="21">
+                    <label nz-checkbox [(ngModel)]="currentBulkPickConfiguration.enabledForOutbound"></label>
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>   
+        </div>  
+        <div nz-row [nzGutter]="24"> 
+          <div nz-col [nzSpan]="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="3">
+                {{ 'enabledForWorkOrder' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="21">
+                    <label nz-checkbox [(ngModel)]="currentBulkPickConfiguration.enabledForWorkOrder"></label>
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>   
+        </div>  
+        
+        <div nz-row [nzGutter]="24"> 
+            <div nz-col [nzSpan]="24">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="3">
+                  {{ 'pickSortDirection' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="21">
+                    <nz-select nzAllowClear  
+                        nz-input [ngModel]="currentBulkPickConfiguration!.pickSortDirection" (ngModelChange)="pickSortDirectionChanged($event)"
+                                style="width: 250px"  >
+                            <nz-option *ngFor="let sortDirection of sortDirections | keys"
+                                nzLabel="{{ 'SORT-DIRECTION-' + sortDirection.key | i18n }}" [nzValue]="sortDirection.key">
+                            </nz-option>
+                        </nz-select>  
+  
+                  </nz-form-control>
+              </nz-form-item>
+            </div>   
+          </div>  
+    </nz-card>
+
+    <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle" *ngIf="!displayOnly">
+        <button nz-button nzType="primary" (click)="confirm()" >
+            <span> {{ 'confirm' | i18n }}</span>
+          </button>
+    </div>
+
+</nz-spin>
+ 

@@ -22,7 +22,7 @@
 
 <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 
-  <nz-card *ngIf="!newWave" nzTitle="{{'current-wave: ' + currentWave.number}}">   
+  <nz-card *ngIf="!newWave" [nzTitle]="waveInfo">   
       <nz-row [nzGutter]="24" >
         <nz-col [nzSpan]="8">
           <nz-statistic [nzValue]="(currentWave.totalOrderCount | number)!"
@@ -38,6 +38,13 @@
           </nz-statistic>
         </nz-col>
       </nz-row>
+      <ng-template #waveInfo>
+        {{'current-wave' | i18n }}: 
+        <a routerLink="/outbound/wave" routerLinkActive="active"
+        [queryParams]="{number: currentWave.number}">{{currentWave.number}}</a>
+        
+        
+      </ng-template>
   </nz-card> 
 
  

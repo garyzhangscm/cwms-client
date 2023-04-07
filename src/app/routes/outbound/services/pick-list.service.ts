@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
-import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { PickList } from '../models/pick-list';
-import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { PickService } from './pick.service';
+import { map } from 'rxjs/operators';
+
 import { PrintingService } from '../../common/services/printing.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Order } from '../models/order';
+import { PickList } from '../models/pick-list';
 import { PickWork } from '../models/pick-work';
+import { PickService } from './pick.service';
 
 @Injectable({
   providedIn: 'root',
@@ -78,7 +79,7 @@ export class PickListService {
                         <tr>
                           <th>${pick.number}</th>
                           <th>${pick.sourceLocation.name}</th>
-                          <th>${pick.destinationLocation.name}</th>
+                          <th>${pick.destinationLocation?.name}</th>
                           <th>${pick.item.name}</th>
                           <th>${pick.item.description}</th>
                           <th>${pick.quantity}</th>

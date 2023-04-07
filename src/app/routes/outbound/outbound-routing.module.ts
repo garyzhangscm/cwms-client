@@ -6,6 +6,7 @@ import { AuthGuard } from '../auth/guard/auth.guard';
 import { OutboundAllocationConfigurationMaintenanceComponent } from './allocation-configuration-maintenance/allocation-configuration-maintenance.component';
 import { OutboundAllocationConfigurationComponent } from './allocation-configuration/allocation-configuration.component';
 import { OutboundAllocationTransactionHistoryComponent } from './allocation-transaction-history/allocation-transaction-history.component';
+import { OutboundBulkPickConfigurationComponent } from './bulk-pick-configuration/bulk-pick-configuration.component';
 import { OutboundCartonComponent } from './carton/carton.component';
 import { OutboundCartonizationConfigurationConfirmComponent } from './cartonization-configuration-confirm/cartonization-configuration-confirm.component';
 import { OutboundCartonizationConfigurationMaintenanceComponent } from './cartonization-configuration-maintenance/cartonization-configuration-maintenance.component';
@@ -309,8 +310,16 @@ const routes: Routes = [
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
-  },
-  ];
+  }, 
+  { path: 'bulk-pick-configuration', component: OutboundBulkPickConfigurationComponent,  
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/outbound/bulk-pick-configuration' , 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

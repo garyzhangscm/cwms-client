@@ -9,16 +9,19 @@ import { Warehouse } from 'src/app/routes/warehouse-layout/models/warehouse';
 import { CompanyService } from 'src/app/routes/warehouse-layout/services/company.service';
 import { WarehouseService } from 'src/app/routes/warehouse-layout/services/warehouse.service';
 
+  // <layout-default [options]="options" [asideUser]="asideUserTpl" [content]="contentTpl">
+
 @Component({
   selector: 'layout-basic', 
-  template: `
+  template: `  
     <layout-default [options]="options" [asideUser]="asideUserTpl" [content]="contentTpl">
       
       <layout-default-header-item direction="left"  >
         <div>
-        <nz-select [(ngModel)]="currentWarehouseId" (ngModelChange)="warehouseChanged()">
-          <nz-option *ngFor="let warehouse of warehouses" [nzValue]="warehouse.id" [nzLabel]="warehouse.name"></nz-option> 
-        </nz-select>
+          {{currentCompany?.name}}
+          <nz-select [(ngModel)]="currentWarehouseId" (ngModelChange)="warehouseChanged()">
+            <nz-option *ngFor="let warehouse of warehouses" [nzValue]="warehouse.id" [nzLabel]="warehouse.name"></nz-option> 
+          </nz-select>
         </div>
       </layout-default-header-item>
       <layout-default-header-item direction="left" hidden="pc">
@@ -46,7 +49,7 @@ import { WarehouseService } from 'src/app/routes/warehouse-layout/services/wareh
             <i nz-icon [nzType]="'question-circle'" style="font-size: 20px; color: #ffffff;" ></i> 
           </a>
         </div>
-      </layout-default-header-item>
+      </layout-default-header-item> 
       <ng-template #asideUserTpl>
         <div nz-dropdown nzTrigger="click" [nzDropdownMenu]="userMenu" class="alain-default__aside-user">
           <nz-avatar class="alain-default__aside-user-avatar" [nzSrc]="user.avatar"></nz-avatar>

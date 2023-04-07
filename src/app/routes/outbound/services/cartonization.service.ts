@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Cartonization } from '../models/cartonization';
 import { _HttpClient } from '@delon/theme';
-import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
+import { PrintingService } from '../../common/services/printing.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { Cartonization } from '../models/cartonization';
 import { PickWork } from '../models/pick-work';
 import { PickService } from './pick.service';
-import { PrintingService } from '../../common/services/printing.service';
 
 @Injectable({
   providedIn: 'root',
@@ -93,7 +94,7 @@ export class CartonizationService {
                         <tr>
                           <th>${pick.number}</th>
                           <th>${pick.sourceLocation.name}</th>
-                          <th>${pick.destinationLocation.name}</th>
+                          <th>${pick.destinationLocation?.name}</th>
                           <th>${pick.item.name}</th>
                           <th>${pick.item.description}</th>
                           <th>${pick.quantity}</th>

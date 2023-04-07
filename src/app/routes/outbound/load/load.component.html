@@ -257,7 +257,7 @@
                     <td><a routerLink="/outbound/cartonization" routerLinkActive="active"
                         [queryParams]="{number : pick.cartonizationNumber}">{{ pick.cartonizationNumber }}</a></td>
                     <td>{{ pick.sourceLocation.name }}</td>
-                    <td>{{ pick.destinationLocation.name }}</td>
+                    <td>{{ pick.destinationLocation?.name }}</td>
                     <td>{{ pick.item.name }}</td>
                     <td>{{ pick.item.description }}</td>
                     <td>{{ pick.quantity }}</td>

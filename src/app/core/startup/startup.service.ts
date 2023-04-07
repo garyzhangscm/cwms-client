@@ -8,6 +8,7 @@ import { NzSafeAny } from 'ng-zorro-antd/core/types';
 import { NzIconService } from 'ng-zorro-antd/icon';
 import { Observable, zip } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { UserService } from 'src/app/routes/auth/services/user.service';
 import { WebClientConfigurationService } from 'src/app/routes/util/services/web-client-configuration.service';
 import { CompanyService } from 'src/app/routes/warehouse-layout/services/company.service';
 import { WarehouseService } from 'src/app/routes/warehouse-layout/services/warehouse.service';
@@ -32,6 +33,7 @@ export class StartupService {
     private httpClient: HttpClient,
     private injector: Injector,
     private companyService: CompanyService,
+    private userService: UserService,
     // private translate: TranslateService,
     @Inject(DA_SERVICE_TOKEN) private tokenService: ITokenService,
     private webClientConfigurationService: WebClientConfigurationService,
@@ -143,6 +145,18 @@ export class StartupService {
       }
     )
 
+    // add admin role and system admin role if the current 
+    // user is admin or system admin
+    this.userService.getCurrentUser().then(
+      user => {
+        if (user != null && user.admin) {
+          this.aclService.attachRole(['admin']);
+        }
+        if (user != null && user.systemAdmin) {
+          this.aclService.attachRole(['system-admin']);
+        }
+      }
+    )
   }
 
   private goToLoginForm() {

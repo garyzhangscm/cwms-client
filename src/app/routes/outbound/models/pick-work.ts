@@ -1,5 +1,6 @@
 import { Item } from '../../inventory/models/item';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { PickStatus } from './pick-status.enum';
 import { PickType } from './pick-type.enum';
 
 export interface PickWork {
@@ -8,8 +9,8 @@ export interface PickWork {
 
   sourceLocationId: number;
   sourceLocation: WarehouseLocation;
-  destinationLocationId: number;
-  destinationLocation: WarehouseLocation;
+  destinationLocationId?: number;
+  destinationLocation?: WarehouseLocation;
 
   itemId: number;
   item: Item;
@@ -29,4 +30,6 @@ export interface PickWork {
   color?:string;
   productSize?:string;
   style?:string;
+
+  status: PickStatus;
 }
