@@ -14,6 +14,7 @@ import { WorkOrderService } from '../../work-order/services/work-order.service';
 import { Cartonization } from '../models/cartonization';
 import { Order } from '../models/order';
 import { PickList } from '../models/pick-list';
+import { PickStatus } from '../models/pick-status.enum';
 import { PickWork } from '../models/pick-work';
 import { Shipment } from '../models/shipment';
 import { Wave } from '../models/wave';
@@ -37,7 +38,7 @@ export class OutboundPickConfirmComponent implements OnInit {
       name: 'pick.number',
       showSort: true,
       sortOrder: null,
-      sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableNumber(a.number, b.number),
+      sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableString(a.number, b.number),
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -117,6 +118,7 @@ export class OutboundPickConfirmComponent implements OnInit {
   setOfCheckedId = new Set<number>();
   checked = false;
   indeterminate = false;
+  pickStatus = PickStatus;
 
 
   pageTitle = '';

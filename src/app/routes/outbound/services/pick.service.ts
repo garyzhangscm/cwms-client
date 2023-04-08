@@ -10,7 +10,11 @@ import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ProductionLine } from '../../work-order/models/production-line';
 import { WorkOrder } from '../../work-order/models/work-order';
+import { BulkPick } from '../models/bulk-pick';
+import { PickGroupType } from '../models/pick-group-type.enum';
+import { PickType } from '../models/pick-type.enum';
 import { PickWork } from '../models/pick-work';
+import { BulkPickService } from './bulk-pick.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +22,7 @@ import { PickWork } from '../models/pick-work';
 export class PickService {
   constructor(private http: _HttpClient, 
     private warehouseService: WarehouseService, 
+    private bulkPickService: BulkPickService,
     private utilService: UtilService) {}
 
   getPicksByOrder(orderId: number): Observable<PickWork[]> {
@@ -407,100 +412,109 @@ export class PickService {
     openPickOnly?: boolean,
     loadDetails?: boolean,
     trailerAppointmentId?: number,
+    forDisplay?: boolean
   ): Observable<PickWork[]> {
      
     
-    let url = `outbound/picks?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    const url = `outbound/picks`;    
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+
     if (number) {
-      url = `${url}&number=${this.utilService.encodeValue(number.trim())}`;
+      params = params.append('number', number);  
     }
 
     if (orderId) {
-      url = `${url}&orderId=${orderId}`;
+      params = params.append('orderId', orderId);   
     }
     if (shipmentId) {
-      url = `${url}&shipmentId=${shipmentId}`;
+      params = params.append('shipmentId', shipmentId);  
     }
 
     if (trailerAppointmentId) {
-      url = `${url}&trailerAppointmentId=${trailerAppointmentId}`;
+      params = params.append('trailerAppointmentId', trailerAppointmentId);   
     }
     
     if (workOrderId) {
-      url = `${url}&workOrderId=${workOrderId}`;
+      params = params.append('workOrderId', workOrderId);    
     }
     if (waveId) {
-      url = `${url}&waveId=${waveId}`;
+      params = params.append('waveId', waveId);     
     }
     if (ids) {
-      url = `${url}&ids=${ids}`;
+      params = params.append('ids', ids);    
     }
     if (listId) {
-      url = `${url}&listId=${listId}`;
+      params = params.append('listId', listId); 
     }
     if (cartonizationId) {
-      url = `${url}&cartonizationId=${cartonizationId}`;
+      params = params.append('cartonizationId', cartonizationId);  
     }
     if (itemId) {
-      url = `${url}&itemId=${itemId}`;
+      params = params.append('itemId', itemId);   
     }
     if (sourceLocationId) {
-      url = `${url}&sourceLocationId=${sourceLocationId}`;
+      params = params.append('sourceLocationId', sourceLocationId);  
     }
     if (destinationLocationId) {
-      url = `${url}&destinationLocationId=${destinationLocationId}`;
+      params = params.append('destinationLocationId', destinationLocationId);   
     }
     if (shortAllocationId) {
-      url = `${url}&shortAllocationId=${shortAllocationId}`;
+      params = params.append('shortAllocationId', shortAllocationId); 
     }
 
     if (orderNumber) {
-      url = `${url}&orderNumber=${this.utilService.encodeValue(orderNumber.trim())}`;
+      params = params.append('orderNumber', orderNumber);  
     }
 
     if (shipmentNumber) {
-      url = `${url}&shipmentNumber=${this.utilService.encodeValue(shipmentNumber.trim())}`;
+      params = params.append('shipmentNumber', shipmentNumber);   
     }
 
     if (workOrderNumber) {
-      url = `${url}&workOrderNumber=${this.utilService.encodeValue(workOrderNumber.trim())}`;
+      params = params.append('workOrderNumber', workOrderNumber.trim());    
     }
     if (waveNumber) {
-      url = `${url}&waveNumber=${this.utilService.encodeValue(waveNumber.trim())}`;
+      params = params.append('waveNumber', waveNumber.trim()); 
     }
 
     if (pickListNumber) {
-      url = `${url}&pickListNumber=${this.utilService.encodeValue(pickListNumber.trim())}`;
+      params = params.append('pickListNumber', pickListNumber.trim()); 
     }
     if (cartonizationNumber) {
-      url = `${url}&cartonizationNumber=${this.utilService.encodeValue(cartonizationNumber.trim())}`;
+      params = params.append('cartonizationNumber', cartonizationNumber.trim());  
     }
     if (itemNumber) {
-      url = `${url}&itemNumber=${this.utilService.encodeValue(itemNumber.trim())}`;
+      params = params.append('itemNumber', itemNumber.trim());  
     }
     if (sourceLocationName) {
-      url = `${url}&sourceLocationName=${this.utilService.encodeValue(sourceLocationName.trim())}`;
+      params = params.append('sourceLocationName', sourceLocationName.trim());  
     }
     if (destinationLocationName) {
-      url = `${url}&destinationLocationName=${this.utilService.encodeValue(destinationLocationName.trim())}`;
+      params = params.append('destinationLocationName', destinationLocationName.trim());  
     }
     if (containerId) {
-      url = `${url}&containerId=${containerId}`;
+      params = params.append('containerId', containerId);  
     }
     if (workOrderLineIds) {
-      url = `${url}&workOrderLineIds=${workOrderLineIds}`;
+      params = params.append('workOrderLineIds', workOrderLineIds.trim());  
     }
     if (openPickOnly != null) {
-      url = `${url}&openPickOnly=${openPickOnly}`;
+      params = params.append('openPickOnly', openPickOnly);  
 
     }
     if (loadDetails != null) {
-      url = `${url}&loadDetails=${loadDetails}`;
+      params = params.append('loadDetails', loadDetails);  
+
+    }
+    if (forDisplay != null) {
+      params = params.append('forDisplay', forDisplay);  
 
     }
 
 
-    return this.http.get(url).pipe(map(res => res.data));
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 
   getPick(id: number): Observable<PickWork> {
@@ -570,5 +584,93 @@ export class PickService {
     return this.http
       .get(url)
       .pipe(map(res => res.data));
+  }
+
+  isSinglePick(pick: PickWork): boolean {
+    return (pick.bulkPickNumber == null || pick.bulkPickNumber.length == 0) &&
+            (pick.pickListNumber == null || pick.pickListNumber.length == 0) &&
+            (pick.cartonizationNumber == null || pick.cartonizationNumber.length == 0);
+  }
+  isInListPick(pick: PickWork) : boolean {
+    return pick.pickListNumber != null && pick.pickListNumber.length > 0;
+  }
+  isInBulkPick(pick: PickWork) : boolean {
+    return pick.bulkPickNumber != null && pick.bulkPickNumber.length > 0;
+  }
+  isInCartonPick(pick: PickWork) : boolean {
+    return pick.cartonizationNumber != null && pick.cartonizationNumber.length > 0;
+  }
+  // we will group picks into list / bulk for display purpose
+  async setupPicksForDisplay(picks: PickWork[]) : Promise<PickWork[]> {
+    let pickResult : PickWork[] = [];
+
+    let picksInBulk: PickWork[] = picks.filter(pick => this.isInBulkPick(pick));
+    let picksInList: PickWork[] = picks.filter(pick => this.isInListPick(pick));
+
+    // add single picks first
+    pickResult =  picks.filter(pick => this.isSinglePick(pick)) ;
+
+    if (picksInBulk.length > 0) {
+      // add bulk pick 
+      let bulkPickNumbers = new Set<string>();
+      
+      picksInBulk.forEach(pick => {
+        bulkPickNumbers.add(pick.bulkPickNumber!)
+      }); 
+      
+      let responseData = await this.bulkPickService.getBulkPicksSynchronous(
+        undefined, Array.from(bulkPickNumbers).join(',')
+      );
+      let bulkPicks: BulkPick[] = responseData.data;
+      
+      console.log("=======   Bulk picks  =========");
+      console.log(`${JSON.stringify(bulkPicks)}`);
+      
+      pickResult = [...pickResult, 
+        ...bulkPicks.map(bulkPick => this.setupPicksFromBulkPick(bulkPick))];
+      /**
+       * 
+      this.bulkPickService.getBulkPicks(undefined, Array.from(bulkPickNumbers).join(',')).subscribe({
+        next: (bulkPicks) => {
+
+          pickResult = [...pickResult, 
+              ...bulkPicks.map(bulkPick => this.setupPicksFromBulkPick(bulkPick))];
+
+          console.log("=======   Pick Result after process Bulk Pick   =========");
+          console.log(`${JSON.stringify(pickResult)}`);
+        }
+      });
+       * 
+       */
+    }
+    return pickResult;
+
+
+  }
+
+  setupPicksFromBulkPick(bulkPick: BulkPick) : PickWork {
+    return {
+        id: bulkPick.id,
+        number: bulkPick.number,
+        sourceLocationId: bulkPick.sourceLocationId,
+        sourceLocation: bulkPick.sourceLocation,
+        destinationLocationId: undefined,    // bulk pick may have multiple destination location
+        destinationLocation:  undefined,    // bulk pick may have multiple destination location
+
+        itemId: bulkPick.itemId,
+        item: bulkPick.item,
+
+        quantity: bulkPick.quantity,
+        pickedQuantity: bulkPick.pickedQuantity,
+        pickType: PickType.OUTBOUND,   // FOR now we will only allow outbound bulk pick
+  
+        color:bulkPick.color,
+        productSize: bulkPick.productSize,
+        style: bulkPick.style,
+
+        status: bulkPick.status, 
+        picks: bulkPick.picks,
+        pickGroupType: PickGroupType.BULK_PICK,
+    }
   }
 }

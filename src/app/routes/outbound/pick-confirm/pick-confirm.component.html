@@ -217,31 +217,31 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of pickTable.data">
-        <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)"
-          [nzDisabled]="mapOfConfirmedQuantity[data.number] === 0"></td>
+      <tr *ngFor="let pick of pickTable.data">
+        <td [nzChecked]="setOfCheckedId.has(pick.id!)" (nzCheckedChange)="onItemChecked(pick.id!, $event)"
+          [nzDisabled]="mapOfConfirmedQuantity[pick.number] === 0 || pick.status != pickStatus.RELEASED"></td>
 
-        <td>{{ data.number }}</td>
-        <td>{{ data.sourceLocation.name }}</td>
-        <td>{{ data.destinationLocation?.name }}</td>
-        <td>{{ data.item.name }}</td>
-        <td>{{ data.item.description }}</td>
-        <td>{{ data.quantity }}</td>
-        <td>{{ data.pickedQuantity }}</td>
+        <td>{{ pick.number }}</td>
+        <td>{{ pick.sourceLocation?.name }}</td>
+        <td>{{ pick.destinationLocation?.name }}</td>
+        <td>{{ pick.item?.name }}</td>
+        <td>{{ pick.item?.description }}</td>
+        <td>{{ pick.quantity }}</td>
+        <td>{{ pick.pickedQuantity }}</td>
         <td nzWidth="120px">
           <ul>
-            <li *ngIf="data.color != null">{{'color' | i18n}}: {{data.color}}</li>
-            <li *ngIf="data.productSize != null">{{'productSize' | i18n}}: {{data.productSize}}</li>
-            <li *ngIf="data.style != null">{{'style' | i18n}}: {{data.style}}</li>
+            <li *ngIf="pick.color != null">{{'color' | i18n}}: {{pick.color}}</li>
+            <li *ngIf="pick.productSize != null">{{'productSize' | i18n}}: {{pick.productSize}}</li>
+            <li *ngIf="pick.style != null">{{'style' | i18n}}: {{pick.style}}</li>
           </ul>
         </td>
         <td nzRight nzWidth="120px">
-          <input nz-input [(ngModel)]="mapOfConfirmedQuantity[data.number]"
-            [disabled]="mapOfConfirmedQuantity[data.number] === 0 || confirming === true" style="width: 100px;" />
+          <input nz-input [(ngModel)]="mapOfConfirmedQuantity[pick.number]"
+            [disabled]="mapOfConfirmedQuantity[pick.number] === 0 || confirming === true  || pick.status != pickStatus.RELEASED" style="width: 100px;" />
         </td>
         <td *ngIf="!displayOnly" nzRight nzWidth="120px">
-          <button nz-button nzType="primary" (click)="confirmPick(data)"
-            [disabled]="mapOfConfirmedQuantity[data.number] <= 0" [nzLoading]="confirming">
+          <button nz-button nzType="primary" (click)="confirmPick(pick)"
+            [disabled]="mapOfConfirmedQuantity[pick.number] <= 0 || pick.status != pickStatus.RELEASED" [nzLoading]="confirming">
             {{ 'confirm' | i18n }}
           </button>
         </td>

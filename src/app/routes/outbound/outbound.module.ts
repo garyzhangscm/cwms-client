@@ -8,6 +8,7 @@ import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 
+import { AuthModule } from '../auth/auth.module';
 import { CommonModule } from '../common/common.module';
 import { DirectivesModule } from '../directives/directives.module';
 import { InventoryModule } from '../inventory/inventory.module';
@@ -16,6 +17,7 @@ import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.modu
 import { OutboundAllocationConfigurationMaintenanceComponent } from './allocation-configuration-maintenance/allocation-configuration-maintenance.component';
 import { OutboundAllocationConfigurationComponent } from './allocation-configuration/allocation-configuration.component';
 import { OutboundAllocationTransactionHistoryComponent } from './allocation-transaction-history/allocation-transaction-history.component';
+import { OutboundBulkPickConfigurationComponent } from './bulk-pick-configuration/bulk-pick-configuration.component';
 import { OutboundCartonComponent } from './carton/carton.component';
 import { OutboundCartonizationConfigurationConfirmComponent } from './cartonization-configuration-confirm/cartonization-configuration-confirm.component';
 import { OutboundCartonizationConfigurationMaintenanceComponent } from './cartonization-configuration-maintenance/cartonization-configuration-maintenance.component';
@@ -45,7 +47,6 @@ import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
-import { OutboundBulkPickConfigurationComponent } from './bulk-pick-configuration/bulk-pick-configuration.component';
 
 const COMPONENTS: Array<Type<void>> = [
   OutboundOrderComponent,
@@ -98,6 +99,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     InventoryModule,  
     WarehouseLayoutModule,
     NzLayoutModule,
+    AuthModule
   ],
   declarations: [
     ...COMPONENTS,

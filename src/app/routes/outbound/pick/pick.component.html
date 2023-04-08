@@ -136,7 +136,7 @@
               [nzSize]="'small'"
               style="width:75px"
             ></nz-skeleton-element> 
-            {{ data.sourceLocation.name }}</td>
+            {{ data.sourceLocation?.name }}</td>
           <td>
             <nz-skeleton-element 
               *ngIf="data.destinationLocationId && data.destinationLocation == null"
@@ -154,7 +154,7 @@
               [nzSize]="'small'"
               style="width:75px"
             ></nz-skeleton-element> 
-            {{ data.item.name }}</td>
+            {{ data.item?.name }}</td>
           <td>
             <nz-skeleton-element 
               *ngIf="data.itemId && data.item == null"
@@ -163,7 +163,7 @@
               [nzSize]="'small'"
               style="width:75px"
             ></nz-skeleton-element> 
-            {{ data.item.description }}</td>
+            {{ data.item?.description }}</td>
           <td>{{ data.quantity }}</td>
           <td>{{ data.pickedQuantity }}</td>
           <td *ngIf="!displayOnly"></td>

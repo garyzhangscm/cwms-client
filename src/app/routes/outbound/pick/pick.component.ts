@@ -27,7 +27,7 @@ export class OutboundPickComponent implements OnInit {
       name: 'pick.number',
       showSort: true,
       sortOrder: null,
-      sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableNumber(a.number, b.number),
+      sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableString(a.number, b.number),
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],

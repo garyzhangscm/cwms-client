@@ -1,8 +1,9 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
+import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
@@ -145,6 +146,8 @@ export class OutboundWaveComponent implements OnInit {
   checked = false;
   indeterminate = false;
   expandSet = new Set<number>();
+
+  pickTableExpandSet = new Set<number>();
   
   displayOnly = false;
   constructor(
@@ -287,8 +290,22 @@ export class OutboundWaveComponent implements OnInit {
     });
   }
   showPicks(wave: Wave): void {
-    this.pickService.getPicksByWave(wave.id!).subscribe(pickRes => {
-      this.mapOfPicks[wave.id!] = [...pickRes];
+    this.pickService.getPicksByWave(wave.id!).subscribe({
+      next: (pickRes) => {
+        // get all the single pick and add it to the result
+        // this.mapOfPicks[wave.id!] = pickRes.filter(pick => this.pickService.isSinglePick(pick));
+        // get all the bulk pick
+        console.log(`start to setup ${pickRes.length}`);
+        // group the picks into 
+        // 1. single pick
+        // 2. bulk pick
+        // 3. list pick
+        this.pickService.setupPicksForDisplay(pickRes).then(
+          pickWorks => this.mapOfPicks[wave.id!] = pickWorks
+        );
+
+
+      }
     });
   }
   showShortAllocations(wave: Wave): void {
@@ -409,7 +426,13 @@ export class OutboundWaveComponent implements OnInit {
       this.expandSet.delete(id);
     }
   }
-
+  onPickTableExpandChange(id: number, pick: PickWork,checked: boolean): void {
+    if (checked) {
+      this.pickTableExpandSet.add(id); 
+    } else {
+      this.pickTableExpandSet.delete(id);
+    }
+  } 
 
   removeSelectedWaves(): void {
     // make sure we have at least one checkbox checked
@@ -496,5 +519,5 @@ export class OutboundWaveComponent implements OnInit {
   }
   confirmPicks(wave: Wave): void {
     this.router.navigateByUrl(`/outbound/pick/confirm?type=wave&id=${wave.id}`);
-  }
+  } 
 }

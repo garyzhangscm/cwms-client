@@ -78,10 +78,10 @@ export class PickListService {
       pageLines.push(`
                         <tr>
                           <th>${pick.number}</th>
-                          <th>${pick.sourceLocation.name}</th>
+                          <th>${pick.sourceLocation?.name}</th>
                           <th>${pick.destinationLocation?.name}</th>
-                          <th>${pick.item.name}</th>
-                          <th>${pick.item.description}</th>
+                          <th>${pick.item?.name}</th>
+                          <th>${pick.item?.description}</th>
                           <th>${pick.quantity}</th>
                           <th>${pick.pickedQuantity}</th>
                           <td>______</td>

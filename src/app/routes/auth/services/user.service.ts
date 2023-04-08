@@ -22,18 +22,34 @@ export class UserService {
               private menuService: MenuService, 
               private settings: SettingsService) {}
 
-  getUsers(username?: string, rolename?: string, workingTeamName?: string): Observable<User[]> {
-    let url = `resource/users?companyId=${this.warehouseService.getCurrentWarehouse().companyId}`;
+  getUsers(username?: string, rolename?: string, 
+    workingTeamName?: string, firstname?: string, lastname?: string): Observable<User[]> {
+    const url = `resource/users`;
+    
+    let params = new HttpParams(); 
+
+    params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
+
     if (username) {
-      url = `${url}&username=${username}`;
-    } else if (rolename) {
-      url = `${url}&rolename=${rolename}`;
-    } else if (workingTeamName) {
-      url = `${url}&workingTeamName=${workingTeamName}`;
+      params = params.append('username', username);  
+    } 
+    
+    if (rolename) {
+      params = params.append('rolename', rolename);  
+    } 
+    
+    if (workingTeamName) {
+      params = params.append('workingTeamName', workingTeamName);  
+    }
+    if (firstname) {
+      params = params.append('firstname', firstname);  
+    }
+    if (lastname) {
+      params = params.append('lastname', lastname);  
     }
     
 
-    return this.http.get(url).pipe(map(res => res.data));
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 
   getUser(id: number): Observable<User> {
