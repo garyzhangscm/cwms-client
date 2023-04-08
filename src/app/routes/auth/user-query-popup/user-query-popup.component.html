@@ -13,10 +13,10 @@
       <div nz-col [nzSpan]="8">
 
         <nz-form-item nzFlex>
-          <nz-form-label [nzSm]="3" [nzXs]="3" nzFor="username">
+          <nz-form-label [nzSpan]="8" nzFor="username">
             {{ 'username' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18">
+          <nz-form-control [nzSpan]="16">
             <input nz-input name="username" id="username" formControlName="username">
           </nz-form-control>
         </nz-form-item>
@@ -24,10 +24,10 @@
       <div nz-col [nzSpan]="8">
 
         <nz-form-item nzFlex>
-          <nz-form-label [nzSm]="3" [nzXs]="3" nzFor="firstname">
+          <nz-form-label [nzSpan]="8" nzFor="firstname">
             {{ 'firstname' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18">
+          <nz-form-control [nzSpan]="16">
             <input nz-input name="firstname" id="firstname" formControlName="firstname">
           </nz-form-control>
         </nz-form-item>
@@ -35,10 +35,10 @@
       <div nz-col [nzSpan]="8">
 
         <nz-form-item nzFlex>
-          <nz-form-label [nzSm]="3" [nzXs]="3" nzFor="lastname">
+          <nz-form-label [nzSpan]="8" nzFor="lastname">
             {{ 'lastname' | i18n }}
           </nz-form-label>
-          <nz-form-control [nzSpan]="18">
+          <nz-form-control [nzSpan]="16">
             <input nz-input name="lastname" id="lastname" formControlName="lastname">
           </nz-form-control>
         </nz-form-item>
@@ -59,7 +59,7 @@
   <div class="search-result-list">
     
     <st #userTable [data]="listOfAllUsers" [columns]="userTablecolumns" 
-      (change)="change($event)">
+      (change)="change($event)" [ps]="5">
     </st>  
   </div>
 </ng-template>

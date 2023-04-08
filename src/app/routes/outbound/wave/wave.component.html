@@ -112,7 +112,7 @@
 
             <nz-tab nzTitle=" {{ 'pick' | i18n }}"> 
 
-              <nz-table  nzSize="middle" [nzShowPagination]="false"
+              <nz-table  nzSize="middle" [nzShowPagination]="false" 
                 [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[wave.id!]" #pickTable>
                 <thead>
                   <th></th>
@@ -199,7 +199,8 @@
                             </nz-dropdown-menu>
                           </nz-list-item>
                           <nz-list-item>
-                            {{ 'assign-user' | i18n }}: <app-auth-user-query-popup></app-auth-user-query-popup>
+                            {{ 'assign-user' | i18n }}: 
+                            <app-auth-user-query-popup (recordSelected)="assignUser(pick, $event)"></app-auth-user-query-popup>
                           </nz-list-item>
                         </nz-list>
                         <!--

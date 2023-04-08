@@ -13,11 +13,13 @@ import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service'; 
+import { PickGroupType } from '../models/pick-group-type.enum';
 import { PickWork } from '../models/pick-work'; 
 import { ShipmentLine } from '../models/shipment-line';
 import { ShortAllocation } from '../models/short-allocation';
 import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
 import { Wave } from '../models/wave'; 
+import { BulkPickService } from '../services/bulk-pick.service';
 import { PickService } from '../services/pick.service';
 import { ShipmentLineService } from '../services/shipment-line.service';
 import { ShortAllocationService } from '../services/short-allocation.service';
@@ -165,6 +167,7 @@ export class OutboundWaveComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private utilService: UtilService,
+    private bulkPickService: BulkPickService,
   ) { 
     userService.isCurrentPageDisplayOnly("/outbound/wave").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
@@ -520,4 +523,22 @@ export class OutboundWaveComponent implements OnInit {
   confirmPicks(wave: Wave): void {
     this.router.navigateByUrl(`/outbound/pick/confirm?type=wave&id=${wave.id}`);
   } 
+
+  assignUser(pick: PickWork, userId?: number) {
+    if (userId == null) {
+      console.log(`no user is selected, do nothing`)
+    }
+    else {
+      this.isSpinning = true;
+      if (pick.pickGroupType == PickGroupType.BULK_PICK) {
+        this.bulkPickService.assignUser(pick.id, userId).subscribe({
+          next: (bulkPick) => {
+            pick.assignedToUserId = userId;
+            this.isSpinning = false;
+          }, 
+          error: () => this.isSpinning = false
+        })
+      }
+    }
+  }
 }

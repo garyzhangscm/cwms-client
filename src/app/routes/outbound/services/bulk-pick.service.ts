@@ -189,11 +189,11 @@ export class BulkPickService {
  
 
   confirmPick(
-    pick: PickWork,
+    pick: BulkPick,
     quantity?: number,
     pickToContainer?: boolean,
     containerId?: string,
-  ): Observable<PickWork> {
+  ): Observable<BulkPick> {
     const confirmedQuantity = quantity === undefined ? pick.quantity - pick.pickedQuantity : quantity;
     const url = `outbound/bulk-picks/${pick.id}/confirm`;
 
@@ -210,4 +210,15 @@ export class BulkPickService {
     }
     return this.http.post(url, undefined, params).pipe(map(res => res.data));
   }  
+
+  
+  assignUser(pickId: number, userId: number): Observable<BulkPick> {
+    const url = `outbound/bulk-picks/${pickId}/assign-user`;
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id); 
+    params = params.append(`userId`, userId); 
+
+    return this.http.post(url, undefined, params).pipe(map(res => res.data));
+  }
 }

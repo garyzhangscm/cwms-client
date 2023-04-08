@@ -12,6 +12,7 @@ import { UserService } from '../services/user.service';
 @Component({
   selector: 'app-auth-user-query-popup',
   templateUrl: './user-query-popup.component.html',
+  styleUrls: ['./user-query-popup.component.less'],
 })
 export class AuthUserQueryPopupComponent implements OnInit {
   scrollX = '100vw';
@@ -22,9 +23,9 @@ export class AuthUserQueryPopupComponent implements OnInit {
 
   userTablecolumns: STColumn[] = [
     { title: '', index: 'id', type: 'radio', width: 70 },
-    { title: this.i18n.fanyi('username'),  render: 'username' }, 
-    { title: this.i18n.fanyi('firstname'),  render: 'firstname' }, 
-    { title: this.i18n.fanyi('lastname'),  render: 'lastname' }, 
+    { title: this.i18n.fanyi('username'),  index: 'username' }, 
+    { title: this.i18n.fanyi('firstname'),  index: 'firstname' }, 
+    { title: this.i18n.fanyi('lastname'),  index: 'lastname' }, 
   ];
  
   // Form related data and functions
@@ -34,6 +35,8 @@ export class AuthUserQueryPopupComponent implements OnInit {
   searching = false;
   queryInProcess = false;
   searchResult = '';
+
+  selectedUserId?: number;
 
 
   // Table data for display
@@ -57,10 +60,12 @@ export class AuthUserQueryPopupComponent implements OnInit {
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllUsers = []; 
+    this.selectedUserId = undefined;
   }
 
   search(): void {
     this.searching = true;
+    this.selectedUserId = undefined;
     this.userService
       .getUsers(
         this.searchForm.value.username,
@@ -111,7 +116,7 @@ export class AuthUserQueryPopupComponent implements OnInit {
   createQueryForm(): void {
     // initiate the search form
     this.searchForm = this.fb.group({ 
-      itemName: [null], 
+      username: [null], 
       firstname: [null], 
       lastname: [null],
     });
@@ -123,11 +128,9 @@ export class AuthUserQueryPopupComponent implements OnInit {
   returnResult(): void {
     // get the selected record
     if (this.isAnyRecordChecked()) {
-      this.recordSelected.emit(
-        ''
-      );
+      this.recordSelected.emit(this.selectedUserId);
     } else {
-      this.recordSelected.emit('');
+      this.recordSelected.emit(null);
     }
     this.queryModal.destroy();
 
@@ -135,8 +138,15 @@ export class AuthUserQueryPopupComponent implements OnInit {
 
   change(ret: STChange): void {
     console.log('change', ret);
+    if (ret.type == 'radio') {
+      this.selectedUserId = undefined;
+      if (ret.radio != null && ret.radio!.id != null) {
+        console.log(`chosen user ${ret.radio!.id} / ${ret.radio!.username}`);
+        this.selectedUserId = ret.radio!.id;
+      }
+    }
   }
   isAnyRecordChecked() {
-    return true;
+    return  this.selectedUserId != undefined;;
   }
 }
