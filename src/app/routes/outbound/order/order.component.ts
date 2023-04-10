@@ -151,6 +151,7 @@ export class OutboundOrderComponent implements OnInit {
     });
   
   }
+  
 
   printerModal!: NzModalRef;
   printerForm!: UntypedFormGroup;

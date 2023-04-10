@@ -17,6 +17,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
@@ -74,7 +75,8 @@ const PASSPORT = [LayoutPassportComponent];
     NzIconModule,
     NzCardModule, 
     NzSelectModule, 
-    SharedModule
+    SharedModule,
+    NzImageModule
   ],
   declarations: [...COMPONENTS, ...HEADERCOMPONENTS, ...PASSPORT],
   exports: [...COMPONENTS, ...PASSPORT]

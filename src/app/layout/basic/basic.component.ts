@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { StartupService } from '@core';
-import { SettingsService, User } from '@delon/theme';
+import { SettingsService, User, _HttpClient } from '@delon/theme';
 import { LayoutDefaultOptions } from '@delon/theme/layout-default';
 import { environment } from '@env/environment';
 import { Company } from 'src/app/routes/warehouse-layout/models/company';
@@ -14,11 +15,10 @@ import { WarehouseService } from 'src/app/routes/warehouse-layout/services/wareh
 @Component({
   selector: 'layout-basic', 
   template: `  
-    <layout-default [options]="options" [asideUser]="asideUserTpl" [content]="contentTpl">
+    <layout-default [options]="{logo: logoTpl }" [asideUser]="asideUserTpl" [content]="contentTpl">
       
       <layout-default-header-item direction="left"  >
-        <div>
-          {{currentCompany?.name}}
+        <div> 
           <nz-select [(ngModel)]="currentWarehouseId" (ngModelChange)="warehouseChanged()">
             <nz-option *ngFor="let warehouse of warehouses" [nzValue]="warehouse.id" [nzLabel]="warehouse.name"></nz-option> 
           </nz-select>
@@ -70,6 +70,16 @@ import { WarehouseService } from 'src/app/routes/warehouse-layout/services/wareh
       <ng-template #contentTpl>
         <router-outlet></router-outlet>
       </ng-template>
+      <ng-template #logoTpl>
+        <h1 style="padding: 25px" *ngIf="!collapsed">
+          <a href="./" target="_blank" style="color: white;">{{ currentCompany?.name}}</a></h1>  
+        <h1 style="padding: 25px" *ngIf="collapsed">
+          <a href="./" target="_blank"  style="color: white;">{{ 
+          currentCompany?.shortName ? 
+             currentCompany?.shortName : 
+             currentCompany?.name ?  currentCompany!.name.substring(0, 1) : "" }}
+          </a></h1>  
+      </ng-template>
     </layout-default>
 
     <setting-drawer *ngIf="showSettingDrawer"></setting-drawer>
@@ -77,10 +87,12 @@ import { WarehouseService } from 'src/app/routes/warehouse-layout/services/wareh
   `
 })
 export class LayoutBasicComponent {
+
+  collapsed = false;
   options: LayoutDefaultOptions = {
-    logoExpanded: `./assets/logo-full.svg`,
-    logoCollapsed: `./assets/logo.svg`
-  };
+    logoExpanded: `./assets/logo-full.svg`, 
+    logoCollapsed: `./assets/logo.svg` 
+  }; 
   searchToggleStatus = false;
   showSettingDrawer = !environment.production;
   currentWarehouse: string | undefined;
@@ -92,26 +104,34 @@ export class LayoutBasicComponent {
   }
 
   constructor(private settings: SettingsService,
-    private startupSrv: StartupService,
+    private startupSrv: StartupService, 
     private warehouseService: WarehouseService,
-    private companyService: CompanyService,
+    private companyService: CompanyService, 
     private router: Router,) {
+      settings.notify.subscribe({
+        next: (value) => { 
+            if (value.name == 'collapsed' && value.type == 'layout') {
+              this.collapsed = value.value;
+            }
+        }
+      });
 
       // load all the warehouses so that the user can choose between them
       this.warehouseService.getWarehouses().subscribe(warehouseRes => this.warehouses = warehouseRes)
-    const warehouse = this.warehouseService.getCurrentWarehouse();
-    const company = this.companyService.getCurrentCompany();
-    if (company === null) {
-      console.log(`Not able to get current company, will force the user to log in again`);
-      router.navigateByUrl('passport/login');
-    } else if (warehouse === null) {
-      console.log(`Not able to get current warehouse, will force the user to log in again`);
-      router.navigateByUrl('passport/login');
-    } else {
-      this.currentWarehouse = warehouse.name;
-      this.currentWarehouseId = warehouse.id;
-      this.currentCompany = company;
-    }
+      const warehouse = this.warehouseService.getCurrentWarehouse();
+      const company = this.companyService.getCurrentCompany();
+      if (company === null) {
+        console.log(`Not able to get current company, will force the user to log in again`);
+        router.navigateByUrl('passport/login');
+      } else if (warehouse === null) {
+        console.log(`Not able to get current warehouse, will force the user to log in again`);
+        router.navigateByUrl('passport/login');
+      } else {
+        this.currentWarehouse = warehouse.name;
+        this.currentWarehouseId = warehouse.id;
+        this.currentCompany = company;
+        
+      }
   }
 
   warehouseChanged() {

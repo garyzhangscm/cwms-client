@@ -115,43 +115,46 @@
               <nz-table  nzSize="middle" [nzShowPagination]="false" 
                 [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[wave.id!]" #pickTable>
                 <thead>
-                  <th></th>
-                  <th>
-                    {{ 'pick.number' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'status' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'assign-user' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'pick-list' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'bulk-pick' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'sourceLocation' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'destinationLocation' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'item' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'item.description' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'pick.quantity' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'pick.pickedQuantity' | i18n }}
-                  </th>
-                  <th *ngIf="!displayOnly" nzWidth="550px">
-                    {{ 'action' | i18n }}
-                  </th>
+                  <tr>
+                    <th></th>
+                    <th>
+                      {{ 'pick.number' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'status' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'assign-user' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'pick-list' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'bulk-pick' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'sourceLocation' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'destinationLocation' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'item' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'item.description' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'pick.quantity' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'pick.pickedQuantity' | i18n }}
+                    </th>
+                    <th *ngIf="!displayOnly" nzWidth="550px">
+                      {{ 'action' | i18n }}
+                    </th>
+                  </tr>
+                  
                 </thead>
                 <tbody>                  
                   <ng-template ngFor let-pick [ngForOf]="pickTable.data">
@@ -228,50 +231,50 @@
                         -->
                       </td>
                     </tr>
-                    <tr [nzExpand]="pickTableExpandSet.has(pick.id!)">
-                      <nz-table #innerPickTable [nzData]="pick.picks!" nzSize="middle" [nzShowPagination]="false">
-                        <thead>
-                          <tr>
-                            <th>
-                              {{ 'pick.number' | i18n }}
-                            </th>
-                            <th>
-                              {{ 'status' | i18n }}
-                            </th> 
-                            <th>
-                              {{ 'sourceLocation' | i18n }}
-                            </th>
-                            <th>
-                              {{ 'destinationLocation' | i18n }}
-                            </th>
-                            <th>
-                              {{ 'item' | i18n }}
-                            </th>
-                            <th>
-                              {{ 'item.description' | i18n }}
-                            </th>
-                            <th>
-                              {{ 'pick.quantity' | i18n }}
-                            </th>
-                            <th>
-                              {{ 'pick.pickedQuantity' | i18n }}
-                            </th> 
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr *ngFor="let innerPick of innerPickTable.data">
-                            
-                            <td>{{ innerPick.number }}</td>
-                            <td>{{ 'PICK-STATUS-' + innerPick.status | i18n }}</td> 
-                            <td>{{ innerPick.sourceLocation?.name }}</td>
-                            <td>{{ innerPick.destinationLocation?.name }}</td>
-                            <td>{{ innerPick.item?.name }}</td>
-                            <td>{{ innerPick.item?.description }}</td>
-                            <td>{{ innerPick.quantity }}</td>
-                            <td>{{ innerPick.pickedQuantity }}</td>
-                          </tr>
-                        </tbody>
-                      </nz-table>
+                    <tr [nzExpand]="pickTableExpandSet.has(pick.id!)">        
+                          <nz-table #innerPickTable [nzData]="pick.picks!" nzSize="middle" [nzShowPagination]="false">
+                            <thead>
+                              <tr>
+                                <th>
+                                  {{ 'pick.number' | i18n }}
+                                </th>
+                                <th>
+                                  {{ 'status' | i18n }}
+                                </th> 
+                                <th>
+                                  {{ 'sourceLocation' | i18n }}
+                                </th>
+                                <th>
+                                  {{ 'destinationLocation' | i18n }}
+                                </th>
+                                <th>
+                                  {{ 'item' | i18n }}
+                                </th>
+                                <th>
+                                  {{ 'item.description' | i18n }}
+                                </th>
+                                <th>
+                                  {{ 'pick.quantity' | i18n }}
+                                </th>
+                                <th>
+                                  {{ 'pick.pickedQuantity' | i18n }}
+                                </th> 
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let innerPick of innerPickTable.data">
+                                
+                                <td>{{ innerPick.number }}</td>
+                                <td>{{ 'PICK-STATUS-' + innerPick.status | i18n }}</td> 
+                                <td>{{ innerPick.sourceLocation?.name }}</td>
+                                <td>{{ innerPick.destinationLocation?.name }}</td>
+                                <td>{{ innerPick.item?.name }}</td>
+                                <td>{{ innerPick.item?.description }}</td>
+                                <td>{{ innerPick.quantity }}</td>
+                                <td>{{ innerPick.pickedQuantity }}</td>
+                              </tr>
+                            </tbody>
+                          </nz-table> 
                     </tr>
                   </ng-template>
                   

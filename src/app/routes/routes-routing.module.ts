@@ -38,7 +38,8 @@ const routes: Routes = [
       { path: 'qc', loadChildren: () => import('./qc/qc.module').then((m) => m.QcModule) },
       { path: 'alert', loadChildren: () => import('./alert/alert.module').then((m) => m.AlertModule) },
       { path: 'transportation', loadChildren: () => import('./transportation/transportation.module').then((m) => m.TransportationModule) },
-      { path: 'billing', loadChildren: () => import('./billing/billing.module').then((m) => m.BillingModule) },]
+      { path: 'billing', loadChildren: () => import('./billing/billing.module').then((m) => m.BillingModule) },
+      { path: 'work-task', loadChildren: () => import('./work-task/work-task.module').then((m) => m.WorkTaskModule) }]
   },
   // Blak Layout 空白布局
   {

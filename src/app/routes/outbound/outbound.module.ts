@@ -17,7 +17,6 @@ import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.modu
 import { OutboundAllocationConfigurationMaintenanceComponent } from './allocation-configuration-maintenance/allocation-configuration-maintenance.component';
 import { OutboundAllocationConfigurationComponent } from './allocation-configuration/allocation-configuration.component';
 import { OutboundAllocationTransactionHistoryComponent } from './allocation-transaction-history/allocation-transaction-history.component';
-import { OutboundBulkPickConfigurationComponent } from './bulk-pick-configuration/bulk-pick-configuration.component';
 import { OutboundCartonComponent } from './carton/carton.component';
 import { OutboundCartonizationConfigurationConfirmComponent } from './cartonization-configuration-confirm/cartonization-configuration-confirm.component';
 import { OutboundCartonizationConfigurationMaintenanceComponent } from './cartonization-configuration-maintenance/cartonization-configuration-maintenance.component';
@@ -36,6 +35,7 @@ import { OutboundOrderComponent } from './order/order.component';
 import { OutboundOutboundOrderPopupQueryComponent } from './outbound-order-popup-query/outbound-order-popup-query.component';
 import { OutboundRoutingModule } from './outbound-routing.module';
 import { OutboundParcelByOrderComponent } from './parcel-by-order/parcel-by-order.component';
+import { OutboundPickConfigurationComponent } from './pick-configuration/pick-configuration.component';
 import { OutboundPickConfirmComponent } from './pick-confirm/pick-confirm.component';
 import { OutboundPickListComponent } from './pick-list/pick-list.component';
 import { OutboundPickComponent } from './pick/pick.component';
@@ -80,7 +80,7 @@ const COMPONENTS: Array<Type<void>> = [
   OutboundListPickConfigurationComponent,
   OutboundListPickConfigurationMaintenanceComponent,
   OutboundParcelByOrderComponent,
-  OutboundBulkPickConfigurationComponent];
+  OutboundPickConfigurationComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

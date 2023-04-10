@@ -6,4 +6,8 @@ export interface BulkPickConfiguration {
     enabledForOutbound: boolean;
     enabledForWorkOrder: boolean;
     pickSortDirection: SortDirection;
+    
+    releaseToWorkTask: boolean;
+    workTaskPriority: number;
+
 }

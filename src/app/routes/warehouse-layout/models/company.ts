@@ -2,6 +2,7 @@ export interface Company {
   id: number;
   code: string;
   name: string;
+  shortName?: string;
   description: string;
   contactorFirstname: string;
   contactorLastname: string;

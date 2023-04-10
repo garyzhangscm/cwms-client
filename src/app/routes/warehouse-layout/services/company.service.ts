@@ -72,4 +72,16 @@ export class CompanyService {
     return this.http.post(`layout/companies/${id}/disable`).pipe(map(res => res.data));
   }
 
+  getFullLogo(id: number): Observable<any> {
+    return this.http
+          .get(`layout/companies/${id}/logo.svg`, { responseType: 'text' })
+          .pipe(map(res => res.data));
+  }
+
+  getLogo(id: number): Observable<any> {
+    return this.http
+          .get(`layout/companies/${id}/logo-full.svg`, { responseType: 'text' })
+          .pipe(map(res => res.data));
+  }
+
 }
