@@ -14,6 +14,7 @@ import { WorkTaskService } from '../services/work-task.service';
 @Component({
   selector: 'app-work-task-work-task',
   templateUrl: './work-task.component.html',
+  styleUrls: ['./work-task.component.less']
 })
 export class WorkTaskWorkTaskComponent implements OnInit {
 

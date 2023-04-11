@@ -23,7 +23,7 @@ export class WorkTaskService {
     assignedUserName?: string,
     assignedRoleName?: string,): Observable<WorkTask[]> { 
   
-    const url = `common/work-tasks`;
+    const url = `resource/work-tasks`;
       
     let params = new HttpParams(); 
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
