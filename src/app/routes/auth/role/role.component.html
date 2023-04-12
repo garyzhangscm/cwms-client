@@ -1,5 +1,7 @@
 <page-header></page-header>
 
+<nz-spin nzSize="large" [nzSpinning]="isSpinning">
+  
 <!-- Form to query the result  -->
 <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
   <div nz-row [nzGutter]="24">
@@ -76,6 +78,10 @@
                 <li nz-menu-item >                   
                     <a  routerLink="/auth/role-permission" routerLinkActive="active" [queryParams]="{roleId : data.id!}">{{
                       'assign-permission' | i18n }}</a> 
+                </li> 
+                <li nz-menu-item >                   
+                    <a  routerLink="/auth/role-operation-type" routerLinkActive="active" [queryParams]="{roleId : data.id!}">{{
+                      'assign-operation-type' | i18n }}</a> 
                 </li> 
                 <li nz-menu-item *ngIf="data.enabled === true">
                   <a  (click)="disableRole(data.id!)">{{ 'disable' | i18n }}</a>
@@ -211,6 +217,16 @@
                 nzCheckable
                 ></nz-tree>
             </nz-tab>
+            <nz-tab nzTitle="{{'operation-type' | i18n}}">
+              <st #operationTypeTable [data]="data.operationTypes" [columns]="operationTypecolumns">
+                 
+                  <ng-template st-row="actionColumn" let-operationType>
+                    <button nz-button (click)="deassignOperationType(data.id!, operationType.id)" nzDanger>
+                      {{ 'deassign' | i18n }}</button>
+                      
+                  </ng-template>
+              </st>
+            </nz-tab>
          </nz-tabset>
 
 
@@ -223,6 +239,8 @@
   </div>
 </div>
 
+
+</nz-spin>
 <ng-template #tableFoot>
 
   <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">

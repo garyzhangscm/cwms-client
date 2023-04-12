@@ -23,7 +23,8 @@ export class UserService {
               private settings: SettingsService) {}
 
   getUsers(username?: string, rolename?: string, 
-    workingTeamName?: string, firstname?: string, lastname?: string): Observable<User[]> {
+    workingTeamName?: string, firstname?: string, lastname?: string, 
+    assignableToWorkTaskId?: number): Observable<User[]> {
     const url = `resource/users`;
     
     let params = new HttpParams(); 
@@ -46,6 +47,9 @@ export class UserService {
     }
     if (lastname) {
       params = params.append('lastname', lastname);  
+    }
+    if (assignableToWorkTaskId != null) {
+      params = params.append('assignableToWorkTaskId', assignableToWorkTaskId);  
     }
     
 

@@ -7,8 +7,7 @@ import { map } from 'rxjs/operators';
 import { UtilService } from '../../util/services/util.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { MenuGroup } from '../models/menu-group'; 
-import { Permission } from '../models/permission';
+import { MenuGroup } from '../models/menu-group';  
 import { Role } from '../models/role';
 import { RolePermission } from '../models/role-permission';
 
@@ -21,14 +20,25 @@ export class RoleService {
     private companyService: CompanyService,
     private utilService: UtilService) {}
 
-  getRoles(name?: string, enabled?: boolean): Observable<Role[]> {
-    let url = `resource/roles?companyId=${this.warehouseService.getCurrentWarehouse().companyId}`;
+  getRoles(name?: string, enabled?: boolean, 
+    assignableToWorkTaskId?: number): Observable<Role[]> {
+
+    const url = `resource/roles`;
     
+    let params = new HttpParams(); 
+
+    params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
     if (name) {
-      url = `${url}&name=${this.utilService.encodeValue(name.trim())}`;
+      params = params.append('name', name);  
+    }
+    if (enabled != null) {
+      params = params.append('enabled', enabled);   
+    }
+    if (assignableToWorkTaskId != null) {
+      params = params.append('assignableToWorkTaskId', assignableToWorkTaskId);  
     }
 
-    return this.http.get(url).pipe(map(res => res.data));
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 
   getRole(id: number): Observable<Role> {
@@ -118,6 +128,10 @@ export class RoleService {
   }
   deassignMenu(roleId: number, menuId: number) {
     const url = `resource/roles/${roleId}/menus?deassigned=${menuId}`;
+    return this.http.post(url).pipe(map(res => res.data));
+  }
+  deassignOperationType(roleId: number, operationTypeId: number) {
+    const url = `resource/roles/${roleId}/operation-types?deassigned=${operationTypeId}`;
     return this.http.post(url).pipe(map(res => res.data));
   }
 

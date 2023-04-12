@@ -1,8 +1,9 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
+import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message'; 
 import { NzTreeNodeOptions } from 'ng-zorro-antd/tree';
@@ -11,6 +12,7 @@ import { Client } from '../../common/models/client';
 import { ColumnItem } from '../../util/models/column-item';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
+import { OperationType } from '../../work-task/models/operation-type';
 import { Menu } from '../models/menu';
 import { MenuGroup } from '../models/menu-group';
 import { Permission } from '../models/permission';
@@ -324,6 +326,7 @@ export class AuthRoleComponent implements OnInit {
   ];
   searching = false;
   searchResult = '';
+  isSpinning = false;
 
 
   displayOnly = false;
@@ -373,14 +376,14 @@ export class AuthRoleComponent implements OnInit {
   // 0: display the user tab under the role record
   // 1: display the menu tab under the role record
   search(tabIndex: number = 0): void {
-    this.searching = true;
+    this.isSpinning = true;
     this.searchResult = '';
     this.roleService.getRoles(this.searchForm!.controls.name.value).subscribe(
       roleRes => {
         this.listOfAllRoles = roleRes;
         this.listOfDisplayRoles = roleRes;
 
-        this.searching = false;
+        this.isSpinning = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
           rowCount: roleRes.length,
@@ -395,7 +398,7 @@ export class AuthRoleComponent implements OnInit {
         });
       },
       () => {
-        this.searching = false;
+        this.isSpinning = false;
         this.searchResult = '';
       },
     );
@@ -694,5 +697,32 @@ export class AuthRoleComponent implements OnInit {
     return existingRolePermissions.find(
       rolePermission => rolePermission.permission.menu!.id == menuId && rolePermission.permission.name == permissionName
     );
+  }
+
+  
+  @ViewChild('operationTypeTable', { static: true })
+  operationTypeTable!: STComponent;
+  operationTypecolumns: STColumn[] = [ 
+    
+    { title: this.i18n.fanyi("name"),  index: 'name' ,  },  
+    { title: this.i18n.fanyi("description"),  index: 'description' ,  },  
+    { title: this.i18n.fanyi("defaultPriority"),  index: 'defaultPriority' ,  },  
+    {
+      title: this.i18n.fanyi("action"), 
+      render: 'actionColumn',  
+    },      
+  ]; 
+  deassignOperationType(roleId: number, operationTypeId: number) {
+    this.isSpinning = true;
+    this.roleService.deassignOperationType(roleId, operationTypeId).subscribe({
+
+      next: () => {
+
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.isSpinning = false;
+        this.search(4);
+      },
+      error: () => this.isSpinning = false
+    })
   }
 }

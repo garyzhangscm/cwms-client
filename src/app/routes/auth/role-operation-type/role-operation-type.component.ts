@@ -39,28 +39,34 @@ export class AuthRoleOperationTypeComponent implements OnInit {
     private operationTypeService: OperationTypeService,
     private router: Router,
   ) {
-    this.pageTitle = this.i18n.fanyi('page.auth.role.opeationTypes'); 
+    this.pageTitle = this.i18n.fanyi('operation-type'); 
     this.unassignedText = this.i18n.fanyi('unassigned');
     this.assignedText = this.i18n.fanyi('assigned');
   }
 
   ngOnInit(): void {
-    this.titleService.setTitle(this.i18n.fanyi('page.auth.role.opeationTypes'));
+    this.titleService.setTitle(this.i18n.fanyi('operation-type'));
 
+    
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.roleId) {
         // Get the role and initiate the menu assignment
-        this.roleService.getRole(params.roleId).subscribe(roleRes => {
-          this.currentRole = roleRes;
-          this.initOperationTypeAssignment(); 
-          this.previousPage = `/auth/role?name=${this.currentRole.name}`;
+        this.isSpinning = true;
+        this.roleService.getRole(params.roleId).subscribe({
+          next: (roleRes) => {
+            this.currentRole = roleRes;
+            this.initOperationTypeAssignment(); 
+            this.previousPage = `/auth/role?name=${this.currentRole.name}`;
+            this.isSpinning = false;
+          },
+          error: () => this.isSpinning = false
         });
       } 
     });
   }
 
   initOperationTypeAssignment(): void {
-    // Get all menus and accessible menus by role
+    
     this.operationTypeService.getOperationTypes().subscribe({
 
       next: (operationTypeRes) => {
@@ -80,7 +86,7 @@ export class AuthRoleOperationTypeComponent implements OnInit {
           key: operationType.id!.toString(),
           title: operationType.name,
           description: operationType.description,
-          direction: this.currentRole!.operationTypes.some(
+          direction: this.currentRole!.operationTypes?.some(
                 assignedOperationType => operationType.id === assignedOperationType.id)  ? 
                 'right' : undefined,
       });

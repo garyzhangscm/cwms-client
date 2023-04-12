@@ -58,4 +58,30 @@ export class WorkTaskService {
   }
    
    
+  assignUser(id: number, userId: number): Observable<WorkTask> { 
+  
+    const url = `resource/work-tasks/${id}/assign-user`;
+      
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+    params = params.append('userId', userId);   
+
+    return this.http
+      .post(url, null, params)
+      .pipe(map(res => res.data));
+
+  }
+  assignRole(id: number, roleId: number): Observable<WorkTask> { 
+  
+    const url = `resource/work-tasks/${id}/assign-role`;
+      
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+    params = params.append('roleId', roleId);   
+
+    return this.http
+      .post(url, null, params)
+      .pipe(map(res => res.data));
+
+  }
 }
