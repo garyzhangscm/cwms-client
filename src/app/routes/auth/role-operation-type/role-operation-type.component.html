@@ -1,0 +1,52 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a (click)="return()" routerLinkActive="active">{{
+    'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.auth' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/auth/role" routerLinkActive="active">{{
+        'breadcrumb.role' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">    
+
+    <nz-card [nzActions]="[cardFoot]" [nzTitle]="cardTitle">  
+      <div nz-row style="padding: 10px" *ngIf="allOperationTypes != null && allOperationTypes.length > 0">
+            <div nz-col nzSpan="12" nzOffset="6">
+              <nz-transfer [nzDataSource]="operationTypeItems" nzShowSearch [nzFilterOption]="transferListFilterOption"
+                (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
+                (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
+                [nzTitles]="[ unassignedText, assignedText]"  > 
+              </nz-transfer>
+            </div>
+      </div>  
+      <nz-result nzStatus="warning" nzTitle="No operation type found" 
+        *ngIf="allOperationTypes == null || allOperationTypes.length == 0">
+        <div nz-result-extra>
+          <button nz-button nzType="primary" (click)="goToOperationTypePage()">Maintain Operation Type</button>
+        </div>
+      </nz-result>
+    </nz-card>
+      
+</nz-spin>
+
+<ng-template #cardTitle>
+  <h4>{{ 'role.name' | i18n}} : {{ currentRole?.name}}</h4>
+</ng-template>
+<ng-template #cardFoot>
+  <div nz-row nzType="flex" nzJustify="center" >
+    <button nz-button nzType="primary" (click)="confirm()" >
+      {{ 'confirm' | i18n }}
+    </button>
+  </div> 
+</ng-template>

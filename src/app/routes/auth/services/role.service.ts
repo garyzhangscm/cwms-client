@@ -51,7 +51,8 @@ export class RoleService {
     return this.http.get(`resource/roles/${id}/menus`).pipe(map(res => res.data));
   }
 
-  processMenus(roleId: number, assignedFullyFunctionalMenuIds: number[], assignedDisplayOnlyMenuIds: number[], deassignedMenuIds: number[]) {
+  processMenus(roleId: number, assignedFullyFunctionalMenuIds: number[], 
+    assignedDisplayOnlyMenuIds: number[], deassignedMenuIds: number[]) {
     if (assignedFullyFunctionalMenuIds.length === 0 && deassignedMenuIds.length === 0
         && assignedDisplayOnlyMenuIds.length === 0) {
       return of(`succeed`);
@@ -68,6 +69,18 @@ export class RoleService {
       return this.http.post(url, null, params).pipe(map(res => res.data));
     }
   } 
+  
+  processOperationTypes(roleId: number, newlyAssignedOperationTypeIds: number[] ) { 
+      const url = `resource/roles/${roleId}/operation-types`
+      
+      
+      let params = new HttpParams(); 
+
+      params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
+      params = params.append('newlyAssignedOperationTypeIds', newlyAssignedOperationTypeIds.join(','));  
+      return this.http.post(url, null, params).pipe(map(res => res.data)); 
+  } 
+
 
   processUsers(roleId: number, assignedUserIds: number[], deassignedUserIds: number[]) {
     if (assignedUserIds.length === 0 && deassignedUserIds.length === 0) {

@@ -29,6 +29,7 @@ import { AuthWorkingTeamMaintenanceConfirmComponent } from './working-team-maint
 import { AuthWorkingTeamMaintenanceComponent } from './working-team-maintenance/working-team-maintenance.component';
 import { AuthWorkingTeamUserComponent } from './working-team-user/working-team-user.component';
 import { AuthWorkingTeamComponent } from './working-team/working-team.component';
+import { AuthRoleOperationTypeComponent } from './role-operation-type/role-operation-type.component';
 
 const COMPONENTS: Array<Type<void>> = [
   AuthUserComponent,
@@ -51,7 +52,8 @@ const COMPONENTS: Array<Type<void>> = [
   AuthWarehouseUserComponent,
   AuthRolePermissionComponent,
   AuthPermissionComponent,
-  AuthUserQueryPopupComponent];
+  AuthUserQueryPopupComponent,
+  AuthRoleOperationTypeComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

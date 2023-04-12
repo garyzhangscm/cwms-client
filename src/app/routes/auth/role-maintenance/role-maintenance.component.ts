@@ -30,7 +30,8 @@ export class AuthRoleMaintenanceComponent implements OnInit {
     nonClientDataAccessible: false,
     allClientAccess:  true,
     roleMenus: [], 
-    rolePermissions: []
+    rolePermissions: [], 
+    operationTypes: []
   };
 
   constructor(

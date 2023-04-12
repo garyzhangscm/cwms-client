@@ -24,6 +24,7 @@ import { AuthWorkingTeamMaintenanceComponent } from './working-team-maintenance/
 import { AuthWorkingTeamUserComponent } from './working-team-user/working-team-user.component';
 import { AuthWorkingTeamComponent } from './working-team/working-team.component';
 import { AuthUserQueryPopupComponent } from './user-query-popup/user-query-popup.component';
+import { AuthRoleOperationTypeComponent } from './role-operation-type/role-operation-type.component';
 
 const routes: Routes = [
   { path: 'user', component: AuthUserComponent , 
@@ -190,7 +191,8 @@ const routes: Routes = [
   }, 
   { path: 'role-permission', component: AuthRolePermissionComponent },
   { path: 'permission', component: AuthPermissionComponent },
-  { path: 'user-query-popup', component: AuthUserQueryPopupComponent }];
+  { path: 'user-query-popup', component: AuthUserQueryPopupComponent },
+  { path: 'role-operation-type', component: AuthRoleOperationTypeComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
