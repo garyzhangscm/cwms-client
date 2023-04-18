@@ -6,10 +6,10 @@
   <div nz-row [nzGutter]="24">
     <div nz-col [nzSpan]="12">
       <nz-form-item nzFlex>
-        <nz-form-label for="number" [nzSm]="3" [nzXs]="3">
+        <nz-form-label for="number" [nzSpan]="6">
           {{ 'wave.number' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSpan]="14">
+        <nz-form-control [nzSpan]="18">
           <input nz-input name="number" id="number" formControlName="number" />
         </nz-form-control>
       </nz-form-item>
@@ -73,7 +73,7 @@
         </tr>
         <tr [nzExpand]="expandSet.has(wave.id!)">
 
-          <nz-tabset>
+          <nz-tabset  [nzSelectedIndex]="tabSelectedIndex">
             <nz-tab nzTitle="{{ 'shipment' | i18n }}">
 
               <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="mapOfShipmentLines[wave.id!]" nzSize="middle"
@@ -112,11 +112,11 @@
 
             <nz-tab nzTitle=" {{ 'pick' | i18n }}"> 
 
-              <nz-table  nzSize="middle" [nzShowPagination]="false" 
+              <nz-table [nzScroll]="{ x: '100vw' }" nzSize="middle" [nzShowPagination]="false" 
                 [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[wave.id!]" #pickTable>
                 <thead>
                   <tr>
-                    <th></th>
+                    <th nzWidth="50px"></th>
                     <th>
                       {{ 'pick.number' | i18n }}
                     </th>
@@ -124,7 +124,10 @@
                       {{ 'status' | i18n }}
                     </th>
                     <th>
-                      {{ 'assign-user' | i18n }}
+                      {{ 'work-task' | i18n }}
+                    </th>
+                    <th nzWidth="250px">
+                      {{ 'assign' | i18n }}
                     </th>
                     <th>
                       {{ 'pick-list' | i18n }}
@@ -150,7 +153,7 @@
                     <th>
                       {{ 'pick.pickedQuantity' | i18n }}
                     </th>
-                    <th *ngIf="!displayOnly" nzWidth="150px">
+                    <th *ngIf="!displayOnly" nzWidth="150px" nzRight>
                       {{ 'action' | i18n }}
                     </th>
                   </tr>
@@ -161,13 +164,24 @@
                     <tr>
                       <td *ngIf="pick.picks != null && pick.picks.length > 0" 
                         [nzExpand]="pickTableExpandSet.has(pick.id!)" 
-                        (nzExpandChange)="onPickTableExpandChange(pick.id!, pick, $event)"></td>
-                      <td *ngIf="pick.picks == null || pick.picks.length == 0"></td>
-                  <!--<tr *ngFor="let pick of mapOfPicks[data.id!]">-->
+                        (nzExpandChange)="onPickTableExpandChange(pick.id!, pick, $event)"
+                        nzWidth="50px"></td>
+                      <td *ngIf="pick.picks == null || pick.picks.length == 0"></td> 
                       <td>{{ pick.number }}</td>
                       <td>{{ 'PICK-STATUS-' + pick.status | i18n }}</td>
                       <td>
-                        {{pick.assignedToUser}}
+                        <a  *ngIf="pick.workTask" routerLink="/work-task/work-task" routerLinkActive="active" 
+                          [queryParams]="{number : pick.workTask.number}">{{pick.workTask.number}}</a> 
+                      </td>
+                      <td nzWidth="250px">
+                        <ul>
+                          <li *ngIf="pick.workTask?.assignedUser">
+                            {{'user.assigned' | i18n}} : {{ pick.workTask?.assignedUser?.username}}
+                          </li>
+                          <li *ngIf="pick.workTask?.assignedRole">
+                            {{'role.assigned' | i18n}} : {{ pick.workTask?.assignedRole?.name}}
+                          </li>
+                        </ul> 
                       </td>
                       <td>{{ pick.pickListNumber }}</td>
                       <td>{{ pick.bulkPickNumber }}</td>
@@ -177,16 +191,18 @@
                       <td>{{ pick.item?.description }}</td>
                       <td>{{ pick.quantity }}</td>
                       <td>{{ pick.pickedQuantity }}</td>
-                      <td *ngIf="!displayOnly" nzWidth="150px">                      
+                      <td *ngIf="!displayOnly" nzWidth="150px"  nzRight>                      
                         <nz-list>
                           <nz-list-item>
-                            <a nz-dropdown [nzDropdownMenu]="menu">
-                              {{ 'cancel' | i18n }}
-                              <span nz-icon nzType="down"></span>
-                            </a>
+                            <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+                              {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
                             <nz-dropdown-menu #menu="nzDropdownMenu">
-                              <ul nz-menu>
-                                <li nz-menu-item>
+                              <ul nz-menu>                
+                                <li nz-menu-item *ngIf="pick.status == pickStatuses.PENDING">
+                                  <a (click)="releasePick(wave,pick)">
+                                    {{ 'release' | i18n }}</a> 
+                                </li>                    
+                                <li nz-menu-item >
                                   <a (click)="cancelPick(wave, pick, false, false)">
                                     {{ 'cancel-pick' | i18n }}</a> 
                                 </li>
@@ -197,13 +213,13 @@
                                 <li nz-menu-item>
                                   <a (click)="cancelPick(wave, pick, true, true)">
                                     {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
-                                </li> 
+                                </li>
                               </ul>
-                            </nz-dropdown-menu>
+                            </nz-dropdown-menu>  
                           </nz-list-item>
                           <nz-list-item>
                             {{ 'assign-user' | i18n }}: 
-                            <app-auth-user-query-popup (recordSelected)="assignUser(pick, $event)"></app-auth-user-query-popup>
+                            <app-auth-user-query-popup (recordSelected)="assignUser(wave, pick, $event)"></app-auth-user-query-popup>
                           </nz-list-item>
                         </nz-list>
                         <!--

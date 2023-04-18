@@ -1,6 +1,7 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, User, _HttpClient } from '@delon/theme';
@@ -71,7 +72,8 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     private fb: UntypedFormBuilder, 
     private roleService: RoleService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private modalService: NzModalService,  ) { 
+    private modalService: NzModalService, 
+    private activatedRoute: ActivatedRoute,  ) { 
     userService.isCurrentPageDisplayOnly("/work-task/work-task").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
     );
@@ -92,6 +94,13 @@ export class WorkTaskWorkTaskComponent implements OnInit {
       sourceLocationName: [null],
       assignedUserName: [null],
       assignedRoleName: [null], 
+    });
+    
+    this.activatedRoute.queryParams.subscribe(params => {
+      if (params.number ) {
+        this.searchForm.controls.number.setValue(params.number); 
+        this.search();
+      }
     });
 
     this.roleService.getRoles(undefined, true).subscribe({

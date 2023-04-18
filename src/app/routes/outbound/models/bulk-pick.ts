@@ -2,6 +2,7 @@ import { User } from '../../auth/models/user';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { Item } from '../../inventory/models/item';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { WorkTask } from '../../work-task/models/work-task';
 import { PickStatus } from './pick-status.enum';
 import { PickType } from './pick-type.enum';
 import { PickWork } from './pick-work';
@@ -45,4 +46,7 @@ export interface BulkPick {
     pickingByUser?: User;
     assignedToUserId?: number;
     assignedToUser?: User;
+
+    workTaskId?: number; 
+    workTask?: WorkTask;
 }

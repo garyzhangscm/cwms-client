@@ -1,6 +1,7 @@
 import { User } from '../../auth/models/user';
 import { Item } from '../../inventory/models/item';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { WorkTask } from '../../work-task/models/work-task';
 import { PickGroupType } from './pick-group-type.enum';
 import { PickStatus } from './pick-status.enum';
 import { PickType } from './pick-type.enum';
@@ -45,4 +46,6 @@ export interface PickWork {
   assignedToUserId?: number;
   assignedToUser?: User;
 
+  workTaskId?: number;
+  workTask?: WorkTask;
 }

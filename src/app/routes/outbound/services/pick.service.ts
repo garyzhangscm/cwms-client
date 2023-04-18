@@ -623,8 +623,8 @@ export class PickService {
       );
       let bulkPicks: BulkPick[] = responseData.data;
       
-      console.log("=======   Bulk picks  =========");
-      console.log(`${JSON.stringify(bulkPicks)}`);
+      // console.log("=======   Bulk picks  =========");
+      // console.log(`${JSON.stringify(bulkPicks)}`);
       
       pickResult = [...pickResult, 
         ...bulkPicks.map(bulkPick => this.setupPicksFromBulkPick(bulkPick))];
@@ -646,6 +646,24 @@ export class PickService {
     return pickResult;
 
 
+  }
+  
+  releasePick(pickId: number): Observable<BulkPick> {
+    const url = `outbound/picks/${pickId}/release`;
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);  
+
+    return this.http.post(url, undefined, params).pipe(map(res => res.data));
+  }
+  assignUser(pickId: number, userId: number): Observable<BulkPick> {
+    const url = `outbound/picks/${pickId}/assign-user`;
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id); 
+    params = params.append(`userId`, userId); 
+
+    return this.http.post(url, undefined, params).pipe(map(res => res.data));
   }
 
   setupPicksFromBulkPick(bulkPick: BulkPick) : PickWork {
@@ -671,6 +689,9 @@ export class PickService {
         status: bulkPick.status, 
         picks: bulkPick.picks,
         pickGroupType: PickGroupType.BULK_PICK,
+        
+        workTaskId: bulkPick.workTaskId,
+        workTask: bulkPick.workTask,
     }
   }
 }

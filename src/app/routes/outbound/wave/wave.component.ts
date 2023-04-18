@@ -1,9 +1,8 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { I18NService } from '@core';
-import { STComponent, STColumn } from '@delon/abc/st';
+import { I18NService } from '@core'; 
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
@@ -14,6 +13,7 @@ import { InventoryService } from '../../inventory/services/inventory.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service'; 
 import { PickGroupType } from '../models/pick-group-type.enum';
+import { PickStatus } from '../models/pick-status.enum';
 import { PickWork } from '../models/pick-work'; 
 import { ShipmentLine } from '../models/shipment-line';
 import { ShortAllocation } from '../models/short-allocation';
@@ -150,6 +150,7 @@ export class OutboundWaveComponent implements OnInit {
   expandSet = new Set<number>();
 
   pickTableExpandSet = new Set<number>();
+  pickStatuses = PickStatus;
   
   displayOnly = false;
   constructor(
@@ -304,13 +305,35 @@ export class OutboundWaveComponent implements OnInit {
         // 2. bulk pick
         // 3. list pick
         this.pickService.setupPicksForDisplay(pickRes).then(
-          pickWorks => this.mapOfPicks[wave.id!] = pickWorks
+          pickWorks => { 
+            this.mapOfPicks[wave.id!] = pickWorks;
+
+            // setup the work task related information
+            // this.setupWorkTaskInformationForPicks(this.mapOfPicks[wave.id!]);
+          }
         );
 
 
       }
     });
   }
+
+  setupWorkTaskInformationForPicks(picks: PickWork[] ) {
+
+    picks.forEach(
+      pick => this.setupWorkTaskInformationForPick(pick)
+    )
+  }
+  setupWorkTaskInformationForPick(pick: PickWork) {
+    if (pick.pickGroupType == PickGroupType.BULK_PICK) {
+      console.log(`start to setup work task for bulk pick`); 
+    }
+    else if (pick.pickGroupType == null) {
+      
+    }
+    
+  }
+
   showShortAllocations(wave: Wave): void {
     this.shortAllocationService.getShortAllocationsByWave(wave.id!).subscribe(shortAllocationRes => {
       console.log(`shortAllocationRes.length: ${shortAllocationRes.length}`);
@@ -502,11 +525,32 @@ export class OutboundWaveComponent implements OnInit {
   }
 
   cancelPick(wave: Wave, pick: PickWork, errorLocation: boolean, generateCycleCount: boolean): void {
-    this.pickService.cancelPick(pick, errorLocation, generateCycleCount).subscribe(pickRes => {
-      this.messageService.success(this.i18n.fanyi('message.action.success'));
-      // refresh the picked inventory
-      this.search(wave.id, 1);
-    });
+    
+    this.isSpinning = true;
+    if (pick.pickGroupType == PickGroupType.BULK_PICK) {
+      console.log(`start to assign user to bulk pick`);
+      this.bulkPickService.cancelBulkPick(pick.id, errorLocation, generateCycleCount).subscribe({
+        next: (bulkPick) => {
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          // refresh the picked inventory
+          this.search(wave.id, 1);
+        }, 
+        error: () => this.isSpinning = false
+      })
+    }
+    else if (pick.pickGroupType == null) { 
+      this.pickService.cancelPick(pick, errorLocation, generateCycleCount).subscribe({
+        next: () => {
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          // refresh the picked inventory
+          this.search(wave.id, 1);
+        }, 
+        error: () => this.isSpinning = false
+      })
+    }
+     
   }
   printPickSheets(wave: Wave): void {
     this.mapOfPrintingInProcessId[wave.id!] = true;
@@ -524,17 +568,61 @@ export class OutboundWaveComponent implements OnInit {
     this.router.navigateByUrl(`/outbound/pick/confirm?type=wave&id=${wave.id}`);
   } 
 
-  assignUser(pick: PickWork, userId?: number) {
+  releasePick(wave: Wave, pick: PickWork) {
+    this.isSpinning = true;
+    console.log(`start to release pick \n ${JSON.stringify(pick)}`);
+
+    if (pick.pickGroupType == PickGroupType.BULK_PICK) {
+        this.bulkPickService.releasePick(pick.id).subscribe({
+          next: () => { 
+            this.isSpinning = false;
+            this.messageService.success(this.i18n.fanyi('message.action.success'));
+            // refresh the picked inventory
+            this.search(wave.id, 1); 
+          }, 
+          error: () => this.isSpinning = false
+        })
+    }
+    else if (pick.pickGroupType == null) {
+      this.pickService.releasePick(pick.id).subscribe({
+        next: () => { 
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          // refresh the picked inventory
+          this.search(wave.id, 1); 
+        }, 
+        error: () => this.isSpinning = false
+      })
+  }
+  }
+
+  assignUser(wave: Wave, pick: PickWork, userId?: number) {
+    console.log(`start to assign user with id ${userId}`);
     if (userId == null) {
       console.log(`no user is selected, do nothing`)
     }
     else {
       this.isSpinning = true;
       if (pick.pickGroupType == PickGroupType.BULK_PICK) {
+        console.log(`start to assign user to bulk pick`);
         this.bulkPickService.assignUser(pick.id, userId).subscribe({
           next: (bulkPick) => {
-            pick.assignedToUserId = userId;
             this.isSpinning = false;
+            this.messageService.success(this.i18n.fanyi('message.action.success'));
+            // refresh the picked inventory
+            this.search(wave.id, 1);  
+          }, 
+          error: () => this.isSpinning = false
+        })
+      }
+      else if (pick.pickGroupType == null) {
+        console.log(`start to assign user to pick`);
+        this.pickService.assignUser(pick.id, userId).subscribe({
+          next: () => {
+            this.isSpinning = false;
+            this.messageService.success(this.i18n.fanyi('message.action.success'));
+            // refresh the picked inventory
+            this.search(wave.id, 1);  
           }, 
           error: () => this.isSpinning = false
         })

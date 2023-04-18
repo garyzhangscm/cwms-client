@@ -176,8 +176,8 @@ export class BulkPickService {
   }
 
    
-  cancelBulkPick(bulkPick: BulkPick, errorLocation: boolean, generateCycleCount: boolean): Observable<BulkPick> {
-    const url = `outbound/bulk-picks/${bulkPick.id}`;
+  cancelBulkPick(bulkPickId: number, errorLocation: boolean, generateCycleCount: boolean): Observable<BulkPick> {
+    const url = `outbound/bulk-picks/${bulkPickId}`;
     let params = new HttpParams(); 
 
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id); 
@@ -218,6 +218,14 @@ export class BulkPickService {
 
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id); 
     params = params.append(`userId`, userId); 
+
+    return this.http.post(url, undefined, params).pipe(map(res => res.data));
+  }
+  releasePick(pickId: number): Observable<BulkPick> {
+    const url = `outbound/bulk-picks/${pickId}/release`;
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);  
 
     return this.http.post(url, undefined, params).pipe(map(res => res.data));
   }
