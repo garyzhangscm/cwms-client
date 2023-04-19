@@ -655,6 +655,33 @@ export class OutboundWaveComponent implements OnInit {
     }
   }
 
+  unassignUser(wave: Wave, pick: PickWork) { 
+      this.isSpinning = true;
+      if (pick.pickGroupType == PickGroupType.BULK_PICK) {
+        console.log(`start to unassign user to bulk pick`);
+        this.bulkPickService.unassignUser(pick.id).subscribe({
+          next: (bulkPick) => {
+            this.isSpinning = false;
+            this.messageService.success(this.i18n.fanyi('message.action.success'));
+            // refresh the picked inventory
+            this.search(wave.id, 1);  
+          }, 
+          error: () => this.isSpinning = false
+        })
+      }
+      else if (pick.pickGroupType == null) {
+        console.log(`start to unassign user to pick`);
+        this.pickService.unassignUser(pick.id).subscribe({
+          next: () => {
+            this.isSpinning = false;
+            this.messageService.success(this.i18n.fanyi('message.action.success'));
+            // refresh the picked inventory
+            this.search(wave.id, 1);  
+          }, 
+          error: () => this.isSpinning = false
+        })
+      } 
+  }
   openUserQueryModal(
     wave: Wave,
     pick: PickWork, 

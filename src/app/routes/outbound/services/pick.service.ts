@@ -665,6 +665,14 @@ export class PickService {
 
     return this.http.post(url, undefined, params).pipe(map(res => res.data));
   }
+  unassignUser(pickId: number): Observable<BulkPick> {
+    const url = `outbound/picks/${pickId}/unassign-user`;
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);  
+
+    return this.http.post(url, undefined, params).pipe(map(res => res.data));
+  }
 
   setupPicksFromBulkPick(bulkPick: BulkPick) : PickWork {
     return {

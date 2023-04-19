@@ -214,23 +214,5 @@ export class UserService {
 
     return this.http.get(`resource/users/permission/by-web-page`, params).pipe(map(res => res.data));
   }
-
-  getAssignableUsers(workTaskType: WorkTaskType, 
-    username?: string, firstname?: string, lastname?: string) : Observable<User[]> {
-    let params = new HttpParams();
-    params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
-    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id); 
-    params = params.append('workTaskType', workTaskType); 
-    if (username) {      
-      params = params.append('username', username.trim()); 
-    }
-    if (firstname) {      
-      params = params.append('firstname', firstname.trim()); 
-    }
-    if (lastname) {      
-      params = params.append('lastname', lastname.trim()); 
-    }
-
-    return this.http.get(`resource/users/assignable`, params).pipe(map(res => res.data));
-  }
+   
 }

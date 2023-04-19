@@ -221,6 +221,14 @@ export class BulkPickService {
 
     return this.http.post(url, undefined, params).pipe(map(res => res.data));
   }
+  unassignUser(pickId: number): Observable<BulkPick> {
+    const url = `outbound/bulk-picks/${pickId}/unassign-user`;
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);  
+
+    return this.http.post(url, undefined, params).pipe(map(res => res.data));
+  }
   releasePick(pickId: number): Observable<BulkPick> {
     const url = `outbound/bulk-picks/${pickId}/release`;
     let params = new HttpParams(); 
