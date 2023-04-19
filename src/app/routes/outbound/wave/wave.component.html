@@ -201,7 +201,12 @@
                                 <li nz-menu-item *ngIf="pick.status == pickStatuses.PENDING">
                                   <a (click)="releasePick(wave,pick)">
                                     {{ 'release' | i18n }}</a> 
-                                </li>                    
+                                </li>        
+                                <li nz-menu-item >
+                                  <a (click)="openUserQueryModal(wave, pick, tplAssignUserModalTitle, 
+                                      tplAssignUserModalContent, tplAssignUserModalFooter)">
+                                    {{ 'assign-user' | i18n }}</a> 
+                                </li>                   
                                 <li nz-menu-item >
                                   <a (click)="cancelPick(wave, pick, false, false)">
                                     {{ 'cancel-pick' | i18n }}</a> 
@@ -217,10 +222,14 @@
                               </ul>
                             </nz-dropdown-menu>  
                           </nz-list-item>
+                          <!--
+
+
                           <nz-list-item>
                             {{ 'assign-user' | i18n }}: 
                             <app-auth-user-query-popup (recordSelected)="assignUser(wave, pick, $event)"></app-auth-user-query-popup>
                           </nz-list-item>
+                          -->
                         </nz-list>
                         <!--
 
@@ -560,4 +569,71 @@
   </form>
 </ng-template>
 
- 
+<!-- modal for assign user -->
+<ng-template #tplAssignUserModalTitle>
+  <span>{{ 'user.assigned' | i18n}}</span>
+</ng-template>
+<ng-template #tplAssignUserModalContent>
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchUserForm" class="ant-advanced-search-form">
+    <div nz-row [nzGutter]="24"> 
+      <div nz-col [nzSpan]="8">
+
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="username">
+            {{ 'username' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <input nz-input name="username" id="username" formControlName="username">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="firstname">
+            {{ 'firstname' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <input nz-input name="firstname" id="firstname" formControlName="firstname">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="lastname">
+            {{ 'lastname' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <input nz-input name="lastname" id="lastname" formControlName="lastname">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="searchUser()" [nzLoading]="searching">
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Table to Display the result  -->
+  <div class="search-result-list">
+    
+    <st #userTable [data]="listOfAllAssignableUsers" [columns]="userTablecolumns" 
+      (change)="change($event)" [ps]="5">
+    </st>  
+  </div>
+</ng-template>
+
+<ng-template #tplAssignUserModalFooter>
+  <button nz-button nzType="default" (click)="closeUserQueryModal()">{{ 'cancel' | i18n}}</button>
+  <button nz-button nzType="primary" (click)="returnUserResult()" [disabled]="isAnyUserRecordChecked() == false">{{ 'confirm' |
+    i18n}}</button>
+
+</ng-template>

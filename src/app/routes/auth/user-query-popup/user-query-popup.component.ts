@@ -97,8 +97,10 @@ export class AuthUserQueryPopupComponent implements OnInit {
     tplQueryModalContent: TemplateRef<{}>,
     tplQueryModalFooter: TemplateRef<{}>,
   ): void {
-
+ 
     this.listOfAllUsers = []; 
+
+    this.selectedUserId = undefined;
 
     this.createQueryForm();
 

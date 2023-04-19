@@ -1,9 +1,10 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core'; 
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { STChange, STColumn, STComponent } from '@delon/abc/st';
+import { ALAIN_I18N_TOKEN, TitleService, User, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
@@ -151,6 +152,8 @@ export class OutboundWaveComponent implements OnInit {
 
   pickTableExpandSet = new Set<number>();
   pickStatuses = PickStatus;
+  currentWave?: Wave;
+  currentPick?: PickWork;
   
   displayOnly = false;
   constructor(
@@ -203,7 +206,29 @@ export class OutboundWaveComponent implements OnInit {
   shortAllocationStatus = ShortAllocationStatus;
 
   unpickModal!: NzModalRef;
+
+  selectedUserId?: number;
+
+  @ViewChild('userTable', { static: false }) 
+  private userTable!: STComponent;
+
+  userTablecolumns: STColumn[] = [
+    { title: '', index: 'id', type: 'radio', width: 70 },
+    { title: this.i18n.fanyi('username'),  index: 'username' }, 
+    { title: this.i18n.fanyi('firstname'),  index: 'firstname' }, 
+    { title: this.i18n.fanyi('lastname'),  index: 'lastname' }, 
+  ];
+ 
+  // Form related data and functions
+  queryUserModal!: NzModalRef;
+  searchUserForm!: UntypedFormGroup;
+  
+  
+  listOfAllAssignableUsers: User[] = []; 
+
+
   isSpinning = false;
+  
 
   resetForm(): void {
     this.searchForm.reset();
@@ -628,5 +653,107 @@ export class OutboundWaveComponent implements OnInit {
         })
       }
     }
+  }
+
+  openUserQueryModal(
+    wave: Wave,
+    pick: PickWork, 
+    tplAssignUserModalTitle: TemplateRef<{}>,
+    tplAssignUserModalContent: TemplateRef<{}>,
+    tplAssignUserModalFooter: TemplateRef<{}>,
+  ): void {
+ 
+    this.currentWave = wave;
+    this.currentPick = pick;
+
+    this.listOfAllAssignableUsers = []; 
+
+    this.selectedUserId = undefined;
+
+    this.createQueryForm();
+
+    // show the model
+    this.queryUserModal = this.modalService.create({
+      nzTitle: tplAssignUserModalTitle,
+      nzContent: tplAssignUserModalContent,
+      nzFooter: tplAssignUserModalFooter,
+
+      nzWidth: 1000,
+    });
+
+  }
+  
+  searchUser(): void {
+    this.searching = true;
+    this.selectedUserId = undefined;
+    if (this.currentPick?.workTaskId == null) {
+      // if we can't get the current work task 
+      // return an empty user result set
+      this.listOfAllAssignableUsers = [];
+      return;
+    }
+    this.userService
+      .getUsers( 
+        this.searchForm.value.username, 
+        undefined,
+        undefined,
+        this.searchForm.value.firstname,
+        this.searchForm.value.lastname,
+        this.currentPick.workTaskId
+      )
+      .subscribe({
+        next: (userRes) => {
+
+          this.listOfAllAssignableUsers = userRes; 
+
+          this.searching = false;
+          this.searchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: userRes.length,
+          });
+        }, 
+        error: () => {
+          this.searching = false;
+          this.searchResult = '';
+        },
+      });
+  } 
+
+ 
+  createQueryForm(): void {
+    // initiate the search form
+    this.searchUserForm = this.fb.group({ 
+      username: [null], 
+      firstname: [null], 
+      lastname: [null],
+    });
+ 
+  }
+  closeUserQueryModal(): void {
+    this.queryUserModal.destroy();
+  }
+  returnUserResult(): void {
+    // get the selected record
+    if (this.isAnyUserRecordChecked()) {
+      this.assignUser(this.currentWave!, this.currentPick!, this.selectedUserId);
+    } else {
+      console.log(`no user is selected, do nothing`)
+    }
+    this.queryUserModal.destroy();
+
+  } 
+
+  change(ret: STChange): void {
+    console.log('change', ret);
+    if (ret.type == 'radio') {
+      this.selectedUserId = undefined;
+      if (ret.radio != null && ret.radio!.id != null) {
+        console.log(`chosen user ${ret.radio!.id} / ${ret.radio!.username}`);
+        this.selectedUserId = ret.radio!.id;
+      }
+    }
+  }
+  isAnyUserRecordChecked() {
+    return  this.selectedUserId != undefined;;
   }
 }

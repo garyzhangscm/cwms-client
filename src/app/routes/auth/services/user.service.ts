@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { WorkTaskType } from '../../work-task/models/work-task-type.enum';
 import { User } from '../models/user';
 import { UserPermission } from '../models/user-permission';
 
@@ -212,5 +213,24 @@ export class UserService {
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id); 
 
     return this.http.get(`resource/users/permission/by-web-page`, params).pipe(map(res => res.data));
+  }
+
+  getAssignableUsers(workTaskType: WorkTaskType, 
+    username?: string, firstname?: string, lastname?: string) : Observable<User[]> {
+    let params = new HttpParams();
+    params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id); 
+    params = params.append('workTaskType', workTaskType); 
+    if (username) {      
+      params = params.append('username', username.trim()); 
+    }
+    if (firstname) {      
+      params = params.append('firstname', firstname.trim()); 
+    }
+    if (lastname) {      
+      params = params.append('lastname', lastname.trim()); 
+    }
+
+    return this.http.get(`resource/users/assignable`, params).pipe(map(res => res.data));
   }
 }
