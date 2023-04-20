@@ -18,6 +18,7 @@ export interface WorkTask {
     type: WorkTaskType;
     status: WorkTaskStatus;
 
+    priority: number;
 
     sourceLocationId: number;
     sourceLocation: WarehouseLocation;

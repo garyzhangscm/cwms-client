@@ -84,4 +84,17 @@ export class WorkTaskService {
       .pipe(map(res => res.data));
 
   }
+  
+  releaseWorkTask(id: number): Observable<WorkTask> { 
+  
+    const url = `resource/work-tasks/${id}/release`;
+      
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+
+    return this.http
+      .post(url, null, params)
+      .pipe(map(res => res.data));
+
+  }
 }

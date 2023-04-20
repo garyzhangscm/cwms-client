@@ -209,7 +209,7 @@
                                 </li>               
                                 <li nz-menu-item *ngIf="pick.workTask?.assignedUser != null">
                                   <a (click)="unassignUser(wave, pick)">
-                                    {{ 'unassign-user' | i18n }}</a> 
+                                    {{ 'deassign-user' | i18n }}</a> 
                                 </li>        
                                 <li nz-menu-item >
                                   <a (click)="cancelPick(wave, pick, false, false)">

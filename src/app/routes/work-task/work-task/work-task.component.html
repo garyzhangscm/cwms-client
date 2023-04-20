@@ -88,6 +88,12 @@
                               tplAssignRoleModalContent, tplAssignRoleModalFooter )">
                       {{ 'assign-role' | i18n }}</a> 
                   </li>  
+                  
+                  <li nz-menu-item 
+                  *ngIf="workTask.status == workTaskStatus.PENDING && (!userPermissionMap.has('release') || userPermissionMap.get('release'))">
+                    <a (click)="releaseWorkTask(workTask )">
+                      {{ 'release' | i18n }}</a> 
+                  </li>  
                   <!--
 
                   <li nz-menu-item 

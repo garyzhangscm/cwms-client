@@ -39,6 +39,7 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     { title: this.i18n.fanyi("number"), index: 'number', width: 150},
     { title: this.i18n.fanyi("type"), index: 'type', width: 150},
     { title: this.i18n.fanyi("status"), index: 'status', width: 100},
+    { title: this.i18n.fanyi("priority"), index: 'priority', width: 100},
     { title: this.i18n.fanyi("sourceLocation"), index: 'sourceLocation.name', width: 150},
     { title: this.i18n.fanyi("destinationLocation"), index: 'destinationLocation.name', width: 150},
     { title: this.i18n.fanyi("referenceNumber"), index: 'referenceNumber', width: 150},
@@ -272,131 +273,143 @@ export class WorkTaskWorkTaskComponent implements OnInit {
         this.search();
       }, 
       error: () => this.queryUserInProcess = false
+    });
+
+  }
+  //  ===============  Assign Role Modal  ================
+  @ViewChild('roleTable', { static: false }) 
+  private roleTable!: STComponent;
+
+  roleTablecolumns: STColumn[] = [
+    { title: '', index: 'id', type: 'radio', width: 70 },
+    { title: this.i18n.fanyi('name'),  index: 'name' }, 
+    { title: this.i18n.fanyi('description'),  index: 'description' },  
+  ];
+
+  // Form related data and functions
+  queryRoleModal!: NzModalRef;
+  searchRoleForm!: UntypedFormGroup;
+
+  queryRoleInProcess = false;
+  searchRoleResult = '';
+
+  selectedRoleId?: number;
+  // Table data for display
+  listOfAssignableRoles: Role[] = [];   
+
+  resetRoleForm(): void {
+    this.searchRoleForm.reset();
+    this.listOfAssignableRoles = []; 
+    this.selectedRoleId = undefined;
+  }
+
+  searchRole(): void {
+    this.queryRoleInProcess = true;
+    this.searchRoleResult = '';
+    this.selectedRoleId = undefined;
+    this.roleService
+      .getRoles(
+        this.searchRoleForm.value.rolename, 
+        true,
+        this.currentAssigningWorkTasks!.id
+      )
+      .subscribe({
+        next: (roleRes) => {
+
+          this.listOfAssignableRoles = roleRes; 
+
+          this.queryRoleInProcess = false;
+          this.searchRoleResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: roleRes.length,
+          });
+        }, 
+        error: () => {
+          this.queryRoleInProcess = false;
+          this.searchRoleResult = '';
+        },
+      });
+  } 
+
+  openAssignRoleModal(
+    workTask: WorkTask,
+    tplAssignRoleModalTitle: TemplateRef<{}>,
+    tplAssignRoleModalContent: TemplateRef<{}>,
+    tplAssignRoleModalFooter: TemplateRef<{}>,
+  ): void {
+
+    this.listOfAssignableRoles = []; 
+    this.currentAssigningWorkTasks = workTask;
+    this.queryRoleInProcess = false;
+
+    this.createRoleQueryForm();
+
+    // show the model
+    this.queryRoleModal = this.modalService.create({
+      nzTitle: tplAssignRoleModalTitle,
+      nzContent: tplAssignRoleModalContent,
+      nzFooter: tplAssignRoleModalFooter,
+
+      nzWidth: 1000,
+    });
+
+  }
+
+  createRoleQueryForm(): void {
+    // initiate the search form
+    this.searchRoleForm = this.fb.group({ 
+      rolename: [null],  
+    });
+
+  }
+  closeRoleQueryModal(): void {
+    this.queryRoleModal.destroy();
+  } 
+  roleTableChanged(ret: STChange): void { 
+    if (ret.type == 'radio') {
+      this.selectedRoleId = undefined;
+      if (ret.radio != null && ret.radio!.id != null) { 
+        this.selectedRoleId = ret.radio!.id;
+      }
+    }
+  }
+  isRoleRecordChecked() {
+    return  this.selectedRoleId != undefined;
+  }
+  assignRole() {
+    if (this.currentAssigningWorkTasks == null) {      
+      this.messageService.error("Fail to load the work task to be assigned, please try again");
+      this.queryRoleInProcess = false;
+      this.queryRoleModal.destroy();
+      return;
+    }
+    this.queryRoleInProcess = true;
+    if (this.selectedRoleId == undefined) {
+      this.messageService.error("please select a role to continue");
+      this.queryRoleInProcess = false;
+      return;
+    }
+    this.workTaskService.assignRole(this.currentAssigningWorkTasks.id, this.selectedRoleId).subscribe({
+      next: (workTaskRes) => {
+        this.queryRoleInProcess = false;
+        this.queryRoleModal.destroy();
+        this.searchForm.controls.number.setValue(workTaskRes.number);
+        this.search();
+      }, 
+      error: () => this.queryRoleInProcess = false
     })
 
   }
-//  ===============  Assign Role Modal  ================
-@ViewChild('roleTable', { static: false }) 
-private roleTable!: STComponent;
 
-roleTablecolumns: STColumn[] = [
-  { title: '', index: 'id', type: 'radio', width: 70 },
-  { title: this.i18n.fanyi('name'),  index: 'name' }, 
-  { title: this.i18n.fanyi('description'),  index: 'description' },  
-];
+  releaseWorkTask(workTask: WorkTask) {
 
-// Form related data and functions
-queryRoleModal!: NzModalRef;
-searchRoleForm!: UntypedFormGroup;
-
-queryRoleInProcess = false;
-searchRoleResult = '';
-
-selectedRoleId?: number;
-// Table data for display
-listOfAssignableRoles: Role[] = [];   
-
-resetRoleForm(): void {
-  this.searchRoleForm.reset();
-  this.listOfAssignableRoles = []; 
-  this.selectedRoleId = undefined;
-}
-
-searchRole(): void {
-  this.queryRoleInProcess = true;
-  this.searchRoleResult = '';
-  this.selectedRoleId = undefined;
-  this.roleService
-    .getRoles(
-      this.searchRoleForm.value.rolename, 
-      true,
-      this.currentAssigningWorkTasks!.id
-    )
-    .subscribe({
-      next: (roleRes) => {
-
-        this.listOfAssignableRoles = roleRes; 
-
-        this.queryRoleInProcess = false;
-        this.searchRoleResult = this.i18n.fanyi('search_result_analysis', {
-          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
-          rowCount: roleRes.length,
-        });
+    this.isSpinning = true;
+    this.workTaskService.releaseWorkTask(workTask.id).subscribe({
+      next: (workTaskRes) => {
+        this.isSpinning = false;
+        this.search();
       }, 
-      error: () => {
-        this.queryRoleInProcess = false;
-        this.searchRoleResult = '';
-      },
+      error: () => this.isSpinning = false
     });
-} 
-
-openAssignRoleModal(
-  workTask: WorkTask,
-  tplAssignRoleModalTitle: TemplateRef<{}>,
-  tplAssignRoleModalContent: TemplateRef<{}>,
-  tplAssignRoleModalFooter: TemplateRef<{}>,
-): void {
-
-  this.listOfAssignableRoles = []; 
-  this.currentAssigningWorkTasks = workTask;
-  this.queryRoleInProcess = false;
-
-  this.createRoleQueryForm();
-
-  // show the model
-  this.queryRoleModal = this.modalService.create({
-    nzTitle: tplAssignRoleModalTitle,
-    nzContent: tplAssignRoleModalContent,
-    nzFooter: tplAssignRoleModalFooter,
-
-    nzWidth: 1000,
-  });
-
-}
-
-createRoleQueryForm(): void {
-  // initiate the search form
-  this.searchRoleForm = this.fb.group({ 
-    rolename: [null],  
-  });
-
-}
-closeRoleQueryModal(): void {
-  this.queryRoleModal.destroy();
-} 
-roleTableChanged(ret: STChange): void { 
-  if (ret.type == 'radio') {
-    this.selectedRoleId = undefined;
-    if (ret.radio != null && ret.radio!.id != null) { 
-      this.selectedRoleId = ret.radio!.id;
-    }
   }
-}
-isRoleRecordChecked() {
-  return  this.selectedRoleId != undefined;
-}
-assignRole() {
-  if (this.currentAssigningWorkTasks == null) {      
-    this.messageService.error("Fail to load the work task to be assigned, please try again");
-    this.queryRoleInProcess = false;
-    this.queryRoleModal.destroy();
-    return;
-  }
-  this.queryRoleInProcess = true;
-  if (this.selectedRoleId == undefined) {
-    this.messageService.error("please select a role to continue");
-    this.queryRoleInProcess = false;
-    return;
-  }
-  this.workTaskService.assignRole(this.currentAssigningWorkTasks.id, this.selectedRoleId).subscribe({
-    next: (workTaskRes) => {
-      this.queryRoleInProcess = false;
-      this.queryRoleModal.destroy();
-      this.searchForm.controls.number.setValue(workTaskRes.number);
-      this.search();
-    }, 
-    error: () => this.queryRoleInProcess = false
-  })
-
-}
 }
