@@ -13,6 +13,7 @@ import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service'; 
+import { WorkTaskService } from '../../work-task/services/work-task.service';
 import { PickGroupType } from '../models/pick-group-type.enum';
 import { PickStatus } from '../models/pick-status.enum';
 import { PickWork } from '../models/pick-work'; 
@@ -172,6 +173,7 @@ export class OutboundWaveComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private utilService: UtilService,
     private bulkPickService: BulkPickService,
+    private workTaskService: WorkTaskService,
   ) { 
     userService.isCurrentPageDisplayOnly("/outbound/wave").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
@@ -653,6 +655,19 @@ export class OutboundWaveComponent implements OnInit {
         })
       }
     }
+  }
+
+  unacknowledgeWorkTask(wave: Wave, workTaskId: number) {  
+      this.isSpinning = true; 
+      this.workTaskService.unacknowledgeWorkTask(workTaskId, false).subscribe({
+        next: () => {
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          // refresh the picked inventory
+          this.search(wave.id, 1);  
+        }, 
+        error: () => this.isSpinning = false
+      }) ;
   }
 
   unassignUser(wave: Wave, pick: PickWork) { 

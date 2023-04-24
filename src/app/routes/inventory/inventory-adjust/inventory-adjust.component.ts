@@ -354,10 +354,14 @@ export class InventoryInventoryAdjustComponent implements OnInit {
           if (expand) {
             // expand all the result
             this.listOfDisplayLocations.forEach(location => {
-              this.expandSet.add(location.id!);
-              this.showInventoryDetails(location);
+              this.expandSet.add(location.id!); 
             });
           }
+          this.listOfDisplayLocations.forEach(location => {
+            if(this.expandSet.has(location.id!)) {
+              this.showInventoryDetails(location);
+            }
+          });
 
 
           this.isSpinning = false;

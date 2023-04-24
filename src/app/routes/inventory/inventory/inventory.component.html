@@ -158,84 +158,83 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let data of rowSelectionTable.data">
+        <tr *ngFor="let inventory of rowSelectionTable.data">
 
-          <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)"></td>
-          <td>{{ data.lpn }}</td>
-          <td *ngIf="threePartyLogisticsFlag">{{ data.client?.name }}</td>
-          <td>
-            <a nz-tooltip nzTooltipTitle="{{ data.item?.description }}">{{ data.item?.name }}</a>
-          </td>
+          <td [nzChecked]="setOfCheckedId.has(inventory.id!)" (nzCheckedChange)="onItemChecked(inventory.id!, $event)"></td>
+          <td *ngIf="threePartyLogisticsFlag">{{ inventory.client?.name }}</td>
+          <td>{{ inventory.lpn }}</td>
+          <td><a nz-tooltip nzTooltipTitle="{{ inventory.item?.description }}">{{ inventory.item?.name }}</a></td>
           <td>
             <a nz-popover nzPopoverTitle="{{ 'itemPackageTypeDetails' | i18n}}"
-              [nzPopoverContent]="itemPackageTypeDetails">{{ data.itemPackageType?.name }}</a>
+              [nzPopoverContent]="itemPackageTypeDetails">{{ inventory.itemPackageType?.name }}</a>
           </td>
           <td>
             <nz-skeleton-element 
-              *ngIf="data.locationId && data.location == null"
+              *ngIf="inventory.locationId && inventory.location == null"
               nzType="input"
               [nzActive]="true"
               [nzSize]="'small'"
               style="width:75px"
             ></nz-skeleton-element> 
-            {{ data.location?.name }}</td>
+            {{ inventory.location?.name }}
+          </td> 
           <td> 
-              {{ data.displayQuantity }}  
+              {{ inventory.displayQuantity }}  
               <nz-skeleton-element 
-              *ngIf="data.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasureId 
-                  && data.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure == null"
+              *ngIf="inventory.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasureId 
+                  && inventory.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure == null"
               nzType="input"
               [nzActive]="true"
               [nzSize]="'small'"
               style="width:75px"
             ></nz-skeleton-element>  
               <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList">
-                {{data.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure?.name}}<span nz-icon nzType="down"></span>
+                {{inventory.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure?.name}}<span nz-icon nzType="down"></span>
               </a>
               <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
                 <ul nz-menu nzSelectable>
-                  <li nz-menu-item *ngFor="let itemUnitOfMeasure of data.itemPackageType?.itemUnitOfMeasures" 
-                  (click)="changeDisplayItemUnitOfMeasure(data, itemUnitOfMeasure)">
+                  <li nz-menu-item *ngFor="let itemUnitOfMeasure of inventory.itemPackageType?.itemUnitOfMeasures" 
+                  (click)="changeDisplayItemUnitOfMeasure(inventory, itemUnitOfMeasure)">
                     {{ itemUnitOfMeasure.unitOfMeasure?.name }}
                   </li> 
                 </ul>
               </nz-dropdown-menu> 
           </td>
           <td>
-            <a nz-tooltip [nzTooltipTitle]="data.inventoryStatus!.description">{{
-              data.inventoryStatus!.description}}</a>
+            <a nz-tooltip [nzTooltipTitle]="inventory.inventoryStatus!.description">{{
+              inventory.inventoryStatus!.description}}</a>
           </td>
 
-          <td>{{ data.color }}</td>
-          <td>{{ data.productSize }}</td>
-          <td>{{ data.style }}</td>
+          <td>{{ inventory.color }}</td>
+          <td>{{ inventory.productSize }}</td>
+          <td>{{ inventory.style }}</td>
           <td>
-            <span *ngIf="data.lockedForAdjust === false">{{ (data.lockedForAdjust + '') | i18n }}</span>
-            <span *ngIf="data.lockedForAdjust === true"><a routerLink="/inventory/inventory-adjustment-request"
-                routerLinkActive="active" [queryParams]="{inventoryId : data.id!}">{{ (data.lockedForAdjust + '') | i18n
+            <span *ngIf="inventory.lockedForAdjust === false">{{ (inventory.lockedForAdjust + '') | i18n }}</span>
+            <span *ngIf="inventory.lockedForAdjust === true"><a routerLink="/inventory/inventory-adjustment-request"
+                routerLinkActive="active" [queryParams]="{inventoryId : inventory.id!}">{{ (inventory.lockedForAdjust + '') | i18n
                 }}</a></span>
           </td>
           <td>            
             <nz-skeleton-element 
-              *ngIf="data.pickId && data.pick == null"
+              *ngIf="inventory.pickId && inventory.pick == null"
               nzType="input"
               [nzActive]="true"
               [nzSize]="'small'"
               style="width:75px"
             ></nz-skeleton-element> 
-            {{ data.pick?.number }}</td>
+            {{ inventory.pick?.number }}</td>
           <td>
             <nz-skeleton-element 
-              *ngIf="data.allocatedByPickId && data.allocatedByPick == null"
+              *ngIf="inventory.allocatedByPickId && inventory.allocatedByPick == null"
               nzType="input"
               [nzActive]="true"
               [nzSize]="'small'"
               style="width:75px"
             ></nz-skeleton-element> 
-            {{ data.allocatedByPick?.number }}</td>
+            {{ inventory.allocatedByPick?.number }}</td>
           <td>
-            <ol *ngIf="data.inventoryMovements!.length > 0">
-              <li *ngFor="let movement of data.inventoryMovements">
+            <ol *ngIf="inventory.inventoryMovements!.length > 0">
+              <li *ngFor="let movement of inventory.inventoryMovements">
                 
                 <span>
                   <nz-skeleton-element 
@@ -250,45 +249,45 @@
             </ol>
           </td>
           <td nzRight nzWidth="360px"  *ngIf="!displayOnly">
-            <button nz-button nz-dropdown [nzDropdownMenu]="actions" [nzLoading]="mapOfInprocessInventoryId[data.id!]"
-              *ngIf="data.lockedForAdjust === false">{{ 'action' | i18n }}<i nz-icon nzType="down"></i></button>
+            <button nz-button nz-dropdown [nzDropdownMenu]="actions" [nzLoading]="mapOfInprocessInventoryId[inventory.id!]"
+              *ngIf="inventory.lockedForAdjust === false">{{ 'action' | i18n }}<i nz-icon nzType="down"></i></button>
             <nz-dropdown-menu #actions="nzDropdownMenu">
               <ul nz-menu>
                 <li nz-menu-item 
                 *ngIf="!userPermissionMap.has('adjust-inventory-quantity') || userPermissionMap.get('adjust-inventory-quantity')">
                   <a routerLink="/inventory/inventory-quantity-change" routerLinkActive="active"
-                    [queryParams]="{id : data.id!, by : 'inventory'}" >
+                    [queryParams]="{id : inventory.id!, by : 'inventory'}" >
                     {{ 'adjustInventory' | i18n }}</a>
                 </li>
                 <li nz-menu-item
                 *ngIf="!userPermissionMap.has('change-inventory-attribute') || userPermissionMap.get('change-inventory-attribute')">
                   <a routerLink="/inventory/inventory-attribute-change" routerLinkActive="active"
-                    [queryParams]="{id : data.id!}" >
+                    [queryParams]="{id : inventory.id!}" >
                     {{ 'inventory.attributeChange' | i18n }}</a>
                 </li>
                 <li nz-menu-item
                 *ngIf="!userPermissionMap.has('move-inventory') || userPermissionMap.get('move-inventory')">
-                  <a (click)="openMoveInventoryModal(data, tplInventoryMoveModalTitle, tplInventoryMoveModalContent)" >
+                  <a (click)="openMoveInventoryModal(inventory, tplInventoryMoveModalTitle, tplInventoryMoveModalContent)" >
                     {{ 'moveInventory' | i18n }}</a>
                 </li>
                 <li nz-menu-item
                   *ngIf="!userPermissionMap.has('remove-inventory') || userPermissionMap.get('remove-inventory')">
                    <a
-                    (click)="openRemoveInventoryModal(data, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
+                    (click)="openRemoveInventoryModal(inventory, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
                     nzDanger>{{ 'removeInventory' | i18n }}</a></li>
 
               </ul>
             </nz-dropdown-menu>
             <nz-divider nzType="vertical"></nz-divider>
-            <cwms-common-print-button style='padding-left: 20px;' (print)="printLPNReport($event, data)"
-              (preview)="previewLPNReport(data)">
+            <cwms-common-print-button style='padding-left: 20px;' (print)="printLPNReport($event, inventory)"
+              (preview)="previewLPNReport(inventory)">
             </cwms-common-print-button>
 
 
           </td>
           <ng-template #itemPackageTypeDetails>
             <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #itemPackageTypeDetailTable
-              [nzData]="data.itemPackageType!.itemUnitOfMeasures!" nzSize="middle" [nzShowPagination]="false"
+              [nzData]="inventory.itemPackageType!.itemUnitOfMeasures!" nzSize="middle" [nzShowPagination]="false"
               nzBordered>
               <thead>
                 <tr>

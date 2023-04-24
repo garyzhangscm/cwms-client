@@ -97,4 +97,17 @@ export class WorkTaskService {
       .pipe(map(res => res.data));
 
   }
+  unacknowledgeWorkTask(id: number, skip: boolean): Observable<WorkTask> { 
+  
+    const url = `resource/work-tasks/${id}/unacknowledge`;
+      
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+    params = params.append('skip', skip);  
+
+    return this.http
+      .post(url, null, params)
+      .pipe(map(res => res.data));
+
+  }
 }

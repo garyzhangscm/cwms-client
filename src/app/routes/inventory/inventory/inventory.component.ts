@@ -438,6 +438,8 @@ export class InventoryInventoryComponent implements OnInit {
 
     await this.loadLocation(inventory);
 
+    this.loadClients(inventory);
+
     this.loadInventoryMovements(inventory);
 
     // load the Unit of Measure for each item unit of measure of each package type
@@ -506,6 +508,17 @@ export class InventoryInventoryComponent implements OnInit {
     } 
 
   }
+   
+  async loadClients(inventory: Inventory) {
+    if (inventory.clientId && inventory.client == null) {
+      this.loadingDetailsRequest++;
+      inventory.client =  await this.localCacheService.getClient(inventory.clientId!).toPromise().finally(
+        () => this.loadingDetailsRequest--
+      );
+    } 
+
+  }
+
   async loadInventoryMovements(inventory: Inventory) {
  
     // load the location of the inventory movement
