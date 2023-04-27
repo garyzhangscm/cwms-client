@@ -110,6 +110,17 @@ export class InventoryInventoryComponent implements OnInit {
       showFilter: false
     },
     {
+      name: 'fifoDate',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableDateTime(a.fifoDate, b.fifoDate),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
       name: 'color',
       showSort: true,
       sortOrder: null,

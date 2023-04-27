@@ -204,6 +204,12 @@
             <a nz-tooltip [nzTooltipTitle]="inventory.inventoryStatus!.description">{{
               inventory.inventoryStatus!.description}}</a>
           </td>
+          <td>
+             <span *ngIf="inventory.fifoDate != null">
+              {{inventory.fifoDate | date: 'shortDate' : 'UTC'}} 
+              </span>
+          </td>
+
 
           <td>{{ inventory.color }}</td>
           <td>{{ inventory.productSize }}</td>

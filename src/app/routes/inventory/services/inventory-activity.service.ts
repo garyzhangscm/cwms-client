@@ -21,6 +21,7 @@ export class InventoryActivityService {
     private warehouseService: WarehouseService, 
     private utilService: UtilService,
     private dateTimeService: DateTimeService) {}
+    
   getInventoryActivities(
     clients?: Client[],
     itemFamilies?: ItemFamily[],

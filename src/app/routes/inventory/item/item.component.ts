@@ -30,6 +30,7 @@ import { ItemService } from '../services/item.service';
   styleUrls: ['./item.component.less']
 })
 export class InventoryItemComponent implements OnInit {
+  /**  
   listOfColumns: Array<ColumnItem<Item>> = [
     {
       name: 'thumbnail',
@@ -304,8 +305,8 @@ export class InventoryItemComponent implements OnInit {
     },
   ];
   expandSet = new Set<number>();
-
   scrollX = '100vw';
+**/
   isSpinning = false;
 
   // Select control for clients and item families
@@ -536,6 +537,8 @@ export class InventoryItemComponent implements OnInit {
       nzOnCancel: () => console.log('Cancel')
     });
   }
+  /**
+   * 
   onExpandChange(id: number, checked: boolean): void {
     if (checked) {
       this.expandSet.add(id);
@@ -543,6 +546,7 @@ export class InventoryItemComponent implements OnInit {
       this.expandSet.delete(id);
     }
   }
+   */
 
   openImageViewer(item: Item, tplUploadImagesModalTitle: TemplateRef<{}>, tplUploadImagesModalContent: TemplateRef<{}>): void {
     this.uploadingImageItem = item;
@@ -618,15 +622,43 @@ export class InventoryItemComponent implements OnInit {
   @ViewChild('st', { static: true })
   st!: STComponent;
   columns: STColumn[] = [
-    { title: this.i18n.fanyi("thumbnail"), type: 'img',index: 'thumbnailUrl', iif: () => this.isChoose('thumbnail'), },
-    { title: this.i18n.fanyi("name"), index: 'name', iif: () => this.isChoose('name'), },
-    { title: this.i18n.fanyi("description"), index: 'description', iif: () => this.isChoose('description'),   width: 200, },
-    // { title: this.i18n.fanyi("description"),  render: 'descriptionColumn', iif: () => this.isChoose('description'), width: 200, },
-    { title: this.i18n.fanyi("client"), index: 'client.name', iif: () => this.isChoose('client'), },
-    { title: this.i18n.fanyi("item-family"), index: 'itemFamily.name', iif: () => this.isChoose('item-family'), },
-    { title: this.i18n.fanyi("unit-cost"), index: 'unitCost', iif: () => this.isChoose('unit-cost'), },
-    { title: this.i18n.fanyi("abc-category"), index: 'abcCategory.description', iif: () => this.isChoose('abcCategory'), },
-    { title: this.i18n.fanyi("velocity"), index: 'velocity.description', iif: () => this.isChoose('velocity'), },
+    { title: this.i18n.fanyi("thumbnail"), type: 'img',index: 'thumbnailUrl', iif: () => this.isChoose('thumbnail'), 
+    },
+    { title: this.i18n.fanyi("name"), index: 'name', iif: () => this.isChoose('name'), 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.name, b.name),
+      },
+    },
+    { title: this.i18n.fanyi("description"), index: 'description', iif: () => this.isChoose('description'),   width: 200, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.description, b.description),
+      },
+    }, 
+    { title: this.i18n.fanyi("client"), index: 'client.name', iif: () => this.isChoose('client'), 
+      sort: {
+        compare: (a, b) =>  this.utilService.compareNullableString(a.client.name, b.client.name),
+      },
+    },
+    { title: this.i18n.fanyi("item-family"), index: 'itemFamily.name', iif: () => this.isChoose('item-family'), 
+      sort: {
+        compare: (a, b) =>  this.utilService.compareNullableString(a.itemFamily.name, b.itemFamily.name),
+      },
+    },
+    { title: this.i18n.fanyi("unit-cost"), index: 'unitCost', iif: () => this.isChoose('unit-cost'), 
+      sort: {
+        compare: (a, b) =>  this.utilService.compareNullableNumber(a.unitCost, b.unitCost),
+      },
+    },
+    { title: this.i18n.fanyi("abc-category"), index: 'abcCategory.description', iif: () => this.isChoose('abcCategory'),
+      sort: {
+        compare: (a, b) =>  this.utilService.compareNullableString(a.abcCategory.description, b.abcCategory.description),
+      },
+    },
+    { title: this.i18n.fanyi("velocity"), index: 'velocity.description', iif: () => this.isChoose('velocity'), 
+      sort: {
+        compare: (a, b) =>  this.utilService.compareNullableString(a.velocity.description, b.velocity.description),
+      },
+    },
     { title: this.i18n.fanyi("allowAllocationByLPN"), index: 'allowAllocationByLPN', iif: () => this.isChoose('allowAllocationByLPN'), 
          type:"yn"},
     { title: this.i18n.fanyi("allocationRoundUpStrategyType"), index: 'allocationRoundUpStrategyType', iif: () => this.isChoose('allocationRoundUpStrategyType'), },

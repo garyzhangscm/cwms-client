@@ -81,6 +81,7 @@ export class UtilFileUploadComponent implements OnInit {
   fileUploadProgressKey = '';
   fileUploadProgress = 100; 
   fileUploadResults: FileUploadResult[] = [];
+  displayFileUploadResults: FileUploadResult[] = [];
 
   removeExistingInventory = false;
   resultTotal = 0;
@@ -271,6 +272,7 @@ export class UtilFileUploadComponent implements OnInit {
       // the file upload type provide an end point to show the result, let's display the result to the user
       this.showResultModal = true;
       this.fileUploadResults = [];
+      this.displayFileUploadResults = [];
       this.resultTotal = 0;
       this.resultSuccess = 0;
       this.resultFail = 0;
@@ -280,6 +282,7 @@ export class UtilFileUploadComponent implements OnInit {
        
           next: (fileUploadResultRes) => {
             this.fileUploadResults = fileUploadResultRes;
+            this.displayFileUploadResults = fileUploadResultRes;
             this.resultTotal = this.fileUploadResults.length;
             this.resultSuccess = this.fileUploadResults.filter(
               result => result.result == 'success'
@@ -309,4 +312,20 @@ export class UtilFileUploadComponent implements OnInit {
     }
     
   } 
+  showAllResults() {
+    
+    this.displayFileUploadResults = this.fileUploadResults;
+  }
+  showSuccessResults() {
+    
+    this.displayFileUploadResults = this.fileUploadResults.filter(
+      result => result.result == 'success'
+    );
+  }
+  showFailResults() {
+    
+    this.displayFileUploadResults = this.fileUploadResults.filter(
+      result => result.result != 'success'
+    );
+  }
 }

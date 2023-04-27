@@ -1,14 +1,17 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN,  TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+
 
 import { Client } from '../../common/models/client';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { Role } from '../models/role';
+import { RoleMenu } from '../models/role-menu';
 import { User } from '../models/user';
+import { MenuService } from '../services/menu.service';
 import { RoleService } from '../services/role.service';
 
 interface MenuTreeNode {
@@ -17,6 +20,7 @@ interface MenuTreeNode {
   expanded?: boolean;
   children?: MenuTreeNode[];
   isLeaf?: boolean;
+  displayOnly?: boolean;
 }
 
 @Component({
@@ -229,6 +233,7 @@ export class AuthRoleMaintenanceConfirmComponent implements OnInit {
     private router: Router,
     private messageService: NzMessageService,
     private utilService: UtilService,
+    private menuService: MenuService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.role.confirm.title');
   }
@@ -240,34 +245,59 @@ export class AuthRoleMaintenanceConfirmComponent implements OnInit {
   }
 
   initMenuTree(): void {
-    this.menuTree = [];
-    this.currentRole!.menuGroups.forEach(menuGroup => {
-      const menuGroupTreeNode: MenuTreeNode = {
-        title: this.i18n.fanyi(menuGroup.i18n),
-        key: menuGroup.id.toString(),
-        expanded: true,
-        children: [],
-      };
-      // add child to it
-      menuGroup.children.forEach(menuSubGroup => {
-        const menuSubGroupTreeNode: MenuTreeNode = {
-          title: this.i18n.fanyi(menuSubGroup.i18n),
-          key: menuSubGroup.id.toString(),
-          expanded: true,
-          children: [],
-        };
-        // add child to it
-        menuSubGroup.children.forEach(menu => {
-          const menuTreeNode: MenuTreeNode = {
-            title: this.i18n.fanyi(menu.i18n),
-            key: menu.id.toString(),
-            isLeaf: true,
+    
+    // Get all menus and accessible menus by role
+    this.menuService.getMenus().subscribe({
+      next: (menuRes) => {
+        this.menuTree = [];
+        menuRes.forEach(menuGroup => {
+          const menuGroupTreeNode: MenuTreeNode = {
+            title: this.i18n.fanyi(menuGroup.i18n),
+            key: menuGroup.id.toString(),
+            expanded: true,
+            children: [],
           };
-          menuSubGroupTreeNode.children!.push(menuTreeNode);
+          // add child to it
+          menuGroup.children.forEach(menuSubGroup => {
+            const menuSubGroupTreeNode: MenuTreeNode = {
+              title: this.i18n.fanyi(menuSubGroup.i18n),
+              key: menuSubGroup.id.toString(),
+              expanded: true,
+              children: [],
+            };
+            // add child to it
+            menuSubGroup.children.forEach(menu => {
+              let roleMenu : RoleMenu | undefined
+                  = this.currentRole.roleMenus.find(roleMenu =>  roleMenu.menu.id === menu.id);
+              if (roleMenu != null) {
+                // ok, the current menu is assigned to current role,
+                // let's display it as a leaf node
+
+                const menuTreeNode: MenuTreeNode  = {
+                  title: this.i18n.fanyi(menu.i18n),
+                  key: menu.id.toString(),
+                  isLeaf: true,
+                  displayOnly: roleMenu.displayOnlyFlag
+                };
+                // add the leaf to the node of menu subgruop node
+                menuSubGroupTreeNode.children!.push(menuTreeNode); 
+              }
+            });
+
+            if (menuSubGroupTreeNode.children!.length > 0) {
+              // ok, the use has access to some menu under this sub group
+              // let's add the sub group to the menu group
+              menuGroupTreeNode.children!.push(menuSubGroupTreeNode);
+            }
+          });
+          if (menuGroupTreeNode.children!.length > 0) {
+              // ok, the use has access to some menu sub group under this group
+              // let's add the group to the tree
+            this.menuTree!.push(menuGroupTreeNode);
+          }
         });
-        menuGroupTreeNode.children!.push(menuSubGroupTreeNode);
-      });
-      this.menuTree!.push(menuGroupTreeNode);
+      }
+
     });
   }
   confirm(): void {

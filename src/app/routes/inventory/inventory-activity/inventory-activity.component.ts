@@ -9,14 +9,11 @@ import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
 import { ClientService } from '../../common/services/client.service';
 import { ColumnItem } from '../../util/models/column-item';
-import { UtilService } from '../../util/services/util.service';
-import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { LocalCacheService } from '../../util/services/local-cache.service';
+import { UtilService } from '../../util/services/util.service'; 
 import { InventoryActivity } from '../models/inventory-activity';
-import { InventoryActivityType } from '../models/inventory-activity-type.enum';
-import { InventoryStatus } from '../models/inventory-status';
-import { Item } from '../models/item';
-import { ItemFamily } from '../models/item-family';
-import { ItemPackageType } from '../models/item-package-type';
+import { InventoryActivityType } from '../models/inventory-activity-type.enum'; 
+import { ItemFamily } from '../models/item-family'; 
 import { InventoryActivityService } from '../services/inventory-activity.service';
 import { ItemFamilyService } from '../services/item-family.service';
 
@@ -231,6 +228,8 @@ export class InventoryInventoryActivityComponent implements OnInit {
   listOfAllInventoryActivities: InventoryActivity[] = [];
   listOfDisplayInventoryActivities: InventoryActivity[] = [];
 
+  availableClients: Client[] = [];
+  threePartyLogisticsFlag = false;
 
   isCollapse = false;
   isSpinning = false;
@@ -245,9 +244,9 @@ export class InventoryInventoryActivityComponent implements OnInit {
     private inventoryActivityService: InventoryActivityService,
     private clientService: ClientService,
     private itemFamilyService: ItemFamilyService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private modalService: NzModalService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private titleService: TitleService,
+    private localCacheService: LocalCacheService,
     private utilService: UtilService,
     private userService: UserService,
   ) { 
@@ -255,6 +254,39 @@ export class InventoryInventoryActivityComponent implements OnInit {
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
     );                        
   
+  }
+
+  ngOnInit(): void {
+    this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.inventory-activity'));
+    this.initSearchForm();
+
+    
+    // initiate the select control
+    this.clientService.getClients().subscribe({
+      next: (clientRes) => this.availableClients = clientRes
+       
+    });
+    
+    this.initClientAssignment();
+  }
+  
+  initClientAssignment(): void {
+    
+    this.isSpinning = true;
+    this.localCacheService.getWarehouseConfiguration().subscribe({
+      next: (warehouseConfigRes) => {
+
+        if (warehouseConfigRes && warehouseConfigRes.threePartyLogisticsFlag) {
+          this.threePartyLogisticsFlag = true;
+        }
+        else {
+          this.threePartyLogisticsFlag = false;
+        } 
+        this.isSpinning = false;
+      }, 
+      error: () => this.isSpinning = false
+    });
+    
   }
 
   resetForm(): void {
@@ -317,10 +349,6 @@ export class InventoryInventoryActivityComponent implements OnInit {
     this.listOfDisplayInventoryActivities = $event;
   }
 
-  ngOnInit(): void {
-    this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.inventory-activity'));
-    this.initSearchForm();
-  }
 
   initSearchForm(): void {
     // initiate the search form

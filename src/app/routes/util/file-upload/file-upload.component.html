@@ -214,9 +214,13 @@
     <ng-template #tableFoot>
     
       <div nz-row nzType="flex" nzJustify="start">
-        {{'total' | i18n}}: <strong>{{resultTotal}}</strong>, 
-        {{'success' | i18n}}:  <span nz-typography nzType="success">{{resultSuccess}}</span> , 
-        {{'fail' | i18n}}: <span nz-typography nzType="danger">{{resultFail}}</span>, 
+        {{'total' | i18n}}: 
+            <strong><a (click)="showAllResults()">{{resultTotal}}</a></strong>, 
+        {{'success' | i18n}}:  
+          <span nz-typography nzType="success" >
+            <a (click)="showSuccessResults()">{{resultSuccess}}</a></span> , 
+        {{'fail' | i18n}}: <span nz-typography nzType="danger">
+          <a (click)="showFailResults()">{{resultFail}}</a></span>, 
       </div>
     </ng-template>
   </ng-container>

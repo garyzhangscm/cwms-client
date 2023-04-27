@@ -47,7 +47,7 @@ export class ClientService {
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
     params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
     if (name) {
-      params = params.append('name', this.utilService.encodeHttpParameter(name.trim()));  
+      params = params.append('name', name.trim());  
     }
     return this.http
       .get(url, params)

@@ -35,6 +35,7 @@ export interface Inventory {
   receiptLineId?: number;
   inboundQCRequired?: boolean;
 
+  fifoDate?: Date;
   
   color?: string;
   productSize?: string;

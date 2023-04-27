@@ -10,7 +10,7 @@
             {{ 'client' | i18n }}
           </nz-form-label>
           <nz-form-control [nzSpan]="18">
-            <nz-select formControlName="clientId">
+            <nz-select formControlName="clientId" nzAllowClear>
               <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
             </nz-select>
           </nz-form-control>

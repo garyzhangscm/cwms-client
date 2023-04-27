@@ -5,10 +5,8 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { TransferItem } from 'ng-zorro-antd/transfer';
-
-import { Menu } from '../models/menu';
-import { MenuGroup } from '../models/menu-group';
-import { MenuSubGroup } from '../models/menu-sub-group';
+ 
+import { MenuGroup } from '../models/menu-group'; 
 import { MenuType } from '../models/menu-type.enum';
 import { Role } from '../models/role';
 import { MenuService } from '../services/menu.service';
@@ -202,6 +200,11 @@ export class AuthRoleMenuComponent implements OnInit {
     }); 
   }
 
+  /***
+   * 
+   * Moved from the role.menu structure into role.roleMenus as we are now allow a new 
+   * 'display' flag on the web menu / web page
+   * 
   goToNextPage(): void {
     const currentAssignedMenuIds = this.webMenuList.filter(item => item.direction === 'right').map(item => item.key);
 
@@ -289,6 +292,62 @@ export class AuthRoleMenuComponent implements OnInit {
     sessionStorage.setItem('role-maintenance.role', JSON.stringify(this.currentRole));
     const url = '/auth/role-client?new-role';
     this.router.navigateByUrl(url);
+  }
+   * 
+   */
+  /**
+   * Assign the menu to the new role
+   */
+  goToNextPage(): void {
+    
+    const currentAssignedMobileMenuIds = [
+       ...this.mobileMenuList.filter(item => item.direction === 'right').map(item => item.key)]; 
+ 
+    const newlyAssignedFullyFunctionalWebMenuIds = 
+        [...this.webMenuList.filter(item => item.direction === 'right' && !item.displayOnly).map(item => item.key)]; 
+    
+      //  const newlyAssignedDisplayOnlyMenuIds = currentAssignedMenuIds.filter(
+      //    id => !this.accessibleMenuIds.some(accessibleMenuId => accessibleMenuId === +id),
+      //  );
+    const newlyAssignedDisplayOnlyWebMenuIds = 
+        [...this.webMenuList.filter(item => item.direction === 'right' && item.displayOnly).map(item => item.key)];
+
+    this.currentRole!.roleMenus = [];
+    this.allMenus!.forEach(menuGroup => {       
+      // Loop through each sub group of this menu group and check
+      // if we will need to add the sub group
+      menuGroup.children.forEach(menuSubGroup => {
+        // loop through each menu item and add the item to
+        // the sub group if it is assigned to the current role
+        menuSubGroup.children.forEach(menu => {
+          // for mobile menus, we will always disable display only flag
+          if (currentAssignedMobileMenuIds.some(id => +id === menu.id) ||
+            newlyAssignedFullyFunctionalWebMenuIds.some(id => +id === menu.id) 
+            ) {
+              this.currentRole!.roleMenus = [...this.currentRole!.roleMenus, 
+                {
+                  menu: menu,
+                  displayOnlyFlag: false,
+                }
+              ];
+          }
+          else if (newlyAssignedDisplayOnlyWebMenuIds.some(id => +id === menu.id)) {
+            
+            this.currentRole!.roleMenus = [...this.currentRole!.roleMenus, 
+              {
+                menu: menu,
+                displayOnlyFlag: true,
+              }
+            ];
+          }
+        });
+      });
+    });     
+          
+
+      sessionStorage.setItem('role-maintenance.role', JSON.stringify(this.currentRole));
+      const url = '/auth/role-client?new-role';
+      this.router.navigateByUrl(url);
   }
 
   onStepsIndexChange(index: number): void {

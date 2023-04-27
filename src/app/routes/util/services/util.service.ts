@@ -55,6 +55,18 @@ export class UtilService {
     }
     return 0;  
   } 
+  compareNullableDateTime(dateTime1?: Date, dateTime2?: Date): number{
+
+    if (dateTime1 === undefined || dateTime1 === null) {
+      return -1;
+    }
+    else  if (dateTime2 === undefined || dateTime2 === null) {
+      return 1;
+    }
+    else {
+      return this.compareDateTime(dateTime1, dateTime2);
+    }
+  } 
   
   compareBoolean(a?: boolean, b?: boolean): number{
 

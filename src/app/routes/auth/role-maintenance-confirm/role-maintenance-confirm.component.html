@@ -22,7 +22,7 @@
 <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
   <div nz-row style="padding: 10px">
     <div nz-col nzSpan="20" nzOffset="2">
-      <nz-steps [nzCurrent]="3" [nzSize]="'default'" (nzIndexChange)="onStepsIndexChange($event)">
+      <nz-steps [nzCurrent]="4" [nzSize]="'default'" (nzIndexChange)="onStepsIndexChange($event)">
         <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"
           nzDescription="{{ 'steps.role.basic-info.description' | i18n }}">
         </nz-step>
@@ -83,7 +83,20 @@
   </nz-card>
 
   <nz-card nzTitle="{{ 'steps.role.assign-menus.title' | i18n }}">
-    <nz-tree [nzData]="menuTree" nzShowLine> </nz-tree>
+    <nz-tree [nzData]="menuTree" nzShowLine  [nzTreeTemplate]="nzTreeTemplate"> 
+      <ng-template #nzTreeTemplate let-node let-origin="origin">
+        <span>   
+            <span>{{ node.title }}
+              <nz-switch *ngIf="origin.displayOnly"  [ngModel]="true" nzDisabled="true"  nzCheckedChildren="{{'displayOnly'|i18n}}" >
+                
+              </nz-switch>
+     
+            </span> 
+         
+        </span>
+      </ng-template>
+
+    </nz-tree>
   </nz-card>
   
   <nz-card nzTitle="{{ 'steps.role.assign-clients.title' | i18n }}"  [nzActions]="[cardFoot]">
