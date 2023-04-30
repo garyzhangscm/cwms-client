@@ -29,7 +29,7 @@
         </nz-form-label>
         <nz-form-control [nzSpan]="18">
           <nz-select formControlName="client" nzAllowClear>
-            <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client"></nz-option>
+            <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -205,6 +205,16 @@
       <tr *ngFor="let data of rowSelectionTable.data">
         <td>{{ data.transactionId }}</td>
         <td>{{ data.transactionGroupId }}</td>
+        <td>            
+          <nz-skeleton-element 
+            *ngIf="data.clientId && data.client == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+          {{ data.client?.name }}</td>
+        <td>
         <td>{{ data.lpn }}</td>
         <td>
           <a nz-tooltip nzTooltipTitle="{{ data.item.description }}">{{ data.item.name }}</a>

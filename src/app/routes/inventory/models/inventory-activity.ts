@@ -1,3 +1,4 @@
+import { Client } from '../../common/models/client';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { InventoryActivityType } from './inventory-activity-type.enum';
@@ -29,4 +30,7 @@ export interface InventoryActivity {
   documentNumber: string;
   comment: string;
   rfCode: string;
+
+  clientId?: number;
+  client?: Client;
 }

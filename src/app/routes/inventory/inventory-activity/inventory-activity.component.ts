@@ -48,6 +48,17 @@ export class InventoryInventoryActivityComponent implements OnInit {
       showFilter: false
     },
     {
+      name: 'client',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableNumber(a.clientId, b.clientId),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
       name: 'lpn',
       showSort: true,
       sortOrder: null,
@@ -150,7 +161,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
       name: 'rfCode',
       showSort: true,
       sortOrder: null,
-      sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.username, b.username),
+      sortFn: (a: InventoryActivity, b: InventoryActivity) => this.utilService.compareNullableString(a.rfCode, b.rfCode),
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -217,7 +228,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
   // Select control for clients and item families
   clients: Array<{ label: string; value: string }> = [];
   itemFamilies: Array<{ label: string; value: string }> = [];
-  inventoryActivityTypes!: InventoryActivityType;
+  inventoryActivityTypes = InventoryActivityType;
   // Form related data and functions
   searchForm!: UntypedFormGroup;
 
@@ -233,6 +244,8 @@ export class InventoryInventoryActivityComponent implements OnInit {
 
   isCollapse = false;
   isSpinning = false;
+
+  loadingDetailsRequest = 0;
 
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
@@ -306,9 +319,14 @@ export class InventoryInventoryActivityComponent implements OnInit {
         this.searchForm.controls.activityDateTimeRanger.value[1] : undefined; 
     let specificDate : Date = this.searchForm.controls.activityDate.value;
 
+    let clients : Client[] = [];
+    if (this.searchForm.value.client != null) {
+      clients = [this.searchForm.value.client]
+    }
+
     this.inventoryActivityService
       .getInventoryActivities(
-        this.searchForm.value.taggedClients,
+        clients,
         this.searchForm.value.taggedItemFamilies,
         this.searchForm.value.itemName,
         this.searchForm.value.location,
@@ -338,10 +356,64 @@ export class InventoryInventoryActivityComponent implements OnInit {
       );
   }
 
+
   processInventoryActivityQueryResult(inventoryActivities: InventoryActivity[]): void {
     this.listOfAllInventoryActivities = inventoryActivities;
     this.listOfDisplayInventoryActivities = inventoryActivities;
+    this.loadDetails(inventoryActivities)
 
+
+  }
+
+  
+  // we will load the information 
+  // asyncronized
+  async loadDetails(inventoryActivities: InventoryActivity[]) {
+ 
+    let index = 0;
+    this.loadingDetailsRequest = 0;
+
+    
+    while (index < inventoryActivities.length) {
+
+      // we will need to make sure we are at max loading detail information
+      // for 10 inventory at a time(each order may have 5 different request). 
+      // we will get error if we flush requests for
+      // too many inventory into the server at a time 
+      
+      
+      while(this.loadingDetailsRequest > 50) {
+        // sleep 50ms        
+        await this.delay(50);
+      } 
+      
+      await this.loadDetail(inventoryActivities[index]);
+      index++;
+    } 
+    while(this.loadingDetailsRequest > 0) {
+      // sleep 50ms        
+      await this.delay(100);
+    }  
+ 
+  }
+  
+  delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+  }
+  
+  async loadDetail(inventoryActivity: InventoryActivity) {
+ 
+    this.loadClients(inventoryActivity); 
+    
+  }
+  
+  async loadClients(inventoryActivity: InventoryActivity) {
+    if (inventoryActivity.clientId && inventoryActivity.client == null) {
+      this.loadingDetailsRequest++;
+      inventoryActivity.client =  await this.localCacheService.getClient(inventoryActivity.clientId!).toPromise().finally(
+        () => this.loadingDetailsRequest--
+      );
+    } 
 
   }
 
@@ -353,13 +425,14 @@ export class InventoryInventoryActivityComponent implements OnInit {
   initSearchForm(): void {
     // initiate the search form
     this.searchForm = this.fb.group({
-      taggedClients: [null],
+      client: [null],
       taggedItemFamilies: [null],
       itemName: [null],
       location: [null],
       lpn: [null],
       username: [null],
       type: [null],
+      rfCode: [null],
       activityDateTimeRanger: [null],
       activityDate: [null],
     });

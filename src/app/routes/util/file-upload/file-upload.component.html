@@ -189,7 +189,7 @@
   <ng-container *nzModalContent> 
     <h3>{{'result' | i18n}}</h3>
     
-    <st #st [data]="fileUploadResults" [columns]="columns" ps="5"  [footer]="tableFoot" [scroll]="{ x: '800px' }" >
+    <st #st [data]="displayFileUploadResults" [columns]="columns" ps="5"  [footer]="tableFoot" [scroll]="{ x: '800px' }" >
 
       <ng-template st-row="recordColumn" let-item let-index="index"> 
         <p

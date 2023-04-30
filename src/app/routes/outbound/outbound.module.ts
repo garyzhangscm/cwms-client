@@ -47,6 +47,7 @@ import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
+import { OutboundHualeiConfigurationComponent } from './hualei-configuration/hualei-configuration.component';
 
 const COMPONENTS: Array<Type<void>> = [
   OutboundOrderComponent,
@@ -80,7 +81,8 @@ const COMPONENTS: Array<Type<void>> = [
   OutboundListPickConfigurationComponent,
   OutboundListPickConfigurationMaintenanceComponent,
   OutboundParcelByOrderComponent,
-  OutboundPickConfigurationComponent];
+  OutboundPickConfigurationComponent,
+  OutboundHualeiConfigurationComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
