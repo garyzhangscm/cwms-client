@@ -30,34 +30,34 @@
     <div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
         
         <div style="background: #ECECEC;padding:15px;">
-        <div nz-row [nzGutter]="24" *ngIf="currentOrder != null">
-            <div nz-col [nzSpan]="12">
-            <nz-card nzTitle="{{'ship-from' | i18n}}">
-                <address *ngIf="easyPostConfiguration != null && easyPostConfiguration.useWarehouseAddressAsShipFromFlag == true">   
-                  {{currentWarehouse.contactorFirstname }}  {{currentWarehouse.contactorLastname }}<br>
-                    {{currentWarehouse.addressLine1 }} <br>
-                    {{currentWarehouse.addressLine2 }} <br>
-                    {{currentWarehouse.addressCity }}, {{currentWarehouse.addressState }} {{currentWarehouse.addressPostcode }} <br> 
-                    </address>
-                <address *ngIf="easyPostConfiguration != null && easyPostConfiguration.useWarehouseAddressAsShipFromFlag == false">   
-                       {{easyPostConfiguration.contactorFirstname }}  {{easyPostConfiguration.contactorLastname }}<br>
-                        {{easyPostConfiguration.addressLine1 }} <br>
-                        {{easyPostConfiguration.addressLine2 }} <br>
-                        {{easyPostConfiguration.addressCity }}, {{easyPostConfiguration.addressState }} {{easyPostConfiguration.addressPostcode }} <br> 
-                </address>
-            </nz-card>
-            </div>
-            <div nz-col [nzSpan]="12">
-                <nz-card nzTitle="{{'ship-to' | i18n}}">
-                <address>  
-                    {{currentOrder.shipToContactorFirstname }}  {{currentOrder.shipToContactorLastname }}  <br>
-                    {{currentOrder.shipToAddressLine1 }} <br>
-                    {{currentOrder.shipToAddressLine2 }} <br>
-                    {{currentOrder.shipToAddressCity }}, {{currentOrder.shipToAddressState }} {{currentOrder.shipToAddressPostcode }} <br> 
-                    </address>
-                </nz-card>
-            </div> 
-        </div>
+          <div nz-row [nzGutter]="24" *ngIf="currentOrder != null">
+              <div nz-col [nzSpan]="12">
+              <nz-card nzTitle="{{'ship-from' | i18n}}">
+                  <address *ngIf="easyPostConfiguration != null && easyPostConfiguration.useWarehouseAddressAsShipFromFlag == true">   
+                    {{currentWarehouse.contactorFirstname }}  {{currentWarehouse.contactorLastname }}<br>
+                      {{currentWarehouse.addressLine1 }} <br>
+                      {{currentWarehouse.addressLine2 }} <br>
+                      {{currentWarehouse.addressCity }}, {{currentWarehouse.addressState }} {{currentWarehouse.addressPostcode }} <br> 
+                      </address>
+                  <address *ngIf="easyPostConfiguration != null && easyPostConfiguration.useWarehouseAddressAsShipFromFlag == false">   
+                        {{easyPostConfiguration.contactorFirstname }}  {{easyPostConfiguration.contactorLastname }}<br>
+                          {{easyPostConfiguration.addressLine1 }} <br>
+                          {{easyPostConfiguration.addressLine2 }} <br>
+                          {{easyPostConfiguration.addressCity }}, {{easyPostConfiguration.addressState }} {{easyPostConfiguration.addressPostcode }} <br> 
+                  </address>
+              </nz-card>
+              </div>
+              <div nz-col [nzSpan]="12">
+                  <nz-card nzTitle="{{'ship-to' | i18n}}">
+                  <address>  
+                      {{currentOrder.shipToContactorFirstname }}  {{currentOrder.shipToContactorLastname }}  <br>
+                      {{currentOrder.shipToAddressLine1 }} <br>
+                      {{currentOrder.shipToAddressLine2 }} <br>
+                      {{currentOrder.shipToAddressCity }}, {{currentOrder.shipToAddressState }} {{currentOrder.shipToAddressPostcode }} <br> 
+                      </address>
+                  </nz-card>
+              </div> 
+          </div>
         </div>
         <nz-card  nzTitle="{{'fill-in-package-information-to-get-rate' | i18n}}">
     
