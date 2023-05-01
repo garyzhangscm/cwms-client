@@ -96,6 +96,7 @@ export class OutboundOrderComponent implements OnInit {
     ['retrigger-order-confirm-integration', false],
     ['upload-document', false],
     ['ship-parcel', false],
+    ['ship-by-hualei', false],    
     ['add-order-billable-activity-type', false],
     ['add-order-line-billable-activity-type', false],
     ['cancel-single-pick', false],

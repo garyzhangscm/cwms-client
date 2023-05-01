@@ -1,0 +1,40 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+    <a routerLink="/outbound/order" routerLinkActive="active"
+        [queryParams]="{number: currentOrder?.number}">{{
+        'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+    <nz-breadcrumb>
+        <nz-breadcrumb-item>
+            <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+        <nz-breadcrumb-item><a routerLink="/outbound/order" routerLinkActive="active">{{
+                'order' | i18n
+                }}</a></nz-breadcrumb-item>
+        <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+    <nz-card *ngIf="currentOrder != null">        
+        <nz-card nzType="inner" nzTitle="{{ 'hualeiShipmentRequest' | i18n}}">   
+            <div class="search-result-list">             
+                <st #shipmentRequestTable [data]="currentOrder.hualeiShipmentRequests!" 
+                    [columns]="shipmentRequestColumns"> 
+                    <ng-template st-row="shipToColumn" let-shipmentRequest >  
+                    </ng-template> 
+                    <ng-template st-row="shipFromColumn" let-shipmentRequest >  
+                    </ng-template> 
+                    <ng-template st-row="volumeColumn" let-shipmentRequest >  
+                    </ng-template> 
+                    <ng-template st-row="invoiceColumn" let-shipmentRequest >  
+                    </ng-template>
+                </st> 
+            </div>
+        </nz-card>
+    </nz-card>
+</nz-spin>

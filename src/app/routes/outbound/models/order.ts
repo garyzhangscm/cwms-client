@@ -7,6 +7,7 @@ import { CarrierServiceLevel } from '../../transportation/models/carrier-service
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { HualeiShipmentRequest } from './hualei-shipment-request';
 import { OrderBillableActivity } from './order-billable-activity';
 import { OrderCategory } from './order-category';
 import { OrderDocument } from './order-document';
@@ -95,4 +96,5 @@ export interface Order {
 
   orderBillableActivities: OrderBillableActivity[];
 
+  hualeiShipmentRequests?: HualeiShipmentRequest[];
 }

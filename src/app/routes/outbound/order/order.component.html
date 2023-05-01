@@ -20,13 +20,13 @@
             {{ 'status' | i18n }}
           </nz-form-label>
           <nz-form-control [nzSpan]="16">
-            <nz-select formControlName="orderStatus">
-               <nz-option
-                   *ngFor="let orderStatus of orderStatuses  | keys"
-                    [nzValue]="orderStatus.key"
-                    [nzLabel]="orderStatus.key"
-                      ></nz-option>
-               </nz-select>
+            <nz-select formControlName="orderStatus">
+              <nz-option
+                *ngFor="let orderStatus of orderStatuses  | keys"
+                [nzValue]="orderStatus.key"
+                [nzLabel]="orderStatus.key"
+                ></nz-option>
+              </nz-select>
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -38,12 +38,12 @@
           </nz-form-label>
           <nz-form-control [nzSpan]="16">
             <nz-select formControlName="orderCategory">
-               <nz-option
-                   *ngFor="let orderCategory of orderCategories  | keys"
-                    [nzValue]="orderCategory.key"
-                     nzLabel="{{ 'ORDER-CATEGORY-' + orderCategory.key |i18n}}"
-                      ></nz-option>
-               </nz-select>
+              <nz-option
+                *ngFor="let orderCategory of orderCategories  | keys"
+                [nzValue]="orderCategory.key"
+                 nzLabel="{{ 'ORDER-CATEGORY-' + orderCategory.key |i18n}}"
+                ></nz-option>
+              </nz-select>
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -1001,6 +1001,11 @@
                   <a routerLink="/outbound/parcel-by-order" routerLinkActive="active"
                     [queryParams]="{id : order.id}">
                     {{ 'ship-parcel' | i18n }}</a> 
+                </li>
+                <li nz-menu-item *ngIf="!userPermissionMap.has('ship-by-hualei') || userPermissionMap.get('ship-by-hualei')">
+                  <a routerLink="/outbound/ship-by-hualei" routerLinkActive="active"
+                    [queryParams]="{id : order.id}">
+                    {{ 'ship-by-hualei' | i18n }}</a> 
                 </li>
                 <li nz-menu-item *ngIf="!userPermissionMap.has('add-order-billable-activity-type') || userPermissionMap.get('add-order-billable-activity-type')">
                   <a (click)="openAddOrderActivityModal(order, tplBillableActivityModalTitle, 

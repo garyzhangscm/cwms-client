@@ -24,7 +24,8 @@
       </nz-card>
 
       <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle" *ngIf="!displayOnly">
-          <button nz-button nzType="primary" (click)="addPickConfiguration()" >
+          <button nz-button nzType="primary" 
+            (click)="openAddProductModal(tplAddProductModalTitle, tplAddProductModalContent)" >
               <span> {{ 'add' | i18n }}</span>
             </button>
       </div>
@@ -35,171 +36,205 @@
 
     <nz-spin [nzSpinning]="isHualeiConfigurationSpinning" [nzSize]="'large'">
         
-      <nz-card>        
-        <div nz-row [nzGutter]="24"> 
-          <div nz-col [nzSpan]="12">
-            <nz-form-item>
-                <nz-form-label [nzSpan]="6">
-                {{ 'customerId' | i18n }}
-                </nz-form-label>
-                <nz-form-control [nzSpan]="18">
-                    
-                    <input nz-input [(ngModel)]="currentHualeiConfiguration.customerId" />  
+      <nz-card>
+        <nz-card nzType="inner" nzTitle="{{'credential' | i18n}}">
+            <div nz-row [nzGutter]="24"> 
+              <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="6">
+                    {{ 'customerId' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="18">
+                        
+                        <input nz-input [(ngModel)]="currentHualeiConfiguration.customerId" />  
+    
+                    </nz-form-control>
+                </nz-form-item>
+              </div>   
+              <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="6">
+                    {{ 'customerUserid' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="18">
+                        <input nz-input [(ngModel)]="currentHualeiConfiguration.customerUserid" />   
+    
+                    </nz-form-control>
+                </nz-form-item>
+              </div> 
+            </div>  
+        </nz-card>
+        <nz-card nzType="inner" nzTitle="{{'url' | i18n}}">
 
-                </nz-form-control>
-            </nz-form-item>
-          </div>   
-          <div nz-col [nzSpan]="12">
-            <nz-form-item>
-                <nz-form-label [nzSpan]="6">
-                {{ 'customerUserid' | i18n }}
-                </nz-form-label>
-                <nz-form-control [nzSpan]="18">
-                    <input nz-input [(ngModel)]="currentHualeiConfiguration.customerUserid" />   
-
-                </nz-form-control>
-            </nz-form-item>
-          </div> 
-        </div>  
-        <div nz-row [nzGutter]="24"> 
-          <div nz-col [nzSpan]="8">
-            <nz-form-item>
-                <nz-form-label [nzSpan]="6">
-                {{ 'protocal' | i18n }}
-                </nz-form-label>
-                <nz-form-control [nzSpan]="18">
-                    <nz-select nzAllowClear  
-                        nz-input [(ngModel)]="currentHualeiConfiguration.protocal" style="width: 250px"  >
-                            <nz-option nzLabel="http" nzValue="http"></nz-option>
-                            <nz-option nzLabel="https" nzValue="https"></nz-option>
-                        </nz-select> 
-                    
-                </nz-form-control>
-            </nz-form-item>
-          </div>   
-          <div nz-col [nzSpan]="8">
-            <nz-form-item>
-                <nz-form-label [nzSpan]="6">
-                {{ 'host' | i18n }}
-                </nz-form-label>
-                <nz-form-control [nzSpan]="18">
-                    <input nz-input [(ngModel)]="currentHualeiConfiguration.host" />   
-                    
-                </nz-form-control>
-            </nz-form-item>
-          </div>   
-          <div nz-col [nzSpan]="8">
-            <nz-form-item>
-                <nz-form-label [nzSpan]="6">
-                {{ 'port' | i18n }}
-                </nz-form-label>
-                <nz-form-control [nzSpan]="18">
-                    <input nz-input [(ngModel)]="currentHualeiConfiguration.port" />   
-                    
-                </nz-form-control>
-            </nz-form-item>
-          </div> 
-        </div>     
-        
-        <div nz-row [nzGutter]="24"> 
-            <div nz-col [nzSpan]="12">
-              <nz-form-item>
-                  <nz-form-label [nzSpan]="6">
-                  {{ 'createOrderEndpoint' | i18n }}
-                  </nz-form-label>
-                  <nz-form-control [nzSpan]="18">
-                    <input nz-input [(ngModel)]="currentHualeiConfiguration.createOrderEndpoint" />   
-                      
-                  </nz-form-control>
-              </nz-form-item>
-            </div> 
-            <div nz-col [nzSpan]="12">
-              <nz-form-item>
-                  <nz-form-label [nzSpan]="6">
-                  {{ 'printLabelEndpoint' | i18n }}
-                  </nz-form-label>
-                  <nz-form-control [nzSpan]="18">
-                    <input nz-input [(ngModel)]="currentHualeiConfiguration.printLabelEndpoint" />   
-                      
-                  </nz-form-control>
-              </nz-form-item>
-            </div> 
-        </div>
-        
-        <div nz-row [nzGutter]="24"> 
-            <div nz-col [nzSpan]="8">
-              <nz-form-item>
-                  <nz-form-label [nzSpan]="6">
-                  {{ 'defaultCargoType' | i18n }}
-                  </nz-form-label>
-                  <nz-form-control [nzSpan]="18">
-                    <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultCargoType" />
-                  </nz-form-control>
-              </nz-form-item>
-            </div> 
-            <div nz-col [nzSpan]="8">
-              <nz-form-item>
-                  <nz-form-label [nzSpan]="6">
-                  {{ 'defaultCustomsClearance' | i18n }}
-                  </nz-form-label>
-                  <nz-form-control [nzSpan]="18">
-                    <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultCustomsClearance" />
-                  </nz-form-control>
-              </nz-form-item>
-            </div> 
-            <div nz-col [nzSpan]="8">
-              <nz-form-item>
-                  <nz-form-label [nzSpan]="6">
-                  {{ 'defaultCustomsDeclaration' | i18n }}
-                  </nz-form-label>
-                  <nz-form-control [nzSpan]="18">
-                    <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultCustomsDeclaration" />
-                  </nz-form-control>
-              </nz-form-item>
-            </div> 
-        </div>
-        <div nz-row [nzGutter]="24"> 
-            <div nz-col [nzSpan]="6">
-              <nz-form-item>
-                  <nz-form-label [nzSpan]="6">
-                  {{ 'defaultDutyType' | i18n }}
-                  </nz-form-label>
-                  <nz-form-control [nzSpan]="18">
-                    <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultDutyType" />
-                  </nz-form-control>
-              </nz-form-item>
-            </div> 
-            <div nz-col [nzSpan]="6">
-              <nz-form-item>
-                  <nz-form-label [nzSpan]="6">
-                  {{ 'defaultFrom' | i18n }}
-                  </nz-form-label>
-                  <nz-form-control [nzSpan]="18">
-                    <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultFrom" />
-                  </nz-form-control>
-              </nz-form-item>
-            </div> 
-            <div nz-col [nzSpan]="6">
-              <nz-form-item>
-                  <nz-form-label [nzSpan]="6">
-                  {{ 'defaultIsFba' | i18n }}
-                  </nz-form-label>
-                  <nz-form-control [nzSpan]="18">
-                    <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultIsFba" />
-                  </nz-form-control>
-              </nz-form-item>
-            </div> 
-            <div nz-col [nzSpan]="6">
-              <nz-form-item>
-                  <nz-form-label [nzSpan]="6">
-                  {{ 'defaultOrderReturnSign' | i18n }}
-                  </nz-form-label>
-                  <nz-form-control [nzSpan]="18">
-                    <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultOrderReturnSign" />
-                  </nz-form-control>
-              </nz-form-item>
+            <div nz-row [nzGutter]="24"> 
+                <div nz-col [nzSpan]="8">
+                  <nz-form-item>
+                      <nz-form-label [nzSpan]="6">
+                      {{ 'protocal' | i18n }}
+                      </nz-form-label>
+                      <nz-form-control [nzSpan]="18">
+                          <nz-select nzAllowClear  
+                              nz-input [(ngModel)]="currentHualeiConfiguration.protocal" style="width: 250px"  >
+                                  <nz-option nzLabel="http" nzValue="http"></nz-option>
+                                  <nz-option nzLabel="https" nzValue="https"></nz-option>
+                              </nz-select> 
+                          
+                      </nz-form-control>
+                  </nz-form-item>
+                </div>   
+                <div nz-col [nzSpan]="8">
+                  <nz-form-item>
+                      <nz-form-label [nzSpan]="6">
+                      {{ 'host' | i18n }}
+                      </nz-form-label>
+                      <nz-form-control [nzSpan]="18">
+                          <input nz-input [(ngModel)]="currentHualeiConfiguration.host" />   
+                          
+                      </nz-form-control>
+                  </nz-form-item>
+                </div>   
+                <div nz-col [nzSpan]="8">
+                  <nz-form-item>
+                      <nz-form-label [nzSpan]="6">
+                      {{ 'port' | i18n }}
+                      </nz-form-label>
+                      <nz-form-control [nzSpan]="18">
+                          <input nz-input [(ngModel)]="currentHualeiConfiguration.port" />   
+                          
+                      </nz-form-control>
+                  </nz-form-item>
+                </div> 
             </div>
-        </div>
+            
+            <div nz-row [nzGutter]="24"> 
+                <div nz-col [nzSpan]="12">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="6">
+                    {{ 'createOrderEndpoint' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="18">
+                        <input nz-input [(ngModel)]="currentHualeiConfiguration.createOrderEndpoint" />   
+                        
+                    </nz-form-control>
+                </nz-form-item>
+                </div> 
+                <div nz-col [nzSpan]="12">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="6">
+                    {{ 'printLabelEndpoint' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="18">
+                        <input nz-input [(ngModel)]="currentHualeiConfiguration.printLabelEndpoint" />   
+                        
+                    </nz-form-control>
+                </nz-form-item>
+                </div> 
+            </div>     
+        </nz-card>
+        <nz-card nzType="inner" nzTitle="{{'default-value' | i18n}}">            
+        
+            <div nz-row [nzGutter]="24"> 
+                <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="6">
+                    {{ 'cargoType' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="18">
+                        <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultCargoType" />
+                    </nz-form-control>
+                </nz-form-item>
+                </div> 
+                <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="12">
+                    {{ 'customsClearance' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="12">
+                        <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultCustomsClearance" />
+                    </nz-form-control>
+                </nz-form-item>
+                </div> 
+                <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="12">
+                    {{ 'customsDeclaration' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="12">
+                        <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultCustomsDeclaration" />
+                    </nz-form-control>
+                </nz-form-item>
+                </div> 
+            </div>
+            <div nz-row [nzGutter]="24"> 
+                <div nz-col [nzSpan]="6">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="6">
+                    {{ 'dutyType' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="18">
+                        <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultDutyType" />
+                    </nz-form-control>
+                </nz-form-item>
+                </div> 
+                <div nz-col [nzSpan]="6">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="6">
+                    {{ 'from' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="18">
+                        <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultFrom" />
+                    </nz-form-control>
+                </nz-form-item>
+                </div> 
+                <div nz-col [nzSpan]="6">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="6">
+                    {{ 'isFba' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="18">
+                        <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultIsFba" />
+                    </nz-form-control>
+                </nz-form-item>
+                </div> 
+                <div nz-col [nzSpan]="6">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="12">
+                    {{ 'orderReturnSign' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="12">
+                        <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultOrderReturnSign" />
+                    </nz-form-control>
+                </nz-form-item>
+                </div>
+            </div>
+        </nz-card>
+        
+        <nz-card nzType="inner" nzTitle="{{ 'shippingLabelFormat' | i18n}}">   
+            <div class="search-result-list">             
+                <st #shippingLabelFormatTable [data]="currentHualeiConfiguration.hualeiShippingLabelFormatByProducts" 
+                    [columns]="shippingLabelFormatColumns"> 
+                    <ng-template st-row="productNameColumn" let-shippingLabelFormat > 
+                        {{ getProductNameByProductId(shippingLabelFormat.productId) }}
+                    </ng-template>
+                    <!--   lastSentTimeColumn colummn  -->  
+                    <ng-template st-row="actionColumn" let-shippingLabelFormat > 
+                    
+                        <button nz-button nzDanger (click)="removeShippingLabelFormat(shippingLabelFormat)" >
+                            {{ 'remove' | i18n }} 
+                        </button>
+                    </ng-template>
+                </st>
+            
+                <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle" *ngIf="!displayOnly">
+                    <button nz-button nzType="primary" 
+                    (click)="openAddShippingLabelFormatModal(tplAddShippingLabelFormatModalTitle, tplAddShippingLabelFormatModalContent)" >
+                        <span> {{ 'add' | i18n }}</span>
+                    </button>
+                    </div>
+            </div>
+        </nz-card>
+
+        
       </nz-card>
 
       <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle" *ngIf="!displayOnly">
@@ -218,7 +253,7 @@
 <ng-template #tplAddProductModalTitle>
     <span>{{ 'product' | i18n}}</span>
   </ng-template>
-  <ng-template #tplAddProductModalContent>
+<ng-template #tplAddProductModalContent>
     <form nz-form [formGroup]="addProductForm">
       <div nz-row [nzGutter]="24">
         <div nz-col [nzSpan]="8">
@@ -265,3 +300,53 @@
     </form>
   </ng-template>
   
+
+  
+<!-- Modal for add shipping label format  -->
+<ng-template #tplAddShippingLabelFormatModalTitle>
+    <span>{{ 'shippingLabelFormat' | i18n}}</span>
+  </ng-template>
+<ng-template #tplAddShippingLabelFormatModalContent>
+    <form nz-form [formGroup]="addShippingLabelFormatForm">
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label  [nzSpan]="12" nzFor="productId">
+              {{ 'productId' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="12">
+              <nz-input-group nzSize="large">
+                
+                <nz-select nzAllowClear  
+                    nz-input formControlName="productId" style="width: 250px"  >
+                        <nz-option *ngFor="let product of hualeiProductsWithoutShippingLabelFormat"
+                        [nzLabel]="product.name" [nzValue]="product.productId">
+                    </nz-option> 
+                </nz-select> 
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        </div>
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="8">
+                <nz-form-item nzFlex>
+                <nz-form-label  [nzSpan]="12" nzFor="shippingLabelFormat">
+                    {{ 'shippingLabelFormat' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12">
+                    <nz-input-group nzSize="large">
+                        <nz-select nzAllowClear  
+                            nz-input formControlName="shippingLabelFormat" style="width: 250px"  >
+                                <nz-option *ngFor="let hualeiShippingLabelFormat of hualeiShippingLabelFormats | keys"
+                                [nzLabel]="hualeiShippingLabelFormat.key" 
+                                [nzValue]="hualeiShippingLabelFormat.key">
+                            </nz-option> 
+                        </nz-select> 
+                    </nz-input-group>
+                </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div> 
+    </form>
+  </ng-template>

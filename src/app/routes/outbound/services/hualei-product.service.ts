@@ -28,24 +28,19 @@ export class HualeiProductService {
       params = params.append('description', description.trim());  
     }
 
-    return this.http.get(url).pipe(map(res => res.data));
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 
   getHualeiProduct(id: number): Observable<HualeiProduct> {
-    return this.http.get(`outbound/hualei-products/${id}`).pipe(map(res => res.data));
+    return this.http.get(`outbound/hualei-products/${id}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`).pipe(map(res => res.data));
   } 
  
   addHualeiProduct(hualeiProduct: HualeiProduct): Observable<HualeiProduct> {
-    return this.http.post(`outbound/hualei-products`, hualeiProduct).pipe(map(res => res.data));
-  }
-
-  changeHualeiProduct(hualeiProduct: HualeiProduct): Observable<HualeiProduct> {
-    const url = `outbound/hualei-products/${hualeiProduct.id}`;
-    return this.http.put(url, hualeiProduct).pipe(map(res => res.data));
-  }
+    return this.http.put(`outbound/hualei-products?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`, hualeiProduct).pipe(map(res => res.data));
+  } 
 
   removeHualeiProduct(hualeiProduct: HualeiProduct): Observable<HualeiProduct> {
-    const url = `outbound/hualei-products/${hualeiProduct.id}`;
+    const url = `outbound/hualei-products/${hualeiProduct.id}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 }

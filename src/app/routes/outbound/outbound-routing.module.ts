@@ -36,6 +36,7 @@ import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
 import { OutboundHualeiConfigurationComponent } from './hualei-configuration/hualei-configuration.component';
+import { OutboundShipByHualeiComponent } from './ship-by-hualei/ship-by-hualei.component';
 
 const routes: Routes = [
   { path: 'order', component: OutboundOrderComponent, 
@@ -321,7 +322,8 @@ const routes: Routes = [
       guard_url: '/exception/403'
     }
   },
-  { path: 'hualei-configuration', component: OutboundHualeiConfigurationComponent }];
+  { path: 'hualei-configuration', component: OutboundHualeiConfigurationComponent },
+  { path: 'ship-by-hualei', component: OutboundShipByHualeiComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

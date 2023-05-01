@@ -10,6 +10,8 @@ import { UserService } from '../../auth/services/user.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { HualeiConfiguration } from '../models/hualei-configuration';
 import { HualeiProduct } from '../models/hualei-product';
+import { HualeiShippingLabelFormat } from '../models/hualei-shipping-label-format';
+import { HualeiShippingLabelFormatByProduct } from '../models/hualei-shipping-label-format-by-product';
 import { HualeiConfigurationService } from '../services/hualei-configuration.service';
 import { HualeiProductService } from '../services/hualei-product.service';
 
@@ -37,12 +39,36 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
     },     
   ]; 
   
+  @ViewChild('shippingLabelFormatTable', { static: true })
+  shippingLabelFormatTable!: STComponent;
+  shippingLabelFormatColumns: STColumn[] = [    
+    {
+      title: this.i18n.fanyi("productId"),  index: 'productId' ,
+    }, 
+    {
+      title: this.i18n.fanyi("name"), 
+      render: 'productNameColumn',  
+    },  
+    {
+      title: this.i18n.fanyi("shippingLabelFormat"),  index: 'shippingLabelFormat' ,
+    },      
+    {
+      title: this.i18n.fanyi("action"), 
+      render: 'actionColumn',  
+    },     
+  ]; 
+  
   currentHualeiConfiguration!: HualeiConfiguration;
   hualeiProducts: HualeiProduct[] = []; 
+  hualeiProductsWithoutShippingLabelFormat: HualeiProduct[] = []; 
+  hualeiShippingLabelFormats = HualeiShippingLabelFormat;
 
   
   addProductForm!: UntypedFormGroup;
   addProductModal!: NzModalRef;
+  
+  addShippingLabelFormatForm!: UntypedFormGroup;
+  addShippingLabelFormatModal!: NzModalRef;
 
   isHualeiConfigurationSpinning = false;
   isHualeiProductSpinning = false;
@@ -92,7 +118,7 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
     this.loadHualeiProducts();
     this.loadHualeiConfiguration();
   }
-  loadHualeiProducts() {
+  loadHualeiConfiguration() {
     this.isHualeiConfigurationSpinning = true;
     this.hualeiConfigurationService.getHualeiConfiguration().subscribe({
       next: (hualeiConfigurationRes) => {
@@ -105,7 +131,7 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
       error: () => this.isHualeiConfigurationSpinning = false
     });
   }
-  loadHualeiConfiguration() {
+  loadHualeiProducts() {
     this.isHualeiProductSpinning = true;
     this.hualeiProductService.getHualeiProducts().subscribe({
       next: (hualeiProductRes) => {
@@ -144,7 +170,7 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
   }
 
   
-  openMoveInventoryModal( 
+  openAddProductModal( 
     tplAddProductModalTitle: TemplateRef<{}>,
     tplAddProductModalContent: TemplateRef<{}>, 
   ): void {
@@ -191,7 +217,104 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
   }
 
   addProduct(productId: string, name: string, description: string) {
-    
+    const hualeiProduct: HualeiProduct = {      
+        warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        productId: productId,
+        name: name,
+        description: description,
+    };
+    this.isHualeiProductSpinning = true;
+    this.hualeiProductService.addHualeiProduct(hualeiProduct).subscribe({
+      next: () => {
+        
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.isHualeiProductSpinning = false;
+        this.loadHualeiProducts();        
+      },
+      error: () => this.isHualeiProductSpinning = false
+    })
+
   }
   
+  
+  openAddShippingLabelFormatModal( 
+    tplAddShippingLabelFormatModalTitle: TemplateRef<{}>,
+    tplAddShippingLabelFormatModalContent: TemplateRef<{}>, 
+  ): void {
+    
+    this.addShippingLabelFormatForm = this.fb.group({ 
+      productId: [null],
+      shippingLabelFormat: [null], 
+    });
+ 
+    this.hualeiProductsWithoutShippingLabelFormat = 
+      this.hualeiProducts.filter(product => 
+        !this.currentHualeiConfiguration.hualeiShippingLabelFormatByProducts.some(
+          shippingLabelFormat => shippingLabelFormat.productId == product.productId)
+         
+      );
+
+    // Load the location
+    this.addShippingLabelFormatModal = this.modalService.create({
+      nzTitle: tplAddShippingLabelFormatModalTitle,
+      nzContent: tplAddShippingLabelFormatModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.addShippingLabelFormatModal.destroy(); 
+      },
+      nzOnOk: () => {
+        if (this.addShippingLabelFormatForm.controls.productId.value == null) {
+          this.messageService.error("please fill in the product id");
+          return false; 
+        }
+        if (this.addShippingLabelFormatForm.controls.shippingLabelFormat.value == null) {
+          this.messageService.error("please fill in the shipping label format");
+          return false; 
+        } 
+        this.addShippingLabelFormat( 
+          this.addShippingLabelFormatForm.controls.productId.value,
+          this.addShippingLabelFormatForm.controls.shippingLabelFormat.value, 
+        );
+        return true;
+      },
+
+      nzWidth: 1000,
+    });
+  }
+
+  addShippingLabelFormat(productId: string, shippingLabelFormat: string) { 
+    // make sure we will only have one format for each product id
+    if (this.currentHualeiConfiguration.hualeiShippingLabelFormatByProducts.some(
+      shippingLabelFormat => shippingLabelFormat.productId == productId
+    )) {
+      return;
+    }
+    var hualeiShippingLabelFormat : HualeiShippingLabelFormat 
+      = HualeiShippingLabelFormat[shippingLabelFormat as keyof typeof HualeiShippingLabelFormat];
+
+    
+    this.currentHualeiConfiguration.hualeiShippingLabelFormatByProducts = 
+    [
+      ...this.currentHualeiConfiguration.hualeiShippingLabelFormatByProducts,
+      {
+        warehouseId: this.warehouseService.getCurrentWarehouse().id, 
+        productId: productId,
+        shippingLabelFormat: hualeiShippingLabelFormat,
+
+      }
+    ];
+
+  }
+  removeShippingLabelFormat(shippingLabelFormatByProduct: HualeiShippingLabelFormatByProduct) {
+
+    this.currentHualeiConfiguration.hualeiShippingLabelFormatByProducts =         
+      this.currentHualeiConfiguration.hualeiShippingLabelFormatByProducts.filter(
+        shippingLabelFormat => shippingLabelFormat.productId != shippingLabelFormatByProduct.productId
+      )
+  }
+  getProductNameByProductId(productId: string): string | undefined {
+    return this.hualeiProducts.find(product => product.productId == productId)?.name;
+  }
 }
