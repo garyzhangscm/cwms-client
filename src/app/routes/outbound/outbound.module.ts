@@ -3,6 +3,7 @@ import { SharedModule } from '@shared';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
@@ -25,6 +26,7 @@ import { OutboundCartonizationComponent } from './cartonization/cartonization.co
 import { OutboundCompleteOrderComponent } from './complete-order/complete-order.component';
 import { OutboundGridMaintenanceComponent } from './grid-maintenance/grid-maintenance.component';
 import { OutboundGridComponent } from './grid/grid.component';
+import { OutboundHualeiConfigurationComponent } from './hualei-configuration/hualei-configuration.component';
 import { OutboundListPickConfigurationMaintenanceComponent } from './list-pick-configuration-maintenance/list-pick-configuration-maintenance.component';
 import { OutboundListPickConfigurationComponent } from './list-pick-configuration/list-pick-configuration.component';
 import { OutboundLoadComponent } from './load/load.component';
@@ -39,6 +41,7 @@ import { OutboundPickConfigurationComponent } from './pick-configuration/pick-co
 import { OutboundPickConfirmComponent } from './pick-confirm/pick-confirm.component';
 import { OutboundPickListComponent } from './pick-list/pick-list.component';
 import { OutboundPickComponent } from './pick/pick.component';
+import { OutboundShipByHualeiComponent } from './ship-by-hualei/ship-by-hualei.component';
 import { OutboundShipmentDisplayComponent } from './shipment-display/shipment-display.component';
 import { OutboundShipmentComponent } from './shipment/shipment.component';
 import { OutboundShippingCartonizationComponent } from './shipping-cartonization/shipping-cartonization.component';
@@ -47,8 +50,6 @@ import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
-import { OutboundHualeiConfigurationComponent } from './hualei-configuration/hualei-configuration.component';
-import { OutboundShipByHualeiComponent } from './ship-by-hualei/ship-by-hualei.component';
 
 const COMPONENTS: Array<Type<void>> = [
   OutboundOrderComponent,
@@ -103,7 +104,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     InventoryModule,  
     WarehouseLayoutModule,
     NzLayoutModule,
-    AuthModule
+    AuthModule,
+    NzResultModule
   ],
   declarations: [
     ...COMPONENTS,

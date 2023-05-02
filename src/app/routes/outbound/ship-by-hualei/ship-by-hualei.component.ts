@@ -10,6 +10,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { PrintingService } from '../../common/services/printing.service';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { HualeiConfiguration } from '../models/hualei-configuration';
 import { HualeiProduct } from '../models/hualei-product';
 import { Order } from '../models/order';
 import { HualeiConfigurationService } from '../services/hualei-configuration.service';
@@ -29,6 +30,7 @@ export class OutboundShipByHualeiComponent implements OnInit {
   isSpinning = false;
   stepIndex = 0; 
   hualeiConfigurationSetup?: boolean;
+  hualeiConfiguration?: HualeiConfiguration;
   isAddressCollapse = true;
   hualeiProducts: HualeiProduct[] = []; 
 
@@ -96,6 +98,7 @@ export class OutboundShipByHualeiComponent implements OnInit {
           }
           else {            
             this.hualeiConfigurationSetup = true;
+            this.hualeiConfiguration = hualeiConfigurationRes;
           }
         }, 
         error: () => this.hualeiConfigurationSetup = false
@@ -118,7 +121,6 @@ export class OutboundShipByHualeiComponent implements OnInit {
       height: [null],
       weight: [null], 
     });
-    
     this.loadHualeiProducts();
   }
   
@@ -140,11 +142,32 @@ export class OutboundShipByHualeiComponent implements OnInit {
         hualeiShipmentRequest => hualeiShipmentRequest.shipmentResponse != null 
       ).forEach(
         hualeiShipmentRequest => {
-           if (hualeiShipmentRequest.shipmentResponse?.order_id != null) {
+           if (hualeiShipmentRequest.shipmentResponse?.order_id != null && this.hualeiConfiguration!= null) {
+            let shippingLabelFormatByProduct = this.hualeiConfiguration.hualeiShippingLabelFormatByProducts.find(
+              hualeiShippingLabelFormatByProduct => hualeiShippingLabelFormatByProduct.productId == hualeiShipmentRequest.param.product_id
+            ); 
+            if (this.hualeiConfiguration?.printLabelProtocol && 
+                  this.hualeiConfiguration?.printLabelHost && 
+                  this.hualeiConfiguration?.printLabelPort && 
+                  this.hualeiConfiguration?.printLabelEndpoint && 
+                  shippingLabelFormatByProduct?.shippingLabelFormat) {
+              
+              hualeiShipmentRequest.shipmentResponse.shippingLabelUrl 
+                    = `${this.hualeiConfiguration?.printLabelProtocol}://${this.hualeiConfiguration?.printLabelHost}:${this.hualeiConfiguration?.printLabelPort}/${this.hualeiConfiguration?.printLabelEndpoint}?PrintType=${shippingLabelFormatByProduct?.shippingLabelFormat}&order_id=${hualeiShipmentRequest.shipmentResponse?.order_id}`;
+                  
+            }
+            else {              
+              hualeiShipmentRequest.shipmentResponse.shippingLabelUrl = "";
+            }
             
-            hualeiShipmentRequest.shipmentResponse.shippingLabelUrl 
-              = `${environment.api.baseUrl}/outbound/hualei/shipping/label?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&orderId=${this.currentOrder!.id}&productId=${hualeiShipmentRequest.param.product_id}&hualeiOrderId=${hualeiShipmentRequest.shipmentResponse?.order_id}`;
-           }
+            if (shippingLabelFormatByProduct?.trackingInfoUrl) {
+              hualeiShipmentRequest.shipmentResponse.trackingUrl 
+              = `${shippingLabelFormatByProduct?.trackingInfoUrl}${hualeiShipmentRequest.shipmentResponse.tracking_number}`;
+            }
+            else {
+              hualeiShipmentRequest.shipmentResponse.trackingUrl  = "";
+            }
+          }
 
         }
       );
@@ -166,13 +189,7 @@ export class OutboundShipByHualeiComponent implements OnInit {
   addPackage() {
     if (!this.parcelFormValid()) {
       return;
-    }
-    console.log(`start to add package `);
-    console.log(`this.searchForm.controls.productId.value: ${this.parcelForm.controls.productId.value}`);
-    console.log(`this.searchForm.controls.length.value: ${this.parcelForm.controls.length.value}`);
-    console.log(`this.searchForm.controls.width.value: ${this.parcelForm.controls.width.value}`);
-    console.log(`this.searchForm.controls.height.value: ${this.parcelForm.controls.height.value}`);
-    console.log(`this.searchForm.controls.weight.value: ${this.parcelForm.controls.weight.value}`);
+    } 
     
     this.isSpinning = true;
     this.hualeiService.sendHualeiRequest(
@@ -222,5 +239,9 @@ export class OutboundShipByHualeiComponent implements OnInit {
   
   getProductNameByProductId(productId: string): string | undefined {
     return this.hualeiProducts.find(product => product.productId == productId)?.name;
+  }
+  configureHualei() {
+    
+    this.router.navigateByUrl('outbound/hualei-configuration');
   }
 }

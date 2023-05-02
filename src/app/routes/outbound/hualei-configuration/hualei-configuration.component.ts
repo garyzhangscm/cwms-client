@@ -53,6 +53,9 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
       title: this.i18n.fanyi("shippingLabelFormat"),  index: 'shippingLabelFormat' ,
     },      
     {
+      title: this.i18n.fanyi("trackingInfoUrl"),  index: 'trackingInfoUrl' ,
+    },    
+    {
       title: this.i18n.fanyi("action"), 
       render: 'actionColumn',  
     },     
@@ -94,12 +97,15 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
         customerId: "",
         customerUserid: "",
     
-        protocal: "",
-        host: "",
-        port: "",
-    
+        createOrderProtocol: "",
+        createOrderHost: "",
+        createOrderPort: "",
         createOrderEndpoint: "",
-        printLabelEndpoint: "",
+    
+        printLabelProtocol: "",
+        printLabelHost: "",
+        printLabelPort: "",
+        printLabelEndpoint: "", 
     
         defaultCargoType: "",
         defaultCustomsClearance: "",
@@ -249,6 +255,7 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
     this.addShippingLabelFormatForm = this.fb.group({ 
       productId: [null],
       shippingLabelFormat: [null], 
+      trackingInfoUrl: [null], 
     });
  
     this.hualeiProductsWithoutShippingLabelFormat = 
@@ -280,6 +287,7 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
         this.addShippingLabelFormat( 
           this.addShippingLabelFormatForm.controls.productId.value,
           this.addShippingLabelFormatForm.controls.shippingLabelFormat.value, 
+          this.addShippingLabelFormatForm.controls.trackingInfoUrl.value, 
         );
         return true;
       },
@@ -288,7 +296,8 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
     });
   }
 
-  addShippingLabelFormat(productId: string, shippingLabelFormat: string) { 
+  addShippingLabelFormat(productId: string, shippingLabelFormat: string,
+    trackingInfoUrl: string) { 
     // make sure we will only have one format for each product id
     if (this.currentHualeiConfiguration.hualeiShippingLabelFormatByProducts.some(
       shippingLabelFormat => shippingLabelFormat.productId == productId
@@ -306,6 +315,7 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
         warehouseId: this.warehouseService.getCurrentWarehouse().id, 
         productId: productId,
         shippingLabelFormat: hualeiShippingLabelFormat,
+        trackingInfoUrl: trackingInfoUrl,
 
       }
     ];

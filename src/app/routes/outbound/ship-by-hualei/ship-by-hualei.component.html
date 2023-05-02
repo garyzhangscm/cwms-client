@@ -18,7 +18,16 @@
     </nz-breadcrumb>
 </ng-template>
 
-<div style="background: #ECECEC;padding:15px;">
+<div *ngIf="!hualeiConfigurationSetup">
+  <nz-result  nzStatus="info"  nzTitle="Hualei is not setup yet">
+    <div nz-result-extra>
+      <button nz-button nzType="primary" (click)="configureHualei()">{{'configure' | i18n}}</button>
+    </div>
+  </nz-result>
+</div>
+<div *ngIf="hualeiConfigurationSetup">
+
+  <div style="background: #ECECEC;padding:15px;">
     <div nz-row nzJustify="end">
         <a class="collapse" (click)="toggleCollapse()">
             <span *ngIf="isAddressCollapse">{{ 'showAddress' | i18n }}</span>
@@ -73,14 +82,27 @@
                   </ng-template>
                   <ng-template st-row="responseColumn" let-shipmentRequest > 
                     <ul *ngIf="shipmentRequest.shipmentResponse">
-                      <li>{{'order_id' | i18n}} : 
-                        <a [href]="shipmentRequest.shipmentResponse.shippingLabelUrl" target="_blank" rel="noopener noreferrer">
+                      <li *ngIf="shipmentRequest.shipmentResponse.order_id != ''">{{'order_id' | i18n}} : 
+                        <a *ngIf="shipmentRequest.shipmentResponse.shippingLabelUrl"
+                          [href]="shipmentRequest.shipmentResponse.shippingLabelUrl" target="_blank" rel="noopener noreferrer">
               
                           {{shipmentRequest.shipmentResponse.order_id}}
                         </a>
+                        <span *ngIf="!shipmentRequest.shipmentResponse.shippingLabelUrl" >
+                          {{shipmentRequest.shipmentResponse.order_id}}
+                        </span>
                       </li>
-                      <li>{{'trackingNumber' | i18n}} : {{shipmentRequest.shipmentResponse.tracking_number}}</li>
-                      <li>{{'message' | i18n}} : {{shipmentRequest.shipmentResponse.message}}</li> 
+                      <li *ngIf="shipmentRequest.shipmentResponse.tracking_number != ''">
+                        {{'trackingNumber' | i18n}} : 
+                        <a *ngIf="shipmentRequest.shipmentResponse.trackingUrl"
+                          [href]="shipmentRequest.shipmentResponse.trackingUrl" target="_blank" rel="noopener noreferrer">
+                          {{shipmentRequest.shipmentResponse.tracking_number}}
+                        </a>
+                        <span *ngIf="!shipmentRequest.shipmentResponse.trackingUrl" >
+                          {{shipmentRequest.shipmentResponse.tracking_number}}
+                        </span>
+                      </li>
+                      <li *ngIf="shipmentRequest.shipmentResponse.message != ''">{{'message' | i18n}} : {{shipmentRequest.shipmentResponse.message}}</li> 
                     </ul>
                 </ng-template>
                 </st> 
@@ -157,3 +179,5 @@
         </nz-card>
     </nz-card>
 </nz-spin>
+
+</div>

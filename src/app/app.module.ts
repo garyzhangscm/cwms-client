@@ -18,7 +18,7 @@ import { PlotlyModule } from 'angular-plotly.js';
 
 import { CheckCircleTwoTone, CloseCircleTwoTone, WarningTwoTone} from '@ant-design/icons-angular/icons';
 
-const icons: IconDefinition[] = [ CheckCircleTwoTone, CloseCircleTwoTone, WarningTwoTone ];
+const icons: IconDefinition[] = [ CheckCircleTwoTone, CloseCircleTwoTone, WarningTwoTone,  ];
 
 PlotlyModule.plotlyjs = PlotlyJS;
 

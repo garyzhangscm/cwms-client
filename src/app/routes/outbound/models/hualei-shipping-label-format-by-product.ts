@@ -6,5 +6,6 @@ export interface HualeiShippingLabelFormatByProduct {
     warehouseId: number;
     productId: string;
     shippingLabelFormat: HualeiShippingLabelFormat;
+    trackingInfoUrl?: string;
  
 }

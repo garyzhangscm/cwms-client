@@ -8,12 +8,16 @@ export interface HualeiConfiguration {
     customerId: string;
     customerUserid: string;
 
-    protocal: string;
-    host: string;
-    port: string;
-
+    
+    createOrderProtocol: string;
+    createOrderHost: string;
+    createOrderPort: string;
     createOrderEndpoint: string;
-    printLabelEndpoint: string;
+
+    printLabelProtocol: string;
+    printLabelHost: string;
+    printLabelPort: string;
+    printLabelEndpoint: string;  
 
     defaultCargoType: string;
     defaultCustomsClearance: string;
