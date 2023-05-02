@@ -207,6 +207,49 @@
                 </nz-form-item>
                 </div>
             </div>
+            
+            <div nz-row [nzGutter]="24"> 
+                <div nz-col [nzSpan]="6">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="6">
+                    {{ 'hsCode' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="18">
+                        <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultHsCode" />
+                    </nz-form-control>
+                </nz-form-item>
+                </div> 
+                <div nz-col [nzSpan]="6">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="6">
+                    {{ 'invoiceTitle' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="18">
+                        <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultInvoiceTitle" />
+                    </nz-form-control>
+                </nz-form-item>
+                </div> 
+                <div nz-col [nzSpan]="6">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="6">
+                    {{ 'sku' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="18">
+                        <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultSku" />
+                    </nz-form-control>
+                </nz-form-item>
+                </div> 
+                <div nz-col [nzSpan]="6">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="12">
+                    {{ 'skuCode' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="12">
+                        <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultSkuCode" />
+                    </nz-form-control>
+                </nz-form-item>
+                </div>
+            </div>
         </nz-card>
         
         <nz-card nzType="inner" nzTitle="{{ 'shippingLabelFormat' | i18n}}">   

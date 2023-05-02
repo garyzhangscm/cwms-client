@@ -56,11 +56,33 @@
         <nz-card nzType="inner" nzTitle="{{ 'hualeiShipmentRequest' | i18n}}">   
             <div class="search-result-list">             
                 <st #shipmentRequestTable [data]="currentOrder.hualeiShipmentRequests!" 
-                    [columns]="shipmentRequestColumns">  
-                    <ng-template st-row="volumeColumn" let-shipmentRequest >  
+                    [columns]="shipmentRequestColumns" ps="3">  
+                    <ng-template st-row="requestTimeColumn" let-shipmentRequest >  
+                      {{ shipmentRequest.createdTime | date:'short'}} 
                     </ng-template> 
-                    <ng-template st-row="invoiceColumn" let-shipmentRequest >  
-                    </ng-template>
+                    <ng-template st-row="volumeColumn" let-shipmentRequest >   
+                      <span *ngIf="shipmentRequest.param.orderVolumeParam && shipmentRequest.param.orderVolumeParam.length > 0">
+                        {{shipmentRequest.param.orderVolumeParam[0].volume_length}} X 
+                        {{shipmentRequest.param.orderVolumeParam[0].volume_width}} X 
+                        {{shipmentRequest.param.orderVolumeParam[0].volume_height}} 
+
+                      </span> 
+                    </ng-template>  
+                    <ng-template st-row="productNameColumn" let-shipmentRequest > 
+                      {{ getProductNameByProductId(shipmentRequest.param.product_id) }}
+                  </ng-template>
+                  <ng-template st-row="responseColumn" let-shipmentRequest > 
+                    <ul *ngIf="shipmentRequest.shipmentResponse">
+                      <li>{{'order_id' | i18n}} : 
+                        <a [href]="shipmentRequest.shipmentResponse.shippingLabelUrl" target="_blank" rel="noopener noreferrer">
+              
+                          {{shipmentRequest.shipmentResponse.order_id}}
+                        </a>
+                      </li>
+                      <li>{{'trackingNumber' | i18n}} : {{shipmentRequest.shipmentResponse.tracking_number}}</li>
+                      <li>{{'message' | i18n}} : {{shipmentRequest.shipmentResponse.message}}</li> 
+                    </ul>
+                </ng-template>
                 </st> 
             </div>
         </nz-card>

@@ -27,6 +27,6 @@ export interface HualeiShipmentRequestParameters {
     order_returnsign: string;
     product_id: string;
     weight: number;
-    orderVolumeParam: HualeiShipmentRequestOrderVolumeParameters;
-    orderInvoiceParam: HualeiShipmentRequestOrderInvoiceParameters;
+    orderVolumeParam: HualeiShipmentRequestOrderVolumeParameters[];
+    orderInvoiceParam: HualeiShipmentRequestOrderInvoiceParameters[];
 }

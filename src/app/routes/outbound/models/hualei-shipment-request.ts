@@ -11,5 +11,7 @@ export interface HualeiShipmentRequest {
 
     param: HualeiShipmentRequestParameters;
 
-    shipmentResponse: HualeiShipmentResponse;
+    shipmentResponse?: HualeiShipmentResponse;
+
+    createdTime?: Date;
 }

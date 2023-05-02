@@ -22,6 +22,13 @@ export interface HualeiConfiguration {
     defaultFrom: string;
     defaultIsFba: string;
     defaultOrderReturnSign: string;
+
+    
+    defaultHsCode: string;
+    defaultInvoiceTitle: string;
+    defaultSku: string;
+    defaultSkuCode: string;
+
     
     hualeiShippingLabelFormatByProducts: HualeiShippingLabelFormatByProduct[];
 

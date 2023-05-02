@@ -29,4 +29,7 @@ export interface HualeiShipmentResponse {
     return_address: string;
     tracking_number: string;
 
+    trackingUrl?: string;
+    shippingLabelUrl?: string;
+
 }

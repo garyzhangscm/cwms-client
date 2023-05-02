@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STColumn, STComponent } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { PrintingService } from '../../common/services/printing.service';
@@ -31,6 +32,7 @@ export class OutboundShipByHualeiComponent implements OnInit {
   isAddressCollapse = true;
   hualeiProducts: HualeiProduct[] = []; 
 
+
   // Form related data and functions
   parcelForm!: UntypedFormGroup;
   
@@ -38,21 +40,29 @@ export class OutboundShipByHualeiComponent implements OnInit {
   shipmentRequestTable!: STComponent;
   shipmentRequestColumns: STColumn[] = [     
     {
+      title: this.i18n.fanyi("requestTime"),   
+      render: 'requestTimeColumn',  
+    },    
+    {
       title: this.i18n.fanyi("isFba"),  index: 'param.is_fba' ,
     }, 
     {
       title: this.i18n.fanyi("productId"),  index: 'param.product_id' ,
     }, 
     {
+      title: this.i18n.fanyi("name"), 
+      render: 'productNameColumn',  
+    },  
+    {
       title: this.i18n.fanyi("weight"),  index: 'param.weight' ,
     },     
     {
       title: this.i18n.fanyi("volume"), 
       render: 'volumeColumn',  
-    },     
+    },        
     {
-      title: this.i18n.fanyi("invoice"), 
-      render: 'invoiceColumn',  
+      title: this.i18n.fanyi("response"), 
+      render: 'responseColumn',  
     },   
   ]; 
   
@@ -118,10 +128,29 @@ export class OutboundShipByHualeiComponent implements OnInit {
       next: (orderRes) => {
         this.currentOrder = orderRes;
         this.isSpinning = false;
+        this.setupURL();
       },
       error: () => this.isSpinning = false
     })
   }
+  setupURL() {
+    if (this.currentOrder!.hualeiShipmentRequests && this.currentOrder!.hualeiShipmentRequests.length > 0) {
+
+      this.currentOrder!.hualeiShipmentRequests.filter(
+        hualeiShipmentRequest => hualeiShipmentRequest.shipmentResponse != null 
+      ).forEach(
+        hualeiShipmentRequest => {
+           if (hualeiShipmentRequest.shipmentResponse?.order_id != null) {
+            
+            hualeiShipmentRequest.shipmentResponse.shippingLabelUrl 
+              = `${environment.api.baseUrl}/outbound/hualei/shipping/label?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&orderId=${this.currentOrder!.id}&productId=${hualeiShipmentRequest.param.product_id}&hualeiOrderId=${hualeiShipmentRequest.shipmentResponse?.order_id}`;
+           }
+
+        }
+      );
+    }
+  }
+  
   loadHualeiProducts() { 
     this.hualeiProductService.getHualeiProducts().subscribe({
       next: (hualeiProductRes) => {
@@ -191,4 +220,7 @@ export class OutboundShipByHualeiComponent implements OnInit {
     return true;
   }
   
+  getProductNameByProductId(productId: string): string | undefined {
+    return this.hualeiProducts.find(product => product.productId == productId)?.name;
+  }
 }

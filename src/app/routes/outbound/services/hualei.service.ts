@@ -42,5 +42,19 @@ export class HualeiService {
     return this.http.post(url, undefined, params).pipe(map(res => res.data));
   }
 
+  getHualeiShippingLabel( 
+    orderId: number,  productId : string,
+    hualeiOrderId: string): Observable<HualeiShipmentResponse[]> {
+    let url = `outbound/hualei/shipping/label`;
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+    params = params.append('orderId', orderId);  
+    params = params.append('productId', productId.trim());  
+    params = params.append('hualeiOrderId', hualeiOrderId);  
+     
+
+    return this.http.post(url, undefined, params).pipe(map(res => res.data));
+  }
   
 }

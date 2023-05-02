@@ -108,6 +108,10 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
         defaultFrom: "",
         defaultIsFba: "",
         defaultOrderReturnSign: "",
+        defaultHsCode: "",
+        defaultInvoiceTitle: "",
+        defaultSku: "",
+        defaultSkuCode: "",
         
         hualeiShippingLabelFormatByProducts: [],
       } 
