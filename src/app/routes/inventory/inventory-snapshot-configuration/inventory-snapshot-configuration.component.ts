@@ -16,9 +16,9 @@ import { LocationUtilizationSnapshotBatchService } from '../services/location-ut
   styleUrls: ['./inventory-snapshot-configuration.component.less'],
 })
 export class InventoryInventorySnapshotConfigurationComponent implements OnInit {
-
   configurationForm!: UntypedFormGroup;
   isSpinning = false;
+
   constructor(private http: _HttpClient,
     private warehouseService: WarehouseService,
     private inventorySnapshotService: InventorySnapshotService,
