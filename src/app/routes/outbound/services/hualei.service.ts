@@ -5,6 +5,7 @@ import { Observable, map } from 'rxjs';
 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { HualeiProduct } from '../models/hualei-product';
+import { HualeiShipmentRequest } from '../models/hualei-shipment-request';
 import { HualeiShipmentResponse } from '../models/hualei-shipment-response';
 
 @Injectable({
@@ -15,7 +16,8 @@ export class HualeiService {
 
   sendHualeiRequest(productId : string, 
     orderId: number, length: number, width: number, height: number, 
-    weight: number): Observable<HualeiShipmentResponse[]> {
+    weight: number, packageCount?: number, itemName?: string,
+    quantity?: number, unitCost?: number): Observable<HualeiShipmentRequest[]> {
     let url = `outbound/hualei/shipping`;
     let params = new HttpParams(); 
 
@@ -23,20 +25,36 @@ export class HualeiService {
     if (productId) {
       params = params.append('productId', productId.trim());  
     }
-    if (orderId) {
+    if (orderId != null) {
       params = params.append('orderId', orderId);  
     }
-    if (length) {
+    if (length != null) {
       params = params.append('length', length);  
     }
-    if (width) {
+    if (width != null) {
       params = params.append('width', width);  
     }
-    if (height) {
+    if (height != null) {
       params = params.append('height', height);  
     }
-    if (weight) {
+    if (weight != null) {
       params = params.append('weight', weight);  
+    }
+    if (packageCount != null) {
+      params = params.append('packageCount', packageCount);  
+    }
+    else {
+      
+      params = params.append('packageCount', 1);  
+    }
+    if (itemName != null) {
+      params = params.append('itemName', itemName.trim());  
+    }
+    if (quantity != null) {
+      params = params.append('quantity', quantity);  
+    }
+    if (unitCost != null) {
+      params = params.append('unitCost', unitCost);  
     }
 
     return this.http.post(url, undefined, params).pipe(map(res => res.data));

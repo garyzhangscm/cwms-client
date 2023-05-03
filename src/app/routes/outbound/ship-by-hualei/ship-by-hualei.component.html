@@ -62,7 +62,7 @@
 <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
 
     <nz-card *ngIf="currentOrder != null">        
-        <nz-card nzType="inner" nzTitle="{{ 'hualeiShipmentRequest' | i18n}}">   
+        <nz-card nzType="inner" nzTitle="{{ 'hualeiShipmentRequest' | i18n}}" [nzExtra]="refreshShipmentRequestTableTemplate">   
             <div class="search-result-list">             
                 <st #shipmentRequestTable [data]="currentOrder.hualeiShipmentRequests!" 
                     [columns]="shipmentRequestColumns" ps="3">  
@@ -107,6 +107,11 @@
                 </ng-template>
                 </st> 
             </div>
+            <ng-template #refreshShipmentRequestTableTemplate>
+              <a (click)="refreshShipmentRequestTable()">
+                {{ 'refresh' | i18n }}
+              </a>
+            </ng-template>
         </nz-card>
         
         <nz-card  nzTitle="{{'parcel-package' | i18n}}">    
@@ -119,7 +124,7 @@
                       {{ 'productId' | i18n }}
                     </nz-form-label>
                     <nz-form-control [nzSpan]="12" nzHasFeedback >  
-                        <nz-select nzAllowClear  
+                        <nz-select nzAllowClear
                             nz-input formControlName="productId" style="width: 250px"  >
                                 <nz-option *ngFor="let product of hualeiProducts"
                                 [nzLabel]="product.name" [nzValue]="product.productId">
@@ -128,9 +133,47 @@
                     </nz-form-control>
                   </nz-form-item>
                 </div> 
+                <div nz-col [nzSpan]="6">
+                  <nz-form-item>
+                    <nz-form-label [nzSpan]="12">
+                      {{ 'item' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="12" nzHasFeedback >  
+                        <nz-select nzAllowClear   (ngModelChange)="itemChanged($event)"
+                            nz-input formControlName="item" style="width: 250px"  >
+                                <nz-option *ngFor="let orderLine of currentOrder.orderLines"
+                                [nzLabel]="orderLine.item!.name" [nzValue]="orderLine.itemId">
+                            </nz-option> 
+                        </nz-select> 
+                    </nz-form-control>
+                  </nz-form-item>
+                </div> 
+                
+                <div nz-col [nzSpan]="6">
+                  <nz-form-item>
+                    <nz-form-label [nzSpan]="12">
+                      {{ 'caseQuantity' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="12" nzHasFeedback >   
+                      
+                      <nz-input-number name="caseQuantity" id="caseQuantity" formControlName="caseQuantity"></nz-input-number>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div> 
+                <div nz-col [nzSpan]="6">
+                  <nz-form-item>
+                    <nz-form-label [nzSpan]="12">
+                      {{ 'unit-cost' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="12" nzHasFeedback >   
+                      
+                      <nz-input-number name="unitCost" id="unitCost" formControlName="unitCost"></nz-input-number>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div> 
             </div> 
             <div nz-row [nzGutter]="24">
-                <div nz-col [nzSpan]="6">
+                <div nz-col [nzSpan]="5">
                   <nz-form-item>
                     <nz-form-label [nzSpan]="12">
                       {{ 'length' | i18n }}
@@ -141,7 +184,7 @@
                   </nz-form-item>
                 </div>
                 
-                <div nz-col [nzSpan]="6">
+                <div nz-col [nzSpan]="5">
                     <nz-form-item>
                       <nz-form-label [nzSpan]="12">
                         {{ 'width' | i18n }}
@@ -151,7 +194,7 @@
                       </nz-form-control>
                     </nz-form-item>
                   </div>
-                  <div nz-col [nzSpan]="6">
+                  <div nz-col [nzSpan]="5">
                     <nz-form-item>
                       <nz-form-label [nzSpan]="12">
                         {{ 'height' | i18n }}
@@ -160,13 +203,24 @@
                           <nz-input-number name="height" id="height" formControlName="height"></nz-input-number> in
                       </nz-form-control>
                     </nz-form-item>
-                  </div><div nz-col [nzSpan]="6">
+                  </div>
+                  <div nz-col [nzSpan]="5">
                     <nz-form-item>
                       <nz-form-label [nzSpan]="12">
                         {{ 'weight' | i18n }}
                       </nz-form-label>
                       <nz-form-control [nzSpan]="12" nzHasFeedback > 
                           <nz-input-number name="weight" id="weight" formControlName="weight"></nz-input-number> lb
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div nz-col [nzSpan]="4">
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="12">
+                        {{ 'packageCount' | i18n }}
+                      </nz-form-label>
+                      <nz-form-control [nzSpan]="12" nzHasFeedback > 
+                          <nz-input-number name="count" id="count" formControlName="packageCount"></nz-input-number>
                       </nz-form-control>
                     </nz-form-item>
                   </div>
