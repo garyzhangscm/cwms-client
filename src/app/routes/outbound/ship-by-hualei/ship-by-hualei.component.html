@@ -69,11 +69,17 @@
                     <ng-template st-row="requestTimeColumn" let-shipmentRequest >  
                       {{ shipmentRequest.createdTime | date:'short'}} 
                     </ng-template> 
+                    <ng-template st-row="weightColumn" let-shipmentRequest >   
+                      <span *ngIf="shipmentRequest.param.orderVolumeParam && shipmentRequest.param.orderVolumeParam.length > 0">
+                        {{shipmentRequest.param.orderVolumeParam[0].volume_weight | number: '1.0-2'}} {{shipmentRequest.param.orderVolumeParam[0].weight_unit}} 
+
+                      </span> 
+                    </ng-template>  
                     <ng-template st-row="volumeColumn" let-shipmentRequest >   
                       <span *ngIf="shipmentRequest.param.orderVolumeParam && shipmentRequest.param.orderVolumeParam.length > 0">
-                        {{shipmentRequest.param.orderVolumeParam[0].volume_length}} X 
-                        {{shipmentRequest.param.orderVolumeParam[0].volume_width}} X 
-                        {{shipmentRequest.param.orderVolumeParam[0].volume_height}} 
+                        {{shipmentRequest.param.orderVolumeParam[0].volume_length | number: '1.0-2'}} {{shipmentRequest.param.orderVolumeParam[0].length_unit}} X 
+                        {{shipmentRequest.param.orderVolumeParam[0].volume_width | number: '1.0-2'}} {{shipmentRequest.param.orderVolumeParam[0].length_unit}} X 
+                        {{shipmentRequest.param.orderVolumeParam[0].volume_height | number: '1.0-2'}} {{shipmentRequest.param.orderVolumeParam[0].length_unit}} 
 
                       </span> 
                     </ng-template>  

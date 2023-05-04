@@ -179,35 +179,61 @@
         <nz-card nzType="inner" nzTitle="{{'default-value' | i18n}}">            
         
             <div nz-row [nzGutter]="24"> 
-                <div nz-col [nzSpan]="8">
-                <nz-form-item>
-                    <nz-form-label [nzSpan]="6">
-                    {{ 'cargoType' | i18n }}
-                    </nz-form-label>
-                    <nz-form-control [nzSpan]="18">
-                        <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultCargoType" />
-                    </nz-form-control>
-                </nz-form-item>
+                <div nz-col [nzSpan]="5">
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="12">
+                        {{ 'cargoType' | i18n }}
+                        </nz-form-label>
+                        <nz-form-control [nzSpan]="12">
+                            <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultCargoType" />
+                        </nz-form-control>
+                    </nz-form-item>
                 </div> 
-                <div nz-col [nzSpan]="8">
-                <nz-form-item>
-                    <nz-form-label [nzSpan]="12">
-                    {{ 'customsClearance' | i18n }}
-                    </nz-form-label>
-                    <nz-form-control [nzSpan]="12">
-                        <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultCustomsClearance" />
-                    </nz-form-control>
-                </nz-form-item>
+                <div nz-col [nzSpan]="5">
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="12">
+                        {{ 'customsClearance' | i18n }}
+                        </nz-form-label>
+                        <nz-form-control [nzSpan]="12">
+                            <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultCustomsClearance" />
+                        </nz-form-control>
+                    </nz-form-item>
                 </div> 
-                <div nz-col [nzSpan]="8">
-                <nz-form-item>
-                    <nz-form-label [nzSpan]="12">
-                    {{ 'customsDeclaration' | i18n }}
-                    </nz-form-label>
-                    <nz-form-control [nzSpan]="12">
-                        <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultCustomsDeclaration" />
-                    </nz-form-control>
-                </nz-form-item>
+                <div nz-col [nzSpan]="4">
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="16">
+                        {{ 'customsDeclaration' | i18n }}
+                        </nz-form-label>
+                        <nz-form-control [nzSpan]="8">
+                            <input nz-input [(ngModel)]="currentHualeiConfiguration.defaultCustomsDeclaration" />
+                        </nz-form-control>
+                    </nz-form-item>
+                </div> 
+                <div nz-col [nzSpan]="5">
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="12">
+                        {{ 'lengthUnit' | i18n }}
+                        </nz-form-label>
+                        <nz-form-control [nzSpan]="12">
+                            <nz-select nzAllowClear  
+                              nz-input [(ngModel)]="currentHualeiConfiguration.lengthUnit"   >
+                                  <nz-option *ngFor="let unit of lengthUnits" [nzLabel]="unit.name" [nzValue]="unit.name"></nz-option> 
+                              </nz-select> 
+                        </nz-form-control>
+                    </nz-form-item>
+                </div> 
+                <div nz-col [nzSpan]="5">
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="12">
+                        {{ 'weightUnit' | i18n }}
+                        </nz-form-label>
+                        <nz-form-control [nzSpan]="12">
+                            <nz-select nzAllowClear  
+                              nz-input [(ngModel)]="currentHualeiConfiguration.weightUnit"  >
+                                  <nz-option *ngFor="let unit of weightUnits" [nzLabel]="unit.name" [nzValue]="unit.name"></nz-option> 
+                              </nz-select> 
+                        </nz-form-control>
+                    </nz-form-item>
                 </div> 
             </div>
             <div nz-row [nzGutter]="24"> 
@@ -318,7 +344,7 @@
                     (click)="openAddShippingLabelFormatModal(tplAddShippingLabelFormatModalTitle, tplAddShippingLabelFormatModalContent)" >
                         <span> {{ 'add' | i18n }}</span>
                     </button>
-                    </div>
+                </div>
             </div>
         </nz-card>
 

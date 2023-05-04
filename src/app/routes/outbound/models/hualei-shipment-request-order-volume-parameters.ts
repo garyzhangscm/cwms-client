@@ -9,4 +9,7 @@ export interface HualeiShipmentRequestOrderVolumeParameters {
     volume_length: number;
     volume_width: number;
     volume_weight: number;
+
+    length_unit: string;
+    weight_unit: string;
 }

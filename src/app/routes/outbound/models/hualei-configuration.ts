@@ -33,6 +33,8 @@ export interface HualeiConfiguration {
     defaultSku: string;
     defaultSkuCode: string;
 
+    weightUnit: string;
+    lengthUnit: string;
     
     hualeiShippingLabelFormatByProducts: HualeiShippingLabelFormatByProduct[];
 

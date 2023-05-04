@@ -7,6 +7,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 import { UserService } from '../../auth/services/user.service';
+import { Unit } from '../../common/models/unit';
+import { UnitType } from '../../common/models/unit-type';
+import { UnitService } from '../../common/services/unit.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { HualeiConfiguration } from '../models/hualei-configuration';
 import { HualeiProduct } from '../models/hualei-product';
@@ -66,6 +69,8 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
   hualeiProductsWithoutShippingLabelFormat: HualeiProduct[] = []; 
   hualeiShippingLabelFormats = HualeiShippingLabelFormat;
 
+  lengthUnits: Unit[] = [];
+  weightUnits: Unit[] = [];
   
   addProductForm!: UntypedFormGroup;
   addProductModal!: NzModalRef;
@@ -84,7 +89,8 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
     private modalService: NzModalService,
     private hualeiConfigurationService: HualeiConfigurationService,
     private hualeiProductService: HualeiProductService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,    
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private unitService: UnitService,   
     private userService: UserService, ) { 
       
       userService.isCurrentPageDisplayOnly("/outbound/hualei-configuration").then(
@@ -119,6 +125,8 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
         defaultSku: "",
         defaultSkuCode: "",
         
+        weightUnit:  "",
+        lengthUnit:  "",
         hualeiShippingLabelFormatByProducts: [],
       } 
   }
@@ -127,6 +135,7 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
   
     this.loadHualeiProducts();
     this.loadHualeiConfiguration();
+    this.loadUnits();
   }
   loadHualeiConfiguration() {
     this.isHualeiConfigurationSpinning = true;
@@ -151,6 +160,24 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
       error: () => this.isHualeiProductSpinning = false
     });
   }
+  
+  loadUnits() {
+    this.unitService.loadUnits().subscribe({
+      next: (unitsRes) => {
+        unitsRes.forEach(
+          unit => {
+            if (unit.type === UnitType.LENGTH) {
+              this.lengthUnits.push(unit); 
+            }
+            else if (unit.type === UnitType.WEIGHT) {
+              this.weightUnits.push(unit); 
+            }
+          }
+        )
+      }
+    })    
+  }
+
 
   confirmHualeiConfiguration() {
 

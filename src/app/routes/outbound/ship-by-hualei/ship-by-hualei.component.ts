@@ -62,7 +62,8 @@ export class OutboundShipByHualeiComponent implements OnInit {
       render: 'productNameColumn',  
     },  
     {
-      title: this.i18n.fanyi("weight"),  index: 'param.weight' ,
+      title: this.i18n.fanyi("weight"),  
+      render: 'weightColumn',  
     },     
     {
       title: this.i18n.fanyi("volume"), 
