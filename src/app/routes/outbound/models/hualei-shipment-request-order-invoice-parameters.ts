@@ -11,4 +11,5 @@ export interface HualeiShipmentRequestOrderInvoiceParameters {
     invoice_weight: number;
     sku: string;
     sku_code: string;
+    weight_unit: string;
 }
