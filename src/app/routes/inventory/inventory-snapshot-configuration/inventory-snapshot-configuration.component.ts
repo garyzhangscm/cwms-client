@@ -7,6 +7,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { DateTimeService } from '../../util/services/date-time.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { InventorySnapshotConfiguration } from '../models/inventory-snapshot-configuration';
+import { InventoryAgingSnapshotService } from '../services/inventory-aging-snapshot.service';
 import { InventorySnapshotConfigurationService } from '../services/inventory-snapshot-configuration.service';
 import { InventorySnapshotService } from '../services/inventory-snapshot.service';
 import { LocationUtilizationSnapshotBatchService } from '../services/location-utilization-snapshot-batch.service';
@@ -28,6 +29,7 @@ export class InventoryInventorySnapshotConfigurationComponent implements OnInit 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private inventorySnapshotConfigurationService: InventorySnapshotConfigurationService,
     private locationUtilizationSnapshotBatchService: LocationUtilizationSnapshotBatchService,
+    private inventoryAgingSnapshotService: InventoryAgingSnapshotService,
     private dateTimeService: DateTimeService,
     private fb: UntypedFormBuilder,) { }
 
@@ -194,5 +196,19 @@ export class InventoryInventorySnapshotConfigurationComponent implements OnInit 
     })
   }
 
-
+  generateInventoryAgingSnapshotBatch() {
+    this.isSpinning = true;
+    this.inventoryAgingSnapshotService.generateInventoryAgingSnapshot()
+    .subscribe({
+      next: (inventoryAgingSnapshotBatch) => { 
+        this.isSpinning = false; 
+        this.message.success(
+          this.i18n.fanyi('inventory-aging-snapshot.created.result', {
+            batchNumber: inventoryAgingSnapshotBatch.number
+          })
+        );
+      } ,
+      error: () => this.isSpinning = false
+    })
+  }
 }
