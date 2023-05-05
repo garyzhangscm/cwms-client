@@ -70,8 +70,8 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
         workingOnSaturdayFlag: false,
 
         
-        locationUtilizationSnapshotEnabled: false,
-        inventoryAgingSnapshotEnabled: false,
+        // locationUtilizationSnapshotEnabled: false,
+        // inventoryAgingSnapshotEnabled: false,
       }
   }
 

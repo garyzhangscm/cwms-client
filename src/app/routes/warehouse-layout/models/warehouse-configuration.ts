@@ -22,8 +22,8 @@ export interface WarehouseConfiguration {
 
     billingRequestEnabledFlag: boolean;
     
-    locationUtilizationSnapshotEnabled: boolean;
-    inventoryAgingSnapshotEnabled: boolean;
+    // locationUtilizationSnapshotEnabled: boolean;
+    // inventoryAgingSnapshotEnabled: boolean;
     
     workingOnSundayFlag: boolean;
     workingOnMondayFlag: boolean;

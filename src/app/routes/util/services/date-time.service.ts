@@ -22,6 +22,17 @@ export class DateTimeService {
   getISODateString(dateTime: Date) : string {
     return this.getISODateTimeString(dateTime).substring(0, 10);
   } 
+
+  getUTCHour(localHour: number) : number{
+    var offset = new Date().getTimezoneOffset();
+    console.log(`current time zone's offset: ${offset}`);
+    return (localHour - offset / 60) % 24;
+  }
+  getLocalHour(utcHour: number) : number{
+    var offset = new Date().getTimezoneOffset();
+    console.log(`current time zone's offset: ${offset}`);
+    return (utcHour + offset / 60) % 24;
+  }
   
   getLocalDateString(dateTime: Date) : string { 
     return `${dateTime.getFullYear()  }-${  dateTime.getMonth() + 1 }-${  dateTime.getDate()}`;
