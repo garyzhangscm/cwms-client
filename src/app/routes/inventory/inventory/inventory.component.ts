@@ -1,10 +1,11 @@
 import { formatDate } from '@angular/common'; 
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 // import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 // import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
+import { STComponent, STColumn, STData } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -41,7 +42,8 @@ import { ItemFamilyService } from '../services/item-family.service';
   styleUrls: ['./inventory.component.less'],
 })
 export class InventoryInventoryComponent implements OnInit {
-
+/**
+ * 
   listOfColumns: Array<ColumnItem<Inventory>> = [
     {
       name: 'lpn',
@@ -199,6 +201,85 @@ export class InventoryInventoryComponent implements OnInit {
       showFilter: false
     },
   ];
+
+ * 
+ */
+  @ViewChild('inventoryTable', { static: false })
+  inventoryTable!: STComponent;
+  invetoryTablePagination = {
+    showSize: true,
+    pageSizes: [5, 10, 25, 50, 100]
+  };
+
+  inventoryTableRecordPerPages: number[] = [5, 10, 25, 50, 100]
+  inventoryTablecolumns: STColumn[] = [
+    { title: '', index: 'number', type: 'checkbox' },
+    { title: this.i18n.fanyi("client"),  index: 'client.name' ,
+        iif: () => this.isChoose('client')  && this.threePartyLogisticsFlag }, 
+    { title: this.i18n.fanyi("lpn"),  index: 'lpn' ,
+        iif: () => this.isChoose('lpn')  }, 
+    { title: this.i18n.fanyi("item"),  render: 'itemColumn',
+        iif: () => this.isChoose('item')  }, 
+    { title: this.i18n.fanyi("item.package-type"),  render: 'itemPackageTypeColumn',
+        iif: () => this.isChoose('itemPackageType')  }, 
+    { title: this.i18n.fanyi("location"),  render: 'locationColumn' ,
+        iif: () => this.isChoose('location')  }, 
+    { title: this.i18n.fanyi("quantity"),  render: 'quantityColumn' , index: 'quantity',
+        iif: () => this.isChoose('quantity') , statistical: 'sum', key: 'quantitySum'}, 
+    { title: this.i18n.fanyi("inventory.status"),  index: 'inventoryStatusColumn' ,
+        iif: () => this.isChoose('inventoryStatus')  }, 
+    { title: this.i18n.fanyi("fifoDate"),  render: 'fifoDateColumn' ,
+        iif: () => this.isChoose('fifoDate')  }, 
+    { title: this.i18n.fanyi("color"),  index: 'color' ,
+        iif: () => this.isChoose('color')  }, 
+    { title: this.i18n.fanyi("productSize"),  index: 'productSize' ,
+        iif: () => this.isChoose('productSize')  }, 
+    { title: this.i18n.fanyi("style"),  index: 'style' ,
+        iif: () => this.isChoose('style')  }, 
+    { title: this.i18n.fanyi("inventory.locked-for-adjustment"),  render: 'lockedForAdjustColumn' ,
+        iif: () => this.isChoose('lockedForAdjust')  }, 
+    { title: this.i18n.fanyi("inventory.pick-id"),  render: 'pickColumn' ,
+        iif: () => this.isChoose('pick')  },   
+    { title: this.i18n.fanyi("inventory.allocated-by-pick-id"),  render: 'allocateByPickColumn' ,
+        iif: () => this.isChoose('allocateByPick')  },   
+    { title: this.i18n.fanyi("movement-path"),  render: 'movementPathColumn' ,
+        iif: () => this.isChoose('movementPath')  },   
+    { title: this.i18n.fanyi("action"),  render: 'actionColumn' , 
+      iif: () => !this.displayOnly ,
+      width: 350,
+      fixed: 'right',},  
+  ]; 
+  
+  customColumns = [
+
+    { label: this.i18n.fanyi("client"), value: 'client', checked: true },
+    { label: this.i18n.fanyi("lpn"), value: 'lpn', checked: true },
+    { label: this.i18n.fanyi("item"), value: 'item', checked: true },
+    { label: this.i18n.fanyi("item.package-type"), value: 'itemPackageType', checked: true },
+    { label: this.i18n.fanyi("location"), value: 'location', checked: true },
+    { label: this.i18n.fanyi("quantity"), value: 'quantity', checked: true },
+    { label: this.i18n.fanyi("inventory.status"), value: 'inventoryStatus', checked: true },
+    { label: this.i18n.fanyi("fifoDate"), value: 'fifoDate', checked: true }, 
+    { label: this.i18n.fanyi("color"), value: 'color', checked: true }, 
+    { label: this.i18n.fanyi("productSize"), value: 'productSize', checked: true }, 
+    { label: this.i18n.fanyi("style"), value: 'style', checked: true }, 
+    { label: this.i18n.fanyi("inventory.locked-for-adjustment"), value: 'lockedForAdjust', checked: true }, 
+    { label: this.i18n.fanyi("inventory.pick-id"), value: 'pick', checked: true }, 
+    { label: this.i18n.fanyi("inventory.allocated-by-pick-id"), value: 'allocateByPick', checked: true }, 
+    { label: this.i18n.fanyi("movement-path"), value: 'movementPath', checked: true }, 
+  ];
+
+  isChoose(key: string): boolean {
+    return !!this.customColumns.find(w => w.value === key && w.checked);
+  }
+
+  columnChoosingChanged(): void{ 
+    if (this.inventoryTable !== undefined && this.inventoryTable.columns !== undefined) {
+        this.inventoryTable!.resetColumns({ emitReload: true });
+
+    }
+  }
+
   // Select control for clients and item families 
   availableClients: Client[] = [];
   itemFamilies: Array<{ label: string; value: string }> = [];
@@ -235,6 +316,10 @@ export class InventoryInventoryComponent implements OnInit {
   loadingDetailsRequest = 0;
   threePartyLogisticsFlag = false;
 
+
+/** 
+ * 
+ * 
   listOfSelection = [
     {
       text: this.i18n.fanyi(`select-all-rows`),
@@ -246,6 +331,7 @@ export class InventoryInventoryComponent implements OnInit {
   setOfCheckedId = new Set<number>();
   checked = false;
   indeterminate = false;
+*/
 
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
@@ -355,7 +441,7 @@ export class InventoryInventoryComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     
-    this.setOfCheckedId.clear();
+    // this.setOfCheckedId.clear();
     if (id) {
       this.inventoryService.getInventoryById(id).subscribe(
         inventoryRes => { 
@@ -850,30 +936,7 @@ export class InventoryInventoryComponent implements OnInit {
       nzWidth: 1000,
     });
   }
-  
-  onAllChecked(value: boolean): void {
-    this.listOfDisplayInventories!.forEach(item => this.updateCheckedSet(item.id!, value));
-    this.refreshCheckedStatus();
-  }
    
-  refreshCheckedStatus(): void {
-    this.checked = this.listOfDisplayInventories!.every(item => this.setOfCheckedId.has(item.id!));
-    this.indeterminate = this.listOfDisplayInventories!.some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
-  }
-  
-  onItemChecked(id: number, checked: boolean): void {
-    this.updateCheckedSet(id, checked);
-    this.refreshCheckedStatus();
-  }
-
-  
-  updateCheckedSet(id: number, checked: boolean): void {
-    if (checked) {
-      this.setOfCheckedId.add(id);
-    } else {
-      this.setOfCheckedId.delete(id);
-    }
-  }
 
   moveInventoryInBatch(inventories: Inventory[], destinationLocationName: string, immediateMove: boolean): void {
     this.isSpinning = true;
@@ -1027,12 +1090,23 @@ export class InventoryInventoryComponent implements OnInit {
   }
   
   getSelectedInventory(): Inventory[] {
-    const selectedInventory: Inventory[] = [];
-    this.listOfDisplayInventories.forEach((inventory: Inventory) => {
-      if (this.setOfCheckedId.has(inventory.id!)) {
-        selectedInventory.push(inventory);
-      }
-    });
+    let selectedInventory: Inventory[] = [];
+    
+    const dataList: STData[] = this.inventoryTable.list; 
+    dataList
+      .filter( data => data.checked)
+      .forEach(
+        data => {
+          // get the selected billing request and added it to the 
+          // selectedBillingRequests
+          selectedInventory = [...selectedInventory,
+              ...this.inventories.filter(
+                inventory => inventory.id == data["id"]
+              )
+          ]
+
+        }
+      );
     return selectedInventory;
   }
  
@@ -1051,6 +1125,14 @@ export class InventoryInventoryComponent implements OnInit {
           inventory.quantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
           }'s quantity ${  itemUnitOfMeasure.quantity}`);
     }
+  }
+
+  exportResult() {
+
+  }
+  inventoryTableRecordPerPageChanged(recordPerPage: any) {
+    console.log(`recordPerPage is changed to ${recordPerPage}`);
+
   }
 
 }
