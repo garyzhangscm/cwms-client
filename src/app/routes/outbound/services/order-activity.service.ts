@@ -1,5 +1,6 @@
 
 
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -34,57 +35,65 @@ export class OrderActivityService {
     shipmentId?: number,
     shipmentLineId?: number,
     pickId?: number,
-    shortAllocationId?: number
+    shortAllocationId?: number,
+    clientId?:number
     
   ): Observable<OrderActivity[]> {
-    let url = `outbound/order-activities?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`; 
+    const url = `outbound/order-activities`; 
+    
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+    
     if (beginDateTime) {
-      url = `${url}&beginDateTime=${this.dateTimeService.getISODateTimeString(beginDateTime)}`;
+      params = params.append('beginDateTime', this.dateTimeService.getISODateTimeString(beginDateTime));  
     }
     if (endDateTime) {
-      url = `${url}&endDateTime=${this.dateTimeService.getISODateTimeString(endDateTime)}`;
+      params = params.append('endDateTime', this.dateTimeService.getISODateTimeString(endDateTime));   
     }
     if (date) {
-      url = `${url}&date=${this.dateTimeService.getISODateString(date)}`;
+      params = params.append('date', this.dateTimeService.getISODateString(date));    
     }
 
     if (username) {
-      url = `${url}&username=${this.utilService.encodeValue(username.trim())}`;
+      params = params.append('username', username.trim());     
     }
     if (rfCode) {
-      url = `${url}&rfCode=${this.utilService.encodeValue(rfCode.trim())}`;
+      params = params.append('rfCode', rfCode.trim());  
     }
     
     if (orderNumber) {
-      url = `${url}&orderNumber=${this.utilService.encodeValue(orderNumber.trim())}`;
+      params = params.append('orderNumber', orderNumber.trim());   
     }
     if (shipmentNumber) {
-      url = `${url}&shipmentNumber=${this.utilService.encodeValue(shipmentNumber.trim())}`;
+      params = params.append('shipmentNumber', shipmentNumber.trim());   
     }
     if (shipmentLineNumber) {
-      url = `${url}&shipmentLineNumber=${this.utilService.encodeValue(shipmentLineNumber.trim())}`;
+      params = params.append('shipmentLineNumber', shipmentLineNumber.trim());    
     }
     if (pickNumber) {
-      url = `${url}&pickNumber=${this.utilService.encodeValue(pickNumber.trim())}`;
+      params = params.append('pickNumber', pickNumber.trim());     
     }
  
     
-    if (orderId) {
-      url = `${url}&orderId=${orderId}`;
+    if (orderId != null) {
+      params = params.append('orderId', orderId);   
     }
-    if (shipmentId) {
-      url = `${url}&shipmentId=${shipmentId}`;
+    if (shipmentId != null) {
+      params = params.append('shipmentId', shipmentId);    
     }
-    if (shipmentLineId) {
-      url = `${url}&shipmentLineId=${shipmentLineId}`;
+    if (shipmentLineId != null) {
+      params = params.append('shipmentLineId', shipmentLineId);   
     }
-    if (pickId) {
-      url = `${url}&pickId=${pickId}`;
+    if (pickId != null) {
+      params = params.append('pickId', pickId);   
     }
-    if (shortAllocationId) {
-      url = `${url}&shortAllocationId=${shortAllocationId}`;
+    if (shortAllocationId != null) {
+      params = params.append('shortAllocationId', shortAllocationId);    
+    }
+    if (clientId != null) {
+      params = params.append('clientId', clientId);    
     }
  
-    return this.http.get(url).pipe(map(res => res.data));
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 }

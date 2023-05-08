@@ -7,8 +7,10 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 
 import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
+import { ClientService } from '../../common/services/client.service';
 import { InventoryActivity } from '../../inventory/models/inventory-activity';
 import { ItemFamily } from '../../inventory/models/item-family';
+import { LocalCacheService } from '../../util/services/local-cache.service';
 import { OrderActivity } from '../models/order-activity';
 import { OrderActivityService } from '../services/order-activity.service';
 
@@ -25,9 +27,15 @@ export class OutboundOrderActivityComponent implements OnInit {
   listOfAllOrderActivities: OrderActivity[] = []; 
 
 
+  threePartyLogisticsFlag = false;
+  availableClients: Client[] = [];
+
   isCollapse = false;
   isSpinning = false;
   searchResult= '';
+  
+  loadingOrderActivityDetailsRequest = 0;
+
 
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
@@ -38,6 +46,8 @@ export class OutboundOrderActivityComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private orderActivityService: OrderActivityService, 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private clientService: ClientService,
+    private localCacheService: LocalCacheService,
     private userService: UserService,
     private titleService: TitleService, 
   ) { 
@@ -46,6 +56,30 @@ export class OutboundOrderActivityComponent implements OnInit {
     );                          
   }
 
+  ngOnInit(): void {
+    this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.order-activity'));
+    this.initSearchForm();
+
+    // initiate the select control
+    this.clientService.getClients().subscribe({
+      next: (clientRes) => this.availableClients = clientRes
+       
+    });
+
+    this.localCacheService.getWarehouseConfiguration().subscribe({
+      next: (warehouseConfigRes) => {
+
+        if (warehouseConfigRes && warehouseConfigRes.threePartyLogisticsFlag) {
+          this.threePartyLogisticsFlag = true;
+        }
+        else {
+          this.threePartyLogisticsFlag = false;
+        } 
+        this.isSpinning = false;
+      }, 
+      error: () => this.isSpinning = false
+    });
+  }
   resetForm(): void {
     this.searchForm.reset();
     this.listOfAllOrderActivities = []; 
@@ -68,7 +102,16 @@ export class OutboundOrderActivityComponent implements OnInit {
         specificDate,
         this.searchForm.value.username,
         this.searchForm.value.rfCode,
-        this.searchForm.value.order
+        this.searchForm.value.order,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        this.searchForm.value.client,
       )
       .subscribe(
         orderActivityRes => {
@@ -78,6 +121,8 @@ export class OutboundOrderActivityComponent implements OnInit {
             currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
             rowCount: orderActivityRes.length,
           });
+          
+          this.refreshDetailInformations(orderActivityRes);
         },
         () => { 
           this.listOfAllOrderActivities = []; 
@@ -86,12 +131,62 @@ export class OutboundOrderActivityComponent implements OnInit {
         },
       );
   }
-   
+   // we will load the client  
+  // asyncronized
+  async refreshDetailInformations(orderActivities: OrderActivity[]) {  
+    // const currentPageOrders = this.getCurrentPageOrders(); 
+    let index = 0;
+    this.loadingOrderActivityDetailsRequest = 0;
+    while (index < orderActivities.length) {
 
-  ngOnInit(): void {
-    this.titleService.setTitle(this.i18n.fanyi('menu.main.outbound.order-activity'));
-    this.initSearchForm();
+      // we will need to make sure we are at max loading detail information
+      // for 50 order activities at a time(each order may have 5 different request). 
+      // we will get error if we flush requests for
+      // too many orders into the server at a time 
+      
+      
+      while(this.loadingOrderActivityDetailsRequest > 50) {
+        // sleep 50ms        
+        await this.delay(50);
+      } 
+      
+      this.refreshDetailInformation(orderActivities[index]);
+      index++;
+    } 
+    while(this.loadingOrderActivityDetailsRequest > 0) {
+      // sleep 50ms        
+      await this.delay(100);
+    }  
+    // refresh the table while everything is loaded
+    console.log(`mnaually refresh the table`);   
+    this.st.reload();  
   }
+
+  
+  refreshDetailInformation(orderActivity: OrderActivity) {
+  
+    this.loadClient(orderActivity); 
+  }
+  
+  loadClient(orderActivity: OrderActivity) {
+     
+    if (orderActivity.clientId && orderActivity.client == null) {
+      this.loadingOrderActivityDetailsRequest++;
+      this.localCacheService.getClient(orderActivity.clientId).subscribe(
+        {
+          next: (res) => {
+            orderActivity.client = res;
+            this.loadingOrderActivityDetailsRequest--;
+          }, 
+          error: () => this.loadingOrderActivityDetailsRequest--
+        }
+      );      
+    } 
+  }
+  delay(ms: number) {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+  }
+  
 
   initSearchForm(): void {
     // initiate the search form
@@ -99,6 +194,7 @@ export class OutboundOrderActivityComponent implements OnInit {
       order: [null], 
       username: [null], 
       rfCode: [null], 
+      client: [null], 
       activityDateTimeRanger: [null],
       activityDate: [null],
     });
@@ -112,6 +208,8 @@ export class OutboundOrderActivityComponent implements OnInit {
      
     { title: this.i18n.fanyi("number"), index: 'number', iif: () => this.isChoose('number') },
     { title: this.i18n.fanyi("transaction-group-id"), index: 'transactionGroupId', iif: () => this.isChoose('transactionGroupId') },
+    { title: this.i18n.fanyi("client"), render: 'clientColumn', 
+        iif: () => this.threePartyLogisticsFlag && this.isChoose('client'), width: 150},
     { title: this.i18n.fanyi("order"), index: 'orderNumber', iif: () => this.isChoose('order') },
     { title: this.i18n.fanyi("order.line"), index: 'orderLineNumber', iif: () => this.isChoose('orderLine') },
     { title: this.i18n.fanyi("type"), index: 'orderActivityType', iif: () => this.isChoose('type') },
@@ -134,6 +232,7 @@ export class OutboundOrderActivityComponent implements OnInit {
 
     { label: this.i18n.fanyi("number"), value: 'number', checked: true },
     { label: this.i18n.fanyi("transaction-group-id"), value: 'transactionGroupId', checked: true },
+    { label: this.i18n.fanyi("client"), value: 'client', checked: true },
     { label: this.i18n.fanyi("order"), value: 'order', checked: true },
     { label: this.i18n.fanyi("order.line"), value: 'orderLine', checked: true },
     { label: this.i18n.fanyi("type"), value: 'type', checked: true },

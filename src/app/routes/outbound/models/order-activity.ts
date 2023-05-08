@@ -1,3 +1,4 @@
+import { Client } from "../../common/models/client";
 import { Order } from "./order";
 import { OrderActivityType } from "./order-activity-type";
 import { OrderLine } from "./order-line";
@@ -74,6 +75,9 @@ export interface OrderActivity {
     newShortAllocationInProcessQuantity: number;
     oldShortAllocationDeliveredQuantity: number;
     newShortAllocationDeliveredQuantity: number;
+
+    clientId?: number;
+    client?: Client;
 
 
 }

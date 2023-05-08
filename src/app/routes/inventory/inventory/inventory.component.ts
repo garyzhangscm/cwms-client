@@ -524,6 +524,7 @@ export class InventoryInventoryComponent implements OnInit {
       await this.delay(100);
     }  
  
+    this.inventoryTable.reload();  
   }
   
   delay(ms: number) {
