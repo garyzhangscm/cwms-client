@@ -12,8 +12,7 @@
             <st #hualeiProductsSt [data]="hualeiProducts" 
                 [columns]="hualeiProductsColumns"> 
                 <!--   lastSentTimeColumn colummn  -->  
-                <ng-template st-row="actionColumn" let-product > 
-                 
+                <ng-template st-row="actionColumn" let-product >                  
                     <button nz-button nzDanger (click)="removeHualeiProduct(product)" >
                           {{ 'remove' | i18n }} 
                     </button>
@@ -384,31 +383,46 @@
         </div>
         </div>
         <div nz-row [nzGutter]="24">
-        <div nz-col [nzSpan]="8">
-            <nz-form-item nzFlex>
-            <nz-form-label  [nzSpan]="8" nzFor="name">
-                {{ 'name' | i18n }}
-            </nz-form-label>
-            <nz-form-control [nzSpan]="16">
-                <nz-input-group nzSize="large">
-                <input nz-input formControlName="name" />
-                </nz-input-group>
-            </nz-form-control>
-            </nz-form-item>
-        </div>
+            <div nz-col [nzSpan]="8">
+                <nz-form-item nzFlex>
+                <nz-form-label  [nzSpan]="8" nzFor="name">
+                    {{ 'name' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="16">
+                    <nz-input-group nzSize="large">
+                    <input nz-input formControlName="name" />
+                    </nz-input-group>
+                </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="16">
+                <nz-form-item nzFlex>
+                    <nz-form-label  [nzSpan]="8" nzFor="description">
+                    {{ 'description' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="16">
+                    <nz-input-group nzSize="large">
+                        <input nz-input formControlName="description" />
+                    </nz-input-group>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
         </div>
         <div nz-row [nzGutter]="24">
             <div nz-col [nzSpan]="8">
-            <nz-form-item nzFlex>
-                <nz-form-label  [nzSpan]="8" nzFor="description">
-                {{ 'description' | i18n }}
-                </nz-form-label>
-                <nz-form-control [nzSpan]="16">
-                <nz-input-group nzSize="large">
-                    <input nz-input formControlName="description" />
-                </nz-input-group>
-                </nz-form-control>
-            </nz-form-item>
+                <nz-form-item nzFlex>
+                    <nz-form-label  [nzSpan]="8" nzFor="carrier">
+                    {{ 'carrier' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="16">
+                    <nz-input-group nzSize="large">
+                        <nz-cascader
+                        nzChangeOnSelect
+                        [nzOptions]="carrierOptions"  formControlName="carrier"
+                        ></nz-cascader>
+                    </nz-input-group>
+                    </nz-form-control>
+                </nz-form-item>
             </div>
         </div>
     </form>
@@ -462,6 +476,8 @@
                 </nz-form-item>
             </div>
       </div> 
+      <!--
+
       <div nz-row [nzGutter]="24">
             <div nz-col [nzSpan]="12">
                 <nz-form-item nzFlex>
@@ -476,5 +492,6 @@
                 </nz-form-item>
             </div>
       </div> 
+      -->
     </form>
   </ng-template>

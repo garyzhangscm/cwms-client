@@ -1,3 +1,6 @@
+import { Carrier } from "../../transportation/models/carrier";
+import { CarrierServiceLevel } from "../../transportation/models/carrier-service-level";
+
 export interface HualeiProduct {
     
     id?: number;
@@ -10,4 +13,8 @@ export interface HualeiProduct {
 
     description: string;
 
+    carrierId?: number;
+    carrier?: Carrier;
+    carrierServiceLevelId?: number;
+    carrierServiceLevel?: CarrierServiceLevel;
 }

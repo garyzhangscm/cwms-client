@@ -1,6 +1,7 @@
 import { NgModule, Type } from '@angular/core';
 import { SharedModule } from '@shared';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
+import { NzCascaderModule } from 'ng-zorro-antd/cascader';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
 import { NzResultModule } from 'ng-zorro-antd/result';
@@ -105,7 +106,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     WarehouseLayoutModule,
     NzLayoutModule,
     AuthModule,
-    NzResultModule
+    NzResultModule,
+    NzCascaderModule 
   ],
   declarations: [
     ...COMPONENTS,

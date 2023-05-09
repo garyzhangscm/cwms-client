@@ -68,7 +68,7 @@ export class CarrierService {
   }
 
   removeCarrier(carrierId: number): Observable<Carrier> {
-    const url = `common/carriers/${carrierId}`;
+    const url = `common/carriers/${carrierId}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
   disableCarrier(carrierId: number): Observable<Carrier> {

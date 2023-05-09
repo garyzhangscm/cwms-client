@@ -33,6 +33,7 @@ export class TransportationCarrierComponent implements OnInit {
     { title: this.i18n.fanyi("enabled"), index: 'enabled',  type: 'yn'},   
     { title: this.i18n.fanyi("contactorFirstname"), index: 'contactorFirstname', },   
     { title: this.i18n.fanyi("contactorLastname"), index: 'contactorLastname', },   
+    { title: this.i18n.fanyi("trackingInfoUrl"), index: 'trackingInfoUrl', },   
     {
       title: 'action',
       renderTitle: 'actionColumnTitle',fixed: 'right',width: 210, 

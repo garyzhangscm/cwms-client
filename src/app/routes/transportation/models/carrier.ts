@@ -15,6 +15,7 @@ export interface Carrier {
   addressLine1?: string;
   addressLine2?: string;
   addressPostcode?: string;
+  trackingInfoUrl?: string;
   carrierServiceLevels: CarrierServiceLevel[];
   enabled?: boolean;
 }

@@ -315,7 +315,7 @@ export class OutboundPickConfirmComponent implements OnInit {
       // initial the picks array;
       this.pickService.getPicksByOrder(this.order.id!).subscribe(pickRes => {
         this.listOfAllPicks = pickRes;
-        this.listOfDisplayPicks = pickRes;
+        this.listOfDisplayPicks = pickRes; 
         this.setupConfirmedQuantity(this.listOfAllPicks);
         this.refreshCheckedStatus();
       });

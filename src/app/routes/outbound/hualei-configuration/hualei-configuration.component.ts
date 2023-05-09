@@ -10,6 +10,7 @@ import { UserService } from '../../auth/services/user.service';
 import { Unit } from '../../common/models/unit';
 import { UnitType } from '../../common/models/unit-type';
 import { UnitService } from '../../common/services/unit.service';
+import { CarrierService } from '../../transportation/services/carrier.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { HualeiConfiguration } from '../models/hualei-configuration';
 import { HualeiProduct } from '../models/hualei-product';
@@ -37,6 +38,12 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
       title: this.i18n.fanyi("description"),  index: 'description' ,
     },     
     {
+      title: this.i18n.fanyi("carrier"),  index: 'carrier.name' ,
+    },     
+    {
+      title: this.i18n.fanyi("carrier.serviceLevel"),  index: 'carrierServiceLevel.name' ,
+    },     
+    {
       title: this.i18n.fanyi("action"), 
       render: 'actionColumn',  
     },     
@@ -57,7 +64,7 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
     },      
     {
       title: this.i18n.fanyi("trackingInfoUrl"),  index: 'trackingInfoUrl' ,
-    },    
+    },     
     {
       title: this.i18n.fanyi("action"), 
       render: 'actionColumn',  
@@ -78,6 +85,8 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
   addShippingLabelFormatForm!: UntypedFormGroup;
   addShippingLabelFormatModal!: NzModalRef;
 
+  carrierOptions: any[] = [];
+
   isHualeiConfigurationSpinning = false;
   isHualeiProductSpinning = false;
   displayOnly = false;
@@ -89,6 +98,7 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
     private modalService: NzModalService,
     private hualeiConfigurationService: HualeiConfigurationService,
     private hualeiProductService: HualeiProductService,
+    private carrierService: CarrierService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private unitService: UnitService,   
     private userService: UserService, ) { 
@@ -136,6 +146,41 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
     this.loadHualeiProducts();
     this.loadHualeiConfiguration();
     this.loadUnits();
+    this.loadCarriers();
+  }
+
+  loadCarriers() {
+    this.carrierOptions = [];
+    this.carrierService.loadCarriers(true).subscribe({
+
+      next: (carrierRes) => {
+        carrierRes.filter(
+          carrier => carrier.enabled == true
+        )
+        .forEach(
+          carrier => {
+            let serviceLevels : any[] = [];
+            carrier.carrierServiceLevels.forEach(
+              carrierServiceLevel => {
+                serviceLevels = [...serviceLevels, 
+                    {
+                      value: carrierServiceLevel.id,
+                      label: carrierServiceLevel.name,
+                      isLeaf: true
+                    }
+                ]
+              }
+            );
+            this.carrierOptions = [...this.carrierOptions, 
+            { 
+              value: carrier.id,
+              label: carrier.name,
+              children: serviceLevels
+            }]
+          }
+        )
+      }
+    })
   }
   loadHualeiConfiguration() {
     this.isHualeiConfigurationSpinning = true;
@@ -216,6 +261,7 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
       productId: [null],
       name: [null],
       description: [null],
+      carrier: [null],
     });
  
     // Load the location
@@ -228,7 +274,7 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
       nzOnCancel: () => {
         this.addProductModal.destroy(); 
       },
-      nzOnOk: () => {
+      nzOnOk: () => { 
         if (this.addProductForm.controls.productId.value == null) {
           this.messageService.error("please fill in the product id");
           return false; 
@@ -241,10 +287,24 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
           this.messageService.error("please fill in the description");
           return false; 
         }
+        // get the carrier and service level for the hualei product
+        let carrierId : number | undefined = undefined;
+        let carrierServiceLevelId  : number | undefined = undefined;
+        let carrierInformation : string = this.addProductForm.controls.carrier.value.toString();
+        if (carrierInformation) {
+          console.log(`get carrier information ${carrierInformation}`);
+          let carrierInformationArray : string[] = [];
+          carrierInformationArray = carrierInformation.split(",");
+          carrierId = +carrierInformationArray[0];
+          carrierServiceLevelId = carrierInformationArray.length > 1 ? +carrierInformationArray[1] : undefined;
+        }
+
         this.addProduct( 
           this.addProductForm.controls.productId.value,
           this.addProductForm.controls.name.value,
           this.addProductForm.controls.description.value,
+          carrierId, 
+          carrierServiceLevelId
         );
         return true;
       },
@@ -253,12 +313,15 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
     });
   }
 
-  addProduct(productId: string, name: string, description: string) {
+  addProduct(productId: string, name: string, description: string, carrierId?: number, 
+    carrierServiceLevelId?: number) {
     const hualeiProduct: HualeiProduct = {      
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
         productId: productId,
         name: name,
         description: description,
+        carrierId: carrierId, 
+        carrierServiceLevelId: carrierServiceLevelId
     };
     this.isHualeiProductSpinning = true;
     this.hualeiProductService.addHualeiProduct(hualeiProduct).subscribe({
@@ -281,8 +344,7 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
     
     this.addShippingLabelFormatForm = this.fb.group({ 
       productId: [null],
-      shippingLabelFormat: [null], 
-      trackingInfoUrl: [null], 
+      shippingLabelFormat: [null],  
     });
  
     this.hualeiProductsWithoutShippingLabelFormat = 
@@ -313,8 +375,7 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
         } 
         this.addShippingLabelFormat( 
           this.addShippingLabelFormatForm.controls.productId.value,
-          this.addShippingLabelFormatForm.controls.shippingLabelFormat.value, 
-          this.addShippingLabelFormatForm.controls.trackingInfoUrl.value, 
+          this.addShippingLabelFormatForm.controls.shippingLabelFormat.value,  
         );
         return true;
       },
@@ -323,8 +384,7 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
     });
   }
 
-  addShippingLabelFormat(productId: string, shippingLabelFormat: string,
-    trackingInfoUrl: string) { 
+  addShippingLabelFormat(productId: string, shippingLabelFormat: string) { 
     // make sure we will only have one format for each product id
     if (this.currentHualeiConfiguration.hualeiShippingLabelFormatByProducts.some(
       shippingLabelFormat => shippingLabelFormat.productId == productId
@@ -342,7 +402,7 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
         warehouseId: this.warehouseService.getCurrentWarehouse().id, 
         productId: productId,
         shippingLabelFormat: hualeiShippingLabelFormat,
-        trackingInfoUrl: trackingInfoUrl,
+        trackingInfoUrl: this.hualeiProducts.find(hualeiProduct => hualeiProduct.productId == productId)?.carrier?.trackingInfoUrl
 
       }
     ];

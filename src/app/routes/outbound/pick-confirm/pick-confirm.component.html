@@ -98,7 +98,7 @@
 
 <!-- Display Order Informaiton -->
 <nz-card *ngIf="type === 'order'">
-  <nz-descriptions nzTitle="{{'order' | i18n}}" nzBordered>
+  <nz-descriptions nzTitle="{{'order' | i18n}}" nzBordered *ngIf="order != null">
     <nz-descriptions-item nzTitle="{{'order.number' | i18n}}">
       {{order.number}}
     </nz-descriptions-item>
