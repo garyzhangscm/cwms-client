@@ -4,6 +4,7 @@ import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzCascaderModule } from 'ng-zorro-antd/cascader';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
+import { NzListModule } from 'ng-zorro-antd/list';
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
@@ -38,6 +39,7 @@ import { OutboundOrderComponent } from './order/order.component';
 import { OutboundOutboundOrderPopupQueryComponent } from './outbound-order-popup-query/outbound-order-popup-query.component';
 import { OutboundRoutingModule } from './outbound-routing.module';
 import { OutboundParcelByOrderComponent } from './parcel-by-order/parcel-by-order.component';
+import { OutboundParcelPackageMaintenanceComponent } from './parcel-package-maintenance/parcel-package-maintenance.component';
 import { OutboundPickConfigurationComponent } from './pick-configuration/pick-configuration.component';
 import { OutboundPickConfirmComponent } from './pick-confirm/pick-confirm.component';
 import { OutboundPickListComponent } from './pick-list/pick-list.component';
@@ -86,7 +88,8 @@ const COMPONENTS: Array<Type<void>> = [
   OutboundParcelByOrderComponent,
   OutboundPickConfigurationComponent,
   OutboundHualeiConfigurationComponent,
-  OutboundShipByHualeiComponent];
+  OutboundShipByHualeiComponent,
+  OutboundParcelPackageMaintenanceComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
@@ -107,7 +110,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzLayoutModule,
     AuthModule,
     NzResultModule,
-    NzCascaderModule 
+    NzCascaderModule,
+    NzListModule 
   ],
   declarations: [
     ...COMPONENTS,

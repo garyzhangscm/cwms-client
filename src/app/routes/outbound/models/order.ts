@@ -55,8 +55,8 @@ export interface Order {
   shipToAddressPostcode?: string;
 
   // Bill to Address
-  billTocontactorFirstname?: string;
-  billTocontactorLastname?: string;
+  billToContactorFirstname?: string;
+  billToContactorLastname?: string;
 
   billToAddressCountry?: string;
   billToAddressState?: string;

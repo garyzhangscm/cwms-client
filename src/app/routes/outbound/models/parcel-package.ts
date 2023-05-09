@@ -2,8 +2,8 @@ import { Order } from "./order";
 
  
 export interface ParcelPackage {
-  id: number;
-  order: Order;
+  id?: number;
+  order?: Order;
 
   warehouseId: number;
 

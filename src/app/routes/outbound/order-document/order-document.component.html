@@ -28,26 +28,56 @@
         <nz-descriptions nzTitle="{{ 'order' | i18n}}" nzBordered>
             <nz-descriptions-item nzTitle="{{ 'number' | i18n}}">
               {{currentOrder.number}}</nz-descriptions-item>
+              
             <nz-descriptions-item nzTitle="{{ 'shipToCustomer' | i18n}}">
-                <h3>{{ currentOrder.shipToCustomer?.name }} </h3> 
-          
-                    <address>  
-                      {{currentOrder.shipToCustomer?.addressLine1}} <br>
-                      {{currentOrder.shipToCustomer?.addressLine2}} <br>
-                      {{currentOrder.shipToCustomer?.addressCity}},  {{currentOrder.shipToCustomer?.addressState}} <br>
-                      {{currentOrder.shipToCustomer?.addressPostcode}} <br>
-                      </address> 
-            </nz-descriptions-item>
-            <nz-descriptions-item nzTitle="{{ 'order.billToCustomer' | i18n}}">
-                <h3>{{ currentOrder.billToCustomer?.name }}</h3> 
-                
-                <address>  
-                    {{currentOrder.billToCustomer?.addressLine1}} <br>
-                    {{currentOrder.billToCustomer?.addressLine2}} <br>
-                    {{currentOrder.billToCustomer?.addressCity}},  {{currentOrder.billToCustomer?.addressState}} <br>
-                    {{currentOrder.billToCustomer?.addressPostcode}} <br>
-                    </address> 
-            </nz-descriptions-item>
+              <div *ngIf="currentOrder.shipToCustomer != null">
+
+                  <h3>{{ currentOrder.shipToCustomer.name }} </h3> 
+        
+                  <address>  
+                    {{currentOrder.shipToCustomer.addressLine1}} <br>
+                    {{currentOrder.shipToCustomer.addressLine2}} <br>
+                    {{currentOrder.shipToCustomer.addressCity}},  {{currentOrder.shipToCustomer.addressState}} <br>
+                    {{currentOrder.shipToCustomer.addressPostcode}} <br>
+                  </address> 
+
+              </div>
+              <div *ngIf="currentOrder.shipToCustomer == null">
+
+                  <h3>{{ currentOrder.shipToContactorFirstname }} {{ currentOrder.shipToContactorLastname }}</h3> 
+        
+                  <address>  
+                    {{currentOrder.shipToAddressLine1}} <br>
+                    {{currentOrder.shipToAddressLine2}} <br>
+                    {{currentOrder.shipToAddressCity}},  {{currentOrder.shipToAddressState}} <br>
+                    {{currentOrder.shipToAddressPostcode}} <br>
+                  </address> 
+
+              </div>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="{{ 'order.billToCustomer' | i18n}}">
+              <div *ngIf="currentOrder.billToCustomer != null">
+                  <h3>{{ currentOrder.billToCustomer.name }}</h3> 
+                  
+                  <address>  
+                      {{currentOrder.billToCustomer.addressLine1}} <br>
+                      {{currentOrder.billToCustomer.addressLine2}} <br>
+                      {{currentOrder.billToCustomer.addressCity}},  {{currentOrder.billToCustomer.addressState}} <br>
+                      {{currentOrder.billToCustomer.addressPostcode}} <br>
+                  </address> 
+              </div>
+              <div *ngIf="currentOrder.billToCustomer == null">
+                  
+                  <h3>{{ currentOrder.billToContactorFirstname }} {{ currentOrder.billToContactorLastname }}</h3> 
+        
+                  <address>  
+                    {{currentOrder.billToAddressLine1}} <br>
+                    {{currentOrder.billToAddressLine2}} <br>
+                    {{currentOrder.billToAddressCity}},  {{currentOrder.billToAddressState}} <br>
+                    {{currentOrder.billToAddressPostcode}} <br>
+                  </address> 
+              </div>
+          </nz-descriptions-item>
         </nz-descriptions>
     </nz-card>
  

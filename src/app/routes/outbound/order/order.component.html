@@ -889,6 +889,51 @@
           </nz-tab>
           
           <nz-tab nzTitle=" {{ 'parcel-package' | i18n }}">
+            
+            <st #parcelPackageTable [data]="mapOfParcelPackages[order.id!]"  
+              [columns]="parcelPackageTablecolumns" [scroll]="{ x: '2155px' }">
+              <ng-template st-row="trackingCodeColumn" let-parcelPackage > 
+                <a [href]="parcelPackage.trackingUrl" target="_blank">{{ parcelPackage.trackingCode }}</a>
+              </ng-template>
+              <ng-template st-row="shippedDateColumn" let-parcelPackage > 
+                {{ parcelPackage.createdTime | date:'short'}} 
+              </ng-template>
+              <ng-template st-row="sizeColumn" let-parcelPackage > 
+
+                {{ parcelPackage.length }} in x {{ parcelPackage.width }} in x {{ parcelPackage.height }} in
+              </ng-template>
+              <ng-template st-row="weightColumn" let-parcelPackage > 
+                {{ parcelPackage.weight }} lb
+              </ng-template>
+              <ng-template st-row="rateColumn" let-parcelPackage > 
+                {{ parcelPackage.rate | currency: 'USD' }} 
+              </ng-template>
+              <ng-template st-row="insuranceColumn" let-parcelPackage >  
+                {{ parcelPackage.insurance | currency: 'USD' }}
+              </ng-template>
+              <ng-template st-row="labelColumn" let-parcelPackage > 
+                <cwms-common-print-button style="padding-left: 20px;" (print)="printParcelLabel( $event, parcelPackage)"
+                      (preview)="previewParcelLevel(parcelPackage)">
+                      </cwms-common-print-button>
+              </ng-template> 
+              <ng-template st-row="actionColumn" let-parcelPackage > 
+                <button nz-button (click)="removePackage(parcelPackage)">{{'remove' | i18n }}</button>
+              </ng-template> 
+            </st>
+            <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
+                <button nz-button nzType="primary" routerLink="/outbound/parcel-package/maintenance" routerLinkActive="active"
+                  *ngIf="!userPermissionMap.has('add-parcel-package') || userPermissionMap.get('add-parcel-package')"
+                  [queryParams]="{id : order.id}">
+                  {{ 'add' | i18n }}
+                </button>
+                <nz-divider nzType="vertical"></nz-divider> 
+                <button  nz-button nzType="primary" routerLink="/util/file-upload/parcel-packages" routerLinkActive="active"
+                *ngIf="!userPermissionMap.has('file-upload') || userPermissionMap.get('file-upload')">
+                  {{ 'file-upload' | i18n }}
+                </button> 
+              </div>
+            <!--
+
             <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="mapOfParcelPackages[order.id!]" nzSize="middle"
               [nzShowPagination]="true" #parcelPackageTable>
               <thead>
@@ -944,16 +989,12 @@
                     
                       <cwms-common-print-button style="padding-left: 20px;" (print)="printParcelLabel( $event, parcelPackage)"
                       (preview)="previewParcelLevel(parcelPackage)">
-                      </cwms-common-print-button>
-
-                    <!--
-                      <a [href]="packages.labelUrl" target="_blank">{{ 'print-label' | i18n }}</a>
-
-                    -->  
-                    </td>
+                      </cwms-common-print-button> 
+                  </td>
                 </tr>
               </tbody>
             </nz-table>
+            -->
           </nz-tab>
         </nz-tabset>
       </ng-template>

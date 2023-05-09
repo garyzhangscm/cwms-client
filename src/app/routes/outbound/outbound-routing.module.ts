@@ -14,6 +14,7 @@ import { OutboundCartonizationComponent } from './cartonization/cartonization.co
 import { OutboundCompleteOrderComponent } from './complete-order/complete-order.component';
 import { OutboundGridMaintenanceComponent } from './grid-maintenance/grid-maintenance.component';
 import { OutboundGridComponent } from './grid/grid.component';
+import { OutboundHualeiConfigurationComponent } from './hualei-configuration/hualei-configuration.component';
 import { OutboundListPickConfigurationMaintenanceComponent } from './list-pick-configuration-maintenance/list-pick-configuration-maintenance.component';
 import { OutboundListPickConfigurationComponent } from './list-pick-configuration/list-pick-configuration.component';
 import { OutboundLoadComponent } from './load/load.component';
@@ -23,10 +24,12 @@ import { OutboundOrderMaintenanceComponent } from './order-maintenance/order-mai
 import { OutboundOrderComponent } from './order/order.component';
 import { OutboundOutboundOrderPopupQueryComponent } from './outbound-order-popup-query/outbound-order-popup-query.component';
 import { OutboundParcelByOrderComponent } from './parcel-by-order/parcel-by-order.component';
+import { OutboundParcelPackageMaintenanceComponent } from './parcel-package-maintenance/parcel-package-maintenance.component';
 import {  OutboundPickConfigurationComponent } from './pick-configuration/pick-configuration.component';
 import { OutboundPickConfirmComponent } from './pick-confirm/pick-confirm.component';
 import { OutboundPickListComponent } from './pick-list/pick-list.component';
 import { OutboundPickComponent } from './pick/pick.component';
+import { OutboundShipByHualeiComponent } from './ship-by-hualei/ship-by-hualei.component';
 import { OutboundShipmentDisplayComponent } from './shipment-display/shipment-display.component';
 import { OutboundShipmentComponent } from './shipment/shipment.component';
 import { OutboundShippingCartonizationComponent } from './shipping-cartonization/shipping-cartonization.component';
@@ -35,8 +38,6 @@ import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
-import { OutboundHualeiConfigurationComponent } from './hualei-configuration/hualei-configuration.component';
-import { OutboundShipByHualeiComponent } from './ship-by-hualei/ship-by-hualei.component';
 
 const routes: Routes = [
   { path: 'order', component: OutboundOrderComponent, 
@@ -323,7 +324,8 @@ const routes: Routes = [
     }
   },
   { path: 'hualei-configuration', component: OutboundHualeiConfigurationComponent },
-  { path: 'ship-by-hualei', component: OutboundShipByHualeiComponent }];
+  { path: 'ship-by-hualei', component: OutboundShipByHualeiComponent },
+  { path: 'parcel-package/maintenance', component: OutboundParcelPackageMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

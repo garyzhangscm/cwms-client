@@ -1342,6 +1342,28 @@ export class OutboundOrderComponent implements OnInit {
     }
   }
 
+  
+  @ViewChild('parcelPackageTable', { static: true })
+  parcelPackageTable!: STComponent;
+  parcelPackageTablecolumns: STColumn[] = [
+    { title: this.i18n.fanyi("trackingCode"), 
+      render: 'trackingCodeColumn', width: 150},
+    { title: this.i18n.fanyi("status"),  index: 'status',  },
+    { title: this.i18n.fanyi("shippedDate"), 
+      render: 'shippedDateColumn' },
+    { title: this.i18n.fanyi("size"), 
+        render: 'sizeColumn' },
+    { title: this.i18n.fanyi("weight"), 
+          render: 'weightColumn' },
+    { title: this.i18n.fanyi("carrier"),  index: 'carrier',  },
+    { title: this.i18n.fanyi("service"),  index: 'service',  },
+    { title: this.i18n.fanyi("deliveryDays"),  index: 'deliveryDays',  },
+    { title: this.i18n.fanyi("rate"), render: 'rateColumn',    },
+    { title: this.i18n.fanyi("insurance"),  render: 'insuranceColumn',   },  
+    { title: this.i18n.fanyi("label"), 
+          render: 'labelColumn' },   
+  ];
+
   orderTableChanged(event: STChange) : void { 
     if (event.type === 'expand' && event.expand.expand === true) {
       
@@ -1867,4 +1889,17 @@ export class OutboundOrderComponent implements OnInit {
  
   formatterDollar = (value: number): string => `$ ${value}`;
   parserDollar = (value: string): string => value.replace('$ ', '');
+
+  removePackage(parcelPackage: ParcelPackage) {
+
+    this.isSpinning = true;
+    this.parcelPackageService.remove(parcelPackage.id!).subscribe({
+      next: () => {
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi("message.action.success"));
+        this.search();
+      }, 
+      error: () => this.isSpinning = false
+    })
+  }
 }

@@ -46,6 +46,7 @@ export class OutboundOrderDocumentComponent implements OnInit {
     private router: Router
   ) {
     
+    this.pageTitle = i18n.fanyi("order-document");
   }
 
   ngOnInit(): void {
