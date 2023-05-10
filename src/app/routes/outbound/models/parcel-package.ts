@@ -1,4 +1,5 @@
 import { Order } from "./order";
+import { ParcelPackageStatus } from "./parcel-package-status.enum";
 
  
 export interface ParcelPackage {
@@ -9,7 +10,8 @@ export interface ParcelPackage {
 
   trackingCode: string;
   trackingUrl: string;
-  status: string;
+  status: ParcelPackageStatus;
+  statusDescription: string;
   shipmentId: string;
 
 

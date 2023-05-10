@@ -18,6 +18,11 @@ export interface HualeiConfiguration {
     printLabelHost: string;
     printLabelPort: string;
     printLabelEndpoint: string;  
+    
+    getPackageStatusProtocol: string;
+    getPackageStatusHost: string;
+    getPackageStatusPort: string;
+    getPackageStatusEndpoint: string;
 
     defaultCargoType: string;
     defaultCustomsClearance: string;

@@ -122,6 +122,11 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
         printLabelHost: "",
         printLabelPort: "",
         printLabelEndpoint: "", 
+        
+        getPackageStatusProtocol:  "",
+        getPackageStatusHost:  "",
+        getPackageStatusPort:  "",
+        getPackageStatusEndpoint:  "",
     
         defaultCargoType: "",
         defaultCustomsClearance: "",

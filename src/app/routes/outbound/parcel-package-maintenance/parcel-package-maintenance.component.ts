@@ -12,6 +12,7 @@ import { CarrierService } from '../../transportation/services/carrier.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Order } from '../models/order'; 
 import { ParcelPackage } from '../models/parcel-package';
+import { ParcelPackageStatus } from '../models/parcel-package-status.enum';
 import { OrderDocumentService } from '../services/order-document.service';
 import { OrderService } from '../services/order.service';
 import { ParcelPackageService } from '../services/parcel-package.service';
@@ -65,7 +66,8 @@ export class OutboundParcelPackageMaintenanceComponent implements OnInit {
     
       trackingCode: "",
       trackingUrl: "",
-      status: "",
+      status: ParcelPackageStatus.REQUESTED,
+      statusDescription: "",
       shipmentId: "", 
     
       length: 0,

@@ -1349,6 +1349,7 @@ export class OutboundOrderComponent implements OnInit {
     { title: this.i18n.fanyi("trackingCode"), 
       render: 'trackingCodeColumn', width: 150},
     { title: this.i18n.fanyi("status"),  index: 'status',  },
+    { title: this.i18n.fanyi("status"),  index: 'statusDescription',  },
     { title: this.i18n.fanyi("shippedDate"), 
       render: 'shippedDateColumn' },
     { title: this.i18n.fanyi("size"), 
