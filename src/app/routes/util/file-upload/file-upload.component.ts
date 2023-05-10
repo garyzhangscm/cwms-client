@@ -41,6 +41,7 @@ export class UtilFileUploadComponent implements OnInit {
     ['itemUnitOfMeasure', false],
     ['locations', false],
     ['orders', false],
+    ['parcel-packages', false],
     ['putaway-inventories', false],
     ['receipts', false],
     ['receiving-inventories', false],

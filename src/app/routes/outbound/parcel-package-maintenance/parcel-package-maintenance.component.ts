@@ -83,7 +83,7 @@ export class OutboundParcelPackageMaintenanceComponent implements OnInit {
       labelSize: "",
       labelUrl: "",
     
-      insurance: "",               
+      insurance: "0",               
     }
   }
 
@@ -193,6 +193,10 @@ export class OutboundParcelPackageMaintenanceComponent implements OnInit {
       this.currentParcelPackage.labelUrl = this.getFileUrl(file.name);
     });
 
+    // setup the shipment id as tracking number.
+    // shipment id is the business key of the package
+    this.currentParcelPackage.shipmentId = this.currentParcelPackage.trackingCode;
+
 
   }
   confirm(): void {
@@ -221,7 +225,7 @@ export class OutboundParcelPackageMaintenanceComponent implements OnInit {
   };
 
   getFileUrl(fileName: string) : string {
-    return `${environment.api.baseUrl}/outbound/orders/${this.currentOrder.warehouseId}/${this.currentOrder.id}/documents/download/${fileName}`; 
+    return `${environment.api.baseUrl}/outbound/orders/${this.currentOrder.warehouseId}/${this.currentOrder.id}/documents/preview/${fileName}`; 
      
   }
   readyForConfirm() {

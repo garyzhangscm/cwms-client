@@ -281,7 +281,7 @@ export class OutboundOrderComponent implements OnInit {
 
   }
 
-  search(expandedOrderId?: number, tabSelectedIndex?: number): void {
+  search(tabSelectedIndex?: number): void {
     this.isSpinning = true;
     this.searchResult = '';
     
@@ -1005,7 +1005,7 @@ export class OutboundOrderComponent implements OnInit {
     this.pickService.cancelPick(pick, errorLocation, generateCycleCount).subscribe(pickRes => {
       this.messageService.success(this.i18n.fanyi('message.action.success'));
       this.isSpinning = false;
-      this.search(order.id, 1);
+      this.search(1);
     });
   }
   openUnpickModal(
@@ -1057,7 +1057,7 @@ export class OutboundOrderComponent implements OnInit {
       console.log(`unpick is done`);
       this.messageService.success(this.i18n.fanyi('message.action.success'));
       // refresh the picked inventory
-      this.search(order.id, 2);
+      this.search(2);
     });
   }
 
@@ -1069,7 +1069,7 @@ export class OutboundOrderComponent implements OnInit {
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi('message.action.success'));
         // refresh the short allocation
-        this.search(order.id, 3);
+        this.search(3);
       }, 
       error: () => this.isSpinning = false
     });
@@ -1088,7 +1088,7 @@ export class OutboundOrderComponent implements OnInit {
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi('message.action.success'));
         // refresh the short allocation
-        this.search(order.id, 3);
+        this.search(3);
       }, 
       error: () => this.isSpinning = false
     });
@@ -1362,6 +1362,9 @@ export class OutboundOrderComponent implements OnInit {
     { title: this.i18n.fanyi("insurance"),  render: 'insuranceColumn',   },  
     { title: this.i18n.fanyi("label"), 
           render: 'labelColumn' },   
+    { title: this.i18n.fanyi("action"),fixed: 'right',width: 150, 
+            render: 'actionColumn',
+            iif: () => !this.displayOnly },
   ];
 
   orderTableChanged(event: STChange) : void { 
@@ -1589,7 +1592,10 @@ export class OutboundOrderComponent implements OnInit {
   }
 
   previewParcelLevel(parcelPackage: ParcelPackage): void {
-    window.open(parcelPackage.labelUrl, '_blank');
+    // window.open(parcelPackage.labelUrl, '_blank');
+    console.log(`open label url ${parcelPackage.labelUrl}`);
+
+    window.open(parcelPackage.labelUrl);
     // this.router.navigateByUrl(parcelPackage.labelUrl, );
   }
 
@@ -1897,7 +1903,7 @@ export class OutboundOrderComponent implements OnInit {
       next: () => {
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("message.action.success"));
-        this.search();
+        this.search(6);
       }, 
       error: () => this.isSpinning = false
     })
