@@ -26,12 +26,12 @@ export class DateTimeService {
   getUTCHour(localHour: number) : number{
     var offset = new Date().getTimezoneOffset();
     console.log(`current time zone's offset: ${offset}`);
-    return (localHour - offset / 60) % 24;
+    return (localHour + offset / 60) % 24;
   }
   getLocalHour(utcHour: number) : number{
     var offset = new Date().getTimezoneOffset();
     console.log(`current time zone's offset: ${offset}`);
-    return (utcHour + offset / 60) % 24;
+    return (utcHour - offset / 60) % 24;
   }
   
   getLocalDateString(dateTime: Date) : string { 
