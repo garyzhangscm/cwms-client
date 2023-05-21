@@ -751,7 +751,7 @@
         </nz-form-item>
       </div>
 
-      <div nz-col [nzSpan]="2" *ngIf="currentReceivingUnitOfMeasure && currentReceivingInventory.itemPackageType">
+      <div nz-col [nzSpan]="2" *ngIf="currentReceivingUnitOfMeasure && currentReceivingInventory.itemPackageType"> 
         <nz-select nz-input [ngModel]="currentReceivingUnitOfMeasure.id" required  name="receivingUnitOfMeasure" 
           (ngModelChange)="receivingUnitOfMeasureChanged($event)"
                 style = "width: 75px;"  >

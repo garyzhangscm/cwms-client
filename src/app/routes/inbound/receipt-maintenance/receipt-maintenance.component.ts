@@ -920,6 +920,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.currentReceivingQuantityStatus = 'error'; 
 
     this.currentReceivingInventory = this.createEmptyReceivingInventory(receiptLine);
+    this.currentReceivingUnitOfMeasure = undefined;
+
     // show the model
     this.receivingModal = this.modalService.create({
       nzTitle: tplReceivingModalTitle,
@@ -1041,7 +1043,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
     }
 
-    console.log(`this.currentReceivingInventory!.item\n ${JSON.stringify(this.currentReceivingInventory!.item)}`);
+    // console.log(`this.currentReceivingInventory!.item\n ${JSON.stringify(this.currentReceivingInventory!.item)}`);
 
     if (this.currentReceivingInventory!.item?.trackingColorFlag) {
       this.currentReceivingInventory!.color = this.currentReceivingInventory!.item.defaultColor;
@@ -1657,12 +1659,13 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     }
   }
   
-  receivingUnitOfMeasureChanged(itemUnitOfMeasureId: number) {
+  receivingUnitOfMeasureChanged(itemUnitOfMeasureId: number) { 
     this.currentReceivingUnitOfMeasure = 
         this.currentReceivingInventory!.itemPackageType!.itemUnitOfMeasures.find(
-          itemUnitOfMeasure => itemUnitOfMeasure.id = itemUnitOfMeasureId
+          itemUnitOfMeasure => itemUnitOfMeasure.id == itemUnitOfMeasureId
         );
-     
+      
+
   } 
   
   receivingInventoryLocationChanged(locationName: string) {
