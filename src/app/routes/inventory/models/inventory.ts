@@ -2,6 +2,7 @@ import { Client } from '../../common/models/client';
 import { PickWork } from '../../outbound/models/pick-work';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+import { WorkOrder } from '../../work-order/models/work-order';
 import { InventoryMovement } from './inventory-movement';
 import { InventoryStatus } from './inventory-status';
 import { Item } from './item';
@@ -34,6 +35,9 @@ export interface Inventory {
   receiptId?: number;
   receiptLineId?: number;
   inboundQCRequired?: boolean;
+
+  workOrderId? : number;
+  workOrder?: WorkOrder;
 
   fifoDate?: Date;
   

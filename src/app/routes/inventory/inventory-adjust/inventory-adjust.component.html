@@ -220,7 +220,7 @@
 <ng-template #tplAddInventoryModalContent>
 
   <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="8" >
+    <div nz-col [nzSpan]="8" *ngIf="threePartyLogisticsFlag">
       <nz-form-item nzFlex>
         <nz-form-label for="client" [nzSpan]="6">
           {{ 'client' | i18n }}
@@ -344,39 +344,82 @@
         </nz-form-control>
       </nz-form-item>
     </div>
-
-    <div nz-col [nzSpan]="8">
+ 
+    <div nz-col [nzSpan]="6">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="quantity">
+        <nz-form-label [nzSpan]="8"   nzFor="quantity">
           {{ 'quantity' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+        <nz-form-control [nzSpan]="16"  nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
           <nz-input-group nzSize="large">
             <input nz-input [(ngModel)]="currentInventory.quantity" id="quantity" name="quantity" />
           </nz-input-group>
         </nz-form-control>
       </nz-form-item>
     </div>
-
-
+    
+    <div nz-col [nzSpan]="2" *ngIf="currentAdjustUnitOfMeasure && currentInventory.itemPackageType"> 
+      <nz-select nz-input [ngModel]="currentAdjustUnitOfMeasure.id" required  name="adjustUnitOfMeasure" 
+        (ngModelChange)="adjustUnitOfMeasureChanged($event)"
+              style = "width: 75px;"  >
+              <nz-option *ngFor=" let itemUnitOfMeasure of currentInventory.itemPackageType!.itemUnitOfMeasures"
+                [nzLabel]="itemUnitOfMeasure.unitOfMeasure!.name" [nzValue]="itemUnitOfMeasure.id">
+              </nz-option>
+            </nz-select>
+    </div> 
   </div>
 
   <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="24">
+    <div nz-col [nzSpan]="8" *ngIf="currentInventory.item?.trackingColorFlag">
       <nz-form-item nzFlex>
-        <nz-form-label [nzSpan]="4" nzFor="documentNumber">
+        <nz-form-label [nzSpan]="12" nzFor="color">
+          {{ 'color' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" >             
+          <input   nz-input
+            [(ngModel)]="currentInventory!.color"  name="color"    id="color" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    
+    <div nz-col [nzSpan]="8" *ngIf="currentInventory.item?.trackingProductSizeFlag">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="12" nzFor="productSize">
+          {{ 'productSize' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" >             
+          <input   nz-input
+            [(ngModel)]="currentInventory!.productSize"  name="productSize"    id="productSize" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    
+    <div nz-col [nzSpan]="8" *ngIf="currentInventory.item?.trackingStyleFlag">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="12" nzFor="style">
+          {{ 'style' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" >             
+          <input   nz-input
+            [(ngModel)]="currentInventory!.style"  name="style"    id="style" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="6" nzFor="documentNumber">
           {{'document-number' | i18n}}
         </nz-form-label>
-        <nz-form-control [nzSpan]="20" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+        <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
 
           <input nz-input [(ngModel)]="documentNumber" id="documentNumber" name="documentNumber" />
         </nz-form-control>
       </nz-form-item>
-    </div>
-  </div>
-
-  <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="24"> 
+    </div> 
+    <div nz-col [nzSpan]="12"> 
       <nz-form-item nzFlex>
         <nz-form-label [nzSpan]="4" nzFor="comment">
           {{'comment' | i18n}}

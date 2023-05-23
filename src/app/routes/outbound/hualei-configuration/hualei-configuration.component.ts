@@ -127,6 +127,11 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
         getPackageStatusHost:  "",
         getPackageStatusPort:  "",
         getPackageStatusEndpoint:  "",
+
+        getTrackingNumberProtocol:  "",
+        getTrackingNumberHost:  "",
+        getTrackingNumberPort:  "",
+        getTrackingNumberEndpoint:  "",
     
         defaultCargoType: "",
         defaultCustomsClearance: "",

@@ -25,6 +25,7 @@ import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
+import { WorkOrderService } from '../../work-order/services/work-order.service';
 import { Inventory } from '../models/inventory';
 import { InventoryDisplayOption } from '../models/inventory-display-option.enum';
 import { InventoryMovement } from '../models/inventory-movement';
@@ -186,6 +187,7 @@ export class InventoryInventoryComponent implements OnInit {
     ['remove-inventory-in-batch', false],
     ['move-inventory-in-batch', false],
     ['upload-inventory', false],
+    ['reverse-inventory', false],
   ]);
   
   constructor(
@@ -206,6 +208,7 @@ export class InventoryInventoryComponent implements OnInit {
     private localCacheService: LocalCacheService,
     private userService: UserService,
     private inventoryStatusService: InventoryStatusService,
+    private workOrderService: WorkOrderService,
   ) { 
     userService.isCurrentPageDisplayOnly("/inventory/inventory").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
@@ -590,6 +593,7 @@ export class InventoryInventoryComponent implements OnInit {
     // see if we have the display UOM setup
     // console.log(`start to setup display quantity for inventory of lpn ${inventory.lpn}`)
     if (inventory.itemPackageType?.displayItemUnitOfMeasure) {
+      // console.log(`inventory.itemPackageType \n ${JSON.stringify(inventory.itemPackageType)}`);
       let displayItemUnitOfMeasureQuantity  = inventory.itemPackageType.displayItemUnitOfMeasure.quantity;
 
       if (inventory.quantity! % displayItemUnitOfMeasureQuantity! ==0) {
@@ -1166,6 +1170,44 @@ export class InventoryInventoryComponent implements OnInit {
 
     // setup the display based on the display option
     this.processInventoryQueryResult(this.inventories);
+  }
+
+  reverseInventory(inventory: Inventory) {
+    
+    this.isSpinning = true;
+    if (inventory.receiptId != null) { 
+        this.inventoryService.reverseReceivedInventory(inventory, true, true).subscribe(
+          {
+            next: () => {
+              this.messageService.success(this.i18n.fanyi('message.action.success'));
+              this.isSpinning = false;
+              this.search();
+            }, 
+            error: () => {
+                    
+              this.isSpinning = false; 
+            }
+          }
+
+        )
+    } 
+    else if (inventory.workOrderId != null) { 
+      this.workOrderService.reverseProduction(inventory.workOrderId, inventory.lpn!).subscribe(
+        {
+          next: () => {
+            this.messageService.success(this.i18n.fanyi('message.action.success'));
+            this.isSpinning = false;
+            this.search();
+          }, 
+          error: () => {
+                  
+            this.isSpinning = false; 
+          }
+        }
+
+      )
+  } 
+
   }
 
 }

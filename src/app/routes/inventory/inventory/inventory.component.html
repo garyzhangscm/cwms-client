@@ -318,6 +318,12 @@
                 <a
                   (click)="openRemoveInventoryModal(inventory, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
                   nzDanger>{{ 'removeInventory' | i18n }}</a></li>
+              <li nz-menu-item
+                 *ngIf="(!userPermissionMap.has('reverse-inventory') || userPermissionMap.get('reverse-inventory')) &&
+                        (inventory.receiptId != null || inventory.workOrderId != null)">
+                 <a
+                   (click)="reverseInventory(inventory)"
+                   nzDanger>{{ 'reverseInventory' | i18n }}</a></li>
 
             </ul>
           </nz-dropdown-menu>

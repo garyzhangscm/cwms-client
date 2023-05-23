@@ -110,10 +110,10 @@ export class WorkOrderService {
   }
 
   
-  reverseProduction(workOrder: WorkOrder, lpn: string): Observable<WorkOrder> {
+  reverseProduction(workOrderId: number, lpn: string): Observable<WorkOrder> {
      
     
-    let url = `workorder/work-orders/${workOrder.id}/reverse-production?lpn=${this.utilService.encodeValue(lpn.trim())}`; 
+    let url = `workorder/work-orders/${workOrderId}/reverse-production?lpn=${this.utilService.encodeValue(lpn.trim())}`; 
     return this.http.post(url).pipe(map(res => res.data)); 
   }
   

@@ -23,6 +23,11 @@ export interface HualeiConfiguration {
     getPackageStatusHost: string;
     getPackageStatusPort: string;
     getPackageStatusEndpoint: string;
+    
+    getTrackingNumberProtocol: string;
+    getTrackingNumberHost: string;
+    getTrackingNumberPort: string;
+    getTrackingNumberEndpoint: string;
 
     defaultCargoType: string;
     defaultCustomsClearance: string;

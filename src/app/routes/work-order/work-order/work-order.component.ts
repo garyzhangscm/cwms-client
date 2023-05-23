@@ -1183,7 +1183,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     
     this.isSpinning = true;
 
-    this.workOrderService.reverseProduction(workOrder, inventory.lpn!)
+    this.workOrderService.reverseProduction(workOrder.id!, inventory.lpn!)
       .subscribe(workOrderRes => {
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi('message.action.success'));

@@ -26,6 +26,8 @@ import { LocationService } from '../../warehouse-layout/services/location.servic
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Inventory } from '../models/inventory';
 import { InventoryStatus } from '../models/inventory-status';
+import { ItemPackageType } from '../models/item-package-type';
+import { ItemUnitOfMeasure } from '../models/item-unit-of-measure';
 import { InventoryStatusService } from '../services/inventory-status.service';
 import { InventoryService } from '../services/inventory.service';
 import { ItemService } from '../services/item.service';
@@ -188,6 +190,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     
   ];
 
+  currentAdjustUnitOfMeasure?: ItemUnitOfMeasure;
 
   displayOnly = false;
   userPermissionMap: Map<string, boolean> = new Map<string, boolean>([
@@ -452,6 +455,8 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.documentNumber = '';
     this.comment = '';
 
+    this.currentAdjustUnitOfMeasure = undefined;
+
     // show the model
     this.addInventoryModal = this.modalService.create({
       nzTitle: tplAddInventoryModalTitle,
@@ -465,7 +470,21 @@ export class InventoryInventoryAdjustComponent implements OnInit {
         this.search();
       },
       nzOnOk: () => {
-        this.addInventory(this.currentInventory);
+        
+        let actualReceivingInventory : Inventory = { 
+          warehouseId: this.warehouseService.getCurrentWarehouse().id,
+          lpn: this.currentInventory!.lpn,
+          item: this.currentInventory!.item,
+          itemPackageType: this.currentInventory!.itemPackageType,
+          inventoryStatus: this.currentInventory!.inventoryStatus,
+          quantity: this.currentInventory!.quantity,
+          locationId: this.currentInventory!.locationId,
+          location: this.currentInventory?.location
+        }
+        if (this.currentAdjustUnitOfMeasure && this.currentAdjustUnitOfMeasure!.quantity! > 1) {
+          actualReceivingInventory.quantity = actualReceivingInventory.quantity! * this.currentAdjustUnitOfMeasure!.quantity!;
+        }
+        this.addInventory(actualReceivingInventory);
       },
       nzWidth: 1000,
     });
@@ -530,6 +549,10 @@ export class InventoryInventoryAdjustComponent implements OnInit {
         description: '',
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
       },
+      
+      color: "",
+      productSize: "",
+      style: "",
 
     };
   }
@@ -639,6 +662,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     );
     if (itemPackageTypes.length === 1) {
       this.currentInventory.itemPackageType = itemPackageTypes[0];
+      this.setupNewItemUnitOfMeasure();
     }
   }
   inventoryStatusChange( ): void {
@@ -654,7 +678,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
 
   addInventory(inventory: Inventory): void {
     // console.log(`Start to add inventory: ${JSON.stringify(inventory)}`);
-    this.isSpinning = true;
+    this.isSpinning = true; 
     this.inventoryService.addInventory(inventory, this.documentNumber, this.comment).subscribe(inventoryRes => {
       // display the newly added inventory
       this.searchForm.controls.location.setValue(inventory.location!.name);
@@ -698,6 +722,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
             this.currentInventory.item = itemRes[0];
             if (this.currentInventory.item!.itemPackageTypes.length === 1) {
               this.currentInventory.itemPackageType = this.currentInventory.item!.itemPackageTypes[0];
+              this.setupNewItemUnitOfMeasure();
             }
           }
         }, 
@@ -718,4 +743,30 @@ export class InventoryInventoryAdjustComponent implements OnInit {
 
   }
 
+  
+  adjustUnitOfMeasureChanged(itemUnitOfMeasureId: number) { 
+    this.currentAdjustUnitOfMeasure = 
+        this.currentInventory!.itemPackageType!.itemUnitOfMeasures.find(
+          itemUnitOfMeasure => itemUnitOfMeasure.id == itemUnitOfMeasureId
+        );
+      
+
+  } 
+
+  setupNewItemUnitOfMeasure() {
+    if (this.currentInventory && this.currentInventory.itemPackageType) {
+      if (this.currentInventory!.itemPackageType.displayItemUnitOfMeasure) {
+        // set the display unit of measure
+        
+        this.currentAdjustUnitOfMeasure = this.currentInventory!.itemPackageType.displayItemUnitOfMeasure;
+        // this.receivingForm!.controls.itemUnitOfMeasure.setValue(this.currentReceivingInventory!.itemPackageType.displayItemUnitOfMeasure.id);
+      }
+      else if (this.currentInventory!.itemPackageType.stockItemUnitOfMeasure) {
+        // set the display unit of measure
+         
+        this.currentAdjustUnitOfMeasure = this.currentInventory!.itemPackageType.stockItemUnitOfMeasure;
+      }
+
+    }
+  }
 }
