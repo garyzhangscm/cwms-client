@@ -1875,6 +1875,7 @@ export class OutboundOrderComponent implements OnInit {
     { title: this.i18n.fanyi("color"), index: 'color', width: 150 },  
     { title: this.i18n.fanyi("productSize"), index: 'productSize', width: 150 },  
     { title: this.i18n.fanyi("style"), index: 'style', width: 150 },  
+    { title: this.i18n.fanyi("allocateByReceiptNumber"), render: 'allocateByReceiptNumberColumn', width: 150 },  
     { title: this.i18n.fanyi("order.line.expectedQuantity"), render: 'displayExpectedQuantityColumn',  width: 150 },  
     { title: this.i18n.fanyi("order.line.openQuantity"), render: 'displayOpenQuantityColumn', width: 150 },  
     { title: this.i18n.fanyi("order.line.inprocessQuantity"), index: 'inprocessQuantity', width: 150 },  

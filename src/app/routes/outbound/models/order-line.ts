@@ -33,6 +33,7 @@ export interface OrderLine {
   color?:string;
   productSize?:string;
   style?:string;
+  allocateByReceiptNumber?: string;
 
   orderLineBillableActivities: OrderLineBillableActivity[];
 }

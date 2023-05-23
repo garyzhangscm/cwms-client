@@ -329,6 +329,10 @@
                </nz-tabset>
              </ng-template>
  
+             <ng-template st-row="allocateByReceiptNumberColumn" let-orderLine  >
+              <a *ngIf="orderLine.allocateByReceiptNumber" routerLink="/inbound/receipt" routerLinkActive="active"
+                  [queryParams]="{number : orderLine.allocateByReceiptNumber}">{{ orderLine.allocateByReceiptNumber }}</a>
+             </ng-template>
              <ng-template st-row="itemColumn" let-orderLine  >
                 <nz-skeleton-element 
                   *ngIf="orderLine.itemId && orderLine.item == null"

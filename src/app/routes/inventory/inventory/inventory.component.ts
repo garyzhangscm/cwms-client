@@ -18,9 +18,7 @@ import { PrintPageOrientation } from '../../common/models/print-page-orientation
 import { PrintPageSize } from '../../common/models/print-page-size.enum';
 import { ClientService } from '../../common/services/client.service';
 import { PrintingService } from '../../common/services/printing.service';
-import { ReportOrientation } from '../../report/models/report-orientation.enum';
-import { ReportType } from '../../report/models/report-type.enum';
-import { ColumnItem } from '../../util/models/column-item';
+import { ReportOrientation } from '../../report/models/report-orientation.enum'; 
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
@@ -28,6 +26,7 @@ import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-locat
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { Inventory } from '../models/inventory';
+import { InventoryDisplayOption } from '../models/inventory-display-option.enum';
 import { InventoryMovement } from '../models/inventory-movement';
 import { InventoryStatus } from '../models/inventory-status';
 import { ItemFamily } from '../models/item-family';
@@ -42,168 +41,7 @@ import { ItemFamilyService } from '../services/item-family.service';
   styleUrls: ['./inventory.component.less'],
 })
 export class InventoryInventoryComponent implements OnInit {
-/**
- * 
-  listOfColumns: Array<ColumnItem<Inventory>> = [
-    {
-      name: 'lpn',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.lpn, b.lpn),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'item',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'item.package-type',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.itemPackageType, b.itemPackageType, 'name'),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'location',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'quantity',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'inventory.status',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.inventoryStatus, b.inventoryStatus, 'name'),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'fifoDate',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableDateTime(a.fifoDate, b.fifoDate),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'color',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.color, b.color),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'productSize',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.productSize, b.productSize),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'style',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.style, b.style),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'inventory.locked-for-adjustment',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareBoolean(a.lockedForAdjust, b.lockedForAdjust),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    
-    {
-      name: 'inventory.pick-id',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableNumber(a.pickId, b.pickId),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'inventory.allocated-by-pick-id',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableNumber(a.allocatedByPickId, b.allocatedByPickId),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'movement-path',
-      showSort: false,
-      sortOrder: null,
-      sortFn: null,
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-  ];
-
- * 
- */
+ 
   @ViewChild('inventoryTable', { static: false })
   inventoryTable!: STComponent;
   invetoryTablePagination = {
@@ -245,7 +83,7 @@ export class InventoryInventoryComponent implements OnInit {
     { title: this.i18n.fanyi("movement-path"),  render: 'movementPathColumn' ,
         iif: () => this.isChoose('movementPath')  },   
     { title: this.i18n.fanyi("action"),  render: 'actionColumn' , 
-      iif: () => !this.displayOnly ,
+      iif: () => (!this.displayOnly) && (this.inventoryDisplayOption == null || this.inventoryDisplayOption == InventoryDisplayOption.NONE),
       width: 350,
       fixed: 'right',},  
   ]; 
@@ -292,7 +130,7 @@ export class InventoryInventoryComponent implements OnInit {
 
   // Table data for display
   inventories: Inventory[] = [];
-  listOfDisplayInventories: readonly  Inventory[] = [];
+  listOfDisplayInventories: Inventory[] = [];
   locationGroups: LocationGroup[] = [];
 
 
@@ -312,6 +150,8 @@ export class InventoryInventoryComponent implements OnInit {
 
   // whether we are move inventory in a batch
   batchMovement = false;
+  inventoryDisplayOptions = InventoryDisplayOption;
+  inventoryDisplayOption?: InventoryDisplayOption;
   
   loadingDetailsRequest = 0;
   threePartyLogisticsFlag = false;
@@ -489,10 +329,199 @@ export class InventoryInventoryComponent implements OnInit {
 
   processInventoryQueryResult(inventories: Inventory[]): void {
     this.inventories = inventories;
-    this.listOfDisplayInventories = inventories;
+    this.setupDisplay(inventories);
 
-    this.loadDetails(this.inventories);
+    this.loadDetails(this.listOfDisplayInventories);
 
+  }
+  setupDisplay(inventories: Inventory[]): void {
+    if (this.inventoryDisplayOption == InventoryDisplayOption.GROUP_BY_LPN) {
+
+      this.setupDisplayGroupByLpn(inventories);
+    }
+    else if (this.inventoryDisplayOption == InventoryDisplayOption.GROUP_BY_ITEM) {
+
+      this.setupDisplayGroupByItem(inventories);
+    }
+    else if (this.inventoryDisplayOption == InventoryDisplayOption.GROUP_BY_LOCATION) {
+
+      this.setupDisplayGroupByLocation(inventories);
+    }
+    else if (this.inventoryDisplayOption == InventoryDisplayOption.GROUP_BY_LOCATION_ITEM) {
+
+      this.setupDisplayGroupByLocationAndItem(inventories);
+    }
+    else {
+      // by default display the result directly
+      this.listOfDisplayInventories = inventories
+    }
+ 
+  }
+  
+  setupDisplayGroupByLpn(inventories: Inventory[]) {
+    this.listOfDisplayInventories = [];
+    // key: lpn
+    // value: Inventory result
+    let inventoryMap : Map<String, Inventory> = new Map();
+    inventories.forEach(
+      inventory => {
+          let key: String = inventory.lpn!;
+          if (inventoryMap.get(key)) {
+            // the value already exists, let's setup the value
+            // 1. sum up the quantity
+            // 2. for other attribute, if the new inventory has
+            //    different value from the previous inventory, then
+            //    show empty(for object) or 'MULTIPLE-VALUE'(for string)
+            inventoryMap.set(key, 
+              this.sumUpInventory(inventoryMap.get(key)!, inventory))
+
+          }
+          else {
+            // initial the inventory
+            inventoryMap.set(key, inventory);
+          }
+      }
+    )
+    inventoryMap.forEach((inventory, key) => 
+      this.listOfDisplayInventories = [...this.listOfDisplayInventories, 
+          inventory]);
+
+  }
+  
+  setupDisplayGroupByItem(inventories: Inventory[]) {
+    this.listOfDisplayInventories = [];
+    // key: item id
+    // value: Inventory result
+    let inventoryMap : Map<number, Inventory> = new Map();
+    inventories.forEach(
+      inventory => {
+          let key: number = inventory.item!.id!;
+          if (inventoryMap.get(key)) {
+            // the value already exists, let's setup the value
+            // 1. sum up the quantity
+            // 2. for other attribute, if the new inventory has
+            //    different value from the previous inventory, then
+            //    show empty(for object) or 'MULTIPLE-VALUE'(for string)
+            inventoryMap.set(key, 
+              this.sumUpInventory(inventoryMap.get(key)!, inventory))
+
+          }
+          else {
+            // initial the inventory
+            inventoryMap.set(key, inventory);
+          }
+      }
+    )
+    inventoryMap.forEach((inventory, key) => 
+      this.listOfDisplayInventories = [...this.listOfDisplayInventories, 
+          inventory]);
+
+  }
+  setupDisplayGroupByLocation(inventories: Inventory[]) {
+    this.listOfDisplayInventories = [];
+    // key: location id
+    // value: Inventory result
+    let inventoryMap : Map<number, Inventory> = new Map();
+    inventories.forEach(
+      inventory => {
+          let key: number = inventory.locationId!;
+          if (inventoryMap.get(key)) {
+            // the value already exists, let's setup the value
+            // 1. sum up the quantity
+            // 2. for other attribute, if the new inventory has
+            //    different value from the previous inventory, then
+            //    show empty(for object) or 'MULTIPLE-VALUE'(for string)
+            inventoryMap.set(key, 
+              this.sumUpInventory(inventoryMap.get(key)!, inventory))
+
+          }
+          else {
+            // initial the inventory
+            inventoryMap.set(key, inventory);
+          }
+      }
+    )
+    inventoryMap.forEach((inventory, key) => 
+      this.listOfDisplayInventories = [...this.listOfDisplayInventories, 
+          inventory]);
+
+  }
+  setupDisplayGroupByLocationAndItem(inventories: Inventory[]) {
+    this.listOfDisplayInventories = [];
+    // key: location id - Item id
+    // value: Inventory result
+    let inventoryMap : Map<String, Inventory> = new Map();
+    inventories.forEach(
+      inventory => {
+          let key: String = `${inventory.locationId!}-${inventory.item?.id}`;
+          if (inventoryMap.get(key)) {
+            // the value already exists, let's setup the value
+            // 1. sum up the quantity
+            // 2. for other attribute, if the new inventory has
+            //    different value from the previous inventory, then
+            //    show empty(for object) or 'MULTIPLE-VALUE'(for string)
+            inventoryMap.set(key, 
+              this.sumUpInventory(inventoryMap.get(key)!, inventory))
+
+          }
+          else {
+            // initial the inventory
+            inventoryMap.set(key, inventory);
+          }
+      }
+    )
+    inventoryMap.forEach((inventory, key) => 
+      this.listOfDisplayInventories = [...this.listOfDisplayInventories, 
+          inventory]);
+
+  }
+
+  // the value already exists, let's setup the value
+  // 1. sum up the quantity
+  // 2. for other attribute, if the new inventory has
+  //    different value from the previous inventory, then
+  //    show empty(for object) or 'MULTIPLE-VALUE'(for string)
+  sumUpInventory(existingInventory: Inventory, newInventory: Inventory) : Inventory {
+    let sumInventory : Inventory = { 
+      lpn: existingInventory.lpn == newInventory.lpn ? existingInventory.lpn : "** Multiple Values**",
+      client: existingInventory.clientId == newInventory.clientId ? existingInventory.client : undefined,
+      clientId: existingInventory.clientId == newInventory.clientId ? existingInventory.clientId : undefined,
+      locationId: existingInventory.locationId == newInventory.locationId ? existingInventory.locationId : undefined,
+      location: existingInventory.locationId == newInventory.locationId ? existingInventory.location : undefined,
+      locationName: existingInventory.locationId == newInventory.locationId ? existingInventory.locationName : "** Multiple Values**",
+      item: existingInventory.item?.id == newInventory.item?.id ? existingInventory.item : undefined,
+      virtual: existingInventory.virtual == newInventory.virtual ? existingInventory.virtual : undefined,
+      warehouseId: existingInventory.warehouseId == newInventory.warehouseId ? existingInventory.warehouseId : undefined,
+      warehouse: existingInventory.warehouseId == newInventory.warehouseId ? existingInventory.warehouse : undefined,
+      itemPackageType: existingInventory.itemPackageType?.id == newInventory.itemPackageType?.id ? existingInventory.itemPackageType : undefined,
+      quantity: existingInventory.quantity! + newInventory.quantity!,
+      displayQuantity: (existingInventory.displayQuantity ? 0 : existingInventory.displayQuantity!) 
+              +  (newInventory.displayQuantity ? 0 : newInventory.displayQuantity!),
+      inventoryStatus: existingInventory.inventoryStatus?.id == newInventory.inventoryStatus?.id ? existingInventory.inventoryStatus : undefined, 
+      lockedForAdjust: existingInventory.lockedForAdjust == newInventory.lockedForAdjust ? existingInventory.lockedForAdjust : undefined,
+    
+      pickId: existingInventory.pickId == newInventory.pickId ? existingInventory.pickId : undefined,
+      pick: existingInventory.pickId == newInventory.pickId ? existingInventory.pick : undefined,
+      allocatedByPickId: existingInventory.allocatedByPickId == newInventory.allocatedByPickId ? existingInventory.allocatedByPickId : undefined,
+      allocatedByPick: existingInventory.allocatedByPickId == newInventory.allocatedByPickId ? existingInventory.allocatedByPick : undefined,
+    
+      inventoryMovements: [],
+      receiptId: existingInventory.receiptId == newInventory.receiptId ? existingInventory.receiptId : undefined,
+      receiptLineId: existingInventory.receiptLineId == newInventory.receiptLineId ? existingInventory.receiptLineId : undefined,
+      inboundQCRequired: existingInventory.inboundQCRequired == newInventory.inboundQCRequired ? existingInventory.inboundQCRequired : undefined,
+    
+      fifoDate: existingInventory.fifoDate == newInventory.fifoDate ? existingInventory.fifoDate : undefined,
+      
+      color: existingInventory.lpn == newInventory.lpn ? existingInventory.lpn : "** Multiple Values**",
+      productSize: existingInventory.lpn == newInventory.lpn ? existingInventory.lpn : "** Multiple Values**",
+      style: existingInventory.lpn == newInventory.lpn ? existingInventory.lpn : "** Multiple Values**",
+    }
+
+    // console.log(`existingInventory ${existingInventory.lpn}'s quantity: ${existingInventory.quantity}`);
+    // console.log(`newInventory ${newInventory.lpn}'s quantity: ${newInventory.quantity}`);
+    // console.log(`sumInventory ${sumInventory.lpn}'s quantity: ${sumInventory.quantity}`);
+
+    return sumInventory;
   }
   
   // we will load the information 
@@ -559,6 +588,7 @@ export class InventoryInventoryComponent implements OnInit {
 
   calculateDisplayQuantity(inventory: Inventory) : void {
     // see if we have the display UOM setup
+    // console.log(`start to setup display quantity for inventory of lpn ${inventory.lpn}`)
     if (inventory.itemPackageType?.displayItemUnitOfMeasure) {
       let displayItemUnitOfMeasureQuantity  = inventory.itemPackageType.displayItemUnitOfMeasure.quantity;
 
@@ -771,13 +801,8 @@ export class InventoryInventoryComponent implements OnInit {
                 error: () => this.loadingDetailsRequest--
               }) 
     }
-  } 
-  
-  onCurrentPageDataChange(listOfCurrentPageData: readonly  Inventory[]): void {
-    this.listOfDisplayInventories = listOfCurrentPageData;
-  }
-
-
+  }  
+ 
   adjustInventory(inventory: Inventory): void {
     console.log(`will adjust inventory: ${  JSON.stringify(inventory)}`);
   }
@@ -990,17 +1015,17 @@ export class InventoryInventoryComponent implements OnInit {
   }
 
   processItemQueryResult(selectedItemName: any): void {
-    console.log(`start to query with item name ${selectedItemName}`);
+    // console.log(`start to query with item name ${selectedItemName}`);
     this.searchForm.controls.itemName.setValue(selectedItemName);
   }
   processLocationQueryResult(selectedLocationName: any): void {
-    console.log(`start to query with location name ${selectedLocationName}`);
+    // console.log(`start to query with location name ${selectedLocationName}`);
     this.inventoryMovementForm.controls.destinationLocation.setValue(selectedLocationName);
   }
 
 
   processQueryLocationQueryResult(selectedLocationName: any): void {
-    console.log(`start to query with location name ${selectedLocationName}`);
+    // console.log(`start to query with location name ${selectedLocationName}`);
     this.searchForm.controls.location.setValue(selectedLocationName);
   }
 
@@ -1008,7 +1033,7 @@ export class InventoryInventoryComponent implements OnInit {
 
     this.isSpinning = true;
     
-    console.log(`start to print lPN label for inventory \n${inventory}`);
+    // console.log(`start to print lPN label for inventory \n${inventory}`);
     this.inventoryService.generateLPNLabel(
       inventory.lpn!, event.physicalCopyCount, event.printerName)
       .subscribe(printResult => {
@@ -1016,7 +1041,7 @@ export class InventoryInventoryComponent implements OnInit {
         // send the result to the printer
         const printFileUrl
           = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
-        console.log(`will print file: ${printFileUrl}`);
+        // console.log(`will print file: ${printFileUrl}`);
         this.printingService.printFileByName(
           "LPN Label",
           printResult.fileName,
@@ -1134,6 +1159,13 @@ export class InventoryInventoryComponent implements OnInit {
   inventoryTableRecordPerPageChanged(recordPerPage: any) {
     console.log(`recordPerPage is changed to ${recordPerPage}`);
 
+  }
+
+  inventoryDisplayOptionChanged() {
+    console.log(`inventory display is changed to ${this.inventoryDisplayOption}`);
+
+    // setup the display based on the display option
+    this.processInventoryQueryResult(this.inventories);
   }
 
 }
