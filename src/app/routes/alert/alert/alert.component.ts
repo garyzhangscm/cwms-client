@@ -26,6 +26,17 @@ export class AlertAlertComponent implements OnInit {
   columns: STColumn[] = [
     
     {
+      title: this.i18n.fanyi("createdTime"), 
+      render: 'createdTimeColumn', width: 200,
+      iif: () => this.isChoose('createdTimeColumn') 
+    },    
+    {
+      title: this.i18n.fanyi("lastSentTime"), 
+      render: 'lastSentTimeColumn', 
+      iif: () => this.isChoose('lastSentTimeColumn'),
+      width: 200
+    },  
+    {
       title: this.i18n.fanyi("type"), 
       render: 'typeColumn', width: 200,
       iif: () => this.isChoose('type') 
@@ -40,18 +51,7 @@ export class AlertAlertComponent implements OnInit {
     { title: this.i18n.fanyi("status"),  index: 'status' , width: 150,
         iif: () => this.isChoose('status')  }, 
     { title: this.i18n.fanyi("errorMessage"),  index: 'errorMessage' ,
-            iif: () => this.isChoose('errorMessage')  }, 
-    {
-      title: this.i18n.fanyi("createdTime"), 
-      render: 'createdTimeColumn', width: 200,
-      iif: () => this.isChoose('createdTimeColumn') 
-    },    
-    {
-      title: this.i18n.fanyi("lastSentTime"), 
-      render: 'lastSentTimeColumn', 
-      iif: () => this.isChoose('lastSentTimeColumn'),
-      width: 200
-    },     
+            iif: () => this.isChoose('errorMessage')  },    
     {
       title: this.i18n.fanyi("action"),  
       buttons: [ 

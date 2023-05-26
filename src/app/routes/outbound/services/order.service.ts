@@ -13,6 +13,7 @@ import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Order } from '../models/order';
 import { OrderBillableActivity } from '../models/order-billable-activity';
+import { OrderCancellationRequest } from '../models/order-cancellation-request';
 import { OrderCategory } from '../models/order-category';
 import { OrderLine } from '../models/order-line';
 import { OrderStatus } from '../models/order-status.enum';
@@ -113,7 +114,7 @@ export class OrderService {
 
     return this.http.post(url, null, params).pipe(map(res => res.data));
   }
-  cancelOrder(orderId: number): Observable<string> {
+  cancelOrder(orderId: number): Observable<OrderCancellationRequest> {
     const url = `outbound/orders/cancel-order`;
 
     let params = new HttpParams();

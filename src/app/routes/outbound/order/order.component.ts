@@ -38,6 +38,7 @@ import { BillOfMaterial } from '../../work-order/models/bill-of-material';
 import { BillOfMaterialService } from '../../work-order/services/bill-of-material.service';
 import { Order } from '../models/order';
 import { OrderBillableActivity } from '../models/order-billable-activity';
+import { OrderCancellationRequestResult } from '../models/order-cancellation-request-result.enum';
 import { OrderCategory } from '../models/order-category';
 import { OrderDocument } from '../models/order-document';
 import { OrderLine } from '../models/order-line';
@@ -1937,9 +1938,20 @@ export class OutboundOrderComponent implements OnInit {
   cancelOrder(order: Order) : void{
     this.isSpinning = true;
     this.orderService.cancelOrder(order.id!).subscribe({
-      next: () => {
-        this.messageService.success(this.i18n.fanyi('message.action.success'));
-        this.isSpinning = false;
+      next: (orderCancellationRequest) => {
+        if (orderCancellationRequest.result == OrderCancellationRequestResult.FAIL) {
+
+          this.messageService.error(orderCancellationRequest.message);
+        }
+        else if (orderCancellationRequest.result == OrderCancellationRequestResult.REQUESTED) {
+
+          this.messageService.success(this.i18n.fanyi("order-cancellation-request-sent")); 
+        }
+        else if (orderCancellationRequest.result == OrderCancellationRequestResult.CANCELLED) {
+
+          this.messageService.success(this.i18n.fanyi("order-cancelled")); 
+        }
+        this.isSpinning = false; 
         this.search();
       }, 
       error: () => this.isSpinning = false

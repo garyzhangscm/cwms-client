@@ -104,7 +104,12 @@ export class StartupService {
         // 初始化菜单 
         this.menuService.add(res.menu);
         // setup the ACL based on the user's accessible menu
+        // console.log(`this.tokenService.get(): ${this.tokenService.get()?.token}, expired? ${this.tokenService.get()?.expired}`); 
+        if (this.tokenService.get()?.token != null) {
+
+          // we will only need to setup the ACL if the user is already login
         this.setupMenuBasedACL(res.menu);
+        }
 
         // 设置页面标题的后缀
         this.titleService.default = '';
