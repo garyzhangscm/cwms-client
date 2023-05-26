@@ -45,7 +45,7 @@ export class OrderService {
     let url = `outbound/orders`;
     
     if (number) { 
-      params = params.append('number', this.utilService.encodeHttpParameter(number)); 
+      params = params.append('number',number.trim()); 
     }
     if (loadDetails != null) {
       params = params.append('loadDetails', loadDetails);  
@@ -58,7 +58,7 @@ export class OrderService {
       params = params.append('status', orderStatus);    
     }
     if (customerName) {
-      params = params.append('customerName', this.utilService.encodeHttpParameter(customerName));  
+      params = params.append('customerName',  customerName.trim());  
     }
     if (customerId != null) {
       params = params.append('customerId', customerId);  
