@@ -242,7 +242,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
 
   loadMapOfRemovableItemPackageTypes(): void {
     this.currentItem.itemPackageTypes.forEach(itemPackageType => {
-      console.log(`Check if ${itemPackageType.name} is removable`);
+      console.log(`Check if ${itemPackageType?.name} is removable`);
       this.itemPackageTypeService.isItemPackageTypeRemovable(itemPackageType.id!).subscribe(removable => {
         this.mapOfRemovableItemPackageTypes[itemPackageType.id!] = removable;
 

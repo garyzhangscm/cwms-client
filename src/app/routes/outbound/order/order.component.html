@@ -151,7 +151,7 @@
     </div>
     
     <st #st [data]="listOfAllOrders"  [columns]="columns" [expand]="expand"  expandAccordion
-    (change)="orderTableChanged($event)" [scroll]="{ x: '3355px' }">
+    (change)="orderTableChanged($event)" [scroll]="{ x: '4005px' }">
       <!-- more details about the supplier -->
       <ng-template st-row="supplierColumn" let-item let-index="index">
         
@@ -1003,7 +1003,10 @@
         </nz-tabset>
       </ng-template>
 
-
+      <ng-template st-row="cancelRequestedTimeColumn" let-order> 
+              
+        {{ order.cancelRequestedTime  | date:'short'}} 
+      </ng-template>
       <!--   action colummn  -->  
       <ng-template st-row="actionColumn" let-order let-index="index"> 
         
@@ -1032,6 +1035,12 @@
                 </li>
                 <li nz-menu-item *ngIf="isOrderReadyForRemove(order) && (!userPermissionMap.has('remove-order') || userPermissionMap.get('remove-order'))">
                   <a  (click)="removeOrder(order)">{{ 'remove' | i18n }}</a>
+                </li>
+                <li nz-menu-item *ngIf="isOrderReadyForCancellation(order) && (!userPermissionMap.has('cancel-order') || userPermissionMap.get('cancel-order'))">
+                  <a  (click)="cancelOrder(order)">{{ 'cancel' | i18n }}</a>
+                </li>
+                <li nz-menu-item *ngIf="isOrderReadyForClearCancellationRequest(order) && (!userPermissionMap.has('clear-cancellation-request') || userPermissionMap.get('clear-cancellation-request'))">
+                  <a  (click)="clearCancellationRequest(order)">{{ 'clear-cancellation-request' | i18n }}</a>
                 </li>
                 
                 <li nz-menu-item *ngIf="isAlreadyCompleted(order) && (!userPermissionMap.has('retrigger-order-confirm-integration') || userPermissionMap.get('retrigger-order-confirm-integration'))">

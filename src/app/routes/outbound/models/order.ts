@@ -44,6 +44,7 @@ export interface Order {
   // Ship to Address
   shipToContactorFirstname?: string;
   shipToContactorLastname?: string;
+  shipToContactorPhoneNumber?: string;
 
   shipToAddressCountry?: string;
   shipToAddressState?: string;
@@ -97,4 +98,9 @@ export interface Order {
   orderBillableActivities: OrderBillableActivity[];
 
   hualeiShipmentRequests?: HualeiShipmentRequest[];
+
+  
+  cancelRequested?: boolean;
+  cancelRequestedTime?: Date;
+  cancelRequestedUsername?: string;
 }

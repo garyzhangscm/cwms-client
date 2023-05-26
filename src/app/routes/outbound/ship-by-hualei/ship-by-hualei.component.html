@@ -108,6 +108,7 @@
                           {{shipmentRequest.shipmentResponse.tracking_number}}
                         </span>
                       </li>
+                      <li >{{'reference' | i18n}} : {{shipmentRequest.shipmentResponse.reference_number}}</li> 
                       <li *ngIf="shipmentRequest.shipmentResponse.message != ''">{{'message' | i18n}} : {{shipmentRequest.shipmentResponse.message}}</li> 
                     </ul>
                 </ng-template>

@@ -35,7 +35,7 @@ export class DateTimeService {
   }
   
   getLocalDateString(dateTime: Date) : string { 
-    return `${dateTime.getFullYear()  }-${  dateTime.getMonth() + 1 }-${  dateTime.getDate()}`;
+    return `${dateTime.getFullYear()  }-${  (`0${  dateTime.getMonth()+1}`).slice(-2)}-${  dateTime.getDate()}`;
   } 
   
   getDayStartTime(date: Date) : Date {  

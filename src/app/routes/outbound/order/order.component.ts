@@ -109,6 +109,8 @@ export class OutboundOrderComponent implements OnInit {
     ['remove-order-billable-activity-type', false],
     ['remove-order-document', false],
     ['remove-order-line-billable-activity-type', false],
+    ['cancel-order', false],
+    ['clear-cancellation-request', false], 
   ]);
 
   constructor(
@@ -296,6 +298,8 @@ export class OutboundOrderComponent implements OnInit {
     let endCreatedTime : Date = this.searchForm.controls.createdTimeRanger.value ? 
         this.searchForm.controls.createdTimeRanger.value[1] : undefined; 
     let specificCreatedDate : Date = this.searchForm.controls.createdDate.value;
+
+    console.log(`specificCreatedDate: ${specificCreatedDate}`);
 
     this.orderService.getOrders(
       this.searchForm.controls.number.value, 
@@ -1290,6 +1294,9 @@ export class OutboundOrderComponent implements OnInit {
       ],width: 100
     },
     { title: this.i18n.fanyi("order.totalShippedQuantity"), index: 'totalShippedQuantity', iif: () => this.isChoose('totalShippedQuantity'), width: 100},     
+    { title: this.i18n.fanyi("order.cancelRequested"), index: 'cancelRequested', iif: () => this.isChoose('cancelRequested'), width: 200 , type: 'yn'},     
+    { title: this.i18n.fanyi("order.cancelRequestedTime"), render: 'cancelRequestedTimeColumn', iif: () => this.isChoose('cancelRequestedTimeColumn'), width: 200},     
+    { title: this.i18n.fanyi("order.cancelRequestedUsername"), index: 'cancelRequestedUsername', iif: () => this.isChoose('cancelRequestedUsername'), width: 200},     
     { 
       title: this.i18n.fanyi("action"),fixed: 'right',width: 150, 
       render: 'actionColumn',
@@ -1329,6 +1336,9 @@ export class OutboundOrderComponent implements OnInit {
     { label: this.i18n.fanyi("order.totalOpenPickQuantity"), value: 'totalOpenPickQuantity', checked: true },
     { label: this.i18n.fanyi("order.totalPickedQuantity"), value: 'totalPickedQuantity', checked: true },
     { label: this.i18n.fanyi("order.totalShippedQuantity"), value: 'totalShippedQuantity', checked: true },
+    { label: this.i18n.fanyi("order.cancelRequested"), value: 'cancelRequested', checked: true },
+    { label: this.i18n.fanyi("order.cancelRequestedTime"), value: 'cancelRequestedTimeColumn', checked: true },
+    { label: this.i18n.fanyi("order.cancelRequestedUsername"), value: 'cancelRequestedUsername', checked: true },
   ];
 
   isChoose(key: string): boolean {
@@ -1910,4 +1920,42 @@ export class OutboundOrderComponent implements OnInit {
       error: () => this.isSpinning = false
     })
   }
+
+  isOrderReadyForCancellation(order: Order) : boolean {
+    return order.status != OrderStatus.COMPLETE &&
+            order.status != OrderStatus.CANCELLED;
+  }
+
+  isOrderReadyForClearCancellationRequest(order: Order) : boolean {
+     // the user is allowed to cancel the cancel request only if the order
+     // is not complete and cancelled yet
+    return order.status != OrderStatus.COMPLETE &&
+            order.status != OrderStatus.CANCELLED &&
+            order.cancelRequested == true;
+  }
+
+  cancelOrder(order: Order) : void{
+    this.isSpinning = true;
+    this.orderService.cancelOrder(order.id!).subscribe({
+      next: () => {
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.isSpinning = false;
+        this.search();
+      }, 
+      error: () => this.isSpinning = false
+    });
+
+  } 
+  clearCancellationRequest(order: Order) : void{
+    this.isSpinning = true;
+    this.orderService.clearCancellationRequest(order.id!).subscribe({
+      next: () => {
+        this.messageService.success(this.i18n.fanyi('message.action.success'));
+        this.isSpinning = false;
+        this.search();
+      }, 
+      error: () => this.isSpinning = false
+    });
+
+  } 
 }

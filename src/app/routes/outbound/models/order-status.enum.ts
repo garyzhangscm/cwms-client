@@ -1,4 +1,5 @@
 export enum OrderStatus {
   OPEN = 'OPEN',
-  COMPLETE = 'COMPLETE',
+  COMPLETE = 'COMPLETE',  
+  CANCELLED = 'CANCELLED',
 }

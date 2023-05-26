@@ -80,13 +80,13 @@ export class OrderService {
     }
     
     if (startCreatedTime) {
-      params = params.append('startCreatedTime', this.dateTimeService.getISODateTimeString(startCreatedTime));  
+      params = params.append('startCreatedTime', this.dateTimeService.getLocalDateString(startCreatedTime));  
     }
     if (endCreatedTime) {
-      params = params.append('endCreatedTime', this.dateTimeService.getISODateTimeString(endCreatedTime));   
+      params = params.append('endCreatedTime', this.dateTimeService.getLocalDateString(endCreatedTime));   
     }
     if (specificCreatedDate) {
-      params = params.append('specificCreatedDate', this.dateTimeService.getISODateString(specificCreatedDate));    
+      params = params.append('specificCreatedDate', this.dateTimeService.getLocalDateString(specificCreatedDate));    
     }
 
     return this.http.get(url, params).pipe(map(res => res.data));
@@ -104,7 +104,24 @@ export class OrderService {
     const url = `outbound/orders/${order.id}`;
     return this.http.put(url, order).pipe(map(res => res.data));
   }
+  clearCancellationRequest(orderId: number): Observable<Order> {
+    const url = `outbound/orders/clear-order-cancelleation-request`;
 
+    let params = new HttpParams();
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);
+    params = params.append('orderId', orderId);
+
+    return this.http.post(url, null, params).pipe(map(res => res.data));
+  }
+  cancelOrder(orderId: number): Observable<string> {
+    const url = `outbound/orders/cancel-order`;
+
+    let params = new HttpParams();
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);
+    params = params.append('orderId', orderId);
+
+    return this.http.post(url, null, params).pipe(map(res => res.data));
+  }
   removeOrder(order: Order): Observable<Order> {
     const url = `outbound/orders/${order.id}`;
     return this.http.delete(url).pipe(map(res => res.data));
