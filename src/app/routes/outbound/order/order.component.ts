@@ -364,7 +364,7 @@ export class OutboundOrderComponent implements OnInit {
       await this.delay(100);
     }  
     // refresh the table while everything is loaded
-    console.log(`mnaually refresh the table`);   
+    // console.log(`mnaually refresh the table`);   
     this.st.reload();  
   }
  
@@ -792,7 +792,7 @@ export class OutboundOrderComponent implements OnInit {
         // send the result to the printer
         const printFileUrl
           = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
-        console.log(`will print file: ${printFileUrl}`);
+        // console.log(`will print file: ${printFileUrl}`);
         this.printingService.printFileByName(
           "Packing Slip",
           printResult.fileName,
@@ -844,7 +844,7 @@ export class OutboundOrderComponent implements OnInit {
         // send the result to the printer
         const printFileUrl
           = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
-        console.log(`will print file: ${printFileUrl}`);
+        // console.log(`will print file: ${printFileUrl}`);
         this.printingService.printFileByName(
           "Bill Of Lading",
           printResult.fileName,

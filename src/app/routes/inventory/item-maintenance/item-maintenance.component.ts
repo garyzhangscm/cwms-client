@@ -288,9 +288,9 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     this.stepIndex += 1;
   }
   confirmItem(): void {
-    console.log(`start to save item \n ${JSON.stringify(this.currentItem)}`);
-    console.log(`warehouse specific item \n ${JSON.stringify(this.warehouseSpecificItem)}`);
-    console.log(`company item \n ${JSON.stringify(this.companyItem)}`);
+    // console.log(`start to save item \n ${JSON.stringify(this.currentItem)}`);
+    // console.log(`warehouse specific item \n ${JSON.stringify(this.warehouseSpecificItem)}`);
+    // console.log(`company item \n ${JSON.stringify(this.companyItem)}`);
 
     if (this.currentItem.id != null) {
       this.isSpinning = true;

@@ -74,7 +74,10 @@ export class WaveService {
 
   findWaveCandidate(orderNumber?: string, clientId?: number, 
     customerName?: string, customerId?: number, 
-    startCreatedTime?: Date, endCreatedTime?:Date, specificCreatedDate?: Date): Observable<Order[]> {
+    startCreatedTime?: Date, endCreatedTime?:Date, specificCreatedDate?: Date,    
+    singleOrderLineOnly?: boolean,
+    singleOrderQuantityOnly?: boolean,
+    singleOrderCaseQuantityOnly?: boolean): Observable<Order[]> {
 
     const url = `outbound/waves/candidate`; 
 
@@ -104,6 +107,15 @@ export class WaveService {
     if (specificCreatedDate) {
       params = params.append('specificCreatedDate', this.dateTimeService.getISODateString(specificCreatedDate));    
     }
+    if (singleOrderLineOnly ) {
+      params = params.append('singleOrderLineOnly', singleOrderLineOnly);  
+    }  
+    if (singleOrderQuantityOnly ) {
+      params = params.append('singleOrderQuantityOnly', singleOrderQuantityOnly);  
+    }  
+    if (singleOrderCaseQuantityOnly ) {
+      params = params.append('singleOrderCaseQuantityOnly', singleOrderCaseQuantityOnly);  
+    }  
     return this.http.get(url, params).pipe(map(res => res.data));
   }
 

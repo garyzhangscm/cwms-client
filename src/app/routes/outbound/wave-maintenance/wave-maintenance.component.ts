@@ -291,6 +291,9 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
       createdTimeRanger: [null],
       createdDate: [null],
       client: [null],
+      singleOrderLineOnly: [null],
+      singleOrderQuantityOnly: [null],
+      singleOrderCaseQuantityOnly: [null],
     }); 
     this.newWave = true;
     this.listOfAllOrders = [];
@@ -400,7 +403,10 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
         undefined,
         this.searchForm.controls.customer.value, 
         startCreatedTime, 
-        endCreatedTime, specificCreatedDate)
+        endCreatedTime, specificCreatedDate, 
+        this.searchForm.controls.singleOrderLineOnly.value,
+        this.searchForm.controls.singleOrderQuantityOnly.value,
+        this.searchForm.controls.singleOrderCaseQuantityOnly.value,)
       .subscribe({
 
         next: (wavableOrders)  => {

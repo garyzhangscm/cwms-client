@@ -88,6 +88,7 @@
           </nz-form-control>
         </nz-form-item>
         
+        
         <nz-form-item *ngIf="threePartyLogisticsFlag">
           <nz-form-label>
             {{ 'client' | i18n }}</nz-form-label>
@@ -98,11 +99,35 @@
           </nz-form-control>
         </nz-form-item>
 
+        <nz-form-item> 
+          <nz-form-control>
+            <label nz-checkbox formControlName="singleOrderLineOnly">
+              {{ 'singleOrderLineOnly' | i18n }}</label>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item> 
+          <nz-form-control>
+            <label nz-checkbox formControlName="singleOrderQuantityOnly">
+              {{ 'singleOrderQuantityOnly' | i18n }}</label>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item> 
+          <nz-form-control>
+            <label nz-checkbox formControlName="singleOrderCaseQuantityOnly">
+              {{ 'singleOrderCaseQuantityOnly' | i18n }}</label>
+          </nz-form-control>
+        </nz-form-item>
+
+
         <nz-form-item>
           <nz-form-control>
             <button nz-button nzType="primary">{{ 'search' | i18n }}</button>
           </nz-form-control>
         </nz-form-item>
+
+        
 
 <!--
 
