@@ -1,14 +1,11 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-
-import { PrintingService } from '../../common/services/printing.service';
-import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { Order } from '../models/order';
-import { PickList } from '../models/pick-list';
-import { PickWork } from '../models/pick-work';
-import { PickService } from './pick.service';
+ 
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service'; 
+import { PickList } from '../models/pick-list'; 
 
 @Injectable({
   providedIn: 'root',
@@ -17,23 +14,49 @@ export class PickListService {
   PICKS_PER_PAGE = 20;
   constructor(
     private http: _HttpClient,
-    private warehouseService: WarehouseService,
-    private pickService: PickService,
-    private printingService: PrintingService,
+    private warehouseService: WarehouseService,  
   ) {}
 
-  getPickLists(number?: string): Observable<PickList[]> {
-    let url = `outbound/pick-lists?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+  getPickLists(number?: string, numberList?: string): Observable<PickList[]> {
+    let url = `outbound/pick-lists`;
+
+    
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+
     if (number) {
-      url = `${url}&number=${number}`;
+      params = params.append('number', number.trim());  
     }
-    return this.http.get(url).pipe(map(res => res.data));
+    if (numberList) {
+      params = params.append('numberList', numberList.trim());  
+    }  
+    return this.http.get(url, params).pipe(map(res => res.data));
+  }
+  
+  getPickListsSynchronous(number?: string, numberList?: string): Promise<any> {
+    let url = `outbound/pick-lists`;
+
+    
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+
+    if (number) {
+      params = params.append('number', number.trim());  
+    }
+    if (numberList) {
+      params = params.append('numberList', numberList.trim());  
+    }  
+    return this.http.get(url, params).toPromise();
   }
 
   getPickList(id: number): Observable<PickList> {
     const url = `outbound/pick-lists/${id}`;
     return this.http.get(url).pipe(map(res => res.data));
   }
+  /**
+   *  
   printPickListPickSheet(pickList: PickList) {
     const reportName = `Outbound Pick List Pick Sheet`;
     // Get the picks for the order
@@ -41,6 +64,7 @@ export class PickListService {
       this.printingService.print(reportName, this.generatePickListPickSheet(reportName, pickList, pickRes));
     });
   }
+   * 
   generatePickListPickSheet(reportName: string, pickList: PickList, picks: PickWork[]): string[] {
     // Pages
     const pages: string[] = [];
@@ -105,4 +129,5 @@ export class PickListService {
 
     return pages;
   }
+   */
 }

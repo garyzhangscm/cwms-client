@@ -5,16 +5,19 @@ import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { Inventory } from '../../inventory/models/inventory';
-import { UtilService } from '../../util/services/util.service';
+import { Inventory } from '../../inventory/models/inventory'; 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ProductionLine } from '../../work-order/models/production-line';
 import { WorkOrder } from '../../work-order/models/work-order';
 import { BulkPick } from '../models/bulk-pick';
 import { PickGroupType } from '../models/pick-group-type.enum';
+import { PickList } from '../models/pick-list';
+import { PickListStatus } from '../models/pick-list-status.enum';
+import { PickStatus } from '../models/pick-status.enum';
 import { PickType } from '../models/pick-type.enum';
 import { PickWork } from '../models/pick-work';
 import { BulkPickService } from './bulk-pick.service';
+import { PickListService } from './pick-list.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +26,7 @@ export class PickService {
   constructor(private http: _HttpClient, 
     private warehouseService: WarehouseService, 
     private bulkPickService: BulkPickService,
-    private utilService: UtilService) {}
+    private pickListService: PickListService ) {}
 
   getPicksByOrder(orderId: number): Observable<PickWork[]> {
     return this.getPicks(undefined, orderId);
@@ -643,6 +646,41 @@ export class PickService {
        * 
        */
     }
+    
+    if (picksInList.length > 0) {
+      // add pick list
+      let pickListNumbers = new Set<string>();
+      
+      picksInList.forEach(pick => {
+        pickListNumbers.add(pick.pickListNumber!)
+      }); 
+      
+      let responseData = await this.pickListService.getPickListsSynchronous(
+        undefined, Array.from(pickListNumbers).join(',')
+      );
+      let pickLists: PickList[] = responseData.data;
+      
+      // console.log("=======   Bulk picks  =========");
+      // console.log(`${JSON.stringify(bulkPicks)}`);
+      
+      pickResult = [...pickResult, 
+        ...pickLists.map(pickList => this.setupPicksFromPickList(pickList))];
+      /**
+       * 
+      this.bulkPickService.getBulkPicks(undefined, Array.from(bulkPickNumbers).join(',')).subscribe({
+        next: (bulkPicks) => {
+
+          pickResult = [...pickResult, 
+              ...bulkPicks.map(bulkPick => this.setupPicksFromBulkPick(bulkPick))];
+
+          console.log("=======   Pick Result after process Bulk Pick   =========");
+          console.log(`${JSON.stringify(pickResult)}`);
+        }
+      });
+       * 
+       */
+    }
+
     return pickResult;
 
 
@@ -700,6 +738,74 @@ export class PickService {
         
         workTaskId: bulkPick.workTaskId,
         workTask: bulkPick.workTask,
+    }
+  }
+  setupPicksFromPickList(pickList: PickList) : PickWork {
+    let totalQuantity = 0;
+    let totalPickedQuantity = 0;
+    let itemIdSet = new Set();
+    let sourceLocationIdSet = new Set();
+    let destinationLocationIdSet = new Set();
+
+    let colorSet = new Set();
+    let productSizeSet = new Set();
+    let styleSet = new Set();
+
+    pickList.picks.forEach(pick => {
+      totalQuantity += pick.quantity;
+      totalPickedQuantity += pick.pickedQuantity;
+      itemIdSet.add(pick.itemId);
+      sourceLocationIdSet.add(pick.sourceLocationId);
+      destinationLocationIdSet.add(pick.destinationLocationId);
+
+      colorSet.add(pick.color);
+      productSizeSet.add(pick.productSize);
+      styleSet.add(pick.style);
+    });
+
+    let pickStatus = PickStatus.PENDING;
+    console.log(`pickList.status: ${pickList.status}`)
+    switch(pickList.status) {
+      case PickListStatus.INPROCESS:
+        pickStatus = PickStatus.INPROCESS
+      break;
+      case PickListStatus.RELEASED:
+        pickStatus = PickStatus.RELEASED
+      break;
+      case PickListStatus.CANCELLED:
+        pickStatus = PickStatus.CANCELLED
+      break;
+      case PickListStatus.COMPLETED:
+        pickStatus = PickStatus.COMPLETED
+      break;
+
+    }
+
+    return {
+        id: pickList.id,
+        number: pickList.number,
+        sourceLocationId: sourceLocationIdSet.size != 1 ? undefined :  pickList.picks[0].sourceLocationId,
+        sourceLocation: sourceLocationIdSet.size != 1 ? undefined :  pickList.picks[0].sourceLocation,
+        destinationLocationId: destinationLocationIdSet.size != 1 ? undefined :  pickList.picks[0].destinationLocationId,    // list pick may have multiple destination location
+        destinationLocation:  destinationLocationIdSet.size != 1 ? undefined :  pickList.picks[0].destinationLocation,    // list pick may have multiple destination location
+
+        itemId: itemIdSet.size != 1 ? undefined : pickList.picks[0].itemId,
+        item: itemIdSet.size != 1 ? undefined : pickList.picks[0].item,
+
+        quantity: totalQuantity,
+        pickedQuantity: totalPickedQuantity,
+        pickType: PickType.OUTBOUND,   // FOR now we will only allow outbound bulk pick
+  
+        color: colorSet.size != 1 ? undefined : colorSet.values().next().value, 
+        productSize: productSizeSet.size != 1 ? undefined : productSizeSet.values().next().value, 
+        style: styleSet.size != 1 ? undefined : styleSet.values().next().value, 
+
+        status: pickStatus, 
+        picks: pickList.picks,
+        pickGroupType: PickGroupType.LIST_PICK,
+        
+        workTaskId: pickList.workTaskId,
+        workTask: pickList.workTask,
     }
   }
 }

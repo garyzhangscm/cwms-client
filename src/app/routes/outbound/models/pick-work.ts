@@ -11,12 +11,12 @@ export interface PickWork {
   id: number;
   number: string;
 
-  sourceLocationId: number;
+  sourceLocationId?: number;
   sourceLocation?: WarehouseLocation;
   destinationLocationId?: number;
   destinationLocation?: WarehouseLocation;
 
-  itemId: number;
+  itemId?: number;
   item?: Item;
 
   quantity: number;

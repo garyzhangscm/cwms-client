@@ -230,7 +230,8 @@ export class OutboundPickListComponent implements OnInit {
 
   printPickSheets(pickList: PickList): void {
     this.mapOfPrintingInProcessId[pickList.id] = true;
-    this.pickListService.printPickListPickSheet(pickList);
+    // this.pickListService.printPickListPickSheet(pickList);
+
     // purposely to show the 'loading' status of the print button
     // for at least 1 second. The above printWorkOrderPickSheet will
     // return immediately but the print job(or print preview page)

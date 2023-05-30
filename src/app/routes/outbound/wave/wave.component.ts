@@ -326,7 +326,7 @@ export class OutboundWaveComponent implements OnInit {
         // get all the single pick and add it to the result
         // this.mapOfPicks[wave.id!] = pickRes.filter(pick => this.pickService.isSinglePick(pick));
         // get all the bulk pick
-        console.log(`start to setup ${pickRes.length}`);
+        // console.log(`start to setup ${pickRes.length}`);
         // group the picks into 
         // 1. single pick
         // 2. bulk pick
@@ -353,7 +353,7 @@ export class OutboundWaveComponent implements OnInit {
   }
   setupWorkTaskInformationForPick(pick: PickWork) {
     if (pick.pickGroupType == PickGroupType.BULK_PICK) {
-      console.log(`start to setup work task for bulk pick`); 
+      // console.log(`start to setup work task for bulk pick`); 
     }
     else if (pick.pickGroupType == null) {
       
@@ -363,19 +363,19 @@ export class OutboundWaveComponent implements OnInit {
 
   showShortAllocations(wave: Wave): void {
     this.shortAllocationService.getShortAllocationsByWave(wave.id!).subscribe(shortAllocationRes => {
-      console.log(`shortAllocationRes.length: ${shortAllocationRes.length}`);
+      // console.log(`shortAllocationRes.length: ${shortAllocationRes.length}`);
       this.mapOfShortAllocations[wave.id!] = shortAllocationRes.length === 0 ? [] : [...shortAllocationRes];
     });
   }
   showPickedInventory(wave: Wave): void {
     // Get all the picks and then load the pikced inventory
     this.pickService.getPicksByWave(wave.id!).subscribe(pickRes => {
-      console.log(`pickRes.length: ${pickRes.length}`);
+      //console.log(`pickRes.length: ${pickRes.length}`);
       if (pickRes.length === 0) {
         this.mapOfPickedInventory[wave.id!] = [];
       } else {
         this.pickService.getPickedInventories(pickRes).subscribe(pickedInventoryRes => {
-          console.log(`pickedInventoryRes.length: ${pickedInventoryRes.length}`);
+          //console.log(`pickedInventoryRes.length: ${pickedInventoryRes.length}`);
           this.mapOfPickedInventory[wave.id!] = pickedInventoryRes.length === 0 ? [] : [...pickedInventoryRes];
         });
       }
@@ -424,9 +424,9 @@ export class OutboundWaveComponent implements OnInit {
   }
 
   unpickInventory(wave: Wave, inventory: Inventory, destinationLocation: string, immediateMove: boolean): void {
-    console.log(
-      `Start to unpick ${JSON.stringify(inventory)} to ${destinationLocation}, immediateMove: ${immediateMove}`,
-    );
+    // console.log(
+    //  `Start to unpick ${JSON.stringify(inventory)} to ${destinationLocation}, immediateMove: ${immediateMove}`,
+    //);
     this.inventoryService.unpick(inventory, destinationLocation, immediateMove).subscribe(res => {
       this.messageService.success(this.i18n.fanyi('message.action.success'));
       // refresh the picked inventory
@@ -498,7 +498,7 @@ export class OutboundWaveComponent implements OnInit {
         nzOkDanger: true,
         nzOnOk: () => {
           this.waveService.removeWaves(selectedWaves).subscribe(res => {
-            console.log('selected wave removed');
+            // console.log('selected wave removed');
             this.search();
           });
         },
@@ -555,7 +555,7 @@ export class OutboundWaveComponent implements OnInit {
     
     this.isSpinning = true;
     if (pick.pickGroupType == PickGroupType.BULK_PICK) {
-      console.log(`start to assign user to bulk pick`);
+      // console.log(`start to assign user to bulk pick`);
       this.bulkPickService.cancelBulkPick(pick.id, errorLocation, generateCycleCount).subscribe({
         next: (bulkPick) => {
           this.isSpinning = false;
@@ -597,7 +597,7 @@ export class OutboundWaveComponent implements OnInit {
 
   releasePick(wave: Wave, pick: PickWork) {
     this.isSpinning = true;
-    console.log(`start to release pick \n ${JSON.stringify(pick)}`);
+    // console.log(`start to release pick \n ${JSON.stringify(pick)}`);
 
     if (pick.pickGroupType == PickGroupType.BULK_PICK) {
         this.bulkPickService.releasePick(pick.id).subscribe({
@@ -624,14 +624,14 @@ export class OutboundWaveComponent implements OnInit {
   }
 
   assignUser(wave: Wave, pick: PickWork, userId?: number) {
-    console.log(`start to assign user with id ${userId}`);
+    // console.log(`start to assign user with id ${userId}`);
     if (userId == null) {
-      console.log(`no user is selected, do nothing`)
+    //  console.log(`no user is selected, do nothing`)
     }
     else {
       this.isSpinning = true;
       if (pick.pickGroupType == PickGroupType.BULK_PICK) {
-        console.log(`start to assign user to bulk pick`);
+        // console.log(`start to assign user to bulk pick`);
         this.bulkPickService.assignUser(pick.id, userId).subscribe({
           next: (bulkPick) => {
             this.isSpinning = false;
@@ -643,7 +643,7 @@ export class OutboundWaveComponent implements OnInit {
         })
       }
       else if (pick.pickGroupType == null) {
-        console.log(`start to assign user to pick`);
+        // console.log(`start to assign user to pick`);
         this.pickService.assignUser(pick.id, userId).subscribe({
           next: () => {
             this.isSpinning = false;
@@ -673,7 +673,7 @@ export class OutboundWaveComponent implements OnInit {
   unassignUser(wave: Wave, pick: PickWork) { 
       this.isSpinning = true;
       if (pick.pickGroupType == PickGroupType.BULK_PICK) {
-        console.log(`start to unassign user to bulk pick`);
+        // console.log(`start to unassign user to bulk pick`);
         this.bulkPickService.unassignUser(pick.id).subscribe({
           next: (bulkPick) => {
             this.isSpinning = false;
@@ -685,7 +685,7 @@ export class OutboundWaveComponent implements OnInit {
         })
       }
       else if (pick.pickGroupType == null) {
-        console.log(`start to unassign user to pick`);
+        // console.log(`start to unassign user to pick`);
         this.pickService.unassignUser(pick.id).subscribe({
           next: () => {
             this.isSpinning = false;
