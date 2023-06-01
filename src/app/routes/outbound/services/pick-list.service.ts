@@ -55,6 +55,20 @@ export class PickListService {
     const url = `outbound/pick-lists/${id}`;
     return this.http.get(url).pipe(map(res => res.data));
   }
+
+  
+  cancelPickList(pickListId: number, errorLocation: boolean, generateCycleCount: boolean): Observable<PickList> {
+    const url = `outbound/pick-lists/${pickListId}`;
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id); 
+    params = params.append(`errorLocation`, errorLocation);
+    params = params.append(`generateCycleCount`, generateCycleCount);
+
+    return this.http.delete(url, params).pipe(map(res => res.data));
+  }
+ 
+
   /**
    *  
   printPickListPickSheet(pickList: PickList) {

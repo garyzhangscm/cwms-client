@@ -1,23 +1,17 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { I18NService } from '@core';
-import { STComponent, STColumn } from '@delon/abc/st';
+import { I18NService } from '@core'; 
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { TransferChange } from 'ng-zorro-antd/transfer';
-
-import { Inventory } from '../../inventory/models/inventory';
-import { ItemSampling } from '../../inventory/models/item-sampling';
-import { InventoryService } from '../../inventory/services/inventory.service';
+import { NzMessageService } from 'ng-zorro-antd/message'; 
+ 
+import { ItemSampling } from '../../inventory/models/item-sampling'; 
 import { ItemSamplingService } from '../../inventory/services/item-sampling.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { QcInspectionRequest } from '../models/qc-inspection-request';
 import { QCInspectionRequestItem } from '../models/qc-inspection-request-item';
 import { QCInspectionRequestItemOption } from '../models/qc-inspection-request-item-option';
-import { QCInspectionResult } from '../models/qc-inspection-result';
-import { QCRule } from '../models/qc-rule';
-import { QCRuleConfiguration } from '../models/qc-rule-configuration';
+import { QCInspectionResult } from '../models/qc-inspection-result'; 
 import { QCRuleItemComparator } from '../models/qc-rule-item-comparator';
 import { QCRuleItemType } from '../models/qc-rule-item-type';
 import { QcInspectionRequestService } from '../services/qc-inspection-request.service';
@@ -42,8 +36,7 @@ export class QcInspectInventoryComponent implements OnInit {
   isCollapse = false;
 
 
-  constructor(private http: _HttpClient, 
-    private inventoryService: InventoryService,
+  constructor( 
     private messageService: NzMessageService,
     private router: Router,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,

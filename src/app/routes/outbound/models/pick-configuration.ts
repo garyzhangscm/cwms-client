@@ -5,4 +5,7 @@ export interface PickConfiguration {
     releaseToWorkTask: boolean;
     workTaskPriority: number;
 
+    releasePickListToWorkTask: boolean;
+    pickListWorkTaskPriority: number;
+
 }

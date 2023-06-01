@@ -49,7 +49,9 @@ export class OutboundPickConfigurationComponent implements OnInit {
 
         warehouseId: warehouseService.getCurrentWarehouse().id, 
         releaseToWorkTask: false,
-        workTaskPriority: 9999,
+        workTaskPriority: 99,
+        releasePickListToWorkTask: false,
+        pickListWorkTaskPriority: 99,
       }
   }
 

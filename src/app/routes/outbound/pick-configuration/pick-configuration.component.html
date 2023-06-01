@@ -134,5 +134,48 @@
       </div>
     </nz-spin>
   </nz-tab>
+  <nz-tab nzTitle="{{'pick-list' | i18n}}">
+    <nz-spin [nzSpinning]="isPickConfigurationSpinning" [nzSize]="'large'">
+        
+      <nz-card>  
+        <div nz-row [nzGutter]="24"> 
+          <div nz-col [nzSpan]="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="3">
+                {{ 'releasePickListToWorkTask' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="21">
+                    <label nz-checkbox [(ngModel)]="currentPickConfiguration.releasePickListToWorkTask"></label>
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>   
+        </div>  
+        
+        <div nz-row [nzGutter]="24"> 
+          <div nz-col [nzSpan]="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="3">
+                {{ 'pickListWorkTaskPriority' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="21">
+                  <nz-input-number  [nzMin]="1" [nzMax]="65524" [nzStep]="1"
+                   [(ngModel)]="currentPickConfiguration.pickListWorkTaskPriority"></nz-input-number> 
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>   
+        </div>  
+        
+      </nz-card>
+
+      <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle" *ngIf="!displayOnly">
+          <button nz-button nzType="primary" (click)="confirmPickConfiguration()" >
+              <span> {{ 'confirm' | i18n }}</span>
+            </button>
+      </div>
+    </nz-spin>
+
+  </nz-tab>
 
 </nz-tabset> 

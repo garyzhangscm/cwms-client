@@ -763,8 +763,8 @@ export class PickService {
       styleSet.add(pick.style);
     });
 
-    let pickStatus = PickStatus.PENDING;
-    console.log(`pickList.status: ${pickList.status}`)
+    let pickStatus = PickStatus.PENDING; 
+
     switch(pickList.status) {
       case PickListStatus.INPROCESS:
         pickStatus = PickStatus.INPROCESS
@@ -779,7 +779,7 @@ export class PickService {
         pickStatus = PickStatus.COMPLETED
       break;
 
-    }
+    } 
 
     return {
         id: pickList.id,

@@ -225,11 +225,11 @@
                                   <a (click)="cancelPick(wave, pick, false, false)">
                                     {{ 'cancel-pick' | i18n }}</a> 
                                 </li>
-                                <li nz-menu-item>
+                                <li nz-menu-item *ngIf="pick.pickGroupType != pickGroupTypes.LIST_PICK">
                                   <a (click)="cancelPick(wave, pick, true, false)">
                                     {{ 'cancel-pick-error-location' | i18n }}</a> 
                                 </li>
-                                <li nz-menu-item>
+                                <li nz-menu-item *ngIf="pick.pickGroupType != pickGroupTypes.LIST_PICK">
                                   <a (click)="cancelPick(wave, pick, true, true)">
                                     {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
                                 </li>

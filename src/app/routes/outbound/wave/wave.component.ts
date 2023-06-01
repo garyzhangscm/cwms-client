@@ -22,6 +22,7 @@ import { ShortAllocation } from '../models/short-allocation';
 import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
 import { Wave } from '../models/wave'; 
 import { BulkPickService } from '../services/bulk-pick.service';
+import { PickListService } from '../services/pick-list.service';
 import { PickService } from '../services/pick.service';
 import { ShipmentLineService } from '../services/shipment-line.service';
 import { ShortAllocationService } from '../services/short-allocation.service';
@@ -150,6 +151,7 @@ export class OutboundWaveComponent implements OnInit {
   checked = false;
   indeterminate = false;
   expandSet = new Set<number>();
+  pickGroupTypes = PickGroupType;
 
   pickTableExpandSet = new Set<number>();
   pickStatuses = PickStatus;
@@ -174,6 +176,7 @@ export class OutboundWaveComponent implements OnInit {
     private utilService: UtilService,
     private bulkPickService: BulkPickService,
     private workTaskService: WorkTaskService,
+    private pickListService: PickListService
   ) { 
     userService.isCurrentPageDisplayOnly("/outbound/wave").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
@@ -558,6 +561,18 @@ export class OutboundWaveComponent implements OnInit {
       // console.log(`start to assign user to bulk pick`);
       this.bulkPickService.cancelBulkPick(pick.id, errorLocation, generateCycleCount).subscribe({
         next: (bulkPick) => {
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          // refresh the picked inventory
+          this.search(wave.id, 1);
+        }, 
+        error: () => this.isSpinning = false
+      })
+    }
+    else if (pick.pickGroupType == PickGroupType.LIST_PICK) {
+      // console.log(`start to assign user to bulk pick`);
+      this.pickListService.cancelPickList(pick.id, errorLocation, generateCycleCount).subscribe({
+        next: (pickList) => {
           this.isSpinning = false;
           this.messageService.success(this.i18n.fanyi('message.action.success'));
           // refresh the picked inventory

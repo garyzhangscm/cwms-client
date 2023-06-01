@@ -296,11 +296,9 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
       singleOrderCaseQuantityOnly: [null],
     }); 
     this.newWave = true;
-    this.listOfAllOrders = [];
-    this.listOfDisplayOrders  = [];
-  
-    this.listOfAllOrderLines  = [];
-    this.listOfDisplayOrderLines  = [];
+
+    console.log(`clear all the display`)
+    this.clearDisplay();
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.id) {
@@ -308,7 +306,6 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
       }
     });
 
-    
     this.customerService.loadCustomers().subscribe({
       next: (customerRes) => this.validCustomers = customerRes
     });
@@ -336,8 +333,13 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   }
 
   loadWave(waveId: number): void {
-    this.waveService.getWave(waveId).subscribe(waveRes => {
-      this.setupWaveInformation(waveRes);
+    this.isSpinning = true;
+    this.waveService.getWave(waveId).subscribe({
+      next: (waveRes)=> {
+        this.setupWaveInformation(waveRes);
+        this.isSpinning = false;
+      }, 
+      error: () => this.isSpinning = false
     });
   }
   setupWaveInformation(wave: Wave): void {
@@ -534,11 +536,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     this.listOfDisplayOrders = [];
     this.listOfAllOrderLines = [];
     this.listOfDisplayOrderLines = [];
-
-
-    if (!this.newWave) {
-      this.searchForm.controls.waveNumber.setValue(this.currentWave.number);
-    }
+ 
   }
 
   updateOrderTableCheckedSet(id: number, checked: boolean): void {
@@ -687,12 +685,14 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
       .planWaveWithOrderLines(waveNumber, orderLiens)
       .subscribe(wave => {
         this.message.info(this.i18n.fanyi('message.action.success'));
-        if (this.newWave) {
+        if (this.newWave) { 
 
           this.router.navigateByUrl(`/outbound/wave-maintenance?id=${wave.id}`);
+          this.clearDisplay();
+          this.loadWave(wave.id!);
         }
         else {
-
+ 
           this.setupWaveInformation(wave);
           this.findWaveCandidate();
           this.waveNumberModalVisible = false;
