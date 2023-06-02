@@ -4,4 +4,5 @@ export interface RfConfiguration {
     workOrderValidatePartialLPNPick?: boolean;
     pickToProductionLineInStage?: boolean;
     receiveToStage?: boolean;
+    listPickBatchPicking?: boolean;
 }
