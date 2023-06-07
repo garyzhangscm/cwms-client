@@ -89,13 +89,18 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
             this.showAddNewSampleQuestion = true; 
             this.currentProductionLineAssignment = productionLineAssignmentRes;
             this.currentWorkOrderQcSample.productionLineAssignment = productionLineAssignmentRes;
+            this.currentWorkOrderQcSample.workOrder = productionLineAssignmentRes.workOrder;
+            this.currentWorkOrderQcSample.productionLine = productionLineAssignmentRes.productionLine;
             // setup the work order. 
             if ((this.currentProductionLineAssignment.workOrder === undefined || 
                   this.currentProductionLineAssignment.workOrder === null) &&
                   this.currentProductionLineAssignment.workOrderId !== null) {
                     this.workOrderService.getWorkOrder(this.currentProductionLineAssignment!.workOrderId!).subscribe(
                       {
-                          next: (workOrderRes) => this.currentProductionLineAssignment!.workOrder = workOrderRes
+                          next: (workOrderRes) => { 
+                            this.currentProductionLineAssignment!.workOrder = workOrderRes
+                            this.currentWorkOrderQcSample.workOrder = workOrderRes;
+                          }
                       }
                     )
             }
