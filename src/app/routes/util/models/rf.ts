@@ -5,4 +5,6 @@ export interface RF {
     warehouseId: number;
     rfCode: string;
 
+    printerName?: string;
+
 }

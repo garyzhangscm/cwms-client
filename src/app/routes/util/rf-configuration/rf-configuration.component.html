@@ -68,6 +68,25 @@
                 </div> 
               </div>
         </nz-card>
+        
+        <nz-card nzTitle="{{ 'configuration' | i18n}}">
+
+            
+            <div nz-col [nzSpan]="12">
+                <nz-form-item nzFlex>
+                <nz-form-label [nzSm]="6" [nzXs]="24">
+                    {{ 'printer' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <nz-select nz-input [(ngModel)]="currentRFConfiguration.printerName" style="width: 250px">
+                    <nz-option *ngFor="let availablePrint of availablePrinters" [nzLabel]="availablePrint.name"
+                        [nzValue]="availablePrint.name">
+                    </nz-option>
+                    </nz-select>
+                </nz-form-control>
+                </nz-form-item>
+            </div>
+        </nz-card>
        
       
 <button nz-button nzType="primary" (click)="saveConfiguration()"  *ngIf="!displayOnly">

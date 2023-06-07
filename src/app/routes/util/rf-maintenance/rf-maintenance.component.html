@@ -37,8 +37,23 @@
           <input nz-input [(ngModel)]="currentRF.rfCode" required  />
         </nz-form-control>
       </nz-form-item>
-    </div>
+    </div>  
  
+    
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'printer' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <nz-select nz-input [(ngModel)]="currentRF.printerName" style="width: 250px">
+            <nz-option *ngFor="let availablePrint of availablePrinters" [nzLabel]="availablePrint.name"
+              [nzValue]="availablePrint.name">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
 
 
     
@@ -54,6 +69,9 @@
     <nz-descriptions nzBordered="true">
 
       <nz-descriptions-item nzTitle="{{ 'rfCode' | i18n }}">{{ currentRF.rfCode }}
+      </nz-descriptions-item>
+      
+      <nz-descriptions-item nzTitle="{{ 'printer' | i18n }}">{{ currentRF.printerName }}
       </nz-descriptions-item>
       
 

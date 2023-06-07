@@ -24,6 +24,7 @@ export class UtilRfComponent implements OnInit {
   st!: STComponent;
   columns: STColumn[] = [
     { title: this.i18n.fanyi("rfCode"),  index: 'rfCode' , }, 
+    { title: this.i18n.fanyi("printer"),  index: 'printerName' , }, 
     {
       title: this.i18n.fanyi("action"),  
       buttons: [ 

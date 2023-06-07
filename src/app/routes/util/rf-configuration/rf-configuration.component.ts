@@ -5,6 +5,10 @@ import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { UserService } from '../../auth/services/user.service';
+import { PrintingService } from '../../common/services/printing.service';
+import { Printer } from '../../report/models/printer';
+import { PrintingStrategy } from '../../warehouse-layout/models/printing-strategy.enum';
+import { WarehouseConfigurationService } from '../../warehouse-layout/services/warehouse-configuration.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { RfConfiguration } from '../models/rf-configuration';
 import { RfConfigurationService } from '../services/rf-configuration.service';
@@ -17,12 +21,15 @@ export class UtilRfConfigurationComponent implements OnInit {
   isSpinning = false;
   
   currentRFConfiguration: RfConfiguration;
+  availablePrinters: Printer[] = [];
 
   displayOnly = false;
   constructor( 
     private rfConfigurationService: RfConfigurationService,
     private messageService: NzMessageService,
     private userService: UserService,
+    private printingService: PrintingService, 
+    private warehouseConfigurationService: WarehouseConfigurationService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private warehouseService: WarehouseService,  ) { 
       userService.isCurrentPageDisplayOnly("/util/rf-configuration").then(
@@ -37,8 +44,50 @@ export class UtilRfConfigurationComponent implements OnInit {
  
   ngOnInit(): void { 
     this.loadCurrentConfiguration();
+    
+    this.availablePrinters = [];
+    this.loadAvaiablePrinters();
  }
 
+ loadAvaiablePrinters(): void {
+  console.log(`start to load avaiable printers`)
+  this.warehouseConfigurationService.getWarehouseConfiguration().subscribe({
+    next: (warehouseConfiguration) => {
+
+      if (warehouseConfiguration.printingStrategy === PrintingStrategy.SERVER_PRINTER ||
+        warehouseConfiguration.printingStrategy === PrintingStrategy.LOCAL_PRINTER_SERVER_DATA) {
+
+        console.log(`will get printer from server`)
+        this.printingService.getAllServerPrinters(warehouseConfiguration.printingStrategy).subscribe(printers => {
+          printers.forEach(
+            (printer, index) => {
+              this.availablePrinters.push({
+                id: index, name: printer, description: printer, warehouseId: this.warehouseService.getCurrentWarehouse().id
+              });
+  
+            });
+        })
+      } 
+      else  if (warehouseConfiguration.printingStrategy === PrintingStrategy.LOCAL_PRINTER_LOCAL_DATA) {
+        
+        console.log(`will get printer from local tools`)
+        this.printingService.getAllLocalPrinters().forEach(
+          (printer, index) => {
+            this.availablePrinters.push({
+              id: index, name: printer, description: printer, warehouseId: this.warehouseService.getCurrentWarehouse().id
+            });
+
+          });
+      }
+      else {
+        
+        this.messageService.error(this.i18n.fanyi('not-able-to-load-printers'));
+
+      }
+    }
+  }) 
+
+}
  loadCurrentConfiguration() {
    this.isSpinning = true;
    this.rfConfigurationService.getRfConfiguration().subscribe({

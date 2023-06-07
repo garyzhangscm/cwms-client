@@ -5,4 +5,6 @@ export interface RfConfiguration {
     pickToProductionLineInStage?: boolean;
     receiveToStage?: boolean;
     listPickBatchPicking?: boolean;
+    
+    printerName?: string;
 }
