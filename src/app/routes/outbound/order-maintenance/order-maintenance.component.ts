@@ -327,6 +327,9 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
         description: '',
         warehouseId: this.warehouseService.getCurrentWarehouse().id,
       },
+      
+      autoRequestShippingLabel: false,
+      
     };
   }
 

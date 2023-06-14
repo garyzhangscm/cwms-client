@@ -46,8 +46,8 @@ export class UtilRfMaintenanceComponent implements OnInit {
     // the user will need to remove the record and create
     // a new record if the user want to change the code
     this.currentRF = this.getEmptyRF();
-    this.titleService.setTitle(this.i18n.fanyi('page.report.maintenance.new'));
-    this.pageTitle = this.i18n.fanyi('page.report.maintenance.new');
+    this.titleService.setTitle(this.i18n.fanyi('rf'));
+    this.pageTitle = this.i18n.fanyi('rf');
   }
   getEmptyRF(): RF {
     return {

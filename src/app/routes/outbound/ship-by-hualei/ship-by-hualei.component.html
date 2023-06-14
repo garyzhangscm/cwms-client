@@ -109,7 +109,7 @@
                         </span>
                       </li>
                       <li >{{'reference' | i18n}} : {{shipmentRequest.shipmentResponse.reference_number}}</li> 
-                      <li *ngIf="shipmentRequest.shipmentResponse.message != ''">{{'message' | i18n}} : {{shipmentRequest.shipmentResponse.message}}</li> 
+                      <li *ngIf="shipmentRequest.shipmentResponse.message != ''">{{'message' | i18n}} : {{ngDecode(shipmentRequest.shipmentResponse.message)}}</li> 
                     </ul>
                 </ng-template>
                 </st> 

@@ -1,3 +1,4 @@
+import { HttpUrlEncodingCodec } from '@angular/common/http';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -35,6 +36,7 @@ export class OutboundShipByHualeiComponent implements OnInit {
   hualeiConfiguration?: HualeiConfiguration;
   isAddressCollapse = true;
   hualeiProducts: HualeiProduct[] = []; 
+  codec = new HttpUrlEncodingCodec;
 
 
   // Form related data and functions
@@ -318,5 +320,13 @@ export class OutboundShipByHualeiComponent implements OnInit {
       this.parcelForm.controls.unitCost.setValue(item.unitCost);
     }
         
+  }
+  
+  ngDecode(param: string){
+    return this.codec.decodeValue(param);
+  }
+
+  jsDecode(param: string){
+    return decodeURIComponent(param);
   }
 }

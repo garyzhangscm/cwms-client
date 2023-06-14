@@ -36,4 +36,6 @@ export interface OrderLine {
   allocateByReceiptNumber?: string;
 
   orderLineBillableActivities: OrderLineBillableActivity[];
+  autoRequestShippingLabel?: boolean;
+  hualeiProductId?: string;
 }
