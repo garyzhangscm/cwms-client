@@ -1039,7 +1039,7 @@ export class InventoryInventoryComponent implements OnInit {
     
     // console.log(`start to print lPN label for inventory \n${inventory}`);
     this.inventoryService.generateLPNLabel(
-      inventory.lpn!, event.physicalCopyCount, event.printerName)
+      inventory.lpn!, undefined, event.printerName)
       .subscribe(printResult => {
 
         // send the result to the printer
