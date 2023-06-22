@@ -59,6 +59,18 @@ export class OutboundLoadComponent implements OnInit {
 
   
   trailerAppointmentStatusEnum = TrailerAppointmentStatus;
+  userPermissionMap: Map<string, boolean> = new Map<string, boolean>([ 
+    ['file-upload', false], 
+    ['cancel-single-pick', false], 
+    ['confirm-multiple-pick', false], 
+    ['cancel-multiple-pick', false], 
+    ['allocate-short-allocation', false], 
+    ['create-work-order', false], 
+    ['cancel-short-allocation', false], 
+    ['allocate-load', false], 
+    ['complete-load', false], 
+  ]);
+
 
   @ViewChild('st', { static: true })
   st!: STComponent;
@@ -92,7 +104,15 @@ export class OutboundLoadComponent implements OnInit {
     private fb: UntypedFormBuilder,) { 
       userService.isCurrentPageDisplayOnly("/outbound/load").then(
         displayOnlyFlag => this.displayOnly = displayOnlyFlag
-      );                         
+      );            
+       
+      userService.getUserPermissionByWebPage("/outbound/load").subscribe({
+        next: (userPermissionRes) => {
+          userPermissionRes.forEach(
+            userPermission => this.userPermissionMap.set(userPermission.permission.name, userPermission.allowAccess)
+          )
+        }
+      });             
     }
 
   ngOnInit(): void { 

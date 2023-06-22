@@ -267,6 +267,7 @@
                       
                       <button nz-button nz-dropdown [nzDropdownMenu]="cancelPicksOption" nzType="primary"
                       (click)="cancelPick(pick, false, false)"   
+                      *ngIf="!userPermissionMap.has('cancel-single-pick') || userPermissionMap.get('cancel-single-pick')"
                       [disabled]="pick.quantity === pick.pickedQuantity  || item.status === trailerAppointmentStatusEnum.COMPLETED" >
                       {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
                       <nz-dropdown-menu #cancelPicksOption="nzDropdownMenu">
@@ -294,13 +295,15 @@
                 <div nz-row nzType="flex" nzJustify="start" *ngIf="!displayOnly">
                    
                   <button nz-button (click)="confirmPicks(item)"
+                    *ngIf="!displayOnly && (!userPermissionMap.has('confirm-multiple-pick') || userPermissionMap.get('confirm-multiple-pick'))"
                     [disabled]="mapOfPicks[item.id!].length === 0  || item.status === trailerAppointmentStatusEnum.COMPLETED">
                     {{ 'confirm' | i18n }}
                   </button>
                   
                   <button nz-button nz-dropdown [nzDropdownMenu]="cancelPicksOption" nzType="primary"
                   (click)="cancelSelectedPick(item, false, false)"   
-                  [disabled]="item.status === trailerAppointmentStatusEnum.COMPLETED">
+                  [disabled]="item.status === trailerAppointmentStatusEnum.COMPLETED" 
+                  *ngIf="!displayOnly && (!userPermissionMap.has('cancel-multiple-pick') || userPermissionMap.get('cancel-multiple-pick'))">
                   {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
                   <nz-dropdown-menu #cancelPicksOption="nzDropdownMenu">
                     <ul nz-menu>         
@@ -384,17 +387,17 @@
                       <nz-dropdown-menu #shortAllocationMenu="nzDropdownMenu">
                         <ul nz-menu> 
 
-                          <li nz-menu-item *ngIf="isShortAllocationAllocatable(shortAllocation) && item.status != trailerAppointmentStatusEnum.COMPLETED">
+                          <li nz-menu-item *ngIf="isShortAllocationAllocatable(shortAllocation) && item.status != trailerAppointmentStatusEnum.COMPLETED && (!userPermissionMap.has('allocate-short-allocation') || userPermissionMap.get('allocate-short-allocation'))">
                             <a   (click)="allocateShortAllocation(shortAllocation)">{{ 'allocate' | i18n }}</a>
                           </li>
                           
-                          <li nz-menu-item *ngIf="item.status != trailerAppointmentStatusEnum.COMPLETED">
+                          <li nz-menu-item *ngIf="item.status != trailerAppointmentStatusEnum.COMPLETED && (!userPermissionMap.has('create-work-order') || userPermissionMap.get('create-work-order'))">
                             <a  (click)="openCreateWorkOrderModel(shortAllocation, tplCreateWorkOrderModalTitle, tplCreateWorkOrderModalContent)">
                               {{ 'create-work-order' | i18n }}</a>
                           </li>
                           
                           
-                          <li nz-menu-item *ngIf="item.status != trailerAppointmentStatusEnum.COMPLETED">
+                          <li nz-menu-item *ngIf="item.status != trailerAppointmentStatusEnum.COMPLETED && (!userPermissionMap.has('cancel-short-allocation') || userPermissionMap.get('cancel-short-allocation'))">
                             <a  (click)="cancelShortAllocation(shortAllocation)">{{ 'cancel' | i18n }}</a>
                           </li>
                         </ul>
@@ -418,10 +421,10 @@
           <nz-dropdown-menu #menu="nzDropdownMenu">
             <ul nz-menu> 
   
-              <li nz-menu-item *ngIf="isLoadReadForAllocate(item)">
+              <li nz-menu-item *ngIf="isLoadReadForAllocate(item) && (!userPermissionMap.has('allocate-load') || userPermissionMap.get('allocate-load'))">
                 <a  (click)="allocateLoad(item)">{{ 'allocate' | i18n }}</a>
               </li> 
-              <li nz-menu-item *ngIf="isLoadReadForComplete(item)">
+              <li nz-menu-item *ngIf="isLoadReadForComplete(item) && (!userPermissionMap.has('complete-load') || userPermissionMap.get('complete-load'))">
                 <a  (click)="completeLoad(item)">{{ 'complete' | i18n }}</a>
               </li> 
             </ul>
@@ -440,6 +443,13 @@
   <ng-template #tableFoot>
     <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
       {{searchResult}}
+    </div>
+
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">   
+      <button  nz-button nzType="primary" routerLink="/util/file-upload/loads" routerLinkActive="active"
+      *ngIf="!userPermissionMap.has('file-upload') || userPermissionMap.get('file-upload')">
+        {{ 'file-upload' | i18n }}
+      </button> 
     </div>
   </ng-template>
   

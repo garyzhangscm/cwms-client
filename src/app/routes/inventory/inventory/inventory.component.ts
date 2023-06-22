@@ -971,9 +971,22 @@ export class InventoryInventoryComponent implements OnInit {
   moveInventoryInBatch(inventories: Inventory[], destinationLocationName: string, immediateMove: boolean): void {
     this.isSpinning = true;
     this.locationService.getLocations(undefined, undefined, destinationLocationName).subscribe({
-      next: (locationsRes) => {
+      next: (locationsRes) => { 
+        if (locationsRes.length == 0 ||
+          locationsRes[0].locationGroup?.locationGroupType?.fourWallInventory == false) {
+          this.messageService.error(`can't find location with name ${destinationLocationName}`);
+          this.isSpinning = false;
+          
+          this.inventoryMoveModal.updateConfig({ 
+            nzOkDisabled: false,
+            nzOkLoading: false
+          });
+        } 
+        else {
 
-        this.moveInventoryInBatchSteps(inventories, locationsRes[0], immediateMove, inventories.length - 1);
+          this.moveInventoryInBatchSteps(inventories, locationsRes[0], immediateMove, inventories.length - 1);
+        }
+
         
       }, 
       error: () => this.isSpinning = false

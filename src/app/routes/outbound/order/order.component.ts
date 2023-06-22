@@ -8,8 +8,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-
-import { UserPermission } from '../../auth/models/user-permission';
+ 
 import { UserService } from '../../auth/services/user.service';
 import { BillableActivityType } from '../../billing/models/billable-activity-type';
 import { BillableActivityTypeService } from '../../billing/services/billable-activity-type.service';
