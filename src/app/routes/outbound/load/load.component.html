@@ -77,16 +77,16 @@
       <st #st [data]="listOfAllTrailerAppointments" [columns]="columns"   
       [expand]="expand"  expandAccordion (change)="trailerAppointmentTableChanged($event)">
      
-        <ng-template st-row="completedTimeColumn" let-item let-index="index"> 
+        <ng-template st-row="completedTimeColumn" let-trailerAppointment let-index="index"> 
               
-            {{ item.completedTime  | date:'short'}} 
+            {{ trailerAppointment.completedTime  | date:'short'}} 
         </ng-template>
         <!--   order details  -->
-        <ng-template #expand let-item let-index="index" >
+        <ng-template #expand let-trailerAppointment let-index="index" >
           
           <nz-tabset  >
             <nz-tab nzTitle=" {{ 'stop' | i18n }}">
-              <nz-table [nzScroll]="{ x: 'true', y: 'true' }"   [nzData]="item.stops" nzSize="middle"
+              <nz-table [nzScroll]="{ x: 'true', y: 'true' }"   [nzData]="trailerAppointment.stops" nzSize="middle"
                 [nzShowPagination]="false" #stopTable>
                 <thead>
                   <th>
@@ -143,8 +143,8 @@
                 </tbody>
               </nz-table>
             </nz-tab> 
-            <nz-tab nzTitle=" {{ 'shipment' | i18n }}" *ngIf="shipmentsMap.has(item.id)">
-              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="shipmentsMap.get(item.id)!" nzSize="middle"
+            <nz-tab nzTitle=" {{ 'shipment' | i18n }}" *ngIf="shipmentsMap.has(trailerAppointment.id)">
+              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="shipmentsMap.get(trailerAppointment.id)!" nzSize="middle"
                 [nzShowPagination]="false" #shipmentTable>
                 <thead>
                   <th>
@@ -190,8 +190,8 @@
                               [queryParams]="{number : shipment.number }">
                             {{ shipment.number }} </a></td>
                         <td>{{ 'SHIPMENT-STATUS-' + shipment.status | i18n }}</td>
-                        <td>{{ shipment.carrier.name }}</td>
-                        <td>{{ shipment.carrierServiceLevel.name }}</td>
+                        <td>{{ shipment.carrier?.name }}</td>
+                        <td>{{ shipment.carrierServiceLevel?.name }}</td>
                         <td>{{ shipment.totalLineCount }}</td>
                         <td>{{ shipment.totalItemCount }}</td>
                         <td>{{ shipment.totalQuantity }}</td>
@@ -204,14 +204,163 @@
                 </tbody>
               </nz-table>
             </nz-tab> 
+            <nz-tab nzTitle=" {{ 'order' | i18n }}" *ngIf="ordersMap.has(trailerAppointment.id)">
+              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="ordersMap.get(trailerAppointment.id)!" nzSize="middle"
+                [nzShowPagination]="false" #orderTable>
+                <thead>
+                  <th>
+                    {{ 'order.number' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'order.category' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'status' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'carrier' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'service' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'shipToCustomer' | i18n }}
+                  </th> 
+                  <th>
+                    {{ 'billToCustomer' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'order.totalItemCount' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'order.totalOrderQuantity' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'order.totalOpenQuantity' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'order.totalInprocessQuantity' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'order.totalShippedQuantity' | i18n }}
+                  </th>
+                   
+                </thead>
+                <tbody>
+                  <tr *ngFor="let order of orderTable.data">
+                      
+                        <td>
+                            <a routerLink="/outbound/order" routerLinkActive="active"
+                              [queryParams]="{number : order.number }">
+                            {{ order.number }} </a></td>
+                        <td>{{ 'ORDER-CATEGORY-' + order.category | i18n }}</td>
+                        <td>{{ order.status }}</td>
+                        <td>
+                          <nz-skeleton-element 
+                              *ngIf="order.carrierId && order.carrier == null"
+                              nzType="input"
+                              [nzActive]="true"
+                              [nzSize]="'small'"
+                              style="width:75px"
+                            ></nz-skeleton-element> 
+                          <a nz-tooltip [nzTooltipTitle]="carrierDetailsTemplate">{{ order.carrier?.name }}</a>
+                          
+                          <ng-template #carrierDetailsTemplate>
+                            <div>{{order.carrier?.name}} - {{order.carrier?.description}}</div>
+                            <div *ngIf="order.carrier?.contactorFirstname != null || order.carrier?.contactorLastname != null">
+                              {{order.carrier?.contactorFirstname}} - {{order.carrier?.contactorLastname}}</div>
+                            <address *ngIf="order.carrier?.addressLine1 != null || order.carrier?.addressLine2 != null  || order.carrier?.addressCity != null  || order.carrier?.addressState != null">  
+                              {{order.carrier?.addressLine1}} <br>
+                              {{order.carrier?.addressLine2}} <br>
+                              {{order.carrier?.addressCity}},  {{order.carrier?.addressState}} <br>
+                              {{order.carrier?.addressPostcode}} <br>
+                              </address>
+                          </ng-template>
+                        </td>
+                        <td>
+                          <nz-skeleton-element 
+                              *ngIf="order.carrierServiceLevelId && order.carrierServiceLevel == null"
+                              nzType="input"
+                              [nzActive]="true"
+                              [nzSize]="'small'"
+                              style="width:75px"
+                            ></nz-skeleton-element> 
+                          <a>{{ order.carrierServiceLevel?.name }}</a>
+                        </td>
+                        <td>
+                          
+                              <nz-skeleton-element 
+                              *ngIf="order.shipToCustomerId && order.shipToCustomer == null"
+                              nzType="input"
+                              [nzActive]="true"
+                              [nzSize]="'small'"
+                              style="width:75px"
+                            ></nz-skeleton-element> 
+                          <a nz-tooltip [nzTooltipTitle]="shipToCustomerDetailsTemplate">{{ order.shipToCustomer?.name }}</a>
+                          <ng-template #shipToCustomerDetailsTemplate>
+                            
+                            <address>  
+                              {{order.shipToCustomer?.addressLine1}} <br>
+                              {{order.shipToCustomer?.addressLine2}} <br>
+                              {{order.shipToCustomer?.addressCity}},  {{order.shipToCustomer?.addressState}} <br>
+                              {{order.shipToCustomer?.addressPostcode}} <br>
+                              </address>
+                          </ng-template>
+                          <address>  
+                            {{order.shipToContactorFirstname}} {{order.shipToContactorLastname}}<br>
+                            {{order.shipToAddressLine1}} <br>
+                            {{order.shipToAddressLine2}} <br>
+                            {{order.shipToAddressCity}},  {{order.shipToAddressState}} <br>
+                            {{order.shipToAddressPostcode}} <br>
+                            </address> 
+                          </td>
+                        <td>
+                          
+                          <nz-skeleton-element 
+                          *ngIf="order.billToCustomerId && order.billToCustomer == null"
+                          nzType="input"
+                          [nzActive]="true"
+                          [nzSize]="'small'"
+                          style="width:75px"
+                          ></nz-skeleton-element> 
+
+                          <a nz-tooltip [nzTooltipTitle]="billToCustomerDetailsTemplate">{{ order.billToCustomer?.name }}</a>
+                          <ng-template #billToCustomerDetailsTemplate>
+                            
+                            <address>  
+                              {{order.billToCustomer?.addressLine1}} <br>
+                              {{order.billToCustomer?.addressLine2}} <br>
+                              {{order.billToCustomer?.addressCity}},  {{order.billToCustomer?.addressState}} <br>
+                              {{order.billToCustomer?.addressPostcode}} <br>
+                              </address>
+                          </ng-template>
+
+                          <address>  
+                            {{order.billToContactorFirstname}} {{order.billToContactorLastname}}<br>
+                            {{order.billToAddressLine1}} <br>
+                            {{order.billToAddressLine2}} <br>
+                            {{order.billToAddressCity}},  {{order.billToAddressState}} <br>
+                            {{order.billToAddressPostcode}} <br>
+                            </address> 
+                        </td>
+                        <td>{{ order.totalItemCount }}</td>
+                        <td>{{ order.totalExpectedQuantity }}</td>
+                        <td>{{ order.totalOpenQuantity }}</td>
+                        <td>{{ order.totalInprocessQuantity }}</td>
+                        <td>{{ order.totalShippedQuantity }}</td>
+           
+                  </tr>
+                </tbody>
+              </nz-table>
+            </nz-tab> 
             
             <nz-tab nzTitle=" {{ 'pick' | i18n }}">
               <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="true"
-                [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[item.id!]" #pickTable>
+                [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[trailerAppointment.id!]" #pickTable>
                 <thead>
                   
                   <th   [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
-                  (nzCheckedChange)="onAllChecked($event, item.id!)" nzWidth="60px"></th>
+                  (nzCheckedChange)="onAllChecked($event, trailerAppointment.id!)" nzWidth="60px"></th>
                   <th>
                     {{ 'pick.number' | i18n }}
                   </th>
@@ -250,7 +399,7 @@
                   <tr *ngFor="let pick of pickTable.data">
                     
                     <td [nzChecked]="setOfCheckedId.has(pick.id!)" [nzDisabled]="pick.quantity === pick.pickedQuantity"
-                      (nzCheckedChange)="onItemChecked(pick.id!, item.id!, $event)"></td>
+                      (nzCheckedChange)="onItemChecked(pick.id!, trailerAppointment.id!, $event)"></td>
                     <td>{{ pick.number }}</td>
                     <td><a routerLink="/outbound/pick-list" routerLinkActive="active"
                         [queryParams]="{number : pick.pickListNumber}">{{ pick.pickListNumber }}</a></td>
@@ -268,7 +417,7 @@
                       <button nz-button nz-dropdown [nzDropdownMenu]="cancelPicksOption" nzType="primary"
                       (click)="cancelPick(pick, false, false)"   
                       *ngIf="!userPermissionMap.has('cancel-single-pick') || userPermissionMap.get('cancel-single-pick')"
-                      [disabled]="pick.quantity === pick.pickedQuantity  || item.status === trailerAppointmentStatusEnum.COMPLETED" >
+                      [disabled]="pick.quantity === pick.pickedQuantity  || trailerAppointment.status === trailerAppointmentStatusEnum.COMPLETED" >
                       {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
                       <nz-dropdown-menu #cancelPicksOption="nzDropdownMenu">
                         <ul nz-menu>         
@@ -294,29 +443,29 @@
               <ng-template #pickTableFoot>
                 <div nz-row nzType="flex" nzJustify="start" *ngIf="!displayOnly">
                    
-                  <button nz-button (click)="confirmPicks(item)"
+                  <button nz-button (click)="confirmPicks(trailerAppointment)"
                     *ngIf="!displayOnly && (!userPermissionMap.has('confirm-multiple-pick') || userPermissionMap.get('confirm-multiple-pick'))"
-                    [disabled]="mapOfPicks[item.id!].length === 0  || item.status === trailerAppointmentStatusEnum.COMPLETED">
+                    [disabled]="mapOfPicks[trailerAppointment.id!] == null || mapOfPicks[trailerAppointment.id!].length === 0  || trailerAppointment.status === trailerAppointmentStatusEnum.COMPLETED">
                     {{ 'confirm' | i18n }}
                   </button>
                   
                   <button nz-button nz-dropdown [nzDropdownMenu]="cancelPicksOption" nzType="primary"
-                  (click)="cancelSelectedPick(item, false, false)"   
-                  [disabled]="item.status === trailerAppointmentStatusEnum.COMPLETED" 
+                  (click)="cancelSelectedPick(trailerAppointment, false, false)"   
+                  [disabled]="trailerAppointment.status === trailerAppointmentStatusEnum.COMPLETED" 
                   *ngIf="!displayOnly && (!userPermissionMap.has('cancel-multiple-pick') || userPermissionMap.get('cancel-multiple-pick'))">
                   {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
                   <nz-dropdown-menu #cancelPicksOption="nzDropdownMenu">
                     <ul nz-menu>         
                       <li nz-menu-item>
-                        <a (click)="cancelSelectedPick(item, false, false)">
+                        <a (click)="cancelSelectedPick(trailerAppointment, false, false)">
                           {{ 'cancel-pick' | i18n }}</a> 
                       </li>
                       <li nz-menu-item>
-                        <a (click)="cancelSelectedPick(item, true, false)">
+                        <a (click)="cancelSelectedPick(trailerAppointment, true, false)">
                           {{ 'cancel-pick-error-location' | i18n }}</a> 
                       </li>  
                       <li nz-menu-item>
-                        <a (click)="cancelSelectedPick(item, true, true)">
+                        <a (click)="cancelSelectedPick(trailerAppointment, true, true)">
                           {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
                       </li>
                     </ul>
@@ -326,7 +475,7 @@
             </nz-tab>
             
             <nz-tab nzTitle=" {{ 'short-allocation' | i18n }}">
-              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="mapOfShortAllocations[item.id!]" nzSize="middle"
+              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="mapOfShortAllocations[trailerAppointment.id!]" nzSize="middle"
                 [nzShowPagination]="true" #shortAllocationTable>
                 <thead>
                   <th>
@@ -387,17 +536,17 @@
                       <nz-dropdown-menu #shortAllocationMenu="nzDropdownMenu">
                         <ul nz-menu> 
 
-                          <li nz-menu-item *ngIf="isShortAllocationAllocatable(shortAllocation) && item.status != trailerAppointmentStatusEnum.COMPLETED && (!userPermissionMap.has('allocate-short-allocation') || userPermissionMap.get('allocate-short-allocation'))">
+                          <li nz-menu-item *ngIf="isShortAllocationAllocatable(shortAllocation) && trailerAppointment.status != trailerAppointmentStatusEnum.COMPLETED && (!userPermissionMap.has('allocate-short-allocation') || userPermissionMap.get('allocate-short-allocation'))">
                             <a   (click)="allocateShortAllocation(shortAllocation)">{{ 'allocate' | i18n }}</a>
                           </li>
                           
-                          <li nz-menu-item *ngIf="item.status != trailerAppointmentStatusEnum.COMPLETED && (!userPermissionMap.has('create-work-order') || userPermissionMap.get('create-work-order'))">
+                          <li nz-menu-item *ngIf="trailerAppointment.status != trailerAppointmentStatusEnum.COMPLETED && (!userPermissionMap.has('create-work-order') || userPermissionMap.get('create-work-order'))">
                             <a  (click)="openCreateWorkOrderModel(shortAllocation, tplCreateWorkOrderModalTitle, tplCreateWorkOrderModalContent)">
                               {{ 'create-work-order' | i18n }}</a>
                           </li>
                           
                           
-                          <li nz-menu-item *ngIf="item.status != trailerAppointmentStatusEnum.COMPLETED && (!userPermissionMap.has('cancel-short-allocation') || userPermissionMap.get('cancel-short-allocation'))">
+                          <li nz-menu-item *ngIf="trailerAppointment.status != trailerAppointmentStatusEnum.COMPLETED && (!userPermissionMap.has('cancel-short-allocation') || userPermissionMap.get('cancel-short-allocation'))">
                             <a  (click)="cancelShortAllocation(shortAllocation)">{{ 'cancel' | i18n }}</a>
                           </li>
                         </ul>
@@ -436,22 +585,14 @@
     <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
       {{searchResult}}
     </div> 
-    </div> 
-  </nz-spin>
-  
-  
-  <ng-template #tableFoot>
-    <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
-      {{searchResult}}
-    </div>
-
     <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">   
       <button  nz-button nzType="primary" routerLink="/util/file-upload/loads" routerLinkActive="active"
       *ngIf="!userPermissionMap.has('file-upload') || userPermissionMap.get('file-upload')">
         {{ 'file-upload' | i18n }}
       </button> 
     </div>
-  </ng-template>
+    </div> 
+  </nz-spin> 
   
 
  

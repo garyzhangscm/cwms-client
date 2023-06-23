@@ -66,8 +66,8 @@
 
           <td>{{ data.number }}</td>
           <td>{{ 'SHIPMENT-STATUS-' + data.status | i18n }}</td>
-          <td>{{ data.carrier.name }}</td>
-          <td>{{ data.carrierServiceLevel.name }}</td>
+          <td>{{ data.carrier?.name }}</td>
+          <td>{{ data.carrierServiceLevel?.name }}</td>
           <td>{{ data.totalLineCount }}</td>
           <td>{{ data.totalItemCount }}</td>
           <td>{{ data.totalQuantity }}</td>
@@ -224,12 +224,8 @@
     </nz-table>
 
     <ng-template #pickTableFoot>
-      <div nz-row nzType="flex" nzJustify="start"  *ngIf="!displayOnly">
-        <button nz-button nzType="primary" (click)="printPickSheets(data)"
-          [nzLoading]="mapOfPrintingInProcessId[data.id!]" [disabled]="mapOfPicks[data.id!].length === 0">
-          {{ 'print' | i18n }}
-        </button>
-        <button nz-button (click)="confirmPicks(data)" [disabled]="mapOfPicks[data.id!].length === 0">
+      <div nz-row nzType="flex" nzJustify="start"  *ngIf="!displayOnly"> 
+        <button nz-button (click)="confirmPicks(data)" [disabled]="mapOfPicks[data.id!] && mapOfPicks[data.id!].length === 0">
           {{ 'confirm' | i18n }}
         </button>
       </div>

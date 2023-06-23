@@ -13,12 +13,15 @@ import { TrailerAppointment } from '../../transportation/models/trailer-appointm
 import { TrailerAppointmentStatus } from '../../transportation/models/trailer-appointment-status.enum';
 import { TrailerAppointmentType } from '../../transportation/models/trailer-appointment-type.enum';
 import { TrailerAppointmentService } from '../../transportation/services/trailer-appointment.service';
+import { LocalCacheService } from '../../util/services/local-cache.service';
 import { BillOfMaterial } from '../../work-order/models/bill-of-material';
 import { BillOfMaterialService } from '../../work-order/services/bill-of-material.service';
+import { Order } from '../models/order';
 import { PickWork } from '../models/pick-work';
 import { Shipment } from '../models/shipment';
 import { ShortAllocation } from '../models/short-allocation';
 import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
+import { OrderService } from '../services/order.service';
 import { PickService } from '../services/pick.service';
 import { ShortAllocationService } from '../services/short-allocation.service';
 import { StopService } from '../services/stop.service';
@@ -40,6 +43,8 @@ export class OutboundLoadComponent implements OnInit {
   // key: trailer appointment id
   // value: list of the shipment in the trailer appointment
   shipmentsMap = new Map<number, Shipment[]>();
+
+  ordersMap = new Map<number, Order[]>();
 
   mapOfPicks: { [key: string]: PickWork[] } = {};
   mapOfShortAllocations: { [key: string]: ShortAllocation[] } = {};
@@ -101,6 +106,8 @@ export class OutboundLoadComponent implements OnInit {
     private shortAllocationService: ShortAllocationService,
     private billOfMaterialService: BillOfMaterialService,
     private userService: UserService,
+    private orderService: OrderService,
+    private localCacheService: LocalCacheService,
     private fb: UntypedFormBuilder,) { 
       userService.isCurrentPageDisplayOnly("/outbound/load").then(
         displayOnlyFlag => this.displayOnly = displayOnlyFlag
@@ -274,13 +281,131 @@ export class OutboundLoadComponent implements OnInit {
         this.isSpinning = false;
       }, 
       error: () => this.isSpinning = false
-    })
+    });
+
+    this.loadOrders(trailerAppointment);
 
     
     this.showPicks(trailerAppointment);
     this.showShortAllocations(trailerAppointment);  
   }
 
+  loadOrders(trailerAppointment: TrailerAppointment) {
+    this.orderService.getOrdersByTrailerAppointment(trailerAppointment.id!).subscribe({
+      next: (ordersRes) => {
+        this.ordersMap.set(trailerAppointment.id!, this.calculateOrderQuantities(ordersRes)); 
+        ordersRes.forEach(
+          order => {
+
+            this.refreshOrderDetailInformations(order);
+          }
+        )
+      }
+    })
+  }
+  
+  
+  refreshOrderDetailInformations(order: Order) {
+  
+    this.loadClient(order); 
+   
+    this.loadSupplier(order);
+
+    this.loadCarrier(order);
+    
+    this.loadCustomer(order); 
+       
+  }
+  
+  loadClient(order: Order) {
+     
+    if (order.clientId && order.client == null) { 
+      this.localCacheService.getClient(order.clientId).subscribe(
+        {
+          next: (res) => {
+            order.client = res; 
+          },  
+        }
+      );      
+    } 
+  }
+  
+  loadCarrier(order: Order) {
+     
+    if (order.carrierId && order.carrier == null) { 
+      this.localCacheService.getCarrier(order.carrierId).subscribe(
+        {
+          next: (res) => {
+            order.carrier = res; 
+            // load the carrier service level as well
+            if (order.carrierServiceLevelId) {
+              order.carrierServiceLevel = res.carrierServiceLevels.find(service => service.id === order.carrierServiceLevelId)
+            } 
+          },  
+        }
+      );      
+    }  
+  }
+  loadSupplier(order: Order) {
+     
+    if (order.supplierId && order.supplier == null) { 
+      this.localCacheService.getSupplier(order.supplierId).subscribe(
+        {
+          next: (res) => {
+            order.supplier = res;  
+          },  
+        }
+      );      
+    }  
+  }
+  loadCustomer(order: Order) {
+     
+    if (order.billToCustomerId && order.billToCustomer == null) { 
+      this.localCacheService.getCustomer(order.billToCustomerId).subscribe(
+        {
+          next: (res) => {
+            order.billToCustomer = res;  
+          },  
+        }
+      );      
+    } 
+    
+    if (order.shipToCustomerId && order.shipToCustomer == null) { 
+      this.localCacheService.getCustomer(order.shipToCustomerId).subscribe(
+        {
+          next: (res) => {
+            order.shipToCustomer = res; 
+              
+          },  
+        }
+      );      
+    } 
+  }
+  
+  calculateOrderQuantities(orders: Order[]): Order[] {
+    orders.forEach(order => {
+      const existingItemIds = new Set();
+      order.totalLineCount = order.orderLines.length;
+      order.totalItemCount = 0;
+      order.totalExpectedQuantity = 0;
+      order.totalOpenQuantity = 0;
+      order.totalInprocessQuantity = 0;
+      order.totalShippedQuantity = 0;
+
+      order.orderLines.forEach(orderLine => {
+        order.totalExpectedQuantity! += orderLine.expectedQuantity;
+        order.totalOpenQuantity! += orderLine.openQuantity;
+        order.totalInprocessQuantity! += orderLine.inprocessQuantity;
+        order.totalShippedQuantity! += orderLine.shippedQuantity;
+        if (!existingItemIds.has(orderLine.itemId)) {
+          existingItemIds.add(orderLine.itemId);
+        }
+      });
+
+      order.totalItemCount = existingItemIds.size;
+    });
+    return orders;
+  }
   
   calculateQuantities(shipments: Shipment[]): Shipment[] {
     shipments.forEach(shipment => {

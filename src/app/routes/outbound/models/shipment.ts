@@ -12,10 +12,10 @@ export interface Shipment {
   shipmentLines: ShipmentLine[];
   orderNumbers: string[];
   status: ShipmentStatus;
-  carrierId: number;
-  carrier: Carrier;
-  carrierServiceLevelId: number;
-  carrierServiceLevel: CarrierServiceLevel;
+  carrierId?: number;
+  carrier?: Carrier;
+  carrierServiceLevelId?: number;
+  carrierServiceLevel?: CarrierServiceLevel;
   stopNumber: string;
 
   clientId: number;
