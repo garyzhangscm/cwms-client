@@ -61,7 +61,7 @@ export class ShipmentService {
     return this.http.put(url).pipe(map(res => res.data));
   }
 
-  allocateShipment(shipment: Shipment): Observable<Shipment> {
+  allocateShipment(shipment: Shipment): Observable<any> {
     const url = `outbound/shipments/${shipment.id}/allocate`;
     return this.http.put(url).pipe(map(res => res.data));
   }

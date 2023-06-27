@@ -77,7 +77,7 @@ export class StopService {
       .post(`outbound/stops/${id}/complete?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`)
       .pipe(map(res => res.data));
   }
-  allocateStop(id: number): Observable<Stop> { 
+  allocateStop(id: number): Observable<any> { 
 
     return this.http
       .post(`outbound/stops/${id}/allocate?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`)

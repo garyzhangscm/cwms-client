@@ -65,7 +65,7 @@ export class InventoryInventoryComponent implements OnInit {
         iif: () => this.isChoose('location')  }, 
     { title: this.i18n.fanyi("quantity"),  render: 'quantityColumn' , index: 'quantity',
         iif: () => this.isChoose('quantity') , statistical: 'sum', key: 'quantitySum'}, 
-    { title: this.i18n.fanyi("inventory.status"),  index: 'inventoryStatusColumn' ,
+    { title: this.i18n.fanyi("inventory.status"),  render: 'inventoryStatusColumn' ,
         iif: () => this.isChoose('inventoryStatus')  }, 
     { title: this.i18n.fanyi("fifoDate"),  render: 'fifoDateColumn' ,
         iif: () => this.isChoose('fifoDate')  }, 

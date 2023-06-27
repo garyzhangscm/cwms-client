@@ -354,126 +354,220 @@
               </nz-table>
             </nz-tab> 
             
-            <nz-tab nzTitle=" {{ 'pick' | i18n }}">
-              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="true"
+            <nz-tab nzTitle=" {{ 'pick' | i18n }}"> 
+
+              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="true" 
                 [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[trailerAppointment.id!]" #pickTable>
                 <thead>
-                  
-                  <th   [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
-                  (nzCheckedChange)="onAllChecked($event, trailerAppointment.id!)" nzWidth="60px"></th>
-                  <th>
-                    {{ 'pick.number' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'list-pick.number' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'cartonization.number' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'sourceLocation' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'destinationLocation' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'item' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'item.description' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'pick.quantity' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'pick.pickedQuantity' | i18n }}
-                  </th>
-                  <th>
-                    {{ 'pick.allocated-lpn' | i18n }}
-                  </th>
-                  <th *ngIf="!displayOnly">
-                    {{ 'action' | i18n }}
-                  </th>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let pick of pickTable.data">
-                    
-                    <td [nzChecked]="setOfCheckedId.has(pick.id!)" [nzDisabled]="pick.quantity === pick.pickedQuantity"
-                      (nzCheckedChange)="onItemChecked(pick.id!, trailerAppointment.id!, $event)"></td>
-                    <td>{{ pick.number }}</td>
-                    <td><a routerLink="/outbound/pick-list" routerLinkActive="active"
-                        [queryParams]="{number : pick.pickListNumber}">{{ pick.pickListNumber }}</a></td>
-                    <td><a routerLink="/outbound/cartonization" routerLinkActive="active"
-                        [queryParams]="{number : pick.cartonizationNumber}">{{ pick.cartonizationNumber }}</a></td>
-                    <td>{{ pick.sourceLocation?.name }}</td>
-                    <td>{{ pick.destinationLocation?.name }}</td>
-                    <td>{{ pick.item?.name }}</td>
-                    <td>{{ pick.item?.description }}</td>
-                    <td>{{ pick.quantity }}</td>
-                    <td>{{ pick.pickedQuantity }}</td>
-                    <td>{{ pick.lpn }}</td>
-                    <td *ngIf="!displayOnly">
-                      
-                      <button nz-button nz-dropdown [nzDropdownMenu]="cancelPicksOption" nzType="primary"
-                      (click)="cancelPick(pick, false, false)"   
-                      *ngIf="!userPermissionMap.has('cancel-single-pick') || userPermissionMap.get('cancel-single-pick')"
-                      [disabled]="pick.quantity === pick.pickedQuantity  || trailerAppointment.status === trailerAppointmentStatusEnum.COMPLETED" >
-                      {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
-                      <nz-dropdown-menu #cancelPicksOption="nzDropdownMenu">
-                        <ul nz-menu>         
-                          <li nz-menu-item>
-                            <a (click)="cancelPick(pick, false, false)">
-                              {{ 'cancel-pick' | i18n }}</a> 
-                          </li>
-                          <li nz-menu-item>
-                            <a (click)="cancelPick(pick, true, false)">
-                              {{ 'cancel-pick-error-location' | i18n }}</a> 
-                          </li>  
-                          <li nz-menu-item>
-                            <a (click)="cancelPick(pick, true, true)">
-                              {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
-                          </li>
-                        </ul>
-                      </nz-dropdown-menu> 
-                    </td>
+                  <tr>
+                    <th nzWidth="50px"></th>
+                    <th>
+                      {{ 'pick.number' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'status' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'work-task.number' | i18n }}
+                    </th>
+                    <th nzWidth="250px">
+                      {{ 'assign' | i18n }}
+                    </th>
+                    <th nzWidth="250px">
+                      {{ 'currentUser' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'pick-list' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'bulk-pick' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'sourceLocation' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'destinationLocation' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'item' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'item.description' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'pick.quantity' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'pick.pickedQuantity' | i18n }}
+                    </th>
+                    <th *ngIf="!displayOnly" nzWidth="150px" nzRight>
+                      {{ 'action' | i18n }}
+                    </th>
                   </tr>
+                  
+                </thead>
+                <tbody>                  
+                  <ng-template ngFor let-pick [ngForOf]="pickTable.data">
+                    <tr>
+                      <td *ngIf="pick.picks != null && pick.picks.length > 0" 
+                        [nzExpand]="pickTableExpandSet.has(pick.id!)" 
+                        (nzExpandChange)="onPickTableExpandChange(pick.id!, pick, $event)"
+                        nzWidth="50px"></td>
+                      <td *ngIf="pick.picks == null || pick.picks.length == 0"></td> 
+                      <td>{{ pick.number }}</td>
+                      <td>{{ 'PICK-STATUS-' + pick.status | i18n }}</td>
+                      <td>
+                        <a  *ngIf="pick.workTask" routerLink="/work-task/work-task" routerLinkActive="active" 
+                          [queryParams]="{number : pick.workTask.number}">{{pick.workTask.number}}</a> 
+                      </td>
+                      <td nzWidth="250px">
+                        <ul>
+                          <li *ngIf="pick.workTask?.assignedUser">
+                            {{'user.assigned' | i18n}} : {{ pick.workTask?.assignedUser?.username}}
+                          </li>
+                          <li *ngIf="pick.workTask?.assignedRole">
+                            {{'role.assigned' | i18n}} : {{ pick.workTask?.assignedRole?.name}}
+                          </li>
+                        </ul> 
+                      </td>
+                      <td nzWidth="250px"> 
+                         {{ pick.workTask?.currentUser?.username}} 
+                      </td>
+                      <td>{{ pick.pickListNumber }}</td>
+                      <td>{{ pick.bulkPickNumber }}</td>
+                      <td>{{ pick.sourceLocation?.name }}</td>
+                      <td>{{ pick.destinationLocation?.name }}</td>
+                      <td>{{ pick.item?.name }}</td>
+                      <td>{{ pick.item?.description }}</td>
+                      <td>{{ pick.quantity }}</td>
+                      <td>{{ pick.pickedQuantity }}</td>
+                      <td *ngIf="!displayOnly" nzWidth="150px"  nzRight>                      
+                        <nz-list>
+                          <nz-list-item>
+                            <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+                              {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+                            <nz-dropdown-menu #menu="nzDropdownMenu">
+                              <ul nz-menu>                
+                                <li nz-menu-item *ngIf="pick.status == pickStatuses.PENDING">
+                                  <a (click)="releasePick(trailerAppointment, pick)">
+                                    {{ 'release' | i18n }}</a> 
+                                </li>        
+                                <li nz-menu-item >
+                                  <a (click)="openUserQueryModal(trailerAppointment, pick, tplAssignUserModalTitle, 
+                                      tplAssignUserModalContent, tplAssignUserModalFooter)">
+                                    {{ 'assign-user' | i18n }}</a> 
+                                </li>               
+                                <li nz-menu-item *ngIf="pick.workTask?.assignedUser != null">
+                                  <a (click)="unassignUser(trailerAppointment, pick)">
+                                    {{ 'deassign-user' | i18n }}</a> 
+                                </li>      
+                                <li nz-menu-item *ngIf="pick.workTaskId != null && pick.workTask?.currentUser != null">
+                                  <a (click)="unacknowledgeWorkTask(trailerAppointment, pick.workTaskId)">
+                                    {{ 'unacknowledge' | i18n }}</a> 
+                                </li>
+                                <li nz-menu-item >
+                                  <a (click)="cancelPick( pick, false, false)">
+                                    {{ 'cancel-pick' | i18n }}</a> 
+                                </li>
+                                <li nz-menu-item *ngIf="pick.pickGroupType != pickGroupTypes.LIST_PICK">
+                                  <a (click)="cancelPick( pick, true, false)">
+                                    {{ 'cancel-pick-error-location' | i18n }}</a> 
+                                </li>
+                                <li nz-menu-item *ngIf="pick.pickGroupType != pickGroupTypes.LIST_PICK">
+                                  <a (click)="cancelPick( pick, true, true)">
+                                    {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
+                                </li>
+                              </ul>
+                            </nz-dropdown-menu>  
+                          </nz-list-item>
+                          <!--
+
+
+                          <nz-list-item>
+                            {{ 'assign-user' | i18n }}: 
+                            <app-auth-user-query-popup (recordSelected)="assignUser(wave, pick, $event)"></app-auth-user-query-popup>
+                          </nz-list-item>
+                          -->
+                        </nz-list>
+                        <!--
+
+                        <button nz-button nz-dropdown [nzDropdownMenu]="cancelPicksOption" nzType="primary"
+                        (click)="cancelPick(data, pick, false, false)"   
+                        [disabled]="pick.quantity === pick.pickedQuantity">
+                        {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
+                        <nz-dropdown-menu #cancelPicksOption="nzDropdownMenu">
+                          <ul nz-menu>         
+                            <li nz-menu-item>
+                              <a (click)="cancelPick(data, pick, false, false)">
+                                {{ 'cancel-pick' | i18n }}</a> 
+                            </li>
+                            <li nz-menu-item>
+                              <a (click)="cancelPick(data, pick, true, false)">
+                                {{ 'cancel-pick-error-location' | i18n }}</a> 
+                            </li>  
+                            <li nz-menu-item>
+                              <a (click)="cancelPick(data, pick, true, true)">
+                                {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
+                            </li>
+                          </ul>
+                        </nz-dropdown-menu>  
+                        -->
+                      </td>
+                    </tr>
+                    <tr [nzExpand]="pickTableExpandSet.has(pick.id!)">        
+                          <nz-table #innerPickTable [nzData]="pick.picks!" nzSize="middle" [nzShowPagination]="false">
+                            <thead>
+                              <tr>
+                                <th>
+                                  {{ 'pick.number' | i18n }}
+                                </th>
+                                <th>
+                                  {{ 'status' | i18n }}
+                                </th> 
+                                <th>
+                                  {{ 'sourceLocation' | i18n }}
+                                </th>
+                                <th>
+                                  {{ 'destinationLocation' | i18n }}
+                                </th>
+                                <th>
+                                  {{ 'item' | i18n }}
+                                </th>
+                                <th>
+                                  {{ 'item.description' | i18n }}
+                                </th>
+                                <th>
+                                  {{ 'pick.quantity' | i18n }}
+                                </th>
+                                <th>
+                                  {{ 'pick.pickedQuantity' | i18n }}
+                                </th> 
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let innerPick of innerPickTable.data">
+                                
+                                <td>{{ innerPick.number }}</td>
+                                <td>{{ 'PICK-STATUS-' + innerPick.status | i18n }}</td> 
+                                <td>{{ innerPick.sourceLocation?.name }}</td>
+                                <td>{{ innerPick.destinationLocation?.name }}</td>
+                                <td>{{ innerPick.item?.name }}</td>
+                                <td>{{ innerPick.item?.description }}</td>
+                                <td>{{ innerPick.quantity }}</td>
+                                <td>{{ innerPick.pickedQuantity }}</td>
+                              </tr>
+                            </tbody>
+                          </nz-table> 
+                    </tr>
+                  </ng-template>
+                  
                 </tbody>
               </nz-table>
 
-              <ng-template #pickTableFoot>
-                <div nz-row nzType="flex" nzJustify="start" *ngIf="!displayOnly">
-                   
-                  <button nz-button (click)="confirmPicks(trailerAppointment)"
-                    *ngIf="!displayOnly && (!userPermissionMap.has('confirm-multiple-pick') || userPermissionMap.get('confirm-multiple-pick'))"
-                    [disabled]="mapOfPicks[trailerAppointment.id!] == null || mapOfPicks[trailerAppointment.id!].length === 0  || trailerAppointment.status === trailerAppointmentStatusEnum.COMPLETED">
-                    {{ 'confirm' | i18n }}
-                  </button>
-                  
-                  <button nz-button nz-dropdown [nzDropdownMenu]="cancelPicksOption" nzType="primary"
-                  (click)="cancelSelectedPick(trailerAppointment, false, false)"   
-                  [disabled]="trailerAppointment.status === trailerAppointmentStatusEnum.COMPLETED" 
-                  *ngIf="!displayOnly && (!userPermissionMap.has('cancel-multiple-pick') || userPermissionMap.get('cancel-multiple-pick'))">
-                  {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
-                  <nz-dropdown-menu #cancelPicksOption="nzDropdownMenu">
-                    <ul nz-menu>         
-                      <li nz-menu-item>
-                        <a (click)="cancelSelectedPick(trailerAppointment, false, false)">
-                          {{ 'cancel-pick' | i18n }}</a> 
-                      </li>
-                      <li nz-menu-item>
-                        <a (click)="cancelSelectedPick(trailerAppointment, true, false)">
-                          {{ 'cancel-pick-error-location' | i18n }}</a> 
-                      </li>  
-                      <li nz-menu-item>
-                        <a (click)="cancelSelectedPick(trailerAppointment, true, true)">
-                          {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
-                      </li>
-                    </ul>
-                  </nz-dropdown-menu>  
-                </div>
+              <ng-template #pickTableFoot> 
               </ng-template>
             </nz-tab>
-            
+
             <nz-tab nzTitle=" {{ 'short-allocation' | i18n }}">
               <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="mapOfShortAllocations[trailerAppointment.id!]" nzSize="middle"
                 [nzShowPagination]="true" #shortAllocationTable>
@@ -684,4 +778,75 @@
       </nz-table>
     </div>
   </form>
+</ng-template>
+
+
+
+<!-- modal for assign user -->
+<ng-template #tplAssignUserModalTitle>
+  <span>{{ 'user.assigned' | i18n}}</span>
+</ng-template>
+<ng-template #tplAssignUserModalContent>
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchUserForm" class="ant-advanced-search-form">
+    <div nz-row [nzGutter]="24"> 
+      <div nz-col [nzSpan]="8">
+
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="username">
+            {{ 'username' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <input nz-input name="username" id="username" formControlName="username">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="firstname">
+            {{ 'firstname' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <input nz-input name="firstname" id="firstname" formControlName="firstname">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="lastname">
+            {{ 'lastname' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <input nz-input name="lastname" id="lastname" formControlName="lastname">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="searchUser()" [nzLoading]="searching">
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Table to Display the result  -->
+  <div class="search-result-list">
+    
+    <st #userTable [data]="listOfAllAssignableUsers" [columns]="userTablecolumns" 
+      (change)="change($event)" [ps]="5">
+    </st>  
+  </div>
+</ng-template>
+
+<ng-template #tplAssignUserModalFooter>
+  <button nz-button nzType="default" (click)="closeUserQueryModal()">{{ 'cancel' | i18n}}</button>
+  <button nz-button nzType="primary" (click)="returnUserResult()" [disabled]="isAnyUserRecordChecked() == false">{{ 'confirm' |
+    i18n}}</button>
+
 </ng-template>

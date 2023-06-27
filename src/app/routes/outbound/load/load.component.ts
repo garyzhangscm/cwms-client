@@ -8,6 +8,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
+import { User } from '../../auth/models/user';
 import { UserService } from '../../auth/services/user.service';
 import { TrailerAppointment } from '../../transportation/models/trailer-appointment';
 import { TrailerAppointmentStatus } from '../../transportation/models/trailer-appointment-status.enum';
@@ -16,11 +17,15 @@ import { TrailerAppointmentService } from '../../transportation/services/trailer
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { BillOfMaterial } from '../../work-order/models/bill-of-material';
 import { BillOfMaterialService } from '../../work-order/services/bill-of-material.service';
+import { WorkTaskService } from '../../work-task/services/work-task.service';
 import { Order } from '../models/order';
+import { PickGroupType } from '../models/pick-group-type.enum';
+import { PickStatus } from '../models/pick-status.enum';
 import { PickWork } from '../models/pick-work';
 import { Shipment } from '../models/shipment';
 import { ShortAllocation } from '../models/short-allocation';
 import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
+import { BulkPickService } from '../services/bulk-pick.service';
 import { OrderService } from '../services/order.service';
 import { PickService } from '../services/pick.service';
 import { ShortAllocationService } from '../services/short-allocation.service';
@@ -62,6 +67,23 @@ export class OutboundLoadComponent implements OnInit {
   // a bom to create work order for short allocation
   displayBom: BillOfMaterial | undefined;
 
+  pickTableExpandSet = new Set<number>();
+  pickStatuses = PickStatus;
+  currentTrailerAppointment?: TrailerAppointment;
+  currentPick?: PickWork;
+  listOfAllAssignableUsers: User[] = []; 
+  selectedUserId?: number;
+  queryUserModal!: NzModalRef;
+  searchUserForm!: UntypedFormGroup;
+  searching = false;
+  pickGroupTypes = PickGroupType;
+  userTablecolumns: STColumn[] = [
+    { title: '', index: 'id', type: 'radio', width: 70 },
+    { title: this.i18n.fanyi('username'),  index: 'username' }, 
+    { title: this.i18n.fanyi('firstname'),  index: 'firstname' }, 
+    { title: this.i18n.fanyi('lastname'),  index: 'lastname' }, 
+  ];
+
   
   trailerAppointmentStatusEnum = TrailerAppointmentStatus;
   userPermissionMap: Map<string, boolean> = new Map<string, boolean>([ 
@@ -101,10 +123,12 @@ export class OutboundLoadComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private stopService: StopService,
     private pickService: PickService,
+    private workTaskService: WorkTaskService,
     private router: Router,
     private modalService: NzModalService,
     private shortAllocationService: ShortAllocationService,
     private billOfMaterialService: BillOfMaterialService,
+    private bulkPickService: BulkPickService,
     private userService: UserService,
     private orderService: OrderService,
     private localCacheService: LocalCacheService,
@@ -229,9 +253,37 @@ export class OutboundLoadComponent implements OnInit {
   
   
   showPicks(trailerAppointment: TrailerAppointment): void {
+    /**
+     * 
     this.pickService.getPicksByLoad(trailerAppointment.id!).subscribe(pickRes => {
       this.mapOfPicks[trailerAppointment.id!] = [...pickRes];
     });
+    
+     * 
+     */
+    this.pickService.getPicksByLoad(trailerAppointment.id!).subscribe({
+      next: (pickRes) => {
+        // get all the single pick and add it to the result
+        // this.mapOfPicks[wave.id!] = pickRes.filter(pick => this.pickService.isSinglePick(pick));
+        // get all the bulk pick
+        // console.log(`start to setup ${pickRes.length}`);
+        // group the picks into 
+        // 1. single pick
+        // 2. bulk pick
+        // 3. list pick
+        this.pickService.setupPicksForDisplay(pickRes).then(
+          pickWorks => { 
+            this.mapOfPicks[trailerAppointment.id!] = pickWorks;
+
+            // setup the work task related information
+            // this.setupWorkTaskInformationForPicks(this.mapOfPicks[wave.id!]);
+          }
+        );
+
+
+      }
+    });
+
   }
   showShortAllocations(trailerAppointment: TrailerAppointment): void {
     this.shortAllocationService
@@ -628,5 +680,217 @@ export class OutboundLoadComponent implements OnInit {
     
     this.createWorkOrderForm.controls.workOrderNumber.setValue(workOrderNumber);
   }
+  
+  onPickTableExpandChange(id: number, pick: PickWork,checked: boolean): void {
+    if (checked) {
+      this.pickTableExpandSet.add(id); 
+    } else {
+      this.pickTableExpandSet.delete(id);
+    }
+  } 
+  
+  releasePick(trailerAppointment: TrailerAppointment, pick: PickWork) {
+    this.isSpinning = true;
+    // console.log(`start to release pick \n ${JSON.stringify(pick)}`);
+
+    if (pick.pickGroupType == PickGroupType.BULK_PICK) {
+        this.bulkPickService.releasePick(pick.id).subscribe({
+          next: () => { 
+            this.isSpinning = false;
+            this.messageService.success(this.i18n.fanyi('message.action.success'));
+            // refresh the picked inventory
+            this.search(); 
+          }, 
+          error: () => this.isSpinning = false
+        })
+    }
+    else if (pick.pickGroupType == null) {
+      this.pickService.releasePick(pick.id).subscribe({
+        next: () => { 
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          // refresh the picked inventory
+          this.search(); 
+        }, 
+        error: () => this.isSpinning = false
+      })
+  }
+  }
+  
+  openUserQueryModal(
+    trailerAppointment: TrailerAppointment,
+    pick: PickWork, 
+    tplAssignUserModalTitle: TemplateRef<{}>,
+    tplAssignUserModalContent: TemplateRef<{}>,
+    tplAssignUserModalFooter: TemplateRef<{}>,
+  ): void {
+ 
+    this.currentTrailerAppointment = trailerAppointment;
+    this.currentPick = pick;
+
+    this.listOfAllAssignableUsers = []; 
+
+    this.selectedUserId = undefined;
+
+    this.createQueryForm();
+
+    // show the model
+    this.queryUserModal = this.modalService.create({
+      nzTitle: tplAssignUserModalTitle,
+      nzContent: tplAssignUserModalContent,
+      nzFooter: tplAssignUserModalFooter,
+
+      nzWidth: 1000,
+    });
+
+  }
+  
+  searchUser(): void {
+    this.searching = true;
+    this.selectedUserId = undefined;
+    if (this.currentPick?.workTaskId == null) {
+      // if we can't get the current work task 
+      // return an empty user result set
+      this.listOfAllAssignableUsers = [];
+      return;
+    }
+    this.userService
+      .getUsers( 
+        this.searchForm.value.username, 
+        undefined,
+        undefined,
+        this.searchForm.value.firstname,
+        this.searchForm.value.lastname,
+        this.currentPick.workTaskId
+      )
+      .subscribe({
+        next: (userRes) => {
+
+          this.listOfAllAssignableUsers = userRes; 
+
+          this.searching = false;
+          this.searchResult = this.i18n.fanyi('search_result_analysis', {
+            currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+            rowCount: userRes.length,
+          });
+        }, 
+        error: () => {
+          this.searching = false;
+          this.searchResult = '';
+        },
+      });
+  } 
+
+ 
+  createQueryForm(): void {
+    // initiate the search form
+    this.searchUserForm = this.fb.group({ 
+      username: [null], 
+      firstname: [null], 
+      lastname: [null],
+    });
+ 
+  }
+  closeUserQueryModal(): void {
+    this.queryUserModal.destroy();
+  }
+  returnUserResult(): void {
+    // get the selected record
+    if (this.isAnyUserRecordChecked()) {
+      this.assignUser(this.currentTrailerAppointment!, this.currentPick!, this.selectedUserId);
+    } else {
+      console.log(`no user is selected, do nothing`)
+    }
+    this.queryUserModal.destroy();
+
+  } 
+  assignUser(trailerAppointment: TrailerAppointment, pick: PickWork, userId?: number) {
+    // console.log(`start to assign user with id ${userId}`);
+    if (userId == null) {
+    //  console.log(`no user is selected, do nothing`)
+    }
+    else {
+      this.isSpinning = true;
+      if (pick.pickGroupType == PickGroupType.BULK_PICK) {
+        // console.log(`start to assign user to bulk pick`);
+        this.bulkPickService.assignUser(pick.id, userId).subscribe({
+          next: (bulkPick) => {
+            this.isSpinning = false;
+            this.messageService.success(this.i18n.fanyi('message.action.success'));
+            // refresh the picked inventory
+            this.search();  
+          }, 
+          error: () => this.isSpinning = false
+        })
+      }
+      else if (pick.pickGroupType == null) {
+        // console.log(`start to assign user to pick`);
+        this.pickService.assignUser(pick.id, userId).subscribe({
+          next: () => {
+            this.isSpinning = false;
+            this.messageService.success(this.i18n.fanyi('message.action.success'));
+            // refresh the picked inventory
+            this.search();  
+          }, 
+          error: () => this.isSpinning = false
+        })
+      }
+    }
+  }
+  unassignUser(trailerAppointment: TrailerAppointment, pick: PickWork) { 
+      this.isSpinning = true;
+      if (pick.pickGroupType == PickGroupType.BULK_PICK) {
+        // console.log(`start to unassign user to bulk pick`);
+        this.bulkPickService.unassignUser(pick.id).subscribe({
+          next: (bulkPick) => {
+            this.isSpinning = false;
+            this.messageService.success(this.i18n.fanyi('message.action.success'));
+            // refresh the picked inventory
+            this.search();  
+          }, 
+          error: () => this.isSpinning = false
+        })
+      }
+      else if (pick.pickGroupType == null) {
+        // console.log(`start to unassign user to pick`);
+        this.pickService.unassignUser(pick.id).subscribe({
+          next: () => {
+            this.isSpinning = false;
+            this.messageService.success(this.i18n.fanyi('message.action.success'));
+            // refresh the picked inventory
+            this.search();  
+          }, 
+          error: () => this.isSpinning = false
+        })
+      } 
+  }
+  unacknowledgeWorkTask(trailerAppointment: TrailerAppointment, workTaskId: number) {  
+      this.isSpinning = true; 
+      this.workTaskService.unacknowledgeWorkTask(workTaskId, false).subscribe({
+        next: () => {
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          // refresh the picked inventory
+          this.search();  
+        }, 
+        error: () => this.isSpinning = false
+      }) ;
+  }
+
+
+  change(ret: STChange): void {
+    console.log('change', ret);
+    if (ret.type == 'radio') {
+      this.selectedUserId = undefined;
+      if (ret.radio != null && ret.radio!.id != null) {
+        console.log(`chosen user ${ret.radio!.id} / ${ret.radio!.username}`);
+        this.selectedUserId = ret.radio!.id;
+      }
+    }
+  }
+  isAnyUserRecordChecked() {
+    return  this.selectedUserId != undefined;;
+  }
+
   
 }
