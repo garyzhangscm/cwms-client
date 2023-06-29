@@ -21,12 +21,14 @@ import { WorkTaskService } from '../../work-task/services/work-task.service';
 import { Order } from '../models/order';
 import { PickGroupType } from '../models/pick-group-type.enum';
 import { PickStatus } from '../models/pick-status.enum';
+import { PickType } from '../models/pick-type.enum';
 import { PickWork } from '../models/pick-work';
 import { Shipment } from '../models/shipment';
 import { ShortAllocation } from '../models/short-allocation';
 import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
 import { BulkPickService } from '../services/bulk-pick.service';
 import { OrderService } from '../services/order.service';
+import { PickListService } from '../services/pick-list.service';
 import { PickService } from '../services/pick.service';
 import { ShortAllocationService } from '../services/short-allocation.service';
 import { StopService } from '../services/stop.service';
@@ -77,6 +79,9 @@ export class OutboundLoadComponent implements OnInit {
   searchUserForm!: UntypedFormGroup;
   searching = false;
   pickGroupTypes = PickGroupType;
+   
+  trailerAppointmentStatusEnum = TrailerAppointmentStatus;
+
   userTablecolumns: STColumn[] = [
     { title: '', index: 'id', type: 'radio', width: 70 },
     { title: this.i18n.fanyi('username'),  index: 'username' }, 
@@ -84,8 +89,7 @@ export class OutboundLoadComponent implements OnInit {
     { title: this.i18n.fanyi('lastname'),  index: 'lastname' }, 
   ];
 
-  
-  trailerAppointmentStatusEnum = TrailerAppointmentStatus;
+   
   userPermissionMap: Map<string, boolean> = new Map<string, boolean>([ 
     ['file-upload', false], 
     ['cancel-single-pick', false], 
@@ -132,6 +136,7 @@ export class OutboundLoadComponent implements OnInit {
     private userService: UserService,
     private orderService: OrderService,
     private localCacheService: LocalCacheService,
+    private pickListService: PickListService,
     private fb: UntypedFormBuilder,) { 
       userService.isCurrentPageDisplayOnly("/outbound/load").then(
         displayOnlyFlag => this.displayOnly = displayOnlyFlag
@@ -172,6 +177,7 @@ export class OutboundLoadComponent implements OnInit {
   }
   search() {
     this.isSpinning = true;
+    this.checked = false;
     
     let startTime : Date = this.searchForm.controls.dateTimeRanger.value ? 
         this.searchForm.controls.dateTimeRanger.value[0] : undefined; 
@@ -543,11 +549,47 @@ export class OutboundLoadComponent implements OnInit {
         this.isSpinning = false;
         return;
       }
-      this.pickService.cancelPicks(picks, errorLocation, generateCycleCount).subscribe({
-        next: () => {
-          this.messageService.success(this.i18n.fanyi("message.action.success"));
-          this.isSpinning = false;
-          this.search();
+      // split picks based on the type
+      const bulkPicks :PickWork[] = [];
+      const pickLists :PickWork[] = [];
+      const singlePicks :PickWork[] = [];
+
+      picks.forEach(
+        pick => {
+          if (pick.pickGroupType === PickGroupType.BULK_PICK) {
+            bulkPicks.push(pick);
+          }
+          else if (pick.pickGroupType === PickGroupType.LIST_PICK) {
+            pickLists.push(pick);
+          }
+          else {
+            singlePicks.push(pick);
+          }
+        }
+      )
+
+      this.pickService.cancelPicks(singlePicks, errorLocation, generateCycleCount).subscribe({
+        next: () => { 
+          this.bulkPickService.cancelBulkPickInBatch(bulkPicks, errorLocation, generateCycleCount).subscribe({
+            next: () => {              
+              this.pickListService.cancelPickListInBatch(pickLists, errorLocation, generateCycleCount).subscribe({
+                next: () => {
+                  this.messageService.success(this.i18n.fanyi("message.action.success")); 
+                  this.isSpinning = false;
+                  this.search();
+                }, 
+                error: () => {                  
+                  this.messageService.error(this.i18n.fanyi("message.action.fail"));
+                  this.isSpinning = false;
+                }
+              }); 
+            }, 
+            error: () => {
+              
+              this.messageService.error(this.i18n.fanyi("message.action.fail"));
+              this.isSpinning = false;
+            }
+          }) ;
         }, 
         error: () => {
           

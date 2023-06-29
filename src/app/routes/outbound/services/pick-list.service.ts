@@ -1,11 +1,12 @@
 import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
  
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service'; 
 import { PickList } from '../models/pick-list'; 
+import { PickWork } from '../models/pick-work';
 
 @Injectable({
   providedIn: 'root',
@@ -64,6 +65,27 @@ export class PickListService {
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id); 
     params = params.append(`errorLocation`, errorLocation);
     params = params.append(`generateCycleCount`, generateCycleCount);
+
+    return this.http.delete(url, params).pipe(map(res => res.data));
+  }
+ 
+  cancelPickListInBatch(picks: PickWork[], errorLocation: boolean, generateCycleCount: boolean): Observable<string> {
+    if (picks.length == 0) {
+      
+      return of("");
+    }
+    const pickIds: number[] = [];
+    picks.forEach(pick => {
+      pickIds.push(pick.id);
+    }); 
+
+    const url = `outbound/pick-lists/cancel-in-batch`;
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id); 
+    params = params.append(`errorLocation`, errorLocation);
+    params = params.append(`generateCycleCount`, generateCycleCount);
+    params = params.append(`ids`, pickIds.join(','));
 
     return this.http.delete(url, params).pipe(map(res => res.data));
   }

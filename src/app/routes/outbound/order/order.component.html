@@ -619,8 +619,7 @@
                 </th>
               </thead>
               <tbody>
-                <tr *ngFor="let pick of pickTable.data">
-                  
+                <tr *ngFor="let pick of pickTable.data">                  
                   <td [nzChecked]="setOfCheckedId.has(pick.id!)" [nzDisabled]="pick.quantity === pick.pickedQuantity"
                     (nzCheckedChange)="onItemChecked(pick.id!, order.id!, $event)"></td>
                   <td>{{ pick.number }}</td>

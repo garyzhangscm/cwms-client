@@ -360,6 +360,8 @@
                 [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[trailerAppointment.id!]" #pickTable>
                 <thead>
                   <tr>
+                    <th   [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
+                    (nzCheckedChange)="onAllChecked($event, trailerAppointment.id!)" nzWidth="60px"></th>
                     <th nzWidth="50px"></th>
                     <th>
                       {{ 'pick.number' | i18n }}
@@ -409,6 +411,8 @@
                 <tbody>                  
                   <ng-template ngFor let-pick [ngForOf]="pickTable.data">
                     <tr>
+                      <td [nzChecked]="setOfCheckedId.has(pick.id!)" [nzDisabled]="pick.quantity === pick.pickedQuantity"
+                        (nzCheckedChange)="onItemChecked(pick.id!, trailerAppointment.id!, $event)"></td>
                       <td *ngIf="pick.picks != null && pick.picks.length > 0" 
                         [nzExpand]="pickTableExpandSet.has(pick.id!)" 
                         (nzExpandChange)="onPickTableExpandChange(pick.id!, pick, $event)"
@@ -564,7 +568,36 @@
                 </tbody>
               </nz-table>
 
-              <ng-template #pickTableFoot> 
+              <ng-template #pickTableFoot>
+                <div nz-row nzType="flex" nzJustify="start"> 
+                  <button nz-button (click)="confirmPicks(trailerAppointment)"  
+                  *ngIf="!displayOnly && (!userPermissionMap.has('confirm-multiple-pick') || userPermissionMap.get('confirm-multiple-pick'))"
+                    [disabled]="(mapOfPicks[trailerAppointment.id!] && mapOfPicks[trailerAppointment.id!].length === 0) || trailerAppointment.status === trailerAppointmentStatusEnum.COMPLETED || trailerAppointment.status === trailerAppointmentStatusEnum.CANCELLED">
+                    {{ 'confirm' | i18n }}
+                  </button>
+  
+                  <button nz-button nz-dropdown [nzDropdownMenu]="cancelPicksOption" nzType="primary"
+                      (click)="cancelSelectedPick(trailerAppointment, false, false)"  *ngIf="!displayOnly && (!userPermissionMap.has('cancel-multiple-pick') || userPermissionMap.get('cancel-multiple-pick'))"
+                        [disabled]="trailerAppointment.status === trailerAppointmentStatusEnum.COMPLETED || trailerAppointment.status === trailerAppointmentStatusEnum.CANCELLED" >
+                  {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
+                  <nz-dropdown-menu #cancelPicksOption="nzDropdownMenu">
+                    <ul nz-menu>         
+                      <li nz-menu-item>
+                        <a (click)="cancelSelectedPick(trailerAppointment, false, false)">
+                          {{ 'cancel-pick' | i18n }}</a> 
+                      </li>
+                      <li nz-menu-item>
+                        <a (click)="cancelSelectedPick(trailerAppointment, true, false)">
+                          {{ 'cancel-pick-error-location' | i18n }}</a> 
+                      </li>  
+                      <li nz-menu-item>
+                        <a (click)="cancelSelectedPick(trailerAppointment, true, true)">
+                          {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
+                      </li>
+                    </ul>
+                  </nz-dropdown-menu>
+   
+                </div>
               </ng-template>
             </nz-tab>
 

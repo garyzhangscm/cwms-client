@@ -66,6 +66,7 @@ export class OutboundOrderComponent implements OnInit {
   setOfCheckedId = new Set<number>();
   checked = false;
   indeterminate = false;
+  
  
   orderReassignShippingStageLocationModal!: NzModalRef;
   orderReassignShippingStageLocationForm!: UntypedFormGroup;

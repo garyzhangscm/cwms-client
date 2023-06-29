@@ -2,7 +2,7 @@
 import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Inventory } from '../../inventory/models/inventory'; 
@@ -543,7 +543,11 @@ export class PickService {
     return this.http.delete(url, params).pipe(map(res => res.data));
   }
 
-  cancelPicks(picks: PickWork[], errorLocation: boolean, generateCycleCount: boolean): Observable<PickWork[]> {
+  cancelPicks(picks: PickWork[], errorLocation: boolean, generateCycleCount: boolean): Observable<string> {
+    if (picks.length == 0) {
+      
+      return of("");
+    }
     const pickIds: number[] = [];
     picks.forEach(pick => {
       pickIds.push(pick.id);

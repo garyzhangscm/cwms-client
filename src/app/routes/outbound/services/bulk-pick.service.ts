@@ -2,7 +2,7 @@
 import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Inventory } from '../../inventory/models/inventory';
@@ -176,13 +176,34 @@ export class BulkPickService {
   }
 
    
-  cancelBulkPick(bulkPickId: number, errorLocation: boolean, generateCycleCount: boolean): Observable<BulkPick> {
+  cancelBulkPick(bulkPickId: number, errorLocation: boolean, generateCycleCount: boolean): Observable<string> {
     const url = `outbound/bulk-picks/${bulkPickId}`;
     let params = new HttpParams(); 
 
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id); 
     params = params.append(`errorLocation`, errorLocation);
     params = params.append(`generateCycleCount`, generateCycleCount);
+
+    return this.http.delete(url, params).pipe(map(res => res.data));
+  }
+ 
+  cancelBulkPickInBatch(picks: PickWork[], errorLocation: boolean, generateCycleCount: boolean): Observable<string> {
+    if (picks.length == 0) {
+      
+      return of("");
+    }
+    const pickIds: number[] = [];
+    picks.forEach(pick => {
+      pickIds.push(pick.id);
+    }); 
+
+    const url = `outbound/bulk-picks/cancel-in-batch`;
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id); 
+    params = params.append(`errorLocation`, errorLocation);
+    params = params.append(`generateCycleCount`, generateCycleCount);
+    params = params.append(`ids`, pickIds.join(','));
 
     return this.http.delete(url, params).pipe(map(res => res.data));
   }
