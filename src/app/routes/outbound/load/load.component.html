@@ -356,20 +356,102 @@
             
             <nz-tab nzTitle=" {{ 'pick' | i18n }}"> 
 
-              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="true" 
+              <st #stPick [data]="mapOfPicks[trailerAppointment.id!]" [columns]="pickColumns"   
+              [expand]="pickExpand"  expandAccordion  
+              [footer]="pickTableFoot">
+              
+                <ng-template st-row="statusColumn" let-pick > 
+                  {{ 'PICK-STATUS-' + pick.status | i18n }}
+                </ng-template>
+                <ng-template st-row="typeColumn" let-pick > 
+                  <span *ngIf="pick.pickGroupType != null">{{  'PICK-GROUP-TYPE-' + pick.pickGroupType | i18n }}</span>
+                </ng-template>
+                <ng-template st-row="workTaskColumn" let-pick > 
+                  <a  *ngIf="pick.workTask" routerLink="/work-task/work-task" routerLinkActive="active" 
+                    [queryParams]="{number : pick.workTask.number}">{{pick.workTask.number}}</a> 
+                </ng-template>
+                <ng-template st-row="assignColumn" let-pick > 
+                  <ul>
+                    <li *ngIf="pick.workTask?.assignedUser">
+                      {{'user.assigned' | i18n}} : {{ pick.workTask?.assignedUser?.username}}
+                    </li>
+                    <li *ngIf="pick.workTask?.assignedRole">
+                      {{'role.assigned' | i18n}} : {{ pick.workTask?.assignedRole?.name}}
+                    </li>
+                  </ul> 
+                </ng-template>
+                <ng-template st-row="actionColumn" let-pick > 
+                  <nz-list>
+                    <nz-list-item>
+                      <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+                        {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+                      <nz-dropdown-menu #menu="nzDropdownMenu">
+                        <ul nz-menu>                
+                          <li nz-menu-item *ngIf="pick.status == pickStatuses.PENDING">
+                            <a (click)="releasePick(trailerAppointment, pick)">
+                              {{ 'release' | i18n }}</a> 
+                          </li>        
+                          <li nz-menu-item >
+                            <a (click)="openUserQueryModal(trailerAppointment, pick, tplAssignUserModalTitle, 
+                                tplAssignUserModalContent, tplAssignUserModalFooter)">
+                              {{ 'assign-user' | i18n }}</a> 
+                          </li>               
+                          <li nz-menu-item *ngIf="pick.workTask?.assignedUser != null">
+                            <a (click)="unassignUser(trailerAppointment, pick)">
+                              {{ 'deassign-user' | i18n }}</a> 
+                          </li>      
+                          <li nz-menu-item *ngIf="pick.workTaskId != null && pick.workTask?.currentUser != null">
+                            <a (click)="unacknowledgeWorkTask(trailerAppointment, pick.workTaskId)">
+                              {{ 'unacknowledge' | i18n }}</a> 
+                          </li>
+                          <li nz-menu-item >
+                            <a (click)="cancelPick( pick, false, false)">
+                              {{ 'cancel-pick' | i18n }}</a> 
+                          </li>
+                          <li nz-menu-item *ngIf="pick.pickGroupType != pickGroupTypes.LIST_PICK">
+                            <a (click)="cancelPick( pick, true, false)">
+                              {{ 'cancel-pick-error-location' | i18n }}</a> 
+                          </li>
+                          <li nz-menu-item *ngIf="pick.pickGroupType != pickGroupTypes.LIST_PICK">
+                            <a (click)="cancelPick( pick, true, true)">
+                              {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
+                          </li>
+                        </ul>
+                      </nz-dropdown-menu>  
+                    </nz-list-item> 
+                  </nz-list> 
+                </ng-template>
+                <!--   pick details  -->
+                <ng-template #pickExpand let-pick>
+                  <st #stInnerPick [data]="pick.picks!" [columns]="innerPickColumns">
+                  
+                    <ng-template st-row="innerPickStatusColumn" let-innerPick > 
+                      {{ 'PICK-STATUS-' + innerPick.status | i18n }}
+                    </ng-template>
+                  </st>
+                
+                </ng-template> 
+              </st>
+              <!--
+
+                
+              <nz-table [nzScroll]="{ x: '100vw' }" nzSize="middle" [nzShowPagination]="true" 
                 [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[trailerAppointment.id!]" #pickTable>
                 <thead>
                   <tr>
                     <th   [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
                     (nzCheckedChange)="onAllChecked($event, trailerAppointment.id!)" nzWidth="60px"></th>
                     <th nzWidth="50px"></th>
-                    <th>
+                    <th nzWidth="250px">
                       {{ 'pick.number' | i18n }}
                     </th>
                     <th>
                       {{ 'status' | i18n }}
                     </th>
                     <th>
+                      {{ 'type' | i18n }}
+                    </th>
+                    <th  nzWidth="250px">
                       {{ 'work-task.number' | i18n }}
                     </th>
                     <th nzWidth="250px">
@@ -377,13 +459,7 @@
                     </th>
                     <th nzWidth="250px">
                       {{ 'currentUser' | i18n }}
-                    </th>
-                    <th>
-                      {{ 'pick-list' | i18n }}
-                    </th>
-                    <th>
-                      {{ 'bulk-pick' | i18n }}
-                    </th>
+                    </th> 
                     <th>
                       {{ 'sourceLocation' | i18n }}
                     </th>
@@ -420,6 +496,7 @@
                       <td *ngIf="pick.picks == null || pick.picks.length == 0"></td> 
                       <td>{{ pick.number }}</td>
                       <td>{{ 'PICK-STATUS-' + pick.status | i18n }}</td>
+                      <td><span *ngIf="pick.pickGroupType != null">{{  'PICK-GROUP-TYPE-' + pick.pickGroupType | i18n }}</span></td>
                       <td>
                         <a  *ngIf="pick.workTask" routerLink="/work-task/work-task" routerLinkActive="active" 
                           [queryParams]="{number : pick.workTask.number}">{{pick.workTask.number}}</a> 
@@ -436,9 +513,7 @@
                       </td>
                       <td nzWidth="250px"> 
                          {{ pick.workTask?.currentUser?.username}} 
-                      </td>
-                      <td>{{ pick.pickListNumber }}</td>
-                      <td>{{ pick.bulkPickNumber }}</td>
+                      </td> 
                       <td>{{ pick.sourceLocation?.name }}</td>
                       <td>{{ pick.destinationLocation?.name }}</td>
                       <td>{{ pick.item?.name }}</td>
@@ -483,39 +558,8 @@
                                 </li>
                               </ul>
                             </nz-dropdown-menu>  
-                          </nz-list-item>
-                          <!--
-
-
-                          <nz-list-item>
-                            {{ 'assign-user' | i18n }}: 
-                            <app-auth-user-query-popup (recordSelected)="assignUser(wave, pick, $event)"></app-auth-user-query-popup>
-                          </nz-list-item>
-                          -->
-                        </nz-list>
-                        <!--
-
-                        <button nz-button nz-dropdown [nzDropdownMenu]="cancelPicksOption" nzType="primary"
-                        (click)="cancelPick(data, pick, false, false)"   
-                        [disabled]="pick.quantity === pick.pickedQuantity">
-                        {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
-                        <nz-dropdown-menu #cancelPicksOption="nzDropdownMenu">
-                          <ul nz-menu>         
-                            <li nz-menu-item>
-                              <a (click)="cancelPick(data, pick, false, false)">
-                                {{ 'cancel-pick' | i18n }}</a> 
-                            </li>
-                            <li nz-menu-item>
-                              <a (click)="cancelPick(data, pick, true, false)">
-                                {{ 'cancel-pick-error-location' | i18n }}</a> 
-                            </li>  
-                            <li nz-menu-item>
-                              <a (click)="cancelPick(data, pick, true, true)">
-                                {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
-                            </li>
-                          </ul>
-                        </nz-dropdown-menu>  
-                        -->
+                          </nz-list-item> 
+                        </nz-list> 
                       </td>
                     </tr>
                     <tr [nzExpand]="pickTableExpandSet.has(pick.id!)">        
@@ -527,6 +571,9 @@
                                 </th>
                                 <th>
                                   {{ 'status' | i18n }}
+                                </th> 
+                                <th>
+                                  {{ 'order.number' | i18n }}
                                 </th> 
                                 <th>
                                   {{ 'sourceLocation' | i18n }}
@@ -553,6 +600,7 @@
                                 
                                 <td>{{ innerPick.number }}</td>
                                 <td>{{ 'PICK-STATUS-' + innerPick.status | i18n }}</td> 
+                                <td>{{ innerPick.orderNumber }}</td>
                                 <td>{{ innerPick.sourceLocation?.name }}</td>
                                 <td>{{ innerPick.destinationLocation?.name }}</td>
                                 <td>{{ innerPick.item?.name }}</td>
@@ -568,6 +616,7 @@
                 </tbody>
               </nz-table>
 
+              -->
               <ng-template #pickTableFoot>
                 <div nz-row nzType="flex" nzJustify="start"> 
                   <button nz-button (click)="confirmPicks(trailerAppointment)"  

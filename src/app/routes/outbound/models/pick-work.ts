@@ -48,4 +48,7 @@ export interface PickWork {
 
   workTaskId?: number;
   workTask?: WorkTask;
+
+  // for display purpose only
+  showExpand?: boolean;
 }

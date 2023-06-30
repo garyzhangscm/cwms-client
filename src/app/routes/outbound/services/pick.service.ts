@@ -617,6 +617,9 @@ export class PickService {
     // add single picks first
     pickResult =  picks.filter(pick => this.isSinglePick(pick)) ;
 
+    // for single picks, don't show the expand button
+    pickResult.forEach(pick => pick.showExpand = false);
+
     if (picksInBulk.length > 0) {
       // add bulk pick 
       let bulkPickNumbers = new Set<string>();
@@ -742,6 +745,7 @@ export class PickService {
         
         workTaskId: bulkPick.workTaskId,
         workTask: bulkPick.workTask,
+        showExpand: true,
     }
   }
   setupPicksFromPickList(pickList: PickList) : PickWork {
@@ -810,6 +814,7 @@ export class PickService {
         
         workTaskId: pickList.workTaskId,
         workTask: pickList.workTask,
+        showExpand: true,
     }
   }
 }

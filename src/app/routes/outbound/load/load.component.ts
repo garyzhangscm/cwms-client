@@ -935,4 +935,44 @@ export class OutboundLoadComponent implements OnInit {
   }
 
   
+  @ViewChild('stPick', { static: false })
+  stPick!: STComponent;
+  pickColumns: STColumn[] = [ 
+    { title: '', index: 'id', type: 'checkbox' },
+
+    { title: this.i18n.fanyi("pick.number"), index: 'number'  },   
+    { title: this.i18n.fanyi("status"), render: 'statusColumn',  },   
+    { title: this.i18n.fanyi("type"), index: 'typeColumn'  },  
+    { title: this.i18n.fanyi("work-task.number"), index: 'workTaskColumn'  },  
+    { title: this.i18n.fanyi("assign"), index: 'assignColumn'  },  
+    { title: this.i18n.fanyi("currentUser"), index: 'workTask.currentUser.username'  },  
+    { title: this.i18n.fanyi("sourceLocation"), index: 'sourceLocation?.name'  },  
+    { title: this.i18n.fanyi("destinationLocation"), index: 'destinationLocation?.name'  },     
+    { title: this.i18n.fanyi("item"), index: 'item?.name'  },   
+    { title: this.i18n.fanyi("item.description"), index: 'item?.description'  },   
+    { title: this.i18n.fanyi("pick.quantity"), index: 'quantity'  },   
+    { title: this.i18n.fanyi("pick.pickedQuantity"), index: 'pickedQuantity'  },    
+    {
+      title: this.i18n.fanyi("action"), fixed: 'right',width: 210, 
+      render: 'actionColumn',
+      iif: () => !this.displayOnly
+    }, 
+   
+  ];
+
+  @ViewChild('stInnerPick', { static: false })
+  stInnerPick!: STComponent;
+  innerPickColumns: STColumn[] = [  
+    { title: this.i18n.fanyi("pick.number"), index: 'number'  },   
+    { title: this.i18n.fanyi("status"), render: 'innerPickStatusColumn',  },   
+    { title: this.i18n.fanyi("order.number"), index: 'orderNumber'  },   
+    { title: this.i18n.fanyi("sourceLocation"), index: 'sourceLocation?.name'  },  
+    { title: this.i18n.fanyi("destinationLocation"), index: 'destinationLocation?.name'  },     
+    { title: this.i18n.fanyi("item"), index: 'item?.name'  },   
+    { title: this.i18n.fanyi("item.description"), index: 'item?.description'  },   
+    { title: this.i18n.fanyi("pick.quantity"), index: 'quantity'  },   
+    { title: this.i18n.fanyi("pick.pickedQuantity"), index: 'pickedQuantity'  },     
+   
+  ];
+  
 }
