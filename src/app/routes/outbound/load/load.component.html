@@ -74,7 +74,7 @@
   
     <div class="search-result-list"> 
       
-      <st #st [data]="listOfAllTrailerAppointments" [columns]="columns"   
+      <st #st  [data]="listOfAllTrailerAppointments" [columns]="columns"   
       [expand]="expand"  expandAccordion (change)="trailerAppointmentTableChanged($event)">
      
         <ng-template st-row="completedTimeColumn" let-trailerAppointment let-index="index"> 
@@ -84,7 +84,7 @@
         <!--   order details  -->
         <ng-template #expand let-trailerAppointment let-index="index" >
           
-          <nz-tabset  >
+          <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'" >
             <nz-tab nzTitle=" {{ 'stop' | i18n }}">
               <nz-table [nzScroll]="{ x: 'true', y: 'true' }"   [nzData]="trailerAppointment.stops" nzSize="middle"
                 [nzShowPagination]="false" #stopTable>
@@ -358,7 +358,7 @@
 
               <st #stPick [data]="mapOfPicks[trailerAppointment.id!]" [columns]="pickColumns"   
               [expand]="pickExpand"  expandAccordion  
-              [footer]="pickTableFoot">
+              [footer]="pickTableFoot" [scroll]="{ x: '815px' }">
               
                 <ng-template st-row="statusColumn" let-pick > 
                   {{ 'PICK-STATUS-' + pick.status | i18n }}

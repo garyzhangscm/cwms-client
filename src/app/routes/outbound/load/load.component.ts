@@ -3,7 +3,7 @@ import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { STComponent, STColumn, STChange } from '@delon/abc/st';
+import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
@@ -58,9 +58,13 @@ export class OutboundLoadComponent implements OnInit {
   availableBOM: BillOfMaterial[] = [];
 
   // check box of the pick table
+  /**
+   * 
+   * 
   setOfCheckedId = new Set<number>();
   checked = false;
   indeterminate = false;
+   */
   
   createWorkOrderModal!: NzModalRef;
   createWorkOrderForm!: UntypedFormGroup;
@@ -177,7 +181,7 @@ export class OutboundLoadComponent implements OnInit {
   }
   search() {
     this.isSpinning = true;
-    this.checked = false;
+    // this.checked = false;
     
     let startTime : Date = this.searchForm.controls.dateTimeRanger.value ? 
         this.searchForm.controls.dateTimeRanger.value[0] : undefined; 
@@ -493,7 +497,8 @@ export class OutboundLoadComponent implements OnInit {
     return shipments;
   }
 
-  
+  /**
+   *  
   onItemChecked(id: number, loadId: number, checked: boolean): void {
     this.updateCheckedSet(id, checked);
     this.refreshCheckedStatus(loadId);
@@ -516,6 +521,7 @@ export class OutboundLoadComponent implements OnInit {
     this.checked = this.mapOfPicks[loadId].every(item => this.setOfCheckedId.has(item.id!));
     this.indeterminate = this.mapOfPicks[loadId].some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
   }
+  **/
   
   cancelPick(pick: PickWork, errorLocation: boolean, generateCycleCount: boolean): void {
     this.isSpinning = true;
@@ -535,24 +541,43 @@ export class OutboundLoadComponent implements OnInit {
     this.router.navigateByUrl(`/outbound/pick/confirm?type=load&id=${trailerAppointment.id}`);
   }
   
+  getSelectedPicks(trailerAppointment: TrailerAppointment): PickWork[] {
+    let selectedPicks: PickWork[] = [];
+    
+    const dataList: STData[] = this.stPick.list; 
+    dataList
+      .filter( data => data.checked)
+      .forEach(
+        data => {
+          // get the selected billing request and added it to the 
+          // selectedBillingRequests
+          selectedPicks = [...selectedPicks,
+              ...this.mapOfPicks[trailerAppointment.id!].filter(
+                pick => pick.number == data["number"]
+              )
+          ]
+
+        }
+      );
+    return selectedPicks;
+  }
   cancelSelectedPick(trailerAppointment: TrailerAppointment, errorLocation: boolean, generateCycleCount: boolean): void {
     this.isSpinning = true;
     const picks :PickWork[] = [];
-    this.mapOfPicks[trailerAppointment.id!]
-      .filter(pick => this.setOfCheckedId.has(pick.id!))
-      .forEach(pick => { 
+    this.getSelectedPicks(trailerAppointment).forEach(pick => { 
         picks.push(pick);
-      });
+    });
  
-      if (picks.length ===0) {
+    if (picks.length ===0) {
         this.messageService.success(this.i18n.fanyi("message.action.success"));
         this.isSpinning = false;
         return;
-      }
-      // split picks based on the type
-      const bulkPicks :PickWork[] = [];
-      const pickLists :PickWork[] = [];
-      const singlePicks :PickWork[] = [];
+    }
+    
+    // split picks based on the type
+    const bulkPicks :PickWork[] = [];
+    const pickLists :PickWork[] = [];
+    const singlePicks :PickWork[] = [];
 
       picks.forEach(
         pick => {
@@ -938,22 +963,23 @@ export class OutboundLoadComponent implements OnInit {
   @ViewChild('stPick', { static: false })
   stPick!: STComponent;
   pickColumns: STColumn[] = [ 
-    { title: '', index: 'id', type: 'checkbox' },
+    { title: '', index: 'number', type: 'checkbox' },
 
-    { title: this.i18n.fanyi("pick.number"), index: 'number'  },   
-    { title: this.i18n.fanyi("status"), render: 'statusColumn',  },   
-    { title: this.i18n.fanyi("type"), index: 'typeColumn'  },  
-    { title: this.i18n.fanyi("work-task.number"), index: 'workTaskColumn'  },  
-    { title: this.i18n.fanyi("assign"), index: 'assignColumn'  },  
-    { title: this.i18n.fanyi("currentUser"), index: 'workTask.currentUser.username'  },  
-    { title: this.i18n.fanyi("sourceLocation"), index: 'sourceLocation?.name'  },  
-    { title: this.i18n.fanyi("destinationLocation"), index: 'destinationLocation?.name'  },     
-    { title: this.i18n.fanyi("item"), index: 'item?.name'  },   
-    { title: this.i18n.fanyi("item.description"), index: 'item?.description'  },   
+    { title: this.i18n.fanyi("pick.number"), index: 'number' , width: 150, },   
+    { title: this.i18n.fanyi("status"), render: 'statusColumn', width: 110,  },   
+    { title: this.i18n.fanyi("type"), render: 'typeColumn', width: 110,  },  
+    { title: this.i18n.fanyi("order.number"), index: 'orderNumber' , width: 150, },   
+    { title: this.i18n.fanyi("work-task.number"), render: 'workTaskColumn' , width: 210, },  
+    // { title: this.i18n.fanyi("assign"), render: 'assignColumn'  },  
+    // { title: this.i18n.fanyi("currentUser"), index: 'workTask.currentUser.username'  },  
+    { title: this.i18n.fanyi("sourceLocation"), index: 'sourceLocation.name'  },  
+    { title: this.i18n.fanyi("destinationLocation"), index: 'destinationLocation.name'  },     
+    { title: this.i18n.fanyi("item"), index: 'item.name'  },   
+    { title: this.i18n.fanyi("item.description"), index: 'item.description'  },   
     { title: this.i18n.fanyi("pick.quantity"), index: 'quantity'  },   
     { title: this.i18n.fanyi("pick.pickedQuantity"), index: 'pickedQuantity'  },    
     {
-      title: this.i18n.fanyi("action"), fixed: 'right',width: 210, 
+      title: this.i18n.fanyi("action"), fixed: 'right', width: 210, 
       render: 'actionColumn',
       iif: () => !this.displayOnly
     }, 
@@ -966,10 +992,10 @@ export class OutboundLoadComponent implements OnInit {
     { title: this.i18n.fanyi("pick.number"), index: 'number'  },   
     { title: this.i18n.fanyi("status"), render: 'innerPickStatusColumn',  },   
     { title: this.i18n.fanyi("order.number"), index: 'orderNumber'  },   
-    { title: this.i18n.fanyi("sourceLocation"), index: 'sourceLocation?.name'  },  
-    { title: this.i18n.fanyi("destinationLocation"), index: 'destinationLocation?.name'  },     
-    { title: this.i18n.fanyi("item"), index: 'item?.name'  },   
-    { title: this.i18n.fanyi("item.description"), index: 'item?.description'  },   
+    { title: this.i18n.fanyi("sourceLocation"), index: 'sourceLocation.name'  },  
+    { title: this.i18n.fanyi("destinationLocation"), index: 'destinationLocation.name'  },     
+    { title: this.i18n.fanyi("item"), index: 'item.name'  },   
+    { title: this.i18n.fanyi("item.description"), index: 'item.description'  },   
     { title: this.i18n.fanyi("pick.quantity"), index: 'quantity'  },   
     { title: this.i18n.fanyi("pick.pickedQuantity"), index: 'pickedQuantity'  },     
    

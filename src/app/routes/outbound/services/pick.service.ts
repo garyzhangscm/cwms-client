@@ -618,7 +618,11 @@ export class PickService {
     pickResult =  picks.filter(pick => this.isSinglePick(pick)) ;
 
     // for single picks, don't show the expand button
-    pickResult.forEach(pick => pick.showExpand = false);
+    pickResult.forEach(pick => { 
+      pick.showExpand = false;
+      pick.pickGroupType = PickGroupType.SINGLE_PICK;
+      console.log(`single pick ${pick.number}'s item is ${pick.itemId} / ${pick.item?.name}`);
+    });
 
     if (picksInBulk.length > 0) {
       // add bulk pick 
