@@ -228,10 +228,12 @@
         </div>
         <div nz-row nzType="flex" [nzJustify]="'start'" style='padding-left: 10px;'>
           <button nz-button nzType="primary"
-            (click)="showAddReceiptLineModal(tplReceiptLineModalTitle, tplReceiptLineModalContent)">
+            (click)="showAddReceiptLineModal(tplReceiptLineModalTitle, tplReceiptLineModalContent)" 
+             [disabled]="newBatch">
             {{ 'add' | i18n }}
           </button>
-          <button nz-button nzDanger (click)="removeSelectedReceiptLines()">
+          <button nz-button nzDanger (click)="removeSelectedReceiptLines()"
+          [disabled]="newBatch">
             {{ 'remove' | i18n }}
           </button>
 
@@ -885,10 +887,24 @@
           {{ 'item' | i18n }}
         </nz-form-label>
         <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <!--
+
           <nz-input-group nzSize="large">
             <input nz-input [ngModel]="currentReceiptLine.item?.name"
               (blur)="currentReceiptLineItemNumberChanged($event)" id="itemNumber" name="itemNumber" />
+              
           </nz-input-group>
+          -->
+          
+          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+            <input nz-input [ngModel]="currentReceiptLine.item?.name"
+            (blur)="currentReceiptLineItemNumberChanged($event)" id="itemNumber" name="itemNumber"  />
+          </nz-input-group>
+          <ng-template #suffixIconButton>
+            <app-inventory-item-query-popup (recordSelected)="itemNameChanged($event)">
+            </app-inventory-item-query-popup>
+          </ng-template>
+
         </nz-form-control>
       </nz-form-item>
     </div>

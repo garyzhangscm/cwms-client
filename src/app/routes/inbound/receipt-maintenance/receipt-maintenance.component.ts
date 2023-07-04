@@ -466,6 +466,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
           this.currentReceipt = res;
           this.setupDisplayForExistingReceipt();
           this.message.success(this.i18n.fanyi('message.new.complete'));
+          this.newBatch = false;
 
           this.receiptForm!.controls.receiptId.setValue(res.id);
           this.receiptForm!.controls.receiptId.disable();
@@ -1270,15 +1271,21 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
 
   currentReceiptLineItemNumberChanged(event: Event): void {
-    const itemNumber: string = (event.target as HTMLInputElement).value;
-    if (itemNumber) {
+    const itemName: string = (event.target as HTMLInputElement).value;
+    this.itemNameChanged(itemName)
+  }
+
+  itemNameChanged(itemName: any): void { 
+    if (itemName) {
       this.itemService
-        .getItems(itemNumber.trim())
+        .getItems(itemName.trim())
         .subscribe(items => (this.currentReceiptLine.item = items.length === 1 ? items[0] : undefined));
     } else {
       this.currentReceiptLine.item = undefined;
     }
+    
   }
+
   removeSelectedReceiptLines(): void {
     const selectedReceiptLines = this.getSelectedReceiptLines();
     
@@ -1684,4 +1691,5 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     }
 
   }
+  
 }
