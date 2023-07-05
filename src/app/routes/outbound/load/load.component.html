@@ -419,6 +419,12 @@
                         </ul>
                       </nz-dropdown-menu>  
                     </nz-list-item> 
+                    <nz-list-item > 
+                      <cwms-common-print-button style='padding-left: 20px;'
+                        (print)="printPickSheet($event, pick)"
+                        (preview)="previewPickSheet(trailerAppointment.number, pick)">
+                      </cwms-common-print-button>
+                    </nz-list-item>
                   </nz-list> 
                 </ng-template>
                 <!--   pick details  -->

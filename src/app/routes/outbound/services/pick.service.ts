@@ -1,11 +1,13 @@
 
 import { HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { Inject, Injectable } from '@angular/core';
+import { I18NService } from '@core';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Inventory } from '../../inventory/models/inventory'; 
+import { ReportHistory } from '../../report/models/report-history';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ProductionLine } from '../../work-order/models/production-line';
 import { WorkOrder } from '../../work-order/models/work-order';
@@ -26,6 +28,7 @@ export class PickService {
   constructor(private http: _HttpClient, 
     private warehouseService: WarehouseService, 
     private bulkPickService: BulkPickService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private pickListService: PickListService ) {}
 
   getPicksByOrder(orderId: number): Observable<PickWork[]> {
@@ -621,7 +624,7 @@ export class PickService {
     pickResult.forEach(pick => { 
       pick.showExpand = false;
       pick.pickGroupType = PickGroupType.SINGLE_PICK;
-      console.log(`single pick ${pick.number}'s item is ${pick.itemId} / ${pick.item?.name}`);
+      // console.log(`single pick ${pick.number}'s item is ${pick.itemId} / ${pick.item?.name}`);
     });
 
     if (picksInBulk.length > 0) {
@@ -821,4 +824,20 @@ export class PickService {
         showExpand: true,
     }
   }
+ 
+  
+  generatePickSheet(pickIds: string, locale?: string): Observable<ReportHistory> {
+    
+    let params = new HttpParams();
+
+    if (!locale) {
+      locale = this.i18n.defaultLang;
+    }
+    params = params.append('locale', locale);
+    params = params.append('ids', pickIds);
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);  
+
+    return this.http.post(`outbound/picks/pick-report`, null, params).pipe(map(res => res.data));
+  }
+
 }

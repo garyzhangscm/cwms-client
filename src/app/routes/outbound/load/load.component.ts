@@ -4,12 +4,17 @@ import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angul
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';  
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 import { User } from '../../auth/models/user';
 import { UserService } from '../../auth/services/user.service';
+import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
+import { PrintPageSize } from '../../common/models/print-page-size.enum';
+import { PrintingService } from '../../common/services/printing.service';
+import { ReportOrientation } from '../../report/models/report-orientation.enum';
+import { ReportType } from '../../report/models/report-type.enum';
 import { TrailerAppointment } from '../../transportation/models/trailer-appointment';
 import { TrailerAppointmentStatus } from '../../transportation/models/trailer-appointment-status.enum';
 import { TrailerAppointmentType } from '../../transportation/models/trailer-appointment-type.enum';
@@ -128,6 +133,7 @@ export class OutboundLoadComponent implements OnInit {
     private titleService: TitleService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private messageService: NzMessageService,
+    private printingService: PrintingService,
     private activatedRoute: ActivatedRoute,
     private stopService: StopService,
     private pickService: PickService,
@@ -306,10 +312,10 @@ export class OutboundLoadComponent implements OnInit {
   }
   
   trailerAppointmentTableChanged(event: STChange) : void { 
-    console.log(`trailerAppointmentTableChanged, event.type: ${event.type} `);
+    // console.log(`trailerAppointmentTableChanged, event.type: ${event.type} `);
     if (event.type === 'expand' && event.expand.expand === true) {
       
-       console.log(`start to call showTrailerAppointmentDetails`);
+      // console.log(`start to call showTrailerAppointmentDetails`);
       this.showTrailerAppointmentDetails(event.expand);
     }
 
@@ -335,7 +341,7 @@ export class OutboundLoadComponent implements OnInit {
           )
         });
         shipments = this.calculateQuantities(shipments);
-        console.log(`add ${shipments.length} shipment to trailer ${trailerAppointment.id!}`);
+        // console.log(`add ${shipments.length} shipment to trailer ${trailerAppointment.id!}`);
         
         this.shipmentsMap.set(trailerAppointment.id!, shipments);
 
@@ -946,11 +952,11 @@ export class OutboundLoadComponent implements OnInit {
 
 
   change(ret: STChange): void {
-    console.log('change', ret);
+    // console.log('change', ret);
     if (ret.type == 'radio') {
       this.selectedUserId = undefined;
       if (ret.radio != null && ret.radio!.id != null) {
-        console.log(`chosen user ${ret.radio!.id} / ${ret.radio!.username}`);
+        // console.log(`chosen user ${ret.radio!.id} / ${ret.radio!.username}`);
         this.selectedUserId = ret.radio!.id;
       }
     }
@@ -1000,5 +1006,206 @@ export class OutboundLoadComponent implements OnInit {
     { title: this.i18n.fanyi("pick.pickedQuantity"), index: 'pickedQuantity'  },     
    
   ];
+
   
+  printPickSheet(event: any, pickWork: PickWork) {
+
+    if (pickWork.pickGroupType === PickGroupType.BULK_PICK) {
+      
+      this.printBulkPickSheet(event, pickWork);
+    }
+    else if (pickWork.pickGroupType === PickGroupType.SINGLE_PICK) {
+      
+      this.printSinglePickSheet(event, pickWork);
+    }
+    else if (pickWork.pickGroupType === PickGroupType.LIST_PICK) {
+      
+      this.printSinglePickSheet(event, pickWork);
+    }
+  }
+  
+  printBulkPickSheet(event: any, pickWork: PickWork) {
+
+    this.isSpinning = true;
+    this.bulkPickService.generateBulkPickSheet(
+      pickWork.id)
+      .subscribe({
+        next: (printResult) => {  
+          this.printingService.printFileByName(
+            "Bulk Pick Sheet",
+            printResult.fileName,
+            ReportType.BULK_PICK_SHEET,
+            event.printerIndex,
+            event.printerName,
+            event.physicalCopyCount,
+            PrintPageOrientation.Portrait,
+            PrintPageSize.Letter,
+            pickWork.number, 
+            printResult);
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi("report.print.printed"));
+          }, 
+        error:  () => this.isSpinning = false
+      });   
+    
+  }
+  
+  printSinglePickSheet(event: any, pickWork: PickWork) {
+
+    this.isSpinning = true;
+    this.pickService.generatePickSheet(
+      pickWork.id.toString())
+      .subscribe({
+        next: (printResult) => {  
+          this.printingService.printFileByName(
+            "Pick Sheet",
+            printResult.fileName,
+            ReportType.PICK_SHEET,
+            event.printerIndex,
+            event.printerName,
+            event.physicalCopyCount,
+            PrintPageOrientation.Portrait,
+            PrintPageSize.Letter,
+            pickWork.number, 
+            printResult);
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi("report.print.printed"));
+          }, 
+        error:  () => this.isSpinning = false
+      });   
+    
+  }
+  printPickListSheet(event: any, pickWork: PickWork) {
+
+    this.isSpinning = true;
+    this.pickListService.generatePickListSheet(
+      pickWork.id)
+      .subscribe({
+        next: (printResult) => {  
+          this.printingService.printFileByName(
+            "Pick List Sheet",
+            printResult.fileName,
+            ReportType.PICK_LIST_SHEET,
+            event.printerIndex,
+            event.printerName,
+            event.physicalCopyCount,
+            PrintPageOrientation.Portrait,
+            PrintPageSize.Letter,
+            pickWork.number, 
+            printResult);
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi("report.print.printed"));
+          }, 
+        error:  () => this.isSpinning = false
+      });   
+    
+  }
+
+  previewPickSheet(trailerAppointmentNumber: string, pickWork: PickWork): void {
+
+    if (pickWork.pickGroupType === PickGroupType.BULK_PICK) {
+      
+      this.previewBulkPickSheet(trailerAppointmentNumber, pickWork);
+    }
+    else if (pickWork.pickGroupType === PickGroupType.SINGLE_PICK) {
+      
+      this.previewSinglePickSheet(trailerAppointmentNumber, pickWork);
+    }
+    else if (pickWork.pickGroupType === PickGroupType.LIST_PICK) {
+      
+      this.previewPickListSheet(trailerAppointmentNumber, pickWork);
+    }
+  }
+
+  previewBulkPickSheet(trailerAppointmentNumber: string, pickWork: PickWork): void {
+
+    this.isSpinning = true;
+    this.bulkPickService.generateBulkPickSheet(
+      pickWork.id)
+      .subscribe({
+        next: (printResult) => {  
+          this.isSpinning = false;
+          sessionStorage.setItem('report_previous_page', `/outbound/load?number=${trailerAppointmentNumber}`);
+          this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
+
+        }, 
+        error:  () => this.isSpinning = false
+      });   
+  }
+  previewSinglePickSheet(trailerAppointmentNumber: string, pickWork: PickWork): void {
+
+    this.isSpinning = true;
+    this.pickService.generatePickSheet(
+      pickWork.id.toString())
+      .subscribe({
+        next: (printResult) => {  
+          this.isSpinning = false;
+          sessionStorage.setItem('report_previous_page', `/outbound/load?number=${trailerAppointmentNumber}`);
+          this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
+
+        }, 
+        error:  () => this.isSpinning = false
+      });   
+  }
+  previewPickListSheet(trailerAppointmentNumber: string, pickWork: PickWork): void {
+
+    this.isSpinning = true;
+    this.pickListService.generatePickListSheet(
+      pickWork.id)
+      .subscribe({
+        next: (printResult) => {  
+          this.isSpinning = false;
+          sessionStorage.setItem('report_previous_page', `/outbound/load?number=${trailerAppointmentNumber}`);
+          this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
+
+        }, 
+        error:  () => this.isSpinning = false
+      });   
+  }
+  
+  printPickSheetInBatch(event: any, trailerAppointment: TrailerAppointment) {
+
+    let picks : PickWork[] = this.getSelectedPicks(trailerAppointment);
+    if (picks.length == 0) {
+      return;
+    }
+    // group the picks according to the type
+    const singlePickIds : string = 
+        picks.filter(pick => pick.pickGroupType == PickGroupType.SINGLE_PICK)
+        .map(pick => pick.id)
+        .join(",");
+    const listPickIds : string = 
+        picks.filter(pick => pick.pickGroupType == PickGroupType.LIST_PICK)
+          .map(pick => pick.id)
+          .join(",");
+    const bulkPickIds : string = 
+        picks.filter(pick => pick.pickGroupType == PickGroupType.BULK_PICK)
+          .map(pick => pick.id)
+          .join(",");
+
+    // LOOP through each group and print the report
+    // we will generate and print the PDF file in batch  
+    this.pickService.generatePickSheet(
+      singlePickIds)
+      .subscribe({
+        next: (printResult) => {  
+          this.printingService.printFileByName(
+            "Pick Sheet",
+            printResult.fileName,
+            ReportType.PICK_SHEET,
+            event.printerIndex,
+            event.printerName,
+            event.physicalCopyCount,
+            PrintPageOrientation.Portrait,
+            PrintPageSize.Letter,
+            singlePickIds, 
+            printResult);
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi("report.print.printed"));
+          }, 
+        error:  () => this.isSpinning = false
+      });   
+
+    
+  }
 }

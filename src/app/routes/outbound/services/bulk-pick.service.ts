@@ -1,11 +1,13 @@
 
 import { HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { Inject, Injectable } from '@angular/core';
+import { I18NService } from '@core';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Inventory } from '../../inventory/models/inventory';
+import { ReportHistory } from '../../report/models/report-history';
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ProductionLine } from '../../work-order/models/production-line';
@@ -18,7 +20,8 @@ import { PickWork } from '../models/pick-work';
 })
 export class BulkPickService {
   constructor(private http: _HttpClient, 
-    private warehouseService: WarehouseService, ) {}
+    private warehouseService: WarehouseService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, ) {}
 
    
   getBulkPicks(
@@ -257,5 +260,33 @@ export class BulkPickService {
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);  
 
     return this.http.post(url, undefined, params).pipe(map(res => res.data));
+  }
+
+  
+  generateBulkPickSheet(bulkPickId: number, locale?: string): Observable<ReportHistory> {
+    
+    let params = new HttpParams();
+
+    if (!locale) {
+      locale = this.i18n.defaultLang;
+    }
+    params = params.append('locale', locale);
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);  
+
+    return this.http.post(`outbound/bulk-picks/${bulkPickId}/pick-report`, null, params).pipe(map(res => res.data));
+  }
+
+  generateBulkPickSheetInBatch(bulkPickIds: number, locale?: string): Observable<ReportHistory[]> {
+    
+    let params = new HttpParams();
+
+    if (!locale) {
+      locale = this.i18n.defaultLang;
+    }
+    params = params.append('locale', locale);
+    params = params.append('ids', bulkPickIds);
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);  
+
+    return this.http.post(`outbound/bulk-picks/pick-report/batch`, null, params).pipe(map(res => res.data));
   }
 }

@@ -1,9 +1,11 @@
 import { HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { Inject, Injectable } from '@angular/core';
+import { I18NService } from '@core';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
- 
+
+import { ReportHistory } from '../../report/models/report-history';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service'; 
 import { PickList } from '../models/pick-list'; 
 import { PickWork } from '../models/pick-work';
@@ -16,6 +18,7 @@ export class PickListService {
   constructor(
     private http: _HttpClient,
     private warehouseService: WarehouseService,  
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
   ) {}
 
   getPickLists(number?: string, numberList?: string): Observable<PickList[]> {
@@ -166,4 +169,30 @@ export class PickListService {
     return pages;
   }
    */
+  
+  generatePickListSheet(pickListId: number, locale?: string): Observable<ReportHistory> {
+    
+    let params = new HttpParams();
+
+    if (!locale) {
+      locale = this.i18n.defaultLang;
+    }
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+    params = params.append('locale', locale);
+
+    return this.http.post(`outbound/pick-lists/${pickListId}/pick-report`, null, params).pipe(map(res => res.data));
+  }
+  generatePickListSheetInBatch(pickListIds: string, locale?: string): Observable<ReportHistory> {
+    
+    let params = new HttpParams();
+
+    if (!locale) {
+      locale = this.i18n.defaultLang;
+    }
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+    params = params.append('locale', locale);
+    params = params.append('ids', pickListIds);
+
+    return this.http.post(`outbound/pick-lists/pick-report/batch`, null, params).pipe(map(res => res.data));
+  }
 }

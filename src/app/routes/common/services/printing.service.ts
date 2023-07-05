@@ -221,6 +221,40 @@ export class PrintingService {
           console.log(` file printed!`);
         }); 
   }
+  
+  printInBatchFromServer(
+    name: string,
+    fileNames: string,
+    type: ReportType,
+    printerIndex: number,
+    printerName: string,
+    physicalCopyCount: number,
+    pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
+    pageSize: PrintPageSize = PrintPageSize.A4,
+    findPrinterBy?: string
+  ): void { 
+      console.log(`will print from the server side in a batch`);
+      let params = new HttpParams();
+      const url = `/resource/report-histories/print/${this.companyService.getCurrentCompany()?.id}/${
+        this.warehouseService.getCurrentWarehouse().id
+      }/${type}`;
+      params = params.append('filenames', fileNames);
+      if (findPrinterBy) {
+        params = params.append('findPrinterBy', findPrinterBy);
+      }
+      if (printerName) {
+        params = params.append('printerName', printerName);
+      }
+      if (physicalCopyCount) {
+        params = params.append('copies', physicalCopyCount.toString());
+      }
+      this.http
+        .post(url, params)
+        .pipe(map(res => res.data))
+        .subscribe(res => {
+          console.log(` file printed!`);
+        }); 
+  }
 
   printFromLocal(    
     name: string,
