@@ -1169,6 +1169,8 @@ export class OutboundLoadComponent implements OnInit {
     if (picks.length == 0) {
       return;
     }
+    this.isSpinning = true;
+    let count = 3;
     // group the picks according to the type
     const singlePickIds : string = 
         picks.filter(pick => pick.pickGroupType == PickGroupType.SINGLE_PICK)
@@ -1185,33 +1187,215 @@ export class OutboundLoadComponent implements OnInit {
 
     // LOOP through each group and print the report
     // we will generate and print the PDF file in batch  
-    this.pickService.generatePickSheet(
-      singlePickIds)
-      .subscribe({
-        next: (printResult) => {  
-          this.printingService.printFileByName(
-            "Pick Sheet",
-            printResult.fileName,
-            ReportType.PICK_SHEET,
-            event.printerIndex,
-            event.printerName,
-            event.physicalCopyCount,
-            PrintPageOrientation.Portrait,
-            PrintPageSize.Letter,
-            singlePickIds, 
-            printResult);
-          this.isSpinning = false;
-          this.messageService.success(this.i18n.fanyi("report.print.printed"));
-          }, 
-        error:  () => this.isSpinning = false
-      });   
+    if (singlePickIds.length > 0) {
 
+      this.pickService.generatePickSheet(
+        singlePickIds)
+        .subscribe({
+          next: (printResult) => {  
+            this.printingService.printFileByName(
+              "Pick Sheet",
+              printResult.fileName,
+              ReportType.PICK_SHEET,
+              event.printerIndex,
+              event.printerName,
+              event.physicalCopyCount,
+              PrintPageOrientation.Portrait,
+              PrintPageSize.Letter,
+              singlePickIds, 
+              printResult);  
+
+            count--;
+            if (count <= 0) {
+              this.isSpinning = false;
+            }
+          }, 
+          error: () => this.isSpinning = false 
+        });   
+    }
+    else {
+      count--;
+      if (count <= 0) {
+        this.isSpinning = false;
+      }
+    }
+    
+    if (listPickIds.length > 0) {
+
+        this.pickListService.generatePickListSheetInBatch(
+          listPickIds)
+          .subscribe({
+            next: (printResults) => {    
+              printResults.forEach(printResult => {
+                this.printingService.printFileByName(
+                  "List Pick Sheet",
+                  printResult.fileName,
+                  ReportType.PICK_LIST_SHEET,
+                  event.printerIndex,
+                  event.printerName,
+                  event.physicalCopyCount,
+                  PrintPageOrientation.Portrait,
+                  PrintPageSize.Letter,
+                  listPickIds, 
+                  printResult);  
+                
+              });
+              count--;
+              if (count <= 0) {
+                this.isSpinning = false;
+              }
+              
+            }, 
+            error: () => this.isSpinning = false   
+          });    
+    }
+    else {
+      count--;
+      if (count <= 0) {
+        this.isSpinning = false;
+      }
+    }
+    
+    if (bulkPickIds.length > 0) {
+  
+        this.bulkPickService.generateBulkPickSheetInBatch(
+          bulkPickIds)
+          .subscribe({
+            next: (printResults) => {    
+              printResults.forEach(printResult => {
+                
+                this.printingService.printFileByName(
+                  "Bulk Pick Sheet",
+                  printResult.fileName,
+                  ReportType.BULK_PICK_SHEET,
+                  event.printerIndex,
+                  event.printerName,
+                  event.physicalCopyCount,
+                  PrintPageOrientation.Portrait,
+                  PrintPageSize.Letter,
+                  bulkPickIds, 
+                  printResult);  
+              });
+              count--;
+              if (count <= 0) {
+                this.isSpinning = false;
+              }
+              
+            }, 
+            error: () => this.isSpinning = false 
+          });    
+    }
+    else {
+      count--;
+      if (count <= 0) {
+        this.isSpinning = false;
+      }
+    }
     
   }
 
   
-  previewPickSheetInBatch(trailerAppointmentNumber: string): void {
- 
+  previewPickSheetInBatch(trailerAppointment: TrailerAppointment): void {
+    let picks : PickWork[] = this.getSelectedPicks(trailerAppointment);
+    console.log(`get ${picks.length} selected picks from trailer appointment ${trailerAppointment.number}`);
+    if (picks.length == 0) {
+      return;
+    }
+    this.isSpinning = true;
+    let count = 3;
+    // group the picks according to the type
+    const singlePickIds : string = 
+        picks.filter(pick => pick.pickGroupType == PickGroupType.SINGLE_PICK)
+        .map(pick => pick.id)
+        .join(",");
+    const listPickIds : string = 
+        picks.filter(pick => pick.pickGroupType == PickGroupType.LIST_PICK)
+          .map(pick => pick.id)
+          .join(",");
+    const bulkPickIds : string = 
+        picks.filter(pick => pick.pickGroupType == PickGroupType.BULK_PICK)
+          .map(pick => pick.id)
+          .join(",");
+    
+    console.log(`singlePickIds: ${singlePickIds}  `);
+    console.log(`listPickIds: ${listPickIds}  `);
+    console.log(`bulkPickIds: ${bulkPickIds}  `);
+    sessionStorage.setItem('report_previous_page', ``);       
+    // LOOP through each group and print the report
+    // we will generate and print the PDF file in batch  
+    if (singlePickIds.length > 0) {
+
+      this.pickService.generatePickSheet(
+        singlePickIds)
+        .subscribe({
+          next: (printResult) => {    
+            count--;
+            if (count <= 0) {
+              this.isSpinning = false;
+            }
+            window.open(`/#/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`, '_blank'); 
+  
+          }, 
+          error: () => this.isSpinning = false  
+        });    
+    }
+    else {
+      count--;
+      if (count <= 0) {
+        this.isSpinning = false;
+      }
+    }
+    if (listPickIds.length > 0) {
+
+      this.pickListService.generatePickListSheetInBatch(
+        listPickIds)
+        .subscribe({
+          next: (printResults) => {    
+            count--;
+            if (count <= 0) {
+              this.isSpinning = false;
+            }
+            printResults.forEach(printResult => {
+              window.open(`/#/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`, '_blank'); 
+
+            });
+            
+          },  
+          error: () => this.isSpinning = false 
+        });    
+    }
+    else {
+      count--;
+      if (count <= 0) {
+        this.isSpinning = false;
+      }
+    }
+    if (bulkPickIds.length > 0) {
+
+      this.bulkPickService.generateBulkPickSheetInBatch(
+        bulkPickIds)
+        .subscribe({
+          next: (printResults) => {    
+            count--;
+            if (count <= 0) {
+              this.isSpinning = false;
+            }
+            printResults.forEach(printResult => {
+              window.open(`/#/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`, '_blank'); 
+
+            });
+            
+          },  
+          error: () => this.isSpinning = false 
+        });    
+    }
+    else {
+      count--;
+      if (count <= 0) {
+        this.isSpinning = false;
+      }
+    }
+
   }
 
 }

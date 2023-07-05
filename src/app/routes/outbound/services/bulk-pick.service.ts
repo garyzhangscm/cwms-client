@@ -276,7 +276,7 @@ export class BulkPickService {
     return this.http.post(`outbound/bulk-picks/${bulkPickId}/pick-report`, null, params).pipe(map(res => res.data));
   }
 
-  generateBulkPickSheetInBatch(bulkPickIds: number, locale?: string): Observable<ReportHistory[]> {
+  generateBulkPickSheetInBatch(bulkPickIds: string, locale?: string): Observable<ReportHistory[]> {
     
     let params = new HttpParams();
 

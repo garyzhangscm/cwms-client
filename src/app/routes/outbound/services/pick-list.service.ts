@@ -182,7 +182,7 @@ export class PickListService {
 
     return this.http.post(`outbound/pick-lists/${pickListId}/pick-report`, null, params).pipe(map(res => res.data));
   }
-  generatePickListSheetInBatch(pickListIds: string, locale?: string): Observable<ReportHistory> {
+  generatePickListSheetInBatch(pickListIds: string, locale?: string): Observable<ReportHistory[]> {
     
     let params = new HttpParams();
 
