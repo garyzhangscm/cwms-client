@@ -1208,4 +1208,10 @@ export class OutboundLoadComponent implements OnInit {
 
     
   }
+
+  
+  previewPickSheetInBatch(trailerAppointmentNumber: string): void {
+ 
+  }
+
 }

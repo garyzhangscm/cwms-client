@@ -165,6 +165,58 @@ export class PrintingService {
     )
   }
 
+  printFileByNameInBatch(
+    name: string,
+    fileName: string,
+    type: ReportType,
+    printerIndex: number,
+    printerName: string,
+    physicalCopyCount: number,
+    pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
+    pageSize: PrintPageSize = PrintPageSize.A4,
+    findPrinterBy?: string, 
+    reportHistory?: ReportHistory,
+  ): void {
+
+    this.localCacheService.getWarehouseConfiguration().subscribe(
+      {
+        next: (warehouseConfigRes) => {
+
+          console.log(`warehouseConfigRes: ${warehouseConfigRes?.printingStrategy}`);
+
+          // by default, we will print from the server
+          if (warehouseConfigRes?.printingStrategy == null ||
+                warehouseConfigRes?.printingStrategy == PrintingStrategy.SERVER_PRINTER) { 
+           
+            console.log(`will print remote file from server`);
+            this.printFromServer(
+              name, fileName, type, printerIndex, printerName, 
+              physicalCopyCount, pageOrientation, pageSize, findPrinterBy
+            );
+          }
+          else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_SERVER_DATA) { 
+            // save the request to the save so the local installed printing service will
+            // print it later on
+            
+            if (reportHistory) {
+              console.log(`will save request to the server`);
+              
+                this.savePrintingRequest(reportHistory, printerName, physicalCopyCount);
+            }
+          }
+          else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_LOCAL_DATA) {  
+              
+                this.printFromLocal(
+                  name, fileName, type, printerIndex, printerName, 
+                  physicalCopyCount, pageOrientation, pageSize, findPrinterBy); 
+          }
+          
+        }, 
+      }
+    )
+  }
+
+
   savePrintingRequest(reportHistory: ReportHistory, 
     printerName: string, copies: number) : void {
 
