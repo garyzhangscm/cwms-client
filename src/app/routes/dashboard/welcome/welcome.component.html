@@ -1,2 +1,48 @@
 <page-header></page-header>
-welcome
+<div style="background: #ECECEC;padding:30px;">
+    <div nz-row [nzGutter]="8">
+      <div nz-col [nzSpan]="6">
+        <nz-card>
+            <nz-statistic [nzValue]="(openOrders | number)!" [nzTitle]="'Open Orders'"></nz-statistic>
+        </nz-card>
+      </div>
+      <div nz-col [nzSpan]="6">
+        <nz-card>
+            <nz-statistic [nzValue]="(newOrdersToday | number)!" [nzTitle]="'New Orders Today'"></nz-statistic>
+        </nz-card>
+      </div>
+      <div nz-col [nzSpan]="6">
+        <nz-card>
+            <nz-statistic [nzValue]="(completedOrdersToday | number)!" [nzTitle]="'Completed Orders Today'"></nz-statistic>
+        </nz-card>
+      </div>
+      <div nz-col [nzSpan]="6">
+        <nz-card>
+            <nz-statistic [nzValue]="(openReceipt | number)!" [nzTitle]="'Open Receipt'"></nz-statistic>
+        </nz-card>
+      </div>
+    </div>
+  </div>
+
+<div nz-row [nzGutter]="8">
+  <div nz-col [nzSpan]="12"  style="padding: 20px">
+    <nz-card nzTitle="Picks">
+        <div>
+            <span>Open Picks({{ openPicks * 100 / totalPicks | number : '1.2-2' }} %)</span> <g2-mini-progress [percent]=" openPicks * 100 / totalPicks" strokeWidth="14" target="0" color="red"></g2-mini-progress> 
+        </div>
+        <div>
+            <span>Completed Picks({{ completedPicks * 100 / totalPicks | number : '1.2-2' }} %)</span> <g2-mini-progress [percent]=" completedPicks * 100 / totalPicks" strokeWidth="14" target="100" color="orange"></g2-mini-progress> 
+        </div>
+        <div>
+            <span>Staged Picks({{ stagedPicks * 100 / totalPicks | number : '1.2-2' }} %)</span> <g2-mini-progress [percent]=" stagedPicks * 100 / totalPicks" strokeWidth="14" target="100" color="green"></g2-mini-progress> 
+        </div>
+    </nz-card>
+  </div>
+  <div nz-col [nzSpan]="12"   style="padding: 20px">
+    <nz-card  nzTitle="Picks By Location Group">
+        <div *ngFor="let pick of picksByLocationGroup | keyvalue">
+            <span>{{ pick.key }}</span> <g2-mini-progress [percent]=" pick.value" strokeWidth="14" target="100"></g2-mini-progress> 
+        </div>
+    </nz-card>
+  </div>
+</div>
