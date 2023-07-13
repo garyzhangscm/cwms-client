@@ -263,5 +263,33 @@ export class OrderService {
     return this.http.delete(url, params).pipe(map(res => res.data));
   }
   
+  getOpenOrderCount(): Observable<number> {
+
+    const url = `outbound/orders/open-order/count`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+
+    return this.http.get(url, params).pipe(map(res => res.data));
+  }
+  getTodayOrderCount(): Observable<number> {
+
+    const url = `outbound/orders/today-order/count`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+
+    return this.http.get(url, params).pipe(map(res => res.data));
+  }
+  getTodayCompletedOrderCount(): Observable<number> {
+
+    const url = `outbound/orders/today-complete-order/count`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+
+    return this.http.get(url, params).pipe(map(res => res.data));
+  }
+  
 
 }

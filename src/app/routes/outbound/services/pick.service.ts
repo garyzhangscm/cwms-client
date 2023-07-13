@@ -840,4 +840,19 @@ export class PickService {
     return this.http.post(`outbound/picks/pick-report`, null, params).pipe(map(res => res.data));
   }
 
+  getPickCount(): Observable<number> {
+    
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);  
+
+    return this.http.get(`outbound/picks/count`, params).pipe(map(res => res.data));
+  }
+  getPickCountByLocationGroup(): Observable<Map<String, number[]>> {
+    
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);  
+
+    return this.http.get(`outbound/picks/count-by-location-group`, params).pipe(map(res => res.data));
+  }
+
 }

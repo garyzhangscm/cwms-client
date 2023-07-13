@@ -41,7 +41,7 @@
   <div nz-col [nzSpan]="12"   style="padding: 20px">
     <nz-card  nzTitle="Picks By Location Group">
         <div *ngFor="let pick of picksByLocationGroup | keyvalue">
-            <span>{{ pick.key }}</span> <g2-mini-progress [percent]=" pick.value" strokeWidth="14" target="100"></g2-mini-progress> 
+            <span>{{ pick.key }} ({{pick.value[1] }} /  {{ pick.value[0]}})</span> <g2-mini-progress [percent]=" pick.value[1] * 100 / pick.value[0]" strokeWidth="14" [target]="pick.value[0]"></g2-mini-progress> 
         </div>
     </nz-card>
   </div>
