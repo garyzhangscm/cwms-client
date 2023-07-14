@@ -53,6 +53,7 @@ import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
+import { OutboundOrderWalmartShippingCartonLabelComponent } from './order-walmart-shipping-carton-label/order-walmart-shipping-carton-label.component';
 
 const COMPONENTS: Array<Type<void>> = [
   OutboundOrderComponent,
@@ -89,7 +90,8 @@ const COMPONENTS: Array<Type<void>> = [
   OutboundPickConfigurationComponent,
   OutboundHualeiConfigurationComponent,
   OutboundShipByHualeiComponent,
-  OutboundParcelPackageMaintenanceComponent];
+  OutboundParcelPackageMaintenanceComponent,
+  OutboundOrderWalmartShippingCartonLabelComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

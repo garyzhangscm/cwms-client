@@ -21,6 +21,7 @@ import { OutboundLoadComponent } from './load/load.component';
 import { OutboundOrderActivityComponent } from './order-activity/order-activity.component';
 import { OutboundOrderDocumentComponent } from './order-document/order-document.component';
 import { OutboundOrderMaintenanceComponent } from './order-maintenance/order-maintenance.component';
+import { OutboundOrderWalmartShippingCartonLabelComponent } from './order-walmart-shipping-carton-label/order-walmart-shipping-carton-label.component';
 import { OutboundOrderComponent } from './order/order.component';
 import { OutboundOutboundOrderPopupQueryComponent } from './outbound-order-popup-query/outbound-order-popup-query.component';
 import { OutboundParcelByOrderComponent } from './parcel-by-order/parcel-by-order.component';
@@ -325,7 +326,8 @@ const routes: Routes = [
   },
   { path: 'hualei-configuration', component: OutboundHualeiConfigurationComponent },
   { path: 'ship-by-hualei', component: OutboundShipByHualeiComponent },
-  { path: 'parcel-package/maintenance', component: OutboundParcelPackageMaintenanceComponent }];
+  { path: 'parcel-package/maintenance', component: OutboundParcelPackageMaintenanceComponent },
+  { path: 'order/walmart-shipping-carton-label', component: OutboundOrderWalmartShippingCartonLabelComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

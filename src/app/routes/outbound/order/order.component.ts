@@ -112,6 +112,7 @@ export class OutboundOrderComponent implements OnInit {
     ['remove-order-line-billable-activity-type', false],
     ['cancel-order', false],
     ['clear-cancellation-request', false], 
+    ['walmart-shipping-carton-label', false], 
   ]);
 
   constructor(

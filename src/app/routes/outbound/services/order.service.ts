@@ -18,6 +18,7 @@ import { OrderCategory } from '../models/order-category';
 import { OrderLine } from '../models/order-line';
 import { OrderStatus } from '../models/order-status.enum';
 import { PickWork } from '../models/pick-work';
+import { WalmartShippnigCartonLabel } from '../models/walmart-shipping-carton-labels';
 import { PickService } from './pick.service';
 
 @Injectable({
@@ -287,6 +288,32 @@ export class OrderService {
 
     let params = new HttpParams(); 
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+
+    return this.http.get(url, params).pipe(map(res => res.data));
+  }
+  generateWalmartShippingCartonLabel(id: number, itemName?: string): Observable<ReportHistory> {
+
+    const url = `outbound/orders/${id}/walmart-shipping-carton-labels/generate`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+    if (itemName) {
+
+      params = params.append('itemName', itemName);  
+    }
+
+    return this.http.post(url, null, params).pipe(map(res => res.data));
+  }
+  getWalmartShippingCartonLabel(id: number, itemName?: string): Observable<WalmartShippnigCartonLabel[]> {
+
+    const url = `outbound/orders/${id}/walmart-shipping-carton-labels`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+    if (itemName) {
+
+      params = params.append('itemName', itemName);  
+    }
 
     return this.http.get(url, params).pipe(map(res => res.data));
   }
