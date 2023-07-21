@@ -159,6 +159,7 @@
             <!-- Table to Display the result  -->
             <div class="search-result-list">
               <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #orderTable [nzShowPagination]="'true'"
+              nzShowSizeChanger [nzPageSizeOptions]="[10,50,150,250]"
                 [nzData]="listOfAllOrders" [nzFooter]="orderTableFoot">
                 <thead>
                   <tr>

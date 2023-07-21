@@ -138,7 +138,13 @@ export class WaveService {
 
     return this.http.post(url).pipe(map(res => res.data));
   }
+  cancelWave(wave: Wave): Observable<Wave> {
+    const url = `outbound/waves/${wave.id}/cancel`;
 
+    return this.http.post(url).pipe(map(res => res.data));
+  }
+/**
+ * 
   printPickSheet(wave: Wave) {
     const reportName = `Outbound Wave Pick Sheet`;
     // Get the picks for the order
@@ -222,4 +228,6 @@ export class WaveService {
 
     return pages;
   }
+ * 
+ */
 }

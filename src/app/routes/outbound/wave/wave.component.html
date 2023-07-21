@@ -66,9 +66,22 @@
           <td>{{ wave.totalStagedQuantity }}</td>
           <td>{{ wave.totalShippedQuantity }}</td>
           <td *ngIf="!displayOnly">
-            <button nz-button nzType="primary" (click)="allocateWave(wave)" [disabled]="!isWaveAllocatable(wave)">
-              {{ 'wave.allocate' | i18n }}
-            </button>
+            
+            <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+              {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu>                
+                <li nz-menu-item *ngIf="isWaveAllocatable(wave) && (!userPermissionMap.has('allocate-wave') || userPermissionMap.get('allocate-wave'))">
+                  <a (click)="allocateWave(wave)">
+                    {{ 'wave.allocate' | i18n }}</a>  
+                </li>              
+                <li nz-menu-item *ngIf="isWaveCancellable(wave) && (!userPermissionMap.has('cancel-wave') || userPermissionMap.get('cancel-wave'))">
+                  <a (click)="cancelWave(wave)">
+                    {{ 'cancel' | i18n }}</a>  
+                </li>     
+              </ul>
+            </nz-dropdown-menu>  
+            
           </td>
         </tr>
         <tr [nzExpand]="expandSet.has(wave.id!)">
@@ -109,6 +122,131 @@
                 </tbody>
               </nz-table>
             </nz-tab>
+            
+            <nz-tab nzTitle=" {{ 'pick' | i18n }}"> 
+
+              <st #stPick [data]="mapOfPicks[wave.id!]" [columns]="pickColumns"   
+              [expand]="pickExpand"  expandAccordion  
+              [footer]="pickTableFoot" [scroll]="{ x: '815px' }">
+              
+                <ng-template st-row="statusColumn" let-pick > 
+                  {{ 'PICK-STATUS-' + pick.status | i18n }}
+                </ng-template>
+                <ng-template st-row="typeColumn" let-pick > 
+                  <span *ngIf="pick.pickGroupType != null">{{  'PICK-GROUP-TYPE-' + pick.pickGroupType | i18n }}</span>
+                </ng-template>
+                <ng-template st-row="workTaskColumn" let-pick > 
+                  <a  *ngIf="pick.workTask" routerLink="/work-task/work-task" routerLinkActive="active" 
+                    [queryParams]="{number : pick.workTask.number}">{{pick.workTask.number}}</a> 
+                </ng-template>
+                <ng-template st-row="assignColumn" let-pick > 
+                  <ul>
+                    <li *ngIf="pick.workTask?.assignedUser">
+                      {{'user.assigned' | i18n}} : {{ pick.workTask?.assignedUser?.username}}
+                    </li>
+                    <li *ngIf="pick.workTask?.assignedRole">
+                      {{'role.assigned' | i18n}} : {{ pick.workTask?.assignedRole?.name}}
+                    </li>
+                  </ul> 
+                </ng-template>
+                <ng-template st-row="actionColumn" let-pick > 
+                  <nz-list>
+                    <nz-list-item>
+                      <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+                        {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+                      <nz-dropdown-menu #menu="nzDropdownMenu">
+                        <ul nz-menu>                
+                          <li nz-menu-item *ngIf="pick.status == pickStatuses.PENDING">
+                            <a (click)="releasePick(wave, pick)">
+                              {{ 'release' | i18n }}</a> 
+                          </li>        
+                          <li nz-menu-item >
+                            <a (click)="openUserQueryModal(wave, pick, tplAssignUserModalTitle, 
+                                tplAssignUserModalContent, tplAssignUserModalFooter)">
+                              {{ 'assign-user' | i18n }}</a> 
+                          </li>               
+                          <li nz-menu-item *ngIf="pick.workTask?.assignedUser != null">
+                            <a (click)="unassignUser(wave, pick)">
+                              {{ 'deassign-user' | i18n }}</a> 
+                          </li>      
+                          <li nz-menu-item *ngIf="pick.workTaskId != null && pick.workTask?.currentUser != null">
+                            <a (click)="unacknowledgeWorkTask(wave, pick.workTaskId)">
+                              {{ 'unacknowledge' | i18n }}</a> 
+                          </li>
+                          <li nz-menu-item >
+                            <a (click)="cancelPick( pick, false, false)">
+                              {{ 'cancel-pick' | i18n }}</a> 
+                          </li>
+                          <li nz-menu-item *ngIf="pick.pickGroupType != pickGroupTypes.LIST_PICK">
+                            <a (click)="cancelPick( pick, true, false)">
+                              {{ 'cancel-pick-error-location' | i18n }}</a> 
+                          </li>
+                          <li nz-menu-item *ngIf="pick.pickGroupType != pickGroupTypes.LIST_PICK">
+                            <a (click)="cancelPick( pick, true, true)">
+                              {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
+                          </li>
+                        </ul>
+                      </nz-dropdown-menu>  
+                    </nz-list-item> 
+                    <nz-list-item > 
+                      <cwms-common-print-button style='padding-left: 20px;'
+                        (print)="printPickSheet($event, pick)"
+                        (preview)="previewPickSheet(wave.number, pick)">
+                      </cwms-common-print-button>
+                    </nz-list-item>
+                  </nz-list> 
+                </ng-template>
+                <!--   pick details  -->
+                <ng-template #pickExpand let-pick>
+                  <st #stInnerPick [data]="pick.picks!" [columns]="innerPickColumns">
+                  
+                    <ng-template st-row="innerPickStatusColumn" let-innerPick > 
+                      {{ 'PICK-STATUS-' + innerPick.status | i18n }}
+                    </ng-template>
+                  </st>
+                
+                </ng-template> 
+              </st>  
+              <ng-template #pickTableFoot>
+                <div nz-row nzType="flex" nzJustify="start"> 
+                  <button nz-button (click)="confirmPicks(wave)"  
+                  *ngIf="!displayOnly && (!userPermissionMap.has('confirm-multiple-pick') || userPermissionMap.get('confirm-multiple-pick'))"
+                    [disabled]="(mapOfPicks[wave.id!] && mapOfPicks[wave.id!].length === 0) || wave.status === waveStatuses.COMPLETED">
+                    {{ 'confirm' | i18n }}
+                  </button>
+  
+                  <nz-divider nzType="vertical"></nz-divider>
+                  <button nz-button nz-dropdown [nzDropdownMenu]="cancelPicksOption" nzType="primary"
+                      (click)="cancelSelectedPick(wave, false, false)"  *ngIf="!displayOnly && (!userPermissionMap.has('cancel-multiple-pick') || userPermissionMap.get('cancel-multiple-pick'))"
+                        [disabled]="wave.status === waveStatuses.COMPLETED " >
+                  {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
+                  <nz-dropdown-menu #cancelPicksOption="nzDropdownMenu">
+                    <ul nz-menu>         
+                      <li nz-menu-item>
+                        <a (click)="cancelSelectedPick(wave, false, false)">
+                          {{ 'cancel-pick' | i18n }}</a> 
+                      </li>
+                      <li nz-menu-item>
+                        <a (click)="cancelSelectedPick(wave, true, false)">
+                          {{ 'cancel-pick-error-location' | i18n }}</a> 
+                      </li>  
+                      <li nz-menu-item>
+                        <a (click)="cancelSelectedPick(wave, true, true)">
+                          {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
+                      </li>
+                    </ul>
+                  </nz-dropdown-menu>
+   
+                  <nz-divider nzType="vertical"></nz-divider>
+                  <cwms-common-print-button style='padding-left: 20px;'
+                    (print)="printPickSheetInBatch($event, wave)"
+                    (preview)="previewPickSheetInBatch(wave)">
+                  </cwms-common-print-button>
+                </div>
+              </ng-template>
+            </nz-tab>
+<!--
+
 
             <nz-tab nzTitle=" {{ 'pick' | i18n }}"> 
 
@@ -119,6 +257,9 @@
                     <th nzWidth="50px"></th>
                     <th>
                       {{ 'pick.number' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'order' | i18n }}
                     </th>
                     <th>
                       {{ 'status' | i18n }}
@@ -171,6 +312,7 @@
                         nzWidth="50px"></td>
                       <td *ngIf="pick.picks == null || pick.picks.length == 0"></td> 
                       <td>{{ pick.number }}</td>
+                      <td>{{ pick.orderNumber }}</td>
                       <td>{{ 'PICK-STATUS-' + pick.status | i18n }}</td>
                       <td>
                         <a  *ngIf="pick.workTask" routerLink="/work-task/work-task" routerLinkActive="active" 
@@ -235,39 +377,8 @@
                                 </li>
                               </ul>
                             </nz-dropdown-menu>  
-                          </nz-list-item>
-                          <!--
-
-
-                          <nz-list-item>
-                            {{ 'assign-user' | i18n }}: 
-                            <app-auth-user-query-popup (recordSelected)="assignUser(wave, pick, $event)"></app-auth-user-query-popup>
-                          </nz-list-item>
-                          -->
-                        </nz-list>
-                        <!--
-
-                        <button nz-button nz-dropdown [nzDropdownMenu]="cancelPicksOption" nzType="primary"
-                        (click)="cancelPick(data, pick, false, false)"   
-                        [disabled]="pick.quantity === pick.pickedQuantity">
-                        {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
-                        <nz-dropdown-menu #cancelPicksOption="nzDropdownMenu">
-                          <ul nz-menu>         
-                            <li nz-menu-item>
-                              <a (click)="cancelPick(data, pick, false, false)">
-                                {{ 'cancel-pick' | i18n }}</a> 
-                            </li>
-                            <li nz-menu-item>
-                              <a (click)="cancelPick(data, pick, true, false)">
-                                {{ 'cancel-pick-error-location' | i18n }}</a> 
-                            </li>  
-                            <li nz-menu-item>
-                              <a (click)="cancelPick(data, pick, true, true)">
-                                {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
-                            </li>
-                          </ul>
-                        </nz-dropdown-menu>  
-                        -->
+                          </nz-list-item> 
+                        </nz-list> 
                       </td>
                     </tr>
                     <tr [nzExpand]="pickTableExpandSet.has(pick.id!)">        
@@ -333,6 +444,7 @@
               </ng-template>
             </nz-tab>
 
+-->
             <nz-tab nzTitle=" {{ 'picked-inventory' | i18n }}">
               <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="false"
                 [nzData]="mapOfPickedInventory[wave.id!!]">
@@ -640,7 +752,7 @@
   <div class="search-result-list">
     
     <st #userTable [data]="listOfAllAssignableUsers" [columns]="userTablecolumns" 
-      (change)="change($event)" [ps]="5">
+      (change)="userTablechanged($event)" [ps]="5">
     </st>  
   </div>
 </ng-template>
