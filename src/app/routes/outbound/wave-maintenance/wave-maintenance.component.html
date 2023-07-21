@@ -160,6 +160,7 @@
             <div class="search-result-list">
               <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #orderTable [nzShowPagination]="'true'"
               nzShowSizeChanger [nzPageSizeOptions]="[10,50,150,250]"
+              (nzCurrentPageDataChange)="orderTableCurrentPageDataChange($event)"
                 [nzData]="listOfAllOrders" [nzFooter]="orderTableFoot">
                 <thead>
                   <tr>
@@ -320,10 +321,9 @@
   </nz-layout> 
   
 
-</nz-spin>
-
 <nz-modal [(nzVisible)]="waveNumberModalVisible" nzTitle="{{'wave.number' | i18n}}" 
-  (nzOnCancel)="cancelNewWave()" (nzOnOk)="createNewWave()" >
+  (nzOnCancel)="cancelNewWave()" (nzOnOk)="createNewWave()" [nzOkLoading]="planWaveInProcess" 
+  [nzCancelLoading]="planWaveInProcess" >
   <ng-container *nzModalContent>
     <form nz-form 
     [formGroup]="newWaveNumberForm"
@@ -339,3 +339,5 @@
     </form>
   </ng-container>
 </nz-modal>
+
+</nz-spin>

@@ -118,7 +118,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
       onSelect: () => {
         this.onOrderTableAllChecked(true);
       }
-    },
+    }, 
   ];
   setOfOrderTableCheckedId = new Set<number>();
   orderTableChecked = false;
@@ -235,7 +235,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   searchForm!: UntypedFormGroup;
 
   newWaveNumberForm!: UntypedFormGroup;
-
+  planWaveInProcess = false;
   newWave = true;
 
   pageTitle: string;
@@ -256,7 +256,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   };
 
   listOfAllOrders: Order[] = [];
-  listOfDisplayOrders: Order[] = [];
+  listOfDisplayOrders: readonly  Order[] = [];
 
   listOfAllOrderLines: OrderLine[] = [];
   listOfDisplayOrderLines: OrderLine[] = [];
@@ -550,14 +550,19 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   onOrderTableItemChecked(id: number, checked: boolean): void {
     this.updateOrderTableCheckedSet(id, checked);
     this.refreshOrderTableCheckedStatus();
-  }
+  } 
 
   onOrderTableAllChecked(value: boolean): void {
     this.listOfDisplayOrders!.forEach(item => this.updateOrderTableCheckedSet(item.id!, value));
     this.refreshOrderTableCheckedStatus();
   }
+  onOrderTableThisPageChecked(value: boolean): void {
+    this.listOfDisplayOrders!.forEach(item => this.updateOrderTableCheckedSet(item.id!, false));
+    this.listOfDisplayOrders!.forEach(item => this.updateOrderTableCheckedSet(item.id!, value));
+    this.refreshOrderTableCheckedStatus();
+  }
 
-  orderTableCurrentPageDataChange($event: Order[]): void {
+  orderTableCurrentPageDataChange($event: readonly Order[]): void {
     this.listOfDisplayOrders! = $event;
     this.refreshOrderTableCheckedStatus();
   }
@@ -675,28 +680,41 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     this.waveNumberModalVisible = false;
   }
   createNewWave() {
+
     this.planWaveWithOrderLines(
       this.newWaveNumberForm.controls.waveNumber.value, 
       this.selectedWavableOrderLine);
   }
   planWaveWithOrderLines(waveNumber: string, orderLiens: OrderLine[]) {
 
+    this.isSpinning = true;
+    this.planWaveInProcess = true;
     this.waveService
       .planWaveWithOrderLines(waveNumber, orderLiens)
-      .subscribe(wave => {
-        this.message.info(this.i18n.fanyi('message.action.success'));
-        if (this.newWave) { 
+      .subscribe({
 
-          this.router.navigateByUrl(`/outbound/wave-maintenance?id=${wave.id}`);
-          this.clearDisplay();
-          this.loadWave(wave.id!);
+        next: (wave) =>{
+          this.isSpinning = false;
+          this.planWaveInProcess = false;
+          this.message.info(this.i18n.fanyi('message.action.success'));
+          if (this.newWave) { 
+  
+            this.router.navigateByUrl(`/outbound/wave-maintenance?id=${wave.id}`);
+            this.clearDisplay();
+            this.loadWave(wave.id!);
+          }
+          else {
+   
+            this.setupWaveInformation(wave);
+            this.findWaveCandidate();
+            this.waveNumberModalVisible = false;
+          } 
+        },
+        error: () => {
+          this.isSpinning = false
+          this.planWaveInProcess = false;
         }
-        else {
- 
-          this.setupWaveInformation(wave);
-          this.findWaveCandidate();
-          this.waveNumberModalVisible = false;
-        } 
-      });
+
+      });  
   }
 }
