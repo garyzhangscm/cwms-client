@@ -33,6 +33,30 @@
     
     <st #st [data]="listOfAllInventoryStatus"  [columns]="columns"  >
         
+      <ng-template st-row="reasonCodeColumn" let-inventoryStatus let-index="index"> 
+         
+          <ul nz-menu> 
+
+            <li nz-menu-item *ngIf="inventoryStatus.reasonRequiredWhenReceiving">
+              {{ 'reasonRequiredWhenReceiving' | i18n}}
+            </li> 
+            <li nz-menu-item *ngIf="inventoryStatus.reasonRequiredWhenProducing">
+              {{ 'reasonRequiredWhenProducing' | i18n}}
+            </li> 
+            <li nz-menu-item *ngIf="inventoryStatus.reasonRequiredWhenAdjusting">
+              {{ 'reasonRequiredWhenAdjusting' | i18n}}
+            </li> 
+            <li nz-menu-item *ngIf="inventoryStatus.reasonOptionalWhenReceiving">
+              {{ 'reasonOptionalWhenReceiving' | i18n}}
+            </li> 
+            <li nz-menu-item *ngIf="inventoryStatus.reasonOptionalWhenProducing">
+              {{ 'reasonOptionalWhenProducing' | i18n}}
+            </li> 
+            <li nz-menu-item *ngIf="inventoryStatus.reasonOptionalWhenAdjusting">
+              {{ 'reasonOptionalWhenAdjusting' | i18n}}
+            </li> 
+          </ul> 
+      </ng-template>
       <!--   action colummn  -->  
       <ng-template st-row="actionColumn" let-item let-index="index"> 
         

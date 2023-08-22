@@ -52,4 +52,16 @@ export class ReasonCodeService {
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem('common.reason-code', res)));
   }
+
+  
+  addReasonCode(reasonCode: ReasonCode): Observable<ReasonCode> {
+    return this.http.post(
+      `common/reason-codes?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`, reasonCode).pipe(map(res => res.data));
+  }
+ 
+
+  removeReasonCode(reasonCodeId: number): Observable<String> {
+    return this.http.delete(`common/reason-codes/${reasonCodeId}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`).pipe(map(res => res.data));
+  }
+
 }

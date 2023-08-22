@@ -25,6 +25,7 @@ export class InventoryInventoryStatusComponent implements OnInit {
     { title: this.i18n.fanyi("name"), index: 'name', },   
     { title: this.i18n.fanyi("description"), index: 'description', },   
     { title: this.i18n.fanyi("availableStatusFlag"), index: 'availableStatusFlag', },   
+    { title: this.i18n.fanyi("reason-code"), render: 'reasonCodeColumn', },   
     {
       title: this.i18n.fanyi("action"),  
       render: 'actionColumn',

@@ -23,16 +23,17 @@ export class CommonReasonCodeComponent implements OnInit {
   columns: STColumn[] = [ 
     { title: this.i18n.fanyi("name"),  index: 'name' , }, 
     { title: this.i18n.fanyi("description"),  index: 'description' , }, 
-    { title: this.i18n.fanyi("type"),  index: 'type' , 
+    { title: this.i18n.fanyi("type"),  render: 'typeColumn' ,index: 'type' , 
       filter: {
         menus:
           Object.values(ReasonCodeType).filter((reasonCodeType) => isNaN(Number(reasonCodeType)))
           .map((reasonCodeType) => {
             return {
-              text: reasonCodeType,
+              text: this.i18n.fanyi( `REASON-CODE-TYPE-${reasonCodeType}`),
               value: reasonCodeType
             } as STColumnFilterMenu;
-          }) 
+          }),
+        fn: (filter, record) => !filter.value || record.type == filter.value 
         /**
          * 
          * 
@@ -53,6 +54,7 @@ export class CommonReasonCodeComponent implements OnInit {
   
   reasonCodes: ReasonCode[] = [];
   displayOnly = false;
+  isSpinning = false;
 
 
   constructor(
@@ -71,13 +73,29 @@ export class CommonReasonCodeComponent implements OnInit {
       this.search(true);
    }
    search(refresh: boolean = false): void {
-    
-    this.reasonCodeService.loadReasonCode(true).subscribe({
+    this.isSpinning = true;
+    this.reasonCodeService.loadReasonCode(refresh).subscribe({
       next: (reasonCodeRes) => {
           this.reasonCodes = reasonCodeRes;
-      }
-      
+          this.isSpinning = false;
+      }, 
+      error: () =>  this.isSpinning = false 
+    });
+   }
 
+   removeReasonCode(reasonCode : ReasonCode) : void{
+    
+    this.isSpinning = true;
+    this.reasonCodeService.removeReasonCode(reasonCode.id!).subscribe({
+      next: () => { 
+        this.isSpinning = false;
+        this.refresh();
+      }, 
+      error: () => {
+        this.isSpinning = false;
+        
+        this.refresh();
+      }
     });
    }
 }

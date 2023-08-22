@@ -26,6 +26,10 @@ export class InventoryInventoryStatusMaintenanceComponent implements OnInit {
   newInventoryStatus = true;
      
   isSpinning = false;
+
+  reasonWhenReceiving = 'NA';
+  reasonWhenProducing = 'NA';
+  reasonWhenAdjusting = 'NA';
  
 
   constructor(
@@ -53,6 +57,8 @@ export class InventoryInventoryStatusMaintenanceComponent implements OnInit {
             this.titleService.setTitle(this.i18n.fanyi('modify'));
             this.pageTitle = this.i18n.fanyi('modify');
             this.isSpinning = false;
+
+            this.setupReasonCodeRequirement();
            }
 
         })   
@@ -62,13 +68,83 @@ export class InventoryInventoryStatusMaintenanceComponent implements OnInit {
         // By default, we will always create the item under specific warehouse 
         this.titleService.setTitle(this.i18n.fanyi('new'));
         this.pageTitle = this.i18n.fanyi('new');
+        
+        this.setupReasonCodeRequirement();
       }
     });
 
     this.stepIndex = 0; 
   }
  
+  setupReasonCodeRequirement() {
+    
+    this.reasonWhenReceiving = 'NA';
+    this.reasonWhenProducing = 'NA';
+    this.reasonWhenAdjusting = 'NA';
 
+    if (this.currentInventoryStatus.reasonRequiredWhenReceiving) {
+      this.reasonWhenReceiving = "Required";
+    }
+    else if (this.currentInventoryStatus.reasonRequiredWhenReceiving) {
+      this.reasonWhenReceiving = "Optional";
+    }
+
+    if (this.currentInventoryStatus.reasonRequiredWhenProducing) {
+      this.reasonWhenProducing = "Required";
+    }
+    else if (this.currentInventoryStatus.reasonRequiredWhenProducing) {
+      this.reasonWhenProducing = "Optional";
+    }
+
+    if (this.currentInventoryStatus.reasonRequiredWhenAdjusting) {
+      this.reasonWhenAdjusting = "Required";
+    }
+    else if (this.currentInventoryStatus.reasonRequiredWhenAdjusting) {
+      this.reasonWhenAdjusting = "Optional";
+    }
+  }
+  setupReasonCodeOnInventoryStatus() {
+    
+    if (this.reasonWhenReceiving == 'Required') {
+      this.currentInventoryStatus.reasonRequiredWhenReceiving = true;
+      this.currentInventoryStatus.reasonOptionalWhenReceiving = false;
+    }
+    else if (this.reasonWhenReceiving == 'Optional') {
+      this.currentInventoryStatus.reasonRequiredWhenReceiving = false;
+      this.currentInventoryStatus.reasonOptionalWhenReceiving = true;
+    }
+    else  {
+      this.currentInventoryStatus.reasonRequiredWhenReceiving = false;
+      this.currentInventoryStatus.reasonOptionalWhenReceiving = false;
+    }
+    
+    if (this.reasonWhenProducing == 'Required') {
+      this.currentInventoryStatus.reasonRequiredWhenProducing = true;
+      this.currentInventoryStatus.reasonOptionalWhenProducing = false;
+    }
+    else if (this.reasonWhenProducing == 'Optional') {
+      this.currentInventoryStatus.reasonRequiredWhenProducing = false;
+      this.currentInventoryStatus.reasonOptionalWhenProducing = true;
+    }
+    else  {
+      this.currentInventoryStatus.reasonRequiredWhenProducing = false;
+      this.currentInventoryStatus.reasonOptionalWhenProducing = false;
+    }
+
+    
+    if (this.reasonWhenAdjusting == 'Required') {
+      this.currentInventoryStatus.reasonRequiredWhenAdjusting  = true;
+      this.currentInventoryStatus.reasonOptionalWhenAdjusting = false;
+    }
+    else if (this.reasonWhenAdjusting == 'Optional') {
+      this.currentInventoryStatus.reasonRequiredWhenAdjusting  = false;
+      this.currentInventoryStatus.reasonOptionalWhenAdjusting = true;
+    }
+    else  {
+      this.currentInventoryStatus.reasonRequiredWhenAdjusting  = false;
+      this.currentInventoryStatus.reasonOptionalWhenAdjusting  = false;
+    } 
+  }
   getEmptyInventoryStatus(): InventoryStatus {
     return {
       id: undefined,
@@ -86,6 +162,8 @@ export class InventoryInventoryStatusMaintenanceComponent implements OnInit {
     this.stepIndex += 1;
   }
   confirm(): void { 
+
+    this.setupReasonCodeOnInventoryStatus();
 
     if (this.currentInventoryStatus.id != null) {
       this.isSpinning = true;

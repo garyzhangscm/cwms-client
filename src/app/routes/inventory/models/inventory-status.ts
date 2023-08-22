@@ -4,4 +4,13 @@ export interface InventoryStatus {
   name: string;
   description: string;
   availableStatusFlag?: boolean;
+
+  
+  reasonRequiredWhenReceiving?: boolean; 
+  reasonRequiredWhenProducing?: boolean;
+  reasonRequiredWhenAdjusting?: boolean;
+
+  reasonOptionalWhenReceiving?: boolean;
+  reasonOptionalWhenProducing?: boolean;
+  reasonOptionalWhenAdjusting?: boolean;
 }
