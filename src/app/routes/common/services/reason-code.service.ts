@@ -48,7 +48,7 @@ export class ReasonCodeService {
       }
     }
     return this.http
-      .get('common/reason-code')
+      .get(`common/reason-codes?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem('common.reason-code', res)));
   }

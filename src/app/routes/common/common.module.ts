@@ -19,6 +19,8 @@ import { CommonCustomerMaintenanceConfirmComponent } from './customer-maintenanc
 import { CommonCustomerMaintenanceComponent } from './customer-maintenance/customer-maintenance.component';
 import { CommonCustomerComponent } from './customer/customer.component';
 import { CommonPrintButtonComponent } from './print-button/print-button.component';
+import { CommonReasonCodeMaintenanceComponent } from './reason-code-maintenance/reason-code-maintenance.component';
+import { CommonReasonCodeComponent } from './reason-code/reason-code.component';
 import { CommonSupplierAddressMaintenanceComponent } from './supplier-address-maintenance/supplier-address-maintenance.component';
 import { CommonSupplierMaintenanceConfirmComponent } from './supplier-maintenance-confirm/supplier-maintenance-confirm.component';
 import { CommonSupplierMaintenanceComponent } from './supplier-maintenance/supplier-maintenance.component';
@@ -46,7 +48,9 @@ const COMPONENTS: Array<Type<void>> = [
   CommonCustomerAddressMaintenanceComponent,
   CommonPrintButtonComponent, 
   CommonAbcCategoryComponent,
-  CommonVelocityComponent];
+  CommonVelocityComponent,
+  CommonReasonCodeComponent,
+  CommonReasonCodeMaintenanceComponent];
 
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
