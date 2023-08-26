@@ -910,7 +910,7 @@ export class OutboundOrderComponent implements OnInit {
     return order.totalInprocessQuantity === 0 && !this.orderService.isOutsourcingOrder(order);
   }
   isOrderReadyForComplete(order: Order): boolean {
-    return order.status === OrderStatus.OPEN;
+    return order.status === OrderStatus.OPEN || order.status === OrderStatus.INPROCESS;
   }
 
   confirmPicks(order: Order): void {
@@ -1925,7 +1925,8 @@ export class OutboundOrderComponent implements OnInit {
 
   isOrderReadyForCancellation(order: Order) : boolean {
     return order.status != OrderStatus.COMPLETE &&
-            order.status != OrderStatus.CANCELLED;
+            order.status != OrderStatus.CANCELLED &&
+            order.status != OrderStatus.ALLOCATING;
   }
 
   isOrderReadyForClearCancellationRequest(order: Order) : boolean {
@@ -1933,6 +1934,7 @@ export class OutboundOrderComponent implements OnInit {
      // is not complete and cancelled yet
     return order.status != OrderStatus.COMPLETE &&
             order.status != OrderStatus.CANCELLED &&
+            order.status != OrderStatus.ALLOCATING &&
             order.cancelRequested == true;
   }
 

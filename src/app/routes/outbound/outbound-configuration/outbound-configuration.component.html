@@ -6,10 +6,10 @@
         <div nz-row [nzGutter]="24"> 
           <div nz-col [nzSpan]="24">
             <nz-form-item>
-                <nz-form-label [nzSpan]="3">
+                <nz-form-label [nzSpan]="5">
                 {{ 'shortAutoReallocation' | i18n }}
                 </nz-form-label>
-                <nz-form-control [nzSpan]="21">
+                <nz-form-control [nzSpan]="19">
                     <label nz-checkbox [(ngModel)]="currentOutboundConfiguration.shortAutoReallocation"></label>
 
                 </nz-form-control>
@@ -20,10 +20,10 @@
         <div nz-row [nzGutter]="24"> 
             <div nz-col [nzSpan]="24">
               <nz-form-item>
-                  <nz-form-label [nzSpan]="3">
+                  <nz-form-label [nzSpan]="5">
                   {{ 'asynchronousAllocation' | i18n }}
                   </nz-form-label>
-                  <nz-form-control [nzSpan]="21">
+                  <nz-form-control [nzSpan]="19">
                       <label nz-checkbox [(ngModel)]="currentOutboundConfiguration.asynchronousAllocation"></label>
   
                   </nz-form-control>
@@ -34,10 +34,10 @@
           <div nz-row [nzGutter]="24"> 
             <div nz-col [nzSpan]="24">
               <nz-form-item>
-                  <nz-form-label [nzSpan]="3">
+                  <nz-form-label [nzSpan]="5">
                   {{ 'asynchronousAllocationPalletThreshold' | i18n }}
                   </nz-form-label>
-                  <nz-form-control [nzSpan]="21">
+                  <nz-form-control [nzSpan]="19">
                     <nz-input-number  [nzMin]="1" [nzMax]="65524" [nzStep]="1"
                      [(ngModel)]="currentOutboundConfiguration.asynchronousAllocationPalletThreshold"></nz-input-number> 
   

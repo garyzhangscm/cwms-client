@@ -141,7 +141,7 @@ export class OrderService {
     .pipe(map(res => res.data));
   }
   allocateOrder(order: Order): Observable<Order> {
-    return this.http.post(`outbound/orders/${order.id}/allocate?asynchronous=true`).pipe(map(res => res.data));
+    return this.http.post(`outbound/orders/${order.id}/allocate`).pipe(map(res => res.data));
   }
   completeOrder(order: Order): Observable<Order> {
     return this.http.post(`outbound/orders/${order.id}/complete`, order).pipe(map(res => res.data));
