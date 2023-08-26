@@ -1,0 +1,58 @@
+<page-header></page-header>
+ 
+    <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+        
+      <nz-card>  
+        <div nz-row [nzGutter]="24"> 
+          <div nz-col [nzSpan]="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="3">
+                {{ 'shortAutoReallocation' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="21">
+                    <label nz-checkbox [(ngModel)]="currentOutboundConfiguration.shortAutoReallocation"></label>
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>   
+        </div>  
+         
+        <div nz-row [nzGutter]="24"> 
+            <div nz-col [nzSpan]="24">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="3">
+                  {{ 'asynchronousAllocation' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="21">
+                      <label nz-checkbox [(ngModel)]="currentOutboundConfiguration.asynchronousAllocation"></label>
+  
+                  </nz-form-control>
+              </nz-form-item>
+            </div>   
+          </div>  
+        
+          <div nz-row [nzGutter]="24"> 
+            <div nz-col [nzSpan]="24">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="3">
+                  {{ 'asynchronousAllocationPalletThreshold' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="21">
+                    <nz-input-number  [nzMin]="1" [nzMax]="65524" [nzStep]="1"
+                     [(ngModel)]="currentOutboundConfiguration.asynchronousAllocationPalletThreshold"></nz-input-number> 
+  
+                  </nz-form-control>
+              </nz-form-item>
+            </div>   
+          </div>     
+        
+      </nz-card>
+
+      <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle" *ngIf="!displayOnly">
+          <button nz-button nzType="primary" (click)="confirmOutboundConfiguration()" >
+              <span> {{ 'confirm' | i18n }}</span>
+            </button>
+      </div>
+    </nz-spin>
+ 
+ 

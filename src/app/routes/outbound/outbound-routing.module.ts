@@ -39,6 +39,7 @@ import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
+import { OutboundOutboundConfigurationComponent } from './outbound-configuration/outbound-configuration.component';
 
 const routes: Routes = [
   { path: 'order', component: OutboundOrderComponent, 
@@ -327,7 +328,8 @@ const routes: Routes = [
   { path: 'hualei-configuration', component: OutboundHualeiConfigurationComponent },
   { path: 'ship-by-hualei', component: OutboundShipByHualeiComponent },
   { path: 'parcel-package/maintenance', component: OutboundParcelPackageMaintenanceComponent },
-  { path: 'order/walmart-shipping-carton-label', component: OutboundOrderWalmartShippingCartonLabelComponent }];
+  { path: 'order/walmart-shipping-carton-label', component: OutboundOrderWalmartShippingCartonLabelComponent },
+  { path: 'outbound-configuration', component: OutboundOutboundConfigurationComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
