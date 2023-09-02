@@ -46,6 +46,8 @@
 
         <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)"></td>
         <td>
+          <!--
+
           <div class="editable-cell" *ngIf="editId !== data.id!|| editCol != 'name'; else editNameTpl">
             <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'name', $event)">
               {{ data.name }}
@@ -54,12 +56,15 @@
           <ng-template #editNameTpl>
             <input type="text" nz-input [(ngModel)]="data.name" (blur)="changeSupplier(data)" />
           </ng-template>
+
+          -->
+          {{ data.name }}
         </td>
         <td  nzEllipsis>
           <div class="editable-cell" *ngIf="editId !== data.id! || editCol != 'description'; else editDescTpl">
             <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'description', $event)">
               <a>
-                <span nz-tooltip nzTooltipTitle="{{ data.description }}">{{ data.description }}</span>
+                <span nz-tooltip nzTooltipTitle="{{ data.description }}">{{ (data.description != null && data.description != '')  ? data.description  : "----" }}</span>
                 </a> 
             </div>
           </div>

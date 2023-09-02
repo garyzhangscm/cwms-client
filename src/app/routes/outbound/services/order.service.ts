@@ -229,7 +229,7 @@ export class OrderService {
     // the order is allocatable when
     // 1. it is not a outsourcing order. Outsoucing order will be done by another party
     // 2. it has open quantity or pending allocation quantity
-    return !this.isOutsourcingOrder(order) &&
+    return !this.isOutsourcingOrder(order) && order.status != OrderStatus.ALLOCATING && 
           (order.totalOpenQuantity! > 0 || order.totalPendingAllocationQuantity! > 0)
   }
   isOutsourcingOrder(order: Order): boolean {

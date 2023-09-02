@@ -40,11 +40,17 @@ export class DashboardWelcomeComponent implements OnInit {
     this.orderService.getTodayCompletedOrderCount().subscribe({
       next: (count) => this.completedOrdersToday = count
     });
+
+    /**
+     * This endpoint may have performance issue. We disabled at this moment
+     * until we fix it 
+     * 
     this.pickService.getPickCountByLocationGroup().subscribe({
       next: (pickByLocationGroupRes) => {
         this.picksByLocationGroup = pickByLocationGroupRes;
       }
     })
+     */
   }
 
 }

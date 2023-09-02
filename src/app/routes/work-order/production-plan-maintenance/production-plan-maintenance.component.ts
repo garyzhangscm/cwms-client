@@ -6,11 +6,9 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { Item } from '../../inventory/models/item';
-import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
-import { ItemService } from '../../inventory/services/item.service';
+import { InventoryStatusService } from '../../inventory/services/inventory-status.service'; 
 import { OrderLine } from '../../outbound/models/order-line';
-import { OrderLineService } from '../../outbound/services/order-line.service';
-import { OrderService } from '../../outbound/services/order.service';
+import { OrderLineService } from '../../outbound/services/order-line.service'; 
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -148,6 +146,8 @@ export class WorkOrderProductionPlanMaintenanceComponent implements OnInit {
   stepIndex = 0;
   currentProductionPlan!: ProductionPlan;
 
+  isSearchingOrder = false;
+  isConfirming = false;
 
   mapOfExpandedId: { [key: string]: boolean } = {};
   mapOfExpandedBOMId: { [key: string]: boolean } = {};
@@ -275,6 +275,7 @@ export class WorkOrderProductionPlanMaintenanceComponent implements OnInit {
         this.mapOfAvailableBillOfMaterial[orderLine.item!.name] = billOfMeasureRes;
         // If we only have one bom defined for the item, let's
         // setup it for the production plan lines that has not setup the BOM yet
+        console.log(`find ${billOfMeasureRes.length} for ${orderLine.orderNumber} \ ${orderLine.item!.name} `);
         if (billOfMeasureRes.length === 1) {
           this.setupDefaultBOMForOrderLine(orderLine.id!, billOfMeasureRes[0]);
         }
@@ -295,6 +296,8 @@ export class WorkOrderProductionPlanMaintenanceComponent implements OnInit {
         inprocessQuantity: 0,
         producedQuantity: 0,
       });
+      console.log(`the user now selected totally ${this.currentProductionPlan.productionPlanLines.length} lines`);
+      
     } else {
       this.currentProductionPlan.productionPlanLines = this.currentProductionPlan.productionPlanLines.filter(
         productionPlanLine => productionPlanLine.orderLineId !== orderLine.id,
@@ -310,11 +313,17 @@ export class WorkOrderProductionPlanMaintenanceComponent implements OnInit {
   }
 
   confirmProductionPlanComplete(): void {
-    this.productionPlanService.addProductionPlan(this.currentProductionPlan).subscribe(res => {
-      this.messageService.success(this.i18n.fanyi('message.production-plan.added'));
-      setTimeout(() => {
-        this.router.navigateByUrl(`/work-order/production-plan?number=${this.currentProductionPlan.number}`);
-      }, 500);
+    this.isConfirming = true;
+    this.productionPlanService.addProductionPlan(this.currentProductionPlan).subscribe({
+      next: () => {
+
+        this.messageService.success(this.i18n.fanyi('message.production-plan.added'));
+        setTimeout(() => {
+          this.isConfirming = false;
+          this.router.navigateByUrl(`/work-order/production-plan?number=${this.currentProductionPlan.number}`);
+        }, 500);
+      }, 
+      error: () => this.isConfirming = false
     });
   }
   previousStep(): void {
@@ -416,16 +425,23 @@ export class WorkOrderProductionPlanMaintenanceComponent implements OnInit {
   }
   findMatchedOrderLines(): void {
     this.mapOfCheckedId = {};
+    this.isSearchingOrder = true;
     this.orderLineService
       .findProductionPlanCandidate(this.filterOrderNumber, this.filterItemName)
-      .subscribe(orderLinesRes => {
-        this.validOrderLines = orderLinesRes;
-      });
+      .subscribe({
+        next: (orderLinesRes) => {
+          this.validOrderLines = orderLinesRes;
+          this.isSearchingOrder = false;
+        },
+        error: () => this.isSearchingOrder = false
+      }) 
   }
   clearMatchedOrderLines(): void {
     this.validOrderLines = [];
     this.mapOfCheckedId = {};
     this.currentProductionPlan.productionPlanLines = [];
+    this.filterOrderNumber = '';
+    this.filterItemName = '';
   }
 
   canbeSkipped(stepIndex: number): boolean {

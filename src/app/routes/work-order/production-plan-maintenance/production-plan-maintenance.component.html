@@ -24,23 +24,23 @@
 
 <div class="steps-content" *ngIf="stepIndex === 0">
   <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="8">
+    <div nz-col [nzSpan]="12">
       <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24">
+        <nz-form-label [nzSpan]="8">
           {{ 'production-plan.number' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+        <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
           <input appFkey variable="production-plan" nz-input [(ngModel)]="currentProductionPlan.number"
             (blur)="productionPlanNumberOnBlur($event)" required />
         </nz-form-control>
       </nz-form-item>
     </div>
-    <div nz-col [nzSpan]="8">
+    <div nz-col [nzSpan]="12">
       <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24">
+        <nz-form-label [nzSpan]="8">
           {{ 'description' | i18n }}
         </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+        <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
           <input nz-input [(ngModel)]="currentProductionPlan.description" required />
         </nz-form-control>
       </nz-form-item>
@@ -50,75 +50,84 @@
 
 <!-- Show the order line that is valid for new production plan-->
 <div class="steps-content" *ngIf="stepIndex === 1">
-  <div nz-row [nzGutter]="24">
-    <div nz-col [nzSpan]="8">
-      <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24">
-          {{ 'order.number' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-          <input nz-input [(ngModel)]="filterOrderNumber" />
-        </nz-form-control>
-      </nz-form-item>
+  <nz-spin [nzSpinning]="isSearchingOrder" [nzSize]="'large'">
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'order.number' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input nz-input [(ngModel)]="filterOrderNumber" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'item.name' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input nz-input [(ngModel)]="filterItemName" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <button nz-button (click)="findMatchedOrderLines()">
+            {{ 'search' | i18n }}
+          </button>
+          <nz-divider nzType="vertical"></nz-divider>
+          <button nz-button (click)="clearMatchedOrderLines()">
+            {{ 'clear' | i18n }}
+          </button>
+        </nz-form-item>
+      </div>
     </div>
-    <div nz-col [nzSpan]="8">
-      <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24">
-          {{ 'item.name' | i18n }}
-        </nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-          <input nz-input [(ngModel)]="filterItemName" />
-        </nz-form-control>
-      </nz-form-item>
+  
+    <div class="search-result-list">
+      <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #basicTable [nzData]="validOrderLines">
+        <thead>
+  
+          <th></th>
+          <!--
+
+          <th [nzSelections]="listOfOrderLineTableSelection" [(nzChecked)]="orderLineTableChecked"
+            [nzIndeterminate]="orderLineTableIndeterminate" (nzCheckedChange)="onOrderLineTableAllChecked($event)"
+              [nzDisabled]="validOrderLines.length === 0"></th>
+
+          -->
+          <th *ngFor="let column of listOfOrderLineTableColumns" [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+            [nzShowFilter]="column.showFilter">
+            {{ column.name | i18n }}
+          </th>
+  
+  
+        </thead>
+        <tbody>
+          <tr *ngFor="let orderLine of basicTable.data">
+            <td [nzChecked]="setOfOrderLineTableCheckedId.has(orderLine.id!)"
+              (nzCheckedChange)="onOrderLineTableItemChecked(orderLine.id!, $event)"></td>
+  
+            <td>{{ orderLine.orderNumber }}</td>
+            <td>{{ orderLine.number }}</td>
+            <td>{{ orderLine.item?.name }}</td>
+            <td>{{ orderLine.expectedQuantity }}</td>
+            <td>{{ orderLine.openQuantity }}</td>
+            <td>{{ orderLine.inprocessQuantity }}</td>
+            <td>{{ orderLine.shippedQuantity }}</td>
+            <td>{{ orderLine.productionPlanInprocessQuantity }}</td>
+            <td>{{ orderLine.productionPlanProducedQuantity }}</td>
+            <td>{{ orderLine.inventoryStatus?.description }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
     </div>
-    <div nz-col [nzSpan]="8">
-      <nz-form-item>
-        <button nz-button (click)="findMatchedOrderLines()">
-          {{ 'search' | i18n }}
-        </button>
-        <nz-divider nzType="vertical"></nz-divider>
-        <button nz-button (click)="clearMatchedOrderLines()">
-          {{ 'clear' | i18n }}
-        </button>
-      </nz-form-item>
-    </div>
-  </div>
 
-  <div class="search-result-list">
-    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #basicTable [nzData]="validOrderLines">
-      <thead>
-
-        <th [nzSelections]="listOfOrderLineTableSelection" [(nzChecked)]="orderLineTableChecked"
-          [nzIndeterminate]="orderLineTableIndeterminate" (nzCheckedChange)="onOrderLineTableAllChecked($event)"
-          nzWidth="60px" [nzDisabled]="validOrderLines.length === 0"></th>
-        <th *ngFor="let column of listOfOrderLineTableColumns" [nzShowSort]="column.showSort"
-          [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
-          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
-          [nzShowFilter]="column.showFilter">
-          {{ column.name | i18n }}
-        </th>
-
-
-      </thead>
-      <tbody>
-        <tr *ngFor="let orderLine of basicTable.data">
-          <td [nzChecked]="setOfOrderLineTableCheckedId.has(orderLine.id!)"
-            (nzCheckedChange)="onOrderLineTableItemChecked(orderLine.id!, $event)"></td>
-
-          <td>{{ orderLine.orderNumber }}</td>
-          <td>{{ orderLine.number }}</td>
-          <td>{{ orderLine.item?.name }}</td>
-          <td>{{ orderLine.expectedQuantity }}</td>
-          <td>{{ orderLine.openQuantity }}</td>
-          <td>{{ orderLine.inprocessQuantity }}</td>
-          <td>{{ orderLine.shippedQuantity }}</td>
-          <td>{{ orderLine.productionPlanInprocessQuantity }}</td>
-          <td>{{ orderLine.productionPlanProducedQuantity }}</td>
-          <td>{{ orderLine.inventoryStatus?.description }}</td>
-        </tr>
-      </tbody>
-    </nz-table>
-  </div>
+  </nz-spin>
 </div>
 <!-- Show the production plan list and allow the user to input
     1. BOM
@@ -160,7 +169,7 @@
           <th>
             {{ 'inventory.status' | i18n }}
           </th>
-          <th>
+          <th nzWidth="200px">
             {{ 'bill-of-material.number' | i18n }}
           </th>
           <th>
@@ -174,54 +183,54 @@
       </thead>
 
       <tbody>
-        <ng-container *ngFor="let data of nestedTable.data; let recordIndex = index">
+        <ng-container *ngFor="let productionPlanLine of nestedTable.data; let recordIndex = index">
 
           <tr>
 
-            <td nzShowExpand [(nzExpand)]="mapOfExpandedBOMId[recordIndex]" [nzDisabled]="data.billOfMaterial === null">
+            <td nzShowExpand [(nzExpand)]="mapOfExpandedBOMId[recordIndex]" [nzDisabled]="productionPlanLine.billOfMaterial === null">
             </td>
 
-            <td>{{ data.orderLine?.orderNumber }}</td>
-            <td>{{ data.orderLine?.number }}</td>
+            <td>{{ productionPlanLine.orderLine?.orderNumber }}</td>
+            <td>{{ productionPlanLine.orderLine?.number }}</td>
             <td>
               <!-- If this is created from order line, then we won't allow the user to change
             the item 
       -->
-              <span *ngIf="data.orderLine !== null">{{ data.item?.name }}</span>
+              <span *ngIf="productionPlanLine.orderLine !== null">{{ productionPlanLine.item?.name }}</span>
 
               <!-- If we create a production plan line without an order line, then we allow the
           user to select a item -->
-              <div *ngIf="data.orderLine === null">
+              <div *ngIf="productionPlanLine.orderLine === null">
                 <nz-input-group nzCompact>
-                  <nz-select nzShowSearch nzAllowClear [(ngModel)]="data.itemId"
-                    (ngModelChange)="itemNameSelected($event, data)" style="width: 200px;">
+                  <nz-select nzShowSearch nzAllowClear [(ngModel)]="productionPlanLine.itemId"
+                    (ngModelChange)="itemNameSelected($event, productionPlanLine)" style="width: 200px;">
                     <nz-option *ngFor="let item of listOfValidBomItem" [nzLabel]="item.name" [nzValue]="item.id">
                     </nz-option>
                   </nz-select>
                 </nz-input-group>
               </div>
             </td>
-            <td>{{ data.orderLine?.expectedQuantity }}</td>
-            <td>{{ data.orderLine?.openQuantity }}</td>
-            <td>{{ data.orderLine?.inprocessQuantity }}</td>
-            <td>{{ data.orderLine?.shippedQuantity }}</td>
+            <td>{{ productionPlanLine.orderLine?.expectedQuantity }}</td>
+            <td>{{ productionPlanLine.orderLine?.openQuantity }}</td>
+            <td>{{ productionPlanLine.orderLine?.inprocessQuantity }}</td>
+            <td>{{ productionPlanLine.orderLine?.shippedQuantity }}</td>
             <td>
               <!-- If we create the production plan from order line, then
                 we force the user to only use the inventory status from the order line
                 Otherwise, we allow the user to select a valid inventory status
               -->
-              <span *ngIf="data.orderLine !== null">
-                {{ data.orderLine?.inventoryStatus?.description }}
+              <span *ngIf="productionPlanLine.orderLine !== null">
+                {{ productionPlanLine.orderLine?.inventoryStatus?.description }}
               </span>
 
-              <span *ngIf="data.orderLine === null">
+              <span *ngIf="productionPlanLine.orderLine === null">
 
                 <nz-form-item nzFlex>
 
                   <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
                     nzErrorTip="{{ 'error.form.field.required' | i18n }}">
-                    <nz-select nz-input [ngModel]="data.inventoryStatus?.name"
-                      (ngModelChange)="inventoryStatusChange($event, data)" style="width: 250px">
+                    <nz-select nz-input [ngModel]="productionPlanLine.inventoryStatus?.name"
+                      (ngModelChange)="inventoryStatusChange($event, productionPlanLine)" style="width: 250px">
                       <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
                         [nzLabel]="inventoryStatus.description"
                         [nzValue]="inventoryStatus.name">
@@ -232,13 +241,13 @@
               </span>
 
             </td>
-            <td>
-              <nz-form-item *ngIf="data.item !== null">
+            <td nzWidth="200px">
+              <nz-form-item *ngIf="productionPlanLine.item != null">
                 <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
                   nzErrorTip="{{ 'error.form.field.required' | i18n }}">
-                  <nz-select nz-input [(ngModel)]="selectedBOM[data.item!.name]"
-                    (ngModelChange)="selectedBOMChange($event, data)" style="width: 250px">
-                    <nz-option *ngFor="let billOfMaterial of this.mapOfAvailableBillOfMaterial[data.item!.name]"
+                  <nz-select nz-input [(ngModel)]="selectedBOM[productionPlanLine.item!.name]"
+                    (ngModelChange)="selectedBOMChange($event, productionPlanLine)" style="width: 200px">
+                    <nz-option *ngFor="let billOfMaterial of this.mapOfAvailableBillOfMaterial[productionPlanLine.item!.name]"
                       [nzLabel]="billOfMaterial.number!" [nzValue]="billOfMaterial.number!">
                     </nz-option>
                   </nz-select>
@@ -248,7 +257,7 @@
             <td>
               <nz-form-item>
                 <nz-form-control [nzSm]="12" [nzXs]="24">
-                  <input nz-input [(ngModel)]="data.expectedQuantity" />
+                  <input nz-input [(ngModel)]="productionPlanLine.expectedQuantity" />
                 </nz-form-control>
               </nz-form-item>
             </td>
@@ -261,7 +270,8 @@
             <nz-tabset>
 
               <nz-tab nzTitle=" {{ 'bill-of-material.line' | i18n }}">
-                <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="data.billOfMaterial!.billOfMaterialLines"
+                <nz-table [nzScroll]="{ x: 'true', y: 'true' }" 
+                [nzData]="productionPlanLine.billOfMaterial == null ? [] : productionPlanLine.billOfMaterial!.billOfMaterialLines"
                   nzSize="middle" [nzShowPagination]="false">
                   <thead>
                     <th>
@@ -280,55 +290,58 @@
                       {{ 'inventory.status' | i18n }}
                     </th>
                   </thead>
-      <tbody>
-        <tr *ngFor="let billOfMaterialLine of data.billOfMaterial?.billOfMaterialLines">
-          <td>{{ billOfMaterialLine.number }}</td>
-          <td>{{ billOfMaterialLine.item?.name }}</td>
-          <td>{{ billOfMaterialLine.item?.description }}</td>
-          <td>{{ billOfMaterialLine.expectedQuantity }}</td>
-          <td>{{ billOfMaterialLine.inventoryStatus?.name }}</td>
-        </tr>
-      </tbody>
-    </nz-table>
-    </nz-tab>
-    <nz-tab nzTitle=" {{ 'work-order-instruction-template' | i18n }}">
-      <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="data.billOfMaterial!.workOrderInstructionTemplates"
-        nzSize="middle" [nzShowPagination]="false">
-        <thead>
-          <th>
-            id
-          </th>
-          <th>
-            {{ 'work-order-instruction-template.sequence' | i18n }}
-          </th>
-          <th>
-            {{ 'work-order-instruction-template.instruction' | i18n }}
-          </th>
-        </thead>
-        <tbody>
-          <tr *ngFor="let workOrderInstructionTemplate of data.billOfMaterial?.workOrderInstructionTemplates">
-            <td>{{ workOrderInstructionTemplate.id }}</td>
-            <td>{{ workOrderInstructionTemplate.sequence }}</td>
-            <td>{{ workOrderInstructionTemplate.instruction }}</td>
+                  <tbody>
+                    <tr *ngFor="let billOfMaterialLine of productionPlanLine.billOfMaterial?.billOfMaterialLines">
+                      <td>{{ billOfMaterialLine.number }}</td>
+                      <td>{{ billOfMaterialLine.item?.name }}</td>
+                      <td>{{ billOfMaterialLine.item?.description }}</td>
+                      <td>{{ billOfMaterialLine.expectedQuantity }}</td>
+                      <td>{{ billOfMaterialLine.inventoryStatus?.name }}</td>
+                    </tr>
+                  </tbody>
+                </nz-table>
+              </nz-tab>
+              <nz-tab nzTitle=" {{ 'work-order-instruction-template' | i18n }}">
+                <nz-table [nzScroll]="{ x: 'true', y: 'true' }" 
+                [nzData]="productionPlanLine.billOfMaterial == null ? [] : productionPlanLine.billOfMaterial!.workOrderInstructionTemplates"
+                  nzSize="middle" [nzShowPagination]="false">
+                  <thead>
+                    <th>
+                      id
+                    </th>
+                    <th>
+                      {{ 'work-order-instruction-template.sequence' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'work-order-instruction-template.instruction' | i18n }}
+                    </th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let workOrderInstructionTemplate of productionPlanLine.billOfMaterial?.workOrderInstructionTemplates">
+                      <td>{{ workOrderInstructionTemplate.id }}</td>
+                      <td>{{ workOrderInstructionTemplate.sequence }}</td>
+                      <td>{{ workOrderInstructionTemplate.instruction }}</td>
+                    </tr>
+                  </tbody>
+                </nz-table>
+              </nz-tab>
+
+            </nz-tabset>
+
+
           </tr>
-        </tbody>
-      </nz-table>
-    </nz-tab>
-
-    </nz-tabset>
-
-
-    </tr>
-    </ng-container>
+        </ng-container>
     </tbody>
 
     </nz-table>
-
+<!--
     <div nz-row nzType="flex" nzJustify="start" style="padding: 10px;">
       <button nz-button nzType="primary" (click)="addEmptyProductionLine()">
         {{ 'add' | i18n }}
       </button>
     </div>
+
+-->
   </div>
 
 
@@ -336,88 +349,90 @@
 <!-- Show the result for confirm -->
 <div *ngIf="stepIndex === 3">
 
-  <nz-descriptions nzTitle="{{'production-plan' | i18n}}" nzBordered>
-    <nz-descriptions-item nzTitle="{{'production-plan.number' | i18n}}">
-      {{ currentProductionPlan.number}}
-    </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{'production-plan.description' | i18n}}">
-      {{ currentProductionPlan.description}}
-    </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{'production-plan.expectedQuantity' | i18n}}">
-      {{ currentProductionPlan.expectedQuantity}}
-    </nz-descriptions-item>
-  </nz-descriptions>
+  <nz-spin [nzSpinning]="isConfirming" [nzSize]="'large'">
+    <nz-descriptions nzTitle="{{'production-plan' | i18n}}" nzBordered>
+      <nz-descriptions-item nzTitle="{{'production-plan.number' | i18n}}">
+        {{ currentProductionPlan.number}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'production-plan.description' | i18n}}">
+        {{ currentProductionPlan.description}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'production-plan.expectedQuantity' | i18n}}">
+        {{ currentProductionPlan.expectedQuantity}}
+      </nz-descriptions-item>
+    </nz-descriptions>
 
   <!--
     Show the result for confirm
   -->
 
-  <div class="search-result-list">
+    <div class="search-result-list">
 
-    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #resultTable [nzData]="currentProductionPlan.productionPlanLines">
-      <thead>
+      <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #resultTable [nzData]="currentProductionPlan.productionPlanLines">
+        <thead>
 
-        <tr>
-          <th>
-            {{ 'order.number' | i18n }}
-          </th>
-          <th>
-            {{ 'order.line.number' | i18n }}
-          </th>
-          <th>
-            {{ 'item' | i18n }}
-          </th>
-          <th>
-            {{ 'order.line.expectedQuantity' | i18n }}
-          </th>
-          <th>
-            {{ 'order.line.openQuantity' | i18n }}
-          </th>
-          <th>
-            {{ 'order.line.inprocessQuantity' | i18n }}
-          </th>
-          <th>
-            {{ 'order.line.shippedQuantity' | i18n }}
-          </th>
-          <th>
-            {{ 'inventory.status' | i18n }}
-          </th>
-          <th>
-            {{ 'bill-of-material.number' | i18n }}
-          </th>
-          <th>
-            {{ 'production-plan.line.expectedQuantity' | i18n }}
-          </th>
-        </tr>
+          <tr>
+            <th>
+              {{ 'order.number' | i18n }}
+            </th>
+            <th>
+              {{ 'order.line.number' | i18n }}
+            </th>
+            <th>
+              {{ 'item' | i18n }}
+            </th>
+            <th>
+              {{ 'order.line.expectedQuantity' | i18n }}
+            </th>
+            <th>
+              {{ 'order.line.openQuantity' | i18n }}
+            </th>
+            <th>
+              {{ 'order.line.inprocessQuantity' | i18n }}
+            </th>
+            <th>
+              {{ 'order.line.shippedQuantity' | i18n }}
+            </th>
+            <th>
+              {{ 'inventory.status' | i18n }}
+            </th>
+            <th>
+              {{ 'bill-of-material.number' | i18n }}
+            </th>
+            <th>
+              {{ 'production-plan.line.expectedQuantity' | i18n }}
+            </th>
+          </tr>
 
-      </thead>
+        </thead>
 
-      <tbody>
-        <tr *ngFor="let productionPlanLine of resultTable.data">
+        <tbody>
+          <tr *ngFor="let productionPlanLine of resultTable.data">
 
-          <td>{{ productionPlanLine.orderLine?.orderNumber }}</td>
-          <td>{{ productionPlanLine.orderLine?.number }}</td>
-          <td> {{ productionPlanLine.item?.name }}
+            <td>{{ productionPlanLine.orderLine?.orderNumber }}</td>
+            <td>{{ productionPlanLine.orderLine?.number }}</td>
+            <td> {{ productionPlanLine.item?.name }}
 
-          </td>
-          <td>{{ productionPlanLine.orderLine?.expectedQuantity }}</td>
-          <td>{{ productionPlanLine.orderLine?.openQuantity }}</td>
-          <td>{{ productionPlanLine.orderLine?.inprocessQuantity }}</td>
-          <td>{{ productionPlanLine.orderLine?.shippedQuantity }}</td>
-          <td>
-            {{ productionPlanLine.inventoryStatus?.description }}
-          </td>
-          <td>
-            {{ productionPlanLine.billOfMaterial?.number}}
-          </td>
-          <td>
-            {{ productionPlanLine.expectedQuantity}}
-          </td>
-        </tr>
-      </tbody>
+            </td>
+            <td>{{ productionPlanLine.orderLine?.expectedQuantity }}</td>
+            <td>{{ productionPlanLine.orderLine?.openQuantity }}</td>
+            <td>{{ productionPlanLine.orderLine?.inprocessQuantity }}</td>
+            <td>{{ productionPlanLine.orderLine?.shippedQuantity }}</td>
+            <td>
+              {{ productionPlanLine.inventoryStatus?.description }}
+            </td>
+            <td>
+              {{ productionPlanLine.billOfMaterial?.number}}
+            </td>
+            <td>
+              {{ productionPlanLine.expectedQuantity}}
+            </td>
+          </tr>
+        </tbody>
 
-    </nz-table>
-  </div>
+      </nz-table>
+    </div>
+  </nz-spin>
 
 </div>
 
