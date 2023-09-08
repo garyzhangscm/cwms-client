@@ -42,7 +42,13 @@ export interface Item {
   companyId: number;
 
   imageUrl?: string;
+  image?: string;
   thumbnailUrl?: string;
+  thumbnail?: string;
+
+  
+  workOrderSOPUrl?: string;
+  workOrderSOP?: string;
 
   abcCategoryId?: number;
   abcCategory?: ABCCategory;

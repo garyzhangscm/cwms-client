@@ -31,6 +31,7 @@ import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
 import { WebClientConfigurationService } from '../../util/services/web-client-configuration.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { BillOfMaterial } from '../models/bill-of-material';
 import { ProductionLineAllocationRequest } from '../models/production-line-allocation-request';
 import { ProductionLineAllocationRequestLine } from '../models/production-line-allocation-request-line';
@@ -309,6 +310,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     private inventoryStatusService: InventoryStatusService,
     private billOfMaterialService: BillOfMaterialService,
     private localCacheService: LocalCacheService,
+    private warehouseService: WarehouseService,
     private userService: UserService,
     
   ) { 
@@ -526,6 +528,11 @@ export class WorkOrderWorkOrderComponent implements OnInit {
                 if (itemMap.has(workOrder.itemId!)) {
                   workOrder.item = itemMap.get(workOrder.itemId!)
                   this.loadDefaultStockUom(workOrder.item!);
+                  if (workOrder.item?.workOrderSOPUrl) {
+                    workOrder.item.workOrderSOP = 
+                    `${environment.api.baseUrl}inventory/items/${workOrder.item.id}/work-order-sop?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&download=false`
+                   
+                  } 
                   
                 }
                 workOrder.workOrderLines.forEach(

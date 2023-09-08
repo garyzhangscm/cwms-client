@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -18,29 +19,40 @@ export class IntegrationWorkOrderDataService {
     private dateTimeService: DateTimeService,
     private companyService: CompanyService,) {}
 
-  getData(startTime?: Date, endTime?:Date, date?: Date, statusList?: string, id?: number, warehouseName?: string): Observable<IntegrationWorkOrder[]> {
-    let url = `integration/integration-data/work-orders?companyCode=${this.companyService.getCurrentCompany()?.code}`;
+  getData(startTime?: Date, endTime?:Date, date?: Date, statusList?: string, id?: number, 
+    warehouseName?: string, workOrderNumber?: string): Observable<IntegrationWorkOrder[]> {
+      
+    let params = new HttpParams();
+           
+    params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
+    params = params.append('companyCode', this.companyService.getCurrentCompany()!.code); 
+    
+    let url = `integration/integration-data/work-orders`;
 
     if (warehouseName) {
-        
-      url = `${url}&warehouseName=${warehouseName}`;
+      params = params.append('warehouseName', warehouseName); 
+         
+    }
+    if (workOrderNumber) {
+      params = params.append('workOrderNumber', workOrderNumber); 
+         
     }
     if (startTime) {
-      url = `${url}&startTime=${this.dateTimeService.getISODateTimeString(startTime)}`;
+      params = params.append('startTime', this.dateTimeService.getISODateTimeString(startTime));  
     }
     if (endTime) {
-      url = `${url}&endTime=${this.dateTimeService.getISODateTimeString(endTime)}`;
+      params = params.append('endTime', this.dateTimeService.getISODateTimeString(endTime));  
     }
     if (date) {
-      url = `${url}&date=${this.dateTimeService.getISODateString(date)}`;
+      params = params.append('date', this.dateTimeService.getISODateString(date));  
     }
     if (statusList) {
-      url = `${url}&statusList=${statusList}`;
+      params = params.append('statusList', statusList);  
     }
     if (id) {
-      url = `${url}&id=${id}`;
+      params = params.append('id', id);  
     }
-    return this.http.get(url).pipe(map(res => res.data));
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 
   resend(id: number) : Observable<IntegrationWorkOrder> {

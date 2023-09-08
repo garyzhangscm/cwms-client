@@ -77,6 +77,11 @@
          expandAccordion   (change)="itemTableChanged($event)"  [widthMode]="{ type: 'strict' }" 
         [scroll]="{ x: '3300px'}">
       
+        <ng-template st-row="thumbnailColumn" let-item let-index="index"> 
+                 
+          <img *ngIf="item.image" 
+               nz-image width="50px" height="50px" [nzSrc]="item.image" alt="" /> 
+        </ng-template>
         <ng-template st-row="receivingRateByUnitColumn" let-item let-index="index"> 
                 
           {{  item.receivingRateByUnit  | currency: 'USD'}} 
@@ -113,8 +118,18 @@
                   [queryParams]="{id : item.id!}">{{ 'modify' | i18n }}</a>
             </li>
             <li nz-menu-item 
-            *ngIf="!userPermissionMap.has('remove-item') || userPermissionMap.get('remove-item')">
-              <a   (click)='removeItem(item)'>{{ 'delete' | i18n }}</a>
+              *ngIf="!userPermissionMap.has('remove-item') || userPermissionMap.get('remove-item')">
+                <a   (click)='removeItem(item)'>{{ 'delete' | i18n }}</a>
+            </li>
+            <li nz-menu-item 
+              *ngIf="!userPermissionMap.has('upload-image') || userPermissionMap.get('upload-image')">
+                <a   (click)='openImageViewer(item, tplUploadImagesModalTitle, tplUploadImagesModalContent)'>
+                  {{ 'upload-image' | i18n }}</a>
+            </li>
+            <li nz-menu-item 
+              *ngIf="!userPermissionMap.has('upload-workorder-sop') || userPermissionMap.get('upload-workorder-sop')">
+                <a   (click)='openWorkOrderSOPUploadModel(item, tplUploadWorkOrderSOPModalTitle, tplUploadWorkOrderSOPModalContent)'>
+                  {{ 'upload-workorder-sop' | i18n }}</a>
             </li>
             <li nz-menu-item adminVisible>
               <a   (click)='processItemOverride(item.id!)'>{{ 'process-item-override' | i18n }}</a>
@@ -163,6 +178,18 @@
                 </tr>
               </tbody>
             </nz-table>
+          </nz-tab>
+          
+          <nz-tab nzTitle="{{ 'document' | i18n}}"> 
+            <nz-list nzBordered >
+              <nz-list-item>
+                <a *ngIf="item.image" [href]="item.image" target="_blank" rel="noopener noreferrer">{{'image' | i18n}}</a>
+              </nz-list-item>
+              <nz-list-item>
+                <a *ngIf="item.workOrderSOP" [href]="item.workOrderSOP" target="_blank" rel="noopener noreferrer">
+                  {{'work-order-sop' | i18n}}</a>
+              </nz-list-item>
+            </nz-list>
           </nz-tab>
         </nz-tabset>
       </ng-template>
@@ -218,9 +245,6 @@
   <span>{{ 'item.image.upload' | i18n}}</span>
 </ng-template>
 <ng-template #tplUploadImagesModalContent>
-
-
-
   <div nz-row [nzGutter]="24" style="margin-bottom: 10px">
     <div nz-col [nzSpan]="24" nzOffset="8">
       <img *ngIf="uploadedImage" nz-image width="300px" height="300px" [nzSrc]="uploadedImage"
@@ -245,5 +269,29 @@
       </nz-form-item>
     </div>
   </div>
+
+</ng-template>
+
+
+<!-- Modal for upload work order SOP -->
+<ng-template #tplUploadWorkOrderSOPModalTitle>
+  <span>{{ 'upload-workorder-sop' | i18n}}</span>
+</ng-template>
+<ng-template #tplUploadWorkOrderSOPModalContent>
+  <div nz-row [nzGutter]="24" style="margin-bottom: 10px">
+    <div nz-col [nzSpan]="24">
+      <nz-upload
+        nzType="drag"
+        [nzMultiple]="false"
+        [nzAction]="workOrderSOPUploadUrl"
+        (nzChange)="handleWorkOrderSOPUpload($event)"
+      >
+        <p class="ant-upload-drag-icon">
+          <span nz-icon nzType="inbox"></span>
+        </p>
+        <p class="ant-upload-text">Click or drag file to this area to upload</p>
+      </nz-upload>
+    </div>
+  </div> 
 
 </ng-template>

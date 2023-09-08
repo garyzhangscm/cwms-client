@@ -149,24 +149,28 @@ export class IntegrationIntegrationDataWorkOrderComponent implements OnInit {
     let specificDate : Date = this.searchForm.controls.integrationDate.value;
     this.integrationWorkOrderService.getData(startTime, endTime, specificDate, 
       this.searchForm.controls.statusList.value,
-      this.searchForm.controls.id.value,).subscribe(
-      integrationWorkOrderRes => {
-        this.listOfAllIntegrationWorkOrders = integrationWorkOrderRes; 
- 
-         
-        this.searching = false;
-        this.isSpinning = false;
-        this.searchResult = this.i18n.fanyi('search_result_analysis', {
-          currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
-          rowCount: integrationWorkOrderRes.length,
-        });
-      },
-      () => {
-        this.searching = false;
-        this.isSpinning = false;
-        this.searchResult = '';
-      },
-    );
+      this.searchForm.controls.id.value,
+      this.searchForm.controls.number.value,).subscribe(
+        {
+          next: (integrationWorkOrderRes) => {
+            this.listOfAllIntegrationWorkOrders = integrationWorkOrderRes; 
+     
+             
+            this.searching = false;
+            this.isSpinning = false;
+            this.searchResult = this.i18n.fanyi('search_result_analysis', {
+              currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+              rowCount: integrationWorkOrderRes.length,
+            });
+
+          }, 
+          error: () => {
+            this.searching = false;
+            this.isSpinning = false;
+            this.searchResult = '';
+          },
+        }
+      );  
   }
   
   ngOnInit(): void {
@@ -179,6 +183,7 @@ export class IntegrationIntegrationDataWorkOrderComponent implements OnInit {
       integrationDateTimeRanger: [null],
       integrationDate: [null],
       statusList: [null],
+      number: [null],
       id: [null]
     });
   }

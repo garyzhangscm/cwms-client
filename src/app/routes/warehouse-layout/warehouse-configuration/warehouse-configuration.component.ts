@@ -1,18 +1,15 @@
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
+import { NzMessageService } from 'ng-zorro-antd/message'; 
 
-import { UserService } from '../../auth/services/user.service';
-import { ReportType } from '../../report/models/report-type.enum';
-import { CarrierServiceLevelType } from '../../transportation/models/carrier-service-level-type.enum';
-import { EasyPostCarrier } from '../../transportation/models/easy-post-carrier';
+import { UserService } from '../../auth/services/user.service'; 
+import { ArchiveConfiguration } from '../models/archive-configuration';
 import { PrintingStrategy } from '../models/printing-strategy.enum';
 import { WarehouseConfiguration } from '../models/warehouse-configuration';
-import { WarehouseHoliday } from '../models/warehouse-holiday';
-import { CompanyService } from '../services/company.service';
+import { WarehouseHoliday } from '../models/warehouse-holiday'; 
+import { ArchiveConfigurationService } from '../services/archive-configuration.service';
 import { WarehouseConfigurationService } from '../services/warehouse-configuration.service';
 import { WarehouseHolidayService } from '../services/warehouse-holiday.service';
 import { WarehouseService } from '../services/warehouse.service';
@@ -25,7 +22,9 @@ import { WarehouseService } from '../services/warehouse.service';
 export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
 
   isSpinning = false;
+  isArchiveSpinning = false;
   currentWarehouseConfiguration: WarehouseConfiguration;
+  currentArchiveConfiguration: ArchiveConfiguration;
   
   printingStrategyList = PrintingStrategy;
 
@@ -41,6 +40,7 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
     private warehouseService: WarehouseService,
     private messageService: NzMessageService, 
     private warehouseHolidayService: WarehouseHolidayService,
+    private archiveConfigurationService: ArchiveConfigurationService,
     private fb: UntypedFormBuilder,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private userService: UserService,
@@ -73,6 +73,11 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
         // locationUtilizationSnapshotEnabled: false,
         // inventoryAgingSnapshotEnabled: false,
       }
+      this.currentArchiveConfiguration = {
+        warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        inventoryArchiveEnabled: false,
+        removedInventoryArchiveDays: 0
+      }
   }
 
   ngOnInit(): void { 
@@ -94,11 +99,33 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
             
             this.currentWarehouseConfiguration = configRes;
           }
+
           this.isSpinning = false;
           
           this.setupHolidayDisplay();
+          
         }, 
         error: () => this.isSpinning = false
+      }
+    )
+    
+    this.isArchiveSpinning = true;
+    this.archiveConfigurationService.getArchiveConfiguration().subscribe(
+      {
+        next: (configRes) => {
+          // we should only get one configuration since
+          // we are only allowed to get the configuratoin for current warehouse
+          if (configRes) {
+            // if we already have the configuration setup for the current warehouse
+            // load it. otherwise, load the default one
+            
+            this.currentArchiveConfiguration = configRes;
+          }
+
+          this.isArchiveSpinning = false; 
+          
+        }, 
+        error: () => this.isArchiveSpinning = false
       }
     )
 
@@ -132,6 +159,20 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
         this.isSpinning = false;
       }, 
       error: () => this.isSpinning = false
+    })
+  }
+
+  confirmArchiveConfiguration() {
+    this.isArchiveSpinning = true;
+    
+    this.archiveConfigurationService.addArchiveConfiguration(this.currentArchiveConfiguration)
+    .subscribe({
+      next:() => {
+        
+        this.messageService.success(this.i18n.fanyi('message.save.complete'));
+        this.isArchiveSpinning = false;
+      }, 
+      error: () => this.isArchiveSpinning = false
     })
   }
 
