@@ -1,4 +1,5 @@
 
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -78,12 +79,17 @@ export class MasterProductionScheduleService {
 
   
   getExistingMPSs(productionLineId: number, beginDate: Date, endDate: Date): Observable<MasterProductionSchedule[]> {
-    let url = `workorder/master-production-schedules/existing-mps?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
-    url = `${url}&productionLineId=${productionLineId}`;
-    url = `${url}&beginDateTime=${this.dateTimeService.getISODateTimeString(beginDate)}`;
-    url = `${url}&endDateTime=${this.dateTimeService.getISODateTimeString(endDate)}`;
-    console.log(`getExistingMPSs by url ${url}`);
-    return this.http.get(url).pipe(map(res => res.data));
+    let url = `workorder/master-production-schedules/existing-mps`;
+
+    
+    let params = new HttpParams();
+    
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);   
+    params = params.append('productionLineId', productionLineId);   
+    params = params.append('beginDateTime', this.dateTimeService.getISODateTimeString(beginDate));   
+    params = params.append('endDateTime',this.dateTimeService.getISODateTimeString(endDate));   
+ 
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 
   getMPSsGanttView(): Promise<GanttTask[]>{
