@@ -9,6 +9,7 @@ import { WorkOrderBillOfMaterialComponent } from './bill-of-material/bill-of-mat
 import { WorkOrderDeassignProductionLineComponent } from './deassign-production-line/deassign-production-line.component';
 import { WorkOrderLaborActivityComponent } from './labor-activity/labor-activity.component';
 import { WorkOrderLaborComponent } from './labor/labor.component';
+import { WorkOrderLightMesConfigurationComponent } from './light-mes-configuration/light-mes-configuration.component';
 import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component';
 import { WorkOrderMouldComponent } from './mould/mould.component';
 import { WorkOrderMpsExportComponent } from './mps-export/mps-export.component';
@@ -53,6 +54,7 @@ import { WorkOrderWorkOrderQcInspectionResultComponent } from './work-order-qc-i
 import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspection/work-order-qc-inspection.component'; 
 import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component'; 
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
+import { WorkOrderLightMesStatusDashboardComponent } from './light-mes-status-dashboard/light-mes-status-dashboard.component';
 
 const routes: Routes = [
   { path: 'work-order', component: WorkOrderWorkOrderComponent , 
@@ -497,8 +499,17 @@ const routes: Routes = [
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
-  }, 
-];
+  },  
+  { path: 'light-mes-configuration', component: WorkOrderLightMesConfigurationComponent , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/light-mes-configuration', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }}
+  ,
+  { path: 'light-mes-status-dashboard', component: WorkOrderLightMesStatusDashboardComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

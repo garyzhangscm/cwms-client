@@ -37,6 +37,7 @@ import { WorkOrderBillOfMaterialComponent } from './bill-of-material/bill-of-mat
 import { WorkOrderDeassignProductionLineComponent } from './deassign-production-line/deassign-production-line.component';
 import { WorkOrderLaborActivityComponent } from './labor-activity/labor-activity.component';
 import { WorkOrderLaborComponent } from './labor/labor.component';
+import { WorkOrderLightMesConfigurationComponent } from './light-mes-configuration/light-mes-configuration.component';
 import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component';
 import { WorkOrderMouldComponent } from './mould/mould.component';
 import { WorkOrderMpsExportComponent } from './mps-export/mps-export.component';
@@ -60,6 +61,7 @@ import { WorkOrderProductionPlanMaintenanceComponent } from './production-plan-m
 import { WorkOrderProductionPlanComponent } from './production-plan/production-plan.component';
 import { WorkOrderQcRuleConfigurationMaintenanceComponent } from './qc-rule-configuration-maintenance/qc-rule-configuration-maintenance.component';
 import { WorkOrderQcRuleConfigurationComponent } from './qc-rule-configuration/qc-rule-configuration.component';
+import { WorkOrderSiloConfigurationComponent } from './silo-configuration/silo-configuration.component';
 import { WorkOrderSiloMonitorComponent } from './silo-monitor/silo-monitor.component';
 import { WorkOrderWorkOrderCompleteByProductComponent } from './work-order-complete-by-product/work-order-complete-by-product.component';
 import { WorkOrderWorkOrderCompleteConfirmComponent } from './work-order-complete-confirm/work-order-complete-confirm.component';
@@ -81,7 +83,7 @@ import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspect
 import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component'; 
 import { WorkOrderRoutingModule } from './work-order-routing.module';
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
-import { WorkOrderSiloConfigurationComponent } from './silo-configuration/silo-configuration.component';
+import { WorkOrderLightMesStatusDashboardComponent } from './light-mes-status-dashboard/light-mes-status-dashboard.component';
 
 
 PlotlyModule.plotlyjs = PlotlyJS;
@@ -137,7 +139,9 @@ const COMPONENTS: Array<Type<void>> = [
   WorkOrderProductionLineDashboardComponent,
   WorkOrderProductionLineStatusDisplayComponent,
   WorkOrderSiloMonitorComponent,
-  WorkOrderSiloConfigurationComponent];
+  WorkOrderSiloConfigurationComponent,
+  WorkOrderLightMesConfigurationComponent,
+  WorkOrderLightMesStatusDashboardComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
