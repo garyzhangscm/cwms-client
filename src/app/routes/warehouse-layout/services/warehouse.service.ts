@@ -74,5 +74,11 @@ export class WarehouseService {
   getServerSidePrintingFlag(): boolean {
     return JSON.parse(localStorage.getItem('server_side_printing')!);
   }
+
+  
+  getAvailableZoneIds(): Observable<string[]> {
+     
+    return this.http.get(`resource/site-information/available-zone-ids`).pipe(map(res => res.data));
+  }
  
 }

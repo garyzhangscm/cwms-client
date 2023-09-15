@@ -4,8 +4,7 @@ import { _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
-import { GzLocalStorageService } from '../../util/services/gz-local-storage.service';
-import { LocalCacheService } from '../../util/services/local-cache.service';
+import { GzLocalStorageService } from '../../util/services/gz-local-storage.service'; 
 import { WarehouseConfiguration } from '../models/warehouse-configuration';
 import { CompanyService } from './company.service';
 import { WarehouseService } from './warehouse.service';
@@ -16,7 +15,7 @@ import { WarehouseService } from './warehouse.service';
 export class WarehouseConfigurationService {
   constructor(private http: _HttpClient, private warehouseService: WarehouseService, 
     private gzLocalStorageService: GzLocalStorageService,
-    private companyService: CompanyService) {}
+    private companyService: CompanyService) {} 
 
   getWarehouseConfiguration(refresh: boolean = false): Observable<WarehouseConfiguration> { 
 

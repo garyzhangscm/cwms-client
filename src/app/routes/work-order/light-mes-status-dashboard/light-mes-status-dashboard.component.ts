@@ -18,7 +18,7 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit {
         console.log(`get ${machines.length} machines`);
         machines.forEach(
           machine => {
-            console.log(`machine ${machine.machineNo}: mid - ${machine.mid}, sim - ${machine.sim}, status - ${machine.status}`);
+            console.log(`machine ${machine.machineNo} / ${machine.machineName}: mid - ${machine.mid}, sim - ${machine.sim}, status - ${machine.status}`);
           }
         )
       }

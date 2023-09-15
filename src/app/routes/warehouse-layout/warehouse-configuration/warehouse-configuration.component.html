@@ -147,6 +147,22 @@
                     </nz-form-control>
                 </nz-form-item>
               </div>
+              <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="6">
+                    {{ 'time-zone' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="18">
+    
+    
+                      <nz-select [(ngModel)]="currentWarehouseConfiguration.timeZone" nzAllowClear nzShowSearch>
+                        <nz-option *ngFor="let zoneId of avaiableZoneIds " [nzValue]="zoneId"
+                          [nzLabel]="zoneId"></nz-option>
+                      </nz-select>
+    
+                    </nz-form-control>
+                </nz-form-item>
+              </div>
     
             </div> 
             <nz-card nzTitle="{{'weekDays' | i18n }}">

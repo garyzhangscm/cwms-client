@@ -32,4 +32,6 @@ export interface WarehouseConfiguration {
     workingOnThursdayFlag: boolean;
     workingOnFridayFlag: boolean;
     workingOnSaturdayFlag: boolean;
+
+    timeZone?: string;
 }

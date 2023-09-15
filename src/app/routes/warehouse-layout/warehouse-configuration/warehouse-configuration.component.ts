@@ -31,6 +31,7 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
   holidayYearIndex = 0;
   holidayYears: string[] = [];
   holidays: WarehouseHoliday[][] = [];
+  avaiableZoneIds : string[] = [];
    
   addHolidayForm!: UntypedFormGroup;
 
@@ -88,6 +89,9 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
     });
 
     this.isSpinning = true;
+    this.warehouseService.getAvailableZoneIds().subscribe({
+      next: (zoneIds) => this.avaiableZoneIds = zoneIds
+    });
     this.warehouseConfigurationService.getWarehouseConfiguration().subscribe(
       {
         next: (configRes) => {
@@ -107,7 +111,8 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
         }, 
         error: () => this.isSpinning = false
       }
-    )
+    );
+
     
     this.isArchiveSpinning = true;
     this.archiveConfigurationService.getArchiveConfiguration().subscribe(
