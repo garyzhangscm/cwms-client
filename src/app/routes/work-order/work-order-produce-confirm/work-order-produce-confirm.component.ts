@@ -96,6 +96,10 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
           workOrderLineConsumeTransaction.consumingByWorkOrderQuantity = 0;
           workOrderLineConsumeTransaction.consumingByBomQuantity = 0; 
 
+          if(this.workOrderProduceTransaction.consumeByBom?.id == null) {
+            this.workOrderProduceTransaction.consumeByBom = undefined;
+          }
+
           if (this.workOrderProduceTransaction.consumeByBom) {
             const matchedBillOfMaterialLines = this.workOrderProduceTransaction.consumeByBom!.billOfMaterialLines.filter(
               billOfMaterialLine => billOfMaterialLine.itemId === workOrderLineConsumeTransaction.workOrderLine!.itemId,

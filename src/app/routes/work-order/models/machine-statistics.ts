@@ -12,4 +12,7 @@ export interface MachineStatistics {
 
     producedQuantity: number;
     pulseCount: number;
+
+    achievementRate: number;
+    shiftEstimationQuantity: number;
 }
