@@ -38,4 +38,21 @@ export class LightMesService {
       .pipe(map(res => res.data));
 
   }
+  
+  getMachineStatus(machineNo?: string): Observable<Machine[]> { 
+    
+    
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+    if (machineNo) {
+
+      params = params.append('machineNo', machineNo); 
+    }
+
+    return this.http
+      .get(`workorder/light-mes/machine-status`, params)
+      .pipe(map(res => res.data));
+
+  }
 }

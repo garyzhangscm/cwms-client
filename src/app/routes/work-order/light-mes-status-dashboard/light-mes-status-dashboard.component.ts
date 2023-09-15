@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 
+import { LightMesConfiguration } from '../models/light-mes-configuration';
+import { Machine } from '../models/machine';
+import { LightMesConfigurationService } from '../services/light-mes-configuration.service';
 import { LightMesService } from '../services/light-mes.service';
 
 @Component({
@@ -8,21 +11,44 @@ import { LightMesService } from '../services/light-mes.service';
   templateUrl: './light-mes-status-dashboard.component.html',
 })
 export class WorkOrderLightMesStatusDashboardComponent implements OnInit {
+  lightMESConfiguration?: LightMesConfiguration;
+  machines?: Machine[] = [];
+  isSpinning = false;
+
+  gridStyle = {
+    width: '25%',
+    textAlign: 'center'
+  };
+
 
   constructor(private http: _HttpClient, 
-    private lightMESService: LightMesService) { }
+    private lightMESService: LightMesService, 
+    private lightMESConfigurationService: LightMesConfigurationService) { 
+      lightMESConfigurationService.getLightMesConfiguration().subscribe({
+        next: (lightMESConfigurationRes) => this.lightMESConfiguration = lightMESConfigurationRes
+      });
+    }
 
   ngOnInit(): void {
-    this.lightMESService.getMachineList().subscribe({
-      next: (machines) => {
-        console.log(`get ${machines.length} machines`);
-        machines.forEach(
+    this.isSpinning = true;
+    this.lightMESService.getMachineStatus().subscribe({
+      next: (machinesRes) => {
+        console.log(`get ${machinesRes.length} machines`);
+        machinesRes.forEach(
           machine => {
             console.log(`machine ${machine.machineNo} / ${machine.machineName}: mid - ${machine.mid}, sim - ${machine.sim}, status - ${machine.status}`);
           }
-        )
-      }
+        );
+        this.machines = machinesRes;
+        
+        this.isSpinning = false;
+      }, 
+      error: () => this.isSpinning = false
     })
+   }
+
+   getBodyStyle(machine: Machine) {
+    return  {"color":"red"} ;
    }
 
 }

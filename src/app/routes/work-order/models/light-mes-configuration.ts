@@ -15,4 +15,6 @@ export interface LightMesConfiguration {
     singleLightPulseQueryUrl?: string;
     singleMachineDetailQueryUrl?: string;
     machineListQueryUrl?: string;
+
+    timeZone?: string;
 }

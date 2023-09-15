@@ -1,3 +1,5 @@
+import { MachineStatistics } from "./machine-statistics";
+
 export interface Machine {
     
     mid : string;
@@ -7,6 +9,10 @@ export interface Machine {
     sim : string;
 
     status : number;
+
+    currentState : string;
+    machineStatistics: MachineStatistics[];
+     
 
     machineBrand : string;
     machineModel : string;

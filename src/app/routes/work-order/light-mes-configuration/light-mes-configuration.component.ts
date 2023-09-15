@@ -16,6 +16,8 @@ import { LightMesConfigurationService } from '../services/light-mes-configuratio
 export class WorkOrderLightMesConfigurationComponent implements OnInit { 
   currentLightMESConfiguration!: LightMesConfiguration; 
 
+  avaiableZoneIds : string[] = [];
+
   isSpinning = false; 
   displayOnly = false;
 
@@ -52,6 +54,11 @@ export class WorkOrderLightMesConfigurationComponent implements OnInit {
   ngOnInit(): void { 
   
     this.isSpinning = true;
+    
+    this.warehouseService.getAvailableZoneIds().subscribe({
+      next: (zoneIds) => this.avaiableZoneIds = zoneIds
+    });
+    
     this.lightMesConfigurationService.getLightMesConfiguration().subscribe(
       {
         next: (lightMESConfigurationRes) => {

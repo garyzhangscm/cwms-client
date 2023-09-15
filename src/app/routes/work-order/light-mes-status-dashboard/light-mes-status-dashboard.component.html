@@ -1,1 +1,28 @@
 <page-header></page-header>
+
+
+
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+  <div *ngIf="lightMESConfiguration == null">
+
+    <nz-result nzStatus="warning" [nzIcon]="'info-circle'" nzTitle="{{'light MES Configuration is not setup' | i18n}}"> 
+      <div nz-result-extra>
+        please go to <a routerLink="/work-order/light-mes-configuration" routerLinkActive="active">Light MES Configuration</a> page to setup the configuration
+      </div>
+    </nz-result>
+  </div>
+
+
+  <nz-card  *ngIf="lightMESConfiguration != null">
+    <div nz-card-grid [ngStyle]="gridStyle" *ngFor="let machine of machines">
+      <nz-card [nzTitle]="machine.machineNo" [nzBodyStyle]="{'background-color': 'red'}">
+          status: {{machine.currentState}}
+         <div *ngFor="let machineStatistics of machine.machineStatistics">
+          <p>{{machineStatistics.workOrderNumber}} / {{machineStatistics.itemName}}</p>
+          </div>
+      </nz-card>
+    </div> 
+  </nz-card>
+</nz-spin>
