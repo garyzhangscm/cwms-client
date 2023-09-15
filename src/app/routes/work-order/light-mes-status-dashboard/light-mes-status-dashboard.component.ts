@@ -16,7 +16,7 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit {
   isSpinning = false;
 
   gridStyle = {
-    width: '10%',
+    width: '12.5%',
     textAlign: 'center'
   };
 
@@ -52,16 +52,16 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit {
     
     switch(machine.currentState) {
       case '001':
-        return  {'background-color': 'green'} ; 
+        return  {'background-color': 'green', 'color': 'red', 'font-weight':'bold'} ; 
       case '010':
-        return  {'background-color': 'yellow'} ; 
+        return  {'background-color': 'yellow', 'font-weight':'bold'} ; 
       case '100':
-        return  {'background-color': 'red'} ; 
+        return  {'background-color': 'red', 'color': 'green', 'font-weight':'bold'} ; 
       case '000':
-        return  {'background-color': 'grey'} ;  
+        return  {'background-color': 'grey', 'font-weight':'bold'} ;  
 
     }
-    return {'background-color': 'white'} ; 
+    return {'background-color': 'white', 'font-weight':'bold'} ; 
    }
 
 }

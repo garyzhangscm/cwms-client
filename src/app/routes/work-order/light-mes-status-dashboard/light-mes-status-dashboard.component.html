@@ -20,7 +20,7 @@
       <nz-card [nzTitle]="machine.machineNo" [nzBodyStyle]="getBodyStyle(machine)">
            
          <div *ngFor="let machineStatistics of machine.machineStatistics">
-            <p style="font-size: 12px;">{{machineStatistics.itemName}}</p>
+            <p style="font-size: 15px;">{{machineStatistics.itemName}}</p>
             <p>{{machineStatistics.producedQuantity}} / {{machineStatistics.shiftEstimationQuantity}} ({{machineStatistics.achievementRate | percent: '1.0-2'}})</p>
           </div>
       </nz-card>
