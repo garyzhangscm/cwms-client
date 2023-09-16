@@ -1,5 +1,5 @@
 import {  formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core'; 
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core'; 
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { LegendPosition, NgxChartsModule } from '@swimlane/ngx-charts';
@@ -21,7 +21,7 @@ import { WorkOrderConfigurationService } from '../services/work-order-configurat
   templateUrl: './production-line-status-display.component.html',
   styleUrls: ['./production-line-status-display.component.less'],
 })
-export class WorkOrderProductionLineStatusDisplayComponent implements OnInit {
+export class WorkOrderProductionLineStatusDisplayComponent implements OnInit, OnDestroy {
  
   public graph = {
     data: [ 

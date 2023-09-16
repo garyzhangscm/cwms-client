@@ -15,7 +15,7 @@
   </div>
 
 
-  <nz-card  *ngIf="lightMESConfiguration != null" >
+  <nz-card  *ngIf="lightMESConfiguration != null" nzTitle="Count down: {{ countDownNumber }}">
     <div nz-card-grid [ngStyle]="gridStyle" *ngFor="let machine of machines"  >
       <nz-card [nzTitle]="titleTemplate" [nzBodyStyle]="getBodyStyle(machine)">
            
@@ -23,12 +23,12 @@
             <p style="font-size: 15px;">{{machineStatistics.itemName}}</p>
             <p>{{machineStatistics.producedQuantity}} / {{machineStatistics.shiftEstimationQuantity}} ({{machineStatistics.achievementRate | percent: '1.0-2'}})</p>
           </div>
-          <p>last hour pulse count: {{machine.pulseCount}}</p>
-          <p>last hour cycle time: {{machine.cycleTime}}</p>
+          <p>pulse count: {{machine.lastHourPulseCount}} / {{machine.shiftPulseCount}}</p>
+          <p>cycle time: {{machine.lastHourCycleTime}} / {{machine.shiftCycleTime}}</p>
           <ng-template #titleTemplate>
             <strong>{{machine.machineNo}}</strong>
           </ng-template>
       </nz-card>
-    </div> 
+    </div>  
   </nz-card>
 </nz-spin>

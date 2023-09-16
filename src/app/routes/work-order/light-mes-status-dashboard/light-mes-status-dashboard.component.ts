@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
+import { NzMessageService } from 'ng-zorro-antd/message'; 
+import { interval, Subscription } from 'rxjs';
 
 import { LightMesConfiguration } from '../models/light-mes-configuration';
 import { Machine } from '../models/machine';
@@ -10,7 +12,7 @@ import { LightMesService } from '../services/light-mes.service';
   selector: 'app-work-order-light-mes-status-dashboard',
   templateUrl: './light-mes-status-dashboard.component.html',
 })
-export class WorkOrderLightMesStatusDashboardComponent implements OnInit {
+export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDestroy {
   lightMESConfiguration?: LightMesConfiguration;
   machines?: Machine[] = [];
   isSpinning = false;
@@ -20,10 +22,17 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit {
     textAlign: 'center',
     padding: '2px'
   };
-
+  
+  // default to show 5 seconds per page
+  refreshCountCycle = 60;
+  countDownNumber = this.refreshCountCycle;
+  countDownsubscription!: Subscription;
+  loadingData = false;
+ 
 
   constructor(private http: _HttpClient, 
-    private lightMESService: LightMesService, 
+    private lightMESService: LightMesService,  
+    private messageService: NzMessageService,
     private lightMESConfigurationService: LightMesConfigurationService) { 
       lightMESConfigurationService.getLightMesConfiguration().subscribe({
         next: (lightMESConfigurationRes) => this.lightMESConfiguration = lightMESConfigurationRes
@@ -31,6 +40,13 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit {
     }
 
   ngOnInit(): void {
+    this.refresh();
+    this.countDownsubscription = interval(1000).subscribe(x => {
+      this.handleCountDownEvent();
+    })
+   }
+
+   refresh() {
     this.isSpinning = true;
     this.lightMESService.getMachineStatus().subscribe({
       next: (machinesRes) => {
@@ -45,7 +61,7 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit {
         this.isSpinning = false;
       }, 
       error: () => this.isSpinning = false
-    })
+    });
    }
 
    getBodyStyle(machine: Machine) {
@@ -64,5 +80,31 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit {
     }
     return {'background-color': 'white', 'font-weight':'bold'} ; 
    }
+
+   
+   handleCountDownEvent(): void {
+     
+    // don't count down when we are loading data
+    if (this.loadingData) {
+      
+      this.resetCountDownNumber();
+      return;
+    }
+    this.countDownNumber--;
+    if (this.countDownNumber <= 0) {
+      this.resetCountDownNumber();
+      this.refresh();
+    } 
+
+  }
+  resetCountDownNumber() {
+    this.countDownNumber = this.refreshCountCycle;
+  }
+  
+  ngOnDestroy() {
+    this.countDownsubscription.unsubscribe();
+
+  }
+
 
 }

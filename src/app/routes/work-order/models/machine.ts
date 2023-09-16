@@ -29,7 +29,9 @@ export interface Machine {
     useTime : string;
 
     
-    pulseCount: number;
-    cycleTime: number;
+    lastHourPulseCount: number;
+    lastHourCycleTime: number;
+    shiftPulseCount: number;
+    shiftCycleTime: number;
     
 }

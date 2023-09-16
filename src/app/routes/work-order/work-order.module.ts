@@ -21,8 +21,7 @@ import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
-import { NzTreeViewModule } from 'ng-zorro-antd/tree-view';
-import { CountdownModule } from 'ngx-countdown';
+import { NzTreeViewModule } from 'ng-zorro-antd/tree-view'; 
 import * as PlotlyJS from 'plotly.js-dist-min';
 
 
@@ -38,6 +37,7 @@ import { WorkOrderDeassignProductionLineComponent } from './deassign-production-
 import { WorkOrderLaborActivityComponent } from './labor-activity/labor-activity.component';
 import { WorkOrderLaborComponent } from './labor/labor.component';
 import { WorkOrderLightMesConfigurationComponent } from './light-mes-configuration/light-mes-configuration.component';
+import { WorkOrderLightMesStatusDashboardComponent } from './light-mes-status-dashboard/light-mes-status-dashboard.component';
 import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component';
 import { WorkOrderMouldComponent } from './mould/mould.component';
 import { WorkOrderMpsExportComponent } from './mps-export/mps-export.component';
@@ -83,7 +83,6 @@ import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspect
 import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component'; 
 import { WorkOrderRoutingModule } from './work-order-routing.module';
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
-import { WorkOrderLightMesStatusDashboardComponent } from './light-mes-status-dashboard/light-mes-status-dashboard.component';
 
 
 PlotlyModule.plotlyjs = PlotlyJS;
@@ -152,7 +151,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzDescriptionsModule,
     NzTransferModule,
     CommonModule,
-    WarehouseLayoutModule, CountdownModule,
+    WarehouseLayoutModule, 
     ScrollingModule, STModule, NzStepsModule,
     NzAutocompleteModule,
     UtilModule, 
@@ -168,7 +167,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     EllipsisModule,
     XlsxModule,
     NgxChartsModule,
-    PlotlyModule
+    PlotlyModule  
   ],
   declarations: [
     ...COMPONENTS,
