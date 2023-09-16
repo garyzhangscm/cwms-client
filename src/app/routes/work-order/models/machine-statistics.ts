@@ -10,9 +10,9 @@ export interface MachineStatistics {
     shiftStartTime: Date;
     shiftEndTime: Date;
 
-    producedQuantity: number;
-    pulseCount: number;
+    producedQuantity: number; 
 
     achievementRate: number;
     shiftEstimationQuantity: number;
+
 }

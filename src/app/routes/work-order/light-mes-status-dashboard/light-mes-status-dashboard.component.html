@@ -23,6 +23,8 @@
             <p style="font-size: 15px;">{{machineStatistics.itemName}}</p>
             <p>{{machineStatistics.producedQuantity}} / {{machineStatistics.shiftEstimationQuantity}} ({{machineStatistics.achievementRate | percent: '1.0-2'}})</p>
           </div>
+          <p>last hour pulse count: {{machine.pulseCount}}</p>
+          <p>last hour cycle time: {{machine.cycleTime}}</p>
           <ng-template #titleTemplate>
             <strong>{{machine.machineNo}}</strong>
           </ng-template>

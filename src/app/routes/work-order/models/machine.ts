@@ -27,4 +27,9 @@ export interface Machine {
     firstDate : string;
     documents : string;
     useTime : string;
+
+    
+    pulseCount: number;
+    cycleTime: number;
+    
 }
