@@ -17,7 +17,8 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit {
 
   gridStyle = {
     width: '12.5%',
-    textAlign: 'center'
+    textAlign: 'center',
+    padding: '2px'
   };
 
 
@@ -52,7 +53,7 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit {
     
     switch(machine.currentState) {
       case '001':
-        return  {'background-color': 'green', 'color': 'red', 'font-weight':'bold'} ; 
+        return  {'background-color': 'green', 'color': 'white', 'font-weight':'bold'} ; 
       case '010':
         return  {'background-color': 'yellow', 'font-weight':'bold'} ; 
       case '100':

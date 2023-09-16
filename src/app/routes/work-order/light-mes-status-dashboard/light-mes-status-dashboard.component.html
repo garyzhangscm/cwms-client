@@ -15,14 +15,17 @@
   </div>
 
 
-  <nz-card  *ngIf="lightMESConfiguration != null">
-    <div nz-card-grid [ngStyle]="gridStyle" *ngFor="let machine of machines">
-      <nz-card [nzTitle]="machine.machineNo" [nzBodyStyle]="getBodyStyle(machine)">
+  <nz-card  *ngIf="lightMESConfiguration != null" >
+    <div nz-card-grid [ngStyle]="gridStyle" *ngFor="let machine of machines"  >
+      <nz-card [nzTitle]="titleTemplate" [nzBodyStyle]="getBodyStyle(machine)">
            
          <div *ngFor="let machineStatistics of machine.machineStatistics">
             <p style="font-size: 15px;">{{machineStatistics.itemName}}</p>
             <p>{{machineStatistics.producedQuantity}} / {{machineStatistics.shiftEstimationQuantity}} ({{machineStatistics.achievementRate | percent: '1.0-2'}})</p>
           </div>
+          <ng-template #titleTemplate>
+            <strong>{{machine.machineNo}}</strong>
+          </ng-template>
       </nz-card>
     </div> 
   </nz-card>
