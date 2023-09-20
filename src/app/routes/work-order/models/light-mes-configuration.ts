@@ -17,4 +17,5 @@ export interface LightMesConfiguration {
     machineListQueryUrl?: string;
 
     timeZone?: string;
+    cycleTimeWindow?: number;
 }

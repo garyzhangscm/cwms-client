@@ -29,7 +29,8 @@
           <label nz-radio *ngFor="let type of productionLineTypes" [nzValue]="type.name">{{type.name}}</label> 
         </nz-radio-group>
         
-        <span style="padding-left: 20px">Refresh Cycle(in seconds): </span><nz-input-number   [nzMin]="1" [nzMax]="9999" [nzStep]="1"   [(ngModel)]="refreshCountCycle" >
+        <span style="padding-left: 20px">Refresh Cycle(in seconds): </span>
+        <nz-input-number   [nzMin]="1" [nzMax]="9999" [nzStep]="1"   [(ngModel)]="refreshCountCycle" (ngModelChange)="refreshCountCycleChanged()" >
         </nz-input-number> 
 
     </div>  
@@ -51,7 +52,7 @@
           <p>cycle time: {{machine.lastHourCycleTime}} / {{machine.shiftCycleTime}}</p>
           -->
           <div>mold count:  {{machine.shiftPulseCount}}</div>
-          <div>cycle time: {{machine.lastHourCycleTime}} </div>
+          <div>cycle time: {{machine.lastTimeWindowCycleTime}}</div>
           <ng-template #titleTemplate>
             <strong [ngStyle]="getBodyStyle(machine)">{{machine.machineNo}}</strong>
           </ng-template>

@@ -19,6 +19,8 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
   productionLineType = "All";
   productionLineTypes: ProductionLineType[] = [];
   machines?: Machine[] = [];
+  productionLineTypeLocalStorageKey = "light_mes_status_dashboard_production_line_key";
+  refreshCountCycleLocalStorageKey = "light_mes_status_dashboard_refresh_cycle_key";
   isSpinning = false;
 
   gridStyle = {
@@ -46,11 +48,26 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
     }
 
   ngOnInit(): void {
-    this.loadAvailableProductionLineTypes();
-    this.refresh();
-    this.countDownsubscription = interval(1000).subscribe(x => {
-      this.handleCountDownEvent();
-    })
+      this.loadAvailableProductionLineTypes();
+      if (localStorage.getItem(this.productionLineTypeLocalStorageKey)) {
+        this.productionLineType = localStorage.getItem(this.productionLineTypeLocalStorageKey)!;
+      }
+      if (localStorage.getItem(this.refreshCountCycleLocalStorageKey)) { 
+        this.refreshCountCycle = +localStorage.getItem(this.refreshCountCycleLocalStorageKey)!;
+        this.countDownNumber = this.refreshCountCycle;
+      }
+    
+      if (this.productionLineType == "All") {
+        this.refresh();
+      }
+      else {
+
+        this.refresh(this.productionLineType);
+      }
+      
+      this.countDownsubscription = interval(1000).subscribe(x => {
+        this.handleCountDownEvent();
+      })
    }
 
    loadAvailableProductionLineTypes() : void {
@@ -63,12 +80,13 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
     this.isSpinning = true;
     this.lightMESService.getMachineStatus(undefined, productionLineTypeName).subscribe({
       next: (machinesRes) => {
-        console.log(`get ${machinesRes.length} machines`);
-        machinesRes.forEach(
-          machine => {
-            console.log(`machine ${machine.machineNo} / ${machine.machineName}: mid - ${machine.mid}, sim - ${machine.sim}, status - ${machine.status}`);
-          }
-        );
+        // console.log(`get ${machinesRes.length} machines`);
+        
+        // machinesRes.forEach(
+        //   machine => {
+        //     console.log(`machine ${machine.machineNo} / ${machine.machineName}: mid - ${machine.mid}, sim - ${machine.sim}, status - ${machine.status}`);
+        //   }
+        // );
         this.machines = machinesRes;
         
         this.isSpinning = false;
@@ -127,6 +145,8 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
   }
 
   productionLineTypeChanged() {
+    
+    localStorage.setItem(this.productionLineTypeLocalStorageKey, this.productionLineType)
     if (this.productionLineType == "All") {
       this.refresh();
     }
@@ -135,6 +155,11 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
       this.refresh(this.productionLineType);
     }
 
+  }
+
+  refreshCountCycleChanged() {
+    
+    localStorage.setItem(this.refreshCountCycleLocalStorageKey, this.refreshCountCycle.toString());
   }
 
 }

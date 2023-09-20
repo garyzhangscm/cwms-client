@@ -1,4 +1,5 @@
 
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -20,12 +21,23 @@ export class ProductionLineService {
     private utilService: UtilService,
     private warehouseService: WarehouseService) {}
 
-  getProductionLines(name?: string): Observable<ProductionLine[]> {
-    const url = name
-      ? `workorder/production-lines?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&name=${name}`
-      : `workorder/production-lines?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+  getProductionLines(name?: string, type?: string): Observable<ProductionLine[]> {
+    const url =  `workorder/production-lines`;
 
-    return this.http.get(url).pipe(map(res => res.data));
+      
+    let params = new HttpParams();
+           
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+    if (name) {
+      params = params.append('name', name); 
+
+    }
+    if (type) {
+      params = params.append('type', type); 
+
+    }
+
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
   getAvailableProductionLines(itemId?: number): Observable<ProductionLine[]> {
     let url = `workorder/production-lines/available?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;

@@ -12,7 +12,9 @@ import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service'; 
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { ProductionLine } from '../models/production-line';
+import { ProductionLineType } from '../models/production-line-type';
 import { ProductionLineAssignmentService } from '../services/production-line-assignment.service';
+import { ProductionLineTypeService } from '../services/production-line-type.service';
 import { ProductionLineService } from '../services/production-line.service';
 
 @Component({
@@ -152,6 +154,9 @@ export class WorkOrderProductionLineComponent implements OnInit {
   checked = false;
   indeterminate = false;
 
+  
+  availableProductionLineTypes: ProductionLineType[] = [];
+
   expandSet = new Set<number>();
 
 
@@ -167,6 +172,7 @@ export class WorkOrderProductionLineComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private productionLineAssignmentService: ProductionLineAssignmentService,
     private localCacheService: LocalCacheService,
+    private productionLineTypeService: ProductionLineTypeService,
   ) {
     userService.isCurrentPageDisplayOnly("/work-order/production-line").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
@@ -202,6 +208,11 @@ export class WorkOrderProductionLineComponent implements OnInit {
     }
   }
 
+  loadAvailableProductionLineTypes() : void {
+    this.productionLineTypeService.getProductionLineTypes().subscribe({
+      next: (productionLineTypeRes) => this.availableProductionLineTypes = productionLineTypeRes
+    })
+  }
 
   showProductionLineDetails(productionLine: ProductionLine) : void {
     if (productionLine.productionLineAssignments != null && productionLine.productionLineAssignments.length > 0) {
@@ -236,7 +247,9 @@ export class WorkOrderProductionLineComponent implements OnInit {
   search(): void {
     this.isSpinning = true;
     this.searchResult = '';
-    this.productionLineService.getProductionLines(this.searchForm.controls.name.value).subscribe(
+    this.productionLineService.getProductionLines(
+      this.searchForm.controls.name.value,
+      this.searchForm.controls.type.value).subscribe(
       productionLineRes => {
         this.listOfAllProductionLine = productionLineRes;
         this.listOfDisplayProductionLine = productionLineRes;
@@ -287,6 +300,7 @@ export class WorkOrderProductionLineComponent implements OnInit {
     // initiate the search form
     this.searchForm = this.fb.group({
       name: [null],
+      type: [null],
     });
 
 
@@ -296,6 +310,8 @@ export class WorkOrderProductionLineComponent implements OnInit {
         this.search();
       }
     });
+
+    this.loadAvailableProductionLineTypes();
 
   }
   disableProductionLine(productionLine: ProductionLine): void {

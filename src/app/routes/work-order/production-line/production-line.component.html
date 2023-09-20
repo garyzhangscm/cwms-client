@@ -15,6 +15,21 @@
           </nz-form-control>
         </nz-form-item>
       </div>
+      
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6">
+            {{ 'type' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <nz-select nz-input  name="type" id="type" formControlName="type" style="width: 250px">
+              <nz-option *ngFor="let type of availableProductionLineTypes" [nzLabel]="type.name!"
+                [nzValue]="type.name!">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
 
     </div>
     <div nz-row>
