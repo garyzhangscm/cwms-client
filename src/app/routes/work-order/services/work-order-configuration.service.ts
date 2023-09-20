@@ -33,4 +33,12 @@ export class WorkOrderConfigurationService {
 
 
   }
+  
+  getCurrentShift(): Observable<any> {
+    let url = `workorder/work-order-configuration/current-shift?warehouseId=${this.warehouseService.getCurrentWarehouse()!.id}`;
+
+    return this.http.get(url).pipe(map(res => res.data));
+
+
+  }
 }

@@ -219,9 +219,11 @@
     <tbody>
       <tr *ngFor="let pick of pickTable.data">
         <td [nzChecked]="setOfCheckedId.has(pick.id!)" (nzCheckedChange)="onItemChecked(pick.id!, $event)"
-          [nzDisabled]="mapOfConfirmedQuantity[pick.number] === 0 || pick.status != pickStatus.RELEASED"></td>
+          [nzDisabled]="mapOfConfirmedQuantity[pick.number] === 0 || pick.status != pickStatus.RELEASED || pick.pickGroupType != pickGroupTypes.SINGLE_PICK"></td>
 
         <td>{{ pick.number }}</td>
+        <td>
+          <span *ngIf="pick.pickGroupType != null">{{  'PICK-GROUP-TYPE-' + pick.pickGroupType | i18n }}</span></td>
         <td>{{ pick.sourceLocation?.name }}</td>
         <td>{{ pick.destinationLocation?.name }}</td>
         <td>{{ pick.item?.name }}</td>

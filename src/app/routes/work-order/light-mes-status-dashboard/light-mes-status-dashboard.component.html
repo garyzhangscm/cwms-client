@@ -19,6 +19,8 @@
        nzTitle="Count down: {{ countDownNumber }}">
        
     <ng-template #showConfigurationTemplate>
+        <span style="padding-right: 10px">{{currentTime | date : 'short'}}</span>
+        <span style="padding-right: 10px">(current shift: [{{currentShiftStartTime }} - {{currentShiftEndTime  }}])</span>
         <label nz-checkbox [(ngModel)]="showConfiguration" >
           <span> {{ 'showConfiguration' | i18n }}</span>
         </label>
@@ -34,8 +36,14 @@
         </nz-input-number> 
 
     </div>  
+    <!--
+
+      <div nz-card-grid [ngStyle]="gridStyle" *ngFor="let machine of machines"  >
+      </div>
+      
+    -->
     <div nz-card-grid [ngStyle]="gridStyle" *ngFor="let machine of machines"  >
-      <nz-card [nzBodyStyle]="getBodyStyle(machine)">
+      <nz-card [nzBodyStyle]="getBodyStyle(machine)" >
           <div style="font-size: 20px;">{{machine.machineNo}}</div>
           <div *ngFor="let machineStatistics of machine.machineStatistics">
             <div style="font-size: 15px;">{{machineStatistics.itemName}}</div>

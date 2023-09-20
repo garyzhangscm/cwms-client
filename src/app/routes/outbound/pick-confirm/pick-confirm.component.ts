@@ -13,6 +13,7 @@ import { WorkOrder } from '../../work-order/models/work-order';
 import { WorkOrderService } from '../../work-order/services/work-order.service';
 import { Cartonization } from '../models/cartonization';
 import { Order } from '../models/order';
+import { PickGroupType } from '../models/pick-group-type.enum';
 import { PickList } from '../models/pick-list';
 import { PickStatus } from '../models/pick-status.enum';
 import { PickWork } from '../models/pick-work';
@@ -39,6 +40,17 @@ export class OutboundPickConfirmComponent implements OnInit {
       showSort: true,
       sortOrder: null,
       sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableString(a.number, b.number),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'type',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableString(a.pickGroupType, b.pickGroupType),
       sortDirections: ['ascend', 'descend'],
       filterMultiple: true,
       listOfFilter: [],
@@ -119,6 +131,7 @@ export class OutboundPickConfirmComponent implements OnInit {
   checked = false;
   indeterminate = false;
   pickStatus = PickStatus;
+  pickGroupTypes = PickGroupType;
 
 
   pageTitle = '';
@@ -299,12 +312,32 @@ export class OutboundPickConfirmComponent implements OnInit {
       // initial the picks array;
       this.listOfAllPicks = [];
 
-      this.pickService.getPicksByWorkOrder(this.workOrder).subscribe(pickRes => {
-        this.listOfAllPicks = pickRes;
-        this.listOfDisplayPicks = pickRes;
-        this.setupConfirmedQuantity(this.listOfAllPicks);
-        this.refreshCheckedStatus();
-      });
+      this.pickService.getPicksByWorkOrder(this.workOrder).subscribe(
+        {
+          next: (pickRes) => {            
+              // get all the single pick and add it to the result
+              // this.mapOfPicks[wave.id!] = pickRes.filter(pick => this.pickService.isSinglePick(pick));
+              // get all the bulk pick
+              // console.log(`start to setup ${pickRes.length}`);
+              // group the picks into 
+              // 1. single pick
+              // 2. bulk pick
+              // 3. list pick
+              this.pickService.setupPicksForDisplay(pickRes).then(
+                pickWorks => { 
+                  
+                  this.listOfAllPicks = pickWorks;
+                  this.listOfDisplayPicks = pickWorks;
+                  this.setupConfirmedQuantity(this.listOfAllPicks);
+                  this.refreshCheckedStatus(); 
+
+                  // setup the work task related information
+                  // this.setupWorkTaskInformationForPicks(this.mapOfPicks[wave.id!]);
+                }
+            );
+          }
+        }
+      );
     });
   }
   displayOrder(orderId: number): void {
@@ -313,11 +346,30 @@ export class OutboundPickConfirmComponent implements OnInit {
       this.order = orderRes;
       this.lastPageUrl = `/outbound/order?number=${this.order.number}`;
       // initial the picks array;
-      this.pickService.getPicksByOrder(this.order.id!).subscribe(pickRes => {
-        this.listOfAllPicks = pickRes;
-        this.listOfDisplayPicks = pickRes; 
-        this.setupConfirmedQuantity(this.listOfAllPicks);
-        this.refreshCheckedStatus();
+      this.pickService.getPicksByOrder(this.order.id!).subscribe({
+        next: (pickRes) => {
+          
+              // get all the single pick and add it to the result
+              // this.mapOfPicks[wave.id!] = pickRes.filter(pick => this.pickService.isSinglePick(pick));
+              // get all the bulk pick
+              // console.log(`start to setup ${pickRes.length}`);
+              // group the picks into 
+              // 1. single pick
+              // 2. bulk pick
+              // 3. list pick
+              this.pickService.setupPicksForDisplay(pickRes).then(
+                pickWorks => { 
+                  
+                  this.listOfAllPicks = pickWorks;
+                  this.listOfDisplayPicks = pickWorks;
+                  this.setupConfirmedQuantity(this.listOfAllPicks);
+                  this.refreshCheckedStatus(); 
+
+                  // setup the work task related information
+                  // this.setupWorkTaskInformationForPicks(this.mapOfPicks[wave.id!]);
+                }
+            );
+        }
       });
     });
   }
@@ -327,11 +379,30 @@ export class OutboundPickConfirmComponent implements OnInit {
       this.shipment = shipmentRes;
       this.lastPageUrl = `/outbound/shipment?number=${this.shipment.number}`;
       // initial the picks array;
-      this.pickService.getPicksByShipment(this.shipment.id).subscribe(pickRes => {
-        this.listOfAllPicks = pickRes;
-        this.listOfDisplayPicks = pickRes;
-        this.setupConfirmedQuantity(this.listOfAllPicks);
-        this.refreshCheckedStatus();
+      this.pickService.getPicksByShipment(this.shipment.id).subscribe({
+        next: (pickRes) => {
+          
+              // get all the single pick and add it to the result
+              // this.mapOfPicks[wave.id!] = pickRes.filter(pick => this.pickService.isSinglePick(pick));
+              // get all the bulk pick
+              // console.log(`start to setup ${pickRes.length}`);
+              // group the picks into 
+              // 1. single pick
+              // 2. bulk pick
+              // 3. list pick
+              this.pickService.setupPicksForDisplay(pickRes).then(
+                pickWorks => { 
+                  
+                  this.listOfAllPicks = pickWorks;
+                  this.listOfDisplayPicks = pickWorks;
+                  this.setupConfirmedQuantity(this.listOfAllPicks);
+                  this.refreshCheckedStatus(); 
+
+                  // setup the work task related information
+                  // this.setupWorkTaskInformationForPicks(this.mapOfPicks[wave.id!]);
+                }
+            );
+        }
       });
     });
   }
@@ -341,12 +412,33 @@ export class OutboundPickConfirmComponent implements OnInit {
       this.wave = waveRes;
       this.lastPageUrl = `/outbound/wave?number=${this.wave.number}`;
       // initial the picks array;
-      this.pickService.getPicksByWave(this.wave.id!).subscribe(pickRes => {
-        this.listOfAllPicks = pickRes;
-        this.listOfDisplayPicks = pickRes;
-        this.setupConfirmedQuantity(this.listOfAllPicks);
-        this.refreshCheckedStatus();
-      });
+      this.pickService.getPicksByWave(this.wave.id!).subscribe({
+          next: (pickRes) => {
+              // get all the single pick and add it to the result
+              // this.mapOfPicks[wave.id!] = pickRes.filter(pick => this.pickService.isSinglePick(pick));
+              // get all the bulk pick
+              // console.log(`start to setup ${pickRes.length}`);
+              // group the picks into 
+              // 1. single pick
+              // 2. bulk pick
+              // 3. list pick
+              this.pickService.setupPicksForDisplay(pickRes).then(
+                  pickWorks => { 
+                    
+                    this.listOfAllPicks = pickWorks;
+                    this.listOfDisplayPicks = pickWorks;
+                    this.setupConfirmedQuantity(this.listOfAllPicks);
+                    this.refreshCheckedStatus(); 
+
+                    // setup the work task related information
+                    // this.setupWorkTaskInformationForPicks(this.mapOfPicks[wave.id!]);
+                  }
+              );
+
+                
+          }
+
+      }); 
     });
   }
   displayPickList(pickListId: number): void {
@@ -355,11 +447,30 @@ export class OutboundPickConfirmComponent implements OnInit {
       this.pickList = pickListRes;
       this.lastPageUrl = `/outbound/pick-list?number=${this.pickList.number}`;
       // initial the picks array;
-      this.pickService.getPicksByPickList(this.pickList.id).subscribe(pickRes => {
-        this.listOfAllPicks = pickRes;
-        this.listOfDisplayPicks = pickRes;
-        this.setupConfirmedQuantity(this.listOfAllPicks);
-        this.refreshCheckedStatus();
+      this.pickService.getPicksByPickList(this.pickList.id).subscribe({
+        next: (pickRes) => {
+          
+              // get all the single pick and add it to the result
+              // this.mapOfPicks[wave.id!] = pickRes.filter(pick => this.pickService.isSinglePick(pick));
+              // get all the bulk pick
+              // console.log(`start to setup ${pickRes.length}`);
+              // group the picks into 
+              // 1. single pick
+              // 2. bulk pick
+              // 3. list pick
+              this.pickService.setupPicksForDisplay(pickRes).then(
+                pickWorks => { 
+                  
+                  this.listOfAllPicks = pickWorks;
+                  this.listOfDisplayPicks = pickWorks;
+                  this.setupConfirmedQuantity(this.listOfAllPicks);
+                  this.refreshCheckedStatus(); 
+
+                  // setup the work task related information
+                  // this.setupWorkTaskInformationForPicks(this.mapOfPicks[wave.id!]);
+                }
+            );
+        }
       });
     });
   }
@@ -369,18 +480,45 @@ export class OutboundPickConfirmComponent implements OnInit {
       this.cartonization = cartonizationRes;
       this.lastPageUrl = `/outbound/cartonization?number=${this.cartonization.number}`;
       // initial the picks array;
-      this.pickService.getPicksByCartonization(this.cartonization.id).subscribe(pickRes => {
-        this.listOfAllPicks = pickRes;
-        this.listOfDisplayPicks = pickRes;
-        this.setupConfirmedQuantity(this.listOfAllPicks);
-        this.refreshCheckedStatus();
+      this.pickService.getPicksByCartonization(this.cartonization.id).subscribe({
+        next: (pickRes) => {
+          
+              // get all the single pick and add it to the result
+              // this.mapOfPicks[wave.id!] = pickRes.filter(pick => this.pickService.isSinglePick(pick));
+              // get all the bulk pick
+              // console.log(`start to setup ${pickRes.length}`);
+              // group the picks into 
+              // 1. single pick
+              // 2. bulk pick
+              // 3. list pick
+              this.pickService.setupPicksForDisplay(pickRes).then(
+                pickWorks => { 
+                  
+                  this.listOfAllPicks = pickWorks;
+                  this.listOfDisplayPicks = pickWorks;
+                  this.setupConfirmedQuantity(this.listOfAllPicks);
+                  this.refreshCheckedStatus(); 
+
+                  // setup the work task related information
+                  // this.setupWorkTaskInformationForPicks(this.mapOfPicks[wave.id!]);
+                }
+            );
+        }
       });
     });
   }
 
   setupConfirmedQuantity(picks: PickWork[]): void {
     picks.forEach(pick => {
-      this.mapOfConfirmedQuantity[pick.number] = pick.quantity - pick.pickedQuantity;
+      // the user is only allow to confirm single pick in this page
+      if (pick.pickGroupType == null || pick.pickGroupType === PickGroupType.SINGLE_PICK) {
+
+        this.mapOfConfirmedQuantity[pick.number] = pick.quantity - pick.pickedQuantity;
+      }
+      else {
+        
+        this.mapOfConfirmedQuantity[pick.number] = 0;
+      }
     });
   }
 
@@ -398,7 +536,16 @@ export class OutboundPickConfirmComponent implements OnInit {
   }
 
   onAllChecked(value: boolean): void {
-    this.listOfDisplayPicks!.forEach(item => this.updateCheckedSet(item.id, value));
+    this.listOfDisplayPicks!.forEach(pick => {
+      if ((pick.pickGroupType == null || pick.pickGroupType === PickGroupType.SINGLE_PICK) &&
+          pick.quantity > pick.pickedQuantity) {
+
+        this.updateCheckedSet(pick.id, value);
+      }
+      else {
+        this.updateCheckedSet(pick.id, false);
+      }  
+    });
     this.refreshCheckedStatus();
   }
 

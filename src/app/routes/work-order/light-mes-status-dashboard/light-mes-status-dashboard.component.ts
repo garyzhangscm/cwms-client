@@ -6,9 +6,11 @@ import { interval, Subscription } from 'rxjs';
 import { LightMesConfiguration } from '../models/light-mes-configuration';
 import { Machine } from '../models/machine';
 import { ProductionLineType } from '../models/production-line-type';
+import { WorkOrderConfiguration } from '../models/work-order-configuration';
 import { LightMesConfigurationService } from '../services/light-mes-configuration.service';
 import { LightMesService } from '../services/light-mes.service';
 import { ProductionLineTypeService } from '../services/production-line-type.service';
+import { WorkOrderConfigurationService } from '../services/work-order-configuration.service';
 
 @Component({
   selector: 'app-work-order-light-mes-status-dashboard',
@@ -35,16 +37,25 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
   countDownsubscription!: Subscription;
   loadingData = false;
   showConfiguration = false;
+
+  // refresh and show the current time
+  currentTime : any = new Date();
+  currentTimesubscription!: Subscription;
+
+  currentShiftStartTime?: string;
+  currentShiftEndTime?: string;
+  shiftTimesubscription!: Subscription;
  
 
   constructor(private http: _HttpClient, 
     private lightMESService: LightMesService,  
     private messageService: NzMessageService,
     private productionLineTypeService: ProductionLineTypeService,
+    private workOrderConfigurationService: WorkOrderConfigurationService,
     private lightMESConfigurationService: LightMesConfigurationService) { 
       lightMESConfigurationService.getLightMesConfiguration().subscribe({
         next: (lightMESConfigurationRes) => this.lightMESConfiguration = lightMESConfigurationRes
-      });
+      }); 
     }
 
   ngOnInit(): void {
@@ -61,13 +72,35 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
         this.refresh();
       }
       else {
-
         this.refresh(this.productionLineType);
       }
       
       this.countDownsubscription = interval(1000).subscribe(x => {
         this.handleCountDownEvent();
-      })
+      });
+      this.currentTimesubscription = interval(1000).subscribe(x => {
+        this.currentTime = new Date(); 
+      });
+
+      this.workOrderConfigurationService.getCurrentShift().subscribe({
+        next: (currentShiftRes) => {
+          this.currentShiftStartTime = currentShiftRes.first;
+          this.currentShiftEndTime = currentShiftRes.second;
+          console.log(`current shift [${this.currentShiftStartTime}, ${this.currentShiftEndTime}]`);
+        }
+      });
+
+      this.shiftTimesubscription = interval(60000).subscribe(x => { 
+        this.workOrderConfigurationService.getCurrentShift().subscribe({
+          next: (currentShiftRes) => {
+                this.currentShiftStartTime = currentShiftRes.first;
+                this.currentShiftEndTime = currentShiftRes.second;
+                console.log(`current shift [${this.currentShiftStartTime}, ${this.currentShiftEndTime}]`);
+          }
+        })
+      });
+
+
    }
 
    loadAvailableProductionLineTypes() : void {
@@ -100,16 +133,16 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
     
     switch(machine.currentState) {
       case '001':
-        return  {'background-color': 'green', 'color': 'white', 'font-weight':'bold'} ; 
+        return  {'background-color': 'green', 'color': 'white', 'font-weight':'bold', 'height': '150px'} ; 
       case '010':
-        return  {'background-color': 'yellow', 'font-weight':'bold'} ; 
+        return  {'background-color': 'yellow', 'font-weight':'bold', 'height': '150px'} ; 
       case '100':
-        return  {'background-color': 'red', 'color': 'green', 'font-weight':'bold'} ; 
+        return  {'background-color': 'red', 'color': 'green', 'font-weight':'bold', 'height': '150px'} ; 
       case '000':
-        return  {'background-color': 'grey', 'font-weight':'bold'} ;  
+        return  {'background-color': 'grey', 'font-weight':'bold', 'height': '150px'} ;  
 
     }
-    return {'background-color': 'white', 'font-weight':'bold'} ; 
+    return {'background-color': 'white', 'font-weight':'bold', 'height': '150px'} ; 
    }
 
    
@@ -141,6 +174,9 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
   
   ngOnDestroy() {
     this.countDownsubscription.unsubscribe();
+    this.currentTimesubscription.unsubscribe();
+    this.shiftTimesubscription.unsubscribe();
+
 
   }
 
