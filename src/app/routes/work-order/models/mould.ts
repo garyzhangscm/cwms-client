@@ -3,4 +3,7 @@ export interface Mould {
     name: string;
     description: string;
     warehouseId: number;
+    cavity?: number;
+
+
 }

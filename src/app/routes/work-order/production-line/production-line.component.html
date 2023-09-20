@@ -67,6 +67,7 @@
             <td [nzExpand]="expandSet.has(data.id!!)" (nzExpandChange)="onExpandChange(data, $event)"></td>
 
             <td>{{ data.name }}</td>
+            <td>{{ data.type?.name }}</td>
             <td>{{ data.productionLineLocation?.name }}</td>
             <td>{{ data.inboundStageLocation?.name }}</td>
             <td>{{ data.outboundStageLocation?.name }}</td>

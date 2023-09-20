@@ -6,6 +6,7 @@ import { map, Observable } from 'rxjs';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { LightStatus } from '../models/light-status';
 import { Machine } from '../models/machine';
+import { ProductionLineType } from '../models/production-line-type';
 
 @Injectable({
   providedIn: 'root'
@@ -39,7 +40,7 @@ export class LightMesService {
 
   }
   
-  getMachineStatus(machineNo?: string): Observable<Machine[]> { 
+  getMachineStatus(machineNo?: string, productionLineTypeName?: string): Observable<Machine[]> { 
     
     
     let params = new HttpParams(); 
@@ -48,6 +49,10 @@ export class LightMesService {
     if (machineNo) {
 
       params = params.append('machineNo', machineNo); 
+    }
+    if (productionLineTypeName) {
+
+      params = params.append('type', productionLineTypeName); 
     }
 
     return this.http

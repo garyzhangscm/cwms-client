@@ -41,6 +41,17 @@ export class WorkOrderMouldComponent implements OnInit {
       filterFn: null,
       showFilter: false
     },
+    {
+      name: 'cavity',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Mould, b: Mould) => this.utilService.compareNullableNumber(a.cavity, b.cavity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
 
 
   ];

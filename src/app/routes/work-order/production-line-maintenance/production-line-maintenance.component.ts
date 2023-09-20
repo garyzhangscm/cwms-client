@@ -17,7 +17,9 @@ import { WarehouseService } from '../../warehouse-layout/services/warehouse.serv
 import { Mould } from '../models/mould';
 import { ProductionLine } from '../models/production-line';
 import { ProductionLineCapacity } from '../models/production-line-capacity';
+import { ProductionLineType } from '../models/production-line-type';
 import { MouldService } from '../services/mould.service';
+import { ProductionLineTypeService } from '../services/production-line-type.service';
 import { ProductionLineService } from '../services/production-line.service';
 
 
@@ -41,6 +43,7 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
   newProductionLine = true;
 
   availablePrinters: Printer[] = [];
+  availableProductionLineTypes: ProductionLineType[] = [];
 
 
   // All UOM maintained in the system
@@ -66,6 +69,7 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
     private printingService: PrintingService,
     private activatedRoute: ActivatedRoute,
     private unitOfMeasureService: UnitOfMeasureService,
+    private productionLineTypeService: ProductionLineTypeService,
     private itemService: ItemService,
     private mouldService: MouldService) {
     this.pageTitle = this.i18n.fanyi('menu.main.production-line.maintenance');
@@ -131,6 +135,7 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
     this.availablePrinters = [];
     
     this.loadAvaiablePrinters();
+    this.loadAvailableProductionLineTypes();
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.id) {
@@ -167,6 +172,11 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
       this.availableMoulds = mouldsRes);
   }
 
+  loadAvailableProductionLineTypes() : void {
+    this.productionLineTypeService.getProductionLineTypes().subscribe({
+      next: (productionLineTypeRes) => this.availableProductionLineTypes = productionLineTypeRes
+    })
+  }
   loadAvaiablePrinters(): void {
     console.log(`start to load avaiable printers`)
     if (this.warehouseService.getServerSidePrintingFlag() == true) {

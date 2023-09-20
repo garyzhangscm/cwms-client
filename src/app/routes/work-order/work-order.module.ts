@@ -83,6 +83,8 @@ import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspect
 import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component'; 
 import { WorkOrderRoutingModule } from './work-order-routing.module';
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
+import { WorkOrderProductionLineTypeComponent } from './production-line-type/production-line-type.component';
+import { WorkOrderProductionLineTypeMaintenanceComponent } from './production-line-type-maintenance/production-line-type-maintenance.component';
 
 
 PlotlyModule.plotlyjs = PlotlyJS;
@@ -140,7 +142,9 @@ const COMPONENTS: Array<Type<void>> = [
   WorkOrderSiloMonitorComponent,
   WorkOrderSiloConfigurationComponent,
   WorkOrderLightMesConfigurationComponent,
-  WorkOrderLightMesStatusDashboardComponent];
+  WorkOrderLightMesStatusDashboardComponent,
+  WorkOrderProductionLineTypeComponent,
+  WorkOrderProductionLineTypeMaintenanceComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

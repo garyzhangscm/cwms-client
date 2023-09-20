@@ -15,18 +15,45 @@
   </div>
 
 
-  <nz-card  *ngIf="lightMESConfiguration != null" nzTitle="Count down: {{ countDownNumber }}">
+  <nz-card  *ngIf="lightMESConfiguration != null" [nzExtra]="showConfigurationTemplate"
+       nzTitle="Count down: {{ countDownNumber }}">
+       
+    <ng-template #showConfigurationTemplate>
+        <label nz-checkbox [(ngModel)]="showConfiguration" >
+          <span> {{ 'showConfiguration' | i18n }}</span>
+        </label>
+    </ng-template>
+    <div *ngIf="showConfiguration" style="padding: 10px">
+        {{'type' | i18n}}: <nz-radio-group [(ngModel)]="productionLineType" (ngModelChange)="productionLineTypeChanged()">
+          <label nz-radio nzValue="All">All</label>
+          <label nz-radio *ngFor="let type of productionLineTypes" [nzValue]="type.name">{{type.name}}</label> 
+        </nz-radio-group>
+        
+        <span style="padding-left: 20px">Refresh Cycle(in seconds): </span><nz-input-number   [nzMin]="1" [nzMax]="9999" [nzStep]="1"   [(ngModel)]="refreshCountCycle" >
+        </nz-input-number> 
+
+    </div>  
     <div nz-card-grid [ngStyle]="gridStyle" *ngFor="let machine of machines"  >
-      <nz-card [nzTitle]="titleTemplate" [nzBodyStyle]="getBodyStyle(machine)">
-           
-         <div *ngFor="let machineStatistics of machine.machineStatistics">
-            <p style="font-size: 15px;">{{machineStatistics.itemName}}</p>
-            <p>{{machineStatistics.producedQuantity}} / {{machineStatistics.shiftEstimationQuantity}} ({{machineStatistics.achievementRate | percent: '1.0-2'}})</p>
+      <nz-card [nzBodyStyle]="getBodyStyle(machine)">
+          <div style="font-size: 20px;">{{machine.machineNo}}</div>
+          <div *ngFor="let machineStatistics of machine.machineStatistics">
+            <div style="font-size: 15px;">{{machineStatistics.itemName}}</div>
+            <div>{{machineStatistics.producedQuantity}} / {{machineStatistics.shiftEstimationQuantity}} ({{machineStatistics.achievementRate | percent: '1.0-2'}})</div>
           </div>
-          <p>pulse count: {{machine.lastHourPulseCount}} / {{machine.shiftPulseCount}}</p>
+          <div *ngIf="machine.machineStatistics == null || machine.machineStatistics.length == 0">
+            <div style="font-size: 15px;">N/A</div>
+            <div>0 / 0 (0%)</div>
+          
+          </div>
+          <!--
+
+          <p>mold count: {{machine.lastHourPulseCount}} / {{machine.shiftPulseCount}}</p>
           <p>cycle time: {{machine.lastHourCycleTime}} / {{machine.shiftCycleTime}}</p>
+          -->
+          <div>mold count:  {{machine.shiftPulseCount}}</div>
+          <div>cycle time: {{machine.lastHourCycleTime}} </div>
           <ng-template #titleTemplate>
-            <strong>{{machine.machineNo}}</strong>
+            <strong [ngStyle]="getBodyStyle(machine)">{{machine.machineNo}}</strong>
           </ng-template>
       </nz-card>
     </div>  

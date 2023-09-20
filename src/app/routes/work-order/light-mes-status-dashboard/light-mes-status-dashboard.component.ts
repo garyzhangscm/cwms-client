@@ -5,8 +5,10 @@ import { interval, Subscription } from 'rxjs';
 
 import { LightMesConfiguration } from '../models/light-mes-configuration';
 import { Machine } from '../models/machine';
+import { ProductionLineType } from '../models/production-line-type';
 import { LightMesConfigurationService } from '../services/light-mes-configuration.service';
 import { LightMesService } from '../services/light-mes.service';
+import { ProductionLineTypeService } from '../services/production-line-type.service';
 
 @Component({
   selector: 'app-work-order-light-mes-status-dashboard',
@@ -14,6 +16,8 @@ import { LightMesService } from '../services/light-mes.service';
 })
 export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDestroy {
   lightMESConfiguration?: LightMesConfiguration;
+  productionLineType = "All";
+  productionLineTypes: ProductionLineType[] = [];
   machines?: Machine[] = [];
   isSpinning = false;
 
@@ -28,11 +32,13 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
   countDownNumber = this.refreshCountCycle;
   countDownsubscription!: Subscription;
   loadingData = false;
+  showConfiguration = false;
  
 
   constructor(private http: _HttpClient, 
     private lightMESService: LightMesService,  
     private messageService: NzMessageService,
+    private productionLineTypeService: ProductionLineTypeService,
     private lightMESConfigurationService: LightMesConfigurationService) { 
       lightMESConfigurationService.getLightMesConfiguration().subscribe({
         next: (lightMESConfigurationRes) => this.lightMESConfiguration = lightMESConfigurationRes
@@ -40,15 +46,22 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
     }
 
   ngOnInit(): void {
+    this.loadAvailableProductionLineTypes();
     this.refresh();
     this.countDownsubscription = interval(1000).subscribe(x => {
       this.handleCountDownEvent();
     })
    }
 
-   refresh() {
+   loadAvailableProductionLineTypes() : void {
+    this.productionLineTypeService.getProductionLineTypes().subscribe({
+      next: (productionLineTypeRes) => this.productionLineTypes = productionLineTypeRes
+    })
+  }
+
+   refresh(productionLineTypeName?: string) {
     this.isSpinning = true;
-    this.lightMESService.getMachineStatus().subscribe({
+    this.lightMESService.getMachineStatus(undefined, productionLineTypeName).subscribe({
       next: (machinesRes) => {
         console.log(`get ${machinesRes.length} machines`);
         machinesRes.forEach(
@@ -93,7 +106,14 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
     this.countDownNumber--;
     if (this.countDownNumber <= 0) {
       this.resetCountDownNumber();
-      this.refresh();
+      
+      if (this.productionLineType == "All") {
+        this.refresh();
+      }
+      else {
+
+        this.refresh(this.productionLineType);
+      }
     } 
 
   }
@@ -106,5 +126,15 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
 
   }
 
+  productionLineTypeChanged() {
+    if (this.productionLineType == "All") {
+      this.refresh();
+    }
+    else {
+
+      this.refresh(this.productionLineType);
+    }
+
+  }
 
 }

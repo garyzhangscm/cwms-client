@@ -2,6 +2,7 @@ import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { ProductionLineAssignment } from './production-line-assignment';
 import { ProductionLineCapacity } from './production-line-capacity';
+import { ProductionLineType } from './production-line-type';
 import { WorkOrder } from './work-order';
 
 export interface ProductionLine {
@@ -17,6 +18,8 @@ export interface ProductionLine {
   outboundStageLocation?: WarehouseLocation;
   productionLineLocationId?: number;
   productionLineLocation?: WarehouseLocation;
+
+  type?: ProductionLineType;
 
   productionLineAssignments?: ProductionLineAssignment[];
   workOrderExclusiveFlag?: boolean;

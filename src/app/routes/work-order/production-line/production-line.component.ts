@@ -33,6 +33,17 @@ export class WorkOrderProductionLineComponent implements OnInit {
       listOfFilter: [],
       filterFn: null,
       showFilter: false
+    }, 
+    {
+      name: 'production-line-type',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: ProductionLine, b: ProductionLine) => this.utilService.compareNullableString(a.type?.name, b.type?.name),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
     }, {
       name: 'production-line.location',
       showSort: true,

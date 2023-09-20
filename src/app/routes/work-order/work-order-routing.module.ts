@@ -10,6 +10,7 @@ import { WorkOrderDeassignProductionLineComponent } from './deassign-production-
 import { WorkOrderLaborActivityComponent } from './labor-activity/labor-activity.component';
 import { WorkOrderLaborComponent } from './labor/labor.component';
 import { WorkOrderLightMesConfigurationComponent } from './light-mes-configuration/light-mes-configuration.component';
+import { WorkOrderLightMesStatusDashboardComponent } from './light-mes-status-dashboard/light-mes-status-dashboard.component';
 import { WorkOrderMouldMaintenanceComponent } from './mould-maintenance/mould-maintenance.component';
 import { WorkOrderMouldComponent } from './mould/mould.component';
 import { WorkOrderMpsExportComponent } from './mps-export/mps-export.component';
@@ -28,6 +29,8 @@ import { WorkOrderProductionLineMonitorTransactionComponent } from './production
 import { WorkOrderProductionLineMonitorComponent } from './production-line-monitor/production-line-monitor.component';
 import { WorkOrderProductionLineStatusDisplayComponent } from './production-line-status-display/production-line-status-display.component';
 import { WorkOrderProductionLineStatusComponent } from './production-line-status/production-line-status.component';
+import { WorkOrderProductionLineTypeMaintenanceComponent } from './production-line-type-maintenance/production-line-type-maintenance.component';
+import { WorkOrderProductionLineTypeComponent } from './production-line-type/production-line-type.component';
 import { WorkOrderProductionLineComponent } from './production-line/production-line.component';
 import { WorkOrderProductionPlanMaintenanceComponent } from './production-plan-maintenance/production-plan-maintenance.component';
 import { WorkOrderProductionPlanComponent } from './production-plan/production-plan.component';
@@ -54,7 +57,6 @@ import { WorkOrderWorkOrderQcInspectionResultComponent } from './work-order-qc-i
 import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspection/work-order-qc-inspection.component'; 
 import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component'; 
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
-import { WorkOrderLightMesStatusDashboardComponent } from './light-mes-status-dashboard/light-mes-status-dashboard.component';
 
 const routes: Routes = [
   { path: 'work-order', component: WorkOrderWorkOrderComponent , 
@@ -509,7 +511,9 @@ const routes: Routes = [
       guard_url: '/exception/403'
     }}
   ,
-  { path: 'light-mes-status-dashboard', component: WorkOrderLightMesStatusDashboardComponent }];
+  { path: 'light-mes-status-dashboard', component: WorkOrderLightMesStatusDashboardComponent },
+  { path: 'production-line-type', component: WorkOrderProductionLineTypeComponent },
+  { path: 'production-line-type/maintenance', component: WorkOrderProductionLineTypeMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
