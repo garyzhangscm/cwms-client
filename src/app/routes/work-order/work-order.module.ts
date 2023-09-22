@@ -85,6 +85,8 @@ import { WorkOrderRoutingModule } from './work-order-routing.module';
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
 import { WorkOrderProductionLineTypeComponent } from './production-line-type/production-line-type.component';
 import { WorkOrderProductionLineTypeMaintenanceComponent } from './production-line-type-maintenance/production-line-type-maintenance.component';
+import { WorkOrderFinishGoodProductivityReportComponent } from './finish-good-productivity-report/finish-good-productivity-report.component';
+import { WorkOrderProductionMoldCountHistoryComponent } from './production-mold-count-history/production-mold-count-history.component';
 
 
 PlotlyModule.plotlyjs = PlotlyJS;
@@ -144,7 +146,9 @@ const COMPONENTS: Array<Type<void>> = [
   WorkOrderLightMesConfigurationComponent,
   WorkOrderLightMesStatusDashboardComponent,
   WorkOrderProductionLineTypeComponent,
-  WorkOrderProductionLineTypeMaintenanceComponent];
+  WorkOrderProductionLineTypeMaintenanceComponent,
+  WorkOrderFinishGoodProductivityReportComponent,
+  WorkOrderProductionMoldCountHistoryComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

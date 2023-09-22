@@ -57,6 +57,8 @@ import { WorkOrderWorkOrderQcInspectionResultComponent } from './work-order-qc-i
 import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspection/work-order-qc-inspection.component'; 
 import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component'; 
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
+import { WorkOrderFinishGoodProductivityReportComponent } from './finish-good-productivity-report/finish-good-productivity-report.component';
+import { WorkOrderProductionMoldCountHistoryComponent } from './production-mold-count-history/production-mold-count-history.component';
 
 const routes: Routes = [
   { path: 'work-order', component: WorkOrderWorkOrderComponent , 
@@ -513,7 +515,9 @@ const routes: Routes = [
   ,
   { path: 'light-mes-status-dashboard', component: WorkOrderLightMesStatusDashboardComponent },
   { path: 'production-line-type', component: WorkOrderProductionLineTypeComponent },
-  { path: 'production-line-type/maintenance', component: WorkOrderProductionLineTypeMaintenanceComponent }];
+  { path: 'production-line-type/maintenance', component: WorkOrderProductionLineTypeMaintenanceComponent },
+  { path: 'finish-good-productivity-report', component: WorkOrderFinishGoodProductivityReportComponent },
+  { path: 'production-mold-count-history', component: WorkOrderProductionMoldCountHistoryComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
