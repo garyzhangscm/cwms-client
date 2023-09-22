@@ -5,8 +5,7 @@ import { interval, Subscription } from 'rxjs';
 
 import { LightMesConfiguration } from '../models/light-mes-configuration';
 import { Machine } from '../models/machine';
-import { ProductionLineType } from '../models/production-line-type';
-import { WorkOrderConfiguration } from '../models/work-order-configuration';
+import { ProductionLineType } from '../models/production-line-type'; 
 import { LightMesConfigurationService } from '../services/light-mes-configuration.service';
 import { LightMesService } from '../services/light-mes.service';
 import { ProductionLineTypeService } from '../services/production-line-type.service';
@@ -56,7 +55,7 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
       lightMESConfigurationService.getLightMesConfiguration().subscribe({
         next: (lightMESConfigurationRes) => this.lightMESConfiguration = lightMESConfigurationRes
       }); 
-    }
+  }
 
   ngOnInit(): void {
       this.loadAvailableProductionLineTypes();

@@ -7,6 +7,7 @@ import { WorkOrderAssignProductionLineComponent } from './assign-production-line
 import { WorkOrderBillOfMaterialMaintenanceComponent } from './bill-of-material-maintenance/bill-of-material-maintenance.component';
 import { WorkOrderBillOfMaterialComponent } from './bill-of-material/bill-of-material.component';
 import { WorkOrderDeassignProductionLineComponent } from './deassign-production-line/deassign-production-line.component';
+import { WorkOrderFinishGoodProductivityReportComponent } from './finish-good-productivity-report/finish-good-productivity-report.component';
 import { WorkOrderLaborActivityComponent } from './labor-activity/labor-activity.component';
 import { WorkOrderLaborComponent } from './labor/labor.component';
 import { WorkOrderLightMesConfigurationComponent } from './light-mes-configuration/light-mes-configuration.component';
@@ -32,6 +33,7 @@ import { WorkOrderProductionLineStatusComponent } from './production-line-status
 import { WorkOrderProductionLineTypeMaintenanceComponent } from './production-line-type-maintenance/production-line-type-maintenance.component';
 import { WorkOrderProductionLineTypeComponent } from './production-line-type/production-line-type.component';
 import { WorkOrderProductionLineComponent } from './production-line/production-line.component';
+import { WorkOrderProductionMoldCountHistoryComponent } from './production-mold-count-history/production-mold-count-history.component';
 import { WorkOrderProductionPlanMaintenanceComponent } from './production-plan-maintenance/production-plan-maintenance.component';
 import { WorkOrderProductionPlanComponent } from './production-plan/production-plan.component';
 import { WorkOrderQcRuleConfigurationMaintenanceComponent } from './qc-rule-configuration-maintenance/qc-rule-configuration-maintenance.component';
@@ -57,8 +59,6 @@ import { WorkOrderWorkOrderQcInspectionResultComponent } from './work-order-qc-i
 import { WorkOrderWorkOrderQcInspectionComponent } from './work-order-qc-inspection/work-order-qc-inspection.component'; 
 import { WorkOrderWorkOrderQcSampleMaintenanceComponent } from './work-order-qc-sample-maintenance/work-order-qc-sample-maintenance.component'; 
 import { WorkOrderWorkOrderComponent } from './work-order/work-order.component';
-import { WorkOrderFinishGoodProductivityReportComponent } from './finish-good-productivity-report/finish-good-productivity-report.component';
-import { WorkOrderProductionMoldCountHistoryComponent } from './production-mold-count-history/production-mold-count-history.component';
 
 const routes: Routes = [
   { path: 'work-order', component: WorkOrderWorkOrderComponent , 
@@ -513,11 +513,45 @@ const routes: Routes = [
       guard_url: '/exception/403'
     }}
   ,
-  { path: 'light-mes-status-dashboard', component: WorkOrderLightMesStatusDashboardComponent },
-  { path: 'production-line-type', component: WorkOrderProductionLineTypeComponent },
-  { path: 'production-line-type/maintenance', component: WorkOrderProductionLineTypeMaintenanceComponent },
-  { path: 'finish-good-productivity-report', component: WorkOrderFinishGoodProductivityReportComponent },
-  { path: 'production-mold-count-history', component: WorkOrderProductionMoldCountHistoryComponent }];
+  { path: 'light-mes-status-dashboard', component: WorkOrderLightMesStatusDashboardComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/light-mes-status-dashboard', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'production-line-type', component: WorkOrderProductionLineTypeComponent, 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/work-order/production-line-type', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'production-line-type/maintenance', component: WorkOrderProductionLineTypeMaintenanceComponent ,  
+  },
+  { path: 'finish-good-productivity-report', component: WorkOrderFinishGoodProductivityReportComponent , 
+  canActivate: [ACLGuard], 
+  data: { 
+    guard:  {
+      role: [ '/work-order/finish-good-productivity-report', 'admin', 'system-admin' ], 
+    } as ACLGuardType,
+    guard_url: '/exception/403'
+  }
+},
+  { path: 'production-mold-count-history', component: WorkOrderProductionMoldCountHistoryComponent , 
+  canActivate: [ACLGuard], 
+  data: { 
+    guard:  {
+      role: [ '/work-order/production-mold-count-history', 'admin', 'system-admin' ], 
+    } as ACLGuardType,
+    guard_url: '/exception/403'
+  }
+},
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
