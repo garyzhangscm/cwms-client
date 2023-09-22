@@ -46,6 +46,7 @@ export class WorkOrderWorkOrderConfigurationComponent implements OnInit {
   
       overConsumeIsAllowed: false,
       overProduceIsAllowed: false,
+      autoRecordItemProductivity: true,
       productionShiftSchedules: [],
     }
     workOrderConfigurationService.getWorkOrderConfiguration().subscribe(

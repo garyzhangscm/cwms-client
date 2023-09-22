@@ -11,6 +11,7 @@ export interface WorkOrderConfiguration {
 
     overConsumeIsAllowed: boolean;
     overProduceIsAllowed: boolean;
+    autoRecordItemProductivity: boolean;
 
     productionShiftSchedules: ProductionShiftSchedule[];
 

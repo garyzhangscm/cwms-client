@@ -46,6 +46,6 @@ export class DateTimeService {
 
     var date = new Date(`${date.getFullYear()}-${  date.getMonth() + 1}-${date.getDate()}`);
     return new Date(date.getTime() + 86400000 - 1);
-  } 
+  }  
    
 }
