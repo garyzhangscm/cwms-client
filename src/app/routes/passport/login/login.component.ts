@@ -15,6 +15,7 @@ import { User } from '../../auth/models/user';
 import { UserService } from '../../auth/services/user.service';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
+import { WarehouseConfigurationService } from '../../warehouse-layout/services/warehouse-configuration.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Component({
@@ -28,6 +29,7 @@ export class UserLoginComponent implements OnDestroy {
   defaultCompanyCode = '';
   changePasswordRequestForm!: UntypedFormGroup;
   changePasswordRequestModal!: NzModalRef;
+  
 
   constructor(
     private fb: UntypedFormBuilder,
@@ -36,6 +38,7 @@ export class UserLoginComponent implements OnDestroy {
     private socialService: SocialService,
     private modalService: NzModalService,
     private userService: UserService, 
+    private warehouseConfigurationService: WarehouseConfigurationService,
     @Optional()
     @Inject(ReuseTabService)
     private reuseTabService: ReuseTabService,
@@ -197,6 +200,20 @@ export class UserLoginComponent implements OnDestroy {
 
         this.warehouseService.getWarehouse(this.warehouseId.value).subscribe((warehouse: Warehouse) => {
           this.warehouseService.setCurrentWarehouse(warehouse);
+          // setup the warehouse's time zone
+          this.warehouseConfigurationService.getWarehouseConfiguration(true, warehouse.id).subscribe({
+            next: (warehouseConfigurationRes) => {
+              warehouse.timeZone = warehouseConfigurationRes.timeZone;
+              this.warehouseService.setCurrentWarehouse(warehouse);
+
+            }, 
+            error: () => {
+              var date = new Date(); 
+              var timezone = date.getTimezoneOffset();
+              warehouse.timeZone = timezone.toString();
+              this.warehouseService.setCurrentWarehouse(warehouse);
+            }
+          })
           // setup the current user
           this.userService.setupCurrentUser();
           // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响

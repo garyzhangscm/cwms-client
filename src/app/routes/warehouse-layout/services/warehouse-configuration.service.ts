@@ -17,9 +17,12 @@ export class WarehouseConfigurationService {
     private gzLocalStorageService: GzLocalStorageService,
     private companyService: CompanyService) {} 
 
-  getWarehouseConfiguration(refresh: boolean = false): Observable<WarehouseConfiguration> { 
+  getWarehouseConfiguration(refresh: boolean = false, warehouseId?: number): Observable<WarehouseConfiguration> { 
 
-    const localStorageKey = `warehouse-configuration-${this.warehouseService.getCurrentWarehouse().id}`
+
+    const localStorageKey = 
+        warehouseId == null ? `warehouse-configuration-${this.warehouseService.getCurrentWarehouse().id}` :
+        `warehouse-configuration-${warehouseId}`;
 
     if (!refresh) {
       const data = this.gzLocalStorageService.getItem(localStorageKey);
@@ -27,10 +30,20 @@ export class WarehouseConfigurationService {
         return of(data);
       }
     }
-    return this.http
+    if (warehouseId != null) {
+
+      return this.http
+      .get(`layout/warehouse-configuration/by-warehouse/${warehouseId}`)
+      .pipe(map(res => res.data))
+      .pipe(tap(res => this.gzLocalStorageService.setItem(localStorageKey, res)));
+    }
+    else {
+
+      return this.http
       .get(`layout/warehouse-configuration/by-warehouse/${this.warehouseService.getCurrentWarehouse().id}`)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.gzLocalStorageService.setItem(localStorageKey, res)));
+    }
 
   }
    

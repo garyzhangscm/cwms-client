@@ -19,8 +19,15 @@
        nzTitle="Count down: {{ countDownNumber }}">
        
     <ng-template #showConfigurationTemplate>
-        <span style="padding-right: 10px">{{currentTime | date : 'short'}}</span>
-        <span style="padding-right: 10px">(current shift: [{{currentShiftStartTime }} - {{currentShiftEndTime  }}])</span>
+      
+        <span style="padding-right: 10px">Hours Spend on this shift: 
+          <strong>{{hoursSpentInThisShift | number: '1.0-2'}}</strong>
+        </span>
+        <span style="padding-right: 10px">current time: 
+            <strong>{{currentTime}}</strong></span>
+
+            <span style="padding-right: 10px">(current shift: 
+              <strong>[{{currentShiftStartTime }} - {{currentShiftEndTime  }}]</strong>)</span>
         <label nz-checkbox [(ngModel)]="showConfiguration" >
           <span> {{ 'showConfiguration' | i18n }}</span>
         </label>

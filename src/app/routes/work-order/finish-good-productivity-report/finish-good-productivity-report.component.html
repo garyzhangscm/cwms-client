@@ -24,7 +24,7 @@
             <strong>{{hoursSpentInThisShift | number: '1.0-2'}}</strong>
         </span>
         <span style="padding-right: 10px">current time: 
-            <strong>{{currentTime | date : 'short'}}</strong></span>
+            <strong>{{currentTime}}</strong></span>
         <span style="padding-right: 10px">(current shift: 
             <strong>[{{currentShiftStartTime }} - {{currentShiftEndTime  }}]</strong>)</span>
         <label nz-checkbox [(ngModel)]="showConfiguration" >

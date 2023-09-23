@@ -19,4 +19,6 @@ export interface Warehouse {
   addressDistrict?: string;
   addressPostcode: string; 
   addressPhone?: string;
+
+  timeZone?: string;
 }

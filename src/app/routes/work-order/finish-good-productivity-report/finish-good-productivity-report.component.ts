@@ -1,15 +1,17 @@
+ 
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { I18NService } from '@core';
 import { STColumn } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import * as moment from 'moment';
+import { ALAIN_I18N_TOKEN,  _HttpClient } from '@delon/theme';
+import * as moment from 'moment'; 
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { interval } from 'rxjs';
 import { Subscription } from 'rxjs/internal/Subscription';
 
 import { ItemFamily } from '../../inventory/models/item-family';
-import { ItemFamilyService } from '../../inventory/services/item-family.service'; 
-import { WarehouseConfigurationService } from '../../warehouse-layout/services/warehouse-configuration.service';
+import { ItemFamilyService } from '../../inventory/services/item-family.service';  
+import { DateTimeService } from '../../util/services/date-time.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ItemProductivityReport } from '../models/item-productivity-report';
 import { LightMesConfiguration } from '../models/light-mes-configuration';
 import { ItemProductivityReportService } from '../services/item-productivity-report.service';
@@ -38,7 +40,7 @@ export class WorkOrderFinishGoodProductivityReportComponent implements OnInit, O
   showConfiguration = false;
 
   // refresh and show the current time
-  currentTime : any = new Date();
+  currentTime : string = "";
   currentTimesubscription!: Subscription;
   hoursSpentInThisShift: number = 0;
 
@@ -68,9 +70,10 @@ export class WorkOrderFinishGoodProductivityReportComponent implements OnInit, O
     private itemProductivityReportService: ItemProductivityReportService,  
     private itemFamilyService: ItemFamilyService,
     private messageService: NzMessageService,  
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
-    private warehouseConfigurationService: WarehouseConfigurationService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,  
     private workOrderConfigurationService: WorkOrderConfigurationService,
+    private dateTimeService: DateTimeService,
+    private warehouseService: WarehouseService,
     private lightMESConfigurationService: LightMesConfigurationService) { 
        
       lightMESConfigurationService.getLightMesConfiguration().subscribe({
@@ -81,6 +84,9 @@ export class WorkOrderFinishGoodProductivityReportComponent implements OnInit, O
 
   ngOnInit(): void { 
       this.refresh(); 
+  
+      this.currentTime =  this.dateTimeService.getCurrentTimeByWarehouseTimeZone().format("MM/DD/yyyy HH:mm:ss");
+      // this.currentTime =  moment(new Date()).tz(this.warehouseService.getCurrentWarehouse().timeZone!);
 
       this.itemFamilyService.loadItemFamilies().subscribe({
         next: (itemFamilyRes) => {
@@ -91,77 +97,52 @@ export class WorkOrderFinishGoodProductivityReportComponent implements OnInit, O
       this.countDownsubscription = interval(1000).subscribe(x => {
         this.handleCountDownEvent();
       });
-      this.currentTimesubscription = interval(1000).subscribe(x => {
-        this.currentTime = new Date(); 
+      this.currentTimesubscription = interval(1000).subscribe(x => { 
+        this.currentTime =  this.dateTimeService.getCurrentTimeByWarehouseTimeZone().format("MM/DD/yyyy HH:mm:ss"); 
+        
+         //this.currentTime =  moment(new Date()).tz(this.warehouseService.getCurrentWarehouse().timeZone!);
+             
       });
 
       this.workOrderConfigurationService.getCurrentShift().subscribe({
-        next: (currentShiftRes) => {
-          this.warehouseConfigurationService.getWarehouseConfiguration().subscribe({
-            next: (warehouseConfiguration) => {
+        next: (currentShiftRes) => { 
               
-                this.currentShiftStartTime = currentShiftRes.first;
-                this.currentShiftEndTime = currentShiftRes.second;
-                console.log(`current shift [${this.currentShiftStartTime}, ${this.currentShiftEndTime}]`);
-
-                if (warehouseConfiguration.timeZone) {
+            this.currentShiftStartTime = currentShiftRes.first;
+            this.currentShiftEndTime = currentShiftRes.second;
+            // console.log(`current shift [${this.currentShiftStartTime}, ${this.currentShiftEndTime}]`);
  
-                    // get the different between now and the shift start 
-                    let start = moment(new Date(this.currentShiftStartTime!));
-                    let end = moment(new Date());
-          
-                    console.log(`get different between zoned time range [${start}, ${end.tz(warehouseConfiguration.timeZone)}]`);
-                    this.hoursSpentInThisShift = end.diff(start) * 1.0 / (1000 * 60 * 60);
-                }
-                else {
-
-                  // get the different between now and the shift start 
-                  let start = moment(new Date(this.currentShiftStartTime!));
-                  let end = moment(new Date());
-        
-                  console.log(`get different between NON zoned time range [${start}, ${end}]`);
-                  this.hoursSpentInThisShift = end.diff(start) * 1.0 / (1000 * 60 * 60);
-                }
+ 
+            // get the different between now and the shift start 
+            let start = this.dateTimeService.getTimeWithTimeZone(
+              this.currentShiftStartTime!, 'MM/DD/YYYY HH:mm:ss', this.warehouseService.getCurrentWarehouse().timeZone!);
+             
+            let end = this.dateTimeService.getCurrentTimeByWarehouseTimeZone();
+           
+            this.hoursSpentInThisShift = end.diff(start) * 1.0 / (1000 * 60 * 60);
+                 
       
             }
-          })
-          
-        }
-      });
+          }); 
 
       this.shiftTimesubscription = interval(60000).subscribe(x => { 
         this.workOrderConfigurationService.getCurrentShift().subscribe({
-          next: (currentShiftRes) => {
-            this.warehouseConfigurationService.getWarehouseConfiguration().subscribe({
-              next: (warehouseConfiguration) => {
+          next: (currentShiftRes) => { 
                 
-                  this.currentShiftStartTime = currentShiftRes.first;
-                  this.currentShiftEndTime = currentShiftRes.second;
-                  console.log(`current shift [${this.currentShiftStartTime}, ${this.currentShiftEndTime}]`);
-
-                  if (warehouseConfiguration.timeZone) {
+              this.currentShiftStartTime = currentShiftRes.first;
+              this.currentShiftEndTime = currentShiftRes.second;
+              
 
                     // get the different between now and the shift start 
-                    let start = moment(new Date(this.currentShiftStartTime!));
-                    let end = moment(new Date());
-          
-                    console.log(`get different between zoned time range [${start}, ${end.tz(warehouseConfiguration.timeZone)}]`);
-                    this.hoursSpentInThisShift = end.diff(start) * 1.0 / (1000 * 60 * 60);
-                  }
-                  else {
-
-                    // get the different between now and the shift start 
-                    let start = moment(new Date(this.currentShiftStartTime!));
-                    let end = moment(new Date());
-          
-                    console.log(`get different between NON zoned time range [${start}, ${end}]`);
-                    this.hoursSpentInThisShift = end.diff(start) * 1.0 / (1000 * 60 * 60);
-                  }
+              let start = this.dateTimeService.getTimeWithTimeZone(
+                    this.currentShiftStartTime!, 'MM/DD/YYYY HH:mm:ss', this.warehouseService.getCurrentWarehouse().timeZone!);
+                  
+              let end = this.dateTimeService.getCurrentTimeByWarehouseTimeZone();
+           
+              this.hoursSpentInThisShift = end.diff(start) * 1.0 / (1000 * 60 * 60);
+                   
         
               }
-            });
-          }
-        })
+            }); 
       });
 
 

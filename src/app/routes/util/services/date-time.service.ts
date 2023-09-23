@@ -1,13 +1,17 @@
 
 import { Injectable } from '@angular/core';
-import moment from 'moment';
+import * as moment from 'moment';
+import 'moment-timezone';
+
+
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 
 @Injectable({
   providedIn: 'root' 
 })
 export class DateTimeService {
 
-  constructor() { }
+  constructor(private warehouseService: WarehouseService) { }
   
   getISODateTimeString(dateTime: Date) : string {
     // var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
@@ -47,5 +51,31 @@ export class DateTimeService {
     var date = new Date(`${date.getFullYear()}-${  date.getMonth() + 1}-${date.getDate()}`);
     return new Date(date.getTime() + 86400000 - 1);
   }  
+
+  getCurrentTimeByWarehouseTimeZone() {
+    return this.convertTimeToWarehouseTimeZone(new Date());
+
+  }
+  convertTimeToWarehouseTimeZone(time: Date) : moment.Moment {
+ 
+    if (this.warehouseService.getCurrentWarehouse().timeZone) {
+      var result = moment(time).tz(this.warehouseService.getCurrentWarehouse().timeZone!);
+      // var result = moment.tz(time, this.warehouseService.getCurrentWarehouse().timeZone!); 
+      return result;
+    }
+    else {
+      var result = moment(time); 
+      return result;
+    }
+  }
+
+  getTimeWithTimeZone(time: string, timeFormat: string, timeZone?: string): moment.Moment{
+    if (timeZone) {
+      return moment.tz(time, timeFormat, timeZone);
+    } 
+    else {
+      return moment(time); 
+    }
+  }
    
 }

@@ -1,8 +1,11 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
+import * as moment from 'moment'; 
 import { NzMessageService } from 'ng-zorro-antd/message'; 
 import { interval, Subscription } from 'rxjs';
 
+import { DateTimeService } from '../../util/services/date-time.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { LightMesConfiguration } from '../models/light-mes-configuration';
 import { Machine } from '../models/machine';
 import { ProductionLineType } from '../models/production-line-type'; 
@@ -38,8 +41,10 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
   showConfiguration = false;
 
   // refresh and show the current time
-  currentTime : any = new Date();
+  currentTime : string = "";
   currentTimesubscription!: Subscription;
+  
+  hoursSpentInThisShift: number = 0;
 
   currentShiftStartTime?: string;
   currentShiftEndTime?: string;
@@ -49,6 +54,8 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
   constructor(private http: _HttpClient, 
     private lightMESService: LightMesService,  
     private messageService: NzMessageService,
+    private dateTimeService: DateTimeService,
+    private warehouseService: WarehouseService,
     private productionLineTypeService: ProductionLineTypeService,
     private workOrderConfigurationService: WorkOrderConfigurationService,
     private lightMESConfigurationService: LightMesConfigurationService) { 
@@ -59,6 +66,9 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
 
   ngOnInit(): void {
       this.loadAvailableProductionLineTypes();
+      
+      this.currentTime =  this.dateTimeService.getCurrentTimeByWarehouseTimeZone().format("MM/DD/yyyy HH:mm:ss");
+
       if (localStorage.getItem(this.productionLineTypeLocalStorageKey)) {
         this.productionLineType = localStorage.getItem(this.productionLineTypeLocalStorageKey)!;
       }
@@ -78,23 +88,38 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
         this.handleCountDownEvent();
       });
       this.currentTimesubscription = interval(1000).subscribe(x => {
-        this.currentTime = new Date(); 
+        this.currentTime =  this.dateTimeService.getCurrentTimeByWarehouseTimeZone().format("MM/DD/yyyy HH:mm:ss");
       });
 
       this.workOrderConfigurationService.getCurrentShift().subscribe({
         next: (currentShiftRes) => {
-          this.currentShiftStartTime = currentShiftRes.first;
-          this.currentShiftEndTime = currentShiftRes.second;
-          console.log(`current shift [${this.currentShiftStartTime}, ${this.currentShiftEndTime}]`);
+            this.currentShiftStartTime = currentShiftRes.first;
+            this.currentShiftEndTime = currentShiftRes.second;
+          
+            // get the different between now and the shift start 
+            
+            let start = this.dateTimeService.getTimeWithTimeZone(
+              this.currentShiftStartTime!, 'MM/DD/YYYY HH:mm:ss', this.warehouseService.getCurrentWarehouse().timeZone!);
+             
+            let end = this.dateTimeService.getCurrentTimeByWarehouseTimeZone();
+ 
+            this.hoursSpentInThisShift = end.diff(start) * 1.0 / (1000 * 60 * 60);
+                 
         }
       });
 
       this.shiftTimesubscription = interval(60000).subscribe(x => { 
         this.workOrderConfigurationService.getCurrentShift().subscribe({
           next: (currentShiftRes) => {
-                this.currentShiftStartTime = currentShiftRes.first;
-                this.currentShiftEndTime = currentShiftRes.second;
-                console.log(`current shift [${this.currentShiftStartTime}, ${this.currentShiftEndTime}]`);
+            this.currentShiftStartTime = currentShiftRes.first;
+            this.currentShiftEndTime = currentShiftRes.second;
+                
+            // get the different between now and the shift start 
+            let start = this.dateTimeService.getTimeWithTimeZone(
+              this.currentShiftStartTime!, 'MM/DD/YYYY HH:mm:ss', this.warehouseService.getCurrentWarehouse().timeZone!);
+            let end = this.dateTimeService.getCurrentTimeByWarehouseTimeZone();
+            
+            this.hoursSpentInThisShift = end.diff(start) * 1.0 / (1000 * 60 * 60);
           }
         })
       });
