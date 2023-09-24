@@ -135,7 +135,7 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
 
    refresh(productionLineTypeName?: string) {
     this.isSpinning = true;
-    this.lightMESService.getMachineStatus(undefined, productionLineTypeName).subscribe({
+    this.lightMESService.getCurrentShiftMachineStatus(undefined, productionLineTypeName).subscribe({
       next: (machinesRes) => {
         // console.log(`get ${machinesRes.length} machines`);
         

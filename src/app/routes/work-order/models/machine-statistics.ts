@@ -7,12 +7,13 @@ export interface MachineStatistics {
     itemName: string;
     workOrderNumber: string;
 
-    shiftStartTime: Date;
-    shiftEndTime: Date;
+    startTime: Date;
+    endTime: Date;
 
     producedQuantity: number; 
 
     achievementRate: number;
-    shiftEstimationQuantity: number;
+    estimationQuantity: number;
+    active: boolean;
 
 }

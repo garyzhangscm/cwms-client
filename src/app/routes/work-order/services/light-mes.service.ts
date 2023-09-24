@@ -40,7 +40,7 @@ export class LightMesService {
 
   }
   
-  getMachineStatus(machineNo?: string, productionLineTypeName?: string): Observable<Machine[]> { 
+  getCurrentShiftMachineStatus(machineNo?: string, productionLineTypeName?: string): Observable<Machine[]> { 
     
     
     let params = new HttpParams(); 
@@ -56,7 +56,7 @@ export class LightMesService {
     }
 
     return this.http
-      .get(`workorder/light-mes/machine-status`, params)
+      .get(`workorder/light-mes/machine-status/current-shift`, params)
       .pipe(map(res => res.data));
 
   }

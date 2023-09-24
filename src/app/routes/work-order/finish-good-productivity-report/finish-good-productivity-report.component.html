@@ -48,6 +48,12 @@
                   {{ productionLineName }}
              </p>
         </ng-template>
+        <ng-template st-row="finishRateColumn" let-itemProductivity  > 
+          {{  itemProductivity.finishRate |  percent: '1.0-2'}} 
+        </ng-template>
+        <ng-template st-row="estimatedFinishRateColumn" let-itemProductivity  > 
+          {{  itemProductivity.estimatedFinishRate | percent: '1.0-2'}} 
+        </ng-template>
 
     </st> 
   </nz-card>

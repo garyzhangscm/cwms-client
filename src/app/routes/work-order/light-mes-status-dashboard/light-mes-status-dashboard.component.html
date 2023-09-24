@@ -53,9 +53,17 @@
       <nz-card [nzBodyStyle]="getBodyStyle(machine)" >
           <div style="font-size: 20px;">{{machine.machineNo}}</div>
           <div *ngFor="let machineStatistics of machine.machineStatistics">
-            <div style="font-size: 15px;">{{machineStatistics.itemName}}</div>
-            <div>{{machineStatistics.producedQuantity}} / {{machineStatistics.shiftEstimationQuantity}} ({{machineStatistics.achievementRate | percent: '1.0-2'}})</div>
-          </div>
+            <div *ngIf="machineStatistics.active">
+              <div style="font-size: 15px;">{{machineStatistics.itemName}}</div>
+              <div>{{machineStatistics.producedQuantity}} / {{machineStatistics.estimationQuantity}} ({{machineStatistics.achievementRate | percent: '1.0-2'}})</div>
+          
+            </div>
+            <div *ngIf="!machineStatistics.active">
+              <div style="font-size: 15px; color: grey">{{machineStatistics.itemName}}</div>
+              <div  style="color: grey">{{machineStatistics.producedQuantity}} / {{machineStatistics.estimationQuantity}} ({{machineStatistics.achievementRate | percent: '1.0-2'}})</div>
+          
+            </div>
+            </div>
           <div *ngIf="machine.machineStatistics == null || machine.machineStatistics.length == 0">
             <div style="font-size: 15px;">N/A</div>
             <div>0 / 0 (0%)</div>
