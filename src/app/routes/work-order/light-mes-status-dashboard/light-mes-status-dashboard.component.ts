@@ -27,6 +27,14 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
   refreshCountCycleLocalStorageKey = "light_mes_status_dashboard_refresh_cycle_key";
   isSpinning = false;
 
+  // display height for each box, in px.
+  // we will need to calculate it dynamicly since one machine may
+  // have multiple item assigned
+  // 1. if the machine allowed multiple items assigned at the same time
+  // 2. the machine only allow one item at a time but within the shift, there
+  //    was multiple items on the machine
+  displayHeight: number = 150;
+
   gridStyle = {
     width: '12.5%',
     textAlign: 'center',
@@ -145,6 +153,7 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
         //   }
         // );
         this.machines = machinesRes;
+        this.setDisplayHeight(this.machines);
         
         this.isSpinning = false;
       }, 
@@ -152,21 +161,27 @@ export class WorkOrderLightMesStatusDashboardComponent implements OnInit, OnDest
     });
    }
 
+   setDisplayHeight(machines: Machine[]) {
+    let maxItemCount = Math.max(...machines.map(machine => machine.machineStatistics.length));
+    this.displayHeight = 150 + (maxItemCount - 1) * 35;
+    console.log(`set height to ${this.displayHeight}`);
+   }
+
    getBodyStyle(machine: Machine) {
     // 三色灯状态码：001-绿灯，010-黄灯，100-红灯，000-关灯
     
     switch(machine.currentState) {
       case '001':
-        return  {'background-color': 'green', 'color': 'white', 'font-weight':'bold', 'height': '150px'} ; 
+        return  {'background-color': 'green', 'color': 'white', 'font-weight':'bold', 'height': `${this.displayHeight }px`} ; 
       case '010':
-        return  {'background-color': 'yellow', 'font-weight':'bold', 'height': '150px'} ; 
+        return  {'background-color': 'yellow', 'font-weight':'bold', 'height': `${this.displayHeight }px`} ; 
       case '100':
-        return  {'background-color': 'red', 'color': 'green', 'font-weight':'bold', 'height': '150px'} ; 
+        return  {'background-color': 'red', 'color': 'green', 'font-weight':'bold', 'height': `${this.displayHeight }px`} ; 
       case '000':
-        return  {'background-color': 'grey', 'font-weight':'bold', 'height': '150px'} ;  
+        return  {'background-color': 'grey', 'font-weight':'bold', 'height': `${this.displayHeight }px`} ;  
 
     }
-    return {'background-color': 'white', 'font-weight':'bold', 'height': '150px'} ; 
+    return {'background-color': 'white', 'font-weight':'bold', 'height': `${this.displayHeight }px`} ; 
    }
 
    
