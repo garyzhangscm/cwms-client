@@ -74,7 +74,7 @@
           <p>mold count: {{machine.lastHourPulseCount}} / {{machine.shiftPulseCount}}</p>
           <p>cycle time: {{machine.lastHourCycleTime}} / {{machine.shiftCycleTime}}</p>
           -->
-          <div>mold count:  {{machine.shiftPulseCount}}</div>
+          <div>mold count:  {{machine.pulseCount}}</div>
           <div>cycle time: {{machine.lastTimeWindowCycleTime}}</div>
           <ng-template #titleTemplate>
             <strong [ngStyle]="getBodyStyle(machine)">{{machine.machineNo}}</strong>

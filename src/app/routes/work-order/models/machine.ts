@@ -31,7 +31,7 @@ export interface Machine {
     
     lastTimeWindowPulseCount: number;
     lastTimeWindowCycleTime: number;
-    shiftPulseCount: number;
-    shiftCycleTime: number;
+    pulseCount: number;
+    cycleTime: number;
     
 }

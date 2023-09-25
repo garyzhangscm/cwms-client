@@ -3,10 +3,12 @@ import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme'; 
 import { map, Observable } from 'rxjs';
 
+import { DateTimeService } from '../../util/services/date-time.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { LightStatus } from '../models/light-status';
 import { Machine } from '../models/machine';
 import { ProductionLineType } from '../models/production-line-type';
+import { PulseCountHistoryByItem } from '../models/pulse-count-history-by-item';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +16,7 @@ import { ProductionLineType } from '../models/production-line-type';
 export class LightMesService {
 
   constructor(private http: _HttpClient, 
+    private dateTimeService: DateTimeService,
     private warehouseService: WarehouseService,  
     ) {}
 
@@ -57,6 +60,25 @@ export class LightMesService {
 
     return this.http
       .get(`workorder/light-mes/machine-status/current-shift`, params)
+      .pipe(map(res => res.data));
+
+  }
+  
+  getPulseCountHistory(
+    startTime: Date, endTime:Date,itemName?: string): Observable<PulseCountHistoryByItem[]> { 
+     
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+    params = params.append('startTime', this.dateTimeService.getISODateTimeString(startTime)); 
+    params = params.append('endTime', this.dateTimeService.getISODateTimeString(endTime)); 
+    if (itemName) {
+
+      params = params.append('itemName', itemName); 
+    } 
+
+    return this.http
+      .get(`workorder/light-mes/pulse-count-history`, params)
       .pipe(map(res => res.data));
 
   }
