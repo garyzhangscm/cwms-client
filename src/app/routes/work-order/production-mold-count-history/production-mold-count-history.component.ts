@@ -42,6 +42,7 @@ export class WorkOrderProductionMoldCountHistoryComponent implements OnInit {
 
     this.searchForm = this.fb.group({
       dateTimeRanger: [null],  
+      itemName: [null],  
     }); 
  
 
@@ -70,7 +71,8 @@ export class WorkOrderProductionMoldCountHistoryComponent implements OnInit {
       return;
     }
     this.lightMesService.getPulseCountHistory(
-      startTime, endTime
+      startTime, endTime, 
+      this.searchForm.controls.itemName.value
     ).subscribe(
       {
         next: (pulseCountHistoryByItemRes) => {
@@ -97,4 +99,7 @@ export class WorkOrderProductionMoldCountHistoryComponent implements OnInit {
   ]; 
  
 
+  processItemQueryResult(selectedItemName: any): void { 
+    this.searchForm.controls.itemName.setValue(selectedItemName);
+  }
 }
