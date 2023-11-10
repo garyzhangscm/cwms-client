@@ -318,7 +318,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
     // console.log(`openProducingInventoryModalWithNewLPN with status ${JSON.stringify(this.availableInventoryStatus)} and item package type ${JSON.stringify(this.currentProducingItemPackageType)}`);
 
     this.produceInventoryForm = this.fb.group({
-      lpn: new UntypedFormControl({ value: newLPN, disabled: true }),
+      lpn: new UntypedFormControl({ value: newLPN , disabled: false}),
       itemNumber: new UntypedFormControl({ value: item.name, disabled: true }),
       itemDescription: new UntypedFormControl({ value: item.description, disabled: true }),
       inventoryStatus: this.formBuilder.control(this.availableInventoryStatus?.id, [Validators.required]),
@@ -326,7 +326,15 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
       quantity:  [this.produceAtLPNUOM ? "1" : "", [Validators.required]], 
       producingUnitOfMeasure: this.formBuilder.control(this.currentProducingUnitOfMeasure?.id, [Validators.required]),
       
-    });
+    }); 
+    
+    if (this.produceAtLPNUOM) { 
+        this.produceInventoryForm.get("quantity")?.disable();
+    }
+    else {
+      
+      this.produceInventoryForm.get("quantity")?.enable();
+    }
 
  
     // Load the location
@@ -352,7 +360,14 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
 
           return false;
         }
-        this.produceInventory(workOrderNumber, productionLine);
+        if (!this.currentProducingUnitOfMeasure) {
+          this.messageService.error("can't get the UOM information");
+          return false;
+        }
+        // get the unit quantity first
+        let unitQuantity = this.produceInventoryForm.controls.quantity.value * 
+            this.currentProducingUnitOfMeasure!.quantity!;
+        this.produceInventory(workOrderNumber, productionLine, unitQuantity);
         return true;
       },
 
@@ -382,13 +397,15 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
 
     if (this.currentProducingUnitOfMeasure && this.currentProducingUnitOfMeasure.trackingLpn) {
       this.produceAtLPNUOM = true;
-      if (this.produceInventoryForm != null) {
-        this.produceInventoryForm.controls.quantiy.setValue("1");
+      if (this.produceInventoryForm) {
+        this.produceInventoryForm.controls.quantity.setValue("1");
+        this.produceInventoryForm.get("quantity")?.disable();
       }
     }
     else {
       
       this.produceAtLPNUOM = false;
+      this.produceInventoryForm.get("quantity")?.enable();
     } 
 
   } 
@@ -398,6 +415,8 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
           itemPackageType => itemPackageType.id = itemPackageTypeId
         );
 
+    this.currentProducingItemPackageType = selectedItemPackageType;
+
     if (selectedItemPackageType != null) {
       if (selectedItemPackageType.defaultWorkOrderReceivingUOM) {
         // set the display unit of measure
@@ -405,7 +424,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
 
         this.currentProducingUnitOfMeasure = selectedItemPackageType.defaultWorkOrderReceivingUOM;
         if (this.produceInventoryForm) {
-          this.produceInventoryForm!.controls.itemUnitOfMeasure.setValue(this.currentProducingUnitOfMeasure.id);
+          this.produceInventoryForm!.controls.producingUnitOfMeasure.setValue(this.currentProducingUnitOfMeasure.id);
         }
         this.producingUnitOfMeasureChanged(this.currentProducingUnitOfMeasure.id!);
         // this.receivingForm!.controls.itemUnitOfMeasure.setValue(this.currentReceivingInventory!.itemPackageType.displayItemUnitOfMeasure.id);
@@ -416,7 +435,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
 
         this.currentProducingUnitOfMeasure = selectedItemPackageType.displayItemUnitOfMeasure;
         if (this.produceInventoryForm) {
-            this.produceInventoryForm!.controls.itemUnitOfMeasure.setValue(this.currentProducingUnitOfMeasure.id);
+            this.produceInventoryForm!.controls.producingUnitOfMeasure.setValue(this.currentProducingUnitOfMeasure.id);
         }
         this.producingUnitOfMeasureChanged(this.currentProducingUnitOfMeasure.id!);
         // this.receivingForm!.controls.itemUnitOfMeasure.setValue(this.currentReceivingInventory!.itemPackageType.displayItemUnitOfMeasure.id);
@@ -427,14 +446,14 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
 
         this.currentProducingUnitOfMeasure = selectedItemPackageType.stockItemUnitOfMeasure; 
         if (this.produceInventoryForm) {
-            this.produceInventoryForm!.controls.itemUnitOfMeasure.setValue(this.currentProducingUnitOfMeasure.id);
+            this.produceInventoryForm!.controls.producingUnitOfMeasure.setValue(this.currentProducingUnitOfMeasure.id);
         }
         this.producingUnitOfMeasureChanged(this.currentProducingUnitOfMeasure.id!);
       }
     }
   }
 
-  produceInventory(workOrderNumber : string, productionLine: ProductionLine) : void { 
+  produceInventory(workOrderNumber : string, productionLine: ProductionLine, unitQuantity: number) : void { 
     this.isSpinning = true;
     this.workOrderService.getWorkOrders(workOrderNumber).subscribe({
         next: (workOrders) => {
@@ -444,16 +463,19 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
             this.isSpinning = false;
           }
           else {
-
+            const inventoryStatus = this.validInventoryStatuses.find(is => is.id! === this.produceInventoryForm.controls.inventoryStatus.value);
+ 
             const workOrderProduceTransaction : WorkOrderProduceTransaction = { 
               workOrder: workOrders[0],
               workOrderLineConsumeTransactions: [],
               workOrderProducedInventories: [
                 { 
                   lpn: this.produceInventoryForm.controls.lpn.value,
-                  quantity: this.produceInventoryForm.controls.quantity.value,
+                  quantity: unitQuantity,
                   inventoryStatusId: this.produceInventoryForm.controls.inventoryStatus.value,
-                  itemPackageTypeId: this.produceInventoryForm.controls.itemPackageType.value
+                  inventoryStatus: inventoryStatus,
+                  itemPackageTypeId: this.produceInventoryForm.controls.itemPackageType.value,
+                  itemPackageType: this.currentProducingItemPackageType
                 }
               ],
               consumeByBomQuantity: false,
@@ -477,6 +499,8 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
     this.workOrderProduceTransactionService.saveWorkOrderProduceTransaction(workOrderProduceTransaction).subscribe({
         next: () => {
           this.messageService.success(this.i18n.fanyi('message.work-order.produced-success')); 
+          // we may need to refresh the production line to reflect the result
+          this.refreshProductionLine(workOrderProduceTransaction.productionLine!);
           this.produceInventoryModal.destroy(); 
           this.isSpinning = false;  
         },
@@ -486,5 +510,15 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
         }
 
     });
+  }
+
+  refreshProductionLine(productionLine: ProductionLine): void {
+    this.productionLineService.getProductionLine(productionLine.id!).subscribe({
+        next: (productionLineRes) => {
+          this.productionLines.filter(productionLine => productionLineRes.id! === productionLine.id!)
+          .forEach(productionLine => productionLine.assignedWorkOrders = productionLineRes.assignedWorkOrders);
+
+        }
+    })
   }
 }

@@ -36,6 +36,7 @@
           <div style="font-size: 20px;">{{productionLine.name}}</div>
           <div *ngFor="let assignedWorkOrder of productionLine.assignedWorkOrders"> 
               <div style="font-size: 15px;">{{assignedWorkOrder.first}}</div>
+              <div style="font-size: 12px;">{{assignedWorkOrder.fourth}} / {{assignedWorkOrder.fifth}}</div>
               <div><a (click)="openProducingInventoryModal(tplProduceInventoryModalTitle, tplProduceInventoryModalContent, 
                 productionLine, assignedWorkOrder.first, assignedWorkOrder.second, assignedWorkOrder.third)">
                 {{assignedWorkOrder.second}}</a></div>
@@ -63,7 +64,7 @@
           </nz-form-label>
           <nz-form-control [nzSpan]="12">
             <nz-input-group nzSize="large">
-              <input nz-input formControlName="lpn" />
+              <input nz-input formControlName="lpn" readonly/>
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>
