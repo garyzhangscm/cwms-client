@@ -33,4 +33,7 @@ export interface ProductionLine {
   
   reportPrinterName?: string;
   labelPrinterName?: string;
+
+  // Pair<String, String>: work order number, finish good's item name
+  assignedWorkOrders?: any;
 }

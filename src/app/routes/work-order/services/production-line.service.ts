@@ -21,7 +21,7 @@ export class ProductionLineService {
     private utilService: UtilService,
     private warehouseService: WarehouseService) {}
 
-  getProductionLines(name?: string, type?: string): Observable<ProductionLine[]> {
+  getProductionLines(name?: string, type?: string, loadDetails?: boolean): Observable<ProductionLine[]> {
     const url =  `workorder/production-lines`;
 
       
@@ -35,6 +35,13 @@ export class ProductionLineService {
     if (type) {
       params = params.append('type', type); 
 
+    }
+    if (loadDetails != null) {
+      params = params.append('loadDetails', loadDetails); 
+    }
+    else {
+      
+      params = params.append('loadDetails', true); 
     }
 
     return this.http.get(url, params).pipe(map(res => res.data));

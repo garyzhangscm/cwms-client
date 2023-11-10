@@ -7,16 +7,10 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { PrintPageSize } from '../../common/models/print-page-size.enum';
-import { PrintingService } from '../../common/services/printing.service';
-import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
-import { InventoryService } from '../../inventory/services/inventory.service';
-import { ItemService } from '../../inventory/services/item.service';
-import { ReportType } from '../../report/models/report-type.enum';
-import { LocationService } from '../../warehouse-layout/services/location.service';
-import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { PrintingService } from '../../common/services/printing.service'; 
+import { ReportType } from '../../report/models/report-type.enum'; 
 import { WorkOrderLineConsumeTransaction } from '../models/work-order-line-consume-transaction';
-import { WorkOrderProduceTransaction } from '../models/work-order-produce-transaction';
-import { BillOfMaterialService } from '../services/bill-of-material.service';
+import { WorkOrderProduceTransaction } from '../models/work-order-produce-transaction'; 
 import { WorkOrderProduceTransactionService } from '../services/work-order-produce-transaction.service';
 import { WorkOrderService } from '../services/work-order.service';
 

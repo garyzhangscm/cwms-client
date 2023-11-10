@@ -4,9 +4,7 @@ import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map, timeout } from 'rxjs/operators';
-
-import { PrintableBarcode } from '../../common/models/printable-barcode';
-import { PrintingService } from '../../common/services/printing.service';
+ 
 import { ReportHistory } from '../../report/models/report-history';
 import { DateTimeService } from '../../util/services/date-time.service';
 import { UtilService } from '../../util/services/util.service';
@@ -14,12 +12,9 @@ import { WarehouseService } from '../../warehouse-layout/services/warehouse.serv
 import { Order } from '../models/order';
 import { OrderBillableActivity } from '../models/order-billable-activity';
 import { OrderCancellationRequest } from '../models/order-cancellation-request';
-import { OrderCategory } from '../models/order-category';
-import { OrderLine } from '../models/order-line';
-import { OrderStatus } from '../models/order-status.enum';
-import { PickWork } from '../models/pick-work';
-import { WalmartShippnigCartonLabel } from '../models/walmart-shipping-carton-labels';
-import { PickService } from './pick.service';
+import { OrderCategory } from '../models/order-category'; 
+import { OrderStatus } from '../models/order-status.enum'; 
+import { WalmartShippnigCartonLabel } from '../models/walmart-shipping-carton-labels'; 
 
 @Injectable({
   providedIn: 'root',

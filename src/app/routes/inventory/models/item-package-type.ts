@@ -9,4 +9,7 @@ export interface ItemPackageType {
   companyId: number;
   stockItemUnitOfMeasure? : ItemUnitOfMeasure;
   displayItemUnitOfMeasure? : ItemUnitOfMeasure;
+  defaultInboundReceivingUOM? : ItemUnitOfMeasure;
+  defaultWorkOrderReceivingUOM? : ItemUnitOfMeasure;
+  trackingLpnUOM? : ItemUnitOfMeasure;
 }
