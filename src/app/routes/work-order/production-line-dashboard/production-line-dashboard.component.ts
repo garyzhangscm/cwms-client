@@ -17,15 +17,11 @@ import { ItemUnitOfMeasure } from '../../inventory/models/item-unit-of-measure';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { ItemService } from '../../inventory/services/item.service';
 import { SystemControlledNumberService } from '../../util/services/system-controlled-number.service';
-import { ProductionLine } from '../models/production-line';
-import { ProductionLineStatus } from '../models/production-line-status';
-import { ProductionLineType } from '../models/production-line-type';
-import { ProductionShiftSchedule } from '../models/production-shift-schedule';
-import { WorkOrder } from '../models/work-order';
+import { ProductionLine } from '../models/production-line'; 
+import { ProductionLineType } from '../models/production-line-type';  
 import { WorkOrderProduceTransaction } from '../models/work-order-produce-transaction';
 import { ProductionLineTypeService } from '../services/production-line-type.service';
-import { ProductionLineService } from '../services/production-line.service';
-import { WorkOrderConfigurationService } from '../services/work-order-configuration.service';
+import { ProductionLineService } from '../services/production-line.service'; 
 import { WorkOrderProduceTransactionService } from '../services/work-order-produce-transaction.service';
 import { WorkOrderService } from '../services/work-order.service';
 
@@ -42,6 +38,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
   productionLines: ProductionLine[] = [];
   doNotRefreshFlag = false;
   autoGenerateNewLPNFlag = true;
+  onlyShowActiveProductionLineFlag = true;
 
   // production line and work order that the current production will take place
   currentProductionLineName = "";
@@ -65,6 +62,8 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
   refreshCountCycleLocalStorageKey = "production_line_dashboard_refresh_cycle_key";
   doNotRefreshLocalStorageKey = "production_line_dashboard_donot_fresh_key";
   autoGenerateNewLPNLocalStorageKey = "production_line_dashboard_auto_generate_new_lpn";
+  onlyShowActiveProductionLineLocalStorageKey = "production_line_dashboard_only_show_production_line";
+
 
   gridStyle = {
     width: '12.5%',
@@ -123,6 +122,9 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
     if (localStorage.getItem(this.autoGenerateNewLPNLocalStorageKey)) { 
       this.autoGenerateNewLPNFlag = localStorage.getItem(this.autoGenerateNewLPNLocalStorageKey) === 'true'; 
     }
+    if (localStorage.getItem(this.onlyShowActiveProductionLineLocalStorageKey)) { 
+      this.onlyShowActiveProductionLineFlag = localStorage.getItem(this.onlyShowActiveProductionLineLocalStorageKey) === 'true'; 
+    }
   
   
     if (this.productionLineType == "All") {
@@ -160,7 +162,14 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
     this.isSpinning = true;
     this.productionLineService.getProductionLines(undefined, productionLineTypeName, false).subscribe({
       next: (productionLineRes) => { 
-        this.productionLines = productionLineRes; 
+        if (this.onlyShowActiveProductionLineFlag) {
+            // ok, we will only show the active production line
+            this.productionLines = productionLineRes.filter(
+              productionLine =>  productionLine.assignedWorkOrders && productionLine.assignedWorkOrders.length > 0);
+        }
+        else {
+          this.productionLines = productionLineRes;
+        }
 
         this.setDisplayHeight(this.productionLines);
         
@@ -211,6 +220,10 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
   doNotRefreshFlagChanged() {
     
     localStorage.setItem(this.doNotRefreshLocalStorageKey, this.doNotRefreshFlag.toString());
+  }
+  onlyShowActiveProductionLineFlagChanged() {
+    
+    localStorage.setItem(this.onlyShowActiveProductionLineLocalStorageKey, this.onlyShowActiveProductionLineFlag.toString());
   }
   autoGenerateNewLPNFlagChanged() {
     

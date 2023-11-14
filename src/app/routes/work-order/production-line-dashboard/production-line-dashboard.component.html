@@ -21,23 +21,25 @@
         <span style="padding-left: 20px">Auto Generate New LPN?</span>
         <label nz-checkbox [(ngModel)]="autoGenerateNewLPNFlag"  (ngModelChange)="autoGenerateNewLPNFlagChanged()" ></label>
         
-        <span style="padding-left: 20px">Refresh Cycle(in seconds): </span>
+        <span style="padding-left: 20px; padding-right: 20px">Refresh Cycle(in seconds): </span>
         <nz-input-number   [nzMin]="1" [nzMax]="9999" [nzStep]="1"  
          [(ngModel)]="refreshCountCycle" (ngModelChange)="refreshCountCycleChanged()" 
          [disabled]="doNotRefreshFlag">
         </nz-input-number> 
-        <span style="padding-left: 20px">Do Not Refresh </span>
+        <span style="padding-left: 20px; padding-right: 20px">Do Not Refresh </span>
         <label nz-checkbox [(ngModel)]="doNotRefreshFlag"  (ngModelChange)="doNotRefreshFlagChanged()" ></label>
+        <span style="padding-left: 20px; padding-right: 20px">Only Show Active Production Line</span>
+        <label nz-checkbox [(ngModel)]="onlyShowActiveProductionLineFlag"  (ngModelChange)="onlyShowActiveProductionLineFlagChanged()" ></label>
     
 
     </div>   
     <div nz-card-grid [ngStyle]="gridStyle" *ngFor="let productionLine of productionLines"  >
-      <nz-card  [nzBodyStyle]="getBodyStyle(productionLine)">
+      <nz-card  [nzBodyStyle]="getBodyStyle(productionLine)" *ngIf="!onlyShowActiveProductionLineFlag || (productionLine.assignedWorkOrders && productionLine.assignedWorkOrders.length > 0)">
           <div style="font-size: 20px;">{{productionLine.name}}</div>
           <div *ngFor="let assignedWorkOrder of productionLine.assignedWorkOrders"> 
               <div style="font-size: 15px;">{{assignedWorkOrder.first}}</div>
               <div style="font-size: 12px;">{{assignedWorkOrder.fourth}} / {{assignedWorkOrder.fifth}}</div>
-              <div><a (click)="openProducingInventoryModal(tplProduceInventoryModalTitle, tplProduceInventoryModalContent, 
+              <div  style="font-size: 24px;text-decoration:underline;"><a (click)="openProducingInventoryModal(tplProduceInventoryModalTitle, tplProduceInventoryModalContent, 
                 productionLine, assignedWorkOrder.first, assignedWorkOrder.second, assignedWorkOrder.third)">
                 {{assignedWorkOrder.second}}</a></div>
             
