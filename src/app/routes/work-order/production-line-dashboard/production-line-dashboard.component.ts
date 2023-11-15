@@ -512,10 +512,10 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
     this.workOrderProduceTransactionService.saveWorkOrderProduceTransaction(workOrderProduceTransaction).subscribe({
         next: () => {
           this.messageService.success(this.i18n.fanyi('message.work-order.produced-success')); 
-          // we may need to refresh the production line to reflect the result
-          this.refreshProductionLine(workOrderProduceTransaction.productionLine!);
           this.produceInventoryModal.destroy(); 
           this.isSpinning = false;  
+          // we may need to refresh the production line to reflect the result
+          this.refreshProductionLine(workOrderProduceTransaction.productionLine!);
         },
         error: () => {
           this.messageService.error("can't produce the inventory from the work order")
