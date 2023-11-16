@@ -17,8 +17,10 @@ import { ItemUnitOfMeasure } from '../../inventory/models/item-unit-of-measure';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { ItemService } from '../../inventory/services/item.service';
 import { SystemControlledNumberService } from '../../util/services/system-controlled-number.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ProductionLine } from '../models/production-line'; 
 import { ProductionLineType } from '../models/production-line-type';  
+import { WorkOrder } from '../models/work-order';
 import { WorkOrderProduceTransaction } from '../models/work-order-produce-transaction';
 import { ProductionLineTypeService } from '../services/production-line-type.service';
 import { ProductionLineService } from '../services/production-line.service'; 
@@ -36,6 +38,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
   productionLineType = "All";
   productionLineTypes: ProductionLineType[] = [];
   productionLines: ProductionLine[] = [];
+  workOrders : WorkOrder[] = [];
   doNotRefreshFlag = false;
   autoGenerateNewLPNFlag = true;
   onlyShowActiveProductionLineFlag = true;
@@ -49,6 +52,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
   currentProducingItemPackageType? : ItemPackageType;
   currentProducingUnitOfMeasure?: ItemUnitOfMeasure;
   produceAtLPNUOM = false;
+
   
   // display height for each box, in px.
   // we will need to calculate it dynamicly since one machine may
@@ -94,7 +98,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private workOrderProduceTransactionService: WorkOrderProduceTransactionService,
     private modalService: NzModalService,
-    private workOrderService: WorkOrderService,
+    private warehouseService: WarehouseService,
     private itemService: ItemService,
     private inventoryStatusService: InventoryStatusService,
     private userService: UserService, ) {  
@@ -467,44 +471,32 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
   }
 
   produceInventory(workOrderNumber : string, productionLine: ProductionLine, unitQuantity: number) : void { 
-    this.isSpinning = true;
-    this.workOrderService.getWorkOrders(workOrderNumber).subscribe({
-        next: (workOrders) => {
-          if (workOrders.length == 0) {
-            
-            this.messageService.error(`can't find work order by number ${workOrderNumber}`); 
-            this.isSpinning = false;
-          }
-          else {
-            const inventoryStatus = this.validInventoryStatuses.find(is => is.id! === this.produceInventoryForm.controls.inventoryStatus.value);
+    this.isSpinning = true;  
+    
+    const inventoryStatus = this.validInventoryStatuses.find(is => is.id! === this.produceInventoryForm.controls.inventoryStatus.value);
  
-            const workOrderProduceTransaction : WorkOrderProduceTransaction = { 
-              workOrder: workOrders[0],
-              workOrderLineConsumeTransactions: [],
-              workOrderProducedInventories: [
-                { 
-                  lpn: this.produceInventoryForm.controls.lpn.value,
-                  quantity: unitQuantity,
-                  inventoryStatusId: this.produceInventoryForm.controls.inventoryStatus.value,
-                  inventoryStatus: inventoryStatus,
-                  itemPackageTypeId: this.produceInventoryForm.controls.itemPackageType.value,
-                  itemPackageType: this.currentProducingItemPackageType
-                }
-              ],
-              consumeByBomQuantity: false,
-              workOrderByProductProduceTransactions: [],
-              workOrderKPITransactions: [],
-              productionLine: productionLine,  
+    const workOrderProduceTransaction : WorkOrderProduceTransaction = { 
+        workOrderNumber: workOrderNumber,
+        warehouseId: this.warehouseService.getCurrentWarehouse().id,
+        workOrderLineConsumeTransactions: [],
+        workOrderProducedInventories: [
+            { 
+                lpn: this.produceInventoryForm.controls.lpn.value,
+                quantity: unitQuantity,
+                inventoryStatusId: this.produceInventoryForm.controls.inventoryStatus.value,
+                inventoryStatus: inventoryStatus,
+                itemPackageTypeId: this.produceInventoryForm.controls.itemPackageType.value,
+                itemPackageType: this.currentProducingItemPackageType
             }
-            this.saveWorkOrderProduceResults(workOrderProduceTransaction);
-          }
-
-        }, 
-        error: () => {
-          this.messageService.error(`can't find work order by number ${workOrderNumber}`); 
-          this.isSpinning = false;
-        }
-    });
+        ],
+        consumeByBomQuantity: false,
+        workOrderByProductProduceTransactions: [],
+        workOrderKPITransactions: [],
+        productionLine: productionLine,  
+    };
+    
+    this.saveWorkOrderProduceResults(workOrderProduceTransaction); 
+ 
 
   }
   saveWorkOrderProduceResults(workOrderProduceTransaction: WorkOrderProduceTransaction): void {

@@ -20,4 +20,7 @@ export interface WorkOrderProduceTransaction {
   printingNewLPNLabel?: boolean;
   labelPrinterName?: string;
   labelPrinterIndex?: number;
+
+  workOrderNumber?: string;
+  warehouseId?: number;
 }
