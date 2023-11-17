@@ -3,11 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
-
-import { Customer } from '../../common/models/customer';
-import { AllocationStrategyType } from '../../outbound/models/allocation-strategy-type.enum';
-import { Order } from '../../outbound/models/order';
-import { OrderLine } from '../../outbound/models/order-line';
+ 
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { QCRule } from '../models/qc-rule';
@@ -15,8 +11,7 @@ import { QCRuleItem } from '../models/qc-rule-item';
 import { QCRuleItemComparator } from '../models/qc-rule-item-comparator';
 import { QCRuleItemType } from '../models/qc-rule-item-type';
 import { QcRuleService } from '../services/qc-rule.service';
-
-import { Address } from 'cluster';
+ 
 
 @Component({
   selector: 'app-qc-qc-rule-maintenance',
