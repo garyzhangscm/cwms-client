@@ -86,13 +86,7 @@ export class ReportPrinterMaintenanceComponent implements OnInit {
   loadAvaiablePrinters(): void { 
     if (this.warehouseService.getServerSidePrintingFlag() == true) { 
       this.printingService.getAllServerPrinters().subscribe(printers => {
-        printers.forEach(
-          (printer, index) => {
-            this.availablePrinters.push({
-              id: index, name: printer, description: printer, warehouseId: this.warehouseService.getCurrentWarehouse().id
-            });
-    
-          });
+        this.availablePrinters = printers;
       })
     }
     else {

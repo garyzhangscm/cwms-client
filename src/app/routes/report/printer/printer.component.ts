@@ -28,6 +28,8 @@ export class ReportPrinterComponent implements OnInit {
     { title: this.i18n.fanyi("name"),  index: 'name' , }, 
     { title: this.i18n.fanyi("description"),  index: 'description' , }, 
     { title: this.i18n.fanyi("printer-type"),  index: 'printerType.name' , }, 
+    { title: this.i18n.fanyi("printer.job-count"),  index: 'jobCount' , }, 
+    { title: this.i18n.fanyi("printer.queued-jobs"),  render: 'queuedJobsColumn', }, 
     {
       title: 'action', 
       render: 'actionColumn',

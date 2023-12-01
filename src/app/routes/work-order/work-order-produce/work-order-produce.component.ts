@@ -108,13 +108,7 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
     if (this.warehouseService.getServerSidePrintingFlag() == true) {
       console.log(`will get printer from server`)
       this.printingService.getAllServerPrinters().subscribe(printers => {
-        printers.forEach(
-          (printer, index) => {
-            this.availablePrinters.push({
-              id: index, name: printer, description: printer, warehouseId: this.warehouseService.getCurrentWarehouse().id
-            });
-
-          });
+        this.availablePrinters = printers;
       })
 
     }

@@ -47,6 +47,15 @@
     
     <st #st [data]="printers" [columns]="columns" [footer]="tableFoot" >
       
+      <ng-template st-row="queuedJobsColumn" let-printer > 
+        
+        <ul> 
+          <li *ngFor="let queuedJob of printer.printingJobs">
+              {{ queuedJob.printingJobName }} @ {{ queuedJob.printingTime}}. {{'result' | i18n}} : {{ queuedJob.result }}
+          </li>
+        </ul>
+      </ng-template>
+
         <ng-template st-row="actionColumn" let-item let-index="index"> 
         
             <button nz-button nz-dropdown [nzDropdownMenu]="actions"   >

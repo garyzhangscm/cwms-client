@@ -59,13 +59,7 @@ export class UtilRfConfigurationComponent implements OnInit {
 
         console.log(`will get printer from server`)
         this.printingService.getAllServerPrinters(warehouseConfiguration.printingStrategy).subscribe(printers => {
-          printers.forEach(
-            (printer, index) => {
-              this.availablePrinters.push({
-                id: index, name: printer, description: printer, warehouseId: this.warehouseService.getCurrentWarehouse().id
-              });
-  
-            });
+          this.availablePrinters = printers;
         })
       } 
       else  if (warehouseConfiguration.printingStrategy === PrintingStrategy.LOCAL_PRINTER_LOCAL_DATA) {

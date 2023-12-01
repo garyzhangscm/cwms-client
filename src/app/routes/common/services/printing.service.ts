@@ -7,6 +7,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+import { Printer } from '../../report/models/printer';
 import { ReportHistory } from '../../report/models/report-history';
 import { ReportType } from '../../report/models/report-type.enum';
 import { PrintingRequestService } from '../../report/services/printing-request.service';
@@ -56,7 +57,7 @@ export class PrintingService {
     return this.lodop!.GET_PRINTER_COUNT();
   }
 
-  getAllServerPrinters(printingStrategy?: PrintingStrategy): Observable<string[]> {
+  getAllServerPrinters(printingStrategy?: PrintingStrategy): Observable<Printer[]> {
     const url = 'resource/server-printers';
     
     let params = new HttpParams();
