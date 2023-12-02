@@ -365,6 +365,12 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
         this.produceInventoryModal.destroy(); 
       },
       nzOnOk: () => { 
+        // disable the OK button to prevent double receiving
+        this.produceInventoryModal.updateConfig({ 
+          nzOkDisabled: true,
+          nzOkLoading: true
+        });
+
         console.log(`this.produceInventoryForm.valid: ${this.produceInventoryForm.valid}`);
 
         if (!this.produceInventoryForm.valid) {
@@ -375,16 +381,30 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
             }
           });
 
+          this.produceInventoryModal.updateConfig({ 
+            nzOkDisabled: false,
+            nzOkLoading: false
+          });
           return false;
         }
         if (!this.currentProducingUnitOfMeasure) {
           this.messageService.error("can't get the UOM information");
+          
+          this.produceInventoryModal.updateConfig({ 
+            nzOkDisabled: false,
+            nzOkLoading: false
+          });
           return false;
         }
         // get the unit quantity first
         let unitQuantity = this.produceInventoryForm.controls.quantity.value * 
             this.currentProducingUnitOfMeasure!.quantity!;
         this.produceInventory(workOrderNumber, productionLine, unitQuantity);
+        
+        this.produceInventoryModal.updateConfig({ 
+          nzOkDisabled: false,
+          nzOkLoading: false
+        });
         return true;
       },
 
