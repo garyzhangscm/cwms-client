@@ -111,7 +111,14 @@ export class ReportReportPrinterConfigurationMaintenanceComponent implements OnI
     if (this.warehouseService.getServerSidePrintingFlag() == true) {
       console.log(`will get printer from server`)
       this.printingService.getAllServerPrinters().subscribe(printers => {
-        this.availablePrinters = printers;
+        // this.availablePrinters = printers;
+        printers.forEach(
+          (printer, index) => {
+            this.availablePrinters.push({
+              id: index, name: printer.name, description: printer.name, warehouseId: this.warehouseService.getCurrentWarehouse().id
+            });
+
+          }); 
       })
 
     }
