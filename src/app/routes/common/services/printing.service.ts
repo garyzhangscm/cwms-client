@@ -58,8 +58,8 @@ export class PrintingService {
   }
 
   getAllServerPrinters(printingStrategy?: PrintingStrategy): Observable<Printer[]> {
-    const url = 'resource/server-printers';
-    
+    // const url = 'resource/server-printers';
+    const url = 'resource/printers';
     let params = new HttpParams();
     
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);
