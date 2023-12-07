@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ACLGuard, ACLGuardType } from '@delon/acl';
-
-import { AuthGuard } from '../auth/guard/auth.guard';
+ 
 import { InventoryAuditCountConfirmComponent } from './audit-count-confirm/audit-count-confirm.component';
 import { InventoryAuditCountResultComponent } from './audit-count-result/audit-count-result.component';
 import { InventoryCountConfigComponent } from './count-config/count-config.component';
 import { InventoryCycleCountMaintenanceComponent } from './cycle-count-maintenance/cycle-count-maintenance.component';
 import { InventoryCycleCountComponent } from './cycle-count/cycle-count.component';
+import { InventoryDryrunInventoryAllocationComponent } from './dryrun-inventory-allocation/dryrun-inventory-allocation.component';
 import { InventoryEmergencyReplenishmentConfigComponent } from './emergency-replenishment-config/emergency-replenishment-config.component';
 import { InventoryInventoryActivityComponent } from './inventory-activity/inventory-activity.component';
 import { InventoryInventoryAdjustComponent } from './inventory-adjust/inventory-adjust.component';
@@ -439,7 +439,8 @@ const routes: Routes = [
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
-  }];
+  }, 
+  { path: 'dryrun-inventory-allocation', component: InventoryDryrunInventoryAllocationComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

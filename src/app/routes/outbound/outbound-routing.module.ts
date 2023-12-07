@@ -1,8 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ACLGuard, ACLGuardType } from '@delon/acl';
-
-import { AuthGuard } from '../auth/guard/auth.guard';
+ 
 import { OutboundAllocationConfigurationMaintenanceComponent } from './allocation-configuration-maintenance/allocation-configuration-maintenance.component';
 import { OutboundAllocationConfigurationComponent } from './allocation-configuration/allocation-configuration.component';
 import { OutboundAllocationTransactionHistoryComponent } from './allocation-transaction-history/allocation-transaction-history.component';
@@ -23,6 +22,7 @@ import { OutboundOrderDocumentComponent } from './order-document/order-document.
 import { OutboundOrderMaintenanceComponent } from './order-maintenance/order-maintenance.component';
 import { OutboundOrderWalmartShippingCartonLabelComponent } from './order-walmart-shipping-carton-label/order-walmart-shipping-carton-label.component';
 import { OutboundOrderComponent } from './order/order.component';
+import { OutboundOutboundConfigurationComponent } from './outbound-configuration/outbound-configuration.component';
 import { OutboundOutboundOrderPopupQueryComponent } from './outbound-order-popup-query/outbound-order-popup-query.component';
 import { OutboundParcelByOrderComponent } from './parcel-by-order/parcel-by-order.component';
 import { OutboundParcelPackageMaintenanceComponent } from './parcel-package-maintenance/parcel-package-maintenance.component';
@@ -39,7 +39,6 @@ import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
-import { OutboundOutboundConfigurationComponent } from './outbound-configuration/outbound-configuration.component';
 
 const routes: Routes = [
   { path: 'order', component: OutboundOrderComponent, 
@@ -329,7 +328,7 @@ const routes: Routes = [
   { path: 'ship-by-hualei', component: OutboundShipByHualeiComponent },
   { path: 'parcel-package/maintenance', component: OutboundParcelPackageMaintenanceComponent },
   { path: 'order/walmart-shipping-carton-label', component: OutboundOrderWalmartShippingCartonLabelComponent },
-  { path: 'outbound-configuration', component: OutboundOutboundConfigurationComponent }];
+  { path: 'outbound-configuration', component: OutboundOutboundConfigurationComponent }, ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

@@ -28,7 +28,7 @@ export class BillableRequestService {
     params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
      
     if (warehouseId) {
-      params = params.append('companyId', warehouseId);  
+      params = params.append('warehouseId', warehouseId);  
     }
 
     

@@ -1,4 +1,5 @@
  
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -10,6 +11,7 @@ import { SystemControlledNumberService } from '../../util/services/system-contro
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { AllocationDryRunResult } from '../models/allocation-dry-run-result';
 import { Inventory } from '../models/inventory';
 import { ItemFamily } from '../models/item-family';
 
@@ -203,5 +205,29 @@ export class InventoryService {
     let url = `inventory/inventories/${this.warehouseService.getCurrentWarehouse().id}/empty-location`;
     url = `${url}?locationId=${locationId}`;
     return this.http.post(url).pipe(map(res => res.data));
+  }
+
+  
+  getAllocationDryRunResult(itemId: number, inventoryStatusId: number, 
+    clientId?: number, locationId?: number, lpn?: string): Observable<AllocationDryRunResult[]>{
+    const url = `inventory/inventories/dry-run-allocation`;    
+    
+    let params = new HttpParams();
+           
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+    params = params.append('itemId', itemId); 
+    params = params.append('inventoryStatusId', inventoryStatusId); 
+     
+    if (clientId) {
+      params = params.append('clientId', clientId);  
+    }
+    if (locationId) {
+      params = params.append('locationId', locationId);  
+    }
+    if (lpn) {
+      params = params.append('lpn', lpn);  
+    }
+
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 }

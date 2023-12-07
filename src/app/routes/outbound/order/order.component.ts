@@ -1973,4 +1973,8 @@ export class OutboundOrderComponent implements OnInit {
     });
 
   } 
+
+  dryrunInventoryAllocation(orderLine: OrderLine) { 
+    this.router.navigateByUrl(`/inventory/dryrun-inventory-allocation?type=orderLine&id=${orderLine.id}`);
+  }
 }

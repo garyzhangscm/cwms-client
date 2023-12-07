@@ -11,16 +11,15 @@ import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
 
 import { CommonModule } from '../common/common.module';
-import { DirectivesModule } from '../directives/directives.module'; 
-import { OutboundModule } from '../outbound/outbound.module';
+import { DirectivesModule } from '../directives/directives.module';  
 import { UtilModule } from '../util/util.module';
-import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module';
-import { WorkOrderModule } from '../work-order/work-order.module';
+import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module'; 
 import { InventoryAuditCountConfirmComponent } from './audit-count-confirm/audit-count-confirm.component';
 import { InventoryAuditCountResultComponent } from './audit-count-result/audit-count-result.component';
 import { InventoryCountConfigComponent } from './count-config/count-config.component';
 import { InventoryCycleCountMaintenanceComponent } from './cycle-count-maintenance/cycle-count-maintenance.component';
 import { InventoryCycleCountComponent } from './cycle-count/cycle-count.component';
+import { InventoryDryrunInventoryAllocationComponent } from './dryrun-inventory-allocation/dryrun-inventory-allocation.component';
 import { InventoryEmergencyReplenishmentConfigComponent } from './emergency-replenishment-config/emergency-replenishment-config.component';
 import { InventoryInventoryActivityComponent } from './inventory-activity/inventory-activity.component';
 import { InventoryInventoryAdjustComponent } from './inventory-adjust/inventory-adjust.component';
@@ -28,6 +27,7 @@ import { InventoryInventoryAdjustmentRequestComponent } from './inventory-adjust
 import { InventoryInventoryAdjustmentThresholdConfirmComponent } from './inventory-adjustment-threshold-confirm/inventory-adjustment-threshold-confirm.component';
 import { InventoryInventoryAdjustmentThresholdMaintenanceComponent } from './inventory-adjustment-threshold-maintenance/inventory-adjustment-threshold-maintenance.component';
 import { InventoryInventoryAdjustmentThresholdComponent } from './inventory-adjustment-threshold/inventory-adjustment-threshold.component';
+import { InventoryInventoryAgingSnapshotComponent } from './inventory-aging-snapshot/inventory-aging-snapshot.component';
 import { InventoryInventoryAllocationSummaryComponent } from './inventory-allocation-summary/inventory-allocation-summary.component';
 import { InventoryInventoryAttributeChangeConfirmComponent } from './inventory-attribute-change-confirm/inventory-attribute-change-confirm.component';
 import { InventoryInventoryAttributeChangeComponent } from './inventory-attribute-change/inventory-attribute-change.component';
@@ -60,7 +60,6 @@ import { InventoryMovementPathMaintenanceComponent } from './movement-path-maint
 import { InventoryMovementPathComponent } from './movement-path/movement-path.component';
 import { InventoryReplenishmentComponent } from './replenishment/replenishment.component';
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
-import { InventoryInventoryAgingSnapshotComponent } from './inventory-aging-snapshot/inventory-aging-snapshot.component';
 
 
 const COMPONENTS: Array<Type<void>> = [
@@ -107,7 +106,8 @@ const COMPONENTS: Array<Type<void>> = [
   InventoryInventoryDashboardComponent,
   InventoryInventoryMixRestrictionComponent,
   InventoryInventoryMixRestrictionMaintenanceComponent,
-  InventoryInventoryAgingSnapshotComponent];
+  InventoryInventoryAgingSnapshotComponent, 
+  InventoryDryrunInventoryAllocationComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

@@ -301,8 +301,8 @@
           <nz-tab nzTitle=" {{ 'order.line' | i18n }}">
 
             <st #stOrderLine [data]="order.orderLines"  [columns]="stOrderLineTableColumns"  
-            [expand]="expand"  expandAccordion 
-            [scroll]="{ x: '1315px' }">
+              [expand]="expand"  expandAccordion 
+              [scroll]="{ x: '1315px' }">
              
             
              <!--   billable activity  -->
@@ -415,11 +415,29 @@
               </ng-template>
              <ng-template st-row="actionColumn" let-orderLine  >
                 
-                <button nz-button (click)="openAddOrderLineActivityModal(order, orderLine, tplBillableActivityModalTitle, 
-                    tplBillableActivityModalContent, tplBillableActivityModalFooter)"
-                    *ngIf="!userPermissionMap.has('add-order-line-billable-activity-type') || userPermissionMap.get('add-order-line-billable-activity-type')">
-                  {{ 'billable-activity-type.add' | i18n }}
-                </button>
+              
+                <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+                  {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+                <nz-dropdown-menu #menu="nzDropdownMenu">
+                  <ul nz-menu>  
+
+                    <li nz-menu-item *ngIf="!userPermissionMap.has('add-order-line-billable-activity-type') || userPermissionMap.get('add-order-line-billable-activity-type')">
+                      <a  (click)="openAddOrderLineActivityModal(order, orderLine, tplBillableActivityModalTitle, 
+                                    tplBillableActivityModalContent, tplBillableActivityModalFooter)">
+                        {{ 'billable-activity-type.add' | i18n }}
+                      </a>
+                    </li>  
+                    
+                    <li nz-menu-item >
+                      <a  (click)="dryrunInventoryAllocation(orderLine)">
+                        {{ 'dryrun-inventory-allocation' | i18n }}
+                      </a>
+                    </li>  
+                     
+                  </ul>
+                </nz-dropdown-menu>
+
+                
               </ng-template>          
           </st> 
 <!--

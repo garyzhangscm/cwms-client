@@ -16,7 +16,7 @@ import { CommonModule } from '../common/common.module';
 import { DirectivesModule } from '../directives/directives.module';
 import { InventoryModule } from '../inventory/inventory.module';
 import { UtilModule } from '../util/util.module';
-import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module';
+import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module'; 
 import { OutboundAllocationConfigurationMaintenanceComponent } from './allocation-configuration-maintenance/allocation-configuration-maintenance.component';
 import { OutboundAllocationConfigurationComponent } from './allocation-configuration/allocation-configuration.component';
 import { OutboundAllocationTransactionHistoryComponent } from './allocation-transaction-history/allocation-transaction-history.component';
@@ -35,7 +35,9 @@ import { OutboundLoadComponent } from './load/load.component';
 import { OutboundOrderActivityComponent } from './order-activity/order-activity.component';
 import { OutboundOrderDocumentComponent } from './order-document/order-document.component';
 import { OutboundOrderMaintenanceComponent } from './order-maintenance/order-maintenance.component';
+import { OutboundOrderWalmartShippingCartonLabelComponent } from './order-walmart-shipping-carton-label/order-walmart-shipping-carton-label.component';
 import { OutboundOrderComponent } from './order/order.component';
+import { OutboundOutboundConfigurationComponent } from './outbound-configuration/outbound-configuration.component';
 import { OutboundOutboundOrderPopupQueryComponent } from './outbound-order-popup-query/outbound-order-popup-query.component';
 import { OutboundRoutingModule } from './outbound-routing.module';
 import { OutboundParcelByOrderComponent } from './parcel-by-order/parcel-by-order.component';
@@ -53,8 +55,6 @@ import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
-import { OutboundOrderWalmartShippingCartonLabelComponent } from './order-walmart-shipping-carton-label/order-walmart-shipping-carton-label.component';
-import { OutboundOutboundConfigurationComponent } from './outbound-configuration/outbound-configuration.component';
 
 const COMPONENTS: Array<Type<void>> = [
   OutboundOrderComponent,
@@ -93,7 +93,7 @@ const COMPONENTS: Array<Type<void>> = [
   OutboundShipByHualeiComponent,
   OutboundParcelPackageMaintenanceComponent,
   OutboundOrderWalmartShippingCartonLabelComponent,
-  OutboundOutboundConfigurationComponent];
+  OutboundOutboundConfigurationComponent ];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

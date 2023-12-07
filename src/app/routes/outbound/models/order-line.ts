@@ -1,3 +1,4 @@
+import { Client } from '../../common/models/client';
 import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { Item } from '../../inventory/models/item';
@@ -38,4 +39,8 @@ export interface OrderLine {
   orderLineBillableActivities: OrderLineBillableActivity[];
   autoRequestShippingLabel?: boolean;
   hualeiProductId?: string;
+
+  
+  clientId?: number;
+  client?: Client;
 }
