@@ -15,6 +15,10 @@ export interface AllocationDryRunResult {
   inventory: Inventory;
 
   locationName: string;
+
+  
+  locationInventoryQuantity: number;
+  locationOpenPickQuantity: number;
   
   allocatible: boolean;
 

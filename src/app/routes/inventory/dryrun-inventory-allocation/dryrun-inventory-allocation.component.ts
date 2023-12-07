@@ -52,7 +52,16 @@ export class InventoryDryrunInventoryAllocationComponent implements OnInit {
     { title: this.i18n.fanyi("item"), index: 'item.name',  },   
     { title: this.i18n.fanyi("inventory-status"), index: 'inventoryStatus.name',  },   
     { title: this.i18n.fanyi("quantity"), index: 'inventory.quantity',  },   
-    { title: this.i18n.fanyi("allocatible"), index: 'allocatible',  },   
+    { title: this.i18n.fanyi("allocatible"), index: 'allocatible',  
+      filter: {
+        menus: [
+          { text: 'true', value: 1 },
+          { text: 'false', value: 2 }
+        ],
+        fn: (filter, record) => !filter.value || record.allocatible == filter.value,
+        multiple: false
+      }
+    },   
     { title: this.i18n.fanyi("allocationFailReason"), index: 'allocationFailReason',  },    
   ];
   
@@ -109,6 +118,11 @@ export class InventoryDryrunInventoryAllocationComponent implements OnInit {
             next: (allocationDryRunResultRes) => {
               this.allocationDryRunResults = allocationDryRunResultRes;
               
+              this.allocationDryRunResults.forEach(
+                result => {
+                  console.log(`>> location: ${result.locationName}, lpn: ${result.inventory.lpn}, allocatable? ${result.allocatible}, locationInventoryQuantity: ${result.locationInventoryQuantity}, locationOpenPickQuantity: ${result.locationOpenPickQuantity}`);
+                }
+              )
               this.searchResult = this.i18n.fanyi('search_result_analysis', {
                 currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
                 rowCount: allocationDryRunResultRes.length

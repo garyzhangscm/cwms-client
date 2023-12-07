@@ -36,16 +36,16 @@
 
 <!-- Display Order Informaiton -->
 <nz-card *ngIf="type === 'orderLine'">
-  <nz-descriptions nzTitle="{{'order' | i18n}}" nzBordered *ngIf="order != null">
+  <nz-descriptions nzTitle="{{'order' | i18n}}" nzBordered *ngIf="orderLine != null">
     <nz-descriptions-item nzTitle="{{'order.number' | i18n}}">
-      {{orderLine?.orderNumber}}
+      {{orderLine.orderNumber}}
     </nz-descriptions-item>   
-    <nz-descriptions-item nzTitle="{{'item' | i18n}}">{{orderLine?.item?.name}}
+    <nz-descriptions-item nzTitle="{{'item' | i18n}}">{{orderLine.item?.name}}
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="{{'item.description' | i18n}}">
-      {{orderLine?.item?.description}}</nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{'expected-quantity' | i18n}}">
-      {{orderLine?.expectedQuantity}}</nz-descriptions-item> 
+      {{orderLine.item?.description}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'order.line.expectedQuantity' | i18n}}">
+      {{orderLine.expectedQuantity}}</nz-descriptions-item> 
   </nz-descriptions>
 </nz-card> 
 <!-- Table to Display the result  -->
