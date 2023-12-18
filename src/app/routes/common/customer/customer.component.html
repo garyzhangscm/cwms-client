@@ -29,7 +29,7 @@
 
 <!-- Table to Display the result  -->
 <div class="search-result-list">
-  <nz-table [nzScroll]="{ x: '90vw' }" #rowSelectionTable nzShowSizeChanger [nzData]="listOfAllCustomers"
+  <nz-table [nzScroll]="{ x: '150vw' }" #rowSelectionTable nzShowSizeChanger [nzData]="listOfAllCustomers"
     [nzFooter]="tableFoot">
     <thead>
       <tr>
@@ -72,6 +72,21 @@
         <td> {{ data.addressLine2 }} 
         </td>
         <td> {{ data.addressPostcode }} 
+        </td>
+        
+        <td> {{ data.customerIsTarget }} 
+        </td>
+        <td> {{ data.customerIsWalmart }} 
+        </td>
+        <td> {{ data.allowPrintShippingCartonLabel }} 
+        </td>
+        <td> {{ data.allowPrintShippingCartonLabelWithPalletLabel }} 
+        </td>
+        <td> {{ data.allowPrintShippingCartonLabelWithPalletLabelWhenShort }} 
+        </td>
+        <td> {{ data.maxPalletSize }} 
+        </td>
+        <td> {{ data.maxPalletHeight }} 
         </td>
         <td nzRight> 
           <a routerLinkActive="active"

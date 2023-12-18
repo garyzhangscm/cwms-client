@@ -15,4 +15,15 @@ export interface Customer {
   addressLine2?: string;
   addressPostcode: string;
   listPickEnabledFlag?: boolean;
+
+  customerIsTarget?: boolean;
+  customerIsWalmart?: boolean;
+
+  allowPrintShippingCartonLabel?: boolean;
+  allowPrintShippingCartonLabelWithPalletLabel?: boolean;
+  allowPrintShippingCartonLabelWithPalletLabelWhenShort?: boolean;
+
+  maxPalletSize?: number;
+
+  maxPalletHeight?: number;
 }

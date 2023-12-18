@@ -92,6 +92,86 @@
         </nz-form-item>
       </div>
     </div> 
+    
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="3">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="23">
+            {{ 'customer.isTarget' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="1">
+            <label nz-checkbox [(ngModel)]="currentCustomer!.customerIsTarget" [nzDisabled]="isWalmart"
+                (ngModelChange)="isTargetSelectedChange($event)"></label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+      <div nz-col [nzSpan]="3">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="23">
+            {{ 'customer.isWalmart' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="1">
+            <label nz-checkbox [(ngModel)]="currentCustomer!.customerIsWalmart" [nzDisabled]="isTarget"
+            (ngModelChange)="isWalmartSelectedChange($event)"></label>
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+      
+      <div nz-col [nzSpan]="5">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="23" nzLabelAlign="right">
+            {{ 'allowPrintShippingCartonLabel' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="1">
+            <label nz-checkbox [(ngModel)]="currentCustomer!.allowPrintShippingCartonLabel" ></label>
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+      <div nz-col [nzSpan]="6">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="23">
+            {{ 'allowPrintShippingCartonLabelWithPalletLabel' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="1">
+            <label nz-checkbox [(ngModel)]="currentCustomer!.allowPrintShippingCartonLabelWithPalletLabel" ></label>
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+      <div nz-col [nzSpan]="7">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="23">
+            {{ 'allowPrintShippingCartonLabelWithPalletLabelWhenShort' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="1">
+            <label nz-checkbox [(ngModel)]="currentCustomer!.allowPrintShippingCartonLabelWithPalletLabelWhenShort"  ></label>
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+    </div> 
+    
+    <div nz-row [nzGutter]="24"> 
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="12" >
+            {{ 'maxPalletSize' | i18n }} (in)
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback >
+            <nz-input-number [(ngModel)]="currentCustomer!.maxPalletSize" [nzMin]="0"  ></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="12"  >
+            {{ 'maxPalletHeight' | i18n }} (in)
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12"  nzHasFeedback >
+            <nz-input-number [(ngModel)]="currentCustomer!.maxPalletHeight" [nzMin]="0" ></nz-input-number>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div> 
 </nz-card>
 
 <ng-template #cardFoot>

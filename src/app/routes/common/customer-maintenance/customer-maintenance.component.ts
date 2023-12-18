@@ -12,8 +12,11 @@ import { Customer } from '../models/customer';
   templateUrl: './customer-maintenance.component.html',
 })
 export class CommonCustomerMaintenanceComponent implements OnInit {
-  currentCustomer: Customer | undefined;
+  currentCustomer!: Customer;
   pageTitle = '';
+
+  isWalmart = false;
+  isTarget = false;
 
   emptyCustomer: Customer = {
     id: 0,
@@ -32,17 +35,31 @@ export class CommonCustomerMaintenanceComponent implements OnInit {
     addressLine2: '',
     addressPostcode: '',
     listPickEnabledFlag: false,
+    
+    customerIsTarget: false,
+    customerIsWalmart: false,
+
+    allowPrintShippingCartonLabel: false,
+    allowPrintShippingCartonLabelWithPalletLabel: false,
+    allowPrintShippingCartonLabelWithPalletLabelWhenShort: false,
+
+    maxPalletSize:0,
+    maxPalletHeight:0,
   };
 
   constructor(private router: Router,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private warehouseService: WarehouseService,
     private titleService: TitleService, 
-    private companyService: CompanyService) { }
+    private companyService: CompanyService) {
+      this.currentCustomer = this.emptyCustomer;
+  }
 
   ngOnInit(): void {
     this.loadCustomerFromSessionStorage();
     this.setupPageTitle();
+    this.isWalmart = this.currentCustomer.customerIsWalmart == null ? false : this.currentCustomer.customerIsWalmart;
+    this.isTarget = this.currentCustomer.customerIsTarget == null ? false : this.currentCustomer.customerIsTarget;
   }
 
   loadCustomerFromSessionStorage(): void {
@@ -53,8 +70,16 @@ export class CommonCustomerMaintenanceComponent implements OnInit {
   }
 
   setupPageTitle(): void {
-    this.titleService.setTitle(this.i18n.fanyi('page.add.title'));
-    this.pageTitle = this.i18n.fanyi('page.add.title');
+    if (this.currentCustomer?.id) {
+      
+      this.titleService.setTitle(this.i18n.fanyi('modify'));
+      this.pageTitle = this.i18n.fanyi('modify');
+    }
+    else {
+
+      this.titleService.setTitle(this.i18n.fanyi('new'));
+      this.pageTitle = this.i18n.fanyi('new');
+    }
   }
   goToAddressPage(): void {
     sessionStorage.setItem('customer-maintenance.customer', JSON.stringify(this.currentCustomer));
@@ -67,5 +92,23 @@ export class CommonCustomerMaintenanceComponent implements OnInit {
     this.currentCustomer!.listPickEnabledFlag = listPickEnabledFlagChecked; 
     console.log(`listPickEnabledFlagChecked is changed to ${listPickEnabledFlagChecked}`);
     console.log(`this.currentCustomer!: ${JSON.stringify(this.currentCustomer!)}`);
+  }
+  
+  // help function to change the local value so that when the user choose the
+  // customer is target, then the user won't be able to choose if the user
+  // is walmart at the same time
+  isTargetSelectedChange(val: boolean) {
+       this.isTarget = val;
+       if (this.isTarget) {
+        this.isWalmart = false;
+        this.currentCustomer.customerIsWalmart = false;
+       }
+  }
+  isWalmartSelectedChange(val: boolean) {
+       this.isWalmart = val;
+       if (this.isWalmart) {
+        this.isTarget = false;
+        this.currentCustomer.customerIsTarget = false;
+       }
   }
 }

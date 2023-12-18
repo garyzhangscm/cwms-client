@@ -45,7 +45,7 @@
       <nz-descriptions-item nzTitle="{{'description' | i18n}}" nzSpan="2">
         {{currentCustomer?.description}}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{'listPickEnabledFlag' | i18n}}" nzSpan="2">
+      <nz-descriptions-item nzTitle="{{'listPickEnabledFlag' | i18n}}" nzSpan="3">
         <span nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"
             *ngIf="currentCustomer?.listPickEnabledFlag"></span>
         <span nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"
@@ -57,26 +57,73 @@
       <nz-descriptions-item nzTitle="{{'contactor.lastname' | i18n}}" nzSpan="2">
         {{currentCustomer?.contactorLastname}}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'country' | i18n }}">
-        {{ currentCustomer?.addressCountry }}
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'state' | i18n }}">
-        {{ currentCustomer?.addressState }}
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'county' | i18n }}">
-        {{ currentCustomer?.addressCounty }}
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'city' | i18n }}">
-        {{ currentCustomer?.addressCity }}
-      </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'postcode' | i18n }}" nzSpan="2">
-        {{ currentCustomer?.addressPostcode }}
-      </nz-descriptions-item>
+      
       <nz-descriptions-item nzTitle="{{ 'address.line1' | i18n }}" nzSpan="2">
         {{ currentCustomer?.addressLine1 }}
       </nz-descriptions-item>
       <nz-descriptions-item nzTitle="{{ 'address.line2' | i18n }}">
         {{ currentCustomer?.addressLine2 }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'city' | i18n }}">
+        {{ currentCustomer?.addressCity }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'county' | i18n }}">
+        {{ currentCustomer?.addressCounty }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'state' | i18n }}">
+        {{ currentCustomer?.addressState }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'country' | i18n }}">
+        {{ currentCustomer?.addressCountry }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'postcode' | i18n }}" nzSpan="2">
+        {{ currentCustomer?.addressPostcode }}
+      </nz-descriptions-item>
+      
+      <nz-descriptions-item nzTitle="{{ 'customer.isTarget' | i18n }}">
+        
+        <span nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"
+            *ngIf="currentCustomer?.customerIsTarget"></span>
+        <span nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"
+            *ngIf="!currentCustomer?.customerIsTarget"></span> 
+ 
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'customer.isWalmart' | i18n }}" nzSpan="2">
+        
+        <span nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"
+            *ngIf="currentCustomer?.customerIsWalmart"></span>
+        <span nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"
+            *ngIf="!currentCustomer?.customerIsWalmart"></span>  
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'allowPrintShippingCartonLabel' | i18n }}">
+        
+        <span nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"
+            *ngIf="currentCustomer?.allowPrintShippingCartonLabel"></span>
+        <span nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"
+            *ngIf="!currentCustomer?.allowPrintShippingCartonLabel"></span>  
+ 
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'allowPrintShippingCartonLabelWithPalletLabel' | i18n }}">
+        
+        <span nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"
+            *ngIf="currentCustomer?.allowPrintShippingCartonLabelWithPalletLabel"></span>
+        <span nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"
+            *ngIf="!currentCustomer?.allowPrintShippingCartonLabelWithPalletLabel"></span>  
+ 
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'allowPrintShippingCartonLabelWithPalletLabelWhenShort' | i18n }}">
+        
+        <span nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"
+            *ngIf="currentCustomer?.allowPrintShippingCartonLabelWithPalletLabelWhenShort"></span>
+        <span nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'"
+            *ngIf="!currentCustomer?.allowPrintShippingCartonLabelWithPalletLabelWhenShort"></span>   
+      </nz-descriptions-item>
+      
+      <nz-descriptions-item nzTitle="{{ 'maxPalletSize' | i18n }}">
+        {{ currentCustomer?.maxPalletSize }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'maxPalletHeight' | i18n }}">
+        {{ currentCustomer?.maxPalletHeight }}
       </nz-descriptions-item>
     </nz-descriptions>
   </nz-card>

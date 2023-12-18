@@ -1,5 +1,5 @@
 import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
+import { UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -9,10 +9,8 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
-import { Customer } from '../models/customer';
-import { Supplier } from '../models/supplier';
-import { CustomerService } from '../services/customer.service';
-import { SupplierService } from '../services/supplier.service';
+import { Customer } from '../models/customer'; 
+import { CustomerService } from '../services/customer.service'; 
 
 
 @Component({
@@ -151,7 +149,77 @@ export class CommonCustomerComponent implements OnInit {
       listOfFilter: [],
       filterFn: null,
       showFilter: false
+    },    
+    {
+      name: 'customer.isTarget',
+      sortOrder: null,
+      sortFn: (a: Customer, b: Customer) => this.utilService.compareBoolean(a.customerIsTarget, b.customerIsTarget),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
     },
+    {
+      name: 'customer.isWalmart',
+      sortOrder: null,
+      sortFn: (a: Customer, b: Customer) => this.utilService.compareBoolean(a.customerIsWalmart, b.customerIsWalmart),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'allowPrintShippingCartonLabel',
+      sortOrder: null,
+      sortFn: (a: Customer, b: Customer) => this.utilService.compareBoolean(a.allowPrintShippingCartonLabel, b.allowPrintShippingCartonLabel),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'allowPrintShippingCartonLabelWithPalletLabel',
+      sortOrder: null,
+      sortFn: (a: Customer, b: Customer) => this.utilService.compareBoolean(a.allowPrintShippingCartonLabelWithPalletLabel, b.allowPrintShippingCartonLabelWithPalletLabel),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'allowPrintShippingCartonLabelWithPalletLabelWhenShort',
+      sortOrder: null,
+      sortFn: (a: Customer, b: Customer) => this.utilService.compareBoolean(a.allowPrintShippingCartonLabelWithPalletLabelWhenShort, b.allowPrintShippingCartonLabelWithPalletLabelWhenShort),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },    
+    {
+      name: 'maxPalletSize',
+      sortOrder: null,
+      sortFn: (a: Customer, b: Customer) => this.utilService.compareNullableNumber(a.maxPalletSize, b.maxPalletSize),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'maxPalletHeight',
+      sortOrder: null,
+      sortFn: (a: Customer, b: Customer) => this.utilService.compareNullableNumber(a.maxPalletHeight, b.maxPalletHeight),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }, 
   ];
 
   listOfSelection = [
