@@ -72,6 +72,19 @@
             </div>
         </div>
         
+        <div nz-row [nzGutter]="24">
+          <div nz-col [nzSpan]="10">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="12">
+                {{ 'poNumber' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12" > 
+                <input   type="text" nz-input [(ngModel)]="currentOrder!.poNumber" /> 
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+       
+      </div>
        
         <div nz-row [nzGutter]="24">
             <div nz-col [nzSpan]="10" *ngIf="!isOutsourcingOrder(currentOrder!)">
@@ -462,6 +475,9 @@
                 {{ 'ORDER-CATEGORY-' + currentOrder?.category |i18n}}
             </nz-descriptions-item> 
             
+            <nz-descriptions-item nzTitle="{{ 'poNumber' | i18n}}"> 
+              {{  currentOrder?.poNumber }}
+            </nz-descriptions-item> 
             <nz-descriptions-item nzTitle="{{ 'carrier' | i18n}}"> 
               {{  currentOrder?.carrier?.name }}
             </nz-descriptions-item> 

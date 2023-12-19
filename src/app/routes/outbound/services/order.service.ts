@@ -77,13 +77,13 @@ export class OrderService {
     }
     
     if (startCreatedTime) {
-      params = params.append('startCreatedTime', this.dateTimeService.getLocalDateString(startCreatedTime));  
+      params = params.append('startCreatedTime', this.dateTimeService.getISODateTimeString(startCreatedTime));  
     }
     if (endCreatedTime) {
-      params = params.append('endCreatedTime', this.dateTimeService.getLocalDateString(endCreatedTime));   
+      params = params.append('endCreatedTime', this.dateTimeService.getISODateTimeString(endCreatedTime));   
     }
     if (specificCreatedDate) {
-      params = params.append('specificCreatedDate', this.dateTimeService.getLocalDateString(specificCreatedDate));    
+      params = params.append('specificCreatedDate', this.dateTimeService.getISODateString(specificCreatedDate));    
     }
 
     return this.http.get(url, params).pipe(map(res => res.data));
@@ -299,6 +299,21 @@ export class OrderService {
 
     return this.http.post(url, null, params).pipe(map(res => res.data));
   }
+  
+  generateWalmartShippingCartonLabelWithPalletLabel(id: number, itemName?: string): Observable<ReportHistory[]> {
+
+    const url = `outbound/orders/${id}/walmart-shipping-carton-labels/generate-with-pallet-label`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+    if (itemName) {
+
+      params = params.append('itemName', itemName);  
+    }
+
+    return this.http.post(url, null, params).pipe(map(res => res.data));
+  }
+
   getWalmartShippingCartonLabel(id: number, itemName?: string): Observable<WalmartShippnigCartonLabel[]> {
 
     const url = `outbound/orders/${id}/walmart-shipping-carton-labels`

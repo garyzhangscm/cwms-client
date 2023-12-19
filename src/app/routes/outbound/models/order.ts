@@ -103,4 +103,6 @@ export interface Order {
   cancelRequested?: boolean;
   cancelRequestedTime?: Date;
   cancelRequestedUsername?: string;
+
+  poNumber?: string;
 }

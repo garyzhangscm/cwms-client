@@ -55,6 +55,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
 
   validInventoryStatuses: InventoryStatus[] = [];
   warehouses: Warehouse[] | undefined;
+  availableInventoryStatus?: InventoryStatus;
 
   avaiableLocationGroups: LocationGroup[] = [];
 
@@ -113,6 +114,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
         this.loadCarriers();
       }
     });
+    this.loadValidInventoryStatus();
     this.loadAvailableInventoryStatus();
     this.loadWarehouses();
     this.loadShippingStageLocationGroups();
@@ -170,12 +172,22 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     )
   }
   
-  loadAvailableInventoryStatus(): void {
+  loadValidInventoryStatus(): void {
     if (this.validInventoryStatuses.length === 0) {
       this.inventoryStatusService
         .loadInventoryStatuses()
         .subscribe(inventoryStatuses => (this.validInventoryStatuses = inventoryStatuses));
     }
+  }
+
+  loadAvailableInventoryStatus() : void {
+    
+    this.inventoryStatusService.getAvailableInventoryStatuses()
+    .subscribe(inventoryStatuses => {
+      if (inventoryStatuses.length > 0) {
+        this.availableInventoryStatus = inventoryStatuses[0];
+      }
+    });
   }
   
   loadWarehouses(): void {  
@@ -269,13 +281,42 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   
   addExtraOrderLine(): void {
     this.currentOrder!.orderLines = [...this.currentOrder!.orderLines, this.getEmptyOrderLine()];
+
+
   }
 
   getEmptyOrderLine(): OrderLine {
-    return {
+    let defaultInventoryStatus : InventoryStatus = {
       id: undefined,
-      
-      number: "", 
+      name: '',
+      description: '',
+      warehouseId: this.warehouseService.getCurrentWarehouse().id,
+    };
+
+    // get the default inventory status for the newly added line
+    if (this.validInventoryStatuses.length === 1) {
+      defaultInventoryStatus = this.validInventoryStatuses[0]; 
+    }
+    else if (this.availableInventoryStatus != null) {
+      defaultInventoryStatus = this.availableInventoryStatus; 
+
+    }
+    // get the maximun number of existing order lines
+    let maxOrderLineNumber : number = 0;
+    if (this.currentOrder!.orderLines.length > 0) {
+      this.currentOrder!.orderLines.forEach(
+        orderLine => {
+          let orderLineNumber = parseInt(orderLine.number);
+          if (!Number.isNaN(maxOrderLineNumber)) {
+            maxOrderLineNumber = Math.max(maxOrderLineNumber, orderLineNumber);
+          }
+        }
+      )
+    }
+
+    return {
+      id: undefined,      
+      number: (maxOrderLineNumber + 1).toString(), 
       orderNumber: this.currentOrder!.number,
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
 
@@ -321,13 +362,8 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
         shelfLifeDays: undefined,
         trackingExpirationDateFlag: undefined,
       },
-      inventoryStatus: {
-        id: undefined,
-        name: '',
-        description: '',
-        warehouseId: this.warehouseService.getCurrentWarehouse().id,
-      },
-      
+      inventoryStatus: defaultInventoryStatus,
+      inventoryStatusId: defaultInventoryStatus.id,      
       autoRequestShippingLabel: false,
       
     };

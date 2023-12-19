@@ -301,7 +301,7 @@ export class OutboundOrderComponent implements OnInit {
         this.searchForm.controls.createdTimeRanger.value[1] : undefined; 
     let specificCreatedDate : Date = this.searchForm.controls.createdDate.value;
 
-    console.log(`specificCreatedDate: ${specificCreatedDate}`);
+    console.log(`query by created date: ${startCreatedTime} - ${endCreatedTime} specificCreatedDate: ${specificCreatedDate}`);
 
     this.orderService.getOrders(
       this.searchForm.controls.number.value, 
@@ -1236,6 +1236,7 @@ export class OutboundOrderComponent implements OnInit {
       
       iif: () => this.isChoose('category'), width: 150},
     { title: this.i18n.fanyi("status"), index: 'status',fixed: 'left', iif: () => this.isChoose('status'), width: 150 },   
+    { title: this.i18n.fanyi("poNumber"), index: 'poNumber', iif: () => this.isChoose('poNumber'), width: 150 },   
     
     { title: this.i18n.fanyi("client"), index: 'client.name', iif: () => this.threePartyLogisticsFlag && this.isChoose('client'), width: 150},
     {
@@ -1320,6 +1321,7 @@ export class OutboundOrderComponent implements OnInit {
     { label: this.i18n.fanyi("order.number"), value: 'number', checked: true },
     { label: this.i18n.fanyi("order.category"), value: 'category', checked: true },
     { label: this.i18n.fanyi("status"), value: 'status', checked: true },
+    { label: this.i18n.fanyi("poNumber"), value: 'poNumber', checked: true },
     { label: this.i18n.fanyi("supplier"), value: 'supplier', checked: true },
     { label: this.i18n.fanyi("client"), value: 'client', checked: true },
     { label: this.i18n.fanyi("carrier"), value: 'carrier', checked: true },

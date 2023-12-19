@@ -39,13 +39,14 @@ export class OutboundOrderWalmartShippingCartonLabelComponent implements OnInit 
   columns: STColumn[] = [
     { title: '', index: 'SSCC18', type: 'checkbox' },
     { title: this.i18n.fanyi("SSCC18"),  index: 'SSCC18'   }, 
+    { title: this.i18n.fanyi("poNumber"),  index: 'poNumber'   }, 
     { title: this.i18n.fanyi("type"),  index: 'type'    }, 
     { title: this.i18n.fanyi("dept"),  index: 'dept'   }, 
     { title: this.i18n.fanyi("shipTo"),  index: 'shipTo'     }, 
     { title: this.i18n.fanyi("address1"),  index: 'address1'    }, 
     { title: this.i18n.fanyi("cityStateZip"),  index: 'cityStateZip'    }, 
     { title: this.i18n.fanyi("DC"),  index: 'DC'   }, 
-    { title: this.i18n.fanyi("itemNumber"),  index: 'itemNumber'  }, 
+    { title: this.i18n.fanyi("item.name"),  index: 'itemNumber'  }, 
     { title: this.i18n.fanyi("orderQuantity"),  index: 'orderQuantity'  }, 
     { title: this.i18n.fanyi("pieceCarton"),  index: 'cartonQuantity'  }, 
     { title: this.i18n.fanyi("cartonQuantity"),  index: 'itemName'  },    
@@ -140,6 +141,46 @@ export class OutboundOrderWalmartShippingCartonLabelComponent implements OnInit 
       })
   }
   
+  printOrderWalmartShippingCartonLabelWithPalletLabel(event: any) {
+    this.isSpinning = true;
+    this.orderService.generateWalmartShippingCartonLabelWithPalletLabel(
+      this.currentOrder!.id!, this.selectedItemName)
+      .subscribe({
+        next: (printResults) => {
+          // Note the return may contains a list of label files, we will need to print each one of them
+          printResults.forEach(
+            printResult => {
+
+              // send the result to the printer
+              const printFileUrl
+                = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
+              console.log(`will print file: ${printFileUrl}`);
+              this.printingService.printFileByName(
+                "Walmart Shipping Carton Label With Pallet Label",
+                printResult.fileName,
+                // ReportType.WALMART_SHIPPING_CARTON_LABEL,
+                printResult.type,
+                event.printerIndex,
+                event.printerName,
+                // event.physicalCopyCount,
+                1, // we will always only print one copy. If the user want to print multiple copies
+                    // the paramter will be passed into the 'generate' command instead of the print command
+                    // so that we will have labels printed in uncollated format, not collated format
+                PrintPageOrientation.Portrait,
+                PrintPageSize.Letter,
+                this.currentOrder?.number, 
+                printResult);
+            }
+          );
+          
+            this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi("report.print.printed"));
+            
+        }, 
+        error: () => this.isSpinning = false
+      })
+  }
+
   previewWalmartShippingCartonLabel() { 
       this.messageService.error(this.i18n.fanyi("action-not-support")); 
   }

@@ -47,12 +47,22 @@
             </nz-form-control>
           </nz-form-item>
         </div>
-        <div nz-col [nzSpan]="8">
+      </div>
+      <div>
+        <div nz-col [nzSpan]="12">
           
-            <cwms-common-print-button style='padding-left: 20px;'
-              (print)="printOrderWalmartShippingCartonLabel($event)"
-              (preview)="previewWalmartShippingCartonLabel()">
-            </cwms-common-print-button>
+          <nz-form-item>
+            <nz-form-label [nzSpan]="11">
+              {{ 'printShippingCartonLabelWithPalletLabel' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="13" >
+            
+              <cwms-common-print-button style='padding-left: 20px;'
+                (print)="printOrderWalmartShippingCartonLabelWithPalletLabel($event)"
+                (preview)="previewWalmartShippingCartonLabel()">
+              </cwms-common-print-button>
+            </nz-form-control>
+          </nz-form-item>
         </div>
       </div>  
     </nz-card>
@@ -76,7 +86,13 @@
             (print)="printSelectedWalmartShippingCartonLabel($event)"
             (preview)="previewWalmartShippingCartonLabel()">
           </cwms-common-print-button>
+          <nz-divider nzType="vertical"></nz-divider> 
+          <button  nz-button nzType="primary" routerLink="/util/file-upload/walmart-shipping-carton-labels" routerLinkActive="active"
+              >
+            {{ 'file-upload' | i18n }}
+          </button> 
         </div>
+        
     </nz-card>  
          
 </nz-spin> 

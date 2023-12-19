@@ -1083,7 +1083,7 @@
                       tplBillableActivityModalContent, tplBillableActivityModalFooter)" >
                   {{ 'billable-activity-type.add' | i18n }}</a>
                 </li> 
-                <li nz-menu-item *ngIf="!userPermissionMap.has('walmart-shipping-carton-label') || userPermissionMap.get('walmart-shipping-carton-label')">
+                <li nz-menu-item *ngIf="order.shipToCustomer?.customerIsWalmart && !userPermissionMap.has('walmart-shipping-carton-label') || userPermissionMap.get('walmart-shipping-carton-label')">
                   
                   <a routerLink="/outbound/order/walmart-shipping-carton-label" routerLinkActive="active"
                     [queryParams]="{id : order.id}">
