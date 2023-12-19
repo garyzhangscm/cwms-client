@@ -36,7 +36,9 @@ export class OutboundOutboundConfigurationComponent implements OnInit {
         warehouseId: warehouseService.getCurrentWarehouse().id, 
         shortAutoReallocation: false,
         asynchronousAllocation: false,
-        asynchronousAllocationPalletThreshold: 0
+        asynchronousAllocationPalletThreshold: 0,
+        maxPalletSize: 0,
+        maxPalletHeight: 0
       } 
   }
 

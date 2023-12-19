@@ -4,5 +4,8 @@ export interface OutboundConfiguration {
     shortAutoReallocation: boolean;
     asynchronousAllocation: boolean;
     asynchronousAllocationPalletThreshold: number;
+
+    maxPalletSize: number;
+    maxPalletHeight: number;
  
 }
