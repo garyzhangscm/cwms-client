@@ -37,8 +37,8 @@ export class OutboundOrderWalmartShippingCartonLabelComponent implements OnInit 
   @ViewChild('st', { static: true })
   walmartShippingCartonLabelTable!: STComponent;
   columns: STColumn[] = [
-    { title: '', index: 'SSCC18', type: 'checkbox' },
-    { title: this.i18n.fanyi("SSCC18"),  index: 'SSCC18'   }, 
+    { title: '', index: 'SSCC18', type: 'checkbox' , fixed: 'left',width: 75, },
+    { title: this.i18n.fanyi("SSCC18"),  index: 'SSCC18',  fixed: 'left',width: 200,    }, 
     { title: this.i18n.fanyi("poNumber"),  index: 'poNumber'   }, 
     { title: this.i18n.fanyi("type"),  index: 'type'    }, 
     { title: this.i18n.fanyi("dept"),  index: 'dept'   }, 
@@ -48,11 +48,15 @@ export class OutboundOrderWalmartShippingCartonLabelComponent implements OnInit 
     { title: this.i18n.fanyi("DC"),  index: 'DC'   }, 
     { title: this.i18n.fanyi("item.name"),  index: 'itemNumber'  }, 
     { title: this.i18n.fanyi("orderQuantity"),  index: 'orderQuantity'  }, 
-    { title: this.i18n.fanyi("pieceCarton"),  index: 'cartonQuantity'  }, 
-    { title: this.i18n.fanyi("cartonQuantity"),  index: 'itemName'  },    
+    { title: this.i18n.fanyi("pieceCarton"),  index: 'pieceCarton'  }, 
+    { title: this.i18n.fanyi("cartonQuantity"),  index: 'cartonQuantity'  },     
     {
-      title: this.i18n.fanyi("action"),  
-      renderTitle: 'actionColumnTitle',fixed: 'right',width: 110, 
+      title: this.i18n.fanyi("lastPrintTime"),   
+      render: 'lastPrintTimeColumn',
+    },  
+    { title: this.i18n.fanyi("palletPickLabel"),  index: 'palletPickLabelContent.number'  },    
+    {
+      title: this.i18n.fanyi("action"),   fixed: 'right',width: 150, 
       render: 'actionColumn',
     },  
     
@@ -90,7 +94,8 @@ export class OutboundOrderWalmartShippingCartonLabelComponent implements OnInit 
     if (this.currentOrder?.id != null) {
 
       this.isSpinning = true;
-      this.orderService.getWalmartShippingCartonLabel(this.currentOrder.id!, this.selectedItemName).subscribe({
+      this.orderService.getWalmartShippingCartonLabel(this.currentOrder.id!, this.selectedItemName, 
+        false, false).subscribe({
 
         next: (walmartShippingCartonLabelRes) => {
           this.walmartShippingCartonLabels = walmartShippingCartonLabelRes;

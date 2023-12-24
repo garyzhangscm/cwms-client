@@ -14,6 +14,7 @@ import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { AuthModule } from '../auth/auth.module';
 import { CommonModule } from '../common/common.module';
 import { DirectivesModule } from '../directives/directives.module';
+import { WarehouseLocalTime } from "../directives/warehouse-local-time.pipe";
 import { InventoryModule } from '../inventory/inventory.module';
 import { UtilModule } from '../util/util.module';
 import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module'; 
@@ -97,30 +98,31 @@ const COMPONENTS: Array<Type<void>> = [
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
-  imports: [
-    SharedModule,
-    OutboundRoutingModule,
-    DirectivesModule,
-    NzDescriptionsModule,
-    NzStatisticModule,
-    CommonModule,
-    NzStepsModule,
-    UtilModule, 
-    NzAutocompleteModule,
-    GooglePlaceModule,
-    NzSkeletonModule ,
-    InventoryModule,  
-    WarehouseLayoutModule,
-    NzLayoutModule,
-    AuthModule,
-    NzResultModule,
-    NzCascaderModule,
-    NzListModule 
-  ],
-  declarations: [
-    ...COMPONENTS,
-    ...COMPONENTS_NOROUNT
-  ],
-  exports: [OutboundOutboundOrderPopupQueryComponent]
+    declarations: [
+        ...COMPONENTS,
+        ...COMPONENTS_NOROUNT
+    ],
+    exports: [OutboundOutboundOrderPopupQueryComponent],
+    imports: [
+        SharedModule,
+        OutboundRoutingModule,
+        DirectivesModule,
+        NzDescriptionsModule,
+        NzStatisticModule,
+        CommonModule,
+        NzStepsModule,
+        UtilModule,
+        NzAutocompleteModule,
+        GooglePlaceModule,
+        NzSkeletonModule,
+        InventoryModule,
+        WarehouseLayoutModule,
+        NzLayoutModule,
+        AuthModule,
+        NzResultModule,
+        NzCascaderModule,
+        NzListModule,
+        WarehouseLocalTime
+    ]
 })
 export class OutboundModule { }

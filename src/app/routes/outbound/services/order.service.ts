@@ -314,7 +314,8 @@ export class OrderService {
     return this.http.post(url, null, params).pipe(map(res => res.data));
   }
 
-  getWalmartShippingCartonLabel(id: number, itemName?: string): Observable<WalmartShippnigCartonLabel[]> {
+  getWalmartShippingCartonLabel(id: number, itemName?: string, nonAssignedOnly?: boolean, 
+    nonPrintedOnly?: boolean): Observable<WalmartShippnigCartonLabel[]> {
 
     const url = `outbound/orders/${id}/walmart-shipping-carton-labels`
 
@@ -323,6 +324,14 @@ export class OrderService {
     if (itemName) {
 
       params = params.append('itemName', itemName);  
+    }
+    if (nonAssignedOnly != null) {
+      params = params.append('nonAssignedOnly', nonAssignedOnly); 
+
+    }
+    if (nonPrintedOnly != null) {
+      params = params.append('nonPrintedOnly', nonPrintedOnly); 
+
     }
 
     return this.http.get(url, params).pipe(map(res => res.data));

@@ -68,7 +68,10 @@
     </nz-card>
     
     <nz-card >
-      <st #st [data]="walmartShippingCartonLabels" [columns]="columns" >
+      <st #st [data]="walmartShippingCartonLabels" [columns]="columns"  [scroll]="{ x: '2355px' }" >
+        <ng-template st-row="lastPrintTimeColumn" let-label > 
+          {{ label.lastPrintTime | warehouseLocalTime}}
+        </ng-template>
         <ng-template st-row="actionColumn" let-label > 
           
           <cwms-common-print-button style='padding-left: 20px;'
