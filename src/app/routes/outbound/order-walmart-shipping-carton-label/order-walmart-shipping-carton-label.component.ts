@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STData } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -10,6 +10,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { PrintPageSize } from '../../common/models/print-page-size.enum';
 import { PrintingService } from '../../common/services/printing.service';
+import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { ReportType } from '../../report/models/report-type.enum';
 import { Order } from '../models/order';
 import { WalmartShippnigCartonLabel } from '../models/walmart-shipping-carton-labels';
@@ -62,10 +63,10 @@ export class OutboundOrderWalmartShippingCartonLabelComponent implements OnInit 
     
   ]; 
 
-  constructor(private http: _HttpClient,
-    private activatedRoute: ActivatedRoute,
+  constructor( private activatedRoute: ActivatedRoute,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private messageService: NzMessageService,
+    private router: Router,
     private orderService: OrderService,
     private walmartShippnigCartonLabelService: WalmartShippnigCartonLabelService,
     private printingService: PrintingService,
@@ -186,8 +187,27 @@ export class OutboundOrderWalmartShippingCartonLabelComponent implements OnInit 
       })
   }
 
-  previewWalmartShippingCartonLabel() { 
-      this.messageService.error(this.i18n.fanyi("action-not-support")); 
+  previewWalmartShippingCartonLabel() {  
+
+    this.isSpinning = true;
+    this.orderService.generateWalmartShippingCartonLabelWithPalletLabel(
+      this.currentOrder!.id!, this.selectedItemName)
+      .subscribe({
+        next: (printResults) => {
+          // Note the return may contains a list of label files, we will need to print each one of them
+          printResults.forEach(
+            printResult => { 
+              // open each label in a new window
+              window.open(`/#/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`, '_blank'); 
+  
+                
+            }
+          );
+          this.isSpinning = false; 
+            
+        }, 
+        error: () => this.isSpinning = false
+      });
   }
   
   printSingleWalmartShippingCartonLabel(event: any, walmartShippingCartonLabel: WalmartShippnigCartonLabel) {
