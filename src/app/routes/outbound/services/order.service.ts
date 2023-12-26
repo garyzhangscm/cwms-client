@@ -310,6 +310,7 @@ export class OrderService {
 
       params = params.append('itemName', itemName);  
     }
+    params = params.append('regeneratePalletLabels', "true");  
 
     return this.http.post(url, null, params).pipe(map(res => res.data));
   }
