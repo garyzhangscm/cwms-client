@@ -47,4 +47,6 @@ export interface WalmartShippnigCartonLabel {
   fobMira: string;
   lomaColtonFayeteville: string;
   
+  fobMiralomaColtonFayeteville: string;
+  
 }

@@ -14,6 +14,7 @@ import { OrderBillableActivity } from '../models/order-billable-activity';
 import { OrderCancellationRequest } from '../models/order-cancellation-request';
 import { OrderCategory } from '../models/order-category'; 
 import { OrderStatus } from '../models/order-status.enum'; 
+import { TargetShippnigCartonLabel } from '../models/target-shipping-carton-labels';
 import { WalmartShippnigCartonLabel } from '../models/walmart-shipping-carton-labels'; 
 
 @Injectable({
@@ -319,6 +320,58 @@ export class OrderService {
     nonPrintedOnly?: boolean): Observable<WalmartShippnigCartonLabel[]> {
 
     const url = `outbound/orders/${id}/walmart-shipping-carton-labels`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+    if (itemName) {
+
+      params = params.append('itemName', itemName);  
+    }
+    if (nonAssignedOnly != null) {
+      params = params.append('nonAssignedOnly', nonAssignedOnly); 
+
+    }
+    if (nonPrintedOnly != null) {
+      params = params.append('nonPrintedOnly', nonPrintedOnly); 
+
+    }
+
+    return this.http.get(url, params).pipe(map(res => res.data));
+  }
+  
+  generateTargetShippingCartonLabel(id: number, itemName?: string): Observable<ReportHistory> {
+
+    const url = `outbound/orders/${id}/target-shipping-carton-labels/generate`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+    if (itemName) {
+
+      params = params.append('itemName', itemName);  
+    }
+
+    return this.http.post(url, null, params).pipe(map(res => res.data));
+  }
+  
+  generateTargetShippingCartonLabelWithPalletLabel(id: number, itemName?: string): Observable<ReportHistory[]> {
+
+    const url = `outbound/orders/${id}/target-shipping-carton-labels/generate-with-pallet-label`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+    if (itemName) {
+
+      params = params.append('itemName', itemName);  
+    }
+    params = params.append('regeneratePalletLabels', "true");  
+
+    return this.http.post(url, null, params).pipe(map(res => res.data));
+  }
+
+  getTargetShippingCartonLabel(id: number, itemName?: string, nonAssignedOnly?: boolean, 
+    nonPrintedOnly?: boolean): Observable<TargetShippnigCartonLabel[]> {
+
+    const url = `outbound/orders/${id}/target-shipping-carton-labels`
 
     let params = new HttpParams(); 
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  

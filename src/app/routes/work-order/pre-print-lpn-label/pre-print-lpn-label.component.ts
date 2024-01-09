@@ -173,9 +173,9 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
       .subscribe({
         next: (printResult) => {
           // send the result to the printer
-          const printFileUrl
-            = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
-          console.log(`will print file: ${printFileUrl}`);
+          // const printFileUrl
+          //  = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
+          // console.log(`will print file: ${printFileUrl}`);
           this.printingService.printFileByName(
             "Work Order LPN Label",
             printResult.fileName,
@@ -204,9 +204,9 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
       .subscribe({
         next: (printResult) => {
           // send the result to the printer
-          const printFileUrl
-            = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
-          console.log(`will print file: ${printFileUrl}`);
+          // const printFileUrl
+          //  = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
+          // console.log(`will print file: ${printFileUrl}`);
           this.printingService.printFileByName(
             "Receiving LPN Label",
             printResult.fileName,
@@ -235,9 +235,9 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
       .subscribe({
         next: (printResult) => {
           // send the result to the printer
-          const printFileUrl
-            = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
-          console.log(`will print file: ${printFileUrl}`);
+          // const printFileUrl
+          //  = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
+          // console.log(`will print file: ${printFileUrl}`);
           this.printingService.printFileByName(
             "Receiving LPN Report",
             printResult.fileName,

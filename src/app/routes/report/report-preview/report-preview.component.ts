@@ -54,7 +54,7 @@ export class ReportReportPreviewComponent implements OnInit {
         }
       }
 
-      let url = `${environment.api.baseUrl}resource/report-histories/download`;
+      let url = `${environment.api.baseUrl}resource/report-histories/preview`;
 
       url = `${url}/${this.warehouseService.getCurrentWarehouse().companyId}`;
       url = `${url}/${this.warehouseService.getCurrentWarehouse().id}`;

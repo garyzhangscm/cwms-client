@@ -36,6 +36,7 @@ import { OutboundLoadComponent } from './load/load.component';
 import { OutboundOrderActivityComponent } from './order-activity/order-activity.component';
 import { OutboundOrderDocumentComponent } from './order-document/order-document.component';
 import { OutboundOrderMaintenanceComponent } from './order-maintenance/order-maintenance.component';
+import { OutboundOrderTargetShippingCartonLabelComponent } from './order-target-shipping-carton-label/order-target-shipping-carton-label.component';
 import { OutboundOrderWalmartShippingCartonLabelComponent } from './order-walmart-shipping-carton-label/order-walmart-shipping-carton-label.component';
 import { OutboundOrderComponent } from './order/order.component';
 import { OutboundOutboundConfigurationComponent } from './outbound-configuration/outbound-configuration.component';
@@ -94,7 +95,8 @@ const COMPONENTS: Array<Type<void>> = [
   OutboundShipByHualeiComponent,
   OutboundParcelPackageMaintenanceComponent,
   OutboundOrderWalmartShippingCartonLabelComponent,
-  OutboundOutboundConfigurationComponent ];
+  OutboundOutboundConfigurationComponent ,
+  OutboundOrderTargetShippingCartonLabelComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

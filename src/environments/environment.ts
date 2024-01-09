@@ -12,7 +12,7 @@ export const environment = {
   useHash: true, // # in the URL
   api: {
     //  AWS Prod
-    // baseUrl: 'http://k8s-staging-zuulserv-b633474817-1541550255.us-west-1.elb.amazonaws.com/api/', 
+    // baseUrl: 'http://k8s-staging-webclien-d59c548886-1026932133.us-west-1.elb.amazonaws.com/api/', 
     // baseUrl: 'https://prod.claytechsuite.com/api/', 
     baseUrl: 'https://staging.claytechsuite.com/api/', 
     
