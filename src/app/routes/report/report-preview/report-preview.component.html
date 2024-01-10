@@ -39,6 +39,10 @@
  
   </div>
   <div nz-row  >
-    <pdf-viewer [src]="pdfUrl"></pdf-viewer>
+    <pdf-viewer [src]="pdfUrl" 
+      [render-text]="true" 
+      style="width: 100px; height: 125px"
+    
+    ></pdf-viewer>
   </div> 
 </div>

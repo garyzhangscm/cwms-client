@@ -42,7 +42,7 @@ export class OutboundOrderTargetShippingCartonLabelComponent implements OnInit {
     { title: '', index: 'SSCC18', type: 'checkbox' , fixed: 'left',width: 75, },
     { title: this.i18n.fanyi("SSCC18"),  index: 'SSCC18',  fixed: 'left',width: 200,    }, 
     { title: this.i18n.fanyi("poNumber"),  index: 'poNumber'   }, 
-    { title: this.i18n.fanyi("shipToName"),  index: 'shipTo'     }, 
+    { title: this.i18n.fanyi("shipTo"),  index: 'shipTo'     }, 
     { title: this.i18n.fanyi("address1"),  index: 'address1'    }, 
     { title: this.i18n.fanyi("cityStateZip"),  index: 'cityStateZip'    }, 
     { title: this.i18n.fanyi("item.name"),  index: 'itemNumber'  }, 

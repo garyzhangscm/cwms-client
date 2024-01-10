@@ -330,7 +330,7 @@ const routes: Routes = [
   { path: 'parcel-package/maintenance', component: OutboundParcelPackageMaintenanceComponent },
   { path: 'order/walmart-shipping-carton-label', component: OutboundOrderWalmartShippingCartonLabelComponent },
   { path: 'outbound-configuration', component: OutboundOutboundConfigurationComponent }, 
-  { path: 'order-target-shipping-carton-label', component: OutboundOrderTargetShippingCartonLabelComponent }];
+  { path: 'order/target-shipping-carton-label', component: OutboundOrderTargetShippingCartonLabelComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
