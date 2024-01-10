@@ -105,26 +105,12 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
   }
 
   createEmptyLocation(): WarehouseLocation {
-    return {
-      id: -9999,
+    return { 
       name: "",
-      aisle: "",
-      x: -9999,
-      y: -9999,
-      z: -9999,
-      length: -9999,
-      width: -9999,
-      height: -9999,
-      pickSequence: -9999,
-      putawaySequence: -9999,
-      countSequence: -9999,
-      capacity: -9999,
-      fillPercentage: -9999,
-      currentVolume: -9999,
-      pendingVolume: -9999,
+      aisle: "",   
       locationGroup: undefined,
-      enabled: false,
-      locked: true, 
+      enabled: true,
+      locked: false, 
       reservedCode: "",
     }
   }
