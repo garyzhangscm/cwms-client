@@ -33,8 +33,14 @@ export class ProductionLineAssignmentService {
     return this.http.get(url).pipe(map(res => res.data));
   }
 
-  getProductionLineAssignment(productionLineAssignmentId: number): Observable<ProductionLineAssignment> {
-      const url = `workorder/production-line-assignment/${productionLineAssignmentId}`;
+  getProductionLineAssignment(productionLineAssignmentId: number, 
+    includeDetails?: boolean,): Observable<ProductionLineAssignment> {
+      let url = `workorder/production-line-assignment/${productionLineAssignmentId}`;
+
+      if (includeDetails !== undefined && includeDetails !== null) {
+  
+        url = `${url}?includeDetails=${includeDetails}`;
+      }
       return this.http.get(url).pipe(map(res => res.data));
   }
 

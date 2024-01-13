@@ -27,7 +27,7 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
   pageTitle: string;
 
   currentProductionLineAssignment!: ProductionLineAssignment;
-  currentWorkOrder?: WorkOrder;
+  // currentWorkOrder?: WorkOrder;
   currentReceiptLine?: ReceiptLine;
   startLPN: string = "";
   quantity: number = 0;
@@ -59,13 +59,13 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
       // we may pre-print lpn label for receipt or work order
       if (params.productionLineAssignmentId) {
         this.isSpinning = true;
-        this.productionLineAssignmentService.getProductionLineAssignment(params.productionLineAssignmentId)
+        this.productionLineAssignmentService.getProductionLineAssignment(params.productionLineAssignmentId, false)
             .subscribe(
               {
                 next:(productionLineAssignmentRes) => {
                   this.currentProductionLineAssignment = productionLineAssignmentRes
                   this.isSpinning = false;
-                  this.loadWorkOrder();
+                  // this.loadWorkOrder();
                   this.type="work-order"; 
                 }
               }
@@ -88,6 +88,8 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
       }
     });
   }
+  /**
+   * 
   loadWorkOrder() {
     this.isSpinning = true;
     this.workOrderService.getWorkOrder(this.currentProductionLineAssignment.workOrderId!).subscribe({
@@ -100,6 +102,8 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
       }
     })
   }
+   * 
+   */
   
   return(): void {
     this.router.navigateByUrl(this.returnUrl);
@@ -168,8 +172,8 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
   
   printWorkOrderLPNLabelInBatch(event: any, startLPN: string, quantity: number, labelCount: number) {
     this.workOrderService.generatePrePrintLPNLabelInBatch(
-      this.currentWorkOrder!.id!, startLPN, quantity, labelCount, 
-      this.currentProductionLineAssignment.productionLine.name, event.physicalCopyCount, event.printerName)
+      this.currentProductionLineAssignment.workOrderId!, startLPN, quantity, labelCount, 
+      this.currentProductionLineAssignment.productionLineName, event.physicalCopyCount, event.printerName)
       .subscribe({
         next: (printResult) => {
           // send the result to the printer
@@ -188,7 +192,7 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
                 // so that we will have labels printed in uncollated format, not collated format 
             PrintPageOrientation.Portrait,
             PrintPageSize.Letter,
-            this.currentProductionLineAssignment.productionLine.name, 
+            this.currentProductionLineAssignment.productionLineName, 
             printResult);
           
             this.isSpinning = false;

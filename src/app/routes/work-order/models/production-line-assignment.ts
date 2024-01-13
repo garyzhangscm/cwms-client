@@ -8,6 +8,7 @@ export interface ProductionLineAssignment {
     id?: number;
 
     productionLine: ProductionLine;
+    productionLineName?: string;
 
     workOrder: WorkOrder;
     workOrderId?: number;

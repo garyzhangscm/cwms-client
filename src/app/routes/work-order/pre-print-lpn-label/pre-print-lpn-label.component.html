@@ -23,15 +23,15 @@
   <nz-descriptions nzTitle="{{ 'work-order' | i18n}}" nzBordered="true" *ngIf="type ==='work-order'">
   
     <nz-descriptions-item nzTitle="{{ 'work-order.number' | i18n}}">
-      {{ currentWorkOrder?.number}}
+      {{ currentProductionLineAssignment.workOrderNumber}}
     </nz-descriptions-item>
     
     <nz-descriptions-item nzTitle="{{ 'production-line' | i18n}}">
-      {{ currentProductionLineAssignment.productionLine.name}}
+      {{ currentProductionLineAssignment.productionLineName}}
     </nz-descriptions-item>
     
     <nz-descriptions-item nzTitle="{{ 'item' | i18n}}" nzSpan="2">
-      {{ currentWorkOrder?.item?.name}}
+      {{ currentProductionLineAssignment.workOrderItemName}}
     </nz-descriptions-item>
 
     
