@@ -367,6 +367,20 @@ export class OrderService {
 
     return this.http.post(url, null, params).pipe(map(res => res.data));
   }
+  generateCombinedTargetShippingCartonLabelWithPalletLabel(id: number, itemName?: string): Observable<ReportHistory> {
+
+    const url = `outbound/orders/${id}/target-shipping-carton-labels/generate-with-pallet-label/combined`
+
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+    if (itemName) {
+
+      params = params.append('itemName', itemName);  
+    }
+    params = params.append('regeneratePalletLabels', "true");  
+
+    return this.http.post(url, null, params).pipe(map(res => res.data));
+  }
 
   getTargetShippingCartonLabel(id: number, itemName?: string, nonAssignedOnly?: boolean, 
     nonPrintedOnly?: boolean): Observable<TargetShippnigCartonLabel[]> {

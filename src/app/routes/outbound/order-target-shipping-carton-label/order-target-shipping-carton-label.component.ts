@@ -185,7 +185,7 @@ export class OutboundOrderTargetShippingCartonLabelComponent implements OnInit {
       })
   }
 
-  previewTargetShippingCartonLabel() {  
+  previewOrderTargetShippingCartonLabel() {  
 
     this.isSpinning = true;
     this.orderService.generateTargetShippingCartonLabelWithPalletLabel(
@@ -201,6 +201,25 @@ export class OutboundOrderTargetShippingCartonLabelComponent implements OnInit {
                 
             }
           );
+          this.isSpinning = false; 
+            
+        }, 
+        error: () => this.isSpinning = false
+      });
+  }
+  
+  previewCombinedOrderTargetShippingCartonLabel() {  
+
+    this.isSpinning = true;
+    this.orderService.generateCombinedTargetShippingCartonLabelWithPalletLabel(
+      this.currentOrder!.id!, this.selectedItemName)
+      .subscribe({
+        next: (printResult) => { 
+              
+          // open each label in a new window
+          window.open(`/#/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`, '_blank'); 
+  
+                 
           this.isSpinning = false; 
             
         }, 

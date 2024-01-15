@@ -59,7 +59,7 @@
             
               <cwms-common-print-button style='padding-left: 20px;'
                 (print)="printOrderTargetShippingCartonLabelWithPalletLabel($event)"
-                (preview)="previewTargetShippingCartonLabel()">
+                (preview)="previewCombinedOrderTargetShippingCartonLabel()">
               </cwms-common-print-button>
             </nz-form-control>
           </nz-form-item>
@@ -76,7 +76,7 @@
           
           <cwms-common-print-button style='padding-left: 20px;'
             (print)="printSingleTargetShippingCartonLabel($event, label)"
-            (preview)="previewTargetShippingCartonLabel()">
+            (preview)="previewCombinedOrderTargetShippingCartonLabel()">
           </cwms-common-print-button>
         </ng-template>
       </st>
@@ -87,7 +87,7 @@
         <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;"  > 
           <cwms-common-print-button style='padding-left: 20px;'
             (print)="printSelectedTargetShippingCartonLabel($event)"
-            (preview)="previewTargetShippingCartonLabel()">
+            (preview)="previewCombinedOrderTargetShippingCartonLabel()">
           </cwms-common-print-button>
           <nz-divider nzType="vertical"></nz-divider> 
           <button  nz-button nzType="primary" routerLink="/util/file-upload/target-shipping-carton-labels" routerLinkActive="active"
