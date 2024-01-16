@@ -228,6 +228,7 @@ export class OutboundOrderComponent implements OnInit {
       createdTimeRanger: [null],
       createdDate: [null],
       client: [null],
+      poNumber: [null],
     });
 
     // IN case we get the number passed in, refresh the display
@@ -1327,9 +1328,9 @@ export class OutboundOrderComponent implements OnInit {
     { label: this.i18n.fanyi("carrier"), value: 'carrier', checked: true },
     { label: this.i18n.fanyi("carrierService"), value: 'carrierService', checked: true },
     { label: this.i18n.fanyi("shipToCustomer"), value: 'shipToCustomer', checked: true },
-    { label: this.i18n.fanyi("shipToCustomer"), value: 'shipToCustomerAddress', checked: true },
+    { label: this.i18n.fanyi("shipToCustomerAddress"), value: 'shipToCustomerAddress', checked: true },
     { label: this.i18n.fanyi("order.billToCustomer"), value: 'billToCustomer', checked: true },
-    { label: this.i18n.fanyi("order.billToCustomer"), value: 'billToCustomerAddress', checked: true },
+    { label: this.i18n.fanyi("billToCustomerAddress"), value: 'billToCustomerAddress', checked: true },
     { label: this.i18n.fanyi("order.totalItemCount"), value: 'totalItemCount', checked: true },
     { label: this.i18n.fanyi("order.totalOrderQuantity"), value: 'totalExpectedQuantity', checked: true },
     { label: this.i18n.fanyi("order.totalOpenQuantity"), value: 'totalOpenQuantity', checked: true },

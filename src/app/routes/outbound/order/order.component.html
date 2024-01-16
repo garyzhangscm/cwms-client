@@ -119,6 +119,21 @@
         </nz-form-item>
       </div>
       
+
+      <div nz-col [nzSpan]="8"  >
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="poNumber">
+            {{ 'poNumber' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <nz-date-picker formControlName="poNumber" name="poNumber"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+    </div>
+    
+    <div nz-row [nzGutter]="24" *ngIf="threePartyLogisticsFlag">
       <div nz-col [nzSpan]="8" *ngIf="threePartyLogisticsFlag">
         <nz-form-item nzFlex>
           <nz-form-label for="client" [nzSpan]="6">
