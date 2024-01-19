@@ -38,4 +38,24 @@ export class TargetShippnigCartonLabelService {
     return this.http.post(url, undefined, params).pipe(map(res => res.data));
   }
   
+  removeTargetShippingCartonLabel(id: number): Observable<string> {
+    let url = `outbound/target-shipping-carton-labels/${id}`;
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);   
+     
+
+    return this.http.delete(url).pipe(map(res => res.data));
+  }
+  
+  removeTargetShippingCartonLabels(idList: string): Observable<string> {
+    let url = `outbound/target-shipping-carton-labels/remove-by-id-list`;
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);   
+    params = params.append('ids', idList);   
+     
+
+    return this.http.delete(url, params).pipe(map(res => res.data));
+  }
 }

@@ -59,7 +59,7 @@
             
               <cwms-common-print-button style='padding-left: 20px;'
                 (print)="printOrderTargetShippingCartonLabelWithPalletLabel($event)"
-                (preview)="previewCombinedOrderTargetShippingCartonLabel()">
+                (preview)="previewOrderTargetShippingCartonLabel()">
               </cwms-common-print-button>
             </nz-form-control>
           </nz-form-item>
@@ -93,6 +93,10 @@
           <button  nz-button nzType="primary" routerLink="/util/file-upload/target-shipping-carton-labels" routerLinkActive="active"
               >
             {{ 'file-upload' | i18n }}
+          </button> 
+          <nz-divider nzType="vertical"></nz-divider> 
+          <button  nz-button nzDanger (click)="removeSelectedLabels()">
+            {{ 'remove' | i18n }}
           </button> 
         </div>
         

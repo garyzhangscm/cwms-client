@@ -30,13 +30,13 @@ export class OutboundOrderTargetShippingCartonLabelComponent implements OnInit {
   
   validItemNames = new Set<string>();
   selectedItemName = "";
-
+ 
 
   targetShippingCartonLabels : TargetShippnigCartonLabel[] = [];
   searchResult = "";
 
 
-  @ViewChild('st', { static: true })
+  @ViewChild('st', { static: false })
   targetShippingCartonLabelTable!: STComponent;
   columns: STColumn[] = [
     { title: '', index: 'SSCC18', type: 'checkbox' , fixed: 'left',width: 75, },
@@ -184,6 +184,40 @@ export class OutboundOrderTargetShippingCartonLabelComponent implements OnInit {
         error: () => this.isSpinning = false
       })
   }
+  printCombinedOrderTargetShippingCartonLabelWithPalletLabel(event: any) {
+    this.isSpinning = true;
+    this.orderService.generateCombinedTargetShippingCartonLabelWithPalletLabel(
+      this.currentOrder!.id!, this.selectedItemName)
+      .subscribe({
+        next: (printResult) => { 
+
+              // send the result to the printer
+              const printFileUrl
+                = `${environment.api.baseUrl}/resource/report-histories/download/${printResult.fileName}`;
+              console.log(`will print file: ${printFileUrl}`);
+              this.printingService.printFileByName(
+                "Target Shipping Carton Label With Pallet Label",
+                printResult.fileName,
+                // ReportType.WALMART_SHIPPING_CARTON_LABEL,
+                printResult.type,
+                event.printerIndex,
+                event.printerName,
+                // event.physicalCopyCount,
+                1, // we will always only print one copy. If the user want to print multiple copies
+                    // the paramter will be passed into the 'generate' command instead of the print command
+                    // so that we will have labels printed in uncollated format, not collated format
+                PrintPageOrientation.Portrait,
+                PrintPageSize.Letter,
+                this.currentOrder?.number, 
+                printResult); 
+
+            this.isSpinning = false;
+            this.messageService.success(this.i18n.fanyi("report.print.printed"));
+            
+        }, 
+        error: () => this.isSpinning = false
+      })
+  }
 
   previewOrderTargetShippingCartonLabel() {  
 
@@ -323,6 +357,41 @@ export class OutboundOrderTargetShippingCartonLabelComponent implements OnInit {
   selectedItemNameChanged() {
 
     this.loadTargetShippingLabel();
+
+  }
+
+  removeSelectedLabels() {
+    const labels = this.getSelectedLabels();
+    if (labels == null || labels.length == 0) {
+      this.messageService.error("No labels are selected");
+      return;
+    }
+    const labelIds =labels.map(label => label.id?.toString()).join(",");
+    this.isSpinning = true;
+    this.targetShippnigCartonLabelService.removeTargetShippingCartonLabels(labelIds)
+    .subscribe({
+      next: () => {
+        this.messageService.success(this.i18n.fanyi("message.action.success"));
+        this.isSpinning = false;
+        this.loadTargetShippingLabel();
+
+      },
+      error: () => {
+        this.isSpinning = false;
+      }
+    })
+
+  }
+  getSelectedLabels(): TargetShippnigCartonLabel[] {
+    
+    const dataList: STData[] = this.targetShippingCartonLabelTable.list;
+    let selectedLabels: TargetShippnigCartonLabel[] = [];
+    dataList.filter(record => record.checked === true)
+    .forEach(record => {
+      selectedLabels = [...selectedLabels, 
+          ...this.targetShippingCartonLabels.filter(label => label.SSCC18 === record["SSCC18"])];
+    });
+    return selectedLabels;
 
   }
 
