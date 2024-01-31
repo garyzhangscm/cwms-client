@@ -56,7 +56,18 @@ export class OutboundPickConfirmComponent implements OnInit {
       listOfFilter: [],
       filterFn: null,
       showFilter: false
-    }, {
+    }, 
+    {
+      name: 'status',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: PickWork, b: PickWork) => this.utilService.compareNullableString(a.status, b.status),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },{
       name: 'sourceLocation',
       showSort: true,
       sortOrder: null,
@@ -538,7 +549,7 @@ export class OutboundPickConfirmComponent implements OnInit {
   onAllChecked(value: boolean): void {
     this.listOfDisplayPicks!.forEach(pick => {
       if ((pick.pickGroupType == null || pick.pickGroupType === PickGroupType.SINGLE_PICK) &&
-          pick.quantity > pick.pickedQuantity) {
+          pick.quantity > pick.pickedQuantity && pick.status == PickStatus.RELEASED) {
 
         this.updateCheckedSet(pick.id, value);
       }
@@ -586,7 +597,9 @@ export class OutboundPickConfirmComponent implements OnInit {
 
   confirmPicks(): void {
     // make sure we have at least one checkbox checked
-    const selectedPicks = this.getSelectedPicks();
+    const selectedPicks = this.getSelectedPicks().filter(
+      pick => pick.status == PickStatus.RELEASED
+    );
     if (selectedPicks.length > 0) {
       this.isSpinning = true;
       this.totalPickCountToConfirm = selectedPicks.length;

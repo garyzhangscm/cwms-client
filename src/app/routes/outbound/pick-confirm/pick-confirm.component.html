@@ -224,6 +224,7 @@
         <td>{{ pick.number }}</td>
         <td>
           <span *ngIf="pick.pickGroupType != null">{{  'PICK-GROUP-TYPE-' + pick.pickGroupType | i18n }}</span></td>
+          <td>{{ pick.status }}</td>
         <td>{{ pick.sourceLocation?.name }}</td>
         <td>{{ pick.destinationLocation?.name }}</td>
         <td>{{ pick.item?.name }}</td>
