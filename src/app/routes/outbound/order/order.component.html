@@ -126,7 +126,8 @@
             {{ 'poNumber' | i18n }}
           </nz-form-label>
           <nz-form-control [nzSpan]="16">
-            <nz-date-picker formControlName="poNumber" name="poNumber"></nz-date-picker>
+            
+            <input nz-input name="poNumber" id="poNumber" formControlName="poNumber" /> 
           </nz-form-control>
         </nz-form-item>
       </div>

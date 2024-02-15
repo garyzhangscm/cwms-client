@@ -315,7 +315,8 @@ export class OutboundOrderComponent implements OnInit {
       this.searchForm.controls.customer.value, 
       startCreatedTime, endCreatedTime, specificCreatedDate, 
       undefined, 
-      this.searchForm.controls.client.value).subscribe({
+      this.searchForm.controls.client.value, 
+      this.searchForm.controls.poNumber.value).subscribe({
 
         next: (orderRes) => {
           this.isSpinning = false;
