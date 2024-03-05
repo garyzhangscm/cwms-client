@@ -52,8 +52,8 @@ export class ListPickConfigurationService {
     return this.http.post(url, listPickConfiguration).pipe(map(res => res.data));
   }
   
-  remove(listPickConfiguration: ListPickConfiguration): Observable<ListPickConfiguration> {
-    const url = `outbound/list-pick-configuration/${listPickConfiguration.id}`;
-    return this.http.delete(url, listPickConfiguration).pipe(map(res => res.data));
+  remove(listPickConfigurationId: number): Observable<string> {
+    const url = `outbound/list-pick-configuration/${listPickConfigurationId}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    return this.http.delete(url).pipe(map(res => res.data));
   }
 }

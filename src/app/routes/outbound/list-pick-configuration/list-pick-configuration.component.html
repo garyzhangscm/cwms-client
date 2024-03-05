@@ -73,6 +73,14 @@
         </ul>
       </ng-template>
       
+      <ng-template st-row="maxVolumeColumn" let-item let-index="index">  
+              {{  item.maxVolume  }}  {{  item.maxVolumeUnit  }} 
+      </ng-template>
+      
+      <ng-template st-row="maxWeightColumn" let-item let-index="index">  
+              {{  item.maxWeight  }}  {{  item.maxWeightUnit  }} 
+      </ng-template>
+      
       <ng-template st-row="customerColumn" let-item let-index="index"> 
         
         <nz-skeleton-element 

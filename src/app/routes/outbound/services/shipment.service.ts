@@ -42,7 +42,7 @@ export class ShipmentService {
   }
 
   cancelShipment(shipment: Shipment): Observable<Shipment> {
-    const url = `outbound/shipments/${shipment.id}`;
+    const url = `outbound/shipments/${shipment.id}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
   cancelShipments(shipments: Shipment[]): Observable<Shipment[]> {

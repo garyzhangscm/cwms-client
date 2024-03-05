@@ -3,14 +3,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
-
-import { AlertTemplate } from '../../alert/models/alert-template';
+ 
 import { Client } from '../../common/models/client';
+import { Customer } from '../../common/models/customer';
+import { Unit } from '../../common/models/unit';
+import { UnitType } from '../../common/models/unit-type';
 import { CustomerService } from '../../common/services/customer.service';
+import { UnitService } from '../../common/services/unit.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { ListPickConfiguration } from '../models/list-pick-configuration';
-import { ListPickConfigurationGroupRule } from '../models/list-pick-configuration-group-rule';
+import { ListPickConfiguration } from '../models/list-pick-configuration'; 
 import { ListPickGroupRuleType } from '../models/list-pick-group-rule-type.enum';
 import { PickType } from '../models/pick-type.enum';
 import { ListPickConfigurationService } from '../services/list-pick-configuration.service';
@@ -32,6 +34,11 @@ export class OutboundListPickConfigurationMaintenanceComponent implements OnInit
   listPickGroupRuleTypes = ListPickGroupRuleType;
   selectedGroupRuleTypes = new Map();
 
+  volumeUnits: Unit[] = [];
+  weightUnits: Unit[] = [];
+  defaultVolumeUnit?: Unit;
+  defaultWeightUnit?: Unit;
+  validCustomers: Customer[] = [];
 
   constructor( 
     private activatedRoute: ActivatedRoute,
@@ -42,7 +49,8 @@ export class OutboundListPickConfigurationMaintenanceComponent implements OnInit
     private messageService: NzMessageService,
     private warehouseService: WarehouseService,
     private customerService: CustomerService,
-    private router: Router
+    private router: Router,
+    private unitService: UnitService
   ) {}
 
   ngOnInit(): void { 
@@ -71,16 +79,64 @@ export class OutboundListPickConfigurationMaintenanceComponent implements OnInit
           }
         }); 
 
+        this.loadValidCustomers();
+        this.loadUnits();
  
   }
+  
+  loadUnits() {
+    this.unitService.loadUnits().subscribe({
+      next: (unitsRes) => {
+        unitsRes.forEach(
+          unit => {
+            if (unit.type === UnitType.VOLUME) {
+              this.volumeUnits.push(unit);
+              if(unit.baseUnitFlag) {
+                this.defaultVolumeUnit = unit;
+                console.log(`defaultVolumeUnit: ${this.defaultVolumeUnit?.name}`);
+              }
+            }
+            else if (unit.type === UnitType.WEIGHT) {
+              this.weightUnits.push(unit);
+              if(unit.baseUnitFlag) {
+                this.defaultWeightUnit = unit;
+                console.log(`defaultWeightUnit: ${this.defaultWeightUnit?.name}`);
+              }
+            }
+          }
+        )
+      }
+    })    
+  }
    
+  getEmptyCustomer(): Customer{
+    return {       
+      name: "",
+      warehouseId: this.warehouseService.getCurrentWarehouse().id,
+      companyId: this.companyService.getCurrentCompany()!.id,
+      description:  "",
+      contactorFirstname:  "",
+      contactorLastname:  "",
+      addressCountry:  "",
+      addressState:  "", 
+      addressCity:  "", 
+      addressLine1:  "", 
+      addressPostcode:  "",
+    }
+  }
    
   getEmptyListPickConfiguration(): ListPickConfiguration {
     return { 
         sequence:0, 
         warehouseId: this.warehouseService.getCurrentWarehouse().id, 
+        customer:  this.getEmptyCustomer(),
         enabled: true,
-        groupRules: []
+        allowLPNPick: false,
+        groupRules: [],
+        maxVolume: 0,
+        maxWeight: 0,
+        maxPickCount: 0,
+        maxQuantity: 0,
     };
   }
 
@@ -138,23 +194,32 @@ export class OutboundListPickConfigurationMaintenanceComponent implements OnInit
   }
 
 
-  customerChanged(event: Event) { 
-    let customerName: string = (event.target as HTMLInputElement).value; 
-    console.log(`customer name is changed to ${customerName}`);
-    if (customerName != "") {
-      this.customerService.getCustomers(customerName).subscribe({
-        next: (customerRes) => {
-            if(customerRes.length > 0) {
-              this.currentListPickConfiguration.customerId = customerRes[0].id;
-              this.currentListPickConfiguration.customer = customerRes[0];
-
-            }
-        }
-      })
-
+  customerChanged() { 
+    
+    console.log(`customer is chagned to ${this.currentListPickConfiguration!.customer!.name}`)
+    const matchedCustomer = this.validCustomers.find(customer => customer.name === this.currentListPickConfiguration!.customer!.name)
+    if (matchedCustomer) {
+      // clone a new customer structure so any further change won't 
+      // mess up with the existing customers auto complete drop down list
+      var clone = { ...matchedCustomer };
+      this.currentListPickConfiguration!.customer = clone;
+      this.currentListPickConfiguration!.customerId= clone.id!;
     }
+    else {
+      
+      this.currentListPickConfiguration!.customer = this.getEmptyCustomer();
+      this.currentListPickConfiguration!.customerId = undefined;
+    }
+    
   }
  
+  weightUnitSelected(unit: Unit) { 
+    this.currentListPickConfiguration.maxWeightUnit = unit.name;
+  } 
+  volumeUnitSelected(unit: Unit) { 
+    this.currentListPickConfiguration.maxVolumeUnit = unit.name;
+  } 
+
   selectedGroupRuleTypeChanged(selectedGroupRuleTypes: string[]): void {
     console.log(selectedGroupRuleTypes);
     this.currentListPickConfiguration.groupRules = selectedGroupRuleTypes.map(
@@ -171,7 +236,14 @@ export class OutboundListPickConfigurationMaintenanceComponent implements OnInit
   isListPickGroupRuleTypeSelected(value: string) : boolean{ 
     return this.currentListPickConfiguration.groupRules.some(
       groupRule =>  groupRule.groupRuleType.toString().localeCompare(value) === 0 
-    );;
+    ); 
 
+  }
+   
+  loadValidCustomers() {
+
+    this.customerService.loadCustomers().subscribe({
+      next: (customerRes) => this.validCustomers = customerRes
+    });
   }
 }

@@ -17,8 +17,7 @@ import { PickWork } from '../models/pick-work';
 import { Shipment } from '../models/shipment';
 import { ShortAllocation } from '../models/short-allocation';
 import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
-import { OrderLineService } from '../services/order-line.service';
-import { OrderService } from '../services/order.service';
+import { OrderLineService } from '../services/order-line.service'; 
 import { PickService } from '../services/pick.service';
 import { ShipmentService } from '../services/shipment.service';
 import { ShortAllocationService } from '../services/short-allocation.service';
@@ -29,6 +28,9 @@ import { ShortAllocationService } from '../services/short-allocation.service';
   styleUrls: ['./shipment.component.less'],
 })
 export class OutboundShipmentComponent implements OnInit {
+
+  isSpinning = false;
+
   listOfColumns: Array<ColumnItem<Shipment>> = [
     {
       name: 'shipment.number',
@@ -216,6 +218,7 @@ export class OutboundShipmentComponent implements OnInit {
 
   search(expandedShipmentId?: number, tabSelectedIndex?: number): void {
     this.searching = true;
+    this.isSpinning = true;
     this.searchResult = '';
 
     this.shipmentService.getShipments(this.searchForm.controls.number.value, 
@@ -226,6 +229,7 @@ export class OutboundShipmentComponent implements OnInit {
 
         this.collapseAllRecord(expandedShipmentId);
         this.searching = false;
+        this.isSpinning = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
           rowCount: shipmentRes.length,
@@ -240,7 +244,9 @@ export class OutboundShipmentComponent implements OnInit {
       },
     );
   }
-
+  canCancelShipment(shipment: Shipment) {
+    return true;
+  }
   calculateQuantities(shipments: Shipment[]): Shipment[] {
     shipments.forEach(shipment => {
       const existingItemIds = new Set();
@@ -348,6 +354,19 @@ export class OutboundShipmentComponent implements OnInit {
         nzOnCancel: () => console.log('Cancel'),
       });
     }
+  }
+  cancelShipment(shipment: Shipment) : void {
+    this.isSpinning = true;
+    this.shipmentService.cancelShipment(shipment).subscribe({
+      next: () => {
+        
+        this.messageService.success(this.i18n.fanyi('message.shipment.cancelled'));
+        this.isSpinning = false;
+        this.search();
+      }, 
+      error: () => this.isSpinning = false
+    })
+
   }
 
   getSelectedShipments(): Shipment[] {

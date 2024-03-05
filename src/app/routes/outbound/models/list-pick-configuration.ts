@@ -21,4 +21,18 @@ export interface ListPickConfiguration {
     enabled: boolean;
     groupRules: ListPickConfigurationGroupRule[];
 
+    
+    maxVolume: number;
+    maxVolumeUnit?: string;
+
+    maxWeight: number;
+    maxWeightUnit?: string;
+
+
+    maxPickCount: number;
+
+    maxQuantity: number;
+
+    allowLPNPick?: boolean;
+
 }

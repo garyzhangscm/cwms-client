@@ -38,6 +38,13 @@ export class OutboundListPickConfigurationComponent implements OnInit {
     },  
     { title: this.i18n.fanyi("groupRules"),  
         render: 'groupRulesColumn',  },    
+    { title: this.i18n.fanyi("maxVolume"),   
+    render: 'maxVolumeColumn',   },    
+    { title: this.i18n.fanyi("maxWeight"),   
+    render: 'maxWeightColumn',   },    
+    { title: this.i18n.fanyi("maxPickCount"),   index: 'maxPickCount'  },    
+    { title: this.i18n.fanyi("maxQuantity"),   index: 'maxQuantity'  },    
+    { title: this.i18n.fanyi("allowLPNPick"),   index: 'allowLPNPick'  },    
     { title: this.i18n.fanyi("enabled"),  index: 'enabled'   },  
     {
       title: this.i18n.fanyi("action"),  
@@ -128,7 +135,7 @@ export class OutboundListPickConfigurationComponent implements OnInit {
   
   removeListPickConfiguration(listPickConfiguration: ListPickConfiguration) : void{
     
-    this.listPickConfigurationService.remove(listPickConfiguration).subscribe({
+    this.listPickConfigurationService.remove(listPickConfiguration.id!).subscribe({
       next: () => {
         
         this.messageService.success(this.i18n.fanyi('message.action.success'));
