@@ -1147,23 +1147,23 @@ export class OutboundWaveComponent implements OnInit {
     
   }
 
-  previewPickSheet(trailerAppointmentNumber: string, pickWork: PickWork): void {
+  previewPickSheet(waveNumber: string, pickWork: PickWork): void {
 
     if (pickWork.pickGroupType === PickGroupType.BULK_PICK) {
       
-      this.previewBulkPickSheet(trailerAppointmentNumber, pickWork);
+      this.previewBulkPickSheet(waveNumber, pickWork);
     }
     else if (pickWork.pickGroupType === PickGroupType.SINGLE_PICK) {
       
-      this.previewSinglePickSheet(trailerAppointmentNumber, pickWork);
+      this.previewSinglePickSheet(waveNumber, pickWork);
     }
     else if (pickWork.pickGroupType === PickGroupType.LIST_PICK) {
       
-      this.previewPickListSheet(trailerAppointmentNumber, pickWork);
+      this.previewPickListSheet(waveNumber, pickWork);
     }
   }
 
-  previewBulkPickSheet(trailerAppointmentNumber: string, pickWork: PickWork): void {
+  previewBulkPickSheet(waveNumber: string, pickWork: PickWork): void {
 
     this.isSpinning = true;
     this.bulkPickService.generateBulkPickSheet(
@@ -1171,14 +1171,14 @@ export class OutboundWaveComponent implements OnInit {
       .subscribe({
         next: (printResult) => {  
           this.isSpinning = false;
-          sessionStorage.setItem('report_previous_page', `/outbound/load?number=${trailerAppointmentNumber}`);
+          sessionStorage.setItem('report_previous_page', `/outbound/wave?number=${waveNumber}`);
           this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
 
         }, 
         error:  () => this.isSpinning = false
       });   
   }
-  previewSinglePickSheet(trailerAppointmentNumber: string, pickWork: PickWork): void {
+  previewSinglePickSheet(waveNumber: string, pickWork: PickWork): void {
 
     this.isSpinning = true;
     this.pickService.generatePickSheet(
@@ -1186,14 +1186,14 @@ export class OutboundWaveComponent implements OnInit {
       .subscribe({
         next: (printResult) => {  
           this.isSpinning = false;
-          sessionStorage.setItem('report_previous_page', `/outbound/load?number=${trailerAppointmentNumber}`);
+          sessionStorage.setItem('report_previous_page', `/outbound/wave?number=${waveNumber}`);
           this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
 
         }, 
         error:  () => this.isSpinning = false
       });   
   }
-  previewPickListSheet(trailerAppointmentNumber: string, pickWork: PickWork): void {
+  previewPickListSheet(waveNumber: string, pickWork: PickWork): void {
 
     this.isSpinning = true;
     this.pickListService.generatePickListSheet(
@@ -1201,7 +1201,7 @@ export class OutboundWaveComponent implements OnInit {
       .subscribe({
         next: (printResult) => {  
           this.isSpinning = false;
-          sessionStorage.setItem('report_previous_page', `/outbound/load?number=${trailerAppointmentNumber}`);
+          sessionStorage.setItem('report_previous_page', `/outbound/wave?number=${waveNumber}`);
           this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
 
         }, 
