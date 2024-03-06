@@ -899,6 +899,7 @@ export class OutboundWaveComponent implements OnInit {
     { title: this.i18n.fanyi("item.description"), index: 'item.description'  },   
     { title: this.i18n.fanyi("pick.quantity"), index: 'quantity'  },   
     { title: this.i18n.fanyi("pick.pickedQuantity"), index: 'pickedQuantity'  },     
+    { title: this.i18n.fanyi("action"), render: 'innerPickActionColumn'  },     
    
   ];
   
@@ -1041,16 +1042,58 @@ export class OutboundWaveComponent implements OnInit {
     }) ;
   }
   cancelPick(pick: PickWork, errorLocation: boolean, generateCycleCount: boolean): void {
+    
+    if (pick.pickGroupType == PickGroupType.LIST_PICK) {
+      this.cancelPickList(pick, errorLocation, generateCycleCount);
+    }
+    else if (pick.pickGroupType == PickGroupType.BULK_PICK) {
+      this.cancelBulkPick(pick, errorLocation, generateCycleCount);
+    }
+    else {
+      
+      this.cancelSinglePick(pick, errorLocation, generateCycleCount);
+    }
+  }
+  cancelPickList(pick: PickWork, errorLocation: boolean, generateCycleCount: boolean): void { 
     this.isSpinning = true;
-    this.pickService.cancelPick(pick, errorLocation, generateCycleCount).subscribe({
-
+    this.pickListService.cancelPickList(pick.id, errorLocation, generateCycleCount).subscribe({
       next: () => {
-
-        this.messageService.success(this.i18n.fanyi('message.action.success'));
-        this.isSpinning = false; 
+        this.messageService.success(this.i18n.fanyi("message.action.success")); 
+        this.isSpinning = false;
         this.search();
       }, 
-      error: () => this.isSpinning = false
+      error: () => {                  
+        this.messageService.error(this.i18n.fanyi("message.action.fail"));
+        this.isSpinning = false;
+      }
+    });
+  }
+  cancelBulkPick(pick: PickWork, errorLocation: boolean, generateCycleCount: boolean): void { 
+    this.isSpinning = true;
+    this.bulkPickService.cancelBulkPick(pick.id, errorLocation, generateCycleCount).subscribe({
+      next: () => {
+        this.messageService.success(this.i18n.fanyi("message.action.success")); 
+        this.isSpinning = false;
+        this.search();
+      }, 
+      error: () => {                  
+        this.messageService.error(this.i18n.fanyi("message.action.fail"));
+        this.isSpinning = false;
+      }
+    });
+  }
+  cancelSinglePick(pick: PickWork, errorLocation: boolean, generateCycleCount: boolean): void { 
+    this.isSpinning = true;
+    this.pickService.cancelPick(pick, errorLocation, generateCycleCount).subscribe({
+      next: () => {
+        this.messageService.success(this.i18n.fanyi("message.action.success")); 
+        this.isSpinning = false;
+        this.search();
+      }, 
+      error: () => {                  
+        this.messageService.error(this.i18n.fanyi("message.action.fail"));
+        this.isSpinning = false;
+      }
     });
   }
 
@@ -1471,7 +1514,9 @@ export class OutboundWaveComponent implements OnInit {
   cancelSelectedPick(wave: Wave, errorLocation: boolean, generateCycleCount: boolean): void {
     this.isSpinning = true;
     const picks :PickWork[] = [];
-    this.getSelectedPicks(wave).forEach(pick => { 
+    this.getSelectedPicks(wave).filter(
+      pick => this.readyForCancelPick(pick)
+    ).forEach(pick => { 
         picks.push(pick);
     });
  
@@ -1593,5 +1638,19 @@ export class OutboundWaveComponent implements OnInit {
     }
   }
 
+  // the pick is ready for cancellation only if
+  // 1. for a single pick, if the pick is not fully picked
+  // 2. for a list pick, if there's nothing picked yet
+  readyForCancelPick(pick: PickWork): boolean {
+    if (pick.pickGroupType == null ||
+        pick.pickGroupType == PickGroupType.SINGLE_PICK) {
+      return pick.pickedQuantity < pick.quantity;
+    }
+    if (pick.pickGroupType == PickGroupType.LIST_PICK) {
+      return pick.pickedQuantity == 0;
+    }
+
+    return true;
+  }
 
 }

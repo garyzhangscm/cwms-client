@@ -174,7 +174,7 @@
                               {{ 'unacknowledge' | i18n }}</a> 
                           </li>
                           <li nz-menu-item >
-                            <a (click)="cancelPick( pick, false, false)">
+                            <a (click)="cancelPick( pick, false, false)" *ngIf="readyForCancelPick(pick)">
                               {{ 'cancel-pick' | i18n }}</a> 
                           </li>
                           <li nz-menu-item *ngIf="pick.pickGroupType != pickGroupTypes.LIST_PICK">
@@ -202,6 +202,29 @@
                   
                     <ng-template st-row="innerPickStatusColumn" let-innerPick > 
                       {{ 'PICK-STATUS-' + innerPick.status | i18n }}
+                      
+                    </ng-template>
+                    
+                    <ng-template st-row="innerPickActionColumn" let-innerPick > 
+                          <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" *ngIf="readyForCancelPick(innerPick)">
+                            {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+                          <nz-dropdown-menu #menu="nzDropdownMenu">
+                            <ul nz-menu>     
+                              <li nz-menu-item >
+                                <a (click)="cancelPick( innerPick, false, false)" >
+                                  {{ 'cancel-pick' | i18n }}</a> 
+                              </li>
+                              <li nz-menu-item>
+                                <a (click)="cancelPick( innerPick, true, false)"  >
+                                  {{ 'cancel-pick-error-location' | i18n }}</a> 
+                              </li>
+                              <li nz-menu-item >
+                                <a (click)="cancelPick( innerPick, true, true)" >
+                                  {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
+                              </li>
+                            </ul>
+                          </nz-dropdown-menu>  
+                       
                     </ng-template>
                   </st>
                 
@@ -486,7 +509,7 @@
                     <td>{{ inventory.item?.description }}</td>
                     <td>{{ inventory.itemPackageType?.name }}</td>
                     <td>{{ inventory.quantity }}</td>
-                    <td>{{ inventory.inventoryStatus }}</td>
+                    <td>{{ inventory.inventoryStatus!.name | i18n }}</td>
                     <td *ngIf="!displayOnly">
                       <button nz-button (click)="openUnpickModal(wave, inventory, tplUnpickModalTitle, tplUnpickModalContent)">
                         {{ 'unpick' | i18n }}
