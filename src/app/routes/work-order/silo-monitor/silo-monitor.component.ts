@@ -14,6 +14,7 @@ import { SiloService } from '../services/silo.service';
 export class WorkOrderSiloMonitorComponent implements OnInit {
 
   siloeDevices: SiloDevice[] = [];
+  isSpinning = false;
 
   @ViewChild('st', { static: true })
   st!: STComponent;
@@ -41,9 +42,13 @@ export class WorkOrderSiloMonitorComponent implements OnInit {
   ngOnInit(): void { 
 
 
+    this.isSpinning = true;
     this.siloService.getSiloDevices().subscribe({
-      next: (res) => this.siloeDevices = res,
-      error: (error) => console.log(`error when request silo information\n ${error}`)
+      next: (res) => { 
+        this.siloeDevices = res;        
+        this.isSpinning = false;
+      },
+      error: () => this.isSpinning = false
     })
   }
 
