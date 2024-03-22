@@ -118,8 +118,8 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
                     this.loadImages();
                     this.isSpinning = false;
                   }
-                  else {
-                    
+                  else { 
+                    this.createNewSample();
                     this.isSpinning = false;
                   }
 
