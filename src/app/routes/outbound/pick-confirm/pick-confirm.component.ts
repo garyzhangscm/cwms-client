@@ -7,6 +7,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 import { UserService } from '../../auth/services/user.service';
+import { InventoryConfiguration } from '../../inventory/models/inventory-configuration';
+import { InventoryConfigurationService } from '../../inventory/services/inventory-configuration.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { WorkOrder } from '../../work-order/models/work-order';
@@ -150,6 +152,8 @@ export class OutboundPickConfirmComponent implements OnInit {
   type = 'NONE';
   id = '';
 
+  inventoryConfiguration?: InventoryConfiguration;
+  
   workOrder!: WorkOrder;
   order!: Order;
   shipment!: Shipment;
@@ -193,11 +197,20 @@ export class OutboundPickConfirmComponent implements OnInit {
     private router: Router,
     private fb: UntypedFormBuilder,
     private utilService: UtilService,
+    private inventoryConfigurationService: InventoryConfigurationService,
   ) {
     userService.isCurrentPageDisplayOnly("/outbound/pick/confirm").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
     );                            
     this.pageTitle = this.i18n.fanyi('page.outbound.pick-confirm.title');
+    
+    inventoryConfigurationService.getInventoryConfigurations().subscribe({
+      next: (inventoryConfigurationRes) => {
+        if (inventoryConfigurationRes) { 
+          this.inventoryConfiguration = inventoryConfigurationRes;
+        }  
+      } ,
+    });
   }
 
   ngOnInit(): void {

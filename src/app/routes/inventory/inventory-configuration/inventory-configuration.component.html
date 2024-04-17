@@ -3,13 +3,140 @@
 <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
   
 <nz-tabset>
-  <nz-tab nzTitle="{{ 'inventory-snapshot.configuration' | i18n }}">
-    <app-inventory-inventory-snapshot-configuration>
-    </app-inventory-inventory-snapshot-configuration>
-  </nz-tab>
 
   <nz-tab nzTitle="{{ 'inventory.configuration' | i18n }}" *ngIf="currentInventoryConfiguration">
         
+    <div nz-row [nzGutter]="24" >
+      <div nz-col [nzSpan]="6">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="20">
+                  {{ 'inventoryAttribute1Enabled' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="4">
+                <label nz-checkbox [(ngModel)]="currentInventoryConfiguration.inventoryAttribute1Enabled"
+                  ></label> 
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="18">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="6">
+                  {{ 'inventoryAttribute1DisplayName' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12">
+                  <input nz-input [(ngModel)]="currentInventoryConfiguration.inventoryAttribute1DisplayName" 
+                  [disabled]="currentInventoryConfiguration.inventoryAttribute1Enabled != true"/>
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+    </div> 
+    <div nz-row [nzGutter]="24" >
+      <div nz-col [nzSpan]="6">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="20">
+                  {{ 'inventoryAttribute2Enabled' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="4">
+                <label nz-checkbox [(ngModel)]="currentInventoryConfiguration.inventoryAttribute2Enabled"
+                  ></label> 
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="18">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="6">
+                  {{ 'inventoryAttribute2DisplayName' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12">
+                  <input nz-input [(ngModel)]="currentInventoryConfiguration.inventoryAttribute2DisplayName" 
+                  [disabled]="currentInventoryConfiguration.inventoryAttribute2Enabled != true"/>
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+    </div> 
+    <div nz-row [nzGutter]="24" >
+      <div nz-col [nzSpan]="6">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="20">
+                  {{ 'inventoryAttribute3Enabled' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="4">
+                <label nz-checkbox [(ngModel)]="currentInventoryConfiguration.inventoryAttribute3Enabled"
+                  ></label> 
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="18">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="6">
+                  {{ 'inventoryAttribute3DisplayName' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12">
+                  <input nz-input [(ngModel)]="currentInventoryConfiguration.inventoryAttribute3DisplayName" 
+                  [disabled]="currentInventoryConfiguration.inventoryAttribute3Enabled != true"/>
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+    </div> 
+    <div nz-row [nzGutter]="24" >
+      <div nz-col [nzSpan]="6">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="20">
+                  {{ 'inventoryAttribute4Enabled' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="4">
+                <label nz-checkbox [(ngModel)]="currentInventoryConfiguration.inventoryAttribute4Enabled"
+                  ></label> 
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="18">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="6">
+                  {{ 'inventoryAttribute4DisplayName' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12">
+                  <input nz-input [(ngModel)]="currentInventoryConfiguration.inventoryAttribute4DisplayName" 
+                  [disabled]="currentInventoryConfiguration.inventoryAttribute4Enabled != true"/>
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+    </div> 
+    <div nz-row [nzGutter]="24" >
+      <div nz-col [nzSpan]="6">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="20">
+                  {{ 'inventoryAttribute5Enabled' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="4">
+                <label nz-checkbox [(ngModel)]="currentInventoryConfiguration.inventoryAttribute5Enabled"
+                  ></label> 
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="18">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="6">
+                  {{ 'inventoryAttribute5DisplayName' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12">
+                  <input nz-input [(ngModel)]="currentInventoryConfiguration.inventoryAttribute5DisplayName" 
+                  [disabled]="currentInventoryConfiguration.inventoryAttribute5Enabled != true"/>
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+    </div> 
+
     <div nz-row [nzGutter]="24" >
       <div nz-col [nzSpan]="12">
           <nz-form-item nzFlex>
@@ -113,6 +240,10 @@
             {{ 'confirm' | i18n }}
         </button>
     </div>
+  </nz-tab>
+  <nz-tab nzTitle="{{ 'inventory-snapshot.configuration' | i18n }}">
+    <app-inventory-inventory-snapshot-configuration>
+    </app-inventory-inventory-snapshot-configuration>
   </nz-tab>
 </nz-tabset>
 

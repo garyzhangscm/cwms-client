@@ -78,7 +78,12 @@ export class InventoryInventoryConfigurationComponent implements OnInit {
         newItemDefaultPackageTypeName: "",
         newItemDefaultPackageTypeDescription: "",
         
-        itemDefaultPackageUOMS: []
+        itemDefaultPackageUOMS: [],
+        inventoryAttribute1Enabled: false,
+        inventoryAttribute2Enabled: false,
+        inventoryAttribute3Enabled: false,
+        inventoryAttribute4Enabled: false,
+        inventoryAttribute5Enabled: false,
       }
 
   }
@@ -140,6 +145,7 @@ export class InventoryInventoryConfigurationComponent implements OnInit {
 
   saveConfiguration() {
     this.isSpinning = true;
+    console.log(`start to save inventory configuration \n ${JSON.stringify(this.currentInventoryConfiguration)}`)
     if (this.currentInventoryConfiguration.id) {
       this.inventoryConfigurationService.changeInventoryConfiguration(this.currentInventoryConfiguration)
       .subscribe({

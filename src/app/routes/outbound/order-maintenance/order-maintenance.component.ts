@@ -7,8 +7,10 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { Address } from 'ngx-google-places-autocomplete/objects/address';
 
 import { UserService } from '../../auth/services/user.service';
+import { Client } from '../../common/models/client';
 import { Customer } from '../../common/models/customer';
 import { Supplier } from '../../common/models/supplier';
+import { ClientService } from '../../common/services/client.service';
 import { CustomerService } from '../../common/services/customer.service';
 import { SupplierService } from '../../common/services/supplier.service';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
@@ -63,6 +65,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
   orderNumberValidateStatus = 'warning'; 
 
   avaiableCarriers: Carrier[] = [];
+  availableClients: Client[] = [];
   avaiableServiceLevel: CarrierServiceLevel[] = [];
 
   stepIndex = 0; 
@@ -87,6 +90,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     private locationService: LocationService, 
     private customerService: CustomerService,
     private carrierService: CarrierService,
+    private clientService: ClientService,
     private supplierService: SupplierService) { 
 
     this.pageTitle = this.i18n.fanyi('menu.main.outbound.order-maintenance');
@@ -117,6 +121,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     this.loadValidInventoryStatus();
     this.loadAvailableInventoryStatus();
     this.loadWarehouses();
+    this.loadValidClients();
     this.loadShippingStageLocationGroups();
     // init the customer auto complete if necessar
     this.customerOptionChanged();
@@ -590,6 +595,13 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
     }
   }
 
+  loadValidClients() {
+
+    this.clientService.getClients().subscribe({
+      next: (clientRes) => this.availableClients = clientRes
+       
+    });
+  }
   loadValidCustomers() {
 
     this.customerService.loadCustomers().subscribe({
@@ -619,6 +631,18 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
 
   }
   
+  clientChanged() {
+    if (this.currentOrder!.clientId) {
+
+      this.currentOrder!.client = this.availableClients.find(
+        availableClient => availableClient.id === this.currentOrder!.clientId
+      );
+    }
+    else {
+      this.currentOrder!.client = undefined;
+    }
+  }
+
   supplierChanged() {
 
     console.log(`supplier is chagned to ${this.currentOrder!.supplier!.name}`)

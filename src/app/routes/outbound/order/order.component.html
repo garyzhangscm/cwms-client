@@ -639,6 +639,36 @@
                 <th>
                   {{ 'style' | i18n }}
                 </th>
+                <th *ngIf="inventoryConfiguration?.inventoryAttribute1Enabled">
+                  <span *ngIf="inventoryConfiguration?.inventoryAttribute1DisplayName">
+                    {{inventoryConfiguration?.inventoryAttribute1DisplayName}}</span>
+                    <span *ngIf="!inventoryConfiguration?.inventoryAttribute1DisplayName">
+                      {{ 'inventoryAttribute1' | i18n }}</span>
+                </th>
+                <th *ngIf="inventoryConfiguration?.inventoryAttribute2Enabled">
+                  <span *ngIf="inventoryConfiguration?.inventoryAttribute2DisplayName">
+                    {{inventoryConfiguration?.inventoryAttribute2DisplayName}}</span>
+                    <span *ngIf="!inventoryConfiguration?.inventoryAttribute2DisplayName">
+                      {{ 'inventoryAttribute2' | i18n }}</span>
+                </th>
+                <th *ngIf="inventoryConfiguration?.inventoryAttribute3Enabled">
+                  <span *ngIf="inventoryConfiguration?.inventoryAttribute3DisplayName">
+                    {{inventoryConfiguration?.inventoryAttribute3DisplayName}}</span>
+                    <span *ngIf="!inventoryConfiguration?.inventoryAttribute3DisplayName">
+                      {{ 'inventoryAttribute3' | i18n }}</span>
+                </th>
+                <th *ngIf="inventoryConfiguration?.inventoryAttribute4Enabled">
+                  <span *ngIf="inventoryConfiguration?.inventoryAttribute4DisplayName">
+                    {{inventoryConfiguration?.inventoryAttribute4DisplayName}}</span>
+                    <span *ngIf="!inventoryConfiguration?.inventoryAttribute4DisplayName">
+                      {{ 'inventoryAttribute4' | i18n }}</span>
+                </th>
+                <th *ngIf="inventoryConfiguration?.inventoryAttribute5Enabled">
+                  <span *ngIf="inventoryConfiguration?.inventoryAttribute5DisplayName">
+                    {{inventoryConfiguration?.inventoryAttribute5DisplayName}}</span>
+                    <span *ngIf="!inventoryConfiguration?.inventoryAttribute5DisplayName">
+                      {{ 'inventoryAttribute5' | i18n }}</span>
+                </th>
                 <th>
                   {{ 'pick.quantity' | i18n }}
                 </th>
@@ -668,6 +698,21 @@
                   <td>{{ pick.color }}</td>
                   <td>{{ pick.productSize }}</td>
                   <td>{{ pick.style }}</td>
+                  <td *ngIf="inventoryConfiguration?.inventoryAttribute1Enabled">
+                    {{ pick.inventoryAttribute1 }}
+                  </td>
+                  <td *ngIf="inventoryConfiguration?.inventoryAttribute2Enabled">
+                    {{ pick.inventoryAttribute2 }}
+                  </td>
+                  <td *ngIf="inventoryConfiguration?.inventoryAttribute3Enabled">
+                    {{ pick.inventoryAttribute3 }}
+                  </td>
+                  <td *ngIf="inventoryConfiguration?.inventoryAttribute4Enabled">
+                    {{ pick.inventoryAttribute4 }}
+                  </td>
+                  <td *ngIf="inventoryConfiguration?.inventoryAttribute5Enabled">
+                    {{ pick.inventoryAttribute5 }}
+                  </td>
                   <td>{{ pick.quantity }}</td>
                   <td>{{ pick.pickedQuantity }}</td>
                   <td>{{ pick.lpn }}</td>

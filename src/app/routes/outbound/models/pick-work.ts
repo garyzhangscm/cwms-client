@@ -51,4 +51,11 @@ export interface PickWork {
 
   // for display purpose only
   showExpand?: boolean;
+
+  
+  inventoryAttribute1?:string;
+  inventoryAttribute2?:string;
+  inventoryAttribute3?:string;
+  inventoryAttribute4?:string;
+  inventoryAttribute5?:string;
 }

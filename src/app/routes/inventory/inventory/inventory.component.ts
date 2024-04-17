@@ -27,11 +27,13 @@ import { LocationGroupService } from '../../warehouse-layout/services/location-g
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { WorkOrderService } from '../../work-order/services/work-order.service';
 import { Inventory } from '../models/inventory';
+import { InventoryConfiguration } from '../models/inventory-configuration';
 import { InventoryDisplayOption } from '../models/inventory-display-option.enum';
 import { InventoryMovement } from '../models/inventory-movement';
 import { InventoryStatus } from '../models/inventory-status';
 import { ItemFamily } from '../models/item-family';
 import { ItemUnitOfMeasure } from '../models/item-unit-of-measure';
+import { InventoryConfigurationService } from '../services/inventory-configuration.service';
 import { InventoryStatusService } from '../services/inventory-status.service';
 import { InventoryService } from '../services/inventory.service';
 import { ItemFamilyService } from '../services/item-family.service';
@@ -49,64 +51,13 @@ export class InventoryInventoryComponent implements OnInit {
     showSize: true,
     pageSizes: [5, 10, 25, 50, 100]
   };
+  inventoryConfiguration?: InventoryConfiguration;
 
   inventoryTableRecordPerPages: number[] = [5, 10, 25, 50, 100]
-  inventoryTablecolumns: STColumn[] = [
-    { title: '', index: 'number', type: 'checkbox' },
-    { title: this.i18n.fanyi("client"),  index: 'client.name' ,
-        iif: () => this.isChoose('client')  && this.threePartyLogisticsFlag }, 
-    { title: this.i18n.fanyi("lpn"),  index: 'lpn' ,
-        iif: () => this.isChoose('lpn')  }, 
-    { title: this.i18n.fanyi("item"),  render: 'itemColumn',
-        iif: () => this.isChoose('item')  }, 
-    { title: this.i18n.fanyi("item.package-type"),  render: 'itemPackageTypeColumn',
-        iif: () => this.isChoose('itemPackageType')  }, 
-    { title: this.i18n.fanyi("location"),  render: 'locationColumn' ,
-        iif: () => this.isChoose('location')  }, 
-    { title: this.i18n.fanyi("quantity"),  render: 'quantityColumn' , index: 'quantity',
-        iif: () => this.isChoose('quantity') , statistical: 'sum', key: 'quantitySum'}, 
-    { title: this.i18n.fanyi("inventory.status"),  render: 'inventoryStatusColumn' ,
-        iif: () => this.isChoose('inventoryStatus')  }, 
-    { title: this.i18n.fanyi("fifoDate"),  render: 'fifoDateColumn' ,
-        iif: () => this.isChoose('fifoDate')  }, 
-    { title: this.i18n.fanyi("color"),  index: 'color' ,
-        iif: () => this.isChoose('color')  }, 
-    { title: this.i18n.fanyi("productSize"),  index: 'productSize' ,
-        iif: () => this.isChoose('productSize')  }, 
-    { title: this.i18n.fanyi("style"),  index: 'style' ,
-        iif: () => this.isChoose('style')  }, 
-    { title: this.i18n.fanyi("inventory.locked-for-adjustment"),  render: 'lockedForAdjustColumn' ,
-        iif: () => this.isChoose('lockedForAdjust')  }, 
-    { title: this.i18n.fanyi("inventory.pick-id"),  render: 'pickColumn' ,
-        iif: () => this.isChoose('pick')  },   
-    { title: this.i18n.fanyi("inventory.allocated-by-pick-id"),  render: 'allocateByPickColumn' ,
-        iif: () => this.isChoose('allocateByPick')  },   
-    { title: this.i18n.fanyi("movement-path"),  render: 'movementPathColumn' ,
-        iif: () => this.isChoose('movementPath')  },   
-    { title: this.i18n.fanyi("action"),  render: 'actionColumn' , 
-      iif: () => (!this.displayOnly) && (this.inventoryDisplayOption == null || this.inventoryDisplayOption == InventoryDisplayOption.NONE),
-      width: 350,
-      fixed: 'right',},  
-  ]; 
-  
-  customColumns = [
 
-    { label: this.i18n.fanyi("client"), value: 'client', checked: true },
-    { label: this.i18n.fanyi("lpn"), value: 'lpn', checked: true },
-    { label: this.i18n.fanyi("item"), value: 'item', checked: true },
-    { label: this.i18n.fanyi("item.package-type"), value: 'itemPackageType', checked: true },
-    { label: this.i18n.fanyi("location"), value: 'location', checked: true },
-    { label: this.i18n.fanyi("quantity"), value: 'quantity', checked: true },
-    { label: this.i18n.fanyi("inventory.status"), value: 'inventoryStatus', checked: true },
-    { label: this.i18n.fanyi("fifoDate"), value: 'fifoDate', checked: true }, 
-    { label: this.i18n.fanyi("color"), value: 'color', checked: true }, 
-    { label: this.i18n.fanyi("productSize"), value: 'productSize', checked: true }, 
-    { label: this.i18n.fanyi("style"), value: 'style', checked: true }, 
-    { label: this.i18n.fanyi("inventory.locked-for-adjustment"), value: 'lockedForAdjust', checked: true }, 
-    { label: this.i18n.fanyi("inventory.pick-id"), value: 'pick', checked: true }, 
-    { label: this.i18n.fanyi("inventory.allocated-by-pick-id"), value: 'allocateByPick', checked: true }, 
-    { label: this.i18n.fanyi("movement-path"), value: 'movementPath', checked: true }, 
-  ];
+  inventoryTablecolumns: STColumn[] = [];
+  
+  customColumns: { label: string, value: string; checked: boolean; }[] = [];
 
   isChoose(key: string): boolean {
     return !!this.customColumns.find(w => w.value === key && w.checked);
@@ -209,6 +160,7 @@ export class InventoryInventoryComponent implements OnInit {
     private userService: UserService,
     private inventoryStatusService: InventoryStatusService,
     private workOrderService: WorkOrderService,
+    private inventoryConfigurationService: InventoryConfigurationService,
   ) { 
     userService.isCurrentPageDisplayOnly("/inventory/inventory").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
@@ -220,8 +172,109 @@ export class InventoryInventoryComponent implements OnInit {
         )
       }
     }); 
+    inventoryConfigurationService.getInventoryConfigurations().subscribe({
+      next: (inventoryConfigurationRes) => {
+        if (inventoryConfigurationRes) { 
+          this.inventoryConfiguration = inventoryConfigurationRes;
+        } 
+        this.setupInventoryTableColumns();
+      } , 
+      error: () =>  this.setupInventoryTableColumns()
+    });
   }
-
+  setupInventoryTableColumns() {
+    this.inventoryTablecolumns = [
+      { title: '', index: 'number', type: 'checkbox' },
+      { title: this.i18n.fanyi("client"),  index: 'client.name' ,
+          iif: () => this.isChoose('client')  && this.threePartyLogisticsFlag }, 
+      { title: this.i18n.fanyi("lpn"),  index: 'lpn' ,
+          iif: () => this.isChoose('lpn')  }, 
+      { title: this.i18n.fanyi("item"),  render: 'itemColumn',
+          iif: () => this.isChoose('item')  }, 
+      { title: this.i18n.fanyi("item.package-type"),  render: 'itemPackageTypeColumn',
+          iif: () => this.isChoose('itemPackageType')  }, 
+      { title: this.i18n.fanyi("location"),  render: 'locationColumn' ,
+          iif: () => this.isChoose('location')  }, 
+      { title: this.i18n.fanyi("quantity"),  render: 'quantityColumn' , index: 'quantity',
+          iif: () => this.isChoose('quantity') , statistical: 'sum', key: 'quantitySum'}, 
+      { title: this.i18n.fanyi("inventory.status"),  render: 'inventoryStatusColumn' ,
+          iif: () => this.isChoose('inventoryStatus')  }, 
+      { title: this.i18n.fanyi("fifoDate"),  render: 'fifoDateColumn' ,
+          iif: () => this.isChoose('fifoDate')  }, 
+      { title: this.i18n.fanyi("color"),  index: 'color' ,
+          iif: () => this.isChoose('color')  }, 
+      { title: this.i18n.fanyi("productSize"),  index: 'productSize' ,
+          iif: () => this.isChoose('productSize')  }, 
+      { title: this.i18n.fanyi("style"),  index: 'style' ,
+          iif: () => this.isChoose('style')  }, 
+      { title: this.inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
+            this.i18n.fanyi("inventoryAttribute1") : this.inventoryConfiguration?.inventoryAttribute1DisplayName,  
+            index: 'attribute1' ,
+          iif: () => this.isChoose('attribute1') && this.inventoryConfiguration?.inventoryAttribute1Enabled == true,  }, 
+      { title: this.inventoryConfiguration?.inventoryAttribute2DisplayName == null ?
+               this.i18n.fanyi("inventoryAttribute2") : this.inventoryConfiguration?.inventoryAttribute2DisplayName,    
+               index: 'attribute2' ,
+          iif: () => this.isChoose('attribute2') && this.inventoryConfiguration?.inventoryAttribute2Enabled == true,  }, 
+      { title: this.inventoryConfiguration?.inventoryAttribute3DisplayName == null ?
+              this.i18n.fanyi("inventoryAttribute3") : this.inventoryConfiguration?.inventoryAttribute3DisplayName,    
+          index: 'attribute3' ,
+          iif: () => this.isChoose('attribute3') && this.inventoryConfiguration?.inventoryAttribute3Enabled == true,  }, 
+      { title: this.inventoryConfiguration?.inventoryAttribute4DisplayName == null ?
+              this.i18n.fanyi("inventoryAttribute4") : this.inventoryConfiguration?.inventoryAttribute4DisplayName,  
+          index: 'attribute4' ,
+          iif: () => this.isChoose('attribute4') && this.inventoryConfiguration?.inventoryAttribute4Enabled == true,  },
+      { title: this.inventoryConfiguration?.inventoryAttribute5DisplayName == null ?
+              this.i18n.fanyi("inventoryAttribute5") : this.inventoryConfiguration?.inventoryAttribute5DisplayName,  
+              index: 'attribute5' ,
+          iif: () => this.isChoose('attribute5') && this.inventoryConfiguration?.inventoryAttribute5Enabled == true,  },
+      { title: this.i18n.fanyi("inventory.locked-for-adjustment"),  render: 'lockedForAdjustColumn' ,
+          iif: () => this.isChoose('lockedForAdjust')  }, 
+      { title: this.i18n.fanyi("inventory.pick-id"),  render: 'pickColumn' ,
+          iif: () => this.isChoose('pick')  },   
+      { title: this.i18n.fanyi("inventory.allocated-by-pick-id"),  render: 'allocateByPickColumn' ,
+          iif: () => this.isChoose('allocateByPick')  },   
+      { title: this.i18n.fanyi("movement-path"),  render: 'movementPathColumn' ,
+          iif: () => this.isChoose('movementPath')  },   
+      { title: this.i18n.fanyi("action"),  render: 'actionColumn' , 
+        iif: () => (!this.displayOnly) && (this.inventoryDisplayOption == null || this.inventoryDisplayOption == InventoryDisplayOption.NONE),
+        width: 350,
+        fixed: 'right',},  
+    ]; 
+    
+    this.customColumns = [
+  
+      { label: this.i18n.fanyi("client"), value: 'client', checked: true },
+      { label: this.i18n.fanyi("lpn"), value: 'lpn', checked: true },
+      { label: this.i18n.fanyi("item"), value: 'item', checked: true },
+      { label: this.i18n.fanyi("item.package-type"), value: 'itemPackageType', checked: true },
+      { label: this.i18n.fanyi("location"), value: 'location', checked: true },
+      { label: this.i18n.fanyi("quantity"), value: 'quantity', checked: true },
+      { label: this.i18n.fanyi("inventory.status"), value: 'inventoryStatus', checked: true },
+      { label: this.i18n.fanyi("fifoDate"), value: 'fifoDate', checked: true }, 
+      { label: this.i18n.fanyi("color"), value: 'color', checked: true }, 
+      { label: this.i18n.fanyi("productSize"), value: 'productSize', checked: true }, 
+      { label: this.i18n.fanyi("style"), value: 'style', checked: true }, 
+      { label: this.inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
+            this.i18n.fanyi("inventoryAttribute1") : this.inventoryConfiguration?.inventoryAttribute1DisplayName,
+         value: 'attribute1', checked: true }, 
+      { label: this.inventoryConfiguration?.inventoryAttribute2DisplayName == null ?
+          this.i18n.fanyi("inventoryAttribute2") : this.inventoryConfiguration?.inventoryAttribute2DisplayName,
+          value: 'attribute2', checked: true }, 
+      { label: this.inventoryConfiguration?.inventoryAttribute3DisplayName == null ?
+          this.i18n.fanyi("inventoryAttribute3") : this.inventoryConfiguration?.inventoryAttribute3DisplayName,
+          value: 'attribute3', checked: true }, 
+      { label: this.inventoryConfiguration?.inventoryAttribute4DisplayName == null ?
+            this.i18n.fanyi("inventoryAttribute4") : this.inventoryConfiguration?.inventoryAttribute4DisplayName,
+            value: 'attribute4', checked: true }, 
+      { label: this.inventoryConfiguration?.inventoryAttribute5DisplayName == null ?
+          this.i18n.fanyi("inventoryAttribute5") : this.inventoryConfiguration?.inventoryAttribute5DisplayName,
+          value: 'attribute5', checked: true }, 
+      { label: this.i18n.fanyi("inventory.locked-for-adjustment"), value: 'lockedForAdjust', checked: true }, 
+      { label: this.i18n.fanyi("inventory.pick-id"), value: 'pick', checked: true }, 
+      { label: this.i18n.fanyi("inventory.allocated-by-pick-id"), value: 'allocateByPick', checked: true }, 
+      { label: this.i18n.fanyi("movement-path"), value: 'movementPath', checked: true }, 
+    ];
+  }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inventory.inventory'));
     this.initSearchForm();

@@ -20,7 +20,9 @@ import { ClientService } from '../../common/services/client.service';
 import { CustomerService } from '../../common/services/customer.service';
 import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
+import { InventoryConfiguration } from '../../inventory/models/inventory-configuration';
 import { ItemUnitOfMeasure } from '../../inventory/models/item-unit-of-measure';
+import { InventoryConfigurationService } from '../../inventory/services/inventory-configuration.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { Printer } from '../../report/models/printer';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
@@ -67,6 +69,7 @@ export class OutboundOrderComponent implements OnInit {
   checked = false;
   indeterminate = false;
   
+  inventoryConfiguration?: InventoryConfiguration;
  
   orderReassignShippingStageLocationModal!: NzModalRef;
   orderReassignShippingStageLocationForm!: UntypedFormGroup;
@@ -143,6 +146,7 @@ export class OutboundOrderComponent implements OnInit {
     private billableActivityTypeService: BillableActivityTypeService,
     private orderLineService: OrderLineService,
     private warehouseService: WarehouseService,
+    private inventoryConfigurationService: InventoryConfigurationService,
   ) {  
     userService.isCurrentPageDisplayOnly("/outbound/order").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
@@ -153,6 +157,15 @@ export class OutboundOrderComponent implements OnInit {
           userPermission => this.userPermissionMap.set(userPermission.permission.name, userPermission.allowAccess)
         )
       }
+    });
+    inventoryConfigurationService.getInventoryConfigurations().subscribe({
+      next: (inventoryConfigurationRes) => {
+        if (inventoryConfigurationRes) { 
+          this.inventoryConfiguration = inventoryConfigurationRes;
+        } 
+        this.setupOrderLineTableColumns();
+      } , 
+      error: () =>  this.setupOrderLineTableColumns()
     });
   
   }
@@ -1885,31 +1898,62 @@ export class OutboundOrderComponent implements OnInit {
    
   @ViewChild('stOrderLine', { static: false })
   stOrderLine!: STComponent;
-  stOrderLineTableColumns: STColumn[] = [ 
-    { title: this.i18n.fanyi("order.line.number"), index: 'number', width: 150 },  
-    { title: this.i18n.fanyi("item"), render: 'itemColumn',   width: 150 },  
-    { title: this.i18n.fanyi("color"), index: 'color', width: 150 },  
-    { title: this.i18n.fanyi("productSize"), index: 'productSize', width: 150 },  
-    { title: this.i18n.fanyi("style"), index: 'style', width: 150 },  
-    { title: this.i18n.fanyi("allocateByReceiptNumber"), render: 'allocateByReceiptNumberColumn', width: 150 },  
-    { title: this.i18n.fanyi("order.line.expectedQuantity"), render: 'displayExpectedQuantityColumn',  width: 150 },  
-    { title: this.i18n.fanyi("order.line.openQuantity"), render: 'displayOpenQuantityColumn', width: 150 },  
-    { title: this.i18n.fanyi("order.line.inprocessQuantity"), index: 'inprocessQuantity', width: 150 },  
-    { title: this.i18n.fanyi("production-plan.line.inprocessQuantity"), index: 'productionPlanInprocessQuantity', width: 150 },  
-    { title: this.i18n.fanyi("production-plan.line.producedQuantity"), index: 'productionPlanProducedQuantity', width: 150 },  
-    { title: this.i18n.fanyi("order.line.shippedQuantity"), index: 'shippedQuantity', width: 150 },  
-    { title: this.i18n.fanyi("inventory.status"), render: 'inventoryStatusColumn', width: 150 },  
-    { title: this.i18n.fanyi("order.line.allocationStrategyType"), render: 'allocationStrategyTypeColumn', width: 150 }, 
-      
-    {
-      title: this.i18n.fanyi("action"), 
-      render: 'actionColumn', 
-      width: 250,
-      fixed: 'right',
-      iif: () => !this.displayOnly
 
-    },   
-  ];
+  stOrderLineTableColumns: STColumn[] = [];
+  setupOrderLineTableColumns() {
+
+    this.stOrderLineTableColumns = [ 
+      { title: this.i18n.fanyi("order.line.number"), index: 'number', width: 150 },  
+      { title: this.i18n.fanyi("item"), render: 'itemColumn',   width: 150 },  
+      { title: this.i18n.fanyi("color"), index: 'color', width: 150 },  
+      { title: this.i18n.fanyi("productSize"), index: 'productSize', width: 150 },  
+      { title: this.i18n.fanyi("style"), index: 'style', width: 150 }, 
+      { title: this.inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
+            this.i18n.fanyi("inventoryAttribute1") : this.inventoryConfiguration?.inventoryAttribute1DisplayName,  
+            index: 'inventoryAttribute1' ,
+          iif: () =>  this.inventoryConfiguration?.inventoryAttribute1Enabled == true, width: 150  
+      }, 
+      { title: this.inventoryConfiguration?.inventoryAttribute2DisplayName == null ?
+            this.i18n.fanyi("inventoryAttribute2") : this.inventoryConfiguration?.inventoryAttribute2DisplayName,  
+            index: 'inventoryAttribute2' ,
+          iif: () =>  this.inventoryConfiguration?.inventoryAttribute2Enabled == true, width: 150  
+      }, 
+      { title: this.inventoryConfiguration?.inventoryAttribute3DisplayName == null ?
+            this.i18n.fanyi("inventoryAttribute3") : this.inventoryConfiguration?.inventoryAttribute3DisplayName,  
+            index: 'inventoryAttribute3' ,
+          iif: () =>  this.inventoryConfiguration?.inventoryAttribute3Enabled == true, width: 150  
+      }, 
+      { title: this.inventoryConfiguration?.inventoryAttribute4DisplayName == null ?
+            this.i18n.fanyi("inventoryAttribute4") : this.inventoryConfiguration?.inventoryAttribute4DisplayName,  
+            index: 'inventoryAttribute4' ,
+          iif: () =>  this.inventoryConfiguration?.inventoryAttribute4Enabled == true, width: 150  
+      }, 
+      { title: this.inventoryConfiguration?.inventoryAttribute5DisplayName == null ?
+            this.i18n.fanyi("inventoryAttribute5") : this.inventoryConfiguration?.inventoryAttribute5DisplayName,  
+            index: 'inventoryAttribute5' ,
+          iif: () =>  this.inventoryConfiguration?.inventoryAttribute5Enabled == true, width: 150  
+      }, 
+
+      { title: this.i18n.fanyi("allocateByReceiptNumber"), render: 'allocateByReceiptNumberColumn', width: 150 },  
+      { title: this.i18n.fanyi("order.line.expectedQuantity"), render: 'displayExpectedQuantityColumn',  width: 150 },  
+      { title: this.i18n.fanyi("order.line.openQuantity"), render: 'displayOpenQuantityColumn', width: 150 },  
+      { title: this.i18n.fanyi("order.line.inprocessQuantity"), index: 'inprocessQuantity', width: 150 },  
+      { title: this.i18n.fanyi("production-plan.line.inprocessQuantity"), index: 'productionPlanInprocessQuantity', width: 150 },  
+      { title: this.i18n.fanyi("production-plan.line.producedQuantity"), index: 'productionPlanProducedQuantity', width: 150 },  
+      { title: this.i18n.fanyi("order.line.shippedQuantity"), index: 'shippedQuantity', width: 150 },  
+      { title: this.i18n.fanyi("inventory.status"), render: 'inventoryStatusColumn', width: 150 },  
+      { title: this.i18n.fanyi("order.line.allocationStrategyType"), render: 'allocationStrategyTypeColumn', width: 150 }, 
+        
+      {
+        title: this.i18n.fanyi("action"), 
+        render: 'actionColumn', 
+        width: 250,
+        fixed: 'right',
+        iif: () => !this.displayOnly
+  
+      },   
+    ];
+  }
  
   formatterDollar = (value: number): string => `$ ${value}`;
   parserDollar = (value: string): string => value.replace('$ ', '');

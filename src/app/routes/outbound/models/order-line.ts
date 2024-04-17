@@ -43,4 +43,11 @@ export interface OrderLine {
   
   clientId?: number;
   client?: Client;
+
+  
+  inventoryAttribute1?: string;
+  inventoryAttribute2?: string;
+  inventoryAttribute3?: string;
+  inventoryAttribute4?: string;
+  inventoryAttribute5?: string;
 }

@@ -22,4 +22,15 @@ export interface InventoryConfiguration {
     
     itemDefaultPackageUOMS: ItemDefaultPackageUOM[];
 
+    inventoryAttribute1DisplayName?: string;
+    inventoryAttribute1Enabled?: boolean;
+    inventoryAttribute2DisplayName?: string;
+    inventoryAttribute2Enabled?: boolean;
+    inventoryAttribute3DisplayName?: string;
+    inventoryAttribute3Enabled?: boolean;
+    inventoryAttribute4DisplayName?: string;
+    inventoryAttribute4Enabled?: boolean;
+    inventoryAttribute5DisplayName?: string;
+    inventoryAttribute5Enabled?: boolean;
+
 }

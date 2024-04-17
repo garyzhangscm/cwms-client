@@ -236,6 +236,46 @@
             <li *ngIf="pick.color != null">{{'color' | i18n}}: {{pick.color}}</li>
             <li *ngIf="pick.productSize != null">{{'productSize' | i18n}}: {{pick.productSize}}</li>
             <li *ngIf="pick.style != null">{{'style' | i18n}}: {{pick.style}}</li>
+            <li *ngIf="pick.inventoryAttribute1 != null">
+                  <span *ngIf="inventoryConfiguration?.inventoryAttribute1DisplayName">
+                    {{ inventoryConfiguration?.inventoryAttribute1DisplayName}}: 
+                  </span>
+                  <span *ngIf="!inventoryConfiguration?.inventoryAttribute1DisplayName">
+                    {{'inventoryAttribute1' | i18n}}: 
+                  </span> 
+                  {{pick.inventoryAttribute1}}</li>
+            <li *ngIf="pick.inventoryAttribute2 != null">
+                  <span *ngIf="inventoryConfiguration?.inventoryAttribute2DisplayName">
+                    {{ inventoryConfiguration?.inventoryAttribute2DisplayName}}: 
+                  </span>
+                  <span *ngIf="!inventoryConfiguration?.inventoryAttribute2DisplayName">
+                    {{'inventoryAttribute2' | i18n}}: 
+                  </span> 
+                  {{pick.inventoryAttribute2}}</li>
+            <li *ngIf="pick.inventoryAttribute3 != null">
+                  <span *ngIf="inventoryConfiguration?.inventoryAttribute3DisplayName">
+                    {{ inventoryConfiguration?.inventoryAttribute3DisplayName}}: 
+                  </span>
+                  <span *ngIf="!inventoryConfiguration?.inventoryAttribute3DisplayName">
+                    {{'inventoryAttribute3' | i18n}}: 
+                  </span> 
+                  {{pick.inventoryAttribute3}}</li>
+            <li *ngIf="pick.inventoryAttribute4 != null">
+                  <span *ngIf="inventoryConfiguration?.inventoryAttribute4DisplayName">
+                    {{ inventoryConfiguration?.inventoryAttribute4DisplayName}}: 
+                  </span>
+                  <span *ngIf="!inventoryConfiguration?.inventoryAttribute4DisplayName">
+                    {{'inventoryAttribute4' | i18n}}: 
+                  </span> 
+                  {{pick.inventoryAttribute4}}</li>
+            <li *ngIf="pick.inventoryAttribute5 != null">
+                  <span *ngIf="inventoryConfiguration?.inventoryAttribute5DisplayName">
+                    {{ inventoryConfiguration?.inventoryAttribute5DisplayName}}: 
+                  </span>
+                  <span *ngIf="!inventoryConfiguration?.inventoryAttribute5DisplayName">
+                    {{'inventoryAttribute5' | i18n}}: 
+                  </span> 
+                  {{pick.inventoryAttribute5}}</li>
           </ul>
         </td>
         <td nzRight nzWidth="120px">

@@ -20,8 +20,10 @@ import { ColumnItem } from '../../util/models/column-item';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { InventoryConfiguration } from '../models/inventory-configuration';
 import { Item } from '../models/item';
 import { ItemFamily } from '../models/item-family';
+import { InventoryConfigurationService } from '../services/inventory-configuration.service';
 import { ItemFamilyService } from '../services/item-family.service';
 import { ItemService } from '../services/item.service';
 
@@ -44,6 +46,7 @@ export class InventoryItemComponent implements OnInit {
   // Table data for display
   items: Item[] = [];
   listOfDisplayItems: Item[] = [];
+  inventoryConfiguration?: InventoryConfiguration;
 
   // editable cell
   editId!: string | null;
@@ -94,6 +97,7 @@ export class InventoryItemComponent implements OnInit {
     private localCacheService: LocalCacheService,
     private warehouseService: WarehouseService,
     private userService: UserService,
+    private inventoryConfigurationService: InventoryConfigurationService,
   ) {
     userService.isCurrentPageDisplayOnly("/inventory/item").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
@@ -105,6 +109,15 @@ export class InventoryItemComponent implements OnInit {
         )
       }
     }); 
+    inventoryConfigurationService.getInventoryConfigurations().subscribe({
+      next: (inventoryConfigurationRes) => {
+        if (inventoryConfigurationRes) { 
+          this.inventoryConfiguration = inventoryConfigurationRes;
+        } 
+        this.setupItemTableColumns();
+      } , 
+      error: () =>  this.setupItemTableColumns()
+    });
   
   }
 
@@ -418,113 +431,165 @@ export class InventoryItemComponent implements OnInit {
 
   @ViewChild('st', { static: true })
   st!: STComponent;
-  columns: STColumn[] = [
-    { title: this.i18n.fanyi("thumbnail"),  render: 'thumbnailColumn', iif: () => this.isChoose('thumbnail'), 
-    },
-    { title: this.i18n.fanyi("name"), index: 'name', iif: () => this.isChoose('name'), 
-      sort: {
-        compare: (a, b) => this.utilService.compareNullableString(a.name, b.name),
-      },
-    },
-    { title: this.i18n.fanyi("description"), index: 'description', iif: () => this.isChoose('description'),   width: 200, 
-      sort: {
-        compare: (a, b) => this.utilService.compareNullableString(a.description, b.description),
-      },
-    }, 
-    { title: this.i18n.fanyi("client"), index: 'client.name', iif: () => this.isChoose('client'), 
-      sort: {
-        compare: (a, b) =>  this.utilService.compareNullableString(a.client.name, b.client.name),
-      },
-    },
-    { title: this.i18n.fanyi("item-family"), index: 'itemFamily.name', iif: () => this.isChoose('item-family'), 
-      sort: {
-        compare: (a, b) =>  this.utilService.compareNullableString(a.itemFamily.name, b.itemFamily.name),
-      },
-    },
-    { title: this.i18n.fanyi("unit-cost"), index: 'unitCost', iif: () => this.isChoose('unit-cost'), 
-      sort: {
-        compare: (a, b) =>  this.utilService.compareNullableNumber(a.unitCost, b.unitCost),
-      },
-    },
-    { title: this.i18n.fanyi("abc-category"), index: 'abcCategory.description', iif: () => this.isChoose('abcCategory'),
-      sort: {
-        compare: (a, b) =>  this.utilService.compareNullableString(a.abcCategory.description, b.abcCategory.description),
-      },
-    },
-    { title: this.i18n.fanyi("velocity"), index: 'velocity.description', iif: () => this.isChoose('velocity'), 
-      sort: {
-        compare: (a, b) =>  this.utilService.compareNullableString(a.velocity.description, b.velocity.description),
-      },
-    },
-    { title: this.i18n.fanyi("allowAllocationByLPN"), index: 'allowAllocationByLPN', iif: () => this.isChoose('allowAllocationByLPN'), 
-         type:"yn"},
-    { title: this.i18n.fanyi("allocationRoundUpStrategyType"), index: 'allocationRoundUpStrategyType', iif: () => this.isChoose('allocationRoundUpStrategyType'), },
-    { title: this.i18n.fanyi("allocationRoundUpStrategyValue"), index: 'allocationRoundUpStrategyValue', iif: () => this.isChoose('allocationRoundUpStrategyValue'), },
-    { title: this.i18n.fanyi("trackingVolumeFlag"), index: 'trackingVolumeFlag', iif: () => this.isChoose('trackingVolumeFlag'),
-    type:"yn" },
-    { title: this.i18n.fanyi("trackingLotNumberFlag"), index: 'trackingLotNumberFlag', iif: () => this.isChoose('trackingLotNumberFlag'), 
-    type:"yn"},
-    { title: this.i18n.fanyi("trackingManufactureDateFlag"), index: 'trackingManufactureDateFlag', iif: () => this.isChoose('trackingManufactureDateFlag'),
-    type:"yn" },
-    { title: this.i18n.fanyi("shelfLifeDays"), index: 'shelfLifeDays', iif: () => this.isChoose('shelfLifeDays'), },
-    { title: this.i18n.fanyi("trackingExpirationDateFlag"), index: 'trackingExpirationDateFlag', iif: () => this.isChoose('trackingExpirationDateFlag'),
-    type:"yn" },
-    
-    { title: this.i18n.fanyi("trackingColorFlag"), index: 'trackingColorFlag', iif: () => this.isChoose('trackingColorFlag'),
-    type:"yn" },
-    { title: this.i18n.fanyi("defaultColor"), index: 'defaultColor', iif: () => this.isChoose('defaultColor'), },
-    { title: this.i18n.fanyi("trackingProductSizeFlag"), index: 'trackingProductSizeFlag', iif: () => this.isChoose('trackingProductSizeFlag'),
-    type:"yn" },
-    { title: this.i18n.fanyi("defaultProductSize"), index: 'defaultProductSize', iif: () => this.isChoose('defaultProductSize'), },
-    { title: this.i18n.fanyi("trackingStyleFlag"), index: 'trackingStyleFlag', iif: () => this.isChoose('trackingStyleFlag'),
-    type:"yn" },
-    { title: this.i18n.fanyi("defaultStyle"), index: 'defaultStyle', iif: () => this.isChoose('defaultStyle')},
-    { title: this.i18n.fanyi("receivingRateByUnit"), render: 'receivingRateByUnitColumn', 
-      iif: () => this.isChoose('receivingRateByUnit'), 
-    },
-    { title: this.i18n.fanyi("shippingRateByUnit"), render: 'shippingRateByUnitColumn', 
-      iif: () => this.isChoose('shippingRateByUnit'), 
-    },
-    { title: this.i18n.fanyi("handlingRateByUnit"), render: 'handlingRateByUnitColumn', 
-      iif: () => this.isChoose('handlingRateByUnit'), 
-    },
+  columns: STColumn[] = [];
+  customColumns : { label: string, value: string; checked: boolean; }[] = [];
+  setupItemTableColumns() {
 
-    {
-      title: 'action',
-      renderTitle: 'actionColumnTitle',
-      render: 'actionColumn',
-      fixed: 'right',width: 110, 
-      iif: () => !this.displayOnly
-    },
-  ];
-  customColumns = [
-
-    { label: this.i18n.fanyi("thumbnail"), value: 'thumbnail', checked: true },
-    { label: this.i18n.fanyi("name"), value: 'name', checked: true },
-    { label: this.i18n.fanyi("description"), value: 'description', checked: true },
-    { label: this.i18n.fanyi("client"), value: 'client', checked: true },
-    { label: this.i18n.fanyi("abc-category"), value: 'abcCategory', checked: true },
-    { label: this.i18n.fanyi("velocity"), value: 'velocity', checked: true },
-    { label: this.i18n.fanyi("item-family"), value: 'item-family', checked: true },
-    { label: this.i18n.fanyi("unit-cost"), value: 'unit-cost', checked: true },
-    { label: this.i18n.fanyi("allowAllocationByLPN"), value: 'allowAllocationByLPN', checked: true },
-    { label: this.i18n.fanyi("allocationRoundUpStrategyType"), value: 'allocationRoundUpStrategyType', checked: true },
-    { label: this.i18n.fanyi("allocationRoundUpStrategyValue"), value: 'allocationRoundUpStrategyValue', checked: true },
-    { label: this.i18n.fanyi("trackingVolumeFlag"), value: 'trackingVolumeFlag', checked: true },
-    { label: this.i18n.fanyi("trackingLotNumberFlag"), value: 'trackingLotNumberFlag', checked: true },
-    { label: this.i18n.fanyi("trackingManufactureDateFlag"), value: 'trackingManufactureDateFlag', checked: true },
-    { label: this.i18n.fanyi("shelfLifeDays"), value: 'shelfLifeDays', checked: true },
-    { label: this.i18n.fanyi("trackingExpirationDateFlag"), value: 'trackingExpirationDateFlag', checked: true },
-    { label: this.i18n.fanyi("trackingColorFlag"), value: 'trackingColorFlag', checked: true },
-    { label: this.i18n.fanyi("defaultColor"), value: 'defaultColor', checked: true },
-    { label: this.i18n.fanyi("trackingProductSizeFlag"), value: 'trackingProductSizeFlag', checked: true },
-    { label: this.i18n.fanyi("defaultProductSize"), value: 'defaultProductSize', checked: true },
-    { label: this.i18n.fanyi("trackingStyleFlag"), value: 'trackingStyleFlag', checked: true },
-    { label: this.i18n.fanyi("defaultStyle"), value: 'defaultStyle', checked: true },
-    { label: this.i18n.fanyi("receivingRateByUnit"), value: 'receivingRateByUnit', checked: true },
-    { label: this.i18n.fanyi("shippingRateByUnit"), value: 'shippingRateByUnit', checked: true },
-    { label: this.i18n.fanyi("handlingRateByUnit"), value: 'handlingRateByUnit', checked: true },
-  ];
+    this.columns = [
+      { title: this.i18n.fanyi("thumbnail"),  render: 'thumbnailColumn', iif: () => this.isChoose('thumbnail'), 
+      },
+      { title: this.i18n.fanyi("name"), index: 'name', iif: () => this.isChoose('name'), 
+        sort: {
+          compare: (a, b) => this.utilService.compareNullableString(a.name, b.name),
+        },
+      },
+      { title: this.i18n.fanyi("description"), index: 'description', iif: () => this.isChoose('description'),   width: 200, 
+        sort: {
+          compare: (a, b) => this.utilService.compareNullableString(a.description, b.description),
+        },
+      }, 
+      { title: this.i18n.fanyi("client"), index: 'client.name', iif: () => this.isChoose('client'), 
+        sort: {
+          compare: (a, b) =>  this.utilService.compareNullableString(a.client.name, b.client.name),
+        },
+      },
+      { title: this.i18n.fanyi("item-family"), index: 'itemFamily.name', iif: () => this.isChoose('item-family'), 
+        sort: {
+          compare: (a, b) =>  this.utilService.compareNullableString(a.itemFamily.name, b.itemFamily.name),
+        },
+      },
+      { title: this.i18n.fanyi("unit-cost"), index: 'unitCost', iif: () => this.isChoose('unit-cost'), 
+        sort: {
+          compare: (a, b) =>  this.utilService.compareNullableNumber(a.unitCost, b.unitCost),
+        },
+      },
+      { title: this.i18n.fanyi("abc-category"), index: 'abcCategory.description', iif: () => this.isChoose('abcCategory'),
+        sort: {
+          compare: (a, b) =>  this.utilService.compareNullableString(a.abcCategory.description, b.abcCategory.description),
+        },
+      },
+      { title: this.i18n.fanyi("velocity"), index: 'velocity.description', iif: () => this.isChoose('velocity'), 
+        sort: {
+          compare: (a, b) =>  this.utilService.compareNullableString(a.velocity.description, b.velocity.description),
+        },
+      },
+      { title: this.i18n.fanyi("allowAllocationByLPN"), index: 'allowAllocationByLPN', iif: () => this.isChoose('allowAllocationByLPN'), 
+           type:"yn"},
+      { title: this.i18n.fanyi("allocationRoundUpStrategyType"), index: 'allocationRoundUpStrategyType', iif: () => this.isChoose('allocationRoundUpStrategyType'), },
+      { title: this.i18n.fanyi("allocationRoundUpStrategyValue"), index: 'allocationRoundUpStrategyValue', iif: () => this.isChoose('allocationRoundUpStrategyValue'), },
+      { title: this.i18n.fanyi("trackingVolumeFlag"), index: 'trackingVolumeFlag', iif: () => this.isChoose('trackingVolumeFlag'),
+      type:"yn" },
+      { title: this.i18n.fanyi("trackingLotNumberFlag"), index: 'trackingLotNumberFlag', iif: () => this.isChoose('trackingLotNumberFlag'), 
+      type:"yn"},
+      { title: this.i18n.fanyi("trackingManufactureDateFlag"), index: 'trackingManufactureDateFlag', iif: () => this.isChoose('trackingManufactureDateFlag'),
+      type:"yn" },
+      { title: this.i18n.fanyi("shelfLifeDays"), index: 'shelfLifeDays', iif: () => this.isChoose('shelfLifeDays'), },
+      { title: this.i18n.fanyi("trackingExpirationDateFlag"), index: 'trackingExpirationDateFlag', iif: () => this.isChoose('trackingExpirationDateFlag'),
+      type:"yn" },
+      
+      { title: this.i18n.fanyi("trackingColorFlag"), index: 'trackingColorFlag', iif: () => this.isChoose('trackingColorFlag'),
+      type:"yn" },
+      { title: this.i18n.fanyi("defaultColor"), index: 'defaultColor', iif: () => this.isChoose('defaultColor'), },
+      { title: this.i18n.fanyi("trackingProductSizeFlag"), index: 'trackingProductSizeFlag', iif: () => this.isChoose('trackingProductSizeFlag'),
+      type:"yn" },
+      { title: this.i18n.fanyi("defaultProductSize"), index: 'defaultProductSize', iif: () => this.isChoose('defaultProductSize'), },
+      { title: this.i18n.fanyi("trackingStyleFlag"), index: 'trackingStyleFlag', iif: () => this.isChoose('trackingStyleFlag'),
+      type:"yn" },
+      { title: this.i18n.fanyi("defaultStyle"), index: 'defaultStyle', iif: () => this.isChoose('defaultStyle')},
+  
+      { title: this.i18n.fanyi("trackingInventoryAttribute1Flag"), index: 'trackingInventoryAttribute1Flag', 
+          iif: () => this.isChoose('trackingInventoryAttribute1Flag') && this.inventoryConfiguration?.inventoryAttribute1Enabled == true, 
+      type:"yn" },
+      { title: this.i18n.fanyi("defaultInventoryAttribute1"), index: 'defaultInventoryAttribute1', 
+          iif: () => this.isChoose('defaultInventoryAttribute1') && this.inventoryConfiguration?.inventoryAttribute1Enabled == true,
+        }, 
+      { title: this.i18n.fanyi("trackingInventoryAttribute2Flag"), index: 'trackingInventoryAttribute2Flag', 
+          iif: () => this.isChoose('trackingInventoryAttribute2Flag') && this.inventoryConfiguration?.inventoryAttribute2Enabled == true,
+      type:"yn" },
+      { title: this.i18n.fanyi("defaultInventoryAttribute2"), index: 'defaultInventoryAttribute2', 
+          iif: () => this.isChoose('defaultInventoryAttribute2') && this.inventoryConfiguration?.inventoryAttribute2Enabled == true,
+        }, 
+          
+      { title: this.i18n.fanyi("trackingInventoryAttribute3Flag"), index: 'trackingInventoryAttribute3Flag', 
+      iif: () => this.isChoose('trackingInventoryAttribute3Flag') && this.inventoryConfiguration?.inventoryAttribute3Enabled == true,
+      type:"yn" },
+      { title: this.i18n.fanyi("defaultInventoryAttribute3"), index: 'defaultInventoryAttribute3', 
+          iif: () => this.isChoose('defaultInventoryAttribute3') && this.inventoryConfiguration?.inventoryAttribute3Enabled == true,
+        }, 
+      { title: this.i18n.fanyi("trackingInventoryAttribute4Flag"), index: 'trackingInventoryAttribute4Flag', 
+      iif: () => this.isChoose('trackingInventoryAttribute4Flag') && this.inventoryConfiguration?.inventoryAttribute4Enabled == true,
+      type:"yn" },
+      { title: this.i18n.fanyi("defaultInventoryAttribute4"), index: 'defaultInventoryAttribute4', 
+          iif: () => this.isChoose('defaultInventoryAttribute4') && this.inventoryConfiguration?.inventoryAttribute4Enabled == true,
+        }, 
+      { title: this.i18n.fanyi("trackingInventoryAttribute5Flag"), index: 'trackingInventoryAttribute5Flag', 
+      iif: () => this.isChoose('trackingInventoryAttribute5Flag') && this.inventoryConfiguration?.inventoryAttribute5Enabled == true,
+      type:"yn" },
+      { title: this.i18n.fanyi("defaultInventoryAttribute5"), index: 'defaultInventoryAttribute5', 
+          iif: () => this.isChoose('defaultInventoryAttribute5') && this.inventoryConfiguration?.inventoryAttribute5Enabled == true,
+        }, 
+     
+      
+      
+      { title: this.i18n.fanyi("receivingRateByUnit"), render: 'receivingRateByUnitColumn', 
+        iif: () => this.isChoose('receivingRateByUnit'), 
+      },
+      { title: this.i18n.fanyi("shippingRateByUnit"), render: 'shippingRateByUnitColumn', 
+        iif: () => this.isChoose('shippingRateByUnit'), 
+      },
+      { title: this.i18n.fanyi("handlingRateByUnit"), render: 'handlingRateByUnitColumn', 
+        iif: () => this.isChoose('handlingRateByUnit'), 
+      },
+  
+      {
+        title: 'action',
+        renderTitle: 'actionColumnTitle',
+        render: 'actionColumn',
+        fixed: 'right',width: 110, 
+        iif: () => !this.displayOnly
+      },
+    ];
+    this.customColumns = [
+  
+      { label: this.i18n.fanyi("thumbnail"), value: 'thumbnail', checked: true },
+      { label: this.i18n.fanyi("name"), value: 'name', checked: true },
+      { label: this.i18n.fanyi("description"), value: 'description', checked: true },
+      { label: this.i18n.fanyi("client"), value: 'client', checked: true },
+      { label: this.i18n.fanyi("abc-category"), value: 'abcCategory', checked: true },
+      { label: this.i18n.fanyi("velocity"), value: 'velocity', checked: true },
+      { label: this.i18n.fanyi("item-family"), value: 'item-family', checked: true },
+      { label: this.i18n.fanyi("unit-cost"), value: 'unit-cost', checked: true },
+      { label: this.i18n.fanyi("allowAllocationByLPN"), value: 'allowAllocationByLPN', checked: true },
+      { label: this.i18n.fanyi("allocationRoundUpStrategyType"), value: 'allocationRoundUpStrategyType', checked: true },
+      { label: this.i18n.fanyi("allocationRoundUpStrategyValue"), value: 'allocationRoundUpStrategyValue', checked: true },
+      { label: this.i18n.fanyi("trackingVolumeFlag"), value: 'trackingVolumeFlag', checked: true },
+      { label: this.i18n.fanyi("trackingLotNumberFlag"), value: 'trackingLotNumberFlag', checked: true },
+      { label: this.i18n.fanyi("trackingManufactureDateFlag"), value: 'trackingManufactureDateFlag', checked: true },
+      { label: this.i18n.fanyi("shelfLifeDays"), value: 'shelfLifeDays', checked: true },
+      { label: this.i18n.fanyi("trackingExpirationDateFlag"), value: 'trackingExpirationDateFlag', checked: true },
+      { label: this.i18n.fanyi("trackingColorFlag"), value: 'trackingColorFlag', checked: true },
+      { label: this.i18n.fanyi("defaultColor"), value: 'defaultColor', checked: true },
+      { label: this.i18n.fanyi("trackingProductSizeFlag"), value: 'trackingProductSizeFlag', checked: true },
+      { label: this.i18n.fanyi("defaultProductSize"), value: 'defaultProductSize', checked: true },
+      { label: this.i18n.fanyi("trackingStyleFlag"), value: 'trackingStyleFlag', checked: true },
+      { label: this.i18n.fanyi("defaultStyle"), value: 'defaultStyle', checked: true },
+      
+      { label: this.i18n.fanyi("trackingInventoryAttribute1Flag"), value: 'trackingInventoryAttribute1Flag', checked: true },
+      { label: this.i18n.fanyi("defaultInventoryAttribute1"), value: 'defaultInventoryAttribute1', checked: true },
+      { label: this.i18n.fanyi("trackingInventoryAttribute2Flag"), value: 'trackingInventoryAttribute2Flag', checked: true },
+      { label: this.i18n.fanyi("defaultInventoryAttribute2"), value: 'defaultInventoryAttribute2', checked: true },
+      { label: this.i18n.fanyi("trackingInventoryAttribute3Flag"), value: 'trackingInventoryAttribute3Flag', checked: true },
+      { label: this.i18n.fanyi("defaultInventoryAttribute3"), value: 'defaultInventoryAttribute3', checked: true },
+      { label: this.i18n.fanyi("trackingInventoryAttribute4Flag"), value: 'trackingInventoryAttribute4Flag', checked: true },
+      { label: this.i18n.fanyi("defaultInventoryAttribute4"), value: 'defaultInventoryAttribute4', checked: true },
+      { label: this.i18n.fanyi("trackingInventoryAttribute5Flag"), value: 'trackingInventoryAttribute5Flag', checked: true },
+      { label: this.i18n.fanyi("defaultInventoryAttribute5"), value: 'defaultInventoryAttribute5', checked: true },
+  
+      { label: this.i18n.fanyi("receivingRateByUnit"), value: 'receivingRateByUnit', checked: true },
+      { label: this.i18n.fanyi("shippingRateByUnit"), value: 'shippingRateByUnit', checked: true },
+      { label: this.i18n.fanyi("handlingRateByUnit"), value: 'handlingRateByUnit', checked: true },
+    ];
+  }
 
   isChoose(key: string): boolean {
     return !!this.customColumns.find(w => w.value === key && w.checked);
