@@ -92,12 +92,13 @@
                                     [nzParser]="parserDollar"
                                     ></nz-input-number>
                                 /
-                                <nz-select 
-                                    [(ngModel)]="billingRate.rateUnit" style="width: 180px;">
+                                <nz-select *ngIf="!billingRate.rateByQuantity"
+                                    [ngModel]="billingRate.rateUnit" style="width: 180px;" (ngModelChange)="billingRateUnitChanged(billingRate, $event)">
                                     <nz-option *ngFor="let unit of volumeUnits"
                                         [nzValue]="unit"
                                         nzLabel="{{unit.description}}"  ></nz-option>
                                 </nz-select> 
+                                <span style="width: 180px;" *ngIf="billingRate.rateByQuantity"> Unit </span>
                             </nz-list-item-action>
                             <nz-list-item-action>
 

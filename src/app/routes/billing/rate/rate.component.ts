@@ -64,6 +64,10 @@ export class BillingRateComponent implements OnInit {
       userService.isCurrentPageDisplayOnly("/billing/rate").then(
         displayOnlyFlag => this.displayOnly = displayOnlyFlag
       );           
+      
+      this.unitService.loadUnits().subscribe({
+        next: (unitRes) => this.volumeUnits = unitRes.filter(unit => unit.type == UnitType.VOLUME)
+      });
     }
 
   ngOnInit(): void { 
@@ -77,9 +81,6 @@ export class BillingRateComponent implements OnInit {
 
     this.loadBillingRateByInventoryAge();
 
-    this.unitService.loadUnits().subscribe({
-      next: (unitRes) => this.volumeUnits = unitRes.filter(unit => unit.type == UnitType.VOLUME)
-    });
   }
 
   formatterDollar = (value: number): string => `$ ${value}`;
@@ -94,7 +95,7 @@ export class BillingRateComponent implements OnInit {
     this.isSpinning = true;
     // let's initiate the billing rate with 0 rate for each category
     // then we will fill in the actual rate that we get from the server
-    this.initiateBillingRate();
+    // this.initiateBillingRate();
 
     this.billingRateByInventoryAgeService.getBillingRateByInventoryAges(
       this.selectedWarehouse? this.selectedWarehouse.id : undefined, 
@@ -104,6 +105,22 @@ export class BillingRateComponent implements OnInit {
         next: (billingRateByInventoryAgeRes) => {
 
           this.billingRateByInventoryAges = this.sortBillingRateByInventoryAges(billingRateByInventoryAgeRes)
+          // setup the rate unit based on the name
+          this.billingRateByInventoryAges.forEach(
+            billingRateByInventoryAge => {
+              billingRateByInventoryAge.billingRates.forEach(
+                billingRate => {
+                  if (billingRate.rateUnitName) {
+                    billingRate.rateUnit = this.volumeUnits.find(unit => unit.name == billingRate.rateUnitName)
+
+                  }
+                  else {
+                    billingRate.rateUnit = undefined;
+                  }
+                }
+              )
+            }
+          )
           
           this.isSpinning = false;
         }, 
@@ -127,6 +144,7 @@ export class BillingRateComponent implements OnInit {
   
   getEmptyBillingRate(billableCategoryName: string) : BillingRate {
     let billableCategory = (<any>BillableCategory)[billableCategoryName];
+    const rateUnit = this.getBillingRateUnit(billableCategory)  ;
     return  { 
       companyId: this.companyService.getCurrentCompany()!.id,
       warehouseId: this.selectedWarehouse? this.selectedWarehouse.id : undefined,
@@ -134,13 +152,23 @@ export class BillingRateComponent implements OnInit {
       billableCategory: billableCategory,
       rate: 0,
       billingCycle: BillingCycle.DAILY,
-      rateUnit: this.getBillingRateUnit(billableCategory),
+      rateUnit: rateUnit,
+      rateUnitName: rateUnit?.name,
+      rateByQuantity: this.isRateByQuantity(billableCategory),
       enabled: false,
+      
     };
+  }
+
+  isRateByQuantity(billableCategory: BillableCategory) : boolean {
+    return billableCategory === BillableCategory.STORAGE_FEE_BY_CASE_COUNT ||
+           billableCategory === BillableCategory.STORAGE_FEE_BY_LOCATION_COUNT ||
+           billableCategory === BillableCategory.STORAGE_FEE_BY_PALLET_COUNT
   }
   getBillingRateUnit(billableCategory: BillableCategory) : Unit | undefined{
     console.log(`start to get unit for billable category ${billableCategory}`) 
-
+/**
+ * 
     if (billableCategory === BillableCategory.STORAGE_FEE_BY_LOCATION_COUNT) {
       console.log(`return location unit`)
       return {        
@@ -165,6 +193,13 @@ export class BillingRateComponent implements OnInit {
       return this.unitService.getBaseUnit(this.volumeUnits,  UnitType.VOLUME);
 
     }
+ * 
+ */
+    if (billableCategory === BillableCategory.STORAGE_FEE_BY_GROSS_VOLUME || 
+        billableCategory === BillableCategory.STORAGE_FEE_BY_NET_VOLUME) {
+          return this.unitService.getBaseUnit(this.volumeUnits,  UnitType.VOLUME);
+    }
+    return undefined;
 
 
   }
@@ -328,5 +363,10 @@ export class BillingRateComponent implements OnInit {
           this.billingRateByInventoryAges.splice(index, 1);
 
     }
+  }
+
+  billingRateUnitChanged(billingRate: BillingRate, rateUnit: Unit) {
+    billingRate.rateUnit = rateUnit;
+    billingRate.rateUnitName = rateUnit.name;
   }
 }

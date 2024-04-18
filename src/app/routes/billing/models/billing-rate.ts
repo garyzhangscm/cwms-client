@@ -12,6 +12,8 @@ export interface BillingRate {
 
     rate: number;
     rateUnit?: Unit;
+    rateUnitName?: string;
+    rateByQuantity?: boolean;
     billingCycle: BillingCycle;
     enabled: boolean;
 
