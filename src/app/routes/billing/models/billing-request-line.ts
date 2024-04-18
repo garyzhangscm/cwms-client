@@ -15,4 +15,6 @@ export interface BillingRequestLine {
 
     documentNumber?: string;
     itemName?: string;
+
+    comment?: string;
 }

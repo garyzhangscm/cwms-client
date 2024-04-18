@@ -37,7 +37,7 @@ export class BillingRequestService {
     return this.http.get(url).pipe(map(res => res.data));
   }
   generateBillingRequests(startTime: Date, endTime: Date, clientId?: number, number?: string, 
-    serialize?: boolean): Observable<BillingRequest[]> {
+    serialize?: boolean, includeDaysSinceInWarehouseForStorageFee?: boolean): Observable<BillingRequest[]> {
     let url = `admin/billing-requests`;
     
     
@@ -62,6 +62,9 @@ export class BillingRequestService {
     }  
     if (serialize != null) {
       params = params.append('serialize', serialize);  
+    }
+    if (includeDaysSinceInWarehouseForStorageFee != null) {
+      params = params.append('includeDaysSinceInWarehouseForStorageFee', includeDaysSinceInWarehouseForStorageFee);  
     }
     
     return this.http.post(url, undefined, params).pipe(map(res => res.data));

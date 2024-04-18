@@ -27,6 +27,8 @@ export class BillingInvoiceMaintenanceComponent implements OnInit {
   stepIndex = 0; 
   isSpinning = false; 
   pageTitle: string;
+
+  includeDaysSinceInWarehouseForStorageFee = false;
  
 
   availableClients: Client[] = [];
@@ -170,7 +172,8 @@ export class BillingInvoiceMaintenanceComponent implements OnInit {
         this.currentInvoice.endTime!,
         this.currentInvoice.clientId,
         undefined,
-        false
+        false, 
+        this.includeDaysSinceInWarehouseForStorageFee
     ).subscribe(
       {
         next: (billingRequestRes) => {
