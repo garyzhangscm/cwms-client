@@ -7,6 +7,7 @@ import { CompanyService } from '../../warehouse-layout/services/company.service'
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { BillableCategory } from '../models/billable-category';
 import { BillingRate } from '../models/billing-rate';
+import { BillingRateByInventoryAge } from '../models/billing-rate-by-inventory-age';
 
 @Injectable({
   providedIn: 'root'

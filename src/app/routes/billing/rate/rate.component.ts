@@ -1,7 +1,9 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
@@ -15,6 +17,8 @@ import { WarehouseService } from '../../warehouse-layout/services/warehouse.serv
 import { BillableCategory } from '../models/billable-category';
 import { BillingCycle } from '../models/billing-cycle';
 import { BillingRate } from '../models/billing-rate';
+import { BillingRateByInventoryAge } from '../models/billing-rate-by-inventory-age';
+import { BillingRateByInventoryAgeService } from '../services/billing-rate-by-inventory-age.service';
 import { BillingRateService } from '../services/billing-rate.service';
 
 @Component({
@@ -32,17 +36,26 @@ export class BillingRateComponent implements OnInit {
   companySpecificFlag = true;
 
   billingRates: BillingRate[] = [];
+  billingRateByInventoryAges: BillingRateByInventoryAge[] = [];
+
+  selectedBillingRateGroup = 0;
 
   billableCategories = BillableCategory;
   billingCycles = BillingCycle;
+  
+  newBillingRateByInventoryAgeForm!: UntypedFormGroup;
+  newBillingRateByInventoryAgeModal!: NzModalRef;
  
   volumeUnits: Unit[] = [];
 
   displayOnly = false;
   constructor(
     private companyService: CompanyService,
+    private fb: UntypedFormBuilder,
+    private modalService: NzModalService,
     private warehouseService: WarehouseService,
     private billingRateService: BillingRateService,
+    private billingRateByInventoryAgeService: BillingRateByInventoryAgeService,
     private messageService: NzMessageService,
     private unitService: UnitService,
     private userService: UserService,
@@ -62,7 +75,7 @@ export class BillingRateComponent implements OnInit {
     this.selectedWarehouse = undefined;
     this.companySpecificFlag = true;
 
-    this.loadBillingRate();
+    this.loadBillingRateByInventoryAge();
 
     this.unitService.loadUnits().subscribe({
       next: (unitRes) => this.volumeUnits = unitRes.filter(unit => unit.type == UnitType.VOLUME)
@@ -72,10 +85,10 @@ export class BillingRateComponent implements OnInit {
   formatterDollar = (value: number): string => `$ ${value}`;
   parserDollar = (value: string): string => value.replace('$ ', '');
   
-  loadBillingRate() {
+  loadBillingRateByInventoryAge() {
     if (this.selectedClient == null && this.companySpecificFlag == false) {
       // the user has not select any thing yet, let's not display the billing rate section
-      this.billingRates = [];
+      this.billingRateByInventoryAges = [];
       return;
     }
     this.isSpinning = true;
@@ -83,28 +96,15 @@ export class BillingRateComponent implements OnInit {
     // then we will fill in the actual rate that we get from the server
     this.initiateBillingRate();
 
-    this.billingRateService.getBillingRates(
+    this.billingRateByInventoryAgeService.getBillingRateByInventoryAges(
       this.selectedWarehouse? this.selectedWarehouse.id : undefined, 
       this.selectedClient? this.selectedClient.id : undefined
     ).subscribe(
       {
-        next: (billingRateRes) => {
+        next: (billingRateByInventoryAgeRes) => {
 
-          billingRateRes.forEach(
-            billingRate => {
-                        
-              // find the matched rate that we already initiated
-              this.billingRates.filter(
-                initiatedBillingRate => initiatedBillingRate.billableCategory === billingRate.billableCategory
-              ).forEach(
-                initiatedBillingRate => {
-                  initiatedBillingRate.billingCycle = billingRate.billingCycle;
-                  initiatedBillingRate.rate = billingRate.rate;
-                  initiatedBillingRate.enabled = billingRate.enabled; 
-                }
-              )
-            }
-          );
+          this.billingRateByInventoryAges = this.sortBillingRateByInventoryAges(billingRateByInventoryAgeRes)
+          
           this.isSpinning = false;
         }, 
         error: () => this.isSpinning = false
@@ -193,12 +193,12 @@ export class BillingRateComponent implements OnInit {
       this.companySpecificFlag = true;
     }
     // refresh the display
-    this.loadBillingRate();
+    this.loadBillingRateByInventoryAge();
   }
   selectedWarehouseChanged() {
     
     // refresh the display
-    this.loadBillingRate();
+    this.loadBillingRateByInventoryAge();
   }
   
   companySpecificFlagChanged() {
@@ -208,12 +208,12 @@ export class BillingRateComponent implements OnInit {
       this.selectedClient = undefined;
     } 
     // refresh the display
-    this.loadBillingRate();
+    this.loadBillingRateByInventoryAge();
   }
 
   confirm() {
     this.isSpinning = true;
-    this.billingRateService.saveBillingRates(this.billingRates).subscribe(
+    this.billingRateByInventoryAgeService.saveBillingRateByInventoryAges(this.billingRateByInventoryAges).subscribe(
       {
         next:() => {
           
@@ -223,5 +223,110 @@ export class BillingRateComponent implements OnInit {
         error: () => this.isSpinning = false
       }
     )
+  }
+
+  
+  openNewBillingRateByInventoryAgeModal( 
+    tplNewBillingRateByInventoryAgeModalTitle: TemplateRef<{}>,
+    tplNewBillingRateByInventoryAgeModalContent: TemplateRef<{}>, 
+  ): void { 
+    this.newBillingRateByInventoryAgeForm = this.fb.group({
+       
+      startInventoryAge: [null],
+      endInventoryAge: [null],
+    });
+ 
+    // Load the location
+    this.newBillingRateByInventoryAgeModal = this.modalService.create({
+      nzTitle: tplNewBillingRateByInventoryAgeModalTitle,
+      nzContent: tplNewBillingRateByInventoryAgeModalContent,
+      nzOkText: this.i18n.fanyi('confirm'),
+      nzCancelText: this.i18n.fanyi('cancel'),
+      nzMaskClosable: false,
+      nzOnCancel: () => {
+        this.newBillingRateByInventoryAgeModal.destroy(); 
+      },
+      nzOnOk: () => {
+        console.log(`this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value: ${this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value}`)
+        console.log(`this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value == null?: ${!this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value}`)
+        if (!this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value ||
+              !this.newBillingRateByInventoryAgeForm.controls.endInventoryAge.value) {
+           
+              this.messageService.error(`start inventory age and end inventory age are required`);
+              return false;
+        }
+        if (this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value  >
+             this.newBillingRateByInventoryAgeForm.controls.endInventoryAge.value ) {
+           
+              this.messageService.error(`start inventory age needs to be less than end inventory age`);
+              return false;
+        }
+        
+        this.newBillingRateByInventoryAgeModal.updateConfig({ 
+          nzOkDisabled: true,
+          nzOkLoading: true
+        });
+        this.addNewBillingRateGroup( 
+          this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value,
+          this.newBillingRateByInventoryAgeForm.controls.endInventoryAge.value,
+        );
+        return false;
+      },
+
+      nzWidth: 1000,
+    });
+  }
+
+  addNewBillingRateGroup(startInventoryAge: number, endInventoryAge: number) {
+
+    let billingRates : BillingRate[] = [];
+    for (let billableCategoryName in  BillableCategory) {
+        if (isNaN(Number(billableCategoryName))) { 
+          billingRates = [...billingRates, 
+
+            this.getEmptyBillingRate(billableCategoryName)
+          ]
+      }
+    }
+    this.billingRateByInventoryAges = this.sortBillingRateByInventoryAges(
+        [...this.billingRateByInventoryAges, 
+          {
+        
+            companyId: this.companyService.getCurrentCompany()!.id,
+            warehouseId: this.selectedWarehouse? this.selectedWarehouse.id : undefined,
+            clientId: this.selectedClient? this.selectedClient.id : undefined,
+            startInventoryAge: startInventoryAge,
+            endInventoryAge: endInventoryAge,
+            
+            billingRates: billingRates, 
+            enabled: true,
+          }
+        ]
+    );
+    
+    this.newBillingRateByInventoryAgeModal.destroy(); 
+  }
+  sortBillingRateByInventoryAges(billingRateByInventoryAges: BillingRateByInventoryAge[]) {
+    return billingRateByInventoryAges.sort((group1, group2) => group1.startInventoryAge - group2.startInventoryAge)
+  }
+  
+  removeBillingRateGroup({ index }: { index: number }) {
+    console.log(`remove billing rate group with index of ${index}`);
+    const id = this.billingRateByInventoryAges[index].id;
+    if (id) {
+      this.isSpinning = true;
+      this.billingRateByInventoryAgeService.removeBillingRateByInventoryAge(id).subscribe({
+        next: () => {
+          this.isSpinning = false;
+          this.billingRateByInventoryAges.splice(index, 1);
+        }, 
+        error: () => this.isSpinning = false
+      })
+    }
+    else {
+      // this is a newly added group and not saved in the server yet
+          this.billingRateByInventoryAges.splice(index, 1);
+
+    }
   }
 }
