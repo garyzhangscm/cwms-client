@@ -18,6 +18,7 @@ import { IntegrationIntegrationDataWorkOrderConfirmComponent } from './integrati
 import { IntegrationIntegrationDataWorkOrderComponent } from './integration-data-work-order/integration-data-work-order.component';
 import { IntegrationIntegrationDataComponent } from './integration-data/integration-data.component';
 import { IntegrationRoutingModule } from './integration-routing.module';
+import { IntegrationTiktokSellerShopIntegrationConfigurationComponent } from './tiktok-seller-shop-integration-configuration/tiktok-seller-shop-integration-configuration.component';
 
 const COMPONENTS: Array<Type<void>> =  [
   IntegrationIntegrationDataComponent,
@@ -36,7 +37,8 @@ const COMPONENTS: Array<Type<void>> =  [
   IntegrationIntegrationDataInventoryAdjustComponent,
   IntegrationIntegrationDataInventoryAttributeChangeComponent,
   IntegrationIntegrationDataWorkOrderConfirmComponent,
-  IntegrationIntegrationDataWorkOrderComponent];
+  IntegrationIntegrationDataWorkOrderComponent,
+  IntegrationTiktokSellerShopIntegrationConfigurationComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({

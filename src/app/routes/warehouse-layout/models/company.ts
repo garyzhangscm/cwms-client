@@ -14,4 +14,7 @@ export interface Company {
   addressLine1: string;
   addressLine2: string;
   addressPostcode: string;
+
+  apiKey?: string;
+  apiSecret?: string;
 }

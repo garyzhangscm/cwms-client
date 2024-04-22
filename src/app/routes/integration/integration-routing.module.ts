@@ -19,6 +19,7 @@ import { IntegrationIntegrationDataSupplierComponent } from './integration-data-
 import { IntegrationIntegrationDataWorkOrderConfirmComponent } from './integration-data-work-order-confirm/integration-data-work-order-confirm.component';
 import { IntegrationIntegrationDataWorkOrderComponent } from './integration-data-work-order/integration-data-work-order.component';
 import { IntegrationIntegrationDataComponent } from './integration-data/integration-data.component';
+import { IntegrationTiktokSellerShopIntegrationConfigurationComponent } from './tiktok-seller-shop-integration-configuration/tiktok-seller-shop-integration-configuration.component';
 
 const routes: Routes = [
   { path: 'integration-data', component: IntegrationIntegrationDataComponent , 
@@ -166,8 +167,17 @@ const routes: Routes = [
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
-  },
-  ];
+  }, 
+  { path: 'tiktok/tts/config', 
+      component: IntegrationTiktokSellerShopIntegrationConfigurationComponent , 
+      canActivate: [ACLGuard], 
+      data: { 
+        guard:  {
+          role: [ '/integration/tiktok/tts/config', 'admin', 'system-admin'  ], 
+        } as ACLGuardType,
+        guard_url: '/exception/403'
+      }
+  }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
