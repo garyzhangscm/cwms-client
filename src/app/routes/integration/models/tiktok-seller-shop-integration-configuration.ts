@@ -5,6 +5,7 @@ export interface TiktokSellerShopIntegrationConfiguration {
     authCode: string;
 
     companyId: number;
+    clientId?: number;
 
     accessToken: string;
     accessTokenExpireIn: number;
@@ -15,4 +16,5 @@ export interface TiktokSellerShopIntegrationConfiguration {
     sellerName: string;
     sellerBaseRegion: string;
     userType: number;
+    autoRefreshOrderTimeWindowInMinute?: number;
 }

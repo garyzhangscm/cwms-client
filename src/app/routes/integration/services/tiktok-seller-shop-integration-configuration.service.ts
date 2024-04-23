@@ -17,10 +17,31 @@ export class TiktokSellerShopIntegrationConfigurationService {
   constructor(private http: _HttpClient, 
     private companyService: CompanyService) {}
 
-    getTiktokSellerShopIntegrationConfiguration(): Observable<TiktokSellerShopIntegrationConfiguration> {
-      let url = `integration/tiktok-config/seller-shop-integration/configuration?companyId=${this.companyService.getCurrentCompany()!.id}`;
+    getTiktokSellerShopIntegrationConfiguration(clientId?: number): Observable<TiktokSellerShopIntegrationConfiguration[]> {
+      const url = `integration/tiktok-config/seller-shop-integration/configuration`;
         
-      return this.http.get(url).pipe(map(res => res.data));
+      let params = new HttpParams(); 
+      params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
+      if (clientId != null) {
+        
+          params = params.append('clientId', clientId); 
+      }
+      return this.http.get(url, params).pipe(map(res => res.data));
+    } 
+    removeTiktokSellerShopIntegrationConfiguration(id: number): Observable<String> {
+      const url = `integration/tiktok-config/seller-shop-integration/configuration/${id}`;
+        
+      let params = new HttpParams(); 
+      params = params.append('companyId', this.companyService.getCurrentCompany()!.id);  
+      return this.http.delete(url, params).pipe(map(res => res.data));
+    } 
+    changeTiktokSellerShopIntegrationConfiguration(tiktokSellerShopIntegrationConfiguration: TiktokSellerShopIntegrationConfiguration): Observable<TiktokSellerShopIntegrationConfiguration> {
+      const url = `integration/tiktok-config/seller-shop-integration/configuration/${tiktokSellerShopIntegrationConfiguration.id}`;
+        
+      let params = new HttpParams(); 
+      params = params.append('companyId', this.companyService.getCurrentCompany()!.id);   
+      
+      return this.http.put(url, tiktokSellerShopIntegrationConfiguration, params).pipe(map(res => res.data));
     } 
     
     getTiktokTTSAuthLink(clientId?: number): Observable<string> {
