@@ -16,7 +16,9 @@ import { Supplier } from '../../common/models/supplier';
 import { ClientService } from '../../common/services/client.service';
 import { SupplierService } from '../../common/services/supplier.service';
 import { Inventory } from '../../inventory/models/inventory';
+import { InventoryConfiguration } from '../../inventory/models/inventory-configuration';
 import { ItemUnitOfMeasure } from '../../inventory/models/item-unit-of-measure'; 
+import { InventoryConfigurationService } from '../../inventory/services/inventory-configuration.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
@@ -172,7 +174,7 @@ export class InboundReceiptComponent implements OnInit {
   billableActivityForm!: UntypedFormGroup;
   addActivityInProcess = false;
 
-
+  inventoryConfiguration?: InventoryConfiguration;
   displayOnly = false; 
 
   // initial the user permission map so that all the permission is disable
@@ -206,7 +208,8 @@ export class InboundReceiptComponent implements OnInit {
     private clientService: ClientService,
     private warehouseService: WarehouseService,
     private billableActivityTypeService: BillableActivityTypeService,
-    private userService: UserService
+    private userService: UserService, 
+    private inventoryConfigurationService: InventoryConfigurationService,
   ) { 
     userService.isCurrentPageDisplayOnly("/inbound/receipt").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
@@ -218,6 +221,16 @@ export class InboundReceiptComponent implements OnInit {
         )
       }
     }); 
+    
+    inventoryConfigurationService.getInventoryConfigurations().subscribe({
+      next: (inventoryConfigurationRes) => {
+        if (inventoryConfigurationRes) { 
+          this.inventoryConfiguration = inventoryConfigurationRes;
+        } 
+        this.setupReceiptLineTableColumns();
+      } , 
+      error: () =>  this.setupReceiptLineTableColumns()
+    });
   }
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('menu.main.inbound.receipt'));
@@ -612,34 +625,69 @@ export class InboundReceiptComponent implements OnInit {
   }
   @ViewChild('st', { static: false })
   st!: STComponent;
-  receiptLineTableColumns: STColumn[] = [ 
-    { title: this.i18n.fanyi("receipt.line.number"), index: 'number', width: 150 },    
-    {
-      title: this.i18n.fanyi("item"), width: 150, 
-      render: 'itemNameColumn', 
-    },
-    {
-      title: this.i18n.fanyi("item.description"), width: 150, 
-      render: 'itemDescriptionColumn', 
-    }, 
-    { title: this.i18n.fanyi("receipt.line.expectedQuantity"), 
-    
-        render: 'expectedQuantityColumn',  width: 150 },     
-    { title: this.i18n.fanyi("receipt.line.receivedQuantity"),  render: 'receivedQuantityColumn',  width: 150 },    
-    { title: this.i18n.fanyi("receipt.line.overReceivingQuantity"), index: 'overReceivingQuantity' , width: 150 },  
-    { title: this.i18n.fanyi("receipt.line.overReceivingPercent"), index: 'overReceivingPercent' , width: 150 },      
-    { title: this.i18n.fanyi("qcQuantity"), index: 'qcQuantity' , width: 150 },      
-    { title: this.i18n.fanyi("qcPercentage"), index: 'qcPercentage' , width: 150 },      
-    { title: this.i18n.fanyi("qcQuantityRequested"), index: 'qcQuantityRequested' , width: 150 },     
-    {
-      title: this.i18n.fanyi("action"), 
-      render: 'actionColumn', 
-      width: 250,
-      fixed: 'right',
-      iif: () => !this.displayOnly
+  
+  
+  receiptLineTableColumns: STColumn[] = [];
+  setupReceiptLineTableColumns() {
 
-    },   
-  ];
+    this.receiptLineTableColumns = [ 
+      { title: this.i18n.fanyi("receipt.line.number"), index: 'number', width: 150 },    
+      {
+        title: this.i18n.fanyi("item"), width: 150, 
+        render: 'itemNameColumn', 
+      },
+      {
+        title: this.i18n.fanyi("item.description"), width: 150, 
+        render: 'itemDescriptionColumn', 
+      }, 
+      { title: this.i18n.fanyi("receipt.line.expectedQuantity"), 
+      
+          render: 'expectedQuantityColumn',  width: 150 },     
+      { title: this.i18n.fanyi("receipt.line.receivedQuantity"),  render: 'receivedQuantityColumn',  width: 150 },    
+      { title: this.i18n.fanyi("receipt.line.overReceivingQuantity"), index: 'overReceivingQuantity' , width: 150 },  
+      { title: this.i18n.fanyi("receipt.line.overReceivingPercent"), index: 'overReceivingPercent' , width: 150 },      
+      { title: this.i18n.fanyi("qcQuantity"), index: 'qcQuantity' , width: 150 },      
+      { title: this.i18n.fanyi("qcPercentage"), index: 'qcPercentage' , width: 150 },      
+      { title: this.i18n.fanyi("qcQuantityRequested"), index: 'qcQuantityRequested' , width: 150 },     
+      { title: this.i18n.fanyi("color"), index: 'color', width: 150 },  
+        { title: this.i18n.fanyi("productSize"), index: 'productSize', width: 150 },  
+        { title: this.i18n.fanyi("style"), index: 'style', width: 150 }, 
+        { title: this.inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
+              this.i18n.fanyi("inventoryAttribute1") : this.inventoryConfiguration?.inventoryAttribute1DisplayName,  
+              index: 'inventoryAttribute1' ,
+            iif: () =>  this.inventoryConfiguration?.inventoryAttribute1Enabled == true, width: 150  
+        }, 
+        { title: this.inventoryConfiguration?.inventoryAttribute2DisplayName == null ?
+              this.i18n.fanyi("inventoryAttribute2") : this.inventoryConfiguration?.inventoryAttribute2DisplayName,  
+              index: 'inventoryAttribute2' ,
+            iif: () =>  this.inventoryConfiguration?.inventoryAttribute2Enabled == true, width: 150  
+        }, 
+        { title: this.inventoryConfiguration?.inventoryAttribute3DisplayName == null ?
+              this.i18n.fanyi("inventoryAttribute3") : this.inventoryConfiguration?.inventoryAttribute3DisplayName,  
+              index: 'inventoryAttribute3' ,
+            iif: () =>  this.inventoryConfiguration?.inventoryAttribute3Enabled == true, width: 150  
+        }, 
+        { title: this.inventoryConfiguration?.inventoryAttribute4DisplayName == null ?
+              this.i18n.fanyi("inventoryAttribute4") : this.inventoryConfiguration?.inventoryAttribute4DisplayName,  
+              index: 'inventoryAttribute4' ,
+            iif: () =>  this.inventoryConfiguration?.inventoryAttribute4Enabled == true, width: 150  
+        }, 
+        { title: this.inventoryConfiguration?.inventoryAttribute5DisplayName == null ?
+              this.i18n.fanyi("inventoryAttribute5") : this.inventoryConfiguration?.inventoryAttribute5DisplayName,  
+              index: 'inventoryAttribute5' ,
+            iif: () =>  this.inventoryConfiguration?.inventoryAttribute5Enabled == true, width: 150  
+        }, 
+      {
+        title: this.i18n.fanyi("action"), 
+        render: 'actionColumn', 
+        width: 250,
+        fixed: 'right',
+        iif: () => !this.displayOnly
+  
+      },   
+    
+    ];
+  }
  
   changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine: ReceiptLine, itemUnitOfMeasure: ItemUnitOfMeasure) {
 
@@ -1015,7 +1063,7 @@ export class InboundReceiptComponent implements OnInit {
     }, 
     { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150, 
     iif: () => !this.displayOnly },       
-  ];
+  ]; 
 
 
 }

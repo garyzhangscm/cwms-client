@@ -26,4 +26,15 @@ export interface ReceiptLine {
 
   purchaseOrderLine?: PurchaseOrderLine;
   receiptLineBillableActivities: ReceiptLineBillableActivity[];
+
+  
+  color?: string;
+  productSize?: string;
+  style?: string;
+  
+  inventoryAttribute1?: string;
+  inventoryAttribute2?: string;
+  inventoryAttribute3?: string;
+  inventoryAttribute4?: string;
+  inventoryAttribute5?: string;
 }

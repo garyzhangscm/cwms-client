@@ -1,8 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { environment } from '@env/environment';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
@@ -11,10 +10,8 @@ import { PrintingService } from '../../common/services/printing.service';
 import { ReceiptLine } from '../../inbound/models/receipt-line';
 import { ReceiptLineService } from '../../inbound/services/receipt-line.service';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
-import { ReportType } from '../../report/models/report-type.enum';
-import { SystemControlledNumberService } from '../../util/services/system-controlled-number.service';
-import { ProductionLineAssignment } from '../models/production-line-assignment';
-import { WorkOrder } from '../models/work-order';
+import { ReportType } from '../../report/models/report-type.enum'; 
+import { ProductionLineAssignment } from '../models/production-line-assignment'; 
 import { ProductionLineAssignmentService } from '../services/production-line-assignment.service';
 import { WorkOrderService } from '../services/work-order.service';
 
@@ -87,24 +84,7 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
         );
       }
     });
-  }
-  /**
-   * 
-  loadWorkOrder() {
-    this.isSpinning = true;
-    this.workOrderService.getWorkOrder(this.currentProductionLineAssignment.workOrderId!).subscribe({
-      next:(workOrderRes) => {
-        this.currentWorkOrder = workOrderRes;
-        this.isSpinning = false;
-        
-        this.returnUrl = `/work-order/work-order?number=${this.currentWorkOrder.number}`
-
-      }
-    })
-  }
-   * 
-   */
-  
+  } 
   return(): void {
     this.router.navigateByUrl(this.returnUrl);
   }
@@ -140,17 +120,7 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
 
     this.printLPNLabelInBatch(event, "", this.quantity, this.labelCount);
      
-  } 
-/*
-  getNextLPNNumber(startLpn: string, index: number) : string{
-    var number = startLpn.match(/\d+/g);
-    // num[0] will be 21
-
-    var prefixLetters =  startLpn.match(/[a-zA-Z]+/g);
-    var nextNumber = (+number! + index).toString().padStart(startLpn.length - prefixLetters!.length, "0");
-    return prefixLetters + nextNumber;
-  }
-  */
+  }  
   printLPNLabelInBatch(event: any, startLPN: string, quantity: number, labelCount: number) {
     
     
@@ -265,13 +235,18 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
       })
   }
   
-  previewLPNLabel(event: any) {
+  previewLPNs(event: any) {
     // preview label is not support
     if (this.documentFormat === 'label') {
 
-      this.messageService.error(this.i18n.fanyi("action-not-support"));
-      return;
+      this.previewLPNLabel(event);
     }
+    else {
+      this.previewLPNReport();
+    }
+  }
+  
+  previewLPNReport() { 
     this.isSpinning = true; 
     if (this.labelCount === 0) {
       
@@ -294,6 +269,93 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
         },
 
       );
+
+
+  }
+  
+  
+  previewLPNLabel(event: any) {
+    
+    this.isSpinning = true;
+    if (this.labelCount === 0) {
+      
+      this.messageService.error(this.i18n.fanyi("Label Count needs to be bigger than 0"));
+      this.isSpinning = false;
+  
+      return;
+    }
+
+    if (this.userSpecifyLPN) {
+      this.previewByUserSpecifiedLPN(event);
+    }
+    else {
+      this.previewBySystemGeneratedLPN(event);
+    }
+  }
+  
+  previewByUserSpecifiedLPN(event: any) {
+    // make sure the user specify a start LPN
+    if (!this.startLPN) {
+      this.messageService.error(this.i18n.fanyi("ERROR-NEW-LPN-REQUIRED"))
+      this.isSpinning = false;  
+      return;
+    }
+    this.previewLPNLabelInBatch(event, this.startLPN, this.quantity, this.labelCount); 
+
+  }
+  previewBySystemGeneratedLPN(event: any) {
+
+    this.previewLPNLabelInBatch(event, "", this.quantity, this.labelCount);
+     
+  } 
+  
+  previewLPNLabelInBatch(event: any, startLPN: string, quantity: number, labelCount: number) {
+
+    if (this.type === "work-order") {
+
+      this.previewWorkOrderLPNLabelInBatch(event, startLPN, quantity, labelCount);
+    }
+    else if (this.type === "receipt-line") {  
+  
+        this.previewReceivingLPNLabelInBatch(event, startLPN, quantity, labelCount); 
+    }
+  }
+  
+
+  previewReceivingLPNLabelInBatch(event: any, startLPN: string, quantity: number, labelCount: number) {
+    
+    this.isSpinning = true;
+    this.receiptLineService.generatePrePrintLPNLabelInBatch(
+      this.currentReceiptLine!.id!, startLPN, quantity, labelCount, 1, "")
+      .subscribe({
+        next: (printResult) => {
+          
+          this.isSpinning = false;
+          this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
+
+            
+        }, 
+        error: () => this.isSpinning = false
+      })
+
+
+  }
+  
+  previewWorkOrderLPNLabelInBatch(event: any, startLPN: string, quantity: number, labelCount: number) {
+    
+    this.isSpinning = true;
+    this.workOrderService.generatePrePrintLPNLabelInBatch(
+      this.currentProductionLineAssignment.workOrderId!, startLPN, quantity, labelCount, 
+      this.currentProductionLineAssignment.productionLineName,  1, "")
+      .subscribe({
+        next: (printResult) => {
+          this.isSpinning = false;
+          this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.PORTRAIT}`);
+ 
+            
+        }, 
+        error: () => this.isSpinning = false
+      })
 
 
   }

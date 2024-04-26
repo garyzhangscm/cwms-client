@@ -39,12 +39,19 @@
       <input nz-input  [(ngModel)]="startLPN" [disabled]="!userSpecifyLPN"/>
       <label nz-checkbox [(ngModel)]="userSpecifyLPN">{{'user-specify-lpn' | i18n}}</label>
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'lpn-quantity' | i18n}}">
-      <input nz-input  [(ngModel)]="quantity" />
+    <nz-descriptions-item nzTitle="{{ 'inventory-quantity-on-lpn' | i18n}}">
+      <nz-input-number  [(ngModel)]="quantity" /> 
+      <i nz-icon [nzType]="'question-circle'"
+        nz-popover [nzPopoverContent]="contentTemplate" nzPopoverPlacement="topRight"></i> 
+       
+      <ng-template #contentTemplate>
+        <div>Quantity of the inventory on the LPN label
+        </div>
+      </ng-template> 
   
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="{{ 'label-count' | i18n}}">
-      <input nz-input  [(ngModel)]="labelCount" />
+      <nz-input-number  [(ngModel)]="labelCount" />
   
     </nz-descriptions-item>
 
@@ -66,15 +73,22 @@
 
     
     <nz-descriptions-item nzTitle="{{ 'start-lpn' | i18n}}">
-      <input nz-input  [(ngModel)]="startLPN" [disabled]="!userSpecifyLPN"/>
+      <input nz-input [(ngModel)]="startLPN" [disabled]="!userSpecifyLPN"/>
       <label nz-checkbox [(ngModel)]="userSpecifyLPN">{{'user-specify-lpn' | i18n}}</label>
     </nz-descriptions-item>
-    <nz-descriptions-item nzTitle="{{ 'quantity' | i18n}}">
-      <input nz-input  [(ngModel)]="quantity" />
+    <nz-descriptions-item nzTitle="{{ 'inventory-quantity-on-lpn' | i18n}}">
+      <nz-input-number  [(ngModel)]="quantity" [nzMin]="0"  [nzStep]="1"/>
+      <i nz-icon [nzType]="'question-circle'" nz-popover [nzPopoverContent]="contentTemplate"
+      nzPopoverPlacement="topRight" ></i> 
+       
+      <ng-template #contentTemplate>
+        <div>Quantity of the inventory on the LPN label
+        </div>
+      </ng-template> 
   
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="{{ 'label-count' | i18n}}">
-      <input nz-input  [(ngModel)]="labelCount" />
+      <nz-input-number  [(ngModel)]="labelCount" [nzMin]="1"  [nzStep]="1"/>
   
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="{{ 'format' | i18n}}">
@@ -92,7 +106,7 @@
     <cwms-common-print-button style='padding-left: 20px; '
       [defaultPhysicalCopyCount]=2
       (print)="printLPNLabels($event)"
-      (preview)="previewLPNLabel($event)">
+      (preview)="previewLPNs($event)">
     </cwms-common-print-button>
   </div>
   </nz-spin>
