@@ -38,6 +38,23 @@ export interface Item {
   trackingStyleFlag?: boolean;
   defaultStyle?: string;
 
+  
+  trackingInventoryAttribute1Flag ?: boolean;
+  defaultInventoryAttribute1?: string;
+
+  trackingInventoryAttribute2Flag?: boolean;
+  defaultInventoryAttribute2?: string;
+
+  trackingInventoryAttribute3Flag?: boolean;
+  defaultInventoryAttribute3?: string;
+
+  trackingInventoryAttribute4Flag?: boolean;
+  defaultInventoryAttribute4?: string;
+
+  trackingInventoryAttribute5Flag?: boolean;
+  defaultInventoryAttribute5?: string;
+
+
   warehouseId?: number;
   companyId: number;
 

@@ -17,11 +17,14 @@ import { ClientService } from '../../common/services/client.service';
 import { PrintingService } from '../../common/services/printing.service';
 import { SupplierService } from '../../common/services/supplier.service'; 
 import { Inventory } from '../../inventory/models/inventory';
+import { InventoryConfiguration } from '../../inventory/models/inventory-configuration';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { ItemPackageType } from '../../inventory/models/item-package-type';
 import { ItemUnitOfMeasure } from '../../inventory/models/item-unit-of-measure';
+import { InventoryConfigurationService } from '../../inventory/services/inventory-configuration.service';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { InventoryService } from '../../inventory/services/inventory.service';
+import { ItemPackageTypeService } from '../../inventory/services/item-package-type.service';
 import { ItemService } from '../../inventory/services/item.service';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { ReportType } from '../../report/models/report-type.enum';
@@ -330,6 +333,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   formatterPercent = (value: number): string => `${value} %`;
   parserPercent = (value: string): string => value.replace(' %', '');
 
+  inventoryConfiguration?: InventoryConfiguration;
+  
   isSpinning = false;
   // how to print putaway work
   // all: print everything recevied, include the one that already in stock
@@ -346,6 +351,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     private clientService: ClientService,
     private supplierService: SupplierService,
     private modalService: NzModalService,
+    private itemPackageTypeService: ItemPackageTypeService,
     private inventoryStatusService: InventoryStatusService,
     private putawayConfigurationService: PutawayConfigurationService,
     private itemService: ItemService,
@@ -359,8 +365,18 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     private messageService: NzMessageService,
     private localCacheService: LocalCacheService,
     private notification: NzNotificationService,
+    private inventoryConfigurationService: InventoryConfigurationService,
   ) {
     this.pageTitle = this.i18n.fanyi('page.inbound.receipt.title');
+    
+    
+    inventoryConfigurationService.getInventoryConfigurations().subscribe({
+      next: (inventoryConfigurationRes) => {
+        if (inventoryConfigurationRes) { 
+          this.inventoryConfiguration = inventoryConfigurationRes;
+        }  
+      } ,  
+    });
   }
 
   ngOnInit(): void {
@@ -922,7 +938,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
     this.currentReceivingInventory = this.createEmptyReceivingInventory(receiptLine);
     this.currentReceivingUnitOfMeasure = undefined;
-
+ 
     // show the model
     this.receivingModal = this.modalService.create({
       nzTitle: tplReceivingModalTitle,
@@ -1645,25 +1661,40 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   }
 
   newInventoryItemPackageTypeChanged(itemPackageTypeId: number) {
-    this.currentReceivingInventory!.itemPackageType = 
-        this.currentReceivingLine.item!.itemPackageTypes!.find(
-          itemPackageType => itemPackageType.id = itemPackageTypeId
-        );
-    if (this.currentReceivingInventory!.itemPackageType) {
-      if (this.currentReceivingInventory!.itemPackageType.displayItemUnitOfMeasure) {
-        // set the display unit of measure
-        console.log(`set the display item unit of measure to \n${JSON.stringify(this.currentReceivingInventory!.itemPackageType.displayItemUnitOfMeasure)}`);
+    console.log(`newInventoryItemPackageTypeChanged: ${itemPackageTypeId}`);
+    if (itemPackageTypeId != null) {
 
-        this.currentReceivingUnitOfMeasure = this.currentReceivingInventory!.itemPackageType.displayItemUnitOfMeasure;
-        // this.receivingForm!.controls.itemUnitOfMeasure.setValue(this.currentReceivingInventory!.itemPackageType.displayItemUnitOfMeasure.id);
-      }
-      else if (this.currentReceivingInventory!.itemPackageType.stockItemUnitOfMeasure) {
-        // set the display unit of measure
-        console.log(`set the display stock item unit of measure to \n${JSON.stringify(this.currentReceivingInventory!.itemPackageType.stockItemUnitOfMeasure)}`);
-
-        this.receivingForm!.controls.itemUnitOfMeasure.setValue(this.currentReceivingInventory!.itemPackageType.stockItemUnitOfMeasure.id);
-      }
+      this.itemPackageTypeService.getItemPackageType(itemPackageTypeId).subscribe({
+        next: (itemPackageType) => {
+          this.currentReceivingInventory!.itemPackageType = itemPackageType;
+          if (this.currentReceivingInventory!.itemPackageType) { 
+            // show the new item pacakge type details
+            this.displayItemPackageType = this.currentReceivingInventory!.itemPackageType;
+            if (this.currentReceivingInventory!.itemPackageType.displayItemUnitOfMeasure) {
+              // set the display unit of measure
+              console.log(`set the display item unit of measure to \n${JSON.stringify(this.currentReceivingInventory!.itemPackageType.displayItemUnitOfMeasure)}`);
+      
+              this.currentReceivingUnitOfMeasure = this.currentReceivingInventory!.itemPackageType.displayItemUnitOfMeasure;
+              // this.receivingForm!.controls.itemUnitOfMeasure.setValue(this.currentReceivingInventory!.itemPackageType.displayItemUnitOfMeasure.id);
+            }
+            else if (this.currentReceivingInventory!.itemPackageType.stockItemUnitOfMeasure) {
+              // set the display unit of measure
+              console.log(`set the display stock item unit of measure to \n${JSON.stringify(this.currentReceivingInventory!.itemPackageType.stockItemUnitOfMeasure)}`);
+      
+              this.receivingForm!.controls.itemUnitOfMeasure.setValue(this.currentReceivingInventory!.itemPackageType.stockItemUnitOfMeasure.id);
+            }
+          }
+        }, 
+        error: () => {
+          this.currentReceivingInventory!.itemPackageType = undefined;
+        }
+      });
     }
+    else {
+      this.currentReceivingInventory!.itemPackageType = undefined;
+      this.displayItemPackageType = undefined;
+    }
+    
   }
   
   receivingUnitOfMeasureChanged(itemUnitOfMeasureId: number) { 
