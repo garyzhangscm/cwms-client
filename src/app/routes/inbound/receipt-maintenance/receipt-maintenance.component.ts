@@ -126,120 +126,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     },
   ];
 
-  listOfReceivedInventoryTableColumns: Array<ColumnItem<Inventory>> = [
-    {
-      name: 'lpn',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.lpn, b.lpn),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'item',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'item.description',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'quantity',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'inventory.status',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.inventoryStatus, b.inventoryStatus, 'name'),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    
-    {
-      name: 'color',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.color, b.color),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'productSize',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.productSize, b.productSize),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'style',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.style, b.style),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-
-    {
-      name: 'location',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-    {
-      name: 'nextLocation',
-      showSort: false,
-      sortOrder: null,
-      sortFn: null,
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-  ];
+  listOfReceivedInventoryTableColumns: Array<ColumnItem<Inventory>> = [];
+  
 
   listOfReceiptLinesTableSelection = [
     {
@@ -374,8 +262,11 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       next: (inventoryConfigurationRes) => {
         if (inventoryConfigurationRes) { 
           this.inventoryConfiguration = inventoryConfigurationRes;
+          
+          this.setupReceivedInventoryTableColumns();
         }  
       } ,  
+      error: () =>  this.setupReceivedInventoryTableColumns()
     });
   }
 
@@ -437,6 +328,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
         }  
       },  
     });
+
   }
   onSupplierChange(value: string): void {
     if (value == null || value == "") {
@@ -447,6 +339,205 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
         supplier => supplier.description.toLowerCase().indexOf(value.toLowerCase()) !== -1);
 
     }
+  }
+
+  setupReceivedInventoryTableColumns() {
+
+    this.listOfReceivedInventoryTableColumns = [
+    {
+      name: 'lpn',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.lpn, b.lpn),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'item',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'item.description',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'quantity',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableNumber(a.quantity, b.quantity),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'inventory.status',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.inventoryStatus, b.inventoryStatus, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    
+    {
+      name: 'color',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.color, b.color),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'productSize',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.productSize, b.productSize),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    },
+    {
+      name: 'style',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.style, b.style),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false
+    }];
+    console.log(`this.inventoryConfiguration?.inventoryAttribute1Enabled: ${this.inventoryConfiguration?.inventoryAttribute1Enabled}`);
+    if (this.inventoryConfiguration?.inventoryAttribute1Enabled) {      
+        this.listOfReceivedInventoryTableColumns = [...this.listOfReceivedInventoryTableColumns,
+          {
+            name: this.inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
+                this.i18n.fanyi("inventoryAttribute1") : this.inventoryConfiguration?.inventoryAttribute1DisplayName,
+            showSort: true,
+            sortOrder: null,
+            sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.attribute1, b.attribute1),
+            sortDirections: ['ascend', 'descend'],
+            filterMultiple: true,
+            listOfFilter: [],
+            filterFn: null,
+            showFilter: false
+          },
+        ]
+    }
+    if (this.inventoryConfiguration?.inventoryAttribute2Enabled) {      
+        this.listOfReceivedInventoryTableColumns = [...this.listOfReceivedInventoryTableColumns,
+          {
+            name: this.inventoryConfiguration?.inventoryAttribute2DisplayName == null ?
+                this.i18n.fanyi("inventoryAttribute2") : this.inventoryConfiguration?.inventoryAttribute2DisplayName,
+            showSort: true,
+            sortOrder: null,
+            sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.attribute2, b.attribute2),
+            sortDirections: ['ascend', 'descend'],
+            filterMultiple: true,
+            listOfFilter: [],
+            filterFn: null,
+            showFilter: false
+          },
+        ]
+    }
+    if (this.inventoryConfiguration?.inventoryAttribute3Enabled) {      
+        this.listOfReceivedInventoryTableColumns = [...this.listOfReceivedInventoryTableColumns,
+          {
+            name: this.inventoryConfiguration?.inventoryAttribute3DisplayName == null ?
+                this.i18n.fanyi("inventoryAttribute3") : this.inventoryConfiguration?.inventoryAttribute3DisplayName,
+            showSort: true,
+            sortOrder: null,
+            sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.attribute3, b.attribute3),
+            sortDirections: ['ascend', 'descend'],
+            filterMultiple: true,
+            listOfFilter: [],
+            filterFn: null,
+            showFilter: false
+          },
+        ]
+    }
+    if (this.inventoryConfiguration?.inventoryAttribute4Enabled) {      
+        this.listOfReceivedInventoryTableColumns = [...this.listOfReceivedInventoryTableColumns,
+          {
+            name: this.inventoryConfiguration?.inventoryAttribute4DisplayName == null ?
+                this.i18n.fanyi("inventoryAttribute4") : this.inventoryConfiguration?.inventoryAttribute4DisplayName,
+            showSort: true,
+            sortOrder: null,
+            sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.attribute4, b.attribute4),
+            sortDirections: ['ascend', 'descend'],
+            filterMultiple: true,
+            listOfFilter: [],
+            filterFn: null,
+            showFilter: false
+          },
+        ]
+    }
+    if (this.inventoryConfiguration?.inventoryAttribute5Enabled) {      
+        this.listOfReceivedInventoryTableColumns = [...this.listOfReceivedInventoryTableColumns,
+          {
+            name: this.inventoryConfiguration?.inventoryAttribute5DisplayName == null ?
+                this.i18n.fanyi("inventoryAttribute5") : this.inventoryConfiguration?.inventoryAttribute5DisplayName,
+            showSort: true,
+            sortOrder: null,
+            sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableString(a.attribute5, b.attribute5),
+            sortDirections: ['ascend', 'descend'],
+            filterMultiple: true,
+            listOfFilter: [],
+            filterFn: null,
+            showFilter: false
+          },
+        ]
+    }
+    this.listOfReceivedInventoryTableColumns = [...this.listOfReceivedInventoryTableColumns,
+      {
+        name: 'location',
+        showSort: true,
+        sortOrder: null,
+        sortFn: (a: Inventory, b: Inventory) => this.utilService.compareNullableObjField(a.location, b.location, 'name'),
+        sortDirections: ['ascend', 'descend'],
+        filterMultiple: true,
+        listOfFilter: [],
+        filterFn: null,
+        showFilter: false
+      },
+      {
+        name: 'nextLocation',
+        showSort: false,
+        sortOrder: null,
+        sortFn: null,
+        sortDirections: ['ascend', 'descend'],
+        filterMultiple: true,
+        listOfFilter: [],
+        filterFn: null,
+        showFilter: false
+      },
+    ];
   }
 
   saveReceipt(): void {
@@ -1147,8 +1238,9 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     // convert the receiving quantity into actual quantity
     // based on the quantity input and the UOM
     let actualReceivingInventory: Inventory = this.currentReceivingInventory!;
+    
     if (this.currentReceivingUnitOfMeasure && this.currentReceivingUnitOfMeasure!.quantity! > 1) {
-
+        console.log(`we will need to convert the quantity based on the uom`)
       // the user is receiving by a UOM, 
       actualReceivingInventory = { 
         lpn: this.currentReceivingInventory!.lpn,
@@ -1157,10 +1249,19 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
         inventoryStatus: this.currentReceivingInventory!.inventoryStatus,
         quantity: this.currentReceivingInventory!.quantity * this.currentReceivingUnitOfMeasure!.quantity!,
         locationId: this.currentReceivingInventory!.locationId,
-        location: this.currentReceivingInventory?.location
+        location: this.currentReceivingInventory?.location,
+        color: this.currentReceivingInventory?.color,
+        productSize: this.currentReceivingInventory?.productSize,
+        style: this.currentReceivingInventory?.style,
+        attribute1: this.currentReceivingInventory?.attribute1,
+        attribute2: this.currentReceivingInventory?.attribute2,
+        attribute3: this.currentReceivingInventory?.attribute3,
+        attribute4: this.currentReceivingInventory?.attribute4,
+        attribute5: this.currentReceivingInventory?.attribute5,
       }
 
     }
+    console.log(`actualReceivingInventory\n${JSON.stringify(actualReceivingInventory)}`)
     
     // if (this.receivingForm.valid) { 
       this.receiptLineService

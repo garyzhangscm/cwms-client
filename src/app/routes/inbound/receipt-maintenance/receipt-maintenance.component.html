@@ -326,20 +326,36 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let data of receivedInventoryTable.data">
-              <td [nzChecked]="setOfReceivedInventoryTableCheckedId.has(data.id!)"
-                (nzCheckedChange)="onReceivedInventoryTableItemChecked(data.id!, $event)"></td>
-              <td>{{ data.lpn }}</td>
-              <td>{{ data.item?.name }}</td>
-              <td>{{ data.item?.description }}</td>
-              <td>{{ data.quantity }}</td>
-              <td>{{ data.inventoryStatus!.description}}</td>
-              <td>{{ data.color}}</td>
-              <td>{{ data.productSize}}</td>
-              <td>{{ data.style}}</td>
-              <td>{{ data.location?.name }}</td>
+            <tr *ngFor="let receivedInventory of receivedInventoryTable.data">
+              <td [nzChecked]="setOfReceivedInventoryTableCheckedId.has(receivedInventory.id!)"
+                (nzCheckedChange)="onReceivedInventoryTableItemChecked(receivedInventory.id!, $event)"></td>
+              <td>{{ receivedInventory.lpn }}</td>
+              <td>{{ receivedInventory.item?.name }}</td>
+              <td>{{ receivedInventory.item?.description }}</td>
+              <td>{{ receivedInventory.quantity }}</td>
+              <td>{{ receivedInventory.inventoryStatus!.description}}</td>
+              <td>{{ receivedInventory.color}}</td>
+              <td>{{ receivedInventory.productSize}}</td>
+              <td>{{ receivedInventory.style}}</td> 
+
+              <td *ngIf="this.inventoryConfiguration?.inventoryAttribute1Enabled">
+                {{ receivedInventory.attribute1 }}</td>
+
+              <td *ngIf="this.inventoryConfiguration?.inventoryAttribute2Enabled">
+                  {{ receivedInventory.attribute2 }}</td>
+
+              <td *ngIf="this.inventoryConfiguration?.inventoryAttribute3Enabled">
+                    {{ receivedInventory.attribute3 }}</td>
+
+              <td *ngIf="this.inventoryConfiguration?.inventoryAttribute4Enabled">
+                      {{ receivedInventory.attribute4 }}</td>
+
+              <td *ngIf="this.inventoryConfiguration?.inventoryAttribute5Enabled">
+                        {{ receivedInventory.attribute5 }}</td>
               <td>
-                <p *ngFor="let inventoryMovement of data.inventoryMovements; let i = index">
+                  {{ receivedInventory.location?.name }}</td>
+              <td>
+                <p *ngFor="let inventoryMovement of receivedInventory.inventoryMovements; let i = index">
                   {{ i+1 }} - {{ inventoryMovement.location.name}}
                 </p>
               </td>
@@ -351,36 +367,36 @@
                 <nz-dropdown-menu #receivedInventoryActionTpl="nzDropdownMenu">
                   <ul nz-menu>
                     <li nz-menu-item
-                      *ngIf="data.location!.name === currentReceipt.number && data.inventoryMovements!.length === 0">
-                      <a (click)="allocateLocation(data)">{{ 'allocateLocation' | i18n }}</a>
+                      *ngIf="receivedInventory.location!.name === currentReceipt.number && receivedInventory.inventoryMovements!.length === 0">
+                      <a (click)="allocateLocation(receivedInventory)">{{ 'allocateLocation' | i18n }}</a>
                     </li>
-                    <li nz-menu-item *ngIf="isInventoryReversible(data)">
+                    <li nz-menu-item *ngIf="isInventoryReversible(receivedInventory)">
                       <!--
                       <a (click)="reverseInventory(data)">{{ 'receipt.reverseInventory' | i18n }}</a>
 
                       -->
-                      <a (click)="openReverseInventoryModal(data, tplReverseInventoryModalTitle, tplReverseInventoryModalContent)">{{ 'receipt.reverseInventory' | i18n }}</a>
+                      <a (click)="openReverseInventoryModal(receivedInventory, tplReverseInventoryModalTitle, tplReverseInventoryModalContent)">{{ 'receipt.reverseInventory' | i18n }}</a>
                     </li>
                     <li nz-menu-item
-                      *ngIf="data.inventoryMovements!.length > 0 && data.location!.name === currentReceipt.number">
-                      <a (click)="reallocateLocation(data)">{{ 'reallocateLocation' | i18n }}</a>
+                      *ngIf="receivedInventory.inventoryMovements!.length > 0 && receivedInventory.location!.name === currentReceipt.number">
+                      <a (click)="reallocateLocation(receivedInventory)">{{ 'reallocateLocation' | i18n }}</a>
                     </li>
-                    <li nz-menu-item *ngIf="data.inventoryMovements!.length ===1">
-                      <a (click)="confirmPutaway(0, data)">{{ 'putaway' | i18n }}</a>
+                    <li nz-menu-item *ngIf="receivedInventory.inventoryMovements!.length ===1">
+                      <a (click)="confirmPutaway(0, receivedInventory)">{{ 'putaway' | i18n }}</a>
                     </li>
-                    <li nz-submenu nzTitle="{{ 'putaway' | i18n }}" *ngIf="data.inventoryMovements!.length > 1">
+                    <li nz-submenu nzTitle="{{ 'putaway' | i18n }}" *ngIf="receivedInventory.inventoryMovements!.length > 1">
                       <ul>
-                        <li nz-menu-item *ngFor="let inventoryMovement of data.inventoryMovements; let i=index">
-                          <a (click)="confirmPutaway(i, data)">
+                        <li nz-menu-item *ngFor="let inventoryMovement of receivedInventory.inventoryMovements; let i=index">
+                          <a (click)="confirmPutaway(i, receivedInventory)">
                             {{ i+1 }} - {{ inventoryMovement.location.name}}</a>
                         </li>
                       </ul>
                     </li>
 
                     <li nz-menu-item
-                      *ngIf="data.location!.name === currentReceipt.number || data.location!.locationGroup?.locationGroupType?.receivingStage === true">
+                      *ngIf="receivedInventory.location!.name === currentReceipt.number || receivedInventory.location!.locationGroup?.locationGroupType?.receivingStage === true">
                       <a
-                        (click)="openManualPutawayModal(data, tplManualPutawayModalTitle, tplManualPutawayModalContent)">{{
+                        (click)="openManualPutawayModal(receivedInventory, tplManualPutawayModalTitle, tplManualPutawayModalContent)">{{
                         'putaway.manual' | i18n }}</a>
                     </li>
                   </ul>
