@@ -95,6 +95,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
     private productionLineService: ProductionLineService, 
     private productionLineTypeService: ProductionLineTypeService,
     private systemControlledNumberService: SystemControlledNumberService,
+    private workOrderService: WorkOrderService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private workOrderProduceTransactionService: WorkOrderProduceTransactionService,
     private modalService: NzModalService,
@@ -164,7 +165,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
 
   refresh(productionLineTypeName?: string) {
     this.isSpinning = true;
-    this.productionLineService.getProductionLines(undefined, productionLineTypeName, false).subscribe({
+    this.productionLineService.getProductionLines(undefined, productionLineTypeName, false, false).subscribe({
       next: (productionLineRes) => { 
         if (this.onlyShowActiveProductionLineFlag) {
             // ok, we will only show the active production line
@@ -176,13 +177,63 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
         }
 
         this.setDisplayHeight(this.productionLines);
+        this.loadItemInformationForProductionLines(this.productionLines);
         
         this.isSpinning = false;
       }, 
       error: () => this.isSpinning = false
     });
   }
+  
+  // load the item information for the work order that assigned to this production
+  // if the production line has assignment
+  loadItemInformationForProductionLines(productionLines: ProductionLine[]) {
+    if (productionLines == null){
+      return;
+    }
+    // load the item information, 1 at a time
+    this.loadItemInformationForProductionLine(productionLines, 0)
+  }
+  loadItemInformationForProductionLine(productionLines: ProductionLine[], index: number) {
+      if (index >= productionLines.length) {
+        return;
+      }
 
+      if (productionLines[index].assignedWorkOrders !=  null) {
+        this.loadItemInformationForAssignedWorkOrder(productionLines, index, 0);
+      }
+      else {
+        this.loadItemInformationForProductionLine(productionLines, index + 1);
+      }   
+  }
+  
+  loadItemInformationForAssignedWorkOrder(
+    productionLines: ProductionLine[], productionLinesIndex: number,  index: number) {
+    if (index >= productionLines[productionLinesIndex].assignedWorkOrders!.length) {
+        // we already loop through all assigned work order in this production line, let's continue
+        // with next line
+        
+        this.loadItemInformationForProductionLine(productionLines, productionLinesIndex + 1);
+    }
+    
+    if ((productionLines[productionLinesIndex].assignedWorkOrders![index].second == null 
+          || productionLines[productionLinesIndex].assignedWorkOrders![index].second == "") &&
+          productionLines[productionLinesIndex].assignedWorkOrders![index].sixth != null) {
+              this.itemService.getItem(productionLines[productionLinesIndex].assignedWorkOrders![index].sixth).subscribe({
+                next: (itemRes) => { 
+                  productionLines[productionLinesIndex].assignedWorkOrders![index].second = itemRes.name;
+                  productionLines[productionLinesIndex].assignedWorkOrders![index].third = itemRes.description;
+                  this.loadItemInformationForAssignedWorkOrder(
+                    productionLines, productionLinesIndex, index + 1
+                  );
+                }, 
+                error: () => this.loadItemInformationForAssignedWorkOrder(
+                  productionLines, productionLinesIndex, index + 1
+                )
+       })
+    } 
+  }
+    
   handleCountDownEvent(): void {
     // don't refresh the result if the flag is checked
     if (this.doNotRefreshFlag) {
@@ -247,7 +298,8 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
   }
   
   setDisplayHeight(productionLines: ProductionLine[]) {
-    let maxItemCount = Math.max(...productionLines.map(productionLines => productionLines.assignedWorkOrders.length));
+    let maxItemCount = Math.max(...productionLines.map(productionLines => 
+          productionLines.assignedWorkOrders == null ? 0 : productionLines.assignedWorkOrders.length));
     this.displayHeight = 150 + (maxItemCount - 1) * 35;
     console.log(`set height to ${this.displayHeight}`);
    }

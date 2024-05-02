@@ -433,7 +433,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       filterFn: null,
       showFilter: false
     }];
-    console.log(`this.inventoryConfiguration?.inventoryAttribute1Enabled: ${this.inventoryConfiguration?.inventoryAttribute1Enabled}`);
+    
     if (this.inventoryConfiguration?.inventoryAttribute1Enabled) {      
         this.listOfReceivedInventoryTableColumns = [...this.listOfReceivedInventoryTableColumns,
           {

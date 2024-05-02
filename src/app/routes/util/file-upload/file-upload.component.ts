@@ -9,9 +9,12 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
 
 import { UserService } from '../../auth/services/user.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { FileUploadColumnMapping } from '../models/file-upload-column-mapping';
 import { FileUploadResult } from '../models/file-upload-result';
 import { FileUploadType } from '../models/file-upload-type';
+import { FileUploadColumnMappingService } from '../services/file-upload-column-mapping.service';
 import { FileUploadOperationService } from '../services/file-upload-operation.service';
 
 @Component({
@@ -32,7 +35,10 @@ export class UtilFileUploadComponent implements OnInit {
     { title: this.i18n.fanyi("result"), index:"result" , width: "5%"},  
     { title: this.i18n.fanyi("errorMessage"), render: 'errorMessageColumn' , width: "35%"},   
   ]; 
-  
+
+  fileUploadTypeColumnTableEditRowName: string | null = null;
+  fileUploadTypeColumnMappings = new Map<string, string>();
+
   displayOnly = false;
   userPermissionMap: Map<string, boolean> = new Map<string, boolean>([
     ['items', false],
@@ -57,7 +63,9 @@ export class UtilFileUploadComponent implements OnInit {
     private titleService: TitleService,
     private msg: NzMessageService,
     private userService: UserService,
-    private warehouseService: WarehouseService
+    private warehouseService: WarehouseService, 
+    private fileUploadColumnMappingService: FileUploadColumnMappingService,
+    private companyService: CompanyService, 
   ) {
     userService.isCurrentPageDisplayOnly("/util/file-upload").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
@@ -140,6 +148,7 @@ export class UtilFileUploadComponent implements OnInit {
                 this.titleService.setTitle(this.i18n.fanyi('menu.main.util.file-upload'));
                 this.setupFileUploadUrl();
                 this.fileUploadDisabled = false;
+                this.loadColumnMapping();
 
               }
             } else {
@@ -167,10 +176,26 @@ export class UtilFileUploadComponent implements OnInit {
             
             
             this.selectedFileUploadType = fileUploadType;
-            this.selectedFileUploadUrl = `${this.selectedFileUploadType.destinationUrl}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&removeExistingInventory=${this.removeExistingInventory}`;
+            this.selectedFileUploadUrl = `${this.selectedFileUploadType.destinationUrl}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&companyId=${this.companyService.getCurrentCompany()!.id}&removeExistingInventory=${this.removeExistingInventory}`;
           });
       });
     }
+  }
+
+  loadColumnMapping(): void { 
+    this.fileUploadTypeColumnMappings.clear();
+    if (this.loadFileForm.value.fileTypeSelector) {
+      this.fileUploadColumnMappingService.getFileUploadColumnMapping(this.loadFileForm.value.fileTypeSelector).subscribe(
+      {
+        next: (fileUploadColumnMappingRes) => {
+          fileUploadColumnMappingRes.forEach(
+            fileUploadColumnMapping => {
+              this.fileUploadTypeColumnMappings.set(fileUploadColumnMapping.columnName, fileUploadColumnMapping.mapToColumnName)
+            }
+          );
+        } 
+      }); 
+    } 
   }
 
   back(): void {
@@ -179,6 +204,7 @@ export class UtilFileUploadComponent implements OnInit {
   selectedFileTypeChanged(fileType: string): void {
     this.setupFileUploadUrl();
     this.fileUploadDisabled = false;
+    this.loadColumnMapping();
   }
 
   handleChange(info: NzUploadChangeParam): void {  
@@ -329,4 +355,41 @@ export class UtilFileUploadComponent implements OnInit {
       result => result.result != 'success'
     );
   }
+
+  startEditFileUploadTypeColumnTable(columnName: string): void {
+    this.fileUploadTypeColumnTableEditRowName = columnName;
+  }
+
+  stopEditFileUploadTypeColumnTable(columnName:string): void {
+    this.fileUploadTypeColumnTableEditRowName = null;
+
+    // save the result back to the server when the user complete
+    // editing the table
+    const mapToColumnName = this.fileUploadTypeColumnMappings.get(columnName);
+
+    this.isSpinning = true;
+        const fileUploadTypeColumnMapping : FileUploadColumnMapping = {
+          
+  
+            companyId: this.companyService.getCurrentCompany()!.id,
+            warehouseId: this.warehouseService.getCurrentWarehouse().id,
+
+            type: this.loadFileForm.value.fileTypeSelector,
+            columnName: columnName,
+            mapToColumnName: mapToColumnName == null ? "" : mapToColumnName,
+        }
+        this.fileUploadColumnMappingService.addFileUploadColumnMapping(fileUploadTypeColumnMapping).subscribe({
+          next: () => {
+ 
+            this.isSpinning = false;
+          }, 
+          error: () => this.isSpinning = false
+        })
+  }
+
+  fileUploadTypeColumnMappingChanged(columnName:string, mapToColumnName: string): void {
+    this.fileUploadTypeColumnMappings.set(columnName,  mapToColumnName);
+    
+  }
+  
 }

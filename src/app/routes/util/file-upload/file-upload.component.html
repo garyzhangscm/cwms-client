@@ -130,7 +130,7 @@
     <div class="search-result-list" *ngIf="selectedFileUploadType">
       <nz-table
       [nzScroll]="{ x: 'true', y: 'true' }" 
-        #rowSelectionTable
+        #fileUploadTypeColumnTable
         nzShowSizeChanger
         [nzData]="selectedFileUploadType!.columns"
         nzShowPagination="false"
@@ -153,15 +153,29 @@
             <td>
               {{ 'optional' | i18n }}
             </td>
+            <td>
+              {{ 'file-upload.mapping_to_column_name' | i18n }}
+            </td>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let data of rowSelectionTable.data">
-            <td>{{ data.name }}</td>
-            <td>{{ data.description }}</td>
-            <td>{{ data.type }}</td>
-            <td>{{ data.maxLength }}</td>
-            <td>{{ data.nullable + '' | i18n }}</td>
+          <tr *ngFor="let fileUploadTypeColumn of fileUploadTypeColumnTable.data">
+            <td>{{ fileUploadTypeColumn.name }}</td>
+            <td>{{ fileUploadTypeColumn.description }}</td>
+            <td>{{ fileUploadTypeColumn.type }}</td>
+            <td>{{ fileUploadTypeColumn.maxLength }}</td>
+            <td>{{ fileUploadTypeColumn.nullable + '' | i18n }}</td>
+            <td>
+              <div class="editable-cell" [hidden]="fileUploadTypeColumnTableEditRowName == fileUploadTypeColumn.name" 
+                  (click)="startEditFileUploadTypeColumnTable( fileUploadTypeColumn.name)">
+                  {{fileUploadTypeColumnMappings.has(fileUploadTypeColumn.name) ? fileUploadTypeColumnMappings.get(fileUploadTypeColumn.name) : fileUploadTypeColumn.name}}
+              </div>
+              <input [hidden]="displayOnly || fileUploadTypeColumnTableEditRowName != fileUploadTypeColumn.name" type="text" 
+                  nz-input [ngModel]="fileUploadTypeColumnMappings.get(fileUploadTypeColumn.name)" 
+                  (ngModelChange)="fileUploadTypeColumnMappingChanged(fileUploadTypeColumn.name, $event)"
+                  (blur)="stopEditFileUploadTypeColumnTable(fileUploadTypeColumn.name)" />
+              
+                </td>
           </tr>
         </tbody>
       </nz-table>

@@ -35,5 +35,5 @@ export interface ProductionLine {
   labelPrinterName?: string;
 
   // Pair<String, String>: work order number, finish good's item name
-  assignedWorkOrders?: any;
+  assignedWorkOrders?: {first: string, second: string, third: string, fourth: number, fifth: number, sixth: number}[];
 }
