@@ -229,7 +229,8 @@ export class OrderService {
     // 1. it is not a outsourcing order. Outsoucing order will be done by another party
     // 2. it has open quantity or pending allocation quantity
     return !this.isOutsourcingOrder(order) && order.status != OrderStatus.ALLOCATING && 
-          (order.totalOpenQuantity! > 0 || order.totalPendingAllocationQuantity! > 0)
+          (order.totalOpenQuantity! > 0 || order.totalPendingAllocationQuantity! > 0) &&
+          order.allowForManualPick != true;
   }
   isOutsourcingOrder(order: Order): boolean {
     return order.category === OrderCategory.OUTSOURCING_ORDER

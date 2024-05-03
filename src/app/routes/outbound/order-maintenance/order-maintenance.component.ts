@@ -42,6 +42,7 @@ import { OrderService } from '../services/order.service';
 export class OutboundOrderMaintenanceComponent implements OnInit {
 
   orderCategories = OrderCategory;
+  orderStatuses = OrderStatus;
   allocationStrategies = AllocationStrategyType;
 
   currentOrder?: Order;

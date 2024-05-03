@@ -41,6 +41,8 @@ export interface Order {
   billToCustomerId?: number;
   billToCustomer?: Customer;
 
+  allowForManualPick?: boolean;
+
   // Ship to Address
   shipToContactorFirstname?: string;
   shipToContactorLastname?: string;
