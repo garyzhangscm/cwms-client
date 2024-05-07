@@ -31,6 +31,7 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
   labelCount: number = 0;
   isSpinning = false;
   userSpecifyLPN = false;
+  ignoreInventoryQuantity = false;
 
   returnUrl = "";
   type = "";  
@@ -174,7 +175,8 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
   }
   printReceivingLPNLabelInBatch(event: any, startLPN: string, quantity: number, labelCount: number) {
     this.receiptLineService.generatePrePrintLPNLabelInBatch(
-      this.currentReceiptLine!.id!, startLPN, quantity, labelCount, event.physicalCopyCount, event.printerName)
+      this.currentReceiptLine!.id!, startLPN, quantity, labelCount, event.physicalCopyCount, 
+      event.printerName, this.ignoreInventoryQuantity)
       .subscribe({
         next: (printResult) => {
           // send the result to the printer
@@ -326,7 +328,7 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
     
     this.isSpinning = true;
     this.receiptLineService.generatePrePrintLPNLabelInBatch(
-      this.currentReceiptLine!.id!, startLPN, quantity, labelCount, 1, "")
+      this.currentReceiptLine!.id!, startLPN, quantity, labelCount, 1, "", this.ignoreInventoryQuantity)
       .subscribe({
         next: (printResult) => {
           

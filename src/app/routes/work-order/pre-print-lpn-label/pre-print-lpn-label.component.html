@@ -77,9 +77,14 @@
       <label nz-checkbox [(ngModel)]="userSpecifyLPN">{{'user-specify-lpn' | i18n}}</label>
     </nz-descriptions-item>
     <nz-descriptions-item nzTitle="{{ 'inventory-quantity-on-lpn' | i18n}}">
-      <nz-input-number  [(ngModel)]="quantity" [nzMin]="0"  [nzStep]="1"/>
+      
+      <nz-input-number  [(ngModel)]="quantity" [nzMin]="0"  [nzStep]="1" [disabled]="ignoreInventoryQuantity"/>
       <i nz-icon [nzType]="'question-circle'" nz-popover [nzPopoverContent]="contentTemplate"
       nzPopoverPlacement="topRight" ></i> 
+      <p>
+        <label nz-checkbox [(ngModel)]="ignoreInventoryQuantity">{{'ignoreInventoryQuantity' | i18n}}</label>
+
+      </p>
        
       <ng-template #contentTemplate>
         <div>Quantity of the inventory on the LPN label

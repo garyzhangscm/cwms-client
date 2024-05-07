@@ -66,8 +66,8 @@ export class ReceiptLineService {
   }
 
   
-  generatePrePrintLPNLabelInBatch(receiptLineId: number, lpn: string, quantity?: number, count?: number, 
-    copies?: number, printerName?: string) : Observable<ReportHistory> {
+  generatePrePrintLPNLabelInBatch(receiptLineId: number, lpn: string, inventoryQuantity?: number, count?: number, 
+    copies?: number, printerName?: string, ignoreInventoryQuantity?: boolean) : Observable<ReportHistory> {
     
     const url = `inbound/receipts/receipt-lines/${receiptLineId}/pre-print-lpn-label/batch`;
 
@@ -83,14 +83,18 @@ export class ReceiptLineService {
       params = params.append('count', 1); 
     }
 
-    if (quantity  && quantity > 0) { 
-      params = params.append('quantity', quantity); 
+    if (inventoryQuantity  && inventoryQuantity > 0) { 
+      params = params.append('inventoryQuantity', inventoryQuantity); 
     }
     if (copies) { 
       params = params.append('copies', copies); 
     }
     if (printerName) { 
       params = params.append('printerName', printerName); 
+    }
+    if (ignoreInventoryQuantity != null) {
+      params = params.append('ignoreInventoryQuantity', ignoreInventoryQuantity); 
+
     }
     
     
