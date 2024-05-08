@@ -1,50 +1,68 @@
-import { Component, OnInit } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { Component, Inject, OnInit } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { I18NService } from '@core';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { UnitOfMeasure } from '../../common/models/unit-of-measure';
+import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
+import { ItemFamily } from '../../inventory/models/item-family';
+import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
+import { ItemFamilyService } from '../../inventory/services/item-family.service';
+import { ItemService } from '../../inventory/services/item.service';
+import { LocationGroup } from '../../warehouse-layout/models/location-group';
+import { LocationGroupType } from '../../warehouse-layout/models/location-group-type';
+import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
+import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
+import { LocationService } from '../../warehouse-layout/services/location.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { AllocationConfiguration } from '../models/allocation-configuration';
 import { PickConfirmStrategy } from '../models/pick-confirm-strategy';
+import { AllocationConfigurationService } from '../services/allocation-configuration.service';
+import { PickConfirmStrategyService } from '../services/pick-confirm-strategy.service';
 
 @Component({
   selector: 'app-outbound-pick-confirm-strategy-maintenance',
   templateUrl: './pick-confirm-strategy-maintenance.component.html',
 })
 export class OutboundPickConfirmStrategyMaintenanceComponent implements OnInit {
-  currentAllocationConfiguration!: PickConfirmStrategy;
-  allocationConfigurationTypes = AllocationConfigurationType;
-  validItemFamilies: ItemFamily[] = [];
-  validInventoryStatus: InventoryStatus[] = [];
+  currentPickConfirmStrategy!: PickConfirmStrategy; 
+  validItemFamilies: ItemFamily[] = []; 
   validLocationGroupTypes: LocationGroupType[] = [];
   validLocationGroups: LocationGroup[] = [];
-  validUnitOfMeasures: UnitOfMeasure[] = [];
-  selectedPickableUnitOfMeasures: UnitOfMeasure[] = [];
+  validUnitOfMeasures: UnitOfMeasure[] = [];  
 
    
   stepIndex = 0;
   pageTitle: string = "";
-  newAllocationConfiguration = true;
+  newPickConfirmStrategy = true;
   isSpinning = false; 
 
 
   constructor(private http: _HttpClient, 
-    private allocationConfigurationService: AllocationConfigurationService,
+    private pickConfirmStrategyService: PickConfirmStrategyService,
     private messageService: NzMessageService,
     private router: Router,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private warehouseService: WarehouseService,
     private itemService: ItemService, 
-    private itemFamilyService: ItemFamilyService, 
-    private inventoryStatusService: InventoryStatusService,  
+    private itemFamilyService: ItemFamilyService,  
     private locationGroupTypeService: LocationGroupTypeService,  
     private locationGroupService: LocationGroupService,  
     private locationService: LocationService,
     private unitOfMeasureService: UnitOfMeasureService,
     private activatedRoute: ActivatedRoute) {
-    this.pageTitle = this.i18n.fanyi('menu.main.outbound.allocation-configuration-maintenance');
+    this.pageTitle = this.i18n.fanyi('menu.main.outbound.pick-confirm-strategy-maintenance');
 
-    this.currentAllocationConfiguration = this.createEmptyCurrentAllocationConfiguration();
+    this.currentPickConfirmStrategy = this.createEmptyPickConfirmStrategy();
   }
 
-  createEmptyCurrentAllocationConfiguration(): AllocationConfiguration {
+  createEmptyPickConfirmStrategy(): PickConfirmStrategy {
     return {  
       warehouseId: this.warehouseService.getCurrentWarehouse().id, 
+      confirmItemFlag: false,
+      confirmLocationFlag: false,
+      confirmLocationCodeFlag: false,
+      confirmLpnFlag: false,
     }
   }
 
@@ -55,26 +73,14 @@ export class OutboundPickConfirmStrategyMaintenanceComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.id) { 
         this.isSpinning = true;
-        this.allocationConfigurationService.getAllocationConfiguration(params.id)
+        this.pickConfirmStrategyService.getPickConfirmStrategy(params.id)
           .subscribe(
           {
 
-            next: (allocationConfiguration) => {
-              this.currentAllocationConfiguration = allocationConfiguration;
+            next: (pickConfirmStrategy) => {
+              this.currentPickConfirmStrategy = pickConfirmStrategy;
 
-              this.newAllocationConfiguration = false;
-              this.selectedPickableUnitOfMeasures=[];
-              this.currentAllocationConfiguration.allocationConfigurationPickableUnitOfMeasures?.forEach(
-                pickableUnitOfMeasure => {
-                  let matchedUnitOfMeasure = this.validUnitOfMeasures.find(
-                    unitOfMeasure => unitOfMeasure.id === pickableUnitOfMeasure.unitOfMeasureId
-                  );
-                  if (matchedUnitOfMeasure) {
-  
-                    this.selectedPickableUnitOfMeasures = [...this.selectedPickableUnitOfMeasures, 
-                      matchedUnitOfMeasure];
-                  }
-              });
+              this.newPickConfirmStrategy = false; 
               
               this.isSpinning = false;
             }, 
@@ -86,14 +92,12 @@ export class OutboundPickConfirmStrategyMaintenanceComponent implements OnInit {
           
       }
       else {
-        
-        this.selectedPickableUnitOfMeasures=[];
-        this.newAllocationConfiguration = true;
+         
+        this.newPickConfirmStrategy = true;
       }
     }); 
     this.loadItemFamlies();
-    
-    this.loadInventoryStatus();
+     
 
     this.loadLocationGroupTypes();
     this.loadLocationGroups();
@@ -111,15 +115,7 @@ loadItemFamlies() {
     next: (itemFamilyRes) => this.validItemFamilies = itemFamilyRes 
   });
 
-}
-loadInventoryStatus() {
-  
-  this.inventoryStatusService.loadInventoryStatuses().subscribe(
-    {
-      next: (inventoryStatusRes) => this.validInventoryStatus = inventoryStatusRes 
-    });
-}
-
+} 
 loadLocationGroupTypes() {
 
   this.locationGroupTypeService.loadLocationGroupTypes().subscribe(
@@ -149,60 +145,22 @@ loadUnitOfMeasure() {
     this.stepIndex -= 1;
   }
   nextStep(): void {
-    this.stepIndex += 1;
-    if (this.stepIndex == 1) {
-      this.setupPickableUnitOfMeasure();
-    }
+    this.stepIndex += 1; 
 
   }
-
-  setupPickableUnitOfMeasure() {
-    if (!this.currentAllocationConfiguration.allocationConfigurationPickableUnitOfMeasures) {
-      this.currentAllocationConfiguration.allocationConfigurationPickableUnitOfMeasures = [];
-    }
-    // add the unit of measure to the configuration, if it doesn't exists 
-    // yet
-    this.selectedPickableUnitOfMeasures.forEach(
-      unitOfMeasure => {
-        if (!this.currentAllocationConfiguration.allocationConfigurationPickableUnitOfMeasures!.some(
-          pickableUnitOfMeasure => pickableUnitOfMeasure.unitOfMeasure.id === unitOfMeasure.id
-        )) {
-          this.currentAllocationConfiguration.allocationConfigurationPickableUnitOfMeasures = [
-            ...this.currentAllocationConfiguration.allocationConfigurationPickableUnitOfMeasures!, 
-            {
-              
-              unitOfMeasureId: unitOfMeasure.id!,
-              unitOfMeasure: unitOfMeasure,
-              warehouseId: this.warehouseService.getCurrentWarehouse().id,
-              warehouse: this.warehouseService.getCurrentWarehouse()
-            }
-
-          ]
-
-        }
-      }
-    );
-    
-    // remove the unit of measure to the configuration, if it  no long exists 
-    this.currentAllocationConfiguration.allocationConfigurationPickableUnitOfMeasures = 
-    this.currentAllocationConfiguration.allocationConfigurationPickableUnitOfMeasures.filter(
-      pickableUnitOfMeasure => this.selectedPickableUnitOfMeasures.some(
-        unitOfMeasure => unitOfMeasure.id === pickableUnitOfMeasure.unitOfMeasureId
-      )
-    );
-  }
+ 
   confirm(): void {
     this.isSpinning = true;
     
-    if (this.newAllocationConfiguration) {
+    if (this.newPickConfirmStrategy) {
 
-      this.allocationConfigurationService.addAllocationConfiguration(this.currentAllocationConfiguration)
+      this.pickConfirmStrategyService.addPickConfirmStrategy(this.currentPickConfirmStrategy)
         .subscribe({
-          next: (allocationConfigurationRes) => {
+          next: (pickConfirmStrategyRes) => {
             this.messageService.success(this.i18n.fanyi('message.save.complete'));
             setTimeout(() => {
               this.isSpinning = false;
-              this.router.navigateByUrl(`/outbound/allocation-configuration?sequence=${allocationConfigurationRes.sequence}`);
+              this.router.navigateByUrl(`/outbound/pick-confirm-strategy?sequence=${pickConfirmStrategyRes.sequence}`);
             }, 500);
           },
           error: () => this.isSpinning = false
@@ -213,13 +171,13 @@ loadUnitOfMeasure() {
     else {
       
 
-      this.allocationConfigurationService.changeAllocationConfiguration(this.currentAllocationConfiguration)
+      this.pickConfirmStrategyService.changePickConfirmStrategy(this.currentPickConfirmStrategy)
         .subscribe({
-          next: (allocationConfigurationRes) => { 
+          next: (pickConfirmStrategyRes) => { 
             this.messageService.success(this.i18n.fanyi('message.save.complete'));
             setTimeout(() => {
               this.isSpinning = false;
-              this.router.navigateByUrl(`/outbound/allocation-configuration?sequence=${allocationConfigurationRes.sequence}`);
+              this.router.navigateByUrl(`/outbound/pick-confirm-strategy?sequence=${pickConfirmStrategyRes.sequence}`);
             }, 500);
           },
           error: () => this.isSpinning = false
@@ -236,8 +194,8 @@ loadUnitOfMeasure() {
       {
         next: (itemsRes) => {
           if (itemsRes.length === 1) {
-            this.currentAllocationConfiguration.item = itemsRes[0];
-            this.currentAllocationConfiguration.itemId = itemsRes[0].id;
+            this.currentPickConfirmStrategy.item = itemsRes[0];
+            this.currentPickConfirmStrategy.itemId = itemsRes[0].id;
           }
         }
       }
@@ -253,8 +211,8 @@ loadUnitOfMeasure() {
           next: (itemsRes) => {
             if (itemsRes.length === 1) {
               console.log(`item is changed to ${itemsRes[0].name}`);
-              this.currentAllocationConfiguration.item = itemsRes[0];
-              this.currentAllocationConfiguration.itemId = itemsRes[0].id;
+              this.currentPickConfirmStrategy.item = itemsRes[0];
+              this.currentPickConfirmStrategy.itemId = itemsRes[0].id;
             }
           }
         }
@@ -269,8 +227,8 @@ loadUnitOfMeasure() {
         next: (locationRes) => {
           if (locationRes.length === 1) {
             console.log(`location is changed to ${locationRes[0].name}`);
-            this.currentAllocationConfiguration.location = locationRes[0];
-            this.currentAllocationConfiguration.locationId = locationRes[0].id!;
+            this.currentPickConfirmStrategy.location = locationRes[0];
+            this.currentPickConfirmStrategy.locationId = locationRes[0].id!;
           }
         }
       }
@@ -286,8 +244,8 @@ loadUnitOfMeasure() {
           next: (locationRes) => {
             if (locationRes.length === 1) {
               console.log(`location is changed to ${locationRes[0].name}`);
-              this.currentAllocationConfiguration.location = locationRes[0];
-              this.currentAllocationConfiguration.locationId = locationRes[0].id;
+              this.currentPickConfirmStrategy.location = locationRes[0];
+              this.currentPickConfirmStrategy.locationId = locationRes[0].id;
             }
           }
         }
@@ -298,30 +256,30 @@ loadUnitOfMeasure() {
   }  
   
   locationGroupTypeChanged() {
-    if (this.currentAllocationConfiguration.locationGroupTypeId) {
+    if (this.currentPickConfirmStrategy.locationGroupTypeId) {
       this.validLocationGroupTypes.filter(
-        locationGroupType => locationGroupType.id === this.currentAllocationConfiguration.locationGroupTypeId
+        locationGroupType => locationGroupType.id === this.currentPickConfirmStrategy.locationGroupTypeId
       ).forEach(
-        locationGroupType => this.currentAllocationConfiguration.locationGroupType = locationGroupType
+        locationGroupType => this.currentPickConfirmStrategy.locationGroupType = locationGroupType
       )
     }
   }
   locationGroupChanged() {
-    if (this.currentAllocationConfiguration.locationGroupId) {
+    if (this.currentPickConfirmStrategy.locationGroupId) {
       this.validLocationGroups.filter(
-        locationGroup => locationGroup.id === this.currentAllocationConfiguration.locationGroupId
+        locationGroup => locationGroup.id === this.currentPickConfirmStrategy.locationGroupId
       ).forEach(
-        locationGroup => this.currentAllocationConfiguration.locationGroup = locationGroup
+        locationGroup => this.currentPickConfirmStrategy.locationGroup = locationGroup
       )
     }
   }
   
   itemFamilyChanged() {
-    if (this.currentAllocationConfiguration.itemFamilyId) {
+    if (this.currentPickConfirmStrategy.itemFamilyId) {
       this.validItemFamilies.filter(
-        itemFamily => itemFamily.id === this.currentAllocationConfiguration.itemFamilyId
+        itemFamily => itemFamily.id === this.currentPickConfirmStrategy.itemFamilyId
       ).forEach(
-        itemFamily => this.currentAllocationConfiguration.itemFamily = itemFamily
+        itemFamily => this.currentPickConfirmStrategy.itemFamily = itemFamily
       )
     }
   } 
