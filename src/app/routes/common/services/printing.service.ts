@@ -1,10 +1,10 @@
-import { HttpParams } from '@angular/common/http';
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Lodop, LodopService } from '@delon/abc/lodop';
 import { _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Printer } from '../../report/models/printer';
@@ -18,6 +18,7 @@ import { WarehouseService } from '../../warehouse-layout/services/warehouse.serv
 import { PrintPageOrientation } from '../models/print-page-orientation.enum';
 import { PrintPageSize } from '../models/print-page-size.enum';
 import { PrintableBarcode } from '../models/printable-barcode';
+ 
 
 @Injectable({
   providedIn: 'root'
@@ -78,7 +79,7 @@ export class PrintingService {
       return allLocalPrinters;
     }
     for (var i = 0; i < localPrinterCount; i++) {
-      console.log(`printer index: ${i}, name: ${this.lodop!.GET_PRINTER_NAME(i)}`);
+      // console.log(`printer index: ${i}, name: ${this.lodop!.GET_PRINTER_NAME(i)}`);
       allLocalPrinters.push(this.lodop!.GET_PRINTER_NAME(i));
     }
     return allLocalPrinters;
@@ -157,8 +158,8 @@ export class PrintingService {
           else if (warehouseConfigRes?.printingStrategy == PrintingStrategy.LOCAL_PRINTER_LOCAL_DATA) {  
               
                 this.printFromLocal(
-                  name, fileName, type, printerIndex, printerName, 
-                  physicalCopyCount, pageOrientation, pageSize, findPrinterBy); 
+                  name, fileName, type, printerIndex, 
+                  physicalCopyCount, pageOrientation); 
           }
           
         }, 
@@ -262,15 +263,12 @@ export class PrintingService {
     name: string,
     fileName: string,
     type: ReportType,
-    printerIndex: number,
-    printerName: string,
+    printerIndex: number, 
     physicalCopyCount: number,
-    pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
-    pageSize: PrintPageSize = PrintPageSize.A4,
-    findPrinterBy?: string 
+    pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait, 
   ): void {
     
-    let url = `${environment.api.baseUrl}/resource/report-histories/download`;
+    let url = `${environment.api.baseUrl}resource/report-histories/download`;
 
     url = `${url}/${this.warehouseService.getCurrentWarehouse().companyId}`;
     url = `${url}/${this.warehouseService.getCurrentWarehouse().id}`;
@@ -278,20 +276,100 @@ export class PrintingService {
     url = `${url}/${fileName}`;
 
 
+    url = "https://localhost.lodop.net:8443/CLodopDemos/PDFDemo.pdf";
+
     console.log(`start to print remote file in orientation: ${pageOrientation}`);
     console.log(`START TO PRINT ${url}`);
+    
     const LODOP = this.lodop!;
     //LODOP.PRINT_INITA(0, 0, 810, 610, name);
     LODOP.PRINT_INIT(name);
-    LODOP.SET_PRINT_PAGESIZE(pageOrientation, 2100, 2970, pageSize);
-    LODOP.SET_PRINTER_INDEX(printerIndex);
-    LODOP.ADD_PRINT_PDF(-30, 0, '100%', '100%', url);
+    // LODOP.SET_PRINT_PAGESIZE(pageOrientation, 2100, 2970, pageSize);
+    LODOP.SET_PRINTER_INDEX(printerIndex); 
+    // LODOP.ADD_PRINT_TEXT(0, 0, '20', '20',"This is a test printing");
+    // LODOP.ADD_PRINT_PDF(0, 0, '100%', '100%', this.demoDownloadPDF(url));
+    // LODOP.ADD_PRINT_URL(0, 0, '100%', '100%', url);
+    // LODOP.ADD_PRINT_URL(0,0, "100%","100%","http://www.baidu.com ");
     // LODOP.ADD_PRINT_PDF(0,0,"100%","100%","http://localhost:8000/CLodopDemos/PDFDemo.pdf");
     // LODOP.ADD_PRINT_PDF(-30,0,"100%","100%","e:\\AAA.pdf");
     LODOP.SET_PRINT_COPIES(physicalCopyCount);
     LODOP.PRINT();
   }
 
+  // download the PDF to print from lodop
+  async lodopDownloadPDF(pdfUrl: string): Promise<string> { 
+    console.log(`start to download files from url \n${pdfUrl}`);
+    let headers = new HttpHeaders();
+    headers = headers.set('Accept', 'application/pdf');
+
+    let responseData = await firstValueFrom(this.http.get(pdfUrl));
+    console.log(`responseData \n${responseData}`);
+    let result = this.getBase64(responseData);
+
+    return result == null ? "" : result.toString();
+  }
+
+  demoDownloadPDF(pdfUrl: string)  {
+    let xhr : XMLHttpRequest = new XMLHttpRequest();
+    xhr.open('GET', pdfUrl, false); 
+    var arraybuffer = false;
+    try {
+      xhr.responseType = 'arraybuffer';
+      var arraybuffer = true;
+      console.log(`set arraybuffer to true`);
+    } 
+    catch(err) {
+      xhr.overrideMimeType('text/plain;charset=x-user-defined');
+      console.log(`set arraybuffer to false`);
+    }
+
+    xhr.send(null);
+    var data = xhr.response;
+    console.log(`get response for downloading PDF\n${data}`);
+
+    let dataArray = null;
+
+    if (typeof Uint8Array !== 'undefined') {
+      if (arraybuffer) {
+        dataArray = new Uint8Array(data);
+      }
+      else {
+        dataArray = new Uint8Array(data.length);
+        for (var i = 0; i < dataArray.length; i++) {
+          dataArray[i] = data.charCodeAt(i);
+        }
+      }
+      
+       console.log(`convert the data into Uint8Array\n${dataArray}`);
+    }
+    
+    return this.getBase64(dataArray);
+  }
+
+  getBase64(dataArray: any) {
+    console.log(`start to process base 64 for the data array\n${dataArray}`);
+
+    var digits = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
+    var strData = '';
+    for (var i= 0, ii = dataArray.length; i < ii; i += 3)  {
+      if (isNaN(dataArray[i]))  {
+        break;
+      }
+      var b1 = dataArray[i] & 0xff;
+      var b2 = dataArray[i + 1] & 0xff;
+      var b3 = dataArray[i + 2] & 0xff;       
+      var d1 = b1 >> 2;
+      var d2 = ((b1 & 3) << 4) | (b2 >> 4);
+      var d3 = i + 1 < ii ? ((b2 & 0xf) << 2) | (b3 >> 6) : 64;
+      var d4 = i + 2 < ii ? b3 & 0x3f : 64;
+      strData = digits.substring(d1, d1 + 1) + digits.substring(d2, d2 + 1)  +
+           digits.substring(d3, d3 + 1) + digits.substring(d4, d4 + 1);
+    }
+  
+    console.log(`result is saved into base 64 format\n${strData}`);
+    return strData;
+    
+  }
   print(
     name: string,
     pages: string[],

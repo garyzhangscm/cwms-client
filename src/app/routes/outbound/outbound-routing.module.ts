@@ -40,6 +40,8 @@ import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
+import { OutboundPickConfirmStrategyComponent } from './pick-confirm-strategy/pick-confirm-strategy.component';
+import { OutboundPickConfirmStrategyMaintenanceComponent } from './pick-confirm-strategy-maintenance/pick-confirm-strategy-maintenance.component';
 
 const routes: Routes = [
   { path: 'order', component: OutboundOrderComponent, 
@@ -325,12 +327,79 @@ const routes: Routes = [
       guard_url: '/exception/403'
     }
   },
-  { path: 'hualei-configuration', component: OutboundHualeiConfigurationComponent },
-  { path: 'ship-by-hualei', component: OutboundShipByHualeiComponent },
-  { path: 'parcel-package/maintenance', component: OutboundParcelPackageMaintenanceComponent },
-  { path: 'order/walmart-shipping-carton-label', component: OutboundOrderWalmartShippingCartonLabelComponent },
-  { path: 'outbound-configuration', component: OutboundOutboundConfigurationComponent }, 
-  { path: 'order/target-shipping-carton-label', component: OutboundOrderTargetShippingCartonLabelComponent }];
+  { path: 'hualei-configuration', component: OutboundHualeiConfigurationComponent,  
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/outbound/hualei-configuration' , 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'ship-by-hualei', component: OutboundShipByHualeiComponent,  
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/outbound/ship-by-hualei' , 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'parcel-package/maintenance', component: OutboundParcelPackageMaintenanceComponent ,  
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/outbound/parcel-package/maintenance' , 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'order/walmart-shipping-carton-label', component: OutboundOrderWalmartShippingCartonLabelComponent ,  
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/outbound/order/walmart-shipping-carton-label' , 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'outbound-configuration', component: OutboundOutboundConfigurationComponent ,  
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/outbound/outbound-configuration' , 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  }, 
+  { path: 'order/target-shipping-carton-label', component: OutboundOrderTargetShippingCartonLabelComponent,  
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/outbound/order/target-shipping-carton-label' , 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    } 
+  },
+  { path: 'pick-confirm-strategy', component: OutboundPickConfirmStrategyComponent ,  
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/outbound/pick-confirm-strategy' , 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'pick-confirm-strategy/maintenance', component: OutboundPickConfirmStrategyMaintenanceComponent,  
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/outbound/pick-confirm-strategy/maintenance' , 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    } 
+  }
+  ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

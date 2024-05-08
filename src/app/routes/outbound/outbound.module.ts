@@ -57,6 +57,8 @@ import { OutboundStopComponent } from './stop/stop.component';
 import { OutboundTrailerComponent } from './trailer/trailer.component';
 import { OutboundWaveMaintenanceComponent } from './wave-maintenance/wave-maintenance.component';
 import { OutboundWaveComponent } from './wave/wave.component';
+import { OutboundPickConfirmStrategyComponent } from './pick-confirm-strategy/pick-confirm-strategy.component';
+import { OutboundPickConfirmStrategyMaintenanceComponent } from './pick-confirm-strategy-maintenance/pick-confirm-strategy-maintenance.component';
 
 const COMPONENTS: Array<Type<void>> = [
   OutboundOrderComponent,
@@ -96,7 +98,9 @@ const COMPONENTS: Array<Type<void>> = [
   OutboundParcelPackageMaintenanceComponent,
   OutboundOrderWalmartShippingCartonLabelComponent,
   OutboundOutboundConfigurationComponent ,
-  OutboundOrderTargetShippingCartonLabelComponent];
+  OutboundOrderTargetShippingCartonLabelComponent,
+  OutboundPickConfirmStrategyComponent,
+  OutboundPickConfirmStrategyMaintenanceComponent];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
