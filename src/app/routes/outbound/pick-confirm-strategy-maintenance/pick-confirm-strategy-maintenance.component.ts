@@ -51,7 +51,7 @@ export class OutboundPickConfirmStrategyMaintenanceComponent implements OnInit {
     private locationService: LocationService,
     private unitOfMeasureService: UnitOfMeasureService,
     private activatedRoute: ActivatedRoute) {
-    this.pageTitle = this.i18n.fanyi('menu.main.outbound.pick-confirm-strategy-maintenance');
+    this.pageTitle = this.i18n.fanyi('pick-confirm-strategy');
 
     this.currentPickConfirmStrategy = this.createEmptyPickConfirmStrategy();
   }

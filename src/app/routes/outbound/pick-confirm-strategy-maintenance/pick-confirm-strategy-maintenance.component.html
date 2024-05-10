@@ -84,10 +84,6 @@
             </nz-form-item>
           </div> 
         </div>
-    
-    </nz-card>
-    <nz-card  nzTitle="{{'filter' | i18n}}"  >
-        
       <div nz-row [nzGutter]="24">
         <div nz-col [nzSpan]="8">
             <nz-form-item>
@@ -159,7 +155,24 @@
           </nz-form-control>
         </nz-form-item>
       </div>
-          </div>
+      </div>
+    </nz-card>
+    
+    <nz-card  nzTitle="{{'filter' | i18n}}"  >
+        
+        <label nz-checkbox [(ngModel)]="currentPickConfirmStrategy.confirmItemFlag">
+            <span>{{'confirmItemFlag' | i18n}}</span>
+        </label>
+        <label nz-checkbox [(ngModel)]="currentPickConfirmStrategy.confirmLocationFlag">
+            <span>{{'confirmLocationFlag' | i18n}}</span>
+        </label>
+        <label nz-checkbox [(ngModel)]="currentPickConfirmStrategy.confirmLocationCodeFlag">
+            <span>{{'confirmLocationCodeFlag' | i18n}}</span>
+        </label>
+        <label nz-checkbox [(ngModel)]="currentPickConfirmStrategy.confirmLpnFlag">
+            <span>{{'confirmLpnFlag' | i18n}}</span>
+        </label>
+    
     </nz-card>
   
      
@@ -179,17 +192,25 @@
           {{currentPickConfirmStrategy.item?.name}}</nz-descriptions-item>
         <nz-descriptions-item nzTitle="{{ 'item-family' | i18n}}">
             {{currentPickConfirmStrategy.itemFamily?.description}}</nz-descriptions-item>  
+            <nz-descriptions-item nzTitle="{{ 'location' | i18n}}">
+              {{currentPickConfirmStrategy.location?.name}}</nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'location-group' | i18n}}">
+                {{currentPickConfirmStrategy.locationGroup?.name}}</nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'location-group-type' | i18n}}">
+                {{currentPickConfirmStrategy.locationGroupType?.name}}</nz-descriptions-item>  
+            <nz-descriptions-item nzTitle="{{ 'unit-of-measure' | i18n}}"> 
+                {{ currentPickConfirmStrategy.unitOfMeasure?.name}} </nz-descriptions-item>  
       </nz-descriptions>
       
       <nz-descriptions nzTitle="{{ 'filter' | i18n}}" nzBordered>
-        <nz-descriptions-item nzTitle="{{ 'location' | i18n}}">
-          {{currentPickConfirmStrategy.location?.name}}</nz-descriptions-item>
-        <nz-descriptions-item nzTitle="{{ 'location-group' | i18n}}">
-            {{currentPickConfirmStrategy.locationGroup?.name}}</nz-descriptions-item> 
-        <nz-descriptions-item nzTitle="{{ 'location-group-type' | i18n}}">
-            {{currentPickConfirmStrategy.locationGroupType?.name}}</nz-descriptions-item>  
-        <nz-descriptions-item nzTitle="{{ 'unit-of-measure' | i18n}}"> 
-            {{ currentPickConfirmStrategy.unitOfMeasure?.name}} </nz-descriptions-item>  
+        <nz-descriptions-item nzTitle="{{ 'confirmItemFlag' | i18n}}">
+          {{currentPickConfirmStrategy.confirmItemFlag}}</nz-descriptions-item>
+          <nz-descriptions-item nzTitle="{{ 'confirmLocationFlag' | i18n}}">
+            {{currentPickConfirmStrategy.confirmLocationFlag}}</nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'confirmLocationCodeFlag' | i18n}}">
+              {{currentPickConfirmStrategy.confirmLocationCodeFlag}}</nz-descriptions-item>
+              <nz-descriptions-item nzTitle="{{ 'confirmLpnFlag' | i18n}}">
+                {{currentPickConfirmStrategy.confirmLpnFlag}}</nz-descriptions-item>
       </nz-descriptions>
   </nz-card>
 
