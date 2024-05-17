@@ -133,7 +133,7 @@ export class PrintingService {
       {
         next: (warehouseConfigRes) => {
 
-          console.log(`warehouseConfigRes: ${warehouseConfigRes?.printingStrategy}`);
+          console.log(`warehouseConfigRes: ${JSON.stringify(warehouseConfigRes)}`);
 
           // by default, we will print from the server
           if (warehouseConfigRes?.printingStrategy == null ||
@@ -276,18 +276,19 @@ export class PrintingService {
     url = `${url}/${fileName}`;
 
 
-    url = "https://localhost.lodop.net:8443/CLodopDemos/PDFDemo.pdf";
+    // url = "https://localhost.lodop.net:8443/CLodopDemos/PDFDemo.pdf";
 
     console.log(`start to print remote file in orientation: ${pageOrientation}`);
     console.log(`START TO PRINT ${url}`);
     
     const LODOP = this.lodop!;
+    LODOP.SET_LICENSES("","BE2FE2DFCE6366AF345F088D1D910455F10","","");
     //LODOP.PRINT_INITA(0, 0, 810, 610, name);
     LODOP.PRINT_INIT(name);
     // LODOP.SET_PRINT_PAGESIZE(pageOrientation, 2100, 2970, pageSize);
     LODOP.SET_PRINTER_INDEX(printerIndex); 
     // LODOP.ADD_PRINT_TEXT(0, 0, '20', '20',"This is a test printing");
-    // LODOP.ADD_PRINT_PDF(0, 0, '100%', '100%', this.demoDownloadPDF(url));
+    LODOP.ADD_PRINT_PDF(0, 0, '100%', '100%', this.demoDownloadPDF(url));
     // LODOP.ADD_PRINT_URL(0, 0, '100%', '100%', url);
     // LODOP.ADD_PRINT_URL(0,0, "100%","100%","http://www.baidu.com ");
     // LODOP.ADD_PRINT_PDF(0,0,"100%","100%","http://localhost:8000/CLodopDemos/PDFDemo.pdf");
@@ -362,7 +363,7 @@ export class PrintingService {
       var d2 = ((b1 & 3) << 4) | (b2 >> 4);
       var d3 = i + 1 < ii ? ((b2 & 0xf) << 2) | (b3 >> 6) : 64;
       var d4 = i + 2 < ii ? b3 & 0x3f : 64;
-      strData = digits.substring(d1, d1 + 1) + digits.substring(d2, d2 + 1)  +
+      strData += digits.substring(d1, d1 + 1) + digits.substring(d2, d2 + 1)  +
            digits.substring(d3, d3 + 1) + digits.substring(d4, d4 + 1);
     }
   
