@@ -20,6 +20,8 @@ import { WarehouseLayoutWarehouseLocationComponent } from './warehouse-location/
 import { WarehouseLayoutWarehouseMaintenanceConfirmComponent } from './warehouse-maintenance-confirm/warehouse-maintenance-confirm.component';
 import { WarehouseLayoutWarehouseMaintenanceComponent } from './warehouse-maintenance/warehouse-maintenance.component';
 import { WarehouseLayoutWarehouseComponent } from './warehouse/warehouse.component';
+import { WarehouseLayoutPickZoneComponent } from './pick-zone/pick-zone.component';
+import { WarehouseLayoutPickZoneMaintenanceComponent } from './pick-zone-maintenance/pick-zone-maintenance.component';
 
 const COMPONENTS: Array<Type<void>> = [
   WarehouseLayoutWarehouseComponent,
@@ -33,7 +35,9 @@ const COMPONENTS: Array<Type<void>> = [
   WarehouseLayoutWarehouseLayoutMaintenanceComponent,
   WarehouseLayoutWarehouseConfigurationComponent,
   WarehouseLayoutLocationMaintenanceComponent,
-  WarehouseLayoutLocationDashboardComponent];
+  WarehouseLayoutLocationDashboardComponent,
+  WarehouseLayoutPickZoneComponent,
+  WarehouseLayoutPickZoneMaintenanceComponent];
 
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 

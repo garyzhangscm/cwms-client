@@ -14,6 +14,8 @@ import { WarehouseLayoutWarehouseLocationComponent } from './warehouse-location/
 import { WarehouseLayoutWarehouseMaintenanceConfirmComponent } from './warehouse-maintenance-confirm/warehouse-maintenance-confirm.component';
 import { WarehouseLayoutWarehouseMaintenanceComponent } from './warehouse-maintenance/warehouse-maintenance.component';
 import { WarehouseLayoutWarehouseComponent } from './warehouse/warehouse.component';
+import { WarehouseLayoutPickZoneComponent } from './pick-zone/pick-zone.component';
+import { WarehouseLayoutPickZoneMaintenanceComponent } from './pick-zone-maintenance/pick-zone-maintenance.component';
 
 const routes: Routes = [
   { path: 'warehouse', component: WarehouseLayoutWarehouseComponent  , 
@@ -148,7 +150,17 @@ const routes: Routes = [
       guard_url: '/exception/403'
     }
   }, 
-  ];
+  ,
+  { path: 'pick-zone', component: WarehouseLayoutPickZoneComponent  , 
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/warehouse-layout/pick-zone', 'admin', 'system-admin' ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    }
+  },
+  { path: 'pick-zone-maintenance', component: WarehouseLayoutPickZoneMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
