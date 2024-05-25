@@ -37,7 +37,9 @@ export class WarehouseLayoutPickZoneMaintenanceComponent implements OnInit {
     return {  
       warehouse: this.warehouseService.getCurrentWarehouse()!,
       name: "",
-      description: ""
+      description: "",
+      pickable: false,
+      allowCartonization: false,
     }
   }
 
