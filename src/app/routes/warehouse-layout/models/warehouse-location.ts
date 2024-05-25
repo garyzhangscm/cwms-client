@@ -1,4 +1,5 @@
 import { LocationGroup } from './location-group';
+import { PickZone } from './pick-zone';
 
 export interface WarehouseLocation {
   id?: number;
@@ -23,6 +24,7 @@ export interface WarehouseLocation {
   currentVolume?: number;
   pendingVolume?: number;
   locationGroup?: LocationGroup;
+  pickZone?: PickZone;
   enabled?: boolean;
   locked?: boolean;
   reservedCode?: string;

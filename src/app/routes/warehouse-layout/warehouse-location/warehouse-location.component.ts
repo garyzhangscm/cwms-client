@@ -52,6 +52,17 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
       filterFn: null,
       showFilter: false,
       width: '200px'
+    },{
+      name: 'pick-zone',
+      showSort: true,
+      sortOrder: null,
+      sortFn: (a: WarehouseLocation, b: WarehouseLocation) => this.utilService.compareNullableObjField(a.pickZone, b.pickZone, 'name'),
+      sortDirections: ['ascend', 'descend'],
+      filterMultiple: true,
+      listOfFilter: [],
+      filterFn: null,
+      showFilter: false,
+      width: '200px'
     }, {
       name: 'location.aisle',
       showSort: true,
