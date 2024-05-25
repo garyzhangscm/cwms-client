@@ -149,8 +149,7 @@ const routes: Routes = [
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
-  }, 
-  ,
+  },  
   { path: 'pick-zone', component: WarehouseLayoutPickZoneComponent  , 
     canActivate: [ACLGuard], 
     data: { 
@@ -160,7 +159,7 @@ const routes: Routes = [
       guard_url: '/exception/403'
     }
   },
-  { path: 'pick-zone-maintenance', component: WarehouseLayoutPickZoneMaintenanceComponent }];
+  { path: 'pick-zone/maintenance', component: WarehouseLayoutPickZoneMaintenanceComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
