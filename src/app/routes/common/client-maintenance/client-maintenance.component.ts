@@ -65,7 +65,7 @@ export class CommonClientMaintenanceComponent implements OnInit {
 
               this.currentClient = clientRes;
               this.newClient = false;
-              this.clientNameValidateStatus === 'success'
+              this.clientNameValidateStatus = 'success';
               if (clientRes.warehouseId) {
   
                 this.warehouseSpecific = true;
@@ -132,6 +132,20 @@ export class CommonClientMaintenanceComponent implements OnInit {
         next:() =>
         {
           
+          this.messageService.success(this.i18n.fanyi('message.action.success'));
+          setTimeout(() => {
+            this.isSpinning = false;
+            this.router.navigateByUrl(`/common/client?name=${this.currentClient.name}`);
+          }, 500);
+        }, 
+        error: () => this.isSpinning = false
+      });
+    }
+    else {
+      
+      this.clientService.changeClient(this.currentClient!).subscribe({
+        next:() =>
+        {
           this.messageService.success(this.i18n.fanyi('message.action.success'));
           setTimeout(() => {
             this.isSpinning = false;

@@ -8,8 +8,10 @@ import { Client } from '../../common/models/client';
 import { Customer } from '../../common/models/customer';
 import { Unit } from '../../common/models/unit';
 import { UnitType } from '../../common/models/unit-type';
+import { ClientService } from '../../common/services/client.service';
 import { CustomerService } from '../../common/services/customer.service';
 import { UnitService } from '../../common/services/unit.service';
+import { LocalCacheService } from '../../util/services/local-cache.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ListPickConfiguration } from '../models/list-pick-configuration'; 
@@ -40,6 +42,8 @@ export class OutboundListPickConfigurationMaintenanceComponent implements OnInit
   defaultWeightUnit?: Unit;
   validCustomers: Customer[] = [];
 
+  threePartyLogisticsFlag = false;
+
   constructor( 
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
@@ -49,8 +53,10 @@ export class OutboundListPickConfigurationMaintenanceComponent implements OnInit
     private messageService: NzMessageService,
     private warehouseService: WarehouseService,
     private customerService: CustomerService,
+    private clientService: ClientService,
     private router: Router,
-    private unitService: UnitService
+    private unitService: UnitService,
+    private localCacheService: LocalCacheService,
   ) {}
 
   ngOnInit(): void { 
@@ -59,6 +65,10 @@ export class OutboundListPickConfigurationMaintenanceComponent implements OnInit
     this.titleService.setTitle(this.i18n.fanyi('modify'));
     this.pageTitle = this.i18n.fanyi('modify');
      
+    this.loadValidCustomers();
+    this.loadUnits();
+    this.loadClients();
+
     this.activatedRoute.queryParams.subscribe(params => {
           if (params.id) {
             this.listPickConfigurationService.get(params.id).subscribe(
@@ -79,10 +89,34 @@ export class OutboundListPickConfigurationMaintenanceComponent implements OnInit
           }
         }); 
 
-        this.loadValidCustomers();
-        this.loadUnits();
  
   }
+
+  loadClients() { 
+    
+    this.isSpinning = true;
+    
+    this.localCacheService.getWarehouseConfiguration().subscribe({
+      next: (warehouseConfigRes) => {
+ 
+        if (warehouseConfigRes && warehouseConfigRes.threePartyLogisticsFlag) {
+          this.threePartyLogisticsFlag = true;
+        }
+        else {
+          this.threePartyLogisticsFlag = false;
+        }
+        if (this.threePartyLogisticsFlag) {
+          this.clientService.getClients().subscribe({
+            next: (clientRes) => this.clients = clientRes
+            
+          });
+        } 
+        this.isSpinning = false;
+      }, 
+      error: () => this.isSpinning = false
+    });
+    
+  } 
   
   loadUnits() {
     this.unitService.loadUnits().subscribe({

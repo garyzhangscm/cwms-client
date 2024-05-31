@@ -8,4 +8,5 @@ export enum ListPickGroupRuleType {
   BY_TRAILER_APPOINTMENT = 'BY_TRAILER_APPOINTMENT',
   BY_ITEM = 'BY_ITEM',
   BY_WAVE = 'BY_WAVE',
+  BY_PICK_ZONE = 'BY_PICK_ZONE',
 }

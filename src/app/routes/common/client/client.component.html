@@ -36,152 +36,41 @@
 
     <!-- Table to Display the result  -->
     <div class="search-result-list">
-      <nz-table [nzScroll]="{ x: '100vw' }" #rowSelectionTable nzShowSizeChanger [nzData]="listOfDisplayClients"
-        [nzFooter]="tableFoot">
-        <thead>
-          <tr>
-            <th [nzSelections]="listOfSelection" [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
-              (nzCheckedChange)="onAllChecked($event)" nzWidth="60px"></th>
-            <th *ngFor="let column of listOfColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
-              [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
-              [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
-              {{ column.name | i18n }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let data of rowSelectionTable.data">
-            <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)"></td>
+        
+      <st #st [data]="clients" [columns]="clientTableColumns" [footer]="tableFoot"   >
+           
+        <ng-template st-row="addressColumn" let-client let-index="index"> 
+       
+          <div>{{client.contactor?.firstname}} - {{client.contactor?.lastname}}</div>
+          <address>  
+            {{client.line1}} <br>
+            {{client.line2}} <br>
+            {{client.city}},  {{client.state}} <br>
+            {{client.postcode}} <br>
+            </address>
 
-            <td>
-              <div class="editable-cell" *ngIf="editId !== data.id!|| editCol != 'name'; else editNameTpl">
-                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'name', $event)">
-                  {{ data.name }}
-                </div>
-              </div>
-              <ng-template #editNameTpl>
-                <input type="text" nz-input [(ngModel)]="data.name" (blur)="changeClient(data)" />
-              </ng-template>
-            </td>
-            <td>
-              <div class="editable-cell" *ngIf="editId !== data.id! || editCol != 'description'; else editDescTpl">
-                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'description', $event)">
-                  {{ data.description }}
-                </div>
-              </div>
-              <ng-template #editDescTpl>
-                <input type="text" nz-input [(ngModel)]="data.description" (blur)="changeClient(data)" />
-              </ng-template>
-            </td>
-            <td>
-              <div class="editable-cell"
-                *ngIf="editId !== data.id! || editCol != 'contactorFirstname'; else editcontactorFirstnameTpl">
-                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'contactorFirstname', $event)">
-                  {{ data.contactorFirstname }}
-                </div>
-              </div>
-              <ng-template #editcontactorFirstnameTpl>
-                <input type="text" nz-input [(ngModel)]="data.contactorFirstname" (blur)="changeClient(data)" />
-              </ng-template>
-            </td>
-            <td>
-              <div class="editable-cell"
-                *ngIf="editId !== data.id! || editCol != 'contactorLastname'; else editcontactorLastnameTpl">
-                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'contactorLastname', $event)">
-                  {{ data.contactorLastname }}
-                </div>
-              </div>
-              <ng-template #editcontactorLastnameTpl>
-                <input type="text" nz-input [(ngModel)]="data.contactorLastname" (blur)="changeClient(data)" />
-              </ng-template>
-            </td>
-            <td>
-              <div class="editable-cell"
-                *ngIf="editId !== data.id! || editCol != 'addressCountry'; else editAddressCountryTpl">
-                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'addressCountry', $event)">
-                  {{ data.addressCountry }}
-                </div>
-              </div>
-              <ng-template #editAddressCountryTpl>
-                <input type="text" nz-input [(ngModel)]="data.addressCountry" (blur)="changeClient(data)" />
-              </ng-template>
-            </td>
-            <td>
-              <div class="editable-cell" *ngIf="editId !== data.id! || editCol != 'addressState'; else editAddressStateTpl">
-                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'addressState', $event)">
-                  {{ data.addressState }}
-                </div>
-              </div>
-              <ng-template #editAddressStateTpl>
-                <input type="text" nz-input [(ngModel)]="data.addressState" (blur)="changeClient(data)" />
-              </ng-template>
-            </td>
-            <td>
-              <div class="editable-cell"
-                *ngIf="editId !== data.id! || editCol != 'addressCounty'; else editAddressCountyTpl">
-                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'addressCounty', $event)">
-                  {{ data.addressCounty }}
-                </div>
-              </div>
-              <ng-template #editAddressCountyTpl>
-                <input type="text" nz-input [(ngModel)]="data.addressCounty" (blur)="changeClient(data)" />
-              </ng-template>
-            </td>
-            <td>
-              <div class="editable-cell" *ngIf="editId !== data.id! || editCol != 'addressCity'; else editAddressCityTpl">
-                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'addressCity', $event)">
-                  {{ data.addressCity }}
-                </div>
-              </div>
-              <ng-template #editAddressCityTpl>
-                <input type="text" nz-input [(ngModel)]="data.addressCity" (blur)="changeClient(data)" />
-              </ng-template>
-            </td>
-            <td>
-              <div class="editable-cell"
-                *ngIf="editId !== data.id! || editCol != 'addressDistrict'; else editAddressStreetTpl">
-                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'addressDistrict', $event)">
-                  {{ data.addressDistrict }}
-                </div>
-              </div>
-              <ng-template #editAddressStreetTpl>
-                <input type="text" nz-input [(ngModel)]="data.addressDistrict" (blur)="changeClient(data)" />
-              </ng-template>
-            </td>
-            <td>
-              <div class="editable-cell" *ngIf="editId !== data.id! || editCol != 'addressLine1'; else editAddressLine1Tpl">
-                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'addressLine1', $event)">
-                  {{ data.addressLine1 }}
-                </div>
-              </div>
-              <ng-template #editAddressLine1Tpl>
-                <input type="text" nz-input [(ngModel)]="data.addressLine1" (blur)="changeClient(data)" />
-              </ng-template>
-            </td>
-            <td>
-              <div class="editable-cell" *ngIf="editId !== data.id! || editCol != 'addressLine2'; else editAddressLine2Tpl">
-                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'addressLine2', $event)">
-                  {{ data.addressLine2 }}
-                </div>
-              </div>
-              <ng-template #editAddressLine2Tpl>
-                <input type="text" nz-input [(ngModel)]="data.addressLine2" (blur)="changeClient(data)" />
-              </ng-template>
-            </td>
-            <td>
-              <div class="editable-cell"
-                *ngIf="editId !== data.id! || editCol != 'addressPostcode'; else editAddressPostcodeTpl">
-                <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'addressPostcode', $event)">
-                  {{ data.addressPostcode }}
-                </div>
-              </div>
-              <ng-template #editAddressPostcodeTpl>
-                <input type="text" nz-input [(ngModel)]="data.addressPostcode" (blur)="changeClient(data)" />
-              </ng-template>
-            </td>
-          </tr>
-        </tbody>
-      </nz-table>
+        </ng-template>
+        <ng-template st-row="actionColumn" let-client let-index="index"> 
+        
+          <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary"  >
+              {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu> 
+                <li nz-menu-item  >
+                  
+                  <a routerLink="/common/client-maintenance"
+                  [queryParams]="{id : client.id}" routerLinkActive="active">
+                      {{ 'modify' | i18n }}</a>
+                      
+                </li>
+                <li nz-menu-item  >
+                  <a  (click)="removeClient(client.id)">{{ 'remove' | i18n }}</a>
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+        </ng-template>
+
+      </st> 
     </div>
 
 
@@ -190,9 +79,7 @@
         <a nz-button nzType="primary" routerLink="/common/client-maintenance" routerLinkActive="active"
            >
           {{'add' | i18n}}
-        </a>
-
-        <button nz-button nzDanger (click)="removeSelectedClients()">{{'delete' | i18n}}</button>
+        </a> 
       </div>
     </ng-template>
   </nz-spin>

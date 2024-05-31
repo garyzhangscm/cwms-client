@@ -75,8 +75,8 @@ export class ClientService {
     return this.http.put(url, client).pipe(map(res => res.data));
   }
 
-  removeClient(client: Client): Observable<Client> {
-    const url = `common/clients/${  client.id}`;
+  removeClient(clientId: number): Observable<Client> {
+    const url = `common/clients/${clientId}`;
     return this.http.delete(url).pipe(map(res => res.data));
   }
 
