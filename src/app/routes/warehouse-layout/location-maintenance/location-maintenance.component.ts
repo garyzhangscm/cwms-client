@@ -3,18 +3,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
-
-import { AlertTemplate } from '../../alert/models/alert-template';
+ 
 import { Unit } from '../../common/models/unit';
 import { UnitType } from '../../common/models/unit-type';
 import { UnitService } from '../../common/services/unit.service';
-import { LocationGroup } from '../models/location-group';
-import { LocationGroupType } from '../models/location-group-type';
+import { LocationGroup } from '../models/location-group'; 
+import { PickZone } from '../models/pick-zone';
 import { WarehouseLocation } from '../models/warehouse-location';
-import { CompanyService } from '../services/company.service';
-import { LocationGroupTypeService } from '../services/location-group-type.service';
+import { CompanyService } from '../services/company.service'; 
 import { LocationGroupService } from '../services/location-group.service';
 import { LocationService } from '../services/location.service';
+import { PickZoneService } from '../services/pick-zone.service';
 import { WarehouseService } from '../services/warehouse.service';
 
 @Component({
@@ -36,13 +35,13 @@ export class WarehouseLayoutLocationMaintenanceComponent implements OnInit {
   defaultVolumeUnit?: Unit;
 
   locationGroups: LocationGroup[] = [];
+  pickZones: PickZone[] = [];
   
   constructor( 
     private activatedRoute: ActivatedRoute,
-    private titleService: TitleService,
-    private companyService: CompanyService,  
-    private warehouseService: WarehouseService,  
+    private titleService: TitleService, 
     private locationGroupService: LocationGroupService,
+    private pickZoneService: PickZoneService,
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private locationService: LocationService,
     private messageService: NzMessageService,
@@ -111,6 +110,10 @@ export class WarehouseLayoutLocationMaintenanceComponent implements OnInit {
     this.locationGroupService.loadLocationGroups().subscribe((locationGroupList: LocationGroup[]) => {
       this.locationGroups = locationGroupList;
     });
+    this.pickZoneService.loadPickZones().subscribe((pickZoneRes: PickZone[]) => {
+      this.pickZones = pickZoneRes;
+    });
+ 
  
   }
    
@@ -212,5 +215,11 @@ export class WarehouseLayoutLocationMaintenanceComponent implements OnInit {
     let locationGroup = this.locationGroups.find(locationGroup => locationGroup.id == locationGroupId);
     console.log(`location group is changed to ${locationGroup?.name}`)
     this.currentLocation.locationGroup = locationGroup;
+  }
+  
+  pickZoneChanged(pickZoneId: number) {
+    let pickZone = this.pickZones.find(pickZone => pickZone.id == pickZoneId);
+    console.log(`pick zone is changed to ${pickZone?.name}`)
+    this.currentLocation.pickZone = pickZone;
   }
 }

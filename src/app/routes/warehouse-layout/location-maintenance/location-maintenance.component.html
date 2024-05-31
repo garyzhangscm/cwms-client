@@ -223,6 +223,21 @@
               </nz-form-control>
             </nz-form-item>
         </div>
+        
+    
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="8">
+              {{ 'pick-zone' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <nz-select [ngModel]="currentLocation.pickZone?.id" (ngModelChange)="pickZoneChanged($event)">
+                <nz-option *ngFor="let pickZone of pickZones" [nzLabel]="pickZone.name!"
+                  [nzValue]="pickZone.id"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
     </div>
 
     <div nz-row [nzGutter]="24">
