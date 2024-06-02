@@ -268,8 +268,11 @@ export class PrintingService {
     pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait, 
   ): void {
     
-    let url = `${environment.api.baseUrl}resource/report-histories/download`;
-
+    // NOTE: use preview instead of download, which will download the label file
+    // as PDF file as well. in download mode, label file will be download as 
+    // ZPL file. LODOP can't process ZPL file
+    // let url = `${environment.api.baseUrl}resource/report-histories/download`;
+    let url = `${environment.api.baseUrl}resource/report-histories/preview`;
     url = `${url}/${this.warehouseService.getCurrentWarehouse().companyId}`;
     url = `${url}/${this.warehouseService.getCurrentWarehouse().id}`;
     url = `${url}/${type}`;

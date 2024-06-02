@@ -60,7 +60,10 @@ export class ReportService {
     const labelReportTypes = [
       ReportType.LPN_LABEL, 
       ReportType.PRODUCTION_LINE_ASSIGNMENT_LABEL, 
-      ReportType.RECEIVING_LPN_LABEL];
+      ReportType.RECEIVING_LPN_LABEL, 
+      ReportType.PARCEL_LABEL,
+      ReportType.WALMART_SHIPPING_CARTON_LABEL,
+      ReportType.TARGET_SHIPPING_CARTON_LABEL];
     return labelReportTypes.includes(reportType);
   }
 
