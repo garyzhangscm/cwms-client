@@ -20,6 +20,7 @@ import { IntegrationIntegrationDataWorkOrderConfirmComponent } from './integrati
 import { IntegrationIntegrationDataWorkOrderComponent } from './integration-data-work-order/integration-data-work-order.component';
 import { IntegrationIntegrationDataComponent } from './integration-data/integration-data.component';
 import { IntegrationTiktokSellerShopIntegrationConfigurationComponent } from './tiktok-seller-shop-integration-configuration/tiktok-seller-shop-integration-configuration.component';
+import { IntegrationShopifyIntegrationConfigurationComponent } from './shopify-integration-configuration/shopify-integration-configuration.component';
 
 const routes: Routes = [
   { path: 'integration-data', component: IntegrationIntegrationDataComponent , 
@@ -177,7 +178,8 @@ const routes: Routes = [
         } as ACLGuardType,
         guard_url: '/exception/403'
       }
-  }];
+  },
+  { path: 'shopify-integration-configuration', component: IntegrationShopifyIntegrationConfigurationComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
