@@ -1078,7 +1078,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           event.physicalCopyCount, PrintPageOrientation.Landscape, 
           PrintPageSize.Letter,
           workOrder.number,
-          printResult);
+          printResult, event.collated);
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("report.print.printed"));
       },
@@ -1277,7 +1277,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           PrintPageOrientation.Portrait,
           PrintPageSize.Letter,
           productionLineAssignment.productionLine.name, 
-          printResult);
+          printResult, event.collated);
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("report.print.printed"));
       },
@@ -1329,7 +1329,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           PrintPageOrientation.Portrait,
           PrintPageSize.Letter,
           productionLineAssignment.productionLine.name, 
-          printResult);
+          printResult, event.collated);
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("report.print.printed"));
       },
@@ -1600,7 +1600,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
           PrintPageOrientation.Landscape,
           PrintPageSize.A4,
           inventory.location?.locationGroup?.name, 
-          printResult);
+          printResult, event.collated);
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("report.print.printed"));
       },

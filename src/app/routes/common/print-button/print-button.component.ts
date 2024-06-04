@@ -21,12 +21,12 @@ export class CommonPrintButtonComponent implements OnInit {
   @Input() allowPreview: boolean = true;
   @Input() printButtonDisabled: boolean = false;
   @Input() defaultPhysicalCopyCount: number = 1;
-  @Output() readonly print: EventEmitter<{ printerIndex: number, printerName: string, physicalCopyCount: number }> = new EventEmitter();
+  @Output() readonly print: EventEmitter<{ printerIndex: number, printerName: string, physicalCopyCount: number, collated: boolean }> = new EventEmitter();
   @Output() readonly preview: EventEmitter<any> = new EventEmitter();
 
   printerModal!: NzModalRef;
   printerForm!: UntypedFormGroup;
-  availablePrinters: Printer[] = [];
+  availablePrinters: Printer[] = []; 
 
   constructor(private http: _HttpClient,
     private fb: UntypedFormBuilder,
@@ -52,6 +52,7 @@ export class CommonPrintButtonComponent implements OnInit {
     this.printerForm = this.fb.group({
       printer: new UntypedFormControl({ value: 0, disabled: false }),
       physicalCopyCount: new UntypedFormControl({ value: this.defaultPhysicalCopyCount, disabled: false }),
+      collated: new UntypedFormControl({ value: false, disabled: false }),
     });
 
     this.loadAvaiablePrinters();
@@ -73,6 +74,8 @@ export class CommonPrintButtonComponent implements OnInit {
           this.printerForm.controls.printer.value,
           selectedPrinter === undefined ? "" : selectedPrinter.name,
           this.printerForm.controls.physicalCopyCount.value,
+          this.printerForm.controls.collated.value,
+          
         );
       },
 
@@ -121,9 +124,9 @@ export class CommonPrintButtonComponent implements OnInit {
 
   }
 
-  printReport(printerIndex: number, printerName: string, physicalCopyCount: number): void {
-    console.log(`print report from ${printerIndex}, name: ${printerName} copies: ${physicalCopyCount}`)
-    this.print.emit({ printerIndex, printerName, physicalCopyCount });
+  printReport(printerIndex: number, printerName: string, physicalCopyCount: number, collated: boolean): void {
+    console.log(`print report from ${printerIndex}, name: ${printerName} copies: ${physicalCopyCount}, collated: ${collated}`)
+    this.print.emit({ printerIndex, printerName, physicalCopyCount, collated });
   }
   previewReport(): void {
     this.preview.emit();
@@ -131,7 +134,7 @@ export class CommonPrintButtonComponent implements OnInit {
 
   printByDefaultConfiguration(): void {
     // print 1 copy from default printer(index = -1)
-    this.print.emit({ printerIndex: -1, printerName: "", physicalCopyCount: this.defaultPhysicalCopyCount });
+    this.print.emit({ printerIndex: -1, printerName: "", physicalCopyCount: this.defaultPhysicalCopyCount, collated:false });
 
   }
 

@@ -912,7 +912,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
           event.physicalCopyCount, PrintPageOrientation.Landscape,
           PrintPageSize.A4,
           this.currentReceipt.number, 
-          printResult);
+          printResult, event.collated);
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("report.print.printed"));
       },
@@ -1499,7 +1499,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
           PrintPageOrientation.Landscape,
           PrintPageSize.A4,
           this.currentReceipt.number, 
-          printResult);
+          printResult, event.collated);
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("report.print.printed"));
       },

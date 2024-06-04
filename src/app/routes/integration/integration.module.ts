@@ -20,6 +20,7 @@ import { IntegrationIntegrationDataComponent } from './integration-data/integrat
 import { IntegrationRoutingModule } from './integration-routing.module';
 import { IntegrationTiktokSellerShopIntegrationConfigurationComponent } from './tiktok-seller-shop-integration-configuration/tiktok-seller-shop-integration-configuration.component';
 import { IntegrationShopifyIntegrationConfigurationComponent } from './shopify-integration-configuration/shopify-integration-configuration.component';
+import { NzResultModule } from 'ng-zorro-antd/result';
 
 const COMPONENTS: Array<Type<void>> =  [
   IntegrationIntegrationDataComponent,
@@ -46,7 +47,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 @NgModule({
   imports: [
     SharedModule,
-    IntegrationRoutingModule
+    IntegrationRoutingModule,
+    NzResultModule,
   ],
   declarations: [
     ...COMPONENTS,

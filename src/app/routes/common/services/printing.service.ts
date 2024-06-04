@@ -127,6 +127,7 @@ export class PrintingService {
     pageSize: PrintPageSize = PrintPageSize.A4,
     findPrinterBy?: string, 
     reportHistory?: ReportHistory,
+    collated?: boolean
   ): void {
 
     this.localCacheService.getWarehouseConfiguration().subscribe(
@@ -159,7 +160,7 @@ export class PrintingService {
               
                 this.printFromLocal(
                   name, fileName, type, printerIndex, 
-                  physicalCopyCount, pageOrientation); 
+                  physicalCopyCount, pageOrientation, collated); 
           }
           
         }, 
@@ -201,7 +202,8 @@ export class PrintingService {
     physicalCopyCount: number,
     pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait,
     pageSize: PrintPageSize = PrintPageSize.A4,
-    findPrinterBy?: string
+    findPrinterBy?: string, 
+    collated?: boolean
   ): void { 
       console.log(`will print from the server side`);
       let params = new HttpParams();
@@ -216,6 +218,9 @@ export class PrintingService {
       }
       if (physicalCopyCount) {
         params = params.append('copies', physicalCopyCount.toString());
+      }
+      if (collated != null) {
+        params = params.append('collated', collated);
       }
       this.http
         .post(url, params)
@@ -266,6 +271,7 @@ export class PrintingService {
     printerIndex: number, 
     physicalCopyCount: number,
     pageOrientation: PrintPageOrientation = PrintPageOrientation.Portrait, 
+    collated?: boolean
   ): void {
     
     // NOTE: use preview instead of download, which will download the label file
@@ -296,7 +302,16 @@ export class PrintingService {
     // LODOP.ADD_PRINT_URL(0,0, "100%","100%","http://www.baidu.com ");
     // LODOP.ADD_PRINT_PDF(0,0,"100%","100%","http://localhost:8000/CLodopDemos/PDFDemo.pdf");
     // LODOP.ADD_PRINT_PDF(-30,0,"100%","100%","e:\\AAA.pdf");
-    LODOP.SET_PRINT_COPIES(physicalCopyCount);
+    LODOP.SET_PRINT_COPIES(physicalCopyCount); 
+    if (!collated) {
+
+      console.log(`print with NON collated`);
+      LODOP.SET_PRINT_MODE("PRINT_NOCOLLATE", "true")
+    }
+    else {
+      console.log(`print with collated`);
+      LODOP.SET_PRINT_MODE("PRINT_NOCOLLATE", "false")
+    }
     LODOP.PRINT();
   }
 

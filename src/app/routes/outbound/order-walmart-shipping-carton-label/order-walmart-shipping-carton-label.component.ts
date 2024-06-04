@@ -130,14 +130,14 @@ export class OutboundOrderWalmartShippingCartonLabelComponent implements OnInit 
             ReportType.WALMART_SHIPPING_CARTON_LABEL,
             event.printerIndex,
             event.printerName,
-            // event.physicalCopyCount,
-            1, // we will always only print one copy. If the user want to print multiple copies
+            event.physicalCopyCount,
+            //1, // we will always only print one copy. If the user want to print multiple copies
                 // the paramter will be passed into the 'generate' command instead of the print command
                 // so that we will have labels printed in uncollated format, not collated format
             PrintPageOrientation.Portrait,
             PrintPageSize.Letter,
             this.currentOrder?.number, 
-            printResult);
+            printResult, event.collated);
           
             this.isSpinning = false;
           this.messageService.success(this.i18n.fanyi("report.print.printed"));
@@ -168,14 +168,14 @@ export class OutboundOrderWalmartShippingCartonLabelComponent implements OnInit 
                 printResult.type,
                 event.printerIndex,
                 event.printerName,
-                // event.physicalCopyCount,
-                1, // we will always only print one copy. If the user want to print multiple copies
+                event.physicalCopyCount,
+                //1, // we will always only print one copy. If the user want to print multiple copies
                     // the paramter will be passed into the 'generate' command instead of the print command
                     // so that we will have labels printed in uncollated format, not collated format
                 PrintPageOrientation.Portrait,
                 PrintPageSize.Letter,
                 this.currentOrder?.number, 
-                printResult);
+                printResult, event.collated);
             }
           );
           
@@ -226,14 +226,14 @@ export class OutboundOrderWalmartShippingCartonLabelComponent implements OnInit 
             ReportType.WALMART_SHIPPING_CARTON_LABEL,
             event.printerIndex,
             event.printerName,
-            // event.physicalCopyCount,
-            1, // we will always only print one copy. If the user want to print multiple copies
+            event.physicalCopyCount,
+            //1, // we will always only print one copy. If the user want to print multiple copies
                 // the paramter will be passed into the 'generate' command instead of the print command
                 // so that we will have labels printed in uncollated format, not collated format
             PrintPageOrientation.Portrait,
             PrintPageSize.Letter,
             this.currentOrder?.number, 
-            printResult);
+            printResult, event.collated);
           
             this.isSpinning = false;
           this.messageService.success(this.i18n.fanyi("report.print.printed"));
@@ -287,14 +287,14 @@ export class OutboundOrderWalmartShippingCartonLabelComponent implements OnInit 
             ReportType.WALMART_SHIPPING_CARTON_LABEL,
             event.printerIndex,
             event.printerName,
-            // event.physicalCopyCount,
-            1, // we will always only print one copy. If the user want to print multiple copies
+            event.physicalCopyCount,
+            //1, // we will always only print one copy. If the user want to print multiple copies
                 // the paramter will be passed into the 'generate' command instead of the print command
                 // so that we will have labels printed in uncollated format, not collated format
             PrintPageOrientation.Portrait,
             PrintPageSize.Letter,
             this.currentOrder?.number, 
-            printResult);
+            printResult, event.collated);
           
             this.isSpinning = false;
           this.messageService.success(this.i18n.fanyi("report.print.printed"));

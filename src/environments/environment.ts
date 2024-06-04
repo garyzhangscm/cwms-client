@@ -13,8 +13,8 @@ export const environment = {
   api: {
     //  AWS Prod
     // baseUrl: 'http://k8s-staging-webclien-d59c548886-1645723175.us-west-1.elb.amazonaws.com/api/', 
-    baseUrl: 'https://prod.claytechsuite.com/api/', 
-    // baseUrl: 'https://staging.claytechsuite.com/api/', 
+    // baseUrl: 'https://prod.claytechsuite.com/api/', 
+    baseUrl: 'https://staging.claytechsuite.com/api/', 
     
     // baseUrl: 'http://dualstack.k8s-prod-webclien-8aaf75f256-1586881181.us-west-1.elb.amazonaws.com./#/passport/login',
     // baseUrl: 'http://gateway.claytechsuite.com/api/',

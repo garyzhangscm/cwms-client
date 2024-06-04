@@ -1041,7 +1041,7 @@ export class OutboundLoadComponent implements OnInit {
             PrintPageOrientation.Portrait,
             PrintPageSize.Letter,
             pickWork.number, 
-            printResult);
+            printResult, event.collated);
           this.isSpinning = false;
           this.messageService.success(this.i18n.fanyi("report.print.printed"));
           }, 
@@ -1067,7 +1067,7 @@ export class OutboundLoadComponent implements OnInit {
             PrintPageOrientation.Portrait,
             PrintPageSize.Letter,
             pickWork.number, 
-            printResult);
+            printResult, event.collated);
           this.isSpinning = false;
           this.messageService.success(this.i18n.fanyi("report.print.printed"));
           }, 
@@ -1092,7 +1092,7 @@ export class OutboundLoadComponent implements OnInit {
             PrintPageOrientation.Portrait,
             PrintPageSize.Letter,
             pickWork.number, 
-            printResult);
+            printResult, event.collated);
           this.isSpinning = false;
           this.messageService.success(this.i18n.fanyi("report.print.printed"));
           }, 
@@ -1203,7 +1203,7 @@ export class OutboundLoadComponent implements OnInit {
               PrintPageOrientation.Portrait,
               PrintPageSize.Letter,
               singlePickIds, 
-              printResult);  
+              printResult, event.collated);  
 
             count--;
             if (count <= 0) {
@@ -1237,7 +1237,7 @@ export class OutboundLoadComponent implements OnInit {
                   PrintPageOrientation.Portrait,
                   PrintPageSize.Letter,
                   listPickIds, 
-                  printResult);  
+                  printResult, event.collated);  
                 
               });
               count--;
@@ -1274,7 +1274,7 @@ export class OutboundLoadComponent implements OnInit {
                   PrintPageOrientation.Portrait,
                   PrintPageSize.Letter,
                   bulkPickIds, 
-                  printResult);  
+                  printResult, event.collated);  
               });
               count--;
               if (count <= 0) {

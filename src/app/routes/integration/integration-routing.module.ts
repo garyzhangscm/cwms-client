@@ -179,7 +179,17 @@ const routes: Routes = [
         guard_url: '/exception/403'
       }
   },
-  { path: 'shopify-integration-configuration', component: IntegrationShopifyIntegrationConfigurationComponent }];
+  { path: 'shopify/integration-configuration', 
+     component: IntegrationShopifyIntegrationConfigurationComponent, 
+      canActivate: [ACLGuard], 
+      data: { 
+        guard:  {
+          role: [ '/integration/shopify/integration-configuration', 'admin', 'system-admin'  ], 
+        } as ACLGuardType,
+        guard_url: '/exception/403'
+      }
+    }
+  ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

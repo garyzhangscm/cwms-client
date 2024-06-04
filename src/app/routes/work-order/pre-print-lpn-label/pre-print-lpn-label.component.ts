@@ -144,7 +144,9 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
   printWorkOrderLPNLabelInBatch(event: any, startLPN: string, quantity: number, labelCount: number) {
     this.workOrderService.generatePrePrintLPNLabelInBatch(
       this.currentProductionLineAssignment.workOrderId!, startLPN, quantity, labelCount, 
-      this.currentProductionLineAssignment.productionLineName, event.physicalCopyCount, event.printerName)
+      this.currentProductionLineAssignment.productionLineName, 
+      1, //event.physicalCopyCount, 
+      event.printerName)
       .subscribe({
         next: (printResult) => {
           // send the result to the printer
@@ -157,14 +159,14 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
             ReportType.PRODUCTION_LINE_ASSIGNMENT_LABEL,
             event.printerIndex,
             event.printerName,
-            // event.physicalCopyCount,
-            1, // we will always only print one copy. If the user want to print multiple copies
+            event.physicalCopyCount,
+            //1, // we will always only print one copy. If the user want to print multiple copies
                 // the paramter will be passed into the 'generate' command instead of the print command
                 // so that we will have labels printed in uncollated format, not collated format 
             PrintPageOrientation.Portrait,
             PrintPageSize.Letter,
             this.currentProductionLineAssignment.productionLineName, 
-            printResult);
+            printResult, event.collated);
           
             this.isSpinning = false;
           this.messageService.success(this.i18n.fanyi("report.print.printed"));
@@ -175,7 +177,8 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
   }
   printReceivingLPNLabelInBatch(event: any, startLPN: string, quantity: number, labelCount: number) {
     this.receiptLineService.generatePrePrintLPNLabelInBatch(
-      this.currentReceiptLine!.id!, startLPN, quantity, labelCount, event.physicalCopyCount, 
+      this.currentReceiptLine!.id!, startLPN, quantity, labelCount, 
+      1, // event.physicalCopyCount, 
       event.printerName, this.ignoreInventoryQuantity)
       .subscribe({
         next: (printResult) => {
@@ -189,14 +192,14 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
             ReportType.RECEIVING_LPN_LABEL,
             event.printerIndex,
             event.printerName,
-            // event.physicalCopyCount,
-            1, // we will always only print one copy. If the user want to print multiple copies
+            event.physicalCopyCount,
+            // 1, // we will always only print one copy. If the user want to print multiple copies
                 // the paramter will be passed into the 'generate' command instead of the print command
                 // so that we will have labels printed in uncollated format, not collated format
             PrintPageOrientation.Portrait,
             PrintPageSize.Letter,
             this.currentReceiptLine?.receiptNumber, 
-            printResult);
+            printResult, event.collated);
           
             this.isSpinning = false;
           this.messageService.success(this.i18n.fanyi("report.print.printed"));
@@ -207,7 +210,9 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
   }
   printReceivingLPNReportInBatch(event: any, startLPN: string, quantity: number, labelCount: number) {
     this.receiptLineService.generatePrePrintLPNReportInBatch(
-      this.currentReceiptLine!.id!, startLPN, quantity, labelCount, event.physicalCopyCount, event.printerName)
+      this.currentReceiptLine!.id!, startLPN, quantity, labelCount,
+      1, // event.physicalCopyCount, 
+      event.printerName)
       .subscribe({
         next: (printResult) => {
           // send the result to the printer
@@ -220,14 +225,14 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
             ReportType.RECEIVING_LPN_REPORT,
             event.printerIndex,
             event.printerName,
-            // event.physicalCopyCount,
-            1, // we will always only print one copy. If the user want to print multiple copies
+            event.physicalCopyCount,
+            // 1, // we will always only print one copy. If the user want to print multiple copies
                 // the paramter will be passed into the 'generate' command instead of the print command
                 // so that we will have labels printed in uncollated format, not collated format
             PrintPageOrientation.Portrait,
             PrintPageSize.Letter,
             this.currentReceiptLine?.receiptNumber, 
-            printResult);
+            printResult, event.collated);
           
             this.isSpinning = false;
           this.messageService.success(this.i18n.fanyi("report.print.printed"));

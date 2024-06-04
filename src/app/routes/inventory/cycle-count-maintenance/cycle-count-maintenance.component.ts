@@ -989,7 +989,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
           event.physicalCopyCount, PrintPageOrientation.Landscape,
           PrintPageSize.A4,
           this.requestForm.controls.batchId.value, 
-          printResult);
+          printResult, event.collated);
         this.isSpinning = false;
         this.message.success(this.i18n.fanyi("report.print.printed"));
       },
@@ -1102,7 +1102,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
           event.physicalCopyCount, PrintPageOrientation.Landscape,
           PrintPageSize.A4,
           this.requestForm.controls.batchId.value, 
-          printResult);
+          printResult, event.collated);
         this.isSpinning = false;
         this.message.success(this.i18n.fanyi("report.print.printed"));
       },

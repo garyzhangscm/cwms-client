@@ -207,7 +207,7 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
       // key: lpn
       this.workOrderService.generatePrePrintLPNLabelInBatch(
         workOrderProduceTransaction.workOrder!.id!, key, value, 1, 
-        workOrderProduceTransaction.productionLine!.name, 2, this.workOrderProduceTransaction.labelPrinterName)
+        workOrderProduceTransaction.productionLine!.name, 1, this.workOrderProduceTransaction.labelPrinterName)
         .subscribe({
           next: (printResult) => {
             // send the result to the printer
@@ -220,14 +220,14 @@ export class WorkOrderWorkOrderProduceConfirmComponent implements OnInit {
               ReportType.PRODUCTION_LINE_ASSIGNMENT_LABEL,
               this.workOrderProduceTransaction.labelPrinterIndex!,
               this.workOrderProduceTransaction.labelPrinterName!,
-              // event.physicalCopyCount,
-              1, // we will always only print one copy. If the user want to print multiple copies
+              2, // event.physicalCopyCount,
+              // 1, // we will always only print one copy. If the user want to print multiple copies
                   // the paramter will be passed into the 'generate' command instead of the print command
                   // so that we will have labels printed in uncollated format, not collated format 
               PrintPageOrientation.Portrait,
               PrintPageSize.Letter,
               workOrderProduceTransaction.productionLine!.name, 
-              printResult);
+              printResult, false);
             
               // this.isSpinning = false;
               //this.messageService.success(this.i18n.fanyi("report.print.printed"));

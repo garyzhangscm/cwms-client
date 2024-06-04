@@ -325,7 +325,7 @@ export class QcQcInspectionComponent implements OnInit {
           PrintPageOrientation.Landscape,
           PrintPageSize.A4,
           qcInspectionRequest.number, 
-          printResult);
+          printResult, event.collated);
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi("report.print.printed"));
       },
