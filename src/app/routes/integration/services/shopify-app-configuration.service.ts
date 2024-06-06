@@ -4,18 +4,18 @@ import { _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
  
-import { CompanyService } from '../../warehouse-layout/services/company.service';  
-import { ShopifyOAuthUrl } from '../models/shopify-oauth-url';
+import { CompanyService } from '../../warehouse-layout/services/company.service';   
+import { ShopifyAppConfiguration } from '../models/shopify-app-configuration';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ShopifyOAuthService {
+export class ShopifyAppConfigurationService {
   constructor(private http: _HttpClient, 
     private companyService: CompanyService) {}
 
-    getOAuthUrl(clientId?: number): Observable<ShopifyOAuthUrl> {
-      const url = `integration/shopify/shop-oauth/url`;
+    getOAuthUrl(clientId?: number): Observable<ShopifyAppConfiguration> {
+      const url = `integration/shopify/app-configuration/oauth-url`;
         
       let params = new HttpParams(); 
       params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 

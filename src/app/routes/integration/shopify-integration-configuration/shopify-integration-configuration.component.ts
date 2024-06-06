@@ -6,8 +6,8 @@ import { Client } from '../../common/models/client';
 import { ClientService } from '../../common/services/client.service';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { ShopifyIntegrationConfiguration } from '../models/shopify-integration-configuration'; 
-import { ShopifyIntegrationConfigurationService } from '../services/shopify-integration-configuration.service';
-import { ShopifyOAuthService } from '../services/shopify-oauth.service';
+import { ShopifyAppConfigurationService } from '../services/shopify-app-configuration.service';
+import { ShopifyIntegrationConfigurationService } from '../services/shopify-integration-configuration.service'; 
 
 @Component({
   selector: 'app-integration-shopify-integration-configuration',
@@ -28,7 +28,7 @@ export class IntegrationShopifyIntegrationConfigurationComponent implements OnIn
   constructor(private http: _HttpClient, 
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private shopifyIntegrationConfigurationService: ShopifyIntegrationConfigurationService, 
-    private shopifyOAuthService: ShopifyOAuthService,
+    private shopifyAppConfigurationService: ShopifyAppConfigurationService,
     private clientService: ClientService,
     private localCacheService: LocalCacheService,
     private messageService: NzMessageService,) {
@@ -85,9 +85,9 @@ export class IntegrationShopifyIntegrationConfigurationComponent implements OnIn
     else {
         // for the company
       this.isSpinning = true;
-        this.shopifyOAuthService.getOAuthUrl().subscribe({
-          next: (shopifyOAuthUrlRes) => {
-            this.shopifyOAuthUrlByCompany = shopifyOAuthUrlRes?.url;
+        this.shopifyAppConfigurationService.getOAuthUrl().subscribe({
+          next: (shopifyAppConfigurationRes) => {
+            this.shopifyOAuthUrlByCompany = shopifyAppConfigurationRes?.url;
             this.isSpinning = false;
           }
           , 
@@ -108,11 +108,11 @@ export class IntegrationShopifyIntegrationConfigurationComponent implements OnIn
           // if not done yet, setup the tiktok shop auth link
           if (!this.shopifyOAuthUrlByClient.get(this.selectedClientId!)) {
 
-            this.shopifyOAuthService.getOAuthUrl(this.selectedClientId).subscribe({
-              next: (shopifyAuthUrlRes) => {
-                if (shopifyAuthUrlRes) {
+            this.shopifyAppConfigurationService.getOAuthUrl(this.selectedClientId).subscribe({
+              next: (shopifyAppConfigurationRes) => {
+                if (shopifyAppConfigurationRes) {
 
-                  this.shopifyOAuthUrlByClient.set(this.selectedClientId!, shopifyAuthUrlRes.url);
+                  this.shopifyOAuthUrlByClient.set(this.selectedClientId!, shopifyAppConfigurationRes.url);
                 }
                 this.isSpinning = false;
               }, 
