@@ -16,6 +16,9 @@ import { InboundPutawayConfigurationComponent } from './putaway-configuration/pu
 import { InboundReceiptConfirmComponent } from './receipt-confirm/receipt-confirm.component';
 import { InboundReceiptMaintenanceComponent } from './receipt-maintenance/receipt-maintenance.component';
 import { InboundReceiptComponent } from './receipt/receipt.component';
+import { InboundPrintingReceivingLpnLabelComponent } from './printing-receiving-lpn-label/printing-receiving-lpn-label.component';
+import { InboundInboundReceivingConfigurationComponent } from './inbound-receiving-configuration/inbound-receiving-configuration.component';
+import { InboundInboundReceivingConfigurationMaintenanceComponent } from './inbound-receiving-configuration-maintenance/inbound-receiving-configuration-maintenance.component';
 
 const routes: Routes = [
 
@@ -135,8 +138,34 @@ const routes: Routes = [
       } as ACLGuardType,
       guard_url: '/exception/403'
     }
+  }, 
+  { path: 'printing-receiving-lpn-label', component: InboundPrintingReceivingLpnLabelComponent,
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inbound/printing-receiving-lpn-label', 'admin', 'system-admin'  ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    } 
   },
-  ];
+  { path: 'inbound-receiving-configuration', component: InboundInboundReceivingConfigurationComponent,
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inbound/inbound-receiving-configuration', 'admin', 'system-admin'  ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    } 
+  },
+  { path: 'inbound-receiving-configuration/maintenance', component: InboundInboundReceivingConfigurationMaintenanceComponent,
+    canActivate: [ACLGuard], 
+    data: { 
+      guard:  {
+        role: [ '/inbound/inbound-receiving-configuration/maintenance', 'admin', 'system-admin'  ], 
+      } as ACLGuardType,
+      guard_url: '/exception/403'
+    } 
+  }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

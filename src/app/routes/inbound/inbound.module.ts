@@ -26,6 +26,9 @@ import { InboundPutawayConfigurationComponent } from './putaway-configuration/pu
 import { InboundReceiptConfirmComponent } from './receipt-confirm/receipt-confirm.component';
 import { InboundReceiptMaintenanceComponent } from './receipt-maintenance/receipt-maintenance.component';
 import { InboundReceiptComponent } from './receipt/receipt.component';
+import { InboundPrintingReceivingLpnLabelComponent } from './printing-receiving-lpn-label/printing-receiving-lpn-label.component';
+import { InboundInboundReceivingConfigurationComponent } from './inbound-receiving-configuration/inbound-receiving-configuration.component';
+import { InboundInboundReceivingConfigurationMaintenanceComponent } from './inbound-receiving-configuration-maintenance/inbound-receiving-configuration-maintenance.component';
 
 const COMPONENTS: Array<Type<void>> = [
   InboundReceiptComponent, InboundReceiptMaintenanceComponent, InboundReceiptConfirmComponent,
@@ -38,7 +41,10 @@ const COMPONENTS: Array<Type<void>> = [
   InboundCustomerReturnOrderMaintenanceComponent,
   InboundCustomerReturnReceiveComponent,
   InboundPurchaseOrderComponent,
-  InboundCreateReceiptFromPoComponent];
+  InboundCreateReceiptFromPoComponent,
+  InboundPrintingReceivingLpnLabelComponent,
+  InboundInboundReceivingConfigurationComponent,
+  InboundInboundReceivingConfigurationMaintenanceComponent];
   
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 

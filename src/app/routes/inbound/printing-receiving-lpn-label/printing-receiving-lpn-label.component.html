@@ -1,0 +1,50 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <ng-template #returnLink>
+    <a (click)="return()" routerLinkActive="active">{{
+      'return' | i18n
+      }}</a>
+  </ng-template>
+  <ng-template #breadcrumb>
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a routerLink="/receipt" routerLinkActive="active">{{
+          'receipt' | i18n
+          }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </ng-template>
+ 
+  
+  <nz-card nzTitle="{{ 'receipt' | i18n}}" *ngIf="currentReceipt">
+    <nz-card nzType="inner" nzTitle="{{'standardPalletSize' | i18n}}" >
+        <a>Standard Pallet Size: 1.6 Cubic Meter</a>
+    </nz-card>
+    <nz-card nzType="inner" nzTitle="{{'receipt-line' | i18n}}" >
+        <st #receiptLineTable [data]="currentReceipt.receiptLines" [columns]="receiptLineTableColumns" 
+        [scroll]="{ x: '1315px' }"  >
+       
+            <!--   typeColumn colummn  -->  
+            <ng-template st-row="lableCountColumn" let-receiptLine let-index="index"> 
+                <nz-input-number  [ngModel]="lpnLableCountMap.get(receiptLine.id)" 
+                (ngModelChange)="lpnLabelCountChanged(receiptLine.id, $event)" [nzMin]="1"  [nzStep]="1"/>
+          </ng-template> 
+      </st>
+    </nz-card> 
+
+  </nz-card>
+
+  <div nz-row style="padding-top: 20px;">
+    
+    <cwms-common-print-button style='padding-left: 20px; '
+      [defaultPhysicalCopyCount]=2
+      (print)="printLPNLabels($event)"
+      (preview)="previewLPNs($event)">
+    </cwms-common-print-button>
+  </div>
+  </nz-spin>
