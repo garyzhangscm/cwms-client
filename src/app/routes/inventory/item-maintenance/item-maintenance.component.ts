@@ -259,12 +259,16 @@ export class InventoryItemMaintenanceComponent implements OnInit {
       name: '',
       description: '',
       client: undefined,
+      /**
+       * 
       itemFamily: {
         name: '',
         description: '',
         warehouseId: isGlobalItem? undefined: this.warehouseService.getCurrentWarehouse().id,
         companyId: this.companyService.getCurrentCompany()!.id,
       },
+       */
+      itemFamily: undefined,
       itemPackageTypes: [],
       unitCost: 0,
       allowCartonization: false,
