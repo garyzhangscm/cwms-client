@@ -176,6 +176,11 @@
                       >
                       {{ 'receipt.check-in' | i18n }}</a>
                     </li>
+                    <li nz-menu-item *ngIf="!displayOnly">                  
+                      
+                      <a routerLink="/inbound/printing-receiving-lpn-label" routerLinkActive="active"
+                      [queryParams]="{receiptId : receipt.id!}">{{ 'pre-print-lpn-label' | i18n }}</a>
+                    </li>
                     <li nz-menu-item *ngIf="receipt.receiptStatus !== receiptStatus.CLOSED && (!userPermissionMap.has('complete-receipt') || userPermissionMap.get('complete-receipt'))">                   
                       
                       <a   nz-type="primary" (click)="closeReceipt(receipt)"
@@ -247,7 +252,10 @@
                   </a>
                   <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
                     <ul nz-menu nzSelectable>
-                      <li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
+                      <!--<li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
+                      (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
+                      -->
+                      <li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLineItemPackageTypes.get(receiptLine.id!)?.itemUnitOfMeasures" 
                       (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
                         {{ itemUnitOfMeasure.unitOfMeasure?.name }}
                       </li> 
@@ -256,6 +264,9 @@
 
                 </ng-template>
 
+                <ng-template st-row="cubicMeterColumn" let-receiptLine let-index="index"> 
+                   {{ receiptLine.cubicMeter | number: '1.0-2'}} 
+                </ng-template>
                 <ng-template st-row="receivedQuantityColumn" let-receiptLine let-index="index"> 
  
                   {{ receiptLine.displayReceivedQuantity }}  

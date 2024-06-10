@@ -37,4 +37,28 @@ export class UnitService {
     return units.find(unit => unit.type == type && (unit.baseUnitFlag || unit.ratio == 1))
   }
   
+  getUnit(units: Unit[], name: string) : Unit | undefined {
+    return units.find(unit => unit.name == name);
+  }
+    
+  // convert the number into base unit
+  convertToBaseUnit(fromNumber: number, fromUnitName?: string) : number {
+    
+      // if for some reason we can't get the from unit, then return the same number
+      // as we fail to do the convert
+      if (fromUnitName == null) {
+        return fromNumber;
+      }
+      const units: Unit[] = this.gzLocalStorageService.getItem('common.unit');
+      if (units == null) {
+        return fromNumber;
+      }
+      let fromUnit : Unit | undefined = this.getUnit(units, fromUnitName);
+      if (fromUnit == null) {
+        return fromNumber;
+      }
+
+      return fromNumber * fromUnit.ratio;
+
+  }
 }

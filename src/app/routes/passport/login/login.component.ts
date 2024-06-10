@@ -13,6 +13,7 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 import { User } from '../../auth/models/user';
 import { UserService } from '../../auth/services/user.service';
+import { UnitService } from '../../common/services/unit.service';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseConfigurationService } from '../../warehouse-layout/services/warehouse-configuration.service';
@@ -51,6 +52,7 @@ export class UserLoginComponent implements OnDestroy {
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private injector: Injector, 
     private aclService: ACLService,
+    private unitService: UnitService,
   ) {
     this.form = fb.group({
       companyCode: [null, [Validators.required, Validators.minLength(1)]],
@@ -216,6 +218,8 @@ export class UserLoginComponent implements OnDestroy {
           })
           // setup the current user
           this.userService.setupCurrentUser();
+          // setup caches
+          this.setupCaches();
           // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
           this.startupSrv.load(warehouse.id).subscribe(() => {
             /***
@@ -274,6 +278,10 @@ export class UserLoginComponent implements OnDestroy {
       });
   }
 
+  setupCaches() {
+      this.unitService.loadUnits(true);
+
+  }
   // #region social
 
   open(type: string, openType: SocialOpenType = 'href'): void {

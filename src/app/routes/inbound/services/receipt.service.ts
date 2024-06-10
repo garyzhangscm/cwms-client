@@ -190,4 +190,27 @@ export class ReceiptService {
 
     return this.http.delete(url, params).pipe(map(res => res.data));
   }
+
+  
+  generatePrePrintLPNReportInBatch(receiptId: number, lpnLabelCountByReceiptLines: Map<number, number>, 
+       lpnQuantityOnLabelByReceiptLines: Map<number, number>, 
+       lpn?: string, printerName?: string) : Observable<ReportHistory> {
+    
+    const url = `inbound/receipts/${receiptId}/pre-print-lpn-report/batch`;
+    
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
+    if (lpn) {
+      params = params.append('lpn', lpn);  
+    }   
+    if (printerName) {
+      params = params.append('printerName', printerName);    
+    }
+    
+    
+    return this.http.post(url, 
+      {lpnLabelCountByReceiptLines: lpnLabelCountByReceiptLines, 
+        lpnQuantityOnLabelByReceiptLines: lpnQuantityOnLabelByReceiptLines}, 
+      params).pipe(map(res => res.data));
+  }
 }

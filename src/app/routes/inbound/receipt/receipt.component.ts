@@ -17,6 +17,7 @@ import { ClientService } from '../../common/services/client.service';
 import { SupplierService } from '../../common/services/supplier.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryConfiguration } from '../../inventory/models/inventory-configuration';
+import { ItemPackageType } from '../../inventory/models/item-package-type';
 import { ItemUnitOfMeasure } from '../../inventory/models/item-unit-of-measure'; 
 import { InventoryConfigurationService } from '../../inventory/services/inventory-configuration.service';
 import { ColumnItem } from '../../util/models/column-item';
@@ -156,6 +157,12 @@ export class InboundReceiptComponent implements OnInit {
   listOfAllReceipts: Receipt[] = [];
   listOfDisplayReceipts: Receipt[] = [];
   receiptStatusList = ReceiptStatus;
+
+  // the item package type that will be used to calculate the 
+  // quanties for receipt line. 
+  // 1. if there's one defined at the receipt line, then we will use it
+  // 2. otherwise we will use the default item package type of the item
+  receiptLineItemPackageTypes = new Map<number, ItemPackageType | undefined>();
 
   threePartyLogisticsFlag = false;
   loadingOrderDetailsRequest = 0;
@@ -398,50 +405,66 @@ export class InboundReceiptComponent implements OnInit {
   }
   
   calculateReceiptLineDisplayQuantity(receiptLine: ReceiptLine) : void { 
-         // see if we have the display UOM setup
-          // if the display item unit of measure is setup for the item
-          // then we will update the display quantity accordingly.
-          // the same logic for both expected quantity and received quantity
-          // 1. if the quantity can be divided by the display UOM's quantity, then display
-          //    the quantity in display UOM and setup the display UOM for each quantity accordingly
-          // 2. otherwise, setup teh quantity in stock UOM and use the stock UOM as the display quantity
-          //    for each quantity
-          if (receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure) {
-            // console.log(`>> found displayItemUnitOfMeasure: ${receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure?.name}`)
-            let displayItemUnitOfMeasureQuantity  = receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.quantity;
-
-            // console.log(`>> with quantity ${displayItemUnitOfMeasureQuantity}`)
-
-            if (receiptLine.expectedQuantity! % displayItemUnitOfMeasureQuantity! ==0) {
-              receiptLine.displayUnitOfMeasureForExpectedQuantity = receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure;
-              receiptLine.displayExpectedQuantity = receiptLine.expectedQuantity! / displayItemUnitOfMeasureQuantity!
-            }
-            else {
-              // the receipt line's quantity can't be devided by the display uom, we will display the quantity in 
-              // stock uom
-              receiptLine.displayExpectedQuantity! = receiptLine.expectedQuantity!;
-              // receiptLine.item!.defaultItemPackageType!.displayItemUnitOfMeasure = receiptLine.item!.defaultItemPackageType!.stockItemUnitOfMeasure;
-              receiptLine.displayUnitOfMeasureForExpectedQuantity = receiptLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure;
-            }
+      // let's calculate the display quantities based on the item package type of priorities
+      // 1. if there's one defined at the receipt line level
+      // 2. default item package type of the item
+      const itemPackagetType : ItemPackageType | undefined
+          = (this.receiptLineItemPackageTypes.has(receiptLine.id!) && this.receiptLineItemPackageTypes.get(receiptLine.id!) != null) ?
+              this.receiptLineItemPackageTypes.get(receiptLine.id!) : 
+                (receiptLine.itemPackageType == null ? 
+                      receiptLine.item?.defaultItemPackageType :
+                      receiptLine.itemPackageType);
+      //console.log(`item package type ${itemPackagetType?.name} will be used for line ${receiptLine.number}`);
+      // see if we have the display UOM setup
+      // if the display item unit of measure is setup for the item
+      // then we will update the display quantity accordingly.
+      // the same logic for both expected quantity and received quantity
+      // 1. if the quantity can be divided by the display UOM's quantity, then display
+      //    the quantity in display UOM and setup the display UOM for each quantity accordingly
+      // 2. otherwise, setup teh quantity in stock UOM and use the stock UOM as the display quantity
+      //    for each quantity
+      if (itemPackagetType?.displayItemUnitOfMeasure) {
+          //console.log(`display uom ${itemPackagetType?.displayItemUnitOfMeasure.unitOfMeasure?.name} is setup for item package type ${itemPackagetType.name}`)
+          // console.log(`>> found displayItemUnitOfMeasure: ${receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure?.name}`)
+          let displayItemUnitOfMeasureQuantity  = itemPackagetType?.displayItemUnitOfMeasure.quantity;
+          //console.log(`> its quantity is ${displayItemUnitOfMeasureQuantity}`)
+          
+          // console.log(`>> with quantity ${displayItemUnitOfMeasureQuantity}`)
+          //console.log(`receiptLine.expectedQuantity: ${receiptLine.expectedQuantity}, displayItemUnitOfMeasureQuantity: ${displayItemUnitOfMeasureQuantity}`)
             
-            if (receiptLine.receivedQuantity! % displayItemUnitOfMeasureQuantity! ==0) {
-              receiptLine.displayReceivedQuantity = receiptLine.receivedQuantity! / displayItemUnitOfMeasureQuantity!
-              receiptLine.displayUnitOfMeasureForReceivedQuantity = receiptLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure;
-            }
-            else {
-              // the receipt line's quantity can't be devided by the display uom, we will display the quantity in 
-              // stock uom
-              receiptLine.displayReceivedQuantity! = receiptLine.receivedQuantity!;
-              // receiptLine.item!.defaultItemPackageType!.displayItemUnitOfMeasure = receiptLine.item!.defaultItemPackageType!.stockItemUnitOfMeasure;
-              receiptLine.displayUnitOfMeasureForReceivedQuantity = receiptLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure;
-            }
+          if (receiptLine.expectedQuantity! % displayItemUnitOfMeasureQuantity! ==0) {
+            //console.log(`use the display item unit of measure ${itemPackagetType?.displayItemUnitOfMeasure.unitOfMeasure?.name} for display`)
+            receiptLine.displayUnitOfMeasureForExpectedQuantity = itemPackagetType?.displayItemUnitOfMeasure.unitOfMeasure;
+            receiptLine.displayExpectedQuantity = receiptLine.expectedQuantity! / displayItemUnitOfMeasureQuantity!
           }
           else {
-            // there's no display UOM setup for this inventory, we will display
-            // by the quantity
-              receiptLine.displayExpectedQuantity = receiptLine.expectedQuantity!;
-              receiptLine.displayReceivedQuantity! = receiptLine.receivedQuantity!;
-          }  
+            // the receipt line's quantity can't be devided by the display uom, we will display the quantity in 
+            // stock uom
+            //console.log(`use the stock item unit of measure ${itemPackagetType?.stockItemUnitOfMeasure?.unitOfMeasure?.name} for display`)
+            
+            receiptLine.displayExpectedQuantity! = receiptLine.expectedQuantity!;
+            // receiptLine.item!.defaultItemPackageType!.displayItemUnitOfMeasure = receiptLine.item!.defaultItemPackageType!.stockItemUnitOfMeasure;
+            receiptLine.displayUnitOfMeasureForExpectedQuantity = itemPackagetType?.stockItemUnitOfMeasure?.unitOfMeasure;
+          }
+            
+          if (receiptLine.receivedQuantity! % displayItemUnitOfMeasureQuantity! ==0) {
+            receiptLine.displayReceivedQuantity = receiptLine.receivedQuantity! / displayItemUnitOfMeasureQuantity!
+            receiptLine.displayUnitOfMeasureForReceivedQuantity = itemPackagetType?.displayItemUnitOfMeasure.unitOfMeasure;
+          }
+          else {
+            // the receipt line's quantity can't be devided by the display uom, we will display the quantity in 
+            // stock uom
+            receiptLine.displayReceivedQuantity! = receiptLine.receivedQuantity!;
+            // receiptLine.item!.defaultItemPackageType!.displayItemUnitOfMeasure = receiptLine.item!.defaultItemPackageType!.stockItemUnitOfMeasure;
+            receiptLine.displayUnitOfMeasureForReceivedQuantity = itemPackagetType?.stockItemUnitOfMeasure?.unitOfMeasure;
+          }
+        }
+        else {
+          // there's no display UOM setup for this inventory, we will display
+          // by the quantity
+            receiptLine.displayExpectedQuantity = receiptLine.expectedQuantity!;
+            receiptLine.displayReceivedQuantity! = receiptLine.receivedQuantity!;
+        }  
   }
   
   
@@ -493,6 +516,7 @@ export class InboundReceiptComponent implements OnInit {
           next: (itemRes) => { 
             receiptLine.item = itemRes; 
 
+            this.loadItemPackageType(receiptLine);
             this.calculateReceiptLineDisplayQuantity(receiptLine);
             this.loadingOrderDetailsRequest--;
           }
@@ -501,8 +525,26 @@ export class InboundReceiptComponent implements OnInit {
     }
     else if (receiptLine.item != null) {
       // console.log(`item is not null:\n${JSON.stringify(receiptLine.item)}`)
+      this.loadItemPackageType(receiptLine);
       this.calculateReceiptLineDisplayQuantity(receiptLine);
     }
+  }
+
+  // setup the item package type
+  loadItemPackageType(receiptLine: ReceiptLine) {
+
+    if (receiptLine.itemPackageTypeId != null && receiptLine.itemPackageType == null) {
+        receiptLine.itemPackageType = receiptLine.item?.itemPackageTypes.find(
+          itempackageType => itempackageType.id == receiptLine.itemPackageTypeId
+        );
+    }
+
+    // we will save the item package type for the receipt line so that we can calculate and display the
+    // quantity based on the right item package type
+    // 1. if there's a item package type defined at the receipt line, then we will use it
+    // 2. otherwise we will use the default item package type
+    this.receiptLineItemPackageTypes.set(receiptLine.id!, 
+      receiptLine.itemPackageType == null ? receiptLine.item?.defaultItemPackageType : receiptLine.itemPackageType);
   }
 
   calculateQuantities(receipts: Receipt[]): Receipt[] {
@@ -640,9 +682,14 @@ export class InboundReceiptComponent implements OnInit {
         title: this.i18n.fanyi("item.description"), width: 150, 
         render: 'itemDescriptionColumn', 
       }, 
+      {
+        title: this.i18n.fanyi("itemPackageType"), width: 150, index: 'itemPackageType.name'  
+      }, 
       { title: this.i18n.fanyi("receipt.line.expectedQuantity"), 
       
           render: 'expectedQuantityColumn',  width: 150 },     
+      { title: this.i18n.fanyi("cubicMeter"), 
+          render: 'cubicMeterColumn', width: 150 },  
       { title: this.i18n.fanyi("receipt.line.receivedQuantity"),  render: 'receivedQuantityColumn',  width: 150 },    
       { title: this.i18n.fanyi("receipt.line.overReceivingQuantity"), index: 'overReceivingQuantity' , width: 150 },  
       { title: this.i18n.fanyi("receipt.line.overReceivingPercent"), index: 'overReceivingPercent' , width: 150 },      
@@ -856,7 +903,7 @@ export class InboundReceiptComponent implements OnInit {
     receiptLineBillableActivity: ReceiptLineBillableActivity) {
 
       this.isSpinning = true;
-      console.log(`start to remove receipt line billable activity`);
+      //console.log(`start to remove receipt line billable activity`);
 
       this.receiptService.removeReceiptLineBillableActivity(
         receiptLine.id!, receiptLineBillableActivity.id!

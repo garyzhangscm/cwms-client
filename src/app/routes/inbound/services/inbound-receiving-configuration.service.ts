@@ -39,6 +39,30 @@ export class InboundReceivingConfigurationService {
 
     return this.http.get(url, params).pipe(map(res => res.data));
   }
+  getBestMatchInboundReceivingConfiguration(
+    supplierId?: number, itemId?: number, itemName?: string, warehouseId?: number): Observable<InboundReceivingConfiguration> {
+    const url = `inbound/inbound-receiving-configuration/best-match`;
+
+    
+    let params = new HttpParams(); 
+
+    params = params.append('companyId', this.companyService.getCurrentCompany()!.id); 
+
+    if (supplierId) {
+      params = params.append('supplierId', supplierId);  
+    }
+    if (itemId) {
+      params = params.append('itemId', itemId);   
+    }
+    if (itemName) {
+      params = params.append('itemName', itemName);   
+    }
+    if (warehouseId) {
+      params = params.append('warehouseId', warehouseId);    
+    }
+
+    return this.http.get(url, params).pipe(map(res => res.data));
+  }
 
   getInboundReceivingConfiguration(id: number): Observable<InboundReceivingConfiguration> {
     return this.http.get(`inbound/inbound-receiving-configuration/${id}`).pipe(map(res => res.data));
