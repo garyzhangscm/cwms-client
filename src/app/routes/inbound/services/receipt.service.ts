@@ -192,11 +192,17 @@ export class ReceiptService {
   }
 
   
-  generatePrePrintLPNReportInBatch(receiptId: number, lpnLabelCountByReceiptLines: Map<number, number>, 
+  generatePrePrintLPNReportInBatch(receiptId: number, 
+      lpnLabelCountByReceiptLines: Map<number, number>, 
        lpnQuantityOnLabelByReceiptLines: Map<number, number>, 
+       ignoreInventoryQuantityByReceiptLines: Map<number, boolean>,
        lpn?: string, printerName?: string) : Observable<ReportHistory> {
     
-    const url = `inbound/receipts/${receiptId}/pre-print-lpn-report/batch`;
+        console.log(`lpnLabelCountByReceiptLines.size: ${lpnLabelCountByReceiptLines.size}`);
+        console.log(`lpnQuantityOnLabelByReceiptLines.size: ${lpnQuantityOnLabelByReceiptLines.size}`);
+        console.log(`ignoreInventoryQuantityByReceiptLines.size: ${ignoreInventoryQuantityByReceiptLines.size}`); 
+
+    const url = `inbound/receipts/${receiptId}/pre-print-lpn-label/batch`;
     
     let params = new HttpParams(); 
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id);  
@@ -206,11 +212,25 @@ export class ReceiptService {
     if (printerName) {
       params = params.append('printerName', printerName);    
     }
-    
+    // we will need to convert the Map into object so that we can pass it to the server
+    const lpnLabelCountByReceiptLinesMap: { [key: number]:  number} = {};
+    const lpnQuantityOnLabelByReceiptLinesMap: { [key: number]:  number} = {};
+    const ignoreInventoryQuantityByReceiptLinesMap: { [key: number]:  boolean} = {};
+    lpnLabelCountByReceiptLines.forEach((val: number, key: number) => {
+      lpnLabelCountByReceiptLinesMap[key] = val;
+    });
+    lpnQuantityOnLabelByReceiptLines.forEach((val: number, key: number) => {
+      lpnQuantityOnLabelByReceiptLinesMap[key] = val;
+    });
+    ignoreInventoryQuantityByReceiptLines.forEach((val: boolean, key: number) => {
+      ignoreInventoryQuantityByReceiptLinesMap[key] = val;
+    });
     
     return this.http.post(url, 
-      {lpnLabelCountByReceiptLines: lpnLabelCountByReceiptLines, 
-        lpnQuantityOnLabelByReceiptLines: lpnQuantityOnLabelByReceiptLines}, 
+      {lpnLabelCountByReceiptLines: lpnLabelCountByReceiptLinesMap, 
+        lpnQuantityOnLabelByReceiptLines: lpnQuantityOnLabelByReceiptLinesMap, 
+        ignoreInventoryQuantityByReceiptLines: ignoreInventoryQuantityByReceiptLinesMap,
+      }, 
       params).pipe(map(res => res.data));
   }
 }

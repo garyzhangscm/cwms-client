@@ -12,6 +12,7 @@ import { InventoryConfiguration } from '../../inventory/models/inventory-configu
 import { ItemPackageType } from '../../inventory/models/item-package-type';
 import { ItemUnitOfMeasure } from '../../inventory/models/item-unit-of-measure';
 import { InventoryConfigurationService } from '../../inventory/services/inventory-configuration.service'; 
+import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { ReportType } from '../../report/models/report-type.enum';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { InboundReceivingConfiguration } from '../models/inbound-receiving-configuration';
@@ -49,6 +50,10 @@ export class InboundPrintingReceivingLpnLabelComponent implements OnInit {
   // key: receipt line id
   // value: quantity to be printedon label, can be null
   lpnQuantityOnLabelByReceiptLines = new Map<number, number>();
+  
+  // key: receipt line id
+  // value: whether to ignore the lpn quantity on the label
+  ignoreInventoryQuantityByReceiptLines = new Map<number, boolean>();
 
   @ViewChild('receiptLineTable', { static: true })
   st!: STComponent;
@@ -112,12 +117,19 @@ export class InboundPrintingReceivingLpnLabelComponent implements OnInit {
             iif: () =>  this.inventoryConfiguration?.inventoryAttribute5Enabled == true, width: 150  
         }, 
         {
-          title: this.i18n.fanyi("label-count"), 
-          render: 'lableCountColumn', 
+          title: this.i18n.fanyi("inventory-quantity-on-lpn"), 
+          render: 'lpnQuantityOnLabelColumn', 
           width: 250,
           fixed: 'right', 
     
-        },   
+        },  
+        {
+          title: this.i18n.fanyi("label-count"), 
+          render: 'lableCountColumn', 
+          width: 150,
+          fixed: 'right', 
+    
+        },  
     
     ];
   }
@@ -180,6 +192,7 @@ export class InboundPrintingReceivingLpnLabelComponent implements OnInit {
                 this.isSpinning = false; 
                 this.returnUrl = `/inbound/receipt?number=${this.currentReceipt.number}` 
                 this.initLPNLabelCounts(receiptRes); 
+                this.initInventoryQuantityOnLPNLabels(receiptRes);
                 this.loadItems(receiptRes);
             }
           }
@@ -358,12 +371,36 @@ calculateQuantities(receipts: Receipt[]): Receipt[] {
     )
     return valid;
   }
+  
+  validateLPNQuantityOnLabel(): boolean {
+
+    let valid = true;
+    // for each line, either we ignore the quantity
+    // or the user input an valid quantity to be displayed on the label
+    this.currentReceipt?.receiptLines.forEach(
+      receiptLine => {
+        if (this.ignoreInventoryQuantityByReceiptLines.get(receiptLine.id!) != true && 
+            (this.lpnQuantityOnLabelByReceiptLines.get(receiptLine.id!) == null || this.lpnQuantityOnLabelByReceiptLines.get(receiptLine.id!)! <= 0)) {
+                valid = false;
+            }
+      }
+    )
+    return valid;
+  }
+
   printLPNLabels(event: any) {
     
     this.isSpinning = true;
     if (!this.validateLPNLabelCount()) {
       
       this.messageService.error(this.i18n.fanyi("Label Count needs to be bigger than 0"));
+      this.isSpinning = false;
+  
+      return;
+    }
+    if (!this.validateLPNQuantityOnLabel()) {
+      
+      this.messageService.error(this.i18n.fanyi("Quantity on the LPN Label needs to be bigger than 0"));
       this.isSpinning = false;
   
       return;
@@ -408,6 +445,7 @@ calculateQuantities(receipts: Receipt[]): Receipt[] {
     this.receiptService.generatePrePrintLPNReportInBatch(
       this.currentReceipt!.id!, this.lpnLabelCountByReceiptLines, 
       this.lpnQuantityOnLabelByReceiptLines, 
+      this.ignoreInventoryQuantityByReceiptLines,
       startLPN,
       event.printerName )
       .subscribe({
@@ -498,6 +536,13 @@ calculateQuantities(receipts: Receipt[]): Receipt[] {
   
       return;
     } 
+    if (!this.validateLPNQuantityOnLabel()) {
+      
+      this.messageService.error(this.i18n.fanyi("Quantity on the LPN Label needs to be bigger than 0"));
+      this.isSpinning = false;
+  
+      return;
+    }
   }
   
   
@@ -507,6 +552,13 @@ calculateQuantities(receipts: Receipt[]): Receipt[] {
     if (!this.validateLPNLabelCount()) {
       
       this.messageService.error(this.i18n.fanyi("Label Count needs to be bigger than 0"));
+      this.isSpinning = false;
+  
+      return;
+    }
+    if (!this.validateLPNQuantityOnLabel()) {
+      
+      this.messageService.error(this.i18n.fanyi("Quantity on the LPN Label needs to be bigger than 0"));
       this.isSpinning = false;
   
       return;
@@ -536,20 +588,18 @@ calculateQuantities(receipts: Receipt[]): Receipt[] {
      
   } 
   
-  previewLPNLabelInBatch(event: any, startLPN: string) {
- 
-        this.previewReceivingLPNLabelInBatch(event, startLPN);  
-  }
-  
+  previewLPNLabelInBatch(event: any, startLPN: string) { 
+    console.log(`start to preview lpn label with parameters`);
+    console.log(`this.lpnLabelCountByReceiptLines.size: ${this.lpnLabelCountByReceiptLines.size}`);
+    console.log(`this.lpnQuantityOnLabelByReceiptLines.size: ${this.lpnQuantityOnLabelByReceiptLines.size}`);
+    console.log(`this.ignoreInventoryQuantityByReceiptLines.size: ${this.ignoreInventoryQuantityByReceiptLines.size}`); 
 
-  previewReceivingLPNLabelInBatch(event: any, startLPN: string) {
-    
-    this.isSpinning = true;
-    /**
-     * 
-     * 
-    this.receiptLineService.generatePrePrintLPNLabelInBatch(
-      this.currentReceiptLine!.id!, startLPN, quantity, labelCount, 1, "", this.ignoreInventoryQuantity)
+    this.isSpinning = true; 
+    this.receiptService.generatePrePrintLPNReportInBatch(
+      this.currentReceipt!.id!, this.lpnLabelCountByReceiptLines, 
+      this.lpnQuantityOnLabelByReceiptLines, 
+      this.ignoreInventoryQuantityByReceiptLines,
+      startLPN)
       .subscribe({
         next: (printResult) => {
           
@@ -559,25 +609,50 @@ calculateQuantities(receipts: Receipt[]): Receipt[] {
             
         }, 
         error: () => this.isSpinning = false
-      })
-
-     * 
-     */
+      });
 
   } 
 
   lpnLabelCountChanged(receiptLineId: number, lpnLabelCount: number) {
     this.lpnLabelCountByReceiptLines.set(receiptLineId, lpnLabelCount);
   }
+  
+  lpnQuantityOnLabelChanged(receiptLineId: number, lpnQuantityOnLabel: number) {
+    this.lpnQuantityOnLabelByReceiptLines.set(receiptLineId, lpnQuantityOnLabel);
+  }
+
+  
+  ignoreInventoryQuantityChanged(receiptLineId: number, ignoreInventoryQuantity: boolean) {
+    this.ignoreInventoryQuantityByReceiptLines.set(receiptLineId, ignoreInventoryQuantity);
+  }
 
   initLPNLabelCounts(receipt: Receipt) {
+    receipt.receiptLines.forEach(
+      receiptLine => this.initLPNLabelCount(receiptLine)
+    )
+    
+    console.log(`after initLPNLabelCounts the this.lpnLabelCountByReceiptLines: ${JSON.stringify(this.lpnLabelCountByReceiptLines)}`);
+    
+  }
+
+  // setup the LPN quantites on the label
+  // by default, we will setup ignoreInventoryQuantity
+  // for all lines
+  initInventoryQuantityOnLPNLabels(receipt: Receipt) {
       receipt.receiptLines.forEach(
-        receiptLine => this.initLPNLabelCount(receiptLine)
+        receiptLine => this.initInventoryQuantityOnLPNLabel(receiptLine)
       )
   }
+  
+  initInventoryQuantityOnLPNLabel(receiptLine: ReceiptLine) {
+      this.ignoreInventoryQuantityByReceiptLines.set(receiptLine.id!, true);
+      this.lpnQuantityOnLabelByReceiptLines.set(receiptLine.id!, 0);
+
+  }
+  
   initLPNLabelCount(receiptLine: ReceiptLine) {
 
-    console.log(`start to estimate the LPN label count for receipt line ${receiptLine.id}`);
+    // console.log(`start to estimate the LPN label count for receipt line ${receiptLine.id}`);
 
     if (!this.inboundReceivingConfiguration || !this.inboundReceivingConfiguration.estimatePalletCountBySize) {
       // estimate the lpn count by quantity of the receipt line and quantity of LPN item unit of measure
@@ -599,7 +674,7 @@ calculateQuantities(receipts: Receipt[]): Receipt[] {
   
   getLPNLabelCountsByReceiptLineCubicMeter(receiptLine: ReceiptLine) : number {
  
-    console.log(`> estimate by receipt line cubic meter`);
+    // console.log(`> estimate by receipt line cubic meter`);
 
     if (receiptLine.cubicMeter == null) {
       return 1;
@@ -614,7 +689,7 @@ calculateQuantities(receipts: Receipt[]): Receipt[] {
   getLPNLabelCountsByItemPackageTypeSize(receiptLine: ReceiptLine) : number {
  
 
-    console.log(`> estimate by case UOM's size `);
+    // console.log(`> estimate by case UOM's size `);
     // we will always calculate the size by case since it is the
     // most UOM that the inventory will be stack
     const caseUnitOfMeasure = this.getCaseUnitOfMeasure(receiptLine);
@@ -636,7 +711,7 @@ calculateQuantities(receipts: Receipt[]): Receipt[] {
   getLPNLabelCountsByItemPackageTypeQuantity(receiptLine: ReceiptLine) : number {
 
 
-    console.log(`> estimate by LPN UOM's quantity `);
+    // console.log(`> estimate by LPN UOM's quantity `);
     const lpnUnitOfMeasure = this.getLPNUnitOfMeasure(receiptLine);
 
     if (lpnUnitOfMeasure == null) {
