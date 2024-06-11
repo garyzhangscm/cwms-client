@@ -93,6 +93,7 @@ export class UtilFileUploadComponent implements OnInit {
   displayFileUploadResults: FileUploadResult[] = [];
 
   removeExistingInventory = false;
+  ignoreUnknownFields = true;
   resultTotal = 0;
   resultSuccess = 0;
   resultFail = 0;
@@ -173,13 +174,21 @@ export class UtilFileUploadComponent implements OnInit {
         fileUploadTypes
           .filter(item => item.name === this.loadFileForm.value.fileTypeSelector)
           .forEach(fileUploadType => {
-            
-            
-            this.selectedFileUploadType = fileUploadType;
-            this.selectedFileUploadUrl = `${this.selectedFileUploadType.destinationUrl}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&companyId=${this.companyService.getCurrentCompany()!.id}&removeExistingInventory=${this.removeExistingInventory}`;
-          });
+                this.selectedFileUploadType = fileUploadType;
+                this.refreshFileParameters();
+            });
       });
     }
+  }
+
+  refreshFileParameters() {
+    let url = `${this.selectedFileUploadType!.destinationUrl}`
+    url = `${url}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`
+    url = `${url}&companyId=${this.companyService.getCurrentCompany()!.id}`
+    url = `${url}&ignoreUnknownFields=${this.ignoreUnknownFields}`
+    url = `${url}&removeExistingInventory=${this.removeExistingInventory}`
+    this.selectedFileUploadUrl = url;
+          
   }
 
   loadColumnMapping(): void { 
@@ -334,8 +343,9 @@ export class UtilFileUploadComponent implements OnInit {
 
   removeExistingInventoryChanged() {
     //  console.log(`removeExistingInventory is changed to ${this.removeExistingInventory}`)
-    if (this.selectedFileUploadType) {
-      this.selectedFileUploadUrl = `${this.selectedFileUploadType.destinationUrl}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&removeExistingInventory=${this.removeExistingInventory}`;
+    if (this.selectedFileUploadType) { 
+      this.refreshFileParameters();
+      
     }
     
   } 

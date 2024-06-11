@@ -683,7 +683,7 @@ export class InboundReceiptComponent implements OnInit {
         render: 'itemDescriptionColumn', 
       }, 
       {
-        title: this.i18n.fanyi("itemPackageType"), width: 150, index: 'itemPackageType.name'  
+        title: this.i18n.fanyi("item.package-type"), width: 150, index: 'itemPackageType.name'  
       }, 
       { title: this.i18n.fanyi("receipt.line.expectedQuantity"), 
       
@@ -779,6 +779,9 @@ export class InboundReceiptComponent implements OnInit {
     },
     {
       title: this.i18n.fanyi("item.description"),  index: 'item.description' ,  width: 150,
+    }, 
+    {
+      title: this.i18n.fanyi("item.package-type"),  index: 'itemPackageType.name' ,  width: 150,
     }, 
     { title: this.i18n.fanyi("quantity"), 
     

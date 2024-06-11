@@ -24,7 +24,7 @@
     <nz-descriptions  nzBordered="true" *ngIf="currentReceipt">
   
       <nz-descriptions-item nzTitle="{{ 'standardPalletSize' | i18n}}">
-        <nz-input-number  [nzMin]="0" [(ngModel)]="standardPalletSize"  [nzStep]="0.05"></nz-input-number> Cubic Meter
+        <nz-input-number  [nzMin]="0" [(ngModel)]="standardPalletSize" (ngModelChange)="standardPalletSizeChanged()" [nzStep]="0.05"></nz-input-number> Cubic Meter
       </nz-descriptions-item>
       
       <nz-descriptions-item nzTitle="{{ 'start-lpn' | i18n}}">

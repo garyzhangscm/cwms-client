@@ -663,13 +663,26 @@ calculateQuantities(receipts: Receipt[]): Receipt[] {
         // size of the standardPalletSize(this.standardPalletSize)
       this.lpnLabelCountByReceiptLines.set(receiptLine.id!, this.getLPNLabelCountsByItemPackageTypeSize(receiptLine));
     }
-    else {
+    else if(receiptLine.cubicMeter != null){
 
         // estimate the lpn count by size of the receipt line's cubic meter
         // size of the standardPalletSize(this.standardPalletSize)
 
       this.lpnLabelCountByReceiptLines.set(receiptLine.id!, this.getLPNLabelCountsByReceiptLineCubicMeter(receiptLine));
-    } 
+    }
+    else {
+      this.lpnLabelCountByReceiptLines.set(receiptLine.id!, this.getLPNLabelCountsByItemPackageTypeQuantity(receiptLine));
+
+    }
+  }
+  standardPalletSizeChanged() {
+    // refresh the label count when the standard pallet size changed, only make the change
+    // when the system is configured to use the standard pallet size to calculate the label count
+    console.log(`standardPalletSizeChanged: this.inboundReceivingConfiguration == null? ${this.inboundReceivingConfiguration == null}`)
+    console.log(`standardPalletSizeChanged: this.inboundReceivingConfiguration.estimatePalletCountBySize? ${this.inboundReceivingConfiguration?.estimatePalletCountBySize}`)
+    if (this.inboundReceivingConfiguration && this.inboundReceivingConfiguration.estimatePalletCountBySize) { 
+      this.initLPNLabelCounts(this.currentReceipt!);
+    }
   }
   
   getLPNLabelCountsByReceiptLineCubicMeter(receiptLine: ReceiptLine) : number {
