@@ -1,4 +1,5 @@
 import { User } from '../../auth/models/user';
+import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { Item } from '../../inventory/models/item';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { WorkTask } from '../../work-task/models/work-task';
@@ -21,6 +22,13 @@ export interface PickWork {
 
   quantity: number;
   pickedQuantity: number;
+
+  
+  displayQuantity?: number;
+  displayUnitOfMeasureForQuantity?: UnitOfMeasure;
+  displayPickedQuantity?: number;
+  displayUnitOfMeasureForPickedQuantity?: UnitOfMeasure;
+
   pickType: PickType;
 
   pickListNumber?: string;

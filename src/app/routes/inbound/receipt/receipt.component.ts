@@ -235,8 +235,13 @@ export class InboundReceiptComponent implements OnInit {
           this.inventoryConfiguration = inventoryConfigurationRes;
         } 
         this.setupReceiptLineTableColumns();
+        this.setupReceivedInventoryTableColumns();
       } , 
-      error: () =>  this.setupReceiptLineTableColumns()
+      error: () =>  {
+        this.setupReceiptLineTableColumns();
+        this.setupReceivedInventoryTableColumns();
+      }
+
     });
   }
   ngOnInit(): void {
@@ -772,30 +777,55 @@ export class InboundReceiptComponent implements OnInit {
 
   @ViewChild('stInventory', { static: false })
   stInventory!: STComponent;
-  receivedInventoryTableColumns: STColumn[] = [ 
-    { title: this.i18n.fanyi("lpn"), index: 'lpn', width: 150 },    
-    {
-      title: this.i18n.fanyi("item"), index: 'item.name' ,  width: 150,
-    },
-    {
-      title: this.i18n.fanyi("item.description"),  index: 'item.description' ,  width: 150,
-    }, 
-    {
-      title: this.i18n.fanyi("item.package-type"),  index: 'itemPackageType.name' ,  width: 150,
-    }, 
-    { title: this.i18n.fanyi("quantity"), 
-    
-        render: 'quantityColumn',  width: 150 },     
-    { title: this.i18n.fanyi("inventory.status"),  index: 'inventoryStatus.name' ,  width: 150 },   
-    { title: this.i18n.fanyi("color"), index: 'color' , width: 150 },       
-    { title: this.i18n.fanyi("productSize"), index: 'productSize' , width: 150 },       
-    { title: this.i18n.fanyi("style"), index: 'style' , width: 150 },        
-    { title: this.i18n.fanyi("location"), index: 'location.name' , width: 150 },       
-    { title: this.i18n.fanyi("nextLocation"), 
-    render: 'nextLocationColumn',  width: 150 },       
-    // { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 },       
-  ];
+  receivedInventoryTableColumns: STColumn[] = [];
 
+  setupReceivedInventoryTableColumns() {
+    this.receivedInventoryTableColumns  = [ 
+      { title: this.i18n.fanyi("lpn"), index: 'lpn', width: 150 },    
+      {
+        title: this.i18n.fanyi("item"), index: 'item.name' ,  width: 150,
+      },
+      {
+        title: this.i18n.fanyi("item.description"),  index: 'item.description' ,  width: 150,
+      }, 
+      {
+        title: this.i18n.fanyi("item.package-type"),  index: 'itemPackageType.name' ,  width: 150,
+      }, 
+      { title: this.i18n.fanyi("quantity"), 
+      
+          render: 'quantityColumn',  width: 150 },     
+      { title: this.i18n.fanyi("inventory.status"),  index: 'inventoryStatus.name' ,  width: 150 },   
+      { title: this.i18n.fanyi("color"), index: 'color' , width: 150 },       
+      { title: this.i18n.fanyi("productSize"), index: 'productSize' , width: 150 },       
+      { title: this.i18n.fanyi("style"), index: 'style' , width: 150 },        
+      { title: this.i18n.fanyi("location"), index: 'location.name' , width: 150 },  
+      { title: this.inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
+        this.i18n.fanyi("inventoryAttribute1") : this.inventoryConfiguration?.inventoryAttribute1DisplayName,  
+        index: 'attribute1' ,
+          iif: () =>  this.inventoryConfiguration?.inventoryAttribute1Enabled == true, width: 150 }, 
+      { title: this.inventoryConfiguration?.inventoryAttribute2DisplayName == null ?
+              this.i18n.fanyi("inventoryAttribute2") : this.inventoryConfiguration?.inventoryAttribute2DisplayName,    
+              index: 'attribute2' ,
+          iif: () =>   this.inventoryConfiguration?.inventoryAttribute2Enabled == true,width: 150  }, 
+      { title: this.inventoryConfiguration?.inventoryAttribute3DisplayName == null ?
+              this.i18n.fanyi("inventoryAttribute3") : this.inventoryConfiguration?.inventoryAttribute3DisplayName,    
+          index: 'attribute3' ,
+          iif: () =>   this.inventoryConfiguration?.inventoryAttribute3Enabled == true, width: 150 }, 
+      { title: this.inventoryConfiguration?.inventoryAttribute4DisplayName == null ?
+              this.i18n.fanyi("inventoryAttribute4") : this.inventoryConfiguration?.inventoryAttribute4DisplayName,  
+          index: 'attribute4' ,
+          iif: () =>  this.inventoryConfiguration?.inventoryAttribute4Enabled == true, width: 150 },
+      { title: this.inventoryConfiguration?.inventoryAttribute5DisplayName == null ?
+              this.i18n.fanyi("inventoryAttribute5") : this.inventoryConfiguration?.inventoryAttribute5DisplayName,  
+              index: 'attribute5' ,
+          iif: () =>   this.inventoryConfiguration?.inventoryAttribute5Enabled == true, width: 150 },
+
+      { title: this.i18n.fanyi("nextLocation"), 
+      render: 'nextLocationColumn',  width: 150 },       
+      // { title: this.i18n.fanyi("action"), render: 'actionColumn', width: 150 },       
+    ];
+     
+  }
 
   loadReceivedInventory(receipt: Receipt) {
     this.listOfAllReceivedInventory[receipt.number] = [];

@@ -661,6 +661,53 @@ export class OutboundOrderComponent implements OnInit {
         ordertLine.displayExpectedQuantity! = ordertLine.expectedQuantity!;
         ordertLine.displayOpenQuantity! = ordertLine.openQuantity!;
       }  
+  }
+  
+  calculatePickWorkDisplayQuantity(pick: PickWork) : void {  
+    console.log(`start to calculate pick work ${pick.number}'s display quantity `)
+    console.log(`pick.item: ${pick.item == null ? "N/A" : pick.item.name} `);
+    console.log(`pick.item?.defaultItemPackageType: ${pick.item?.defaultItemPackageType== null ? "N/A" : pick.item?.defaultItemPackageType.name} `);
+    console.log(`pick.item?.defaultItemPackageType?.displayItemUnitOfMeasure: ${pick.item?.defaultItemPackageType?.displayItemUnitOfMeasure == null ? "N/A" : pick.item?.defaultItemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure?.name} `);
+    if (pick.item?.defaultItemPackageType?.displayItemUnitOfMeasure) {
+      // console.log(`>> found displayItemUnitOfMeasure: ${ordertLine.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure?.name}`)
+      let displayItemUnitOfMeasureQuantity  = pick.item?.defaultItemPackageType?.displayItemUnitOfMeasure.quantity;
+      console.log(`pick.quantity: ${pick.quantity} `);
+      console.log(`displayItemUnitOfMeasureQuantity: ${displayItemUnitOfMeasureQuantity} `);
+    
+      // console.log(`>> with quantity ${displayItemUnitOfMeasureQuantity}`)
+
+      // console.log(`>> ordertLine.expectedQuantity ${ordertLine.expectedQuantity}`)
+      if (pick.quantity! % displayItemUnitOfMeasureQuantity! ==0) {
+        pick.displayUnitOfMeasureForQuantity = pick.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure;
+        pick.displayQuantity = pick.quantity! / displayItemUnitOfMeasureQuantity!
+      }
+      else {
+        // the receipt line's quantity can't be devided by the display uom, we will display the quantity in 
+        // stock uom
+        pick.displayQuantity! = pick.quantity!;
+        // receiptLine.item!.defaultItemPackageType!.displayItemUnitOfMeasure = receiptLine.item!.defaultItemPackageType!.stockItemUnitOfMeasure;
+        pick.displayUnitOfMeasureForQuantity = pick.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure;
+      }
+      // console.log(`>> ordertLine.displayExpectedQuantity ${ordertLine.displayExpectedQuantity}`)
+      
+      if (pick.pickedQuantity! % displayItemUnitOfMeasureQuantity! ==0) {
+        pick.displayPickedQuantity = pick.pickedQuantity! / displayItemUnitOfMeasureQuantity!
+        pick.displayUnitOfMeasureForPickedQuantity = pick.item?.defaultItemPackageType?.displayItemUnitOfMeasure.unitOfMeasure;
+      }
+      else {
+        // the receipt line's quantity can't be devided by the display uom, we will display the quantity in 
+        // stock uom
+        pick.displayPickedQuantity = pick.pickedQuantity!;
+        // receiptLine.item!.defaultItemPackageType!.displayItemUnitOfMeasure = receiptLine.item!.defaultItemPackageType!.stockItemUnitOfMeasure;
+        pick.displayUnitOfMeasureForPickedQuantity = pick.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure;
+      }
+    }
+    else {
+      // there's no display UOM setup for this inventory, we will display
+      // by the quantity
+      pick.displayQuantity! = pick.quantity!;
+      pick.displayPickedQuantity! = pick.pickedQuantity!;
+    }  
 }
 
   calculateStatisticQuantities(order: Order) {
@@ -957,6 +1004,10 @@ export class OutboundOrderComponent implements OnInit {
   showPicks(order: Order): void {
     this.pickService.getPicksByOrder(order.id!).subscribe(pickRes => {
       this.mapOfPicks[order.id!] = [...pickRes];
+
+      // this.mapOfPicks[order.id!].forEach(
+      //   pick => this.calculatePickWorkDisplayQuantity(pick)
+      // );
     });
   }
   showShortAllocations(order: Order): void {
@@ -1659,6 +1710,41 @@ export class OutboundOrderComponent implements OnInit {
     else {
       this.messageService.error(`can't change the display quantity as the line's expected quantity ${ 
         orderLine.openQuantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
+          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+    }
+  }
+
+  
+  changeDisplayItemUnitOfMeasureForPickWorkQuantity(pick: PickWork, itemUnitOfMeasure: ItemUnitOfMeasure) {
+
+    
+    // see if the inventory's quantity can be divided by the item unit of measure
+    // if so, we are allowed to change the display UOM and quantity
+    if (pick.quantity! % itemUnitOfMeasure.quantity! == 0) {
+
+      pick.displayQuantity = pick.quantity! / itemUnitOfMeasure.quantity!;
+      pick.displayUnitOfMeasureForQuantity = itemUnitOfMeasure.unitOfMeasure;
+    }
+    else {
+      this.messageService.error(`can't change the display quantity as the pick work's quantity ${ 
+        pick.quantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
+          }'s quantity ${  itemUnitOfMeasure.quantity}`);
+    }
+  }
+  
+  changeDisplayItemUnitOfMeasureForPickWorkPickedQuantity(pick: PickWork,  itemUnitOfMeasure: ItemUnitOfMeasure) {
+
+    
+    // see if the inventory's quantity can be divided by the item unit of measure
+    // if so, we are allowed to change the display UOM and quantity
+    if (pick.pickedQuantity! % itemUnitOfMeasure.quantity! == 0) {
+
+      pick.displayPickedQuantity = pick.pickedQuantity! / itemUnitOfMeasure.quantity!;
+      pick.displayUnitOfMeasureForPickedQuantity = itemUnitOfMeasure.unitOfMeasure;
+    }
+    else {
+      this.messageService.error(`can't change the display quantity as the pick work's picked quantity ${ 
+        pick.pickedQuantity  } can't be divided by uom ${  itemUnitOfMeasure.unitOfMeasure?.name 
           }'s quantity ${  itemUnitOfMeasure.quantity}`);
     }
   }

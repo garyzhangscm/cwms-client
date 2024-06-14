@@ -456,154 +456,11 @@
                 
               </ng-template>          
           </st> 
-<!--
-            <nz-table [nzScroll]="{ x: '100vw'}" #innerTable [nzData]="order.orderLines" nzSize="middle"
-              [nzShowPagination]="false" #orderLineTable>
-              <thead>
-                <th>
-                  {{ 'order.line.number' | i18n }}
-                </th>
-                <th>
-                  {{ 'item' | i18n }}
-                </th>
-                <th>
-                  {{ 'color' | i18n }}
-                </th>
-                <th>
-                  {{ 'productSize' | i18n }}
-                </th>
-                <th>
-                  {{ 'style' | i18n }}
-                </th>
-                <th>
-                  {{ 'order.line.expectedQuantity' | i18n }}
-                </th>
-                <th>
-                  {{ 'order.line.openQuantity' | i18n }}
-                </th>
-                <th>
-                  {{ 'order.line.inprocessQuantity' | i18n }}
-                </th>
-                <th>
-                  {{ 'production-plan.line.inprocessQuantity' | i18n }}
-                </th>
-                <th>
-                  {{ 'production-plan.line.producedQuantity' | i18n }}
-                </th>
-                <th>
-                  {{ 'order.line.shippedQuantity' | i18n }}
-                </th>
-                <th>
-                  {{ 'inventory.status' | i18n }}
-                </th>
-                <th>
-                  {{ 'order.line.allocationStrategyType' | i18n }}
-                </th>
-                <th>
-                  {{'action' | i18n}}
-                </th>
-              </thead>
-              <tbody>
-                <tr *ngFor="let orderLine of orderLineTable.data">
-                  <td>{{ orderLine.number }}</td>
-                  
-                  <td>
-                    <nz-skeleton-element 
-                      *ngIf="orderLine.itemId && orderLine.item == null"
-                      nzType="input"
-                      [nzActive]="true"
-                      [nzSize]="'small'"
-                      style="width:75px"
-                    ></nz-skeleton-element> 
-                    {{ orderLine.item?.name }}</td>
-                    <td>{{ orderLine.color }}</td>
-                    <td>{{ orderLine.productSize }}</td>
-                    <td>{{ orderLine.style }}</td>
-                  <td>
-                    
-                    {{ orderLine.displayExpectedQuantity }}  
-                    <nz-skeleton-element 
-                      *ngIf="orderLine.displayUnitOfMeasureForExpectedQuantity == null"
-                      nzType="input"
-                      [nzActive]="true"
-                      [nzSize]="'small'"
-                      style="width:75px"
-                    ></nz-skeleton-element>  
-                    <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList1" 
-                      *ngIf="orderLine.displayUnitOfMeasureForExpectedQuantity != null">
-                      {{orderLine.displayUnitOfMeasureForExpectedQuantity.name}}
-                      <span nz-icon nzType="down"></span>
-                    </a>
-                    <nz-dropdown-menu #unitOfMeasureList1="nzDropdownMenu">
-                      <ul nz-menu nzSelectable>
-                        <li nz-menu-item *ngFor="let itemUnitOfMeasure of orderLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
-                        (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(orderLine, itemUnitOfMeasure)">
-                          {{ itemUnitOfMeasure.unitOfMeasure?.name }}
-                        </li> 
-                      </ul>
-                    </nz-dropdown-menu> 
-                  </td>
-                  <td>
-                    
-                    {{ orderLine.displayOpenQuantity }}  
-                    <nz-skeleton-element 
-                      *ngIf="orderLine.displayUnitOfMeasureForOpenQuantity == null"
-                      nzType="input"
-                      [nzActive]="true"
-                      [nzSize]="'small'"
-                      style="width:75px"
-                    ></nz-skeleton-element>  
-                    <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList2" 
-                      *ngIf="orderLine.displayUnitOfMeasureForOpenQuantity != null">
-                      {{orderLine.displayUnitOfMeasureForOpenQuantity.name}}
-                      <span nz-icon nzType="down"></span>
-                    </a>
-                    <nz-dropdown-menu #unitOfMeasureList2="nzDropdownMenu">
-                      <ul nz-menu nzSelectable>
-                        <li nz-menu-item *ngFor="let itemUnitOfMeasure of orderLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
-                        (click)="changeDisplayItemUnitOfMeasureForOpenQuantity(orderLine, itemUnitOfMeasure)">
-                          {{ itemUnitOfMeasure.unitOfMeasure?.name }}
-                        </li> 
-                      </ul>
-                    </nz-dropdown-menu> 
 
-                  </td>
-                  <td>{{ orderLine.inprocessQuantity }}</td>
-                  <td>{{ orderLine.productionPlanInprocessQuantity }}</td>
-                  <td>{{ orderLine.productionPlanProducedQuantity }}</td>
-                  <td>{{ orderLine.shippedQuantity }}</td>
-                  <td>
-                    
-                    <nz-skeleton-element 
-                    *ngIf="orderLine.inventoryStatusId && orderLine.inventoryStatus == null"
-                    nzType="input"
-                    [nzActive]="true"
-                    [nzSize]="'small'"
-                      style="width:75px"
-                    ></nz-skeleton-element> 
-                    <span *ngIf="orderLine.inventoryStatus != null" >
-                      {{  orderLine.inventoryStatus?.description}}
-                    </span>
-                    </td>
-                  <td><span *ngIf="orderLine.allocationStrategyType != null">
-                    {{ 'ALLOCATION-STRATEGY-TYPE-' + orderLine.allocationStrategyType | i18n}}
-                  </span></td>
-                  <td> 
-                    <button nz-button (click)="openAddOrderLineActivityModal(order, orderLine, tplBillableActivityModalTitle, 
-                        tplBillableActivityModalContent, tplBillableActivityModalFooter)">
-                    {{ 'billable-activity-type.add' | i18n }}
-                    </button>
- 
-                  </td>
-                </tr>
-              </tbody>
-            </nz-table>
-
-          -->
           </nz-tab> 
 
           <nz-tab nzTitle=" {{ 'pick' | i18n }}">
-            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="true"
+            <nz-table [nzScroll]="{ x: '100vw' }" nzSize="middle" [nzShowPagination]="true"
               [nzFooter]="pickTableFoot" [nzData]="mapOfPicks[order.id!]" #pickTable>
               <thead>
                 
@@ -713,8 +570,57 @@
                   <td *ngIf="inventoryConfiguration?.inventoryAttribute5Enabled">
                     {{ pick.inventoryAttribute5 }}
                   </td>
+
                   <td>{{ pick.quantity }}</td>
                   <td>{{ pick.pickedQuantity }}</td>
+                  <!--
+                  <td>
+                    {{ pick.displayQuantity }}  
+                       <nz-skeleton-element 
+                          *ngIf="pick.displayUnitOfMeasureForQuantity == null"
+                          nzType="input"
+                          [nzActive]="true"
+                          [nzSize]="'small'"
+                          style="width:75px" ></nz-skeleton-element>  
+                        
+                          <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList1" 
+                                 *ngIf="pick.displayUnitOfMeasureForQuantity != null">
+                                 {{pick.displayUnitOfMeasureForQuantity.name}}
+                            <span nz-icon nzType="down"></span>
+                          </a>
+                         <nz-dropdown-menu #unitOfMeasureList1="nzDropdownMenu">
+                            <ul nz-menu nzSelectable>
+                              <li nz-menu-item *ngFor="let itemUnitOfMeasure of pick.item?.defaultItemPackageType?.itemUnitOfMeasures" 
+                                   (click)="changeDisplayItemUnitOfMeasureForPickWorkQuantity(pick, itemUnitOfMeasure)">
+                                     {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                              </li> 
+                            </ul>
+                        </nz-dropdown-menu> 
+                  </td>
+                  <td>
+                    {{ pick.displayPickedQuantity }}  
+                       <nz-skeleton-element 
+                          *ngIf="pick.displayUnitOfMeasureForPickedQuantity == null"
+                          nzType="input"
+                          [nzActive]="true"
+                          [nzSize]="'small'"
+                          style="width:75px" ></nz-skeleton-element>  
+                        
+                          <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList1" 
+                                 *ngIf="pick.displayUnitOfMeasureForPickedQuantity != null">
+                                 {{pick.displayUnitOfMeasureForPickedQuantity.name}}
+                            <span nz-icon nzType="down"></span>
+                          </a>
+                         <nz-dropdown-menu #unitOfMeasureList1="nzDropdownMenu">
+                            <ul nz-menu nzSelectable>
+                              <li nz-menu-item *ngFor="let itemUnitOfMeasure of pick.item?.defaultItemPackageType?.itemUnitOfMeasures" 
+                                   (click)="changeDisplayItemUnitOfMeasureForPickWorkPickedQuantity(pick, itemUnitOfMeasure)">
+                                     {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                              </li> 
+                            </ul>
+                        </nz-dropdown-menu> 
+                  </td>
+                  --> 
                   <td>{{ pick.lpn }}</td>
                   <td *ngIf="!displayOnly">
 
@@ -1546,7 +1452,7 @@
     
     <div nz-col [nzSpan]="24" *ngIf="displayBom !== null">
       <div><strong>{{'bill-of-material' | i18n}}</strong></div>
-      <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #BOMDetailTable
+      <nz-table #BOMDetailTable
         [nzData]="displayBom!.billOfMaterialLines" nzSize="middle" [nzShowPagination]="false" nzBordered>
         <thead>
           <tr>

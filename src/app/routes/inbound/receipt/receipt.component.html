@@ -345,7 +345,8 @@
             
             <nz-tab nzTitle="{{ 'receipt.receivedInventory' | i18n }}">
               <nz-spin [nzSpinning]="isReceivedInventorySpinning" [nzSize]="'large'">
-                <st #stInventory [data]="listOfAllReceivedInventory[receipt.number]"  [columns]="receivedInventoryTableColumns"   [scroll]="{ x: '1315px' }">
+                <st #stInventory [data]="listOfAllReceivedInventory[receipt.number]"  [columns]="receivedInventoryTableColumns" 
+                  [scroll]="{ x: '1515px' }">
                 
                   <ng-template st-row="quantityColumn" let-item let-index="index"> 
     
