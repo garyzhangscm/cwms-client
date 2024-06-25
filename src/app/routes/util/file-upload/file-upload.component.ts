@@ -182,6 +182,7 @@ export class UtilFileUploadComponent implements OnInit {
   }
 
   refreshFileParameters() {
+    console.log(`selectedFileUploadType: ${this.selectedFileUploadType?.name}`)
     let url = `${this.selectedFileUploadType!.destinationUrl}`
     url = `${url}?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`
     url = `${url}&companyId=${this.companyService.getCurrentCompany()!.id}`

@@ -87,7 +87,7 @@
             </nz-form-item>
           </div>
         </div>
-        <div nz-row [nzGutter]="24" *ngIf="selectedFileUploadType?.name == 'inventory'">
+        <div nz-row [nzGutter]="24" *ngIf="selectedFileUploadType?.name == 'inventory' || selectedFileUploadType?.name == 'receiving-inventories'">
           <div nz-col [nzSpan]="8">
             <nz-form-item>
               <nz-form-label [nzSpan]="10">
