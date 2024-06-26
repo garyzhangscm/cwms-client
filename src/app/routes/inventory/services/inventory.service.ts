@@ -34,39 +34,51 @@ export class InventoryService {
     lpn?: string,
     includeDetails?: boolean,
     inventoryStatusId?: number,
-    locationGroupId?: number
+    locationGroupId?: number,
+    color?: string,
+    style?: string,
+    productSize?: string,
+    inventoryAttribute1?: string,
+    inventoryAttribute2?: string,
+    inventoryAttribute3?: string,
+    inventoryAttribute4?: string,
+    inventoryAttribute5?: string,
   ): Observable<Inventory[]> {
-    let params = `warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+    
+    let params = new HttpParams(); 
+
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+ 
      
 
-    if (itemName) {
-      params = `${params}&itemName=${this.utilService.encodeValue(itemName.trim())}`;
+    if (itemName) { 
+      params = params.append('itemName', itemName.trim()); 
     }
     if (client) {
-      params = `${params}&client=${client.id}`;
+      params = params.append('client', client.id!.toString());  
     }
     if (itemFamilies && itemFamilies.length > 0) {
-      params = `${params}&item_families=${itemFamilies.join(',')}`;
+      params = params.append('item_families', itemFamilies.join(','));   
     }
     if (locationName) {
-      params = `${params}&location=${this.utilService.encodeValue(locationName.trim())}`;
+      params = params.append('location', locationName.trim());    
     }
     if (lpn) {
-      params = `${params}&lpn=${this.utilService.encodeValue(lpn.trim())}`;
+      params = params.append('lpn', lpn.trim());     
     } 
     if (locationGroupId) {
-      params = `${params}&locationGroupId=${locationGroupId}`;
+      params = params.append('locationGroupId', locationGroupId);     
     } 
     if (inventoryStatusId) {
-      params = `${params}&inventoryStatusId=${inventoryStatusId}`;
+      params = params.append('inventoryStatusId', inventoryStatusId);   
     } 
     if (includeDetails !== undefined && includeDetails !== null) {
 
-      params = `${params}&includeDetails=${includeDetails}`;
+      params = params.append('includeDetails', includeDetails);     
     }
 
-    const url = `inventory/inventories${  params.length > 0 ? `?${  params}` : ''}`;
-    return this.http.get(url).pipe(map(res => res.data));
+    const url = `inventory/inventories`;
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 
   getInventoryById(id: number): Observable<Inventory> {

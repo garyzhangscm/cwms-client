@@ -364,7 +364,9 @@ export class InventoryInventoryComponent implements OnInit {
           this.searchForm.value.lpn,
           false,
           this.searchForm.value.inventoryStatus,
-          this.searchForm.value.locationGroups
+          this.searchForm.value.locationGroups,
+          this.searchForm.value.color,
+          this.searchForm.value.style
         )
         .subscribe(
           inventoryRes => {
@@ -924,6 +926,8 @@ export class InventoryInventoryComponent implements OnInit {
       location: [null],
       lpn: [null],
       inventoryStatus: [null],
+      color: [null],
+      style: [null],
     });
 
     // initiate the select control
