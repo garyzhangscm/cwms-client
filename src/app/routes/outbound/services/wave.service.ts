@@ -1,10 +1,12 @@
 import { HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { _HttpClient } from '@delon/theme';
+import { Inject, Injectable } from '@angular/core';
+import { I18NService } from '@core';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { PrintingService } from '../../common/services/printing.service';
+import { ReportHistory } from '../../report/models/report-history';
 import { DateTimeService } from '../../util/services/date-time.service';
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -23,6 +25,7 @@ export class WaveService {
   constructor(
     private http: _HttpClient,
     private warehouseService: WarehouseService,
+    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private pickService: PickService,
     private dateTimeService: DateTimeService,
     private printingService: PrintingService,
@@ -230,4 +233,18 @@ export class WaveService {
   }
  * 
  */
+
+  
+  generatePickSheet(waveId: number, locale?: string): Observable<ReportHistory> {
+    
+    let params = new HttpParams();
+
+    if (!locale) {
+      locale = this.i18n.defaultLang;
+    }
+    params = params.append('locale', locale); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);  
+
+    return this.http.post(`outbound/waves/${waveId}/pick-report`, null, params).pipe(map(res => res.data));
+  } 
 }

@@ -838,7 +838,7 @@ export class PickService {
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);  
 
     return this.http.post(`outbound/picks/pick-report`, null, params).pipe(map(res => res.data));
-  }
+  } 
 
   getPickCount(): Observable<number> {
     

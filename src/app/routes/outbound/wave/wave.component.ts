@@ -1404,6 +1404,32 @@ export class OutboundWaveComponent implements OnInit {
     
   }
 
+  printWavePickSheet(event: any, wave: Wave) {
+
+     
+    this.isSpinning = true;
+    this.waveService
+      .generatePickSheet(wave.id!, this.i18n.currentLang)
+      .subscribe(printResult => {
+
+        // send the result to the printer
+        this.printingService.printFileByName(
+          "wave pick sheet",
+          printResult.fileName,
+          ReportType.WAVE_PICK_SHEET_BY_LOCATION,
+          event.printerIndex,
+          event.printerName,
+          event.physicalCopyCount, PrintPageOrientation.Landscape,
+          PrintPageSize.A4,
+          wave.number,
+          printResult, event.collated);
+        this.isSpinning = false;
+        this.messageService.success(this.i18n.fanyi("report.print.printed"));
+      });
+     
+ 
+    
+  }
   
   previewPickSheetInBatch(wave: Wave): void {
     let picks : PickWork[] = this.getSelectedPicks(wave);
@@ -1508,6 +1534,27 @@ export class OutboundWaveComponent implements OnInit {
 
   }
   
+  previewWavePickSheet( wave: Wave) {
+
+     
+    this.isSpinning = true;
+    this.waveService
+      .generatePickSheet(wave.id!, this.i18n.currentLang)
+      .subscribe({
+        next: (printResult)=> {
+          // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+          this.isSpinning = false;
+          sessionStorage.setItem("report_previous_page", `outbound/wave?number=${wave.number}`);
+          
+          this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
+    
+        }, 
+        error: () => this.isSpinning = false
+      }); 
+     
+ 
+    
+  }
   confirmPicks(wave: Wave): void {
     this.router.navigateByUrl(`/outbound/pick/confirm?type=wave&id=${wave.id}`);
   }
