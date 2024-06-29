@@ -132,20 +132,14 @@ export class OutboundWaveComponent implements OnInit {
   listOfAllWaves: Wave[] = [];
   listOfDisplayWaves: Wave[] = [];
   waveStatuses = WaveStatus;
-
-
-  // list of record with allocation in process
-  mapOfAllocationInProcessId: { [key: string]: boolean } = {};
-
-  // list of record with printing in process
-  mapOfPrintingInProcessId: { [key: string]: boolean } = {};
-
+ 
   // list of record with printing in process
   mapOfShipmentLines: { [key: string]: ShipmentLine[] } = {};
   mapOfPicks: { [key: string]: PickWork[] } = {};
   mapOfShortAllocations: { [key: string]: ShortAllocation[] } = {};
 
   mapOfPickedInventory: { [key: string]: Inventory[] } = {};
+  mapOfTotalShortQuantity: { [key: number]: number} = {};
 
   shortAllocationStatus = ShortAllocationStatus;
 
@@ -187,6 +181,8 @@ export class OutboundWaveComponent implements OnInit {
       waveRes => {
         this.listOfAllWaves = this.calculateQuantities(waveRes); 
  
+        this.setupShortAllocationQuantities();
+
         this.isSpinning = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
@@ -243,16 +239,22 @@ export class OutboundWaveComponent implements OnInit {
       wave.totalItemCount = existingItemIds.size;
       wave.totalOrderCount = existingOrderNumbers.size;
 
-      // load the short allocation quantity
-      
-      this.shortAllocationService.getShortAllocationsByWave(wave.id!).subscribe({
-        next: (shortAllocationRes) => {
-          wave.totalShortQuantity = shortAllocationRes.map(shortAllocation => shortAllocation.quantity).reduce((acc, cur) => acc + cur, 0);
-           
-        }
-      });
     });
     return waves;
+  }
+
+  setupShortAllocationQuantities() {
+
+      // load the short allocation quantity
+      this.listOfAllWaves.forEach(wave => {
+
+        this.shortAllocationService.getShortAllocationsByWave(wave.id!).subscribe({
+          next: (shortAllocationRes) => {
+            wave.totalShortQuantity = shortAllocationRes.map(shortAllocation => shortAllocation.quantity).reduce((acc, cur) => acc + cur, 0);
+            this.mapOfTotalShortQuantity[wave.id!] = wave.totalShortQuantity
+          }
+        });
+      })
   }
 
   showWaveDetails(wave: Wave): void { 
@@ -312,6 +314,9 @@ export class OutboundWaveComponent implements OnInit {
     this.shortAllocationService.getShortAllocationsByWave(wave.id!).subscribe(shortAllocationRes => {
       // console.log(`shortAllocationRes.length: ${shortAllocationRes.length}`);
       this.mapOfShortAllocations[wave.id!] = shortAllocationRes.length === 0 ? [] : [...shortAllocationRes];
+      
+      wave.totalShortQuantity = shortAllocationRes.map(shortAllocation => shortAllocation.quantity).reduce((acc, cur) => acc + cur, 0);
+      this.mapOfTotalShortQuantity[wave.id!] = wave.totalShortQuantity 
     });
   }
   showPickedInventory(wave: Wave): void {

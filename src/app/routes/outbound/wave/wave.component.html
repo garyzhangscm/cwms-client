@@ -36,6 +36,12 @@
       <ng-template st-row="statusColumn" let-wave > 
         {{ 'WAVE-STATUS-' + wave.status | i18n}}
       </ng-template>
+      <ng-template st-row="totalShortQuantityColumn" let-wave > 
+        <nz-alert nzType="success" nzMessage="{{mapOfTotalShortQuantity[wave.id!]}}" 
+            *ngIf="mapOfTotalShortQuantity[wave.id!] == 0"></nz-alert>
+            <nz-alert nzType="error" nzMessage="{{mapOfTotalShortQuantity[wave.id!]}}" 
+                *ngIf="mapOfTotalShortQuantity[wave.id!] > 0"></nz-alert>
+      </ng-template>
       <ng-template st-row="actionColumn" let-wave > 
         <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
           {{ 'action' | i18n }} <i nz-icon nzType="down" *ngIf="!displayOnly"></i></button>
