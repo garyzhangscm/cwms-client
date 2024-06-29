@@ -40,6 +40,7 @@ export interface Inventory {
   workOrder?: WorkOrder;
 
   fifoDate?: Date;
+  inWarehouseDatetime?: Date;
   
   color?: string;
   productSize?: string;

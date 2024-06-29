@@ -207,6 +207,8 @@ export class InventoryInventoryComponent implements OnInit {
           iif: () => this.isChoose('productSize')  }, 
       { title: this.i18n.fanyi("style"),  index: 'style' ,
           iif: () => this.isChoose('style')  }, 
+      { title: this.i18n.fanyi("inWarehouseDate"),  render: 'inWarehouseDateColumn' , 
+          iif: () => this.isChoose('inWarehouseDate')  }, 
       { title: this.inventoryConfiguration?.inventoryAttribute1DisplayName == null ?
             this.i18n.fanyi("inventoryAttribute1") : this.inventoryConfiguration?.inventoryAttribute1DisplayName,  
             index: 'attribute1' ,

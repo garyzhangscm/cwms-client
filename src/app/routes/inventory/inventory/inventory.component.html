@@ -266,6 +266,14 @@
           {{inventory.fifoDate | date: 'shortDate' : 'UTC'}} 
           </span>
       </ng-template>
+      <ng-template st-row="inWarehouseDateColumn" let-inventory>  
+        
+        <span *ngIf="inventory.inWarehouseDatetime != null">
+          {{inventory.inWarehouseDatetime | date: 'shortDate' : 'UTC'}} 
+          </span>
+      </ng-template>
+       
+
       <ng-template st-row="lockedForAdjustColumn" let-inventory>  
         
         <span *ngIf="inventory.lockedForAdjust === false">{{ (inventory.lockedForAdjust + '') | i18n }}</span>

@@ -41,123 +41,35 @@ import { WaveService } from '../services/wave.service';
   styleUrls: ['./wave.component.less'],
 })
 export class OutboundWaveComponent implements OnInit {
+ 
+ 
 
-  listOfColumns: Array<ColumnItem<Wave>> = [
-    {
-      name: 'wave.number',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableString(a.number, b.number),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    }, {
-      name: 'wave.status',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableString(a.status?.toString(), b.status?.toString()),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    }, {
-      name: 'wave.totalOrderCount',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableNumber(a.totalOrderCount, b.totalOrderCount),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    }, {
-      name: 'wave.totalOrderLineCount',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableNumber(a.totalOrderLineCount, b.totalOrderLineCount),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    }, {
-      name: 'wave.totalItemCount',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableNumber(a.totalItemCount, b.totalItemCount),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    }, {
-      name: 'wave.totalQuantity',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableNumber(a.totalQuantity, b.totalQuantity),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    }, {
-      name: 'wave.totalOpenQuantity',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableNumber(a.totalOpenQuantity, b.totalOpenQuantity),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    }, {
-      name: 'wave.totalInprocessQuantity',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableNumber(a.totalInprocessQuantity, b.totalInprocessQuantity),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    }, {
-      name: 'wave.totalStagedQuantity',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableNumber(a.totalStagedQuantity, b.totalStagedQuantity),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    }, {
-      name: 'wave.totalShippedQuantity',
-      showSort: true,
-      sortOrder: null,
-      sortFn: (a: Wave, b: Wave) => this.utilService.compareNullableNumber(a.totalShippedQuantity, b.totalShippedQuantity),
-      sortDirections: ['ascend', 'descend'],
-      filterMultiple: true,
-      listOfFilter: [],
-      filterFn: null,
-      showFilter: false
-    },
-  ];
+  @ViewChild('waveTable', { static: false })
+  waveTable!: STComponent;
+  waveColumns: STColumn[] = [ 
+    { title: '', index: 'number', type: 'checkbox' },
 
-  listOfSelection = [
+    { title: this.i18n.fanyi("wave.number"), index: 'number' , width: 150, },   
+    { title: this.i18n.fanyi("wave.status"), render: 'statusColumn', width: 110,  },   
+    { title: this.i18n.fanyi("wave.totalOrderCount"), index: 'totalOrderCount', width: 110,  },  
+    { title: this.i18n.fanyi("wave.totalOrderLineCount"), index: 'totalOrderLineCount' , width: 150, },   
+    { title: this.i18n.fanyi("wave.totalItemCount"), index: 'totalItemCount' , width: 210, },  
+    // { title: this.i18n.fanyi("assign"), render: 'assignColumn'  },  
+    // { title: this.i18n.fanyi("currentUser"), index: 'workTask.currentUser.username'  },  
+    { title: this.i18n.fanyi("wave.totalQuantity"), index: 'totalQuantity'  },  
+    { title: this.i18n.fanyi("wave.totalOpenQuantity"), index: 'totalOpenQuantity'  },     
+    { title: this.i18n.fanyi("wave.totalInprocessQuantity"), index: 'totalInprocessQuantity'  },   
+    { title: this.i18n.fanyi("wave.totalShortQuantity"), render: 'totalShortQuantityColumn'  },   
+    { title: this.i18n.fanyi("wave.totalStagedQuantity"), index: 'totalStagedQuantity'  },   
+    { title: this.i18n.fanyi("wave.totalShippedQuantity"), index: 'totalShippedQuantity'  },    
     {
-      text: this.i18n.fanyi(`select-all-rows`),
-      onSelect: () => {
-        this.onAllChecked(true);
-      }
-    },
+      title: this.i18n.fanyi("action"), fixed: 'right', width: 210, 
+      render: 'actionColumn',
+      iif: () => !this.displayOnly
+    }, 
+   
   ];
-  setOfCheckedId = new Set<number>();
-  checked = false;
-  indeterminate = false;
-  expandSet = new Set<number>();
+ 
   pickGroupTypes = PickGroupType;
 
   pickTableExpandSet = new Set<number>();
@@ -273,10 +185,8 @@ export class OutboundWaveComponent implements OnInit {
     this.searchResult = '';
     this.waveService.getWaves(this.searchForm.controls.number.value).subscribe(
       waveRes => {
-        this.listOfAllWaves = this.calculateQuantities(waveRes);
-        this.listOfDisplayWaves = this.calculateQuantities(waveRes);
-
-        this.collapseAllRecord(expandedWaveId);
+        this.listOfAllWaves = this.calculateQuantities(waveRes); 
+ 
         this.isSpinning = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
           currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
@@ -293,17 +203,15 @@ export class OutboundWaveComponent implements OnInit {
     );
   }
 
-  collapseAllRecord(expandedWaveId?: number): void {
-    this.listOfDisplayWaves.forEach(item => (this.expandSet.delete(item.id!)));
-    if (expandedWaveId) {
-      this.expandSet.add(expandedWaveId);
-      this.listOfDisplayWaves.forEach(wave => {
-        if (wave.id === expandedWaveId) {
-          this.showWaveDetails(wave);
-        }
-      });
+  
+  waveTableChanged(event: STChange) : void { 
+    if (event.type === 'expand' && event.expand.expand === true) {
+      
+      this.showWaveDetails(event.expand);
     }
+
   }
+ 
 
   calculateQuantities(waves: Wave[]): Wave[] {
     waves.forEach(wave => {
@@ -312,6 +220,9 @@ export class OutboundWaveComponent implements OnInit {
       wave.totalQuantity = 0;
       wave.totalOpenQuantity = 0;
       wave.totalInprocessQuantity = 0;
+      wave.totalShortQuantity = 0;
+       
+      
 
       wave.totalStagedQuantity = 0;
       wave.totalShippedQuantity = 0;
@@ -331,18 +242,24 @@ export class OutboundWaveComponent implements OnInit {
       });
       wave.totalItemCount = existingItemIds.size;
       wave.totalOrderCount = existingOrderNumbers.size;
+
+      // load the short allocation quantity
+      
+      this.shortAllocationService.getShortAllocationsByWave(wave.id!).subscribe({
+        next: (shortAllocationRes) => {
+          wave.totalShortQuantity = shortAllocationRes.map(shortAllocation => shortAllocation.quantity).reduce((acc, cur) => acc + cur, 0);
+           
+        }
+      });
     });
     return waves;
   }
 
-  showWaveDetails(wave: Wave): void {
-    // When we expand the details for the order, load the picks and short allocation from the server
-    if (this.expandSet.has(wave.id!)) {
+  showWaveDetails(wave: Wave): void { 
       this.showShipmentLines(wave);
       this.showPicks(wave);
       this.showShortAllocations(wave);
-      this.showPickedInventory(wave);
-    }
+      this.showPickedInventory(wave); 
   }
 
   showShipmentLines(wave: Wave): void {
@@ -471,44 +388,8 @@ export class OutboundWaveComponent implements OnInit {
       this.search(wave.id, 3);
     });
   }
-
-  updateCheckedSet(id: number, checked: boolean): void {
-    if (checked) {
-      this.setOfCheckedId.add(id);
-    } else {
-      this.setOfCheckedId.delete(id);
-    }
-  }
-
-  onItemChecked(id: number, checked: boolean): void {
-    this.updateCheckedSet(id, checked);
-    this.refreshCheckedStatus();
-  }
-
-  onAllChecked(value: boolean): void {
-    this.listOfDisplayWaves!.forEach(item => this.updateCheckedSet(item.id!, value));
-    this.refreshCheckedStatus();
-  }
-
-  currentPageDataChange($event: Wave[]): void {
-    this.listOfDisplayWaves! = $event;
-    this.refreshCheckedStatus();
-  }
-
-  refreshCheckedStatus(): void {
-    this.checked = this.listOfDisplayWaves!.every(item => this.setOfCheckedId.has(item.id!));
-    this.indeterminate = this.listOfDisplayWaves!.some(item => this.setOfCheckedId.has(item.id!)) && !this.checked;
-  }
-
-  onExpandChange(id: number, wave: Wave,checked: boolean): void {
-    if (checked) {
-      this.expandSet.add(id);
-
-      this.showWaveDetails(wave);
-    } else {
-      this.expandSet.delete(id);
-    }
-  }
+  
+ 
   onPickTableExpandChange(id: number, pick: PickWork,checked: boolean): void {
     if (checked) {
       this.pickTableExpandSet.add(id); 
@@ -539,13 +420,25 @@ export class OutboundWaveComponent implements OnInit {
   }
 
   getSelectedWaves(): Wave[] {
-    const selectedWaves: Wave[] = [];
-    this.listOfAllWaves.forEach((wave: Wave) => {
-      if (this.setOfCheckedId.has(wave.id!)) {
-        selectedWaves.push(wave);
-      }
-    });
-    return selectedWaves;
+    
+    let selectedWaves: Wave[] = [];
+    
+    const dataList: STData[] = this.waveTable.list; 
+    dataList
+      .filter( data => data.checked)
+      .forEach(
+        data => {
+          // get the selected billing request and added it to the 
+          // selectedBillingRequests
+          selectedWaves = [...selectedWaves,
+              ...this.listOfAllWaves.filter(
+                wave => wave.id == data["id"]
+              )
+          ]
+
+        }
+      ); 
+      return selectedWaves;
   }
 
   ngOnInit(): void {
@@ -1700,4 +1593,5 @@ export class OutboundWaveComponent implements OnInit {
     return true;
   }
 
+  
 }

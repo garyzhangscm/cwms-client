@@ -12,6 +12,7 @@ export interface Wave {
   totalQuantity?: number;
   totalOpenQuantity?: number;
   totalInprocessQuantity?: number;
+  totalShortQuantity?: number;
   totalPickedQuantity?: number;
   totalStagedQuantity?: number;
   totalShippedQuantity?: number;
