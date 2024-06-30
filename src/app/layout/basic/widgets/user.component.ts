@@ -142,7 +142,9 @@ export class HeaderUserComponent {
 
       this.webMessageAlertService.getUserInreadWebMessageAlertCount().subscribe({
         next: (count) => this.newAlertCount = count,
-        error: () => {}
+        error: (error) => {
+          console.log(`web message alert error: ${error}`)
+        }
       }) 
     }
   }

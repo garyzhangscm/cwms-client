@@ -50,18 +50,18 @@ export class OutboundWaveComponent implements OnInit {
     { title: '', index: 'number', type: 'checkbox' },
 
     { title: this.i18n.fanyi("wave.number"), index: 'number' , width: 150, },   
-    { title: this.i18n.fanyi("wave.status"), render: 'statusColumn', width: 110,  },   
-    { title: this.i18n.fanyi("wave.totalOrderCount"), index: 'totalOrderCount', width: 110,  },  
+    { title: this.i18n.fanyi("wave.status"), render: 'statusColumn', width: 150,  },   
+    { title: this.i18n.fanyi("wave.totalOrderCount"), index: 'totalOrderCount', width: 150,  },  
     { title: this.i18n.fanyi("wave.totalOrderLineCount"), index: 'totalOrderLineCount' , width: 150, },   
-    { title: this.i18n.fanyi("wave.totalItemCount"), index: 'totalItemCount' , width: 210, },  
+    { title: this.i18n.fanyi("wave.totalItemCount"), index: 'totalItemCount' , width: 150, },  
     // { title: this.i18n.fanyi("assign"), render: 'assignColumn'  },  
     // { title: this.i18n.fanyi("currentUser"), index: 'workTask.currentUser.username'  },  
-    { title: this.i18n.fanyi("wave.totalQuantity"), index: 'totalQuantity'  },  
-    { title: this.i18n.fanyi("wave.totalOpenQuantity"), index: 'totalOpenQuantity'  },     
-    { title: this.i18n.fanyi("wave.totalInprocessQuantity"), index: 'totalInprocessQuantity'  },   
-    { title: this.i18n.fanyi("wave.totalShortQuantity"), render: 'totalShortQuantityColumn'  },   
-    { title: this.i18n.fanyi("wave.totalStagedQuantity"), index: 'totalStagedQuantity'  },   
-    { title: this.i18n.fanyi("wave.totalShippedQuantity"), index: 'totalShippedQuantity'  },    
+    { title: this.i18n.fanyi("wave.totalQuantity"), index: 'totalQuantity', width: 150  },  
+    { title: this.i18n.fanyi("wave.totalOpenQuantity"), index: 'totalOpenQuantity', width: 150  },     
+    { title: this.i18n.fanyi("wave.totalInprocessQuantity"), index: 'totalInprocessQuantity', width: 150  },   
+    { title: this.i18n.fanyi("wave.totalShortQuantity"), render: 'totalShortQuantityColumn' , width: 150 },   
+    { title: this.i18n.fanyi("wave.totalStagedQuantity"), index: 'totalStagedQuantity', width: 150  },   
+    { title: this.i18n.fanyi("wave.totalShippedQuantity"), index: 'totalShippedQuantity' , width: 150 },    
     {
       title: this.i18n.fanyi("action"), fixed: 'right', width: 210, 
       render: 'actionColumn',
@@ -1598,5 +1598,50 @@ export class OutboundWaveComponent implements OnInit {
     return true;
   }
 
+  
+  printPackingSlip(event: any, wave: Wave) {
+
+    this.isSpinning = true;
+
+    this.waveService.generatePackingSlip(
+      wave.id!)
+      .subscribe({
+        next: (printResult) => {  
+          this.printingService.printFileByName(
+            "Wave Packing Slip",
+            printResult.fileName,
+            ReportType.WAVE_PACKING_SLIP,
+            event.printerIndex,
+            event.printerName,
+            event.physicalCopyCount,
+            PrintPageOrientation.Portrait,
+            PrintPageSize.Letter,
+            wave.number, 
+            printResult, event.collated);
+          this.isSpinning = false;
+          this.messageService.success(this.i18n.fanyi("report.print.printed"));
+          }, 
+        error:  () => this.isSpinning = false
+      });   
+  }
+  previewPackingSlip(wave: Wave): void {
+
+
+    this.isSpinning = true;
+    this.waveService
+      .generatePackingSlip(wave.id!, this.i18n.currentLang)
+      .subscribe({
+        next: (printResult)=> {
+          // console.log(`Print success! result: ${JSON.stringify(printResult)}`);
+          this.isSpinning = false;
+          sessionStorage.setItem("report_previous_page", `outbound/wave?number=${wave.number}`);
+          
+          this.router.navigateByUrl(`/report/report-preview?type=${printResult.type}&fileName=${printResult.fileName}&orientation=${ReportOrientation.LANDSCAPE}`);
+    
+        }, 
+        error: () => this.isSpinning = false
+      }); 
+     
+  }
   
 }

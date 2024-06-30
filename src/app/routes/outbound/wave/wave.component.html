@@ -31,7 +31,8 @@
   
   <st #waveTable [data]="listOfAllWaves" [columns]="waveColumns" 
         [expand]="waveExpand"  expandAccordion   (change)="waveTableChanged($event)" 
-        [footer]="tableFoot" [scroll]="{ x: '1515px' }">
+        [footer]="tableFoot" [scroll]="{ x: '1615px' }"
+        [widthMode]="{ type: 'strict' }" resizable>
   
       <ng-template st-row="statusColumn" let-wave > 
         {{ 'WAVE-STATUS-' + wave.status | i18n}}
@@ -43,20 +44,33 @@
                 *ngIf="mapOfTotalShortQuantity[wave.id!] > 0"></nz-alert>
       </ng-template>
       <ng-template st-row="actionColumn" let-wave > 
-        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
-          {{ 'action' | i18n }} <i nz-icon nzType="down" *ngIf="!displayOnly"></i></button>
-        <nz-dropdown-menu #menu="nzDropdownMenu">
-          <ul nz-menu>                
-            <li nz-menu-item *ngIf="isWaveAllocatable(wave) && (!userPermissionMap.has('allocate-wave') || userPermissionMap.get('allocate-wave'))">
-              <a (click)="allocateWave(wave)">
-                {{ 'wave.allocate' | i18n }}</a>  
-            </li>              
-            <li nz-menu-item *ngIf="isWaveCancellable(wave) && (!userPermissionMap.has('cancel-wave') || userPermissionMap.get('cancel-wave'))">
-              <a (click)="cancelWave(wave)">
-                {{ 'cancel' | i18n }}</a>  
-            </li>     
-          </ul>
-        </nz-dropdown-menu>  
+        
+        <nz-list>
+          <nz-list-item>     
+            
+              <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+                {{ 'action' | i18n }} <i nz-icon nzType="down" *ngIf="!displayOnly"></i></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu>                
+                  <li nz-menu-item *ngIf="isWaveAllocatable(wave) && (!userPermissionMap.has('allocate-wave') || userPermissionMap.get('allocate-wave'))">
+                    <a (click)="allocateWave(wave)">
+                      {{ 'wave.allocate' | i18n }}</a>  
+                  </li>              
+                  <li nz-menu-item *ngIf="isWaveCancellable(wave) && (!userPermissionMap.has('cancel-wave') || userPermissionMap.get('cancel-wave'))">
+                    <a (click)="cancelWave(wave)">
+                      {{ 'cancel' | i18n }}</a>  
+                  </li>     
+                </ul>
+              </nz-dropdown-menu>  
+          </nz-list-item>
+          <nz-list-item>
+            {{ 'packing-slip' | i18n }}: 
+            <cwms-common-print-button style='padding-left: 20px;'
+              (print)="printPackingSlip($event, wave)"
+              (preview)="previewPackingSlip(wave)">
+            </cwms-common-print-button>
+          </nz-list-item>
+        </nz-list>
       </ng-template>
       
       <ng-template #waveExpand let-wave>

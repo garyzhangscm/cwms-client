@@ -247,4 +247,17 @@ export class WaveService {
 
     return this.http.post(`outbound/waves/${waveId}/pick-report`, null, params).pipe(map(res => res.data));
   } 
+  
+  generatePackingSlip(waveId: number, locale?: string): Observable<ReportHistory> {
+    
+    let params = new HttpParams();
+
+    if (!locale) {
+      locale = this.i18n.defaultLang;
+    }
+    params = params.append('locale', locale); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);  
+
+    return this.http.post(`outbound/waves/${waveId}/packing-slip`, null, params).pipe(map(res => res.data));
+  } 
 }

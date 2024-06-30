@@ -5,6 +5,8 @@
 // @import '~@delon/theme/theme-default.less';
 @import '@delon/theme/theme-default.less';
 
+@import 'ng-zorro-antd/resizable/style/entry.less';
+
 // ==========The following is the custom theme variable area==========
 // The theme paraments can be generated at https://ng-alain.github.io/ng-alain/
 // @primary-color: #f50;
@@ -13,7 +15,12 @@
 .alain-default__aside {
     width: 300px
 }
+.scrollbar {
+    scrollbar-color: rgba(240, 0, 0, 0.3) #6e6e6e;
+}
 
+body, .scrollbar, .ant-dialog-wrap, .ant-drawer-body, .ant-drawer-wrapper-body, .ant-anchor-wrapper,
+textarea.ant-input {scrollbar-color: rgba(0, 0, 0, 0.3) #dcdcdc;}
 @media (min-width: 768px) {
 
     .alain-default__content {
