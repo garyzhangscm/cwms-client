@@ -94,6 +94,8 @@ export class UtilFileUploadComponent implements OnInit {
 
   removeExistingInventoryWithSameLPN = true;
   emptyLocation = true;
+  createCustomer = true;
+  modifyCustomer = true;
   ignoreUnknownFields = true;
   resultTotal = 0;
   resultSuccess = 0;
@@ -190,6 +192,8 @@ export class UtilFileUploadComponent implements OnInit {
     url = `${url}&ignoreUnknownFields=${this.ignoreUnknownFields}`
     url = `${url}&removeExistingInventoryWithSameLPN=${this.removeExistingInventoryWithSameLPN}`
     url = `${url}&emptyLocation=${this.emptyLocation}`
+    url = `${url}&createCustomer=${this.createCustomer}`
+    url = `${url}&modifyCustomer=${this.modifyCustomer}`
     this.selectedFileUploadUrl = url;
           
   }

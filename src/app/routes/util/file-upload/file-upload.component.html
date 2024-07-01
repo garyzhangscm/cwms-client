@@ -87,6 +87,30 @@
             </nz-form-item>
           </div>
         </div>
+        <div nz-row [nzGutter]="24" *ngIf="selectedFileUploadType?.name == 'orders' || selectedFileUploadType?.name == 'loads'">
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="10">
+                {{ 'createCustomerIfNotExists' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="10">
+                <label nz-checkbox [(ngModel)]="createCustomer" (ngModelChange)="refreshFileParameters()" ></label>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row [nzGutter]="24" *ngIf="selectedFileUploadType?.name == 'orders' || selectedFileUploadType?.name == 'loads'">
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="10">
+                {{ 'modifyCustomerIfExists' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="10">
+                <label nz-checkbox [(ngModel)]="modifyCustomer" (ngModelChange)="refreshFileParameters()" ></label>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
         <div nz-row [nzGutter]="24" *ngIf="selectedFileUploadType?.name == 'inventory' || selectedFileUploadType?.name == 'receiving-inventories'">
           <div nz-col [nzSpan]="8">
             <nz-form-item>

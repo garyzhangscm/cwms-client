@@ -330,8 +330,8 @@ export class CommonCustomerComponent implements OnInit {
     const selectedCustomers = this.getSelectedCustomers();
     if (selectedCustomers.length > 0) {
       this.modalService.confirm({
-        nzTitle: this.i18n.fanyi('page.modal.delete.header.title'),
-        nzContent: this.i18n.fanyi('page.supplier.modal.delete.content'),
+        nzTitle: this.i18n.fanyi('modal.delete.header.title'),
+        nzContent: this.i18n.fanyi('modal.delete.content'),
         nzOkText: this.i18n.fanyi('confirm'),
         nzOkDanger: true,
         nzOnOk: () => {

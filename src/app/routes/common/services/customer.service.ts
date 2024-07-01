@@ -78,7 +78,7 @@ export class CustomerService {
       customerIds.push(customer.id!);
     });
     const params = {
-      customer_ids: customerIds.join(','),
+      customerIds: customerIds.join(','),
     };
     return this.http.delete('common/customers', params).pipe(map(res => res.data));
   }
