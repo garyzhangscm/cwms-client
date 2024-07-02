@@ -78,10 +78,10 @@
         <div nz-row [nzGutter]="24">
           <div nz-col [nzSpan]="8">
             <nz-form-item>
-              <nz-form-label [nzSpan]="10">
+              <nz-form-label [nzSpan]="16">
                 {{ 'ignoreUnknownFields' | i18n }}
               </nz-form-label>
-              <nz-form-control [nzSpan]="10">
+              <nz-form-control [nzSpan]="8">
                 <label nz-checkbox [(ngModel)]="ignoreUnknownFields" (ngModelChange)="refreshFileParameters()"></label>
               </nz-form-control>
             </nz-form-item>
@@ -90,10 +90,10 @@
         <div nz-row [nzGutter]="24" *ngIf="selectedFileUploadType?.name == 'orders' || selectedFileUploadType?.name == 'loads'">
           <div nz-col [nzSpan]="8">
             <nz-form-item>
-              <nz-form-label [nzSpan]="10">
+              <nz-form-label [nzSpan]="16">
                 {{ 'createCustomerIfNotExists' | i18n }}
               </nz-form-label>
-              <nz-form-control [nzSpan]="10">
+              <nz-form-control [nzSpan]="8">
                 <label nz-checkbox [(ngModel)]="createCustomer" (ngModelChange)="refreshFileParameters()" ></label>
               </nz-form-control>
             </nz-form-item>
@@ -102,10 +102,10 @@
         <div nz-row [nzGutter]="24" *ngIf="selectedFileUploadType?.name == 'orders' || selectedFileUploadType?.name == 'loads'">
           <div nz-col [nzSpan]="8">
             <nz-form-item>
-              <nz-form-label [nzSpan]="10">
+              <nz-form-label [nzSpan]="16">
                 {{ 'modifyCustomerIfExists' | i18n }}
               </nz-form-label>
-              <nz-form-control [nzSpan]="10">
+              <nz-form-control [nzSpan]="8">
                 <label nz-checkbox [(ngModel)]="modifyCustomer" (ngModelChange)="refreshFileParameters()" ></label>
               </nz-form-control>
             </nz-form-item>
@@ -114,10 +114,10 @@
         <div nz-row [nzGutter]="24" *ngIf="selectedFileUploadType?.name == 'inventory' || selectedFileUploadType?.name == 'receiving-inventories'">
           <div nz-col [nzSpan]="8">
             <nz-form-item>
-              <nz-form-label [nzSpan]="10">
+              <nz-form-label [nzSpan]="16">
                 {{ 'removeExistingInventoryWithSameLPN' | i18n }}
               </nz-form-label>
-              <nz-form-control [nzSpan]="10">
+              <nz-form-control [nzSpan]="8">
                 <label nz-checkbox [(ngModel)]="removeExistingInventoryWithSameLPN" (ngModelChange)="refreshFileParameters()" ></label>
               </nz-form-control>
             </nz-form-item>
@@ -126,10 +126,10 @@
         <div nz-row [nzGutter]="24" *ngIf="selectedFileUploadType?.name == 'inventory' || selectedFileUploadType?.name == 'receiving-inventories'">
           <div nz-col [nzSpan]="8">
             <nz-form-item>
-              <nz-form-label [nzSpan]="10">
+              <nz-form-label [nzSpan]="16">
                 {{ 'emptyLocation' | i18n }}
               </nz-form-label>
-              <nz-form-control [nzSpan]="10">
+              <nz-form-control [nzSpan]="8">
                 <label nz-checkbox [(ngModel)]="emptyLocation" (ngModelChange)="refreshFileParameters()" ></label>
               </nz-form-control>
             </nz-form-item>

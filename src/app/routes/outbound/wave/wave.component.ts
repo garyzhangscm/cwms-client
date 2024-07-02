@@ -60,7 +60,7 @@ export class OutboundWaveComponent implements OnInit {
     { title: this.i18n.fanyi("wave.totalOpenQuantity"), index: 'totalOpenQuantity', width: 150  },     
     { title: this.i18n.fanyi("wave.totalInprocessQuantity"), index: 'totalInprocessQuantity', width: 150  },   
     { title: this.i18n.fanyi("wave.totalShortQuantity"), render: 'totalShortQuantityColumn' , width: 150 },   
-    { title: this.i18n.fanyi("wave.totalStagedQuantity"), index: 'totalStagedQuantity', width: 150  },   
+    { title: this.i18n.fanyi("wave.totalStagedQuantity"), render: 'totalStagedQuantityColumn', width: 150  },   
     { title: this.i18n.fanyi("wave.totalShippedQuantity"), index: 'totalShippedQuantity' , width: 150 },    
     {
       title: this.i18n.fanyi("action"), fixed: 'right', width: 210, 
@@ -140,6 +140,7 @@ export class OutboundWaveComponent implements OnInit {
 
   mapOfPickedInventory: { [key: string]: Inventory[] } = {};
   mapOfTotalShortQuantity: { [key: number]: number} = {};
+  mapOfTotalStagedQuantity: { [key: number]: number} = {};
 
   shortAllocationStatus = ShortAllocationStatus;
 
@@ -182,6 +183,7 @@ export class OutboundWaveComponent implements OnInit {
         this.listOfAllWaves = this.calculateQuantities(waveRes); 
  
         this.setupShortAllocationQuantities();
+        this.setupStagedQuantities();
 
         this.isSpinning = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {
@@ -252,6 +254,20 @@ export class OutboundWaveComponent implements OnInit {
           next: (shortAllocationRes) => {
             wave.totalShortQuantity = shortAllocationRes.map(shortAllocation => shortAllocation.quantity).reduce((acc, cur) => acc + cur, 0);
             this.mapOfTotalShortQuantity[wave.id!] = wave.totalShortQuantity
+          }
+        });
+      })
+  }
+
+  setupStagedQuantities() {
+
+      // load the short allocation quantity
+      this.listOfAllWaves.forEach(wave => {
+
+        this.waveService.getStagedInventory(wave.id!).subscribe({
+          next: (stagedInventoryRes) => {
+            wave.totalStagedQuantity = stagedInventoryRes.map(inventory => inventory.quantity!).reduce((acc, cur) => acc + cur, 0);
+            this.mapOfTotalStagedQuantity[wave.id!] = wave.totalStagedQuantity!
           }
         });
       })

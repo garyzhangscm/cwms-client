@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { PrintingService } from '../../common/services/printing.service';
+import { Inventory } from '../../inventory/models/inventory';
 import { ReportHistory } from '../../report/models/report-history';
 import { DateTimeService } from '../../util/services/date-time.service';
 import { UtilService } from '../../util/services/util.service';
@@ -259,5 +260,11 @@ export class WaveService {
     params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse()!.id);  
 
     return this.http.post(`outbound/waves/${waveId}/packing-slip`, null, params).pipe(map(res => res.data));
+  } 
+
+  getStagedInventory(waveId: number): Observable<Inventory[]> {
+     
+
+    return this.http.get(`outbound/waves/${waveId}/staged-inventory`).pipe(map(res => res.data));
   } 
 }

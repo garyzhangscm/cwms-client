@@ -43,6 +43,10 @@
             <nz-alert nzType="error" nzMessage="{{mapOfTotalShortQuantity[wave.id!]}}" 
                 *ngIf="mapOfTotalShortQuantity[wave.id!] > 0"></nz-alert>
       </ng-template>
+      
+      <ng-template st-row="totalStagedQuantityColumn" let-wave > 
+        {{mapOfTotalStagedQuantity[wave.id!]}}
+      </ng-template>
       <ng-template st-row="actionColumn" let-wave > 
         
         <nz-list>
