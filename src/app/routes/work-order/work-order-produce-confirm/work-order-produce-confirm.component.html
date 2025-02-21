@@ -1,0 +1,404 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/work-order/work-order" routerLinkActive="active"
+    [queryParams]="{ number: workOrderProduceTransaction.workOrder?.number }">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/work-order" routerLinkActive="active">{{
+        'breadcrumb.work-order' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning">
+
+
+
+  <div nz-row style="padding: 10px">
+    <div nz-col nzSpan="12" nzOffset="6">
+      <nz-steps nzType="navigation" [nzCurrent]="3" [nzSize]="'small'" (nzIndexChange)="onIndexChange($event)">
+        <nz-step nzTitle="{{ 'steps.work-order-produce.produce.title' | i18n }}"
+          nzDescription="{{ 'steps.work-order-produce.produce.description' | i18n }}">
+        </nz-step>
+        <nz-step nzTitle="{{ 'steps.work-order-produce.by-product.title' | i18n }}"
+          nzDescription="{{ 'steps.work-order-produce.by-product.description' | i18n }}">
+        </nz-step>
+        <nz-step nzTitle="{{ 'steps.work-order-produce.user-kpi.title' | i18n }}"
+          nzDescription="{{ 'steps.work-order-produce.user-kpi.description' | i18n }}">
+        </nz-step>
+        <nz-step nzTitle="{{ 'steps.work-order-produce.confirm.title' | i18n }}"
+          nzDescription="{{ 'steps.work-order-produce.confirm.description' | i18n }}">
+        </nz-step>
+      </nz-steps>
+    </div>
+  </div>
+
+  <!-- Show the work order information -->
+  <nz-card nzTitle="{{ 'work-order' | i18n}}" [nzExtra]="toggleWorkOrderInformation"
+    *ngIf="workOrderProduceTransaction !== undefined">
+
+    <nz-descriptions nzBordered [hidden]="isWorkOrderCollapse">
+      <nz-descriptions-item nzTitle="{{ 'work-order.number' | i18n}}">
+        {{ workOrderProduceTransaction.workOrder?.number}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'item-name' | i18n}}">
+        {{ workOrderProduceTransaction.workOrder?.item?.name}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'item.description' | i18n}}">
+        {{ workOrderProduceTransaction.workOrder?.item?.description}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'work-order.expected-quantity' | i18n}}">
+        {{ workOrderProduceTransaction.workOrder?.expectedQuantity}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'work-order.produced-quantity' | i18n}}">
+        {{ workOrderProduceTransaction.workOrder?.producedQuantity}}</nz-descriptions-item>
+    </nz-descriptions>
+  </nz-card>
+  <ng-template #toggleWorkOrderInformation>
+    <a class="collapse" (click)="toggleCollapse()">
+
+
+      <span *ngIf="!isWorkOrderCollapse">{{ 'collapse' | i18n }}</span>
+      <span *ngIf="isWorkOrderCollapse">{{ 'expand' | i18n }}</span>
+
+      <i nz-icon [nzType]="isWorkOrderCollapse ? 'down' : 'up'"></i>
+    </a>
+  </ng-template>
+
+  <!-- Show the produced inventory information -->
+
+  <nz-card nzTitle="{{ 'work-order.producing-inventory' | i18n}}" *ngIf="workOrderProduceTransaction !== undefined">
+    <div class="search-result-list">
+      <nz-table [nzScroll]="{ x: 'true', y: 'true' }"
+        [nzData]="workOrderProduceTransaction.workOrderProducedInventories!" nzShowPagination="false" #inventoryTable>
+        <thead>
+          <tr>
+            <th>{{ 'lpn' | i18n }}</th>
+            <th>{{ 'item' | i18n }}</th>
+            <th>{{ 'item.description' | i18n }}</th>
+            <th>{{ 'item.package-type' | i18n }}</th>
+            <th>{{ 'location' | i18n }}</th>
+            <th>{{ 'inventory.status' | i18n }}</th>
+            <th>{{ 'work-order.expected-quantity' | i18n }}</th>
+            <th>{{ 'work-order.produced-quantity' | i18n }}</th>
+            <th>{{ 'quantity' | i18n }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let inventory of inventoryTable.data; let i = index">
+            <td>
+              {{inventory?.lpn}}
+            </td>
+            <td>
+              {{ workOrderProduceTransaction.workOrder!.item?.name }}
+            </td>
+            <td>
+              {{ workOrderProduceTransaction.workOrder!.item?.description }}
+            </td>
+            <td>
+              {{ inventory.itemPackageType?.name }}
+            </td>
+            <td> </td>
+            <td>
+              {{inventory.inventoryStatus?.name}}
+            </td>
+            <td>{{ workOrderProduceTransaction.workOrder?.expectedQuantity }}</td>
+            <td>{{ workOrderProduceTransaction.workOrder?.producedQuantity }}</td>
+            <td> {{ inventory.quantity }} </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </nz-card>
+  <div nz-row nzType="flex" nzJustify="start">
+    <button nz-button nzType="primary" (click)="saveWorkOrderProduceResults()" [nzLoading]="savingInProcess">
+      {{ 'confirm' | i18n }}
+    </button>
+  </div>
+
+  <!-- Show consumed quantities -->
+
+  <nz-card nzTitle="{{ 'work-order.consuming-inventory' | i18n}}" *ngIf="workOrderProduceTransaction !== undefined"
+    [nzExtra]="consumeByUOM">
+    <div class="search-result-list">
+      <nz-table [nzScroll]="{ x: 'true', y: 'true' }"
+        [nzData]="workOrderProduceTransaction.workOrderLineConsumeTransactions" nzShowPagination="false"
+            #workOrderLineTable>
+        <thead>
+          <tr>
+            <th nzWidth="40px"></th>
+            <th>{{ 'work-order.line.number' | i18n }}</th>
+            <th>{{ 'item' | i18n }}</th>
+            <th>{{ 'item.description' | i18n }}</th>
+            <th>{{ 'work-order.line.expectedQuantity' | i18n }}</th>
+            <th>{{ 'work-order.line.inprocessQuantity' | i18n }}</th>
+            <th>{{ 'work-order.line.consumedQuantity' | i18n }}</th>
+            <th>{{ 'work-order.line.consumingByBomQuantity' | i18n }}</th>
+            <th>{{ 'work-order.line.consumingQuantity' | i18n }}</th>
+            <th>{{ 'work-order.line.consumingByLPNQuantity' | i18n }}</th>
+            <th>{{ 'work-order.line.consumingByWorkOrderQuantity' | i18n }}</th>
+            <th>{{ 'work-order.line.totalConsumingQuantity' | i18n }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <ng-template ngFor let-data [ngForOf]="workOrderLineTable.data">
+            <tr>
+              
+              <td [nzExpand]="expandSet.has(data.workOrderLine!.id!)" (nzExpandChange)="onExpandChange(data, $event)"></td>
+              <td>{{ data?.workOrderLine?.number }}</td>
+              <td>
+                {{ data?.workOrderLine?.item?.name }}
+              </td>
+              <td>
+                {{ data?.workOrderLine?.item?.description }}
+              </td>
+              <td>
+                {{ data?.workOrderLine?.expectedQuantity }}
+              </td>
+              <td>
+                {{ data?.workOrderLine?.inprocessQuantity }}
+              </td>
+              <td>
+                {{ data?.workOrderLine?.consumedQuantity }}
+              </td>
+              <td>
+                {{ data?.consumingByBomQuantity }} 
+              </td>
+              <td>
+                {{ data?.consumedQuantity }} 
+              </td>
+              <td>
+                {{ data?.consumingByLPNQuantity }} 
+              </td>
+              <td>
+                {{ data?.consumingByWorkOrderQuantity }} 
+              </td>
+              <td>
+                {{ data?.totalConsumedQuantity }}
+              </td>
+            </tr>
+            <tr [nzExpand]="expandSet.has(data.workOrderLine!.id!)">
+              <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
+                <nz-tab nzTitle="{{'inventory' | i18n}}">
+                  
+                <div *ngIf="data.workOrderLineConsumeLPNTransactions === undefined || data.workOrderLineConsumeLPNTransactions.length === 0">
+                    {{ "work-order-line.no-consumable-lpn" | i18n}} 
+                </div>
+                  <nz-table [nzScroll]="{ x: 'true', y: 'true' }"  *ngIf="data.workOrderLineConsumeLPNTransactions && data.workOrderLineConsumeLPNTransactions.length > 0"
+                  [nzData]="data.workOrderLineConsumeLPNTransactions"
+                    nzSize="middle" [nzShowPagination]="true" #consumeByLPNTable>
+                    <thead>
+                      <tr>
+                        <th>{{'lpn' | i18n}}</th>
+                        <th>{{'quantity' | i18n}}</th> 
+                        <th>{{'consumingQuantity' | i18n}}</th> 
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let consumeByLPN of consumeByLPNTable.data">
+                        <td>
+                          {{ consumeByLPN.lpn }}</td> 
+                          <td>
+                            {{ consumeByLPN.quantity }}</td> 
+                          
+                        <td>
+                          {{ consumeByLPN.consumedQuantity }}</td> 
+                      </tr>
+                    </tbody>
+                  </nz-table>
+                </nz-tab>
+              </nz-tabset>
+            </tr>
+          </ng-template>
+        </tbody>
+        </nz-table>
+<!--   
+      <nz-table [nzScroll]="{ x: 'true', y: 'true' }"
+        [nzData]="workOrderProduceTransaction.workOrderLineConsumeTransactions" nzShowPagination="false"
+        #workOrderLineTable>
+        <thead>
+          <tr>
+            <th>{{ 'work-order.line.number' | i18n }}</th>
+            <th>{{ 'item' | i18n }}</th>
+            <th>{{ 'item.description' | i18n }}</th>
+            <th>{{ 'work-order.line.expectedQuantity' | i18n }}</th>
+            <th>{{ 'work-order.line.inprocessQuantity' | i18n }}</th>
+            <th>{{ 'work-order.line.consumedQuantity' | i18n }}</th>
+            <th>{{ 'work-order.line.consumingQuantity' | i18n }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let workOrderLineConsumeTransaction of workOrderLineTable.data; let i = index">
+            <td>{{ workOrderLineConsumeTransaction?.workOrderLine?.number }}</td>
+            <td>
+              {{ workOrderLineConsumeTransaction?.workOrderLine?.item?.name }}
+            </td>
+            <td>
+              {{ workOrderLineConsumeTransaction?.workOrderLine?.item?.description }}
+            </td>
+            <td>
+              {{ workOrderLineConsumeTransaction?.workOrderLine?.expectedQuantity }}
+            </td>
+            <td>
+              {{ workOrderLineConsumeTransaction?.workOrderLine?.inprocessQuantity }}
+            </td>
+            <td>
+              {{ workOrderLineConsumeTransaction?.workOrderLine?.consumedQuantity }}
+            </td>
+            <td>
+              {{workOrderLineConsumeTransaction.consumedQuantity }}
+            </td>
+          </tr>
+        </tbody>
+      </nz-table> -->
+    </div>
+  </nz-card>
+
+  <ng-template #consumeByUOM>
+    <span *ngIf="workOrderProduceTransaction.consumeByBomQuantity === true">
+
+      <a nz-popover nzPopoverTitle="BOM" [nzPopoverContent]="bomDetails">{{
+        workOrderProduceTransaction.consumeByBom?.number }}</a>
+
+    </span>
+  </ng-template>
+
+  <ng-template #bomDetails>
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #bomDetailTable
+      [nzData]="workOrderProduceTransaction.consumeByBom!.billOfMaterialLines" nzSize="middle"
+      [nzShowPagination]="false" nzBordered>
+      <thead>
+        <th>
+          {{ 'bill-of-material.line.number' | i18n }}</th>
+        <th>
+          {{ 'item' | i18n }}</th>
+        <th>
+          {{ 'item.description' | i18n }}</th>
+        <th>
+          {{ 'bill-of-material.line.expectedQuantity' | i18n }}</th>
+        <th>
+          {{ 'inventory.status' | i18n }}</th>
+      </thead>
+      
+      <tbody>
+        <tr *ngFor="let billOfMaterialLine of bomDetailTable.data">
+          <td>{{ billOfMaterialLine.number }}</td>
+          <td>{{ billOfMaterialLine.item?.name }}</td>
+          <td>{{ billOfMaterialLine.item?.description }}</td>
+          <td>{{ billOfMaterialLine.expectedQuantity }}</td>
+          <td>{{ billOfMaterialLine.inventoryStatus?.description }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </ng-template>
+
+  <!-- Show by product-->
+  <nz-card nzTitle="{{ 'work-order.by-product' | i18n}}" *ngIf="workOrderProduceTransaction !== undefined"
+    [nzExtra]="toggleWorkOrderByProductInformation">
+    <div class="search-result-list" [hidden]="isWorkOrderByProductCollapse">
+      <nz-table [nzScroll]="{ x: 'true', y: 'true' }"
+        [nzData]="workOrderProduceTransaction.workOrderByProductProduceTransactions!" nzShowPagination="false"
+        #workOrderByProductProduceTransactionTable>
+        <thead>
+          <tr>
+            <th>{{ 'lpn' | i18n }}</th>
+            <th>{{ 'item' | i18n }}</th>
+            <th>{{ 'item.description' | i18n }}</th>
+            <th>{{ 'item.package-type' | i18n }}</th>
+            <th>{{ 'location' | i18n }}</th>
+            <th>{{ 'inventory.status' | i18n }}</th>
+            <th>{{ 'work-order.by-product.expectedQuantity' | i18n }}</th>
+            <th>{{ 'work-order.by-product.producedQuantity' | i18n }}</th>
+            <th>{{ 'quantity' | i18n }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let workOrderByProductProduceTransaction of workOrderByProductProduceTransactionTable.data; let i = index">
+            <td>
+              {{workOrderByProductProduceTransaction?.lpn}}
+            </td>
+            <td>
+              {{ workOrderByProductProduceTransaction.workOrderByProduct!.item?.name }}
+            </td>
+            <td>
+              {{ workOrderByProductProduceTransaction.workOrderByProduct!.item?.description }}
+            </td>
+            <td>
+              {{ workOrderByProductProduceTransaction.itemPackageType?.name }}
+            </td>
+            <td> </td>
+            <td>
+              {{workOrderByProductProduceTransaction.inventoryStatus?.name}}
+            </td>
+            <td>{{ workOrderByProductProduceTransaction.workOrderByProduct?.expectedQuantity }}</td>
+            <td>{{ workOrderByProductProduceTransaction.workOrderByProduct?.producedQuantity }}</td>
+            <td> {{ workOrderByProductProduceTransaction.quantity }} </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </nz-card>
+  <ng-template #toggleWorkOrderByProductInformation>
+    <a class="collapse" (click)="toggleByProductCollapse()">
+
+
+      <span *ngIf="!isWorkOrderByProductCollapse">{{ 'collapse' | i18n }}</span>
+      <span *ngIf="isWorkOrderByProductCollapse">{{ 'expand' | i18n }}</span>
+
+      <i nz-icon [nzType]="isWorkOrderByProductCollapse ? 'down' : 'up'"></i>
+    </a>
+  </ng-template>
+
+  <!-- Show KPI-->
+  <nz-card nzTitle="{{ 'work-order.kpi' | i18n}}" *ngIf="workOrderProduceTransaction !== undefined"
+    [nzExtra]="toggleWorkOrderKPIInformation">
+    <div class="search-result-list" [hidden]="isWorkOrderKPICollapse">
+      <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="workOrderProduceTransaction.workOrderKPITransactions!"
+        nzShowPagination="false" #workOrderKPITransactionTable>
+
+        <thead>
+          <tr>
+            <th>{{ 'username' | i18n }}</th>
+            <th>{{ 'working-team' | i18n }}</th>
+            <th>{{ 'amount' | i18n }}</th>
+            <th>{{ 'KPIMeasure' | i18n }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let workOrderKPI of workOrderKPITransactionTable.data">
+            <td> {{workOrderKPI.username }}
+
+            </td>
+            <td>
+              {{workOrderKPI.workingTeamName }}
+
+            </td>
+            <td>
+              {{ workOrderKPI.amount }}
+            </td>
+            <td> {{'KPI-MEASUREMENT-' + workOrderKPI.kpiMeasurement | i18n }}
+
+            </td>
+          </tr>
+        </tbody>
+
+      </nz-table>
+    </div>
+  </nz-card>
+  <ng-template #toggleWorkOrderKPIInformation>
+    <a class="collapse" (click)="toggleKPICollapse()">
+      <span *ngIf="!isWorkOrderKPICollapse">{{ 'collapse' | i18n }}</span>
+      <span *ngIf="isWorkOrderKPICollapse">{{ 'expand' | i18n }}</span>
+
+      <i nz-icon [nzType]="isWorkOrderKPICollapse ? 'down' : 'up'"></i>
+    </a>
+  </ng-template>
+
+
+
+</nz-spin>

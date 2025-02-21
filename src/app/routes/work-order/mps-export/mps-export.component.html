@@ -1,0 +1,101 @@
+<page-header title="{{'mps-export' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning">  
+
+    <!--  choose production line and time span-->
+    <nz-card nzTitle="{{'criteria' | i18n}}">
+      <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="12">
+                <nz-form-item nzFlex>
+                    <nz-form-label for="production-line" [nzSpan]="6">
+                    {{ 'production-line' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="18">
+                        <nz-select  nzMode="multiple" formControlName="productionLines"  >
+                            <nz-option *ngFor="let productionLine of availableProductionLines" [nzLabel]="productionLine.name" 
+                                [nzValue]="productionLine.id"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            
+            <div nz-col [nzSpan]="12" >
+                <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="6" nzFor="dateRanger">
+                    {{ 'date-range' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18">
+                    <nz-range-picker   
+                    formControlName="dateRanger" name="dateRanger">
+                    </nz-range-picker>
+                </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+      </form>
+    </nz-card>
+    <nz-card  nzTitle="{{'mps-export.result-group-by' | i18n}}">
+        <nz-radio-group [(ngModel)]="exportType"> 
+            <label nz-radio [nzValue]="mpsExportType.key" *ngFor="let mpsExportType of mpsExportTypes  | keys">
+                {{'MPS-EXPORT-TYPE.' + mpsExportType.key | i18n}}</label> 
+        </nz-radio-group>
+        <div style="padding-top: 25px;">
+            <button nzType="primary" nz-button (click)="search()" [disabled]="!readyForSearch()">{{'search' | i18n}}</button>
+        </div>
+    </nz-card>
+    <!--
+
+    <nz-card  *ngIf="downloadUrl != ''">
+        <span>
+            <a [href]="downloadUrl" target="_blank" rel="noopener noreferrer">
+    
+                {{ 'download' | i18n }}
+              </a> 
+        </span>
+    </nz-card>
+
+    -->
+    <nz-card>
+        <button nz-button (click)="export()" >{{'export' | i18n}}</button> 
+
+        <!--
+            Wrapper for export Excel
+        -->
+        <div #tableWrapper>
+
+            <nz-table  [nzData]="mpsByItemViewData" #mpsByItemViewTable  nzShowPagination>
+                <thead>
+                  <tr>  
+                    <th>{{'item' | i18n}}</th>
+                    <th>{{'totalQuantity' | i18n}}</th>
+                    <th>{{'goalQuantity' | i18n}}</th>
+                    <th>{{'production-line' | i18n}}</th>
+                    <th>{{'productionDays' | i18n}}</th>
+                  </tr> 
+                </thead>
+                <tbody>
+    
+                    <tr *ngFor="let mpsByItemViewRow of mpsByItemViewTable.data;  let i = index">
+                        <td *ngIf="mpsByItemViewRow.lineNumber == 0" [rowSpan]="mpsByItemViewRow.totalLines">
+                          {{mpsByItemViewRow.itemName}}
+                        </td>
+                        <td *ngIf="mpsByItemViewRow.lineNumber == 0" [rowSpan]="mpsByItemViewRow.totalLines">
+                          {{mpsByItemViewRow.totalQuantity}}
+                        </td>
+                        <td>
+                          {{mpsByItemViewRow.goalQuantity}}
+                        </td>
+                        <td>
+                          {{mpsByItemViewRow.productionLineName}}
+                        </td>
+                        <td>
+                          {{mpsByItemViewRow.productionDays}}
+                        </td>
+                      </tr>
+                </tbody>
+              </nz-table>
+        </div>
+    </nz-card>
+
+</nz-spin>

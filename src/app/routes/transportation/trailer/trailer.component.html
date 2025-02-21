@@ -1,0 +1,223 @@
+<page-header title="{{'trailer' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    <!-- Form to query the result  -->
+    <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form"> 
+  
+      <div nz-row [nzGutter]="24">
+          <div nz-col [nzSpan]="12">
+              <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="6" nzFor="number">
+                  {{ 'number' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18">
+                  <input nz-input name="number" id="number" formControlName="number">
+                </nz-form-control>
+              </nz-form-item>
+          </div> 
+        
+      </div>
+      <div nz-row>
+        <div nz-col [nzSpan]="24" class="search-area">
+          <button nz-button [nzType]="'primary'" (click)="search()"  >
+            {{ 'search' | i18n }}
+          </button>
+          <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+        </div>
+      </div>
+    </form> 
+   
+   
+    
+    <div class="search-result-list"> 
+      
+      <!--
+      <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+        <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+      </div>
+    -->
+      
+      <st #st [data]="trailers" [columns]="columns" [footer]="tableFoot"    
+      [expand]="expand" (change)="trailerTableChanged($event)"  expandAccordion> 
+      
+        <!--   action colummn  --> 
+        <ng-template st-row="actionColumnTitle" type="title" let-c>
+          {{ 'action' | i18n }}
+        </ng-template>
+        <ng-template st-row="actionColumn" let-item let-index="index"> 
+          
+          <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" 
+              [disabled]="item.number==''"
+          >
+            {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu> 
+              <li nz-menu-item  >
+                
+                <a routerLink="/transportation/trailer/maintenance"
+                [queryParams]="{id : item.id}" routerLinkActive="active">
+                    {{ 'modify' | i18n }}</a>
+                    
+              </li>
+              <li nz-menu-item  >
+                <a  (click)="removeTrailer(item)">{{ 'remove' | i18n }}</a>
+              </li>
+              
+              <li nz-menu-item  >
+                
+                <a routerLink="/transportation/trailer/appointment/maintenance"
+                [queryParams]="{id : item.id}" routerLinkActive="active">
+                    {{ 'appointment' | i18n }}</a>
+                    
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+        </ng-template>
+   
+        <!--   current appointment -->
+        <ng-template #expand let-item let-index="index" >
+          
+          <nz-tabset>
+            <nz-tab nzTitle="{{'current-appointment' | i18n}}">
+              
+              <nz-descriptions nzBordered="true">
+                <nz-descriptions-item nzTitle="{{ 'number' | i18n }}">{{ item.currentAppointment?.number }}
+                </nz-descriptions-item>
+                <nz-descriptions-item nzTitle="{{ 'description' | i18n}}">
+                    {{item.currentAppointment?.description}}
+                </nz-descriptions-item>
+                <nz-descriptions-item nzTitle="{{ 'type' | i18n}}">
+                    <span *ngIf="item.currentAppointment?.type != null">
+                        {{'TRAILER-APPOINTMENT-TYPE-' + item.currentAppointment.type | i18n}} </span>
+                </nz-descriptions-item>
+              </nz-descriptions>
+
+              <!--Show stops only if we have a trailer apppointment-->
+              <nz-tabset *ngIf="item.currentAppointment">
+                <nz-tab nzTitle="{{'stop' | i18n}}">
+                
+                  <st #stStops [data]="mapOfStops[item.id!]" [columns]="stopColumns"    > 
+                      
+                      <ng-template st-row="addressColumn" let-stop let-index="index"> 
+                      
+                        <address>  
+                        {{stop.contactorFirstname}} {{stop.contactorLastname}}<br>
+                        {{stop.addressLine1}} <br>
+                        <div *ngIf="stop.addressLine2">{{stop.addressLine2}}</div>  
+                        {{stop.addressCity}},  {{stop.addressState}} {{stop.addressPostcode}} 
+                        </address>
+                      </ng-template>
+                      <ng-template st-row="actionColumn" let-stop let-index="index"> 
+                        
+                        <button nz-button nzDanger (click)="removeStopFromTrailerAppointment(stop)">
+                          {{ 'remove' | i18n }} </button> 
+                      </ng-template>
+                      <!--   current appointment --> 
+                  </st>
+                </nz-tab> 
+                <nz-tab nzTitle="{{'order' | i18n}}">
+                
+                  <st #stOrders [data]="mapOfOrders[item.id!]" [columns]="orderColumns"    > 
+                       
+                      <ng-template st-row="numberColumn" let-order let-index="index">  
+                        <a  routerLink="/outbound/order" routerLinkActive="active" [queryParams]="{number : order.number}">
+                          {{ order.number }}</a> 
+                      </ng-template>
+                      <ng-template st-row="addressColumn" let-order let-index="index"> 
+                      
+                        <address>  
+                        {{order.shipToContactorFirstname}} {{order.shipToContactorLastname}}<br>
+                        {{order.shipToAddressLine1}} <br>
+                        <div *ngIf="order.shipToAddressLine2">{{order.shipToAddressLine2}}</div> 
+                        {{order.shipToAddressCity}},  {{order.shipToAddressState}} {{order.shipToAddressPostcode}}   
+                        
+                        </address>
+                      </ng-template>
+                      <ng-template st-row="inProcessColumn" let-order  >  
+                        <nz-progress [nzPercent]="(order.totalInprocessQuantity * 100.0/ order.totalExpectedQuantity) | number: '1.0-2'" nzStatus="normal"></nz-progress> 
+                      </ng-template>
+                      <ng-template st-row="shippedColumn" let-order>   
+                        <nz-progress [nzPercent]="(order.totalShippedQuantity  * 100.0/ order.totalExpectedQuantity) | number: '1.0-2'" nzStatus="normal"></nz-progress>   
+                      </ng-template>
+
+                      
+                      <ng-template st-row="actionColumn" let-order> 
+                        
+                        <button nz-button nzDanger (click)="removeOrderFromTrailerAppointment(order)">
+                          {{ 'remove' | i18n }} </button> 
+                      </ng-template>
+                  </st>
+                </nz-tab> 
+                <nz-tab nzTitle="{{'shipment' | i18n}}">
+                
+                  <st #stShipments [data]="mapOfShipments[item.id!]" [columns]="shipmentColumns"    > 
+                      
+                    <ng-template st-row="numberColumn" let-shipment let-index="index">  
+                      <a  routerLink="/outbound/shipment" routerLinkActive="active" [queryParams]="{number : shipment.number}">
+                        {{ shipment.number }}</a> 
+                    </ng-template>
+                      <ng-template st-row="addressColumn" let-shipment> 
+                      
+                        <address>  
+                        {{shipment.shipTocontactorFirstname}} {{shipment.shipTocontactorLastname}}<br>
+                        {{shipment.shipToAddressLine1}} <br>
+                        <div *ngIf="shipment.shipToAddressLine2">{{shipment.shipToAddressLine2}} </div> 
+                        {{shipment.shipToAddressCity}},  {{shipment.shipToAddressState}} {{shipment.shipToAddressPostcode}} 
+                        </address>
+                      </ng-template>
+                      
+                      <ng-template st-row="inProcessColumn" let-shipment>  
+                        <nz-progress [nzPercent]="(shipment.totalInprocessQuantity  * 100.0/ shipment.totalQuantity) | number: '1.0-2'" nzStatus="normal"></nz-progress> 
+                      </ng-template>
+                      
+                      <ng-template st-row="stagedColumn" let-shipment>   
+                        <nz-progress [nzPercent]="(shipment.totalStagedQuantity  * 100.0/ shipment.totalQuantity) | number: '1.0-2'" nzStatus="normal"></nz-progress>  
+                      </ng-template>
+
+                     
+                      <ng-template st-row="loadedColumn" let-shipment>   
+                        <nz-progress [nzPercent]="(shipment.totalLoadedQuantity  * 100.0/ shipment.totalQuantity) | number: '1.0-2'" nzStatus="normal"></nz-progress>   
+                      </ng-template>
+
+                   
+                      <ng-template st-row="shippedColumn" let-shipment>   
+                        <nz-progress [nzPercent]="(shipment.totalShippedQuantity  * 100.0/ shipment.totalQuantity) | number: '1.0-2'" nzStatus="normal"></nz-progress>   
+                      </ng-template>
+
+
+                      <ng-template st-row="actionColumn" let-shipment> 
+                        
+                        <button nz-button nzDanger  (click)="removeShipmentFromTrailerAppointment(shipment)">
+                          {{ 'remove' | i18n }} </button> 
+                      </ng-template>
+                      <!--   current appointment --> 
+                  </st>
+                </nz-tab> 
+              </nz-tabset>
+            </nz-tab>
+          </nz-tabset>
+        </ng-template>
+      </st>
+    
+    </div>
+   
+  </nz-spin>
+  
+<ng-template #tableFoot>
+
+    <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+      {{searchResult}}
+    </div>
+    
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
+      
+      <button nz-button nzType="primary" routerLink="/transportation/trailer/maintenance" routerLinkActive="active">
+          {{ 'add' | i18n }}
+        </button>
+        <nz-divider nzType="vertical"></nz-divider> 
+        <button  nz-button nzType="primary" routerLink="/util/file-upload/shipping-trailer-appointment" routerLinkActive="active">
+          {{ 'file-upload' | i18n }}
+        </button> 
+    </div>
+  </ng-template>
+  

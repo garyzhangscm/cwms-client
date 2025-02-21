@@ -1,0 +1,218 @@
+<page-header [title]="pageTitle"></page-header>
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="6">
+          {{ 'username' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input formControlName="username" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #rowSelectionTable nzShowSizeChanger nzShowPagination
+    [nzData]="listOfAllUsers" [nzFooter]="tableFoot">
+    <thead nzSingleSort>
+      <tr>
+        <th *ngFor="let column of listOfColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+          [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+          [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+          {{ column.name | i18n }}
+        </th>
+        <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data">
+        <td>
+          {{ data.username }}</td>
+        <td>{{ data.firstname }}</td>
+        <td>{{ data.lastname }}</td>
+        <td>{{ data.email }} </td>
+        <td>{{ data.department?.name }} </td>
+        <td>{{ data.position }} </td>
+        <td>
+          {{ data.onBoardTime  | date:'short'}} 
+          </td>
+        <td>{{ data.enabled + '' | i18n }}</td>
+        <td>{{ data.locked + '' | i18n}}</td>
+        <td *ngIf="!displayOnly">
+          
+          <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" [disabled]="data.systemAdmin === true || data.companyId! < 0">
+            {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu>
+                <!--  allow the user to assign the production line only when
+                the work order is not start yet
+                -->
+                <li nz-menu-item >  
+                  <a  routerLink="/auth/user-role" routerLinkActive="active" [queryParams]="{userId : data.id!}">{{
+                    'assign-role' | i18n }}</a>
+                </li>
+                <li nz-menu-item >  
+                  <a  routerLink="/auth/user/maintenance" routerLinkActive="active"
+                    [queryParams]="{userId : data.id!}">{{ 'modify' | i18n }}</a>
+                </li>
+                
+                <li nz-menu-item >  
+                  <a  (click)="openCopyUserModal(data, tplCopyUserModalTitle, tplCopyUserModalContent )">{{ 'copy' | i18n }}</a>
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+ 
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
+    <a nz-button routerLink="/auth/user/maintenance" routerLinkActive="active">{{ 'new' | i18n }}</a>
+    <nz-divider nzType="vertical"></nz-divider>
+    <button nz-button (click)="openNewTempUserModal(tplNewTempUserModalTitle, tplNewTempUserModalContent )">{{'new-temp-user' | i18n}}</button>
+    
+  </div>
+</div>
+
+<ng-template #tableFoot>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>
+
+
+
+
+<!-- Modal for adding temporary user-->
+<ng-template #tplNewTempUserModalTitle>
+  <span>{{ 'new' | i18n}}</span>
+</ng-template>
+<ng-template #tplNewTempUserModalContent>
+  <form nz-form [formGroup]="newTempUserForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
+            {{ 'username' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="username" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="firstname">
+            {{ 'first-name' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="firstname" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lastname">
+            {{ 'last-name' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="lastname" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div> 
+  </form>
+</ng-template>
+
+
+<!-- Modal for copy existing user-->
+<ng-template #tplCopyUserModalTitle>
+  <span>{{ 'copy' | i18n}}</span>
+</ng-template>
+<ng-template #tplCopyUserModalContent>
+  <form nz-form [formGroup]="copyUserForm">
+    <div nz-row  [nzGutter]="24">
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="copyFromUsername">
+            {{ 'copy-from-username' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="copyFromUsername" [disabled]="true"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
+            {{ 'username' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="username" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="firstname">
+            {{ 'first-name' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="firstname" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lastname">
+            {{ 'last-name' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="lastname" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div> 
+    
+    <div nz-row  [nzGutter]="24">
+        <span>
+          *User will be created with password the same as the username and will be forced to change password when next logon
+        </span>
+    </div>
+  </form>
+</ng-template>

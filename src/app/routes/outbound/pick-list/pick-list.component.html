@@ -1,0 +1,340 @@
+<page-header title="{{'pick-list' |  i18n}}" ></page-header>
+
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="number" [nzSpan]="10">
+          {{ 'order.number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="number" id="number" formControlName="number" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllPickLists"
+    #nestedTable>
+    <thead>
+      <tr>
+        <th nzWidth="40px"></th>
+        <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+          [nzShowFilter]="column.showFilter">
+          {{ column.name | i18n }}
+        </th>
+
+
+        <th *ngIf="!displayOnly">
+          {{ 'action' | i18n }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-template ngFor let-data [ngForOf]="nestedTable.data">
+        <tr>
+          <td [nzExpand]="expandSet.has(data.id!)" (nzExpandChange)="onExpandChange(data.id!, $event)"></td>
+
+          <td>{{ data.number }}</td>
+          <td>{{ data.groupKey }}</td>
+          <td>{{ 'PICK-LIST-STATUS-' + data.status | i18n }}</td>
+          <td>{{ data.totalPickCount }}</td>
+          <td>{{ data.totalItemCount }}</td>
+          <td>{{ data.totalLocationCount }}</td>
+          <td>{{ data.totalQuantity }}</td>
+          <td>{{ data.totalPickedQuantity }}</td>
+          <td *ngIf="!displayOnly">
+            <button nz-button nzType="primary" (click)="printPickSheets(data)"
+              [nzLoading]="mapOfPrintingInProcessId[data.id!]" [disabled]="data.picks.length === 0">
+              {{ 'print' | i18n }}
+            </button>
+            <button nz-button (click)="confirmPicks(data)" [disabled]="data.picks.length === 0">
+              {{ 'confirm' | i18n }}
+            </button>
+          </td>
+
+
+        </tr>
+        <tr [nzExpand]="expandSet.has(data.id!)" class="inner-table">
+
+          <nz-tabset [nzSelectedIndex]="tabSelectedIndex">
+
+            <nz-tab nzTitle=" {{ 'pick' | i18n }}">
+              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="false"
+                [nzData]="mapOfPicks[data.id!]">
+                <thead>
+                  <th>
+                    {{ 'pick.number' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'list-pick.number' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'sourceLocation' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'destinationLocation' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'item' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'item.description' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'pick.quantity' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'pick.pickedQuantity' | i18n }}
+                  </th>
+                  <th *ngIf="!displayOnly">
+                    {{ 'action' | i18n }}
+                  </th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let pick of mapOfPicks[data.id!]">
+                    <td>{{ pick.number }}</td>
+                    <td>{{ pick.pickListNumber }}</td>
+                    <td>{{ pick.sourceLocation?.name }}</td>
+                    <td>{{ pick.destinationLocation?.name }}</td>
+                    <td>{{ pick.item?.name }}</td>
+                    <td>{{ pick.item?.description }}</td>
+                    <td>{{ pick.quantity }}</td>
+                    <td>{{ pick.pickedQuantity }}</td>
+
+                    <td *ngIf="!displayOnly">
+                      
+                      <button nz-button nz-dropdown [nzDropdownMenu]="cancelPickOption" nzDanger
+                      (click)="cancelPick(data, pick, false, false)"
+                      [disabled]="pick.quantity === pick.pickedQuantity">
+                      {{ 'cancel' | i18n }} <i nz-icon nzType="down"></i></button>
+                      <nz-dropdown-menu #cancelPickOption="nzDropdownMenu">
+                        <ul nz-menu>         
+                          <li nz-menu-item>
+                            <a (click)="cancelPick(data, pick,false, false)">
+                              {{ 'cancel-pick' | i18n }}</a> 
+                          </li>
+                          <li nz-menu-item>
+                            <a (click)="cancelPick(data, pick,true, false)">
+                              {{ 'cancel-pick-error-location' | i18n }}</a> 
+                          </li>  
+                          <li nz-menu-item>
+                            <a (click)="cancelPick(data, pick,true, true)">
+                              {{ 'cancel-pick-error-location-generate-cycle-count' | i18n }}</a> 
+                          </li>
+                        </ul>
+                      </nz-dropdown-menu>  
+ 
+                    </td>
+                  </tr>
+                </tbody>
+              </nz-table>
+
+            </nz-tab>
+
+            <nz-tab nzTitle=" {{ 'picked-inventory' | i18n }}">
+              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzSize="middle" [nzShowPagination]="false"
+                [nzData]="mapOfPickedInventory[data.id!]">
+                <thead>
+                  <th>
+                    {{ 'pick.number' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'location' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'lpn' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'item' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'item.description' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'item.package-type' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'quantity' | i18n }}
+                  </th>
+                  <th>
+                    {{ 'inventory.status' | i18n }}
+                  </th>
+                  <th *ngIf="!displayOnly">
+                    {{ 'action' | i18n }}
+                  </th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let inventory of mapOfPickedInventory[data.id!]">
+                    <td>{{ inventory.pick?.number }}</td>
+                    <td>{{ inventory.locationName }}</td>
+                    <td>{{ inventory.lpn }}</td>
+                    <td>{{ inventory.item?.name }}</td>
+                    <td>{{ inventory.item?.description }}</td>
+                    <td>{{ inventory.itemPackageType?.name }}</td>
+                    <td>{{ inventory.quantity }}</td>
+                    <td>{{ inventory.inventoryStatus?.name }}</td>
+                    <td *ngIf="!displayOnly">
+                      <button nz-button (click)="openUnpickModal(data, inventory, tplUnpickModalTitle, tplUnpickModalContent)">
+                        {{ 'unpick' | i18n }}
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </nz-table>
+            </nz-tab>
+          </nz-tabset>
+
+        </tr>
+      </ng-template>
+    </tbody>
+  </nz-table>
+</div>
+</nz-spin>
+
+
+
+<!-- Modal for unpick -->
+<ng-template #tplUnpickModalTitle>
+  <span>{{ 'page.modal.unpick' | i18n}}</span>
+</ng-template>
+
+<ng-template #tplUnpickModalContent>
+  <form nz-form [formGroup]="unpickForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
+            {{ 'lpn' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="lpn" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNumber">
+            {{ 'item' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="itemNumber" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemDescription">
+            {{ 'item.description' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="itemDescription" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'inventory.status' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input nz-input formControlName="inventoryStatus" />
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemPackageType">
+            {{ 'item.package-type' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+
+            <input nz-input formControlName="itemPackageType" />
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="quantity">
+            {{ 'quantity' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="quantity" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationName">
+            {{ 'location' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="locationName" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="destinationLocation">
+            {{ 'unpick.destination-location' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="destinationLocation" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-control [nzSpan]="14" [nzOffset]="6">
+            <label nz-checkbox formControlName="immediateMove">
+              <span>{{ 'unpick.immediately-putaway' | i18n}}</span>
+            </label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>
+  </form>
+</ng-template>

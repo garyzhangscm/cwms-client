@@ -1,0 +1,351 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/warehouse-layout/warehouse-location" routerLinkActive="active" [queryParams]="{name: currentLocation.name}">{{ 'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/warehouse-layout/warehouse-location" routerLinkActive="active">{{ 'location' | i18n }}</a>
+    </nz-breadcrumb-item> 
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin nzSize="large" [nzSpinning]="isSpinning">
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex" nzStatus="wait" style="padding: 15px">
+  <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+<!-- Show basic item information -->
+<div class="small-card" *ngIf="stepIndex === 0 
+    && currentLocation != null">
+    
+  <div nz-row [nzGutter]="24">
+
+    
+    <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8">
+            {{ 'location-group' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <nz-select [ngModel]="currentLocation.locationGroup!.id" (ngModelChange)="locationGroupChanged($event)">
+              <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description!"
+                [nzValue]="locationGroup.id"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+  </div>
+  <div nz-row [nzGutter]="24">
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'name' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <input nz-input  [(ngModel)]="currentLocation.name" required [disabled]="!newLocation"/> 
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    
+    <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'code' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <input nz-input  [(ngModel)]="currentLocation.code" required /> 
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'location.aisle' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <input nz-input  [(ngModel)]="currentLocation.aisle" required /> 
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    
+    <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="length">
+              {{ 'length' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              <nz-input-group nzSize="large">
+                <nz-input-number [nzStep]="0.01" [(ngModel)]="currentLocation.length"></nz-input-number>
+                <a nz-dropdown [nzDropdownMenu]="lengthUnitMenu" style="padding-left: 5px;">
+                  {{currentLocation!.lengthUnit}}
+                  <span nz-icon nzType="down"></span>
+                </a>
+                <nz-dropdown-menu #lengthUnitMenu="nzDropdownMenu">
+                  <ul nz-menu nzSelectable>
+                    <li nz-menu-item *ngFor="let lengthUnit of lengthUnits" (click)="lengthUnitSelected(lengthUnit)">{{ lengthUnit.name }}</li> 
+                  </ul>
+                </nz-dropdown-menu>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="width">
+              {{ 'width' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              <nz-input-group nzSize="large">
+                <nz-input-number [nzStep]="0.01"  [(ngModel)]="currentLocation.width"></nz-input-number>
+                <a nz-dropdown [nzDropdownMenu]="widthUnitMenu" style="padding-left: 5px;">
+                    {{currentLocation!.widthUnit}}
+                  <span nz-icon nzType="down"></span>
+                </a>
+                <nz-dropdown-menu #widthUnitMenu="nzDropdownMenu">
+                  <ul nz-menu nzSelectable>
+                    <li nz-menu-item *ngFor="let lengthUnit of lengthUnits" (click)="widthUnitSelected(lengthUnit)">{{ lengthUnit.name }}</li> 
+                  </ul>
+                </nz-dropdown-menu>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="height">
+              {{ 'height' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              <nz-input-group nzSize="large">
+                <nz-input-number [nzStep]="0.01"  [(ngModel)]="currentLocation.height"></nz-input-number>
+                <a nz-dropdown [nzDropdownMenu]="heightUnitMenu" style="padding-left: 5px;">
+                    {{currentLocation!.heightUnit}}
+                  <span nz-icon nzType="down"></span>
+                </a>
+                <nz-dropdown-menu #heightUnitMenu="nzDropdownMenu">
+                  <ul nz-menu nzSelectable>
+                    <li nz-menu-item *ngFor="let lengthUnit of lengthUnits" (click)="heightUnitSelected(lengthUnit)">{{ lengthUnit.name }}</li> 
+                  </ul>
+                </nz-dropdown-menu>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+    </div>
+      
+    <div nz-row [nzGutter]="24">
+        
+        <div nz-col [nzSpan]="8">
+            <nz-form-item nzFlex>
+              <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="pickSequence">
+                {{ 'location.pickSequence' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSm]="14" [nzXs]="24">
+                <nz-input-group nzSize="large">
+                  <nz-input-number [nzStep]="1" [nzMin]="0" [(ngModel)]="currentLocation.pickSequence"></nz-input-number>
+                   
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="8">
+            <nz-form-item nzFlex>
+              <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="putawaySequence">
+                {{ 'location.putawaySequence' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSm]="14" [nzXs]="24">
+                <nz-input-group nzSize="large">
+                  <nz-input-number [nzStep]="1" [nzMin]="0" [(ngModel)]="currentLocation.putawaySequence"></nz-input-number>
+                   
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="8">
+            <nz-form-item nzFlex>
+              <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="countSequence">
+                {{ 'location.countSequence' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSm]="14" [nzXs]="24">
+                <nz-input-group nzSize="large">
+                  <nz-input-number [nzStep]="1" [nzMin]="0" [(ngModel)]="currentLocation.countSequence"></nz-input-number>
+                   
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+        
+        <div nz-col [nzSpan]="8">
+            <nz-form-item nzFlex>
+              <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="capacity">
+                {{ 'location.capacity' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSm]="14" [nzXs]="24">
+                <nz-input-group nzSize="large">
+                  <nz-input-number [nzStep]="0.01"  [(ngModel)]="currentLocation.capacity"></nz-input-number>
+                  <a nz-dropdown [nzDropdownMenu]="capacityUnitMenu" style="padding-left: 5px;">
+                      {{currentLocation!.capacityUnit}}
+                    <span nz-icon nzType="down"></span>
+                  </a>
+                  <nz-dropdown-menu #capacityUnitMenu="nzDropdownMenu">
+                    <ul nz-menu nzSelectable>
+                      <li nz-menu-item *ngFor="let volumeUnit of volumeUnits" (click)="capacityUnitSelected(volumeUnit)">{{ volumeUnit.name }}</li> 
+                    </ul>
+                  </nz-dropdown-menu>
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="8">
+            <nz-form-item nzFlex>
+              <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="fillPercentage">
+                {{ 'location.fillPercentage' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSm]="14" [nzXs]="24">
+                <nz-input-group nzSize="large">
+                  <nz-input-number [nzStep]="1" [nzMin]="0" [nzMax]="100" [(ngModel)]="currentLocation.fillPercentage"></nz-input-number>
+                   
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+        </div>
+        
+    
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="8">
+              {{ 'pick-zone' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <nz-select [ngModel]="currentLocation.pickZone?.id" (ngModelChange)="pickZoneChanged($event)">
+                <nz-option *ngFor="let pickZone of pickZones" [nzLabel]="pickZone.name!"
+                  [nzValue]="pickZone.id"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="8">
+                {{ 'enabled' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="16">
+                <label nz-checkbox [(ngModel)]="currentLocation.enabled"></label>
+              </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="8">
+                {{ 'locked' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="16">
+                <label nz-checkbox [(ngModel)]="currentLocation.locked"></label>
+              </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+    
+</div>
+  
+<!-- Confirm the change -->
+<div class="small-card" *ngIf="stepIndex === 1">
+  <nz-card>
+    <nz-descriptions nzBordered="true">
+
+      <nz-descriptions-item nzTitle="{{ 'locationGroup' | i18n }}" nzSpan=3>
+
+        {{ currentLocation.locationGroup?.name  }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'name' | i18n }}">
+
+        {{ currentLocation.name  }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'code' | i18n }}">
+
+        {{ currentLocation.code  }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'aisle' | i18n }}">
+
+        {{ currentLocation.aisle  }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'length' | i18n }}">
+
+        {{ currentLocation.length  }} <strong> {{currentLocation.lengthUnit}}</strong>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'width' | i18n }}">
+
+        {{ currentLocation.width  }} <strong> {{currentLocation.widthUnit}}</strong>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'height' | i18n }}">
+
+        {{ currentLocation.height  }} <strong> {{currentLocation.heightUnit}}</strong>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'pickSequence' | i18n }}">
+
+        {{ currentLocation.pickSequence  }}  
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'putawaySequence' | i18n }}">
+
+        {{ currentLocation.putawaySequence  }}  
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'countSequence' | i18n }}">
+
+        {{ currentLocation.countSequence  }}  
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'capacity' | i18n }}">
+
+        {{ currentLocation.capacity  }}   <strong> {{currentLocation.capacityUnit}}</strong>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'fillPercentage' | i18n }}">
+
+        {{ currentLocation.fillPercentage  }}  
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'enabled' | i18n }}">
+
+        {{ currentLocation.enabled  }}  
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'locked' | i18n }}">
+
+        {{ currentLocation.locked  }}  
+      </nz-descriptions-item>
+      
+    </nz-descriptions>
+  </nz-card>
+</div>
+
+
+<div class="steps-action" *ngIf="stepIndex === 0">
+  <button nz-button nzType="default" (click)="nextStep()">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+</div>
+
+<div class="steps-action" *ngIf="stepIndex === 1">
+
+  <button nz-button nzType="default" (click)="previousStep()">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()">
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+</nz-spin>

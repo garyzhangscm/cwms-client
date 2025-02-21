@@ -1,0 +1,76 @@
+<page-header [title]="'pick-zone' | i18n">
+</page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  
+
+
+<!-- Form to query the result  -->
+<form nz-form class="ant-advanced-search-form">
+  
+    
+    
+    <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="6"  nzFor="name">
+              {{ 'name' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18">
+                <input nz-input name="name" id="name" formControlName="name">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+    </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()"  >{{'search' | i18n}}</button>
+      <button nz-button (click)="resetForm()"   >{{'clear' |
+        i18n}}</button>
+    </div>
+  </div>
+</form>
+
+
+<div class="search-result-list"> 
+    
+    <st #st [data]="pickZones" [columns]="columns" [footer]="tableFoot"  >
+      
+        <!--   actionColumn colummn  -->  
+        <ng-template st-row="actionColumn" let-pickZone let-index="index"> 
+              
+            <button *ngIf="!displayOnly" nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+                {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu>  
+                  <li nz-menu-item >
+                    <a routerLink="/warehouse-layout/pick-zone/maintenance" routerLinkActive="active"
+                    [queryParams]="{id: pickZone.id}">{{ 'modify' | i18n }}</a>
+                  </li>
+                  <li nz-menu-item>
+                    <a  (click)="removePickZone(pickZone.id)">{{ 'remove' | i18n }}</a>
+                  </li>
+                </ul>
+              </nz-dropdown-menu>
+        </ng-template>
+         
+    </st>
+  
+  </div>
+ 
+
+</nz-spin>
+
+<ng-template #tableFoot>
+
+    <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+      {{searchResult}}
+    </div>
+    
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+      
+      <button nz-button nzType="primary" routerLink="/warehouse-layout/pick-zone/maintenance" routerLinkActive="active" *ngIf="!displayOnly">
+        {{ 'add' | i18n }}
+      </button>
+    </div>
+  </ng-template>

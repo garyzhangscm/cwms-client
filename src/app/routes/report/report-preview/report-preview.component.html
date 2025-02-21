@@ -1,0 +1,48 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnTpl"></page-header>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item
+      ><a>{{ 'menu.main' | i18n }}</a></nz-breadcrumb-item
+    >
+    <nz-breadcrumb-item
+      ><a>{{ 'menu.main.report' | i18n }}</a></nz-breadcrumb-item
+    >
+    <nz-breadcrumb-item
+      ><a routerLink="/report/report" routerLinkActive="active">{{ 'menu.main.report.report' | i18n }}</a></nz-breadcrumb-item
+    >
+  </nz-breadcrumb>
+</ng-template>
+
+<ng-template #returnTpl>
+  <a (click)="back()">
+    {{ 'return' | i18n }}
+  </a>
+</ng-template>
+
+<div class="container">
+   
+  <div nz-row nzType="flex" nzJustify="center" style="margin: 25px;"> 
+    <cwms-common-print-button
+      [printingInProcess]="printingInProcess"
+      [allowPreview]="false"
+      (print)="printReport($event)"
+      (preview)="previewReport()"
+    >
+    </cwms-common-print-button>
+    <nz-divider nzType="vertical"></nz-divider>
+    <a [href]="pdfUrl" target="_blank" rel="noopener noreferrer">
+      {{ 'report.download' | i18n }} 
+    </a>
+ 
+  </div>
+  <div nz-row  >
+    <pdf-viewer [src]="pdfUrl" 
+      [render-text]="true" 
+      style="width: 100px; height: 125px"
+    
+    ></pdf-viewer>
+  </div> 
+</div>

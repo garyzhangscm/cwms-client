@@ -1,0 +1,196 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/work-order/work-order" routerLinkActive="active"
+    [queryParams]="{ number: currentWorkOrder.number }">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/work-order" routerLinkActive="active">{{
+        'breadcrumb.work-order' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+<div nz-row style="padding: 10px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="2" [nzSize]="'small'" (nzIndexChange)="onStepsIndexChange($event)">
+      <nz-step nzTitle="{{ 'steps.work-order-complete.info.title' | i18n }}"
+        nzDescription="{{ 'steps.work-order-complete.info.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.work-order-complete.user-kpi.title' | i18n }}"
+        nzDescription="{{ 'steps.work-order-complete.user-kpi.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.work-order-complete.confirm.title' | i18n }}"
+        nzDescription="{{ 'steps.work-order-complete.confirm.description' | i18n }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+<!-- Show the work order information -->
+<nz-card nzTitle="{{ 'work-order' | i18n}}" *ngIf="workOrderCompleteTransaction !== undefined">
+
+  <nz-descriptions nzBordered>
+    <nz-descriptions-item nzTitle="{{ 'work-order.number' | i18n}}">
+      {{ workOrderCompleteTransaction.workOrder?.number}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'item-name' | i18n}}">
+      {{ workOrderCompleteTransaction.workOrder?.item?.name}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'item.description' | i18n}}">
+      {{ workOrderCompleteTransaction.workOrder?.item?.description}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'work-order.expected-quantity' | i18n}}">
+      {{ workOrderCompleteTransaction.workOrder?.expectedQuantity}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'work-order.produced-quantity' | i18n}}">
+      {{ workOrderCompleteTransaction.workOrder?.producedQuantity}}</nz-descriptions-item>
+  </nz-descriptions>
+</nz-card>
+
+
+<!-- Table to show work order  lines-->
+
+<nz-card nzTitle="{{ 'work-order.line' | i18n}}" *ngIf="workOrderCompleteTransaction !== undefined">
+  <div class="search-result-list">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }"
+      [nzData]="workOrderCompleteTransaction!.workOrderLineCompleteTransactions" nzShowPagination="false"
+      nzBordered="true" #workOrderLineTable>
+
+      <thead>
+        <th>
+          {{ 'work-order.line.number' | i18n }}</th>
+        <th>
+          {{ 'item' | i18n }}</th>
+        <th>
+          {{ 'item.description' | i18n }}</th>
+        <th>
+          {{ 'work-order.line.expectedQuantity' | i18n }}</th>
+        <th>
+          {{ 'work-order.line.openQuantity' | i18n }}</th>
+        <th>
+          {{ 'work-order.line.inprocessQuantity' | i18n }}</th>
+        <th>
+          {{ 'work-order.line.deliveredQuantity' | i18n }}</th>
+        <th>
+          {{ 'work-order.line.consumedQuantity' | i18n }}</th>
+        <th>
+          {{ 'inventory.status' | i18n }}</th>
+        <th>
+          {{ 'work-order.line.override-consumed-quantity' | i18n }}</th>
+        <th>
+          {{ 'work-order.line.scrappedQuantity' | i18n }}</th>
+        <th>
+          {{ 'work-order.line.returnMaterialRequest' | i18n }}</th>
+
+      </thead>
+      <tbody>
+
+        <tr *ngFor="let data of workOrderLineTable.data">
+          <td>{{ data.workOrderLine!.number! }}</td>
+          <td>{{ data.workOrderLine!.item!.name }}</td>
+          <td>{{ data.workOrderLine!.item!.description }}</td>
+          <td>{{ data.workOrderLine!.expectedQuantity }}</td>
+          <td>{{ data.workOrderLine!.openQuantity }}</td>
+          <td>{{ data.workOrderLine!.inprocessQuantity }}</td>
+          <td>{{ data.workOrderLine!.deliveredQuantity }}</td>
+          <td>{{ data.workOrderLine!.consumedQuantity }}</td>
+          <td>{{ data.workOrderLine!.inventoryStatus?.name }}</td>
+          <td>
+            {{ data.adjustedConsumedQuantity }}
+
+          </td>
+          <td>{{data.scrappedQuantity}}
+          </td>
+          <td>
+            <ul *ngIf="data.returnMaterialRequests.length > 0">
+              <li *ngFor="let returnMaterialRequest of data.returnMaterialRequests">
+
+                <a nz-popover nzPopoverTitle="{{returnMaterialRequest.lpn}}"
+                  [nzPopoverContent]="returnMaterialRequestDetails">{{returnMaterialRequest.lpn}}</a>
+
+                <ng-template #returnMaterialRequestDetails>
+
+
+                  <nz-descriptions nzBordered="true" nzSize="small">
+                    <nz-descriptions-item nzTitle="{{'lpn' | i18n}}">{{returnMaterialRequest.lpn}}
+                    </nz-descriptions-item>
+                    <nz-descriptions-item nzTitle="{{'item' | i18n}}">{{data.workOrderLine!.item?.name}}
+                    </nz-descriptions-item>
+                    <nz-descriptions-item nzTitle="{{'item.description' | i18n}}">
+                      {{data.workOrderLine!.item?.description}}</nz-descriptions-item>
+
+                    <nz-descriptions-item nzTitle="{{'quantity' | i18n}}">
+                      {{ returnMaterialRequest.quantity + "" | i18n}}</nz-descriptions-item>
+                    <nz-descriptions-item nzTitle="{{'inventory-status' | i18n}}">
+                      {{ returnMaterialRequest.inventoryStatus?.description }}
+                    </nz-descriptions-item>
+                    <nz-descriptions-item nzTitle="{{'item-package-type' | i18n}}">
+                      {{returnMaterialRequest.itemPackageType?.name}}</nz-descriptions-item>
+                    <nz-descriptions-item nzTitle="{{'location' | i18n}}">{{returnMaterialRequest.location}}
+                    </nz-descriptions-item>
+
+                  </nz-descriptions>
+                </ng-template>
+              </li>
+
+            </ul>
+          </td>
+
+        </tr>
+      </tbody>
+
+    </nz-table>
+  </div>
+
+</nz-card>
+
+<!-- Table to show work order  kpi-->
+<nz-card nzTitle="{{ 'work-order.kpi' | i18n}}" *ngIf="workOrderCompleteTransaction !== undefined">
+  <div class="search-result-list">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="kpis" nzShowPagination="false" nzBordered="true"
+      #kpiTable>
+
+      <thead>
+        <tr>
+          <th>{{ 'username' | i18n }}</th>
+          <th>{{ 'working-team' | i18n }}</th>
+          <th>{{ 'amount' | i18n }}</th>
+          <th>{{ 'KPIMeasure' | i18n }}</th>
+          <th>{{ 'original-amount' | i18n }}</th>
+          <th>{{ 'original-KPIMeasure' | i18n }}</th>
+          <th>{{ 'changed' | i18n }}?</th>
+        </tr>
+
+      </thead>
+      <tbody>
+
+        <tr *ngFor="let data of kpiTable.data">
+          <td>{{ data.username }}</td>
+          <td>{{ data.workingTeamName }}</td>
+          <td>{{ data.amount }}</td>
+          <td>{{ 'KPI-MEASUREMENT-' +data.kpiMeasurement | i18n }}</td>
+          <td>{{ data.originalAmount }}</td>
+          <td>{{ 'KPI-MEASUREMENT-' +data.originalKpiMeasurement| i18n }}</td>
+          <td><span style="color: red;" *ngIf=" data.changed">{{ data.changed + "" | i18n }}</span><span
+              *ngIf="!data.changed">{{ data.changed + "" | i18n }}</span></td>
+
+        </tr>
+      </tbody>
+
+    </nz-table>
+  </div>
+</nz-card>
+<div nz-row style="padding-top: 10px;">
+
+
+  <button nz-button nzType="primary" (click)="confirmWorkOrderComplete()" [nzLoading]="savingInProcess">
+    {{ 'confirm' | i18n }}
+  </button>
+</div>
+</nz-spin>

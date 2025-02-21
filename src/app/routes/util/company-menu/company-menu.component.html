@@ -1,0 +1,81 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+    <a routerLink="/util/menu" routerLinkActive="active">{{
+    'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.util' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/util/menu" routerLinkActive="active">{{
+        'menu' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    
+<nz-card>
+
+    <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item nzFlex>
+            <nz-form-label for="company" [nzSpan]="5">
+              {{ 'company' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                
+              <nz-select nzAllowClear nz-input [ngModel]="selectedCompany?.code"
+                (ngModelChange)="selectedCompanyChanged($event)"
+                        style="width: 250px"  >
+                    <nz-option *ngFor="let company of validCompanies"
+                        [nzLabel]="company.name" [nzValue]="company.code">
+                    </nz-option>
+              </nz-select> 
+            </nz-form-control>
+          </nz-form-item>
+        </div> 
+      </div>
+</nz-card>
+
+<nz-card [nzActions]="[cardFoot]" *ngIf="selectedCompany">
+
+  <nz-card nzTitle="{{ 'web' | i18n}}">
+    <div nz-row style="padding: 10px">
+      <div nz-col nzSpan="12" nzOffset="6">
+        <nz-transfer [nzDataSource]="webMenuList" nzShowSearch [nzFilterOption]="transferListFilterOption"
+          (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
+          (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
+          [nzTitles]="[ unassignedMenuText, assignedMenuText]">
+        </nz-transfer>
+      </div>
+    </div>
+  </nz-card>
+  <nz-card nzTitle="{{ 'mobile' | i18n}}">
+      <div nz-row style="padding: 10px">
+        <div nz-col nzSpan="12" nzOffset="6">
+          <nz-transfer [nzDataSource]="mobileMenuList" nzShowSearch [nzFilterOption]="transferListFilterOption"
+            (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
+            (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
+            [nzTitles]="[ unassignedMenuText, assignedMenuText]">
+          </nz-transfer>
+        </div>
+      </div>
+  </nz-card>
+  
+</nz-card>
+
+</nz-spin>
+ 
+<ng-template #cardFoot>
+  <div nz-row nzType="flex" nzJustify="center" *ngIf="!newRole">
+    <button nz-button nzType="primary" (click)="assignMenu()" [nzLoading]="processingMenu">
+      {{ 'confirm' | i18n }}
+    </button>
+  </div>
+</ng-template>

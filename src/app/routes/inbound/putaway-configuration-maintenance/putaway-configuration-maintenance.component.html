@@ -1,0 +1,238 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+  <a routerLink="/inbound/putaway-configuration" routerLinkActive="active">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/inbound/putaway-configuration" routerLinkActive="active">{{
+        'putaway-configuration' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning">
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+  <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+
+<!-- Step 1: basic information  
+  -->
+
+
+
+<div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;"  >
+
+
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'sequence' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-number [(ngModel)]="currentPutawayConfiguration.sequence" [nzMin]="1"   [nzStep]="1"
+                [nzDisabled]="!newPutawayConfiguration">
+
+            </nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+    </div> 
+    </div>
+    
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'item' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+
+            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                <input nz-input [ngModel]="currentPutawayConfiguration.item?.name"
+                (blur)="itemNameChanged($event)"
+                
+                [disabled]="!newPutawayConfiguration"/>
+              </nz-input-group>
+              <ng-template #suffixIconButton>
+                <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
+                </app-inventory-item-query-popup>
+              </ng-template>
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    
+    <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'item-family' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+  
+            <nz-select 
+                *ngIf='currentPutawayConfiguration !== undefined' nz-input [ngModel]="currentPutawayConfiguration.itemFamilyId!"
+                (ngModelChange)="itemFamilyChanged($event)" style="width: 250px"  [disabled]="!newPutawayConfiguration">
+                <nz-option *ngFor="let itemFamily of validItemFamilies"
+                    [nzLabel]="itemFamily.description" [nzValue]="itemFamily.id">
+                </nz-option>
+              </nz-select> 
+          
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+     
+    <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="8">
+            {{ 'inventory-status' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+  
+              
+              <nz-select *ngIf='currentPutawayConfiguration !== undefined' nz-input [(ngModel)]="currentPutawayConfiguration.inventoryStatusId!"
+                  (ngModelChange)="inventoryStatusChanged($event)"
+                style="width: 250px"  >
+            
+              <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
+                  [nzLabel]="inventoryStatus.description"
+                  [nzValue]="inventoryStatus.id">
+              </nz-option>
+          </nz-select>
+          
+  
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+  </div>
+
+  <div nz-row [nzGutter]="24">
+    
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'location' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18" >
+          <nz-input-group nzSearch [nzAddOnAfter]="locationSuffixIconButton">
+            <input nz-input [ngModel]="currentPutawayConfiguration.location?.name"
+                        (blur)="locationNameChanged($event)"/>
+            </nz-input-group>
+            <ng-template #locationSuffixIconButton>
+                <app-warehouse-layout-location-query-popup (recordSelected)="procesLocationQueryResult($event)">
+                </app-warehouse-layout-location-query-popup>
+            </ng-template> 
+        
+        </nz-form-control>
+      </nz-form-item>
+    </div> 
+    
+    <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label for="location_group" [nzSm]="6" [nzXs]="6">
+            {{ 'location-group' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <nz-select   [(ngModel)]="currentPutawayConfiguration.locationGroupId" (ngModelChange)="locationGroupChanged()">
+              <nz-option *ngFor="let locationGroup of validLocationGroups" [nzLabel]="locationGroup.description!"
+                [nzValue]="locationGroup.id"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label for="location_group_type" [nzSpan]="8">
+            {{ 'location-group-type' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <nz-select  [(ngModel)]="currentPutawayConfiguration.locationGroupTypeId" (ngModelChange)="locationGroupTypeChanged()">
+              <nz-option *ngFor="let locationGroupType of validLocationGroupTypes" [nzLabel]="locationGroupType.description"
+                [nzValue]="locationGroupType.id"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+  </div>
+
+  <div nz-row [nzGutter]="24">
+       
+    <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label for="strategy" [nzSpan]="10">
+            {{ 'putaway-configuration.strategy' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <nz-select nzMode="tags" [(ngModel)]="selectedStrategies" (ngModelChange)="selectedStrategiesChanged()">
+                <nz-option
+                      *ngFor="let putawayConfigurationStrategy of putawayConfigurationStrategies  | keys"
+                      [nzValue]="putawayConfigurationStrategy.key"
+                      [nzLabel]="putawayConfigurationStrategy.key"
+                    ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+  </div>
+
+  
+</div>
+
+<div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+  <nz-card>
+
+    <nz-descriptions nzTitle="{{ 'putaway-configuration' | i18n}}" nzBordered>
+      <nz-descriptions-item nzTitle="{{ 'sequence' | i18n}}">
+        {{currentPutawayConfiguration.sequence}}</nz-descriptions-item>
+        
+      <nz-descriptions-item nzTitle="{{ 'item' | i18n}}">
+        {{currentPutawayConfiguration.item?.name}}</nz-descriptions-item>
+        
+      <nz-descriptions-item nzTitle="{{ 'item-family' | i18n}}">
+        {{currentPutawayConfiguration.itemFamily?.description}}</nz-descriptions-item>
+        
+      <nz-descriptions-item nzTitle="{{ 'inventory-status' | i18n}}">
+        {{currentPutawayConfiguration.inventoryStatus?.name}}</nz-descriptions-item>
+        
+      <nz-descriptions-item nzTitle="{{ 'location' | i18n}}">
+        {{currentPutawayConfiguration.location?.name}}</nz-descriptions-item>
+        
+      <nz-descriptions-item nzTitle="{{ 'location-group' | i18n}}">
+        {{currentPutawayConfiguration.locationGroup?.description}}</nz-descriptions-item>
+        
+      <nz-descriptions-item nzTitle="{{ 'location-group-type' | i18n}}">
+        {{currentPutawayConfiguration.locationGroupType?.description}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'putaway-configuration.strategy' | i18n}}">
+          {{currentPutawayConfiguration.strategies}}</nz-descriptions-item>
+    </nz-descriptions>
+
+  </nz-card>
+
+</div>
+
+<div class="steps-action" style="padding-top: 20px;">
+  <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 1"
+  [disabled]="!readyForConfirm()"
+  
+  >
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+</nz-spin>

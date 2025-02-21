@@ -1,0 +1,261 @@
+<page-header [title]="'menu.main.work-order.qc-rule-config' | i18n"> </page-header>
+
+<nz-spin [nzSpinning]="isSpinning">
+<!-- Form to query the result  -->
+<!--
+  
+-->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24"> 
+    
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label for="productionLine" [nzSpan]="6">
+          {{ 'production-line' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          
+          <nz-select name="productionLine" id="productionLine" formControlName="productionLine">
+            <nz-option *ngFor="let productionLine of validproductionLines"
+            [nzLabel]="productionLine.name" [nzValue]="productionLine.id">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  
+    
+    <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label for="workOrder" [nzSpan]="6">
+            {{ 'work-order' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+              
+              <input nz-input name="workOrder" id="workOrder" formControlName="workOrder" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+  </div> 
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+    </div>
+  </div>
+</form>
+
+<div class="search-result-list">
+  <!--
+    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+      <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+    </div>
+    -->
+    
+    <st #st [data]="listOfAllQCRuleConfiguration"  [columns]="columns"  [scroll]="{ x: '1450px'}"
+        [expand]="expand"   expandAccordion>
+      
+        
+      <ng-template st-row="warehouse" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.warehouseId && item.warehouse == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+         {{ item.warehouse?.name }} 
+
+      </ng-template>
+      <ng-template st-row="itemName" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.itemId && item.item == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+          
+        <a nz-tooltip [nzTooltipTitle]="itemNameTemplate">{{ item.item?.name }} </a>
+        <ng-template #itemNameTemplate>
+          {{ item.item?.name }} 
+        </ng-template>
+
+         
+
+      </ng-template>
+      <ng-template st-row="itemDescription" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.itemId && item.item == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+          <a nz-tooltip [nzTooltipTitle]="itemDescriptionTemplate"> {{ item.item?.description }}  </a>
+          <ng-template #itemDescriptionTemplate>
+            {{ item.item?.description }} 
+          </ng-template>
+        
+
+      </ng-template>
+      <ng-template st-row="itemFamily" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.itemFamilyId && item.itemFamily == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+          
+          <a nz-tooltip [nzTooltipTitle]="itemFamilyTemplate">
+            {{ item.itemFamily?.name }}   </a>
+          <ng-template #itemFamilyTemplate>
+            {{ item.itemFamily?.name }} 
+          </ng-template>
+
+      </ng-template>
+      <ng-template st-row="btoCustomer" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.customerId && item.customer == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+          <a nz-tooltip [nzTooltipTitle]="customerTemplate">
+            {{ item.customer?.name }}  </a>
+          <ng-template #customerTemplate>
+            {{ item.customer?.name }} 
+          </ng-template>
+
+      </ng-template>
+      <ng-template st-row="btoOrder" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.outboundOrderId && item.outboundOrder == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+          <a nz-tooltip [nzTooltipTitle]="orderTemplate">
+            {{ item.outboundOrder?.number }}  </a>
+          <ng-template #orderTemplate>
+            {{ item.outboundOrder?.number }} 
+          </ng-template>
+
+      </ng-template>
+      <ng-template st-row="fromInventoryStatus" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.fromInventoryStatusId && item.fromInventoryStatus == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+         {{ item.fromInventoryStatus?.name }} 
+
+      </ng-template>
+      <ng-template st-row="toInventoryStatus" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.toInventoryStatusId && item.toInventoryStatus == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+         {{ item.toInventoryStatus?.name }} 
+
+      </ng-template>
+      <ng-template st-row="inventoryLock" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.inventoryLockId && item.inventoryLock == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+         {{ item.inventoryLock?.name }} 
+
+      </ng-template>
+      <ng-template st-row="futureInventoryLock" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.futureInventoryLockId && item.futureInventoryLock == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+         {{ item.futureInventoryLock?.name }} 
+
+      </ng-template>
+      
+      <!--   qc rule details  -->
+      <ng-template #expand let-item let-index="index" >
+        
+        <nz-tabset  >
+          <nz-tab *ngFor="let qcRuleConfig of item.workOrderQCRuleConfigurationRules" [nzTitle]="qcRuleConfig.qcRule.name!" >
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="qcRuleConfig.qcRule.qcRuleItems" nzSize="middle"
+              #qcRuleItemTable>
+              <thead>
+                <th>
+                  {{ 'qcRule.checkPoint' | i18n }}
+                </th>
+                <th>
+                  {{ 'qcRule.qcRuleItemType' | i18n }}
+                </th>
+                <th>
+                  {{ 'qcRule.qcRuleItemComparator' | i18n }}
+                </th>
+                <th>
+                  {{ 'qcRule.expectedValue' | i18n }}
+                </th> 
+                
+              </thead>
+              <tbody>
+                <tr *ngFor="let qcRuleItem of qcRuleItemTable.data">
+                  <td>{{ qcRuleItem.checkPoint }}</td>
+                  <td>{{ 'QC-RULE-ITEM-TYPE-' + qcRuleItem.qcRuleItemType | i18n }}</td>
+                  <td>{{ 'QC-RULE-ITEM-COMPARATOR-' + qcRuleItem.qcRuleItemComparator  | i18n}}</td>
+                  <td>{{ qcRuleItem.expectedValue }}</td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </nz-tab>
+        </nz-tabset>
+      </ng-template>
+
+      <!--   action colummn  --> 
+      <ng-template st-row="actionColumnTitle" type="title" let-c>
+        {{ 'action' | i18n }}
+      </ng-template>
+      <ng-template st-row="actionColumn" let-item let-index="index"> 
+        
+        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+          {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu> 
+
+            <li nz-menu-item >
+              <a  (click)="modifyQCRuleConfiguration(item)">{{ 'modify' | i18n }}</a>
+            </li>
+            <li nz-menu-item>
+              <a  (click)="removeQCRuleConfiguration(item)">{{ 'remove' | i18n }}</a>
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+      </ng-template>
+    </st>
+    <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
+      {{searchResult}}
+    </div>
+    
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
+        <button nz-button nzType="primary" routerLink="/work-order/qc-rule-configuration/maintenance" routerLinkActive="active">
+          {{ 'add' | i18n }}
+        </button>
+    </div>
+</div>
+</nz-spin>

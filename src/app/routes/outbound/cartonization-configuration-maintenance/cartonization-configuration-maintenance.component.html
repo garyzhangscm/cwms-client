@@ -1,0 +1,110 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/outbound/cartonization-configuration" routerLinkActive="active">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.outbound' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/outbound/cartonization-configuration" routerLinkActive="active">{{
+        'breadcrumb.cartonization-configuration' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<div nz-row style="padding: 50px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="0" [nzSize]="'default'">
+      <nz-step nzTitle="{{ 'steps.cartionization-configuration-maintenance.basic-info.title' | i18n }}"
+        nzDescription="{{ 'steps.cartionization-configuration-maintenance.basic-info.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.cartionization-configuration-maintenance.confirm.title' | i18n }}"
+        nzDescription="{{ 'steps.cartionization-configuration-maintenance.confirm.description' | i18n }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+<form nz-form>
+
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'sequence' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <input nz-input [(ngModel)]="cartonizationConfiguration.sequence" type="number" name="sequence" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label for="client" [nzSm]="3" [nzXs]="3">
+          {{ 'client' | i18n }}
+        </nz-form-label>
+        <nz-select [(ngModel)]="cartonizationConfiguration.clientId" nzAllowClear name="clients">
+          <nz-option *ngFor="let client of clients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
+        </nz-select>
+      </nz-form-item>
+    </div>
+
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label for="pickType" [nzSm]="3" [nzXs]="3">
+          {{ 'pick.type' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <nz-select [(ngModel)]="cartonizationConfiguration.pickType" name="pickType">
+            <nz-option *ngFor="let pickType of pickTypes | keys" nzLabel="{{ 'PICK-TYPE-' + pickType.key | i18n}}"
+              [nzValue]="pickType.key">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'cartonization.group-key' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <nz-select nzMode="tags" [(ngModel)]="cartonizationConfiguration.groupRules" name="groupRules">
+
+            <nz-option *ngFor="let groupRule of groupRules | keys" [nzLabel]="groupRule.key" [nzValue]="groupRule.key">
+            </nz-option>
+
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <label nz-checkbox [(ngModel)]="cartonizationConfiguration.enabled" name="enabled">
+          <span>
+            {{'enabled' | i18n}}</span>
+        </label>
+      </nz-form-item>
+    </div>
+
+  </div>
+</form>
+
+<div nz-row nzType="flex" nzJustify="center">
+  <button nz-button nzType="primary" (click)="goToConfirmPage()">
+    {{ 'steps.next' | i18n }} :
+    {{ 'steps.cartonization-configuration-maintenance.confirm.title' | i18n }}
+  </button>
+</div>

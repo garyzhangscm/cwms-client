@@ -1,0 +1,60 @@
+<page-header [title]="'page.warehouse.header.title' | i18n" [action]="addWarehouseActionTpl"> </page-header>
+<ng-template #addWarehouseActionTpl>
+  <a routerLink="/warehouse-layout/warehouse-maintenance" routerLinkActive="active">
+    {{ 'add' | i18n }}
+  </a>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<ng-container *ngFor="let warehouse of warehouses">
+  <nz-card nzTitle="{{ '#' + warehouse.id + '-' + warehouse.name }}" [nzActions]="[actionEdit, actionDelete]">
+    <nz-descriptions nzBordered>
+      <nz-descriptions-item nzTitle="{{ 'id' | i18n }}">{{ warehouse.id }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'name' | i18n }}">{{ warehouse.name }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'size' | i18n }}">{{ warehouse.size }}
+      </nz-descriptions-item>
+
+      <nz-descriptions-item nzTitle="{{ 'contactor' | i18n }}">
+        {{ warehouse.contactorFirstname }}   {{ warehouse.contactorLastname }} 
+      </nz-descriptions-item> 
+
+      <nz-descriptions-item nzTitle="{{ 'country' | i18n }}">
+        {{ warehouse.addressCountry }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'state' | i18n }}">
+        {{ warehouse.addressState }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'county' | i18n }}">
+        {{ warehouse.addressCounty }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'city' | i18n }}">
+        {{ warehouse.addressCity }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'address.line1' | i18n }}">
+        {{ warehouse.addressLine1 }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'address.line2' | i18n }}">
+        {{ warehouse.addressLine2 }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'postcode' | i18n }}">
+        {{ warehouse.addressPostcode }}
+      </nz-descriptions-item>
+
+      <nz-descriptions-item nzTitle="{{ 'phone' | i18n }}">
+        {{ warehouse.addressPhone }}
+      </nz-descriptions-item>
+    </nz-descriptions>
+  </nz-card>
+
+  <ng-template #actionEdit>
+    <a routerLink="/warehouse-layout/warehouse-maintenance/{{warehouse.id}}" routerLinkActive="active">
+      <i nz-icon nzType="edit"></i>
+    </a>
+  </ng-template>
+  <ng-template #actionDelete>
+    <i nz-icon nzType="delete" (click)="removeWarehouse(warehouse)"></i>
+  </ng-template>
+</ng-container>
+</nz-spin>

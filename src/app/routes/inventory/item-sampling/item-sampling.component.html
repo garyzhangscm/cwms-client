@@ -1,0 +1,155 @@
+<page-header title="{{'item-sampling' |  i18n}}" > </page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form"> 
+
+    <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="12">
+            <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="6" nzFor="number">
+                {{ 'number' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="18">
+                <input nz-input name="number" id="number" formControlName="number">
+              </nz-form-control>
+            </nz-form-item>
+        </div>
+          
+        <div nz-col [nzSpan]="8">
+            <nz-form-item nzFlex>
+                <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemName">
+                    {{ 'item' | i18n }}
+                </nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                    <input nz-input name="itemName" id="itemName" formControlName="itemName" />
+                </nz-input-group>
+                <ng-template #suffixIconButton>
+                    <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
+                    </app-inventory-item-query-popup>
+                </ng-template>
+            </nz-form-control>
+            </nz-form-item>
+        </div>
+      
+    </div>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="search()"  >
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form> 
+ 
+ 
+  
+  <div class="search-result-list"> 
+    
+  <!--
+    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+      <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+    </div>
+  -->
+    
+    <st #st [data]="itemSamplingList" [columns]="columns" [footer]="tableFoot"   [expand]="expand" expandAccordion
+        (change)="itemSamplingListTableChanged($event)"
+    > 
+    
+    <ng-template st-row="images" let-item let-index="index">
+      <button nz-button nzType="primary" (click)="previewSamplingImage(item)" [disabled]="item.imageUrls==''">{{'Preview' | i18n}}</button>
+
+    </ng-template>
+
+    
+      <!--   action colummn  --> 
+      <ng-template st-row="actionColumnTitle" type="title" let-c>
+        {{ 'action' | i18n }}
+      </ng-template>
+      <ng-template st-row="actionColumn" let-item let-index="index"> 
+        
+        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" 
+            [disabled]="item.number==''"
+        >
+          {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu> 
+            <li nz-menu-item  >
+              
+              <a routerLink="/inventory/item-sampling/maintenance"
+              [queryParams]="{id : item.id}" routerLinkActive="active">
+                  {{ 'modify' | i18n }}</a>
+                  
+            </li>
+            <li nz-menu-item  >
+              <a  (click)="disableItemSampling(item)">{{ 'disable' | i18n }}</a>
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+      </ng-template>
+
+    
+      
+
+      <!--   data transfer request details  -->
+      <ng-template #expand let-item let-index="index" >
+        <nz-tabset  >
+               
+            <nz-tab nzTitle=" {{ 'item-sampling.previous' | i18n }}">
+                <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="mapOfPreviousItemSampling[item.item.id!]" nzSize="middle"
+                [nzShowPagination]="false" #previousItemSamplingTable>
+                <thead>
+                    <th>
+                    {{ 'number' | i18n }}
+                    </th>
+                    <th>
+                    {{ 'description' | i18n }}
+                    </th>
+                    <th>
+                    {{ 'images' | i18n }}
+                    </th>
+                    
+                </thead>
+                <tbody>
+                    <tr *ngFor="let previousItemSampling of previousItemSamplingTable.data">
+                        <td>{{ previousItemSampling.number }}</td>
+                        
+                        <td>{{ previousItemSampling.description }}</td>
+                        <td>
+                          
+                            <button nz-button nzType="primary" (click)="previewSamplingImage(previousItemSampling)"
+                             [disabled]="previousItemSampling.imageUrls==''">{{'Preview' | i18n}}</button>
+
+                        </td>  
+                    
+                    </tr>
+                </tbody>
+                </nz-table>
+            </nz-tab>  
+        </nz-tabset>
+      </ng-template> 
+    </st>
+  
+  </div>
+ 
+</nz-spin>
+<ng-template #tableFoot>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+  
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
+    
+    <button nz-button nzType="primary" routerLink="/inventory/item-sampling/maintenance" routerLinkActive="active">
+        {{ 'add' | i18n }}
+      </button>
+  </div>
+</ng-template>
+
+ 
+
+
+ 

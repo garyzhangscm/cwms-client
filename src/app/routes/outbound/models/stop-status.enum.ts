@@ -1,0 +1,6 @@
+export enum StopStatus {
+    CANCELLED = 'CANCELLED',
+    PLANNED = 'PLANNED',
+    INPROCESS = 'INPROCESS',
+    COMPLETED = 'COMPLETED',
+}

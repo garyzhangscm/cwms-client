@@ -1,0 +1,254 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+  <a routerLink="/outbound/allocation-configuration" routerLinkActive="active">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/outbound/allocation-configuration" routerLinkActive="active">{{
+        'allocation-configuration' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+ 
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+  <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step> 
+  <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+
+<!-- Step 1: basic information  
+  -->
+
+
+
+<div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
+    <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="6">
+              {{ 'type' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="14">
+                <nz-select  nz-input [(ngModel)]="currentAllocationConfiguration.type"
+                     style="width: 250px" >
+                            <nz-option
+                              *ngFor="let allocationConfigurationType of allocationConfigurationTypes  | keys"
+                              [nzValue]="allocationConfigurationType.key"
+                              nzLabel="{{ 'ALLOCATION-CONFIGURATION-TYPE-' + allocationConfigurationType.key | i18n}}"
+                            ></nz-option>
+                          </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="8">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="6">
+              {{ 'sequence' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                <nz-input-number [(ngModel)]="currentAllocationConfiguration.sequence" [nzMin]="1" [nzStep]="1"></nz-input-number> 
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+    </div>
+    <nz-card  nzTitle="{{'criteria' | i18n}}"  >
+        
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="6">
+                {{ 'item' | i18n }}
+              </nz-form-label>
+              
+              <nz-form-control [nzSpan]="14">
+    
+                <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                  <input nz-input [ngModel]="currentAllocationConfiguration.item?.name" (ngModelChange)="itemNameChanged($event)"/>
+                </nz-input-group>
+                <ng-template #suffixIconButton>
+                  <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
+                  </app-inventory-item-query-popup>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          
+          
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="6">
+                {{ 'item-family' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+      
+                <nz-select  
+                    *ngIf='currentAllocationConfiguration !== undefined' nz-input [(ngModel)]="currentAllocationConfiguration.itemFamilyId"
+                     style="width: 250px" (ngModelChange)="itemFamilyChanged()">
+                    <nz-option *ngFor="let itemFamily of validItemFamilies"
+                        [nzLabel]="itemFamily.description" [nzValue]="itemFamily.id">
+                        </nz-option>
+                  </nz-select> 
+              
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="6">
+                {{ 'inventory-status' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+      
+                <nz-select  
+                    *ngIf='currentAllocationConfiguration !== undefined' nz-input [(ngModel)]="currentAllocationConfiguration.inventoryStatusId"
+                      style="width: 250px"  >
+                    <nz-option *ngFor="let inventoryStatus of validInventoryStatus"
+                        [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.id">
+                        </nz-option>
+                  </nz-select> 
+              
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+    
+    </nz-card>
+    <nz-card  nzTitle="{{'filter' | i18n}}"  >
+        
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="8">
+                {{ 'location-group-type' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+      
+                <nz-select  
+                    *ngIf='currentAllocationConfiguration !== undefined' nz-input [(ngModel)]="currentAllocationConfiguration.locationGroupTypeId"
+                      style="width: 250px" (ngModelChange)="locationGroupTypeChanged()" >
+                    <nz-option *ngFor="let locationGroupType of validLocationGroupTypes"
+                        [nzLabel]="locationGroupType.description" [nzValue]="locationGroupType.id">
+                        </nz-option>
+                  </nz-select> 
+              
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="8">
+                  {{ 'location-group' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+        
+                  <nz-select  
+                      *ngIf='currentAllocationConfiguration !== undefined' nz-input [(ngModel)]="currentAllocationConfiguration.locationGroupId"
+                        style="width: 250px"  (ngModelChange)="locationGroupChanged()"   >
+                      <nz-option *ngFor="let locationGroup of validLocationGroups"
+                          [nzLabel]="locationGroup.description!" [nzValue]="locationGroup.id">
+                          </nz-option>
+                    </nz-select> 
+                
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="8">
+                    {{ 'location' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="16" >
+                    <nz-input-group nzSearch [nzAddOnAfter]="locationSuffixIconButton">
+                      <input nz-input [ngModel]="currentAllocationConfiguration.location?.name"
+                                  (blur)="locationNameChanged($event)"/>
+                      </nz-input-group>
+                      <ng-template #locationSuffixIconButton>
+                          <app-warehouse-layout-location-query-popup (recordSelected)="procesLocationQueryResult($event)">
+                          </app-warehouse-layout-location-query-popup>
+                      </ng-template> 
+                  
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+      </div>
+      
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label for="unit-of-measure" [nzSpan]="8">
+            {{ 'unit-of-measure' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <nz-select nzMode="tags" [(ngModel)]="selectedPickableUnitOfMeasures">
+              <nz-option *ngFor="let unitOfMeasure of validUnitOfMeasures" [nzLabel]="unitOfMeasure.description"
+                [nzValue]="unitOfMeasure"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+          </div>
+    </nz-card>
+  
+     
+</div>
+
+ <!-- confirm -->
+<div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+  <nz-card>
+
+    <nz-descriptions nzTitle="{{ 'allocation-configuration' | i18n}}" nzBordered>
+        <nz-descriptions-item nzTitle="{{ 'type' | i18n}}">
+          {{currentAllocationConfiguration.type}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'sequence' | i18n}}">
+            {{currentAllocationConfiguration.sequence}}</nz-descriptions-item> 
+      </nz-descriptions>
+ 
+      <nz-descriptions nzTitle="{{ 'criteria' | i18n}}" nzBordered>
+        <nz-descriptions-item nzTitle="{{ 'item' | i18n}}">
+          {{currentAllocationConfiguration.item?.name}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'item-family' | i18n}}">
+            {{currentAllocationConfiguration.itemFamily?.description}}</nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'inventory-status' | i18n}}">
+                {{currentAllocationConfiguration.inventoryStatus?.description}}</nz-descriptions-item>  
+      </nz-descriptions>
+      
+      <nz-descriptions nzTitle="{{ 'filter' | i18n}}" nzBordered>
+        <nz-descriptions-item nzTitle="{{ 'location' | i18n}}">
+          {{currentAllocationConfiguration.location?.name}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'location-group' | i18n}}">
+            {{currentAllocationConfiguration.locationGroup?.name}}</nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'location-group-type' | i18n}}">
+                {{currentAllocationConfiguration.locationGroupType?.name}}</nz-descriptions-item>  
+                <nz-descriptions-item nzTitle="{{ 'unit-of-measure' | i18n}}">
+                  <span *ngFor="let pickableUnitOfMeasure of currentAllocationConfiguration.allocationConfigurationPickableUnitOfMeasures">
+                    {{ pickableUnitOfMeasure.unitOfMeasure.name}} , 
+                  </span> </nz-descriptions-item>  
+      </nz-descriptions>
+  </nz-card>
+
+</div>
+
+<div class="steps-action" style="padding-top: 20px;">
+  <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 1"
+  
+  >
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+</nz-spin>

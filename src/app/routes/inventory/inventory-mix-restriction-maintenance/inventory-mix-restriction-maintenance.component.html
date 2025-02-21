@@ -1,0 +1,174 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/inventory/mix-restriction" routerLinkActive="active" >{{ 'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/inventory/mix-restriction" routerLinkActive="active">{{ 'inventory-mix-restriction' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'maintenance' | i18n }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'"> 
+    <nz-steps nzType="navigation" [nzCurrent]="stepIndex" style="padding: 15px">
+    <nz-step nzTitle="{{ 'steps.item.info' | i18n }}"> </nz-step> 
+    <nz-step nzTitle="{{ 'steps.item.confirm' | i18n }}"> </nz-step>
+    </nz-steps>
+
+    <!-- Show basic item information -->
+    <div class="small-card" *ngIf="stepIndex === 0 && currentInventoryMixRestriction != undefined">
+        <!--   Criteria -->
+        <nz-card nzTitle="{{'criteria' | i18n}}">
+            <div nz-row [nzGutter]="24">
+                <div nz-col [nzSpan]="8" *ngIf="threePartyLogisticsFlag">
+                  <nz-form-item nzFlex>
+                    <nz-form-label for="client" [nzSpan]="6">
+                      {{ 'client' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="18">
+                      <nz-select [(ngModel)]="currentInventoryMixRestriction.clientId">
+                        <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
+                      </nz-select>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                 
+                  <div nz-col [nzSpan]="8">
+                      <nz-form-item nzFlex>
+                      <nz-form-label for="location_group_type" [nzSpan]="8">
+                          {{ 'location-group-type' | i18n }}
+                      </nz-form-label>
+                      <nz-form-control [nzSpan]="16">
+                          <nz-select  [(ngModel)]="currentInventoryMixRestriction.locationGroupTypeId">
+                          <nz-option *ngFor="let locationGroupType of locationGroupTypes" [nzLabel]="locationGroupType.description"
+                              [nzValue]="locationGroupType.id"></nz-option>
+                          </nz-select>
+                      </nz-form-control>
+                      </nz-form-item>
+                  </div>
+              
+                  <div nz-col [nzSpan]="8">
+                      <nz-form-item nzFlex>
+                      <nz-form-label for="location_group" [nzSm]="6" [nzXs]="6">
+                          {{ 'location-group' | i18n }}
+                      </nz-form-label>
+                      <nz-form-control [nzSpan]="18">
+                          <nz-select [(ngModel)]="currentInventoryMixRestriction.locationGroupId">
+                          <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description!"
+                              [nzValue]="locationGroup.id"></nz-option>
+                          </nz-select>
+                      </nz-form-control>
+                      </nz-form-item>
+                  </div>
+              </div>
+              <div nz-row [nzGutter]="24">
+                  
+                  <div nz-col [nzSpan]="8"  >
+                      <nz-form-item nzFlex>
+                        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="location">
+                          {{ 'location' | i18n }}
+                        </nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                          <nz-input-group nzSearch [nzAddOnAfter]="locationSuffixIconButton">
+                            <input nz-input [ngModel]="currentInventoryMixRestriction.location?.name" (ngModelChange)="locationNameChanged($event)"
+                            [ngModelOptions]="{updateOn: 'blur'}"/>
+                          </nz-input-group>
+                          <ng-template #locationSuffixIconButton>
+                            <app-warehouse-layout-location-query-popup (recordSelected)="processLocationQueryResult($event)" >
+                            </app-warehouse-layout-location-query-popup>
+                          </ng-template>
+                        </nz-form-control>
+              
+                      </nz-form-item>
+                  </div>
+              </div>
+
+        </nz-card>
+        <!--   Attribute that are NOT allowed to be mixed  -->
+        <div nz-row  > 
+            <h3>{{'inventory-mix-restriction.lines.description' | i18n}}</h3> 
+        </div>
+        <div nz-row [nzGutter]="8">
+            <div nz-col [nzSpan]="12">
+                <nz-card nzTitle="{{'BY-LPN' | i18n}}">        
+                    
+                    <nz-transfer [nzDataSource]="attributeByLPNList" nzShowSearch [nzFilterOption]="transferListFilterOption"
+                        (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
+                        (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
+                        [nzTitles]="[ unassignedText, assignedText]">
+                    </nz-transfer>
+                </nz-card>  
+            </div>
+            <div nz-col [nzSpan]="12"> 
+                <nz-card nzTitle="{{'BY-LOCATION' | i18n}}"> 
+                    
+                    <nz-transfer [nzDataSource]="attributeByLocationList" nzShowSearch [nzFilterOption]="transferListFilterOption"
+                        (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
+                        (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
+                        [nzTitles]="[ unassignedText, assignedText]">
+                    </nz-transfer>
+                </nz-card>  
+            </div>
+        </div> 
+    </div>
+ 
+
+    <!-- Confirm the change -->
+    <div class="small-card" *ngIf="stepIndex === 1"> 
+        <nz-descriptions nzBordered="true">
+
+            <nz-descriptions-item nzTitle="{{ 'client' | i18n }}">
+
+                {{ currentInventoryMixRestriction.client?.name  }}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'location-group-type' | i18n }}">
+
+                {{ currentInventoryMixRestriction.locationGroupType?.name  }}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'location-group' | i18n }}">
+
+                {{ currentInventoryMixRestriction.locationGroup?.name  }}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'location' | i18n }}">
+
+                {{ currentInventoryMixRestriction.location?.name  }}
+            </nz-descriptions-item>
+            
+        </nz-descriptions> 
+        
+        <div nz-row> 
+            <h3>{{'inventory-mix-restriction.lines.description' | i18n}}</h3> 
+        </div>
+        <nz-list nzItemLayout="horizontal" >
+            <nz-list-item *ngFor="let line of currentInventoryMixRestriction.lines">
+              <nz-list-item-meta nzDescription="{{'INVENTORY_ATTRIBUTE-' + line.attribute | i18n }}" >
+                <nz-list-item-meta-title>
+                    {{ line.type  }}
+                </nz-list-item-meta-title>
+              </nz-list-item-meta>
+            </nz-list-item> 
+          </nz-list>
+
+    </div>
+
+    <div class="steps-action">
+    <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+        <span>{{ 'steps.previous' | i18n }}</span>
+    </button>
+    <nz-divider nzType="vertical" *ngIf="stepIndex < 2"></nz-divider>
+    <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1">
+        <span>{{ 'steps.next' | i18n }}</span>
+    </button>
+    <nz-divider nzType="vertical" *ngIf="stepIndex === 1"></nz-divider>
+    <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 1">
+        <span> {{ 'confirm' | i18n }}</span>
+    </button>
+    </div>
+
+</nz-spin> 

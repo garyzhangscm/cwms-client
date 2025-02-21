@@ -1,0 +1,62 @@
+<page-header></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'"> 
+  <nz-card>
+    <nz-descriptions nzBordered="true">
+        <nz-descriptions-item nzTitle="{{ 'wave' | i18n }}">
+            <input nz-input name="waveNumber" id="waveNumber"  
+            [(ngModel)]="waveNumber"
+            (blur)="waveNumberChanged()" />
+        </nz-descriptions-item> 
+        <nz-descriptions-item nzTitle="{{ 'location' | i18n }}"  nzSpan="2">
+            <nz-select [ngModel]="currentSortationLocationId" 
+            *ngIf="this.currentWaveSortationLocations != null && this.currentWaveSortationLocations.length > 0" 
+            (ngModelChange)="currentSortationLocationChanged($event)"
+            [nzDisabled]=" this.currentWaveSortationLocations.length == 1">
+                <nz-option
+                  *ngFor="let location of currentWaveSortationLocations"
+                  [nzValue]="location.id"
+                  [nzLabel]="location.name!"
+                  ></nz-option>
+                </nz-select>
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'barcode' | i18n }}">
+            <input nz-input #barcodeInput name="barcode" id="barcode" [ngModel]="currentBarcode"
+            (blur)="currentBarcodeChanged($event)"  />
+        </nz-descriptions-item> 
+    </nz-descriptions>
+  </nz-card>
+
+  <nz-card *ngIf="currentSortation != null">
+    <div nz-card-grid [ngStyle]="gridStyle" 
+       *ngFor="let sortationByShipment of currentSortation.sortationByShipments"
+       [style.background-color]="sortationByShipment.shipmentId == currentSortationShipmentId ? 'yellow' : 'rgb(225, 225, 225)'"
+       (click)="startSortByShipment(sortationByShipment)">
+        <h1>{{sortationByShipment.orderNumbers}}</h1>  
+       {{'arrived' | i18n}}: <nz-progress 
+            nzPercent="{{ sortationByShipment.totalArrivedQuantity! * 100 /sortationByShipment. totalExpectedQuantity! | number: '1.0-2'}}"
+            nzSuccessPercent="{{ sortationByShipment.totalArrivedQuantity! * 100 /sortationByShipment. totalExpectedQuantity!| number: '1.0-2'}}"
+            ></nz-progress>
+            {{'sorted' | i18n}}: <nz-progress 
+            nzPercent="{{ sortationByShipment.totalSortedQuantity! * 100 /sortationByShipment. totalExpectedQuantity!| number: '1.0-2'}}"
+            nzSuccessPercent="{{ sortationByShipment.totalSortedQuantity! * 100 /sortationByShipment. totalExpectedQuantity!| number: '1.0-2'}}"
+            ></nz-progress>
+    </div>
+
+  </nz-card>
+
+  
+  <nz-modal [(nzVisible)]="chooseInventoryAttributeModalVisible" nzTitle="{{'inventoryAttribute' | i18n}}" 
+  (nzOnCancel)="cancelChoosingInventoryAttribute()" nzOkDisabled="true">
+  <ng-container *nzModalContent> 
+    <st #chooseInventoryAttributeTable [data]="sortationRequirementInventoryAttributes" 
+        [columns]="chooseInventoryAttributeTableColumns">
+        <ng-template st-row="actionColumn" let-inventoryAttribute>    
+          <button nz-button (click)="sortWithAttribute(inventoryAttribute)"></button>
+          </ng-template>
+      </st>
+  </ng-container>
+  </nz-modal>
+
+
+</nz-spin>

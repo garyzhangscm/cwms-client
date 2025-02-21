@@ -1,0 +1,6 @@
+export enum InventoryQuantityChangeType {
+  RECEIVING = 'RECEIVING',
+  INVENTORY_ADJUST = 'INVENTORY_ADJUST',
+  CYCLE_COUNT = 'CYCLE_COUNT',
+  AUDIT_COUNT = 'AUDIT_COUNT',
+}

@@ -1,0 +1,223 @@
+ 
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+  <a routerLink="/inbound/purchase-order" routerLinkActive="active">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/inbound/purchase-order" routerLinkActive="active">{{
+        'purchase-order' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+  <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+
+<!-- Step 1: basic information  
+  -->
+
+
+
+<div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
+
+    <nz-card>
+        <nz-descriptions nzTitle="{{ 'purchase-order' | i18n}}" nzBordered *ngIf="currentPurchaseOrder.id != null">
+            <nz-descriptions-item nzTitle="{{ 'number' | i18n}}">
+              {{currentPurchaseOrder.number}}</nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'supplier' | i18n}}">
+                <a nz-tooltip [nzTooltipTitle]="supplierDetailsTemplate">{{ currentPurchaseOrder.supplier?.name }}</a>
+        
+                <ng-template #supplierDetailsTemplate>
+                  <div>{{currentPurchaseOrder.supplier?.name}} - {{currentPurchaseOrder.supplier?.description}}</div>
+                  <address>  
+                    {{currentPurchaseOrder.supplier?.addressLine1}} <br>
+                    {{currentPurchaseOrder.supplier?.addressLine2}} <br>
+                    {{currentPurchaseOrder.supplier?.addressCity}},  {{currentPurchaseOrder.supplier?.addressState}} <br>
+                    {{currentPurchaseOrder.supplier?.addressPostcode}} <br>
+                    </address>
+                </ng-template>
+            </nz-descriptions-item>
+        </nz-descriptions>
+      </nz-card>
+
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'receipt.number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+
+          <input appFkey variable="receipt-number" type="text" nz-input [(ngModel)]="receiptNumber" 
+          
+          (nextNumberAvailableEvent)="receiptNumberChanged($event)"/>
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+     
+    <nz-tabset >
+        <nz-tab nzTitle=" {{ 'purchase-order.line' | i18n }}">
+        <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="currentPurchaseOrder.purchaseOrderLines" nzSize="middle"
+          [nzShowPagination]="true" #purchaseOrderLineTable>
+          <thead>
+            <th>
+              {{ 'number' | i18n }}
+            </th>
+            <th>
+              {{ 'item' | i18n }}
+            </th>
+            <th>
+              {{ 'expectedQuantity' | i18n }}
+            </th>
+            <th>
+              {{ 'receiptQuantity' | i18n }}
+            </th>
+            <th>
+              {{ 'receivedQuantity' | i18n }}
+            </th> 
+            <th>
+              {{ 'new-receipt-line-quantity' | i18n }}
+            </th> 
+          </thead>
+          <tbody>
+            <tr *ngFor="let purchaseOrderLine of purchaseOrderLineTable.data">
+              <td>{{ purchaseOrderLine.number }}</td>
+              
+              <td>
+                
+                  <nz-skeleton-element 
+                  *ngIf="purchaseOrderLine.itemId && purchaseOrderLine.item == null"
+                  nzType="input"
+                  [nzActive]="true"
+                  [nzSize]="'small'"
+                  style="width:75px"
+                ></nz-skeleton-element> 
+                {{ purchaseOrderLine.item?.name }}</td>
+              <td>{{ purchaseOrderLine.expectedQuantity }}</td>
+              <td>{{ purchaseOrderLine.receiptQuantity }}</td>
+              <td>{{ purchaseOrderLine.receivedQuantity }}</td>  
+              <td> 
+                <nz-input-number   [nzMin]="0"  [nzStep]="1" [ngModel]="getReceiptLineQuantity(purchaseOrderLine.id!)" 
+                (ngModelChange)="currentReceiptLineQuantityChanged(purchaseOrderLine.id!, $event)">
+
+                </nz-input-number>
+ 
+
+              </td>
+            </tr>
+          </tbody>
+        </nz-table> 
+      </nz-tab>
+    </nz-tabset>
+
+  </div>
+
+</div>
+
+<div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+  
+    <nz-card>
+        <nz-descriptions nzTitle="{{ 'purchase-order' | i18n}}" nzBordered *ngIf="currentPurchaseOrder.id != null">
+            <nz-descriptions-item nzTitle="{{ 'number' | i18n}}">
+              {{currentPurchaseOrder.number}}</nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'supplier' | i18n}}">
+                <a nz-tooltip [nzTooltipTitle]="supplierDetailsTemplate">{{ currentPurchaseOrder.supplier?.name }}</a>
+        
+                <ng-template #supplierDetailsTemplate>
+                  <div>{{currentPurchaseOrder.supplier?.name}} - {{currentPurchaseOrder.supplier?.description}}</div>
+                  <address>  
+                    {{currentPurchaseOrder.supplier?.addressLine1}} <br>
+                    {{currentPurchaseOrder.supplier?.addressLine2}} <br>
+                    {{currentPurchaseOrder.supplier?.addressCity}},  {{currentPurchaseOrder.supplier?.addressState}} <br>
+                    {{currentPurchaseOrder.supplier?.addressPostcode}} <br>
+                    </address>
+                </ng-template>
+            </nz-descriptions-item>
+        </nz-descriptions>
+      </nz-card>
+    
+      <nz-card>
+        <nz-descriptions nzTitle="{{ 'receipt' | i18n}}" nzBordered >
+            <nz-descriptions-item nzTitle="{{ 'number' | i18n}}">
+              {{receiptNumber}}</nz-descriptions-item>
+        </nz-descriptions>
+      </nz-card>
+
+      <nz-tabset >
+        <nz-tab nzTitle=" {{ 'purchase-order.line' | i18n }}">
+        <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="currentPurchaseOrder.purchaseOrderLines" nzSize="middle"
+          [nzShowPagination]="true" #purchaseOrderLineTable>
+          <thead>
+            <th>
+              {{ 'number' | i18n }}
+            </th>
+            <th>
+              {{ 'item' | i18n }}
+            </th>
+            <th>
+              {{ 'expectedQuantity' | i18n }}
+            </th>
+            <th>
+              {{ 'receiptQuantity' | i18n }}
+            </th>
+            <th>
+              {{ 'receivedQuantity' | i18n }}
+            </th> 
+            <th>
+              {{ 'new-receipt-line-quantity' | i18n }}
+            </th> 
+          </thead>
+          <tbody>
+            <tr *ngFor="let purchaseOrderLine of purchaseOrderLineTable.data">
+              <td>{{ purchaseOrderLine.number }}</td>
+              
+              <td>
+                
+                  <nz-skeleton-element 
+                  *ngIf="purchaseOrderLine.itemId && purchaseOrderLine.item == null"
+                  nzType="input"
+                  [nzActive]="true"
+                  [nzSize]="'small'"
+                  style="width:75px"
+                ></nz-skeleton-element> 
+                {{ purchaseOrderLine.item?.name }}</td>
+              <td>{{ purchaseOrderLine.expectedQuantity }}</td>
+              <td>{{ purchaseOrderLine.receiptQuantity }}</td>
+              <td>{{ purchaseOrderLine.receivedQuantity }}</td>  
+              <td> 
+                  {{getReceiptLineQuantity(purchaseOrderLine.id!)}}
+
+              </td>
+            </tr>
+          </tbody>
+        </nz-table> 
+      </nz-tab>
+    </nz-tabset>
+</div>
+
+<div class="steps-action" style="padding-top: 20px;">
+  <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 1">
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+</nz-spin>

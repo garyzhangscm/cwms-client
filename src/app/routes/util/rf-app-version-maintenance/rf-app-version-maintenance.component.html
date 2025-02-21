@@ -1,0 +1,169 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+    <a routerLink="/util/rf-app-version" routerLinkActive="active">{{ 'return' | i18n }}</a>
+</ng-template>
+
+<ng-template #breadcrumb>
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a routerLink="/util/rf-app-version" routerLinkActive="active">{{
+          'menu.main.util.rf-app-version' | i18n
+          }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+    <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+        <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+        <nz-step nzTitle="{{ 'assign-rf' | i18n }}"> </nz-step>
+        
+        <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+    </nz-steps>
+
+    <!-- Let the user input the order information -->
+    <div class="small-card" *ngIf="stepIndex === 0 " style="padding-top: 20px;">
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="6">
+                  {{ 'rf.app.version-number' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="versionNumberErrorTpl" [nzValidateStatus]="versionNumberValidateStatus"
+                >
+                  <input   type="text" nz-input [(ngModel)]="currentRFAppVersion!.versionNumber" required 
+                    (blur)="versionNumberChange($event)" [disabled]="!newRFAppVersion"/>
+                  <ng-template #versionNumberErrorTpl let-control>  
+                      <ng-container *ngIf="versionNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
+                      <ng-container *ngIf="versionNumberErrorCode === 'numberExists'">Version number already exists</ng-container>
+                              
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+        
+            <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                    
+                    <nz-form-label [nzSpan]="8">
+                        {{ 'rf.app.is-latest-version' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="16">
+                        <label nz-checkbox [(ngModel)]="currentRFAppVersion!.latestVersion" ></label>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>        
+        <div nz-row [nzGutter]="24">    
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="6">
+                  {{ 'rf.app.release-note' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18" >                    
+                    <textarea rows="4" nz-input [(ngModel)]="currentRFAppVersion!.releaseNote"></textarea> 
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+        </div>
+
+        <div nz-row [nzGutter]="24">
+            
+          <div nz-col [nzSpan]="1">
+          </div>
+          <div nz-col [nzSpan]="8">
+            <div class="clearfix">
+                <nz-upload
+                [nzAction]="apkFileUploadUrl"
+                [nzHeaders]="{ authorization: 'authorization-text' }"
+                [nzAccept]="acceptUploadedFileTypes"
+                 (nzChange)="handleUploadChange($event)"
+                [nzFileList]="fileList"
+                [nzShowButton]="fileList.length == 0" 
+              >
+                <div>
+                  <i nz-icon nzType="upload"></i>
+                  <div style="margin-top: 8px">
+                    {{ 'file-upload' | i18n }}</div>
+                </div>
+              </nz-upload> 
+            </div>
+          </div>
+
+        </div>
+    </div>
+ 
+    <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+      <nz-card nzTitle="{{ 'rf' | i18n}}">
+        <div nz-row style="padding: 10px">
+          <div nz-col nzSpan="12" nzOffset="6">
+            <nz-transfer [nzDataSource]="rfList" nzShowSearch [nzFilterOption]="transferListFilterOption"
+              (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
+              (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
+              [nzTitles]="[ unassignedRFText, assignedRFText]">
+            </nz-transfer>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+    <!-- Let the user confirm the result -->
+    <div class="small-card" *ngIf="stepIndex === 2" style="padding-top: 20px;">
+
+        <nz-descriptions nzBordered>
+            <nz-descriptions-item nzTitle="{{ 'rf.app.version-number' | i18n}}"> 
+                {{currentRFAppVersion!.versionNumber }}
+            </nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'file-name' | i18n}}"> 
+                {{currentRFAppVersion!.fileName }}
+            </nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'rf.app.is-latest-version' | i18n}}"> 
+                {{currentRFAppVersion!.latestVersion }}
+            </nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'rf.app.release-note' | i18n}}"> 
+                {{currentRFAppVersion!.releaseNote}}
+            </nz-descriptions-item>  
+        </nz-descriptions>
+        
+        <nz-card nzTitle="{{'RF.assigned' | i18n}}">
+          
+          <cdk-virtual-scroll-viewport itemSize="10" class="demo-infinite-container" 
+              *ngIf="currentRFAppVersion!.rfAppVersionByRFCodes.length > 0">
+
+            <nz-list nzBordered>
+                <nz-list-item *cdkVirtualFor="let rfAppVersionByRFCode of currentRFAppVersion!.rfAppVersionByRFCodes">
+                    <nz-list-item-meta> 
+                        <nz-list-item-meta-title>
+                          {{ rfAppVersionByRFCode.rf.rfCode}} 
+                        </nz-list-item-meta-title>
+                      </nz-list-item-meta>
+                    </nz-list-item>
+              </nz-list>
+          </cdk-virtual-scroll-viewport>
+          
+          <nz-empty *ngIf="currentRFAppVersion!.rfAppVersionByRFCodes.length == 0" style="padding-top: 25px;"></nz-empty>
+        </nz-card>
+        
+    </div>
+
+
+
+    <div class="steps-action" style="padding-top: 15px;">
+        <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+            <span>{{ 'steps.previous' | i18n }}</span>
+        </button>
+        <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+        <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 2" [disabled]="this.currentRFAppVersion.fileName == ''">
+            <span>{{ 'steps.next' | i18n }}</span>
+        </button>
+        <nz-divider nzType="vertical"></nz-divider>
+        <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 2">
+            <span> {{ 'confirm' | i18n }}</span>
+        </button>
+    </div>
+
+</nz-spin>

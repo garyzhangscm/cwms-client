@@ -1,0 +1,289 @@
+<page-header *ngIf="!fromMenu" [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnTpl"></page-header>
+<page-header *ngIf="fromMenu" title="{{'file-upload' |  i18n}}" ></page-header>
+
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item
+      ><a>{{ 'menu.main' | i18n }}</a></nz-breadcrumb-item
+    >
+    <nz-breadcrumb-item
+      ><a>{{ 'menu.main.util' | i18n }}</a></nz-breadcrumb-item
+    >
+    <nz-breadcrumb-item
+      ><a routerLink="/util/file-upload" routerLinkActive="active">{{
+        'menu.main.util.file-upload' | i18n
+      }}</a></nz-breadcrumb-item
+    >
+  </nz-breadcrumb>
+</ng-template>
+
+<ng-template #returnTpl>
+  <a (click)="back()">
+    {{ 'return' | i18n }}
+  </a>
+</ng-template>
+
+<nz-spin *ngIf="optionAllowed" [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <ng-container>
+    <nz-card>
+      <form nz-form [formGroup]="loadFileForm">
+        <div nz-row [nzGutter]="24">
+          <div nz-col [nzSpan]="12">
+            <nz-form-item nzFlex>
+              <nz-form-label for="fileType" [nzSm]="3" [nzXs]="3" nzRequired="true">
+                {{ 'file-upload.filetype' | i18n }}
+              </nz-form-label>
+              
+              <nz-form-control [nzSpan]="14">
+                <nz-select
+                  nzPlaceHolder="{{ 'placeholder.file-upload.filetype' | i18n }}"
+                  name="Type"
+                  formControlName="fileTypeSelector"
+                  (ngModelChange)="selectedFileTypeChanged($event)"
+                  [nzDisabled]="!fromMenu"
+                >
+                  <nz-option
+                    *ngFor="let fileType of allowedFileTypes"
+                    [nzLabel]="fileType.label"
+                    [nzValue]="fileType.value"
+                  >
+                  </nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="12">
+            <nz-form-item>
+              <nz-upload [nzAction]="selectedFileUploadUrl" (nzChange)="handleChange($event)">
+                <button nz-button [disabled]="fileUploadDisabled" *ngIf="!displayOnly">
+                  <i nz-icon nzType="upload"></i>
+                  {{ 'file-upload' | i18n }}
+                </button>
+              </nz-upload>
+
+              <!--
+
+              <nz-upload nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                [nzHeaders]="{ authorization: 'authorization-text' }" (nzChange)="handleChange($event)">
+                <button nz-button><i nz-icon nzType="upload"></i>Click to Upload</button>
+              </nz-upload>
+              -->
+            </nz-form-item>
+          </div>
+        </div>
+      </form>
+        <div nz-row [nzGutter]="24">
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="16">
+                {{ 'ignoreUnknownFields' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="8">
+                <label nz-checkbox [(ngModel)]="ignoreUnknownFields" (ngModelChange)="refreshFileParameters()"></label>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row [nzGutter]="24" *ngIf="selectedFileUploadType?.name == 'orders' || selectedFileUploadType?.name == 'loads'">
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="16">
+                {{ 'createCustomerIfNotExists' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="8">
+                <label nz-checkbox [(ngModel)]="createCustomer" (ngModelChange)="refreshFileParameters()" ></label>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row [nzGutter]="24" *ngIf="selectedFileUploadType?.name == 'orders' || selectedFileUploadType?.name == 'loads'">
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="16">
+                {{ 'modifyCustomerIfExists' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="8">
+                <label nz-checkbox [(ngModel)]="modifyCustomer" (ngModelChange)="refreshFileParameters()" ></label>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row [nzGutter]="24" *ngIf="selectedFileUploadType?.name == 'inventory' || selectedFileUploadType?.name == 'receiving-inventories'">
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="16">
+                {{ 'removeExistingInventoryWithSameLPN' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="8">
+                <label nz-checkbox [(ngModel)]="removeExistingInventoryWithSameLPN" (ngModelChange)="refreshFileParameters()" ></label>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row [nzGutter]="24" *ngIf="selectedFileUploadType?.name == 'inventory' || selectedFileUploadType?.name == 'receiving-inventories'">
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="16">
+                {{ 'emptyLocation' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="8">
+                <label nz-checkbox [(ngModel)]="emptyLocation" (ngModelChange)="refreshFileParameters()" ></label>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div nz-row [nzGutter]="24">
+          <div nz-col [nzSpan]="12">
+            <nz-form-item nzFlex>
+              <nz-form-label for="fileType" [nzSpan]="4"> {{ 'file-upload.template-file' | i18n }} </nz-form-label
+              >
+              <!--
+
+              <button
+                down-file
+                [http-data]="data"
+                [http-url]="selectedFileUploadType?.templateFileUrl"
+                nz-button
+                [file-name]="selectedFileUploadType?.name + '.csv'"
+                [disabled]="selectedFileUploadType === null || selectedFileUploadType?.templateFileUrl === ''"
+              >
+                {{ 'download' | i18n }}
+              </button>
+
+              -->
+              <div  *ngIf="selectedFileUploadType?.templateFileUrl != null">
+
+                <button nz-button 
+                  down-file
+                  nzType="primary" 
+                  [http-url]="selectedFileUploadType!.templateFileUrl"
+                  [file-name]="selectedFileUploadType!.name"
+                    nzShape="round">
+                    <i nz-icon nzType="download"></i>
+                        {{ 'download' | i18n }} 
+                </button>
+              </div>
+
+
+              
+            </nz-form-item>
+          </div>
+        </div> 
+    
+    </nz-card>
+
+    <div class="search-result-list" *ngIf="selectedFileUploadType">
+      <nz-table
+      [nzScroll]="{ x: 'true', y: 'true' }" 
+        #fileUploadTypeColumnTable
+        nzShowSizeChanger
+        [nzData]="selectedFileUploadType!.columns"
+        nzShowPagination="false"
+        nzFrontPagination="false"
+      >
+        <thead>
+          <tr>
+            <td>
+              {{ 'file-upload.template-file.column-name' | i18n }}
+            </td>
+            <td>
+              {{ 'description' | i18n }}
+            </td>
+            <td>
+              {{ 'file-upload.template-file.column-type' | i18n }}
+            </td>
+            <td>
+              {{ 'file-upload.template-file.column-max-length' | i18n }}
+            </td>
+            <td>
+              {{ 'optional' | i18n }}
+            </td>
+            <td>
+              {{ 'file-upload.mapping_to_column_name' | i18n }}
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let fileUploadTypeColumn of fileUploadTypeColumnTable.data">
+            <td>{{ fileUploadTypeColumn.name }}</td>
+            <td>{{ fileUploadTypeColumn.description }}</td>
+            <td>{{ fileUploadTypeColumn.type }}</td>
+            <td>{{ fileUploadTypeColumn.maxLength }}</td>
+            <td>{{ fileUploadTypeColumn.nullable + '' | i18n }}</td>
+            <td>
+              <div class="editable-cell" [hidden]="fileUploadTypeColumnTableEditRowName == fileUploadTypeColumn.name" 
+                  (click)="startEditFileUploadTypeColumnTable( fileUploadTypeColumn.name)">
+                  {{fileUploadTypeColumnMappings.has(fileUploadTypeColumn.name) ? fileUploadTypeColumnMappings.get(fileUploadTypeColumn.name) : fileUploadTypeColumn.name}}
+              </div>
+              <input [hidden]="displayOnly || fileUploadTypeColumnTableEditRowName != fileUploadTypeColumn.name" type="text" 
+                  nz-input [ngModel]="fileUploadTypeColumnMappings.get(fileUploadTypeColumn.name)" 
+                  (ngModelChange)="fileUploadTypeColumnMappingChanged(fileUploadTypeColumn.name, $event)"
+                  (blur)="stopEditFileUploadTypeColumnTable(fileUploadTypeColumn.name)" />
+              
+                </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </ng-container>
+</nz-spin>
+<nz-result  *ngIf="!optionAllowed"
+  nzTitle="{{'Upload ' + urlFileUploadType + ' is not allowed' }} "
+  nzStatus="error"
+  nzSubTitle="Option Not Allowed"
+  > 
+<div nz-result-extra>
+  <button nz-button nzType="primary" (click)="back()">{{'return' | i18n}}</button> 
+</div>
+</nz-result>
+
+<nz-modal [nzVisible]="fileUploadProgress < 100" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+  <ng-container *nzModalContent> 
+    <nz-progress [nzPercent]="fileUploadProgress" nzType="circle"></nz-progress>
+  </ng-container>
+</nz-modal>
+
+
+<nz-modal [nzVisible]="showResultModal" nzWidth=500 (nzOnCancel)="closeResultModal()" (nzOnOk)="closeResultModal()" >
+  <ng-container *nzModalContent> 
+    <h3>{{'result' | i18n}}</h3>
+    
+    <st #st [data]="displayFileUploadResults" [columns]="columns" ps="5"  [footer]="tableFoot" [scroll]="{ x: '800px' }" >
+
+      <ng-template st-row="recordColumn" let-item let-index="index"> 
+        <p
+          nz-typography
+          nzEllipsis
+          nzCopyable
+          [nzContent]="item.record" 
+        ></p> 
+      </ng-template>
+      <ng-template st-row="errorMessageColumn" let-item let-index="index">
+        <!--<ellipsis length="30" tooltip>{{ item.errorMessage }}</ellipsis>-->
+        <p
+          nz-typography
+          nzEllipsis
+          nzCopyable
+          [nzContent]="item.errorMessage" 
+        ></p> 
+
+      </ng-template>
+
+    </st>
+    <ng-template #tableFoot>
+    
+      <div nz-row nzType="flex" nzJustify="start">
+        {{'total' | i18n}}: 
+            <strong><a (click)="showAllResults()">{{resultTotal}}</a></strong>, 
+        {{'success' | i18n}}:  
+          <span nz-typography nzType="success" >
+            <a (click)="showSuccessResults()">{{resultSuccess}}</a></span> , 
+        {{'fail' | i18n}}: <span nz-typography nzType="danger">
+          <a (click)="showFailResults()">{{resultFail}}</a></span>, 
+      </div>
+    </ng-template>
+  </ng-container>
+</nz-modal>

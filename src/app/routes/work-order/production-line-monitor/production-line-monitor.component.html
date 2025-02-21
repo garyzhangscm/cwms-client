@@ -1,0 +1,94 @@
+<page-header title="{{'production-line-monitor' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    <!-- Form to query the result  -->
+    <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label for="name" [nzSpan]="8">
+              {{ 'name' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <input nz-input name="name" id="name" formControlName="name" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label for="description" [nzSpan]="8">
+              {{ 'description' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <input nz-input name="description" id="description" formControlName="description" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label for="productionLine" [nzSpan]="8">
+              {{ 'production-line' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <nz-select formControlName="productionLine">
+                 <nz-option
+                     *ngFor="let productionLine of availableProductionLines"
+                      [nzValue]="productionLine.name"
+                      [nzLabel]="productionLine.name"
+                        ></nz-option>
+                 </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+         
+      </div>
+       
+      <div nz-row>
+        <div nz-col [nzSpan]="24" class="search-area">
+          <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+            {{ 'search' | i18n }}
+          </button>
+          <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+        </div>
+      </div>
+    </form>
+  
+  <!-- Table to Display the result  -->
+
+  <div class="search-result-list"> 
+    
+    <st #st [data]="listOfProductionLineMonitors"  [columns]="columns" >
+        <ng-template st-row="lastHeartBeatTimeColumn" let-item let-index="index"> 
+            {{ item.lastHeartBeatTime | date:'short'}} 
+        </ng-template>
+        <ng-template st-row="actionColumn" let-item let-index="index"> 
+            
+            <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+                {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu>  
+                  <li nz-menu-item >
+                    <a routerLink="/work-order/production-line-monitor/maintenance" routerLinkActive="active"
+                    [queryParams]="{id: item.id}">{{ 'modify' | i18n }}</a>
+                  </li>
+                  <li nz-menu-item>
+                    <a  (click)="removeProductionLineMonitor(item)">{{ 'remove' | i18n }}</a>
+                  </li>
+                </ul>
+              </nz-dropdown-menu>
+       </ng-template>
+    </st>
+    
+    <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
+      {{searchResult}}
+    </div>
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
+      <button nz-button nzType="primary" routerLink="/work-order/production-line-monitor/maintenance" routerLinkActive="active">
+        {{ 'add' | i18n }}
+      </button>
+    </div>
+  </div>
+      
+</nz-spin>
+
+ 

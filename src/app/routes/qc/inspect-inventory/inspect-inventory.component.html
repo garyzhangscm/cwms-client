@@ -1,0 +1,191 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+  <a routerLink="/qc/inspection" routerLinkActive="active">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/qc/inspection" routerLinkActive="active">{{
+        'qc-inspection' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning">
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+  <nz-step nzTitle="{{ 'qc-inspection' | i18n }}"> </nz-step> 
+  <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+
+<!-- Step 1: basic information  
+  -->
+
+
+<div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
+
+    <nz-card *ngFor="let inventoryQCRequest of inventoryQCRequestMap | keyvalue" [nzTitle]="inventoryQCRequestTitle" >
+
+      <div *ngIf="itemSamplingMap.has(inventoryQCRequest.key)">
+        
+        <nz-image-group [hidden]="isCollapse">
+          <img *ngFor="let imageUrl of itemSamplingMap.get(inventoryQCRequest.key).imageUrls.split(',')"
+               nz-image width="100px" height="100px" [nzSrc]="getImageUrl(itemSamplingMap.get(inventoryQCRequest.key), imageUrl)" alt="" /> 
+        </nz-image-group>
+        <div nz-row>
+          <div nz-col [nzSpan]="24" class="search-area">
+          
+            <a class="collapse" (click)="toggleCollapse()">
+              {{ 'collapse' | i18n }}
+
+              <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+       
+        <ng-template #inventoryQCRequestTitle>
+            <span>
+                {{inventoryQCRequest.key}} / {{ inventoryQCResultMap.get(inventoryQCRequest.key)}}
+                
+                <span *ngIf="inventoryQCResultMap.get(inventoryQCRequest.key) === qcInspectionResults.PENDING">
+                    <i nz-icon [nzType]="'warning'" [nzTheme]="'twotone'" [nzTwotoneColor]="'yellow'" ></i></span>
+                <span *ngIf="inventoryQCResultMap.get(inventoryQCRequest.key) === qcInspectionResults.PASS">
+                    <i nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"></i></span>
+                <span *ngIf="inventoryQCResultMap.get(inventoryQCRequest.key) === qcInspectionResults.FAIL">
+                    <i nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'"   [nzTwotoneColor]="'#eb2f96'"></i></span>
+            </span>
+          </ng-template>
+        <nz-card nzType="inner" *ngFor="let qcInspectionRequestItem of inventoryQCRequest.value" 
+            [nzTitle]="qcInspectionRequestItem.qcRule.name" >
+            <ul nz-list [nzDataSource]="qcInspectionRequestItem.qcInspectionRequestItemOptions" nzBordered nzSize="large"> 
+                <nz-list-header>{{ 'result' | i18n}}: {{qcInspectionRequestItem.qcInspectionResult}}
+
+                    <span *ngIf="qcInspectionRequestItem.qcInspectionResult === qcInspectionResults.PENDING">
+                        <i nz-icon [nzType]="'warning'" [nzTheme]="'twotone'" [nzTwotoneColor]="'yellow'" ></i></span>
+                    <span *ngIf="qcInspectionRequestItem.qcInspectionResult === qcInspectionResults.PASS">
+                        <i nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"></i></span>
+                    <span *ngIf="qcInspectionRequestItem.qcInspectionResult === qcInspectionResults.FAIL">
+                        <i nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'"   [nzTwotoneColor]="'#eb2f96'"></i></span>
+                </nz-list-header>
+                <li nz-list-item *ngFor="let qcInspectionRequestItemOption of qcInspectionRequestItem.qcInspectionRequestItemOptions" nzNoFlex>
+                  <ul nz-list-item-actions>
+                    <!--  Yes No QC rule item -->
+                    <nz-list-item-action  *ngIf="qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === qcRuleItemTypes.YESNO">   
+                        <nz-radio-group  [(ngModel)]="qcInspectionRequestItemOption.value"
+                            (ngModelChange)="qcInspectionRequestItemOptionChanged(qcInspectionRequestItem, qcInspectionRequestItemOption)">
+                            <label nz-radio nzValue="NOT_APPLY">{{'N/A' | i18n}}</label>
+                            <label nz-radio nzValue="YES">{{'Yes' | i18n}}</label>
+                            <label nz-radio nzValue="NO">{{'No' | i18n}}</label> 
+                        </nz-radio-group>
+                    </nz-list-item-action>
+                    
+                    <!--  item of number type -->
+                    <nz-list-item-action  *ngIf="qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === qcRuleItemTypes.NUMBER"> 
+                      <label nz-checkbox [ngModel]="notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)"
+                      (ngModelChange)="notApplyQCInspectionRequestItemOptionChanged(qcInspectionRequestItem, qcInspectionRequestItemOption, $event)">{{'N/A' | i18n}}</label>
+                      <nz-input-number [nzDisabled]="notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)"
+                      [(ngModel)]="qcInspectionRequestItemOption.doubleValue" 
+                        (ngModelChange)="qcInspectionRequestItemOptionChanged(qcInspectionRequestItem, qcInspectionRequestItemOption)"
+                        style="width: 150px;"
+                      ></nz-input-number>
+                    </nz-list-item-action>
+                    <!--  item of string type -->
+                    <nz-list-item-action  *ngIf="qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === qcRuleItemTypes.STRING"> 
+                      <label nz-checkbox [ngModel]="notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)"
+                      (ngModelChange)="notApplyQCInspectionRequestItemOptionChanged(qcInspectionRequestItem, qcInspectionRequestItemOption, $event)">{{'N/A' | i18n}}</label>
+                      <nz-input  [disabled]="notApplyQCInspectionRequestItemOptionSet.has(qcInspectionRequestItemOption.id)"
+                        [(ngModel)]="qcInspectionRequestItemOption.stringValue" 
+                        (ngModelChange)="qcInspectionRequestItemOptionChanged(qcInspectionRequestItem, qcInspectionRequestItemOption)"
+                        style="width: 350px;"
+                      ></nz-input>
+                    </nz-list-item-action>
+                  </ul>
+                  {{ qcInspectionRequestItemOption.qcRuleItem.checkPoint  }} 
+                </li> 
+              </ul>
+              
+        </nz-card>
+
+    </nz-card>
+ 
+  
+</div> 
+ <!-- confirm -->
+<div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+  <nz-card>
+
+    
+    <nz-card *ngFor="let inventoryQCRequest of inventoryQCRequestMap | keyvalue" [nzTitle]="inventoryQCRequestTitle" >
+        <ng-template #inventoryQCRequestTitle>
+            <span>
+                {{inventoryQCRequest.key}} / {{ inventoryQCResultMap.get(inventoryQCRequest.key)}}
+                
+                <span *ngIf="inventoryQCResultMap.get(inventoryQCRequest.key) === qcInspectionResults.PENDING">
+                    <i nz-icon [nzType]="'warning'" [nzTheme]="'twotone'" [nzTwotoneColor]="'yellow'" ></i></span>
+                <span *ngIf="inventoryQCResultMap.get(inventoryQCRequest.key) === qcInspectionResults.PASS">
+                    <i nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"></i></span>
+                <span *ngIf="inventoryQCResultMap.get(inventoryQCRequest.key) === qcInspectionResults.FAIL">
+                    <i nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'"   [nzTwotoneColor]="'#eb2f96'"></i></span>
+            </span>
+          </ng-template>
+        <nz-card nzType="inner" *ngFor="let qcInspectionRequestItem of inventoryQCRequest.value" 
+            [nzTitle]="qcInspectionRequestItem.qcRule.name" >
+            <ul nz-list [nzDataSource]="qcInspectionRequestItem.qcInspectionRequestItemOptions" nzBordered nzSize="large"> 
+                <nz-list-header>{{ 'result' | i18n}}: {{qcInspectionRequestItem.qcInspectionResult}}
+
+                    
+
+                    <span *ngIf="qcInspectionRequestItem.qcInspectionResult === qcInspectionResults.PENDING">
+                        <i nz-icon [nzType]="'warning'" [nzTheme]="'twotone'" [nzTwotoneColor]="'yellow'" ></i></span>
+                    <span *ngIf="qcInspectionRequestItem.qcInspectionResult === qcInspectionResults.PASS">
+                        <i nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"></i></span>
+                    <span *ngIf="qcInspectionRequestItem.qcInspectionResult === qcInspectionResults.FAIL">
+                        <i nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'"   [nzTwotoneColor]="'#eb2f96'"></i></span>
+                </nz-list-header>
+                <li nz-list-item *ngFor="let qcInspectionRequestItemOption of qcInspectionRequestItem.qcInspectionRequestItemOptions" nzNoFlex>
+                  <ul nz-list-item-actions>  
+                    <nz-list-item-action >   
+                          {{ qcInspectionRequestItemOption.qcInspectionResult  }} 
+                          
+                            <span *ngIf="qcInspectionRequestItemOption.qcInspectionResult === qcInspectionResults.PENDING">
+                                <i nz-icon [nzType]="'warning'" [nzTheme]="'twotone'" [nzTwotoneColor]="'yellow'" ></i></span>
+                            <span *ngIf="qcInspectionRequestItemOption.qcInspectionResult === qcInspectionResults.PASS">
+                                <i nz-icon [nzType]="'check-circle'" [nzTheme]="'twotone'" [nzTwotoneColor]="'#52c41a'"></i></span>
+                            <span *ngIf="qcInspectionRequestItemOption.qcInspectionResult === qcInspectionResults.FAIL">
+                                <i nz-icon [nzType]="'close-circle'" [nzTheme]="'twotone'"   [nzTwotoneColor]="'#eb2f96'"></i></span>
+                    </nz-list-item-action>
+                  </ul>
+                  {{ qcInspectionRequestItemOption.qcRuleItem.checkPoint  }}   
+                </li> 
+              </ul>
+              
+        </nz-card>
+
+    </nz-card>
+    
+  </nz-card>
+
+</div>
+
+<div class="steps-action" style="padding-top: 20px;">
+  <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 1"
+  
+  >
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+</nz-spin>

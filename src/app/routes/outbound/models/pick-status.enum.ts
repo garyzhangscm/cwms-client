@@ -1,0 +1,8 @@
+export enum PickStatus {
+    PENDING = 'PENDING',
+    INPROCESS = 'INPROCESS',
+    CANCELLED = 'CANCELLED',
+    COMPLETED = 'COMPLETED',
+    HOLD = 'HOLD',
+    RELEASED = 'RELEASED',
+}

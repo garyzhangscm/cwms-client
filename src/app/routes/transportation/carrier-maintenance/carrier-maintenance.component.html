@@ -1,0 +1,285 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+    <a routerLink="/transportation/carrier" routerLinkActive="active"
+        [queryParams]="{name: currentCarrier?.name}">{{
+        'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+    <nz-breadcrumb>
+        <nz-breadcrumb-item>
+            <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+        <nz-breadcrumb-item><a routerLink="/transportation/carrier" routerLinkActive="active">{{
+                'carrier' | i18n
+                }}</a></nz-breadcrumb-item>
+        <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+    <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+        <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+        <nz-step nzTitle="{{ 'service' | i18n }}"> </nz-step>
+        <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+    </nz-steps>
+
+    <!-- Let the user input the order information -->
+    <div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="6">
+                  {{ 'name' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="carrierNameErrorTpl" [nzValidateStatus]="carrierNameValidateStatus"
+                >
+        
+
+                  <input type="text" nz-input [(ngModel)]="currentCarrier!.name" required 
+                    (blur)="carrierNameChange($event)" [disabled]="!newCarrier"/>
+                  <ng-template #carrierNameErrorTpl let-control>  
+                      <ng-container *ngIf="carrierNameValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
+                      <ng-container *ngIf="carrierNameValidateStatus === 'numberExists'">{{ 'carrier' | i18n}} {{currentCarrier!.name}} {{ 'already-exists-error' | i18n }}</ng-container>
+                    
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            
+            <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="6">
+                    {{ 'description' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="18">
+                    <input type="text" nz-input [(ngModel)]="currentCarrier!.description" required  /> 
+                  </nz-form-control>
+                </nz-form-item>
+            </div> 
+            
+            <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="6">
+                    {{ 'enabled' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="18">
+                    <label nz-checkbox [(ngModel)]="currentCarrier!.enabled"></label>
+                  </nz-form-control>
+                </nz-form-item>
+            </div> 
+        </div>
+        
+        <div nz-row [nzGutter]="24" >
+            <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="8">
+                    {{ 'contactorFirstname' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="16">
+                    <input type="text" nz-input [(ngModel)]="currentCarrier!.contactorFirstname" required  /> 
+                  </nz-form-control>
+                </nz-form-item>
+            </div> 
+            <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="8">
+                    {{ 'contactorLastname' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="16">
+                    <input type="text" nz-input [(ngModel)]="currentCarrier!.contactorLastname" required  /> 
+                  </nz-form-control>
+                </nz-form-item>
+            </div> 
+        </div>
+        
+        <div nz-row [nzGutter]="24" >
+            <div nz-col [nzSpan]="24">            
+              <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="2">
+                  {{ 'address' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="22" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                  <!--
+                    
+                  <input nz-input ngx-google-places-autocomplete (onAddressChange)="handleNewCarrierAddressChange($event)" />
+                  -->
+                  <input nz-input />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+        </div>
+        
+        <div nz-row [nzGutter]="24" >
+            <div nz-col [nzSpan]="24">            
+              <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="3">
+                  
+                  {{ 'trackingInfoUrl' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="21" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                  
+                  <input type="text" nz-input [(ngModel)]="currentCarrier!.trackingInfoUrl" required  /> 
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+        </div>
+    </div>
+
+    <!-- Let the user input the order line information -->
+    <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+ 
+
+        <!-- Table to show order line  -->
+
+        <div class="search-result-list" *ngIf="currentCarrier" > 
+            <nz-table  nzShowPagination [nzData]="currentCarrier!.carrierServiceLevels"
+                [nzFooter]="serviceTableFoot" #serviceTable>
+                <thead>
+                    <tr> 
+                        <th>
+                          {{ 'name' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'description' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'type' | i18n }}
+                        </th> 
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of serviceTable.data; let i = index"> 
+                        <td>
+                            <div *ngIf="data.id === undefined">
+                                <div class="row">
+                                    <input   type="text" [(ngModel)]="data.name"/>
+                                </div>
+                            </div>
+                            <span *ngIf="data.id">
+                                {{ data.name }}
+                            </span>
+                        </td>
+                        <td>
+                            <div *ngIf="data.id === undefined">
+                                <div class="row">
+                                    <input  type="text" [(ngModel)]="data.description" />
+                                </div>
+                            </div> 
+                            <span *ngIf="data.id">
+                                {{ data.description }}
+                            </span>
+                        </td>             
+                        <td>
+                            <nz-select style="width: 250px" *ngIf="data.id === undefined"
+                                [(ngModel)]="data.type"  
+                                >
+                                <nz-option *ngFor="let carrierServiceLevelType of carrierServiceLevelTypes | keys"
+                                    nzLabel="{{ 'CARRIER-SERVICE-LEVEL-TYPE-' + carrierServiceLevelType.key | i18n }}" [nzValue]="carrierServiceLevelType.key">
+                                </nz-option>
+                            </nz-select>
+
+                            <span *ngIf="data.id">
+                                {{  data.type}}
+                            </span>
+                        </td> 
+                        <td >
+                            <button nz-button nzDanger nzShape="circle" (click)="removeService(i)">
+                                <i nz-icon nzType="close"></i>
+                                
+                              </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+
+        <ng-template #serviceTableFoot>
+            <div nz-row nzType="flex" nzJustify="start">
+                <button nz-button nzType="primary" (click)="addExtraService()">
+                    {{ 'add' | i18n }}
+                </button>
+            </div>
+        </ng-template>
+    </div>
+
+    <!-- Let the user confirm the result -->
+    <div class="small-card" *ngIf="stepIndex === 2" style="padding-top: 20px;">
+
+        <nz-descriptions nzTitle="{{ 'carrier' | i18n}} - {{  currentCarrier?.name }}" nzBordered>
+            <nz-descriptions-item nzTitle="{{ 'name' | i18n}}"> 
+                {{  currentCarrier!.name |i18n}}
+            </nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'description' | i18n}}"> 
+                {{  currentCarrier!.name |i18n}}
+            </nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'contactorFirstname' | i18n}}"> 
+                {{  currentCarrier!.contactorFirstname! |i18n}}
+            </nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'contactorLastname' | i18n}}"> 
+                {{  currentCarrier!.contactorLastname! |i18n}}
+            </nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'address' | i18n}}"> 
+                
+              <address>  
+                {{currentCarrier!.addressLine1}} <br>
+                {{currentCarrier!.addressLine2}} <br>
+                {{currentCarrier!.addressCity}},  {{currentCarrier!.addressState}} <br>
+                {{currentCarrier!.addressPostcode}} <br>
+              </address>
+            </nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'trackingInfoUrl' | i18n}}"> 
+                {{  currentCarrier!.trackingInfoUrl! |i18n}}
+            </nz-descriptions-item> 
+        </nz-descriptions> 
+
+        <!-- Table to show order line  -->
+
+        <div class="search-result-list"> 
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="currentCarrier!.carrierServiceLevels"
+                #displayServiceTable>
+                <thead>
+                    <tr> 
+                        <th>
+                          {{ 'name' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'description' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'type' | i18n }}
+                        </th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of displayServiceTable.data">  
+                        <td>{{ data.name }} </td>
+                        <td>{{ data.description }} </td>
+                        <td>{{ 'CARRIER-SERVICE-LEVEL-TYPE-' + data.type | i18n }} </td> 
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+ 
+    </div>
+
+
+
+    <div class="steps-action">
+        <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+            <span>{{ 'steps.previous' | i18n }}</span>
+        </button>
+        <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+        <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 2">
+            <span>{{ 'steps.next' | i18n }}</span>
+        </button>
+        <nz-divider nzType="vertical"></nz-divider>
+        <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 2">
+            <span> {{ 'confirm' | i18n }}</span>
+        </button>
+    </div>
+
+</nz-spin>

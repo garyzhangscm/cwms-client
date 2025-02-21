@@ -1,0 +1,400 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/transportation/trailer" routerLinkActive="active" [queryParams]="{number: currentTrailer.number}">{{ 'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/transportation/trailer" routerLinkActive="active">{{ 'trailer' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'trailer.maintenance' | i18n }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex" nzStatus="wait" style="padding: 15px">
+  <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+<!-- Show basic item information -->
+<div class="small-card" *ngIf="stepIndex === 0 ">  
+    <nz-card nzTitle="{{'current-appointment' | i18n}}">
+        <div *ngIf="currentAppointment != null">
+            <nz-descriptions nzBordered>
+                <nz-descriptions-item nzTitle="{{ 'number' | i18n}}">
+                {{currentAppointment.number}}
+                </nz-descriptions-item>
+                <nz-descriptions-item nzTitle="{{ 'description' | i18n}}">
+                {{currentAppointment.description}}
+                </nz-descriptions-item>
+                <nz-descriptions-item nzTitle="{{ 'type' | i18n}}">
+                    <span *ngIf="currentAppointment?.type != null">
+                        {{'TRAILER-APPOINTMENT-TYPE-' + currentAppointment.type | i18n}} </span>
+                </nz-descriptions-item>
+          </nz-descriptions>
+          <div nz-row nzType="flex" nzJustify="end" style="padding: 15px;">                
+              <button nz-button nzType="default"  nzDanger (click)="cancelTrailerAppointment()">
+                {{ 'cancel' | i18n }}
+              </button>     
+              <nz-divider nzType="vertical"></nz-divider>
+              <button nz-button nzType="primary"  (click)="completeTrailerAppointment()">
+                  {{ 'complete' | i18n }}
+                </button>
+          </div>
+
+        </div>
+        <div *ngIf="currentAppointment == null">
+            There's no current appointment, <a (click)="showAddAppointmentModal(tplAddAppointmentModalTitle, tplAddAppointmentModalContent)">add</a> one
+
+        </div>
+    </nz-card>   
+    <!-- Add Stop to this trailer appoinment -->
+    <nz-card *ngIf="currentAppointment?.number != null && currentAppointment?.type === trailerAppointmentTypes.SHIPPING">
+      <nz-tabset nzType="card">
+        
+        <nz-tab nzTitle="{{'stop' | i18n}}">
+          <st #stopTable [data]="stops" [columns]="stopTablecolumns" [footer]="stopTableFoot"> 
+            
+            <!--   action colummn  --> 
+            <ng-template st-row="actionColumnTitle" type="title" let-c>
+              {{ 'action' | i18n }}
+            </ng-template>
+            <ng-template st-row="actionColumn" let-item let-index="index"> 
+              
+              <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" 
+                  [disabled]="item.number==''"
+              >
+                {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu>  
+                  <li nz-menu-item  >
+                    <a  (click)="deassignStop(item)">{{ 'deassign' | i18n }}</a>
+                  </li>
+                  
+                </ul>
+              </nz-dropdown-menu>
+            </ng-template>
+
+            
+            <ng-template #stopTableFoot>
+              <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">                
+                <button nz-button nzType="primary"  (click)="showAssignStopModal(tplAssignStopModalTitle, tplAssignStopModalContent)">
+                    {{ 'assign' | i18n }}
+                  </button>
+              </div>
+            </ng-template>
+          </st>
+        </nz-tab>
+        <nz-tab nzTitle="{{'shipment' | i18n}}">
+          <st #shipmentTable [data]="shipments" [columns]="shipmentTablecolumns" [footer]="shipmentTableFoot" [scroll]="{ x: '2150px'}"> 
+            
+            <!--   action colummn  --> 
+            <ng-template st-row="actionColumnTitle" type="title" let-c>
+              {{ 'action' | i18n }}
+            </ng-template>
+            <ng-template st-row="actionColumn" let-item let-index="index"> 
+              
+              <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" 
+                  [disabled]="item.number==''"
+              >
+                {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu>  
+                  <li nz-menu-item  >
+                    <a  (click)="deassignShipmentFromStop(item)">{{ 'deassign' | i18n }}</a>
+                  </li>
+                  
+                </ul>
+              </nz-dropdown-menu>
+            </ng-template>
+
+            
+            <ng-template #shipmentTableFoot>
+              <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">                
+                <button nz-button nzType="primary"  (click)="showAssignShipmentModal(tplAssignShipmentModalTitle, tplAssignShipmentModalContent)">
+                    {{ 'assign' | i18n }}
+                </button> 
+                    
+              </div>
+            </ng-template>
+          </st>
+        </nz-tab> 
+        <nz-tab nzTitle="{{'order' | i18n}}">
+          <st #orderTable [data]="orders" [columns]="orderTablecolumns" [footer]="orderTableFoot" [scroll]="{ x: '1450px'}"> 
+             
+            <ng-template st-row="actionColumnTitle" type="title" let-c>
+              {{ 'action' | i18n }}
+            </ng-template>
+            <ng-template st-row="actionColumn" let-item let-index="index"> 
+              
+              <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary"  
+              >
+                {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu>  
+                  <li nz-menu-item  >
+                    <a  (click)="deassignOrderFromStop(item)">{{ 'deassign' | i18n }}</a>
+                  </li>
+                  
+                </ul>
+              </nz-dropdown-menu>
+            </ng-template>
+
+            
+            <ng-template #orderTableFoot>
+              <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">                
+                <button nz-button nzType="primary"  (click)="showAssignOrderModal(tplAssignOrderModalTitle, tplAssignOrderModalContent)">
+                    {{ 'assign' | i18n }}
+                </button>
+              </div>
+            </ng-template>
+          </st>
+        </nz-tab> 
+      </nz-tabset>
+
+    </nz-card>
+</div>
+
+
+
+<!-- Confirm the change -->
+<div class="small-card" *ngIf="stepIndex === 1">
+  <nz-card>
+    <nz-descriptions nzBordered="true">
+
+      <nz-descriptions-item nzTitle="{{ 'number' | i18n }}">{{ currentAppointment?.number }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description' | i18n}}">
+          {{currentAppointment?.description}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'type' | i18n}}">
+          <span *ngIf="currentAppointment?.type != null">
+              {{'TRAILER-APPOINTMENT-TYPE-' + currentAppointment?.type | i18n}} </span>
+      </nz-descriptions-item>
+      
+
+       
+    </nz-descriptions>
+  </nz-card>   
+  <!-- Add Stop to this trailer appoinment -->
+  <nz-card *ngIf="currentAppointment?.number != null && currentAppointment?.type === trailerAppointmentTypes.SHIPPING">
+    <nz-tabset nzType="card">
+        
+      <nz-tab nzTitle="{{'stop' | i18n}}">
+        <st #stopTable [data]="stops" [columns]="stopTablecolumns" [scroll]="{ x: '1450px'}" >  
+        </st>
+      </nz-tab>
+      <nz-tab nzTitle="{{'shipment' | i18n}}">
+        <st #shipmentTable [data]="shipments" [columns]="shipmentTablecolumns" [scroll]="{ x: '2150px'}" >  
+        </st>
+      </nz-tab> 
+      <nz-tab nzTitle="{{'order' | i18n}}">
+        <st #orderTable [data]="orders" [columns]="orderTablecolumns"  [scroll]="{ x: '1450px'}">  
+        </st>
+      </nz-tab> 
+    </nz-tabset> 
+  </nz-card>
+</div>
+
+<div class="steps-action" *ngIf="stepIndex === 0">
+  <button nz-button nzType="default" (click)="nextStep()"  >
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+</div>
+
+<div class="steps-action" *ngIf="stepIndex === 1">
+
+  <button nz-button nzType="default" (click)="previousStep()">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()">
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+
+</nz-spin>
+
+
+
+<!-- Modal for creating receipt line -->
+<ng-template #tplAddAppointmentModalTitle>
+    <span>{{ 'add-appointment' | i18n}}</span>
+</ng-template>
+<ng-template #tplAddAppointmentModalContent>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="number">
+            {{ 'number' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-group nzSize="large">
+              <input appFkey variable="trailer-appointment-number"  nz-input [(ngModel)]="currentAppointment!.number" id="number" name="number" 
+              (nextNumberAvailableEvent)="currentAppointmentNumberChanged($event)"/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="description">
+            {{ 'description' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-group nzSize="large">
+              <input  nz-input [(ngModel)]="currentAppointment!.description" id="description" name="description" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div> 
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="type">
+            {{ 'type' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-group nzSize="large" >
+                <nz-select  [(ngModel)]="currentAppointment!.type" style="width: 250px" >
+                        <nz-option
+                          *ngFor="let type of trailerAppointmentTypes  | keys"
+                          [nzValue]="type.key"
+                          nzLabel="{{ 'TRAILER-APPOINTMENT-TYPE-' + type.key | i18n}}"
+                        ></nz-option>
+                      </nz-select>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+</ng-template>
+
+<!-- Modal for assign stop to current trailer appointment -->
+<ng-template #tplAssignStopModalTitle>
+  <span>{{ 'assign-stop' | i18n}}</span>
+</ng-template>
+<ng-template #tplAssignStopModalContent>
+  
+  <st #openStopTable [data]="openStops" [columns]="openStopTablecolumns" 
+  (change)="openStopTableChange($event)" [ps]="5"> 
+  
+  </st>
+</ng-template>
+
+
+<!-- Modal for assign shipment to current trailer appointment -->
+<ng-template #tplAssignShipmentModalTitle>
+  <span>{{ 'assign-shipment' | i18n}}</span>
+</ng-template>
+<ng-template #tplAssignShipmentModalContent>
+  
+    <!-- Form to query the result  -->
+    <form nz-form [formGroup]="openShipmentSearchForm" class="ant-advanced-search-form"> 
+  
+      <div nz-row [nzGutter]="24">
+          <div nz-col [nzSpan]="12">
+              <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="6" nzFor="number">
+                  {{ 'number' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18">
+                  <input nz-input name="number" id="number" formControlName="number">
+                </nz-form-control>
+              </nz-form-item>
+          </div> 
+          <div nz-col [nzSpan]="12">
+              <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="6" nzFor="orderNumber">
+                  {{ 'order.number' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18">
+                  <input nz-input name="orderNumber" id="orderNumber" formControlName="orderNumber">
+                </nz-form-control>
+              </nz-form-item>
+          </div> 
+        
+      </div>
+      <div nz-row>
+        <div nz-col [nzSpan]="24" class="search-area">
+          <button nz-button [nzType]="'primary'" (click)="openShipmentSearch()" [nzLoading]="openShipmentSearching">
+            {{ 'search' | i18n }}
+          </button>
+          <button nz-button (click)="resetopenShipmentForm()">{{ 'clear' | i18n }}</button>
+        </div>
+      </div>
+    </form> 
+   
+   
+    
+    <div class="search-result-list"> 
+      <st #openShipmentTable [data]="openShipments" [columns]="openShipmentTablecolumns" 
+      (change)="openShipmentTableChange($event)" [scroll]="{ x: '1450px'}" [footer]="openShipmentTableFoot" [ps]="5"  > 
+      
+      </st>
+      <ng-template #openShipmentTableFoot>
+      
+          <div nz-row nzType="flex" nzJustify="start" *ngIf="openShipmentTableSearchResult != ''">
+            {{openShipmentTableSearchResult}}
+          </div> 
+      </ng-template>
+        
+    </div>
+</ng-template>
+
+
+
+<!-- Modal for assign order to current trailer appointment -->
+<ng-template #tplAssignOrderModalTitle>
+  <span>{{ 'assign-order' | i18n}}</span>
+</ng-template>
+<ng-template #tplAssignOrderModalContent>
+  
+    <!-- Form to query the result  -->
+    <form nz-form [formGroup]="openOrderSearchForm" class="ant-advanced-search-form"> 
+  
+      <div nz-row [nzGutter]="24">
+          <div nz-col [nzSpan]="12">
+              <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="6" nzFor="number">
+                  {{ 'number' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18">
+                  <input nz-input name="number" id="number" formControlName="number">
+                </nz-form-control>
+              </nz-form-item>
+          </div>  
+      </div>
+      <div nz-row>
+        <div nz-col [nzSpan]="24" class="search-area">
+          <button nz-button [nzType]="'primary'" (click)="openOrderSearch()" [nzLoading]="openShipmentSearching">
+            {{ 'search' | i18n }}
+          </button>
+          <button nz-button (click)="resetOpenOrderForm()">{{ 'clear' | i18n }}</button>
+        </div>
+      </div>
+    </form> 
+   
+   
+    
+    <div class="search-result-list"> 
+      <st #openOrderTable [data]="openOrders" [columns]="openOrderTablecolumns" 
+      (change)="openOrderTableChange($event)" [scroll]="{ x: '1450px'}" [footer]="openOrderTableFoot" [ps]="5"> 
+      
+      </st>
+      <ng-template #openOrderTableFoot>
+      
+          <div nz-row nzType="flex" nzJustify="start" *ngIf="openOrderTableSearchResult != ''">
+            {{openOrderTableSearchResult}}
+          </div> 
+      </ng-template>
+        
+    </div>
+</ng-template>

@@ -1,0 +1,78 @@
+<page-header [title]="'menu.main.work-order.labor-activity' | i18n"> </page-header>
+
+<nz-spin [nzSpinning]="isSpinning">
+<!-- Form to query the result  -->
+
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+     
+  <div nz-row [nzGutter]="24"> 
+    <div nz-col [nzSpan]="8" >
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="username">
+            {{ 'username' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <input nz-input name="username" id="username" formControlName="username" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+    <div nz-col [nzSpan]="8" >
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="8" nzFor="productionLine">
+          {{ 'production-line' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16">
+            
+            <nz-select nz-input formControlName="productionLine" style="width: 250px">
+                <nz-option *ngFor="let productionLine of allProductionLines" [nzLabel]="productionLine.name"
+                  [nzValue]="productionLine.id">
+                </nz-option>
+              </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+      
+  </div>
+
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+    </div>
+  </div>
+</form>
+
+<div class="search-result-list">
+  <!--
+    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+      <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+    </div>
+    -->
+    
+    <st #st [data]="listOfLaborActivities"  [columns]="columns"  >
+         
+      <!--   check in time colummn  --> 
+
+      <ng-template st-row="activityTimeColumnTitle" type="title" let-c>
+        {{ 'work-order.labor.activity-time' | i18n }}
+      </ng-template>
+      <ng-template st-row="activityTimeColumn" let-item let-index="index"> 
+        
+         <span *ngIf="item.activityTime">
+
+            {{ item.activityTime  | date:'short'}} 
+         </span>
+      </ng-template>
+      
+      
+
+    </st>
+    <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
+      {{searchResult}}
+    </div> 
+    
+</div>
+</nz-spin>

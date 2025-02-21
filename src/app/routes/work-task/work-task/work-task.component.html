@@ -1,0 +1,244 @@
+<page-header title="{{'work-task' |  i18n}}" ></page-header>
+
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    <!-- Form to query the result  -->
+    <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label for="number" [nzSpan]="8">
+              {{ 'number' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <input nz-input name="number" id="number" formControlName="number" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label for="type" [nzSpan]="8">
+              {{ 'type' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <nz-select formControlName="type">
+                <nz-option
+                  *ngFor="let type of workTaskTypes | keys"
+                  [nzValue]="type.key"
+                  [nzLabel]="type.key"
+                  ></nz-option>
+                 </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        
+        
+        <div nz-col [nzSpan]="8">
+            <nz-form-item nzFlex>
+              <nz-form-label for="status" [nzSpan]="8">
+                {{ 'status' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="16">
+                <nz-select formControlName="status">
+                  <nz-option
+                    *ngFor="let status of workTaskStatus | keys"
+                    [nzValue]="status.key"
+                    [nzLabel]="status.key"
+                    ></nz-option>
+                   </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+      </div>  
+  
+      <div nz-row>
+        <div nz-col [nzSpan]="24" class="search-area">
+          <button nz-button [nzType]="'primary'" (click)="search()">
+            {{ 'search' | i18n }}
+          </button>
+          <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+        </div>
+      </div>
+    </form>
+  
+    <!-- Table to Display the result  -->
+  
+    <div class="search-result-list"> 
+      
+      <st #st [data]="workTasks"  [columns]="columns"  [scroll]="{ x: '2355px' }">   
+        <!--   action colummn  -->  
+        <ng-template st-row="actionColumn" let-workTask let-index="index"> 
+          
+          <nz-list>
+            <nz-list-item>          
+              <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+                {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu> 
+  
+                  <li nz-menu-item 
+                  *ngIf="!userPermissionMap.has('assign-user') || userPermissionMap.get('assign-user')">
+                    <a (click)="openAssignUserModal(workTask,  tplAssignUserModalTitle,
+                                tplAssignUserModalContent, tplAssignUserModalFooter )">
+                      {{ 'assign-user' | i18n }}</a> 
+                  </li>  
+                  <li nz-menu-item 
+                  *ngIf="!userPermissionMap.has('assign-role') || userPermissionMap.get('assign-role')">
+                    <a (click)="openAssignRoleModal(workTask,  tplAssignRoleModalTitle,
+                              tplAssignRoleModalContent, tplAssignRoleModalFooter )">
+                      {{ 'assign-role' | i18n }}</a> 
+                  </li>  
+                  
+                  <li nz-menu-item 
+                  *ngIf="workTask.status == workTaskStatus.PENDING && (!userPermissionMap.has('release') || userPermissionMap.get('release'))">
+                    <a (click)="releaseWorkTask(workTask )">
+                      {{ 'release' | i18n }}</a> 
+                  </li>  
+                  <!--
+
+                  <li nz-menu-item 
+                  *ngIf="!userPermissionMap.has('assign-working-team') || userPermissionMap.get('assign-working-team')">
+                    <a (click)="assignWorkingTeam(workTask)">
+                      {{ 'assign-working-team' | i18n }}</a> 
+                  </li>  
+
+                  -->
+                </ul>
+              </nz-dropdown-menu>
+            </nz-list-item>  
+          </nz-list>
+          
+        </ng-template>
+          
+        
+    </st>
+      
+    <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
+      {{searchResult}}
+    </div> 
+  </div> 
+  
+</nz-spin>
+  
+
+<!-- Modal for assign user-->
+<ng-template #tplAssignUserModalTitle>
+  <span>{{ 'assign-user' | i18n}}</span>
+</ng-template>
+<ng-template #tplAssignUserModalContent>  
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchUserForm" class="ant-advanced-search-form">
+    <div nz-row [nzGutter]="24"> 
+      <div nz-col [nzSpan]="8">
+
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="username">
+            {{ 'username' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <input nz-input name="username" id="username" formControlName="username">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="firstname">
+            {{ 'firstname' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <input nz-input name="firstname" id="firstname" formControlName="firstname">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="lastname">
+            {{ 'lastname' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <input nz-input name="lastname" id="lastname" formControlName="lastname">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="searchUser()" [nzLoading]="queryUserInProcess">
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetUserForm()" [nzLoading]="queryUserInProcess">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Table to Display the result  -->
+  <div class="search-result-list">
+    
+    <st #userTable [data]="listOfAssignableUsers" [columns]="userTablecolumns" 
+      (change)="userTableChanged($event)" [ps]="5">
+    </st>  
+  </div>
+</ng-template>
+
+<ng-template #tplAssignUserModalFooter>
+  <button nz-button nzType="default" (click)="closeUserQueryModal()" [nzLoading]="queryUserInProcess">{{ 'cancel' | i18n}}</button>
+  <button nz-button nzType="primary" (click)="assignUser()" [nzLoading]="queryUserInProcess"
+   [disabled]="isUserRecordChecked() == false">{{ 'confirm' |
+    i18n}}</button>
+
+</ng-template>
+
+<!-- Modal for assign role-->
+<ng-template #tplAssignRoleModalTitle>
+  <span>{{ 'assign-role' | i18n}}</span>
+</ng-template>
+<ng-template #tplAssignRoleModalContent>  
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchRoleForm" class="ant-advanced-search-form">
+    <div nz-row [nzGutter]="24"> 
+      <div nz-col [nzSpan]="8">
+
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="name">
+            {{ 'name' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <nz-select formControlName="rolename">
+              <nz-option
+                *ngFor="let role of validRoles"
+                [nzValue]="role.name" [nzLabel]="role.name"
+                ></nz-option>
+               </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>  
+    </div>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="searchRole()" [nzLoading]="queryRoleInProcess">
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetRoleForm()" [nzLoading]="queryRoleInProcess">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Table to Display the result  -->
+  <div class="search-result-list">
+    
+    <st #roleTable [data]="listOfAssignableRoles" [columns]="roleTablecolumns" 
+      (change)="roleTableChanged($event)" [ps]="5">
+    </st>  
+  </div>
+</ng-template>
+
+<ng-template #tplAssignRoleModalFooter>
+  <button nz-button nzType="default" (click)="closeRoleQueryModal()" [nzLoading]="queryRoleInProcess">{{ 'cancel' | i18n}}</button>
+  <button nz-button nzType="primary" (click)="assignRole()"  [nzLoading]="queryRoleInProcess"
+  [disabled]="isRoleRecordChecked() == false">{{ 'confirm' |
+    i18n}}</button>
+
+</ng-template>

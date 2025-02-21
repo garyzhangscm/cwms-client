@@ -1,0 +1,26 @@
+<page-header [title]="'billable-activity-type' | i18n">
+</page-header>
+
+<!-- Table to Display the result  -->
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <div class="search-result-list"> 
+    
+    <st #st [data]="billableActivityTypes" [columns]="columns"  [footer]="tableFoot"> 
+    </st>
+  
+  </div>
+ 
+</nz-spin>
+
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start">
+    <a nz-button nzType="primary" (click)="refresh()">
+      {{'fresh' | i18n}}
+    </a>
+    <a nz-button nzType="primary" routerLink="/billing/billable-activity-type/maintenance" routerLinkActive="active"
+    *ngIf="!displayOnly">
+      {{'add' | i18n}}
+    </a> 
+  </div>
+</ng-template>

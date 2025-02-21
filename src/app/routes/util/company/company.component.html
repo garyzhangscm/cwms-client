@@ -1,0 +1,71 @@
+<page-header title="{{'company' |  i18n}}" > </page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form"> 
+
+    
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label for="code" [nzSpan]="8">
+          {{ 'company.code' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input name="code" id="code" formControlName="code" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>  
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label for="name" [nzSpan]="8">
+          {{ 'name' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input name="name" id="name" formControlName="name" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>  
+
+  </div>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="search()"  >
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form> 
+ 
+ 
+  
+  <div class="search-result-list"> 
+    
+    <st #st [data]="companies"  [columns]="columns" [footer]="tableFoot" > 
+      
+      <!--   action colummn  -->  
+      <ng-template st-row="actionColumn" let-item let-index="index"> 
+        
+        <button nz-button nzDanger *ngIf="item.enabled" (click)="disableCompany(item.id)">
+          {{ 'disable' | i18n }}  </button>
+          <button nz-button  nzType="primary" *ngIf="!item.enabled"  (click)="enableCompany(item.id)">
+            {{ 'enable' | i18n }}  </button>
+      </ng-template>
+        
+    </st>
+  
+  </div>
+ 
+</nz-spin>
+<ng-template #tableFoot>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+   
+</ng-template>
+
+
+
+ 

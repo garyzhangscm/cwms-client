@@ -1,0 +1,221 @@
+<script type="text/javascript" >
+  // Move the X Axis to the top of the google chart
+  // https://stackoverflow.com/questions/37328945/google-charts-timeline-move-date-year-to-the-top-of-the-chart
+
+  function afterDraw() {
+
+        console.log("js / afterDraw");
+      	var g = document.getElementsByTagName("svg")[0].getElementsByTagName("g")[1];
+        document.getElementsByTagName("svg")[0].parentNode.style.top = '40px';
+        document.getElementsByTagName("svg")[0].style.overflow = 'visible';
+        var height = Number(g.getElementsByTagName("text")[0].getAttribute('y')) + 15;
+        g.setAttribute('transform','translate(0,-'+height+')');
+        g = null;
+      }
+</script>
+
+<page-header title="{{'mps-view' |  i18n}}" ></page-header>
+ 
+<nz-spin [nzSpinning]="isSpinning">  
+    <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="12">
+                <nz-form-item nzFlex>
+                    <nz-form-label for="number" [nzSm]="3" [nzXs]="3">
+                    {{ 'number' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="14">
+                    <input nz-input name="number" id="number" formControlName="number" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+                    
+            <div nz-col [nzSpan]="12">
+                <nz-form-item nzFlex>
+                <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="name">
+                    {{ 'item' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="14">
+
+                    <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                    <input nz-input name="itemName" id="itemName" formControlName="itemName" />
+                    </nz-input-group>
+                    <ng-template #suffixIconButton>
+                    <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
+                    </app-inventory-item-query-popup>
+                    </ng-template>
+                </nz-form-control>
+                </nz-form-item>
+            </div>
+            
+        </div>
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="12">
+                <nz-form-item nzFlex>
+                    <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="name">
+                        {{ 'production-line' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="14">
+                        
+                        <nz-select  nzMode="multiple" formControlName="productionLines"  >
+                            <nz-option *ngFor="let productionLine of availableProductionLines" [nzLabel]="productionLine.name" 
+                                [nzValue]="productionLine.id"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            
+            <div nz-col [nzSpan]="12" >
+                <nz-form-item nzFlex>
+                <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="mpsDateTimeRanger">
+                    {{ 'date-range' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="14"> 
+                    <nz-range-picker formControlName="mpsDateTimeRanger"></nz-range-picker>
+        
+                </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+        <div nz-row>
+            <div nz-col [nzSpan]="24" class="search-area">
+            <button nz-button [nzType]="'primary'" (click)="search()">
+                {{ 'search' | i18n }}
+            </button>
+            <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+            </div>
+        </div>
+    </form>
+    
+    <div nz-row style="padding: 20px" *ngIf="mpsByItemViewData.length > 0">
+        <div nz-col [nzSpan]="24"  >
+            <!--
+
+            <a  routerLink="/work-order/mps-export" routerLinkActive="active" >
+                {{ 'export' | i18n }}
+            </a> 
+            -->
+            {{'export' | i18n }}: <button nz-button (click)="exportByItem()">{{ 'MPS-EXPORT-TYPE.BY_ITEM' | i18n }}</button>
+            <button nz-button (click)="exportByProductionLine()">{{ 'MPS-EXPORT-TYPE.BY_PRODUCTION_LINE' | i18n }}</button>
+        </div>
+    </div>
+<!-- gantt diagram / option 1-->
+<!--
+https://www.npmjs.com/package/dhtmlx-gantt
+https://dhtmlx.com/blog/dhtmlx-gantt-chart-usage-angularjs-2-framework/
+
+    <div #gantt_here class='gantt-chart'></div>
+-->
+
+
+<!-- gantt diagram / option 2-->
+<!--
+http://gantt.ngnice.com/guides/intro 
+ 
+-->
+
+<!--google chart-->
+<!--
+    https://github.com/FERNman/angular-google-charts
+--> 
+    <div id="google_chart_wrapper" *ngIf="chartData.length > 0 && chartOptions != null">
+
+        <google-chart
+         [type]="chartType" [data]="chartData" 
+        [dynamicResize]="true"  
+        (select)="onSelect($event)"
+        (ready)="onGoogleChartReady()"
+        [options]="chartOptions"
+        [width]="chartWidth" ></google-chart>
+        
+    </div>
+    <nz-empty *ngIf="chartData.length == 0" style="padding-top: 25px;"></nz-empty>
+    
+    <nz-list nzGrid *ngIf="colorByItemMap.size > 0">
+        <div nz-row [nzGutter]="16">
+          <div nz-col [nzSpan]="3"  *ngFor="let colorByItem of colorByItemMap | keyvalue">
+            <nz-list-item>
+              <nz-card nzSize="small" [style.background]="colorByItem.value">{{colorByItem.key}}</nz-card>
+            </nz-list-item>
+          </div>
+        </div>
+      </nz-list>
+</nz-spin> 
+
+ 
+
+        <!--
+            Wrapper for export Excel
+        -->
+        <div #exportByItemTableWrapper hidden>
+
+            <nz-table  [nzData]="mpsByItemViewData" #mpsByItemViewTable  nzShowPagination>
+                <thead>
+                  <tr>  
+                    <th>{{'item' | i18n}}</th>
+                    <th>{{'totalQuantity' | i18n}}</th>
+                    <th>{{'goalQuantity' | i18n}}</th>
+                    <th>{{'production-line' | i18n}}</th>
+                    <th>{{'productionDays' | i18n}}</th>
+                  </tr> 
+                </thead>
+                <tbody>
+    
+                    <tr *ngFor="let mpsByItemViewRow of mpsByItemViewTable.data;  let i = index">
+                        <td *ngIf="mpsByItemViewRow.lineNumber == 0" [rowSpan]="mpsByItemViewRow.totalLines">
+                          {{mpsByItemViewRow.itemName}}
+                        </td>
+                        <td *ngIf="mpsByItemViewRow.lineNumber == 0" [rowSpan]="mpsByItemViewRow.totalLines">
+                          {{mpsByItemViewRow.totalQuantity}}
+                        </td>
+                        <td>
+                          {{mpsByItemViewRow.goalQuantity}}
+                        </td>
+                        <td>
+                          {{mpsByItemViewRow.productionLineName}}
+                        </td>
+                        <td>
+                          {{mpsByItemViewRow.productionDays}}
+                        </td>
+                      </tr>
+                </tbody>
+              </nz-table>
+        </div> 
+
+        
+        <div #exportByProductionLineTableWrapper hidden>
+
+            <nz-table  [nzData]="mpsByProductionLineViewData" #mpsByProductionLineViewTable  nzShowPagination>
+                <thead>
+                  <tr>  
+                    <th>{{'production-line' | i18n}}</th>
+                    <th>{{'date-range' | i18n}}</th>
+                    <th>{{'productionDays' | i18n}}</th>
+                    <th>{{'item' | i18n}}</th>
+                    <th>{{'goalQuantity' | i18n}}</th>
+                  </tr> 
+                </thead>
+                <tbody>
+    
+                    <tr *ngFor="let mpsByProductionLineViewRow of mpsByProductionLineViewTable.data;  let i = index">
+                        <td *ngIf="mpsByProductionLineViewRow.lineNumber == 0" [rowSpan]="mpsByProductionLineViewRow.totalLines">
+                          {{mpsByProductionLineViewRow.productionLineName}}
+                        </td>
+                        
+                        <td>
+                          {{mpsByProductionLineViewRow.dateRange}}
+                        </td>
+                        <td>
+                          {{mpsByProductionLineViewRow.productionDays}}
+                        </td>
+                        <td>
+                          {{mpsByProductionLineViewRow.itemName}}
+                        </td>
+                        <td>
+                          {{mpsByProductionLineViewRow.goalQuantity}}
+                        </td>
+                        
+                      </tr>
+                </tbody>
+              </nz-table>
+        </div> 

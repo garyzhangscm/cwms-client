@@ -1,0 +1,125 @@
+<page-header title="{{'rf-configuration' |  i18n}}" ></page-header>
+
+
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+     
+        <nz-card nzTitle="{{ 'work-order' | i18n}}">
+
+            <div nz-row [nzGutter]="24">
+                
+                <div nz-col [nzSpan]="12">
+                    <nz-form-item nzFlex> 
+                    <nz-form-control [nzSpan]="16">
+                        <nz-input-group nzSize="large">
+                        <label nz-checkbox [(ngModel)]="currentRFConfiguration.workOrderValidatePartialLPNPick">
+                            <span>{{ 'workOrderValidatePartialLPNPick' | i18n }}</span>
+                        </label> 
+                        </nz-input-group>
+                    </nz-form-control>
+                    </nz-form-item>
+                </div>
+                
+                <div nz-col [nzSpan]="12">
+                    <nz-form-item nzFlex> 
+                    <nz-form-control [nzSpan]="16">
+                        <nz-input-group nzSize="large">
+                        <label nz-checkbox [(ngModel)]="currentRFConfiguration.pickToProductionLineInStage">
+                            <span>{{ 'pickToProductionLineInStage' | i18n }}</span>
+                        </label> 
+                        </nz-input-group>
+                    </nz-form-control>
+                    </nz-form-item>
+                </div>
+              </div>
+        </nz-card>
+ 
+        <nz-card nzTitle="{{ 'inbound' | i18n}}">
+
+            <div nz-row [nzGutter]="24">
+                
+                <div nz-col [nzSpan]="12">
+                    <nz-form-item nzFlex> 
+                    <nz-form-control [nzSpan]="16">
+                        <nz-input-group nzSize="large">
+                        <label nz-checkbox [(ngModel)]="currentRFConfiguration.receiveToStage">
+                            <span>{{ 'receiveToStage' | i18n }}</span>
+                        </label> 
+                        </nz-input-group>
+                    </nz-form-control>
+                    </nz-form-item>
+                </div> 
+              </div>
+        </nz-card>
+        <nz-card nzTitle="{{ 'outbound' | i18n}}">
+
+            <div nz-row [nzGutter]="24">
+                
+                <div nz-col [nzSpan]="12">
+                    <nz-form-item nzFlex> 
+                    <nz-form-control [nzSpan]="16">
+                        <nz-input-group nzSize="large">
+                        <label nz-checkbox [(ngModel)]="currentRFConfiguration.listPickBatchPicking">
+                            <span>{{ 'listPickBatchPicking' | i18n }}</span>
+                        </label> 
+                        </nz-input-group>
+                    </nz-form-control>
+                    </nz-form-item>
+                </div> 
+              </div>
+              <div nz-row [nzGutter]="24">
+                  
+                  <div nz-col [nzSpan]="12">
+                      <nz-form-item nzFlex> 
+                      <nz-form-control [nzSpan]="16">
+                          <nz-input-group nzSize="large">
+                          <label nz-checkbox [(ngModel)]="currentRFConfiguration.outboundOrderValidatePartialLPNPick">
+                              <span>{{ 'outboundOrderValidatePartialLPNPick' | i18n }}</span>
+                          </label> 
+                          </nz-input-group>
+                      </nz-form-control>
+                      </nz-form-item>
+                  </div> 
+                </div>
+        </nz-card>
+        
+        <nz-card nzTitle="{{ 'configuration' | i18n}}">
+
+            <div nz-row [nzGutter]="24">
+            
+                <div nz-col [nzSpan]="12">
+                    <nz-form-item nzFlex>
+                    <nz-form-label [nzSm]="6" [nzXs]="24">
+                        {{ 'printer' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <nz-select nz-input [(ngModel)]="currentRFConfiguration.printerName" style="width: 250px">
+                        <nz-option *ngFor="let availablePrint of availablePrinters" [nzLabel]="availablePrint.name"
+                            [nzValue]="availablePrint.name">
+                        </nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+            <div nz-row [nzGutter]="24">
+                
+                <div nz-col [nzSpan]="12">
+                    <nz-form-item nzFlex> 
+                    <nz-form-control [nzSpan]="16">
+                        <nz-input-group nzSize="large">
+                        <label nz-checkbox [(ngModel)]="currentRFConfiguration.autoDepositForLpnWithSameDestination">
+                            <span>{{ 'autoDepositForLpnWithSameDestination' | i18n }}</span>
+                        </label> 
+                        </nz-input-group>
+                    </nz-form-control>
+                    </nz-form-item>
+                </div> 
+              </div>
+        </nz-card>
+       
+      
+<button nz-button nzType="primary" (click)="saveConfiguration()"  *ngIf="!displayOnly">
+    {{ 'save' | i18n }}
+  </button>
+      </nz-spin>

@@ -1,0 +1,168 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+    <a routerLink="/work-order/work-order" routerLinkActive="active"
+      [queryParams]="{ number: currentProductionLineAssignment?.workOrder?.number }">{{ 'return' | i18n }}</a>
+</ng-template>
+
+<ng-template #breadcrumb>
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a routerLink="/work-order" routerLinkActive="active">{{
+          'breadcrumb.work-order' | i18n
+          }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+    <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+        <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+        
+        <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+    </nz-steps>
+
+    <!-- Let the user input the order information -->
+    <nz-card class="small-card" *ngIf="stepIndex === 0 && currentWorkOrderQcSample !== undefined && currentProductionLineAssignment !== undefined" 
+    style="margin-top: 20px;"  [nzExtra]="removeQCSampleTemplate">
+
+      <div *ngIf="showAddNewSampleQuestion">
+        <nz-list nzBordered [nzHeader]="showAddNewSampleQuestionTemplate"> 
+        </nz-list>
+        <ng-template #showAddNewSampleQuestionTemplate>
+          There's sample setup for the work order, choose whether to <a (click)="loadLastSample()">load the last sample</a>, or <a  (click)="createNewSample()">create new sample</a>
+        </ng-template>
+      </div>
+      <div *ngIf="!showAddNewSampleQuestion">
+
+        <div nz-row [nzGutter]="24">
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="6">
+                {{ 'number' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="sampleNumberErrorTpl" [nzValidateStatus]="sampleNumberValidateStatus"
+              >
+                <input  appFkey variable="work-order-qc-sample-number"  type="text" nz-input [(ngModel)]="currentWorkOrderQcSample!.number" required 
+                  (blur)="sampleNumberChange($event)" [disabled]="!newSample"/>
+                <ng-template #sampleNumberErrorTpl let-control>  
+                    <ng-container *ngIf="sampleNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
+                    <ng-container *ngIf="sampleNumberValidateStatus === 'numberExists'">Sample number already exists</ng-container>
+                            
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+      
+          <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="6">
+                  {{ 'work-order' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18" >                    
+                  <input   type="text" nz-input [ngModel]="currentProductionLineAssignment!.workOrder.number" disabled/>        
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="6">
+                {{ 'production-line' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="18" >                    
+                <input   type="text" nz-input [ngModel]="currentProductionLineAssignment!.productionLine.name" disabled/>        
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+
+        <div nz-row [nzGutter]="24">
+          <!--
+
+
+            <nz-upload [nzAction]="imageFileUploadUrl" [nzHeaders]="{ authorization: 'authorization-text' }"
+            [nzFileList]="fileList" [nzAccept]="acceptUploadedFileTypes" (nzChange)="handleUploadChange($event)">
+                <button nz-button>
+                <i nz-icon nzType="upload"></i>
+    
+                {{ 'file-upload' | i18n }}
+                </button>
+            </nz-upload>
+          -->
+          <div class="clearfix">
+              <nz-upload
+              [nzAction]="imageFileUploadUrl" 
+              nzListType="picture-card"
+              [nzAccept]="acceptUploadedFileTypes"
+              (nzChange)="handleUploadChange($event)"
+              [nzFileList]="fileList"
+              [nzShowButton]="fileList.length < 8"
+              [nzPreview]="handlePreview"
+            >
+              <div>
+                <i nz-icon nzType="plus"></i>
+                <div style="margin-top: 8px">
+                  {{ 'file-upload' | i18n }}</div>
+              </div>
+            </nz-upload>
+            <nz-modal
+              [nzVisible]="previewVisible"
+              [nzContent]="modalContent"
+              [nzFooter]="null"
+              (nzOnCancel)="previewVisible = false"
+            >
+              <ng-template #modalContent>
+                <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+              </ng-template>
+            </nz-modal>
+          </div>
+
+        </div>
+      </div>
+      <ng-template #removeQCSampleTemplate>
+        <a *ngIf="newSample == false && !showAddNewSampleQuestion"  (click)="removeQCExample()">{{'remove' | i18n}}</a>
+      </ng-template>
+    </nz-card>
+ 
+    <!-- Let the user confirm the result -->
+    <nz-card class="small-card" *ngIf="stepIndex === 1" style="margin-top: 20px;">
+
+        <nz-descriptions nzBordered>
+            <nz-descriptions-item nzTitle="{{ 'number' | i18n}}"> 
+                {{currentWorkOrderQcSample!.number }}
+            </nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'work-order' | i18n}}"> 
+                {{ currentProductionLineAssignment!.workOrder.number }}
+            </nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'production-line' | i18n}}"> 
+                {{ currentProductionLineAssignment!.productionLine.name }}
+            </nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'Images' | i18n}}"> 
+                {{currentWorkOrderQcSample.imageUrls}}
+            </nz-descriptions-item> 
+        </nz-descriptions>
+        
+        
+    </nz-card>
+
+
+
+    <div class="steps-action" style="padding-top: 15px;">
+        <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0 && !showAddNewSampleQuestion">
+            <span>{{ 'steps.previous' | i18n }}</span>
+        </button>
+        <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+        <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1 && !showAddNewSampleQuestion">
+            <span>{{ 'steps.next' | i18n }}</span>
+        </button>
+        <nz-divider nzType="vertical"></nz-divider>
+        <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 1 && !showAddNewSampleQuestion">
+            <span> {{ 'confirm' | i18n }}</span>
+        </button>
+    </div>
+
+</nz-spin>

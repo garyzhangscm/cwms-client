@@ -1,0 +1,8 @@
+export enum CustomReportExecutionStatus {
+  INIT = 'INIT',
+  RUNNING = 'RUNNING',
+  EXPORT_RESULT = 'EXPORT_RESULT',
+  COMPLETE = 'COMPLETE',
+  FAIL = 'FAIL',
+  EXPIRED = 'EXPIRED',
+}

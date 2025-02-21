@@ -1,0 +1,266 @@
+<page-header [title]="'page.bill-of-material.header.title' | i18n"> </page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="number" [nzSm]="3" [nzXs]="3">
+          {{ 'bill-of-material.number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="number" id="number" formControlName="number" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="item" [nzSm]="3" [nzXs]="3">
+          {{ 'item' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="item" id="item" formControlName="item" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #nestedTable nzShowSizeChanger nzShowPagination
+    [nzData]="listOfAllBillOfMaterial" [nzFooter]="tableFoot">
+    <thead>
+      <tr>
+
+        <th [nzSelections]="listOfSelection" [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="onAllChecked($event)" nzWidth="60px"></th>
+        <th nzWidth="40px"></th>
+        <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+          [nzShowFilter]="column.showFilter">
+          {{ column.name | i18n }}
+        </th>
+
+
+        <th *ngIf="!displayOnly">
+          {{ 'action' | i18n }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-template ngFor let-data [ngForOf]="nestedTable.data">
+        <tr>
+
+          <td [nzChecked]="setOfCheckedId.has(data.id!!)" (nzCheckedChange)="onItemChecked(data.id!!, $event)"></td>
+
+          <td [nzExpand]="expandSet.has(data.id!!)" (nzExpandChange)="onExpandChange(data.id!!, $event)"></td>
+
+          <td>{{ data.number }}</td>
+          <td>{{ data.item?.name }}</td>
+          <td> <ellipsis length="100" tooltip>{{ data.item?.description }}</ellipsis> </td>
+          <td>{{ data.expectedQuantity }} 
+            <nz-skeleton-element 
+              *ngIf="data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+                  && data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+              nzType="input"
+              [nzActive]="true"
+              [nzSize]="'small'"
+              style="width:75px"
+            ></nz-skeleton-element> 
+            <strong>{{data.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
+
+          </td>
+          <td *ngIf="!displayOnly">
+            <button nz-button nzType="primary"
+              (click)="openNewWorkOrderModal(data, tplCreatingWorkOrderModalTitle, tplCreatingWorkOrderModalContent)">
+              {{ 'bill-of-material.create-work-order' | i18n }}
+            </button>
+
+            <button nz-button (click)="modifyBillOfMaterial(data)">
+              {{ 'modify' | i18n }}
+            </button>
+          </td>
+        </tr>
+        <tr [nzExpand]="expandSet.has(data.id!!)">
+
+          <nz-tabset>
+            <nz-tab nzTitle=" {{ 'bill-of-material.line' | i18n }}">
+              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="data.billOfMaterialLines" nzSize="middle"
+                [nzShowPagination]="false">
+
+                <thead>
+                  <th>
+                    {{ 'bill-of-material.line.number' | i18n }}</th>
+                  <th>
+                    {{ 'item' | i18n }}</th>
+                  <th>
+                    {{ 'item.description' | i18n }}</th>
+                  <th>
+                    {{ 'bill-of-material.line.expectedQuantity' | i18n }}</th>
+                  <th>
+                    {{ 'inventory.status' | i18n }}</th>
+                </thead>
+    <tbody>
+
+      <tr *ngFor="let billOfMaterialLine of data.billOfMaterialLines">
+        <td>{{ billOfMaterialLine.number }}</td>
+        <td>{{ billOfMaterialLine.item!.name }}</td>
+        <td>
+          <ellipsis length="100" tooltip>{{ billOfMaterialLine.item?.description }}</ellipsis>
+        </td>
+        <td>{{ billOfMaterialLine.expectedQuantity }}
+          <nz-skeleton-element 
+          *ngIf="billOfMaterialLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId 
+              && billOfMaterialLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null"
+          nzType="input"
+          [nzActive]="true"
+          [nzSize]="'small'"
+          style="width:75px"
+        ></nz-skeleton-element> 
+        <strong>{{billOfMaterialLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure?.name}}</strong>
+
+        </td>
+        <td>{{ billOfMaterialLine.inventoryStatus!.name }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+  </nz-tab>
+  <nz-tab nzTitle=" {{ 'work-order-instruction-template' | i18n }}">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="data.workOrderInstructionTemplates" nzSize="middle"
+      [nzShowPagination]="false">
+
+      <thead>
+        <th>
+          {{ 'id' | i18n}}</th>
+        <th>
+          {{ 'work-order-instruction-template.sequence' | i18n }}</th>
+        <th>
+          {{ 'work-order-instruction-template.instruction' | i18n }}</th>
+      </thead>
+      <tbody>
+
+        <tr *ngFor="let workOrderInstructionTemplate of data.workOrderInstructionTemplates">
+          <td>{{ workOrderInstructionTemplate.id }}</td>
+          <td>{{ workOrderInstructionTemplate.sequence }}</td>
+          <td>{{ workOrderInstructionTemplate.instruction }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+
+
+  <nz-tab nzTitle=" {{ 'bill-of-material.by-product' | i18n }}">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="data.billOfMaterialByProducts" nzSize="middle"
+      [nzShowPagination]="false">
+
+
+      <thead>
+        <th>
+          {{ 'item' | i18n }}</th>
+        <th>
+          {{ 'item.description' | i18n }}</th>
+        <th>
+          {{ 'bill-of-material.by-product.expectedQuantity' | i18n }}</th>
+        <th>
+          {{ 'inventory.status' | i18n }}</th>
+      </thead>
+      <tbody>
+
+        <tr *ngFor="let byProduct of data.billOfMaterialByProducts">
+          <td>{{ byProduct.item?.name }}</td>
+          <td>{{ byProduct.item?.description }}</td>
+          <td>{{ byProduct.expectedQuantity }}</td>
+          <td>{{   byProduct.inventoryStatus?.description}}</td>
+        </tr>
+      </tbody>
+
+    </nz-table>
+  </nz-tab>
+
+  </nz-tabset>
+
+  </tr>
+  </ng-template>
+  </tbody>
+  </nz-table>
+  <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle" *ngIf="!displayOnly">
+
+    <a nz-button routerLink="/work-order/bill-of-material/maintenance"  *ngIf="!displayOnly"routerLinkActive="active">{{ 'new' | i18n }}</a>
+    <nz-divider nzType="vertical"></nz-divider>
+    <button nz-button nzType="primary" routerLink="/util/file-upload/BOMs" routerLinkActive="active">
+      {{ 'file-upload' | i18n }}
+    </button>
+  </div>
+</div>
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>
+
+
+
+<!-- Modal for create work order from BOM -->
+<ng-template #tplCreatingWorkOrderModalTitle>
+  <span>{{ 'page.modal.bill-of-material.create-work-order' | i18n}}</span>
+</ng-template>
+<ng-template #tplCreatingWorkOrderModalContent>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label  [nzSpan]="8" nzFor="workOrderNumber">
+          {{ 'work-order' | i18n }}
+        </nz-form-label>
+        <nz-form-control  [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+
+          <input appFkey variable="work-order-number" nz-input [(ngModel)]="newWorkOrder.number" id="workOrderNumber"
+            name="workOrderNumber" (blur)="workOrderNumberOnBlur($event)" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label  [nzSpan]="8" nzFor="productionLine">
+          {{ 'production-line' | i18n }}
+        </nz-form-label>
+        <nz-form-control  [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <nz-select nz-input [(ngModel)]="newWorkOrderProductionLine"  style="width: 250px" nzAllowClear >
+            <nz-option *ngFor="let productionLine of availableProductionLines" [nzLabel]="productionLine.name"
+              [nzValue]="productionLine">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label  [nzSpan]="8" nzFor="expectedQuantity">
+          {{ 'work-order.expected-quantity' | i18n }}
+        </nz-form-label>
+        <nz-form-control  [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <input nz-input [(ngModel)]="newWorkOrder.expectedQuantity" id="expectedQuantity" name="expectedQuantity" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+
+
+
+</ng-template>
+</nz-spin>

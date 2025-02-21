@@ -1,0 +1,74 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a (click)="return()" routerLinkActive="active">{{
+    'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.auth' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/auth/role" routerLinkActive="active">{{
+        'breadcrumb.role' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+
+<nz-card [nzActions]="[cardFoot]" [nzTitle]="cardTitle">
+
+
+  <div nz-row style="padding: 10px" *ngIf="newRole">
+    <div nz-col nzSpan="20" nzOffset="2">
+      <nz-steps [nzCurrent]="1" [nzSize]="'default'" (nzIndexChange)="onStepsIndexChange($event)">
+        <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"
+          nzDescription="{{ 'steps.role.basic-info.description' | i18n }}">
+        </nz-step>
+        <nz-step nzTitle="{{ 'steps.role.assign-users.title' | i18n }}"
+          nzDescription="{{ 'steps.role.assign-users.description' | i18n }}" [nzDisabled]="true">
+        </nz-step>
+        <nz-step nzTitle="{{ 'steps.role.assign-menus.title' | i18n }}"
+          nzDescription="{{ 'steps.role.assign-menus.description' | i18n }}" [nzDisabled]="true">
+        </nz-step>
+        <nz-step nzTitle="{{ 'steps.role.assign-clients.title' | i18n }}"
+          nzDescription="{{ 'steps.role.assign-clients.description' | i18n }}">
+        </nz-step>
+        <nz-step nzTitle="{{ 'steps.confirm.title' | i18n }}" nzDescription="{{ 'steps.confirm.description' | i18n }}"
+          [nzDisabled]="true">
+        </nz-step>
+      </nz-steps>
+    </div>
+  </div>
+
+  <div nz-row style="padding: 10px">
+    <div nz-col nzSpan="12" nzOffset="6">
+      <nz-transfer [nzDataSource]="userList" nzShowSearch [nzFilterOption]="transferListFilterOption"
+        (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
+        (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
+        [nzTitles]="[ unassignedUserText, assignedUserText]">
+      </nz-transfer>
+    </div>
+  </div>
+</nz-card>
+
+
+<ng-template #cardTitle>
+  <h4>{{ 'role.name' | i18n}} : {{ currentRole?.name}}</h4>
+</ng-template>
+<ng-template #cardFoot>
+  <div nz-row nzType="flex" nzJustify="center" *ngIf="!newRole">
+    <button nz-button nzType="primary" (click)="assignUser()" [nzLoading]="processingUser">
+      {{ 'confirm' | i18n }}
+    </button>
+  </div>
+  <div nz-row nzType="flex" nzJustify="center" *ngIf="newRole">
+    <button nz-button nzType="primary" (click)="goToNextPage()">
+      {{ 'steps.next' | i18n }} :
+      {{ 'steps.role.assign-menus.title' | i18n }}
+    </button>
+  </div>
+</ng-template>

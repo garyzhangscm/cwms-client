@@ -1,0 +1,376 @@
+<page-header title="{{'item' |  i18n}}" > </page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8" *ngIf="threePartyLogisticsFlag">
+        <nz-form-item nzFlex>
+          <nz-form-label for="client" [nzSpan]="6">
+            {{ 'client' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <nz-select formControlName="clientId" nzAllowClear>
+              <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label for="item-family" [nzSpan]="6">
+            {{ 'item-family' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <nz-select nzMode="tags" formControlName="taggedItemFamilies">
+              <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.label"
+                [nzValue]="itemFamily.value">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="name">
+            {{ 'name' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <input nz-input name="name" id="name" formControlName="itemName">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="description">
+            {{ 'description' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <input nz-input name="description" id="description" formControlName="itemDescription">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form> 
+ 
+ 
+  
+  <div class="search-result-list">
+    
+    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+      <!--
+      <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+      -->
+      <button nz-button (click)="st.export(items, { filename: 'items.xlsx', sheetname: 'items' })">Export</button>
+    </div>
+  
+    
+    <st #st [data]="items" [columns]="columns" [footer]="tableFoot" [expand]="expand" 
+         expandAccordion   (change)="itemTableChanged($event)"  [widthMode]="{ type: 'strict' }" 
+        [scroll]="{ x: '3300px'}">
+      
+        <ng-template st-row="thumbnailColumn" let-item let-index="index"> 
+                 
+          <img *ngIf="item.image" 
+               nz-image width="50px" height="50px" [nzSrc]="item.image" alt="" /> 
+        </ng-template>
+        <ng-template st-row="receivingRateByUnitColumn" let-item let-index="index"> 
+                
+          {{  item.receivingRateByUnit  | currency: 'USD'}} 
+        </ng-template>
+        <ng-template st-row="shippingRateByUnitColumn" let-item let-index="index"> 
+                
+          {{  item.shippingRateByUnit  | currency: 'USD'}} 
+        </ng-template>
+        <ng-template st-row="handlingRateByUnitColumn" let-item let-index="index"> 
+                
+          {{  item.handlingRateByUnit  | currency: 'USD'}} 
+        </ng-template>
+        <!-- item description -->
+        <!--
+
+        <ng-template st-row="descriptionColumn" let-item let-index="index"> 
+            <ellipsis length="100" tooltip>{{ item.description }}</ellipsis>
+        </ng-template>
+
+        -->
+      <!--   action colummn  --> 
+      <ng-template st-row="actionColumnTitle" type="title" let-c>
+        {{ 'action' | i18n }}
+      </ng-template>
+      <ng-template st-row="actionColumn" let-item let-index="index"> 
+        
+        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+          {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu> 
+            <li nz-menu-item 
+            *ngIf="!userPermissionMap.has('modify-item') || userPermissionMap.get('modify-item')">
+              <a  routerLink="/inventory/item/maintenance" routerLinkActive="active"
+                  [queryParams]="{id : item.id!}">{{ 'modify' | i18n }}</a>
+            </li>
+            <li nz-menu-item 
+              *ngIf="!userPermissionMap.has('remove-item') || userPermissionMap.get('remove-item')">
+                <a   (click)='removeItem(item)'>{{ 'delete' | i18n }}</a>
+            </li>
+            <li nz-menu-item 
+              *ngIf="!userPermissionMap.has('upload-image') || userPermissionMap.get('upload-image')">
+                <a   (click)='openImageViewer(item, tplUploadImagesModalTitle, tplUploadImagesModalContent)'>
+                  {{ 'upload-image' | i18n }}</a>
+            </li>
+            <li nz-menu-item 
+              *ngIf="!userPermissionMap.has('upload-workorder-sop') || userPermissionMap.get('upload-workorder-sop')">
+                <a   (click)='openWorkOrderSOPUploadModel(item, tplUploadWorkOrderSOPModalTitle, tplUploadWorkOrderSOPModalContent)'>
+                  {{ 'upload-workorder-sop' | i18n }}</a>
+            </li>
+            <li nz-menu-item adminVisible>
+              <a   (click)='processItemOverride(item.id!)'>{{ 'process-item-override' | i18n }}</a>
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+      </ng-template>
+      <!--   item details  -->
+      <ng-template #expand let-item let-index="index" let-column="column">
+         
+        <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'"> 
+          <nz-tab *ngIf="item.itemPackageTypes == null || item.itemPackageTypes.length == 0" nzTitle="No Package Type">
+             No package type is defined yet, please maintain the item package type
+          </nz-tab>
+          <nz-tab *ngFor="let itemPackageType of item.itemPackageTypes" [nzTitle]="itemPackageType.name!">
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #itemPackageTypeTable
+              [nzData]="itemPackageType.itemUnitOfMeasures" nzSize="middle" [nzShowPagination]="false">
+              <thead>
+                <tr>
+                  <th>{{'unit-of-measure' | i18n}}</th>
+                  <th>{{'quantity' | i18n}}</th>
+                  <th>{{'weight' | i18n}}</th>
+                  <th>{{'length' | i18n}}</th>
+                  <th>{{'width' | i18n}}</th>
+                  <th>{{'height' | i18n}}</th>
+                  <th>{{ 'unit-of-measure.default-for-inbound-receiving' | i18n }}</th>
+                  <th>{{ 'unit-of-measure.default-for-workorder-receiving' | i18n }}</th>
+                  <th>{{ 'unit-of-measure.tracking_lpn' | i18n }}</th>
+                  <th>{{ 'unit-of-measure.defaultForDisplay' | i18n }}</th>
+                  <th>{{ 'unit-of-measure.caseFlag' | i18n }}</th>
+                  <th>{{ 'unit-of-measure.packFlag' | i18n }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let itemUnitOfMeasure of itemPackageTypeTable.data">
+                  <td>{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
+                  <td>{{ itemUnitOfMeasure.quantity }}</td>
+                  <td>{{ itemUnitOfMeasure.weight }} <strong>{{ itemUnitOfMeasure.weightUnit }}</strong> </td>
+                  <td>{{ itemUnitOfMeasure.length }} <strong>{{ itemUnitOfMeasure.lengthUnit }}</strong></td>
+                  <td>{{ itemUnitOfMeasure.width }} <strong>{{ itemUnitOfMeasure.widthUnit }}</strong></td>
+                  <td>{{ itemUnitOfMeasure.height }} <strong>{{ itemUnitOfMeasure.heightUnit }}</strong></td>
+                  <td>{{ itemUnitOfMeasure.defaultForInboundReceiving }}</td>
+                  <td>{{ itemUnitOfMeasure.defaultForWorkOrderReceiving }}</td>
+                  <td>{{ itemUnitOfMeasure.trackingLpn }}</td>
+                  <td>{{ itemUnitOfMeasure.defaultForDisplay }}</td>
+                  <td>{{ itemUnitOfMeasure.caseFlag }}</td>
+                  <td>{{ itemUnitOfMeasure.packFlag }}</td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </nz-tab>
+          
+          <nz-tab nzTitle="{{ 'code' | i18n}}"> 
+            
+            <st #barcodeTable [data]="item.itemBarcodes" [columns]="barcodeTableColumns" [footer]="tableFoot"> 
+               
+            </st>
+            <ng-template #tableFoot>
+              <div nz-row nzType="flex" nzJustify="start"> 
+            
+                <button nz-button (click)="openAddItemBarcodeModal(
+                  item, tplAddItemBarcodeModalTitle, tplAddItemBarcodeModalContent)"
+                 *ngIf="!displayOnly">{{'add' | i18n}}</button>
+              </div>
+            </ng-template>
+          </nz-tab>
+
+          <nz-tab nzTitle="{{ 'kit' | i18n}}" *ngIf="item.kitItemFlag && item.billOfMaterial != null"> 
+            <st #kitInnerItemTable [data]="item.billOfMaterial.billOfMaterialLines" [columns]="kitInnerItemTableColumn" 
+              >
+              
+              <ng-template st-row="kitInnerItemColumn" let-billOfMaterialLine  >  
+                <a  routerLink="/inventory/item" routerLinkActive="active"
+                  [queryParams]="{name : billOfMaterialLine.item.name}"  target="_blank" rel="noopener noreferrer">
+                  {{ billOfMaterialLine.item.name }}</a> 
+              </ng-template>
+              <ng-template st-row="kitQuantityColumn"    >   
+                {{ item.billOfMaterial.expectedQuantity }} 
+              </ng-template>
+            </st>
+          </nz-tab>
+          <nz-tab nzTitle="{{ 'document' | i18n}}"> 
+            <nz-list nzBordered >
+              <nz-list-item>
+                <a *ngIf="item.image" [href]="item.image" target="_blank" rel="noopener noreferrer">{{'image' | i18n}}</a>
+              </nz-list-item>
+              <nz-list-item>
+                <a *ngIf="item.workOrderSOP" [href]="item.workOrderSOP" target="_blank" rel="noopener noreferrer">
+                  {{'work-order-sop' | i18n}}</a>
+              </nz-list-item>
+            </nz-list>
+          </nz-tab>
+        </nz-tabset>
+      </ng-template>
+    </st>
+  
+  </div> 
+</nz-spin>
+<ng-template #tableFoot>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+  
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
+    
+    
+    <button nz-button nz-dropdown [nzDropdownMenu]="uploadFileMenu" nzType="primary" >
+      {{ 'file-upload' | i18n }} <i nz-icon nzType="down"></i></button>
+    <nz-dropdown-menu #uploadFileMenu="nzDropdownMenu">
+      <ul nz-menu> 
+        <li nz-menu-item 
+        *ngIf="!userPermissionMap.has('upload-item') || userPermissionMap.get('upload-item')">
+          <a  routerLink="/util/file-upload/items" routerLinkActive="active"
+               >{{ 'item' | i18n }}</a>
+        </li>
+        <li nz-menu-item 
+        *ngIf="!userPermissionMap.has('upload-item-unit-of-measure') || userPermissionMap.get('upload-item-unit-of-measure')">
+          <a  routerLink="/util/file-upload/itemUnitOfMeasure" routerLinkActive="active"
+               >{{ 'unit-of-measure' | i18n }}</a>
+        </li>
+      </ul>
+    </nz-dropdown-menu>
+ 
+    <nz-divider nzType="vertical"></nz-divider>
+    <button nz-button nzType="primary" routerLink="/inventory/item/maintenance" routerLinkActive="active"
+     *ngIf="!displayOnly && (!userPermissionMap.has('add-item') || userPermissionMap.get('add-item'))">
+      {{ 'add' | i18n }}
+    </button>
+
+    
+    <nz-divider nzType="vertical"></nz-divider>
+    <button  nz-button nzType="primary" (click)="processItemOverride()" adminVisible *ngIf="!displayOnly">
+      {{ 'process-item-override' | i18n }}
+    </button> 
+  </div>
+</ng-template>
+
+
+
+
+<!-- Modal for upload images -->
+<ng-template #tplUploadImagesModalTitle>
+  <span>{{ 'item.image.upload' | i18n}}</span>
+</ng-template>
+<ng-template #tplUploadImagesModalContent>
+  <div nz-row [nzGutter]="24" style="margin-bottom: 10px">
+    <div nz-col [nzSpan]="24" nzOffset="8">
+      <img *ngIf="uploadedImage" nz-image width="300px" height="300px" [nzSrc]="uploadedImage"
+        nzDisablePreview="true" />
+      <img *ngIf="!uploadedImage && uploadingImageItem?.imageUrl" nz-image width="300px" height="300px"
+        [nzSrc]='imageServerUrl + "inventory/" + uploadingImageItem.imageUrl' [nzFallback]="fallbackImage"
+        nzDisablePreview="true" alt="" />
+      <img *ngIf="!uploadedImage && !uploadingImageItem?.imageUrl" nz-image width="300px" height="300px"
+        [nzSrc]='fallbackImage' [nzFallback]="fallbackImage" nzDisablePreview="true" alt="" />
+    </div>
+  </div>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="24" nzOffset="8">
+      <nz-form-item>
+        <nz-upload [nzAction]="imageUploadDestination" [nzBeforeUpload]="beforeUpload"
+          (nzChange)="handleChange($event)">
+          <button nz-button>
+            <i nz-icon nzType="upload"></i>
+            {{ 'image-upload' | i18n }}
+          </button>
+        </nz-upload>
+      </nz-form-item>
+    </div>
+  </div>
+
+</ng-template>
+
+
+<!-- Modal for upload work order SOP -->
+<ng-template #tplUploadWorkOrderSOPModalTitle>
+  <span>{{ 'upload-workorder-sop' | i18n}}</span>
+</ng-template>
+<ng-template #tplUploadWorkOrderSOPModalContent>
+  <div nz-row [nzGutter]="24" style="margin-bottom: 10px">
+    <div nz-col [nzSpan]="24">
+      <nz-upload
+        nzType="drag"
+        [nzMultiple]="false"
+        [nzAction]="workOrderSOPUploadUrl"
+        (nzChange)="handleWorkOrderSOPUpload($event)"
+      >
+        <p class="ant-upload-drag-icon">
+          <span nz-icon nzType="inbox"></span>
+        </p>
+        <p class="ant-upload-text">Click or drag file to this area to upload</p>
+      </nz-upload>
+    </div>
+  </div> 
+
+</ng-template>
+
+
+
+<!-- Modal for adding item barcode -->
+<ng-template #tplAddItemBarcodeModalTitle>
+  <span>{{ 'item-barcode' | i18n}}</span>
+</ng-template>
+<ng-template #tplAddItemBarcodeModalContent>
+  <form nz-form [formGroup]="addItemBarcodeForm">
+    <div nz-row [nzGutter]="24"  >
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="code">
+            {{ 'code' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="code" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>  
+    </div>  
+    <div nz-row [nzGutter]="24"  >
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="type">
+            {{ 'type' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <nz-input-group nzSize="large">
+              <nz-select  formControlName="type">
+                <nz-option *ngFor="let itemBarcodeType of validItemBarcodeTypes" 
+                  [nzLabel]="itemBarcodeType.name"
+                  [nzValue]="itemBarcodeType">
+                </nz-option>
+              </nz-select>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>  
+    </div>  
+  </form>
+</ng-template>

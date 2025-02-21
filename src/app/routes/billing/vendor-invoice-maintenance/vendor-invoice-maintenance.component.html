@@ -1,0 +1,162 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/billing/invoice" routerLinkActive="active" [queryParams]="{number:currentInvoice.number}">{{ 'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/billing/invoice" routerLinkActive="active">{{ 'invoice' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'invoice' | i18n }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex" nzStatus="wait" style="padding: 15px">
+    <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+    <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+<!-- Show basic item information -->
+<div class="small-card" *ngIf="stepIndex === 0 
+    && currentInvoice != undefined">
+  
+    <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8" *ngIf="threePartyLogisticsFlag">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="12">
+                {{ 'client' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12" >
+    
+                    <nz-select [(ngModel)]="currentInvoice!.client" (ngModelChange)="clientChanged()">
+                        <nz-option *ngFor="let client of availableClients" [nzValue]="client" [nzLabel]="client.name"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="8">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="6">
+              {{ 'number' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="invoiceNumberErrorTpl" [nzValidateStatus]="invoiceNumberValidateStatus"
+            >
+              <input  appFkey variable="invoice-number"  type="text" nz-input [(ngModel)]="currentInvoice!.number" required 
+                (blur)="invoiceNumberChange($event)" />
+              <ng-template #invoiceNumberErrorTpl let-control>  
+                  <ng-container *ngIf="invoiceNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
+                  <ng-container *ngIf="invoiceNumberValidateStatus === 'numberExists'">Invoice number already exists</ng-container>
+                
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+    
+      </div>
+      
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="6">
+              {{ 'referenceNumber' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+    
+              <input type="text" nz-input [(ngModel)]="currentInvoice.referenceNumber" />
+    
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="8">
+            <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="6" >
+                {{ 'invoiceDate' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="14">
+                <nz-date-picker [(ngModel)]="currentInvoice.invoiceDate"></nz-date-picker>
+              </nz-form-control>
+               
+            </nz-form-item>
+          </div>
+          <div nz-col [nzSpan]="8">
+              <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="6" >
+                  {{ 'dueDate' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="14">
+                  <nz-date-picker [(ngModel)]="currentInvoice.dueDate"></nz-date-picker>
+                </nz-form-control>
+                 
+              </nz-form-item>
+            </div>
+      </div>
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="24">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="2">
+              {{ 'comment' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18" 
+            >
+                <input type="text" nz-input [(ngModel)]="currentInvoice.comment" />
+    
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+  <!-- upload the template file -->
+  <div nz-row [nzGutter]="24">
+
+
+    <div nz-col [nzSpan]="8">
+      <div nz-row>
+        <nz-upload [nzAction]="templateFileUploadUrl" [nzHeaders]="{ authorization: 'authorization-text' }"
+          [nzFileList]="fileList" [nzAccept]="acceptUploadedFileTypes" (nzChange)="handleUploadChange($event)">
+          <button nz-button>
+            <i nz-icon nzType="upload"></i>
+
+            {{ 'file-upload' | i18n }}
+          </button> 
+        </nz-upload>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+<!-- Confirm the change -->
+<div class="small-card" *ngIf="stepIndex === 1">
+  <nz-card>
+    <nz-descriptions nzBordered="true">
+ 
+
+    </nz-descriptions>
+  </nz-card>
+</div>
+
+
+<div class="steps-action" *ngIf="stepIndex === 0">
+  <button nz-button nzType="default" (click)="nextStep()">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+</div>
+
+<div class="steps-action" *ngIf="stepIndex === 1">
+
+  <button nz-button nzType="default" (click)="previousStep()">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()">
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+</nz-spin>

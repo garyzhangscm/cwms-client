@@ -1,0 +1,145 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/util/system-controlled-number" routerLinkActive="active" [queryParams]="{variable:currentSystemControlledNumber.variable}">{{ 'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/util/system-controlled-number" routerLinkActive="active">{{ 'system-controlled-number' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'rf' | i18n }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex" nzStatus="wait" style="padding: 15px">
+  <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+<!-- Show basic item information -->
+<div class="small-card" *ngIf="stepIndex === 0 
+    && currentSystemControlledNumber != undefined">
+  <div nz-row [nzGutter]="24">
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'variable' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <input nz-input [(ngModel)]="currentSystemControlledNumber.variable" required  [disabled]="currentSystemControlledNumber.id !== undefined"/>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+ 
+    <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'prefix' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentSystemControlledNumber.prefix" required  />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'postfix' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentSystemControlledNumber.postfix" required  />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+  </div> 
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'length' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <nz-input-number [nzStep]="1" [(ngModel)]="currentSystemControlledNumber.length" required  >
+              </nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'currentNumber' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            
+          <nz-input-number [nzStep]="1" [(ngModel)]="currentSystemControlledNumber.currentNumber" required  >
+          </nz-input-number>
+ 
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+          
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <label nz-checkbox [(ngModel)]="currentSystemControlledNumber.rollover">
+                {{ 'rollover' | i18n }}
+            </label>
+            
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+ </div>
+</div>
+
+
+
+<!-- Confirm the change -->
+<div class="small-card" *ngIf="stepIndex === 1">
+  <nz-card>
+    <nz-descriptions nzBordered="true">
+
+      <nz-descriptions-item nzTitle="{{ 'variable' | i18n }}">{{ currentSystemControlledNumber.variable }}
+      </nz-descriptions-item>
+      
+      <nz-descriptions-item nzTitle="{{ 'prefix' | i18n }}">{{ currentSystemControlledNumber.prefix }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'postfix' | i18n }}">{{ currentSystemControlledNumber.postfix }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'length' | i18n }}">{{ currentSystemControlledNumber.length }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'currentNumber' | i18n }}">{{ currentSystemControlledNumber.currentNumber }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'rollover' | i18n }}">{{ currentSystemControlledNumber.rollover }}
+        </nz-descriptions-item>
+
+    </nz-descriptions>
+  </nz-card>
+</div>
+
+
+<div class="steps-action" *ngIf="stepIndex === 0">
+  <button nz-button nzType="default" (click)="nextStep()">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+</div>
+
+<div class="steps-action" *ngIf="stepIndex === 1">
+
+  <button nz-button nzType="default" (click)="previousStep()">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirmRF()">
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+
+</nz-spin>

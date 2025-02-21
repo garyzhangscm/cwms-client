@@ -1,0 +1,307 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/work-order/work-order" routerLinkActive="active"
+    [queryParams]="{ number: currentWorkOrder.number }">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/work-order" routerLinkActive="active">{{
+        'breadcrumb.work-order' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+
+<div nz-row style="padding: 10px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="0" [nzSize]="'small'" (nzIndexChange)="onStepsIndexChange($event)">
+      <nz-step nzTitle="{{ 'steps.work-order-complete.info.title' | i18n }}"
+        nzDescription="{{ 'steps.work-order-complete.info.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.work-order-complete.user-kpi.title' | i18n }}"
+        nzDescription="{{ 'steps.work-order-complete.user-kpi.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.work-order-complete.confirm.title' | i18n }}"
+        nzDescription="{{ 'steps.work-order-complete.confirm.description' | i18n }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+<!-- Show the work order information -->
+<nz-card nzTitle="{{ 'work-order' | i18n}}" *ngIf="workOrderCompleteTransaction !== undefined">
+
+  <nz-descriptions nzBordered>
+    <nz-descriptions-item nzTitle="{{ 'work-order.number' | i18n}}">
+      {{ workOrderCompleteTransaction.workOrder?.number}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'item-name' | i18n}}">
+      {{ workOrderCompleteTransaction.workOrder?.item?.name}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'item.description' | i18n}}">
+      {{ workOrderCompleteTransaction.workOrder?.item?.description}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'work-order.expected-quantity' | i18n}}">
+      {{ workOrderCompleteTransaction.workOrder?.expectedQuantity}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'work-order.produced-quantity' | i18n}}">
+      {{ workOrderCompleteTransaction.workOrder?.producedQuantity}}</nz-descriptions-item>
+  </nz-descriptions>
+</nz-card>
+
+
+<!-- Table to show work order  lines-->
+
+<div class="search-result-list">
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }"
+    [nzData]="workOrderCompleteTransaction.workOrderLineCompleteTransactions!" nzShowPagination="false"
+    nzBordered="true" #workOrderLineTable>
+
+    <thead>
+      <th></th>
+      <th>
+        {{ 'work-order.line.number' | i18n }}</th>
+      <th>
+        {{ 'item' | i18n }}</th>
+      <th>
+        {{ 'item.description' | i18n }}</th>
+      <th>
+        {{ 'work-order.line.expectedQuantity' | i18n }}</th>
+      <th>
+        {{ 'work-order.line.openQuantity' | i18n }}</th>
+      <th>
+        {{ 'work-order.line.inprocessQuantity' | i18n }}</th>
+      <th>
+        {{ 'work-order.line.deliveredQuantity' | i18n }}</th>
+      <th>
+        {{ 'work-order.line.consumedQuantity' | i18n }}</th>
+      <th>
+        {{ 'inventory.status' | i18n }}</th>
+      <th>
+        {{ 'work-order.line.override-consumed-quantity' | i18n }}</th>
+      <th>
+        {{ 'work-order.line.scrappedQuantity' | i18n }}</th>
+      <th>
+        {{ 'work-order.line.returnMaterialRequest' | i18n }}</th>
+      <th>
+        {{ 'action' | i18n }}</th>
+    </thead>
+    <tbody>
+
+      <tr *ngFor="let data of workOrderLineTable.data">
+        <td>
+
+          <i *ngIf="mapOfWorkOrderLineStatus[data.workOrderLine!.id!] === true" nz-icon [nzType]="'check-circle'"
+            [nzTheme]="'twotone'" [nzTwotoneColor]="'#008000'" style="font-size: 26px"></i>
+          <i *ngIf="mapOfWorkOrderLineStatus[data.workOrderLine!.id!] === false" nz-icon [nzType]="'close-circle'"
+            [nzTheme]="'twotone'" [nzTwotoneColor]="'#eb2f96'" style="font-size: 26px"></i>
+
+        </td>
+        <td>{{ data.workOrderLine?.number }}</td>
+        <td>{{ data.workOrderLine?.item?.name }}</td>
+        <td>{{ data.workOrderLine?.item?.description }}</td>
+        <td>{{ data.workOrderLine?.expectedQuantity }}</td>
+        <td>{{ data.workOrderLine?.openQuantity }}</td>
+        <td>{{ data.workOrderLine?.inprocessQuantity }}</td>
+        <td>{{ data.workOrderLine?.deliveredQuantity }}</td>
+        <td>{{ data.workOrderLine?.consumedQuantity }}</td>
+        <td>{{ data.workOrderLine?.inventoryStatus?.name }}</td>
+        <td><input nz-input [(ngModel)]="data.adjustedConsumedQuantity" (ngModelChange)="resetWorkOrderLineStatus(data)"
+            [disabled]="data.workOrderLine!.deliveredQuantity! <= data.workOrderLine!.consumedQuantity!"
+            style="width: 100px;" />
+        </td>
+        <td><input nz-input [(ngModel)]="data.scrappedQuantity" (ngModelChange)="resetWorkOrderLineStatus(data)"
+            [disabled]="data.workOrderLine!.deliveredQuantity! <= data.workOrderLine!.consumedQuantity!"
+            style="width: 100px;" />
+        </td>
+        <td>
+          <ul *ngIf="data.returnMaterialRequests.length > 0">
+            <li *ngFor="let returnMaterialRequest of data.returnMaterialRequests">
+
+              <a nz-popover nzPopoverTitle="{{returnMaterialRequest.lpn}}"
+                [nzPopoverContent]="returnMaterialRequestDetails">{{returnMaterialRequest.lpn}}</a>
+
+              <ng-template #returnMaterialRequestDetails>
+
+
+                <nz-descriptions nzBordered="true" nzSize="small">
+                  <nz-descriptions-item nzTitle="{{'lpn' | i18n}}">{{returnMaterialRequest.lpn}}
+                  </nz-descriptions-item>
+                  <nz-descriptions-item nzTitle="{{'item' | i18n}}">{{data.workOrderLine!.item?.name}}
+                  </nz-descriptions-item>
+                  <nz-descriptions-item nzTitle="{{'item.description' | i18n}}">
+                    {{data.workOrderLine!.item?.description}}</nz-descriptions-item>
+                  <nz-descriptions-item nzTitle="{{'quantity' | i18n}}">
+                    {{ returnMaterialRequest.quantity }}</nz-descriptions-item>
+                  <nz-descriptions-item nzTitle="{{'inventory-status' | i18n}}">
+                    {{ returnMaterialRequest.inventoryStatus?.description }}
+                  </nz-descriptions-item>
+                  <nz-descriptions-item nzTitle="{{'item-package-type' | i18n}}">
+                    {{returnMaterialRequest.itemPackageType?.name}}</nz-descriptions-item>
+                  <nz-descriptions-item nzTitle="{{'location' | i18n}}">{{returnMaterialRequest.location}}
+                  </nz-descriptions-item>
+
+                </nz-descriptions>
+              </ng-template>
+            </li>
+
+          </ul>
+        </td>
+        <td>
+
+
+          <button nz-button nzType="primary" nz-dropdown [nzDropdownMenu]="balanceQuantityActionTpl"
+            [disabled]="data.workOrderLine!.deliveredQuantity! <= data.workOrderLine!.consumedQuantity!">
+            {{ 'complete' | i18n }}
+            <i nz-icon nzType="down"></i>
+          </button>
+          <nz-dropdown-menu #balanceQuantityActionTpl="nzDropdownMenu">
+            <ul nz-menu>
+              <li nz-menu-item>
+                <a (click)="consumeBalance(data)">{{ 'work-order.line.complete-transaction.consume-all-quantity' | i18n
+                  }}</a>
+              </li>
+              <li nz-menu-item>
+                <a (click)="scrapBalance(data)">{{ 'work-order.line.complete-transaction.scrap-all-quantity' | i18n
+                  }}</a>
+              </li>
+              <li nz-menu-item>
+                <a (click)="openReturnMaterialModal(data, tplReturnMaterialModalTitle, tplReturnMaterialModalContent)">{{
+                  'work-order.line.returnMaterialRequest' | i18n }}</a>
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+        </td>
+      </tr>
+    </tbody>
+
+  </nz-table>
+</div>
+
+<div nz-row style="padding-top: 10px;">
+
+
+  <a nz-button nzType="link" (click)="addKPIInfo()" *ngIf="!isWorkOrderReadyForComplete()" disabled>
+    {{ 'steps.work-order-complete.user-kpi.title' | i18n }}</a>
+
+  <a nz-button nzType="link" (click)="addKPIInfo()" *ngIf="isWorkOrderReadyForComplete()">
+    {{ 'steps.work-order-complete.user-kpi.title' | i18n }}</a>
+  <button nz-button nzType="primary" (click)="confirmWorkOrderComplete()" [disabled]="!isWorkOrderReadyForComplete()">
+    {{ 'complete' | i18n }}
+  </button>
+</div>
+
+
+<!-- Modal for return material inventory -->
+<ng-template #tplReturnMaterialModalTitle>
+  <span>{{ 'work-order.line.returnMaterialRequest' | i18n}}</span>
+</ng-template>
+<ng-template #tplReturnMaterialModalContent>
+  <form nz-form [formGroup]="returnMaterialForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNumber">
+            {{ 'item' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="itemNumber" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="16">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemDescription">
+            {{ 'item.description' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="itemDescription" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
+            {{ 'lpn' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-group nzSize="large">
+              <input appFkey variable="lpn" nz-input formControlName="lpn"
+                (blur)="returningMaterialLPNChanged($event )" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="16">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="inventoryStatus">
+            {{ 'inventory.status' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-select nz-input formControlName="inventoryStatus" style="width: 250px">
+              <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
+                [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.name">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemPackageType">
+            {{ 'item.package-type' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+
+            <nz-select nz-input formControlName="itemPackageType">
+              <nz-option *ngFor="let availableItemPackageType of returningWorkOrderLine.item!.itemPackageTypes"
+                [nzLabel]="availableItemPackageType.name!" [nzValue]="availableItemPackageType.name!">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="quantity">
+            {{ 'quantity' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="quantity" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationName">
+            {{ 'location' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="locationName" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>
+  </form>
+
+</ng-template>

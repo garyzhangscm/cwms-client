@@ -1,0 +1,185 @@
+<page-header title="{{'customer-return' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="number" [nzSpan]="6">
+          {{ 'number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <input nz-input name="number" id="number" formControlName="number" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="12" >
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="6" nzFor="status">
+          {{ 'status' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          
+          <nz-select  nzMode="multiple" formControlName="statusList" name="statusList">
+            <nz-option
+              *ngFor="let status of receiptStatusList | keys"
+              [nzValue]="status.key"
+              nzLabel="{{ 'RECEIPT-STATUS-' + status.key | i18n}}"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()"  >
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+
+<div class="search-result-list">
+  <!--
+
+    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+      <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+    </div>
+  -->
+    
+    <st #st [data]="customerReturnOrders"  [columns]="columns" [scroll]="{ x: '1450px'}"
+    [expand]="expand"  expandAccordion (change)="csrTableChanged($event)"> 
+      
+      <!-- more details about the customer -->
+      <ng-template st-row="customerColumn" let-item let-index="index">
+        
+        <nz-skeleton-element 
+            *ngIf="item.customerId && item.customer == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+        <a nz-tooltip [nzTooltipTitle]="customerDetailsTemplate">{{ item.customer?.name }}</a>
+        
+        <ng-template #customerDetailsTemplate>
+          
+          <address>  
+            {{item.customer?.addressLine1}} <br>
+            {{item.customer?.addressLine2}} <br>
+            {{item.customer?.addressCity}},  {{item.customer?.addressState}} <br>
+            {{item.customer?.addressPostcode}} <br>
+            </address>
+        </ng-template>
+
+      </ng-template>
+
+      <!--   action colummn  --> 
+      <ng-template st-row="actionColumnTitle" type="title" let-c>
+        {{ 'action' | i18n }}
+      </ng-template>
+      <ng-template st-row="actionColumn" let-item let-index="index"> 
+        
+        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+          {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu> 
+
+            <li nz-menu-item >
+              <a routerLink="/inbound/customer-return-receive" routerLinkActive="active"
+              [queryParams]="{id: item.id}">{{ 'receive' | i18n }}</a>
+            </li>
+            <li nz-menu-item >
+              <a routerLink="/inbound/customer-return-order/maintenance" routerLinkActive="active"
+              [queryParams]="{id: item.id}">{{ 'modify' | i18n }}</a>
+            </li>
+            <li nz-menu-item>
+              <a  (click)="removeCustomerReturnOrder(item)">{{ 'remove' | i18n }}</a>
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+      </ng-template>
+      
+        <!--   return lines -->
+        <ng-template #expand let-item let-index="index" >
+          
+            <nz-tabset>
+              <nz-tab nzTitle="{{'customer-return-order.line' | i18n}}">
+                
+              <nz-table [nzScroll]="{ x: '50vw' }" nzShowPagination [nzData]="item!.customerReturnOrderLines"
+              #displayOrderLineTable>
+              <thead>
+                  <tr> 
+                    <th nzWidth="150px">
+                      {{ 'line.number' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'order' | i18n }}
+                    </th>  
+                    <th>
+                      {{ 'item' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'item.description' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'order.line.expectedQuantity' | i18n }}
+                    </th>  
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr *ngFor="let data of displayOrderLineTable.data">  
+                      <td  nzWidth="150px">{{ data.number }} </td>
+                      <td>
+                        <nz-skeleton-element 
+                            *ngIf="data.outboundOrderNumber == null"
+                            nzType="input"
+                            [nzActive]="true"
+                            [nzSize]="'small'"
+                            style="width:75px"
+                          ></nz-skeleton-element> 
+                          {{ data.outboundOrderNumber }} </td> 
+                      <td>
+                        <nz-skeleton-element 
+                            *ngIf="data.itemId && data.item == null"
+                            nzType="input"
+                            [nzActive]="true"
+                            [nzSize]="'small'"
+                            style="width:75px"
+                          ></nz-skeleton-element> 
+                          {{ data.item?.name }} </td>
+                      <td>
+                        <nz-skeleton-element 
+                            *ngIf="data.itemId && data.item == null"
+                            nzType="input"
+                            [nzActive]="true"
+                            [nzSize]="'small'"
+                            style="width:75px"
+                          ></nz-skeleton-element> 
+                          {{ data.item?.description }}  </td>
+                      <td>{{ data.expectedQuantity }} </td> 
+                  </tr>
+              </tbody>
+              </nz-table>
+                
+              </nz-tab>
+            </nz-tabset>
+          </ng-template>
+    </st>
+    <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
+      {{searchResult}}
+    </div>
+    
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
+        <button nz-button nzType="primary" routerLink="/inbound/customer-return-order/maintenance" routerLinkActive="active">
+          {{ 'add' | i18n }}
+        </button>
+    </div>
+</div>
+</nz-spin>

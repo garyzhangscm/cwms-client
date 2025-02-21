@@ -1,0 +1,86 @@
+<page-header title="{{'pick-confirm-strategy' |  i18n}}" > </page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+
+
+    <div nz-col [nzSpan]="12" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label for="itemFamily"  [nzSpan]="6">
+          {{ 'item-family' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+
+          <nz-select formControlName="itemFamily">
+            <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.description"
+              [nzValue]="itemFamily.id">
+            </nz-option>
+          </nz-select>
+          </nz-form-control>
+      </nz-form-item>
+    </div>
+    
+    <div nz-col [nzSpan]="8" [hidden]="isCollapse">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="name">
+            {{ 'item' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+
+            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+              <input nz-input name="itemName" id="itemName" formControlName="itemName" />
+            </nz-input-group>
+            <ng-template #suffixIconButton>
+              <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
+              </app-inventory-item-query-popup>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      <a class="collapse" (click)="toggleCollapse()">
+        {{ 'collapse' | i18n }}
+
+        <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
+      </a>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+
+<div class="search-result-list"> 
+    
+    <st #st [data]="pickConfirmStrategies" [columns]="columns" [footer]="tableFoot" [scroll]="{ x: '2715px' }">
+      
+          <!--   typeColumn colummn  -->  
+          <ng-template st-row="actionColumn" let-item let-index="index"> 
+              
+            <a nz-tooltip [nzTooltipTitle]="item.type">{{ item.type}}</a>
+        </ng-template>   
+    </st>
+  
+    <ng-template #tableFoot>
+
+        <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+        {{searchResult}}
+        </div>
+        
+    </ng-template>
+  </div>
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
+    <button nz-button nzType="primary" routerLink="/outbound/pick-confirm-strategy/maintenance" routerLinkActive="active">
+      {{ 'add' | i18n }}
+    </button>
+  </div>
+</nz-spin>

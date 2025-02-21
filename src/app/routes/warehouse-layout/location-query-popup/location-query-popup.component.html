@@ -1,0 +1,125 @@
+<button nz-button nzType="primary" nzSearch
+  (click)="openQueryModal(tplQueryModalTitle, tplQueryModalContent, tplQueryModalFooter)"><i nz-icon
+    nzType="search"></i></button>
+
+
+<!-- Modal for query -->
+<ng-template #tplQueryModalTitle>
+  <span>{{ 'page.modal.query.popup' | i18n}}</span>
+</ng-template>
+<ng-template #tplQueryModalContent>
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label for="location_group_type" [nzSpan]="12">
+            {{ 'location-group-type' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12">
+            <nz-select nzMode="tags" formControlName="taggedLocationGroupTypes">
+              <nz-option *ngFor="let locationGroupType of locationGroupTypes" [nzLabel]="locationGroupType.description"
+                [nzValue]="locationGroupType.id"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label for="location_group" [nzSpan]="12">
+            {{ 'location-group' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12">
+            <nz-select nzMode="tags" formControlName="taggedLocationGroups">
+              <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description!"
+                [nzValue]="locationGroup.id"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="12" nzFor="name">
+            {{ 'location' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12">
+            <input nz-input name="locationName" id="locationName" formControlName="locationName" />
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Table to Display the result  -->
+  <div class="search-result-list">
+
+    <nz-table [nzScroll]="{ x: '100vw'  }" #rowSelectionTable nzShowPagination [nzData]="listOfAllLocations"
+      [nzPageSize]=5>
+      <thead>
+        <tr>
+          <th nzWidth="62px" nzLeft></th>
+
+          <th [nzSortOrder]="locationNameColumn.sortOrder" [nzSortFn]="locationNameColumn.sortFn"
+            [nzSortDirections]="locationNameColumn.sortDirections"
+            [nzFilterMultiple]="locationNameColumn.filterMultiple" [nzFilters]="locationNameColumn.listOfFilter"
+            [nzFilterFn]="locationNameColumn.filterFn" [nzShowFilter]="locationNameColumn.showFilter" nzLeft>
+            {{ locationNameColumn.name | i18n }}
+          </th>
+
+          <th *ngFor="let column of listOfColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+            {{ column.name | i18n }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of rowSelectionTable.data" (click)="rowClicked(data)">
+          <td [nzChecked]="setOfCheckedId.has(data.id!)" (nzCheckedChange)="onItemChecked(data.id!, $event)" nzLeft>
+          </td>
+
+          <!-- Display the result -->
+          <td nzLeft>{{ data.name }}</td>
+          <td>{{ data.locationGroup?.description }}</td>
+          <td>{{ data.aisle }}</td>
+          <td>{{ data.length }}</td>
+          <td>{{ data.width }}</td>
+          <td>{{ data.height }}</td>
+          <td>{{ data.capacity }}</td>
+          <td>{{ data.fillPercentage }}</td>
+          <td>{{ data.currentVolume }}</td>
+          <td>{{ data.pendingVolume }}</td>
+          <td>{{ data.putawaySequence }}</td>
+          <td>{{ data.pickSequence }}</td>
+          <td>{{ data.countSequence }}</td>
+          <td>{{ data.enabled + ''| i18n}}</td>
+          <td>{{ data.locked + '' | i18n}}</td>
+          <td>{{ data.reservedCode }}</td>
+
+        </tr>
+      </tbody>
+    </nz-table>
+
+
+
+  </div>
+</ng-template>
+
+<ng-template #tplQueryModalFooter>
+  <button nz-button nzType="default" (click)="closeQueryModal()">{{ 'cancel' | i18n}}</button>
+  <button nz-button nzType="primary" (click)="returnResult()" [disabled]="isAnyRecordChecked() == false">{{ 'confirm' |
+    i18n}}</button>
+
+</ng-template>

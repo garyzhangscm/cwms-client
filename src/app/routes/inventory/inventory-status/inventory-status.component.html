@@ -1,0 +1,91 @@
+<page-header title="{{'inventory-status' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label for="name" [nzSpan]="8">
+            {{ 'inventory-status' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <input nz-input name="name" id="name" formControlName="name" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+         
+    </div> 
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="search()" >
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Table to Display the result  -->
+
+  <div class="search-result-list"> 
+    
+    <st #st [data]="listOfAllInventoryStatus"  [columns]="columns"  >
+        
+      <ng-template st-row="reasonCodeColumn" let-inventoryStatus let-index="index"> 
+         
+          <ul nz-menu> 
+
+            <li nz-menu-item *ngIf="inventoryStatus.reasonRequiredWhenReceiving">
+              {{ 'reasonRequiredWhenReceiving' | i18n}}
+            </li> 
+            <li nz-menu-item *ngIf="inventoryStatus.reasonRequiredWhenProducing">
+              {{ 'reasonRequiredWhenProducing' | i18n}}
+            </li> 
+            <li nz-menu-item *ngIf="inventoryStatus.reasonRequiredWhenAdjusting">
+              {{ 'reasonRequiredWhenAdjusting' | i18n}}
+            </li> 
+            <li nz-menu-item *ngIf="inventoryStatus.reasonOptionalWhenReceiving">
+              {{ 'reasonOptionalWhenReceiving' | i18n}}
+            </li> 
+            <li nz-menu-item *ngIf="inventoryStatus.reasonOptionalWhenProducing">
+              {{ 'reasonOptionalWhenProducing' | i18n}}
+            </li> 
+            <li nz-menu-item *ngIf="inventoryStatus.reasonOptionalWhenAdjusting">
+              {{ 'reasonOptionalWhenAdjusting' | i18n}}
+            </li> 
+          </ul> 
+      </ng-template>
+      <!--   action colummn  -->  
+      <ng-template st-row="actionColumn" let-item let-index="index"> 
+        
+        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+          {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu> 
+
+            <li nz-menu-item >
+                <a routerLink="/inventory/status/maintenance" routerLinkActive="active"
+                  [queryParams]="{id : item.id}">
+                  {{ 'modify' | i18n }}</a> 
+              </li> 
+            <li nz-menu-item>
+              <a  (click)="removeInventoryStatus(item.id)">
+                {{ 'remove' | i18n }}</a>
+            </li> 
+          </ul>
+        </nz-dropdown-menu>
+      </ng-template>
+    </st>
+    <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
+      {{searchResult}}
+    </div>
+      <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;"> 
+        <button nz-button nzType="primary" routerLink="/inventory/status/maintenance" routerLinkActive="active">
+          {{ 'add' | i18n }}
+        </button>
+      </div>
+  </div>
+</nz-spin>
+    

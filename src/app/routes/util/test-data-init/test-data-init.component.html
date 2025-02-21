@@ -1,0 +1,18 @@
+<page-header></page-header>
+
+<ng-container>
+  <nz-card [nzExtra]="extraTemplate">
+    <nz-steps [nzCurrent]="currentStep" nzDirection="vertical">
+      <nz-step *ngFor="let dataName of dataNames" nzTitle="{{dataName}}" nzDescription="{{dataName}}"></nz-step>
+    </nz-steps>
+  </nz-card>
+  <ng-template #extraTemplate>
+    <button nz-button (click)="loadData(0)" [disabled]="loadButtonDisabled" [nzLoading]="loadButtonLoading"
+      nzType="primary">Load
+      Data</button>
+    <nz-divider nzType="vertical"></nz-divider>
+    <button nz-button (click)="clearData()" [disabled]="clearButtonDisabled" [nzLoading]="clearButtonLoading"
+      nzDanger>Clear
+      Data</button>
+  </ng-template>
+</ng-container>

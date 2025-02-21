@@ -1,0 +1,7 @@
+export enum ParcelPackageStatus {
+  REQUESTED = 'REQUESTED',
+  PICKED_UP = 'PICKED_UP',
+  IN_TRANSIT = 'IN_TRANSIT',
+  OUT_FOR_DELIVERY = 'OUT_FOR_DELIVERY',
+  DELIVERED = 'DELIVERED', 
+}

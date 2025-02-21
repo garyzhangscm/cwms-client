@@ -1,0 +1,625 @@
+<page-header title="{{'menu.main.inventory.inventory' |  i18n}}" > </page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+    <div nz-row [nzGutter]="24" [hidden]="isCollapse" >
+      <div nz-col [nzSpan]="6"   *ngIf="threePartyLogisticsFlag">
+        <nz-form-item nzFlex>
+          <nz-form-label for="client" [nzSpan]="6">
+            {{ 'client' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <nz-select formControlName="client">
+              <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+      <div nz-col [nzSpan]="6"  >
+        <nz-form-item nzFlex>
+          <nz-form-label for="location_group" [nzSpan]="6">
+            {{ 'location-group' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <nz-select   formControlName="locationGroups" nzAllowClear >
+              <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description!"
+                [nzValue]="locationGroup.id"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="6"  >
+        <nz-form-item nzFlex>
+          <nz-form-label for="item-family" [nzSpan]="6">
+            {{ 'item-family' | i18n }}
+          </nz-form-label>
+
+          <nz-form-control [nzSpan]="18">
+            <nz-select nzMode="tags" formControlName="taggedItemFamilies">
+              <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.label"
+                [nzValue]="itemFamily.value">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="6"  >
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="name">
+            {{ 'item' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+
+            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+              <input nz-input name="itemName" id="itemName" formControlName="itemName" />
+            </nz-input-group>
+            <ng-template #suffixIconButton>
+              <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
+              </app-inventory-item-query-popup>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="24" [hidden]="isCollapse" >
+      <div nz-col [nzSpan]="6"  >
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6"  nzFor="location">
+            {{ 'location' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18" >
+            <nz-input-group nzSearch [nzAddOnAfter]="locationSuffixIconButton">
+              <input nz-input formControlName="location" id="location" name="location" />
+            </nz-input-group>
+            <ng-template #locationSuffixIconButton>
+              <app-warehouse-layout-location-query-popup (recordSelected)="processQueryLocationQueryResult($event)">
+              </app-warehouse-layout-location-query-popup>
+            </ng-template>
+          </nz-form-control>
+
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="6">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6"  nzFor="lpn">
+            {{ 'lpn' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <input barcode variable="lpn" nz-input name="lpn" id="lpn" formControlName="lpn" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+      <div nz-col [nzSpan]="6">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'inventory-status' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+
+              
+              <nz-select formControlName="inventoryStatus" nzAllowClear >
+            
+              <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
+                  [nzLabel]="inventoryStatus.description"
+                  [nzValue]="inventoryStatus.id">
+              </nz-option>
+          </nz-select>
+          
+
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+      
+      <div nz-col [nzSpan]="6">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="color">
+            {{ 'color' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <input nz-input name="color" id="color" formControlName="color" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="24" [hidden]="isCollapse">     
+        
+      <div nz-col [nzSpan]="6">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="style">
+            {{ 'style' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <input nz-input name="style" id="style" formControlName="style" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="6">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="receiptNumber">
+            {{ 'receipt.number' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <input nz-input name="receiptNumber" id="receiptNumber" formControlName="receiptNumber" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>
+
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+        <a class="collapse" (click)="toggleCollapse()">
+          {{ 'collapse' | i18n }}
+
+          <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
+        </a>
+      </div>
+    </div>
+  </form>
+
+  <!-- Table to Display the result  -->
+  <div class="search-result-list">
+    
+    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;text-align: left">
+      
+  <!--
+      <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()">
+
+      </app-util-table-column-selection>
+      <nz-divider nzType="vertical"></nz-divider>
+    -->
+      <button nz-button (click)="exportResult()">{{'export' | i18n}}</button> 
+      <nz-divider nzType="vertical"></nz-divider>
+      <span style="padding-left: 15px; padding-right:15px"> {{'inventory-display-options' | i18n}}:</span> 
+      <nz-select nzAllowClear  [(ngModel)]="inventoryDisplayOption"  
+          (ngModelChange)="inventoryDisplayOptionChanged()" style="width: 200px;"  >
+          <nz-option *ngFor="let option of inventoryDisplayOptions | keys"
+                      nzLabel="{{ 'INVENTORY-DISPLAY-OPTIONS-' + option.key | i18n }}" [nzValue]="option.key">
+          </nz-option>
+      </nz-select>  
+    </div>
+    <!--[data]="listOfDisplayInventories" -->
+    <st #inventoryTable 
+    [data]="listOfDisplayInventories"  
+    [columns]="inventoryTablecolumns" [footer]="tableFoot" [scroll]="{ x: '2650px' }"
+      [body]="bodyTpl" [page]="invetoryTablePagination"
+      (change)="inventoryTableChanged($event)"
+      [widthMode]="{ type: 'strict' }" resizable>
+    
+      <ng-template st-row="itemColumn" let-inventory>  
+        <a *ngIf="inventory.item != null" nz-tooltip nzTooltipTitle="{{ inventory.item?.description }}">{{ inventory.item?.name }}</a>
+        <span *ngIf="inventory.item == null" >** Multiple Values**</span>
+      </ng-template>
+      <ng-template st-row="itemPackageTypeColumn" let-inventory>  
+        <a *ngIf="inventory.itemPackageType != null" nz-popover nzPopoverTitle="{{ 'itemPackageTypeDetails' | i18n}}"
+              [nzPopoverContent]="itemPackageTypeDetails">{{ inventory.itemPackageType?.name }}
+          <ng-template #itemPackageTypeDetails>
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #itemPackageTypeDetailTable
+              [nzData]="inventory.itemPackageType!.itemUnitOfMeasures!" nzSize="middle" [nzShowPagination]="false"
+              nzBordered>
+              <thead>
+                <tr>
+                  <th>{{ 'unitOfMeasure' | i18n}}</th>
+                  <th>{{ 'quantity' | i18n }}</th>
+                  <th>{{ 'weight' | i18n }}</th>
+                  <th>{{ 'length' | i18n }}</th>
+                  <th>{{ 'width' | i18n }}</th>
+                  <th>{{ 'height' | i18n }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let itemUnitOfMeasure of itemPackageTypeDetailTable.data">
+                  <td>
+                    <nz-skeleton-element 
+                      *ngIf="itemUnitOfMeasure.unitOfMeasureId && itemUnitOfMeasure.unitOfMeasure == null"
+                      nzType="input"
+                      [nzActive]="true"
+                      [nzSize]="'small'"
+                      style="width:75px"
+                    ></nz-skeleton-element> 
+                    {{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
+                  <td>{{ itemUnitOfMeasure.quantity }} </td>
+                  <td>{{ itemUnitOfMeasure.weight }}</td>
+                  <td>{{ itemUnitOfMeasure.length }}</td>
+                  <td>{{ itemUnitOfMeasure.width }}</td>
+                  <td>{{ itemUnitOfMeasure.height }}</td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </ng-template>
+        </a>
+        <span *ngIf="inventory.itemPackageType == null" >** Multiple Values**</span>
+              
+      </ng-template>
+      <ng-template st-row="locationColumn" let-inventory>  
+        
+        <nz-skeleton-element 
+          *ngIf="inventory.locationId && inventory.location == null"
+          nzType="input"
+          [nzActive]="true"
+          [nzSize]="'small'"
+          style="width:75px"
+        ></nz-skeleton-element> 
+        {{ inventory.locationName }}
+      </ng-template>
+      
+      <ng-template st-row="receiptColumn" let-inventory>  
+        
+        <nz-skeleton-element 
+          *ngIf="inventory.receiptId && inventory.receipt == null"
+          nzType="input"
+          [nzActive]="true"
+          [nzSize]="'small'"
+          style="width:75px"
+        ></nz-skeleton-element> 
+        <a routerLink="/inbound/receipt" routerLinkActive="active"
+            [queryParams]="{number : inventory.receipt?.number}" 
+            target="_blank" rel="noopener noreferrer">
+          {{ inventory.receipt?.number }}</a>
+        
+      </ng-template>
+
+      <ng-template st-row="quantityColumn" let-inventory>  
+          {{ inventory.displayQuantity }}  
+          <nz-skeleton-element 
+              *ngIf="inventory.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasureId 
+                  && inventory.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure == null"
+              nzType="input"
+              [nzActive]="true"
+              [nzSize]="'small'"
+              style="width:75px"
+          ></nz-skeleton-element>  
+          <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList">
+                {{inventory.itemPackageType?.displayItemUnitOfMeasure?.unitOfMeasure?.name}}<span nz-icon nzType="down"></span>
+          </a>
+          <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
+                <ul nz-menu nzSelectable>
+                  <li nz-menu-item *ngFor="let itemUnitOfMeasure of inventory.itemPackageType?.itemUnitOfMeasures" 
+                  (click)="changeDisplayItemUnitOfMeasure(inventory, itemUnitOfMeasure)">
+                    {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                  </li> 
+                </ul>
+          </nz-dropdown-menu> 
+      </ng-template>
+      <ng-template st-row="inventoryStatusColumn" let-inventory>  
+        
+        <a nz-tooltip [nzTooltipTitle]="inventory.inventoryStatus!.description">{{
+          inventory.inventoryStatus!.description}}</a>
+      </ng-template>
+      <ng-template st-row="fifoDateColumn" let-inventory>  
+        
+        <span *ngIf="inventory.fifoDate != null">
+          {{inventory.fifoDate | date: 'shortDate' : 'UTC'}} 
+          </span>
+      </ng-template>
+      
+      <ng-template st-row="inWarehouseDatetimeColumn" let-inventory>  
+        
+        <span *ngIf="inventory.inWarehouseDatetime != null">
+          {{inventory.inWarehouseDatetime | date: 'shortDate'}} 
+          </span>
+      </ng-template> 
+       
+
+      <ng-template st-row="lockedForAdjustColumn" let-inventory>  
+        
+        <span *ngIf="inventory.lockedForAdjust === false">{{ (inventory.lockedForAdjust + '') | i18n }}</span>
+        <span *ngIf="inventory.lockedForAdjust === true"><a routerLink="/inventory/inventory-adjustment-request"
+            routerLinkActive="active" [queryParams]="{inventoryId : inventory.id!}">{{ (inventory.lockedForAdjust + '') | i18n
+            }}</a></span>
+      </ng-template>
+      <ng-template st-row="pickColumn" let-inventory>  
+        
+        <nz-skeleton-element 
+          *ngIf="inventory.pickId && inventory.pick == null"
+          nzType="input"
+          [nzActive]="true"
+          [nzSize]="'small'"
+          style="width:75px"
+        ></nz-skeleton-element> 
+        {{ inventory.pick?.number }}
+      </ng-template>
+      <ng-template st-row="allocateByPickColumn" let-inventory>  
+        
+        <nz-skeleton-element 
+          *ngIf="inventory.allocatedByPickId && inventory.allocatedByPick == null"
+          nzType="input"
+          [nzActive]="true"
+          [nzSize]="'small'"
+          style="width:75px"
+        ></nz-skeleton-element> 
+        {{ inventory.allocatedByPick?.number }}
+      </ng-template>
+      <ng-template st-row="movementPathColumn" let-inventory>  
+        
+        <ol *ngIf="inventory.inventoryMovements != null && inventory.inventoryMovements!.length > 0">
+          <li *ngFor="let movement of inventory.inventoryMovements">
+            
+            <span>
+              <nz-skeleton-element 
+                *ngIf="movement.locationId && movement.location == null"
+                nzType="input"
+                [nzActive]="true"
+                [nzSize]="'small'"
+                style="width:75px"
+              ></nz-skeleton-element> 
+              {{ movement?.location?.name}}</span>
+          </li>
+        </ol>
+      </ng-template>
+      <ng-template st-row="actionColumn" let-inventory>    
+          <button nz-button nz-dropdown [nzDropdownMenu]="actions" [nzLoading]="mapOfInprocessInventoryId[inventory.id!]"
+          *ngIf="inventory.lockedForAdjust === false && (this.inventoryDisplayOption == null || this.inventoryDisplayOption == inventoryDisplayOptions.NONE)">{{ 'action' | i18n }}<i nz-icon nzType="down"></i></button>
+          <nz-dropdown-menu #actions="nzDropdownMenu">
+            <ul nz-menu>
+              <li nz-menu-item 
+              *ngIf="!userPermissionMap.has('adjust-inventory-quantity') || userPermissionMap.get('adjust-inventory-quantity')">
+                <a routerLink="/inventory/inventory-quantity-change" routerLinkActive="active"
+                  [queryParams]="{id : inventory.id!, by : 'inventory'}" >
+                  {{ 'adjustInventory' | i18n }}</a>
+              </li>
+              <li nz-menu-item
+              *ngIf="!userPermissionMap.has('change-inventory-attribute') || userPermissionMap.get('change-inventory-attribute')">
+                <a routerLink="/inventory/inventory-attribute-change" routerLinkActive="active"
+                  [queryParams]="{id : inventory.id!}" >
+                  {{ 'inventory.attributeChange' | i18n }}</a>
+              </li>
+              <li nz-menu-item
+              *ngIf="!userPermissionMap.has('move-inventory') || userPermissionMap.get('move-inventory')">
+                <a (click)="openMoveInventoryModal(inventory, tplInventoryMoveModalTitle, tplInventoryMoveModalContent)" >
+                  {{ 'moveInventory' | i18n }}</a>
+              </li>
+              <li nz-menu-item
+                *ngIf="!userPermissionMap.has('remove-inventory') || userPermissionMap.get('remove-inventory')">
+                <a
+                  (click)="openRemoveInventoryModal(inventory, tplInventoryRemovalModalTitle, tplInventoryRemovalModalContent )"
+                  nzDanger>{{ 'removeInventory' | i18n }}</a></li>
+              <li nz-menu-item
+                 *ngIf="(!userPermissionMap.has('reverse-inventory') || userPermissionMap.get('reverse-inventory')) &&
+                        (inventory.receiptId != null || inventory.workOrderId != null)">
+                 <a
+                   (click)="reverseInventory(inventory)"
+                   nzDanger>{{ 'reverseInventory' | i18n }}</a></li>
+
+            </ul>
+          </nz-dropdown-menu>
+          <nz-divider nzType="vertical"></nz-divider>
+          <cwms-common-print-button style='padding-left: 20px;' 
+            *ngIf="(this.inventoryDisplayOption == null || this.inventoryDisplayOption == inventoryDisplayOptions.NONE)"
+            (print)="printLPNReport($event, inventory)"
+            (preview)="previewLPNReport(inventory)">
+          </cwms-common-print-button>
+      </ng-template>
+      <!--  Statistics  -->
+      <ng-template #bodyTpl let-s>
+        <ng-container *ngIf="inventoryTable.count > 0">
+          <tr>
+            <td></td>
+            <td>{{'summary' | i18n}}</td> 
+            <td *ngIf="threePartyLogisticsFlag"></td> 
+            <td></td> 
+            <td></td>  
+            <td></td>  
+            <td>{{ s.quantitySum.text }}</td> 
+          </tr> 
+        </ng-container>
+      </ng-template>
+    </st>
+    
+  </div>
+ 
+
+  <ng-template #tableFoot>
+
+    <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+      {{searchResult}}
+    </div>
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
+    
+      <button nz-button nzDanger (click)="removeSelectedInventory()"
+        *ngIf="!userPermissionMap.has('remove-inventory-in-batch') || userPermissionMap.get('remove-inventory-in-batch')">
+        {{'delete' | i18n}}</button>
+      
+      <nz-divider nzType="vertical"></nz-divider> 
+      <button nz-button [nzType]="'primary'"  (click)="openBatchMoveInventoryModal(tplInventoryMoveModalTitle, tplInventoryMoveModalContent)"
+        *ngIf="!userPermissionMap.has('move-inventory-in-batch') || userPermissionMap.get('move-inventory-in-batch')">
+          {{'moveInventory' | i18n}}</button>
+        
+      <nz-divider nzType="vertical"></nz-divider> 
+      <button  nz-button nzType="primary" routerLink="/util/file-upload/inventory" routerLinkActive="active"
+        *ngIf="!userPermissionMap.has('upload-inventory') || userPermissionMap.get('upload-inventory')">
+        {{ 'file-upload' | i18n }}
+      </button> 
+    </div>
+  </ng-template>
+</nz-spin>
+
+<!-- Modal for inventory remove warning -->
+<ng-template #tplInventoryRemovalModalTitle>
+  <span>{{ 'page.modal.delete.header.title' | i18n}}</span>
+</ng-template>
+<ng-template #tplInventoryRemovalModalContent>
+  <nz-descriptions nzBordered>
+    <nz-descriptions-item nzTitle="{{ 'lpn' | i18n }}">
+      {{ inventoryToBeRemoved.lpn }}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'item' | i18n }}">
+      {{ inventoryToBeRemoved.item?.name }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'location' | i18n }}">
+      {{ inventoryToBeRemoved.location?.name }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'quantity' | i18n }}">
+      {{ inventoryToBeRemoved.quantity }}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'inventory.status' | i18n }}" nzSpan="2">
+      {{ inventoryToBeRemoved.inventoryStatus?.name }}</nz-descriptions-item>
+    <!--
+
+    <nz-descriptions-item nzTitle="{{ 'inventory.adjustment.reason' | i18n }}" nzSpan="3">
+      <div>
+        <nz-select style="width: 320px;" [(ngModel)]="inventoryRemovalReason" nzShowSearch nzAllowClear
+          nzDropdownMatchSelectWidth="true">
+          <nz-option *ngFor="let reason of listOfReasons" [nzLabel]="reason.description" [nzValue]="reason.id">
+          </nz-option>
+        </nz-select>
+      </div>
+    </nz-descriptions-item>
+
+      -->
+    <nz-descriptions-item nzTitle="{{'document-number' | i18n}}">
+
+      <input nz-input [(ngModel)]="documentNumber" style="width: 250px;" />
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'comment' | i18n}}">
+
+      <input nz-input [(ngModel)]="comment" style="width: 250px;" />
+    </nz-descriptions-item>
+  </nz-descriptions>
+</ng-template>
+
+
+
+<!-- Modal for inventory movement-->
+<ng-template #tplInventoryMoveModalTitle>
+  <span>{{ 'move' | i18n}}</span>
+</ng-template>
+<ng-template #tplInventoryMoveModalContent>
+  <form nz-form [formGroup]="inventoryMovementForm">
+    <div nz-row [nzGutter]="24" *ngIf="!batchMovement">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="lpn">
+            {{ 'lpn' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="lpn" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemNumber">
+            {{ 'item' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="itemNumber" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="itemDescription">
+            {{ 'item.description' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="itemDescription" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24"  *ngIf="!batchMovement">
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'inventory.status' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <input nz-input formControlName="inventoryStatus" />
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemPackageType">
+            {{ 'item.package-type' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+
+            <input nz-input formControlName="itemPackageType" />
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="quantity">
+            {{ 'quantity' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="quantity" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24" >
+
+
+      <div nz-col [nzSpan]="8" *ngIf="!batchMovement">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="locationName">
+            {{ 'location' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+
+            <nz-input-group nzSearch [nzAddOnAfter]="locationSuffixIconButton">
+              <input nz-input formControlName="locationName" id="locationName" name="locationName" required />
+            </nz-input-group>
+            <ng-template #locationSuffixIconButton>
+              <app-warehouse-layout-location-query-popup (recordSelected)="processLocationValueQueryResult($event)">
+              </app-warehouse-layout-location-query-popup>
+            </ng-template>
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="destinationLocation">
+            {{ 'unpick.destination-location' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+              <input nz-input formControlName="destinationLocation" />
+            </nz-input-group>
+            <ng-template #suffixIconButton>
+              <app-warehouse-layout-location-query-popup (recordSelected)="processLocationQueryResult($event)">
+              </app-warehouse-layout-location-query-popup>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-control [nzSpan]="14" [nzOffset]="6">
+            <label nz-checkbox formControlName="immediateMove">
+              <span>{{ 'unpick.immediately-putaway' | i18n}}</span>
+            </label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>
+  </form>
+</ng-template>

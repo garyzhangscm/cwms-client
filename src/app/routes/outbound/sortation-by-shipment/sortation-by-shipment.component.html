@@ -1,0 +1,74 @@
+<page-header></page-header>
+
+<!--allow query by order-->
+<nz-card *ngIf="accessFromMenu">
+
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="6">
+        <nz-form-item nzFlex>
+          <nz-form-label for="orderNumber" [nzSpan]="8">
+            {{ 'order.number' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <input nz-input name="orderNumber" id="orderNumber" formControlName="orderNumber" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="6">
+        <nz-form-item nzFlex> 
+          <nz-form-control [nzSpan]="16">
+            <button nz-button [nzType]="'primary'" (click)="searchByOrder()">
+              {{ 'search' | i18n }}
+            </button>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </form>
+</nz-card>
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'"  > 
+  <nz-card *ngIf="currentShipment != null">
+    <nz-descriptions nzBordered="true">
+        <nz-descriptions-item nzTitle="{{ 'shipment' | i18n }}"> 
+            {{ currentShipment.number }}
+        </nz-descriptions-item> 
+        <nz-descriptions-item nzTitle="{{ 'customer' | i18n }}"  nzSpan="2"> 
+            
+            <div>{{currentShipment.shipTocontactorFirstname }} {{currentShipment.shipTocontactorFirstname}}</div>
+            <address *ngIf="currentShipment.shipToCustomer != null">  
+              {{currentShipment.shipToCustomer.addressLine1}} <br>
+              {{currentShipment.shipToCustomer.addressLine2}} <br>
+              {{currentShipment.shipToCustomer.addressCity}},  {{currentShipment.shipToCustomer.addressState}} <br>
+              {{currentShipment.shipToCustomer.addressPostcode}} <br>
+              </address>
+              <address *ngIf="currentShipment.shipToCustomer == null">  
+                {{currentShipment.shipToAddressLine1}} <br>
+                {{currentShipment.shipToAddressLine2}} <br>
+                {{currentShipment.shipToAddressCity}},  {{currentShipment.shipToAddressState}} <br>
+                {{currentShipment.shipToAddressPostcode}} <br>
+                </address>
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'barcode' | i18n }}">
+            <input nz-input name="barcode" id="barcode" [ngModel]="currentBarcode"
+            (ngModelChange)="currentBarcodeChanged($event)" [ngModelOptions]="{updateOn: 'blur'}"/>
+        </nz-descriptions-item> 
+    </nz-descriptions>
+  </nz-card>
+
+  <nz-card *ngIf="currentShipment != null && currentSortationByShipment != null"> 
+    
+    <div class="search-result-list"> 
+      <st #sortationByShipmentTable [data]="currentSortationByShipment.sortationByShipmentLines" 
+        [columns]="sortationByShipmentTableColumns">
+        <ng-template st-row="actionColumn" let-sortationByShipmentLine let-index="index"> 
+          <button *ngIf="sortationByShipmentLine.arrivedQuantity > sortationByShipmentLine.sortedQuantity"
+            (click)="sortedWholeLine(sortationByShipmentLine)">
+            {{'sortedAll' | i18n}}
+          </button>
+        </ng-template>
+      </st>
+     </div>
+
+  </nz-card>
+</nz-spin>

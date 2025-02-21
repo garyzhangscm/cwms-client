@@ -1,0 +1,441 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/work-order/bill-of-material" routerLinkActive="active">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/work-order/bill-of-material" routerLinkActive="active">{{
+        'breadcrumb.bill-of-material' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+  <nz-step nzTitle="{{ 'steps.bill-of-material.maintenance.info' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.bill-of-material.maintenance.line' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.bill-of-material.maintenance.work-instruction' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.bill-of-material.maintenance.by-product' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+<!-- Step 1: basic information 
+  1. BOM number / description
+  2. BOM item information
+  -->
+<div class="steps-content" *ngIf="stepIndex === 0 && currentBillOfMaterial != null">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">
+          {{ 'bill-of-material.number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16" nzHasFeedback [nzErrorTip]="bomNumberErrorTpl">
+          
+          <nz-input-group  style="width: 100%">
+          
+            <input appFkey variable="bill-of-material" nz-input [(ngModel)]="currentBillOfMaterial.number"
+            appNewNumberValidator (blur)="billOfMaterialNumberOnBlur($event)" required #bomNumber="ngModel"
+            [ngModelOptions]="{ updateOn: 'blur' }" />
+
+            <ng-template #bomNumberErrorTpl let-control>
+              <div *ngIf="bomNumber!.invalid != null  && (bomNumber!.dirty != null  || bomNumber!.touched != null )">
+                <ng-container *ngIf="bomNumber.errors?.errorCode">
+                  {{ 'ERROR-NEW-BOM-NUMBER-' + bomNumber.errors!.errorCode! | i18n }}</ng-container>
+                <ng-container *ngIf="control.hasError('required')">
+                  {{ 'ERROR-NEW-BOM-NUMBER-REQUIRED' | i18n }}</ng-container>
+              </div>
+            </ng-template>
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="16">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="4">
+          {{ 'description' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="20" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <nz-input-group style="width: 100%">
+            <input nz-input [(ngModel)]="currentBillOfMaterial.description" required />
+          
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">
+          {{ 'item.name' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton"  style="width: 100%">
+            <input nz-input [(ngModel)]="currentBillOfMaterial.item!.name" (blur)="itemNameOnBlur($event)" required />
+          </nz-input-group>
+          <ng-template #suffixIconButton>
+            <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
+            </app-inventory-item-query-popup>
+          </ng-template>
+ 
+        </nz-form-control>
+
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="16">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="4">
+          {{ 'bill-of-material.expectedQuantity' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="10" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <nz-input-group  style="width: 100%">
+            <nz-input-number [(ngModel)]="currentBillOfMaterial.expectedQuantity" required [nzMin]="1" [nzStep]="1" style="width: 100%"></nz-input-number>
+          
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</div>
+
+<!-- Step 2: BOM lines -->
+
+<div class="small-card" *ngIf="stepIndex === 1">
+  <!-- Show the BOM line information and allow the user to 
+      1. remote the existing line
+      2. change the quantity of existing line
+      3. add new lines
+  -->
+  <div class="search-result-list">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="currentBillOfMaterial.billOfMaterialLines!"
+      nzSize="middle" [nzShowPagination]="false">
+      <thead>
+        <th>
+          {{ 'bill-of-material.line.number' | i18n }}
+        </th>
+        <th>
+          {{ 'item' | i18n }}
+        </th>
+        <th>
+          {{ 'item.description' | i18n }}
+        </th>
+        <th>
+          {{ 'inventory.status' | i18n }}
+        </th>
+        <th>
+          {{ 'bill-of-material.line.expectedQuantity' | i18n }}
+        </th>
+        <th>
+          {{ 'bill-of-material.line.expectedQuantity.new' | i18n }}
+        </th>
+        <th>{{ 'action' | i18n }}</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let billOfMaterialLine of currentBillOfMaterial?.billOfMaterialLines">
+          <td>{{ billOfMaterialLine.number }}</td>
+          <td>
+            <span *ngIf="billOfMaterialLine.id !== undefined && billOfMaterialLine.id !== null ">{{ billOfMaterialLine.item!.name }}</span>
+
+            <nz-input-group nzCompact *ngIf="billOfMaterialLine.id === undefined || billOfMaterialLine.id === null"
+                nzSearch [nzAddOnAfter]="bomLineItemsuffixIconButton" >
+ 
+ 
+              
+              <input nz-input [(ngModel)]="billOfMaterialLine.item!.name"  
+                style="width: 150px;" (blur)="bomLineItemNameOnBlur($event, billOfMaterialLine)" />
+            </nz-input-group>
+            
+            <ng-template #bomLineItemsuffixIconButton>
+              <app-inventory-item-query-popup (recordSelected)="processBomLineItemQueryResult($event, billOfMaterialLine)">
+              </app-inventory-item-query-popup>
+            </ng-template>
+          </td>
+          <td>{{ billOfMaterialLine.item?.description }}</td>
+          <td>
+            <span *ngIf="billOfMaterialLine.id !== undefined && billOfMaterialLine.id !== null"> 
+              {{billOfMaterialLine.inventoryStatus?.description}} </span>
+
+            <nz-input-group nzCompact *ngIf="billOfMaterialLine.id === undefined || billOfMaterialLine.id === null">
+              <nz-select nz-input [ngModel]="billOfMaterialLine.inventoryStatus?.name"
+                (ngModelChange)="inventoryStatusChange($event, billOfMaterialLine)" style="width: 150px">
+                <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
+                  [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.name">
+                </nz-option>
+              </nz-select>
+            </nz-input-group>
+          </td>
+          <td>{{ billOfMaterialLine.expectedQuantity }}</td>
+          <td>
+            <!-- Allow the user to change the quantity of an existing work order line-->
+            <nz-input-group nzCompact>
+              <input nz-input [(ngModel)]="mapOfNewLineExpectedQuantity[billOfMaterialLine.number!]"
+                style="width: 50%;" />
+            </nz-input-group>
+          </td>
+          <td>
+            <button nz-button nzDanger (click)="removeBOMLine(billOfMaterialLine)">
+              {{ 'delete' | i18n }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <nz-autocomplete [nzDataSource]="validItemNames" #itemList></nz-autocomplete>
+  </div>
+  <div nz-row nzJustify="start" style="padding: 15px;">
+    <button nz-button nzType="primary" (click)="addNewBOMLine()">
+      {{ 'add' | i18n }}
+    </button>
+  </div>
+</div>
+<!-- Step 3: working instruction template -->
+<div class="small-card" *ngIf="stepIndex === 2">
+  <div class="search-result-list">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="currentBillOfMaterial!.workOrderInstructionTemplates!"
+      nzSize="middle" [nzShowPagination]="false">
+      <thead>
+        <th>
+          {{ 'work-order-instruction-template.sequence' | i18n }}
+        </th>
+        <th>
+          {{ 'work-order-instruction-template.instruction' | i18n }}
+        </th>
+        <th>{{ 'action' | i18n }}</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let workOrderInstructionTemplate of currentBillOfMaterial?.workOrderInstructionTemplates">
+          <td>{{ workOrderInstructionTemplate.sequence }}</td>
+
+          <td>
+            <span *ngIf="workOrderInstructionTemplate.id !== null">{{ workOrderInstructionTemplate.instruction }}</span>
+
+            <nz-input-group nzCompact *ngIf="workOrderInstructionTemplate.id === null">
+              <input nz-input [(ngModel)]="workOrderInstructionTemplate.instruction" />
+            </nz-input-group>
+          </td>
+
+          <td>
+            <button nz-button nzDanger (click)="removeInstructionTemplate(workOrderInstructionTemplate)">
+              {{ 'delete' | i18n }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+  <div nz-row nzJustify="start" style="padding-top: 15px;">
+    <button nz-button nzType="primary" (click)="addNewInstructionTemplate()">
+      {{ 'add' | i18n }}
+    </button>
+  </div>
+</div>
+<!-- Step 4: by product -->
+<div class="small-card" *ngIf="stepIndex === 3">
+  <div class="search-result-list">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="currentBillOfMaterial!.billOfMaterialByProducts!"
+      nzSize="middle" [nzShowPagination]="false">
+      <thead>
+        <th>
+          {{ 'item' | i18n }}
+        </th>
+        <th>
+          {{ 'item.description' | i18n }}
+        </th>
+        <th>
+          {{ 'inventory.status' | i18n }}
+        </th>
+        <th>
+          {{ 'bill-of-material.by-product.expectedQuantity' | i18n }}
+        </th>
+        <th>
+          {{ 'bill-of-material.by-product.expectedQuantity.new' | i18n }}
+        </th>
+        <th>{{ 'action' | i18n }}</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let byProduct of currentBillOfMaterial.billOfMaterialByProducts">
+          <td>
+            <span *ngIf="byProduct.id != null">{{ byProduct.item?.name }}</span>
+
+            <nz-input-group nzCompact *ngIf="byProduct.id == null">
+              <input nz-input [(ngModel)]="byProduct.item!.name" [nzAutocomplete]="itemList" style="width: 150px;"
+                (blur)="byProductItemNameChanged($event, byProduct)" />
+            </nz-input-group>
+          </td>
+          <td>{{ byProduct.item?.description }}</td>
+          <td>
+            <span *ngIf="byProduct.id != null">{{ byProduct.inventoryStatus?.description
+              }}</span>
+
+            <nz-input-group nzCompact *ngIf="byProduct.id == null">
+              <nz-select nz-input [ngModel]="byProduct.inventoryStatus?.name"
+                (ngModelChange)="byProductInventoryStatusChange($event, byProduct)" style="width: 150px">
+                <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
+                  [nzLabel]=" inventoryStatus.description" [nzValue]="inventoryStatus.name">
+                </nz-option>
+              </nz-select>
+            </nz-input-group>
+          </td>
+          <td>{{ byProduct.expectedQuantity }}</td>
+          <td>
+            <!-- Allow the user to change the quantity of an existing work order line-->
+            <nz-input-group nzCompact>
+              <input nz-input [(ngModel)]="mapOfNewByProductExpectedQuantity[byProduct.itemId!]" style="width: 50%;" />
+            </nz-input-group>
+          </td>
+          <td>
+            <button nz-button nzDanger (click)="removeByProduct(byProduct)">
+              {{ 'delete' | i18n }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <nz-autocomplete [nzDataSource]="validItemNames" #itemList></nz-autocomplete>
+  </div>
+  <div nz-row nzJustify="start" style="padding-top: 15px;">
+    <button nz-button nzType="primary" (click)="addNewByProduct()">
+      {{ 'add' | i18n }}
+    </button>
+  </div>
+</div>
+<!-- Step 5: confirm -->
+<div class="small-card" *ngIf="stepIndex === 4">
+  <!-- Bill Of Material Information -->
+  <nz-card nzTitle="{{ 'bill-of-material' | i18n }}">
+    <nz-descriptions nzBordered *ngIf="currentBillOfMaterial !== undefined">
+      <nz-descriptions-item nzTitle="{{ 'bill-of-material.number' | i18n }}">
+        {{ currentBillOfMaterial.number }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'bill-of-material.description' | i18n }}">
+        {{ currentBillOfMaterial.number }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'item-name' | i18n }}">
+        {{ currentBillOfMaterial.item?.name }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'item.description' | i18n }}">
+        {{ currentBillOfMaterial.item?.description }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'work-order.expected-quantity' | i18n }}">
+        {{ currentBillOfMaterial.expectedQuantity }}</nz-descriptions-item>
+    </nz-descriptions>
+  </nz-card>
+
+  <!-- Bill Of Material Line Information -->
+  <nz-card nzTitle="{{ 'bill-of-material.line' | i18n }}">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="currentBillOfMaterial.billOfMaterialLines" nzSize="middle"
+      [nzShowPagination]="false">
+      <thead>
+        <th>
+          {{ 'bill-of-material.line.number' | i18n }}
+        </th>
+        <th>
+          {{ 'item' | i18n }}
+        </th>
+        <th>
+          {{ 'item.description' | i18n }}
+        </th>
+        <th>
+          {{ 'bill-of-material.line.expectedQuantity' | i18n }}
+        </th>
+        <th>
+          {{ 'bill-of-material.line.expectedQuantity.new' | i18n }}
+        </th>
+        <th>
+          {{ 'inventory.status' | i18n }}
+        </th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let billOfMaterialLine of currentBillOfMaterial.billOfMaterialLines">
+          <td>{{ billOfMaterialLine.number }}</td>
+          <td>{{ billOfMaterialLine.item!.name }}</td>
+          <td>{{ billOfMaterialLine.item!.description }}</td>
+          <td>{{ billOfMaterialLine.expectedQuantity }}</td>
+
+          <td>
+            {{ mapOfNewLineExpectedQuantity[billOfMaterialLine.number!] }}
+          </td>
+          <td>{{ billOfMaterialLine.inventoryStatus?.name }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+
+  <!-- Work Instruction Information -->
+  <nz-card nzTitle="{{ 'work-order-instruction-template' | i18n }}">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="currentBillOfMaterial.workOrderInstructionTemplates"
+      nzSize="middle" [nzShowPagination]="false">
+      <thead>
+        <th>
+          {{ 'id' | i18n }}
+        </th>
+        <th>
+          {{ 'work-order-instruction-template.sequence' | i18n }}
+        </th>
+        <th>
+          {{ 'work-order-instruction-template.instruction' | i18n }}
+        </th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let workOrderInstructionTemplate of currentBillOfMaterial.workOrderInstructionTemplates">
+          <td>{{ workOrderInstructionTemplate.id }}</td>
+          <td>{{ workOrderInstructionTemplate.sequence }}</td>
+          <td>{{ workOrderInstructionTemplate.instruction }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+
+  <!-- By Product Information -->
+  <nz-card nzTitle="{{ 'bill-of-material.by-product' | i18n }}">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="currentBillOfMaterial.billOfMaterialByProducts"
+      nzSize="middle" [nzShowPagination]="false">
+      <thead>
+        <th>
+          {{ 'item' | i18n }}
+        </th>
+        <th>
+          {{ 'item.description' | i18n }}
+        </th>
+        <th>
+          {{ 'bill-of-material.by-product.expectedQuantity' | i18n }}
+        </th>
+        <th>
+          {{ 'bill-of-material.by-product.expectedQuantity.new' | i18n }}
+        </th>
+        <th>
+          {{ 'inventory.status' | i18n }}
+        </th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let byProduct of currentBillOfMaterial.billOfMaterialByProducts">
+          <td>{{ byProduct.item?.name }}</td>
+          <td>{{ byProduct.item?.description }}</td>
+          <td>{{ byProduct.expectedQuantity }}</td>
+          <td>
+            {{ mapOfNewByProductExpectedQuantity[byProduct.itemId!] }}
+          </td>
+          <td>{{  byProduct.inventoryStatus!.description }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+</div>
+
+<div class="steps-action">
+  <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical" *ngIf="stepIndex < 4"></nz-divider>
+  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 4">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 4">
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+</nz-spin>

@@ -1,0 +1,84 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/inventory/inventory" routerLinkActive="active">{{
+    'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/inventory/inventory" routerLinkActive="active">{{
+        'breadcrumb.inventory' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<ng-container>
+  <nz-card [nzActions]="[actionConfirm]">
+    <nz-descriptions nzBordered>
+
+      <nz-descriptions-item nzTitle="{{'lpn' | i18n}}">
+        {{currentInventory.lpn}}
+      </nz-descriptions-item>
+
+      <nz-descriptions-item nzTitle="{{'location' | i18n}}" nzSpan="2">
+        {{currentInventory.locationName}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'item' | i18n}}">
+        {{currentInventory.item?.name}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'item.description' | i18n}}" nzSpan="2">
+        {{currentInventory.item?.description}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'item.package-type' | i18n}}" nzSpan="3">
+        <nz-card *ngIf='currentInventory !== undefined' nzTitle="{{currentInventory.itemPackageType?.name}}">
+          <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #itemPackageTypeDetailTable
+            [nzData]="currentInventory.itemPackageType!.itemUnitOfMeasures!" nzSize="middle" [nzShowPagination]="false"
+            nzBordered>
+            <thead>
+              <tr>
+                <th>{{ 'unitOfMeasure' | i18n}}</th>
+                <th>{{ 'quantity' | i18n }}</th>
+                <th>{{ 'weight' | i18n }}</th>
+                <th>{{ 'length' | i18n }}</th>
+                <th>{{ 'width' | i18n }}</th>
+                <th>{{ 'height' | i18n }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let itemUnitOfMeasure of itemPackageTypeDetailTable.data">
+                <td>{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
+                <td>{{ itemUnitOfMeasure.quantity }}</td>
+                <td>{{ itemUnitOfMeasure.weight }}</td>
+                <td>{{ itemUnitOfMeasure.length }}</td>
+                <td>{{ itemUnitOfMeasure.width }}</td>
+                <td>{{ itemUnitOfMeasure.height }}</td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </nz-card>
+
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'inventory.status' | i18n}}">
+        {{currentInventory.inventoryStatus?.name}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'quantity' | i18n}}">
+        <input nz-input [(ngModel)]="currentInventory.quantity" style="width: 250px;" />
+
+      </nz-descriptions-item>
+    </nz-descriptions>
+  </nz-card>
+</ng-container>
+
+</nz-spin>
+
+<ng-template #actionConfirm>
+  <a nz-button nzType="primary" routerLink="/inventory/inventory-quantity-change/confirm"
+    [queryParams]="{by : previousApplication}" routerLinkActive="active" (click)="saveCurrentInventory()">
+    {{ 'steps.next' | i18n }} :
+    {{ 'steps.confirm.title' | i18n }}</a>
+</ng-template>

@@ -1,0 +1,5 @@
+export enum InventoryConsolidationStrategy {
+  NONE = 'NONE',
+  CONSOLIDATE_BY_LPN = 'CONSOLIDATE_BY_LPN',
+  CONSOLIDATE_BY_INVENTORY = 'CONSOLIDATE_BY_INVENTORY',
+}

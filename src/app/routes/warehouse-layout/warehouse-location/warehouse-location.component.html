@@ -1,0 +1,225 @@
+<page-header [title]="'page.warehouse-location.header.title' | i18n"> </page-header>
+
+<nz-spin nzSize="large" [nzSpinning]="isSpinning">
+
+
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label for="location_group_type" [nzSpan]="8">
+          {{ 'location-group-type' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <nz-select nzMode="tags" formControlName="taggedLocationGroupTypes">
+            <nz-option *ngFor="let locationGroupType of locationGroupTypes" [nzLabel]="locationGroupType.description"
+              [nzValue]="locationGroupType.id"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label for="location_group" [nzSm]="6" [nzXs]="6">
+          {{ 'location-group' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <nz-select nzMode="tags" formControlName="taggedLocationGroups">
+            <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description!"
+              [nzValue]="locationGroup.id"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="name">
+          {{ 'location' | i18n }}
+        </nz-form-label>
+
+        <nz-form-control [nzSpan]="18">
+          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+            <input nz-input name="locationName" id="locationName" formControlName="locationName" />
+          </nz-input-group>
+          <ng-template #suffixIconButton>
+            <app-warehouse-layout-location-query-popup (recordSelected)="processLocationQueryResult($event)">
+            </app-warehouse-layout-location-query-popup>
+          </ng-template>
+        </nz-form-control>
+
+      </nz-form-item>
+    </div>
+  </div>
+  <!--
+
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label  [nzSpan]="8">
+          {{ 'location.status' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <nz-select formControlName="locationStatus">
+            <nz-option *ngFor="let locationStatus of locationStatuses | keyvalue" nzValue="{{locationStatus.key}}"
+                  nzLabel="{{'LOCATION-STATUS-' + locationStatus.value | i18n}}">
+                </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  -->
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  
+  <st #locationTable [data]="listOfAllLocations" [columns]="locationTableColumns"  
+        [footer]="tableFoot" [scroll]="{ x: '1615px' }"
+        [widthMode]="{ type: 'strict' }" resizable>
+
+        <ng-template st-row="actionColumn" let-location let-index="index">
+                   
+          <button
+            nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" >
+          {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu> 
+              <li nz-menu-item *ngIf="!displayOnly && (!userPermissionMap.has('modify-location') || userPermissionMap.get('modify-location'))">                  
+                
+                <a routerLink="/warehouse-layout/location/maintenance"  routerLinkActive="active" [queryParams]="{id:location.id}"> 
+                  {{ 'modify' | i18n }}</a>
+              </li>
+              <li nz-menu-item *ngIf="!displayOnly && (!userPermissionMap.has('copy-location') || userPermissionMap.get('copy-location'))">                  
+                
+                <a (click)="openCopyLocationModal(location)" >
+                {{ 'copy' | i18n }}</a>
+              </li> 
+            </ul>
+          </nz-dropdown-menu> 
+
+       </ng-template>
+  </st> 
+
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
+    <button nz-button nzDanger (click)="removeSelectedLocations()">
+      {{ 'delete' | i18n }}
+    </button>
+    <button nz-button nzType="primary" routerLink="/util/file-upload/locations" routerLinkActive="active">
+      {{ 'file-upload' | i18n }}
+    </button>
+    <button nz-button nzType="primary" routerLink="/warehouse-layout/location/maintenance" routerLinkActive="active">
+      {{ 'add' | i18n }}
+    </button>
+  </div>
+</div>
+
+<ng-template #tableFoot>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+
+</ng-template>
+
+</nz-spin>
+
+<nz-modal [(nzVisible)]="copyLocationModalVisible" nzTitle="{{'copyLocation' | i18n}}" 
+(nzOnCancel)="cancelCopyLocation()"  (nzOnOk)="copyLocation()"  >
+<ng-container *nzModalContent> 
+  <form nz-form 
+    [formGroup]="copyLocationForm"
+    [nzLayout]="'vertical'" >
+    
+    <div nz-row [nzGutter]="24">
+        
+      <div nz-col [nzSpan]="6">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">{{'currentLocation' | i18n}}</nz-form-label>
+        </nz-form-item>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input formControlName="currentLocation" id="currentLocation"
+            name="currentLocation"  [disabled]="true"/> 
+        </nz-form-control>
+      </div>
+      
+    </div>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="6">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">{{'prefix' | i18n}}</nz-form-label>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="6">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">{{'startNumber' | i18n}}</nz-form-label>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="1"> 
+      </div>
+      <div nz-col [nzSpan]="6">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">{{'endNumber' | i18n}}</nz-form-label>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="6">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="5">{{'postfix' | i18n}}</nz-form-label>
+        </nz-form-item>
+      </div>
+    </div>
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="6">
+          <nz-form-item>
+            <nz-form-control [nzSpan]="14">
+              <input nz-input formControlName="prefix" id="prefix"
+                name="prefix"  /> 
+            </nz-form-control>
+          </nz-form-item>
+        </div> 
+        <div nz-col [nzSpan]="6">
+          <nz-form-item>
+            <nz-form-control [nzSpan]="14"> 
+              <input nz-input formControlName="startNumber" id="startNumber"
+                name="startNumber"  /> 
+            </nz-form-control>
+          </nz-form-item>
+        </div> 
+        <div nz-col [nzSpan]="1">
+          <nz-form-item>
+            <nz-form-item>
+              <nz-form-label [nzSpan]="24">~</nz-form-label>
+            </nz-form-item>
+          </nz-form-item>
+        </div> 
+        <div nz-col [nzSpan]="5">
+          <nz-form-item>
+            <nz-form-control [nzSpan]="14"> 
+              <input nz-input formControlName="endNumber" id="endNumber"
+                name="endNumber"  /> 
+            </nz-form-control>
+          </nz-form-item>
+        </div> 
+        <div nz-col [nzSpan]="6">
+          <nz-form-item>
+            <nz-form-control [nzSpan]="14"> 
+              <input nz-input formControlName="postfix" id="postfix"
+                name="postfix"  /> 
+            </nz-form-control>
+          </nz-form-item>
+        </div> 
+      </div> 
+    </form>
+</ng-container>
+</nz-modal>

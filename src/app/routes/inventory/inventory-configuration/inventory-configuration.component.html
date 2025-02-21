@@ -1,0 +1,442 @@
+<page-header title="{{'inventory-configuration' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  
+<nz-tabset>
+
+  <nz-tab nzTitle="{{ 'inventory.configuration' | i18n }}" *ngIf="currentInventoryConfiguration">
+        
+    <div nz-row [nzGutter]="24" >
+      <div nz-col [nzSpan]="6">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="20">
+                  {{ 'inventoryAttribute1Enabled' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="4">
+                <label nz-checkbox [(ngModel)]="currentInventoryConfiguration.inventoryAttribute1Enabled"
+                  ></label> 
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="18">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="6">
+                  {{ 'inventoryAttribute1DisplayName' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12">
+                  <input nz-input [(ngModel)]="currentInventoryConfiguration.inventoryAttribute1DisplayName" 
+                  [disabled]="currentInventoryConfiguration.inventoryAttribute1Enabled != true"/>
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+    </div> 
+    <div nz-row [nzGutter]="24" >
+      <div nz-col [nzSpan]="6">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="20">
+                  {{ 'inventoryAttribute2Enabled' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="4">
+                <label nz-checkbox [(ngModel)]="currentInventoryConfiguration.inventoryAttribute2Enabled"
+                  ></label> 
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="18">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="6">
+                  {{ 'inventoryAttribute2DisplayName' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12">
+                  <input nz-input [(ngModel)]="currentInventoryConfiguration.inventoryAttribute2DisplayName" 
+                  [disabled]="currentInventoryConfiguration.inventoryAttribute2Enabled != true"/>
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+    </div> 
+    <div nz-row [nzGutter]="24" >
+      <div nz-col [nzSpan]="6">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="20">
+                  {{ 'inventoryAttribute3Enabled' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="4">
+                <label nz-checkbox [(ngModel)]="currentInventoryConfiguration.inventoryAttribute3Enabled"
+                  ></label> 
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="18">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="6">
+                  {{ 'inventoryAttribute3DisplayName' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12">
+                  <input nz-input [(ngModel)]="currentInventoryConfiguration.inventoryAttribute3DisplayName" 
+                  [disabled]="currentInventoryConfiguration.inventoryAttribute3Enabled != true"/>
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+    </div> 
+    <div nz-row [nzGutter]="24" >
+      <div nz-col [nzSpan]="6">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="20">
+                  {{ 'inventoryAttribute4Enabled' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="4">
+                <label nz-checkbox [(ngModel)]="currentInventoryConfiguration.inventoryAttribute4Enabled"
+                  ></label> 
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="18">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="6">
+                  {{ 'inventoryAttribute4DisplayName' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12">
+                  <input nz-input [(ngModel)]="currentInventoryConfiguration.inventoryAttribute4DisplayName" 
+                  [disabled]="currentInventoryConfiguration.inventoryAttribute4Enabled != true"/>
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+    </div> 
+    <div nz-row [nzGutter]="24" >
+      <div nz-col [nzSpan]="6">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="20">
+                  {{ 'inventoryAttribute5Enabled' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="4">
+                <label nz-checkbox [(ngModel)]="currentInventoryConfiguration.inventoryAttribute5Enabled"
+                  ></label> 
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="18">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="6">
+                  {{ 'inventoryAttribute5DisplayName' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12">
+                  <input nz-input [(ngModel)]="currentInventoryConfiguration.inventoryAttribute5DisplayName" 
+                  [disabled]="currentInventoryConfiguration.inventoryAttribute5Enabled != true"/>
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+    </div> 
+
+    <div nz-row [nzGutter]="24" >
+      <div nz-col [nzSpan]="12">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="6">
+                  {{ 'lpn-validation-rule' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="18">
+                  <input nz-input [(ngModel)]="currentInventoryConfiguration.lpnValidationRule" />
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+    </div> 
+
+    <div nz-row [nzGutter]="24" >
+      <div nz-col [nzSpan]="12">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="12">
+                  {{ 'newItemAutoGenerateDefaultPackageType' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12">
+                <label nz-checkbox [(ngModel)]="currentInventoryConfiguration.newItemAutoGenerateDefaultPackageType"
+                  ></label>
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+    </div> 
+    
+    <div nz-row [nzGutter]="24" *ngIf="currentInventoryConfiguration.newItemAutoGenerateDefaultPackageType">
+      <div nz-col [nzSpan]="12">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="8">
+                  {{ 'newItemDefaultPackageTypeName' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="16">
+                  <input nz-input [(ngModel)]="currentInventoryConfiguration.newItemDefaultPackageTypeName" />
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+          <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="8">
+                  {{ 'newItemDefaultPackageTypeDescription' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="16">
+                  <input nz-input [(ngModel)]="currentInventoryConfiguration.newItemDefaultPackageTypeDescription" />
+                  
+              </nz-form-control>
+          </nz-form-item>
+      </div>
+    </div> 
+     
+      <div nz-row nzType="flex" nzJustify="end" *ngIf="currentInventoryConfiguration.newItemAutoGenerateDefaultPackageType">
+          
+        <button nz-button nzType="primary"
+        (click)="openAddingItemUnitOfMeasureModal(tplItemUOMModalTitle, tplItemUOMModalContent, tplItemUOMModalFooter)">
+        {{ 'add' | i18n }} {{ 'unit-of-measure' | i18n }}
+      </button>
+    </div> 
+    <nz-table   *ngIf="currentInventoryConfiguration.newItemAutoGenerateDefaultPackageType"
+        [nzData]="currentInventoryConfiguration.itemDefaultPackageUOMS" 
+        [nzShowPagination]="false" >
+        <thead>
+          <th>{{ 'unit-of-measure' | i18n }}</th>
+          <th>{{ 'quantity' | i18n }}</th>
+          <th>{{ 'weight' | i18n }}</th>
+          <th>{{ 'length' | i18n }}</th>
+          <th>{{ 'width' | i18n }}</th>
+          <th>{{ 'height' | i18n }}</th>
+          <th>{{ 'unit-of-measure.default-for-inbound-receiving' | i18n }}</th>
+          <th>{{ 'unit-of-measure.default-for-workorder-receiving' | i18n }}</th>
+          <th>{{ 'unit-of-measure.tracking_lpn' | i18n }}</th>
+          <th *ngIf="!displayOnly">{{ 'action' | i18n }}</th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let itemUnitOfMeasure of currentInventoryConfiguration.itemDefaultPackageUOMS">
+            <td>{{ itemUnitOfMeasure.unitOfMeasure?.name }}</td>
+            <td>{{ itemUnitOfMeasure.quantity }}</td>
+            <td>{{ itemUnitOfMeasure.weight }} <strong>{{ itemUnitOfMeasure.weightUnit }}</strong></td>
+            <td>{{ itemUnitOfMeasure.length }} <strong>{{ itemUnitOfMeasure.lengthUnit }}</strong></td>
+            <td>{{ itemUnitOfMeasure.width }} <strong>{{ itemUnitOfMeasure.widthUnit }}</strong></td>
+            <td>{{ itemUnitOfMeasure.height }} <strong>{{ itemUnitOfMeasure.heightUnit }}</strong></td>
+            <td>{{ itemUnitOfMeasure.defaultForInboundReceiving }}</td>
+            <td>{{ itemUnitOfMeasure.defaultForWorkOrderReceiving }}</td>
+            <td>{{ itemUnitOfMeasure.trackingLpn }}</td>
+
+            <td *ngIf="!displayOnly">
+              <button nz-button (click)="removeItemUnitOfMeasure(itemUnitOfMeasure)">
+                {{ 'remove' | i18n }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+    </nz-table>
+
+    <div nz-row nzType="flex" nzJustify="start" style="padding-top: 20px" *ngIf="!displayOnly">
+       
+        <button nz-button nzType="primary" (click)="saveConfiguration()">
+            {{ 'confirm' | i18n }}
+        </button>
+    </div>
+  </nz-tab>
+  <nz-tab nzTitle="{{ 'inventory-snapshot.configuration' | i18n }}">
+    <app-inventory-inventory-snapshot-configuration>
+    </app-inventory-inventory-snapshot-configuration>
+  </nz-tab>
+</nz-tabset>
+
+</nz-spin>
+
+<!-- Modal for adding item unit of measure -->
+<ng-template #tplItemUOMModalTitle>
+  <span>{{ 'unit-of-measure' | i18n }}</span>
+</ng-template>
+
+<ng-template #tplItemUOMModalContent>
+  <form nz-form [formGroup]="itemUOMForm">
+    <div nz-row [nzGutter]="24">
+      
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="unitOfMeasure">
+            {{ 'item-unit-of-measure.name' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <nz-input-group nzSize="large">
+              <nz-select formControlName="unitOfMeasure" name="unitOfMeasure" style="width: 100px;">
+                <nz-option *ngFor="let unitOfMeasure of availableUnitOfMeasuresForAdding"
+                  [nzLabel]="unitOfMeasure.description" [nzValue]="unitOfMeasure.name">
+                </nz-option>
+              </nz-select>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="quantity">
+            {{ 'quantity' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback [nzErrorTip]="itemUOMQuantityErrorTpl">
+            <nz-input-group nzSize="large">
+              <nz-input-number [nzMin]="1" [nzStep]="1" formControlName="quantity" name="quantity"></nz-input-number>
+            </nz-input-group>
+
+            <ng-template #itemUOMQuantityErrorTpl let-control>
+              <div
+                *ngIf="itemUOMQuantityControl!.invalid != null && (itemUOMQuantityControl!.dirty != null || itemUOMQuantityControl!.touched != null)">
+                <ng-container *ngIf="itemUOMQuantityControl!.errors!.errorCode">
+                  {{'ERROR-NEW-ITEM-UOM-QUANTITY-' + itemUOMQuantityControl!.errors!.errorCode | i18n}}
+                </ng-container>
+
+                <ng-container *ngIf="control.hasError('required')">{{ 'error.form.field.required' | i18n }}
+                </ng-container>
+              </div>
+            </ng-template>
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="weight">
+            {{ 'weight' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <nz-input-number [nzStep]="0.01" formControlName="weight" name="weight"></nz-input-number>
+              <a nz-dropdown [nzDropdownMenu]="weightUnitMenu" style="padding-left: 5px;">
+                {{newUnitOfMeasureWeightUnit!.name}}
+                <span nz-icon nzType="down"></span>
+              </a>
+              <nz-dropdown-menu #weightUnitMenu="nzDropdownMenu">
+                <ul nz-menu nzSelectable>
+                  <li nz-menu-item *ngFor="let weightUnit of weightUnits" (click)="weightUnitSelected(weightUnit)">{{ weightUnit.name }}</li> 
+                </ul>
+              </nz-dropdown-menu>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="length">
+            {{ 'length' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <nz-input-number [nzStep]="0.01" formControlName="length" name="length"></nz-input-number>
+              <a nz-dropdown [nzDropdownMenu]="lengthUnitMenu" style="padding-left: 5px;">
+                {{newUnitOfMeasureLengthUnit!.name}}
+                <span nz-icon nzType="down"></span>
+              </a>
+              <nz-dropdown-menu #lengthUnitMenu="nzDropdownMenu">
+                <ul nz-menu nzSelectable>
+                  <li nz-menu-item *ngFor="let lengthUnit of lengthUnits" (click)="lengthUnitSelected(lengthUnit)">{{ lengthUnit.name }}</li> 
+                </ul>
+              </nz-dropdown-menu>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="width">
+            {{ 'width' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <nz-input-number [nzStep]="0.01" formControlName="width" name="width"></nz-input-number>
+              <a nz-dropdown [nzDropdownMenu]="widthUnitMenu" style="padding-left: 5px;">
+                {{newUnitOfMeasureWidthUnit!.name}}
+                <span nz-icon nzType="down"></span>
+              </a>
+              <nz-dropdown-menu #widthUnitMenu="nzDropdownMenu">
+                <ul nz-menu nzSelectable>
+                  <li nz-menu-item *ngFor="let lengthUnit of lengthUnits" (click)="widthUnitSelected(lengthUnit)">{{ lengthUnit.name }}</li> 
+                </ul>
+              </nz-dropdown-menu>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="height">
+            {{ 'height' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <nz-input-number [nzStep]="0.01" formControlName="height" name="height"></nz-input-number>
+              <a nz-dropdown [nzDropdownMenu]="heightUnitMenu" style="padding-left: 5px;">
+                {{newUnitOfMeasureHeightUnit!.name}}
+                <span nz-icon nzType="down"></span>
+              </a>
+              <nz-dropdown-menu #heightUnitMenu="nzDropdownMenu">
+                <ul nz-menu nzSelectable>
+                  <li nz-menu-item *ngFor="let lengthUnit of lengthUnits" (click)="heightUnitSelected(lengthUnit)">{{ lengthUnit.name }}</li> 
+                </ul>
+              </nz-dropdown-menu>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="18" nzFor="defaultForInboundReceiving">
+            {{ 'unit-of-measure.default-for-inbound-receiving' | i18n }}
+          </nz-form-label>
+          
+          <nz-form-control [nzSpan]="6">
+            <label nz-checkbox  formControlName="defaultForInboundReceiving" name="defaultForInboundReceiving"></label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="18" nzFor="defaultForWorkOrderReceiving">
+            {{ 'unit-of-measure.default-for-workorder-receiving' | i18n }}
+          </nz-form-label>
+          
+          <nz-form-control [nzSpan]="6">
+            <label nz-checkbox  formControlName="defaultForWorkOrderReceiving" name="defaultForWorkOrderReceiving"></label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="trackingLpnUOM">
+            {{ 'unit-of-measure.tracking_lpn' | i18n }}
+          </nz-form-label>
+          
+          <nz-form-control [nzSpan]="16">
+            <label nz-checkbox  formControlName="trackingLpnUOM" name="trackingLpnUOM"></label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+  </form>
+</ng-template>
+
+<ng-template #tplItemUOMModalFooter>
+  <button nz-button nzType="default" (click)="closeItemUOMModal()" [nzLoading]="creatingItemUOMInProcess">{{ 'cancel' |
+    i18n}}</button>
+  <button nz-button nzType="primary" (click)="confirmItemUOM()" [nzLoading]="creatingItemUOMInProcess">{{ 'confirm' |
+    i18n}}</button>
+
+</ng-template>

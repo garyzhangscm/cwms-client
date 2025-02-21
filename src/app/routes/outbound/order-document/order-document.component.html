@@ -1,0 +1,159 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/outbound/order" routerLinkActive="active" [queryParams]="{number:currentOrder.number}">{{ 'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/outbound/order" routerLinkActive="active">{{ 'order' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'upload-document' | i18n }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex" nzStatus="wait" style="padding: 15px">
+  <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+<!-- Show basic item information -->
+<div class="small-card" *ngIf="stepIndex === 0 
+    && currentOrder != undefined">
+    <nz-card>
+        <nz-descriptions nzTitle="{{ 'order' | i18n}}" nzBordered>
+            <nz-descriptions-item nzTitle="{{ 'number' | i18n}}">
+              {{currentOrder.number}}</nz-descriptions-item>
+              
+            <nz-descriptions-item nzTitle="{{ 'shipToCustomer' | i18n}}">
+              <div *ngIf="currentOrder.shipToCustomer != null">
+
+                  <h3>{{ currentOrder.shipToCustomer.name }} </h3> 
+        
+                  <address>  
+                    {{currentOrder.shipToCustomer.addressLine1}} <br>
+                    {{currentOrder.shipToCustomer.addressLine2}} <br>
+                    {{currentOrder.shipToCustomer.addressCity}},  {{currentOrder.shipToCustomer.addressState}} <br>
+                    {{currentOrder.shipToCustomer.addressPostcode}} <br>
+                  </address> 
+
+              </div>
+              <div *ngIf="currentOrder.shipToCustomer == null">
+
+                  <h3>{{ currentOrder.shipToContactorFirstname }} {{ currentOrder.shipToContactorLastname }}</h3> 
+        
+                  <address>  
+                    {{currentOrder.shipToAddressLine1}} <br>
+                    {{currentOrder.shipToAddressLine2}} <br>
+                    {{currentOrder.shipToAddressCity}},  {{currentOrder.shipToAddressState}} <br>
+                    {{currentOrder.shipToAddressPostcode}} <br>
+                  </address> 
+
+              </div>
+          </nz-descriptions-item>
+          <nz-descriptions-item nzTitle="{{ 'order.billToCustomer' | i18n}}">
+              <div *ngIf="currentOrder.billToCustomer != null">
+                  <h3>{{ currentOrder.billToCustomer.name }}</h3> 
+                  
+                  <address>  
+                      {{currentOrder.billToCustomer.addressLine1}} <br>
+                      {{currentOrder.billToCustomer.addressLine2}} <br>
+                      {{currentOrder.billToCustomer.addressCity}},  {{currentOrder.billToCustomer.addressState}} <br>
+                      {{currentOrder.billToCustomer.addressPostcode}} <br>
+                  </address> 
+              </div>
+              <div *ngIf="currentOrder.billToCustomer == null">
+                  
+                  <h3>{{ currentOrder.billToContactorFirstname }} {{ currentOrder.billToContactorLastname }}</h3> 
+        
+                  <address>  
+                    {{currentOrder.billToAddressLine1}} <br>
+                    {{currentOrder.billToAddressLine2}} <br>
+                    {{currentOrder.billToAddressCity}},  {{currentOrder.billToAddressState}} <br>
+                    {{currentOrder.billToAddressPostcode}} <br>
+                  </address> 
+              </div>
+          </nz-descriptions-item>
+        </nz-descriptions>
+    </nz-card>
+ 
+  <!-- upload the template file -->
+  <div nz-row [nzGutter]="24">
+
+
+    <div nz-col [nzSpan]="8"> 
+        <nz-upload [nzAction]="orderDocumentUploadUrl" [nzHeaders]="{ authorization: 'authorization-text' }"
+          [nzFileList]="fileList" [nzAccept]="acceptUploadedFileTypes" (nzChange)="handleUploadChange($event)">
+          <button nz-button>
+            <i nz-icon nzType="upload"></i>
+
+            {{ 'file-upload' | i18n }}
+          </button> 
+        </nz-upload> 
+    </div>
+  </div>
+
+</div>
+
+
+
+<!-- Confirm the change -->
+<div class="small-card" *ngIf="stepIndex === 1">
+    
+    <nz-card>
+        <nz-descriptions nzTitle="{{ 'order' | i18n}}" nzBordered>
+            <nz-descriptions-item nzTitle="{{ 'number' | i18n}}">
+              {{currentOrder.number}}</nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'shipToCustomer' | i18n}}">
+                <h3>{{ currentOrder.shipToCustomer?.name }} </h3> 
+          
+                    <address>  
+                      {{currentOrder.shipToCustomer?.addressLine1}} <br>
+                      {{currentOrder.shipToCustomer?.addressLine2}} <br>
+                      {{currentOrder.shipToCustomer?.addressCity}},  {{currentOrder.shipToCustomer?.addressState}} <br>
+                      {{currentOrder.shipToCustomer?.addressPostcode}} <br>
+                      </address> 
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'order.billToCustomer' | i18n}}">
+                <h3>{{ currentOrder.billToCustomer?.name }}</h3> 
+                
+                <address>  
+                    {{currentOrder.billToCustomer?.addressLine1}} <br>
+                    {{currentOrder.billToCustomer?.addressLine2}} <br>
+                    {{currentOrder.billToCustomer?.addressCity}},  {{currentOrder.billToCustomer?.addressState}} <br>
+                    {{currentOrder.billToCustomer?.addressPostcode}} <br>
+                    </address> 
+            </nz-descriptions-item>
+        </nz-descriptions>
+    </nz-card>
+
+    <nz-list nzBordered nzHeader="{{'files' | i18n}}" >
+        <nz-list-item *ngFor="let orderDocument of currentOrder.orderDocuments">
+            <a [href]="getFileUrl(orderDocument)" target="_blank" rel="noopener noreferrer" >
+              {{orderDocument.fileName}}</a>
+        </nz-list-item>
+      </nz-list>
+</div>
+
+
+<div class="steps-action" *ngIf="stepIndex === 0">
+  <button nz-button nzType="default" (click)="nextStep()">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+</div>
+
+<div class="steps-action" *ngIf="stepIndex === 1">
+
+  <button nz-button nzType="default" (click)="previousStep()">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()">
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+</nz-spin>

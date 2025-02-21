@@ -1,0 +1,102 @@
+<page-header title="{{'work-order-configuration' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="6">
+                {{ 'work-order-configuration.material-consume-timing' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18">
+              <nz-select [(ngModel)]="currentWorkOrderConfiguration!.materialConsumeTiming">
+                <nz-option
+                   *ngFor="let workOrderMaterialConsumeTiming of workOrderMaterialConsumeTimings  | keys"
+                     [nzValue]="workOrderMaterialConsumeTiming.key"
+                      nzLabel="{{ 'MATERIAL-CONSUME-TIMING-' + workOrderMaterialConsumeTiming.key | i18n}}"
+                    ></nz-option>
+              </nz-select>            
+
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+</div>
+<div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="6">
+                {{ 'work-order-configuration.allow-over-consume' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18">
+                <nz-switch [(ngModel)]="currentWorkOrderConfiguration!.overConsumeIsAllowed"></nz-switch>
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+</div>
+<div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="6">
+                {{ 'work-order-configuration.allow-over-produce' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18">
+                <nz-switch [(ngModel)]="currentWorkOrderConfiguration!.overProduceIsAllowed"></nz-switch>
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+</div>
+<div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="6">
+                {{ 'autoRecordItemProductivity' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18">
+                <nz-switch [(ngModel)]="currentWorkOrderConfiguration!.autoRecordItemProductivity"></nz-switch>
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+</div>
+<nz-card nzTitle="shift schedule">
+    <ul nz-list   nzBordered nzSize="large"> 
+        <li nz-list-item *ngFor="let item of currentWorkOrderConfiguration!.productionShiftSchedules, let i = index" nzNoFlex>
+          <ul nz-list-item-actions>
+            <nz-list-item-action>
+              <a (click)="removeShiftSchedule(i)">{{"remove" | i18n}}</a>
+            </nz-list-item-action>
+          </ul>
+          <span style="padding-left: 20px;">
+            <nz-time-picker [(ngModel)]="currentWorkOrderConfiguration!.productionShiftSchedules[i].shiftStartDateTime" 
+            ></nz-time-picker>
+
+          </span> 
+              
+          <span style="padding-left: 20px;">
+            to
+          </span>
+          <span style="padding-left: 20px;">
+
+            <nz-time-picker [(ngModel)]="currentWorkOrderConfiguration!.productionShiftSchedules[i].shiftEndDateTime" 
+            ></nz-time-picker>
+          </span>
+          <span style="padding-left: 20px;">
+
+            <label nz-checkbox [(ngModel)]="currentWorkOrderConfiguration!.productionShiftSchedules[i].shiftEndNextDay" >
+                <span> {{ 'shift end next day?' | i18n }}</span>
+              </label>
+          </span>
+        </li>
+        <nz-list-footer>
+            <button nz-button nzType="primary" (click)="addShiftSchedule()" *ngIf="!displayOnly">
+            {{ 'add' | i18n }}
+          </button>
+        </nz-list-footer>
+      </ul>
+</nz-card>
+
+
+<div nz-row nzType="flex" nzJustify="start">
+    <button nz-button nzType="primary" (click)="saveConfiguration()" *ngIf="!displayOnly">
+        {{ 'confirm' | i18n }}
+    </button>
+</div>
+</nz-spin>

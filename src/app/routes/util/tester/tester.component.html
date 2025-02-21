@@ -1,0 +1,14 @@
+<page-header></page-header>
+
+<ng-container>
+  <nz-card [nzExtra]="extraTemplate" *ngIf="testScenarioSuit">
+    <nz-steps nzDirection="vertical">
+      <nz-step *ngFor="let testScenario of testScenarioSuit.testScenarios" nzTitle="{{testScenario.name}}"
+        nzDescription="{{testScenario.description}}" [nzStatus]="mapOfStepStatus[testScenario.name]"></nz-step>
+    </nz-steps>
+  </nz-card>
+  <ng-template #extraTemplate>
+    <button nz-button (click)="executeScenario()" [disabled]="executing" [nzLoading]="executing" nzType="primary">
+      Executing</button>
+  </ng-template>
+</ng-container>

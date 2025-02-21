@@ -1,0 +1,229 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+  <a (click)="returnToPreviousPage()">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/qc/qc-inspection" routerLinkActive="active">{{
+        'qc-inspection' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+    <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step> 
+    <nz-step nzTitle="{{ 'steps.assign-qc-rule' | i18n }}"> </nz-step>
+    <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+
+<!-- Step 1: basic information  
+  -->
+
+
+
+<div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
+
+
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="qcInspectionRequestNumberErrorTpl" [nzValidateStatus]="qcInspectionRequestNumberValidateStatus"
+        >
+
+            <input appFkey variable="qc-inspection-request" type="text" nz-input [(ngModel)]="currentQCInspectionRequest.number" required 
+            (blur)="qcInspectionRequestChange($event)" [disabled]="!newQCInspectionRequest"/> 
+
+            <ng-template #qcInspectionRequestNumberErrorTpl let-control>  
+              <ng-container *ngIf="qcInspectionRequestNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
+              <ng-container *ngIf="qcInspectionRequestNumberValidateStatus === 'numberExists'">QC Inspection Request Number already exists</ng-container>
+                      
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    
+    <div nz-col [nzSpan]="8"  >
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="name">
+            {{ 'item' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+
+            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                <input nz-input [ngModel]="currentQCInspectionRequest.item?.name"
+                (blur)="itemNameChanged($event)"
+                
+                [disabled]="!newQCInspectionRequest"/>
+            </nz-input-group>
+            <ng-template #suffixIconButton>
+              <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
+              </app-inventory-item-query-popup>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+    </div>
+  </div> 
+ 
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8"  >
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="name">
+            {{ 'quantity' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+
+            <nz-input-group>
+                <input nz-input [(ngModel)]="currentQCInspectionRequest.qcQuantity"  />
+            </nz-input-group> 
+          </nz-form-control>
+        </nz-form-item>
+    </div>
+  </div>
+  
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="24" >
+
+        <nz-radio-group [(ngModel)]="filterBy">
+            <label nz-radio nzValue="None" >{{ "None" | i18n }}</label>
+            <label nz-radio nzValue="workOrder" >{{ "work-order" | i18n }}</label>
+            <!--
+
+            <label nz-radio nzValue="receipt" >{{ "receipt" | i18n }}</label>
+
+            -->
+          </nz-radio-group>
+
+          
+
+    </div>
+  </div>
+  
+  <div nz-row [nzGutter]="24" *ngIf="filterBy== 'workOrder'" style="padding-top: 25px;">
+    
+    <div nz-col [nzSpan]="8"  >
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="work-order">
+          {{ 'work-order' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+
+          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+              <input nz-input [ngModel]="currentQCInspectionRequest.workOrder?.number"
+              (blur)="workOrderNumberChanged($event)"
+              
+              [disabled]="!newQCInspectionRequest"/>
+          </nz-input-group>
+          <ng-template #suffixIconButton>
+            <app-util-work-order-query-popup (recordSelected)="processWorkOrderQueryResult($event)">
+            </app-util-work-order-query-popup>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+  </div>
+  </div>
+
+</div>
+
+<!-- assign qc rule -->
+<div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+    
+  <div nz-row style="padding: 10px">
+    <div nz-col nzSpan="12" nzOffset="6">
+      <nz-transfer [nzDataSource]="qcRuleList" nzShowSearch [nzFilterOption]="transferListFilterOption"
+        (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
+        (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
+        [nzTitles]="[ unassignedQCRuleText, assignedQCRuleText]">
+      </nz-transfer>
+    </div>
+  </div>
+ </div>
+<div class="small-card" *ngIf="stepIndex === 2" style="padding-top: 20px;">
+
+  <nz-card>
+
+    <nz-descriptions nzTitle="" nzBordered>
+        <nz-descriptions-item nzTitle="{{ 'number' | i18n}}">
+          {{currentQCInspectionRequest.number}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'item' | i18n}}">
+            {{currentQCInspectionRequest.item?.name}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'filterBy' | i18n}}">
+                {{filterBy | i18n}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'work-order' | i18n}}" *ngIf="filterBy== 'workOrder'" >
+          {{currentQCInspectionRequest.workOrder?.number}}
+        </nz-descriptions-item> 
+            
+      </nz-descriptions>
+
+      
+        <div class="search-result-list" style="padding-top: 25px"> 
+            
+            <st #st [data]="currentQCInspectionRequest.qcInspectionRequestItems"  [columns]="columns"  [expand]="expand"   expandAccordion>
+            
+            <!--   qc rule details  -->
+            <ng-template #expand let-item let-index="index" >
+                
+                <nz-tabset  >
+                <nz-tab nzTitle=" {{ 'qc-rule.item' | i18n }}">
+                    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="item.qcRule.qcRuleItems" nzSize="middle"
+                    [nzShowPagination]="false" #qcRuleItemTable>
+                    <thead>
+                        <th>
+                        {{ 'qcRule.checkPoint' | i18n }}
+                        </th>
+                        <th>
+                        {{ 'qcRule.qcRuleItemType' | i18n }}
+                        </th>
+                        <th>
+                        {{ 'qcRule.qcRuleItemComparator' | i18n }}
+                        </th>
+                        <th>
+                        {{ 'qcRule.expectedValue' | i18n }}
+                        </th> 
+                        
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let qcRuleItem of qcRuleItemTable.data">
+                        <td>{{ qcRuleItem.checkPoint }}</td>
+                        <td>{{ 'QC-RULE-ITEM-TYPE-' + qcRuleItem.qcRuleItemType | i18n }}</td>
+                        <td>{{ 'QC-RULE-ITEM-COMPARATOR-' + qcRuleItem.qcRuleItemComparator  | i18n}}</td>
+                        <td>{{ qcRuleItem.expectedValue }}</td>
+                        </tr>
+                    </tbody>
+                    </nz-table>
+                </nz-tab>
+                </nz-tabset>
+            </ng-template>  
+          </st> 
+             
+        </div>
+    
+  </nz-card>
+
+</div>
+
+<div class="steps-action" style="padding-top: 20px;">
+  <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 2">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 2">
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+</nz-spin>

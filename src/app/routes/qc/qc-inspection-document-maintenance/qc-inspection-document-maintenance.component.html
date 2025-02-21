@@ -1,0 +1,83 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+    <a routerLink="/qc/inspection" routerLinkActive="active"
+      [queryParams]="{ number: currentQCInspectionRequest.number }">{{ 'return' | i18n }}</a>
+</ng-template>
+
+<ng-template #breadcrumb>
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a routerLink="/qc/qc-inspection" routerLinkActive="active">{{
+          'qc-inspection' | i18n
+          }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+ 
+    <!-- Let the user input the order information -->
+    <nz-card class="small-card" *ngIf="currentQCInspectionRequest !== undefined"
+    style="margin-top: 20px;"   >
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="8">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="6">
+                  {{ 'number' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18" >
+                  <input   type="text" nz-input [(ngModel)]="currentQCInspectionRequest!.number"  disabled/>
+                   
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            
+        </div>
+
+        <div nz-row [nzGutter]="24"> 
+          <div class="clearfix">
+              <nz-upload
+              [nzAction]="imageFileUploadUrl"
+              [nzHeaders]="{ authorization: 'authorization-text' }"
+              nzListType="picture-card"
+              [nzAccept]="acceptUploadedFileTypes"
+               (nzChange)="handleUploadChange($event)"
+              [nzFileList]="fileList"
+              [nzShowButton]="fileList.length < 8"
+              [nzPreview]="handlePreview"
+            >
+              <div>
+                <i nz-icon nzType="plus"></i>
+                <div style="margin-top: 8px">
+                  {{ 'file-upload' | i18n }}</div>
+              </div>
+            </nz-upload>
+            <nz-modal
+              [nzVisible]="previewVisible"
+              [nzContent]="modalContent"
+              [nzFooter]="null"
+              (nzOnCancel)="previewVisible = false"
+            >
+              <ng-template #modalContent>
+                <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+              </ng-template>
+            </nz-modal>
+          </div>
+
+        </div> 
+    </nz-card>
+  
+
+
+    <div class="steps-action" style="padding-top: 15px;">
+        
+        <button nz-button nzType="primary" (click)="confirm()">
+            <span> {{ 'confirm' | i18n }}</span>
+        </button>
+    </div>
+
+</nz-spin>

@@ -1,0 +1,86 @@
+<page-header [title]="'page.client.header.title' | i18n">
+</page-header>
+
+<div *ngIf="!threePartyLogisticsFlag">
+
+  <nz-result nzStatus="warning" [nzIcon]="'info-circle'" nzTitle="{{'3pl-not-enabled-for-this-warehouse' | i18n}}"> 
+  </nz-result>
+</div>
+<div *ngIf="threePartyLogisticsFlag">
+
+  
+  <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+      <div nz-row [nzGutter]="12">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label for="name" [nzSm]="6" [nzXs]="14">
+              {{ 'name' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="14">
+              <input nz-input name="name" id="name" formControlName="name" />
+            </nz-form-control>
+          </nz-form-item>
+        </div> 
+      </div> 
+
+      <div nz-row>
+        <div nz-col [nzSpan]="24" class="search-area">
+          <button nz-button [nzType]="'primary'" (click)="search()">
+            {{ 'search' | i18n }}
+          </button>
+          <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Table to Display the result  -->
+    <div class="search-result-list">
+        
+      <st #st [data]="clients" [columns]="clientTableColumns" [footer]="tableFoot"   >
+           
+        <ng-template st-row="addressColumn" let-client let-index="index"> 
+       
+          <div>{{client.contactor?.firstname}} - {{client.contactor?.lastname}}</div>
+          <address>  
+            {{client.line1}} <br>
+            {{client.line2}} <br>
+            {{client.city}},  {{client.state}} <br>
+            {{client.postcode}} <br>
+            </address>
+
+        </ng-template>
+        <ng-template st-row="actionColumn" let-client let-index="index"> 
+        
+          <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary"  >
+              {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu> 
+                <li nz-menu-item  >
+                  
+                  <a routerLink="/common/client-maintenance"
+                  [queryParams]="{id : client.id}" routerLinkActive="active">
+                      {{ 'modify' | i18n }}</a>
+                      
+                </li>
+                <li nz-menu-item  >
+                  <a  (click)="removeClient(client.id)">{{ 'remove' | i18n }}</a>
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+        </ng-template>
+
+      </st> 
+    </div>
+
+
+    <ng-template #tableFoot>
+      <div nz-row nzType="flex" nzJustify="start" *ngIf="!displayOnly"> 
+        <a nz-button nzType="primary" routerLink="/common/client-maintenance" routerLinkActive="active"
+           >
+          {{'add' | i18n}}
+        </a> 
+      </div>
+    </ng-template>
+  </nz-spin>
+</div>

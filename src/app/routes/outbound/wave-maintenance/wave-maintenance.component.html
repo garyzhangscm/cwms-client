@@ -1,0 +1,412 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a (click)="returnToPreviousPage()" routerLinkActive="active">{{
+    'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.outbound' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/outbound/wave" routerLinkActive="active">{{
+        'breadcrumb.wave' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a>
+    </nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+  <nz-card *ngIf="!newWave" [nzTitle]="waveInfo">   
+    
+    <nz-descriptions nzBordered="true">
+
+      <nz-descriptions-item nzTitle="{{ 'wave.totalOrderCount' | i18n }}">
+
+        {{ currentWave.totalOrderCount | number  }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'wave.totalItemCount' | i18n }}" >
+        {{ currentWave.totalItemCount | number}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'wave.totalQuantity' | i18n }}">
+        {{ currentWave.totalQuantity | number }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'comment' | i18n }}" >
+        <input nz-input (ngModelChange)="waveCommentChanged($event)" 
+        [ngModelOptions]="{updateOn: 'blur'}"
+        [ngModel]="currentWave.comment"/>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'loadNumber' | i18n }}" >
+        <input nz-input (ngModelChange)="waveLoadNumberChanged($event)" 
+        [ngModelOptions]="{updateOn: 'blur'}"
+        [ngModel]="currentWave.loadNumbers"/>
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'billOfLadingNumber' | i18n }}" >
+        <input nz-input (ngModelChange)="waveBillOfLadingNumberChanged($event)"
+        [ngModelOptions]="{updateOn: 'blur'}"
+         [ngModel]="currentWave.billOfLadingNumbers"/>
+      </nz-descriptions-item>
+      
+    </nz-descriptions>
+<!--
+  
+      <nz-row [nzGutter]="24" >
+        <nz-col [nzSpan]="8">
+          <nz-statistic [nzValue]="(currentWave.totalOrderCount | number)!"
+            nzTitle="{{ 'wave.totalOrderCount' | i18n }}">
+          </nz-statistic>
+        </nz-col>
+        <nz-col [nzSpan]="8">
+          <nz-statistic [nzValue]="(currentWave.totalItemCount | number)!" nzTitle="{{ 'wave.totalItemCount' | i18n }}">
+          </nz-statistic>
+        </nz-col>
+        <nz-col [nzSpan]="8">
+          <nz-statistic [nzValue]="(currentWave.totalQuantity | number)!" nzTitle="{{ 'wave.totalQuantity' | i18n }}">
+          </nz-statistic>
+        </nz-col>
+      </nz-row>
+      
+-->
+      <ng-template #waveInfo>
+        {{'current-wave' | i18n }}: 
+        <a routerLink="/outbound/wave" routerLinkActive="active"
+        [queryParams]="{number: currentWave.number}">{{currentWave.number}}</a>
+        
+        
+      </ng-template>
+  </nz-card> 
+
+ 
+  <nz-layout *ngIf="this.currentWave == null || isWaveOpenForNewOrderShipment(this.currentWave)">
+    <nz-sider [(nzCollapsed)]="hideCriteria">
+      <h3 style="border-bottom: 1px solid #d9d9d9">{{'criteria' | i18n}}</h3>
+      <form nz-form 
+        [formGroup]="searchForm"
+        [nzLayout]="'vertical'" 
+        (ngSubmit)="findWaveCandidate()"> 
+
+        <nz-form-item>
+          <nz-form-label>{{ 'order.number' | i18n }}</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="orderNumber" />
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <nz-form-label>{{ 'customer' | i18n }}</nz-form-label>
+          <nz-form-control>
+            <nz-select nzShowSearch nzAllowClear  formControlName="customer">
+              <nz-option *ngFor="let customer of validCustomers" [nzLabel]="customer.name" [nzValue]="customer.id"></nz-option> 
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item>
+          <nz-form-label> {{ 'created-time' | i18n }}</nz-form-label>
+          <nz-form-control>
+            <nz-range-picker [nzShowTime]="{ nzHideDisabledOptions: true }" nzFormat="yyyy-MM-dd HH:mm:ss"
+              formControlName="createdTimeRanger" name="createdTimeRanger">
+            </nz-range-picker>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item>
+          <nz-form-label>
+            {{ 'created-date' | i18n }}</nz-form-label>
+          <nz-form-control>
+            <nz-date-picker formControlName="createdDate" name="createdDate"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+        
+        
+        <nz-form-item *ngIf="threePartyLogisticsFlag">
+          <nz-form-label>
+            {{ 'client' | i18n }}</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="client" nzAllowClear>
+              <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item> 
+          <nz-form-control>
+            <label nz-checkbox formControlName="singleOrderLineOnly">
+              {{ 'singleOrderLineOnly' | i18n }}</label>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item> 
+          <nz-form-control>
+            <label nz-checkbox formControlName="singleOrderQuantityOnly">
+              {{ 'singleOrderQuantityOnly' | i18n }}</label>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item> 
+          <nz-form-control>
+            <label nz-checkbox formControlName="singleOrderCaseQuantityOnly">
+              {{ 'singleOrderCaseQuantityOnly' | i18n }}</label>
+          </nz-form-control>
+        </nz-form-item>
+
+
+        <nz-form-item>
+          <nz-form-control>
+            <button nz-button nzType="primary">{{ 'search' | i18n }}</button>
+          </nz-form-control>
+        </nz-form-item>
+
+        
+
+<!--
+
+          <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="8">
+              <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="8" nzFor="orderNumber">
+                  
+                </nz-form-label>
+                <nz-form-control [nzSpan]="16" nzHasFeedback
+                  nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                  <input nz-input formControlName="orderNumber" id="orderNumber" name="orderNumber" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div> 
+
+
+-->
+      </form>
+
+
+    </nz-sider>
+    <nz-content>      
+      <nz-card>
+        <nz-tabset [nzSelectedIndex] = "planWaveByCategoryIndex" (nzSelectedIndexChange)="planWaveByCategoryIndexChanged($event)">
+          <nz-tab nzTitle="{{ 'order' | i18n }}">
+
+            <!-- Table to Display the result  -->
+            <div class="search-result-list">
+              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #orderTable [nzShowPagination]="'true'"
+              nzShowSizeChanger [nzPageSizeOptions]="[10,50,150,250]"
+              (nzCurrentPageDataChange)="orderTableCurrentPageDataChange($event)"
+                [nzData]="listOfAllOrders" [nzFooter]="orderTableFoot">
+                <thead>
+                  <tr>
+                    <th [nzSelections]="listOfOrderTableSelection" [(nzChecked)]="orderTableChecked"
+                      [nzIndeterminate]="orderTableIndeterminate" (nzCheckedChange)="onOrderTableAllChecked($event)"
+                      nzWidth="60px"></th>
+                    <th *ngFor="let column of listOfOrderTableColumns" [nzShowSort]="column.showSort"
+                      [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+                      [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
+                      [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+                      {{ column.name | i18n }}
+                    </th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let data of orderTable.data">
+
+
+                    <td [nzChecked]="setOfOrderTableCheckedId.has(data.id!)"
+                      (nzCheckedChange)="onOrderTableItemChecked(data.id!, $event)"></td>
+
+                    <td>{{ data.number }}</td>
+                    <td>
+                      <nz-skeleton-element 
+                          *ngIf="data.shipToCustomerId && data.shipToCustomer == null"
+                          nzType="input"
+                          [nzActive]="true"
+                          [nzSize]="'small'"
+                          style="width:75px"
+                        ></nz-skeleton-element> 
+                      <a nz-tooltip [nzTooltipTitle]="shipToCustomerDetailsTemplate">{{ data.shipToCustomer?.name }}</a>
+                      
+                        <ng-template #shipToCustomerDetailsTemplate>
+                          
+                          <address>  
+                            {{data.shipToCustomer?.addressLine1}} <br>
+                            {{data.shipToCustomer?.addressLine2}} <br>
+                            {{data.shipToCustomer?.addressCity}},  {{data.shipToCustomer?.addressState}} <br>
+                            {{data.shipToCustomer?.addressPostcode}} <br>
+                            </address>
+                        </ng-template>
+                    </td>
+                    <td>
+                      <div *ngIf="data.billToCustomer != null">
+                        <a nz-tooltip [nzTooltipTitle]="billToCustomerTooltipTpl">
+                          {{ data.billToCustomer.name }}
+                        </a>
+                        <ng-template #billToCustomerTooltipTpl>
+                          <div>
+                            {{ data.billToCustomer.contactorFirstname }} {{ data.billToCustomer.contactorLastname }}
+                          </div>
+                          <div>
+                            {{ data.billToCustomer.addressLine1 }}
+                          </div>
+                          <div *ngIf="data.billToCustomer.addressLine2 != null">
+                            {{ data.billToCustomer.addressLine2 }}
+                          </div>
+                          <div>
+                            {{ data.billToCustomer.addressCity }}, {{ data.billToCustomer.addressState }}
+                            {{ data.billToCustomer.addressPostcode }}
+                          </div>
+                        </ng-template>
+                      </div>
+                      <div *ngIf="data.billToCustomer === null">
+                        <a nz-tooltip [nzTooltipTitle]="billToAddressTooltipTpl">
+                          {{ data.billToContactorFirstname }} {{ data.billToContactorLastname }}
+                        </a>
+                        <ng-template #billToAddressTooltipTpl>
+                          <div>
+                            {{ data.billToAddressLine1 }}
+                          </div>
+                          <div *ngIf="data.billToAddressLine2 != null">
+                            {{ data.billToAddressLine2 }}
+                          </div>
+                          <div>
+                            {{ data.billToAddressCity }}, {{ data.billToAddressState }}
+                            {{ data.billToAddressPostcode }}
+                          </div>
+                        </ng-template>
+
+                      </div>
+                    </td>
+                    <td>{{ data.totalItemCount }}</td>
+                    <td>{{ data.totalExpectedQuantity }}</td>
+                    <td>{{ data.totalOpenQuantity }}</td>
+                    <td>{{ data.totalInprocessQuantity }}</td>
+                    <td>{{ data.totalShippedQuantity }}</td>
+                  </tr>
+                </tbody>
+              </nz-table>
+            </div>
+
+            <ng-template #orderTableFoot>
+              <div nz-row nzType="flex" nzJustify="start">
+                <button nz-button nzType="primary" (click)="createWaveWithOrders()">
+                  {{ 'add-to-wave' | i18n }}
+                </button>
+              </div>
+            </ng-template>
+          </nz-tab>
+          <nz-tab nzTitle="{{ 'order.line' | i18n }}">
+
+            <!-- Table to Display the result  -->
+            <div class="search-result-list">
+              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #orderLineTable [nzShowPagination]="'false'"
+                [nzData]="listOfDisplayOrderLines" [nzFooter]="orderLineTableFoot">
+                <thead>
+                  <tr>
+                    <th [nzSelections]="listOfOrderLineTableSelection" [(nzChecked)]="orderLineTableChecked"
+                      [nzIndeterminate]="orderLineTableIndeterminate" (nzCheckedChange)="onOrderLineTableAllChecked($event)"
+                      nzWidth="60px"></th>
+                    <th *ngFor="let column of listOfOrderLineTableColumns" [nzShowSort]="column.showSort"
+                      [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+                      [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
+                      [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+                      {{ column.name | i18n }}
+                    </th>
+
+
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let data of orderLineTable.data">
+
+                    <td [nzChecked]="setOfOrderLineTableCheckedId.has(data.id!)"
+                      (nzCheckedChange)="onOrderLineTableItemChecked(data.id!, $event)"></td>
+                    <td>{{ data.orderNumber }}</td>
+                    <td>{{ data.number }}</td>
+                    <td>{{ data.item?.name }}</td>
+                    <td>{{ data.item?.description }}</td>
+                    <td>{{ data.expectedQuantity }}</td>
+                    <td>{{ data.openQuantity }}</td>
+                    <td>{{ data.inprocessQuantity }}</td>
+                    <td>{{ data.shippedQuantity }}</td>
+                    <td>
+                      <span nz-tooltip nzTooltipTitle="{{ data.inventoryStatus?.description }}">{{ data.inventoryStatus?.name
+                        }}</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </nz-table>
+            </div>
+
+            <ng-template #orderLineTableFoot>
+              <div nz-row nzType="flex" nzJustify="start">
+                <button nz-button nzType="primary" (click)="createWaveWithOrderLines()">
+                  {{ 'add-to-wave' | i18n }}
+                </button>
+              </div>
+            </ng-template>
+          </nz-tab>
+          
+          <nz-tab nzTitle="{{ 'shipment' | i18n }}">
+
+            <!-- Table to Display the result  -->
+            <div class="search-result-list">
+              <st #shipmentTable [data]="waveableShipments" [columns]="shipmentTableColumns" 
+                [scroll]="{ x: '1615px' }"
+                [widthMode]="{ type: 'strict' }" resizable [footer]="shipmentTableFoot">
+              </st>
+            </div>
+
+            <ng-template #shipmentTableFoot>
+              <div nz-row nzType="flex" nzJustify="start">
+                <button nz-button nzType="primary" (click)="createWaveWithShipments()">
+                  {{ 'add-to-wave' | i18n }}
+                </button>
+              </div>
+            </ng-template>
+          </nz-tab>
+        </nz-tabset>
+
+
+      </nz-card>
+    </nz-content> 
+  </nz-layout> 
+  
+
+<nz-modal [(nzVisible)]="waveNumberModalVisible" nzTitle="{{'wave.number' | i18n}}" 
+  (nzOnCancel)="cancelNewWave()" (nzOnOk)="createNewWave()" [nzOkLoading]="planWaveInProcess" 
+  [nzCancelLoading]="planWaveInProcess" >
+  <ng-container *nzModalContent>
+    <form nz-form 
+    [formGroup]="newWaveNumberForm"
+    [nzLayout]="'vertical'" >
+    
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="24">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="6">{{'wave.number' | i18n}}</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+              <input appFkey variable="wave-number" nz-input formControlName="waveNumber" id="waveNumber"
+                name="waveNumber" required (nextNumberAvailableEvent)="setWaveNumber($event)"
+                placeholder="{{'leave-empty-system-generate' | i18n}}" /> 
+            </nz-form-control>
+          </nz-form-item >
+        </div>
+      </div>
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="24">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="6">{{'comment' | i18n}}</nz-form-label>
+            <nz-form-control [nzSpan]="14">
+              <input  nz-input formControlName="comment" id="comment"
+                name="comment"   /> 
+            </nz-form-control>
+          </nz-form-item >
+        </div>
+      </div>
+    </form>
+  </ng-container>
+</nz-modal>
+
+</nz-spin>
