@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -24,6 +24,7 @@ import { WorkTaskService } from '../services/work-task.service';
 })
 export class WorkTaskWorkTaskComponent implements OnInit {
 
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   searchForm!: UntypedFormGroup;
   searchResult = '';
   workTasks: WorkTask[] = [];
@@ -66,14 +67,14 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     ['assign-role', false], 
     ['assign-working-team', false], 
   ]);
+  
 
   constructor(private http: _HttpClient,    
     private workTaskService: WorkTaskService, 
     private messageService: NzMessageService,
     private userService: UserService,
     private fb: UntypedFormBuilder, 
-    private roleService: RoleService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private roleService: RoleService, 
     private modalService: NzModalService, 
     private activatedRoute: ActivatedRoute,  ) { 
     userService.isCurrentPageDisplayOnly("/work-task/work-task").then(
@@ -99,8 +100,8 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     });
     
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.number ) {
-        this.searchForm.controls.number.setValue(params.number); 
+      if (params['number'] ) {
+        this.searchForm.value.number.setValue(params['number']); 
         this.search();
       }
     });
@@ -122,12 +123,12 @@ export class WorkTaskWorkTaskComponent implements OnInit {
     this.searchResult = ''; 
 
     this.workTaskService.getWorkTasks(
-      this.searchForm.controls.number.value, 
-      this.searchForm.controls.type.value, 
-      this.searchForm.controls.status.value, 
-      this.searchForm.controls.sourceLocationName.value, 
-      this.searchForm.controls.assignedUserName.value, 
-      this.searchForm.controls.assignedRoleName.value, ).subscribe({
+      this.searchForm.value.number.value, 
+      this.searchForm.value.type.value, 
+      this.searchForm.value.status.value, 
+      this.searchForm.value.sourceLocationName.value, 
+      this.searchForm.value.assignedUserName.value, 
+      this.searchForm.value.assignedRoleName.value, ).subscribe({
 
         next: (workTasksRes) => {
           this.isSpinning = false;
@@ -270,7 +271,7 @@ export class WorkTaskWorkTaskComponent implements OnInit {
       next: (workTaskRes) => {
         this.queryUserInProcess = false;
         this.queryUserModal.destroy();
-        this.searchForm.controls.number.setValue(workTaskRes.number);
+        this.searchForm.value.number.setValue(workTaskRes.number);
         this.search();
       }, 
       error: () => this.queryUserInProcess = false
@@ -394,7 +395,7 @@ export class WorkTaskWorkTaskComponent implements OnInit {
       next: (workTaskRes) => {
         this.queryRoleInProcess = false;
         this.queryRoleModal.destroy();
-        this.searchForm.controls.number.setValue(workTaskRes.number);
+        this.searchForm.value.number.setValue(workTaskRes.number);
         this.search();
       }, 
       error: () => this.queryRoleInProcess = false
