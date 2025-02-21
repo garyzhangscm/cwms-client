@@ -88,20 +88,20 @@ export class InventoryInventoryMixRestrictionComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       let autoSearch = false;
 
-      if (params.clientId) {         
-        this.searchForm.controls.client.setValue(params.clientId);
+      if (params['clientId']) {         
+        this.searchForm.value.client.setValue(params['clientId']);
         autoSearch = true;
       }  
-      if (params.locationGroupTypeId) {         
-        this.searchForm.controls.locationGroupType.setValue(params.locationGroupTypeId);
+      if (params['locationGroupTypeId']) {         
+        this.searchForm.value.locationGroupType.setValue(params['locationGroupTypeId']);
         autoSearch = true;
       }  
-      if (params.locationGroupId) {         
-        this.searchForm.controls.locationGroup.setValue(params.locationGroupId);
+      if (params['locationGroupId']) {         
+        this.searchForm.value.locationGroup.setValue(params['locationGroupId']);
         autoSearch = true;
       }
-      if (params.locationName) {         
-        this.searchForm.controls.location.setValue(params.locationName);
+      if (params['locationName']) {         
+        this.searchForm.value.location.setValue(params['locationName']);
         autoSearch = true;
       }
       if (autoSearch) {
@@ -121,7 +121,7 @@ export class InventoryInventoryMixRestrictionComponent implements OnInit {
 
   processLocationQueryResult(selectedLocationName: any): void {
     console.log(`start to query with location name ${selectedLocationName}`);
-    this.searchForm.controls.location.setValue(selectedLocationName);
+    this.searchForm.value.location.setValue(selectedLocationName);
   }
   
   initClientAssignment(): void {

@@ -284,7 +284,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       supplier: [null],
       allowUnexpectedItem: [false],
     });
-    this.receiptForm.controls.receiptId.disable();
+    this.receiptForm.value.receiptId.disable();
 
     this.clientService.getClients().subscribe({
       next: (clientRes) => {
@@ -294,8 +294,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     
     this.activatedRoute.queryParams.subscribe(params => {
       
-      if (params.receiptNumber) { 
-        this.loadReceipt(params.receiptNumber); 
+      if (params['receiptNumber']) { 
+        this.loadReceipt(params['receiptNumber']); 
         this.newBatch = false;
       } else {
         this.listOfAllReceiptLines = [];
@@ -547,16 +547,16 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   saveReceipt(): void {
     // Setup the value
     this.isSpinning = true;
-    this.currentReceipt.id = this.receiptForm!.controls.receiptId.value;
-    this.currentReceipt.number = this.receiptForm!.controls.receiptNumber.value;
+    this.currentReceipt.id = this.receiptForm!.value.receiptId.value;
+    this.currentReceipt.number = this.receiptForm!.value.receiptNumber.value;
 
     // Get the client by name
-    const client = this.getClientByName(this.receiptForm!.controls.client.value);
+    const client = this.getClientByName(this.receiptForm!.value.client.value);
     this.currentReceipt.clientId = client ? client.id : undefined;
     this.currentReceipt.client = client ? client : undefined;
 
     // Get the supplier by name
-    const supplier = this.getSupplierByName(this.receiptForm!.controls.supplier.value);
+    const supplier = this.getSupplierByName(this.receiptForm!.value.supplier.value);
     this.currentReceipt.supplierId = supplier ? supplier.id : undefined;
     this.currentReceipt.supplier = supplier ? supplier : undefined;
 
@@ -579,10 +579,10 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
           this.message.success(this.i18n.fanyi('message.new.complete'));
           this.newBatch = false;
 
-          this.receiptForm!.controls.receiptId.setValue(res.id);
-          this.receiptForm!.controls.receiptId.disable();
-          this.receiptForm!.controls.receiptNumber.setValue(res.number);
-          this.receiptForm!.controls.receiptNumber.disable();
+          this.receiptForm!.value.receiptId.setValue(res.id);
+          this.receiptForm!.value.receiptId.disable();
+          this.receiptForm!.value.receiptNumber.setValue(res.number);
+          this.receiptForm!.value.receiptNumber.disable();
           this.isSpinning = false;
 
         }, 
@@ -618,9 +618,9 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.listOfAllReceivedInventory = [];
     this.listOfDisplayReceivedInventory = [];
 
-    this.receiptForm!.controls.receiptId.setValue('');
-    this.receiptForm!.controls.receiptNumber.setValue('');
-    this.receiptForm!.controls.receiptNumber.enable();
+    this.receiptForm!.value.receiptId.setValue('');
+    this.receiptForm!.value.receiptNumber.setValue('');
+    this.receiptForm!.value.receiptNumber.enable();
 
     // this.receiptForm.controls.client.setValue('');
     // this.receiptForm.controls.supplier.setValue('');
@@ -630,14 +630,14 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.listOfAllReceiptLines = this.currentReceipt.receiptLines;
     this.listOfDisplayReceiptLines = this.currentReceipt.receiptLines;
 
-    this.receiptForm!.controls.receiptId.setValue(this.currentReceipt.id);
-    this.receiptForm!.controls.receiptId.disable();
-    this.receiptForm!.controls.receiptNumber.setValue(this.currentReceipt.number);
-    this.receiptForm!.controls.receiptNumber.disable();
-    this.receiptForm!.controls.client.disable();
+    this.receiptForm!.value.receiptId.setValue(this.currentReceipt.id);
+    this.receiptForm!.value.receiptId.disable();
+    this.receiptForm!.value.receiptNumber.setValue(this.currentReceipt.number);
+    this.receiptForm!.value.receiptNumber.disable();
+    this.receiptForm!.value.client.disable();
 
-    this.receiptForm!.controls.client.setValue(this.currentReceipt.client ? this.currentReceipt.client.id : '');
-    this.receiptForm!.controls.supplier.setValue(this.currentReceipt.supplier ? this.currentReceipt.supplier.name : '');
+    this.receiptForm!.value.client.setValue(this.currentReceipt.client ? this.currentReceipt.client.id : '');
+    this.receiptForm!.value.supplier.setValue(this.currentReceipt.supplier ? this.currentReceipt.supplier.name : '');
 
     this.loadReceivedInventory(this.currentReceipt);
 
@@ -705,14 +705,14 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     // When we use the 'fkey' to automatically generate the next receipt number
     // the reactive form control may not have the right value.Let's set
     // the number back to the bind control
-    this.receiptForm!.controls.receiptNumber.setValue((event.target as HTMLInputElement).value);
+    this.receiptForm!.value.receiptNumber.setValue((event.target as HTMLInputElement).value);
     this.refreshReceiptResults();
   }
 
   refreshReceiptResults(selectedTabIndex: number = 0): void {
     this.isSpinning = true;
     this.selectedTabIndex = selectedTabIndex;
-    const receiptNumber = this.receiptForm!.controls.receiptNumber.value;
+    const receiptNumber = this.receiptForm!.value.receiptNumber.value;
     if (receiptNumber) {
       this.loadReceipt(receiptNumber);
     } else {
@@ -734,8 +734,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
         this.clearDisplay();
         // in case the receipt doesn't exists yet, let's set the
         // receipt number control as the input value
-        this.receiptForm!.controls.receiptNumber.setValue(receiptNumber);
-        console.log(`this.receiptForm.controls.receiptNumber: ${this.receiptForm!.controls.receiptNumber.value}`);
+        this.receiptForm!.value.receiptNumber.setValue(receiptNumber);
+        console.log(`this.receiptForm.controls.receiptNumber: ${this.receiptForm!.value.receiptNumber.value}`);
       }
       this.isSpinning = false;
     });
@@ -1117,7 +1117,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     this.currentReceivingInventory!.lpn = newLPN;
   }
   receivingLPNChanged(event: Event): void {
-    this.receivingForm!.controls.lpn.setValue((event.target as HTMLInputElement).value);
+    this.receivingForm!.value.lpn.setValue((event.target as HTMLInputElement).value);
     // this.currentInventory.lpn = 
   }
   /**
@@ -1307,19 +1307,19 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   createReceivingInventory(receiptLine: ReceiptLine, receiptLocation: WarehouseLocation): Inventory | undefined {
     const inventoryStatus = this.validInventoryStatuses
       .filter(
-        availableInventoryStatus => availableInventoryStatus.id === this.receivingForm.controls.inventoryStatus.value,
+        availableInventoryStatus => availableInventoryStatus.id === this.receivingForm.value.inventoryStatus.value,
       )
       .pop();
     const itemPackageType = receiptLine.item!.itemPackageTypes
       .filter(
-        existingItemPackageType => existingItemPackageType.id === this.receivingForm.controls.itemPackageType.value,
+        existingItemPackageType => existingItemPackageType.id === this.receivingForm.value.itemPackageType.value,
       )
       .pop();
     
-    console.log(`this.receivingForm.controls.itemUnitOfMeasure.value: ${this.receivingForm.controls.itemUnitOfMeasure.value}`)
+    console.log(`this.receivingForm.controls.itemUnitOfMeasure.value: ${this.receivingForm.value.itemUnitOfMeasure.value}`)
     
     const itemUnitOfMeasure = itemPackageType?.itemUnitOfMeasures.find(
-      itemUnitOfMeasure => itemUnitOfMeasure.id === this.receivingForm.controls.itemUnitOfMeasure.value,
+      itemUnitOfMeasure => itemUnitOfMeasure.id === this.receivingForm.value.itemUnitOfMeasure.value,
     )
 
     console.log(`receive by item unit of measure \n ${JSON.stringify(itemUnitOfMeasure)}`)
@@ -1332,12 +1332,12 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
       return {
         id: undefined,
-        lpn: this.receivingForm.controls.lpn.value,
+        lpn: this.receivingForm.value.lpn.value,
         location: receiptLocation,
         locationName: receiptLocation.name,
         item: receiptLine.item,
         itemPackageType,
-        quantity: this.receivingForm.controls.quantity.value * itemUnitOfMeasure.quantity!,
+        quantity: this.receivingForm.value.quantity.value * itemUnitOfMeasure.quantity!,
         inventoryStatus,
       };
     }
@@ -1627,8 +1627,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       nzOnOk: () => {
         this.reverseInventory( 
           inventory,
-          this.reverseInventoryForm.controls.reverseQCQuantity.value,
-          this.reverseInventoryForm.controls.allowReuseLPN.value,
+          this.reverseInventoryForm.value.reverseQCQuantity.value,
+          this.reverseInventoryForm.value.allowReuseLPN.value,
         );
       },
 
@@ -1776,8 +1776,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       nzOnOk: () => {
         this.recalculateQCQuantity( 
           receiptLine,
-          this.recalculateQCForm.controls.newQCQuantity.value,
-          this.recalculateQCForm.controls.newQCPercentage.value,
+          this.recalculateQCForm.value.newQCQuantity.value,
+          this.recalculateQCForm.value.newQCPercentage.value,
         );
       },
 
@@ -1854,7 +1854,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
               // set the display unit of measure
               console.log(`set the display stock item unit of measure to \n${JSON.stringify(this.currentReceivingInventory!.itemPackageType.stockItemUnitOfMeasure)}`);
       
-              this.receivingForm!.controls.itemUnitOfMeasure.setValue(this.currentReceivingInventory!.itemPackageType.stockItemUnitOfMeasure.id);
+              this.receivingForm!.value.itemUnitOfMeasure.setValue(this.currentReceivingInventory!.itemPackageType.stockItemUnitOfMeasure.id);
             }
           }
         }, 

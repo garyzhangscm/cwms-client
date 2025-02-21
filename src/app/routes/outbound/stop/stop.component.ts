@@ -86,8 +86,8 @@ export class OutboundStopComponent implements OnInit {
     // IN case we get the number passed in, refresh the display
     // and show the order information
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.number) {
-        this.searchForm.controls.number.setValue(params.number);
+      if (params['number']) {
+        this.searchForm.value.number.setValue(params['number']);
         this.search();
       }
     });
@@ -102,7 +102,7 @@ export class OutboundStopComponent implements OnInit {
      
 
     this.stopService.getStops(
-      this.searchForm.controls.number.value,   
+      this.searchForm.value.number.value,   
     ).subscribe(
       {
         next: (stopRes) => {

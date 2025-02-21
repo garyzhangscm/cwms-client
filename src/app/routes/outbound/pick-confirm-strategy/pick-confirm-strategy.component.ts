@@ -128,8 +128,8 @@ export class OutboundPickConfirmStrategyComponent implements OnInit {
     this.pickConfirmStrategyService.getPickConfirmStrategies(
       sequence,      
       undefined,
-      this.searchForm.controls.itemName.value,
-      this.searchForm.controls.itemFamily.value,
+      this.searchForm.value.itemName.value,
+      this.searchForm.value.itemFamily.value,
     ).subscribe({
       next: (pickConfirmStrategyRes) => {
 
@@ -156,8 +156,8 @@ export class OutboundPickConfirmStrategyComponent implements OnInit {
 
     
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.sequence) { 
-        this.search(params.sequence);
+      if (params['sequence']) { 
+        this.search(params['sequence']);
       } 
     }); 
   }
@@ -190,7 +190,7 @@ export class OutboundPickConfirmStrategyComponent implements OnInit {
   }
   
   processItemQueryResult(selectedItemName: any): void {  
-    this.searchForm.controls.item.setValue(selectedItemName);
+    this.searchForm.value.item.setValue(selectedItemName);
     
     
   }

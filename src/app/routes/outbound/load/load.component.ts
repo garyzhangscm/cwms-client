@@ -175,8 +175,8 @@ export class OutboundLoadComponent implements OnInit {
     // IN case we get the number passed in, refresh the display
     // and show the order information
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.number) {
-        this.searchForm.controls.number.setValue(params.number);
+      if (params['number']) {
+        this.searchForm.value.number.setValue(params['number']);
         this.search();
       }
     });
@@ -190,16 +190,16 @@ export class OutboundLoadComponent implements OnInit {
     this.isSpinning = true;
     // this.checked = false;
     
-    let startTime : Date = this.searchForm.controls.dateTimeRanger.value ? 
-        this.searchForm.controls.dateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.controls.dateTimeRanger.value ? 
-        this.searchForm.controls.dateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.controls.date.value;
+    let startTime : Date = this.searchForm.value.dateTimeRanger.value ? 
+        this.searchForm.value.dateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.value.dateTimeRanger.value ? 
+        this.searchForm.value.dateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.value.date.value;
 
     this.trailerAppointmentService.getTrailerAppointments(
-      this.searchForm.controls.number.value, 
+      this.searchForm.value.number.value, 
       TrailerAppointmentType.SHIPPING,
-      this.searchForm.controls.status.value,
+      this.searchForm.value.status.value,
       startTime,  endTime, specificDate    
     ).subscribe(
       {
@@ -717,9 +717,9 @@ export class OutboundLoadComponent implements OnInit {
                   this.isSpinning = true;
                   this.shortAllocationService.createWorkOrder(
                     shortAllocation,
-                    this.createWorkOrderForm.controls.bom.value,
-                    this.createWorkOrderForm.controls.workOrderNumber.value,
-                    this.createWorkOrderForm.controls.workOrderQuantity.value,
+                    this.createWorkOrderForm.value.bom.value,
+                    this.createWorkOrderForm.value.workOrderNumber.value,
+                    this.createWorkOrderForm.value.workOrderQuantity.value,
                   ).subscribe({
                     next: () => {
                       
@@ -746,13 +746,13 @@ export class OutboundLoadComponent implements OnInit {
   
   setupDefaultDisplayBOM(): void {
     if (this.availableBOM.length === 1) {
-      this.createWorkOrderForm!.controls.bom.setValue(this.availableBOM[0].id);
+      this.createWorkOrderForm!.value.bom.setValue(this.availableBOM[0].id);
       this.displayBom = this.availableBOM[0];
     }
   }
   workOrderNumberChanged(workOrderNumber: string) {
     
-    this.createWorkOrderForm.controls.workOrderNumber.setValue(workOrderNumber);
+    this.createWorkOrderForm.value.workOrderNumber.setValue(workOrderNumber);
   }
   
   onPickTableExpandChange(id: number, pick: PickWork,checked: boolean): void {

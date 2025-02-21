@@ -179,9 +179,9 @@ export class InboundPutawayConfigurationComponent implements OnInit {
     this.putawayConfigurationService
       .getPutawayConfigurations(
         undefined,
-        this.searchForm!.controls.itemName.value,
-        this.searchForm!.controls.itemFamilyName.value,
-        this.searchForm!.controls.inventoryStatus.value,
+        this.searchForm!.value.itemName.value,
+        this.searchForm!.value.itemFamilyName.value,
+        this.searchForm!.value.inventoryStatus.value,
       )
       .subscribe(
         putawayConfigurationRes => {
@@ -299,7 +299,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
     console.log(`user selected: ${itemName}`);
 
     this.lookupDrawerclosed();
-    this.searchForm!.controls.itemName.setValue(itemName);
+    this.searchForm!.value.itemName.setValue(itemName);
   }
 
   modifyPutawayConfiguration(putawayConfiguration: PutawayConfiguration) {

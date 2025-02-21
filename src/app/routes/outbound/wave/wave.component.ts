@@ -626,10 +626,10 @@ export class OutboundWaveComponent implements OnInit {
   search(expandedWaveId?: number, tabSelectedIndex?: number): void {
     this.isSpinning = true;
     this.searchResult = '';
-    this.waveService.getWaves(this.searchForm.controls.number.value, 
-      this.searchForm.controls.waveStatus.value, 
-      this.searchForm.controls.includeCompletedWave.value, 
-      this.searchForm.controls.includeCancelledWave.value).subscribe(
+    this.waveService.getWaves(this.searchForm.value.number.value, 
+      this.searchForm.value.waveStatus.value, 
+      this.searchForm.value.includeCompletedWave.value, 
+      this.searchForm.value.includeCancelledWave.value).subscribe(
       waveRes => {
         // this.listOfAllWaves = this.calculateQuantities(waveRes); 
  
@@ -907,8 +907,8 @@ export class OutboundWaveComponent implements OnInit {
         this.unpickInventory(
           wave,
           inventory,
-          this.unpickForm.controls.destinationLocation.value,
-          this.unpickForm.controls.immediateMove.value,
+          this.unpickForm.value.destinationLocation.value,
+          this.unpickForm.value.immediateMove.value,
         );
       },
       nzWidth: 1000,
@@ -999,8 +999,8 @@ export class OutboundWaveComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.number) {
-        this.searchForm.controls.number.setValue(params.number);
+      if (params['number']) {
+        this.searchForm.value.number.setValue(params['number']);
         this.search();
       }
     });

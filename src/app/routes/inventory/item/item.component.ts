@@ -353,8 +353,8 @@ export class InventoryItemComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.name) {
-        this.searchForm.controls.itemName.setValue(params.name);
+      if (params['name']) {
+        this.searchForm.value.itemName.setValue(params['name']);
         this.search();
       }
     });
@@ -723,8 +723,8 @@ export class InventoryItemComponent implements OnInit {
       nzOnOk: () => {
         this.addItemBarcode( 
           item,
-          this.addItemBarcodeForm.controls.code.value,
-          this.addItemBarcodeForm.controls.type.value,
+          this.addItemBarcodeForm.value.code.value,
+          this.addItemBarcodeForm.value.type.value,
         );
         return false;
       },

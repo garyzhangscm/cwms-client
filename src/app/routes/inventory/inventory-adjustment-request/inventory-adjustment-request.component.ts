@@ -241,10 +241,10 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
     this.initSearchForm();
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.inventoryId) {
-        this.search(params.inventoryId);
-      } else if (params.locationName) {
-        this.searchForm.controls.location.setValue(params.locationName);
+      if (params['inventoryId']) {
+        this.search(params['inventoryId']);
+      } else if (params['locationName']) {
+        this.searchForm.value.location.setValue(params['locationName']);
         this.search();
       }
     });
@@ -349,8 +349,8 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
     this.requestInProcess = true;
     this.processInventoryAdjustmentRequest(
       this.currentProcessingRequest!,
-      this.inventoryAdjustmentRequestProcessForm.controls.approved.value,
-      this.inventoryAdjustmentRequestProcessForm.controls.comment.value,
+      this.inventoryAdjustmentRequestProcessForm.value.approved.value,
+      this.inventoryAdjustmentRequestProcessForm.value.comment.value,
     );
   }
 
@@ -374,10 +374,10 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
   }
   refresh(): void {
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.inventoryId) {
-        this.search(params.inventoryId);
-      } else if (params.locationName) {
-        this.searchForm.controls.location.setValue(params.locationName);
+      if (params['inventoryId']) {
+        this.search(params['inventoryId']);
+      } else if (params['locationName']) {
+        this.searchForm.value.location.setValue(params['locationName']);
         this.search();
       } else {
         this.search();

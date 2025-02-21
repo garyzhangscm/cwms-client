@@ -164,8 +164,8 @@ export class OutboundCartonizationComponent implements OnInit {
     // IN case we get the number passed in, refresh the display
     // and show the order information
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.number) {
-        this.searchForm.controls.number.setValue(params.number);
+      if (params['number']) {
+        this.searchForm.value.number.setValue(params['number']);
         this.search();
       }
     });
@@ -181,9 +181,9 @@ export class OutboundCartonizationComponent implements OnInit {
     this.searching = true;
     this.cartonizationService
       .getAll(
-        this.searchForm.controls.number.value,
-        this.searchForm.controls.status.value,
-        this.searchForm.controls.cartonName.value,
+        this.searchForm.value.number.value,
+        this.searchForm.value.status.value,
+        this.searchForm.value.cartonName.value,
       )
       .subscribe(cartonizationRes => {
         this.listOfAllCartonization = this.calculateQuantities(cartonizationRes);
@@ -319,8 +319,8 @@ export class OutboundCartonizationComponent implements OnInit {
         this.unpickInventory(
           cartonization,
           inventory,
-          this.unpickForm.controls.destinationLocation.value,
-          this.unpickForm.controls.immediateMove.value,
+          this.unpickForm.value.destinationLocation.value,
+          this.unpickForm.value.immediateMove.value,
         );
       },
       nzWidth: 1000,

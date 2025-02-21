@@ -132,9 +132,9 @@ export class BillingInvoiceComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.number || params.referenceNumber ) {
-        this.searchForm.controls.number.setValue(params.number);
-        this.searchForm.controls.referenceNumber.setValue(params.referenceNumber); 
+      if (params['number'] || params['referenceNumber'] ) {
+        this.searchForm.value.number.setValue(params['number']);
+        this.searchForm.value.referenceNumber.setValue(params['referenceNumber']); 
         this.search();
       }
     });

@@ -49,8 +49,8 @@ export class QcQcResultComponent implements OnInit {
     }); 
 
     this.activatedRoute.queryParams.subscribe(params => {
-        if (params.lpn) {
-          this.searchForm.controls.lpn.setValue(params.lpn);
+        if (params['lpn']) {
+          this.searchForm.value.lpn.setValue(params['lpn']);
           this.search();
         }
     });
@@ -68,11 +68,11 @@ export class QcQcResultComponent implements OnInit {
   search(): void {
     this.isSpinning = true;
     this.searchResult = '';
-    console.log(`search by number ${this.searchForm.controls.number.value}`);
+    console.log(`search by number ${this.searchForm.value.number.value}`);
     this.qcInspectionRequestService.getQCInspectionResult(
-      this.searchForm.controls.lpn.value,      
-      this.searchForm.controls.workOrderQCSampleNumber.value,      
-      this.searchForm.controls.number.value).subscribe(
+      this.searchForm.value.lpn.value,      
+      this.searchForm.value.workOrderQCSampleNumber.value,      
+      this.searchForm.value.number.value).subscribe(
       {
         next: (qcInspectionRequestRes) => {
           this.listOfQCInspectionRequest = qcInspectionRequestRes;

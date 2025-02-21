@@ -73,7 +73,7 @@ export class InboundInboundQcConfigurationComponent implements OnInit {
   
   processItemQueryResult(selectedItemName: any): void {
     console.log(`start to query with item name ${selectedItemName}`);
-    this.searchForm.controls.item.setValue(selectedItemName);
+    this.searchForm.value.item.setValue(selectedItemName);
     
     
   }

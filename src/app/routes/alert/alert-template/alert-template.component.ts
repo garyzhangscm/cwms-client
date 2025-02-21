@@ -76,9 +76,9 @@ export class AlertAlertTemplateComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.type || params.deliveryChannel ) {
-        this.searchForm.controls.type.setValue(params.type);
-        this.searchForm.controls.deliveryChannel.setValue(params.deliveryChannel); 
+      if (params['type'] || params['deliveryChannel'] ) {
+        this.searchForm.value.type.setValue(params['type']);
+        this.searchForm.value.deliveryChannel.setValue(params['deliveryChannel']); 
         this.search();
       }
     });

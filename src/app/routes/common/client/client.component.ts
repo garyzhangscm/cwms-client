@@ -78,8 +78,8 @@ export class CommonClientComponent implements OnInit {
     // IN case we get the number passed in, refresh the display
     // and show the client information
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.name) {
-        this.searchForm.controls.name.setValue(params.name);
+      if (params['name']) {
+        this.searchForm.value.name.setValue(params['name']);
         this.search();
       }
     });

@@ -90,8 +90,8 @@ export class InventoryLockComponent implements OnInit {
  
     this.activatedRoute.queryParams.subscribe(params => {
       // if we are changing an existing record
-      if (params.name) { 
-        this.searchForm!.controls.name.setValue(params.name);
+      if (params['name']) { 
+        this.searchForm!.value.name.setValue(params['name']);
         this.search();
       } 
     });
@@ -148,7 +148,7 @@ export class InventoryLockComponent implements OnInit {
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi('message.action.success'));
         
-        this.searchForm.controls.name.setValue(inventoryLock.name); 
+        this.searchForm.value.name.setValue(inventoryLock.name); 
 
         this.search();
       },
@@ -166,7 +166,7 @@ export class InventoryLockComponent implements OnInit {
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi('message.action.success'));
         
-        this.searchForm.controls.name.setValue(inventoryLock.name); 
+        this.searchForm.value.name.setValue(inventoryLock.name); 
 
         this.search();
       },
@@ -184,7 +184,7 @@ export class InventoryLockComponent implements OnInit {
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi('message.action.success'));
         
-        this.searchForm.controls.name.setValue(inventoryLock.name); 
+        this.searchForm.value.name.setValue(inventoryLock.name); 
 
         this.search();
       },
@@ -204,7 +204,7 @@ export class InventoryLockComponent implements OnInit {
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi('message.action.success'));
         
-        this.searchForm.controls.name.setValue(inventoryLock.name); 
+        this.searchForm.value.name.setValue(inventoryLock.name); 
 
         this.search();
       },

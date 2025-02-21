@@ -273,8 +273,8 @@ export class InboundReceiptComponent implements OnInit {
       checkInDate: [null],
     });
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.number) {
-        this.searchForm!.controls.number.setValue(params.number);
+      if (params['number']) {
+        this.searchForm!.value.number.setValue(params['number']);
         this.search();
       }
     });
@@ -320,19 +320,19 @@ export class InboundReceiptComponent implements OnInit {
     this.searchResult = '';
 
     
-    let checkInStartTime : Date = this.searchForm.controls.checkInDateTimeRanger.value ? 
-        this.searchForm.controls.checkInDateTimeRanger.value[0] : undefined; 
-    let checkInEndTime : Date = this.searchForm.controls.checkInDateTimeRanger.value ? 
-        this.searchForm.controls.checkInDateTimeRanger.value[1] : undefined; 
-    let checkInSpecificDate : Date = this.searchForm.controls.checkInDate.value;
+    let checkInStartTime : Date = this.searchForm.value.checkInDateTimeRanger.value ? 
+        this.searchForm.value.checkInDateTimeRanger.value[0] : undefined; 
+    let checkInEndTime : Date = this.searchForm.value.checkInDateTimeRanger.value ? 
+        this.searchForm.value.checkInDateTimeRanger.value[1] : undefined; 
+    let checkInSpecificDate : Date = this.searchForm.value.checkInDate.value;
 
-    this.receiptService.getReceipts(this.searchForm!.controls.number.value, true,       
-      this.searchForm!.controls.statusList.value,       
-      this.searchForm!.controls.supplier.value,
+    this.receiptService.getReceipts(this.searchForm!.value.number.value, true,       
+      this.searchForm!.value.statusList.value,       
+      this.searchForm!.value.supplier.value,
       checkInStartTime, checkInEndTime, checkInSpecificDate, 
          undefined,
          undefined,
-      this.searchForm!.controls.client.value).subscribe(
+      this.searchForm!.value.client.value).subscribe(
       receiptRes => {
 
         this.searching = false;
@@ -1055,8 +1055,7 @@ export class InboundReceiptComponent implements OnInit {
           receiptLine.receiptLineBillableActivities = receiptLine.receiptLineBillableActivities.filter(
             existingReceiptLineBillableActivity => existingReceiptLineBillableActivity.id != receiptLineBillableActivity.id
           );
-          // this.searchForm!.controls.number.setValue(this.billableActivityReceipt!.number);
-          // this.search();
+          
         }
       })
   }
@@ -1164,13 +1163,13 @@ export class InboundReceiptComponent implements OnInit {
       if (this.billableActivityReceiptLine) {
 
         const receiptLineBillableActivity : ReceiptLineBillableActivity = {        
-          billableActivityTypeId: this.billableActivityForm.controls.billableActivityType.value,
-          activityTime: this.billableActivityForm.controls.activityTime.value,
+          billableActivityTypeId: this.billableActivityForm.value.billableActivityType.value,
+          activityTime: this.billableActivityForm.value.activityTime.value,
           warehouseId: this.warehouseService.getCurrentWarehouse().id,
           clientId:  this.billableActivityReceipt?.clientId,
-          rate: this.billableActivityForm.controls.rate.value,
-          amount: this.billableActivityForm.controls.amount.value,
-          totalCharge: this.billableActivityForm.controls.totalCharge.value,
+          rate: this.billableActivityForm.value.rate.value,
+          amount: this.billableActivityForm.value.amount.value,
+          totalCharge: this.billableActivityForm.value.totalCharge.value,
         }
         this.receiptService.addReceiptLineBillableActivity(this.billableActivityReceiptLine.id!, 
           receiptLineBillableActivity).subscribe({
@@ -1179,7 +1178,7 @@ export class InboundReceiptComponent implements OnInit {
             this.addActivityInProcess = false;
             this.billableActivityModal.destroy();
             
-            this.searchForm!.controls.number.setValue(this.billableActivityReceipt!.number);
+            this.searchForm!.value.value.setValue(this.billableActivityReceipt!.number);
             this.search();
           },
           error: () => this.addActivityInProcess = false
@@ -1188,13 +1187,13 @@ export class InboundReceiptComponent implements OnInit {
       else {
 
         const receiptBillableActivity : ReceiptBillableActivity = {        
-          billableActivityTypeId: this.billableActivityForm.controls.billableActivityType.value,
-          activityTime: this.billableActivityForm.controls.activityTime.value,
+          billableActivityTypeId: this.billableActivityForm.value.billableActivityType.value,
+          activityTime: this.billableActivityForm.value.activityTime.value,
           warehouseId: this.warehouseService.getCurrentWarehouse().id,
           clientId:  this.billableActivityReceipt?.clientId,
-          rate: this.billableActivityForm.controls.rate.value,
-          amount: this.billableActivityForm.controls.amount.value,
-          totalCharge: this.billableActivityForm.controls.totalCharge.value,
+          rate: this.billableActivityForm.value.rate.value,
+          amount: this.billableActivityForm.value.amount.value,
+          totalCharge: this.billableActivityForm.value.totalCharge.value,
         }
         this.receiptService.addReceiptBillableActivity(
           this.billableActivityReceipt!.id!, receiptBillableActivity).subscribe({
@@ -1202,7 +1201,7 @@ export class InboundReceiptComponent implements OnInit {
             this.addActivityInProcess = false;
             this.billableActivityModal.destroy();
             
-            this.searchForm!.controls.number.setValue(this.billableActivityReceipt!.number);
+            this.searchForm!.value.number.setValue(this.billableActivityReceipt!.number);
             this.search();
           }, 
           error: () => this.addActivityInProcess = false
@@ -1223,12 +1222,12 @@ export class InboundReceiptComponent implements OnInit {
   
   recalculateTotalCharge(): void { 
     
-    if (this.billableActivityForm.controls.rate.value != null &&
-      this.billableActivityForm.controls.amount.value != null) {
+    if (this.billableActivityForm.value.rate.value != null &&
+      this.billableActivityForm.value.amount.value != null) {
 
-        this.billableActivityForm!.controls.totalCharge.setValue(
-          this.billableActivityForm.controls.rate.value * 
-          this.billableActivityForm.controls.amount.value
+        this.billableActivityForm!.value.totalCharge.setValue(
+          this.billableActivityForm.value.rate.value * 
+          this.billableActivityForm.value.amount.value
         );
         
       } 

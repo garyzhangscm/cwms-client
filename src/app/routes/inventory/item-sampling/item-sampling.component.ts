@@ -102,8 +102,8 @@ export class InventoryItemSamplingComponent implements OnInit {
  
     this.activatedRoute.queryParams.subscribe(params => {
       // if we are changing an existing record
-      if (params.number) { 
-        this.searchForm!.controls.number.setValue(params.number);
+      if (params['number']) { 
+        this.searchForm!.value.number.setValue(params['number']);
         this.search();
       } 
     });
@@ -153,7 +153,7 @@ export class InventoryItemSamplingComponent implements OnInit {
   
   processItemQueryResult(selectedItemName: any): void {
     console.log(`start to query with item name ${selectedItemName}`);
-    this.searchForm.controls.itemName.setValue(selectedItemName);
+    this.searchForm.value.itemName.setValue(selectedItemName);
     
     
   }
@@ -186,8 +186,8 @@ export class InventoryItemSamplingComponent implements OnInit {
         this.isSpinning = false;
         this.messageService.success(this.i18n.fanyi('message.action.success'));
         
-        this.searchForm.controls.number.setValue(itemSampling.number);
-        this.searchForm.controls.itemName.setValue("");
+        this.searchForm.value.number.setValue(itemSampling.number);
+        this.searchForm.value.itemName.setValue("");
 
         this.search();
       },

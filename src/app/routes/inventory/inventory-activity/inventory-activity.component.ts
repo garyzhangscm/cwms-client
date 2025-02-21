@@ -796,11 +796,11 @@ export class InventoryInventoryActivityComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     
-    let startTime : Date = this.searchForm.controls.activityDateTimeRanger.value ? 
-        this.searchForm.controls.activityDateTimeRanger.value[0] : undefined;  
-    let endTime : Date = this.searchForm.controls.activityDateTimeRanger.value ? 
-        this.searchForm.controls.activityDateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.controls.activityDate.value;
+    let startTime : Date = this.searchForm.value.activityDateTimeRanger.value ? 
+        this.searchForm.value.activityDateTimeRanger.value[0] : undefined;  
+    let endTime : Date = this.searchForm.value.activityDateTimeRanger.value ? 
+        this.searchForm.value.activityDateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.value.activityDate.value;
 
     let clients : Client[] = [];
     if (this.searchForm.value.client != null) {
@@ -927,9 +927,9 @@ export class InventoryInventoryActivityComponent implements OnInit {
   }
 
   processLocationQueryResult(selectedLocationName: any): void {
-    this.searchForm.controls.location.setValue(selectedLocationName);
+    this.searchForm.value.location.setValue(selectedLocationName);
   }
   processItemQueryResult(selectedItemName: any): void {
-    this.searchForm.controls.itemName.setValue(selectedItemName);
+    this.searchForm.value.itemName.setValue(selectedItemName);
   }
 }
