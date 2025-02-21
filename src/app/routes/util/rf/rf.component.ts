@@ -65,8 +65,8 @@ export class UtilRfComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.rfCode) {
-        this.searchForm.controls.rfCode.setValue(params.rfCode);
+      if (params['rfCode']) {
+        this.searchForm.value.rfCode.setValue(params['rfCode']);
         this.search();
       }
     });}

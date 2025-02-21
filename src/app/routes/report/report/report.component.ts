@@ -144,9 +144,9 @@ export class ReportReportComponent implements OnInit {
 
     this.reportService
       .getAll(
-        this.searchForm.controls.type.value,
-        this.searchForm.controls.companySpecific.value,
-        this.searchForm.controls.warehouseSpecific.value
+        this.searchForm.value.type.value,
+        this.searchForm.value.companySpecific.value,
+        this.searchForm.value.warehouseSpecific.value
       )
       .subscribe(
         reportRes => {
@@ -244,8 +244,8 @@ export class ReportReportComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.type) {
-        this.searchForm.controls.type.setValue(params.type);
+      if (params['type']) {
+        this.searchForm.value.type.setValue(params['type']);
         this.search();
       }
     });

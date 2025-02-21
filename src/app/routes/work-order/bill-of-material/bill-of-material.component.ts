@@ -143,8 +143,8 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.number) {
-        this.searchForm.controls.number.setValue(params.number);
+      if (params['number']) {
+        this.searchForm.value.number.setValue(params['number']);
         this.search();
       }
     });
@@ -164,7 +164,7 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     this.billOfMaterialService
-      .getBillOfMaterials(this.searchForm.controls.number.value, this.searchForm.controls.item.value)
+      .getBillOfMaterials(this.searchForm.value.number.value, this.searchForm.value.item.value)
       .subscribe(
         billOfMaterailRes => {
           this.listOfAllBillOfMaterial = billOfMaterailRes;

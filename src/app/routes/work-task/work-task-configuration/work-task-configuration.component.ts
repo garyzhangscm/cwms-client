@@ -87,8 +87,8 @@ export class WorkTaskWorkTaskConfigurationComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.workTaskType) {
-        this.searchForm.controls.workTaskType.setValue(params.workTaskType);
+      if (params['workTaskType']) {
+        this.searchForm.value.workTaskType.setValue(params['workTaskType']);
         this.search();
       }
     });
@@ -163,10 +163,10 @@ export class WorkTaskWorkTaskConfigurationComponent implements OnInit {
 
   procesSourceLocationQueryResult(selectedLocationName: any): void {
     console.log(`start to query with location name ${selectedLocationName}`);
-    this.searchForm.controls.sourceLocation.setValue(selectedLocationName); 
+    this.searchForm.value.sourceLocation.setValue(selectedLocationName); 
   } 
   procesDestinationLocationQueryResult(selectedLocationName: any): void {
     console.log(`start to query with location name ${selectedLocationName}`);
-    this.searchForm.controls.destinationLocation.setValue(selectedLocationName); 
+    this.searchForm.value.destinationLocation.setValue(selectedLocationName); 
   } 
 }

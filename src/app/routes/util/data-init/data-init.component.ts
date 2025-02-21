@@ -118,9 +118,9 @@ export class UtilDataInitComponent implements OnInit {
       },
       nzOnOk: () => {
         this.addDataInitialRequest( 
-          this.dataInitialRequestForm.controls.companyName.value,
-          this.dataInitialRequestForm.controls.warehouseName.value,
-          this.dataInitialRequestForm.controls.adminUsername.value,
+          this.dataInitialRequestForm.value.companyName.value,
+          this.dataInitialRequestForm.value.warehouseName.value,
+          this.dataInitialRequestForm.value.adminUsername.value,
         );
       },
 
@@ -134,7 +134,7 @@ export class UtilDataInitComponent implements OnInit {
         .subscribe({
           next: () => {
             this.isSpinning = false;
-            this.dataInitialRequestForm.controls.companyName.setValue(companyName);
+            this.dataInitialRequestForm.value.companyName.setValue(companyName);
             this.search();
           },
           error: () => this.isSpinning = false

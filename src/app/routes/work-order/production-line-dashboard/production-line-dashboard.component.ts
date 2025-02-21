@@ -454,7 +454,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
           return false;
         }
         // get the unit quantity first
-        let unitQuantity = this.produceInventoryForm.controls.quantity.value * 
+        let unitQuantity = this.produceInventoryForm.value.quantity.value * 
             this.currentProducingUnitOfMeasure!.quantity!;
         this.produceInventory(workOrderNumber, productionLine, unitQuantity);
         
@@ -492,7 +492,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
     if (this.currentProducingUnitOfMeasure && this.currentProducingUnitOfMeasure.trackingLpn) {
       this.produceAtLPNUOM = true;
       if (this.produceInventoryForm) {
-        this.produceInventoryForm.controls.quantity.setValue("1");
+        this.produceInventoryForm.value.quantity.setValue("1");
         this.produceInventoryForm.get("quantity")?.disable();
       }
     }
@@ -518,7 +518,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
 
         this.currentProducingUnitOfMeasure = selectedItemPackageType.defaultWorkOrderReceivingUOM;
         if (this.produceInventoryForm) {
-          this.produceInventoryForm!.controls.producingUnitOfMeasure.setValue(this.currentProducingUnitOfMeasure.id);
+          this.produceInventoryForm!.value.producingUnitOfMeasure.setValue(this.currentProducingUnitOfMeasure.id);
         }
         this.producingUnitOfMeasureChanged(this.currentProducingUnitOfMeasure.id!);
         // this.receivingForm!.controls.itemUnitOfMeasure.setValue(this.currentReceivingInventory!.itemPackageType.displayItemUnitOfMeasure.id);
@@ -529,7 +529,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
 
         this.currentProducingUnitOfMeasure = selectedItemPackageType.displayItemUnitOfMeasure;
         if (this.produceInventoryForm) {
-            this.produceInventoryForm!.controls.producingUnitOfMeasure.setValue(this.currentProducingUnitOfMeasure.id);
+            this.produceInventoryForm!.value.producingUnitOfMeasure.setValue(this.currentProducingUnitOfMeasure.id);
         }
         this.producingUnitOfMeasureChanged(this.currentProducingUnitOfMeasure.id!);
         // this.receivingForm!.controls.itemUnitOfMeasure.setValue(this.currentReceivingInventory!.itemPackageType.displayItemUnitOfMeasure.id);
@@ -540,7 +540,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
 
         this.currentProducingUnitOfMeasure = selectedItemPackageType.stockItemUnitOfMeasure; 
         if (this.produceInventoryForm) {
-            this.produceInventoryForm!.controls.producingUnitOfMeasure.setValue(this.currentProducingUnitOfMeasure.id);
+            this.produceInventoryForm!.value.producingUnitOfMeasure.setValue(this.currentProducingUnitOfMeasure.id);
         }
         this.producingUnitOfMeasureChanged(this.currentProducingUnitOfMeasure.id!);
       }
@@ -550,7 +550,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
   produceInventory(workOrderNumber : string, productionLine: ProductionLine, unitQuantity: number) : void { 
     this.isSpinning = true;  
     
-    const inventoryStatus = this.validInventoryStatuses.find(is => is.id! === this.produceInventoryForm.controls.inventoryStatus.value);
+    const inventoryStatus = this.validInventoryStatuses.find(is => is.id! === this.produceInventoryForm.value.inventoryStatus.value);
  
     const workOrderProduceTransaction : WorkOrderProduceTransaction = { 
         workOrderNumber: workOrderNumber,
@@ -558,11 +558,11 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
         workOrderLineConsumeTransactions: [],
         workOrderProducedInventories: [
             { 
-                lpn: this.produceInventoryForm.controls.lpn.value,
+                lpn: this.produceInventoryForm.value.lpn.value,
                 quantity: unitQuantity,
-                inventoryStatusId: this.produceInventoryForm.controls.inventoryStatus.value,
+                inventoryStatusId: this.produceInventoryForm.value.inventoryStatus.value,
                 inventoryStatus: inventoryStatus,
-                itemPackageTypeId: this.produceInventoryForm.controls.itemPackageType.value,
+                itemPackageTypeId: this.produceInventoryForm.value.itemPackageType.value,
                 itemPackageType: this.currentProducingItemPackageType
             }
         ],

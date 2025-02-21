@@ -55,8 +55,8 @@ export class WorkOrderMpsComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.number) {
-        this.searchForm.controls.number.setValue(params.number);
+      if (params['number']) {
+        this.searchForm.value.number.setValue(params['number']);
         this.search();
       }
     });
@@ -74,8 +74,8 @@ export class WorkOrderMpsComponent implements OnInit {
      
 
     this.masterProductionScheduleService.getMasterProductionSchedules(
-      this.searchForm.controls.number.value,  
-      this.searchForm.controls.description.value).subscribe(
+      this.searchForm.value.number.value,  
+      this.searchForm.value.description.value).subscribe(
         mpsRes => {
   
 
@@ -176,7 +176,7 @@ export class WorkOrderMpsComponent implements OnInit {
       nzOnOk: () => {
         this.removeMPS(
           masterProductionSchedule, 
-          this.removeMPSForm.controls.moveSuccessor.value,
+          this.removeMPSForm.value.moveSuccessor.value,
         );
       },
 

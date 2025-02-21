@@ -133,12 +133,12 @@ export class UtilFileUploadComponent implements OnInit {
      
      
           this.activatedRoute.queryParams.subscribe(params => { 
-            if (this.activatedRoute.snapshot.params.filetype) {
+            if (this.activatedRoute.snapshot.params['filetype']) {
               // if the file type from the url is not allowed
               // show error message 
-              if (!this.userPermissionMap.has(this.activatedRoute.snapshot.params.filetype) ||
-                   this.userPermissionMap.get(this.activatedRoute.snapshot.params.filetype) == false) {
-                this.urlFileUploadType = this.activatedRoute.snapshot.params.filetype;
+              if (!this.userPermissionMap.has(this.activatedRoute.snapshot.params['filetype']) ||
+                   this.userPermissionMap.get(this.activatedRoute.snapshot.params['filetype']) == false) {
+                this.urlFileUploadType = this.activatedRoute.snapshot.params['filetype'];
                 this.optionAllowed = false;
                 this.fromMenu = false;
                 this.pageTitle = this.i18n.fanyi('menu.main.util.file-upload');
@@ -147,7 +147,7 @@ export class UtilFileUploadComponent implements OnInit {
               }
               else {
                 this.optionAllowed = true;
-                this.loadFileForm.get('fileTypeSelector')!.setValue(this.activatedRoute.snapshot.params.filetype);
+                this.loadFileForm.get('fileTypeSelector')!.setValue(this.activatedRoute.snapshot.params['filetype']);
                 this.fromMenu = false;
                 this.pageTitle = this.i18n.fanyi('menu.main.util.file-upload');
                 this.titleService.setTitle(this.i18n.fanyi('menu.main.util.file-upload'));

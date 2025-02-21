@@ -66,8 +66,8 @@ export class WarehouseLayoutPickZoneComponent implements OnInit {
 
     
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.name) {  
-        this.searchForm!.controls.name.setValue(params.name);
+      if (params['name']) {  
+        this.searchForm!.value.name.setValue(params['name']);
         this.search();
       } 
     }); 
@@ -82,7 +82,7 @@ export class WarehouseLayoutPickZoneComponent implements OnInit {
     this.searchResult = '';
     this.isSpinning = true;
     
-    this.pickZoneService.getPickZones(this.searchForm!.controls.name.value).subscribe({
+    this.pickZoneService.getPickZones(this.searchForm!.value.name.value).subscribe({
       next: (pickZoneRes) => {
         this.isSpinning = false;
         this.searchResult = this.i18n.fanyi('search_result_analysis', {

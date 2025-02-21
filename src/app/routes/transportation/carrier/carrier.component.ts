@@ -67,8 +67,8 @@ export class TransportationCarrierComponent implements OnInit {
       // IN case we get the number passed in, refresh the display
       // and show the order information
       this.activatedRoute.queryParams.subscribe(params => {
-        if (params.name) {
-          this.searchForm.controls.name.setValue(params.name);
+        if (params['name']) {
+          this.searchForm.value.name.setValue(params['name']);
           this.search();
         }
       });
@@ -87,7 +87,7 @@ export class TransportationCarrierComponent implements OnInit {
      
 
     this.carrierService.getCarriers(
-      this.searchForm.controls.name.value).subscribe({
+      this.searchForm.value.name.value).subscribe({
         next: (carriersRes) => {
 
           this.listOfCarriers = carriersRes;

@@ -101,6 +101,6 @@ export class WorkOrderProductionMoldCountHistoryComponent implements OnInit {
  
 
   processItemQueryResult(selectedItemName: any): void { 
-    this.searchForm.controls.itemName.setValue(selectedItemName);
+    this.searchForm.value.itemName.setValue(selectedItemName);
   }
 }

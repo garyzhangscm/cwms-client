@@ -60,7 +60,7 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
     this.pageTitle = this.i18n.fanyi('spare-part-maintenance');
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (!params.id) {
+      if (!params['id']) {
         this.messageService.error("Error: Work Order Line is not passed in");
         
         this.isSpinning = true;
@@ -71,12 +71,12 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
       }
       
       this.isSpinning = true;
-      this.workOrderService.getWorkOrderLine(params.id).subscribe({
+      this.workOrderService.getWorkOrderLine(params['id']).subscribe({
         next: (workOrderLine) => {
           this.currentWorkOrderLine = workOrderLine;
           this.isSpinning = false;
           if (!this.currentWorkOrderLine) {
-            this.messageService.error(`Error: can't find Work Order Line by id ${params.id}`);
+            this.messageService.error(`Error: can't find Work Order Line by id ${params['id']}`);
             
             this.isSpinning = true;
             setTimeout(() => {
@@ -140,7 +140,7 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
   }
   
   processItemQueryResult(selectedItemName: any): void { 
-    this.sparePartDetailForm.controls.itemName.setValue(selectedItemName);
+    this.sparePartDetailForm.value.itemName.setValue(selectedItemName);
   }
 
   
@@ -155,9 +155,9 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
 
       this.addSparePartDetail(
         this.currentSparePart!,
-        this.sparePartDetailForm.controls.itemName.value,
-        this.sparePartDetailForm.controls.inventoryStatus.value,
-        this.sparePartDetailForm.controls.quantity.value,
+        this.sparePartDetailForm.value.itemName.value,
+        this.sparePartDetailForm.value.inventoryStatus.value,
+        this.sparePartDetailForm.value.quantity.value,
       );
 
       this.sparePartDetailModal.destroy();

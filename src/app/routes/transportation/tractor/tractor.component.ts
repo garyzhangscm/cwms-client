@@ -99,8 +99,8 @@ export class CommonTractorComponent implements OnInit {
  
     this.activatedRoute.queryParams.subscribe(params => {
       // if we are changing an existing record
-      if (params.number) { 
-        this.searchForm!.controls.number.setValue(params.number);
+      if (params['number']) { 
+        this.searchForm!.value.number.setValue(params['number']);
         this.search();
       } 
     });

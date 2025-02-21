@@ -94,11 +94,11 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
 
   }
   loadMPS() {
-    if (this.searchForm.controls.mpsNumber.value) {
+    if (this.searchForm.value.mpsNumber.value) {
       // only load the MPS when the user input the MPS
       this.isSpinning = true;
       this.masterProductionScheduleService.getMasterProductionSchedules(
-        this.searchForm.controls.mpsNumber.value
+        this.searchForm.value.mpsNumber.value
       ).subscribe({
         next: (mps) => {
 
@@ -302,12 +302,12 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
         this.chooseBOMModal.destroy(); 
       },
       nzOnOk: () => {
-        if (this.addMRPForm.controls.mrpNumber.value == null) {
+        if (this.addMRPForm.value.mrpNumber.value == null) {
           this.messageService.error(this.i18n.fanyi('mrp-number-is-required'))
           return false;
         }
-        this.currentMRP!.number = this.addMRPForm.controls.mrpNumber.value;
-        this.currentMRP!.description = this.addMRPForm.controls.description.value;
+        this.currentMRP!.number = this.addMRPForm.value.mrpNumber.value;
+        this.currentMRP!.description = this.addMRPForm.value.description.value;
         this.saveMRP();
         return true;
       },
@@ -502,7 +502,7 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
   } 
   
   mrpNumberOnBlur(event: Event): void { 
-    this.addMRPForm!.controls.mrpNumber.setValue((event.target as HTMLInputElement).value); 
+    this.addMRPForm!.value.mrpNumber.setValue((event.target as HTMLInputElement).value); 
   }
 
   bomTableChanged(ret: STChange): void {
