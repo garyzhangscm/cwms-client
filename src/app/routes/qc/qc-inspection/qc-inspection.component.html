@@ -1,0 +1,297 @@
+<page-header [title]="'menu.main.qc.qc-inspection' | i18n"> </page-header>
+
+<nz-spin [nzSpinning]="isSpinning">
+<!-- Form to query the result  -->
+
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  
+    <!--
+
+  <div nz-row [nzGutter]="24"> 
+
+    <div nz-col [nzSpan]="16">
+      <nz-form-item nzFlex>
+        <nz-form-label for="location_group" [nzSpan]="5">
+          {{ 'location-group' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <nz-select   formControlName="locationGroups">
+            <nz-option *ngFor="let locationGroup of validLocationGroups" [nzLabel]="locationGroup.description"
+              [nzValue]="locationGroup.id"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="name">
+          {{ 'location' | i18n }}
+        </nz-form-label>
+
+        <nz-form-control [nzSpan]="18">
+          <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+            <input nz-input name="locationName" id="locationName" formControlName="locationName" />
+          </nz-input-group>
+          <ng-template #suffixIconButton>
+            <app-warehouse-layout-location-query-popup (recordSelected)="processLocationQueryResult($event)">
+            </app-warehouse-layout-location-query-popup>
+          </ng-template>
+        </nz-form-control>
+
+      </nz-form-item>
+    </div> 
+   </div>
+   
+
+    -->
+  <div nz-row [nzGutter]="24"> 
+      
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18" >
+
+            <nz-input-group >
+              <input nz-input name="number" id="number" formControlName="number" />
+              </nz-input-group> 
+
+        </nz-form-control>
+      </nz-form-item>
+    </div> 
+    
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'lpn' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18" >
+
+            <nz-input-group >
+              <input nz-input name="lpn" id="lpn" formControlName="lpn" />
+              </nz-input-group> 
+
+        </nz-form-control>
+      </nz-form-item>
+    </div> 
+
+    <!--
+
+    <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'item' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+  
+              <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                <input nz-input name="itemName" id="itemName" formControlName="itemName" />
+                </nz-input-group>
+                <ng-template #suffixIconButton>
+                  <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
+                  </app-inventory-item-query-popup>
+                </ng-template>
+  
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+
+    -->
+      
+  </div>
+  <div  nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'qc-inspection-request-type' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18" >
+
+            <nz-input-group >
+              <nz-select formControlName="qcInspectionRequestType" style="width: 250px" nzAllowClear >
+                  <nz-option
+                       *ngFor="let qcInspectionRequestType of qcInspectionRequestTypes  | keys"
+                       [nzValue]="qcInspectionRequestType.key"
+                       nzLabel="{{ 'QC-INSPECTION-REQUEST-TYPE-' + qcInspectionRequestType.key | i18n}}"
+                  ></nz-option>
+              </nz-select>
+
+              </nz-input-group> 
+        </nz-form-control>
+      </nz-form-item>
+    </div> 
+
+    
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'qc-inspection-result' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18" >
+
+            <nz-input-group >
+              <nz-select formControlName="qcInspectionResult" style="width: 250px" nzAllowClear  >
+                  <nz-option
+                          *ngFor="let qcInspectionResult of qcInspectionResults | keys"
+                          [nzValue]="qcInspectionResult.key"
+                          nzLabel="{{ 'QC-INSPECTION-RESULT-' + qcInspectionResult.key | i18n}}"
+                        ></nz-option>
+                      </nz-select>
+
+              </nz-input-group> 
+        </nz-form-control>
+      </nz-form-item>
+    </div> 
+
+  </div>
+
+  <div nz-row [nzGutter]="24"> 
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+    </div>
+  </div>
+</form>
+
+<div class="search-result-list">
+  
+      <!--
+    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+      <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+    </div>
+  -->
+    
+    <st #st [data]="listOfQCInspectionRequest"  [columns]="columns" [scroll]="{ x: '1450px'}"
+    [expand]="expand"   expandAccordion>
+      
+      <!--   qc inspection column --> 
+      <ng-template st-row="qcInspectionColumnTitle" type="title" let-c>
+        {{ 'qc-inspection' | i18n }}
+      </ng-template>
+      <ng-template st-row="qcInspectionColumn" let-item let-index="index"> 
+        
+          <nz-skeleton-element 
+            *ngIf="qcInspectionByInventory.get(item.id) === undefined || qcInspectionByInventory.get(item.id) === null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element>
+        <span *ngIf="qcInspectionByInventory.get(item.id)">
+          {{ qcInspectionByInventory.get(item.id).number }}
+        </span> 
+      
+      </ng-template>
+        
+      <!--  item name column -->  
+      <ng-template st-row="itemNameColumn" let-item let-index="index"> 
+         
+        <span *ngIf="item.item != null">
+          {{ item.item.name }}
+        </span> 
+        <span *ngIf="item.inventory != null">
+          {{ item.inventory.item?.name }}
+        </span> 
+      
+      </ng-template>  
+      <!--  item description column -->  
+      <ng-template st-row="itemDescriptionColumn" let-item let-index="index"> 
+         
+        <span *ngIf="item.item != null">
+          {{ item.item.description }}
+        </span> 
+        <span *ngIf="item.inventory != null">
+          {{ item.inventory.item?.description }}
+        </span> 
+      
+      </ng-template>  
+      <!--   action colummn  --> 
+      <ng-template st-row="actionColumnTitle" type="title" let-c>
+        {{ 'action' | i18n }}
+      </ng-template>
+      <ng-template st-row="actionColumn" let-item let-index="index"> 
+        
+        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+        {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu> 
+            <li nz-menu-item *ngIf="isQCRequired(item)" >
+              
+              <a (click)="processQCInspection(item)">
+                {{ 'qc-inspection' | i18n}} </a>
+            </li>
+            <li nz-menu-item >
+              <a routerLink="/qc/inspection-document/maintenance" routerLinkActive="active"
+                [queryParams]="{id : item.id!}">{{ 'qc.document-maintenance' | i18n }}</a>
+            </li> 
+          </ul>
+        </nz-dropdown-menu>
+
+        <nz-divider nzType="vertical"></nz-divider>
+        <cwms-common-print-button style='padding-left: 20px;' (print)="printQCInspectionRequestReport($event, item)"
+          (preview)="previewQCInspectionRequestReport(item)">
+        </cwms-common-print-button>
+        
+      </ng-template>
+
+      
+            <!--   qc rule details  -->
+            <ng-template #expand let-item let-index="index" >
+                
+              <nz-tabset  >
+              <nz-tab *ngFor="let qcInspectionRequestItem of item.qcInspectionRequestItems" [nzTitle]="qcInspectionRequestItem.qcRule.name">
+                  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="qcInspectionRequestItem.qcRule.qcRuleItems" nzSize="middle"
+                  [nzShowPagination]="false" #qcRuleItemTable>
+                  <thead>
+                      <th>
+                      {{ 'qcRule.checkPoint' | i18n }}
+                      </th>
+                      <th>
+                      {{ 'qcRule.qcRuleItemType' | i18n }}
+                      </th>
+                      <th>
+                      {{ 'qcRule.qcRuleItemComparator' | i18n }}
+                      </th>
+                      <th>
+                      {{ 'qcRule.expectedValue' | i18n }}
+                      </th> 
+                      
+                  </thead>
+                  <tbody>
+                      <tr *ngFor="let qcRuleItem of qcRuleItemTable.data">
+                      <td>{{ qcRuleItem.checkPoint }}</td>
+                      <td>{{ 'QC-RULE-ITEM-TYPE-' + qcRuleItem.qcRuleItemType | i18n }}</td>
+                      <td>{{ 'QC-RULE-ITEM-COMPARATOR-' + qcRuleItem.qcRuleItemComparator  | i18n}}</td>
+                      <td>{{ qcRuleItem.expectedValue }}</td>
+                      </tr>
+                  </tbody>
+                  </nz-table>
+              </nz-tab>
+              </nz-tabset>
+          </ng-template>  
+
+    </st>
+    <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
+      {{searchResult}}
+    </div> 
+    
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
+      <button nz-button nzType="primary" routerLink="/qc/qc-inspection-request/maintenance" routerLinkActive="active">
+        {{ 'add' | i18n }}
+      </button>
+    </div>
+    <!--
+
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;"> 
+      <button nz-button nzType="primary" (click)="processQCInspectionForSelectedInventory()">
+        {{ 'qc-inspection' | i18n}}
+      </button>
+  </div>
+    -->
+</div>
+</nz-spin>

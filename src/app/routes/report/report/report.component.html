@@ -1,0 +1,142 @@
+<page-header title="{{'report' |  i18n}}" ></page-header>
+<nz-spin nzSize="large" [nzSpinning]="isSpinning">
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="12">
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'report.type' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <nz-select nzAllowClear formControlName="type" style="width: 300px;">
+            <nz-option *ngFor="let reportType of reportTypes | keys" nzValue="{{ reportType.key }}"
+              nzLabel="{{ 'REPORT-TYPE-' + reportType.key | i18n }}">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <label nz-checkbox formControlName="companySpecific">
+          <span> {{ 'report.companySpecific' | i18n }}</span>
+        </label>
+
+
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+
+        <label nz-checkbox formControlName="warehouseSpecific">
+          <span> {{ 'report.warehouseSpecific' | i18n }}</span>
+        </label>
+
+      </nz-form-item>
+    </div>
+  </div>
+
+
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+
+<div class="search-result-list">
+
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllReports"
+    #reportTable>
+    <thead>
+      <tr>
+
+        <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+          [nzShowFilter]="column.showFilter">
+          {{ column.name | i18n }}
+        </th>
+
+
+
+
+        <th *ngIf="!displayOnly">
+          {{ 'action' | i18n }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of reportTable.data">
+        <td>
+          {{ 'REPORT-TYPE-' + data.type | i18n }}
+        </td>
+        <td>{{ data.description }}</td>
+        <td>{{ data.company?.name}}</td>
+        <td>{{ data.warehouse?.name }}</td>
+        <td>{{ data.printerType?.name }}</td>
+        <td>{{ 'REPORT-ORIENTATION_' + data.reportOrientation | i18n }}</td>
+        <td>
+          
+          <nz-list>
+            <nz-list-item>
+              <a [href]="data.fileUrl" target="_blank" rel="noopener noreferrer">
+    
+                {{ data.fileName }}
+              </a>
+            </nz-list-item>
+            <nz-list-item *ngFor="let propertyFile of data.mapOfPropertyFiles | keyvalue"> 
+
+              <a [href]="propertyFile.value" target="_blank" rel="noopener noreferrer">
+    
+                {{ propertyFile.key }}
+              </a>
+            </nz-list-item> 
+          </nz-list>
+        </td>
+        <td nzRight *ngIf="!displayOnly">
+          <button nz-button nz-dropdown [nzDropdownMenu]="actions" [disabled]="data.companyId === null && data.warehouseId === null" >
+            {{ 'action' | i18n }}<i nz-icon nzType="down"></i></button>
+          <nz-dropdown-menu #actions="nzDropdownMenu" >
+            <ul nz-menu  *ngIf="data.companyId != null || data.warehouseId != null">
+              <li nz-menu-item>
+                <a routerLink="/report/report-maintenance" routerLinkActive="active"
+                  [queryParams]="{id : data.id!}">
+                  {{ 'modify' | i18n }}
+              </a>
+              </li>
+              <li nz-menu-item>
+                <a   
+                (click)="removeCustomizedReport(data)">
+                  {{ 'delete' | i18n }}
+              </a>
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+        </td>
+      </tr>
+
+    </tbody>
+  </nz-table>
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+    <button nz-button nzType="primary" routerLink="/report/report-maintenance" routerLinkActive="active" *ngIf="!displayOnly">
+      {{ 'add' | i18n }}
+    </button>
+  </div>
+</div>
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>
+</nz-spin>

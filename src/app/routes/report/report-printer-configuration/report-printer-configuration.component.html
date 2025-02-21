@@ -1,0 +1,91 @@
+<page-header title="{{'report-printer-configuration' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning">
+    <!-- Form to query the result  -->
+    <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+
+
+        <div nz-row [nzGutter]="12">
+            <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                    <nz-form-label [nzSm]="6" [nzXs]="24">
+                        {{ 'report.type' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <nz-select nzAllowClear formControlName="type" style="width: 200px;">
+                            <nz-option *ngFor="let reportType of reportTypes | keys" nzValue="{{ reportType.key }}"
+                                nzLabel="{{ 'REPORT-TYPE-' + reportType.key | i18n }}">
+                            </nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+        </div>
+
+
+        <div nz-row>
+            <div nz-col [nzSpan]="24" class="search-area">
+                <button nz-button [nzType]="'primary'" (click)="search()">
+                    {{ 'search' | i18n }}
+                </button>
+                <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Table to Display the result  -->
+    <div class="search-result-list">
+
+        <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowSizeChanger nzShowPagination
+            [nzData]="listOfAllReportPrinterConfiguration" #reportPrinterConfigurationTable>
+            <thead>
+                <tr>
+
+                    <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort"
+                        [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+                        [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+                        [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+                        [nzShowFilter]="column.showFilter">
+                        {{ column.name | i18n }}
+                    </th>
+
+                    <th *ngIf="!displayOnly">
+                        {{ 'action' | i18n }}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of reportPrinterConfigurationTable.data">
+                    <td>{{ 'REPORT-TYPE-' + data.reportType | i18n }}</td>
+                    <td>{{ data.criteriaValue }}</td>
+
+                    <td>{{ data.printerName }}</td>
+
+                    <td *ngIf="!displayOnly">
+                        <a routerLink="/report/report-printer-configuration/maintenance" routerLinkActive="active"
+                            [queryParams]="{id : data.id!}">{{'modify' | i18n}}</a>
+                        <nz-divider nzType="vertical"></nz-divider>
+                        <button nz-button nzDanger (click)="removeConfiguration(data)">{{'delete' |
+                            i18n}}</button>
+
+                    </td>
+                    <td></td>
+                </tr>
+
+            </tbody>
+        </nz-table>
+
+        <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+            <button nz-button nzType="primary" routerLink="/report/report-printer-configuration/maintenance"
+                routerLinkActive="active" *ngIf="!displayOnly">
+                {{ 'add' | i18n }}
+            </button>
+        </div>
+    </div>
+</nz-spin>
+<ng-template #tableFoot>
+    <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+        {{searchResult}}
+    </div>
+</ng-template>

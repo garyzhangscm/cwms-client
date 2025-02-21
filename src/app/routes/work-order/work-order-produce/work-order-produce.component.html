@@ -1,0 +1,351 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/work-order/work-order" routerLinkActive="active"
+    [queryParams]="{ number: currentWorkOrder.number }">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/work-order" routerLinkActive="active">{{
+        'breadcrumb.work-order' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<div nz-row style="padding: 10px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps nzType="navigation" [nzCurrent]="0" [nzSize]="'small'" (nzIndexChange)="onIndexChange($event)">
+      <nz-step nzTitle="{{ 'steps.work-order-produce.produce.title' | i18n }}"
+        nzDescription="{{ 'steps.work-order-produce.produce.description' | i18n }}" 
+        [nzDisabled]="workOrderProduceTransaction === undefined || workOrderProduceTransaction.productionLine === undefined">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.work-order-produce.by-product.title' | i18n }}"
+        nzDescription="{{ 'steps.work-order-produce.by-product.description' | i18n }}"
+        [nzDisabled]="workOrderProduceTransaction === undefined || workOrderProduceTransaction.productionLine === undefined">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.work-order-produce.user-kpi.title' | i18n }}"
+        nzDescription="{{ 'steps.work-order-produce.user-kpi.description' | i18n }}"
+        [nzDisabled]="workOrderProduceTransaction === undefined || workOrderProduceTransaction.productionLine === undefined">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.work-order-produce.confirm.title' | i18n }}"
+        nzDescription="{{ 'steps.work-order-produce.confirm.description' | i18n }}"
+        [nzDisabled]="workOrderProduceTransaction === undefined || workOrderProduceTransaction.productionLine === undefined">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+<nz-card>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="4">
+          {{ 'production-line' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-select style="width: 150px" [ngModel]="workOrderProduceTransaction.productionLine?.name"
+            (ngModelChange)="productionLineChanged($event)">
+            <nz-option *ngFor="let productionLineAssignment of currentWorkOrder?.productionLineAssignments"
+              [nzLabel]="productionLineAssignment.productionLine.name"
+              [nzValue]="productionLineAssignment.productionLine.name"></nz-option>
+          </nz-select>
+
+        </nz-form-control>
+      </nz-form-item>
+    </div> 
+  </div>
+  <div nz-row [nzGutter]="24" 
+      *ngIf="workOrderProduceTransaction !== undefined && workOrderProduceTransaction.productionLine !== undefined && workOrderProduceTransaction.printingNewLPNLabel == true">
+      
+      <div nz-col [nzSpan]="6">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="18">
+            {{ 'newLPNPrintLabelAtProducingFlag' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="6">
+                <label nz-checkbox [(ngModel)]="workOrderProduceTransaction.printingNewLPNLabel"></label>
+            </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6">
+            {{ 'report-printer' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <nz-select nz-input  [(ngModel)]="workOrderProduceTransaction.labelPrinterName" style="width: 250px" (ngModelChange)="labelPrinterChanged()">
+              <nz-option *ngFor="let availablePrint of availablePrinters" [nzLabel]="availablePrint.name"
+                [nzValue]="availablePrint.name">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+  </div>
+</nz-card>
+<!-- Table to show inventory  -->
+<div class="search-result-list" 
+  *ngIf="workOrderProduceTransaction !== undefined && workOrderProduceTransaction.productionLine !== undefined">
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="workOrderProduceTransaction.workOrderProducedInventories!"
+    [nzFooter]="inventoryTableFoot" nzShowPagination="false" #inventoryTable>
+    <thead>
+      <tr>
+        <th>{{ 'lpn' | i18n }}</th>
+        <th>{{ 'item' | i18n }}</th>
+        <th>{{ 'item.description' | i18n }}</th>
+        <th>{{ 'item.package-type' | i18n }}</th>
+        <th>{{ 'location' | i18n }}</th>
+        <th>{{ 'inventory.status' | i18n }}</th>
+        <th>{{ 'work-order.expected-quantity' | i18n }}</th>
+        <th>{{ 'work-order.produced-quantity' | i18n }}</th>
+        <th>{{ 'quantity' | i18n }}</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let inventory of inventoryTable.data; let i = index">
+        <td>
+          <div class="row">
+            <input appFkey variable="lpn" type="text" [ngModel]="inventory?.lpn" 
+              (blur)="lpnChanged($event, inventory)" style="width: 120px"
+              name="lpn-{{ i }}" id="lpn-{{ i }}" />
+          </div>
+        </td>
+        <td>
+          {{ currentWorkOrder.item?.name }}
+        </td>
+        <td>
+          {{ currentWorkOrder.item?.description }}
+        </td>
+        <td>
+          <nz-select style="width: 150px" [ngModel]="inventory.itemPackageType?.name"
+            (ngModelChange)="itemPackageTypeChanged($event, inventory)" >
+            <nz-option *ngFor="let itemPackageType of currentWorkOrder.item?.itemPackageTypes"
+              [nzLabel]="itemPackageType.name!" [nzValue]="itemPackageType.name!"></nz-option>
+          </nz-select>
+        </td>
+        <td> </td>
+        <td>
+          <nz-select style="width: 150px" [ngModel]="inventory.inventoryStatus?.id"
+            (ngModelChange)="inventoryStatusChanged($event, inventory)"  >
+            <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
+              [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus?.id">
+            </nz-option>
+          </nz-select>
+        </td>
+        <td>{{ currentWorkOrder.expectedQuantity }}</td>
+        <td>{{ currentWorkOrder.producedQuantity }}</td>
+        <td><input type="text" [(ngModel)]="inventory.quantity" name="result-{{ i }}"  style="width: 100px" /></td>
+        <td>
+          <button nz-button nzDanger (click)="removeProducedInventory(i)">
+            {{ 'remove' | i18n }}
+          </button></td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+<ng-template #inventoryTableFoot>
+  <div nz-row nzType="flex" nzJustify="start">
+    <nz-layout>
+      <nz-sider class="inner-nz-sider">
+        <button nz-button nzType="primary" (click)="addExtraInventory()">
+          {{ 'add' | i18n }}
+        </button>
+      </nz-sider>
+      <nz-content class="inner-nz-content">
+        <a nz-button nzType="link" (click)="produceByProduct()">
+          {{ 'steps.work-order-produce.by-product.title' | i18n }}</a>
+        <button nz-button nzType="primary" (click)="saveCurrentWorkOrderResults()">
+          {{ 'confirm' | i18n }}
+        </button>
+      </nz-content>
+
+
+    </nz-layout>
+
+  </div>
+</ng-template>
+
+<!-- Table to specify the consumed inventory  -->
+<nz-card nzTitle="{{ 'work-order.line' | i18n }}" [nzExtra]="workOrderLineActions" 
+
+  *ngIf="workOrderProduceTransaction !== undefined && workOrderProduceTransaction.productionLine !== undefined">
+  <!-- 
+    Consume by BOM
+  -->
+  <div *ngIf="consumeByBomQuantity === 'true'" style="padding: 20px;">
+
+    {{'work-order.consume-by-bom-on-work-order' | i18n}} : 
+      <nz-radio-group [(ngModel)]="consumeByWorkOrderBOM"  (ngModelChange)="consumeByWorkOrderBOMChanged()"
+        nzName="radiogroup">
+        <label nz-radio nzValue="true">{{ 'yes' | i18n }}</label>
+        <label nz-radio nzValue="false">{{ 'no' | i18n }}</label>
+      </nz-radio-group>
+    <div *ngIf="consumeByWorkOrderBOM === 'true'" style="padding-top: 20px;">  
+      {{ 'work-order.bill-of-material' | i18n}} : 
+      <span *ngIf="workOrderProduceTransaction.workOrder!.consumeByBom" >{{ workOrderProduceTransaction.workOrder!.consumeByBom.number }} </span>
+      <span *ngIf="workOrderProduceTransaction.workOrder!.consumeByBom === undefined || workOrderProduceTransaction.workOrder!.consumeByBom === null" >N/A</span>
+          
+    </div>
+    
+    
+    <div *ngIf="consumeByWorkOrderBOM === 'false'" style="padding-top: 20px;">  
+      
+      {{'work-order.matched-bom' | i18n}} : 
+        <nz-select *ngIf="matchedBOM.length >0" style="width: 150px" [(ngModel)]="workOrderProduceTransaction!.consumeByBom!.number"
+            (ngModelChange)="matchedBOMChanged()">
+            <nz-option *ngFor="let billOfMaterial of matchedBOM"
+              [nzLabel]="billOfMaterial.number!"
+              [nzValue]="billOfMaterial.number"></nz-option>
+          </nz-select>
+          <span *ngIf="matchedBOM.length === 0" >N/A</span>
+    </div>
+    
+      <div class="search-result-list"
+          style = "padding-top: 25px"
+          *ngIf="workOrderProduceTransaction!.consumeByBom && workOrderProduceTransaction!.consumeByBom.number">
+        <!-- if we have the consume by bom setup, show the details  --> 
+          <nz-descriptions nzTitle="{{ 'bill-of-material' | i18n }}" nzBordered 
+          style = "padding-bottom: 25px">
+            <nz-descriptions-item nzTitle="{{ 'bill-of-material.number' | i18n }}">
+              {{ workOrderProduceTransaction!.consumeByBom.number }}
+
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'item' | i18n }}">
+              {{ workOrderProduceTransaction!.consumeByBom.item?.name }}
+
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'bill-of-material.expectedQuantity' | i18n }}">
+              {{ workOrderProduceTransaction!.consumeByBom.expectedQuantity }}
+
+            </nz-descriptions-item>
+        </nz-descriptions>
+        
+        <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #bomDetailTable
+            [nzData]="workOrderProduceTransaction!.consumeByBom.billOfMaterialLines!" nzSize="middle"
+            [nzShowPagination]="false" nzBordered>
+            <thead>
+              <th>
+                {{ 'bill-of-material.line.number' | i18n }}</th>
+              <th>
+                {{ 'item' | i18n }}</th>
+              <th>
+                {{ 'item.description' | i18n }}</th>
+              <th>
+                {{ 'bill-of-material.line.expectedQuantity' | i18n }}</th>
+              <th>
+                {{ 'inventory.status' | i18n }}</th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let billOfMaterialLine of bomDetailTable.data">
+                <td>{{ billOfMaterialLine.number }}</td>
+                <td>{{ billOfMaterialLine.item?.name }}</td>
+                <td>{{ billOfMaterialLine.item?.description }}</td>
+                <td>{{ billOfMaterialLine.expectedQuantity }}</td>
+                <td>{{ billOfMaterialLine.inventoryStatus?.name }}</td>
+              </tr>
+            </tbody>
+          </nz-table> 
+      </div>
+
+  </div>
+  <!--
+      User specify how to consume the inventory
+
+  -->
+  <div class="search-result-list" *ngIf="consumeByBomQuantity === 'false'">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }"
+      [nzData]="workOrderProduceTransaction.workOrderLineConsumeTransactions" nzShowPagination="false"
+      #workOrderLineTable>
+      <thead>
+        <tr>
+          <th nzWidth="40px"></th>
+          <th>{{ 'work-order.line.number' | i18n }}</th>
+          <th>{{ 'item' | i18n }}</th>
+          <th>{{ 'item.description' | i18n }}</th>
+          <th>{{ 'work-order.line.expectedQuantity' | i18n }}</th>
+          <th>{{ 'work-order.line.inprocessQuantity' | i18n }}</th>
+          <th>{{ 'work-order.line.consumedQuantity' | i18n }}</th>
+          <th>{{ 'work-order.line.consumingQuantity' | i18n }}</th>
+          <th>{{ 'work-order.line.totalConsumingQuantity' | i18n }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <ng-template ngFor let-data [ngForOf]="workOrderLineTable.data">
+          <tr>
+            
+            <td [nzExpand]="expandSet.has(data.workOrderLine!.id!)" (nzExpandChange)="onExpandChange(data, $event)"></td>
+            <td>{{ data?.workOrderLine?.number }}</td>
+            <td>
+              {{ data?.workOrderLine?.item?.name }}
+            </td>
+            <td>
+              {{ data?.workOrderLine?.item?.description }}
+            </td>
+            <td>
+              {{ data?.workOrderLine?.expectedQuantity }}
+            </td>
+            <td>
+              {{ data?.workOrderLine?.inprocessQuantity }}
+            </td>
+            <td>
+              {{ data?.workOrderLine?.consumedQuantity }}
+            </td>
+            <td>
+              <input type="text" [(ngModel)]="data.consumedQuantity" (ngModelChange)="recalculateTotalConsumedQuantity(data)"/>
+            </td>
+            <td>
+              {{ data?.totalConsumedQuantity }}
+            </td>
+          </tr>
+          <tr [nzExpand]="expandSet.has(data.workOrderLine!.id!)">
+            <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
+              <nz-tab nzTitle="{{'inventory' | i18n}}">
+                 
+              <div *ngIf="data.workOrderLineConsumeLPNTransactions === undefined || data.workOrderLineConsumeLPNTransactions.length === 0">
+                  {{ "work-order-line.no-consumable-lpn" | i18n}} 
+              </div>
+                <nz-table [nzScroll]="{ x: 'true', y: 'true' }"  *ngIf="data.workOrderLineConsumeLPNTransactions && data.workOrderLineConsumeLPNTransactions.length > 0"
+                [nzData]="data.workOrderLineConsumeLPNTransactions"
+                  nzSize="middle" [nzShowPagination]="true" #consumeByLPNTable>
+                  <thead>
+                    <tr>
+                      <th>{{'lpn' | i18n}}</th>
+                      <th>{{'quantity' | i18n}}</th> 
+                      <th>{{'consumingQuantity' | i18n}}</th> 
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let consumeByLPN of consumeByLPNTable.data">
+                      <td>
+                        {{ consumeByLPN.lpn }}</td> 
+                        <td>
+                          {{ consumeByLPN.quantity }}</td> 
+                        
+                      <td>
+                        <input type="text" [(ngModel)]="consumeByLPN.consumedQuantity" (ngModelChange)="recalculateTotalConsumedQuantity(data)" /></td> 
+                    </tr>
+                  </tbody>
+                </nz-table>
+              </nz-tab>
+            </nz-tabset>
+          </tr>
+        </ng-template>
+      </tbody>
+    </nz-table>
+  </div>
+</nz-card>
+<ng-template #workOrderLineActions>
+  <nz-radio-group [(ngModel)]="consumeByBomQuantity" (ngModelChange)="onConsumeByBomQuantityChanged($event)"
+    nzName="radiogroup">
+    <label nz-radio nzValue="true">{{ 'yes' | i18n }}</label>
+    <label nz-radio nzValue="false">{{ 'no' | i18n }}</label>
+  </nz-radio-group>
+</ng-template>

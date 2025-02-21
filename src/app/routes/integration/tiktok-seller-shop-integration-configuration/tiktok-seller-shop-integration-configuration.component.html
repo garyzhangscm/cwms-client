@@ -1,0 +1,68 @@
+<page-header title="{{'tiktok-configuration' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    <div *ngIf="!threePartyLogisticsFlag">
+    
+        <nz-card *ngIf="tiktokSellerShopIntegrationConfigurationList.length == 0">
+            <div *ngIf="tiktokSellerShopIntegrationAuthUrlByCompany != ''">
+                Tiktok Seller Shop Integration is not setup yet, please click 
+                <a [href]="tiktokSellerShopIntegrationAuthUrlByCompany" target="_blank" rel="noopener noreferrer">
+                    this link</a> 
+                    to allow CWMS to access your Tiktok Shop
+            </div>
+        </nz-card>
+        <nz-card *ngIf="tiktokSellerShopIntegrationConfigurationList.length > 0"> 
+            <span>Tiktok Seller Shop Integration is setup </span>
+        </nz-card>
+    </div>
+    <div *ngIf="threePartyLogisticsFlag">
+        <nz-card>
+            <p>
+
+                <span>Choose a Client to Start: </span>
+            
+                <nz-select nzAllowClear [(ngModel)]="selectedClientId" (ngModelChange)="selectedClientChanged()" style="width: 250px">
+                    <nz-option *ngFor="let client of availableClients" [nzValue]="client.id" [nzLabel]="client.name"></nz-option>
+                </nz-select>
+            </p>
+            <div *ngIf="tiktokSellerShopIntegrationConfigurationList.length == 0 && selectedClientId != null && tiktokSellerShopIntegrationAuthUrlByClient.get(selectedClientId) != null">
+                Tiktok Seller Shop Integration is not setup yet, please click 
+                <a [href]="tiktokSellerShopIntegrationAuthUrlByClient.get(selectedClientId)" target="_blank" rel="noopener noreferrer">
+                    this link</a> 
+                    to allow CWMS to access your Tiktok Shop for this client
+            </div>
+            <nz-card nzType="inner" 
+                *ngFor="let tiktokSellerShopIntegrationConfiguration of tiktokSellerShopIntegrationConfigurationList"
+                nzTitle="{{'shop' | i18n}}: {{tiktokSellerShopIntegrationConfiguration.sellerName}}" [nzExtra]="removeConfigurationTemplate">  
+                
+                <div nz-col [nzSpan]="12">
+                    <nz-form-item nzFlex>
+                        <nz-form-label [nzSpan]="6">
+                                {{ 'autoRefreshOrderTimeWindowInMinute' | i18n }}
+                        </nz-form-label>
+                    <nz-form-control [nzSpan]="12">                
+                        <nz-input-number [(ngModel)]="tiktokSellerShopIntegrationConfiguration.autoRefreshOrderTimeWindowInMinute"  [nzMin]="0" [nzMax]="65524" [nzStep]="1">
+                        </nz-input-number> 
+                    </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;"> 
+                
+                  <button nz-button (click)="saveTiktokSellerShopIntegrationConfiguration(tiktokSellerShopIntegrationConfiguration)">
+                    {{'save' | i18n}}</button>
+                </div>
+                <ng-template #removeConfigurationTemplate>
+                    <a (click)="removeTiktokSellerShopIntegrationConfiguration(tiktokSellerShopIntegrationConfiguration)">
+                        {{'remove' | i18n}}</a>
+                  </ng-template>
+            </nz-card>
+            <div *ngIf="tiktokSellerShopIntegrationConfigurationList.length > 0 && selectedClientId != null && tiktokSellerShopIntegrationAuthUrlByClient.get(selectedClientId) != null">
+                Click 
+                <a [href]="tiktokSellerShopIntegrationAuthUrlByClient.get(selectedClientId)" target="_blank" rel="noopener noreferrer">
+                    this link</a> 
+                    to add more Tiktok Shop for this client
+            </div>
+        </nz-card> 
+    </div>
+
+</nz-spin>

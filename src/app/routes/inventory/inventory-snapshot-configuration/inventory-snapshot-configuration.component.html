@@ -1,0 +1,247 @@
+<nz-spin [nzSize]="'large'" [nzSpinning]="isSpinning">
+  <nz-card [nzActions]="[cardFoot]">
+    <form nz-form [formGroup]="configurationForm">
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="16" nzFor="cron">
+              {{ 'inventory-snapshot.configuration.cron' | i18n }} - 1
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback
+              nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+              
+                <nz-select formControlName="inventorySnapshotTiming1" id="inventorySnapshotTiming1" 
+                    name="inventorySnapshotTiming1" style="width: 100px"  nzAllowClear>
+                  <nz-option *ngFor="let hour of hours" [nzValue]="hour" [nzLabel]="hour"></nz-option> 
+                </nz-select> 
+              <!--<input nz-input formControlName="cron" id="cron" name="cron" />--> 
+            </nz-form-control>
+            <!--
+
+            <a  nz-popover
+              nzPopoverTitle="{{ 'inventory-snapshot.configuration.cron' | i18n }}" [nzPopoverContent]="cronDescription"
+              nzPopoverPlacement="rightTop">
+              <i nz-icon [nzType]="'question-circle'"   style="font-size: 25px; padding-left: 20px;"></i> 
+            </a> 
+            -->
+          </nz-form-item>
+
+        </div>
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="16" nzFor="cron">
+              {{ 'inventory-snapshot.configuration.cron' | i18n }} - 2
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback
+              nzErrorTip="{{ 'error.form.field.required' | i18n }}"> 
+              <nz-select formControlName="inventorySnapshotTiming2" id="inventorySnapshotTiming2" 
+                  name="inventorySnapshotTiming2" style="width: 100px"  nzAllowClear>
+                <nz-option *ngFor="let hour of hours" [nzValue]="hour" [nzLabel]="hour"></nz-option> 
+              </nz-select>  
+            </nz-form-control> 
+          </nz-form-item>
+
+        </div>
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="16" nzFor="cron">
+              {{ 'inventory-snapshot.configuration.cron' | i18n }} - 3
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback
+              nzErrorTip="{{ 'error.form.field.required' | i18n }}"> 
+              <nz-select formControlName="inventorySnapshotTiming3" id="inventorySnapshotTiming3" 
+                  name="inventorySnapshotTiming3" style="width: 100px"  nzAllowClear>
+                <nz-option *ngFor="let hour of hours" [nzValue]="hour" [nzLabel]="hour"></nz-option> 
+              </nz-select>   
+            </nz-form-control> 
+          </nz-form-item>
+
+        </div>
+      </div>
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="16">
+              {{ 'location-utilization-snapshot.configuration.cron' | i18n }} - 1
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback
+              nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+              <nz-select formControlName="locationUtilizationSnapshotTiming1" id="locationUtilizationSnapshotTiming1" 
+                  name="locationUtilizationSnapshotTiming1" style="width: 100px"  nzAllowClear>
+                <nz-option *ngFor="let hour of hours" [nzValue]="hour" [nzLabel]="hour"></nz-option> 
+              </nz-select>    
+                <!--
+
+              <input nz-input formControlName="locationUtilizationCron" id="locationUtilizationCron" name="locationUtilizationCron" />
+                -->
+            </nz-form-control>
+            <!--
+
+            <a nz-popover
+              nzPopoverTitle="{{ 'location-utilization-snapshot.configuration.cron' | i18n }}" [nzPopoverContent]="locationUtilizationCronDescription"
+              nzPopoverPlacement="rightTop">
+              <i nz-icon [nzType]="'question-circle'"   style="font-size: 25px; padding-left: 20px;"></i> 
+            </a> 
+            -->
+
+          </nz-form-item>
+
+
+        </div>
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="16">
+              {{ 'location-utilization-snapshot.configuration.cron' | i18n }} - 2
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback
+              nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+              <nz-select formControlName="locationUtilizationSnapshotTiming2" id="locationUtilizationSnapshotTiming2" 
+                  name="locationUtilizationSnapshotTiming2" style="width: 100px"  nzAllowClear >
+                <nz-option *ngFor="let hour of hours" [nzValue]="hour" [nzLabel]="hour"></nz-option> 
+              </nz-select>     
+            </nz-form-control> 
+
+          </nz-form-item>
+
+
+        </div>
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="16">
+              {{ 'location-utilization-snapshot.configuration.cron' | i18n }} - 3
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback
+              nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+              <nz-select formControlName="locationUtilizationSnapshotTiming3" id="locationUtilizationSnapshotTiming3" 
+                  name="locationUtilizationSnapshotTiming3" style="width: 100px" nzAllowClear >
+                <nz-option *ngFor="let hour of hours" [nzValue]="hour" [nzLabel]="hour"></nz-option> 
+              </nz-select>      
+                <!--
+
+              <input nz-input formControlName="locationUtilizationCron" id="locationUtilizationCron" name="locationUtilizationCron" />
+                -->
+            </nz-form-control>
+            <!--
+
+            <a nz-popover
+              nzPopoverTitle="{{ 'location-utilization-snapshot.configuration.cron' | i18n }}" [nzPopoverContent]="locationUtilizationCronDescription"
+              nzPopoverPlacement="rightTop">
+              <i nz-icon [nzType]="'question-circle'"   style="font-size: 25px; padding-left: 20px;"></i> 
+            </a> 
+            -->
+
+          </nz-form-item>
+
+
+        </div>
+      </div>
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="16">
+              {{ 'inventory-aging-snapshot.configuration.cron' | i18n }} - 1
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback
+              nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+              <nz-select formControlName="inventoryAgingSnapshotTiming1" id="inventoryAgingSnapshotTiming1" 
+                  name="inventoryAgingSnapshotTiming1" style="width: 100px"  nzAllowClear>
+                <nz-option *ngFor="let hour of hours" [nzValue]="hour" [nzLabel]="hour"></nz-option> 
+              </nz-select>   
+                <!--
+
+              <input nz-input formControlName="locationUtilizationCron" id="locationUtilizationCron" name="locationUtilizationCron" />
+                -->
+            </nz-form-control>
+            <!--
+
+            <a nz-popover
+              nzPopoverTitle="{{ 'location-utilization-snapshot.configuration.cron' | i18n }}" [nzPopoverContent]="locationUtilizationCronDescription"
+              nzPopoverPlacement="rightTop">
+              <i nz-icon [nzType]="'question-circle'"   style="font-size: 25px; padding-left: 20px;"></i> 
+            </a> 
+            -->
+
+          </nz-form-item>
+
+
+        </div>
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="16">
+              {{ 'inventory-aging-snapshot.configuration.cron' | i18n }} - 2
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback
+              nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+              <nz-select formControlName="inventoryAgingSnapshotTiming2" id="inventoryAgingSnapshotTiming2" 
+                  name="inventoryAgingSnapshotTiming2" style="width: 100px" nzAllowClear >
+                <nz-option *ngFor="let hour of hours" [nzValue]="hour" [nzLabel]="hour"></nz-option> 
+              </nz-select>   
+            </nz-form-control> 
+
+          </nz-form-item>
+
+
+        </div>
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="16">
+              {{ 'inventory-aging-snapshot.configuration.cron' | i18n }} - 3
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback
+              nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+              <nz-select formControlName="inventoryAgingSnapshotTiming3" id="inventoryAgingSnapshotTiming3" 
+                  name="inventoryAgingSnapshotTiming3" style="width: 100px"  nzAllowClear>
+                <nz-option *ngFor="let hour of hours" [nzValue]="hour" [nzLabel]="hour"></nz-option> 
+              </nz-select>    
+                <!--
+
+              <input nz-input formControlName="locationUtilizationCron" id="locationUtilizationCron" name="locationUtilizationCron" />
+                -->
+            </nz-form-control>
+            <!--
+
+            <a nz-popover
+              nzPopoverTitle="{{ 'location-utilization-snapshot.configuration.cron' | i18n }}" [nzPopoverContent]="locationUtilizationCronDescription"
+              nzPopoverPlacement="rightTop">
+              <i nz-icon [nzType]="'question-circle'"   style="font-size: 25px; padding-left: 20px;"></i> 
+            </a> 
+            -->
+
+          </nz-form-item>
+
+
+        </div>
+      </div>
+    </form>
+
+  </nz-card>
+</nz-spin>
+<ng-template #cardFoot>
+  <div nz-row nzType="flex" [nzJustify]="'start'" style='padding-left: 20px;' >
+    <button nz-button nzType="primary" (click)="saveConfiguration()">
+      {{ 'confirm' | i18n }}
+    </button>
+    <nz-divider nzType="vertical"></nz-divider>
+    <button nz-button nzType="primary" (click)="generateInventorySnapshot()">
+      {{ 'inventory-snapshot.generate' | i18n }}
+    </button>
+    <nz-divider nzType="vertical"></nz-divider>
+    <button nz-button nzType="primary" (click)="generateLocationUtilizationSnapshotBatch()">
+      {{ 'location-utilization-snapshot.generate' | i18n }}
+    </button>
+    <nz-divider nzType="vertical"></nz-divider>
+    <button nz-button nzType="primary" (click)="generateInventoryAgingSnapshotBatch()">
+      {{ 'inventory-aging-snapshot.generate' | i18n }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #cronDescription>
+  <div>{{ 'inventory-snapshot.configuration.cron.description' | i18n }}
+  </div>
+</ng-template>
+
+<ng-template #locationUtilizationCronDescription>
+  <div>{{ 'location-utilization-snapshot.configuration.cron.description' | i18n }}
+  </div>
+</ng-template>

@@ -1,0 +1,132 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/transportation/trailer" routerLinkActive="active" [queryParams]="{number: currentTrailer.number}">{{ 'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/transportation/trailer" routerLinkActive="active">{{ 'trailer' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'trailer.maintenance' | i18n }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex" nzStatus="wait" style="padding: 15px">
+  <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+<!-- Show basic item information -->
+<div class="small-card" *ngIf="stepIndex === 0 
+    && currentTrailer != undefined">
+
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="numberErrorTpl" [nzValidateStatus]="numberValidateStatus">
+          <input nz-input [(ngModel)]="currentTrailer.number" required  (blur)="numberChange($event)" [disabled]="!newTrailer" />
+          <ng-template #numberErrorTpl let-control>   
+            <ng-container *ngIf="numberErrorCode === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
+            <ng-container *ngIf="numberErrorCode === 'numberExists'">Number already exists</ng-container>
+                    
+        </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+ 
+
+
+    <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'description' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentTrailer.description" required  />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+  </div> 
+  
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'size' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-number
+                    [(ngModel)]="currentTrailer.size" 
+                    [nzStep]="0.01" [nzMin]="0"
+                ></nz-input-number> 
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <!--
+
+    <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'warehouseSpecific' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <label nz-checkbox [(ngModel)]="warehouseSpecific"></label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    -->
+  </div>
+</div>
+
+
+
+<!-- Confirm the change -->
+<div class="small-card" *ngIf="stepIndex === 1">
+  <nz-card>
+    <nz-descriptions nzBordered="true">
+
+      <nz-descriptions-item nzTitle="{{ 'number' | i18n }}">{{ currentTrailer.number }}
+      </nz-descriptions-item>
+      
+
+      <nz-descriptions-item nzTitle="{{ 'description' | i18n }}">{{ currentTrailer.description }}
+        </nz-descriptions-item>
+        
+
+        <nz-descriptions-item nzTitle="{{ 'size' | i18n }}">{{ currentTrailer.size }}
+        </nz-descriptions-item>
+    
+
+    </nz-descriptions>
+  </nz-card>
+</div>
+
+
+<div class="steps-action" *ngIf="stepIndex === 0">
+  <button nz-button nzType="default" (click)="nextStep()" [disabled]="numberValidateStatus != 'success'">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+</div>
+
+<div class="steps-action" *ngIf="stepIndex === 1">
+
+  <button nz-button nzType="default" (click)="previousStep()">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirmTrailer()" [disabled]="numberValidateStatus != 'success'">
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+
+</nz-spin>

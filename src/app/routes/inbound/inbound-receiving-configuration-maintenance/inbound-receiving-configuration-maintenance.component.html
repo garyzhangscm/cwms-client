@@ -1,0 +1,287 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+  <a routerLink="/inbound/inbound-receiving-configuration" routerLinkActive="active">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/inbound/inbound-receiving-configuration" routerLinkActive="active">{{
+        'inbound-qc-configuration' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning">
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+  <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+
+<!-- Step 1: basic information  
+  -->
+
+
+
+<div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
+
+
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="12">
+          {{ 'supplier' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+
+            
+            <nz-select *ngIf='currentInboundReceivingConfiguration !== undefined' nz-input [ngModel]="currentInboundReceivingConfiguration.supplierId!"
+            (ngModelChange)="supplierChanged($event)" style="width: 250px"  [disabled]="!currentInboundReceivingConfiguration">
+            <nz-option *ngFor="let supplier of validSuppliers"
+            [nzLabel]="supplier.description" [nzValue]="supplier.id">
+            </nz-option>
+        </nz-select>
+        
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="12">
+          {{ 'item' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+
+            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                <input nz-input [ngModel]="currentInboundReceivingConfiguration.item?.name"
+                (blur)="itemNameChanged($event)"
+                
+                [disabled]="!newInboundReceivingConfiguration"/>
+              </nz-input-group>
+              <ng-template #suffixIconButton>
+                <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
+                </app-inventory-item-query-popup>
+              </ng-template>
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    
+    <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="14">
+            {{ 'warehouseSpecific' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="10">
+            <label nz-checkbox [(ngModel)]="warehouseSpecific" [disabled]="!newInboundReceivingConfiguration"></label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+  </div>
+
+  <div nz-row [nzGutter]="24">
+    
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="12">
+          {{ 'item-family' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+
+          <nz-select 
+              *ngIf='currentInboundReceivingConfiguration !== undefined' nz-input [ngModel]="currentInboundReceivingConfiguration.itemFamilyId!"
+              (ngModelChange)="itemFamilyChanged($event)" style="width: 250px"  [disabled]="!newInboundReceivingConfiguration">
+              <nz-option *ngFor="let itemFamily of validItemFamilies"
+                  [nzLabel]="itemFamily.description" [nzValue]="itemFamily.id">
+              </nz-option>
+            </nz-select> 
+        
+        </nz-form-control>
+      </nz-form-item>
+    </div> 
+
+  </div>
+
+  <div nz-row [nzGutter]="24">
+      
+    <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="12">
+            {{ 'standardPalletSize' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+   
+                  <nz-input-number [(ngModel)]="this.currentInboundReceivingConfiguration.standardPalletSize"  
+                      [nzMin]="0"> 
+
+                   </nz-input-number> in<sup>3</sup>
+  
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="14">
+            {{ 'estimatePalletCountBySize' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="10">
+            <label nz-checkbox [(ngModel)]="this.currentInboundReceivingConfiguration.estimatePalletCountBySize">
+            </label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="18">
+            {{ 'estimatePalletCountByReceiptLineCubicMeter' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="6">
+            <label nz-checkbox [(ngModel)]="this.currentInboundReceivingConfiguration.estimatePalletCountByReceiptLineCubicMeter">
+            </label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+  </div>
+
+  <div nz-row [nzGutter]="24">
+      
+    <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="16">
+            {{ 'statusAllowReceiptChangeWhenUploadFile' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="8" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-select nzAllowClear   
+            nz-input  [(ngModel)]="this.currentInboundReceivingConfiguration.statusAllowReceiptChangeWhenUploadFile"
+                    style="width: 150px"  >
+                  <nz-option *ngFor="let receiptStatus of receiptStatusList | keys"
+                      nzLabel="{{ 'RECEIPT-STATUS-' + receiptStatus.key | i18n}}" [nzValue]="receiptStatus.key">
+                  </nz-option>
+              </nz-select>  
+  
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+      <div nz-col [nzSpan]="8">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="16">
+              {{ 'statusAllowReceiptChangeFromIntegration' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="8" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+              <nz-select nzAllowClear   
+              nz-input  [(ngModel)]="this.currentInboundReceivingConfiguration.statusAllowReceiptChangeFromIntegration"
+                      style="width: 150px"  >
+                    <nz-option *ngFor="let receiptStatus of receiptStatusList | keys"
+                        nzLabel="{{ 'RECEIPT-STATUS-' + receiptStatus.key | i18n}}" [nzValue]="receiptStatus.key">
+                    </nz-option>
+                </nz-select>  
+    
+            </nz-form-control>
+          </nz-form-item>
+        </div> 
+        <div nz-col [nzSpan]="8">
+            <nz-form-item>
+              <nz-form-label [nzSpan]="16">
+                {{ 'statusAllowReceiptChangeFromWebUI' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="8" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                <nz-select nzAllowClear   
+                nz-input  [(ngModel)]="this.currentInboundReceivingConfiguration.statusAllowReceiptChangeFromWebUI"
+                        style="width: 150px"  >
+                      <nz-option *ngFor="let receiptStatus of receiptStatusList | keys"
+                          nzLabel="{{ 'RECEIPT-STATUS-' + receiptStatus.key | i18n}}" [nzValue]="receiptStatus.key">
+                      </nz-option>
+                  </nz-select>  
+      
+              </nz-form-control>
+            </nz-form-item>
+          </div> 
+  </div>
+  <div nz-row [nzGutter]="24">
+       
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="20">
+            {{ 'useReceiptCheckInTimeAsInWarehouseDateTime' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="4">
+            <label nz-checkbox [(ngModel)]="this.currentInboundReceivingConfiguration.useReceiptCheckInTimeAsInWarehouseDateTime">
+            </label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="20">
+            {{ 'validateOverReceivingAgainstArrivedQuantity' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="4">
+            <label nz-checkbox [(ngModel)]="this.currentInboundReceivingConfiguration.validateOverReceivingAgainstArrivedQuantity">
+            </label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+  </div>
+
+  
+</div>
+
+<div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+  <nz-card>
+
+    <nz-descriptions nzTitle="{{ 'inbound-receiving-configuration' | i18n}}" nzBordered>
+      <nz-descriptions-item nzTitle="{{ 'supplier' | i18n}}">
+        {{currentInboundReceivingConfiguration.supplier?.description}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'item' | i18n}}">
+        {{currentInboundReceivingConfiguration.item?.name}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'warehouse' | i18n}}">
+          {{currentInboundReceivingConfiguration.warehouse?.name}}</nz-descriptions-item>
+          
+      <nz-descriptions-item nzTitle="{{ 'item-family' | i18n}}">
+        {{currentInboundReceivingConfiguration.itemFamily?.name}}</nz-descriptions-item>  
+           
+      <nz-descriptions-item nzTitle="{{ 'standardPalletSize' | i18n}}">
+            {{currentInboundReceivingConfiguration.standardPalletSize}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'estimatePalletCountBySize' | i18n}}">
+            {{currentInboundReceivingConfiguration.estimatePalletCountBySize}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'estimatePalletCountByReceiptLineCubicMeter' | i18n}}">
+            {{currentInboundReceivingConfiguration.estimatePalletCountByReceiptLineCubicMeter}}</nz-descriptions-item>
+            
+      <nz-descriptions-item nzTitle="{{ 'statusAllowReceiptChangeWhenUploadFile' | i18n}}">
+        {{currentInboundReceivingConfiguration.statusAllowReceiptChangeWhenUploadFile}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'statusAllowReceiptChangeFromIntegration' | i18n}}">
+          {{currentInboundReceivingConfiguration.statusAllowReceiptChangeFromIntegration}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'statusAllowReceiptChangeFromWebUI' | i18n}}">
+        {{currentInboundReceivingConfiguration.statusAllowReceiptChangeFromWebUI}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'useReceiptCheckInTimeAsInWarehouseDateTime' | i18n}}">
+        {{currentInboundReceivingConfiguration.useReceiptCheckInTimeAsInWarehouseDateTime}}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'validateOverReceivingAgainstArrivedQuantity' | i18n}}">
+          {{currentInboundReceivingConfiguration.validateOverReceivingAgainstArrivedQuantity}}</nz-descriptions-item>
+    </nz-descriptions>
+
+  </nz-card>
+
+</div>
+
+<div class="steps-action" style="padding-top: 20px;">
+  <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 1" 
+  >
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+</nz-spin>

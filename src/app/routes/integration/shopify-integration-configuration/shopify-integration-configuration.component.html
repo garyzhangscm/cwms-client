@@ -1,0 +1,67 @@
+ 
+
+
+<page-header title="{{'shopify-integration' |  i18n}}" ></page-header>
+<!--
+
+<a href="https://admin.shopify.com/oauth/install_custom_app?client_id=7e0b33dd596b5e74e611d86e50c3d5bd&no_redirect=true&signature=eyJfcmFpbHMiOnsibWVzc2FnZSI6ImV5SmxlSEJwY21WelgyRjBJam94TnpFM09UazBPVEUzTENKd1pYSnRZVzVsYm5SZlpHOXRZV2x1SWpvaWNYVnBZMnR6ZEdGeWRDMHdPVE16Wm1NM01DNXRlWE5vYjNCcFpua3VZMjl0SWl3aVkyeHBaVzUwWDJsa0lqb2lOMlV3WWpNelpHUTFPVFppTldVM05HVTJNVEZrT0RabE5UQmpNMlExWW1RaUxDSndkWEp3YjNObElqb2lZM1Z6ZEc5dFgyRndjQ0lzSW0xbGNtTm9ZVzUwWDI5eVoyRnVhWHBoZEdsdmJsOXBaQ0k2TVRJeU1qY3lOelF3ZlE9PSIsImV4cCI6IjIwMjQtMDYtMTdUMDQ6NDg6MzcuNjQ4WiIsInB1ciI6bnVsbH19--9bc1977c099f4f029b0aa02c2e0a3a125694e613">
+    shopify
+</a>
+
+-->
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    <div *ngIf="!threePartyLogisticsFlag">
+    
+        <nz-card *ngIf="shopifyIntegrationConfigurationList.length == 0">
+            <div *ngIf="shopifyOAuthUrlByCompany != ''">
+                Shopify Integration is not setup yet, please click 
+                <a [href]="shopifyOAuthUrlByCompany" target="_blank" rel="noopener noreferrer">
+                    this link</a> 
+                    to allow CWMS to access your Shop
+            </div>
+        </nz-card>
+        <nz-card *ngIf="shopifyIntegrationConfigurationList.length > 0"> 
+            <span>Shopify Integration is setup </span>
+        </nz-card>
+    </div>
+    <div *ngIf="threePartyLogisticsFlag">
+        <nz-card>
+            <p>
+
+                <span>Choose a Client to Start: </span>
+            
+                <nz-select nzAllowClear [(ngModel)]="selectedClientId" (ngModelChange)="selectedClientChanged()" style="width: 250px">
+                    <nz-option *ngFor="let client of availableClients" [nzValue]="client.id" [nzLabel]="client.name"></nz-option>
+                </nz-select>
+            </p>
+            
+            <nz-result *ngIf="selectedClientId != null && shopifyOAuthUrlByClient.get(selectedClientId) == null"
+                nzStatus="error" nzTitle="Shopify Authorization Configuration is not setup yet, please contact the system admin to setup in Shopify">
+                 
+            </nz-result> 
+            <div *ngIf="shopifyIntegrationConfigurationList.length == 0 && selectedClientId != null && shopifyOAuthUrlByClient.get(selectedClientId) != null">
+                Shopify Integration is not setup yet, please click 
+                <a [href]="shopifyOAuthUrlByClient.get(selectedClientId)" target="_blank" rel="noopener noreferrer">
+                    this link</a> 
+                    to allow CWMS to access your Shop for this client
+            </div>
+            <nz-card nzType="inner" 
+                *ngFor="let shopifyIntegrationConfiguration of shopifyIntegrationConfigurationList"
+                nzTitle="{{'shop' | i18n}}: {{shopifyIntegrationConfiguration.shop}}" [nzExtra]="removeConfigurationTemplate">  
+                 <div>{{shopifyIntegrationConfiguration.access_token}}</div>
+                <ng-template #removeConfigurationTemplate>
+                    <a (click)="removeShopIntegrationConfiguration(shopifyIntegrationConfiguration)">
+                        {{'remove' | i18n}}</a>
+                  </ng-template>
+            </nz-card>
+            <div *ngIf="shopifyIntegrationConfigurationList.length > 0 && selectedClientId != null && shopifyOAuthUrlByClient.get(selectedClientId) != null">
+                Click 
+                <a [href]="shopifyOAuthUrlByClient.get(selectedClientId)" target="_blank" rel="noopener noreferrer">
+                    this link</a> 
+                    to add more Shop for this client
+            </div>
+        </nz-card> 
+    </div>
+
+</nz-spin>

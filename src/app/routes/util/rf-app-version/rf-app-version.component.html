@@ -1,0 +1,141 @@
+<page-header> </page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form"> 
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="versionNumber">
+            {{ 'rf.app.version-number' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <input nz-input name="versionNumber" id="versionNumber" formControlName="versionNumber">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+          
+        <label nz-checkbox formControlName="isLatestVersion">
+            <span> {{ 'rf.app.is-latest-version' | i18n }}</span>
+        </label>
+          
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="search()"  >
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form> 
+ 
+ 
+  
+  <div class="search-result-list"> 
+    
+    <st #st [data]="rfAppVersions" [columns]="columns" [footer]="tableFoot" [widthMode]="{ type: 'strict' }"
+    [expand]="expand"   expandAccordion>
+        
+      
+      <!--   apk file colummn  --> 
+
+      <ng-template st-row="apkFileColumnTitle" type="title" let-c>
+        {{ 'file-name' | i18n }}
+      </ng-template>
+      <ng-template st-row="apkFileColumn" let-item let-index="index"> 
+        
+        <a [href]="item.apkDownloadUrl" target="_blank" rel="noopener noreferrer">
+    
+          {{ item.fileName }}
+        </a>
+      </ng-template>
+      
+      <!--  release note colummn  --> 
+
+      <ng-template st-row="releaseNoteTitle" type="title" let-c>
+        {{ 'rf.app.release-note' | i18n }}
+      </ng-template>
+      <ng-template st-row="releaseNoteColumn" let-item let-index="index"> 
+        <a nz-tooltip [nzTooltipTitle]="releaseNoteTemplate">{{ item.releaseNote }}</a>
+        <ng-template #releaseNoteTemplate>
+          <div style="white-space:pre-wrap">
+            {{ item.releaseNote }}
+          </div>
+        </ng-template> 
+      </ng-template>
+      <!--   check in time colummn  --> 
+
+      <ng-template st-row="releaseDateColumnTitle" type="title" let-c>
+        {{ 'rf.app.release-date' | i18n }}
+      </ng-template>
+      <ng-template st-row="releaseDateColumn" let-item let-index="index"> 
+        
+         <span *ngIf="item.releaseDate">
+
+            {{ item.releaseDate  | date:'short'}} 
+         </span>
+      </ng-template>
+      <!--   action colummn  --> 
+      <ng-template st-row="actionColumnTitle" type="title" let-c>
+        {{ 'action' | i18n }}
+      </ng-template>
+      <ng-template st-row="actionColumn" let-item let-index="index"> 
+        
+        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+          {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu> 
+
+            <li nz-menu-item >
+              <a  routerLink="/util/rf-app-version/maintenance" routerLinkActive="active"
+                  [queryParams]="{id : item.id!}">{{ 'modify' | i18n }}</a>
+            </li>
+            <li nz-menu-item>
+              <a  (click)="removeRFAppVersion(item)">{{ 'remove' | i18n }}</a>
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+      </ng-template>
+      
+      <!--   specify the RF for this version  -->
+      <ng-template #expand let-item let-index="index" >
+        
+        <nz-tabset  >
+          <nz-tab nzTitle="{{'rf' | i18n}}">
+            <nz-list nzBordered *ngIf="item.rfAppVersionByRFCodes.length > 0">
+              <nz-list-item *ngFor="let rfAppVersionByRFCode of item.rfAppVersionByRFCodes">
+                 
+                {{ rfAppVersionByRFCode.rf.rfCode }}
+              </nz-list-item>
+            </nz-list>
+            
+            <nz-empty *ngIf="item.rfAppVersionByRFCodes.length == 0" style="padding-top: 25px;"></nz-empty>
+          </nz-tab>
+        </nz-tabset>
+      </ng-template>
+    </st>
+  
+  </div>
+ 
+</nz-spin>
+<ng-template #tableFoot>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+  
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+    
+    <button nz-button nzType="primary" routerLink="/util/rf-app-version/maintenance"  *ngIf="!displayOnly" routerLinkActive="active">
+      {{ 'add' | i18n }}
+    </button>
+  </div>
+</ng-template>
+
+
+
+ 

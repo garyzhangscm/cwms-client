@@ -1,0 +1,81 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/auth/role" routerLinkActive="active">{{
+    'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.auth' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/auth/role" routerLinkActive="active">{{
+        'breadcrumb.role' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<div nz-row style="padding: 50px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="2" [nzSize]="'default'">
+      <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"
+        nzDescription="{{ 'steps.working-team.basic-info.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.working-team.assign-users.title' | i18n }}"
+        nzDescription="{{ 'steps.working-team.assign-users.description' | i18n }}">
+      </nz-step>
+
+      <nz-step nzTitle="{{ 'steps.confirm.title' | i18n }}" nzDescription="{{ 'steps.confirm.description' | i18n }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+
+<nz-card nzTitle="{{ 'steps.basic-info.title' | i18n }}">
+  <nz-descriptions nzBordered="true">
+    <nz-descriptions-item nzTitle="{{ 'name' | i18n}}">
+      {{currentWorkingTeam!.name}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'description' | i18n}}">
+      {{currentWorkingTeam!.description}}
+    </nz-descriptions-item>
+  </nz-descriptions>
+</nz-card>
+
+<nz-card nzTitle="{{ 'steps.role.assign-users.title' | i18n }}" [nzActions]="[cardFoot]">
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #userTable [nzData]="currentWorkingTeam!.users">
+    <thead>
+      <tr>
+        <th *ngFor="let column of listOfUserTableColumns" [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn"
+          [nzSortDirections]="column.sortDirections" [nzFilterMultiple]="column.filterMultiple"
+          [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+          {{ column.name | i18n }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of userTable.data">
+
+        <td>
+          {{ data.username }}</td>
+        <td>{{ data.firstname }}</td>
+        <td>{{ data.lastname }}</td>
+        <td>{{ data.email }} </td>
+        <td>{{ data.enabled +''| i18n }}</td>
+        <td>{{ data.locked +''| i18n}}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+
+<ng-template #cardFoot>
+  <div nz-row nzType="flex" nzJustify="center" style='padding-left: 20px;'>
+    <button nz-button nzType="primary" (click)="confirm()">
+      {{ 'steps.confirm.title' | i18n }}
+    </button>
+  </div>
+</ng-template>

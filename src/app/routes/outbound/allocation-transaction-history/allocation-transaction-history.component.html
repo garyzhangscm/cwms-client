@@ -1,0 +1,98 @@
+<page-header title="{{'allocation-transaction-history' |  i18n}}" ></page-header>
+
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    <!-- Form to query the result  -->
+    <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="6">
+          <nz-form-item nzFlex>
+            <nz-form-label for="transactionGroupId" [nzSpan]="12">
+              {{ 'transactionGroupId' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="12">
+              <input nz-input name="transactionGroupId" id="transactionGroupId" formControlName="transactionGroupId" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="6">
+          <nz-form-item nzFlex>
+            <nz-form-label for="number" [nzSpan]="10">
+              {{ 'number' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="14">
+              <input nz-input name="number" id="number" formControlName="number" />
+            </nz-form-control>
+          </nz-form-item>
+        </div> 
+        <div nz-col [nzSpan]="6">
+          <nz-form-item nzFlex>
+            <nz-form-label for="itemName" [nzSpan]="10">
+              {{ 'itemName' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="14">
+              <input nz-input name="itemName" id="itemName" formControlName="itemName" />
+            </nz-form-control>
+          </nz-form-item>
+        </div> 
+      </div>
+      
+      <div nz-row [nzGutter]="24">
+        
+        <div nz-col [nzSpan]="6">
+            <nz-form-item nzFlex>
+              <nz-form-label for="workOrderNumber" [nzSpan]="12">
+                {{ 'workOrderNumber' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="12">
+                <input nz-input name="workOrderNumber" id="workOrderNumber" formControlName="workOrderNumber" />
+              </nz-form-control>
+            </nz-form-item>
+          </div> 
+        <div nz-col [nzSpan]="6">
+            <nz-form-item nzFlex>
+              <nz-form-label for="orderNumber" [nzSpan]="10">
+                {{ 'orderNumber' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="14">
+                <input nz-input name="orderNumber" id="orderNumber" formControlName="orderNumber" />
+              </nz-form-control>
+            </nz-form-item>
+          </div> 
+            <div nz-col [nzSpan]="6">
+                <nz-form-item nzFlex>
+                  <nz-form-label for="locationName" [nzSpan]="10">
+                    {{ 'locationName' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="14">
+                    <input nz-input name="locationName" id="locationName" formControlName="locationName" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div> 
+    
+      </div>
+      <div nz-row>
+        <div nz-col [nzSpan]="24" class="search-area">
+          <button nz-button [nzType]="'primary'" (click)="search()" >
+            {{ 'search' | i18n }}
+          </button>
+          <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+        </div>
+      </div>
+    </form>
+  
+    <!-- Table to Display the result  -->
+  
+    <div class="search-result-list">
+      
+      <!--
+      <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+        <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+      </div>
+    -->
+      
+      <st #st [data]="listOfAllAllocationTransactionHistories"  [columns]="columns" 
+      [scroll]="{ x: '2715px' }">
+      </st>
+    </div>
+</nz-spin>

@@ -1,0 +1,32 @@
+<page-header title="{{'system-configuration' |  i18n}}" ></page-header>
+<div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="6">
+                {{ 'system-configuration.allow-data-initial-flag' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18">
+                <nz-switch [(ngModel)]="currentSystemConfiguration!.allowDataInitialFlag"></nz-switch>
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+</div>
+<div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="6">
+                {{ 'system-configuration.server-side-printing' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18">
+                <nz-switch [(ngModel)]="currentSystemConfiguration!.serverSidePrinting"></nz-switch>
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+</div>
+
+
+<div nz-row nzType="flex" nzJustify="start">
+    <button nz-button nzType="primary" (click)="saveConfiguration()" *ngIf="!displayOnly">
+        {{ 'confirm' | i18n }}
+    </button>
+</div>

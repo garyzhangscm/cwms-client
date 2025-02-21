@@ -1,0 +1,105 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink> 
+    <a (click)="return()" routerLinkActive="active">{{
+        'return' | i18n
+        }}</a>
+
+</ng-template>
+
+<ng-template #breadcrumb>
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a routerLink="/util/custom-report" routerLinkActive="active">{{
+          'menu.main.util.custom-report' | i18n
+          }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    
+
+    <div class="small-card" style="padding-top: 20px;" *ngIf="currentCustomReport != null">
+
+        <nz-descriptions nzBordered>
+            <nz-descriptions-item nzTitle="{{ 'name' | i18n}}" nzSpan="2"> 
+                {{currentCustomReport!.name }}
+            </nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'runAtCompanyLevel' | i18n}}"> 
+                {{currentCustomReport!.runAtCompanyLevel }}
+            </nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'query' | i18n}}"  nzSpan="3"> 
+                {{currentCustomReport!.query }}
+            </nz-descriptions-item>  
+        </nz-descriptions>
+        
+        <nz-card nzTitle="{{'parameter' | i18n}}" *ngIf="currentCustomReport != null" [nzActions]="[executeTpl]"> 
+            
+            <st #customReportParametersTable [data]="currentCustomReport.customReportParameters" 
+                [columns]="customReportParametersTableColumns" [page]="{ show: false }">
+
+                <ng-template st-row="valueColumn" let-customReportParameter let-index="index"> 
+                   
+                    <input   type="text" nz-input [ngModel]="customReportParameter.value"
+                    (ngModelChange)="customReportParameterValueChanged(customReportParameter.name, $event)" required  />
+                </ng-template>
+
+            </st>
+            
+            <ng-template #executeTpl>
+                <div style="background-color: blue;" >
+                 <a (click)="executeCustomReport()">
+                    <span style ="color: white;">{{ 'execute' | i18n }}</span>
+                  </a>  
+                </div>
+ 
+              </ng-template>
+        </nz-card>
+        <nz-card nzTitle="{{'result' | i18n}}">
+
+            <nz-list class="demo-loadmore-list" >
+                <nz-list-item *ngFor="let customReportExecutionHistory of customReportExecutionHistories">
+                    <ng-container>
+                        <nz-list-item-meta 
+                            nzDescription="{{ customReportExecutionHistory.query }}">
+                            <nz-list-item-meta-title>
+                                <nz-progress  *ngIf="customReportExecutionHistory.status != CustomReportExecutionStatusList.FAIL"
+                                    nzPercent="{{ customReportExecutionHistory.customReportExecutionPercent | number: '1.0-2'}}"
+                                    nzSuccessPercent="{{ customReportExecutionHistory.customReportExecutionPercent | number: '1.0-2'}}"
+                                ></nz-progress> 
+                                <span style="color: red" *ngIf="customReportExecutionHistory.status == CustomReportExecutionStatusList.FAIL">
+                                    {{customReportExecutionHistory.errorMessage}}
+                                </span>
+                            </nz-list-item-meta-title>
+                        </nz-list-item-meta>
+                        
+                        <ul nz-list-item-actions>
+                            <nz-list-item-action *ngIf="readyForDownload(customReportExecutionHistory)">
+                                
+                                <a [href]="customReportExecutionHistory.resultFileDownloadUrl" target="_blank" rel="noopener noreferrer">
+                                    {{ 'report.download' | i18n }} 
+                                </a> 
+                              </nz-list-item-action>
+                              
+                            <nz-list-item-action *ngIf="!readyForDownload(customReportExecutionHistory) && customReportExecutionHistory.status != CustomReportExecutionStatusList.FAIL">
+                                 {{ 'report.download' | i18n }}  
+                              </nz-list-item-action>
+                              
+                            <nz-list-item-action *ngIf="customReportExecutionHistory.status == CustomReportExecutionStatusList.FAIL">
+                                <span style="color: red">{{ 'fail' | i18n }}  </span>
+                             </nz-list-item-action>
+                        </ul>
+                    </ng-container>
+                </nz-list-item>
+            </nz-list>
+
+        </nz-card>
+    </div>
+
+
+
+</nz-spin>

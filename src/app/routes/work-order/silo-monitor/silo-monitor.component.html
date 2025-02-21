@@ -1,0 +1,11 @@
+<page-header title="{{'silo-monitor' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    <st #st [data]="siloeDevices"  [columns]="columns"  >
+
+        <ng-template st-row="itemColumn" let-siloDevice let-index="index"> 
+            {{ siloDevice.itemName != null ? siloDevice.itemName : siloDevice.MATERIAL }}
+            
+    </ng-template>
+</st>
+</nz-spin>

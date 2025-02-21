@@ -1,0 +1,38 @@
+<page-header [title]="'reason-code' | i18n">
+</page-header>
+
+<nz-spin [nzSpinning]="isSpinning">
+
+    <!-- Table to Display the result  -->
+    <div class="search-result-list"> 
+        
+        <st #st [data]="reasonCodes"   [footer]="tableFoot"
+            [columns]="columns" >
+        
+        <ng-template st-row="typeColumn" let-reasonCode > 
+            {{ 'REASON-CODE-TYPE-' + reasonCode.type | i18n }}
+        </ng-template>
+        <ng-template st-row="actionColumn" let-reasonCode > 
+            
+            <button nz-button nzDanger (click)="removeReasonCode(reasonCode)">
+                {{ 'delete' | i18n }}
+            </button>
+        </ng-template>
+        </st>
+    </div>
+
+
+    <ng-template #tableFoot>
+    <div nz-row nzType="flex" nzJustify="start">
+        <a nz-button nzType="primary" (click)="refresh()">
+        {{'fresh' | i18n}}
+        </a> 
+    
+        <nz-divider nzType="vertical"></nz-divider>
+        <a nz-button nzType="primary" routerLink="/common/reason-code/maintenance" routerLinkActive="active" *ngIf="!displayOnly">
+        {{'add' | i18n}}
+        </a>
+    </div>
+    </ng-template>
+
+</nz-spin>

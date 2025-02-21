@@ -1,0 +1,34 @@
+<page-header [title]="'production-line-type' | i18n">
+</page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+    <!-- Table to Display the result  -->
+    <div class="search-result-list">
+        
+        <st #st [data]="productionLineTypes"  
+            [columns]="columns" [footer]="tableFoot"  >
+            <ng-template st-row="actionColumn" let-type let-index="index"> 
+            
+                <button nz-button (click)="removeProductionLineType(type)"  nzDanger>
+                    {{'remove' | i18n}}
+                    </button> 
+        </ng-template>
+        </st>
+    </div>
+
+
+    <ng-template #tableFoot>
+    <div nz-row nzType="flex" nzJustify="start">
+        <a nz-button nzType="primary" (click)="refresh()">
+        {{'fresh' | i18n}}
+        </a>
+        <a nz-button nzType="primary" routerLink="/work-order/production-line-type/maintenance" routerLinkActive="active"
+          *ngIf="!displayOnly">
+        {{'add' | i18n}}
+        </a>
+    
+    </div>
+    </ng-template>
+
+</nz-spin>

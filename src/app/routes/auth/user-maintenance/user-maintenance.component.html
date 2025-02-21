@@ -1,0 +1,220 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/auth/user" routerLinkActive="active">{{
+    'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.auth' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/auth/user" routerLinkActive="active">{{
+        'breadcrumb.user' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<div nz-row style="padding: 10px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="0" [nzSize]="'default'">
+      <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"
+        nzDescription="{{ 'steps.role.basic-info.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.role.assign-roles.title' | i18n }}"
+        nzDescription="{{ 'steps.role.assign-roles.description' | i18n }}">
+      </nz-step>
+
+      <nz-step nzTitle="{{ 'steps.confirm.title' | i18n }}" nzDescription="{{ 'steps.confirm.description' | i18n }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+
+<nz-card [nzActions]="[cardFoot]"> 
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="username">
+            {{ 'user.username' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="usernameErrorTpl">
+            <input nz-input [(ngModel)]="currentUser!.username" id="username" name="username" required
+              [disabled]="modifying" variable="username" appNewNumberValidator #username="ngModel"
+              [ngModelOptions]="{updateOn: 'blur'}" />
+
+            <ng-template #usernameErrorTpl let-control>
+              <div *ngIf="username.invalid && (username.dirty || username.touched)">
+                <ng-container *ngIf="username?.errors?.errorCode">
+                  {{username?.errors?.errorCode | i18n}}</ng-container>
+                <ng-container *ngIf="control.hasError('required')">{{ 'error.form.field.required' | i18n }}
+                </ng-container>
+              </div>
+            </ng-template>
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="password">
+            {{ 'user.password' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-group [nzSuffix]="suffixTemplate">
+              <input [type]="passwordVisible ? 'text' : 'password'" nz-input [(ngModel)]="currentUser!.password"
+                id="password" name="password" [disabled]="!isLoginUserAdmin && modifying" />
+            </nz-input-group>
+            <ng-template #suffixTemplate>
+              <i nz-icon [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                (click)="passwordVisible = !passwordVisible"></i>
+            </ng-template>
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="firstname">
+            {{ 'firstname' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentUser!.firstname" id="firstname" name="firstname" required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="lastname">
+            {{ 'lastname' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentUser!.lastname" id="lastname" name="lastname" required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="email">
+            {{ 'email' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentUser!.email" id="email" name="email" required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="department">
+            {{ 'department' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            
+              <nz-select nzAllowClear  *ngIf='currentUser && currentUser.department' nz-input [ngModel]="currentUser!.department!.id"
+              (ngModelChange)="departmentChanged($event)"
+                    style="width: 250px"  >
+                  <nz-option *ngFor="let department of validDepartments"
+                      [nzLabel]="department.description" [nzValue]="department.id">
+                  </nz-option>
+              </nz-select> 
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="position">
+            {{ 'user.position' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentUser!.position" id="position" name="position" required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="workerType">
+            {{ 'worker-type' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-select nzAllowClear  *ngIf='currentUser !== undefined' 
+            nz-input [ngModel]="currentUser!.workerType" (ngModelChange)="workerTypeChanged($event)"
+                    style="width: 250px"  >
+                  <nz-option *ngFor="let workerType of workerTypes | keys"
+                      nzLabel="{{ 'WORKER-TYPE-' + workerType.key | i18n }}" [nzValue]="workerType.key">
+                  </nz-option>
+              </nz-select>  
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="onBoardTime">
+            {{ 'user.on-board-time' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <nz-date-picker [(ngModel)]="currentUser!.onBoardTime"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="enabled">
+            {{ 'enabled' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="6">
+            <label nz-checkbox [(ngModel)]="currentUser!.enabled" name="enabled">
+
+
+            </label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="locked">
+            {{ 'locked' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="6">
+            <label nz-checkbox [(ngModel)]="currentUser!.locked" name="locked"> </label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="13" nzFor="changePasswordAtNextLogon">
+            {{ 'user.change-password-at-next-logon' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="6">
+            <label nz-checkbox [(ngModel)]="currentUser!.changePasswordAtNextLogon" name="changePasswordAtNextLogon">
+
+            </label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div> 
+</nz-card>
+
+<ng-template #cardFoot>
+  <div nz-row nzType="flex" nzJustify="center" style='padding-left: 20px;'>
+    <button nz-button nzType="primary" (click)="goToNextPage()">
+      {{ 'steps.next' | i18n }} :
+      {{ 'steps.role.assign-roles.title' | i18n }}
+    </button>
+  </div>
+</ng-template>

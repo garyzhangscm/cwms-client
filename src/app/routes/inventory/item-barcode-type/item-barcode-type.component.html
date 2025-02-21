@@ -1,0 +1,62 @@
+<page-header [title]="'item-barcode-type' | i18n">
+</page-header>
+
+<!-- Table to Display the result  -->
+
+  
+<div class="search-result-list"> 
+    
+    <st #st [data]="itemBarcodeTypes" [columns]="itemBarcodeTypeTableColumns" [footer]="tableFoot"> 
+    </st>
+  
+  </div>
+
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start">
+    <a nz-button nzType="primary" (click)="refresh()">
+      {{'fresh' | i18n}}
+    </a> 
+
+    <button nz-button (click)="openAddItemBarcodeTypeModal(tplAddItemBarcodeTypeModalTitle, tplAddItemBarcodeTypeModalContent)"
+     *ngIf="!displayOnly">{{'add' | i18n}}</button>
+  </div>
+</ng-template>
+
+
+<!-- Modal for adding item barcode type -->
+<ng-template #tplAddItemBarcodeTypeModalTitle>
+    <span>{{ 'item-barcode-type' | i18n}}</span>
+  </ng-template>
+  <ng-template #tplAddItemBarcodeTypeModalContent>
+    <form nz-form [formGroup]="addItemBarcodeTypeForm">
+      <div nz-row [nzGutter]="24"  >
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="8" nzFor="name">
+              {{ 'name' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <nz-input-group nzSize="large">
+                <input nz-input formControlName="name" />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>  
+      </div>  
+      <div nz-row [nzGutter]="24"  >
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="8" nzFor="description">
+              {{ 'description' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <nz-input-group nzSize="large">
+                <input nz-input formControlName="description" />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>  
+      </div>  
+    </form>
+  </ng-template>

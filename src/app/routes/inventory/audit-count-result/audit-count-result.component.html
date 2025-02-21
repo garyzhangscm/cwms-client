@@ -1,0 +1,107 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/inventory/count/cycle-count-maintenance" routerLinkActive="active"
+    [queryParams]="{batchId : batchId}">{{
+    'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.inventory' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/inventory/count/cycle-count" routerLinkActive="active">{{
+        'breadcrumb.cycle-count' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<!-- Table to show inventory  -->
+
+<div class="search-result-list">
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="listOfAllAuditCountResult"
+    [nzFooter]="inventoryTableFoot" #inventoryTable>
+    <thead>
+      <tr>
+        <th>id</th>
+        <th>{{ 'lpn' | i18n }}</th>
+        <th>{{ 'item' | i18n }}</th>
+        <th>{{ 'item.description' | i18n }}</th>
+        <th>{{ 'item.package-type' | i18n }}</th>
+        <th>{{ 'location' | i18n }}</th>
+        <th>{{ 'quantity' | i18n }}</th>
+        <th>{{ 'inventory.status' | i18n }}</th>
+        <th>{{ 'count-quantity' | i18n }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of inventoryTable.data; let i = index">
+        <td>{{ data.inventory.id }} </td>
+        <td>
+          <div *ngIf="data.inventory?.id === undefined">
+            <div class="row">
+              <input appFkey variable="lpn" type="text" [ngModel]="data.inventory.lpn"
+                (blur)="lpnChanged($event, data)" name="lpn-{{ i }}" id="lpn-{{ i }}" />
+            </div>
+
+          </div>
+          <span *ngIf="data.inventory?.id">
+            {{ data.inventory.lpn }}
+          </span>
+        </td>
+        <td>
+          <input type="text" [ngModel]="data.inventory!.item!.name!" (blur)="itemChanged($event, data)"
+            *ngIf="data.inventory?.id === undefined" name="item-{{ i }}" />
+          <span *ngIf="data.inventory?.id">
+            {{ data.inventory.item?.name }}
+          </span>
+        </td>
+        <td>
+          {{ data.inventory.item?.description }}
+        </td>
+        <td>
+          <nz-select style="width: 150px" *ngIf="data.inventory?.id === undefined"
+            [ngModel]="data.inventory!.itemPackageType!.name!" (ngModelChange)="itemPackageTypeChanged($event, data)"
+            nzShowSearch nzAllowClear>
+            <nz-option *ngFor="let itemPackageType of data.inventory?.item?.itemPackageTypes"
+              [nzLabel]="itemPackageType.name!" [nzValue]="itemPackageType.name!"></nz-option>
+          </nz-select>
+          <span *ngIf="data.inventory?.id">
+            {{ data.inventory.itemPackageType?.name }}
+          </span>
+        </td>
+        <td>{{ data.location.name }}</td>
+        <td>{{ data.quantity }}</td>
+        <td>
+          <nz-select style="width: 150px" *ngIf="data.inventory?.id === undefined"
+            [ngModel]="data.inventory!.inventoryStatus!.id!" (ngModelChange)="inventoryStatusChanged($event, data)"
+            nzShowSearch nzAllowClear>
+            <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
+              [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus?.id">
+            </nz-option>
+          </nz-select>
+
+          <span *ngIf="data.inventory?.id">
+            {{ data.inventory.inventoryStatus?.description}}
+          </span>
+        </td>
+        <td><input type="text" [(ngModel)]="data.countQuantity" name="result-{{ i }}" /></td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+<ng-template #inventoryTableFoot>
+  <div nz-row nzType="flex" nzJustify="start">
+    <button nz-button nzType="primary" (click)="addExtraInventory()">
+      {{ 'add' | i18n }}
+    </button>
+    <button nz-button nzType="primary" routerLink="/inventory/count/audit-count-confirm" routerLinkActive="active"
+      [queryParams]="{batchId : batchId, locationId: location?.id}" (click)="saveCurrentAuditCountResults()">
+      {{ 'confirm' | i18n }}
+    </button>
+  </div>
+</ng-template>

@@ -1,0 +1,71 @@
+<button nz-button nz-dropdown [nzDropdownMenu]="printButtons" [nzLoading]="printingInProcess"
+  [disabled]="printButtonDisabled" (click)="openPrinterModal(tplPrinterModalTitle, tplPrinterModalContent)">
+  {{ 'print' | i18n }}<i nz-icon nzType="down"></i></button>
+<nz-dropdown-menu #printButtons="nzDropdownMenu">
+  <ul nz-menu>
+
+    <li nz-menu-item>
+      <a (click)="printByDefaultConfiguration()">
+        {{ 'report.print.default' | i18n }}</a>
+    </li>
+
+    <li nz-menu-item *ngIf="allowPreview">
+      <a (click)="previewReport()">
+        {{ 'report.preview' | i18n }}</a>
+    </li>
+
+  </ul>
+</nz-dropdown-menu>
+
+
+
+<!-- Modal for select printer -->
+<ng-template #tplPrinterModalTitle>
+  <span>{{ 'page.modal.printer.title' | i18n}}</span>
+</ng-template>
+<ng-template #tplPrinterModalContent>
+  <form nz-form [formGroup]="printerForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24">
+            {{ 'printer' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-select nz-input formControlName="printer" style="width: 250px">
+              <nz-option *ngFor="let availablePrint of availablePrinters" [nzLabel]="availablePrint.name"
+                [nzValue]="availablePrint.id">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="8" [nzXs]="8" nzFor="physicalCopyCount">
+            {{ 'print.physical-copy-count' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+
+            <input nz-input formControlName="physicalCopyCount" />
+
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="24">
+      
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="14">
+            {{ 'collated' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="10">
+            <label nz-checkbox formControlName="collated"  ></label>
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+    </div>
+  </form>
+</ng-template>

@@ -1,0 +1,166 @@
+<page-header title="{{'outbound-configuration' |  i18n}}" ></page-header>
+ 
+    <nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+        
+      <nz-card>  
+        <div nz-row [nzGutter]="24"> 
+          <div nz-col [nzSpan]="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="7">
+                {{ 'shortAutoReallocation' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="17">
+                    <label nz-checkbox [(ngModel)]="currentOutboundConfiguration.shortAutoReallocation"></label>
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>   
+        </div>  
+         
+        <div nz-row [nzGutter]="24"> 
+            <div nz-col [nzSpan]="24">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="7">
+                  {{ 'asynchronousAllocation' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="17">
+                      <label nz-checkbox [(ngModel)]="currentOutboundConfiguration.asynchronousAllocation"></label>
+  
+                  </nz-form-control>
+              </nz-form-item>
+            </div>   
+          </div>  
+        
+          <div nz-row [nzGutter]="24"> 
+            <div nz-col [nzSpan]="24">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="7">
+                  {{ 'asynchronousAllocationPalletThreshold' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="17">
+                    <nz-input-number  [nzMin]="1" [nzMax]="65524" [nzStep]="1"
+                     [(ngModel)]="currentOutboundConfiguration.asynchronousAllocationPalletThreshold"></nz-input-number> 
+  
+                  </nz-form-control>
+              </nz-form-item>
+            </div>   
+          </div>     
+        
+          <div nz-row [nzGutter]="24"> 
+            <div nz-col [nzSpan]="24">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="7">
+                  {{ 'maxPalletSize' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="17">
+                    <nz-input-number  [nzMin]="0"  
+                     [(ngModel)]="currentOutboundConfiguration.maxPalletSize"></nz-input-number> (in <sup>3</sup>)
+  
+                  </nz-form-control>
+              </nz-form-item>
+            </div>   
+          </div>   
+          <div nz-row [nzGutter]="24"> 
+            <div nz-col [nzSpan]="24">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="7">
+                  {{ 'maxPalletHeight' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="17">
+                    <nz-input-number  [nzMin]="0"  
+                     [(ngModel)]="currentOutboundConfiguration.maxPalletHeight"></nz-input-number>  (in)
+  
+                  </nz-form-control>
+              </nz-form-item>
+            </div>   
+          </div>   
+
+          <div nz-row [nzGutter]="24"> 
+            <div nz-col [nzSpan]="24">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="7">
+                  {{ 'statusAllowOrderChangeWhenUploadFile' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="17">
+                    
+                    <nz-select style="width: 150px"  nzAllowClear
+                        [(ngModel)]="currentOutboundConfiguration.statusAllowOrderChangeWhenUploadFile" 
+                        >
+                        <nz-option *ngFor="let orderStatus of orderStatusList | keys"
+                        nzLabel="{{ 'ORDER-STATUS-' + orderStatus.key | i18n }}" 
+                            [nzValue]="orderStatus.key">
+                        </nz-option>
+                    </nz-select>
+ 
+  
+                  </nz-form-control>
+              </nz-form-item>
+            </div>   
+          </div>  
+        
+          <div nz-row [nzGutter]="24"> 
+            <div nz-col [nzSpan]="24">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="7">
+                  {{ 'statusAllowOrderChangeFromIntegration' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="17">
+                    
+                    <nz-select style="width: 150px"   nzAllowClear
+                        [(ngModel)]="currentOutboundConfiguration.statusAllowOrderChangeFromIntegration" 
+                        >
+                        <nz-option *ngFor="let orderStatus of orderStatusList | keys"
+                        nzLabel="{{ 'ORDER-STATUS-' + orderStatus.key | i18n }}" 
+                            [nzValue]="orderStatus.key">
+                        </nz-option>
+                    </nz-select>
+ 
+  
+                  </nz-form-control>
+              </nz-form-item>
+            </div>   
+          </div>  
+          <div nz-row [nzGutter]="24"> 
+            <div nz-col [nzSpan]="24">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="7">
+                  {{ 'statusAllowOrderChangeFromWebUI' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="17">
+                    
+                    <nz-select style="width: 150px"  
+                        [(ngModel)]="currentOutboundConfiguration.statusAllowOrderChangeFromWebUI" 
+                        nzAllowClear >
+                        <nz-option *ngFor="let orderStatus of orderStatusList | keys"
+                        nzLabel="{{ 'ORDER-STATUS-' + orderStatus.key | i18n }}" 
+                            [nzValue]="orderStatus.key">
+                        </nz-option>
+                    </nz-select> 
+  
+                  </nz-form-control>
+              </nz-form-item>
+            </div>   
+          </div>  
+          <div nz-row [nzGutter]="24"> 
+            <div nz-col [nzSpan]="24">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="7">
+                  {{ 'completeOrderAndShipmentWhenCompleteWave' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="17">
+                      <label nz-checkbox [(ngModel)]="currentOutboundConfiguration.completeOrderAndShipmentWhenCompleteWave"></label>
+  
+                  </nz-form-control>
+              </nz-form-item>
+            </div>   
+          </div>  
+      </nz-card>
+
+      <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle" *ngIf="!displayOnly">
+          <button nz-button nzType="primary" (click)="confirmOutboundConfiguration()" >
+              <span> {{ 'confirm' | i18n }}</span>
+            </button>
+      </div>
+    </nz-spin>
+ 
+ 

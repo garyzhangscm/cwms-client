@@ -1,0 +1,28 @@
+<page-header></page-header>
+
+
+<div class="row">
+  <nz-descriptions nzTitle="nzTheme: outline" nzBordered>
+    <nz-descriptions-item *ngFor="let icon of outlineIconList" [nzTitle]="icon">
+      <i nz-icon [nzType]="icon" nzTheme="outline"></i>
+    </nz-descriptions-item>
+  </nz-descriptions>
+</div>
+
+
+<div class="row">
+  <nz-descriptions nzTitle="nzTheme: filled" nzBordered>
+    <nz-descriptions-item *ngFor="let icon of filledIconList" [nzTitle]="icon">
+      <i nz-icon [nzType]="icon" nzTheme="fill"></i>
+    </nz-descriptions-item>
+  </nz-descriptions>
+</div>
+
+
+<div class="row">
+  <nz-descriptions nzTitle="nzTheme: two tone" nzBordered>
+    <nz-descriptions-item *ngFor="let icon of towToneIconList" [nzTitle]="icon">
+      <i nz-icon [nzType]="icon" nzTheme="twotone"></i>
+    </nz-descriptions-item>
+  </nz-descriptions>
+</div>

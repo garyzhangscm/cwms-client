@@ -1,0 +1,238 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/work-order/work-order" routerLinkActive="active" [queryParams]="{number: currentWorkOrderLine?.workOrderNumber}">{{ 'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/work-order/work-order" routerLinkActive="active">{{ 'work-order' | i18n }}</a>
+    </nz-breadcrumb-item> 
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+   
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex" style="padding: 15px">
+  <nz-step nzTitle="{{ 'work-order-line.spare-part' | i18n }}"> </nz-step> 
+  <nz-step nzTitle="{{ 'confirm' | i18n }}"> </nz-step>
+</nz-steps>
+ 
+
+<!-- Maintain the spare part -->
+<div *ngIf="stepIndex === 0 && currentWorkOrderLine != null" class="small-card">
+  <div class="search-result-list">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #nestedTable [nzData]="currentWorkOrderLine!.workOrderLineSpareParts!"
+      [nzShowPagination]="false">
+      <thead>
+        <tr>
+          <th nzWidth="40px"></th>
+          <th>
+            {{ 'name' | i18n }}
+          </th>
+          <th>
+            {{ 'description' | i18n }}
+          </th>
+          <th>
+            {{ 'quantity' | i18n }}
+          </th>
+          <th>
+            {{ 'action' | i18n }}
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <ng-container *ngFor="let data of nestedTable.data; let recordIndex = index">
+          <tr>
+
+            <td [nzExpand]="sparePartDetailExpandSet.has(recordIndex)"
+              (nzExpandChange)="onSparePartExpandChange(recordIndex, $event)"
+              [nzDisabled]="data.workOrderLineSparePartDetails!.length === 0"></td>
+
+            <td>
+              <input nz-input [(ngModel)]="data.name" required />
+            </td>
+            <td>
+              <input nz-input [(ngModel)]="data.description" required />
+            </td>
+            <td>
+              <nz-input-number [(ngModel)]="data.quantity" required [nzMin]="1" [nzStep]="1"> </nz-input-number>
+            </td>
+
+            <td>
+              <button nz-button
+                (click)="openAddingSparePartDetailModal(data, tplSparePartDetailModalTitle, tplSparePartDetailModalContent, tplSparePartDetailModalFooter)">
+                {{ 'add' | i18n }}{{ 'spare-part-detail' | i18n }}
+              </button>
+              <nz-divider nzType="vertical"></nz-divider>
+
+              <button (click)="removeSparePart(recordIndex)" 
+                nzTooltipPlacement="top" nz-button nz-tooltip>
+                {{ 'remove' | i18n }}
+              </button>
+            </td>
+          </tr>
+
+          <tr [nzExpand]="sparePartDetailExpandSet.has(recordIndex)">
+
+            <nz-tabset>
+              <nz-tab nzTitle=" {{ 'spare-part-detail' | i18n }}">
+                <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="data.workOrderLineSparePartDetails" nzSize="middle"
+                  [nzShowPagination]="false">
+                  <thead>
+                    <th>{{ 'item' | i18n }}</th>
+                    <th>{{ 'inventory-status' | i18n }}</th>
+                    <th>{{ 'quantity' | i18n }}</th>
+                    <th>{{ 'action' | i18n }}</th>
+                  </thead>
+                    <tbody>
+                        <tr *ngFor="let sparePartDetail of data.workOrderLineSparePartDetails">
+                        <td>{{ sparePartDetail.item?.name }}</td>
+                        <td>{{ sparePartDetail.inventoryStatus?.name }}</td>
+                        <td>{{ sparePartDetail.quantity }}</td>
+
+                        <td>
+                            <button nz-button (click)="removeSparePartDetail(data, sparePartDetail)">
+                            {{ 'remove' | i18n }}
+                            </button>
+                        </td>
+                        </tr>
+                    </tbody>
+                </nz-table>
+              </nz-tab>
+            </nz-tabset>
+
+           </tr>
+        </ng-container>
+      </tbody>
+    </nz-table>
+
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 10px;">
+      <button nz-button nzType="primary" (click)="addSparePart()">
+        {{ 'add' | i18n }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm the change -->
+<div class="small-card" *ngIf="stepIndex === 1"> 
+  <nz-card>
+    <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
+      <nz-tab *ngFor="let workOrderLineSparePart of currentWorkOrderLine!.workOrderLineSpareParts" [nzTitle]="workOrderLineSparePart.name!">
+        <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="workOrderLineSparePart.workOrderLineSparePartDetails"
+          nzSize="middle" [nzShowPagination]="false">
+          <thead>
+            <tr>
+                <th>{{ 'item' | i18n }}</th>
+                <th>{{ 'inventory-status' | i18n }}</th>
+                <th>{{ 'quantity' | i18n }}</th>
+                <th>{{ 'ratio' | i18n }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of innerTable.data">
+              <td>{{ data.item?.name }}</td>
+              <td>{{ data.inventoryStatus?.name }}</td>
+              <td>{{ data.quantity }}</td>
+              <td>{{ workOrderLineSparePart.quantity }} : {{ data.quantity }}</td> 
+            </tr>
+          </tbody>
+        </nz-table>
+      </nz-tab>
+    </nz-tabset>
+  </nz-card>
+</div>
+
+<div class="steps-action">
+  <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical" *ngIf="stepIndex < 2"></nz-divider>
+  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical" *ngIf="stepIndex === 2"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirmSpareParts()" *ngIf="stepIndex === 1">
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+
+</nz-spin>
+
+<!-- Modal for adding item unit of measure -->
+<ng-template #tplSparePartDetailModalTitle>
+  <span>{{ 'spare-part' | i18n }}</span>
+</ng-template>
+
+<ng-template #tplSparePartDetailModalContent>
+  <form nz-form [formGroup]="sparePartDetailForm">
+    <div nz-row [nzGutter]="24">
+        
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="itemName">
+            {{ 'item' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+
+            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+              <input nz-input name="itemName" id="itemName" formControlName="itemName" />
+            </nz-input-group>
+            <ng-template #suffixIconButton>
+              <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
+              </app-inventory-item-query-popup>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+      
+        <div nz-col [nzSpan]="16">
+            <nz-form-item nzFlex>
+            <nz-form-label for="inventoryStatus" [nzSpan]="8">
+                {{'inventory.status' | i18n}}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+                <nz-select name="inventoryStatus" id="inventoryStatus" formControlName="inventoryStatus">
+                <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
+                    [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.id">
+                </nz-option>
+                </nz-select>
+            </nz-form-control>
+            </nz-form-item>
+        </div>
+
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="quantity">
+            {{ 'quantity' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24">
+            <nz-input-group nzSize="large">
+              <nz-input-number [nzMin]="1" [nzStep]="1" formControlName="quantity" name="quantity"></nz-input-number>
+            </nz-input-group>
+ 
+
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+    </div> 
+
+  </form>
+</ng-template>
+
+<ng-template #tplSparePartDetailModalFooter>
+  <button nz-button nzType="default" (click)="closeSparePartDetailModal()" >{{ 'cancel' |
+    i18n}}</button>
+  <button nz-button nzType="primary" (click)="confirmSparePartDetail()" >{{ 'confirm' |
+    i18n}}</button>
+
+</ng-template>

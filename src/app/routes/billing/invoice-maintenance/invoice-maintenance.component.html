@@ -1,0 +1,333 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+  <a routerLink="/billing/invoice" routerLinkActive="active">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/billing/invoice" routerLinkActive="active">{{
+        'invoice' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+  <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'billing-request' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+
+<!-- Step 1: basic information  
+  -->
+
+
+
+<div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
+
+
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="6">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="12">
+            {{ 'client' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="12" >
+
+                <nz-select [(ngModel)]="currentInvoice!.client" (ngModelChange)="clientChanged()">
+                    <nz-option *ngFor="let client of availableClients" [nzValue]="client" [nzLabel]="client.name"></nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18" nzHasFeedback [nzErrorTip]="invoiceNumberErrorTpl" [nzValidateStatus]="invoiceNumberValidateStatus"
+        >
+          <input  appFkey variable="invoice-number"  type="text" nz-input [(ngModel)]="currentInvoice!.number" required 
+            (blur)="invoiceNumberChange($event)" />
+          <ng-template #invoiceNumberErrorTpl let-control>  
+              <ng-container *ngIf="invoiceNumberValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
+              <ng-container *ngIf="invoiceNumberValidateStatus === 'numberExists'">Invoice number already exists</ng-container>
+            
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+  
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'referenceNumber' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+
+          <input type="text" nz-input [(ngModel)]="currentInvoice.referenceNumber" />
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="24">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="3">
+          {{ 'comment' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18" 
+        >
+            <input type="text" nz-input [(ngModel)]="currentInvoice.comment" />
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row [nzGutter]="24"> 
+    <div nz-col [nzSpan]="6">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="dateRanger">
+            {{ 'date' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+              <nz-range-picker [(ngModel)]="dateRange" (ngModelChange)="onDateRangeChange($event)"></nz-range-picker>
+    
+          </nz-form-control>
+        </nz-form-item>
+    </div>
+    
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex> 
+        <nz-form-control [nzSpan]="24">
+          
+          <label nz-checkbox [(ngModel)]="includeDaysSinceInWarehouseForStorageFee">
+            <span>{{'includeDaysSinceInWarehouseForStorageFee' | i18n}}</span>
+            </label>
+  
+        </nz-form-control>
+      </nz-form-item>
+  </div>
+  </div>
+    
+
+</div>
+
+<!-- Show the billable request between the date time selected -->
+<div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+  <nz-card>
+      
+  <div class="search-result-list"> 
+    
+    <st #st [data]="billingRequests" [columns]="columns"  [scroll]="{ x: '1024px' }"
+        [expand]="expand"  expandAccordion  (change)="billingRequestTableChanged($event)">
+        
+          <!--   billableCategoryColumn colummn  -->  
+          <ng-template st-row="billableCategoryColumn" let-item let-index="index"> 
+              
+            {{ 'BILLABLE-CATEGORY-' + item.billableCategory | i18n}} 
+          </ng-template>
+          
+          <ng-template st-row="totalAmountColumn" let-item let-index="index"> 
+              
+            {{  item.totalAmount | number: '1.0-2'}} 
+          </ng-template>
+          <ng-template st-row="totalChargeColumn" let-item let-index="index"> 
+              
+            {{  item.totalCharge | number: '1.0-2'}} 
+          </ng-template>
+        
+        <!--   billing request lines -->
+        <ng-template #expand let-item let-index="index" >
+          
+            <nz-tabset>
+              <nz-tab nzTitle="{{'billing-request.line' | i18n}}">
+                
+              <nz-table  nzShowPagination [nzData]="item!.billingRequestLines"
+                  #billingRequestLine>
+              <thead>
+                  <tr>  
+                    <th>
+                      {{ 'startTime' | i18n }}
+                    </th> 
+                    <th>
+                      {{ 'endTime' | i18n }}
+                    </th> 
+                    <th>
+                      {{ 'totalAmount' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'totalCharge' | i18n }}
+                    </th> 
+                    <th>
+                      {{ 'rate' | i18n }}
+                    </th> 
+                    <th>
+                      {{ 'document-number' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'itemName' | i18n }}
+                    </th> 
+                    <th>
+                      {{ 'comment' | i18n }}
+                    </th> 
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr *ngFor="let data of billingRequestLine.data">   
+                        <td  >
+                                {{ data.startTime | date:'short'}}   </td> 
+                        <td  >
+                                    {{ data.endTime | date:'short'}}   </td> 
+                        <td  >
+                            {{ data.totalAmount | number: '1.0-2'}}  </td>
+                        <td  >
+                            {{ data.totalCharge | number: '1.0-2'}}  </td>
+                        <td  >
+                            {{ data.rate | number: '1.0-2'}}  </td>
+                        <td  >
+                                {{ data.documentNumber }}  </td>
+                        <td  >
+                                    {{ data.itemName  }}  </td>
+                        <td  >
+                                    {{ data.comment  }}  </td>
+                  </tr>
+              </tbody>
+              </nz-table>
+                
+              </nz-tab>
+            </nz-tabset>
+          </ng-template>
+    </st>
+  
+  </div>
+
+    
+
+  </nz-card>
+
+</div>
+
+<!-- Show the billable request between the date time selected -->
+<div class="small-card" *ngIf="stepIndex === 2" style="padding-top: 20px;">
+    
+    <nz-card>
+        <nz-descriptions  nzBordered>
+            <nz-descriptions-item nzTitle="{{'number' | i18n}}">
+                {{currentInvoice.number}}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{'client' | i18n}}">
+                {{currentInvoice.client?.name}}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{'referenceNumber' | i18n}}">
+                {{currentInvoice.referenceNumber}}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{'startTime' | i18n}}">
+                {{currentInvoice.startTime | date:'MM/dd/yyyy'}} 
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{'endTime' | i18n}}">
+                {{currentInvoice.endTime | date:'MM/dd/yyyy'}} 
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{'totalCharge' | i18n}}">
+                {{currentInvoice.totalCharge| number: '1.0-2'}}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{'comment' | i18n}}">
+                {{currentInvoice.comment}}
+            </nz-descriptions-item>
+        </nz-descriptions>
+    
+    </nz-card>
+    <nz-card>
+        
+        <div class="search-result-list"> 
+        
+        <st #st2 [data]="selectedBillingRequests" [columns]="columns2"  [scroll]="{ x: '1024px' }"
+            [expand]="expand"  expandAccordion>
+            
+            <!--   billableCategoryColumn colummn  -->  
+            <ng-template st-row="billableCategoryColumn" let-item let-index="index"> 
+              
+                {{ 'BILLABLE-CATEGORY-' + item.billableCategory | i18n}} 
+            </ng-template>
+            
+            <ng-template st-row="totalAmountColumn" let-item let-index="index"> 
+                
+              {{  item.totalAmount | number: '1.0-2'}} 
+            </ng-template>
+            <ng-template st-row="totalChargeColumn" let-item let-index="index"> 
+                
+              {{  item.totalCharge | number: '1.0-2'}} 
+            </ng-template>
+            
+            
+            <!--   billing request lines -->
+            <ng-template #expand let-item let-index="index" >
+                
+                <nz-tabset>
+                    <nz-tab nzTitle="{{'billing-request.line' | i18n}}">
+                    
+                    <nz-table   nzShowPagination [nzData]="item!.billingRequestLines"
+                        #invoieLine>
+                    <thead>
+                        <tr> 
+                        <th>
+                            {{ 'date' | i18n }}
+                        </th> 
+                        <th>
+                            {{ 'totalAmount' | i18n }}
+                        </th>
+                        <th>
+                            {{ 'totalCharge' | i18n }}
+                        </th>  
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let data of invoieLine.data">  
+                            <td  >
+                                {{ data.date | date:'MM/dd/yyyy'}}   </td> 
+                            <td  >
+                                {{ data.totalAmount | number: '1.0-2'}}  </td>
+                            <td  >
+                                {{ data.totalCharge | number: '1.0-2'}}  </td>
+                        </tr>
+                    </tbody>
+                    </nz-table>
+                    
+                    </nz-tab>
+                </nz-tabset>
+                </ng-template>
+        </st>
+        
+        </div>
+  
+      
+  
+    </nz-card>
+  
+  </div>
+
+<div class="steps-action" style="padding-top: 20px;">
+  <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0" >
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical" *ngIf="stepIndex < 2"></nz-divider>
+  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 2" [disabled]="!passValidation()">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 2">
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+
+</nz-spin>

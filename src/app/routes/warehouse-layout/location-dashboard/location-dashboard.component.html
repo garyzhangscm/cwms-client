@@ -1,0 +1,22 @@
+<page-header title="{{'location-dashboard' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+    <nz-card nzTitle="location utilization" *ngIf="locationUtilizationData.length > 0">
+
+                <!--
+                  https://plotly.com/javascript/pie-charts/
+                --> 
+                <!--
+        <plotly-plot [data]="locationUtilizationData" [layout]="locationUtilizationLayout"></plotly-plot>
+
+                --> 
+    </nz-card>
+    
+    <nz-result nzStatus="warning" [nzIcon]="'info-circle'" nzTitle="{{'No location group is volume tracked' | i18n}}" 
+    *ngIf="locationUtilizationData.length == 0"> 
+    <div nz-result-extra>
+        There's no location group that is setup as volume tracked. In order to see the utilization, please make sure the locations are volume tracked. 
+    </div>
+    </nz-result>
+</nz-spin>

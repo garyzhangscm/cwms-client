@@ -1,0 +1,282 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/common/client" routerLinkActive="active">{{
+    'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.common' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/common/client" routerLinkActive="active">{{
+        'breadcrumb.client' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning">
+
+  
+  <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+    <nz-step nzTitle="{{ 'steps.client-maintenance.basic-info.title' | i18n }}"> </nz-step>
+    <nz-step nzTitle="{{ 'steps.client-maintenance.address.title' | i18n }}"> </nz-step>
+    <nz-step nzTitle="{{ 'steps.client-maintenance.confirm.title' | i18n }}"> </nz-step>
+  </nz-steps>
+ 
+
+  <!-- basic information -->
+  <div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
+    
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="clientName">
+            {{ 'name' | i18n }}
+          </nz-form-label> 
+            <nz-form-control [nzSpan]="16" nzHasFeedback [nzErrorTip]="clientNameErrorTpl" [nzValidateStatus]="clientNameValidateStatus"
+            > 
+              <input   type="text" nz-input [(ngModel)]="currentClient!.name" required 
+                (blur)="clientNameChange($event)" [disabled]="!newClient"/>
+              <ng-template #clientNameErrorTpl let-control>  
+                  <ng-container *ngIf="clientNameValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
+                  <ng-container *ngIf="clientNameValidateStatus === 'nameExists'">Name already exists</ng-container>
+                          
+              </ng-template>
+            </nz-form-control> 
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="clientDescription">
+            {{ 'description' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16" >
+            <input nz-input [(ngModel)]="currentClient!.description" id="clientDescription" name="description"
+              required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="14">
+            {{ 'warehouseSpecific' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="10">
+            <label nz-checkbox [(ngModel)]="warehouseSpecific" (ngModelChange)="warehouseSpeficFlagChanged()"  [disabled]="!newClient"></label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="24">
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="14">
+            {{ 'listPickEnabledFlag' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="10">
+            <label nz-checkbox [(ngModel)]="currentClient!.listPickEnabledFlag"></label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="contactor.firstname">
+            {{ 'contactor.firstname' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16"  >
+            <input nz-input [(ngModel)]="currentClient!.contactorFirstname" id="contactor.firstname" name="firstname"
+              required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8"  nzFor="contactor.lastname">
+            {{ 'contactor.lastname' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16" >
+            <input nz-input [(ngModel)]="currentClient!.contactorLastname" id="contactor.lastname" name="lastname"
+              required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </div>
+
+  <!-- address information -->
+  <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+    
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="clientAddressCountry">
+            {{ 'country' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.clientAddress.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentClient!.addressCountry" id="clientAddressCountry" name="addressCountry"
+              required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="clientAddressState">
+            {{ 'state' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.clientAddress.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentClient!.addressState" id="clientAddressState" name="addressState"
+              required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="clientAddressCounty">
+            {{ 'county' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.clientAddress.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentClient!.addressCounty" id="clientAddresscounty" name="addressCounty"
+              required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="clientAddressCity">
+            {{ 'city' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.clientAddress.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentClient!.addressCity" id="clientAddressCity" name="addressCity"
+              required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="clientAddressDistrict">
+            {{ 'district' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.clientAddress.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentClient!.addressDistrict" id="clientAddressDistrict"
+              name="addressDistrict" required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="clientAddressLine1">
+            {{ 'address.line1' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.clientAddress.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentClient!.addressLine1" id="clientAddressLine1" name="addressLine1"
+              required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="clientAddressLine2">
+            {{ 'address.line2' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.clientAddress.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentClient!.addressLine2" id="clientAddressLine2" name="addressLine2"
+              required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="clientAddressPostcode">
+            {{ 'postcode' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+            nzErrorTip="{{ 'error.form.field.clientAddress.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentClient!.addressPostcode" id="clientAddressPostcode"
+              name="addressPostcode" required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </div>
+
+  <!-- confirm information -->
+  <div class="small-card" *ngIf="stepIndex === 2" style="padding-top: 20px;">
+    
+    <nz-card nzTitle="{{ currentClient.name }}" >
+      <nz-descriptions nzBordered>
+
+        <nz-descriptions-item nzTitle="{{'name' | i18n}}">{{currentClient.name}}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'description' | i18n}}" nzSpan="2">
+          {{currentClient.description}}
+        </nz-descriptions-item>
+
+        <nz-descriptions-item nzTitle="{{'listPickEnabledFlag' | i18n}}" nzSpan="2">
+          {{currentClient.listPickEnabledFlag}}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'contactor.firstname' | i18n}}">
+          {{currentClient.contactorFirstname}}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{'contactor.lastname' | i18n}}" nzSpan="2">
+          {{currentClient.contactorLastname}}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'country' | i18n }}">
+          {{ currentClient.addressCountry }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'state' | i18n }}">
+          {{ currentClient.addressState }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'county' | i18n }}">
+          {{ currentClient.addressCounty }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'city' | i18n }}">
+          {{ currentClient.addressCity }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'postcode' | i18n }}" nzSpan="2">
+          {{ currentClient.addressPostcode }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'address.line1' | i18n }}" nzSpan="2">
+          {{ currentClient.addressLine1 }}
+        </nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'address.line2' | i18n }}">
+          {{ currentClient.addressLine2 }}
+        </nz-descriptions-item>
+      </nz-descriptions>
+    </nz-card>
+  </div>
+ 
+
+  <div class="steps-action" style="padding-top: 20px;">
+    <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+      <span>{{ 'steps.previous' | i18n }}</span>
+    </button>
+    <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+    <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 2">
+      <span>{{ 'steps.next' | i18n }}</span>
+    </button>
+    <nz-divider nzType="vertical"></nz-divider>
+    <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 2" 
+    >
+      <span> {{ 'confirm' | i18n }}</span>
+    </button>
+  </div>
+</nz-spin>

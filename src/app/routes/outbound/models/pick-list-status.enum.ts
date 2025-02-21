@@ -1,0 +1,7 @@
+export enum PickListStatus {
+  PENDING = 'PENDING',
+  RELEASED = 'RELEASED',
+  INPROCESS = 'INPROCESS',
+  CANCELLED = 'CANCELLED',
+  COMPLETED = 'COMPLETED'
+}

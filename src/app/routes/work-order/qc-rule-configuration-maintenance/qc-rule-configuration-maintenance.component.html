@@ -1,0 +1,563 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+  <a routerLink="/work-order/qc-rule-configuration" routerLinkActive="active">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="work-order/qc-rule-configuration" routerLinkActive="active">{{
+        'qc-rule-configuration' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning">
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+  <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.assign-qc-rule' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+
+<!-- Step 1: basic information  
+  -->
+
+
+
+<div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
+  <nz-card>
+
+    <nz-radio-group [(ngModel)]="configureBy">
+      <label nz-radio nzValue="sample">{{'work-order-qc.by-sample' | i18n}}</label>
+      <label nz-radio nzValue="workOrder">{{'work-order-qc.by-work-order' | i18n}}</label> 
+    </nz-radio-group>
+  </nz-card>
+  <nz-card  *ngIf="configureBy === 'sample'" nzTitle="{{ 'work-order-qc.by-sample' | i18n }}" >
+
+    <div nz-row [nzGutter]="24">
+    
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'work-order' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+  
+              <nz-input-group >
+                  <input nz-input [ngModel]="currentQCRuleConfiguration.workOrder?.number"
+                  (blur)="wrokOrderChanged($event)"
+                  
+                  [disabled]="!newQCRuleConfiguration"/>
+                </nz-input-group> 
+  
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+  
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'production-line' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+  
+              
+              <nz-select *ngIf='currentQCRuleConfiguration !== undefined' nz-input [ngModel]="currentQCRuleConfiguration.productionLine?.id"
+              (ngModelChange)="productionLineChanged($event)" style="width: 250px"  [disabled]="!newQCRuleConfiguration">
+              <nz-option *ngFor="let productionLine of validproductionLines"
+              [nzLabel]="productionLine.name" [nzValue]="productionLine.id">
+              </nz-option>
+          </nz-select>
+          
+  
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+        
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'qc-quantity' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+  
+              <nz-input-group >
+                  <input nz-input [(ngModel)]="currentQCRuleConfiguration.qcQuantity" 
+                  
+                  [disabled]="!newQCRuleConfiguration"/>
+                </nz-input-group> 
+  
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div> 
+
+  </nz-card>
+  <nz-card  *ngIf="configureBy === 'workOrder'" nzTitle="{{ 'work-order-qc.by-work-order' | i18n }}" >
+
+ 
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'order' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="orderNumberErrorTpl">
+              <nz-input-group  >
+                <input nz-input [ngModel]="currentQCRuleConfiguration.outboundOrder?.number"
+                (blur)="orderNumberChanged($event)"   variable="order-number" appExistingNumberValidator  
+                [ngModelOptions]="{updateOn: 'blur'}" #orderNumberModel="ngModel"
+                />
+              </nz-input-group>   
+          </nz-form-control>
+          
+              <!-- Display error if the order doesn't exists -->
+                <ng-template #orderNumberErrorTpl let-control>
+                  <div *ngIf="orderNumberModel.invalid && (orderNumberModel.dirty ||orderNumberModel.touched)">
+                    <ng-container *ngIf="orderNumberModel.errors?.errorCode">
+                       {{orderNumberModel.errors!.errorCode |i18n}}</ng-container>
+                    <ng-container *ngIf="control.hasError('required')">
+                       {{ 'error.form.field.required' | i18n}}
+                    </ng-container>
+                  </div>
+                </ng-template>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'customer' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="customerNameErrorTpl">         
+             
+
+              <input type="text" nz-input [ngModel]="currentQCRuleConfiguration.customer?.name" 
+              (ngModelChange)="customerNameChanged($event)" variable="customer-name" appExistingNumberValidator
+              id="customerName" name="customerName" 
+              [nzAutocomplete]="customerAutoCompleteTpl"
+              [ngModelOptions]="{updateOn: 'blur'}" #customerNameModel="ngModel"/> 
+              
+            <!-- Auto Complete -->
+            <nz-autocomplete #customerAutoCompleteTpl>
+              <nz-auto-option *ngFor="let customer of validCustomers" [nzLabel]="customer.name" [nzValue]="customer.name">
+                {{ customer.name }}
+              </nz-auto-option>
+            </nz-autocomplete>
+
+          </nz-form-control>
+          
+              <!-- Display error if the customer doesn't exists -->
+                <ng-template #customerNameErrorTpl let-control>
+                  <div *ngIf="customerNameModel.invalid && (customerNameModel.dirty ||customerNameModel.touched)">
+                    <ng-container *ngIf="customerNameModel.errors?.errorCode">
+                       {{customerNameModel.errors!.errorCode |i18n}}</ng-container>
+                    <ng-container *ngIf="control.hasError('required')">
+                       {{ 'error.form.field.required' | i18n}}
+                    </ng-container>
+                  </div>
+                </ng-template>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'item' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+  
+              <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                  <input nz-input [ngModel]="currentQCRuleConfiguration.item?.name"
+                  (blur)="itemNameChanged($event)"/>
+                </nz-input-group>
+                <ng-template #suffixIconButton>
+                  <app-inventory-item-query-popup (recordSelected)="processItemQueryResult($event)">
+                  </app-inventory-item-query-popup>
+                </ng-template>
+  
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+        <div nz-col [nzSpan]="8">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="6">
+              {{ 'item-family' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+    
+              <nz-select 
+                  *ngIf='currentQCRuleConfiguration !== undefined' nz-input [ngModel]="currentQCRuleConfiguration.itemFamilyId!"
+                  (ngModelChange)="itemFamilyChanged($event)" style="width: 250px"  >
+                  <nz-option *ngFor="let itemFamily of validItemFamilies"
+                      [nzLabel]="itemFamily.description" [nzValue]="itemFamily.id">
+                  </nz-option>
+                </nz-select> 
+            
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'warehouse' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="10">
+            
+            <nz-select 
+            *ngIf='currentQCRuleConfiguration !== undefined' nz-input [ngModel]="currentQCRuleConfiguration.warehouseId!"
+              (ngModelChange)="warehouseChanged($event)" style="width: 250px"  >
+              <nz-option *ngFor="let warehouse of warehouses"
+                  [nzLabel]="warehouse.name" [nzValue]="warehouse.id">
+              </nz-option>
+            </nz-select>  
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+  
+    </div>
+  
+    <div nz-row [nzGutter]="24">
+      
+      
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="8">
+            {{ 'from-inventory-status' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+  
+              
+              <nz-select *ngIf='currentQCRuleConfiguration !== undefined' nz-input [(ngModel)]="currentQCRuleConfiguration.fromInventoryStatusId!"
+                  (ngModelChange)="fromInventoryStatusChanged($event)"
+                style="width: 250px"  >
+            
+              <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
+                  [nzLabel]="inventoryStatus.description"
+                  [nzValue]="inventoryStatus.id">
+              </nz-option>
+          </nz-select>
+          
+  
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="8">
+            {{ 'to-inventory-status' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+  
+              
+              <nz-select *ngIf='currentQCRuleConfiguration !== undefined' nz-input [(ngModel)]="currentQCRuleConfiguration.toInventoryStatusId!"
+                (ngModelChange)="toInventoryStatusChanged($event)"
+                style="width: 250px"  >
+            
+              <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
+                  [nzLabel]="inventoryStatus.description"
+                  [nzValue]="inventoryStatus.id">
+              </nz-option>
+          </nz-select>
+          
+  
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  
+    <div nz-row [nzGutter]="24">
+        
+      <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="8">
+              {{ 'qc-configuration.by-quantity' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+    
+                <nz-input-group >
+                    <nz-input-number  [(ngModel)]="this.currentQCRuleConfiguration.qcQuantityPerWorkOrder" 
+                    
+                      [nzMin]="0" 
+                      [nzStep]="1" >
+                      </nz-input-number>
+                  </nz-input-group>
+    
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+  
+        
+      <div nz-col [nzSpan]="12">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="8">
+              {{ 'qc-configuration.by-percentage' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+    
+                <nz-input-group  >
+                    <nz-input-number [(ngModel)]="this.currentQCRuleConfiguration.qcPercentagePerWorkOrder" 
+                    
+                      [nzMin]="0"
+                      [nzMax]="100" 
+                      [nzFormatter]="formatterPercent"
+                      [nzParser]="parserPercent" >
+                      </nz-input-number>
+                  </nz-input-group>
+    
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+    </div>
+    <div nz-row  [nzGutter]="24">
+      
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'inventoryLock' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="lockNameErrorTpl">              
+            <input type="text" nz-input [ngModel]="currentQCRuleConfiguration.inventoryLock?.name" 
+              (ngModelChange)="lockNameChanged($event)" variable="inventory-lock-name" appExistingNumberValidator
+              id="lockName" name="lockName" 
+              [nzAutocomplete]="lockNameAutoCompleteTpl"
+              [ngModelOptions]="{updateOn: 'blur'}" #lockNameModel="ngModel"/>
+              
+            <!-- Auto Complete -->
+            <nz-autocomplete #lockNameAutoCompleteTpl>
+              <nz-auto-option *ngFor="let inventoryLock of validInventoryLocks" [nzLabel]="inventoryLock.name" [nzValue]="inventoryLock.name">
+                {{ inventoryLock.name }}
+              </nz-auto-option>
+            </nz-autocomplete>
+
+          </nz-form-control>
+          <!-- Display error if the lock doesn't exists -->
+          <ng-template #lockNameErrorTpl let-control>
+            <div *ngIf="lockNameModel.invalid && (lockNameModel.dirty ||lockNameModel.touched)">
+              <ng-container *ngIf="lockNameModel.errors?.errorCode">
+                 {{lockNameModel.errors!.errorCode |i18n}}</ng-container>
+              <ng-container *ngIf="control.hasError('required')">
+                 {{ 'error.form.field.required' | i18n}}
+              </ng-container>
+            </div>
+          </ng-template>
+        </nz-form-item>
+      </div>
+      
+      <div nz-col [nzSpan]="12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="6">
+            {{ 'futureInventoryLock' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="futureLockNameErrorTpl">              
+            <input type="text" nz-input [ngModel]="currentQCRuleConfiguration.futureInventoryLock?.name" 
+              (ngModelChange)="futureLockNameChanged($event)" variable="inventory-lock-name" appExistingNumberValidator
+              id="futureInventoryLock" name="futureInventoryLock" 
+              [nzAutocomplete]="futureLockNameAutoCompleteTpl"
+              [ngModelOptions]="{updateOn: 'blur'}" #futureLockNameModel="ngModel"/>
+              
+            <!-- Auto Complete -->
+            <nz-autocomplete #futureLockNameAutoCompleteTpl>
+              <nz-auto-option *ngFor="let inventoryLock of validInventoryLocks" [nzLabel]="inventoryLock.name" [nzValue]="inventoryLock.name">
+                {{ inventoryLock.name }}
+              </nz-auto-option>
+            </nz-autocomplete>
+
+          </nz-form-control>
+            <!-- Display error if the customer doesn't exists -->
+          <ng-template #futureLockNameErrorTpl let-control>
+            <div *ngIf="futureLockNameModel.invalid && (futureLockNameModel.dirty ||futureLockNameModel.touched)">
+              <ng-container *ngIf="futureLockNameModel.errors?.errorCode">
+                 {{futureLockNameModel.errors!.errorCode |i18n}}</ng-container>
+              <ng-container *ngIf="control.hasError('required')">
+                 {{ 'error.form.field.required' | i18n}}
+              </ng-container>
+            </div>
+          </ng-template>
+        </nz-form-item>
+      </div>
+
+    </div>
+  </nz-card>
+  
+
+  
+</div>
+<!-- assign qc rule -->
+<div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+    
+  <div nz-row style="padding: 10px">
+    <div nz-col nzSpan="12" nzOffset="6">
+      <nz-transfer [nzDataSource]="qcRuleList" nzShowSearch [nzFilterOption]="transferListFilterOption"
+        (nzSearchChange)="transferListSearch($event)" (nzSelectChange)="transferListSelect($event)"
+        (nzChange)="transferListChange($event)" [nzListStyle]="{ 'width.px': 350, 'height.px': 400 }"
+        [nzTitles]="[ unassignedQCRuleText, assignedQCRuleText]">
+      </nz-transfer>
+    </div>
+  </div>
+ </div>
+ <!-- confirm -->
+<div class="small-card" *ngIf="stepIndex === 2" style="padding-top: 20px;">
+  <nz-card *ngIf="configureBy === 'sample'" >
+
+    <nz-descriptions nzTitle="{{ 'qc-rule-configuration' | i18n}}" nzBordered>
+        <nz-descriptions-item nzTitle="{{ 'production-line' | i18n}}">
+          {{currentQCRuleConfiguration.productionLine?.name}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'work-order' | i18n}}">
+            {{currentQCRuleConfiguration.workOrder?.number}}</nz-descriptions-item> 
+          
+        <nz-descriptions-item nzTitle="{{ 'qc-quantity' | i18n}}">
+          {{currentQCRuleConfiguration.qcQuantity}}</nz-descriptions-item> 
+            
+      </nz-descriptions>
+
+      
+        <div class="search-result-list" style="padding-top: 25px"> 
+            
+            <st #st [data]="currentQCRuleConfiguration.workOrderQCRuleConfigurationRules"  
+            [columns]="columns" [expand]="expand"   expandAccordion>
+            
+            <!--   qc rule details  -->
+            <ng-template #expand let-item let-index="index" >
+                
+                <nz-tabset  >
+                <nz-tab nzTitle=" {{ 'qc-rule.item' | i18n }}">
+                    <nz-table [nzScroll]="{ x: 'true', y: 'true' }"   [nzData]="item.qcRule.qcRuleItems" nzSize="middle"
+                    [nzShowPagination]="false" #qcRuleItemTable>
+                    <thead>
+                        <th>
+                        {{ 'qcRule.checkPoint' | i18n }}
+                        </th>
+                        <th>
+                        {{ 'qcRule.qcRuleItemType' | i18n }}
+                        </th>
+                        <th>
+                        {{ 'qcRule.qcRuleItemComparator' | i18n }}
+                        </th>
+                        <th>
+                        {{ 'qcRule.expectedValue' | i18n }}
+                        </th> 
+                        
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let qcRuleItem of qcRuleItemTable.data">
+                        <td>{{ qcRuleItem.checkPoint }}</td>
+                        <td>{{ 'QC-RULE-ITEM-TYPE-' + qcRuleItem.qcRuleItemType | i18n }}</td>
+                        <td>{{ 'QC-RULE-ITEM-COMPARATOR-' + qcRuleItem.qcRuleItemComparator  | i18n}}</td>
+                        <td>{{ qcRuleItem.expectedValue }}</td>
+                        </tr>
+                    </tbody>
+                    </nz-table>
+                </nz-tab>
+                </nz-tabset>
+            </ng-template>  
+          </st> 
+             
+        </div>
+    
+  </nz-card>
+  
+  <nz-card *ngIf="configureBy === 'workOrder'" >
+
+    <nz-descriptions nzTitle="{{ 'qc-rule-configuration' | i18n}}" nzBordered>
+        <nz-descriptions-item nzTitle="{{ 'order' | i18n}}">
+          {{currentQCRuleConfiguration.outboundOrder?.number}}</nz-descriptions-item>
+        <nz-descriptions-item nzTitle="{{ 'customer' | i18n}}">
+            {{currentQCRuleConfiguration.customer?.name}}</nz-descriptions-item> 
+          
+        <nz-descriptions-item nzTitle="{{ 'item' | i18n}}">
+          {{currentQCRuleConfiguration.item?.name}}</nz-descriptions-item> 
+        <nz-descriptions-item nzTitle="{{ 'item-family' | i18n}}">
+            {{currentQCRuleConfiguration.itemFamily?.name}}</nz-descriptions-item> 
+        <nz-descriptions-item nzTitle="{{ 'warehouseSpecific' | i18n}}">
+              {{warehouseSpecific}}</nz-descriptions-item> 
+
+        <nz-descriptions-item nzTitle="{{ 'from-inventory-status' | i18n}}"> 
+            {{currentQCRuleConfiguration.fromInventoryStatus?.name}}</nz-descriptions-item> 
+        <nz-descriptions-item nzTitle="{{ 'to-inventory-status' | i18n}}">
+            {{currentQCRuleConfiguration.toInventoryStatus?.name}}</nz-descriptions-item> 
+
+        <nz-descriptions-item nzTitle="{{ 'qc-configuration.by-quantity' | i18n}}">
+            {{currentQCRuleConfiguration.qcQuantityPerWorkOrder}}</nz-descriptions-item> 
+        <nz-descriptions-item nzTitle="{{ 'qc-configuration.by-percentage' | i18n}}">
+            {{currentQCRuleConfiguration.qcPercentagePerWorkOrder}}</nz-descriptions-item> 
+
+        <nz-descriptions-item nzTitle="{{ 'inventoryLock' | i18n}}">
+                {{currentQCRuleConfiguration.inventoryLock?.name}}</nz-descriptions-item> 
+        <nz-descriptions-item nzTitle="{{ 'futureInventoryLock' | i18n}}">
+                {{currentQCRuleConfiguration.futureInventoryLock?.name}}</nz-descriptions-item> 
+              
+            
+      </nz-descriptions>
+
+      
+        <div class="search-result-list" style="padding-top: 25px"> 
+            
+            <st #st [data]="currentQCRuleConfiguration.workOrderQCRuleConfigurationRules"  
+            [columns]="columns" [expand]="expand"   expandAccordion>
+            
+            <!--   qc rule details  -->
+            <ng-template #expand let-item let-index="index" >
+                
+                <nz-tabset  >
+                <nz-tab nzTitle=" {{ 'qc-rule.item' | i18n }}">
+                    <nz-table [nzScroll]="{ x: 'true', y: 'true' }"   [nzData]="item.qcRule.qcRuleItems" nzSize="middle"
+                    [nzShowPagination]="false" #qcRuleItemTable>
+                    <thead>
+                        <th>
+                        {{ 'qcRule.checkPoint' | i18n }}
+                        </th>
+                        <th>
+                        {{ 'qcRule.qcRuleItemType' | i18n }}
+                        </th>
+                        <th>
+                        {{ 'qcRule.qcRuleItemComparator' | i18n }}
+                        </th>
+                        <th>
+                        {{ 'qcRule.expectedValue' | i18n }}
+                        </th> 
+                        
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let qcRuleItem of qcRuleItemTable.data">
+                        <td>{{ qcRuleItem.checkPoint }}</td>
+                        <td>{{ 'QC-RULE-ITEM-TYPE-' + qcRuleItem.qcRuleItemType | i18n }}</td>
+                        <td>{{ 'QC-RULE-ITEM-COMPARATOR-' + qcRuleItem.qcRuleItemComparator  | i18n}}</td>
+                        <td>{{ qcRuleItem.expectedValue }}</td>
+                        </tr>
+                    </tbody>
+                    </nz-table>
+                </nz-tab>
+                </nz-tabset>
+            </ng-template>  
+          </st> 
+             
+        </div>
+    
+  </nz-card>
+
+</div>
+
+<div class="steps-action" style="padding-top: 20px;">
+  <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 2">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 2"
+  
+  >
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+</nz-spin>

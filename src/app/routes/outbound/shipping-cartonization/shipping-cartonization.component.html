@@ -1,0 +1,100 @@
+<page-header title="{{'shipping-cartonization' |  i18n}}" ></page-header>
+
+
+<nz-spin [nzSpinning]="workInProgress" [nzSize]="'large'">
+  <nz-card>
+    <form nz-form [formGroup]="shippingCartonizationQueryForm" class="query-form">
+
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="5">
+          <nz-form-item nzFlex>
+            <nz-form-label>
+              id
+            </nz-form-label>
+            <nz-form-control>
+              <input type="text" #inventoryIdTextBox nz-input formControlName="inventoryId"
+                (blur)="onUserInputInventoryIdBlur()" (keyup.enter)="onUserInputInventoryIdEnter()" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label>
+              {{ 'carton.name' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              <nz-select formControlName="cartonName">
+                <nz-option *ngFor="let shippingCarton of avaiableShippingCartons" [nzLabel]="shippingCarton.name"
+                  [nzValue]="shippingCarton.id">
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="5">
+          <nz-form-item nzFlex>
+            <nz-form-label>
+              {{ 'item' | i18n }}
+            </nz-form-label>
+            <nz-form-control>
+              <input type="text" nz-input #itemNameTextBox formControlName="itemName"
+                (keyup.enter)="onUserInputItemNameEvent()" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+
+    </form>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area"  *ngIf="!displayOnly">
+        <!--<button nz-button (click)="onUserInputInventoryIdEvent()">{{'search' | i18n}}</button>-->
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+        <button nz-button (click)="confirm()">{{ 'confirm' | i18n }}</button>
+        <button nz-button (click)="complete()" [disabled]="totalProgress === 0">{{ 'complete' | i18n }}</button>
+      </div>
+    </div>
+  </nz-card>
+
+
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #rowSelectionTable nzShowSizeChanger [nzTitle]="progressTemplate"
+    [nzData]="listOfPackingItems">
+    <thead>
+      <tr>
+        <th>
+          {{ 'item' | i18n }}
+        </th>
+        <th>
+          {{ 'quantity' | i18n }}
+        </th>
+        <th>
+          {{ 'shipping-cartonization.packed-quantity' | i18n }}
+        </th>
+        <th>
+          {{ 'progress' | i18n }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data" [class.active]="data.itemName === lastConfirmedItemName">
+        <td>{{ data.itemName }}</td>
+        <td>{{ data.quantity }}</td>
+        <td>{{ data.packedQuantity }}</td>
+        <td>
+          <nz-progress [nzPercent]="data.progress"></nz-progress>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+
+  <ng-template #progressTemplate>
+
+    <nz-progress [nzPercent]="totalProgress"></nz-progress>
+  </ng-template>
+</nz-spin>

@@ -1,0 +1,545 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/inventory/count/cycle-count" routerLinkActive="active">{{
+    'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.inventory' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/inventory/count/cycle-count" routerLinkActive="active">{{
+        'breadcrumb.cycle-count' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning">
+  <nz-card [nzActions]="[cardFoot]" [nzExtra]="refreshTemplate">
+    <form nz-form [formGroup]="requestForm">
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="16">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="6" nzFor="batchId">
+              {{ 'cycle-count.batchId' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+              <input appFkey variable="cycle-count-batch-id" nz-input formControlName="batchId" id="batchId"
+                name="batchId" required (blur)="batchIdOnBlur($event)" />
+            </nz-form-control>
+
+          </nz-form-item>
+        </div>
+        <!--
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <label nz-checkbox formControlName="autoGenerateId" (ngModelChange)="generateBatchId($event)">
+            {{ 'number.auto' | i18n }}</label>
+        </nz-form-item>
+      </div>
+    -->
+      </div>
+
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="16">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="6" nzFor="requestType">
+              {{ 'cycle-count.request-type' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+              <nz-select #requestTypeSelect formControlName="requestType" name="requestType"
+                (ngModelChange)="requestTypeChange($event)">
+                <nz-option *ngFor="let type of availableRequestType | keyvalue" nzValue="{{type.key}}"
+                  nzLabel="{{'CYCLE-COUNT-REQUEST-TYPE-' + type.value | i18n}}">
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div nz-row [nzGutter]="24" *ngIf='cycleCountRequestType'>
+        <div nz-col [nzSpan]="8" [ngSwitch]="cycleCountRequestType">
+          <nz-form-item nzFlex *ngSwitchCase="'BY_LOCATION_RANGE'">
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="startValue">
+              {{ 'cycle-count-request.start-location' | i18n }}
+
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+              nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+              <nz-input-group nzSearch [nzAddOnAfter]="startLocationSuffixIconButton">
+                <input nz-input formControlName="startValue" id="startValue" name="startValue" required />
+              </nz-input-group>
+              <ng-template #startLocationSuffixIconButton>
+                <app-warehouse-layout-location-query-popup (recordSelected)="processStartValueQueryResult($event)">
+                </app-warehouse-layout-location-query-popup>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+
+
+          <nz-form-item nzFlex *ngSwitchCase="'BY_ITEM_RANGE'">
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="startValue">
+              {{ 'cycle-count-request.start-item' | i18n }}
+
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+              nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+              <nz-input-group nzSearch [nzAddOnAfter]="startItemSuffixIconButton">
+                <input nz-input formControlName="startValue" id="startValue" name="startValue" required />
+              </nz-input-group>
+              <ng-template #startItemSuffixIconButton>
+                <app-inventory-item-query-popup (recordSelected)="processStartValueQueryResult($event)">
+                </app-inventory-item-query-popup>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+
+
+          <nz-form-item nzFlex *ngSwitchCase="'BY_AISLE_RANGE'">
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="startValue">
+              {{ 'cycle-count-request.start-aisle' | i18n }}
+
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+              nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+              <nz-input-group>
+                <input nz-input formControlName="startValue" id="startValue" name="startValue" required />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+
+        </div>
+
+        <div nz-col [nzSpan]="8" [ngSwitch]="cycleCountRequestType!">
+
+
+          <nz-form-item nzFlex *ngSwitchCase="'BY_LOCATION_RANGE'">
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="endValue">
+              {{ 'cycle-count-request.end-location' | i18n }}
+
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+              nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+              <nz-input-group nzSearch [nzAddOnAfter]="endLocationSuffixIconButton">
+                <input nz-input formControlName="endValue" id="endValue" name="endValue" required />
+              </nz-input-group>
+              <ng-template #endLocationSuffixIconButton>
+                <app-warehouse-layout-location-query-popup (recordSelected)="processEndValueQueryResult($event)">
+                </app-warehouse-layout-location-query-popup>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+
+
+          <nz-form-item nzFlex *ngSwitchCase="'BY_ITEM_RANGE'">
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="endValue">
+              {{ 'cycle-count-request.end-item' | i18n }}
+
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+              nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+              <nz-input-group nzSearch [nzAddOnAfter]="endItemSuffixIconButton">
+                <input nz-input formControlName="endValue" id="endValue" name="endValue" required />
+              </nz-input-group>
+              <ng-template #endItemSuffixIconButton>
+                <app-inventory-item-query-popup (recordSelected)="processEndValueQueryResult($event)">
+                </app-inventory-item-query-popup>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+
+
+          <nz-form-item nzFlex *ngSwitchCase="'BY_AISLE_RANGE'">
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="endValue">
+              {{ 'cycle-count-request.end-aisle' | i18n }}
+
+            </nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+              nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+              <nz-input-group>
+                <input nz-input formControlName="endValue" id="endValue" name="endValue" required />
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-col [nzSpan]="8"
+          *ngIf='cycleCountRequestType === "BY_LOCATION_RANGE" || cycleCountRequestType === "BY_AISLE_RANGE"'>
+          <nz-form-item nzFlex>
+            <label nz-checkbox formControlName="includeEmptyLocation">
+              {{ 'cycle-count-request.include-empty-location' | i18n }}</label>
+          </nz-form-item>
+        </div>
+      </div>
+
+    </form>
+
+  </nz-card>
+  <ng-template #refreshTemplate>
+    <button [disabled]="newBatch===true" nz-button nzType="text" (click)="refreshCountBatchResults()">
+      {{'Refresh' | i18n}}</button>
+  </ng-template>
+  <ng-template #cardFoot>
+    <div nz-row nzType="flex" [nzJustify]="'start'" style='padding-left: 20px;'>
+      <button nz-button nzType="primary" (click)="generateCountRequest()" [disabled]="!requestForm.valid">
+        {{ 'confirm' | i18n }}
+      </button>
+    </div>
+  </ng-template>
+
+  <nz-tabset [nzSelectedIndex]="tabSelectedIndex">
+    <nz-tab [nzTitle]="openCycleCountRequestTabHeader">
+      <!-- Table to Display the result  -->
+      <div>
+        <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="listOfAllOpenCycleCountRequests"
+          [nzFooter]="openCycleCountTableFoot" #openCycleCountTable>
+          <thead>
+            <tr>
+              <th [nzSelections]="listOfOpenCycleCountTableSelection" [(nzChecked)]="openCycleCountTableChecked"
+                [nzIndeterminate]="openCycleCountTableIndeterminate"
+                (nzCheckedChange)="onOpenCycleCountTableAllChecked($event)" nzWidth="60px"></th>
+              <th *ngFor="let column of listOfOpenCycleCountTableColumns" [nzShowSort]="column.showSort"
+                [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+                [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
+                [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+                {{ column.name | i18n }}
+              </th>
+
+
+              <th>{{ 'action' | i18n }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of openCycleCountTable.data">
+              <td [nzChecked]="setOfOpenCycleCountTableCheckedId.has(data.id!)"
+                (nzCheckedChange)="onOpenCycleCountTableItemChecked(data.id!, $event)"></td>
+              <td>{{ data.batchId }}</td>
+              <td>{{ data.location.name }}</td>
+              <td>
+                <button nz-button
+                  (click)="openCountResultModal(data, tplCycleCountRequestConfirmModalTitle, tplCycleCountRequestConfirmModalContent)"
+                  nzType="primary">{{ 'cycle-count.complete' | i18n }}</button>
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+      <ng-template #openCycleCountRequestTabHeader>
+        {{ 'cycle-count-request.open' | i18n}}
+        <nz-badge [nzCount]="listOfAllOpenCycleCountRequests.length" nzShowZero="true">
+          <a class="head-example"></a>
+        </nz-badge>
+      </ng-template>
+      <ng-template #openCycleCountTableFoot>
+        <div nz-row nzType="flex" [nzJustify]="'start'" style='padding-left: 10px;'>
+          <button nz-button nzType="primary" nz-dropdown [nzDropdownMenu]="confirmSelectionTpl">
+            {{ 'confirm' | i18n }}<i nz-icon nzType="down"></i>
+          </button>
+          <nz-divider nzType="vertical"></nz-divider>
+          <button nz-button nzDanger (click)="cancelSelectedCycleCounts()">
+            {{ 'cancel' | i18n }}
+          </button>
+          <nz-divider nzType="vertical"></nz-divider>
+
+          <nz-select [(ngModel)]="printCycleCountType" style='width: 150px;'>
+            <nz-option nzValue="all" nzLabel="{{ 'PRINTING-ALL' | i18n }}"></nz-option>
+            <nz-option nzValue="selected" nzLabel="{{ 'PRINTING-SELECTED' | i18n }}"></nz-option>
+          </nz-select>
+
+
+          <cwms-common-print-button style="padding-left: 20px;" (print)="printCycleCounts( $event)"
+            (preview)="previewCycleCounts()">
+          </cwms-common-print-button>
+
+
+
+          <nz-dropdown-menu #confirmSelectionTpl="nzDropdownMenu">
+            <ul nz-menu>
+              <li nz-menu-item>
+                <a (click)="confirmSelectedCycleCounts()">{{ 'confirmSelected' | i18n }}</a>
+              </li>
+              <li nz-menu-item>
+                <a (click)="confirmAllCycleCounts()">{{ 'confirmAll' | i18n }}</a>
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+        </div>
+      </ng-template>
+
+    </nz-tab>
+
+    <nz-tab [nzTitle]="finishedCycleCountRequestTabHeader">
+
+      <!-- Table to Display the result  -->
+      <div class="search-result-list">
+        <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowSizeChanger nzShowPagination
+          [nzData]="listOfAllCycleCountResults" #cycleCountResultTable>
+          <thead>
+            <tr>
+              <th *ngFor="let column of listOfCycleCountResultTableColumns" [nzShowSort]="column.showSort"
+                [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+                [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
+                [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+                {{ column.name | i18n }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of cycleCountResultTable.data">
+              <td>{{ data.batchId }}</td>
+              <td>{{ data.location?.name }}</td>
+              <td>{{ data.item?.name }}</td>
+              <td>{{ data.item?.description }}</td>
+              <td>{{ data.quantity }}</td>
+              <td>{{ data.countQuantity }}</td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+      <ng-template #finishedCycleCountRequestTabHeader>
+        {{ 'cycle-count-request.finished' | i18n}}
+        <nz-badge [nzCount]="listOfAllCycleCountResults.length" [nzStyle]="{ backgroundColor: '#52c41a' }"
+          nzShowZero="true">
+          <a class="head-example"></a>
+        </nz-badge>
+      </ng-template>
+
+    </nz-tab>
+
+    <nz-tab [nzTitle]="cancelledCycleCountRequestTabHeader">
+
+      <!-- Table to Display the result  -->
+      <div class="search-result-list">
+        <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowSizeChanger nzShowPagination
+          [nzData]="listOfAllCancelledCycleCountRequests" [nzFooter]="cancelledCycleCountTableFoot"
+          #cancelledCycleCountTable>
+          <thead>
+            <tr>
+
+              <th [nzSelections]="listOfCancelledCycleCountTableSelection"
+                [(nzChecked)]="cancelledCycleCountTableChecked"
+                [nzIndeterminate]="cancelledCycleCountTableIndeterminate"
+                (nzCheckedChange)="onCancelledCycleCountTableAllChecked($event)" nzWidth="60px"></th>
+              <th *ngFor="let column of listOfCancelledCycleCountTableColumns" [nzShowSort]="column.showSort"
+                [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+                [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
+                [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+                {{ column.name | i18n }}
+              </th>
+
+
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of cancelledCycleCountTable.data">
+
+              <td [nzChecked]="setOfCancelledCycleCountTableCheckedId.has(data.id!)"
+                (nzCheckedChange)="onCancelledCycleCountTableItemChecked(data.id!, $event)"></td>
+              <td>{{ data.batchId }}</td>
+              <td>{{ data.location.name }}</td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+
+      <ng-template #cancelledCycleCountRequestTabHeader>
+        {{ 'cycle-count-request.cancelled' | i18n}}
+        <nz-badge [nzCount]="listOfAllCancelledCycleCountRequests.length" nzShowZero="true"
+          [nzStyle]="{ backgroundColor: '#808080' }">
+          <a class="head-example"></a>
+        </nz-badge>
+      </ng-template>
+      <ng-template #cancelledCycleCountTableFoot>
+        <div nz-row nzType="flex" [nzJustify]="'start'" style='padding-left: 10px;'>
+          <button nz-button nzType="primary" (click)="reopenCancelledCycleCountRequest()">
+            {{ 'cycle-count-request.reopen' | i18n }}
+          </button>
+        </div>
+      </ng-template>
+    </nz-tab>
+
+    <nz-tab [nzTitle]="openAuditCountRequestTabHeader">
+
+      <!-- Table to Display the result  -->
+      <div class="search-result-list">
+        <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowSizeChanger nzShowPagination
+          [nzData]="listOfAllOpenAuditCountRequests" [nzFooter]="openAuditCountTableFoot" #openAuditCountTable>
+          <thead>
+            <tr>
+
+              <th [nzSelections]="listOfOpenAuditCountTableSelection" [(nzChecked)]="openAuditCountTableChecked"
+                [nzIndeterminate]="openAuditCountTableIndeterminate"
+                (nzCheckedChange)="onOpenAuditCountTableAllChecked($event)" nzWidth="60px"></th>
+              <th *ngFor="let column of listOfOpenAuditCountTableColumns" [nzShowSort]="column.showSort"
+                [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+                [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
+                [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+                {{ column.name | i18n }}
+              </th>
+
+
+              <th>{{ 'action' | i18n }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of openAuditCountTable.data">
+
+              <td [nzChecked]="setOfOpenAuditCountTableCheckedId.has(data.id!)"
+                (nzCheckedChange)="onOpenAuditCountTableItemChecked(data.id!, $event)"></td>
+
+              <td>{{ data.batchId }}</td>
+              <td>{{ data.location.name }}</td>
+              <td>
+                <a nz-button nzType="primary" routerLink="/inventory/count/audit-count-result" routerLinkActive="active"
+                  [queryParams]="{batchId : data.batchId, locationId: data.location.id}">
+                  {{ 'cycle-count.complete' | i18n }}</a>
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+
+      <ng-template #openAuditCountRequestTabHeader>
+        {{ 'audit-count-request' | i18n}}
+        <nz-badge [nzCount]="listOfAllOpenAuditCountRequests.length" nzShowZero="true">
+          <a class="head-example"></a>
+        </nz-badge>
+      </ng-template>
+      <ng-template #openAuditCountTableFoot>
+        <div nz-row nzType="flex" [nzJustify]="'start'" style='padding-left: 10px;'>
+          <button nz-button nzType="primary" nz-dropdown [nzDropdownMenu]="confirmSelectedAuditCountTpl">
+            {{ 'confirm' | i18n }}<i nz-icon nzType="down"></i>
+          </button>
+
+
+          <nz-divider nzType="vertical"></nz-divider>
+
+          <nz-select [(ngModel)]="printAuditCountType" style='width: 150px;'>
+            <nz-option nzValue="all" nzLabel="{{ 'PRINTING-ALL' | i18n }}"></nz-option>
+            <nz-option nzValue="selected" nzLabel="{{ 'PRINTING-SELECTED' | i18n }}"></nz-option>
+          </nz-select>
+
+
+          <cwms-common-print-button style="padding-left: 20px;" (print)="printAuditCounts( $event)"
+            (preview)="previewAuditCounts()">
+          </cwms-common-print-button>
+
+          <nz-dropdown-menu #confirmSelectedAuditCountTpl="nzDropdownMenu">
+            <ul nz-menu>
+              <li nz-menu-item>
+                <a (click)="confirmSelectedAuditCounts()">{{ 'confirmSelected' | i18n }}</a>
+              </li>
+              <li nz-menu-item>
+                <a (click)="confirmAllAuditCounts()">{{ 'confirmAll' | i18n }}</a>
+              </li>
+            </ul>
+          </nz-dropdown-menu>
+        </div>
+      </ng-template>
+
+
+    </nz-tab>
+
+    <nz-tab [nzTitle]="auditCountResultTabHeader">
+
+      <!-- Table to Display the result  -->
+      <div class="search-result-list">
+        <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowSizeChanger nzShowPagination
+          [nzData]="listOfAllAuditCountResults" #auditCountResultsTable>
+          <thead>
+            <tr>
+              <th *ngFor="let column of listOfAuditCountResultsTableColumns" [nzShowSort]="column.showSort"
+                [nzSortOrder]="column.sortOrder" [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+                [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
+                [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+                {{ column.name | i18n }}
+              </th>
+
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of auditCountResultsTable.data">
+              <td>{{ data.batchId }}</td>
+              <td>
+                <a *ngIf="data.location !== null" routerLink="/inventory/inventory"
+                  [queryParams]="{refresh : true, location: data.location.name}" routerLinkActive="active">
+                  {{ data.location.name }}
+                </a>
+              </td>
+              <td>
+
+                <a *ngIf="data.location !== null" routerLink="/inventory/inventory"
+                  [queryParams]="{refresh : true, lpn: data.lpn}" routerLinkActive="active">
+                  {{ data.lpn }}</a>
+              </td>
+              <td>{{ data.item.name }}</td>
+              <td>{{ data.item.description }}</td>
+              <td>{{ data.quantity }}</td>
+              <td>{{ data.countQuantity }}</td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+
+      <ng-template #auditCountResultTabHeader>
+        {{ 'audit-count-result' | i18n}}
+        <nz-badge [nzCount]="listOfAllAuditCountResults.length" nzShowZero="true"
+          [nzStyle]="{ backgroundColor: '#52c41a' }">
+          <a class="head-example"></a>
+        </nz-badge>
+      </ng-template>
+
+    </nz-tab>
+
+  </nz-tabset>
+
+</nz-spin>
+
+
+<!-- Modal for confirm cycle count result -->
+<ng-template #tplCycleCountRequestConfirmModalTitle>
+  <span>{{ 'page.modal.cycle-count.confirm.title' | i18n}}</span>
+</ng-template>
+<ng-template #tplCycleCountRequestConfirmModalContent>
+  <form>
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="inventoriesToBeCount" #inventoriesTable
+      nzShowPagination="false">
+      <thead>
+        <tr>
+          <th>{{ 'location' | i18n}}</th>
+          <th>{{ 'item' | i18n}}</th>
+          <th>{{ 'item.description' | i18n}}</th>
+          <th>{{ 'quantity' | i18n}}</th>
+          <th>{{ 'count-quantity' | i18n}}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of inventoriesTable.data; let i = index">
+          <td>{{ data.location?.name }}</td>
+          <td>
+            <input *ngIf="data.item != null" type="text" [ngModel]="data.item.name"
+              (blur)="countResultItemNameBlur($event, data)" name="itemName-{{i}}">
+          </td>
+          <td>{{ data.item?.description }}</td>
+          <td>{{ data.quantity }}</td>
+          <td><input type="text" [(ngModel)]="data.countQuantity" name='result-{{i}}'></td>
+          <td>
+            <button *ngIf="data.item !== null" nz-button nzType="primary" (click)="removeCountedInventory(i)">
+              <i nz-icon nzType="close" nzTheme="outline"></i>
+            </button>
+            <button *ngIf="i === inventoriesTable.data.length - 1" nz-button nzType="primary"
+              (click)="addCountedInventory(data)">
+              <i nz-icon nzType="plus" nzTheme="outline"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </form>
+
+</ng-template>

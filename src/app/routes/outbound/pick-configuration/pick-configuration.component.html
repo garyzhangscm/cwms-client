@@ -1,0 +1,181 @@
+<page-header title="{{'pick-configuration' |  i18n}}" > </page-header>
+
+<nz-tabset>
+  <nz-tab nzTitle="{{'pick' | i18n}}">
+    <nz-spin [nzSpinning]="isPickConfigurationSpinning" [nzSize]="'large'">
+        
+      <nz-card>  
+        <div nz-row [nzGutter]="24"> 
+          <div nz-col [nzSpan]="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="3">
+                {{ 'releaseToWorkTask' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="21">
+                    <label nz-checkbox [(ngModel)]="currentPickConfiguration.releaseToWorkTask"></label>
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>   
+        </div>  
+        
+        <div nz-row [nzGutter]="24"> 
+          <div nz-col [nzSpan]="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="3">
+                {{ 'workTaskPriority' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="21">
+                  <nz-input-number  [nzMin]="1" [nzMax]="65524" [nzStep]="1"
+                   [(ngModel)]="currentPickConfiguration.workTaskPriority"></nz-input-number> 
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>   
+        </div>  
+        
+      </nz-card>
+
+      <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle" *ngIf="!displayOnly">
+          <button nz-button nzType="primary" (click)="confirmPickConfiguration()" >
+              <span> {{ 'confirm' | i18n }}</span>
+            </button>
+      </div>
+    </nz-spin>
+
+  </nz-tab>
+  <nz-tab nzTitle="{{'bulk-pick' | i18n}}">
+
+    <nz-spin [nzSpinning]="isBulkPickConfigurationSpinning" [nzSize]="'large'">
+        
+      <nz-card>        
+        <div nz-row [nzGutter]="24"> 
+          <div nz-col [nzSpan]="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="3">
+                {{ 'enabledForOutbound' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="21">
+                    <label nz-checkbox [(ngModel)]="currentBulkPickConfiguration.enabledForOutbound"></label>
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>   
+        </div>  
+        <div nz-row [nzGutter]="24"> 
+          <div nz-col [nzSpan]="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="3">
+                {{ 'enabledForWorkOrder' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="21">
+                    <label nz-checkbox [(ngModel)]="currentBulkPickConfiguration.enabledForWorkOrder"></label>
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>   
+        </div>  
+        
+        <div nz-row [nzGutter]="24"> 
+            <div nz-col [nzSpan]="24">
+              <nz-form-item>
+                  <nz-form-label [nzSpan]="3">
+                  {{ 'pickSortDirection' | i18n }}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="21">
+                    <nz-select nzAllowClear  
+                        nz-input [ngModel]="currentBulkPickConfiguration!.pickSortDirection" (ngModelChange)="pickSortDirectionChanged($event)"
+                                style="width: 250px"  >
+                            <nz-option *ngFor="let sortDirection of sortDirections | keys"
+                                nzLabel="{{ 'SORT-DIRECTION-' + sortDirection.key | i18n }}" [nzValue]="sortDirection.key">
+                            </nz-option>
+                        </nz-select>  
+  
+                  </nz-form-control>
+              </nz-form-item>
+            </div>   
+          </div>  
+          
+        <div nz-row [nzGutter]="24"> 
+          <div nz-col [nzSpan]="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="3">
+                {{ 'releaseBulkPickToWorkTask' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="21">
+                    <label nz-checkbox [(ngModel)]="currentBulkPickConfiguration.releaseToWorkTask"></label>
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>   
+        </div>  
+        
+        <div nz-row [nzGutter]="24"> 
+          <div nz-col [nzSpan]="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="3">
+                {{ 'workTaskPriority' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="21">
+                  <nz-input-number  [nzMin]="1" [nzMax]="65524" [nzStep]="1"
+                   [(ngModel)]="currentBulkPickConfiguration.workTaskPriority"></nz-input-number> 
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>   
+        </div>   
+        
+      </nz-card>
+
+      <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle" *ngIf="!displayOnly">
+          <button nz-button nzType="primary" (click)="confirmBulkPickConfiguration()" >
+              <span> {{ 'confirm' | i18n }}</span>
+            </button>
+      </div>
+    </nz-spin>
+  </nz-tab>
+  <nz-tab nzTitle="{{'pick-list' | i18n}}">
+    <nz-spin [nzSpinning]="isPickConfigurationSpinning" [nzSize]="'large'">
+        
+      <nz-card>  
+        <div nz-row [nzGutter]="24"> 
+          <div nz-col [nzSpan]="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="3">
+                {{ 'releasePickListToWorkTask' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="21">
+                    <label nz-checkbox [(ngModel)]="currentPickConfiguration.releasePickListToWorkTask"></label>
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>   
+        </div>  
+        
+        <div nz-row [nzGutter]="24"> 
+          <div nz-col [nzSpan]="24">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="3">
+                {{ 'pickListWorkTaskPriority' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="21">
+                  <nz-input-number  [nzMin]="1" [nzMax]="65524" [nzStep]="1"
+                   [(ngModel)]="currentPickConfiguration.pickListWorkTaskPriority"></nz-input-number> 
+
+                </nz-form-control>
+            </nz-form-item>
+          </div>   
+        </div>  
+        
+      </nz-card>
+
+      <div nz-row nzJustify="start" style="padding: 15px;" nzAlign="middle" *ngIf="!displayOnly">
+          <button nz-button nzType="primary" (click)="confirmPickConfiguration()" >
+              <span> {{ 'confirm' | i18n }}</span>
+            </button>
+      </div>
+    </nz-spin>
+
+  </nz-tab>
+
+</nz-tabset> 

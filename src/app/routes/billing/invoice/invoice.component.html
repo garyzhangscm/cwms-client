@@ -1,0 +1,155 @@
+<page-header title="{{'invoice' |  i18n}}" > </page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form"> 
+
+    <div nz-row [nzGutter]="24">
+        
+        <div nz-col [nzSpan]="8" *ngIf="threePartyLogisticsFlag">
+            <nz-form-item>
+                <nz-form-label [nzSpan]="12">
+                {{ 'client' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="12" >
+
+                    <nz-select formControlName="clientId">
+                        <nz-option *ngFor="let client of availableClients" [nzValue]="client.id" [nzLabel]="client.name"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="type">
+            {{ 'number' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <input nz-input name="number" id="number" formControlName="number" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6"  nzFor="type">
+            {{ 'referenceNumber' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <input nz-input name="referenceNumber" id="referenceNumber" formControlName="referenceNumber" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+     
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="search()"  >
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form> 
+ 
+ 
+  
+  <div class="search-result-list"> 
+    
+    <st #st [data]="invoices" [columns]="columns" [footer]="tableFoot" [scroll]="{ x: '1024px' }"
+    [expand]="expand"  expandAccordion>
+       
+          <!--   startTimeColumn colummn  -->  
+        <ng-template st-row="startTimeColumn" let-item let-index="index"> 
+              
+            {{ item.startTime  | date:'MM/dd/yyyy'}} 
+        </ng-template>
+        <!--   endTimeColumn colummn  -->  
+        <ng-template st-row="endTimeColumn" let-item let-index="index"> 
+          
+
+              {{ item.endTime  | date:'MM/dd/yyyy'}} 
+        </ng-template>
+        <!--   invoiceDateColumn colummn  -->  
+        <ng-template st-row="invoiceDateColumn" let-item let-index="index"> 
+          
+
+              {{ item.invoiceDate  | date:'MM/dd/yyyy'}} 
+        </ng-template>
+        <!--   dueDateColumn colummn  -->  
+        <ng-template st-row="dueDateColumn" let-item let-index="index"> 
+          
+
+              {{ item.dueDate  | date:'MM/dd/yyyy'}} 
+        </ng-template>
+        <ng-template st-row="totalChargeColumn" let-item let-index="index"> 
+          
+
+              {{ item.totalCharge  | number: '1.0-2'}} 
+        </ng-template>
+        <!--   action colummn  -->  
+        <ng-template st-row="actionColumn" let-item let-index="index"> 
+          
+
+            
+        </ng-template>
+        
+        <!--   invoice lines -->
+        <ng-template #expand let-item let-index="index" >
+          
+            <nz-tabset>
+              <nz-tab nzTitle="{{'invoice.line' | i18n}}">
+                
+              <nz-table   nzShowPagination [nzData]="item!.lines"
+                  #invoieLine>
+              <thead>
+                  <tr> 
+                    <th nzWidth="350px">
+                      {{ 'billableCategory' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'amount' | i18n }}
+                    </th>  
+                    <th>
+                      {{ 'rate' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'totalCharge' | i18n }}
+                    </th>  
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr *ngFor="let data of invoieLine.data">  
+                      <td  nzWidth="350px">{{ 'BILLABLE-CATEGORY-' + data.billableCategory | i18n}} </td>
+                      <td> {{ data.amount | number: '1.0-2'}} </td> 
+                      <td> {{ data.rate }} </td> 
+                      <td> {{ data.totalCharge | number: '1.0-2'}} </td> 
+                  </tr>
+              </tbody>
+              </nz-table>
+                
+              </nz-tab>
+            </nz-tabset>
+          </ng-template>
+    </st>
+  
+  </div>
+ 
+</nz-spin>
+<ng-template #tableFoot>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+  
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
+    
+    <button nz-button nzType="primary" routerLink="/billing/invoice/maintenance" routerLinkActive="active">
+      {{ 'generate-invoice' | i18n }}
+    </button> 
+  </div>
+</ng-template>
+
+
+
+ 

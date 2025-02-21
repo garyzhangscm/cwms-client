@@ -1,0 +1,114 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/work-order/work-order" routerLinkActive="active"
+    [queryParams]="{ number: currentWorkOrder.number }">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/work-order" routerLinkActive="active">{{
+        'breadcrumb.work-order' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<div nz-row style="padding: 10px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps nzType="navigation" [nzCurrent]="2" [nzSize]="'small'" (nzIndexChange)="onIndexChange($event)">
+      <nz-step nzTitle="{{ 'steps.work-order-produce.produce.title' | i18n }}"
+        nzDescription="{{ 'steps.work-order-produce.produce.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.work-order-produce.by-product.title' | i18n }}"
+        nzDescription="{{ 'steps.work-order-produce.by-product.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.work-order-produce.user-kpi.title' | i18n }}"
+        nzDescription="{{ 'steps.work-order-produce.user-kpi.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.work-order-produce.confirm.title' | i18n }}"
+        nzDescription="{{ 'steps.work-order-produce.confirm.description' | i18n }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+
+<!-- Table to show users and kpi  -->
+<div class="search-result-list">
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="workOrderProduceTransaction.workOrderKPITransactions!"
+    [nzFooter]="KPITableFoot" nzShowPagination="false" #KPITable>
+    <thead>
+      <tr>
+        <th>{{ 'username' | i18n }}</th>
+        <th>{{ 'working-team' | i18n }}</th>
+        <th>{{ 'amount' | i18n }}</th>
+        <th>{{ 'KPIMeasure' | i18n }}</th>
+        <th>{{ 'action' | i18n }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let workOrderKPI of KPITable.data">
+        <td>
+          <nz-input-group nzCompact>
+            <input nz-input [(ngModel)]="workOrderKPI.username" [nzAutocomplete]="usernameList" style="width: 50%;" />
+
+          </nz-input-group>
+
+        </td>
+        <td>
+          <nz-input-group nzCompact>
+            <input nz-input [(ngModel)]="workOrderKPI.workingTeamName" [nzAutocomplete]="workingTeamList"
+              style="width: 50%;" />
+
+          </nz-input-group>
+
+        </td>
+        <td>
+          <nz-input-group nzCompact>
+            <input nz-input [(ngModel)]="workOrderKPI.amount" style="width: 20%;" />
+          </nz-input-group>
+        </td>
+        <td>
+
+          <nz-input-group nzCompact>
+            <nz-select [(ngModel)]="workOrderKPI.kpiMeasurement" style="width: 75%;">
+              <nz-option *ngFor="let kpiMeasurement of kpiMeasurements | keys" [nzValue]="kpiMeasurement.key"
+                nzLabel="{{ 'KPI-MEASUREMENT-' + kpiMeasurement.key | i18n }}"></nz-option>
+            </nz-select>
+          </nz-input-group>
+
+        </td>
+        <td>
+          <button nz-button nzDanger (click)="removeKPI(workOrderKPI)">
+            {{ 'remove' | i18n }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <nz-autocomplete [nzDataSource]="validUsernames" #usernameList></nz-autocomplete>
+  <nz-autocomplete [nzDataSource]="validWorkingTeamNames" #workingTeamList></nz-autocomplete>
+</div>
+
+<ng-template #KPITableFoot>
+  <div nz-row nzType="flex" nzJustify="start">
+
+    <nz-layout>
+      <nz-sider>
+        <button nz-button nzType="primary" (click)="addExtraKPI()">
+          {{ 'add' | i18n }}
+        </button>
+      </nz-sider>
+      <nz-content>
+        <button nz-button nzType="primary" routerLink="/work-order/work-order/produce/confirm" routerLinkActive="active"
+          [queryParams]="{ id: currentWorkOrder.id }" (click)="saveCurrentWorkOrderResults()">
+          {{ 'steps.work-order-complete.confirm.title' | i18n }}
+        </button>
+      </nz-content>
+    </nz-layout>
+
+  </div>
+</ng-template>

@@ -1,0 +1,251 @@
+<page-header title="{{'purchase-order' |  i18n}}" > </page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form"> 
+
+    
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label for="number" [nzSpan]="8">
+          {{ 'purchase-order.number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input name="number" id="number" formControlName="number" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="6" >
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="6" nzFor="status">
+          {{ 'status' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          
+          <nz-select  nzMode="multiple" formControlName="statusList" name="statusList">
+            <nz-option
+              *ngFor="let status of purchaseOrderStatusList | keys"
+              [nzValue]="status.key"
+              nzLabel="{{ 'PURCHASE-ORDER-STATUS-' + status.key | i18n}}"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    
+    <div nz-col [nzSpan]="10">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="supplier">
+          {{ 'supplier' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+          nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <nz-input-group nzSize="large"  >
+            <input nz-input formControlName="supplier" id="supplier" name="supplier"
+              [nzAutocomplete]="supplierAutoCompleteTpl" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      
+      <ng-template #searchIcon>
+        <i nz-icon nzType="search"></i>
+      </ng-template>
+      <nz-autocomplete #supplierAutoCompleteTpl>
+        <nz-auto-option *ngFor="let supplier of validSuppliers" [nzLabel]="supplier.description" [nzValue]="supplier.name">
+          {{ supplier.description }}
+        </nz-auto-option>
+      </nz-autocomplete>
+    </div>
+
+  </div>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="search()"  >
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form> 
+ 
+ 
+  
+  <div class="search-result-list"> 
+    
+    <st #st [data]="purchaseOrders" [columns]="columns" [footer]="tableFoot" [expand]="expand"  expandAccordion
+    (change)="purchaseOrderTableChanged($event)">
+        
+      <ng-template st-row="supplierColumn" let-item let-index="index">
+        
+        <nz-skeleton-element 
+            *ngIf="item.supplierId && item.supplier == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+        <a nz-tooltip [nzTooltipTitle]="supplierDetailsTemplate">{{ item.supplier?.name }}</a>
+        
+        <ng-template #supplierDetailsTemplate>
+          <div>{{item.supplier.name}} - {{item.supplier.description}}</div>
+          <address>  
+            {{item.supplier?.addressLine1}} <br>
+            {{item.supplier?.addressLine2}} <br>
+            {{item.supplier?.addressCity}},  {{item.supplier?.addressState}} <br>
+            {{item.supplier?.addressPostcode}} <br>
+            </address>
+        </ng-template>
+
+      </ng-template>
+      
+      <!--   order details  -->
+      <ng-template #expand let-item let-index="index" >
+        
+        <nz-tabset >
+          <nz-tab nzTitle=" {{ 'purchase-order.line' | i18n }}">
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="item.purchaseOrderLines" nzSize="middle"
+              [nzShowPagination]="true" #purchaseOrderLineTable>
+              <thead>
+                <th>
+                  {{ 'number' | i18n }}
+                </th>
+                <th>
+                  {{ 'item' | i18n }}
+                </th>
+                <th>
+                  {{ 'item' | i18n }}
+                </th>
+                <th>
+                  {{ 'expectedQuantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'receiptQuantity' | i18n }}
+                </th>
+                <th>
+                  {{ 'receivedQuantity' | i18n }}
+                </th> 
+              </thead>
+              <tbody>
+                <tr *ngFor="let purchaseOrderLine of purchaseOrderLineTable.data">
+                  <td>{{ purchaseOrderLine.number }}</td>
+                  
+                  <td>
+                    
+                      <nz-skeleton-element 
+                      *ngIf="purchaseOrderLine.itemId && purchaseOrderLine.item == null"
+                      nzType="input"
+                      [nzActive]="true"
+                      [nzSize]="'small'"
+                      style="width:75px"
+                    ></nz-skeleton-element> 
+                    {{ purchaseOrderLine.item?.name }}</td>
+                    <td>
+                      
+                        <nz-skeleton-element 
+                        *ngIf="purchaseOrderLine.itemId && purchaseOrderLine.item == null"
+                        nzType="input"
+                        [nzActive]="true"
+                        [nzSize]="'small'"
+                        style="width:75px"
+                      ></nz-skeleton-element> 
+                      {{ purchaseOrderLine.item?.description }}</td>
+                  <td>{{ purchaseOrderLine.expectedQuantity }}</td>
+                  <td>{{ purchaseOrderLine.receiptQuantity }}</td>
+                  <td>{{ purchaseOrderLine.receivedQuantity }}</td>  
+                </tr>
+              </tbody>
+            </nz-table>
+          </nz-tab> 
+          <nz-tab nzTitle=" {{ 'receipt' | i18n }}">
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="mapOfReceipt[item.id!]" nzSize="middle"
+            [nzShowPagination]="true" #receiptTable>
+              <thead>
+                <th>
+                  {{ 'receipt.number' | i18n }}
+                </th>
+                <th>
+                  {{ 'client' | i18n }}
+                </th>
+                <th>
+                  {{ 'supplier' | i18n }}
+                </th>
+                <th>
+                  {{ 'supplier' | i18n }}
+                </th> 
+                <th>
+                  {{ 'status' | i18n }}
+                </th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let receipt of receiptTable.data">
+                  <td><a routerLink="/inbound/receipt" routerLinkActive="active"
+                    [queryParams]="{number : receipt.number}">
+                    {{ receipt.number }}</a></td>
+                    
+                  <td> 
+                  {{ receipt.client?.name }}</td>
+                  <td>  
+                      
+                        <nz-skeleton-element 
+                        *ngIf="receipt.supplierId && receipt.supplier == null"
+                        nzType="input"
+                        [nzActive]="true"
+                        [nzSize]="'small'"
+                        style="width:75px"
+                      ></nz-skeleton-element> 
+                      {{ receipt.supplier?.name }}</td>
+                      <td>  
+                          
+                            <nz-skeleton-element 
+                            *ngIf="receipt.supplierId && receipt.supplier == null"
+                            nzType="input"
+                            [nzActive]="true"
+                            [nzSize]="'small'"
+                            style="width:75px"
+                          ></nz-skeleton-element> 
+                          {{ receipt.supplier?.description }}</td>
+                  <td>{{ 'RECEIPT-STATUS-' + receipt.receiptStatus | i18n}} </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </nz-tab> 
+        </nz-tabset>
+      </ng-template>
+
+      
+      <!--   action colummn  -->  
+      <ng-template st-row="actionColumn" let-item let-index="index"> 
+        
+        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary"
+        *ngIf="item.status == purchaseOrderStatusList.OPEN">
+          {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu> 
+
+            <li nz-menu-item *ngIf="item.status == purchaseOrderStatusList.OPEN">
+              <a routerLink="/inbound/create-receipt-from-po" routerLinkActive="active"
+            [queryParams]="{poid : item.id}">
+             {{ 'create-receipt' | i18n }}</a>
+            </li>
+            
+          </ul>
+        </nz-dropdown-menu>
+      </ng-template>
+        
+    </st>
+  
+  </div>
+ 
+</nz-spin>
+<ng-template #tableFoot>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+   
+</ng-template>
+
+
+
+ 

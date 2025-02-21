@@ -1,0 +1,62 @@
+<page-header [title]="'page.unit-of-measure.header.title' | i18n">
+</page-header>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #rowSelectionTable nzShowSizeChanger
+    [nzData]="listOfDisplayUnitOfMeasures" [nzFooter]="tableFoot">
+    <thead nzSingleSort>
+      <tr>
+        <th nzWidth="62px" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="checkAll($event)"></th>
+        <th nzShowSort nzSortKey="id">ID</th>
+        <th nzShowSort nzSortKey="name" nzShowFilter [nzFilters]="filtersByName"
+          (nzFilterChange)="filter($event, selectedFiltersByDescription)">
+          {{'name' | i18n}}</th>
+        <th nzShowFilter [nzFilters]="filtersByDescription" (nzFilterChange)="filter(selectedFiltersByName, $event)">
+          {{'description' | i18n}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data">
+        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[data.id!]" (nzCheckedChange)="refreshStatus()"></td>
+        <td>{{ data.id! }}</td>
+        <td>
+          <div class="editable-cell" *ngIf="editId !== data.id!|| editCol != 'name'; else editNameTpl">
+            <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'name', $event)">
+              {{ data.name }}
+            </div>
+          </div>
+          <ng-template #editNameTpl>
+            <input type="text" nz-input [(ngModel)]="data.name" (blur)="changeUnitOfMeasure(data)" />
+          </ng-template>
+        </td>
+        <td>
+          <div class="editable-cell" *ngIf="editId !== data.id! || editCol != 'description'; else editDescTpl">
+            <div class="editable-cell-value-wrap" (click)="startEdit(data.id!, 'description', $event)">
+              {{ data.description }}
+            </div>
+          </div>
+          <ng-template #editDescTpl>
+            <input type="text" nz-input [(ngModel)]="data.description" (blur)="changeUnitOfMeasure(data)" />
+          </ng-template>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start">
+    <a nz-button nzType="primary" (click)="refresh()">
+      {{'fresh' | i18n}}
+    </a>
+    <a nz-button nzType="primary" routerLink="/common/unit-of-measure-maintenance" routerLinkActive="active"
+      (click)="clearSessionUnitOfMeasure()" *ngIf="!displayOnly">
+      {{'add' | i18n}}
+    </a>
+
+    <button nz-button nzDanger (click)="removeSelectedUnitOfMeasures()" *ngIf="!displayOnly">{{'delete' | i18n}}</button>
+  </div>
+</ng-template>

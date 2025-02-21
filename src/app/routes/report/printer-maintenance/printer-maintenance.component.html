@@ -1,0 +1,118 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/report/printer" routerLinkActive="active" [queryParams]="{name: currentPrinter.name}">{{ 'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/report/printer" routerLinkActive="active">{{ 'printer' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'printer' | i18n }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin nzSize="large" [nzSpinning]="isSpinning">
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex" nzStatus="wait" style="padding: 15px">
+  <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+<!-- Show basic item information -->
+<div class="small-card" *ngIf="stepIndex === 0 
+    && currentPrinter != null">
+  <div nz-row [nzGutter]="24">
+
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'printer' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <!--
+
+          <nz-select nzAllowClear [(ngModel)]="currentPrinter" style="width: 300px;" *ngIf="newPrinter" >
+            <nz-option *ngFor="let printer of availablePrinters" [nzValue]="printer"
+                [nzLabel]="printer.name">
+            </nz-option>
+            </nz-select>
+          -->
+            <input nz-input [(ngModel)]="currentPrinter.name"  [disabled]="!newPrinter"/>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'description' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <input nz-input [(ngModel)]="currentPrinter.description" required   />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+ 
+  </div>
+
+  <div nz-row [nzGutter]="24">
+
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+            {{ 'printer-type' | i18n }}
+      </nz-form-label>
+      <nz-form-control [nzSpan]="18">
+            <nz-select nzAllowClear [ngModel]="currentPrinter.printerType?.id" style="width: 300px;" (ngModelChange)="selectedPrinterTypeChanged($event)">
+            <nz-option *ngFor="let printerType of printerTypes" [nzValue]="printerType.id"
+                [nzLabel]="printerType.description">
+            </nz-option>
+            </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div> 
+
+</div>
+  
+<!-- Confirm the change -->
+<div class="small-card" *ngIf="stepIndex === 1">
+  <nz-card>
+    <nz-descriptions nzBordered="true">
+
+      <nz-descriptions-item nzTitle="{{ 'name' | i18n }}">
+
+        {{ currentPrinter.name | i18n }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description' | i18n }}">{{ currentPrinter.description }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'printer-type' | i18n }}">{{ currentPrinter.printerType?.name }}
+      </nz-descriptions-item>
+      
+    </nz-descriptions>
+  </nz-card>
+</div>
+
+
+<div class="steps-action" *ngIf="stepIndex === 0">
+  <button nz-button nzType="default" (click)="nextStep()">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+</div>
+
+<div class="steps-action" *ngIf="stepIndex === 1">
+
+  <button nz-button nzType="default" (click)="previousStep()">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirmPrinter()">
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+</nz-spin>

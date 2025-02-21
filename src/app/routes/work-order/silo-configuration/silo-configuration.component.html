@@ -1,0 +1,93 @@
+<page-header title="{{'silo-configuration' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+    <div nz-row [nzGutter]="24" >
+        <div nz-col [nzSpan]="12">
+            <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="6">
+                    {{ 'webAPIProtocol' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18">
+                    <input nz-input [(ngModel)]="currentSiloConfiguration.webAPIProtocol" />
+                    
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div> 
+      
+    <div nz-row [nzGutter]="24" >
+        <div nz-col [nzSpan]="12">
+            <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="6">
+                    {{ 'url' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18">
+                    <input nz-input [(ngModel)]="currentSiloConfiguration.webAPIUrl" />
+                    
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div> 
+    <div nz-row [nzGutter]="24" >
+        <div nz-col [nzSpan]="12">
+            <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="6">
+                    {{ 'username' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18">
+                    <input nz-input [(ngModel)]="currentSiloConfiguration.webAPIUsername" />
+                    
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div> 
+    <div nz-row [nzGutter]="24" >
+        <div nz-col [nzSpan]="12">
+            <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="6">
+                    {{ 'password' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18">
+                    <nz-input-group [nzSuffix]="suffixTemplate">
+                        <input nz-input [(ngModel)]="currentSiloConfiguration.webAPIPassword" [type]="passwordVisible ? 'text' : 'password'"/>
+                    </nz-input-group>
+                    <ng-template #suffixTemplate>
+                    <i nz-icon [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                        (click)="passwordVisible = !passwordVisible"></i>
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div> 
+    <div nz-row [nzGutter]="24" >
+        <div nz-col [nzSpan]="2"> 
+        </div>
+        <div nz-col [nzSpan]="8"> 
+            <nz-form-item> 
+              <nz-form-control [nzSpan]="10">
+                <label nz-checkbox [(ngModel)]="currentSiloConfiguration.enabled">{{ 'enabled' | i18n }}</label>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+    </div>
+    <div nz-row [nzGutter]="24" >
+        <div nz-col [nzSpan]="2"> 
+        </div>
+        <div nz-col [nzSpan]="8">
+            <nz-form-item> 
+              <nz-form-control [nzSpan]="10">
+                <label nz-checkbox [(ngModel)]="currentSiloConfiguration.inventoryInformationFromWMS">{{ 'inventoryInformationFromWMS' | i18n }}</label>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+    </div>
+      
+    <div nz-row nzType="flex" nzJustify="start" style="padding-top: 20px">
+       
+        <button nz-button nzType="primary" (click)="saveConfiguration()" *ngIf="!displayOnly">
+            {{ 'confirm' | i18n }}
+        </button>
+    </div>
+    
+</nz-spin>

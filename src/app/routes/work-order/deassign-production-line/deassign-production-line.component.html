@@ -1,0 +1,249 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+    <a routerLink="/work-order/work-order" routerLinkActive="active"
+        [queryParams]="{number: currentWorkOrder?.number}">{{
+        'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+    <nz-breadcrumb>
+        <nz-breadcrumb-item>
+            <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+        <nz-breadcrumb-item><a routerLink="/work-order/work-order" routerLinkActive="active">{{
+                'breadcrumb.work-order' | i18n
+                }}</a></nz-breadcrumb-item>
+        <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+    <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+        <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+        <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+    </nz-steps>
+
+    <!-- Let the user choose the production line and input the return to stock material -->
+    <div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
+
+        <nz-descriptions nzTitle="{{ 'work-order' | i18n}} - {{  currentWorkOrder?.number }}" nzBordered>
+            <nz-descriptions-item nzTitle="{{ 'production-line' | i18n}}">
+
+                <nz-select [(ngModel)]="selectedProductionLineId" (ngModelChange)="selectedProductionLineChanged()">
+                    <nz-option *ngFor="let assignedProductionLine of currentWorkOrder?.productionLineAssignments"
+                        nzValue="{{assignedProductionLine.productionLine.id}}"
+                        nzLabel="{{assignedProductionLine.productionLine.name}}">
+                    </nz-option>
+                </nz-select>
+
+            </nz-descriptions-item>
+        </nz-descriptions>
+
+
+        <!-- Table to show inventory  -->
+
+        <div class="search-result-list" *ngIf="selectedProductionLine !== undefined">
+            <h3>{{ 'work-order.returned-inventory' | i18n}}</h3>
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="listOfReturnableMaterial"
+                [nzFooter]="inventoryTableFoot" #inventoryTable>
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>{{ 'lpn' | i18n }}</th>
+                        <th>{{ 'item' | i18n }}</th>
+                        <th>{{ 'item.description' | i18n }}</th>
+                        <th>{{ 'item.package-type' | i18n }}</th>
+                        <th>{{ 'inventory.status' | i18n }}</th>
+                        <th>{{ 'quantity' | i18n }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of inventoryTable.data; let i = index">
+                        <td>{{ data.id }} </td>
+                        <td>
+                            <div *ngIf="data.id === undefined">
+                                <div class="row">
+                                    <input appFkey variable="lpn" type="text" [ngModel]="data.lpn"
+                                        (blur)="lpnChanged($event, data)" name="lpn-{{ i }}" id="lpn-{{ i }}" />
+                                </div>
+
+                            </div>
+                            <span *ngIf="data.id">
+                                {{ data.lpn }}
+                            </span>
+                        </td>
+                        <td>
+
+                            <nz-select style="width: 150px" *ngIf="data.id === undefined" [(ngModel)]="data.item!.name"
+                                (ngModelChange)="itemChanged(data)" nzShowSearch nzAllowClear>
+                                <nz-option *ngFor="let workOrderLine of currentWorkOrder?.workOrderLines"
+                                    [nzLabel]="workOrderLine.item!.name" [nzValue]="workOrderLine.item!.name">
+                                </nz-option>
+                            </nz-select>
+                            <!--
+
+                        <input type="text" [ngModel]="data.item!.name!" (blur)="itemChanged($event, data)"
+                            *ngIf="data.id === undefined" name="item-{{ i }}" />
+
+-->
+                            <span *ngIf="data.id">
+                                {{ data.item?.name }}
+                            </span>
+                        </td>
+                        <td>
+                            {{ data.item?.description }}
+                        </td>
+                        <td>
+                            <nz-select style="width: 150px" *ngIf="data.id === undefined"
+                                [(ngModel)]="data.itemPackageType!.name" (ngModelChange)="itemPackageTypeChanged(data)"
+                                nzShowSearch nzAllowClear>
+                                <nz-option *ngFor="let itemPackageType of data.item?.itemPackageTypes"
+                                    [nzLabel]="itemPackageType.name!" [nzValue]="itemPackageType.name!"></nz-option>
+                            </nz-select>
+                            <span *ngIf="data.id">
+                                {{ data.itemPackageType?.name }}
+                            </span>
+                        </td>
+                        <td>
+                            <nz-select style="width: 150px" *ngIf="data.id === undefined"
+                                [(ngModel)]="data.inventoryStatus!.id" (ngModelChange)="inventoryStatusChanged(data)"
+                                nzShowSearch nzAllowClear>
+                                <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
+                                    [nzLabel]="inventoryStatus.description"
+                                    [nzValue]="inventoryStatus?.id">
+                                </nz-option>
+                            </nz-select>
+
+                            <span *ngIf="data.id">
+                                {{  data.inventoryStatus?.description }}
+                            </span>
+                        </td>
+                        <td><input type="text" [(ngModel)]="data.quantity" name="result-{{ i }}" /></td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+
+        <ng-template #inventoryTableFoot>
+            <div nz-row nzType="flex" nzJustify="start">
+                <button nz-button nzType="primary" (click)="addExtraInventory()">
+                    {{ 'add' | i18n }}
+                </button>
+            </div>
+        </ng-template>
+    </div>
+
+
+    <!-- Let the user confirm the result -->
+    <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+
+        <nz-descriptions nzTitle="{{ 'work-order' | i18n}} - {{  currentWorkOrder?.number }}" nzBordered>
+            <nz-descriptions-item nzTitle="{{ 'production-line' | i18n}}">
+                {{selectedProductionLine?.name}}
+
+            </nz-descriptions-item>
+        </nz-descriptions>
+
+
+        <!-- Table to show inventory  -->
+
+        <div class="search-result-list">
+            <h3>{{ 'work-order.returned-inventory' | i18n}}</h3>
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowPagination [nzData]="inventoryResults"
+                #inventoryTable>
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>{{ 'lpn' | i18n }}</th>
+                        <th>{{ 'item' | i18n }}</th>
+                        <th>{{ 'item.description' | i18n }}</th>
+                        <th>{{ 'item.package-type' | i18n }}</th>
+                        <th>{{ 'inventory.status' | i18n }}</th>
+                        <th>{{ 'quantity' | i18n }}</th>
+                        <th>{{ 'originalValue' | i18n }}</th>
+                        <th>{{ 'newValue' | i18n }}</th>
+                        <th>{{ 'type' | i18n }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of inventoryTable.data; let i = index">
+                        <td>{{ data.inventory.id }} </td>
+                        <td>{{ data.inventory.lpn }} </td>
+                        <td>{{ data.inventory.item?.name }} </td>
+                        <td>{{ data.inventory.item?.description }} </td>
+                        <td>{{ data.inventory.itemPackageType?.name }} </td>
+                        <td>{{ data.inventory.inventoryStatus?.name }} </td>
+                        <td>{{ data.inventory.quantity }} </td>
+
+                        <td>{{ data.originalQuantity}} </td>
+                        <td>{{ data.newQuantity}} </td>
+                        <td>{{ data.type}} </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+
+        <div class="search-result-list">
+            <h3>{{ 'pick-to-be-cancelled' | i18n}}</h3>
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="picksToBeCancelled" nzSize="middle"
+                [nzShowPagination]="true" #pickTable>
+
+                <thead>
+                    <th>
+                        {{ 'pick.number' | i18n }}</th>
+                    <th>
+                        {{ 'sourceLocationGroup' | i18n }}</th>
+                    <th>
+                        {{ 'sourceLocation' | i18n }}</th>
+                    <th>
+                        {{ 'destinationLocationGroup' | i18n }}</th>
+                    <th>
+                        {{ 'destinationLocation' | i18n }}</th>
+                    <th>
+                        {{ 'item' | i18n }}</th>
+                    <th>
+                        {{ 'item.description' | i18n }}</th>
+                    <th>
+                        {{ 'pick.quantity' | i18n }}</th>
+                    <th>
+                        {{ 'pick.pickedQuantity' | i18n }}</th>
+                </thead>
+                <tbody>
+
+                    <tr *ngFor="let pick of pickTable.data">
+                        <td>{{ pick.number }}</td>
+                        <td>{{ pick.sourceLocation?.locationGroup?.name }}</td>
+                        <td>{{ pick.sourceLocation?.name }}</td>
+                        <td>{{ pick.destinationLocation?.locationGroup?.name }}</td>
+                        <td>{{ pick.destinationLocation?.name }}</td>
+                        <td>{{ pick.item?.name }}</td>
+                        <td>{{ pick.item?.description }}</td>
+                        <td>{{ pick.quantity }}</td>
+                        <td>{{ pick.pickedQuantity }}</td>
+                    </tr>
+                </tbody>
+            </nz-table>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="steps-action">
+        <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+            <span>{{ 'steps.previous' | i18n }}</span>
+        </button>
+        <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+        <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1">
+            <span>{{ 'steps.next' | i18n }}</span>
+        </button>
+        <nz-divider nzType="vertical"></nz-divider>
+        <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 1">
+            <span> {{ 'confirm' | i18n }}</span>
+        </button>
+    </div>
+
+</nz-spin>

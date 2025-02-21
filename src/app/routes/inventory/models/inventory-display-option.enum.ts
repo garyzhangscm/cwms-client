@@ -1,0 +1,7 @@
+export enum InventoryDisplayOption {
+    NONE = 'NONE',
+    GROUP_BY_LPN = 'GROUP_BY_LPN',
+    GROUP_BY_LOCATION = 'GROUP_BY_LOCATION',
+    GROUP_BY_ITEM = 'GROUP_BY_ITEM',
+    GROUP_BY_LOCATION_ITEM = 'GROUP_BY_LOCATION_ITEM',
+}

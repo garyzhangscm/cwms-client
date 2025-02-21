@@ -1,0 +1,322 @@
+<page-header [title]="'page.production-line.header.title' | i18n"> </page-header>
+
+<!-- Form to query the result  -->
+<nz-spin [nzSpinning]="isSpinning">
+
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label for="name" [nzSm]="3" [nzXs]="3">
+            {{ 'production-line.name' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <input nz-input name="name" id="name" formControlName="name" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6">
+            {{ 'type' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <nz-select nz-input  name="type" id="type" formControlName="type" style="width: 250px">
+              <nz-option *ngFor="let type of availableProductionLineTypes" [nzLabel]="type.name!"
+                [nzValue]="type.name!">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Table to Display the result  -->
+  <div class="search-result-list">
+    
+    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+      <app-util-table-column-selection [tableColumnsConfiguration]="tableConfigurations['productionLineTable']" 
+      (tableColumnConfigurationChanged)="productionLineTableColumnConfigurationChanged($event)" >
+        
+      </app-util-table-column-selection>
+    
+    </div>
+
+    <st #productionLineTable [data]="listOfAllProductionLine" [columns]="productionLineTableColumns" [footer]="tableFoot" 
+    [scroll]="{ x: '2715px' }" [expand]="expand"  expandAccordion
+    (change)="productionLineTableChanged($event)">
+    
+      <ng-template st-row="locationColumn" let-productionLine let-index="index">
+          
+        <nz-skeleton-element 
+            *ngIf="productionLine.productionLineLocationId && productionLine.productionLineLocation == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+        <a>{{ productionLine.productionLineLocation?.name }}</a>
+
+      </ng-template>
+      
+      <ng-template st-row="inboundStageLocationColumn" let-productionLine let-index="index">
+          
+        <nz-skeleton-element 
+            *ngIf="productionLine.inboundStageLocationId && productionLine.inboundStageLocation == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+        <a>{{ productionLine.inboundStageLocation?.name }}</a>
+
+      </ng-template>
+      
+      <ng-template st-row="outboundStageLocationColumn" let-productionLine let-index="index">
+          
+        <nz-skeleton-element 
+            *ngIf="productionLine.outboundStageLocationId && productionLine.outboundStageLocation == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+        <a>{{ productionLine.outboundStageLocation?.name }}</a>
+
+      </ng-template>
+
+      <ng-template st-row="actionColumn" let-productionLine >
+        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+          {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu> 
+            <li nz-menu-item>                    
+              <a routerLink="/work-order/production-line-maintenance" [queryParams]="{id: productionLine.id!}"
+              routerLinkActive="active"> {{ 'modify' | i18n }}</a>
+            </li>              
+            <li nz-menu-item *ngIf="productionLine.enabled === true" >
+              <a (click)="disableProductionLine(productionLine)"> {{'disable' | i18n}}</a>
+            </li>          
+            <li nz-menu-item *ngIf="productionLine.enabled === false" >
+              <a (click)="enableProductionLine(productionLine)"> {{'enable' | i18n}}</a>
+            </li>           
+            <li nz-menu-item  >
+              <a (click)="removeProductionLine(productionLine)"> {{'delete' | i18n}}</a>
+            </li> 
+          </ul>
+        </nz-dropdown-menu> 
+      </ng-template>
+      <ng-template #expand let-productionLine >
+        <nz-tabset>
+          <nz-tab nzTitle=" {{ 'production-line.capacity' | i18n }}">
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="productionLine.productionLineCapacities" nzSize="middle"
+              [nzShowPagination]="false">
+
+              <thead>
+
+                <th>{{"item" | i18n}}</th>
+                <th>{{"mould" | i18n}}</th>
+                <th>{{"production-line.capacity" | i18n}}</th>
+                <th>{{"unit-of-measure" | i18n}}</th>
+                <th>{{"time-unit" | i18n}}</th>
+                <th>{{ 'production-line.staff-count' | i18n }}</th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let productionLineCapacity of productionLine.productionLineCapacities">
+
+                  <td>{{ productionLineCapacity.item?.name }}</td>
+                  <td>{{ productionLineCapacity.mould?.name }}</td>
+                  <td>{{ productionLineCapacity.capacity }}</td>
+                  <td>
+                    {{ productionLineCapacity.unitOfMeasure?.description }}</td>
+                  <td>{{ productionLineCapacity.capacityUnit }}</td>
+                  <td>{{ productionLineCapacity.staffCount }}</td>
+
+                </tr>
+
+              </tbody>
+            </nz-table>
+          </nz-tab>
+          <nz-tab nzTitle=" {{ 'work-order' | i18n }}">
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="productionLine.productionLineAssignments!" nzSize="middle"
+              [nzShowPagination]="false">
+
+              <thead>
+
+                <th>{{"work-order" | i18n}}</th>
+                <th>{{"item" | i18n}}</th>
+                <th>{{"quantity" | i18n}}</th>
+                <th>{{"openQuantity" | i18n}}</th>
+                <th>{{"mould" | i18n}}</th>
+              </thead>
+              <tbody>
+                <tr *ngFor="let productionLineAssignment of productionLine.productionLineAssignments">
+
+                  <td>{{ productionLineAssignment.workOrderNumber }}</td>
+                  <td>{{ productionLineAssignment.workOrderItemName }}</td>
+                  <td>{{ productionLineAssignment.quantity }}</td>
+                  <td>{{ productionLineAssignment.openQuantity }}</td>
+                  <td>{{ productionLineAssignment.mould?.name }}</td>
+
+                </tr>
+
+              </tbody>
+            </nz-table>
+          </nz-tab>
+        </nz-tabset>
+      </ng-template>
+    </st>
+<!--
+
+ 
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #rowSelectionTable nzShowSizeChanger nzShowPagination
+      [nzData]="listOfAllProductionLine" [nzFooter]="tableFoot">
+      <thead>
+        <tr>
+          <th nzWidth="40px"></th> 
+          <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+            [nzShowFilter]="column.showFilter">
+            {{ column.name | i18n }}
+          </th>
+
+
+          <th *ngIf="!displayOnly">
+            {{ 'action' | i18n }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-template ngFor let-data [ngForOf]="rowSelectionTable.data">
+          <tr>
+
+
+            <td [nzExpand]="expandSet.has(data.id!!)" (nzExpandChange)="onExpandChange(data, $event)"></td>
+
+            <td>{{ data.name }}</td>
+            <td>{{ data.type?.name }}</td>
+            <td>{{ data.productionLineLocation?.name }}</td>
+            <td>{{ data.inboundStageLocation?.name }}</td>
+            <td>{{ data.outboundStageLocation?.name }}</td>
+            <td>{{ data.workOrderExclusiveFlag + ""| i18n }}</td>
+            <td>{{ data.reportPrinterName }}</td>
+            <td>{{ data.labelPrinterName }}</td>
+            <td>{{ data.enabled + "" | i18n }}</td>
+            <td>{{ data.genericPurpose + "" | i18n }}</td>
+            <td *ngIf="!displayOnly">
+              
+              <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+                {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu> 
+                  <li nz-menu-item>                    
+                    <a routerLink="/work-order/production-line-maintenance" [queryParams]="{id: data.id!}"
+                    routerLinkActive="active"> {{ 'modify' | i18n }}</a>
+                  </li>              
+                  <li nz-menu-item *ngIf="data.enabled === true" >
+                    <a (click)="disableProductionLine(data)"> {{'disable' | i18n}}</a>
+                  </li>          
+                  <li nz-menu-item *ngIf="data.enabled === false" >
+                    <a (click)="enableProductionLine(data)"> {{'enable' | i18n}}</a>
+                  </li>           
+                  <li nz-menu-item  >
+                    <a (click)="removeProductionLine(data)"> {{'delete' | i18n}}</a>
+                  </li> 
+                </ul>
+              </nz-dropdown-menu> 
+            </td> 
+          </tr>
+          <tr [nzExpand]="expandSet.has(data.id!!)" class="inner-table">
+
+            <nz-tabset>
+              <nz-tab nzTitle=" {{ 'production-line.capacity' | i18n }}">
+                <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="data.productionLineCapacities" nzSize="middle"
+                  [nzShowPagination]="false">
+
+                  <thead>
+
+                    <th>{{"item" | i18n}}</th>
+                    <th>{{"mould" | i18n}}</th>
+                    <th>{{"production-line.capacity" | i18n}}</th>
+                    <th>{{"unit-of-measure" | i18n}}</th>
+                    <th>{{"time-unit" | i18n}}</th>
+                    <th>{{ 'production-line.staff-count' | i18n }}</th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let productionLineCapacity of data.productionLineCapacities">
+
+                      <td>{{ productionLineCapacity.item?.name }}</td>
+                      <td>{{ productionLineCapacity.mould?.name }}</td>
+                      <td>{{ productionLineCapacity.capacity }}</td>
+                      <td>
+                        {{ productionLineCapacity.unitOfMeasure?.description }}</td>
+                      <td>{{ productionLineCapacity.capacityUnit }}</td>
+                      <td>{{ productionLineCapacity.staffCount }}</td>
+
+                    </tr>
+
+                  </tbody>
+                </nz-table>
+              </nz-tab>
+              <nz-tab nzTitle=" {{ 'work-order' | i18n }}">
+                <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="data.productionLineAssignments!" nzSize="middle"
+                  [nzShowPagination]="false">
+
+                  <thead>
+
+                    <th>{{"work-order" | i18n}}</th>
+                    <th>{{"item" | i18n}}</th>
+                    <th>{{"quantity" | i18n}}</th>
+                    <th>{{"openQuantity" | i18n}}</th>
+                    <th>{{"mould" | i18n}}</th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let productionLineAssignment of data.productionLineAssignments">
+
+                      <td>{{ productionLineAssignment.workOrderNumber }}</td>
+                      <td>{{ productionLineAssignment.workOrderItemName }}</td>
+                      <td>{{ productionLineAssignment.quantity }}</td>
+                      <td>{{ productionLineAssignment.openQuantity }}</td>
+                      <td>{{ productionLineAssignment.mould?.name }}</td>
+
+                    </tr>
+
+                  </tbody>
+                </nz-table>
+              </nz-tab>
+            </nz-tabset>
+          </tr>
+        </ng-template>
+    </tbody>
+    </nz-table>
+
+-->
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
+      <button nz-button nzType="primary" routerLink="/work-order/production-line-maintenance" routerLinkActive="active"
+        [nzLoading]="searching">
+        {{'add' | i18n}}
+      </button>
+
+    </div>
+
+  </div>
+
+</nz-spin>
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>

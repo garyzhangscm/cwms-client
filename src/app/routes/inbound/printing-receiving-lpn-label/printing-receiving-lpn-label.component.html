@@ -1,0 +1,196 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <ng-template #returnLink>
+    <a (click)="return()" routerLinkActive="active">{{
+      'return' | i18n
+      }}</a>
+  </ng-template>
+  <ng-template #breadcrumb>
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a routerLink="/receipt" routerLinkActive="active">{{
+          'receipt' | i18n
+          }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </ng-template>
+ 
+   
+    <nz-descriptions  nzBordered="true" *ngIf="currentReceipt">
+  
+      <nz-descriptions-item nzTitle="{{ 'standardPalletSize' | i18n}}">
+        <nz-input-number  [nzMin]="0" [(ngModel)]="standardPalletSize" (ngModelChange)="standardPalletSizeChanged()" [nzStep]="0.05"></nz-input-number> Cubic Meter
+      </nz-descriptions-item>
+      
+      <nz-descriptions-item nzTitle="{{ 'start-lpn' | i18n}}">
+        <input nz-input [(ngModel)]="startLPN" [disabled]="!userSpecifyLPN"/>
+        <label nz-checkbox [(ngModel)]="userSpecifyLPN">{{'user-specify-lpn' | i18n}}</label>
+      </nz-descriptions-item>
+    </nz-descriptions> 
+    <nz-card nzType="inner"  *ngIf="currentReceipt" >
+        <st #receiptLineTable [data]="currentReceipt.receiptLines" [columns]="receiptLineTableColumns" 
+        [scroll]="{ x: '1315px' }"  >
+       
+          <!--   attributeColumn colummn  -->  
+          <ng-template st-row="attributeColumn" let-receiptLine let-index="index"> 
+            
+            <nz-list>
+              <nz-list-item>   
+                <p>{{ 'inventory-quantity-on-lpn' | i18n}}</p>
+                <p>
+                  <nz-input-number  [ngModel]="lpnQuantityOnLabelByReceiptLines.get(receiptLine.id)"
+                    (ngModelChange)="lpnQuantityOnLabelChanged(receiptLine.id, $event)"
+                    [nzMin]="0"  [nzStep]="1" [disabled]="ignoreInventoryQuantityByReceiptLines.get(receiptLine.id) != true"/>
+                    <i nz-icon [nzType]="'question-circle'" nz-popover [nzPopoverContent]="contentTemplate"
+                        nzPopoverPlacement="topRight" ></i> 
+                </p>
+                <p>
+                  <label nz-checkbox [ngModel]="ignoreInventoryQuantityByReceiptLines.get(receiptLine.id)"
+                      (ngModelChange)="ignoreInventoryQuantityChanged(receiptLine.id, $event)">
+                    {{'ignoreInventoryQuantity' | i18n}}</label>
+
+                </p>
+                
+                    <ng-template #contentTemplate>
+                      <div>Quantity of the inventory on the LPN label
+                      </div>
+                    </ng-template>   
+              </nz-list-item>
+              <nz-list-item>   
+                <div>{{ 'label-count' | i18n}} :</div>
+                <div>
+                  <nz-input-number  [ngModel]="lpnLabelCountByReceiptLines.get(receiptLine.id)" 
+                    (ngModelChange)="lpnLabelCountChanged(receiptLine.id, $event)" [nzMin]="1"  [nzStep]="1">
+                  </nz-input-number> 
+                </div>
+              </nz-list-item>
+            </nz-list>  
+          </ng-template> 
+          <!--   lableCountColumn colummn  -->  
+          <ng-template st-row="lableCountColumn" let-receiptLine let-index="index"> 
+                <nz-input-number  [ngModel]="lpnLabelCountByReceiptLines.get(receiptLine.id)" 
+                      (ngModelChange)="lpnLabelCountChanged(receiptLine.id, $event)" [nzMin]="1"  [nzStep]="1">
+                </nz-input-number>
+          </ng-template> 
+          
+          <!--   lpnQuantityOnLabel colummn  -->  
+          <ng-template st-row="lpnQuantityOnLabelColumn" let-receiptLine let-index="index"> 
+            <nz-input-number  [ngModel]="lpnQuantityOnLabelByReceiptLines.get(receiptLine.id)"
+                (ngModelChange)="lpnQuantityOnLabelChanged(receiptLine.id, $event)"
+                 [nzMin]="0"  [nzStep]="1" [disabled]="ignoreInventoryQuantityByReceiptLines.get(receiptLine.id) == true"/>
+            <i nz-icon [nzType]="'question-circle'" nz-popover [nzPopoverContent]="contentTemplate"
+                nzPopoverPlacement="topRight" ></i> 
+            <p>
+              <label nz-checkbox [ngModel]="ignoreInventoryQuantityByReceiptLines.get(receiptLine.id)"
+                  (ngModelChange)="ignoreInventoryQuantityChanged(receiptLine.id, $event)">
+                {{'ignoreInventoryQuantity' | i18n}}</label>
+
+            </p>
+            
+            <ng-template #contentTemplate>
+              <div>Quantity of the inventory on the LPN label
+              </div>
+            </ng-template> 
+          </ng-template> 
+
+          <ng-template st-row="expectedQuantityColumn" let-receiptLine let-index="index"> 
+ 
+            {{ receiptLine.displayExpectedQuantity }}  
+            <nz-skeleton-element 
+              *ngIf="receiptLine.displayUnitOfMeasureForExpectedQuantity == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element>  
+            <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList" 
+              *ngIf="receiptLine.displayUnitOfMeasureForExpectedQuantity != null">
+              {{receiptLine.displayUnitOfMeasureForExpectedQuantity.name}}
+              <span nz-icon nzType="down"></span>
+            </a>
+            <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
+              <ul nz-menu nzSelectable>
+                <!--<li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
+                (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
+                -->
+                <li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLineItemPackageTypes.get(receiptLine.id!)?.itemUnitOfMeasures" 
+                (click)="changeDisplayItemUnitOfMeasureForExpectedQuantity(receiptLine, itemUnitOfMeasure)">
+                  {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                </li> 
+              </ul>
+            </nz-dropdown-menu> 
+
+          </ng-template>
+
+          <ng-template st-row="cubicMeterColumn" let-receiptLine let-index="index"> 
+            {{ receiptLine.cubicMeter | number: '1.0-2'}} 
+         </ng-template>
+         
+          <ng-template st-row="receivedQuantityColumn" let-receiptLine let-index="index"> 
+
+            {{ receiptLine.displayReceivedQuantity }}  
+            <nz-skeleton-element 
+              *ngIf="receiptLine.displayUnitOfMeasureForReceivedQuantity == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element>  
+            <a nz-dropdown [nzDropdownMenu]="unitOfMeasureList" 
+              *ngIf="receiptLine.displayUnitOfMeasureForReceivedQuantity != null">
+              {{receiptLine.displayUnitOfMeasureForReceivedQuantity.name}}
+              <span nz-icon nzType="down"></span>
+            </a>
+            <nz-dropdown-menu #unitOfMeasureList="nzDropdownMenu">
+              <ul nz-menu nzSelectable>
+                <li nz-menu-item *ngFor="let itemUnitOfMeasure of receiptLine.item?.defaultItemPackageType?.itemUnitOfMeasures" 
+                (click)="changeDisplayItemUnitOfMeasureForReceivedQuantity(receiptLine, itemUnitOfMeasure)">
+                  {{ itemUnitOfMeasure.unitOfMeasure?.name }}
+                </li> 
+              </ul>
+            </nz-dropdown-menu> 
+
+          </ng-template>
+
+          <ng-template st-row="itemNameColumn" let-receiptLine let-index="index"> 
+
+            <nz-skeleton-element 
+                *ngIf="receiptLine.itemId && receiptLine.item == null"
+                nzType="input"
+                [nzActive]="true"
+                [nzSize]="'small'"
+                style="width:75px"
+              ></nz-skeleton-element> 
+             {{ receiptLine.item?.name }} 
+
+          </ng-template>
+          <ng-template st-row="itemDescriptionColumn" let-receiptLine let-index="index">
+            
+            <nz-skeleton-element 
+                *ngIf="receiptLine.itemId && receiptLine.item == null"
+                nzType="input"
+                [nzActive]="true"
+                [nzSize]="'small'"
+                style="width:75px"
+              ></nz-skeleton-element> 
+             {{ receiptLine.item?.description }} 
+
+          </ng-template>
+      </st>
+    </nz-card> 
+ 
+
+  <div nz-row style="padding-top: 20px;">
+    
+    <cwms-common-print-button style='padding-left: 20px; '
+      [defaultPhysicalCopyCount]=2
+      (print)="printLPNLabels($event)"
+      (preview)="previewLPNs($event)">
+    </cwms-common-print-button>
+  </div>
+  </nz-spin>

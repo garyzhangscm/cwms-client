@@ -1,0 +1,88 @@
+<page-header [title]="pageTitle!" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/auth/role" routerLinkActive="active">{{
+    'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.auth' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/auth/role" routerLinkActive="active">{{
+        'breadcrumb.role' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<div nz-row style="padding: 50px">
+  <div nz-col nzSpan="20" nzOffset="2">
+    <nz-steps [nzCurrent]="0" [nzSize]="'default'">
+      <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"
+        nzDescription="{{ 'steps.role.basic-info.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.role.assign-users.title' | i18n }}"
+        nzDescription="{{ 'steps.role.assign-users.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.role.assign-menus.title' | i18n }}"
+        nzDescription="{{ 'steps.role.assign-menus.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.role.assign-clients.title' | i18n }}"
+        nzDescription="{{ 'steps.role.assign-clients.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.confirm.title' | i18n }}" nzDescription="{{ 'steps.confirm.description' | i18n }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+
+<nz-card [nzActions]="[cardFoot]">
+  <form nz-form>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="name">
+            {{ 'role.name' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="roleNameErrorTpl" [nzValidateStatus]="roleNameValidateStatus"
+          > 
+            
+            <input nz-input [(ngModel)]="currentRole!.name" id="name" name="name"  required 
+            (blur)="roleNameChange($event)"/>
+            <ng-template #roleNameErrorTpl let-control>  
+                <ng-container *ngIf="roleNameValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
+                <ng-container *ngIf="roleNameValidationMessage === 'nameExists'">Role Name already exists</ng-container>
+                        
+            </ng-template>
+          
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="16">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="description">
+            {{ 'role.description' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <input nz-input [(ngModel)]="currentRole!.description" id="description" name="description" required />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+  </form>
+
+</nz-card>
+
+<ng-template #cardFoot>
+  <div nz-row nzType="flex" nzJustify="center" style='padding-left: 20px;'>
+    <button nz-button nzType="primary" (click)="goToNextPage()" [disabled]="!passValidation()">
+      {{ 'steps.next' | i18n }} :
+      {{ 'steps.role.assign-users.title' | i18n }}
+    </button>
+  </div>
+</ng-template>

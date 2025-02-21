@@ -1,0 +1,52 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/common/unit-of-measure" routerLinkActive="active">{{
+    'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.common' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/common/unit-of-measure" routerLinkActive="active">{{
+        'breadcrumb.unit-of-measure' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<div nz-row style="padding: 50px">
+  <div nz-col nzSpan="12" nzOffset="6">
+    <nz-steps [nzCurrent]="1" [nzSize]="'default'" (nzIndexChange)="onStepIndexChange($event)">
+      <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"
+        nzDescription="{{ 'steps.unit-of-measure.basic-info.description' | i18n }}">
+      </nz-step>
+      <nz-step nzTitle="{{ 'steps.confirm.title' | i18n }}" nzDescription="{{ 'steps.confirm.description' | i18n }}">
+      </nz-step>
+    </nz-steps>
+  </div>
+</div>
+
+
+<ng-container>
+  <nz-card nzTitle="{{ currentUnitOfMeasure?.name }}" [nzActions]="[actionSave]">
+    <nz-descriptions nzBordered>
+
+      <nz-descriptions-item nzTitle="{{'name' | i18n}}">
+        {{currentUnitOfMeasure?.name}}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{'description' | i18n}}" nzSpan="2">
+        {{currentUnitOfMeasure?.description}}
+      </nz-descriptions-item>
+
+    </nz-descriptions>
+  </nz-card>
+</ng-container>
+
+
+<ng-template #actionSave>
+  <button nz-button nzType="primary" (click)="saveUnitOfMeasure()">{{ 'confirm' | i18n}}</button>
+</ng-template>

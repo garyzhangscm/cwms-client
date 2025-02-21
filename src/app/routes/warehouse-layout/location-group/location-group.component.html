@@ -1,0 +1,259 @@
+<page-header [title]="'page.location-group.header.title' | i18n">
+</page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  
+
+
+<!-- Form to query the result  -->
+<form nz-form class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="location_group_type" [nzSpan]="6">
+          {{'location-group-type' | i18n}}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+
+          <nz-select nzMode="tags" [(ngModel)]="selectedLocationGroupTypes" name="selectedLocationGroupTypes">
+            <nz-option *ngFor="let locationGroupType of locationGroupTypes" [nzLabel]="locationGroupType.description"
+              [nzValue]="locationGroupType.id"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="location_group" [nzSpan]="4">
+          {{ 'location-group' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="20">
+          <nz-select nzMode="tags" [(ngModel)]="selectedLocationGroups" name="selectedLocationGroups">
+            <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description!"
+              [nzValue]="locationGroup.id"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching"
+        [disabled]="operationInProcess">{{'search' | i18n}}</button>
+      <button nz-button (click)="resetForm()" [nzLoading]="searching" [disabled]="operationInProcess">{{'clear' |
+        i18n}}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table [nzScroll]="{ x: '100vw'}" #rowSelectionTable nzShowSizeChanger
+    [nzData]="listOfAllLocationGroups" [nzFooter]="tableFoot">
+    <thead>
+      <tr>
+        <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+          [nzShowFilter]="column.showFilter" [nzWidth]="column.width!">
+          {{ column.name | i18n }}
+        </th>
+
+
+        <th nzRight nzWidth="250px" *ngIf="!displayOnly">{{'action' | i18n}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data">
+        <ng-container *ngIf="!editCache[data.id!].edit; else editTemplate">
+          <td>{{ data.name }}</td>
+          <td>{{ data.description }}</td>
+
+          <td>
+
+            {{ data.locationGroupType!.description! }}
+          </td>
+
+
+          <td>{{ data.pickable + ''| i18n}}</td>
+
+          <td>{{ data.storable + ''| i18n}}</td>
+          <td>{{ data.countable + ''| i18n}}</td>
+          <td>{{ data.adjustable + ''| i18n}}</td>
+          <td>{{ data.trackingVolume + ''| i18n}}</td>
+
+          <td><span *ngIf="data.volumeTrackingPolicy !== null">
+              {{ 'LOCATION-VOLUME-TRACKING-POLICY-' + data.volumeTrackingPolicy | i18n}}
+            </span></td>
+          <td>{{ 'INVENTORY-CONSOLIDATION-STRATEGY-' + data.inventoryConsolidationStrategy | i18n}}</td>
+          <td>{{ data.allowEmptyLocation + '' | i18n}}</td>
+          <td>{{ data.allowOutboundSort + '' | i18n}}</td>
+
+          <td><span *ngIf="data.trackingLocationUtilization !== null">
+            {{ data.trackingLocationUtilization + '' | i18n}}
+
+          </span></td>
+          <td><span *ngIf="data.itemVolumeTrackingLevel !== null">
+            {{ 'ITEM-VOLUME-TRACKING-LEVEL-' + data.itemVolumeTrackingLevel + '' | i18n}}
+          </span></td>
+
+          <td nzRight *ngIf="!displayOnly">
+            <a (click)="startEdit(data.id!)"
+              *ngIf="!searching && !operationInProcess && data.locationGroupType?.virtual === false"> {{ 'modify' | i18n
+              }}</a>
+            <a *ngIf="searching || operationInProcess"> {{ 'modify' | i18n }}</a>
+            <!-- Allow remove location group only if it is a virtual location group -->
+            <nz-divider nzType="vertical" *ngIf="data.locationGroupType?.virtual === false"></nz-divider>
+            <button nz-button nzDanger (click)="removeLocationGroup(data.id!)"
+              *ngIf="data.locationGroupType?.virtual === false" [nzLoading]="searching"
+              [disabled]="operationInProcess">{{'delete' | i18n}}</button>
+          </td>
+        </ng-container>
+
+        <ng-template #editTemplate>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id!].data.name" /></td>
+          <td><input type="text" nz-input [(ngModel)]="editCache[data.id!].data.description" /></td>
+
+          <td>
+            <!--
+
+
+            <a nz-dropdown [nzDropdownMenu]="locationGroupTypesMenu">
+              {{ data.locationGroupType.description }}
+              <i nz-icon nzType="down"></i>
+            </a>
+            <nz-dropdown-menu #locationGroupTypesMenu="nzDropdownMenu">
+              <ul nz-menu nzSelectable>
+                <li nz-menu-item *ngFor="let locationGroupType of locationGroupTypes"
+                  (click)="changeLocationGroupType(data, locationGroupType.value)">
+                  {{locationGroupType.label}}
+                </li>
+              </ul>
+            </nz-dropdown-menu>
+
+            -->
+            <nz-select [(ngModel)]="editCache[data.id!].locationGroupTypeName">
+              <nz-option *ngFor="let locationGroupType of locationGroupTypes" [nzLabel]="locationGroupType.description"
+                [nzValue]="locationGroupType.name"></nz-option>
+            </nz-select>
+          </td>
+
+          <td>
+            <nz-select [(ngModel)]="editCache[data.id!].data.pickable">
+              <nz-option nzLabel="{{ 'true' | i18n }} " [nzValue]="true"></nz-option>
+              <nz-option nzLabel="{{ 'false' | i18n }}" [nzValue]="false"></nz-option>
+            </nz-select>
+          </td>
+
+          <td>
+
+            <nz-select [(ngModel)]="editCache[data.id!].data.storable">
+              <nz-option nzLabel="{{ 'true' | i18n }} " [nzValue]="true"></nz-option>
+              <nz-option nzLabel="{{ 'false' | i18n }}" [nzValue]="false"></nz-option>
+            </nz-select>
+          </td>
+          <td>
+
+            <nz-select [(ngModel)]="editCache[data.id!].data.countable">
+              <nz-option nzLabel="{{ 'true' | i18n }} " [nzValue]="true"></nz-option>
+              <nz-option nzLabel="{{ 'false' | i18n }}" [nzValue]="false"></nz-option>
+            </nz-select>
+
+          </td>
+          <td>
+
+            <nz-select [(ngModel)]="editCache[data.id!].data.adjustable">
+              <nz-option nzLabel="{{ 'true' | i18n }} " [nzValue]="true"></nz-option>
+              <nz-option nzLabel="{{ 'false' | i18n }}" [nzValue]="false"></nz-option>
+            </nz-select>
+
+          </td>
+          <td>
+
+            <nz-select [(ngModel)]="editCache[data.id!].data.trackingVolume">
+              <nz-option nzLabel="{{ 'true' | i18n }} " [nzValue]="true"></nz-option>
+              <nz-option nzLabel="{{ 'false' | i18n }}" [nzValue]="false"></nz-option>
+            </nz-select>
+
+          </td>
+          <td>
+
+            <nz-select [(ngModel)]="editCache[data.id!].data.volumeTrackingPolicy">
+              <nz-option *ngFor="let policy of locationVolumeTrackingPolicy | keys" [nzValue]="policy.key"
+                nzLabel="{{ 'LOCATION-VOLUME-TRACKING-POLICY-' + policy.key | i18n }}"></nz-option>
+            </nz-select>
+
+          </td>
+          <td>
+
+            <nz-select [(ngModel)]="editCache[data.id!].data.inventoryConsolidationStrategy">
+              <nz-option *ngFor="let strategy of inventoryConsolidationStrategy | keys" [nzValue]="strategy.key"
+                nzLabel="{{ 'INVENTORY-CONSOLIDATION-STRATEGY-' + strategy.key | i18n }}"></nz-option>
+            </nz-select>
+
+          </td>
+          <td>
+
+            <nz-select [(ngModel)]="editCache[data.id!].data.allowEmptyLocation">
+              <nz-option nzLabel="{{ 'true' | i18n }} " [nzValue]="true"></nz-option>
+              <nz-option nzLabel="{{ 'false' | i18n }}" [nzValue]="false"></nz-option>
+            </nz-select>
+
+          </td>
+          <td>
+
+            <nz-select [(ngModel)]="editCache[data.id!].data.allowOutboundSort">
+              <nz-option nzLabel="{{ 'true' | i18n }} " [nzValue]="true"></nz-option>
+              <nz-option nzLabel="{{ 'false' | i18n }}" [nzValue]="false"></nz-option>
+            </nz-select>
+
+          </td>
+          
+          <td>
+
+            <nz-select [(ngModel)]="editCache[data.id!].data.trackingLocationUtilization">
+              <nz-option nzLabel="{{ 'true' | i18n }} " [nzValue]="true"></nz-option>
+              <nz-option nzLabel="{{ 'false' | i18n }}" [nzValue]="false"></nz-option>
+            </nz-select>
+
+          </td>
+          <td>
+
+            <nz-select [(ngModel)]="editCache[data.id!].data.itemVolumeTrackingLevel">
+              <nz-option *ngFor="let itemVolumeTrackingLevel of itemVolumeTrackingLevels | keys" [nzValue]="itemVolumeTrackingLevel.key"
+                nzLabel="{{ 'ITEM-VOLUME-TRACKING-LEVEL-' + itemVolumeTrackingLevel.key | i18n }}"></nz-option>
+            </nz-select>
+
+          </td>
+
+
+          <td nzRight>
+            <a (click)="saveRecord(data.id!)" class="save">{{'save' | i18n }}</a>
+            <a nz-popconfirm nzPopconfirmTitle="Sure to cancel?" (nzOnConfirm)="cancelEdit(data.id!)">{{'cancel' |
+              i18n }}</a>
+          </td>
+        </ng-template>
+      </tr>
+    </tbody>
+  </nz-table>
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
+    <button nz-button nzType="primary" routerLink="/warehouse-layout/location-group-maintenance"
+      routerLinkActive="active" [nzLoading]="searching" [disabled]="operationInProcess">
+      {{'add' | i18n}}
+    </button>
+    <!--
+
+    <button nz-button nzDanger (click)="removeSelectedLocationGroups()">{{'delete' | i18n}}</button>
+
+-->
+  </div>
+</div>
+
+</nz-spin>
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>

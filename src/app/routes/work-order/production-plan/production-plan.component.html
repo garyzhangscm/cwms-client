@@ -1,0 +1,248 @@
+<page-header [title]="'page.production-plan.header.title' | i18n"> </page-header>
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="number" [nzSpan]="6">
+          {{ 'production-plan.number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <input nz-input name="number" id="number" formControlName="number" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="item" [nzSpan]="6">
+          {{ 'item' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <input nz-input name="item" id="item" formControlName="item" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #nestedTable nzShowSizeChanger nzShowPagination
+    [nzData]="listOfAllProductionPlans" [nzFooter]="tableFoot">
+    <thead>
+      <tr>
+        <th [nzSelections]="listOfSelection" [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="onAllChecked($event)" nzWidth="60px"></th>
+        <th nzWidth="40px"></th>
+        <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+          [nzShowFilter]="column.showFilter">
+          {{ column.name | i18n }}
+        </th>
+
+
+
+
+      </tr>
+    </thead>
+    <tbody>
+      <ng-template ngFor let-data [ngForOf]="nestedTable.data">
+        <tr>
+
+          <td [nzChecked]="setOfCheckedId.has(data.id!!)" (nzCheckedChange)="onItemChecked(data.id!!, $event)"></td>
+          <td [nzExpand]="expandSet.has(data.id!!)" (nzExpandChange)="onExpandChange(data.id!!, $event)"></td>
+
+          <td>{{ data.number }}</td>
+          <td>{{ data.description }}</td>
+          <td>{{ data.expectedQuantity }}</td>
+          <td>{{ data.inprocessQuantity }}</td>
+          <td>{{ data.producedQuantity }}</td>
+
+        </tr>
+        <tr [nzExpand]="expandSet.has(data.id!!)">
+
+          <nz-tabset>
+            <nz-tab nzTitle=" {{ 'production-plan.line' | i18n }}">
+
+              <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="data.productionPlanLines" nzSize="middle"
+                [nzShowPagination]="false">
+
+                <thead>
+                  <tr>
+                    <th>
+                      {{ 'item' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'production-plan.line.expectedQuantity' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'production-plan.line.inprocessQuantity' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'production-plan.line.producedQuantity' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'order.number' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'order.line.number' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'bill-of-material.number' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'inventory-status' | i18n }}
+                    </th>
+                    <th *ngIf="!displayOnly">
+                      {{ 'action' | i18n }}
+                    </th>
+                  </tr>
+                </thead>
+    <tbody>
+
+      <tr *ngFor="let productionPlanLine of data.productionPlanLines">
+        <td>{{ productionPlanLine.item?.name }}</td>
+        <td>{{ productionPlanLine.expectedQuantity }}</td>
+        <td>{{ productionPlanLine.inprocessQuantity }}</td>
+        <td>{{ productionPlanLine.producedQuantity }}</td>
+        <td>{{ productionPlanLine.orderLine?.orderNumber }}</td>
+        <td>{{ productionPlanLine.orderLine?.number }}</td>
+        <td>{{ productionPlanLine.billOfMaterial?.number }}</td>
+        <td>{{ productionPlanLine.inventoryStatus?.name }}</td>
+        <td *ngIf="!displayOnly">
+          <button nz-button nzType="primary"
+            (click)="openNewWorkOrderModal(productionPlanLine, tplCreatingWorkOrderModalTitle, tplCreatingWorkOrderModalContent)"
+            [disabled]="!canCreateWorkOrder(productionPlanLine)">
+            {{ 'production-plan.create-work-order' | i18n }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  </nz-tab>
+  <nz-tab nzTitle=" {{ 'work-order' | i18n }}">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="mapOfWorkOrders[data.id!!]" nzSize="middle"
+      [nzShowPagination]="false">
+
+      <thead>
+        <th>
+          {{ 'work-order.number' | i18n }}
+        </th>
+        <th>
+          {{ 'status' | i18n }}
+        </th>
+        <th>
+          {{ 'item' | i18n }}
+        </th>
+        <th>
+          {{ 'work-order.expected-quantity' | i18n }}
+        </th>
+        <th>
+          {{ 'work-order.produced-quantity' | i18n }}
+        </th>
+
+        <th>
+          {{ 'work-order.totalLineExpectedQuantity' | i18n }}</th>
+        <th>
+          {{ 'work-order.totalLineOpenQuantity' | i18n }}</th>
+        <th>
+          {{ 'work-order.totalLineInprocessQuantity' | i18n }}</th>
+        <th>
+          {{ 'work-order.totalLineDeliveredQuantity' | i18n }}</th>
+        <th>
+          {{ 'work-order.totalLineConsumedQuantity' | i18n }}</th>
+
+        <th>
+          {{ 'production-line' | i18n }}
+        </th>
+      </thead>
+      <tbody>
+
+        <tr *ngFor="let workOrder of mapOfWorkOrders[data.id!!]">
+          <td><a routerLink="/work-order/work-order" routerLinkActive="active"
+              [queryParams]="{number : workOrder.number}">
+              {{ workOrder.number }}
+            </a>
+          </td>
+          <td>{{ 'WORK-ORDER-STATUS-' + workOrder.status | i18n}}</td>
+          <td>{{ workOrder.item?.name }}</td>
+          <td>{{ workOrder.expectedQuantity }}</td>
+          <td>{{ workOrder.producedQuantity }}</td>
+          <td>{{ workOrder.totalLineExpectedQuantity }}</td>
+          <td>{{ workOrder.totalLineOpenQuantity }}</td>
+          <td>{{ workOrder.totalLineInprocessQuantity }}</td>
+          <td>{{ workOrder.totalLineDeliveredQuantity }}</td>
+          <td>{{ workOrder.totalLineConsumedQuantity }}</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+
+  </nz-tabset>
+
+  </tr>
+  </ng-template>
+  </tbody>
+  </nz-table>
+  <div nz-row nzType="flex" nzJustify="start" style="margin-top: 15px ">
+    <button nz-button nzType="primary" routerLink="/work-order/production-plan/maintenance"  *ngIf="!displayOnly"
+    routerLinkActive="active">
+      {{ 'add' | i18n }}
+    </button>
+  </div>
+</div>
+
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>
+<!-- Modal for create work order from BOM -->
+<ng-template #tplCreatingWorkOrderModalTitle>
+  <span>{{ 'page.modal.production-plan.create-work-order' | i18n}}</span>
+</ng-template>
+<ng-template #tplCreatingWorkOrderModalContent>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="8" nzFor="workOrderNumber">
+          {{ 'work-order' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+
+          <input appFkey variable="work-order-number" nz-input [(ngModel)]="newWorkOrder.number" id="workOrderNumber"
+            name="workOrderNumber" (blur)="workOrderNumberOnBlur($event)" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="8" nzFor="expectedQuantity">
+          {{ 'work-order.expected-quantity' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <input nz-input [(ngModel)]="newWorkOrder.expectedQuantity" id="expectedQuantity" name="expectedQuantity" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+
+
+
+</ng-template>

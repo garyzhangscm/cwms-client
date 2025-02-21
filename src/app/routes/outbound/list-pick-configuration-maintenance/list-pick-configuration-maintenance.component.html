@@ -1,0 +1,281 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/outbound/list-pick-configuration" routerLinkActive="active" 
+  [queryParams]="{pickType:currentListPickConfiguration.pickType, 
+    customer: currentListPickConfiguration.customer?.name, 
+    client: currentListPickConfiguration.client?.name}">{{ 'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/outbound/list-pick-configuration" routerLinkActive="active">{{ 'list-pick-configuration' | i18n }}</a>
+    </nz-breadcrumb-item> 
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin nzSize="large" [nzSpinning]="isSpinning">
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex" nzStatus="wait" style="padding: 15px">
+  <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+<!-- Show basic item information -->
+<div class="small-card" *ngIf="stepIndex === 0 
+    && currentListPickConfiguration != null">
+  <div nz-row [nzGutter]="24">
+
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'sequence' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">          
+          <nz-input-number [(ngModel)]="currentListPickConfiguration!.sequence"  [nzMin]="0" [nzMax]="65524" [nzStep]="1" [disabled]="!newListPickConfiguration">
+
+          </nz-input-number> 
+        </nz-form-control>
+      </nz-form-item>
+    </div> 
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="6">
+          {{ 'pickType' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+            <nz-select  nzAllowClear [(ngModel)]="currentListPickConfiguration.pickType">
+                <nz-option *ngFor="let pickType of pickTypes | keys"
+                      [nzValue]="pickType.key"
+                      nzLabel="{{ 'PICK-TYPE-' + pickType.key | i18n}}"
+                    ></nz-option>
+          </nz-select> 
+        </nz-form-control>
+      </nz-form-item>
+    </div> 
+  
+  </div>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8"  *ngIf="threePartyLogisticsFlag">
+      <nz-form-item nzFlex>
+        <nz-form-label for="client" [nzSpan]="6">
+          {{ 'client' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <nz-select  [(ngModel)]="currentListPickConfiguration.clientId">
+            <nz-option *ngFor="let client of clients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>  
+    
+    <div nz-col [nzSpan]="8" >
+      <nz-form-item nzFlex>
+        <nz-form-label for="customer" [nzSpan]="6">
+          {{ 'customer' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">           
+
+          <input type="text" nz-input [ngModel]="currentListPickConfiguration!.customer?.name" 
+              (ngModelChange)="customerChanged()" variable="customer-name" appExistingNumberValidator
+              id="customerName" name="customerName" 
+              [nzAutocomplete]="customerAutoCompleteTpl"
+              [ngModelOptions]="{updateOn: 'blur'}" #customerNameModel="ngModel"/>
+              
+          <!-- Auto Complete -->
+          <nz-autocomplete #customerAutoCompleteTpl>
+              <nz-auto-option *ngFor="let customer of validCustomers" [nzLabel]="customer.name" [nzValue]="customer.name">
+                {{ customer.name }}
+              </nz-auto-option>
+            </nz-autocomplete>
+        </nz-form-control>
+
+        
+      </nz-form-item>
+    </div>  
+  </div>
+  <nz-card nzTitle="{{ 'groupRules' | i18n}}">
+    
+    <nz-checkbox-wrapper style="width: 100%;" (nzOnChange)="selectedGroupRuleTypeChanged($event)">
+      <div nz-row>
+        <div nz-col nzSpan="8" *ngFor="let listPickGroupRuleType of listPickGroupRuleTypes | keys" >
+              <label nz-checkbox [nzValue]="listPickGroupRuleType.key" [ngModel]="isListPickGroupRuleTypeSelected(listPickGroupRuleType.key)">
+                {{"LIST-PICK-GROUP-RULE-TYPE-" + listPickGroupRuleType.key | i18n}}
+              </label>
+        </div> 
+      </div>
+    </nz-checkbox-wrapper> 
+    
+  </nz-card>
+  <nz-card nzTitle="{{ 'restriction' | i18n}}">
+            
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="8">
+            {{ 'allowLPNPick' | i18n }}
+          </nz-form-label>
+          <label nz-checkbox [(ngModel)]="currentListPickConfiguration!.allowLPNPick"> </label>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="24">
+      
+      <div nz-col [nzSpan]="6" >
+        <nz-form-item nzFlex>
+          <nz-form-label  [nzSpan]="12">
+            {{ 'maxVolume' | i18n }}
+          </nz-form-label>
+          
+          <nz-form-control [nzSpan]="12">
+            <nz-input-group nzSize="large">
+              <nz-input-number [nzStep]="0.01" [(ngModel)]="currentListPickConfiguration!.maxVolume" name="volume">
+              </nz-input-number>
+              <a nz-dropdown [nzDropdownMenu]="volumeUnitMenu" style="padding-left: 5px;">
+                {{currentListPickConfiguration!.maxVolumeUnit}}
+                <span nz-icon nzType="down"></span>
+              </a>
+              <nz-dropdown-menu #volumeUnitMenu="nzDropdownMenu">
+                <ul nz-menu nzSelectable>
+                  <li nz-menu-item *ngFor="let volumeUnit of volumeUnits" (click)="volumeUnitSelected(volumeUnit)">{{ volumeUnit.name }}</li> 
+                </ul>
+              </nz-dropdown-menu>
+            </nz-input-group>
+          </nz-form-control>  
+        </nz-form-item>
+      </div>   
+      <div nz-col [nzSpan]="6" >
+        <nz-form-item nzFlex>
+          <nz-form-label  [nzSpan]="12">
+            {{ 'maxWeight' | i18n }}
+          </nz-form-label>
+          
+          <nz-form-control [nzSpan]="12">
+            <nz-input-group nzSize="large">
+              <nz-input-number [nzStep]="0.01" [(ngModel)]="currentListPickConfiguration!.maxWeight" name="weight">
+              </nz-input-number>
+              <a nz-dropdown [nzDropdownMenu]="weightUnitMenu" style="padding-left: 5px;">
+                {{currentListPickConfiguration!.maxWeightUnit}}
+                <span nz-icon nzType="down"></span>
+              </a>
+              <nz-dropdown-menu #weightUnitMenu="nzDropdownMenu">
+                <ul nz-menu nzSelectable>
+                  <li nz-menu-item *ngFor="let weightUnit of weightUnits" (click)="weightUnitSelected(weightUnit)">{{ weightUnit.name }}</li> 
+                </ul>
+              </nz-dropdown-menu>
+            </nz-input-group>
+          </nz-form-control> 
+        </nz-form-item>
+      </div>   
+      <div nz-col [nzSpan]="6" >
+        <nz-form-item nzFlex>
+          <nz-form-label  [nzSpan]="12">
+            {{ 'maxPickCount' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12">
+            <nz-input-number [(ngModel)]="currentListPickConfiguration!.maxPickCount"  [nzMin]="0" >
+            </nz-input-number> 
+          </nz-form-control>
+        </nz-form-item>
+      </div>   
+      <div nz-col [nzSpan]="6" >
+        <nz-form-item nzFlex>
+          <nz-form-label  [nzSpan]="12">
+            {{ 'maxQuantity' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12">
+            <nz-input-number [(ngModel)]="currentListPickConfiguration!.maxQuantity"  [nzMin]="0" >
+            </nz-input-number> 
+          </nz-form-control>
+        </nz-form-item>
+      </div>   
+    </div> 
+    
+    
+  </nz-card>
+</div>
+  
+<!-- Confirm the change -->
+<div class="small-card" *ngIf="stepIndex === 1">
+  <nz-card  >
+    <nz-descriptions nzBordered="true">
+
+      <nz-descriptions-item nzTitle="{{ 'sequence' | i18n }}">
+
+        {{ currentListPickConfiguration.sequence  }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'pickType' | i18n }}">
+
+        {{ 'PICK-TYPE-' + currentListPickConfiguration.pickType | i18n }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'client' | i18n }}">
+
+        {{ currentListPickConfiguration.client?.name  }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'customer' | i18n }}">
+
+        {{ currentListPickConfiguration.customer?.name  }}
+      </nz-descriptions-item>
+      
+      <nz-descriptions-item nzTitle="{{ 'maxVolume' | i18n }}">
+
+        {{ currentListPickConfiguration.maxVolume }}  {{ currentListPickConfiguration.maxVolumeUnit }} 
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'maxWeight' | i18n }}">
+
+        {{ currentListPickConfiguration.maxWeight }}  {{ currentListPickConfiguration.maxWeightUnit }} 
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'maxPickCount' | i18n }}">
+
+        {{ currentListPickConfiguration.maxPickCount }} 
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'maxQuantity' | i18n }}">
+
+        {{ currentListPickConfiguration.maxQuantity }}  
+      </nz-descriptions-item>
+
+      <nz-descriptions-item nzTitle="{{ 'allowLPNPick' | i18n }}">
+
+        {{ currentListPickConfiguration.allowLPNPick  }}
+      </nz-descriptions-item>
+
+      <nz-descriptions-item nzTitle="{{ 'enabled' | i18n }}">
+
+        {{ currentListPickConfiguration.enabled  }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'groupRules' | i18n }}">
+
+        <ul>
+            <li *ngFor="let groupRule of currentListPickConfiguration.groupRules">
+              {{ "LIST-PICK-GROUP-RULE-TYPE-" + groupRule.groupRuleType | i18n}}
+            </li>
+
+        </ul>
+      </nz-descriptions-item>
+      
+    </nz-descriptions>
+  </nz-card>
+</div>
+
+
+<div class="steps-action" *ngIf="stepIndex === 0">
+  <button nz-button nzType="default" (click)="nextStep()">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+</div>
+
+<div class="steps-action" *ngIf="stepIndex === 1">
+
+  <button nz-button nzType="default" (click)="previousStep()">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()">
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+</nz-spin>

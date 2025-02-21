@@ -1,0 +1,97 @@
+<page-header title="{{'cycle-count' |  i18n}}" > </page-header>
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+
+    <div nz-col [nzSpan]="6">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="3" [nzXs]="3" nzFor="batchId">
+          {{ 'cycle-count.batchId' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="batchId" id="batchId" formControlName="batchId">
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      <a class="collapse" (click)="toggleCollapse()">
+        {{ 'collapse' | i18n }}
+        <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
+      </a>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowSizeChanger nzShowPagination
+    [nzData]="listOfDisplayCycleCountBatches" [nzFooter]="tableFoot" #rowSelectionTable>
+    <thead nzSingleSort>
+      <tr>
+        <th nzShowSort nzSortKey="id">id</th>
+        <th nzShowSort nzSortKey="batchId">
+          {{ 'cycle-count.batchId' | i18n }}
+        </th>
+        <th nzShowSort nzSortKey="requestLocationCount">
+          {{'cycle-count-request.count' | i18n}}</th>
+        <th nzShowSort nzSortKey="finishedLocationCount">
+          {{'cycle-count-result.count' | i18n}}</th>
+        <th nzShowSort nzSortKey="auditLocationCount">
+          {{'audit-count-request.count' | i18n}}</th>
+        <th nzShowSort nzSortKey="auditFinishedLocationCount">
+          {{'audit-count-result.count' | i18n}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data">
+        <td>{{ data.id! }}</td>
+        <td>{{ data.batchId }}</td>
+        <td>{{ data.requestLocationCount }}</td>
+        <td>{{ data.finishedLocationCount}}</td>
+        <td> </td>
+        <td> </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start">
+    <button nz-button nzType="primary" routerLink="/inventory/cycle-count-maintenance" routerLinkActive="active">
+      {{ 'new' | i18n }}
+    </button>
+  </div>
+</ng-template>
+
+<div>
+  <div class="row">appstore: <span><i nz-icon nzType="appstore"></i></span></div>
+  <div class="row">control: <span><i nz-icon nzType="control"></i></span></div>
+  <div class="row">hdd: <span><i nz-icon nzType="hdd"></i></span></div>
+  <div class="row">layout: <span><i nz-icon nzType="layout"></i></span></div>
+  <div class="row">home: <span><i nz-icon nzType="home"></i></span></div>
+  <div class="row">profile: <span><i nz-icon nzType="profile"></i></span></div>
+  <div class="row">project: <span><i nz-icon nzType="project"></i></span></div>
+  <div class="row">setting: <span><i nz-icon nzType="setting"></i></span></div>
+  <div class="row">tool: <span><i nz-icon nzType="tool"></i></span></div>
+  <div class="row">apprtment: <span><i nz-icon nzType="apprtment"></i></span></div>
+  <div class="row">gold: <span><i nz-icon nzType="gold"></i></span></div>
+  <div class="row">table: <span><i nz-icon nzType="table"></i></span></div>
+  <div class="row">laptop: <span><i nz-icon nzType="laptop"></i></span></div>
+
+
+
+  <div class="row">account-book: <span><i nz-icon nzType="account-book"></i></span></div>
+  <div class="row">bank: <span><i nz-icon nzType="bank"></i></span></div>
+  <div class="row">book: <span><i nz-icon nzType="book"></i></span></div>
+  <div class="row">container: <span><i nz-icon nzType="container"></i></span></div>
+  <div class="row">credit-card: <span><i nz-icon nzType="credit-card"></i></span></div>
+  <div class="row">star: <span><i nz-icon nzType="star"></i></span></div>
+  <div class="row">wallet: <span><i nz-icon nzType="wallet"></i></span></div>
+</div>

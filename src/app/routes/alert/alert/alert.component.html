@@ -1,0 +1,126 @@
+<page-header title="{{'alert' |  i18n}}" > </page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form"> 
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="3" [nzXs]="3" nzFor="type">
+            {{ 'type' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <nz-select  nzMode="multiple" formControlName="type">
+                <nz-option
+                      *ngFor="let alertType of alertTypes | keys"
+                      [nzValue]="alertType.key"
+                      nzLabel="{{ 'ALERT-TYPE-' + alertType.key | i18n}}"
+                    ></nz-option>
+          </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSm]="3" [nzXs]="3" nzFor="status">
+            {{ 'status' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <nz-select    formControlName="status">
+                <nz-option
+                      *ngFor="let alertStatus of alertStatusList | keys"
+                      [nzValue]="alertStatus.key"
+                      nzLabel="{{ 'ALERT-STATUS-' + alertStatus.key | i18n}}"
+                    ></nz-option>
+          </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    
+    <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="6"  nzFor="keyWords">
+              {{ 'keyWords' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18">
+                <input nz-input name="keyWords" id="keyWords" formControlName="keyWords">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        
+        <div nz-col [nzSpan]="8"  >
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="8" nzFor="dateTimeRanger">
+              {{ 'date-time-range' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <nz-range-picker [nzShowTime]="{ nzHideDisabledOptions: true }" nzFormat="yyyy-MM-dd HH:mm:ss"
+                formControlName="dateTimeRanger" name="dateTimeRanger">
+              </nz-range-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div nz-col [nzSpan]="8"  >
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="6" nzFor="date">
+              {{ 'date' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18">
+              <nz-date-picker formControlName="date" name="date"></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+    </div>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="search()"  >
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form> 
+ 
+ 
+  
+  <div class="search-result-list"> 
+    
+    <st #st [data]="alerts" [columns]="columns" [footer]="tableFoot" [scroll]="{ x: '2715px' }">
+      
+          <!--   typeColumn colummn  -->  
+          <ng-template st-row="typeColumn" let-item let-index="index"> 
+              
+            <a nz-tooltip [nzTooltipTitle]="item.type">{{ item.type}}</a>
+        </ng-template>
+          <!--   createdTimeColumn colummn  -->  
+        <ng-template st-row="createdTimeColumn" let-item let-index="index"> 
+              
+            {{ item.createdTime  | date:'short'}} 
+        </ng-template>
+        <!--   lastSentTimeColumn colummn  -->  
+        <ng-template st-row="lastSentTimeColumn" let-item let-index="index"> 
+          
+
+              {{ item.lastModifiedTime  | date:'short'}} 
+        </ng-template>
+    </st>
+  
+  </div>
+ 
+</nz-spin>
+<ng-template #tableFoot>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+  
+</ng-template>
+
+
+
+ 

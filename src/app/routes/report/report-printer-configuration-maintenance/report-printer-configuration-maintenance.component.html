@@ -1,0 +1,139 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+    <a routerLink="/report/report-printer-configuration" routerLinkActive="active">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+    <nz-breadcrumb>
+        <nz-breadcrumb-item>
+            <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+        <nz-breadcrumb-item><a routerLink="/report/report-printer-configuration" routerLinkActive="active">{{
+                'report-printer-configuration' | i18n }}</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item><a>{{ 'report-printer-configuration' | i18n }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+</ng-template>
+
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex" nzStatus="wait" style="padding: 15px">
+    <nz-step nzTitle="{{ 'steps.report-printer-configuration.info' | i18n }}"> </nz-step>
+    <nz-step nzTitle="{{ 'steps.report-printer-configuration.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+<!-- Show basic item information -->
+<div class="small-card" *ngIf="stepIndex === 0 
+    && currentReportPrinterConfiguration != undefined">
+    <div nz-row [nzGutter]="24">
+
+
+        <div nz-col [nzSpan]="8">
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24">
+                    {{ 'report.type' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <nz-select nzAllowClear [(ngModel)]="currentReportPrinterConfiguration.reportType"
+                        style="width: 200px;">
+                        <nz-option *ngFor="let reportType of reportTypes | keys" nzValue="{{ reportType.key }}"
+                            nzLabel="{{ 'REPORT-TYPE-' + reportType.key | i18n }}">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div nz-col [nzSpan]="8">
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24">
+                    {{ 'report-printer-configuration.criteria-value' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+                    nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                    <input nz-input [(ngModel)]="currentReportPrinterConfiguration.criteriaValue" required />
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div nz-col [nzSpan]="8">
+            <nz-form-item nzFlex>
+                <nz-form-label [nzSm]="6" [nzXs]="24">
+                    {{ 'printer' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24">
+                    <nz-select nz-input [(ngModel)]="currentReportPrinterConfiguration.printerName"
+                        style="width: 200px;">
+                        <nz-option *ngFor="let availablePrint of availablePrinters" [nzLabel]="availablePrint.name"
+                            [nzValue]="availablePrint.name">
+                        </nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+
+
+    </div>
+
+    <div nz-row [nzGutter]="24">
+
+        <div nz-col [nzSpan]="8">
+            <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24">
+                    {{ 'report-printer-configuration.copies' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback
+                    nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+                    <nz-input-number [(ngModel)]="currentReportPrinterConfiguration.copies" [nzMin]="1" [nzMax]="10"
+                        [nzStep]="1" required>
+                    </nz-input-number>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+
+
+</div>
+
+
+
+<!-- Confirm the change -->
+<div class="small-card" *ngIf="stepIndex === 1">
+    <nz-card>
+        <nz-descriptions nzBordered="true">
+
+            <nz-descriptions-item nzTitle="{{ 'report.type' | i18n }}">
+
+                {{ 'REPORT-TYPE-' + currentReportPrinterConfiguration.reportType | i18n }}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'report-printer-configuration.criteria-value' | i18n }}">
+                {{ currentReportPrinterConfiguration.criteriaValue }}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'printer.name' | i18n }}">{{
+                currentReportPrinterConfiguration.printerName }}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'report-printer-configuration.copies' | i18n }}">{{
+                currentReportPrinterConfiguration.copies }}
+            </nz-descriptions-item>
+
+
+        </nz-descriptions>
+    </nz-card>
+</div>
+
+
+<div class="steps-action" *ngIf="stepIndex === 0">
+    <button nz-button nzType="default" (click)="nextStep()">
+        <span>{{ 'steps.next' | i18n }}</span>
+    </button>
+</div>
+
+<div class="steps-action" *ngIf="stepIndex === 1">
+
+    <button nz-button nzType="default" (click)="previousStep()">
+        <span>{{ 'steps.previous' | i18n }}</span>
+    </button>
+    <nz-divider nzType="vertical"></nz-divider>
+    <button nz-button nzType="primary" (click)="confirmReportPrinterConfiguration()">
+        <span> {{ 'confirm' | i18n }}</span>
+    </button>
+</div>

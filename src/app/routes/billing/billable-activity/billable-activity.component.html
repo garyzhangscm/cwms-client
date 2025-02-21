@@ -1,0 +1,134 @@
+<page-header title="{{'billable-activity' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    <!-- Form to query the result  -->
+    <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form"> 
+  
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="6" *ngIf="threePartyLogisticsFlag" >
+          <nz-form-item nzFlex>
+            <nz-form-label for="client" [nzSpan]="6">
+              {{ 'client' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18">
+              <nz-select formControlName="client" nzAllowClear>
+                <nz-option *ngFor="let client of availableClients" [nzLabel]="client.name" [nzValue]="client.id"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="12">
+            <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="6" nzFor="dateRanger">
+                {{ 'date' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="18">
+                  <nz-range-picker formControlName="dateRanger"></nz-range-picker>
+        
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+      </div>
+       
+      <div nz-row>
+        <div nz-col [nzSpan]="24" class="search-area">
+          <button nz-button [nzType]="'primary'" (click)="search()"  >
+            {{ 'search' | i18n }}
+          </button>
+          <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+        </div>
+      </div>
+    </form> 
+   
+   
+    
+    <div class="search-result-list"> 
+        
+        <st #st [data]="billingRequests" [columns]="columns"  [scroll]="{ x: '1024px' }"
+            [expand]="expand"  expandAccordion  (change)="billingRequestTableChanged($event)" [footer]="tableFoot">
+            
+            <!--   billableCategoryColumn colummn  -->  
+            <ng-template st-row="billableCategoryColumn" let-item let-index="index"> 
+                
+                {{ 'BILLABLE-CATEGORY-' + item.billableCategory | i18n}} 
+            </ng-template>
+            
+            <ng-template st-row="totalAmountColumn" let-item let-index="index"> 
+                
+              {{  item.totalAmount   | number: '1.0-2'}} 
+          </ng-template>
+            <ng-template st-row="rateColumn" let-item let-index="index"> 
+                
+                {{  item.rate  | currency: 'USD'}} 
+            </ng-template>
+            <ng-template st-row="totalChargeColumn" let-item let-index="index"> 
+                
+                {{  item.totalCharge | currency: 'USD'}} 
+            </ng-template>
+            
+            <!--   billing request lines -->
+            <ng-template #expand let-item let-index="index" >
+            
+                <nz-tabset>
+                <nz-tab nzTitle="{{'billing-request.line' | i18n}}">
+                    
+                <nz-table  nzShowPagination [nzData]="item!.billingRequestLines"
+                    #billingRequestLine>
+                <thead>
+                    <tr>  
+                        <th>
+                        {{ 'startTime' | i18n }}
+                        </th> 
+                        <th>
+                        {{ 'endTime' | i18n }}
+                        </th> 
+                        <th>
+                        {{ 'totalAmount' | i18n }}
+                        </th>
+                        <th>
+                        {{ 'totalCharge' | i18n }}
+                        </th> 
+                        <th>
+                        {{ 'document-number' | i18n }}
+                        </th>
+                        <th>
+                        {{ 'itemName' | i18n }}
+                        </th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of billingRequestLine.data">   
+                            <td  >
+                                    {{ data.startTime | date:'short'}}   </td> 
+                            <td  >
+                                        {{ data.endTime | date:'short'}}   </td> 
+                            <td  >
+                                {{ data.totalAmount | number: '1.0-2'}}  </td>
+                            <td  >
+                                {{ data.totalCharge | currency: 'USD'}}  </td>
+                            <td  >
+                                    {{ data.documentNumber }}  </td>
+                            <td  >
+                                        {{ data.itemName  }}  </td>
+                    </tr>
+                </tbody>
+                </nz-table>
+                    
+                </nz-tab>
+                </nz-tabset>
+            </ng-template>
+        </st>
+    
+    </div>
+   
+  </nz-spin>
+  <ng-template #tableFoot>
+  
+    <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+      {{searchResult}}
+    </div>
+    <div nz-row nzType="flex" nzJustify="start" *ngIf="!displayOnly">
+      <button nz-button nzType="primary">{{ 'generate-invoice' | i18n }}</button>
+    </div>
+    
+  </ng-template>

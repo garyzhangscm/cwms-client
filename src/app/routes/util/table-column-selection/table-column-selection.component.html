@@ -1,0 +1,97 @@
+<button nz-button (click)="openColumnChoosingModal(tplColumnChoosingModalTitle, tplColumnChoosingContent)"> 
+  change column
+    </button>
+
+    
+<!-- Modal for inventory movement-->
+<ng-template #tplColumnChoosingModalTitle>
+    <span>{{ 'tableColumnConfiguration' | i18n}}</span>
+  </ng-template>
+  <ng-template #tplColumnChoosingContent>
+      <!--
+    <div class="search-result-list">
+      <div class="mb-md">
+        <nz-checkbox-group [(ngModel)]="_myModel" (ngModelChange)="columnChanged()" name="customColumns" ></nz-checkbox-group>
+      </div>
+      </div>
+      -->   
+    <div class="table-responsive user-list">
+      <table  class="table">
+        <thead>
+          <tr>
+            <th scope="col" style="width: 10%"># </th>
+            <th scope="col" style="width: 30%">Name</th>
+            <th scope="col" style="width: 40%">Display</th>
+            <th scope="col" style="width: 20%">Enabled</th>
+          </tr>
+        </thead>
+        <tbody cdkDropList (cdkDropListDropped)="drop($event)">
+          <tr *ngFor="let columnConfiguration of _tableColumnsConfiguration, index as i" cdkDrag cdkDragLockAxis="y">
+            <th class="col-xs">
+              <div class="drag-handle">
+                <ng-container [ngTemplateOutlet]="dragHandleTmpl">
+                </ng-container>
+                {{ columnConfiguration.columnSequence }}
+              </div>
+            </th>
+            <td>{{ columnConfiguration.columnName }}</td>
+            <td>
+              <input nz-input [(ngModel)]="columnConfiguration.columnDisplayText" />  
+            </td>
+            <td>
+              <label nz-checkbox [(ngModel)]="columnConfiguration.displayFlag"></label>     
+            </td>
+          </tr>
+        </tbody>
+      </table> 
+    </div>
+    
+    <ng-template #dragHandleTmpl>
+      <svg class="bi bi-list handle" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd"
+          d="M2.5 11.5A.5.5 0 013 11h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 7h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 3h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z"
+          clip-rule="evenodd" />
+      </svg>
+    </ng-template>
+      <!--
+      <div style="height: 500px; overflow-y: auto" cdkScrollable>
+        <div cdkDropList class="example-list mt-20" (cdkDropListDropped)="drop($event)">  
+          
+          <div class="example-box" *ngFor="let columnConfiguration of _tableColumnsConfiguration, index as i" cdkDrag> 
+            <div class="drag-index">{{i+1}}</div> 
+            <div class="w-100 drag-content">
+              {{ columnConfiguration.columnName }}  
+            </div> 
+            <div class="w-100 drag-content">
+              <input nz-input [(ngModel)]="columnConfiguration.columnDisplay" />  
+            </div> 
+            <div class="w-10 delete-icon">
+              <label nz-checkbox [(ngModel)]="columnConfiguration.display"></label>           
+            </div>
+          </div>
+        </div>
+      </div>
+      -->     
+          <!-- 
+          @for (columnConfiguration of _tableColumnsConfiguration; track columnConfiguration) {
+            <div class="example-box" cdkDrag>{{columnConfiguration.label}}</div>
+          }
+    
+          <div class="example-box" *ngFor="let columnConfiguration of _tableColumnsConfiguration, index as i" cdkDrag>
+            
+            <div class="drag-index">{{i+1}}</div>
+            <div class="w-10 drag-icon">
+              <i  class="material-icons disable">reorder</i>
+              <i  class="material-icons" cdkDragHandle>reorder</i>
+            </div>
+            <div class="w-100 drag-content">
+              {{ columnConfiguration.name }}  
+            </div> 
+            <div class="w-10 delete-icon">
+              <label nz-checkbox [(ngModel)]="columnConfiguration.display"></label>
+               
+            </div>
+          </div>
+          -->
+  </ng-template>

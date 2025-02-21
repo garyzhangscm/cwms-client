@@ -1,0 +1,78 @@
+<page-header title="{{'report-history' |  i18n}}" ></page-header>
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="12">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item nzFlex>
+        <nz-form-label for="name" [nzSm]="6" [nzXs]="14">
+          {{ 'report.name' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="name" id="name" formControlName="name" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+
+
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+
+  <nz-table [nzScroll]="{ x: 'true', y: 'true' }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllReportHistories"
+    #reportHistoryTable>
+    <thead>
+      <tr>
+
+        <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+          [nzShowFilter]="column.showFilter">
+          {{ column.name | i18n }}
+        </th>
+
+
+
+
+        <th>
+          {{ 'action' | i18n }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of reportHistoryTable.data">
+        <td>{{ data.type }}</td>
+        <td>{{ data.description }}</td>
+        <td> {{ data.printedDate | date:'short'}} 
+        </td>
+        <td>{{ data.printedUsername }}</td>
+        <td>{{ 'REPORT-ORIENTATION_' + data.reportOrientation | i18n }}</td>
+
+        <td>
+          <a routerLink="/report/report-preview" routerLinkActive="active"
+            [queryParams]="{fileName : data.fileName, type: data.type, orientation: data.reportOrientation}">{{
+            data.fileName }}</a>
+        </td>
+        <td></td>
+      </tr>
+
+    </tbody>
+  </nz-table>
+</div>
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>

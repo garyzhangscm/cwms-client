@@ -1,0 +1,94 @@
+<page-header [title]="'menu.dashboard.production-kanban' | i18n"> </page-header>
+
+
+<div nz-row>
+  Count down: {{ countDownNumber }}
+</div>
+
+<div nz-row style="padding: 15px;">
+  <a (click)="toggleProductionLineDisplay()" *ngIf="!hideProductionLineSelection">hide << </a>
+      <a (click)="toggleProductionLineDisplay()" *ngIf="hideProductionLineSelection">show >> </a>
+</div>
+
+<div nz-row>
+  <div nz-col nzSpan="4" style="padding-right: 20px; padding-left: 20px; " [hidden]="hideProductionLineSelection">
+    <cdk-virtual-scroll-viewport itemSize="15" class="example-viewport">
+      <div *cdkVirtualFor="let productionLine of productionLines" class="example-item">
+        {{ productionLine.name }}
+        <nz-switch [ngModel]="showProductionLineSet.has(productionLine.name)"
+          (click)="switchProductionLineDisplay(productionLine.name)">
+
+        </nz-switch>
+
+      </div>
+
+    </cdk-virtual-scroll-viewport>
+
+  </div>
+  <div nz-col [nzSpan]="hideProductionLineSelection ? 24 : 20">
+
+    <!-- Table to Display the result  -->
+    <div class="search-result-list">
+      <!--
+
+
+      <nz-table #rowSelectionTable nzShowSizeChanger nzShowPagination [nzData]="displayProductionLineKanbanDataList">
+        <thead>
+          <tr>
+
+            <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+              [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+              [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter"
+              [nzFilterFn]="column.filterFn" [nzShowFilter]="column.showFilter">
+              {{ column.name | i18n }}
+            </th>
+
+
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of rowSelectionTable.data">
+            <td>{{ data.productionLineName }}</td>
+            <td>{{ data.workOrderNumber }}</td>
+            <td>{{ data.itemName }}</td>
+            <td>{{ data.productionLineModel }}</td>
+            <td>{{ data.productionLineTargetOutput }}</td>
+            <td>{{ data.productionLineActualOutput }}</td>
+            <td>{{ data.productionLineActualPutawayOutput }}</td>
+            <td>{{ data.productionLineTotalTargetOutput }}</td>
+            <td>{{ data.productionLineTotalActualOutput }}</td>
+            <td>{{ data.productionLineTotalActualPutawayOutput }}</td>
+            <td>{{ 'WORK-ORDER-STATUS-' + data.workOrderStatus | i18n}}</td>
+            <td>{{ data.shift }}</td>
+
+            <td>{{ data.percent.toFixed(2) + '%' }}</td>
+
+
+
+
+          </tr>
+        </tbody>
+      </nz-table>
+
+
+      -->
+      <!--
+    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+      <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+    </div>
+    -->
+    <!--
+
+      <div class="mb-md">
+        <nz-checkbox-group [(ngModel)]="customColumns" name="customColumns"
+          (ngModelChange)="st.resetColumns({ emitReload: true })"></nz-checkbox-group>
+      </div>
+
+    -->
+      <st #st [data]="displayProductionLineKanbanDataList" [columns]="columns" [loading]="loadingData" (change)="kanbanDataTableChanged($event)">
+      </st>
+
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,78 @@
+<page-header title="{{'quickbook-auth' |  i18n}}" ></page-header>
+
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form"> 
+
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="authCode">
+            {{ 'authCode' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <input nz-input name="authCode" id="authCode" formControlName="authCode">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="6" nzFor="realmId">
+            {{ 'realmId' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="18">
+            <input nz-input name="realmId" id="realmId" formControlName="realmId">
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    </form>
+    <h4>Token:</h4> 
+    <p><strong>{{currentQBOToken.token}}</strong></p>
+    <h4>Refresh Token:</h4> 
+    <p><strong>{{currentQBOToken.refreshToken}}</strong></p>
+      <button nz-button nzType="primary" (click)="requestToken()" *ngIf="!displayOnly">
+        {{ 'get token' | i18n }}
+      </button>
+
+      <button nz-button nzType="primary" (click)="refreshToken()" *ngIf="!displayOnly">
+          {{ 'refresh token' | i18n }}
+        </button>
+  <div style="padding-top: 20px">
+    <nz-select nzAllowClear [(ngModel)]="currentSyncEntity" style="width: 300px;">
+      <nz-option *ngFor="let quickbookEntity of quickbookEntities | keys" nzValue="{{ quickbookEntity.key }}"
+        nzLabel="{{ quickbookEntity.key | i18n }}">
+      </nz-option>
+    </nz-select>
+    <span>for last 
+      <nz-input-number [(ngModel)]="syncTransactionDays"  [nzMin]="0" [nzMax]="9999" [nzStep]="1"></nz-input-number> 
+      days
+    </span>
+    <button nz-button nzType="primary" (click)="syncEntity()" *ngIf="!displayOnly">
+      {{ 'Sync' | i18n }}
+    </button>
+  </div>
+  <!--
+
+
+  <nz-card nzTitle="webhook testing">
+
+    <div style="padding-top: 25px; padding-bottom: 25px">
+      <p>Signature:</p>
+      <input nz-input   [(ngModel)]="signature" />
+    </div>
+    <div style="padding-top: 25px; padding-bottom: 25px"> 
+      <p>Payload:</p>
+      <textarea nz-input  [(ngModel)]="payload" [nzAutosize]="{ minRows: 3, maxRows: 999 }"></textarea>
+    </div>
+    <div style="padding-top: 25px; padding-bottom: 25px">
+      <button nz-button nzType="primary" (click)="sendWebhook()">>
+        {{ 'Send Webhook' | i18n }}
+      </button>
+    </div>
+  </nz-card>
+  -->
+</nz-spin>

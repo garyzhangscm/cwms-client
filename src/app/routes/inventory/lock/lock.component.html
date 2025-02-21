@@ -1,0 +1,154 @@
+<page-header title="{{'lock' |  i18n}}" > </page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form"> 
+
+    <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="12">
+            <nz-form-item nzFlex>
+              <nz-form-label [nzSpan]="6" nzFor="name">
+                {{ 'name' | i18n }}
+              </nz-form-label>
+              <nz-form-control [nzSpan]="18">
+                <input nz-input name="name" id="name" formControlName="name">
+              </nz-form-control>
+            </nz-form-item>
+        </div>
+           
+      
+    </div>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="search()"  >
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form> 
+ 
+ 
+  
+  <div class="search-result-list"> 
+    
+      <!--
+    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+      <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+    </div>
+  -->
+    
+    <st #st [data]="inventoryLockList" [columns]="columns" [footer]="tableFoot"   [expand]="expand" expandAccordion 
+        (change)="inventoryLockTableChanged($event)"
+    > 
+     
+
+    
+      <!--   action colummn  --> 
+      <ng-template st-row="actionColumnTitle" type="title" let-c>
+        {{ 'action' | i18n }}
+      </ng-template>
+      <ng-template st-row="actionColumn" let-item let-index="index"> 
+        
+        <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary" 
+            [disabled]="item.number==''"
+        >
+          {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu> 
+            <li nz-menu-item  >
+              
+              <a routerLink="/inventory/lock/maintenance"
+              [queryParams]="{id : item.id}" routerLinkActive="active">
+                  {{ 'modify' | i18n }}</a>
+                  
+            </li>
+            <li nz-menu-item  *ngIf="item.enabled === true">
+              <a  (click)="disableInventoryLock(item)">{{ 'disable' | i18n }}</a>
+            </li>
+            <li nz-menu-item  *ngIf="item.enabled === false">
+              <a  (click)="enableInventoryLock(item)">{{ 'enable' | i18n }}</a>
+            </li>
+            <li nz-menu-item  >
+              <a  (click)="removeInventoryLock(item)">{{ 'remove' | i18n }}</a>
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+      </ng-template>
+
+    
+      
+
+      <!--  locked inventory details  -->
+      <ng-template #expand let-item let-index="index" >
+        <nz-tabset  >
+               
+            <nz-tab nzTitle=" {{ 'locked-inventory' | i18n }}">
+                <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="mapOfLockedInventory[item.id!]" nzSize="middle"
+                [nzShowPagination]="false" #lockedInventoryTable>
+                <thead>
+                    <th>
+                    {{ 'lpn' | i18n }}
+                    </th>
+                    <th>
+                    {{ 'item' | i18n }}
+                    </th>
+                    <th>
+                    {{ 'item.description' | i18n }}
+                    </th>
+                    <th>
+                    {{ 'location-group' | i18n }}
+                    </th>
+                    <th>
+                    {{ 'location' | i18n }}
+                    </th>
+                    <th>
+                    {{ 'quantity' | i18n }}
+                    </th>
+                    <th *ngIf="!displayOnly">
+                    {{ 'action' | i18n }}
+                    </th>
+                    
+                </thead>
+                <tbody>
+                    <tr *ngFor="let inventory of lockedInventoryTable.data">
+                        <td>{{ inventory.lpn }}</td>
+                        <td>{{ inventory.item?.name }}</td>
+                        <td>{{ inventory.item?.description }}</td>
+                        <td>{{ inventory.location?.locationGroup?.name }}</td>
+                        <td>{{ inventory.locationName }}</td>
+                        <td>{{ inventory.quantity }}</td>
+                        <td *ngIf="!displayOnly">
+                            <button nz-button nzType="primary" (click)="unlockInventory(item, inventory)">
+                                {{ 'unlock-inventory' | i18n }}
+                              </button></td>
+                    
+                    </tr>
+                </tbody>
+                </nz-table>
+            </nz-tab>  
+        </nz-tabset>
+      </ng-template> 
+    </st>
+  
+  </div>
+ 
+</nz-spin>
+<ng-template #tableFoot>
+
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+  
+  <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly">
+    
+    <button nz-button nzType="primary" routerLink="/inventory/lock/maintenance" routerLinkActive="active">
+        {{ 'add' | i18n }}
+      </button>
+  </div>
+</ng-template>
+
+ 
+
+
+ 

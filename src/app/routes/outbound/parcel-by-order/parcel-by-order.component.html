@@ -1,0 +1,259 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+    <a routerLink="/outbound/order" routerLinkActive="active"
+        [queryParams]="{number: currentOrder?.number}">{{
+        'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+    <nz-breadcrumb>
+        <nz-breadcrumb-item>
+            <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+        <nz-breadcrumb-item><a routerLink="/outbound/order" routerLinkActive="active">{{
+                'order' | i18n
+                }}</a></nz-breadcrumb-item>
+        <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+    <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+        <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step>
+        <nz-step nzTitle="{{ 'rate' | i18n }}"> </nz-step>
+        <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+    </nz-steps>
+
+    <!-- Let the user input the package information -->
+    <div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
+        
+        <div style="background: #ECECEC;padding:15px;">
+          <div nz-row [nzGutter]="24" *ngIf="currentOrder != null">
+              <div nz-col [nzSpan]="12">
+              <nz-card nzTitle="{{'ship-from' | i18n}}">
+                  <address *ngIf="easyPostConfiguration != null && easyPostConfiguration.useWarehouseAddressAsShipFromFlag == true">   
+                    {{currentWarehouse.contactorFirstname }}  {{currentWarehouse.contactorLastname }}<br>
+                      {{currentWarehouse.addressLine1 }} <br>
+                      {{currentWarehouse.addressLine2 }} <br>
+                      {{currentWarehouse.addressCity }}, {{currentWarehouse.addressState }} {{currentWarehouse.addressPostcode }} <br> 
+                      </address>
+                  <address *ngIf="easyPostConfiguration != null && easyPostConfiguration.useWarehouseAddressAsShipFromFlag == false">   
+                        {{easyPostConfiguration.contactorFirstname }}  {{easyPostConfiguration.contactorLastname }}<br>
+                          {{easyPostConfiguration.addressLine1 }} <br>
+                          {{easyPostConfiguration.addressLine2 }} <br>
+                          {{easyPostConfiguration.addressCity }}, {{easyPostConfiguration.addressState }} {{easyPostConfiguration.addressPostcode }} <br> 
+                  </address>
+              </nz-card>
+              </div>
+              <div nz-col [nzSpan]="12">
+                  <nz-card nzTitle="{{'ship-to' | i18n}}">
+                  <address>  
+                      {{currentOrder.shipToContactorFirstname }}  {{currentOrder.shipToContactorLastname }}  <br>
+                      {{currentOrder.shipToAddressLine1 }} <br>
+                      {{currentOrder.shipToAddressLine2 }} <br>
+                      {{currentOrder.shipToAddressCity }}, {{currentOrder.shipToAddressState }} {{currentOrder.shipToAddressPostcode }} <br> 
+                      </address>
+                  </nz-card>
+              </div> 
+          </div>
+        </div>
+        <nz-card  nzTitle="{{'fill-in-package-information-to-get-rate' | i18n}}">
+    
+            <div nz-row [nzGutter]="24">
+                <div nz-col [nzSpan]="6">
+                  <nz-form-item>
+                    <nz-form-label [nzSpan]="12">
+                      {{ 'length' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="12" nzHasFeedback > 
+                        <nz-input-number [(ngModel)]="packageLength" ></nz-input-number> in
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                
+                <div nz-col [nzSpan]="6">
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="12">
+                        {{ 'width' | i18n }}
+                      </nz-form-label>
+                      <nz-form-control [nzSpan]="12" nzHasFeedback > 
+                          <nz-input-number [(ngModel)]="packageWidth" ></nz-input-number> in
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div nz-col [nzSpan]="6">
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="12">
+                        {{ 'height' | i18n }}
+                      </nz-form-label>
+                      <nz-form-control [nzSpan]="12" nzHasFeedback > 
+                          <nz-input-number [(ngModel)]="packageHeight" ></nz-input-number> in
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div><div nz-col [nzSpan]="6">
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="12">
+                        {{ 'weight' | i18n }}
+                      </nz-form-label>
+                      <nz-form-control [nzSpan]="12" nzHasFeedback > 
+                          <nz-input-number [(ngModel)]="packageWeight" ></nz-input-number> lb
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+            </div> 
+            
+    
+    
+        </nz-card>
+    </div>
+    
+    <!-- Let the user choose the service and rate  -->
+    <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+        <div  *ngIf="currentEasyPostShipment != null">
+          <h3>{{'carrier'}}: {{currentOrder!.carrier == null? "N/A" : currentOrder!.carrier!.name}}, 
+            {{'service'}}: {{currentOrder!.carrierServiceLevel == null? "N/A" : currentOrder!.carrierServiceLevel!.name}}
+          </h3>
+
+            <nz-card nzTitle="{{'selected-rate' | i18n}}" >
+                <nz-descriptions nzBordered="true" *ngIf="currentEasyPostShipment.selectedRate != null">
+            
+                  <nz-descriptions-item nzSpan="3" nzTitle="{{ 'carrier' | i18n }}">
+            
+                    {{ currentEasyPostShipment.selectedRate.carrier  }}
+                  </nz-descriptions-item> 
+                  <nz-descriptions-item nzSpan="3" nzTitle="{{ 'service' | i18n }}">
+            
+                    {{ currentEasyPostShipment.selectedRate.service  }}
+                  </nz-descriptions-item> 
+                  <nz-descriptions-item nzSpan="3" nzTitle="{{ 'rate' | i18n }}">
+            
+                    {{ currentEasyPostShipment.selectedRate.rate  }} 
+                    {{ currentEasyPostShipment.selectedRate.currency  }}
+                  </nz-descriptions-item> 
+                  <nz-descriptions-item nzSpan="3" nzTitle="{{ 'deliveryDays' | i18n }}">
+            
+                    {{ currentEasyPostShipment.selectedRate.deliveryDays  }}
+                  </nz-descriptions-item>  
+                </nz-descriptions>
+                <div *ngIf="currentEasyPostShipment.selectedRate == null">
+                    {{'no-parcel-rate-selected' | i18n}}
+                </div>
+            </nz-card>
+             <!--
+            <nz-card nzTitle="{{'other-rate' | i18n}}">
+                
+                <div nz-card-grid [ngStyle]="{width: '50%'}" *ngFor="let rate of currentEasyPostShipment.rates" (click)="rateSelected(rate)">
+                    
+                    <nz-descriptions nzBordered="true" >
+                
+                        <nz-descriptions-item nzSpan="3" nzTitle="{{ 'carrier' | i18n }}">
+                
+                        {{ rate.carrier  }}
+                        </nz-descriptions-item> 
+                        <nz-descriptions-item nzSpan="3" nzTitle="{{ 'service' | i18n }}">
+                
+                        {{ rate.service  }}
+                        </nz-descriptions-item> 
+                        <nz-descriptions-item nzSpan="3" nzTitle="{{ 'rate' | i18n }}">
+                
+                        {{ rate.rate  }} 
+                        {{ rate.currency  }}
+                        </nz-descriptions-item> 
+                        <nz-descriptions-item nzSpan="3" nzTitle="{{ 'deliveryDays' | i18n }}">
+                
+                        {{ rate.deliveryDays  }}
+                        </nz-descriptions-item>  
+                    </nz-descriptions>
+    
+                </div>
+                
+            </nz-card>
+
+             -->
+
+             <nz-card nzTitle="{{'other-rate' | i18n}}">
+              <nz-list >
+                <nz-list-item *ngFor="let rate of currentEasyPostShipment.rates" [ngStyle]="{'background-color': getBackgroundColor(rate)}">
+                  <ng-container > 
+                    <nz-list-item-meta>
+                      <nz-list-item-meta-avatar [nzSrc]="getLogo(rate)"></nz-list-item-meta-avatar>
+                      <nz-list-item-meta-title>
+                        <a (click)="rateSelected(rate)">{{rate.carrier}} - {{rate.service}}</a>
+                      </nz-list-item-meta-title>
+                      <nz-list-item-meta-description>
+                        {{ rate.rate  }}  {{ rate.currency  }}
+                      </nz-list-item-meta-description> 
+                    </nz-list-item-meta>
+                    <ul nz-list-item-actions>
+                      <nz-list-item-action *ngIf="isBestRate(rate)"><strong>{{'best-rate' | i18n}}</strong></nz-list-item-action> 
+                    </ul>
+                  </ng-container> 
+                </nz-list-item> 
+              </nz-list>
+          </nz-card>
+
+        </div>
+    </div>
+    <!-- confirm  -->
+    <div class="small-card" *ngIf="stepIndex === 2" style="padding-top: 20px;">
+        
+        <nz-descriptions nzBordered="true" >
+                
+            <nz-descriptions-item   nzSpan="3" nzTitle="{{ 'ship-from' | i18n }}">
+              <address *ngIf="easyPostConfiguration != null && easyPostConfiguration.useWarehouseAddressAsShipFromFlag == true">   
+                {{currentWarehouse.contactorFirstname }}  {{currentWarehouse.contactorLastname }}<br>
+                  {{currentWarehouse.addressLine1 }} <br>
+                  {{currentWarehouse.addressLine2 }} <br>
+                  {{currentWarehouse.addressCity }}, {{currentWarehouse.addressState }} {{currentWarehouse.addressPostcode }} <br> 
+                  </address>
+              <address *ngIf="easyPostConfiguration != null && easyPostConfiguration.useWarehouseAddressAsShipFromFlag == false">   
+                     {{easyPostConfiguration.contactorFirstname }}  {{easyPostConfiguration.contactorLastname }}<br>
+                      {{easyPostConfiguration.addressLine1 }} <br>
+                      {{easyPostConfiguration.addressLine2 }} <br>
+                      {{easyPostConfiguration.addressCity }}, {{easyPostConfiguration.addressState }} {{easyPostConfiguration.addressPostcode }} <br> 
+              </address>
+            </nz-descriptions-item> 
+            <nz-descriptions-item nzSpan="3" nzTitle="{{ 'ship-to' | i18n }}">
+    
+                <address>  
+                    {{currentOrder!.shipToContactorFirstname }}  {{currentOrder!.shipToContactorLastname }}  <br>
+                    {{currentOrder!.shipToAddressLine1 }} <br>
+                    {{currentOrder!.shipToAddressLine2 }} <br>
+                    {{currentOrder!.shipToAddressCity }}, {{currentOrder!.shipToAddressState }} {{currentOrder!.shipToAddressPostcode }} <br> 
+                    </address>
+            </nz-descriptions-item>  <nz-descriptions-item nzSpan="3" nzTitle="{{ 'carrier' | i18n }}">
+            
+                {{ currentEasyPostShipment!.selectedRate!.carrier  }}
+              </nz-descriptions-item> 
+              <nz-descriptions-item nzSpan="3" nzTitle="{{ 'service' | i18n }}">
+        
+                {{ currentEasyPostShipment!.selectedRate.service  }}
+              </nz-descriptions-item> 
+              <nz-descriptions-item nzSpan="3" nzTitle="{{ 'rate' | i18n }}">
+        
+                {{ currentEasyPostShipment!.selectedRate.rate  }} 
+                {{ currentEasyPostShipment!.selectedRate.currency  }}
+              </nz-descriptions-item> 
+              <nz-descriptions-item nzSpan="3" nzTitle="{{ 'deliveryDays' | i18n }}">
+        
+                {{ currentEasyPostShipment!.selectedRate.deliveryDays  }}
+              </nz-descriptions-item>  
+        </nz-descriptions>
+    </div>
+
+    <div class="steps-action" style="padding-top: 15px">
+        <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+            <span>{{ 'steps.previous' | i18n }}</span>
+        </button>
+        <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+        <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 2" [disabled]="!readyForNextStep()">
+            <span>{{ 'steps.next' | i18n }}</span>
+        </button>
+        <nz-divider nzType="vertical"></nz-divider>
+        <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 2">
+            <span> {{ 'confirm' | i18n }}</span>
+        </button>
+    </div>
+</nz-spin>

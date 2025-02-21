@@ -1,0 +1,124 @@
+<button nz-button nzType="primary" nzSearch
+  (click)="openQueryModal(tplQueryModalTitle, tplQueryModalContent, tplQueryModalFooter)"><i nz-icon
+    nzType="search"></i></button>
+
+
+<!-- Modal for query -->
+<ng-template #tplQueryModalTitle>
+  <span>{{ 'page.modal.query.popup' | i18n}}</span>
+</ng-template>
+<ng-template #tplQueryModalContent>
+  <!-- Form to query the result  -->
+  <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+      
+    <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item nzFlex>
+            <nz-form-label for="number" [nzSpan]="6">
+              {{ 'order.number' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="14">
+              <input nz-input name="number" id="number" formControlName="number" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="12">
+          <nz-form-item nzFlex>
+            <nz-form-label for="item" [nzSpan]="6">
+              {{ 'item' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="14">
+              <input nz-input name="item" id="item" formControlName="item" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+  
+      </div>
+    <div nz-row>
+      <div nz-col [nzSpan]="24" class="search-area">
+        <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+          {{ 'search' | i18n }}
+        </button>
+        <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Table to Display the result  -->
+    
+  <div class="search-result-list">
+    
+      <!--
+    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+      <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+    </div>
+  -->
+    
+    <st #st [data]="listOfAllOrders"  [columns]="columns"  [scroll]="{ x: '2715px' }">
+      
+      <ng-template st-row="shipToCustomerColumn" let-item let-index="index">
+        <nz-skeleton-element 
+            *ngIf="item.shipToCustomerId && item.shipToCustomer == null"
+            nzType="input"
+            [nzActive]="true"
+            [nzSize]="'small'"
+            style="width:75px"
+          ></nz-skeleton-element> 
+        <a nz-tooltip [nzTooltipTitle]="shipToCustomerDetailsTemplate">{{ item.shipToCustomer?.name }}</a>
+        <ng-template #shipToCustomerDetailsTemplate>
+          
+          <address>  
+            {{item.shipToCustomer?.addressLine1}} <br>
+            {{item.shipToCustomer?.addressLine2}} <br>
+            {{item.shipToCustomer?.addressCity}},  {{item.shipToCustomer?.addressState}} <br>
+            {{item.shipToCustomer?.addressPostcode}} <br>
+            </address>
+        </ng-template>
+
+      </ng-template>
+      
+      <ng-template st-row="billToCustomerColumn" let-item let-index="index">
+        
+        <nz-skeleton-element 
+          *ngIf="item.billToCustomerId && item.billToCustomer == null"
+          nzType="input"
+          [nzActive]="true"
+          [nzSize]="'small'"
+          style="width:75px"
+        ></nz-skeleton-element> 
+
+        <a nz-tooltip [nzTooltipTitle]="billToCustomerDetailsTemplate">{{ item.billToCustomer?.name }}</a>
+        <ng-template #billToCustomerDetailsTemplate>
+          
+          <address>  
+            {{item.billToCustomer?.addressLine1}} <br>
+            {{item.billToCustomer?.addressLine2}} <br>
+            {{item.billToCustomer?.addressCity}},  {{item.shipToCustomer?.addressState}} <br>
+            {{item.billToCustomer?.addressPostcode}} <br>
+            </address>
+        </ng-template>
+
+      </ng-template>
+      
+      <!-- more details about the order number -->
+      <ng-template st-row="orderNumberColumn" let-item let-index="index">
+        <a nz-tooltip [nzTooltipTitle]="orderNumberTemplate">{{ item.number }}</a>
+        <ng-template #orderNumberTemplate>
+          {{item.number}}
+        </ng-template>
+
+      </ng-template>
+
+    </st>
+
+
+
+  </div>
+</ng-template>
+
+<ng-template #tplQueryModalFooter>
+  <button nz-button nzType="default" (click)="closeQueryModal()">{{ 'cancel' | i18n}}</button>
+  <button nz-button nzType="primary" (click)="returnResult()" [disabled]="isAnyRecordChecked() == false">{{ 'confirm' |
+    i18n}}</button>
+
+</ng-template>

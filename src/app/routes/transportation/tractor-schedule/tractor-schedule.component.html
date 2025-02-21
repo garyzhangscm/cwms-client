@@ -1,0 +1,137 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/transportation/tractor" routerLinkActive="active" [queryParams]="{number: currentTractor.number}">{{ 'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/transportation/tractor" routerLinkActive="active">{{ 'tractor' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'tractor.schedule' | i18n }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+    <nz-card>
+        
+    <form nz-form [formGroup]="addScheduleForm" class="ant-advanced-search-form"> 
+  
+        <div nz-row [nzGutter]="24">
+            
+            <div nz-col [nzSpan]="8">
+                <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="6" nzFor="checkInTime">
+                    {{ 'checkInTime' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18">
+                    <nz-date-picker nzShowTime formControlName="checkInTime" name="checkInTime" ></nz-date-picker>
+                </nz-form-control>
+                </nz-form-item>
+            </div> 
+            <div nz-col [nzSpan]="8">
+                <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="6" nzFor="dispatchTime">
+                    {{ 'dispatchTime' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="18">
+                    <nz-date-picker nzShowTime formControlName="dispatchTime" name="dispatchTime"></nz-date-picker>
+                </nz-form-control>
+                </nz-form-item>
+            </div> 
+            <div nz-col [nzSpan]="8">
+              <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="8" nzFor="type">
+                  {{ 'type' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="16"  >
+                  <nz-input-group nzSize="large" >
+                      <nz-select formControlName="type" style="width: 250px" >
+                              <nz-option
+                                *ngFor="let type of tractorAppointmentTypes  | keys"
+                                [nzValue]="type.key"
+                                nzLabel="{{ 'TRACTOR-APPOINTMENT-TYPE-' + type.key | i18n}}"
+                              ></nz-option>
+                            </nz-select>
+                  </nz-input-group>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          
+        </div>
+        
+        <div nz-row [nzGutter]="24">
+             
+                <div nz-col [nzSpan]="24">
+                    <nz-form-item>
+                      <nz-form-label  [nzSpan]="2">
+                        {{ 'comment' | i18n }}
+                      </nz-form-label>
+                      <nz-form-control [nzSpan]="22" >
+                        <input nz-input  formControlName="comment"  />
+                      </nz-form-control>
+                    </nz-form-item>
+                </div> 
+        </div>
+        <div nz-row>
+          <div nz-col [nzSpan]="24" class="search-area">
+            <button nz-button [nzType]="'primary'" (click)="addSchedule()"  >
+              {{ 'add' | i18n }}
+            </button>
+            <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+          </div>
+        </div>
+      </form> 
+     
+
+    </nz-card>
+
+    <nz-card>             
+        <nz-calendar>                 
+            <ng-container *nzDateCell="let date" > 
+                <ng-container *ngIf="getTotalDailyScheduleCount(date) > 0">
+                    <h5><span nz-popover [nzPopoverTitle]="titleTemplate" [nzPopoverContent]="contentTemplate">
+                        {{'total-quantity' | i18n}}: {{ getTotalDailyScheduleCount(date) }}
+                    
+                        <ng-template #titleTemplate> 
+                            {{'total-quantity' | i18n}}
+                        </ng-template>
+                        <ng-template #contentTemplate> 
+                            <ul class="events">
+                                <ng-container *ngFor="let tractorSchedule of geDailySchedule(date)">
+                                    <li>
+                                        <nz-badge nzStatus="success">
+                                           {{tractorSchedule.checkInTime  | date:'short'}}  - {{tractorSchedule.dispatchTime  | date:'short'}}  : {{tractorSchedule.type}}
+                                        </nz-badge>
+                                    </li>
+                                </ng-container>
+                             </ul>
+                        </ng-template>
+                    </span></h5>
+                    
+                    
+                    <ul class="events">
+                        <ng-container *ngFor="let tractorSchedule of geDailySchedule(date)">
+                            <li>
+                                <nz-badge nzStatus="success">
+                                    <span nz-tooltip [nzTooltipTitle]="titleTemplate">
+                                        {{tractorSchedule.checkInTime  | date:'short'}}  - {{tractorSchedule.dispatchTime   | date:'short'}}  : {{tractorSchedule.type}}
+                                
+                                        <ng-template #titleTemplate> 
+                                            {{tractorSchedule.checkInTime  | date:'short'}} - {{tractorSchedule.dispatchTime   | date:'short'}}  : {{tractorSchedule.type}}
+                                
+                                        </ng-template>
+                                    </span>
+                                  </nz-badge>
+                            </li>
+                        </ng-container>
+                     </ul>
+                </ng-container>
+            </ng-container> 
+        </nz-calendar>
+    </nz-card>
+</nz-spin>

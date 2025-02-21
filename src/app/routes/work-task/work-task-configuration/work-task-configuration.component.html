@@ -1,0 +1,182 @@
+<page-header title="{{'work-task-configuration' |  i18n}}" ></page-header>
+
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    <!-- Form to query the result  -->
+    <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form"> 
+  
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="12" nzFor="sourceLocationGroupType">
+              {{ 'sourceLocationGroupType' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="12">
+                <nz-select   formControlName="sourceLocationGroupType">
+                    <nz-option *ngFor="let locationGroupType of locationGroupTypes" [nzLabel]="locationGroupType.description"
+                      [nzValue]="locationGroupType.id"></nz-option>
+                  </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div> 
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="12" nzFor="sourceLocationGroup">
+              {{ 'sourceLocationGroup' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="12">
+                <nz-select  formControlName="sourceLocationGroup">
+                    <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description!"
+                      [nzValue]="locationGroup.id"></nz-option>
+                  </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div> 
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="8" nzFor="sourceLocation">
+              {{ 'sourceLocation' | i18n }}
+            </nz-form-label>            
+            <nz-form-control [nzSpan]="16" >
+                <nz-input-group nzSearch [nzAddOnAfter]="sourceLocationSuffixIconButton">
+                <input nz-input formControlName="sourceLocationGroup"/>
+                </nz-input-group>
+                <ng-template #sourceLocationSuffixIconButton>
+                    <app-warehouse-layout-location-query-popup (recordSelected)="procesSourceLocationQueryResult($event)">
+                    </app-warehouse-layout-location-query-popup>
+                </ng-template> 
+            
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="12" nzFor="destinationLocationGroupType">
+              {{ 'destinationLocationGroupType' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="12">
+                <nz-select   formControlName="destinationLocationGroupType">
+                    <nz-option *ngFor="let locationGroupType of locationGroupTypes" [nzLabel]="locationGroupType.description"
+                      [nzValue]="locationGroupType.id"></nz-option>
+                  </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div> 
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="12" nzFor="destinationLocationGroup">
+              {{ 'destinationLocationGroup' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="12">
+                <nz-select  formControlName="destinationLocationGroup">
+                    <nz-option *ngFor="let locationGroup of locationGroups" [nzLabel]="locationGroup.description!"
+                      [nzValue]="locationGroup.id"></nz-option>
+                  </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div> 
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="8" nzFor="destinationLocation">
+              {{ 'destinationLocation' | i18n }}
+            </nz-form-label>            
+            <nz-form-control [nzSpan]="16" >
+                <nz-input-group nzSearch [nzAddOnAfter]="destinationLocationSuffixIconButton">
+                <input nz-input formControlName="destinationLocationGroup"/>
+                </nz-input-group>
+                <ng-template #destinationLocationSuffixIconButton>
+                    <app-warehouse-layout-location-query-popup (recordSelected)="procesDestinationLocationQueryResult($event)">
+                    </app-warehouse-layout-location-query-popup>
+                </ng-template> 
+            
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div nz-row [nzGutter]="24">
+     
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="6" nzFor="workTaskType">
+              {{ 'workTaskType' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18"  >
+              <nz-select nzAllowClear formControlName="workTaskType">
+                    <nz-option *ngFor="let workTaskType of workTaskTypes | keys"
+                        nzLabel="{{ 'WORKER-TASK-TYPE-' + workTaskType.key | i18n }}" [nzValue]="workTaskType.key">
+                    </nz-option>
+                </nz-select>  
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="6" nzFor="operationType">
+              {{ 'operation-type' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18"  >
+              <nz-select nzAllowClear formControlName="operationType">
+                    <nz-option *ngFor="let operationType of operationTypes"
+                        [nzLabel]="operationType.description == null ? operationType.name : operationType.description" 
+                        [nzValue]="operationType.name">
+                    </nz-option>
+                </nz-select>  
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div nz-row>
+        <div nz-col [nzSpan]="24" class="search-area">
+          <button nz-button [nzType]="'primary'" (click)="search()"  >
+            {{ 'search' | i18n }}
+          </button>
+          <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+        </div>
+      </div>
+    </form> 
+   
+   
+    
+    <div class="search-result-list"> 
+      
+      <st #st [data]="workTaskConfigurations" [columns]="columns" [footer]="tableFoot">
+        
+        <ng-template st-row="actionColumn" let-workTaskConfiguration let-index="index"> 
+              
+            <button *ngIf="!displayOnly" nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+                {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu>  
+                  <li nz-menu-item >
+                    <a routerLink="/work-task/work-task-configuration/maintenance" routerLinkActive="active"
+                    [queryParams]="{id: workTaskConfiguration.id}">{{ 'modify' | i18n }}</a>
+                  </li>
+                  <li nz-menu-item>
+                    <a  (click)="removeWorkTaskConfiguration(workTaskConfiguration)">{{ 'remove' | i18n }}</a>
+                  </li>
+                </ul>
+              </nz-dropdown-menu>
+        </ng-template>
+      </st>
+    
+    </div>
+   
+  </nz-spin>
+  <ng-template #tableFoot>
+  
+    <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+      {{searchResult}}
+    </div>
+    
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+      
+      <button nz-button nzType="primary" routerLink="/work-task/work-task-configuration/maintenance"  *ngIf="!displayOnly" routerLinkActive="active">
+        {{ 'add' | i18n }}
+      </button>
+    </div>
+  </ng-template>
+  

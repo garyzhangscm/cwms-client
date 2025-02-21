@@ -1,0 +1,5 @@
+export enum CycleCountRequestType {
+  BY_LOCATION_RANGE = 'BY_LOCATION_RANGE',
+  // BY_ITEM_RANGE = 'BY_ITEM_RANGE',
+  BY_AISLE_RANGE = 'BY_AISLE_RANGE',
+}

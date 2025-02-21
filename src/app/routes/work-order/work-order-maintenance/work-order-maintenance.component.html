@@ -1,0 +1,422 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/work-order/work-order" routerLinkActive="active">{{ 'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/work-order/work-order" routerLinkActive="active">{{
+        'work-order' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+  <nz-step nzTitle="{{ 'steps.work-order.maintenance.info' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.work-order.maintenance.line' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.work-order.maintenance.work-instruction' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.work-order.maintenance.by-product' | i18n }}"> </nz-step>
+  <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+<!-- Step 1: basic information 
+  1. Work Order number / description
+  2. Work Order item information
+  -->
+<div class="steps-content" *ngIf="stepIndex === 0 && currentWorkOrder != null">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">
+          {{ 'work-order.number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16" nzHasFeedback [nzErrorTip]="bomNumberErrorTpl">
+          <input appFkey variable="work-order-number" nz-input [(ngModel)]="currentWorkOrder.number"
+            appNewNumberValidator 
+            (nextNumberAvailableEvent)="workOrderNumberChanged($event)"  required #bomNumber="ngModel"
+            [ngModelOptions]="{ updateOn: 'blur' }" [disabled]="!newWorkOrder"/>
+
+          <ng-template #bomNumberErrorTpl let-control>
+            <div *ngIf="bomNumber!.invalid != null  && (bomNumber!.dirty != null  || bomNumber!.touched != null )">
+              <ng-container *ngIf="bomNumber.errors?.errorCode">
+                {{ 'ERROR-NEW-WORK-ORDER-NUMBER-' + bomNumber.errors!.errorCode! | i18n }}</ng-container>
+              <ng-container *ngIf="control.hasError('required')">
+                {{ 'ERROR-NEW-WORK-ORDER-NUMBER-REQUIRED' | i18n }}</ng-container>
+            </div>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+    </div> 
+  </div>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">
+          {{ 'item.name' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            
+            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" style="width: 100%;">
+                <input nz-input [(ngModel)]="currentWorkOrder.item!.name" (blur)="itemNameOnBlur($event)" [disabled]="!newWorkOrder"/>
+              </nz-input-group>
+              <ng-template #suffixIconButton>
+                <app-inventory-item-query-popup (recordSelected)="processWorkOrderItemQueryResult($event)">
+                </app-inventory-item-query-popup>
+              </ng-template>
+ 
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="16">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24">
+          {{ 'expectedQuantity' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <input nz-input [(ngModel)]="currentWorkOrder.expectedQuantity" required />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</div>
+
+<!-- Step 2: Work Order lines -->
+
+<div class="small-card" *ngIf="stepIndex === 1">
+  <!-- Show the Work Order line information and allow the user to 
+      1. remove the existing line
+      2. change the quantity of existing line
+      3. add new lines
+  -->
+  <div class="search-result-list">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="currentWorkOrder.workOrderLines!"
+      nzSize="middle" [nzShowPagination]="false">
+      <thead>
+        <th>
+          {{ 'line.number' | i18n }}
+        </th>
+        <th>
+          {{ 'item' | i18n }}
+        </th>
+        <th>
+          {{ 'item.description' | i18n }}
+        </th>
+        <th>
+          {{ 'inventory.status' | i18n }}
+        </th>
+        <th>
+          {{ 'expectedQuantity' | i18n }}
+        </th>
+        <th>
+          {{ 'expectedQuantity.new' | i18n }}
+        </th>
+        <th>{{ 'action' | i18n }}</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let workOrderLine of currentWorkOrder?.workOrderLines">
+          <td>{{ workOrderLine.number }}</td>
+          <td>
+            <span *ngIf="workOrderLine.id !== undefined && workOrderLine.id !== null ">{{ workOrderLine.item!.name }}</span>
+
+            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" 
+                nzCompact *ngIf="workOrderLine.id === undefined || workOrderLine.id === null">
+                <input nz-input [(ngModel)]="workOrderLine.item!.name" (blur)="workOrderLineItemNameOnBlur($event, workOrderLine)"/>
+              </nz-input-group>
+              <ng-template #suffixIconButton>
+                <app-inventory-item-query-popup (recordSelected)="processWorkOrderLineItemQueryResult($event, workOrderLine)">
+                </app-inventory-item-query-popup>
+              </ng-template> 
+          </td>
+          <td>{{ workOrderLine.item?.description }}</td>
+          <td>
+            <span *ngIf="workOrderLine.id !== undefined && workOrderLine.id !== null">{{
+               workOrderLine.inventoryStatus?.description
+              }}</span>
+
+            <nz-input-group nzCompact *ngIf="workOrderLine.id === undefined || workOrderLine.id === null">
+              <nz-select nz-input [ngModel]="workOrderLine.inventoryStatus?.name"
+                (ngModelChange)="inventoryStatusChange($event, workOrderLine)" style="width: 150px">
+                <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
+                  [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.name">
+                </nz-option>
+              </nz-select>
+            </nz-input-group>
+          </td>
+          <td>{{ workOrderLine.expectedQuantity }}</td>
+          <td>
+            <!-- Allow the user to change the quantity of an existing work order line-->
+            <nz-input-group nzCompact *ngIf="newWorkOrder">
+              <input nz-input [(ngModel)]="mapOfNewLineExpectedQuantity[workOrderLine.number!]"
+                style="width: 50%;" />
+            </nz-input-group>
+          </td>
+          <td>
+            <button nz-button nzDanger (click)="removeWorkOrderLine(workOrderLine)" *ngIf="newWorkOrder" >
+              {{ 'delete' | i18n }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+  <div nz-row nzJustify="start" style="padding: 15px;">
+    <button nz-button nzType="primary" (click)="addNewWorkOrderLine()" *ngIf="newWorkOrder" >
+      {{ 'add' | i18n }}
+    </button>
+  </div>
+</div>
+<!-- Step 3: working instruction template -->
+<div class="small-card" *ngIf="stepIndex === 2">
+  <div class="search-result-list">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="currentWorkOrder!.workOrderInstructions!"
+      nzSize="middle" [nzShowPagination]="false">
+      <thead>
+        <th>
+          {{ 'sequence' | i18n }}
+        </th>
+        <th>
+          {{ 'instruction' | i18n }}
+        </th>
+        <th>{{ 'action' | i18n }}</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let workOrderInstruction of currentWorkOrder?.workOrderInstructions">
+          <td>{{ workOrderInstruction.sequence }}</td>
+
+          <td>
+            <span *ngIf="workOrderInstruction.id !== null">{{ workOrderInstruction.instruction }}</span>
+
+            <nz-input-group nzCompact *ngIf="workOrderInstruction.id === null">
+              <input nz-input [(ngModel)]="workOrderInstruction.instruction" />
+            </nz-input-group>
+          </td>
+
+          <td>
+            <button nz-button nzDanger (click)="removeInstruction(workOrderInstruction)"
+                *ngIf="newWorkOrder" >
+              {{ 'delete' | i18n }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+  <div nz-row nzJustify="start" style="padding-top: 15px;">
+    <button nz-button nzType="primary" (click)="addNewInstruction()" *ngIf="newWorkOrder" >
+      {{ 'add' | i18n }}
+    </button>
+  </div>
+</div>
+<!-- Step 4: by product -->
+<div class="small-card" *ngIf="stepIndex === 3">
+  <div class="search-result-list">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="currentWorkOrder!.workOrderByProducts!"
+      nzSize="middle" [nzShowPagination]="false">
+      <thead>
+        <th>
+          {{ 'item' | i18n }}
+        </th>
+        <th>
+          {{ 'item.description' | i18n }}
+        </th>
+        <th>
+          {{ 'inventory.status' | i18n }}
+        </th>
+        <th>
+          {{ 'expectedQuantity' | i18n }}
+        </th>
+        <th>
+          {{ 'expectedQuantity.new' | i18n }}
+        </th>
+        <th>{{ 'action' | i18n }}</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let byProduct of currentWorkOrder.workOrderByProducts">
+          <td>
+            <span *ngIf="byProduct.id != null">{{ byProduct.item?.name }}</span>
+
+            <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton" 
+                nzCompact nzCompact *ngIf="byProduct.id == null">
+                <input nz-input [(ngModel)]="byProduct.item!.name"  style="width: 150px;"
+                (blur)="byProductItemNameOnBlur($event, byProduct)"/>
+              </nz-input-group>
+              <ng-template #suffixIconButton>
+                <app-inventory-item-query-popup (recordSelected)="processWorkOrderByProductItemQueryResult($event, byProduct)">
+                </app-inventory-item-query-popup>
+              </ng-template>  
+          </td>
+          <td>{{ byProduct.item?.description }}</td>
+          <td>
+            <span *ngIf="byProduct.id != null">{{
+               byProduct.inventoryStatus?.description
+              }}</span>
+
+            <nz-input-group nzCompact *ngIf="byProduct.id == null">
+              <nz-select nz-input [ngModel]="byProduct.inventoryStatus?.name"
+                (ngModelChange)="byProductInventoryStatusChange($event, byProduct)" style="width: 150px">
+                <nz-option *ngFor="let inventoryStatus of availableInventoryStatuses"
+                  [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.name">
+                </nz-option>
+              </nz-select>
+            </nz-input-group>
+          </td>
+          <td>{{ byProduct.expectedQuantity }}</td>
+          <td>
+            <!-- Allow the user to change the quantity of an existing work order line-->
+            <nz-input-group nzCompact>
+              <input nz-input [(ngModel)]="mapOfNewByProductExpectedQuantity[byProduct.itemId!]" style="width: 50%;" />
+            </nz-input-group>
+          </td>
+          <td>
+            <button nz-button nzDanger (click)="removeByProduct(byProduct)">
+              {{ 'delete' | i18n }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <nz-autocomplete [nzDataSource]="validItemNames" #itemList></nz-autocomplete>
+  </div>
+  <div nz-row nzJustify="start" style="padding-top: 15px;">
+    <button nz-button nzType="primary" (click)="addNewByProduct()">
+      {{ 'add' | i18n }}
+    </button>
+  </div>
+</div>
+<!-- Step 5: confirm -->
+<div class="small-card" *ngIf="stepIndex === 4">
+  <!-- Bill Of Material Information -->
+  <nz-card nzTitle="{{ 'work-order' | i18n }}">
+    <nz-descriptions nzBordered *ngIf="currentWorkOrder !== undefined">
+      <nz-descriptions-item nzTitle="{{ 'work-order.number' | i18n }}">
+        {{ currentWorkOrder.number }}</nz-descriptions-item> 
+      <nz-descriptions-item nzTitle="{{ 'item-name' | i18n }}">
+        {{ currentWorkOrder.item?.name }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'item.description' | i18n }}">
+        {{ currentWorkOrder.item?.description }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'work-order.expected-quantity' | i18n }}">
+        {{ currentWorkOrder.expectedQuantity }}</nz-descriptions-item>
+    </nz-descriptions>
+  </nz-card>
+
+  <!-- Work Order Line Information -->
+  <nz-card nzTitle="{{ 'work-order.line' | i18n }}">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="currentWorkOrder.workOrderLines" nzSize="middle"
+      [nzShowPagination]="false">
+      <thead>
+        <th>
+          {{ 'work-order.line.number' | i18n }}
+        </th>
+        <th>
+          {{ 'item' | i18n }}
+        </th>
+        <th>
+          {{ 'item.description' | i18n }}
+        </th>
+        <th>
+          {{ 'work-order.line.expectedQuantity' | i18n }}
+        </th>
+        <th>
+          {{ 'work-order.line.expectedQuantity.new' | i18n }}
+        </th>
+        <th>
+          {{ 'inventory.status' | i18n }}
+        </th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let workOrderLine of currentWorkOrder.workOrderLines">
+          <td>{{ workOrderLine.number }}</td>
+          <td>{{ workOrderLine.item!.name }}</td>
+          <td>{{ workOrderLine.item!.description }}</td>
+          <td>{{ workOrderLine.expectedQuantity }}</td>
+
+          <td>
+            {{ mapOfNewLineExpectedQuantity[workOrderLine.number!] }}
+          </td>
+          <td>{{ workOrderLine.inventoryStatus?.name }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+
+  <!-- Work Instruction Information -->
+  <nz-card nzTitle="{{ 'work-order-instruction' | i18n }}">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="currentWorkOrder.workOrderInstructions"
+      nzSize="middle" [nzShowPagination]="false">
+      <thead>
+        <th>
+          {{ 'id' | i18n }}
+        </th>
+        <th>
+          {{ 'work-order-instruction.sequence' | i18n }}
+        </th>
+        <th>
+          {{ 'work-order-instruction.instruction' | i18n }}
+        </th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let workOrderInstruction of currentWorkOrder.workOrderInstructions">
+          <td>{{ workOrderInstruction.id }}</td>
+          <td>{{ workOrderInstruction.sequence }}</td>
+          <td>{{ workOrderInstruction.instruction }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+
+  <!-- By Product Information -->
+  <nz-card nzTitle="{{ 'bill-of-material.by-product' | i18n }}">
+    <nz-table [nzScroll]="{ x: 'true', y: 'true' }" [nzData]="currentWorkOrder.workOrderByProducts"
+      nzSize="middle" [nzShowPagination]="false">
+      <thead>
+        <th>
+          {{ 'item' | i18n }}
+        </th>
+        <th>
+          {{ 'item.description' | i18n }}
+        </th>
+        <th>
+          {{ 'expectedQuantity' | i18n }}
+        </th>
+        <th>
+          {{ 'expectedQuantity.new' | i18n }}
+        </th>
+        <th>
+          {{ 'inventory.status' | i18n }}
+        </th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let byProduct of currentWorkOrder.workOrderByProducts">
+          <td>{{ byProduct.item?.name }}</td>
+          <td>{{ byProduct.item?.description }}</td>
+          <td>{{ byProduct.expectedQuantity }}</td>
+          <td>
+            {{ mapOfNewByProductExpectedQuantity[byProduct.itemId!] }}
+          </td>
+          <td>{{  byProduct.inventoryStatus!.description }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+</div>
+
+<div class="steps-action">
+  <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical" *ngIf="stepIndex < 4"></nz-divider>
+  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 4">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 4">
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+</nz-spin>

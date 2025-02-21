@@ -1,0 +1,63 @@
+<page-header title="{{'operation-type' |  i18n}}" ></page-header>
+
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+    <!-- Form to query the result  -->
+    <form nz-form [formGroup]="searchForm" class="ant-advanced-search-form"> 
+  
+      <div nz-row [nzGutter]="24">
+        <div nz-col [nzSpan]="12">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSm]="3" [nzXs]="3" nzFor="name">
+              {{ 'name' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18">
+              <input nz-input name="name" id="name" formControlName="name">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div nz-col [nzSpan]="12">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSm]="3" [nzXs]="3" nzFor="description">
+              {{ 'description' | i18n }}
+            </nz-form-label>
+            <nz-form-control [nzSpan]="18">
+              <input nz-input name="description" id="description" formControlName="description">
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div nz-row>
+        <div nz-col [nzSpan]="24" class="search-area">
+          <button nz-button [nzType]="'primary'" (click)="search()"  >
+            {{ 'search' | i18n }}
+          </button>
+          <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+        </div>
+      </div>
+    </form> 
+   
+   
+    
+    <div class="search-result-list"> 
+      
+      <st #st [data]="operationTypes" [columns]="columns" [footer]="tableFoot">
+      </st>
+    
+    </div>
+   
+  </nz-spin>
+  <ng-template #tableFoot>
+  
+    <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+      {{searchResult}}
+    </div>
+    
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;">
+      
+      <button nz-button nzType="primary" routerLink="/work-task/operation-type/maintenance"  *ngIf="!displayOnly" routerLinkActive="active">
+        {{ 'add' | i18n }}
+      </button>
+    </div>
+  </ng-template>
+  

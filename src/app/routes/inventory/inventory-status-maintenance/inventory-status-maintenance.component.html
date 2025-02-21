@@ -1,0 +1,178 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a routerLink="/inventory/status" routerLinkActive="active" [queryParams]="{name:currentInventoryStatus.name}">{{ 'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/inventory/status" routerLinkActive="active">{{ 'inventory-status' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'status' | i18n }}</a></nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+   
+<nz-steps nzType="navigation" [nzCurrent]="stepIndex" style="padding: 15px">
+    <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step> 
+    <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+</nz-steps>
+
+<!-- Show basic item information -->
+<div class="small-card" *ngIf="stepIndex === 0 && currentInventoryStatus != undefined">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="10">
+          {{ 'name' | i18n }}
+        </nz-form-label>
+        <nz-form-control *ngIf="newInventoryStatus" [nzSpan]="14" nzHasFeedback
+          [nzErrorTip]="inventoryStatusErrorTpl">
+
+          <!--
+
+          <input *ngIf="currentItem.id !== null" nz-input [(ngModel)]="currentItem.name" required disabled />
+
+          -->
+
+          <input #inventoryStatusControl="ngModel" variable="inventory-status" nz-input [(ngModel)]="currentInventoryStatus.name" required
+            appNewNumberValidator [ngModelOptions]="{updateOn: 'blur'}" />
+          <ng-template #inventoryStatusErrorTpl let-control>
+            <div
+              *ngIf="inventoryStatusControl!.invalid != null  && (inventoryStatusControl!.dirty != null  || inventoryStatusControl!.touched != null )">
+              <ng-container *ngIf="inventoryStatusControl?.errors?.errorCode">
+                {{ inventoryStatusControl!.errors!.errorCode! | i18n }}</ng-container>
+              <ng-container *ngIf="control.hasError('required')">{{ 'error.form.field.required' | i18n }}
+              </ng-container>
+            </div>
+          </ng-template>
+        </nz-form-control>
+
+        <nz-form-control *ngIf="!newInventoryStatus" [nzSpan]="14">
+
+
+          <input nz-input [(ngModel)]="currentInventoryStatus.name" required disabled />
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">
+          {{ 'description' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          <input nz-input [(ngModel)]="currentInventoryStatus.description" required />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    
+    
+
+    <div nz-col [nzSpan]="8">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="10">
+            {{ 'availableStatusFlag' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="14">
+            <label nz-checkbox [(ngModel)]="currentInventoryStatus.availableStatusFlag"></label>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+  </div>  
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="10">
+          {{ 'reason-code' | i18n }} 
+        </nz-form-label>
+        <nz-form-control> 
+        </nz-form-control>
+
+        <nz-form-control   [nzSpan]="14">
+          <nz-radio-group [(ngModel)]="reasonWhenReceiving">
+            <label nz-radio nzValue="NA">{{'N/A' | i18n}}</label>
+            <label nz-radio nzValue="Required">{{'reasonRequiredWhenReceiving' | i18n}}</label>
+            <label nz-radio nzValue="Optional">{{'reasonOptionalWhenReceiving' | i18n}}</label>
+          </nz-radio-group>
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="10">
+          {{ 'reason-code' | i18n }}
+        </nz-form-label>
+        <nz-form-control> 
+        </nz-form-control>
+
+        <nz-form-control   [nzSpan]="14">
+          <nz-radio-group [(ngModel)]="reasonWhenProducing">
+            <label nz-radio nzValue="NA">{{'N/A' | i18n}}</label>
+            <label nz-radio nzValue="Required">{{'reasonRequiredWhenProducing' | i18n}}</label>
+            <label nz-radio nzValue="Optional">{{'reasonOptionalWhenProducing' | i18n}}</label>
+          </nz-radio-group>
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="8">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="10">
+          {{ 'reason-code' | i18n }} 
+        </nz-form-label>
+        <nz-form-control> 
+        </nz-form-control>
+
+        <nz-form-control  [nzSpan]="14">
+          <nz-radio-group [(ngModel)]="reasonWhenAdjusting">
+            <label nz-radio nzValue="NA">{{'N/A' | i18n}}</label>
+            <label nz-radio nzValue="Required">{{'reasonRequiredWhenAdjusting' | i18n}}</label>
+            <label nz-radio nzValue="Optional">{{'reasonOptionalWhenAdjusting' | i18n}}</label>
+          </nz-radio-group>
+
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</div>
+ 
+<!-- Confirm the change -->
+<div class="small-card" *ngIf="stepIndex === 1">
+  <nz-card>
+    <nz-descriptions nzBordered="true">
+      <nz-descriptions-item nzTitle="{{ 'name' | i18n }}">{{ currentInventoryStatus.name }} </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'description' | i18n }}">{{ currentInventoryStatus.description }}
+      </nz-descriptions-item>
+      <nz-descriptions-item nzTitle="{{ 'availableStatusFlag' | i18n }}">{{ currentInventoryStatus.availableStatusFlag }}
+      </nz-descriptions-item> 
+    </nz-descriptions>
+  </nz-card> 
+</div>
+
+<div class="steps-action">
+  <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+    <span>{{ 'steps.previous' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical" *ngIf="stepIndex < 2"></nz-divider>
+  <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1">
+    <span>{{ 'steps.next' | i18n }}</span>
+  </button>
+  <nz-divider nzType="vertical" *ngIf="stepIndex === 2"></nz-divider>
+  <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 1">
+    <span> {{ 'confirm' | i18n }}</span>
+  </button>
+</div>
+
+</nz-spin> 
+ 

@@ -1,0 +1,121 @@
+<page-header title="{{'allocation-configuration' |  i18n}}" > </page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+
+
+    <div nz-col [nzSpan]="12" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label for="itemFamily"  [nzSpan]="6">
+          {{ 'item-family' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+
+          <nz-select formControlName="itemFamily">
+            <nz-option *ngFor="let itemFamily of itemFamilies" [nzLabel]="itemFamily.description"
+              [nzValue]="itemFamily.name">
+            </nz-option>
+          </nz-select>
+          </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="6" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="6" [nzXs]="6" nzFor="itemName">
+          {{ 'item' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <input nz-input name="itemName" id="itemName" formControlName="itemName" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      <a class="collapse" (click)="toggleCollapse()">
+        {{ 'collapse' | i18n }}
+
+        <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
+      </a>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table   #rowSelectionTable nzShowPagination
+    [nzData]="listOfAllConfigurations">
+    <thead>
+      <tr>
+
+        <th *ngFor="let column of listOfColumns" [nzShowSort]="column.showSort" [nzSortOrder]="column.sortOrder"
+          [nzSortFn]="column.sortFn" [nzSortDirections]="column.sortDirections"
+          [nzFilterMultiple]="column.filterMultiple" [nzFilters]="column.listOfFilter" [nzFilterFn]="column.filterFn"
+          [nzShowFilter]="column.showFilter">
+          {{ column.name | i18n }}
+        </th>
+        <th width="20px" *ngIf="!displayOnly">
+          {{ 'action' | i18n }}
+        </th>
+
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data"> 
+        <td>{{ data.sequence }}</td>
+        <td>{{ data.type }}</td>
+        <td>{{ data.item?.name }}</td>
+        <td>{{ data.itemFamily?.name }}</td>
+        <td>{{ data.location?.name }}</td>
+        <td>{{ data.locationGroup?.name }}</td>
+        <td>{{ data.locationGroupType?.name }}</td>
+
+        <td>{{ data.allocationStrategy }}</td>
+        <td>
+
+          <ul>
+            <li *ngFor="let pickableUnitOfMeasure of data.allocationConfigurationPickableUnitOfMeasures">
+              {{ pickableUnitOfMeasure.unitOfMeasure.name }}
+            </li>
+          </ul>
+        </td>
+        <td width="20px" *ngIf="!displayOnly">
+          <button nz-button nz-dropdown [nzDropdownMenu]="menu" nzType="primary">
+          {{ 'action' | i18n }} <i nz-icon nzType="down"></i></button>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <ul nz-menu>
+              <!--  allow the user to assign the production line only when
+              the work order is not start yet
+              -->
+              <li nz-menu-item >                  
+                <a  routerLink="/outbound/allocation-configuration/maintenance" routerLinkActive="active" [queryParams]="{id : data.id!}">{{
+                  'modify' | i18n }}</a> 
+              </li>
+               
+              <li nz-menu-item>
+                <a  (click)="removeAllocationConfiguration(data)">{{ 'remove' | i18n }}</a>
+              </li> 
+            </ul>
+          </nz-dropdown-menu>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
+      <button nz-button nzType="primary" routerLink="/outbound/allocation-configuration/maintenance" routerLinkActive="active">
+        {{ 'add' | i18n }}
+      </button>
+    </div>
+</div>
+</nz-spin>

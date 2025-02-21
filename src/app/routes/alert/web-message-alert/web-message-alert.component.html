@@ -1,0 +1,54 @@
+<page-header  [title]="pageTitle" ></page-header>
+
+<st #st [widthMode]="{ type: 'strict' }" [data]="url" [req]="{ params: params }" [columns]="columns" 
+    [page]="{zeroIndexed : true}"
+    [res]="{ process : serverDataPreProcess}">
+
+
+    <ng-template st-row="alertTypeColumn" let-item let-index="index"> 
+        <span *ngIf="item.readFlag">
+            {{ 'ALERT-TYPE-' + item.alert.type | i18n }}
+        </span>
+        <strong *ngIf="!item.readFlag">
+            {{ 'ALERT-TYPE-' + item.alert.type | i18n }}
+        </strong>
+            
+    </ng-template>
+    <ng-template st-row="titleColumn" let-item let-index="index"> 
+        <span *ngIf="item.readFlag">
+            {{ item.alert.title }}
+        </span>
+        <strong *ngIf="!item.readFlag">
+            {{ item.alert.title }}
+        </strong>
+            
+    </ng-template>
+    <ng-template st-row="actionColumn" let-item let-index="index"> 
+         <a (click)="openReadMessageModal(item, tplMessageModalTitle, tplMessageModalContent, tplMessageModalFooter)">{{'read' | i18n}}</a>
+         <nz-divider nzType="vertical"></nz-divider>
+         <a (click)="markAsRead(item, true)">{{'mark-as-read' | i18n}}</a>
+    </ng-template>
+
+</st>
+
+
+
+
+    
+  <!-- Modal for message details -->
+  <ng-template #tplMessageModalTitle>
+    <span>{{ 'web-message-alert' | i18n}}</span>
+  </ng-template>
+  <ng-template #tplMessageModalContent>
+      
+    <nz-card [nzTitle]="currentWebMessageAlert?.alert?.title" >
+        <p>{{ currentWebMessageAlert?.alert?.message }}</p> 
+      </nz-card>
+  
+  
+  </ng-template>
+  <ng-template #tplMessageModalFooter>
+    <button nz-button nzType="default" (click)="closeMessageModal()">{{ 'close' |
+      i18n}}</button> 
+  
+  </ng-template>

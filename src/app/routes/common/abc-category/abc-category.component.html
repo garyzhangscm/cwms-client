@@ -1,0 +1,75 @@
+<page-header title="{{'abc-category' |  i18n}}" ></page-header>
+
+
+
+<div class="search-result-list"> 
+    
+    <st #st [data]="abcCategories" [columns]="columns"  [footer]="tableFoot"  [header]="tableHeader" >
+        <ng-template st-row="actionColumn" let-item let-index="index"> 
+        
+            <button nz-button (click)="removeABCCategory(item)"  nzDanger>
+                {{'remove' | i18n}}
+                </button> 
+       </ng-template>
+    </st>
+  
+  </div>
+
+  <ng-template #tableHeader> 
+      
+      <div nz-row nzType="flex" nzJustify="end" style="padding: 15px;"> 
+        <a (click)="search()">
+          {{ 'refresh' | i18n }}
+        </a>
+      </div>
+  </ng-template>
+  
+<ng-template #tableFoot>
+    <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+        {{searchResult}}
+      </div>
+      
+      <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
+        <button nz-button nzType="primary" (click)="openAddCategoryModel(tplNewABCCategoryModalTitle, tplNewABCCategoryModalContent)">
+          {{ 'add' | i18n }}
+        </button>
+      </div>
+  </ng-template>
+  
+
+  
+<!-- Modal for adding temporary user-->
+<ng-template #tplNewABCCategoryModalTitle>
+    <span>{{ 'abc-category' | i18n}}</span>
+  </ng-template>
+  <ng-template #tplNewABCCategoryModalContent> 
+    <form nz-form [formGroup]="newABCCategoryForm">
+      <div nz-row [nzGutter]="24" >
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="8" nzFor="name">
+              {{ 'name' | i18n }}  
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <nz-input-group nzSize="large">
+                <input nz-input name="abcCategoryName" id="abcCategoryName" formControlName="abcCategoryName"/>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>  <div nz-row [nzGutter]="24" >
+        <div nz-col [nzSpan]="8">
+          <nz-form-item nzFlex>
+            <nz-form-label [nzSpan]="8" nzFor="description">
+              {{ 'description' | i18n }}  
+            </nz-form-label>
+            <nz-form-control [nzSpan]="16">
+              <nz-input-group nzSize="large">
+                <input nz-input name="abcCategoryDescription" id="abcCategoryDescription" formControlName="abcCategoryDescription"/>
+              </nz-input-group>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>  
+    </form> 
+  </ng-template>

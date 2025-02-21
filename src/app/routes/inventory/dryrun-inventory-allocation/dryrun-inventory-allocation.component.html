@@ -1,0 +1,68 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+<ng-template #returnLink>
+  <a (click)="returnToPreviousPage()" *ngIf="type !== ''">{{
+    'return' | i18n
+    }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+  <nz-breadcrumb>
+    <nz-breadcrumb-item>
+      <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+    </nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ 'breadcrumb.outbound' | i18n }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a routerLink="/inventory/dryrun-inventory-allocation" routerLinkActive="active">{{
+        'allocationDryRunResult' | i18n
+        }}</a></nz-breadcrumb-item>
+    <nz-breadcrumb-item><a>{{ pageTitle }}</a>
+    </nz-breadcrumb-item>
+  </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'"> 
+<!-- Display Work Order Line Informaiton -->
+<nz-card *ngIf="type === 'workOrderLine'">
+  <nz-descriptions nzTitle="{{'work-order' | i18n}}" nzBordered>
+    <nz-descriptions-item nzTitle="{{'work-order.number' | i18n}}">{{workOrderLine?.workOrderNumber}}
+    </nz-descriptions-item> 
+    <nz-descriptions-item nzTitle="{{'item' | i18n}}">{{workOrderLine?.item?.name}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'item.description' | i18n}}">
+      {{workOrderLine?.item?.description}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'work-order.expected-quantity' | i18n}}">
+      {{workOrderLine?.expectedQuantity}}</nz-descriptions-item> 
+  </nz-descriptions>
+</nz-card> 
+
+<!-- Display Order Informaiton -->
+<nz-card *ngIf="type === 'orderLine'">
+  <nz-descriptions nzTitle="{{'order' | i18n}}" nzBordered *ngIf="orderLine != null">
+    <nz-descriptions-item nzTitle="{{'order.number' | i18n}}">
+      {{orderLine.orderNumber}}
+    </nz-descriptions-item>   
+    <nz-descriptions-item nzTitle="{{'item' | i18n}}">{{orderLine.item?.name}}
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'item.description' | i18n}}">
+      {{orderLine.item?.description}}</nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{'order.line.expectedQuantity' | i18n}}">
+      {{orderLine.expectedQuantity}}</nz-descriptions-item> 
+  </nz-descriptions>
+</nz-card> 
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+
+    
+    <st #st [data]="allocationDryRunResults" [columns]="columns" [footer]="tableFoot"> 
+        
+    </st>
+      
+    <ng-template #tableFoot>
+
+        <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+        {{searchResult}}
+        </div>
+        
+    </ng-template>
+</div>
+
+</nz-spin> 

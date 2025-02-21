@@ -1,0 +1,48 @@
+<page-header title="{{'inventory-dashboard' |  i18n}}" ></page-header>
+ 
+
+
+<nz-spin [nzSpinning]="isSummaryQuantitySpinning" [nzSize]="'large'">
+
+  <nz-card nzTitle="Inventory Summary" *ngIf="inventorySnapshotSummaryQuantityData.length > 0">
+
+                <!--
+                  https://plotly.com/javascript/pie-charts/
+                --> 
+                <!--
+
+      <plotly-plot [data]="inventorySnapshotSummaryQuantityData"></plotly-plot>
+
+                -->
+
+  </nz-card>
+  
+</nz-spin>
+
+<nz-spin [nzSpinning]="isSummaryByVelocitySpinning" [nzSize]="'large'">
+
+  <nz-card nzTitle="Inventory Summary By Velocity" *ngIf="inventorySnapshotSummaryByVelocityData.length > 0">
+
+                <!--
+                  https://plotly.com/javascript/pie-charts/
+                --> 
+                <!--
+      <plotly-plot [data]="inventorySnapshotSummaryByVelocityData" [layout]="inventorySnapshotSummaryByVelocityLayout"></plotly-plot>
+
+                --> 
+  </nz-card>
+  
+</nz-spin>
+<nz-spin [nzSpinning]="isSummaryByABCCategorySpinning" [nzSize]="'large'">
+  <nz-card nzTitle="Inventory Summary By ABC Category" *ngIf="inventorySnapshotSummaryByABCCategoryData.length > 0">
+
+    <!--
+      https://plotly.com/javascript/pie-charts/
+    --> 
+    <!--
+    <plotly-plot [data]="inventorySnapshotSummaryByABCCategoryData" [layout]="inventorySnapshotSummaryByABCCategoryLayout"></plotly-plot>
+
+    --> 
+    </nz-card>
+   
+</nz-spin>

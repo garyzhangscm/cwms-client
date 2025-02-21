@@ -1,0 +1,248 @@
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="6" nzFor="integrationDateTimeRanger">
+          {{ 'integration.date-time' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <nz-range-picker [nzShowTime]="{ nzHideDisabledOptions: true }" nzFormat="yyyy-MM-dd HH:mm:ss"
+            formControlName="integrationDateTimeRanger" name="integrationDateTimeRanger">
+          </nz-range-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div nz-col [nzSpan]="12" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="6" nzFor="integrationDate">
+          {{ 'integration.date' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <nz-date-picker formControlName="integrationDate" name="integrationDate"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="6" nzFor="status">
+          {{ 'integration.status' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          
+          <nz-select  nzMode="multiple" formControlName="statusList" name="statusList">
+            <nz-option
+              *ngFor="let status of integrationStatusList  | keys"
+              [nzValue]="status.key"
+              nzLabel="{{ 'INTEGRATION-STATUS-' + status.key | i18n}}"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    
+    <div nz-col [nzSpan]="12" [hidden]="isCollapse">
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="6" nzFor="id">
+          {{ 'id' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="6">
+          
+          <input nz-input name="id" id="id" formControlName="id"> 
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()" [nzLoading]="searching">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+      <a class="collapse" (click)="toggleCollapse()">
+        {{ 'collapse' | i18n }}
+
+        <i nz-icon [nzType]="isCollapse ? 'down' : 'up'"></i>
+      </a>
+    </div>
+  </div>
+</form>
+
+
+<!-- Table to Display the result  -->
+<div class="search-result-list">
+  <nz-table 
+  [nzScroll]="{ x: '100vw' }" nzShowSizeChanger nzShowPagination [nzData]="listOfAllIntegrationWorkOrderConfirmations" #nestedTable
+    [nzFooter]="tableFoot">
+    <thead >
+      <tr>
+
+        
+        <th nzWidth="40px"></th>
+        <th
+            *ngFor="let column of listOfColumns"
+            [nzShowSort]="column.showSort"
+            [nzSortOrder]="column.sortOrder"
+            [nzSortFn]="column.sortFn"
+            [nzSortDirections]="column.sortDirections"
+            [nzFilterMultiple]="column.filterMultiple"
+            [nzFilters]="column.listOfFilter"
+            [nzFilterFn]="column.filterFn"        
+            [nzShowFilter]="column.showFilter"
+          >
+            {{ column.name | i18n }}
+          </th> 
+          <th nzEllipsis>{{ 'integration.errorMessage' | i18n }}</th>
+          <th nzRight>{{ 'action' | i18n }}</th>
+          
+ 
+      </tr>
+    </thead>
+    <tbody>
+      <ng-template ngFor let-data [ngForOf]="nestedTable.data">
+        <tr>
+
+          <td [nzExpand]="expandSet.has(data.id)" (nzExpandChange)="onExpandChange(data.id, $event)"></td>
+          <td>{{ data.id }}</td>
+          <td>{{ data.number }}</td>
+          <td>{{ data.warehouseId }}</td>
+          <td>{{ data.warehouseName }}</td>
+
+          <td>{{ data.itemId }}</td>
+          <td>{{ data.itemName }}</td>
+
+          <td>{{ data.productionLineName }}</td>
+          <td>{{ data.billOfMaterialName }}</td>
+          <td>{{ data.expectedQuantity }}</td>
+          <td>{{ data.producedQuantity }}</td>
+
+          
+          <td>{{ 'INTEGRATION-STATUS-' + data.status | i18n}}</td>
+          
+          <td>
+            {{data.createdTime | date:'short'}} 
+          </td>
+          <td>
+            {{data.lastModifiedTime | date:'short'}} 
+          </td>
+          <td nzEllipsis>
+            <a>
+              <span nz-tooltip nzTooltipTitle="{{ data.errorMessage }}">{{ data.errorMessage }}</span>
+            </a>
+          </td>
+          <td nzRight>
+            <button nz-button (click)="resendIntegration(data.id!)">{{ 'resend' | i18n }}</button>
+          </td>
+
+
+        </tr>
+        <tr [nzExpand]="expandSet.has(data.id)" class="inner-table">
+          
+            <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
+              <nz-tab nzTitle=" {{ 'work-order.line' | i18n }}">
+                <nz-table 
+                [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="data.workOrderLineConfirmations" nzSize="middle"
+                  [nzShowPagination]="false">
+                  <thead>
+                    <th>
+                      {{ 'work-order.line.number' | i18n }}
+                    </th>
+                    <th>
+                      {{ 'item' | i18n }}</th>
+                    <th>
+                      {{ 'item.description' | i18n }}</th>
+                    <th>
+                      {{ 'work-order.line.expectedQuantity' | i18n }}</th>
+                    <th>
+                      {{ 'work-order.line.openQuantity' | i18n }}</th>
+                    <th>
+                      {{ 'work-order.line.inprocessQuantity' | i18n }}</th>
+                    <th>
+                      {{ 'work-order.line.deliveredQuantity' | i18n }}</th>
+                    <th>
+                      {{ 'work-order.line.consumedQuantity' | i18n }}</th>
+                    <th>
+                      {{ 'work-order.line.scrappedQuantity' | i18n }}</th>
+                    <th>
+                      {{ 'work-order.line.returnedQuantity' | i18n }}</th>
+                    <th>
+                      {{ 'inventory-status.id' | i18n }}</th>
+                    <th>
+                      {{ 'inventory-status.name' | i18n }}</th>
+                  </thead>
+    <tbody>
+      <tr *ngFor="let workOrderLine of data.workOrderLineConfirmations">
+        <td>{{ workOrderLine.number }}</td>
+        <td>{{ workOrderLine.itemId }}</td>
+        <td>{{ workOrderLine.itemName }}</td>
+        <td>{{ workOrderLine.expectedQuantity }}</td>
+        <td>{{ workOrderLine.openQuantity }}</td>
+        <td>{{ workOrderLine.inprocessQuantity }}</td>
+        <td>{{ workOrderLine.deliveredQuantity }}</td>
+        <td>{{ workOrderLine.consumedQuantity }}</td>
+        <td>{{ workOrderLine.scrappedQuantity }}</td>
+        <td>{{ workOrderLine.returnedQuantity }}</td>
+        <td>{{ workOrderLine.inventoryStatusId }}</td>
+        <td>{{ workOrderLine.inventoryStatusName }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+  </nz-tab>
+
+
+  <nz-tab nzTitle=" {{ 'work-order.by-product' | i18n }}">
+    <nz-table 
+    [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="data.workOrderByProductConfirmations" nzSize="middle" [nzShowPagination]="false">
+      <thead>
+
+        <th>
+          {{ 'item' | i18n }}</th>
+        <th>
+          {{ 'item.description' | i18n }}</th>
+
+        <th>
+          {{ 'work-order.by-product.expectedQuantity' | i18n }}</th>
+        <th>
+          {{ 'work-order.by-product.producedQuantity' | i18n }}</th>
+        <th>
+          {{ 'inventory-status.id' | i18n }}</th>
+        <th>
+          {{ 'inventory-status.name' | i18n }}</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let workOrderByProduct of data.workOrderByProductConfirmations!">
+
+          <td>{{ workOrderByProduct.itemId }}</td>
+          <td>{{ workOrderByProduct.itemName }}</td>
+          <td>{{ workOrderByProduct.expectedQuantity }}</td>
+          <td>{{ workOrderByProduct.producedQuantity }}</td>
+
+          <td>{{ workOrderByProduct.inventoryStatusId }}</td>
+          <td>{{ workOrderByProduct.inventoryStatusName }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+
+  </nz-tabset>
+   
+  </tr>
+  </ng-template>
+  </tbody>
+  </nz-table>
+</div>
+
+
+<ng-template #tableFoot>
+  <div nz-row nzType="flex" nzJustify="start" *ngIf="searchResult != ''">
+    {{searchResult}}
+  </div>
+</ng-template>
+
+</nz-spin>

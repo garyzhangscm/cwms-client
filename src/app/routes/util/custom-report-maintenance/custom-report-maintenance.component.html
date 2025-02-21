@@ -1,0 +1,240 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink> 
+    <a (click)="return()" routerLinkActive="active">{{
+        'return' | i18n
+        }}</a>
+
+</ng-template>
+
+<ng-template #breadcrumb>
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a routerLink="/util/custom-report" routerLinkActive="active">{{
+          'menu.main.util.custom-report' | i18n
+          }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+    <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+        <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step> 
+        
+        <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+    </nz-steps>
+
+    <!-- Let the user input the order information -->
+    <div class="small-card" *ngIf="stepIndex === 0 " style="padding-top: 20px;">
+        <nz-card    *ngIf="currentCustomReport != null" >   
+            <div nz-row [nzGutter]="24">
+                <div nz-col [nzSpan]="8">
+                  <nz-form-item>
+                    <nz-form-label [nzSpan]="8">
+                      {{ 'name' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="16" nzHasFeedback [nzErrorTip]="nameErrorTpl" 
+                        [nzValidateStatus]="nameValidateStatus"
+                    >
+                      <input   type="text" nz-input [(ngModel)]="currentCustomReport!.name" required 
+                        (blur)="nameChange($event)" [disabled]="!newCustomReport"/>
+                      <ng-template #nameErrorTpl let-control>  
+                          <ng-container *ngIf="nameValidateStatus === 'required'">{{ 'error.form.field.required' | i18n }}</ng-container>
+                          <ng-container *ngIf="nameValidateStatus === 'nameExists'">Name already exists</ng-container>
+                         
+                      </ng-template>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+            
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                        
+                        <nz-form-label [nzSpan]="8">
+                            {{ 'runAtCompanyLevel' | i18n }}
+                        </nz-form-label>
+                        <nz-form-control [nzSpan]="16">
+                            <label nz-checkbox [(ngModel)]="currentCustomReport!.runAtCompanyLevel" ></label>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+            <div nz-row [nzGutter]="24">
+                <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="8">
+                    {{ 'companyIdFieldName' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="16" >
+                    <input   type="text" nz-input [(ngModel)]="currentCustomReport!.companyIdFieldName" required  /> 
+                    </nz-form-control>
+                </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                    <nz-form-label [nzSpan]="8">
+                        {{ 'warehouseIdFieldName' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="16" >
+                        <input   type="text" nz-input [(ngModel)]="currentCustomReport!.warehouseIdFieldName" required  /> 
+                    </nz-form-control>
+                    </nz-form-item>
+                </div>
+
+            </div>      
+            <div nz-row [nzGutter]="24">
+                <div nz-col [nzSpan]="8">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="8">
+                    {{ 'groupBy' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="16" >
+                    <input   type="text" nz-input [(ngModel)]="currentCustomReport!.groupBy" required  /> 
+                    </nz-form-control>
+                </nz-form-item>
+                </div>
+                <div nz-col [nzSpan]="8">
+                    <nz-form-item>
+                    <nz-form-label [nzSpan]="8">
+                        {{ 'sortBy' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="16" >
+                        <input   type="text" nz-input [(ngModel)]="currentCustomReport!.sortBy" required  /> 
+                    </nz-form-control>
+                    </nz-form-item>
+                </div>
+
+            </div>   
+            <div nz-row [nzGutter]="24">    
+                <div nz-col [nzSpan]="16">
+                  <nz-form-item>
+                    <nz-form-label [nzSpan]="4">
+                      {{ 'query' | i18n }}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="20" >                    
+                        <textarea rows="4" nz-input [(ngModel)]="currentCustomReport!.query"></textarea> 
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+            </div>
+        </nz-card>
+ 
+        <nz-card   nzTitle="{{'parameter' | i18n}}"
+             *ngIf="currentCustomReport != null" [nzActions]="[addParameterTpl]">   
+            
+            <nz-list class="demo-loadmore-list" >
+                <nz-list-item *ngFor="let customReportParameter of currentCustomReport.customReportParameters">
+                    <ng-container>
+                        <nz-list-item-meta 
+                            nzDescription="{{ customReportParameter.name }}">
+                            <nz-list-item-meta-title>
+                                {{ customReportParameter.displayText }}
+                            </nz-list-item-meta-title>
+                        </nz-list-item-meta>
+                        
+                        <ul nz-list-item-actions>
+                            <nz-list-item-action>
+                                <a (click)="removeParameter(customReportParameter.name)">
+                                {{ 'remove' | i18n }}</a>
+                              </nz-list-item-action>
+                        </ul>
+                    </ng-container>
+                </nz-list-item>
+            </nz-list>
+
+            <ng-template #addParameterTpl>
+                <a (click)="openAddParameterModal()">{{ 'add' | i18n }}</a>
+              </ng-template>
+        </nz-card>
+    </div>
+  
+    <!-- Let the user confirm the result -->
+    <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+
+        <nz-descriptions nzBordered>
+            <nz-descriptions-item nzTitle="{{ 'name' | i18n}}" nzSpan="2"> 
+                {{currentCustomReport!.name }}
+            </nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'runAtCompanyLevel' | i18n}}"> 
+                {{currentCustomReport!.runAtCompanyLevel }}
+            </nz-descriptions-item> 
+            <nz-descriptions-item nzTitle="{{ 'query' | i18n}}"  nzSpan="3"> 
+                {{currentCustomReport!.query }}
+            </nz-descriptions-item>  
+        </nz-descriptions>
+        
+        <nz-card nzTitle="{{'parameter' | i18n}}"> 
+
+            <nz-list class="demo-loadmore-list" >
+                <nz-list-item *ngFor="let customReportParameter of currentCustomReport.customReportParameters">
+                    <ng-container>
+                        <nz-list-item-meta 
+                            nzDescription="{{ customReportParameter.name }}">
+                            <nz-list-item-meta-title>
+                                {{ customReportParameter.displayText }}
+                            </nz-list-item-meta-title>
+                        </nz-list-item-meta>
+                        
+                         
+                    </ng-container>
+                </nz-list-item>
+            </nz-list>
+        </nz-card>
+        
+    </div>
+
+
+
+    <div class="steps-action" style="padding-top: 15px;">
+        <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+            <span>{{ 'steps.previous' | i18n }}</span>
+        </button>
+        <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+        <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1">
+            <span>{{ 'steps.next' | i18n }}</span>
+        </button>
+        <nz-divider nzType="vertical"></nz-divider>
+        <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 1">
+            <span> {{ 'confirm' | i18n }}</span>
+        </button>
+    </div>
+
+</nz-spin>
+
+
+<nz-modal [(nzVisible)]="addParameterModalVisible" 
+    nzTitle="{{ 'parameter' | i18n}}" (nzOnCancel)="onParameterModalCancel()" (nzOnOk)="onParameterModalConfirm()">
+    <ng-container *nzModalContent>
+        
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="16">
+            <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="10"  nzFor="name">
+                {{ 'name' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="14">
+                    <input   type="text" nz-input [(ngModel)]="newParameterName" required  />
+                </nz-form-control>
+            </nz-form-item>
+            </div>  
+        </div>
+        <div nz-row [nzGutter]="24">
+            <div nz-col [nzSpan]="16">
+            <nz-form-item nzFlex>
+                <nz-form-label [nzSpan]="10"  nzFor="displayText">
+                {{ 'displayText' | i18n }}
+                </nz-form-label>
+                <nz-form-control [nzSpan]="14">
+                    <input   type="text" nz-input [(ngModel)]="newParameterDisplayText" required  />
+                </nz-form-control>
+            </nz-form-item>
+            </div>  
+        </div>
+        
+        
+    </ng-container>
+  </nz-modal>

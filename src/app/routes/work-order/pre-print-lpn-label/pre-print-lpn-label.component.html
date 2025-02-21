@@ -1,0 +1,117 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+  <ng-template #returnLink>
+    <a (click)="return()" routerLinkActive="active">{{
+      'return' | i18n
+      }}</a>
+  </ng-template>
+  <ng-template #breadcrumb>
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a routerLink="/work-order" routerLinkActive="active">{{
+          'breadcrumb.work-order' | i18n
+          }}</a></nz-breadcrumb-item>
+      <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </ng-template>
+
+  <nz-descriptions nzTitle="{{ 'work-order' | i18n}}" nzBordered="true" *ngIf="type ==='work-order'">
+  
+    <nz-descriptions-item nzTitle="{{ 'work-order.number' | i18n}}">
+      {{ currentProductionLineAssignment.workOrderNumber}}
+    </nz-descriptions-item>
+    
+    <nz-descriptions-item nzTitle="{{ 'production-line' | i18n}}">
+      {{ currentProductionLineAssignment.productionLineName}}
+    </nz-descriptions-item>
+    
+    <nz-descriptions-item nzTitle="{{ 'item' | i18n}}" nzSpan="2">
+      {{ currentProductionLineAssignment.workOrderItemName}}
+    </nz-descriptions-item>
+
+    
+    <nz-descriptions-item nzTitle="{{ 'start-lpn' | i18n}}">
+      <input nz-input  [(ngModel)]="startLPN" [disabled]="!userSpecifyLPN"/>
+      <label nz-checkbox [(ngModel)]="userSpecifyLPN">{{'user-specify-lpn' | i18n}}</label>
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'inventory-quantity-on-lpn' | i18n}}">
+      <nz-input-number  [(ngModel)]="quantity" /> 
+      <i nz-icon [nzType]="'question-circle'"
+        nz-popover [nzPopoverContent]="contentTemplate" nzPopoverPlacement="topRight"></i> 
+       
+      <ng-template #contentTemplate>
+        <div>Quantity of the inventory on the LPN label
+        </div>
+      </ng-template> 
+  
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'label-count' | i18n}}">
+      <nz-input-number  [(ngModel)]="labelCount" />
+  
+    </nz-descriptions-item>
+
+  </nz-descriptions>
+  
+  <nz-descriptions nzTitle="{{ 'receipt.line' | i18n}}" nzBordered="true" *ngIf="type ==='receipt-line'">
+  
+    <nz-descriptions-item nzTitle="{{ 'receipt.number' | i18n}}">
+      {{ currentReceiptLine?.receiptNumber}}
+    </nz-descriptions-item>
+    
+    <nz-descriptions-item nzTitle="{{ 'receipt.line.number' | i18n}}">
+      {{ currentReceiptLine?.number}}
+    </nz-descriptions-item>
+    
+    <nz-descriptions-item nzTitle="{{ 'item' | i18n}}" nzSpan="2">
+      {{ currentReceiptLine?.item?.name}}
+    </nz-descriptions-item>
+
+    
+    <nz-descriptions-item nzTitle="{{ 'start-lpn' | i18n}}">
+      <input nz-input [(ngModel)]="startLPN" [disabled]="!userSpecifyLPN"/>
+      <label nz-checkbox [(ngModel)]="userSpecifyLPN">{{'user-specify-lpn' | i18n}}</label>
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'inventory-quantity-on-lpn' | i18n}}">
+      
+      <nz-input-number  [(ngModel)]="quantity" [nzMin]="0"  [nzStep]="1" [disabled]="ignoreInventoryQuantity"/>
+      <i nz-icon [nzType]="'question-circle'" nz-popover [nzPopoverContent]="contentTemplate"
+      nzPopoverPlacement="topRight" ></i> 
+      <p>
+        <label nz-checkbox [(ngModel)]="ignoreInventoryQuantity">{{'ignoreInventoryQuantity' | i18n}}</label>
+
+      </p>
+       
+      <ng-template #contentTemplate>
+        <div>Quantity of the inventory on the LPN label
+        </div>
+      </ng-template> 
+  
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'label-count' | i18n}}">
+      <nz-input-number  [(ngModel)]="labelCount" [nzMin]="1"  [nzStep]="1"/>
+  
+    </nz-descriptions-item>
+    <nz-descriptions-item nzTitle="{{ 'format' | i18n}}">
+      <nz-radio-group [(ngModel)]="documentFormat" >
+        <label nz-radio nzValue="label">{{'label' | i18n}}</label>
+        <label nz-radio nzValue="report">{{'report' | i18n}}</label>
+      </nz-radio-group>
+  
+    </nz-descriptions-item>
+
+  </nz-descriptions>
+
+  <div nz-row style="padding-top: 20px;">
+    
+    <cwms-common-print-button style='padding-left: 20px; '
+      [defaultPhysicalCopyCount]=2
+      (print)="printLPNLabels($event)"
+      (preview)="previewLPNs($event)">
+    </cwms-common-print-button>
+  </div>
+  </nz-spin>

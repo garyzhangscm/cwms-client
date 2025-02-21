@@ -1,0 +1,164 @@
+<page-header title="{{'production-line-dashboard' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+ 
+ 
+  <nz-card  [nzExtra]="showConfigurationTemplate"
+       nzTitle="Count down: {{ countDownNumber }}">
+       
+    <ng-template #showConfigurationTemplate>
+       
+        <label nz-checkbox [(ngModel)]="showConfiguration" >
+          <span> {{ 'showConfiguration' | i18n }}</span>
+        </label>
+    </ng-template>
+    <div *ngIf="showConfiguration" style="padding: 10px">
+        {{'type' | i18n}}: <nz-radio-group [(ngModel)]="productionLineType" (ngModelChange)="productionLineTypeChanged()">
+          <label nz-radio nzValue="All">All</label>
+          <label nz-radio *ngFor="let type of productionLineTypes" [nzValue]="type.name">{{type.name}}</label> 
+        </nz-radio-group>
+        
+        <span style="padding-left: 20px">Auto Generate New LPN?</span>
+        <label nz-checkbox [(ngModel)]="autoGenerateNewLPNFlag"  (ngModelChange)="autoGenerateNewLPNFlagChanged()" ></label>
+        
+        <span style="padding-left: 20px; padding-right: 20px">Refresh Cycle(in seconds): </span>
+        <nz-input-number   [nzMin]="1" [nzMax]="9999" [nzStep]="1"  
+         [(ngModel)]="refreshCountCycle" (ngModelChange)="refreshCountCycleChanged()" 
+         [disabled]="doNotRefreshFlag">
+        </nz-input-number> 
+        <span style="padding-left: 20px; padding-right: 20px">Do Not Refresh </span>
+        <label nz-checkbox [(ngModel)]="doNotRefreshFlag"  (ngModelChange)="doNotRefreshFlagChanged()" ></label>
+        <span style="padding-left: 20px; padding-right: 20px">Only Show Active Production Line</span>
+        <label nz-checkbox [(ngModel)]="onlyShowActiveProductionLineFlag"  (ngModelChange)="onlyShowActiveProductionLineFlagChanged()" ></label>
+    
+
+    </div>   
+    <div nz-card-grid [ngStyle]="gridStyle" *ngFor="let productionLine of productionLines"  >
+      <nz-card  [nzBodyStyle]="getBodyStyle(productionLine)" *ngIf="!onlyShowActiveProductionLineFlag || (productionLine.assignedWorkOrders && productionLine.assignedWorkOrders.length > 0)">
+          <div style="font-size: 20px;">{{productionLine.name}}</div>
+          <div *ngFor="let assignedWorkOrder of productionLine.assignedWorkOrders"> 
+              <div style="font-size: 15px;">{{assignedWorkOrder.first}}</div>
+              <div style="font-size: 12px;">{{assignedWorkOrder.fourth}} / {{assignedWorkOrder.fifth}}</div>
+              <div  style="font-size: 24px;text-decoration:underline;"><a (click)="openProducingInventoryModal(tplProduceInventoryModalTitle, tplProduceInventoryModalContent, 
+                productionLine, assignedWorkOrder.first, assignedWorkOrder.second, assignedWorkOrder.third)">
+                {{assignedWorkOrder.second}}</a></div>
+            
+          </div>  
+      </nz-card>
+    </div>  
+  </nz-card>
+</nz-spin>
+ 
+
+<!-- Modal for produce inventory --> 
+<ng-template #tplProduceInventoryModalTitle>
+  <span>{{ 'produce' | i18n}}</span>
+</ng-template>
+<ng-template #tplProduceInventoryModalContent>
+  <h2 style="text-align: center">{{currentProductionLineName}}</h2>
+  <h4 style="text-align: center">{{currentWorkOrderName}}</h4>
+  <form nz-form [formGroup]="produceInventoryForm">
+    <div nz-row [nzGutter]="24" >
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="12" nzFor="lpn">
+            {{ 'lpn' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="lpn" readonly/>
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="24" >
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="12" nzFor="itemNumber">
+            {{ 'item' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="itemNumber"  />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div nz-col [nzSpan]="16">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="itemDescription">
+            {{ 'item.description' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <nz-input-group nzSize="large">
+              <input nz-input formControlName="itemDescription"  />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div> 
+    <div nz-row [nzGutter]="24" >
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="12" nzFor="inventoryStatus">
+            {{ 'inventory.status' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}"> 
+            <nz-select nz-input  formControlName="inventoryStatus" 
+                name="inventoryStatus"  
+                style="width: 150px" required>
+              <nz-option *ngFor="let inventoryStatus of validInventoryStatuses"
+                [nzLabel]="inventoryStatus.description" [nzValue]="inventoryStatus.id">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>      
+    </div> 
+    <div nz-row [nzGutter]="24" >
+      <div nz-col [nzSpan]="8">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="12" nzFor="itemPackageType">
+            {{ 'item.package-type' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+
+            <nz-select nz-input formControlName="itemPackageType" 
+              style="width: 150px"  name="itemPackageType" 
+              (ngModelChange)="newInventoryItemPackageTypeChanged($event)" 
+              *ngIf="currentProducingItem!.itemPackageTypes != null">
+              <nz-option *ngFor=" let availableItemPackageType of currentProducingItem!.itemPackageTypes"
+                [nzLabel]="availableItemPackageType.name!" [nzValue]="availableItemPackageType.id!">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="6">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="quantity">
+            {{ 'quantity' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+            <nz-input-group>
+              <input nz-input formControlName="quantity"  name="quantity" #producingInventoryQuantity [disabled]="produceAtLPNUOM" />
+            </nz-input-group> 
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div nz-col [nzSpan]="2" *ngIf="currentProducingItemPackageType && currentProducingUnitOfMeasure"> 
+        <nz-select nz-input   formControlName="producingUnitOfMeasure" required  name="producingUnitOfMeasure" 
+          (ngModelChange)="producingUnitOfMeasureChanged($event)"
+                style = "width: 75px;"  >
+                <nz-option *ngFor=" let itemUnitOfMeasure of currentProducingItemPackageType.itemUnitOfMeasures"
+                  [nzLabel]="itemUnitOfMeasure.unitOfMeasure!.name" [nzValue]="itemUnitOfMeasure.id">
+                </nz-option>
+              </nz-select>
+      </div> 
+
+    </div>
+  </form>
+</ng-template>

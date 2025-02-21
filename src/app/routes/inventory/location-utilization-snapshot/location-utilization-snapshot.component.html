@@ -1,0 +1,110 @@
+<page-header title="{{'location-utilization-snapshot' |  i18n}}" ></page-header>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+<!-- Form to query the result  -->
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+  <div nz-row [nzGutter]="24">
+    <div nz-col [nzSpan]="12">
+      <nz-form-item nzFlex>
+        <nz-form-label for="number" [nzSpan]="6">
+          {{ 'number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          <input nz-input name="number" id="number" formControlName="number" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div nz-col [nzSpan]="12" >
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="6" nzFor="status">
+          {{ 'status' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="18">
+          
+          <nz-select   formControlName="status" name="status">
+            <nz-option
+              *ngFor="let status of locationUtilizationSnapshotStatusList | keys"
+              [nzValue]="status.key"
+              nzLabel="{{ 'LOCATION-UTILIZATION-SNAPSHOT-STATUS-' + status.key | i18n}}"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+  </div>
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()"  >
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+    </div>
+  </div>
+</form>
+
+<!-- Table to Display the result  -->
+
+<div class="search-result-list">
+  <!--
+    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+      <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+    </div>
+  -->
+    
+    <st #st [data]="locationUtilizationSnapshotBatches"  [columns]="columns" [scroll]="{ x: '1450px'}"
+    [expand]="expand"  expandAccordion   >  
+      
+      <ng-template st-row="netVolumeColum" let-item let-index="index"> 
+        {{ item.netVolume  | number: '1.0-2'}} <strong>{{ item.capacityUnit }}</strong>
+      </ng-template>
+      <ng-template st-row="grossVolumeColum" let-item let-index="index"> 
+        {{ item.grossVolume  | number: '1.0-2'}} <strong>{{ item.capacityUnit }}</strong>
+      </ng-template>
+      <ng-template st-row="startTimeColumn" let-item let-index="index"> 
+                
+        {{ item.startTime  | date:'short'}} 
+      </ng-template>
+      <ng-template st-row="completeTimeColumn" let-item let-index="index"> 
+                
+        {{ item.completeTime  | date:'short'}} 
+      </ng-template>
+      <ng-template st-row="actionColumn" let-item let-index="index"> 
+           <button nz-button nzDanger (click)="remove(item)">{{'remove' | i18n}}</button> 
+      </ng-template>
+        <!--  location utilization snapshot by client -->
+        <ng-template #expand let-item let-index="index" >
+          
+            <nz-tabset>
+              <nz-tab *ngFor="let snapshotByClient of item.clientLocationUtilizationSnapshotBatches" 
+              [nzTitle]="snapshotByClient.client == null ? 'N/A' : snapshotByClient.client?.name">
+                
+                <nz-card>
+                    <nz-descriptions nzTitle="{{ 'client' | i18n}}" nzBordered>
+                        <nz-descriptions-item nzTitle="{{ 'client' | i18n}}">
+                        {{snapshotByClient.client == null ? 'N/A' : snapshotByClient.client?.name}}</nz-descriptions-item>
+                        <nz-descriptions-item nzTitle="{{ 'netVolume' | i18n}}">
+                        {{snapshotByClient.netVolume | number: '1.0-2'}} <strong>{{ snapshotByClient.capacityUnit }}</strong></nz-descriptions-item>
+                        <nz-descriptions-item nzTitle="{{ 'grossVolume' | i18n}}">
+                        {{snapshotByClient.grossVolume | number: '1.0-2'}} <strong>{{ snapshotByClient.capacityUnit }}</strong></nz-descriptions-item>
+                        <nz-descriptions-item nzTitle="{{ 'totalLocations' | i18n}}">
+                        {{snapshotByClient.totalLocations}}</nz-descriptions-item> 
+                        <nz-descriptions-item nzTitle="{{ 'totalLPNs' | i18n}}">
+                          {{snapshotByClient.totalLPNs}}</nz-descriptions-item> 
+                    </nz-descriptions>
+                </nz-card>
+              </nz-tab>
+            </nz-tabset>
+          </ng-template>
+    </st>
+    <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
+      {{searchResult}}
+    </div>
+    
+    <div nz-row nzType="flex" nzJustify="start" style="padding: 15px;" *ngIf="!displayOnly"> 
+        <button nz-button nzType="primary" (click)="generateLocationUtilizationSnapshotBatch()">
+          {{ 'generate-snapshot' | i18n }}
+        </button>
+    </div>
+</div>
+</nz-spin>

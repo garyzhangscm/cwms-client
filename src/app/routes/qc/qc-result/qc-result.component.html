@@ -1,0 +1,150 @@
+<page-header [title]="'menu.main.qc.qc-result' | i18n"> </page-header>
+
+<nz-spin [nzSpinning]="isSpinning">
+<!-- Form to query the result  -->
+
+<form nz-form [formGroup]="searchForm" class="ant-advanced-search-form">
+     
+  <div nz-row [nzGutter]="24"> 
+    <div nz-col [nzSpan]="8" >
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="lpn">
+            {{ 'lpn' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <input nz-input name="lpn" id="lpn" formControlName="lpn" />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      
+    <div nz-col [nzSpan]="8" >
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="8" nzFor="workOrderQCSampleNumber">
+          {{ 'work-order.qc-sample.number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input name="workOrderQCSampleNumber" id="workOrderQCSampleNumber" formControlName="workOrderQCSampleNumber" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    
+    <div nz-col [nzSpan]="8" >
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSpan]="8" nzFor="number">
+          {{ 'number' | i18n }}
+        </nz-form-label>
+        <nz-form-control [nzSpan]="16">
+          <input nz-input name="number" id="number" formControlName="number" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+      
+  </div>
+
+  <div nz-row>
+    <div nz-col [nzSpan]="24" class="search-area">
+      <button nz-button [nzType]="'primary'" (click)="search()">
+        {{ 'search' | i18n }}
+      </button>
+      <button nz-button (click)="resetForm()">{{ 'clear' | i18n }}</button>
+    </div>
+  </div>
+</form>
+
+<div class="search-result-list">
+  
+      <!--
+    <div nz-row nzType="flex" nzJustify="start" style="padding-left: 25px;">
+      <app-util-table-column-selection [tableColumnsConfiguration]="customColumns" (myModelChange)="columnChoosingChanged()"></app-util-table-column-selection>
+    </div>
+  -->
+    
+    <st #st [data]="listOfQCInspectionRequest"  [columns]="columns"  [expand]="expand"   expandAccordion>
+        
+      <!--   qc rule details  -->
+      <ng-template #expand let-item let-index="index" >
+        
+        <nz-tabset  >
+          <!-- QC rule details-->
+          <nz-tab *ngFor="let qcInspectionRequestItem of item.qcInspectionRequestItems" [nzTitle]="qcInspectionRequestItem.qcRule.name">
+            <nz-table [nzScroll]="{ x: 'true', y: 'true' }" #innerTable [nzData]="qcInspectionRequestItem.qcInspectionRequestItemOptions" nzSize="middle"
+              [nzShowPagination]="true" #qcInspectionRequestItemOptionTable>
+              <thead>
+                <th>
+                  {{ 'qcRule.checkPoint' | i18n }}
+                </th> 
+                <th>
+                  {{ 'enabled' | i18n }}
+                </th> 
+                <th>
+
+                  {{ 'qcRule.qcRuleItemType' | i18n }}
+                </th>
+                <th>
+                  {{ 'qcRule.qcRuleItemComparator' | i18n }}
+                </th>
+                <th>
+                  {{ 'qcRule.expectedValue' | i18n }}
+                </th> 
+                <th>
+                  {{ 'qc.actualValue' | i18n }}
+                </th> 
+  
+                <th>
+                  {{ 'qc-result' | i18n }}
+                </th> 
+                
+              </thead>
+              <tbody>
+                <tr *ngFor="let qcInspectionRequestItemOption of qcInspectionRequestItemOptionTable.data">
+                  <td>{{ qcInspectionRequestItemOption.qcRuleItem.checkPoint }}</td> 
+                  <td>{{ qcInspectionRequestItemOption.qcRuleItem.enabled }}</td> 
+
+
+                  <td>{{ 'QC-RULE-ITEM-TYPE-' + qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType | i18n }}</td>
+                  <td>{{ 'QC-RULE-ITEM-COMPARATOR-' + qcInspectionRequestItemOption.qcRuleItem.qcRuleItemComparator  | i18n}}</td>
+                  <td>{{ qcInspectionRequestItemOption.qcRuleItem.expectedValue }}</td> 
+                  <td>
+                    <span *ngIf="qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === qcRuleItemTypes.NUMBER">
+                      {{qcInspectionRequestItemOption.doubleValue}}
+                    </span>
+                    <span *ngIf="qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === qcRuleItemTypes.STRING">
+                      {{qcInspectionRequestItemOption.stringValue}}
+                    </span>
+                    <span *ngIf="qcInspectionRequestItemOption.qcRuleItem.qcRuleItemType === qcRuleItemTypes.YESNO">
+                      {{qcInspectionRequestItemOption.booleanValue}}
+                    </span>
+                  </td> 
+                  <td>{{ qcInspectionRequestItemOption.qcInspectionResult }}</td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </nz-tab>
+          <!-- QC inventory-->
+          <nz-tab nzTitle="{{'inventory' | i18n}}">
+            
+            <st  [data]="item.allInventories"  [columns]="inventoryColumns" >
+            </st>
+          </nz-tab>
+          
+        </nz-tabset>
+      </ng-template>
+      <!--   qc inspection time colummn  --> 
+
+      <ng-template st-row="qcTimeColumnTitle" type="title" let-c>
+        {{ 'qc-inspection-time' | i18n }}
+      </ng-template>
+      <ng-template st-row="qcTimeColumn" let-item let-index="index"> 
+        
+         <span *ngIf="item.qcTime">
+
+            {{ item.qcTime  | date:'short'}} 
+         </span>
+      </ng-template>
+    </st>
+    <div nz-row nzType="flex" nzJustify="start"  style="padding: 15px;" *ngIf="searchResult != ''">
+      {{searchResult}}
+    </div> 
+    
+</div>
+</nz-spin>

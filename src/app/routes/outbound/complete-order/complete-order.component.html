@@ -1,0 +1,240 @@
+<page-header [title]="pageTitle" [breadcrumb]="breadcrumb" [action]="returnLink"> </page-header>
+
+<ng-template #returnLink>
+    <a routerLink="/outbound/order" routerLinkActive="active"
+        [queryParams]="{number: currentOrder?.number}">{{
+        'return' | i18n }}</a>
+</ng-template>
+<ng-template #breadcrumb>
+    <nz-breadcrumb>
+        <nz-breadcrumb-item>
+            <a routerLink="/" routerLinkActive="active">{{ 'breadcrumb.home' | i18n }}</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item><a>{{ 'breadcrumb.main' | i18n }}</a></nz-breadcrumb-item>
+        <nz-breadcrumb-item><a routerLink="/outbound/order" routerLinkActive="active">{{
+                'order' | i18n
+                }}</a></nz-breadcrumb-item>
+        <nz-breadcrumb-item><a>{{ pageTitle }}</a></nz-breadcrumb-item>
+    </nz-breadcrumb>
+</ng-template>
+
+<nz-spin [nzSpinning]="isSpinning" [nzSize]="'large'">
+
+    <nz-steps nzType="navigation" [nzCurrent]="stepIndex">
+        <nz-step nzTitle="{{ 'steps.basic-info.title' | i18n }}"> </nz-step> 
+        <nz-step nzTitle="{{ 'steps.confirm' | i18n }}"> </nz-step>
+    </nz-steps>
+    
+    <!-- Let the user input the order information -->
+    <div class="small-card" *ngIf="stepIndex === 0" style="padding-top: 20px;">
+        
+        <nz-descriptions nzTitle="{{ 'order' | i18n}} - {{  currentOrder?.number }}" nzBordered>
+            <nz-descriptions-item nzTitle="{{ 'order.category' | i18n}}"> 
+                {{ 'ORDER-CATEGORY-' + currentOrder?.category |i18n}}
+            </nz-descriptions-item> 
+        </nz-descriptions>
+        
+        <nz-descriptions nzTitle="{{ 'ORDER-CATEGORY-WAREHOUSE_TRANSFER_ORDER' | i18n}}" 
+            *ngIf="currentOrder!.category === orderCategories.WAREHOUSE_TRANSFER_ORDER" nzBordered> 
+            <nz-descriptions-item nzTitle="{{ 'order.transferReceiptWarehouseId' | i18n}}"> 
+
+                {{ currentOrder?.transferReceiptWarehouse?.name}}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'order.transferReceiptNumber' | i18n}}"> 
+
+                {{ currentOrder?.transferReceiptNumber}}
+            </nz-descriptions-item>
+        </nz-descriptions>
+
+        
+        <nz-descriptions nzTitle="{{ 'ORDER-CATEGORY-SALES_ORDER' | i18n}}" 
+            *ngIf="currentOrder!.category === orderCategories.SALES_ORDER || currentOrder!.category === orderCategories.OUTSOURCING_ORDER" nzBordered> 
+             
+            <nz-descriptions-item nzTitle="{{ 'supplier' | i18n}}"> 
+              {{ currentOrder?.supplier?.name}} - {{currentOrder?.supplier?.description}}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'address' | i18n}}" nzSpan="2">  
+                    <address>  
+                      {{currentOrder?.supplier?.addressLine1}} <br>
+                      {{currentOrder?.supplier?.addressLine2}} <br>
+                      {{currentOrder?.supplier?.addressCity}},  {{currentOrder?.supplier?.addressState}} <br>
+                      {{currentOrder?.supplier?.addressPostcode}} <br>
+                    </address> 
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'shipToCustomer' | i18n}}">  
+
+                {{ currentOrder?.shipToCustomer?.name}} 
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'address' | i18n}}" nzSpan="2">  
+                <address>  
+                  {{currentOrder?.shipToCustomer?.addressLine1}} <br>
+                  {{currentOrder?.shipToCustomer?.addressLine2}} <br>
+                  {{currentOrder?.shipToCustomer?.addressCity}},  {{currentOrder?.shipToCustomer?.addressState}} <br>
+                  {{currentOrder?.shipToCustomer?.addressPostcode}} <br>
+                  </address>
+               
+            </nz-descriptions-item>
+        </nz-descriptions>
+
+
+        <div class="search-result-list" *ngIf="currentOrder" > 
+            <nz-table  [nzScroll]="{ x: '100vw' }" nzShowPagination [nzData]="currentOrder!.orderLines"
+                #orderLineTable>
+                <thead>
+                    <tr> 
+                        <th>
+                          {{ 'order.line.number' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'item' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'item.description' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'order.line.expectedQuantity' | i18n }}
+                        </th>  
+                        <th>
+                          {{ 'inventory.status' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'order.line.oldShippedQuantity' | i18n }}
+                        </th> 
+                        <th>
+                          {{ 'order.line.newShippedQuantity' | i18n }}
+                        </th>  
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of orderLineTable.data; let i = index"> 
+                        <td> {{ data.number }} </td>
+                        <td> {{ data.item?.name }} </td>
+                        <td> {{ data.item?.description }} </td>                        
+                        <td> {{ data.expectedQuantity }} </td> 
+                        <td> {{   data.inventoryStatus?.description }} </td>
+                        <td> {{ data.shippedQuantity }} </td> 
+                        <td> 
+                            <div class="row">
+                                <nz-input-number [nzMin]="0"  [nzStep]="1" type="text" [ngModel]="shippedQuantityMap.get(data.number)"
+                                (ngModelChange)="shippedQuantityChanged(data.number, $event)" >
+                                </nz-input-number>
+                            </div>
+                        </td> 
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+
+    
+    </div>
+
+    
+    <!-- confirm -->
+    <div class="small-card" *ngIf="stepIndex === 1" style="padding-top: 20px;">
+        
+        <nz-descriptions nzTitle="{{ 'order' | i18n}} - {{  currentOrder?.number }}" nzBordered>
+            <nz-descriptions-item nzTitle="{{ 'order.category' | i18n}}"> 
+                {{ 'ORDER-CATEGORY-' + currentOrder?.category |i18n}}
+            </nz-descriptions-item> 
+        </nz-descriptions>
+        
+        <nz-descriptions nzTitle="{{ 'ORDER-CATEGORY-WAREHOUSE_TRANSFER_ORDER' | i18n}}" 
+            *ngIf="currentOrder!.category === orderCategories.WAREHOUSE_TRANSFER_ORDER" nzBordered> 
+            <nz-descriptions-item nzTitle="{{ 'order.transferReceiptWarehouseId' | i18n}}"> 
+
+                {{ currentOrder?.transferReceiptWarehouse?.name}}
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'order.transferReceiptNumber' | i18n}}"> 
+
+                {{ currentOrder?.transferReceiptNumber}}
+            </nz-descriptions-item>
+        </nz-descriptions>
+
+        
+        <nz-descriptions nzTitle="{{ 'ORDER-CATEGORY-SALES_ORDER' | i18n}}" 
+            *ngIf="currentOrder!.category === orderCategories.SALES_ORDER || currentOrder!.category === orderCategories.OUTSOURCING_ORDER" nzBordered> 
+             
+            <nz-descriptions-item nzTitle="{{ 'supplier' | i18n}}"> 
+              {{ currentOrder?.supplier?.name}} - {{currentOrder?.supplier?.description}}
+              </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'shipToCustomer' | i18n}}">  
+
+                {{ currentOrder?.shipToCustomer?.name}} 
+            </nz-descriptions-item>
+            <nz-descriptions-item nzTitle="{{ 'address' | i18n}}">  
+                <address>  
+                  {{currentOrder?.shipToCustomer?.addressLine1}} <br>
+                  {{currentOrder?.shipToCustomer?.addressLine2}} <br>
+                  {{currentOrder?.shipToCustomer?.addressCity}},  {{currentOrder?.shipToCustomer?.addressState}} <br>
+                  {{currentOrder?.shipToCustomer?.addressPostcode}} <br>
+                  </address>
+               
+            </nz-descriptions-item>
+        </nz-descriptions>
+
+
+        <div class="search-result-list" *ngIf="currentOrder" > 
+            <nz-table  [nzScroll]="{ x: '100vw' }" nzShowPagination [nzData]="currentOrder!.orderLines"
+                #orderLineTable>
+                <thead>
+                    <tr> 
+                        <th>
+                          {{ 'order.line.number' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'item' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'item.description' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'order.line.expectedQuantity' | i18n }}
+                        </th>  
+                        <th>
+                          {{ 'inventory.status' | i18n }}
+                        </th>
+                        <th>
+                          {{ 'order.line.oldShippedQuantity' | i18n }}
+                        </th> 
+                        <th>
+                          {{ 'order.line.newShippedQuantity' | i18n }}
+                        </th> 
+                        <th>
+                          {{ 'quantity-changed' | i18n }}
+                        </th>  
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of orderLineTable.data; let i = index"> 
+                        <td> {{ data.number }} </td>
+                        <td> {{ data.item?.name }} </td>
+                        <td> {{ data.item?.description }} </td>                        
+                        <td> {{ data.expectedQuantity }} </td> 
+                        <td> {{  data.inventoryStatus?.description }} </td>
+                        <td> {{ data.shippedQuantity }} </td> 
+                        <td>  {{shippedQuantityMap.get(data.number)}}
+                        </td> 
+                        <td> {{ (shippedQuantityMap.get(data.number) ? shippedQuantityMap.get(data.number)! : 0) - data.shippedQuantity}} </td> 
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+    
+    </div>
+
+    
+    <div class="steps-action">
+        <button nz-button nzType="default" (click)="previousStep()" *ngIf="stepIndex > 0">
+            <span>{{ 'steps.previous' | i18n }}</span>
+        </button>
+        <nz-divider nzType="vertical" *ngIf="stepIndex < 1"></nz-divider>
+        <button nz-button nzType="default" (click)="nextStep()" *ngIf="stepIndex < 1">
+            <span>{{ 'steps.next' | i18n }}</span>
+        </button>
+        <nz-divider nzType="vertical"></nz-divider>
+        <button nz-button nzType="primary" (click)="confirm()" *ngIf="stepIndex === 1">
+            <span> {{ 'confirm' | i18n }}</span>
+        </button>
+    </div>
+
+</nz-spin>
