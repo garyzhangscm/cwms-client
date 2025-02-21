@@ -63,8 +63,8 @@ export class UtilMenuComponent implements OnInit {
     // IN case we get the number passed in, refresh the display
     // and show the order information
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.name) {
-        this.searchForm.controls.name.setValue(params.name);
+      if (params['name']) {
+        this.searchForm.value.name.setValue(params['name']);
         this.search();
       }
     });
@@ -86,10 +86,10 @@ export class UtilMenuComponent implements OnInit {
       menuRes => {
  
         // filter by name
-        if (this.searchForm.controls.name.value) {
+        if (this.searchForm.value.name.value) {
           menuRes.forEach(
             menuGroup => {
-              if (menuGroup.text.toLowerCase().includes(this.searchForm.controls.name.value)) {
+              if (menuGroup.text.toLowerCase().includes(this.searchForm.value.name.value)) {
                 // add the whole menuGrup to the result
                 this.listOfAllMenus = [...this.listOfAllMenus, ...this.getMenusFromMenuGroup(menuGroup)];
               }
@@ -97,14 +97,14 @@ export class UtilMenuComponent implements OnInit {
                 // check if we have matched sub group or menu item
                 menuGroup.children.forEach(
                   menuSubGroup => {
-                    if (menuSubGroup.text.toLowerCase().includes(this.searchForm.controls.name.value)) {
+                    if (menuSubGroup.text.toLowerCase().includes(this.searchForm.value.name.value)) {
                       // add the whole sub menuGrup to the result
                       this.listOfAllMenus = [...this.listOfAllMenus, ...this.getMenusFromMenuSubGroup(menuGroup, menuSubGroup)];
                     }
                     else {
                       menuSubGroup.children.forEach(
                         menu => {                          
-                          if (menu.text.toLowerCase().includes(this.searchForm.controls.name.value)) {
+                          if (menu.text.toLowerCase().includes(this.searchForm.value.name.value)) {
                             // add the whole sub menuGrup to the result
                             this.listOfAllMenus = [...this.listOfAllMenus, 
                                     {

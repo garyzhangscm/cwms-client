@@ -488,8 +488,8 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.name) {
-        this.searchForm.controls.locationName.setValue(params.name);
+      if (params['name']) {
+        this.searchForm.value.locationName.setValue(params['name']);
         this.search();
       } 
     });
@@ -585,9 +585,9 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
     this.isSpinning = true;
     this.locationService
       .getLocations(
-        this.searchForm.controls.taggedLocationGroupTypes.value,
-        this.searchForm.controls.taggedLocationGroups.value,
-        this.searchForm.controls.locationName.value,
+        this.searchForm.value.taggedLocationGroupTypes.value,
+        this.searchForm.value.taggedLocationGroups.value,
+        this.searchForm.value.locationName.value,
         undefined,
         // this.searchForm.controls.locationStatus.value,
       )
@@ -661,7 +661,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   }
   processLocationQueryResult(selectedLocationName: any): void {
     console.log(`start to query with location name ${selectedLocationName}`);
-    this.searchForm.controls.locationName.setValue(selectedLocationName);
+    this.searchForm.value.locationName.setValue(selectedLocationName);
   }
 
   
@@ -687,10 +687,10 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
   copyLocation() {
     this.isSpinning = true;
     this.locationService.copyLocation(this.copyFromLocation!.id!,
-      this.copyLocationForm.controls.startNumber.value,
-      this.copyLocationForm.controls.endNumber.value,
-      this.copyLocationForm.controls.prefix.value,
-      this.copyLocationForm.controls.postfix.value).subscribe({
+      this.copyLocationForm.value.startNumber.value,
+      this.copyLocationForm.value.endNumber.value,
+      this.copyLocationForm.value.prefix.value,
+      this.copyLocationForm.value.postfix.value).subscribe({
         next: () => {
           this.isSpinning = false;
           this.copyLocationModalVisible = false;

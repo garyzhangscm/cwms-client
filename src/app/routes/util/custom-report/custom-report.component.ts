@@ -233,8 +233,8 @@ export class UtilCustomReportComponent implements OnInit {
 
     
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.name) { 
-        this.searchForm.controls.name.setValue(params.name);
+      if (params['name']) { 
+        this.searchForm.value.name.setValue(params['name']);
         this.search();
       }
     });
@@ -249,7 +249,7 @@ export class UtilCustomReportComponent implements OnInit {
   search(): void {
     this.isSpinning = true;
     this.searchResult = '';
-    this.customReportService.getCustomReports(this.searchForm.controls.name.value).subscribe({
+    this.customReportService.getCustomReports(this.searchForm.value.name.value).subscribe({
       next: (customReportRes) => {
         this.customReports = customReportRes;
         this.isSpinning = false;

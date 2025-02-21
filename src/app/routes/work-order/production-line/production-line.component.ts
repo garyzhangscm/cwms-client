@@ -164,8 +164,8 @@ export class WorkOrderProductionLineComponent implements OnInit {
 
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.name) {
-        this.searchForm.controls.name.setValue(params.name);
+      if (params['name']) {
+        this.searchForm.value.name.setValue(params['name']);
         this.search();
       }
     });
@@ -401,8 +401,8 @@ export class WorkOrderProductionLineComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     this.productionLineService.getProductionLines(
-      this.searchForm.controls.name.value,
-      this.searchForm.controls.type.value, 
+      this.searchForm.value.name.value,
+      this.searchForm.value.type.value, 
       false, false).subscribe({
         next: (productionLineRes) => {
           this.listOfAllProductionLine = productionLineRes;  

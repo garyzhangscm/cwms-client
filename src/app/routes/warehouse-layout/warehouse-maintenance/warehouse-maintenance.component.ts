@@ -40,7 +40,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.activatedRoute.snapshot.params.id) {
+    if (this.activatedRoute.snapshot.params['id']) {
 
       this.warehouseForm = this.fb.group({
         warehouseId: new UntypedFormControl({ value: '', disabled: true }),
@@ -77,7 +77,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
       // and we already fill in all the information. Let's
       // load the changed warehouse from session storage
       let warehouseLoaded = false;
-      if (params.inprocess === 'true') {
+      if (params['inprocess'] === 'true') {
         warehouseLoaded = this.loadWarehouseFromSessionStorage();
       }
 
@@ -99,7 +99,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
       return false;
     }
 
-    this.warehouseForm.controls.warehouseId.setValue(warehouse.id);
+    this.warehouseForm.value.warehouseId.setValue(warehouse.id);
     this.warehouseForm.patchValue(warehouse);
     this.loadCurrentAddress(warehouse);
 
@@ -109,7 +109,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
   loadWarehouseFromServer(warehouseId: string): void {
     if (warehouseId) {
       this.warehouseService.getWarehouse(+warehouseId).subscribe((warehouse: Warehouse) => {
-        this.warehouseForm.controls.warehouseId.setValue(warehouseId);
+        this.warehouseForm.value.warehouseId.setValue(warehouseId);
         this.warehouseForm.patchValue(warehouse);
         this.loadCurrentAddress(warehouse);
       });
@@ -127,7 +127,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
   }
 
   setupPageTitle(): void {
-    if (this.warehouseForm.controls.warehouseId.value) {
+    if (this.warehouseForm.value.warehouseId.value) {
       this.titleService.setTitle(this.i18n.fanyi('page.warehouse-maintenance.modify.header.title'));
       this.pageTitle = this.i18n.fanyi('page.warehouse-maintenance.modify.header.title');
     } else {
@@ -139,7 +139,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
     // for a new warehouse, warehouse address is required 
     if (this.warehouseForm.valid) {
       const warehouse: Warehouse = this.warehouseForm.value;
-      warehouse.id = this.warehouseForm.controls.warehouseId.value; 
+      warehouse.id = this.warehouseForm.value.warehouseId.value; 
       warehouse.addressLine1 = this.addressLine1;
       warehouse.addressLine2 = this.addressLine2;
       warehouse.addressCity = this.addressCity;
@@ -151,7 +151,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
       if (warehouse.id == null && this.warehouseAddress == null)  {
         // make sure the warehouseAddress is not null for a new warehouse
         // clear the address control and show the error
-        this.warehouseForm.controls.address.reset();
+        this.warehouseForm.value.address.reset();
         this.displayFormError(this.warehouseForm);
         
         return;
@@ -187,8 +187,8 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
       }
 
       sessionStorage.setItem('warehouse-maintenance.warehouse', JSON.stringify(warehouse));
-      const url = this.warehouseForm.controls.warehouseId.value
-        ? `/warehouse-layout/warehouse-maintenance/${  this.warehouseForm.controls.warehouseId.value  }/confirm`
+      const url = this.warehouseForm.value.warehouseId.value
+        ? `/warehouse-layout/warehouse-maintenance/${  this.warehouseForm.value.warehouseId.value  }/confirm`
         : '/warehouse-layout/warehouse-maintenance/confirm';
 
       this.router.navigateByUrl(url);

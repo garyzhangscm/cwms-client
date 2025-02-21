@@ -78,10 +78,10 @@ export class UtilQuickbookOnlineConfigurationComponent implements OnInit {
  }
  displayCurrentConfiguration() {
    
-  this.searchForm.controls.clientId.setValue(this.currentQBOConfiguration.clientId);
-  this.searchForm.controls.clientSecret.setValue(this.currentQBOConfiguration.clientSecret);
-  this.searchForm.controls.webhookVerifierToken.setValue(this.currentQBOConfiguration.webhookVerifierToken);
-  this.searchForm.controls.quickbookOnlineUrl.setValue(this.currentQBOConfiguration.quickbookOnlineUrl);
+  this.searchForm.value.clientId.setValue(this.currentQBOConfiguration.clientId);
+  this.searchForm.value.clientSecret.setValue(this.currentQBOConfiguration.clientSecret);
+  this.searchForm.value.webhookVerifierToken.setValue(this.currentQBOConfiguration.webhookVerifierToken);
+  this.searchForm.value.quickbookOnlineUrl.setValue(this.currentQBOConfiguration.quickbookOnlineUrl);
  }
  saveConfiguration(): void {
     this.isSpinning = true;

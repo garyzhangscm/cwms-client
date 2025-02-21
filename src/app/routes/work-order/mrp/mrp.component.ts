@@ -52,8 +52,8 @@ export class WorkOrderMrpComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.number) {
-        this.searchForm.controls.number.setValue(params.number);
+      if (params['number']) {
+        this.searchForm.value.number.setValue(params['number']);
         this.search();
       }
     });
@@ -71,9 +71,9 @@ export class WorkOrderMrpComponent implements OnInit {
      
 
     this.materialRequirementsPlanningService.getMRPs(
-      this.searchForm.controls.number.value,  
-      this.searchForm.controls.description.value,  
-      this.searchForm.controls.mpsNumber.value).subscribe(
+      this.searchForm.value.number.value,  
+      this.searchForm.value.description.value,  
+      this.searchForm.value.mpsNumber.value).subscribe(
         mrpRes => {
   
 

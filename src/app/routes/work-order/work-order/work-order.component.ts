@@ -399,8 +399,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.number) {
-        this.searchForm.controls.number.setValue(params.number);
+      if (params['number']) {
+        this.searchForm.value.number.setValue(params['number']);
         this.search();
       }
     });
@@ -434,8 +434,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       );
     } else {
       this.workOrderService
-        .getWorkOrders(this.searchForm.controls.number.value, this.searchForm.controls.item.value, 
-          undefined, this.searchForm.controls.status.value, false)
+        .getWorkOrders(this.searchForm.value.number.value, this.searchForm.value.item.value, 
+          undefined, this.searchForm.value.status.value, false)
         .subscribe(
           workOrderRes => {
             this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities(workOrderRes);
@@ -910,10 +910,10 @@ export class WorkOrderWorkOrderComponent implements OnInit {
         this.unpickInventory(
           workOrder,
           inventory,
-          this.unpickForm.controls.destinationLocation.value,
-          this.unpickForm.controls.immediateMove.value,
-          this.unpickForm.controls.overrideConsumedQuantity.value,
-          this.unpickForm.controls.consumedQuantity.value,
+          this.unpickForm.value.destinationLocation.value,
+          this.unpickForm.value.immediateMove.value,
+          this.unpickForm.value.overrideConsumedQuantity.value,
+          this.unpickForm.value.consumedQuantity.value,
         );
       },
       nzWidth: 1000,
@@ -1459,7 +1459,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
             
             this.messageService.success(this.i18n.fanyi("message.action.success"));
             this.isSpinning = false;
-            this.searchForm.controls.number.setValue(workOrder.number);
+            this.searchForm.value.number.setValue(workOrder.number);
             this.search();
            },
           error: () => this.isSpinning = false, 
@@ -1491,7 +1491,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
             
           this.messageService.success(this.i18n.fanyi("message.action.success"));
           this.isSpinning = false;
-          this.searchForm.controls.number.setValue(workOrder.number);
+          this.searchForm.value.number.setValue(workOrder.number);
           this.search();
          },
           error: () => this.isSpinning = false, 
@@ -1506,7 +1506,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
             
             this.messageService.success(this.i18n.fanyi("message.action.success"));
             this.isSpinning = false;
-            this.searchForm.controls.number.setValue(workOrder.number);
+            this.searchForm.value.number.setValue(workOrder.number);
             this.search();
            },
           error: () => this.isSpinning = false, 
@@ -1527,7 +1527,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
             
             this.messageService.success(this.i18n.fanyi('message.action.success'));
             this.isSpinning = false;
-            this.searchForm.controls.number.setValue(workOrder.number);
+            this.searchForm.value.number.setValue(workOrder.number);
             this.search();
           },
           error: () => this.isSpinning = false
@@ -1561,8 +1561,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       nzOnOk: () => {
         this.recalculateQCQuantity( 
           workOrder,
-          this.recalculateQCForm.controls.newQCQuantity.value,
-          this.recalculateQCForm.controls.newQCPercentage.value,
+          this.recalculateQCForm.value.newQCQuantity.value,
+          this.recalculateQCForm.value.newQCPercentage.value,
         );
       },
 

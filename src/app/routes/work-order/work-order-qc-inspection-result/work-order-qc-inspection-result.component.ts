@@ -50,8 +50,8 @@ export class WorkOrderWorkOrderQcInspectionResultComponent implements OnInit {
     }); 
 
     this.activatedRoute.queryParams.subscribe(params => {
-        if (params.number) {
-          this.searchForm.controls.lpn.setValue(params.number);
+        if (params['number']) {
+          this.searchForm.value.lpn.setValue(params['number']);
           this.search();
         }
     });
@@ -78,11 +78,11 @@ export class WorkOrderWorkOrderQcInspectionResultComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     this.workOrderQcResultService.getWorkOrderQcResults(
-      this.searchForm.controls.number.value,
-      this.searchForm.controls.workOrderQCSampleNumber.value,
-      this.searchForm.controls.productionLineId.value,
+      this.searchForm.value.number.value,
+      this.searchForm.value.workOrderQCSampleNumber.value,
+      this.searchForm.value.productionLineId.value,
       undefined,
-      this.searchForm.controls.workOrderNumber.value).subscribe(
+      this.searchForm.value.workOrderNumber.value).subscribe(
       {
         next: (workOrderQcResultRes) => {
           this.listOfWorkOrderQcResult = workOrderQcResultRes;

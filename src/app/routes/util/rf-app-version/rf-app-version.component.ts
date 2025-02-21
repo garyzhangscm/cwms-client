@@ -93,8 +93,8 @@ export class UtilRfAppVersionComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.versionNumber) {
-        this.searchForm.controls.versionNumber.setValue(params.versionNumber);
+      if (params['versionNumber']) {
+        this.searchForm.value.versionNumber.setValue(params['versionNumber']);
         this.search();
       }
     });}

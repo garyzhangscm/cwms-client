@@ -169,18 +169,18 @@ export class WorkOrderMpsViewComponent implements OnInit {
      * 
      */
     
-    let startTime : Date = this.searchForm.controls.mpsDateTimeRanger.value ? 
-        this.searchForm.controls.mpsDateTimeRanger.value[0] : addDays(new Date(), -2000); 
-    let endTime : Date = this.searchForm.controls.mpsDateTimeRanger.value ? 
-        this.searchForm.controls.mpsDateTimeRanger.value[1] : addDays(new Date(), 2000); 
+    let startTime : Date = this.searchForm.value.mpsDateTimeRanger.value ? 
+        this.searchForm.value.mpsDateTimeRanger.value[0] : addDays(new Date(), -2000); 
+    let endTime : Date = this.searchForm.value.mpsDateTimeRanger.value ? 
+        this.searchForm.value.mpsDateTimeRanger.value[1] : addDays(new Date(), 2000); 
 
       
     this.masterProductionScheduleService.getMasterProductionSchedules(      
-      this.searchForm.controls.number.value,  
+      this.searchForm.value.number.value,  
       undefined, 
       undefined,
-      this.searchForm.controls.productionLines.value,  
-      this.searchForm.controls.itemName.value, 
+      this.searchForm.value.productionLines.value,  
+      this.searchForm.value.itemName.value, 
       startTime, 
       endTime 
     ).subscribe({
@@ -199,8 +199,8 @@ export class WorkOrderMpsViewComponent implements OnInit {
             // first, we will filter out the result by production line, if the user query by production line
             mps.masterProductionScheduleLines.filter(
               masterProductionScheduleLine => 
-              this.searchForm.controls.productionLines.value == null ||
-                String(this.searchForm.controls.productionLines.value).split(",").some(
+              this.searchForm.value.productionLines.value == null ||
+                String(this.searchForm.value.productionLines.value).split(",").some(
                   productoinLineId => +productoinLineId === masterProductionScheduleLine.productionLine.id!
                 ) 
             ).forEach(
@@ -477,7 +477,7 @@ export class WorkOrderMpsViewComponent implements OnInit {
   }
 
   processItemQueryResult(selectedItemName: any): void { 
-    this.searchForm.controls.itemName.setValue(selectedItemName);
+    this.searchForm.value.itemName.setValue(selectedItemName);
   }
 
   onSelect(event: ChartSelectionChangedEvent ){

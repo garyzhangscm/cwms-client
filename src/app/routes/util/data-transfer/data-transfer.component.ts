@@ -203,9 +203,9 @@ export class UtilDataTransferComponent implements OnInit {
       },
       nzOnOk: () => {
         this.addDataExportRequest( 
-          this.dataExportRequestForm.controls.number.value,
-          this.dataExportRequestForm.controls.companyCode.value,
-          this.dataExportRequestForm.controls.description.value,
+          this.dataExportRequestForm.value.number.value,
+          this.dataExportRequestForm.value.companyCode.value,
+          this.dataExportRequestForm.value.description.value,
         );
       },
 
@@ -227,7 +227,7 @@ export class UtilDataTransferComponent implements OnInit {
                 next: () => {
                   
                   this.isSpinning = false;
-                  this.searchForm.controls.number.setValue(number);
+                  this.searchForm.value.number.setValue(number);
                   this.search();
                 }, 
                 error: () => this.isSpinning = false
@@ -268,9 +268,9 @@ export class UtilDataTransferComponent implements OnInit {
       },
       nzOnOk: () => {
         this.addDataImportRequest( 
-          this.dataImportRequestForm.controls.number.value,
-          this.dataImportRequestForm.controls.companyCode.value,
-          this.dataImportRequestForm.controls.description.value,
+          this.dataImportRequestForm.value.number.value,
+          this.dataImportRequestForm.value.companyCode.value,
+          this.dataImportRequestForm.value.description.value,
         );
       },
 
@@ -292,7 +292,7 @@ export class UtilDataTransferComponent implements OnInit {
                 next: () => {
                   
                   this.isSpinning = false;
-                  this.searchForm.controls.number.setValue(number);
+                  this.searchForm.value.number.setValue(number);
                   this.search();
                 }, 
                 error: () => this.isSpinning = false

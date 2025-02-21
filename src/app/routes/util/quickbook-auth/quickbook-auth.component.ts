@@ -74,8 +74,8 @@ export class UtilQuickbookAuthComponent implements OnInit {
  }
  displayCurrentToken() {
    
-  this.searchForm.controls.authCode.setValue(this.currentQBOToken.authorizationCode);
-  this.searchForm.controls.realmId.setValue(this.currentQBOToken.realmId);
+  this.searchForm.value.authCode.setValue(this.currentQBOToken.authorizationCode);
+  this.searchForm.value.realmId.setValue(this.currentQBOToken.realmId);
  }
  requestToken(): void {
     this.isSpinning = true;

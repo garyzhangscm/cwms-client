@@ -149,7 +149,7 @@ export class WorkOrderProductionPlanComponent implements OnInit {
     this.searching = true;
     this.searchResult = '';
     this.productionPlanService
-      .getProductionPlans(this.searchForm.controls.number.value, this.searchForm.controls.item.value)
+      .getProductionPlans(this.searchForm.value.number.value, this.searchForm.value.item.value)
       .subscribe(
         productionPlanRes => {
           this.listOfAllProductionPlans = productionPlanRes;
@@ -217,8 +217,8 @@ export class WorkOrderProductionPlanComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.number) {
-        this.searchForm.controls.number.setValue(params.number);
+      if (params['number']) {
+        this.searchForm.value.number.setValue(params['number']);
         this.search();
       }
     });

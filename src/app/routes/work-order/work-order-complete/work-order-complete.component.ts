@@ -57,8 +57,8 @@ export class WorkOrderWorkOrderCompleteComponent implements OnInit {
       if (params.hasOwnProperty('refresh')) {
         this.workOrderCompleteTransaction = JSON.parse(sessionStorage.getItem('workOrderCompleteTransaction')!);
         this.currentWorkOrder = this.workOrderCompleteTransaction.workOrder!;
-      } else if (params.id) {
-        this.workOrderService.getWorkOrder(params.id).subscribe(workOrderRes => {
+      } else if (params['id']) {
+        this.workOrderService.getWorkOrder(params['id']).subscribe(workOrderRes => {
           this.currentWorkOrder = workOrderRes;
           this.setupEmptyWorkOrderCompleteTransaction(this.currentWorkOrder);
         });
@@ -155,11 +155,11 @@ export class WorkOrderWorkOrderCompleteComponent implements OnInit {
       nzOnOk: () => {
         this.addReturnMaterialRequest(
           workOrderLineCompleteTransaction,
-          this.returnMaterialForm.controls.lpn.value,
-          this.returnMaterialForm.controls.inventoryStatus.value,
-          this.returnMaterialForm.controls.itemPackageType.value,
-          this.returnMaterialForm.controls.quantity.value,
-          this.returnMaterialForm.controls.locationName.value,
+          this.returnMaterialForm.value.lpn.value,
+          this.returnMaterialForm.value.inventoryStatus.value,
+          this.returnMaterialForm.value.itemPackageType.value,
+          this.returnMaterialForm.value.quantity.value,
+          this.returnMaterialForm.value.locationName.value,
         );
       },
       nzWidth: 1000,
@@ -235,7 +235,7 @@ export class WorkOrderWorkOrderCompleteComponent implements OnInit {
   }
 
   returningMaterialLPNChanged(event: Event): void {
-    this.returnMaterialForm.controls.lpn.setValue((event.target as HTMLInputElement).value);
+    this.returnMaterialForm.value.lpn.setValue((event.target as HTMLInputElement).value);
   }
 
   consumeBalance(workOrderLineCompleteTransaction: WorkOrderLineCompleteTransaction): void {

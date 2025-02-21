@@ -83,8 +83,8 @@ export class UtilSystemControlledNumberComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.variable) {
-        this.searchForm.controls.variable.setValue(params.variable);
+      if (params['variable']) {
+        this.searchForm.value.variable.setValue(params['variable']);
         this.search();
       }
     });
