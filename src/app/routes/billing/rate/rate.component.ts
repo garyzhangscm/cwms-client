@@ -43,6 +43,7 @@ export class BillingRateComponent implements OnInit {
 
   billableCategories = BillableCategory;
   billingCycles = BillingCycle;
+  billingCyclesKeys = Object.keys(this.billingCycles);
   
   newBillingRateByInventoryAgeForm!: UntypedFormGroup;
   newBillingRateByInventoryAgeModal!: NzModalRef;
@@ -85,7 +86,9 @@ export class BillingRateComponent implements OnInit {
   }
 
   formatterDollar = (value: number): string => `$ ${value}`;
-  parserDollar = (value: string): string => value.replace('$ ', '');
+  parserDollar = (value: string): number => parseFloat(value?.replace(/\$\s?|(,*)/g, ''));
+  
+  // parserDollar = (value: string): string => value.replace('$ ', '');
   
   loadBillingRateByInventoryAge() {
     if (this.selectedClient == null && this.companySpecificFlag == false) {
@@ -283,16 +286,16 @@ export class BillingRateComponent implements OnInit {
         this.newBillingRateByInventoryAgeModal.destroy(); 
       },
       nzOnOk: () => {
-        console.log(`this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value: ${this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value}`)
-        console.log(`this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value == null?: ${!this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value}`)
-        if (!this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value ||
-              !this.newBillingRateByInventoryAgeForm.controls.endInventoryAge.value) {
+        console.log(`this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value: ${this.newBillingRateByInventoryAgeForm.value.startInventoryAge.value}`)
+        console.log(`this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value == null?: ${!this.newBillingRateByInventoryAgeForm.value.startInventoryAge.value}`)
+        if (!this.newBillingRateByInventoryAgeForm.value.startInventoryAge.value ||
+              !this.newBillingRateByInventoryAgeForm.value.endInventoryAge.value) {
            
               this.messageService.error(`start inventory age and end inventory age are required`);
               return false;
         }
-        if (this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value  >
-             this.newBillingRateByInventoryAgeForm.controls.endInventoryAge.value ) {
+        if (this.newBillingRateByInventoryAgeForm.value.startInventoryAge.value  >
+             this.newBillingRateByInventoryAgeForm.value.endInventoryAge.value ) {
            
               this.messageService.error(`start inventory age needs to be less than end inventory age`);
               return false;
@@ -303,8 +306,8 @@ export class BillingRateComponent implements OnInit {
           nzOkLoading: true
         });
         this.addNewBillingRateGroup( 
-          this.newBillingRateByInventoryAgeForm.controls.startInventoryAge.value,
-          this.newBillingRateByInventoryAgeForm.controls.endInventoryAge.value,
+          this.newBillingRateByInventoryAgeForm.value.startInventoryAge.value,
+          this.newBillingRateByInventoryAgeForm.value.endInventoryAge.value,
         );
         return false;
       },

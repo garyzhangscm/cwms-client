@@ -58,9 +58,9 @@ export class CommonClientMaintenanceComponent implements OnInit {
     this.pageTitle = this.i18n.fanyi('page.client-maintenance.add.title');
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         // Get the production line by ID
-        this.localCacheService.getClient(params.id)
+        this.localCacheService.getClient(params['id'])
           .subscribe({
             next: (clientRes) => {
 

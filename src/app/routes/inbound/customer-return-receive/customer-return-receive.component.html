@@ -23,19 +23,19 @@
 
     <nz-descriptions nzTitle="{{ 'customer-return-order' | i18n}} - {{  currentCustomerReturnOrder!.number }}" nzBordered>
         <nz-descriptions-item nzTitle="{{ 'client' | i18n}}"> 
-            {{ currentCustomerReturnOrder.client?.name  }}
+            {{ currentCustomerReturnOrder?.client?.name  }}
         </nz-descriptions-item> 
         <nz-descriptions-item nzTitle="{{ 'RMANumber' | i18n}}"> 
-            {{ currentCustomerReturnOrder.rmaNumber  }}
+            {{ currentCustomerReturnOrder?.rmaNumber  }}
         </nz-descriptions-item> 
         <nz-descriptions-item nzTitle="{{ 'trackingNumber' | i18n}}"> 
-            {{ currentCustomerReturnOrder.trackingNumber  }}
+            {{ currentCustomerReturnOrder?.trackingNumber  }}
         </nz-descriptions-item> 
         <nz-descriptions-item nzTitle="{{ 'customer' | i18n}}"> 
-            {{ currentCustomerReturnOrder.customer?.name  }}
+            {{ currentCustomerReturnOrder?.customer?.name  }}
         </nz-descriptions-item> 
         <nz-descriptions-item nzTitle="{{ 'allowUnexpectedItem' | i18n}}"> 
-            {{ currentCustomerReturnOrder.allowUnexpectedItem  }}
+            {{ currentCustomerReturnOrder?.allowUnexpectedItem  }}
         </nz-descriptions-item> 
       </nz-descriptions>
   </nz-card>
@@ -82,7 +82,7 @@
                 <ng-template #lpnErrorTpl let-control>
                     <div *ngIf="lpnControl!.invalid != null && (lpnControl!.dirty != null || lpnControl!.touched != null)">
                     <ng-container *ngIf="lpnControl?.errors?.errorCode">
-                        {{ 'ERROR-NEW-LPN-' + lpnControl!.errors!.errorCode! | i18n }}</ng-container>
+                        {{ 'ERROR-NEW-LPN-' + lpnControl!.errors!['errorCode'] | i18n }}</ng-container>
                     <ng-container *ngIf="control.hasError('required')">{{ 'error.form.field.required' | i18n }}
                     </ng-container>
                     </div>

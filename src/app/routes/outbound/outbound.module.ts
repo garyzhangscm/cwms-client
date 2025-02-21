@@ -1,5 +1,4 @@
-import { NgModule, Type } from '@angular/core';
-import { SharedModule } from '@shared';
+import { NgModule, Type } from '@angular/core'; 
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzCascaderModule } from 'ng-zorro-antd/cascader';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
@@ -8,11 +7,10 @@ import { NzListModule } from 'ng-zorro-antd/list';
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
-import { NzStepsModule } from 'ng-zorro-antd/steps';
-import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
+import { NzStepsModule } from 'ng-zorro-antd/steps'; 
 
 import { AuthModule } from '../auth/auth.module';
-import { CommonModule } from '../common/common.module';
+import { CWMSCommonModule } from '../common/common.module';
 import { DirectivesModule } from '../directives/directives.module';
 import { WarehouseLocalTime } from "../directives/warehouse-local-time.pipe";
 import { InventoryModule } from '../inventory/inventory.module';
@@ -116,13 +114,12 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
         ...COMPONENTS_NOROUNT
     ],
     exports: [OutboundOutboundOrderPopupQueryComponent],
-    imports: [
-        SharedModule,
+    imports: [ 
         OutboundRoutingModule,
         DirectivesModule,
         NzDescriptionsModule,
         NzStatisticModule,
-        CommonModule,
+        CWMSCommonModule,
         NzStepsModule,
         UtilModule,
         NzAutocompleteModule, 

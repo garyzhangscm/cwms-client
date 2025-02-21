@@ -1,12 +1,11 @@
 import { NgModule, Type } from '@angular/core';
-import { EllipsisModule } from '@delon/abc/ellipsis';
-import { SharedModule } from '@shared';
+import { EllipsisModule } from '@delon/abc/ellipsis'; 
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 
-import { CommonModule } from '../common/common.module';
+
 import { DirectivesModule } from '../directives/directives.module';
 import { InventoryModule } from '../inventory/inventory.module';
 import { OutboundModule } from '../outbound/outbound.module';
@@ -29,7 +28,28 @@ import { InboundReceiptComponent } from './receipt/receipt.component';
 import { InboundPrintingReceivingLpnLabelComponent } from './printing-receiving-lpn-label/printing-receiving-lpn-label.component';
 import { InboundInboundReceivingConfigurationComponent } from './inbound-receiving-configuration/inbound-receiving-configuration.component';
 import { InboundInboundReceivingConfigurationMaintenanceComponent } from './inbound-receiving-configuration-maintenance/inbound-receiving-configuration-maintenance.component';
-import { DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PageHeaderComponent } from '@delon/abc/page-header';
+import { STModule } from '@delon/abc/st';
+import { I18nPipe } from '@delon/theme';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzListModule } from 'ng-zorro-antd/list';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { CWMSCommonModule } from '../common/common.module';
 
 const COMPONENTS: Array<Type<void>> = [
   InboundReceiptComponent, InboundReceiptMaintenanceComponent, InboundReceiptConfirmComponent,
@@ -50,8 +70,7 @@ const COMPONENTS: Array<Type<void>> = [
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
-  imports: [
-    SharedModule,
+  imports: [ 
     InboundRoutingModule,
     DirectivesModule,
     CommonModule,
@@ -64,6 +83,29 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzSkeletonModule ,
     OutboundModule,
     EllipsisModule,
+    NzSpinModule ,
+    PageHeaderComponent ,
+    NzFormModule,
+    FormsModule, 
+    ReactiveFormsModule,
+    STModule,
+    I18nPipe,
+    NzBreadCrumbModule ,
+    NzCardModule ,
+    NzDividerModule,
+    NzTabsModule ,
+    NzToolTipModule ,
+    NzTableModule ,
+    NzInputNumberModule ,
+    NzButtonModule,
+    NzSelectModule,
+    NzDropDownModule , 
+    NzInputModule,
+    NzListModule ,
+    NzIconModule ,
+    NzPopoverModule , 
+    CWMSCommonModule,
+    
   ],
   providers: [DatePipe],
   declarations: [

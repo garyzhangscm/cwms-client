@@ -76,14 +76,14 @@
                     [ngModelOptions]="{updateOn: 'blur'}" #customerNameModel="ngModel"/>
                     
                     <!-- Display error if the customer doesn't exists -->
-                  <ng-template #customerNameErrorTpl let-control>
-                    <div *ngIf="customerNameModel.invalid && (customerNameModel.dirty ||customerNameModel.touched)">
-                      <ng-container *ngIf="customerNameModel.errors?.errorCode">
-                         {{customerNameModel.errors!.errorCode |i18n}}</ng-container>
-                      <ng-container *ngIf="control.hasError('required')">
-                         {{ 'error.form.field.required' | i18n}}
+                  <ng-template #customerNameErrorTpl let-control>
+                    <div *ngIf="customerNameModel.invalid && (customerNameModel.dirty ||customerNameModel.touched)">
+                      <ng-container *ngIf="customerNameModel.errors?.errorCode">
+                          {{customerNameModel.errors!['errorCode']|i18n}}</ng-container>
+                      <ng-container *ngIf="control.hasError('required')">
+                          {{ 'error.form.field.required' | i18n}}
                       </ng-container>
-                    </div>
+                    </div>
                   </ng-template>
                   <!-- Auto Complete -->
                   <nz-autocomplete #customerAutoCompleteTpl>
@@ -182,13 +182,13 @@
                         </td>
                         <td>
                           <div *ngIf="data.id === undefined" style="height: 32px;">   
-                                  <nz-input-group  nzSearch [nzAddOnAfter]="outboundOrderNumberSuffixIconButton">
-                                    <input nz-input [ngModel]="data.outboundOrderNumber"
+                                  <nz-input-group  nzSearch [nzAddOnAfter]="outboundOrderNumberSuffixIconButton">
+                                    <input nz-input [ngModel]="data.outboundOrderNumber"
                                                 (blur)="outboundOrderNumberChanged(data, $event)"/>
                                   </nz-input-group>
                                   <ng-template #outboundOrderNumberSuffixIconButton> 
                                     <app-outbound-outbound-order-popup-query (recordSelected)="procesOutboundOrderQueryResult(data, $event)"
-                                    [customerName]="currentCustomerReturnOrder.customer?.name">
+                                    [customerName]="currentCustomerReturnOrder?.customer?.name">
                                     </app-outbound-outbound-order-popup-query> 
                                   </ng-template>  
                           </div>

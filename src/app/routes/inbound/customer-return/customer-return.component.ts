@@ -27,6 +27,7 @@ export class InboundCustomerReturnComponent implements OnInit {
   isSpinning = false;
   
   receiptStatusList = ReceiptStatus;
+  receiptStatusListKeys = Object.keys(this.receiptStatusList);
 
   @ViewChild('st', { static: true })
   st!: STComponent;
@@ -119,7 +120,7 @@ export class InboundCustomerReturnComponent implements OnInit {
     this.isSpinning = true; 
     this.customerReturnOrderService
       .getCustomerReturnOrders(this.searchForm.value.number, false, 
-        this.searchForm!.controls.statusList.value,)
+        this.searchForm!.value.statusList.value,)
       .subscribe({
 
         next: (customerReturnRes) => {

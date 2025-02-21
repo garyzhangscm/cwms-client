@@ -1,5 +1,4 @@
-import { NgModule, Type } from '@angular/core';
-import { SharedModule } from '@shared';
+import { NgModule, Type } from '@angular/core'; 
 
 import { IntegrationIntegrationDataClientComponent } from './integration-data-client/integration-data-client.component';
 import { IntegrationIntegrationDataCustomerComponent } from './integration-data-customer/integration-data-customer.component';
@@ -45,8 +44,7 @@ const COMPONENTS: Array<Type<void>> =  [
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
-  imports: [
-    SharedModule,
+  imports: [ 
     IntegrationRoutingModule,
     NzResultModule,
   ],
