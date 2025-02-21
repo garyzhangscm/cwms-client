@@ -23,7 +23,9 @@ export class AlertAlertTemplateMaintenanceComponent implements OnInit {
   newAlertTemplate = true;
   
   alertTypes = AlertType; 
+  alertTypeKeys = Object.keys(this.alertTypes);
   alertDeliveryChannels = AlertDeliveryChannel;
+  alertDeliveryChannelsKeys = Object.keys(this.alertDeliveryChannels);
 
 
   constructor( 
@@ -43,8 +45,8 @@ export class AlertAlertTemplateMaintenanceComponent implements OnInit {
     this.pageTitle = this.i18n.fanyi('modify');
      
         this.activatedRoute.queryParams.subscribe(params => {
-          if (params.id) {
-            this.alertTemplateService.getAlertTemplate(params.id).subscribe(
+          if (params['id']) {
+            this.alertTemplateService.getAlertTemplate(params['id']).subscribe(
               {
     
                 next: (alertTemplateRes) => {

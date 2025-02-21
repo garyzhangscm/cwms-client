@@ -22,6 +22,7 @@ export class AuthUserMaintenanceComponent implements OnInit {
   modifying = false;
   validDepartments: Department[] = [];
   workerTypes = WorkerType;
+  workerTypesKeys = Object.keys(this.workerTypes);
   isLoginUserAdmin = false;
 
   emptyUser: User = {
@@ -77,7 +78,7 @@ export class AuthUserMaintenanceComponent implements OnInit {
   loadUsers(): void {
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.hasOwnProperty('userId')) {
-        this.userService.getUser(params.userId).subscribe(userRes => {
+        this.userService.getUser(params['userId']).subscribe(userRes => {
           this.modifying = true;
           this.currentUser = userRes;
         });

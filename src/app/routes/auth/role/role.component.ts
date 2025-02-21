@@ -11,9 +11,7 @@ import { NzTreeNodeOptions } from 'ng-zorro-antd/tree';
 import { Client } from '../../common/models/client';
 import { ColumnItem } from '../../util/models/column-item';
 import { LocalCacheService } from '../../util/services/local-cache.service';
-import { UtilService } from '../../util/services/util.service';
-import { OperationType } from '../../work-task/models/operation-type';
-import { Menu } from '../models/menu';
+import { UtilService } from '../../util/services/util.service'; 
 import { MenuGroup } from '../models/menu-group';
 import { Permission } from '../models/permission';
 import { Role } from '../models/role';
@@ -379,7 +377,7 @@ export class AuthRoleComponent implements OnInit {
   search(tabIndex: number = 0): void {
     this.isSpinning = true;
     this.searchResult = '';
-    this.roleService.getRoles(this.searchForm!.controls.name.value).subscribe(
+    this.roleService.getRoles(this.searchForm!.value.name.value).subscribe(
       roleRes => {
         this.listOfAllRoles = roleRes;
         this.listOfDisplayRoles = roleRes;

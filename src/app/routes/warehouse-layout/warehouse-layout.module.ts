@@ -1,9 +1,9 @@
 import { NgModule, Type } from '@angular/core';
-import { SharedModule } from '@shared'; 
+
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzStepsModule } from 'ng-zorro-antd/steps'; 
-import { GooglePlaceModule } from "ngx-google-places-autocomplete";
+
 import { DirectivesModule } from '../directives/directives.module'; 
 import { WarehouseLayoutLocationDashboardComponent } from './location-dashboard/location-dashboard.component';
 import { WarehouseLayoutLocationGroupMaintenanceConfirmComponent } from './location-group-maintenance-confirm/location-group-maintenance-confirm.component';
@@ -42,7 +42,6 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
   imports: [
-    SharedModule,
     WarehouseLayoutRoutingModule,
     DirectivesModule,
     NzDescriptionsModule,

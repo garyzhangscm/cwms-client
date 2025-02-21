@@ -15,8 +15,7 @@ import { AlertService } from '../services/alert.service';
 
 @Component({
     selector: 'app-alert-alert',
-    templateUrl: './alert.component.html',
-    styleUrls: ['./alert.component.less'],
+    templateUrl: './alert.component.html', 
     standalone: false
 })
 export class AlertAlertComponent implements OnInit {
@@ -94,7 +93,9 @@ export class AlertAlertComponent implements OnInit {
   alerts: Alert[] = [];
   searchResult = "";
   alertTypes = AlertType;
+  alertTypeKeys = Object.keys(this.alertTypes);
   alertStatusList = AlertStatus;
+  alertStatusListKeys = Object.keys(this.alertStatusList);
    
   displayOnly = false;
   constructor(private http: _HttpClient,

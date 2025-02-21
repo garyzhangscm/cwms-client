@@ -11,8 +11,8 @@
   <thead>
     <tr>
       <th  ></th>
-      <th *ngFor="let alertDeliveryChannel of alertDeliveryChannels | keys" >
-        {{ 'ALERT-DELIVERY-CHANNEL-' + alertDeliveryChannel.key.toString() | i18n }}
+      <th *ngFor="let alertDeliveryChannel of alertDeliveryChannelsKeys" >
+        {{ 'ALERT-DELIVERY-CHANNEL-' + alertDeliveryChannel.toString() | i18n }}
       </th> 
     </tr>
   </thead>
@@ -20,7 +20,7 @@
       <tr  *ngFor="let alertType of alertSubscriptionTable.data">
         <td >
           {{ 'ALERT-TYPE-' + alertType.toString() | i18n }}</td>
-        <td *ngFor="let alertDeliveryChannel of enumKeys(alertDeliveryChannels)">
+        <td *ngFor="let alertDeliveryChannel of enumKeys(alertDeliveryChannels)">
           <nz-switch [ngModel]="userAlertSubscriptionMap.has(alertType.toString() + '-' + alertDeliveryChannel.toString())"
             (ngModelChange)="toggleSubscription($event, alertTypes[alertType], alertDeliveryChannels[alertDeliveryChannel])"
           >
