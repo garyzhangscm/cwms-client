@@ -97,8 +97,8 @@ export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
  
     this.activatedRoute.queryParams.subscribe(params => {
       // if we are changing an existing record
-      if (params.number) { 
-        this.searchForm!.controls.number.setValue(params.number);
+      if (params['number']) { 
+        this.searchForm!.value.number.setValue(params['number']);
         this.search();
       } 
     });
@@ -123,7 +123,7 @@ export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
     this.isSpinning = true; 
     this.locationUtilizationSnapshotBatchService
       .getLocationUtilizationSnapshotBatches(this.searchForm.value.number ,
-        this.searchForm!.controls.status.value)
+        this.searchForm!.value.status.value)
       .subscribe({
 
         next: (locationUtilizationSnapshotBatchesRes) => {
@@ -179,7 +179,7 @@ export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
     this.locationUtilizationSnapshotBatchService.generateLocationUtilizationSnapshotBatch()
     .subscribe({
       next: (locationUtilizationSnapshotRes) => {
-        this.searchForm!.controls.number.setValue(locationUtilizationSnapshotRes.number);
+        this.searchForm!.value.number.setValue(locationUtilizationSnapshotRes.number);
         this.isSpinning = false;
         this.search();
       } ,

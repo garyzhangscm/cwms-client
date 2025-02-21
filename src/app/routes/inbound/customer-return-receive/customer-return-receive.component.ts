@@ -81,7 +81,7 @@ export class InboundCustomerReturnReceiveComponent implements OnInit {
   }
 
   receivingLPNChanged(event: Event): void {
-    this.receivingForm!.controls.lpn.setValue((event.target as HTMLInputElement).value);
+    this.receivingForm!.value.lpn.setValue((event.target as HTMLInputElement).value);
   }
   itemChanged(csrLine: CustomerReturnOrderLine) { 
     this.receivingItem = csrLine?.item;

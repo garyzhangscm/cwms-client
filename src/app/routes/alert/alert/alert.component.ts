@@ -125,10 +125,10 @@ export class AlertAlertComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.type || params.status  || params.keywords ) {
-        this.searchForm.controls.type.setValue(params.type);
-        this.searchForm.controls.status.setValue(params.tstatusype);
-        this.searchForm.controls.keywords.setValue(params.keywords);
+      if (params['type'] || params['status']  || params['keywords'] ) {
+        this.searchForm.value.type.setValue(params['type']);
+        this.searchForm.value.status.setValue(params['status']);
+        this.searchForm.value.keywords.setValue(params['keywords']);
         this.search();
       }
     });
@@ -142,11 +142,11 @@ export class AlertAlertComponent implements OnInit {
   search(): void {
     this.isSpinning = true; 
     
-    let startTime : Date = this.searchForm.controls.dateTimeRanger.value ? 
-        this.searchForm.controls.dateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.controls.dateTimeRanger.value ? 
-        this.searchForm.controls.dateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.controls.date.value;
+    let startTime : Date = this.searchForm.value.dateTimeRanger.value ? 
+        this.searchForm.value.dateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.value.dateTimeRanger.value ? 
+        this.searchForm.value.dateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.value.date.value;
 
 
     this.alertService

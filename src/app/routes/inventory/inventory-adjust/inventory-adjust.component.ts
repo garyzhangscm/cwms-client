@@ -298,9 +298,9 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.locationName) {
+      if (params['locationName']) {
         const expand = params.hasOwnProperty('expand') ? params.hasOwnProperty('expand') : false;
-        this.searchForm.controls.location.setValue(params.locationName);
+        this.searchForm.value.location.setValue(params['locationName']);
         this.search(expand);
       }
     });
@@ -347,9 +347,9 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.searchResult = '';
     this.locationService
       .getLocations(
-        this.searchForm.controls.taggedLocationGroupTypes.value,
-        this.searchForm.controls.taggedLocationGroups.value,
-        this.searchForm.controls.location.value,
+        this.searchForm.value.taggedLocationGroupTypes.value,
+        this.searchForm.value.taggedLocationGroups.value,
+        this.searchForm.value.location.value,
       )
       .subscribe(
         locationRes => {
@@ -439,7 +439,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.inventoryService.adjustDownInventory(this.inventoryToBeRemoved).subscribe({
       next: () => {
         // refresh only that location
-        this.searchForm.controls.location.setValue(this.inventoryToBeRemoved.locationName);
+        this.searchForm.value.location.setValue(this.inventoryToBeRemoved.locationName);
         this.search(true);
       }
     }); 
@@ -624,7 +624,9 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.emptyLocationPercent = +(this.emptyLocationCurrentInventoryIndex * 100 / this.emptyLocationInventoryCount).toFixed(2);
     if (inventories.length == 0) { 
       this.messageService.success(this.i18n.fanyi('message.action.success'));
-      if (this.emptyLocationlModal.state == NzModalState.OPEN) {
+      this.emptyLocationlModal.state
+      // if (this.emptyLocationlModal.state == NzModalState.OPEN) {
+        if (this.emptyLocationlModal.state == 0) {
         this.emptyLocationlModal.destroy();
       }
       return;
@@ -691,7 +693,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.isSpinning = true; 
     this.inventoryService.addInventory(inventory, this.documentNumber, this.comment).subscribe(inventoryRes => {
       // display the newly added inventory
-      this.searchForm.controls.location.setValue(inventory.locationName);
+      this.searchForm.value.location.setValue(inventory.locationName);
 
       if (inventoryRes.lockedForAdjust === true) {
         this.messageService.success(this.i18n.fanyi('message.inventory-adjust-result.request-success'));
@@ -708,7 +710,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
   }
   processLocationQueryResult(selectedLocationName: any): void {
 
-    this.searchForm.controls.location.setValue(selectedLocationName);
+    this.searchForm.value.location.setValue(selectedLocationName);
   }
   processItemQueryResult(selectedItemName: any): void {
     this.newInventoryItemChanged(selectedItemName);

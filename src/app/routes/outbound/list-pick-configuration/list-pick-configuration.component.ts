@@ -90,10 +90,10 @@ export class OutboundListPickConfigurationComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.pickType || params.customer || params.client) {
-        this.searchForm.controls.pickType.setValue(params.pickType); 
-        this.searchForm.controls.customer.setValue(params.customer); 
-        this.searchForm.controls.client.setValue(params.client); 
+      if (params['pickType'] || params['customer'] || params['client']) {
+        this.searchForm.value.pickType.setValue(params['pickType']); 
+        this.searchForm.value.customer.setValue(params['customer']); 
+        this.searchForm.value.client.setValue(params['client']); 
         this.search();
       }
     });

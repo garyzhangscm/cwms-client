@@ -68,8 +68,8 @@ export class InventoryInventoryAgingSnapshotComponent implements OnInit {
  
     this.activatedRoute.queryParams.subscribe(params => {
       // if we are changing an existing record
-      if (params.number) { 
-        this.searchForm!.controls.number.setValue(params.number);
+      if (params['number']) { 
+        this.searchForm!.value.number.setValue(params['number']);
         this.search();
       } 
     });
@@ -84,7 +84,7 @@ export class InventoryInventoryAgingSnapshotComponent implements OnInit {
     this.isSpinning = true; 
     this.inventoryAgingSnapshotService
       .getInventoryAgingSnapshots(this.searchForm.value.number ,
-        this.searchForm!.controls.status.value)
+        this.searchForm!.value.status.value)
       .subscribe({
 
         next: (inventoryAgingSnapshotRes) => {
@@ -140,7 +140,7 @@ export class InventoryInventoryAgingSnapshotComponent implements OnInit {
     this.inventoryAgingSnapshotService.generateInventoryAgingSnapshot()
     .subscribe({
       next: (invenotryAgingSnapshotRes) => {
-        this.searchForm!.controls.number.setValue(invenotryAgingSnapshotRes.number);
+        this.searchForm!.value.number.setValue(invenotryAgingSnapshotRes.number);
         this.isSpinning = false;
         this.search();
       } ,

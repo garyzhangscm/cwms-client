@@ -161,8 +161,8 @@ export class OutboundPickListComponent implements OnInit {
     // IN case we get the number passed in, refresh the display
     // and show the order information
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.number) {
-        this.searchForm.controls.number.setValue(params.number);
+      if (params['number']) {
+        this.searchForm.value.number.setValue(params['number']);
         this.search();
       }
     });
@@ -176,7 +176,7 @@ export class OutboundPickListComponent implements OnInit {
 
   search(expandedPickListId?: number, tabSelectedIndex?: number): void {
     this.searching = true;
-    this.pickListService.getPickLists(this.searchForm.controls.number.value).subscribe(pickListRes => {
+    this.pickListService.getPickLists(this.searchForm.value.number.value).subscribe(pickListRes => {
       this.listOfAllPickLists = this.calculateQuantities(pickListRes);
       this.listOfDisplayPickLists = this.calculateQuantities(pickListRes);
 
@@ -319,8 +319,8 @@ export class OutboundPickListComponent implements OnInit {
         this.unpickInventory(
           pickList,
           inventory,
-          this.unpickForm.controls.destinationLocation.value,
-          this.unpickForm.controls.immediateMove.value,
+          this.unpickForm.value.destinationLocation.value,
+          this.unpickForm.value.immediateMove.value,
         );
       },
       nzWidth: 1000,

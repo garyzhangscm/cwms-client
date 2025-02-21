@@ -200,8 +200,8 @@ export class AuthUserComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.username) {
-        this.searchForm!.controls.username.setValue(params.username);
+      if (params['username']) {
+        this.searchForm!.value.username.setValue(params['username']);
         this.search();
       }
     });
@@ -246,7 +246,7 @@ export class AuthUserComponent implements OnInit {
         this.messageService.success(this.i18n.fanyi('message.action.success'));
         this.newTempUserModal.destroy(); 
         // search by the new user
-        this.searchForm.controls.username.setValue(username);
+        this.searchForm.value.username.setValue(username);
         this.search();
       }, 
       error: () => this.messageService.error(this.i18n.fanyi('message.action.error'))
@@ -296,7 +296,7 @@ export class AuthUserComponent implements OnInit {
         this.messageService.success(this.i18n.fanyi('message.action.success'));
         this.copyUserModal.destroy(); 
         // search by the new user
-        this.searchForm.controls.username.setValue(username);
+        this.searchForm.value.username.setValue(username);
         this.search();
       }, 
       error: () => this.messageService.error(this.i18n.fanyi('message.action.error'))

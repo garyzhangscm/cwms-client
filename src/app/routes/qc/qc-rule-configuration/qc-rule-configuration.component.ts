@@ -97,7 +97,7 @@ resetForm(): void {
 
 processItemQueryResult(selectedItemName: any): void {
   console.log(`start to query with item name ${selectedItemName}`);
-  this.searchForm.controls.item.setValue(selectedItemName);
+  this.searchForm.value.item.setValue(selectedItemName);
 
 }
 
@@ -106,10 +106,10 @@ search(): void {
   this.searchResult = '';
   this.qcRuleConfigurationService.getQCRuleConfigurations(
     undefined,
-    this.searchForm!.controls.item.value,
-    this.searchForm!.controls.itemFamily.value,
-    this.searchForm!.controls.inventoryStatus.value,
-    this.searchForm.controls.supplier.value,
+    this.searchForm!.value.item.value,
+    this.searchForm!.value.itemFamily.value,
+    this.searchForm!.value.inventoryStatus.value,
+    this.searchForm.value.supplier.value,
   ).subscribe({
     next: (qcRuleConfigurationRes) => {
       this.listOfAllQCRuleConfiguration = qcRuleConfigurationRes; 

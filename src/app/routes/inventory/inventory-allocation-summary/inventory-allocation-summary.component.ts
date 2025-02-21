@@ -158,10 +158,10 @@ export class InventoryInventoryAllocationSummaryComponent implements OnInit {
 
 
   processItemQueryResult(selectedItemName: any): void { 
-    this.searchForm.controls.itemName.setValue(selectedItemName);
+    this.searchForm.value.itemName.setValue(selectedItemName);
   }
   processLocationQueryResult(selectedLocationName: any): void { 
-    this.searchForm.controls.location.setValue(selectedLocationName);
+    this.searchForm.value.location.setValue(selectedLocationName);
   }
 
   
@@ -170,9 +170,9 @@ export class InventoryInventoryAllocationSummaryComponent implements OnInit {
     this.searchResult = '';
     this.inventoryAllocationSummaryService.getInventoryAllocationSummary(
       undefined,
-      this.searchForm.controls.itemName.value, 
+      this.searchForm.value.itemName.value, 
       undefined,
-      this.searchForm.controls.location.value).subscribe({
+      this.searchForm.value.location.value).subscribe({
 
         next: (inventoryAllocationSummaryRes) => {
 
@@ -285,7 +285,7 @@ export class InventoryInventoryAllocationSummaryComponent implements OnInit {
   
   processQueryLocationQueryResult(selectedLocationName: any): void {
     // console.log(`start to query with location name ${selectedLocationName}`);
-    this.searchForm.controls.location.setValue(selectedLocationName);
+    this.searchForm.value.location.setValue(selectedLocationName);
   }
 
 }

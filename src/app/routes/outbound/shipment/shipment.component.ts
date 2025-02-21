@@ -222,8 +222,8 @@ export class OutboundShipmentComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
 
-    this.shipmentService.getShipments(this.searchForm.controls.number.value, 
-      this.searchForm.controls.orderNumber.value).subscribe(
+    this.shipmentService.getShipments(this.searchForm.value.number.value, 
+      this.searchForm.value.orderNumber.value).subscribe(
       shipmentRes => {
         this.listOfAllShipments = this.calculateQuantities(shipmentRes);
         this.listOfDisplayShipments = this.calculateQuantities(shipmentRes);
@@ -396,8 +396,8 @@ export class OutboundShipmentComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.number) {
-        this.searchForm.controls.number.setValue(params.number);
+      if (params['number']) {
+        this.searchForm.value.number.setValue(params['number']);
         this.search();
       }
     });
@@ -507,8 +507,8 @@ export class OutboundShipmentComponent implements OnInit {
         this.unpickInventory(
           shipment,
           inventory,
-          this.unpickForm.controls.destinationLocation.value,
-          this.unpickForm.controls.immediateMove.value,
+          this.unpickForm.value.destinationLocation.value,
+          this.unpickForm.value.immediateMove.value,
         );
       },
       nzWidth: 1000,

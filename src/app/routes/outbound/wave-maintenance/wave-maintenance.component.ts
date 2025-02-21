@@ -322,8 +322,8 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     this.clearDisplay();
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
-        this.loadWave(params.id);
+      if (params['id']) {
+        this.loadWave(params['id']);
       }
     });
 
@@ -439,22 +439,22 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   findWaveCandidate(): void {
     this.isSpinning = true;
     
-    let startCreatedTime : Date = this.searchForm.controls.createdTimeRanger.value ? 
-        this.searchForm.controls.createdTimeRanger.value[0] : undefined; 
-    let endCreatedTime : Date = this.searchForm.controls.createdTimeRanger.value ? 
-        this.searchForm.controls.createdTimeRanger.value[1] : undefined; 
-    let specificCreatedDate : Date = this.searchForm.controls.createdDate.value;
+    let startCreatedTime : Date = this.searchForm.value.createdTimeRanger.value ? 
+        this.searchForm.value.createdTimeRanger.value[0] : undefined; 
+    let endCreatedTime : Date = this.searchForm.value.createdTimeRanger.value ? 
+        this.searchForm.value.createdTimeRanger.value[1] : undefined; 
+    let specificCreatedDate : Date = this.searchForm.value.createdDate.value;
 
     this.waveService
-      .findWaveableOrderCandidate(this.searchForm.controls.orderNumber.value, 
-        this.searchForm.controls.client.value, 
+      .findWaveableOrderCandidate(this.searchForm.value.orderNumber.value, 
+        this.searchForm.value.client.value, 
         undefined,
-        this.searchForm.controls.customer.value, 
+        this.searchForm.value.customer.value, 
         startCreatedTime, 
         endCreatedTime, specificCreatedDate, 
-        this.searchForm.controls.singleOrderLineOnly.value,
-        this.searchForm.controls.singleOrderQuantityOnly.value,
-        this.searchForm.controls.singleOrderCaseQuantityOnly.value,)
+        this.searchForm.value.singleOrderLineOnly.value,
+        this.searchForm.value.singleOrderQuantityOnly.value,
+        this.searchForm.value.singleOrderCaseQuantityOnly.value,)
       .subscribe({
 
         next: (wavableOrders)  => {
@@ -473,15 +473,15 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
       });
 
     this.waveService
-      .findWaveableShipmentCandidate(this.searchForm.controls.orderNumber.value, 
-        this.searchForm.controls.client.value, 
+      .findWaveableShipmentCandidate(this.searchForm.value.orderNumber.value, 
+        this.searchForm.value.client.value, 
         undefined,
-        this.searchForm.controls.customer.value, 
+        this.searchForm.value.customer.value, 
         startCreatedTime, 
         endCreatedTime, specificCreatedDate, 
-        this.searchForm.controls.singleOrderLineOnly.value,
-        this.searchForm.controls.singleOrderQuantityOnly.value,
-        this.searchForm.controls.singleOrderCaseQuantityOnly.value,)
+        this.searchForm.value.singleOrderLineOnly.value,
+        this.searchForm.value.singleOrderQuantityOnly.value,
+        this.searchForm.value.singleOrderCaseQuantityOnly.value,)
       .subscribe({
 
         next: (waveableShipmentsRes)  => {
@@ -862,7 +862,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
   }
 
   setWaveNumber(newReceiptNumber: string): void {
-    this.newWaveNumberForm.controls.waveNumber.setValue(newReceiptNumber);
+    this.newWaveNumberForm.value.waveNumber.setValue(newReceiptNumber);
   }
 
   returnToPreviousPage(): void {
@@ -885,15 +885,15 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
     if (this.planWaveWithOrderLineFlag) {
 
       this.planWaveWithOrderLines(
-        this.newWaveNumberForm.controls.waveNumber.value, 
+        this.newWaveNumberForm.value.waveNumber.value, 
         this.selectedWavableOrderLines,
-        this.newWaveNumberForm.controls.comment.value );
+        this.newWaveNumberForm.value.comment.value );
     }
     else {
       this.planWaveWithShipmentLines(
-        this.newWaveNumberForm.controls.waveNumber.value, 
+        this.newWaveNumberForm.value.waveNumber.value, 
         this.selectedWavableShipmentLines,
-        this.newWaveNumberForm.controls.comment.value );
+        this.newWaveNumberForm.value.comment.value );
 
     }
   }

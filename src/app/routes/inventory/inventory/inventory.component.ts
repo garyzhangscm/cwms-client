@@ -426,13 +426,13 @@ export class InventoryInventoryComponent implements OnInit {
 
     this.activatedRoute.queryParams.subscribe(params => {
       if (params.hasOwnProperty('refresh')) {
-        if (params.id) {
-          this.search(params.id);
-        } else if (params.lpn) {
-          this.searchForm.controls.lpn.setValue(params.lpn);
+        if (params['id']) {
+          this.search(params['id']);
+        } else if (params['lpn']) {
+          this.searchForm.value.lpn.setValue(params['lpn']);
           this.search();
-        } else if (params.location) {
-          this.searchForm.controls.location.setValue(params.location);
+        } else if (params['location']) {
+          this.searchForm.value.location.setValue(params['location']);
           this.search();
         } else {
           this.search();
@@ -1188,8 +1188,8 @@ export class InventoryInventoryComponent implements OnInit {
       nzOnOk: () => {
         this.moveInventory(
           inventory,
-          this.inventoryMovementForm.controls.destinationLocation.value,
-          this.inventoryMovementForm.controls.immediateMove.value,
+          this.inventoryMovementForm.value.destinationLocation.value,
+          this.inventoryMovementForm.value.immediateMove.value,
         );
       },
 
@@ -1226,8 +1226,8 @@ export class InventoryInventoryComponent implements OnInit {
         });
         this.moveInventoryInBatch(
           this.getSelectedInventory(),
-          this.inventoryMovementForm.controls.destinationLocation.value,
-          this.inventoryMovementForm.controls.immediateMove.value,
+          this.inventoryMovementForm.value.destinationLocation.value,
+          this.inventoryMovementForm.value.immediateMove.value,
         );
         return false;
       },
@@ -1288,7 +1288,7 @@ export class InventoryInventoryComponent implements OnInit {
 
           this.mapOfInprocessInventoryId[inventory.id!] = false;
           // refresh with LPN
-          this.searchForm.controls.lpn.setValue(inventory.lpn);
+          this.searchForm.value.lpn.setValue(inventory.lpn);
           this.search();
         },
         () => {
@@ -1302,17 +1302,17 @@ export class InventoryInventoryComponent implements OnInit {
 
   processItemQueryResult(selectedItemName: any): void {
     // console.log(`start to query with item name ${selectedItemName}`);
-    this.searchForm.controls.itemName.setValue(selectedItemName);
+    this.searchForm.value.itemName.setValue(selectedItemName);
   }
   processLocationQueryResult(selectedLocationName: any): void {
     // console.log(`start to query with location name ${selectedLocationName}`);
-    this.inventoryMovementForm.controls.destinationLocation.setValue(selectedLocationName);
+    this.inventoryMovementForm.value.destinationLocation.setValue(selectedLocationName);
   }
 
 
   processQueryLocationQueryResult(selectedLocationName: any): void {
     // console.log(`start to query with location name ${selectedLocationName}`);
-    this.searchForm.controls.location.setValue(selectedLocationName);
+    this.searchForm.value.location.setValue(selectedLocationName);
   }
 
   printLPNReport(event: any, inventory: Inventory) {

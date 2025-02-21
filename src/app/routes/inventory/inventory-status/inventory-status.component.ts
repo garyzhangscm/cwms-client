@@ -68,8 +68,8 @@ export class InventoryInventoryStatusComponent implements OnInit {
       // IN case we get the number passed in, refresh the display
       // and show the order information
       this.activatedRoute.queryParams.subscribe(params => {
-        if (params.name) {
-          this.searchForm.controls.name.setValue(params.name);
+        if (params['name']) {
+          this.searchForm.value.name.setValue(params['name']);
           this.search();
         }
       });
@@ -87,7 +87,7 @@ export class InventoryInventoryStatusComponent implements OnInit {
      
 
     this.inventoryStatusService.getInventoryStatuses(
-      this.searchForm.controls.name.value, ).subscribe({
+      this.searchForm.value.name.value, ).subscribe({
 
         next: (inventoryStatusRes) => {
           this.searchResult = this.i18n.fanyi('search_result_analysis', {

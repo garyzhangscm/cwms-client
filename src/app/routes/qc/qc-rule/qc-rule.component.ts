@@ -46,8 +46,8 @@ ngOnInit(): void {
     }); 
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.name) {
-        this.searchForm.controls.name.setValue(params.name);
+      if (params['name']) {
+        this.searchForm.value.name.setValue(params['name']);
         this.search();
       }
     });
@@ -65,7 +65,7 @@ resetForm(): void {
 search(): void {
   this.isSpinning = true;
   this.searchResult = '';
-  this.qcRuleService.getQCRules(this.searchForm.controls.name.value).subscribe(
+  this.qcRuleService.getQCRules(this.searchForm.value.name.value).subscribe(
     {
       next: (qcRuleRes) => {
         this.listOfAllQCRules = qcRuleRes;

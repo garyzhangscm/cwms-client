@@ -57,44 +57,44 @@ export class InventoryInventorySnapshotConfigurationComponent implements OnInit 
 
           if (inventorySnapshotConfiguration.inventorySnapshotTiming1 != null)  {
 
-            this.configurationForm.controls.inventorySnapshotTiming1.setValue(
+            this.configurationForm.value.inventorySnapshotTiming1.setValue(
               this.dateTimeService.getLocalHour(inventorySnapshotConfiguration.inventorySnapshotTiming1));
           }
           if (inventorySnapshotConfiguration.inventorySnapshotTiming2 != null)  {
 
-            this.configurationForm.controls.inventorySnapshotTiming2.setValue(
+            this.configurationForm.value.inventorySnapshotTiming2.setValue(
               this.dateTimeService.getLocalHour(inventorySnapshotConfiguration.inventorySnapshotTiming2));
           }
           if (inventorySnapshotConfiguration.inventorySnapshotTiming3 != null)  {
 
-            this.configurationForm.controls.inventorySnapshotTiming3.setValue(
+            this.configurationForm.value.inventorySnapshotTiming3.setValue(
               this.dateTimeService.getLocalHour(inventorySnapshotConfiguration.inventorySnapshotTiming3));
           }
 
             
           if (inventorySnapshotConfiguration.locationUtilizationSnapshotTiming1 != null)  {
-            this.configurationForm.controls.locationUtilizationSnapshotTiming1.setValue(
+            this.configurationForm.value.locationUtilizationSnapshotTiming1.setValue(
               this.dateTimeService.getLocalHour(inventorySnapshotConfiguration.locationUtilizationSnapshotTiming1)); 
           }            
           if (inventorySnapshotConfiguration.locationUtilizationSnapshotTiming2 != null)  {
-            this.configurationForm.controls.locationUtilizationSnapshotTiming2.setValue(
+            this.configurationForm.value.locationUtilizationSnapshotTiming2.setValue(
               this.dateTimeService.getLocalHour(inventorySnapshotConfiguration.locationUtilizationSnapshotTiming2)); 
           }            
           if (inventorySnapshotConfiguration.locationUtilizationSnapshotTiming3 != null)  {
-            this.configurationForm.controls.locationUtilizationSnapshotTiming3.setValue(
+            this.configurationForm.value.locationUtilizationSnapshotTiming3.setValue(
               this.dateTimeService.getLocalHour(inventorySnapshotConfiguration.locationUtilizationSnapshotTiming3)); 
           }
              
           if (inventorySnapshotConfiguration.inventoryAgingSnapshotTiming1 != null)  {
-            this.configurationForm.controls.inventoryAgingSnapshotTiming1.setValue(
+            this.configurationForm.value.inventoryAgingSnapshotTiming1.setValue(
               this.dateTimeService.getLocalHour(inventorySnapshotConfiguration.inventoryAgingSnapshotTiming1)); 
           } 
           if (inventorySnapshotConfiguration.inventoryAgingSnapshotTiming2 != null)  {
-            this.configurationForm.controls.inventoryAgingSnapshotTiming2.setValue(
+            this.configurationForm.value.inventoryAgingSnapshotTiming2.setValue(
               this.dateTimeService.getLocalHour(inventorySnapshotConfiguration.inventoryAgingSnapshotTiming2)); 
           } 
           if (inventorySnapshotConfiguration.inventoryAgingSnapshotTiming3 != null)  {
-            this.configurationForm.controls.inventoryAgingSnapshotTiming3.setValue(
+            this.configurationForm.value.inventoryAgingSnapshotTiming3.setValue(
               this.dateTimeService.getLocalHour(inventorySnapshotConfiguration.inventoryAgingSnapshotTiming3)); 
           } 
         }
@@ -104,28 +104,28 @@ export class InventoryInventorySnapshotConfigurationComponent implements OnInit 
 
   saveConfiguration(): void {
     // before we save, we should convert the hours to UTC
-    let  inventorySnapshotTiming1 = this.configurationForm.controls.inventorySnapshotTiming1.value == null ?
-          undefined : this.dateTimeService.getUTCHour(this.configurationForm.controls.inventorySnapshotTiming1.value);
-    let  inventorySnapshotTiming2 = this.configurationForm.controls.inventorySnapshotTiming2.value == null ?
-          undefined : this.dateTimeService.getUTCHour(this.configurationForm.controls.inventorySnapshotTiming2.value);          
-    let  inventorySnapshotTiming3 = this.configurationForm.controls.inventorySnapshotTiming3.value == null ?
-          undefined : this.dateTimeService.getUTCHour(this.configurationForm.controls.inventorySnapshotTiming3.value);
+    let  inventorySnapshotTiming1 = this.configurationForm.value.inventorySnapshotTiming1.value == null ?
+          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.inventorySnapshotTiming1.value);
+    let  inventorySnapshotTiming2 = this.configurationForm.value.inventorySnapshotTiming2.value == null ?
+          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.inventorySnapshotTiming2.value);          
+    let  inventorySnapshotTiming3 = this.configurationForm.value.inventorySnapshotTiming3.value == null ?
+          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.inventorySnapshotTiming3.value);
 
 
-    let  locationUtilizationSnapshotTiming1 = this.configurationForm.controls.locationUtilizationSnapshotTiming1.value == null ?
-          undefined : this.dateTimeService.getUTCHour(this.configurationForm.controls.locationUtilizationSnapshotTiming1.value);
-    let  locationUtilizationSnapshotTiming2 = this.configurationForm.controls.locationUtilizationSnapshotTiming2.value == null ?
-          undefined : this.dateTimeService.getUTCHour(this.configurationForm.controls.locationUtilizationSnapshotTiming2.value);          
-    let  locationUtilizationSnapshotTiming3 = this.configurationForm.controls.locationUtilizationSnapshotTiming3.value == null ?
-          undefined : this.dateTimeService.getUTCHour(this.configurationForm.controls.locationUtilizationSnapshotTiming3.value);
+    let  locationUtilizationSnapshotTiming1 = this.configurationForm.value.locationUtilizationSnapshotTiming1.value == null ?
+          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.locationUtilizationSnapshotTiming1.value);
+    let  locationUtilizationSnapshotTiming2 = this.configurationForm.value.locationUtilizationSnapshotTiming2.value == null ?
+          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.locationUtilizationSnapshotTiming2.value);          
+    let  locationUtilizationSnapshotTiming3 = this.configurationForm.value.locationUtilizationSnapshotTiming3.value == null ?
+          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.locationUtilizationSnapshotTiming3.value);
  
 
-    let  inventoryAgingSnapshotTiming1 = this.configurationForm.controls.inventoryAgingSnapshotTiming1.value == null ?
-          undefined : this.dateTimeService.getUTCHour(this.configurationForm.controls.inventoryAgingSnapshotTiming1.value);
-    let  inventoryAgingSnapshotTiming2 = this.configurationForm.controls.inventoryAgingSnapshotTiming2.value == null ?
-          undefined : this.dateTimeService.getUTCHour(this.configurationForm.controls.inventoryAgingSnapshotTiming2.value);          
-    let  inventoryAgingSnapshotTiming3 = this.configurationForm.controls.inventoryAgingSnapshotTiming3.value == null ?
-          undefined : this.dateTimeService.getUTCHour(this.configurationForm.controls.inventoryAgingSnapshotTiming3.value); 
+    let  inventoryAgingSnapshotTiming1 = this.configurationForm.value.inventoryAgingSnapshotTiming1.value == null ?
+          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.inventoryAgingSnapshotTiming1.value);
+    let  inventoryAgingSnapshotTiming2 = this.configurationForm.value.inventoryAgingSnapshotTiming2.value == null ?
+          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.inventoryAgingSnapshotTiming2.value);          
+    let  inventoryAgingSnapshotTiming3 = this.configurationForm.value.inventoryAgingSnapshotTiming3.value == null ?
+          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.inventoryAgingSnapshotTiming3.value); 
 
           
     const inventorySnapshotConfiguration: InventorySnapshotConfiguration =

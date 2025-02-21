@@ -118,8 +118,8 @@ export class OutboundShipByHualeiComponent implements OnInit {
   ngOnInit(): void { 
     
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
-        this.loadOrder(params.id);
+      if (params['id']) {
+        this.loadOrder(params['id']);
       }
     }); 
 
@@ -151,7 +151,7 @@ export class OutboundShipByHualeiComponent implements OnInit {
         // if there's only one item in the order, set the parcel form's item
         // control to the only one item 
         if (this.currentOrder?.orderLines.length == 1) { 
-          this.parcelForm.controls.item.setValue(this.currentOrder?.orderLines[0].itemId);
+          this.parcelForm.value.item.setValue(this.currentOrder?.orderLines[0].itemId);
           this.setupDefaultMeasurement(this.currentOrder?.orderLines[0].itemId!);
         }
       },
@@ -214,22 +214,22 @@ export class OutboundShipByHualeiComponent implements OnInit {
       return;
     } 
     let item : Item | undefined = this.currentOrder?.orderLines.find(
-      orderLine => orderLine.itemId == this.parcelForm.controls.item.value
+      orderLine => orderLine.itemId == this.parcelForm.value.item.value
     )?.item;
      
 
     this.isSpinning = true;
     this.hualeiService.sendHualeiRequest(
-      this.parcelForm.controls.productId.value, 
+      this.parcelForm.value.productId.value, 
       this.currentOrder!.id!, 
-      this.parcelForm.controls.length.value, 
-      this.parcelForm.controls.width.value, 
-      this.parcelForm.controls.height.value, 
-      this.parcelForm.controls.weight.value, 
-      this.parcelForm.controls.packageCount.value, 
+      this.parcelForm.value.length.value, 
+      this.parcelForm.value.width.value, 
+      this.parcelForm.value.height.value, 
+      this.parcelForm.value.weight.value, 
+      this.parcelForm.value.packageCount.value, 
       item?.name,
-      this.parcelForm.controls.caseQuantity.value, 
-      this.parcelForm.controls.unitCost.value, 
+      this.parcelForm.value.caseQuantity.value, 
+      this.parcelForm.value.unitCost.value, 
       ).subscribe({
         next: (shipmetnResponse) => {
 
@@ -248,27 +248,27 @@ export class OutboundShipByHualeiComponent implements OnInit {
     this.loadOrder(this.currentOrder!.id!);
   }
   parcelFormValid() {
-    if (this.parcelForm.controls.productId.value == null) {
+    if (this.parcelForm.value.productId.value == null) {
       this.messageService.error("product id is required")
       return false;
     }
-    if (this.parcelForm.controls.item.value == null) {
+    if (this.parcelForm.value.item.value == null) {
       this.messageService.error("item is required")
       return false;
     }
-    if (this.parcelForm.controls.length.value == null) {
+    if (this.parcelForm.value.length.value == null) {
       this.messageService.error("package length is required")
       return false;
     }
-    if (this.parcelForm.controls.width.value == null) {
+    if (this.parcelForm.value.width.value == null) {
       this.messageService.error("package width is required")
       return false;
     }
-    if (this.parcelForm.controls.height.value == null) {
+    if (this.parcelForm.value.height.value == null) {
       this.messageService.error("package height is required")
       return false;
     }
-    if (this.parcelForm.controls.weight.value == null) {
+    if (this.parcelForm.value.weight.value == null) {
       this.messageService.error("package weight is required")
       return false;
     }
@@ -293,17 +293,17 @@ export class OutboundShipByHualeiComponent implements OnInit {
     }
     else {
       
-      this.parcelForm.controls.length.setValue("");
-      this.parcelForm.controls.width.setValue("");
-      this.parcelForm.controls.height.setValue("");
-      this.parcelForm.controls.weight.setValue("");
-      this.parcelForm.controls.caseQuantity.setValue("");
-      this.parcelForm.controls.unitCost.setValue("");
+      this.parcelForm.value.length.setValue("");
+      this.parcelForm.value.width.setValue("");
+      this.parcelForm.value.height.setValue("");
+      this.parcelForm.value.weight.setValue("");
+      this.parcelForm.value.caseQuantity.setValue("");
+      this.parcelForm.value.unitCost.setValue("");
     }
   }
   setupDefaultMeasurement(itemId: number) {
     let item : Item | undefined = this.currentOrder?.orderLines.find(
-      orderLine => orderLine.itemId == this.parcelForm.controls.item.value
+      orderLine => orderLine.itemId == this.parcelForm.value.item.value
     )?.item; 
 
     let caseUnitOfMeasure : ItemUnitOfMeasure | undefined = 
@@ -313,12 +313,12 @@ export class OutboundShipByHualeiComponent implements OnInit {
 
     if (item != null && caseUnitOfMeasure != null) {
        
-      this.parcelForm.controls.length.setValue(caseUnitOfMeasure.length);
-      this.parcelForm.controls.width.setValue(caseUnitOfMeasure.width);
-      this.parcelForm.controls.height.setValue(caseUnitOfMeasure.height);
-      this.parcelForm.controls.weight.setValue(caseUnitOfMeasure.weight);
-      this.parcelForm.controls.caseQuantity.setValue(caseUnitOfMeasure.quantity);
-      this.parcelForm.controls.unitCost.setValue(item.unitCost);
+      this.parcelForm.value.length.setValue(caseUnitOfMeasure.length);
+      this.parcelForm.value.width.setValue(caseUnitOfMeasure.width);
+      this.parcelForm.value.height.setValue(caseUnitOfMeasure.height);
+      this.parcelForm.value.weight.setValue(caseUnitOfMeasure.weight);
+      this.parcelForm.value.caseQuantity.setValue(caseUnitOfMeasure.quantity);
+      this.parcelForm.value.unitCost.setValue(item.unitCost);
     }
         
   }

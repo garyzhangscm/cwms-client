@@ -87,11 +87,11 @@ export class QcQcInspectionComponent implements OnInit {
 
     
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.number || params.type || params.result) { 
+      if (params['number'] || params['type'] || params['result']) { 
 
-        this.searchForm!.controls.number.setValue(params.number ? params.number : "");
-        this.searchForm!.controls.qcInspectionRequestType.setValue(params.type ? params.type : "");
-        this.searchForm!.controls.qcInspectionResult.setValue(params.result ? params.result  : "");
+        this.searchForm!.value.number.setValue(params['number'] ? params['number'] : "");
+        this.searchForm!.value.qcInspectionRequestType.setValue(params['type'] ? params['type'] : "");
+        this.searchForm!.value.qcInspectionResult.setValue(params['result'] ? params['result']  : "");
         this.search();
       } 
     });
@@ -118,14 +118,14 @@ export class QcQcInspectionComponent implements OnInit {
   search(): void {
     this.isSpinning = true;
     this.searchResult = ''; 
-    console.log(`this.searchForm.controls.qcInspectionRequestType.value: ${this.searchForm.controls.qcInspectionRequestType.value}`) 
+    console.log(`this.searchForm.controls.qcInspectionRequestType.value: ${this.searchForm.value.qcInspectionRequestType.value}`) 
 
       this.qcInspectionRequestService.getQCInspectionRequests(
         undefined, undefined,
-        this.searchForm.controls.lpn.value,
-        this.searchForm.controls.number.value, 
-        this.searchForm.controls.qcInspectionRequestType.value,
-        this.searchForm.controls.qcInspectionResult.value).subscribe(
+        this.searchForm.value.lpn.value,
+        this.searchForm.value.number.value, 
+        this.searchForm.value.qcInspectionRequestType.value,
+        this.searchForm.value.qcInspectionResult.value).subscribe(
         {
           next: (qcInspectionRequestRes) => {
             this.listOfQCInspectionRequest = qcInspectionRequestRes; 
@@ -249,7 +249,7 @@ export class QcQcInspectionComponent implements OnInit {
       {
         next: (itemsRes) => {
           if (itemsRes.length === 1) { 
-            this.searchForm.controls.itemName.setValue(itemsRes[0].name); 
+            this.searchForm.value.itemName.setValue(itemsRes[0].name); 
           }
         }
       }
@@ -262,7 +262,7 @@ export class QcQcInspectionComponent implements OnInit {
       {
         next: (locationRes) => {
           if (locationRes.length === 1) {
-            this.searchForm.controls.locationName.setValue(locationRes[0].name); 
+            this.searchForm.value.locationName.setValue(locationRes[0].name); 
           }
         }
       }
@@ -299,7 +299,7 @@ export class QcQcInspectionComponent implements OnInit {
   }
 
   getSelectedInventory() : number[] {
-    return this.st._data.filter(item => item.checked).map(item => item.id); 
+    return this.st._data.filter(item => item.checked).map(item => item['id']); 
   }
 
   

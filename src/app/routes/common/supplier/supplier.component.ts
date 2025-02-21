@@ -199,8 +199,8 @@ export class CommonSupplierComponent implements OnInit {
       name: [null], 
     }); 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.name) {
-        this.searchForm!.controls.name.setValue(params.name);
+      if (params['name']) {
+        this.searchForm!.value.name.setValue(params['name']);
         this.search();
       }
     });

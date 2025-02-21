@@ -191,7 +191,7 @@ export class OutboundShortAllocationComponent implements OnInit {
   search(): void {
     this.isSpinning = true;
     this.shortAllocationService
-      .getShortAllocations(this.searchForm.controls.orderNumber.value, this.searchForm.controls.itemNumber.value)
+      .getShortAllocations(this.searchForm.value.orderNumber.value, this.searchForm.value.itemNumber.value)
       .subscribe({
 
         next: (shortAllocationRes) => {
@@ -284,7 +284,7 @@ export class OutboundShortAllocationComponent implements OnInit {
   }
   
   processItemQueryResult(selectedItemName: any): void {
-    this.searchForm.controls.itemNumber.setValue(selectedItemName);
+    this.searchForm.value.itemNumber.setValue(selectedItemName);
     
 
   }
