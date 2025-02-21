@@ -2,11 +2,16 @@ import { APP_INITIALIZER, Injectable, Provider, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { DA_SERVICE_TOKEN } from '@delon/auth';
-import { ALAIN_I18N_TOKEN, MenuService, SettingsService, TitleService } from '@delon/theme';
+import { ALAIN_I18N_TOKEN, Menu, MenuService, SettingsService, TitleService } from '@delon/theme';
 import { ACLService } from '@delon/acl';
 import { I18NService } from '../i18n/i18n.service';
 import { Observable, zip, of, catchError, map } from 'rxjs';
 import type { NzSafeAny } from 'ng-zorro-antd/core/types';
+
+import { CompanyService } from 'src/app/routes/warehouse-layout/services/company.service';
+import { WarehouseService } from 'src/app/routes/warehouse-layout/services/warehouse.service';
+import { WebClientConfigurationService } from 'src/app/routes/util/services/web-client-configuration.service';
+import { UserService } from 'src/app/routes/auth/services/user.service';
 
 /**
  * Used for application startup
@@ -34,9 +39,16 @@ export class StartupService {
   private httpClient = inject(HttpClient);
   private router = inject(Router);
   private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  
+  private companyService = inject(CompanyService);
+  private warehouseService = inject(WarehouseService);
+  private webClientConfigurationService = inject(WebClientConfigurationService);
+  private userService = inject(UserService);
+
   // If http request allows anonymous access, you need to add `ALLOW_ANONYMOUS`:
   // this.httpClient.get('/app', { context: new HttpContext().set(ALLOW_ANONYMOUS, true) })
-  private appData$ = this.httpClient.get('./assets/tmp/app-data.json').pipe(
+  // private appData$ = this.httpClient.get('./assets/tmp/app-data.json').pipe(
+  private appData$ = this.httpClient.get('./resource/assets/app-data.json').pipe(
     catchError((res: NzSafeAny) => {
       console.warn(`StartupService.load: Network request failed`, res);
       setTimeout(() => this.router.navigateByUrl(`/exception/500`));
@@ -126,11 +138,139 @@ export class StartupService {
     return of(void 0);
   }
 
-  load(): Observable<void> {
+  load(warehouseId?: number): Observable<void> {
     // http
     // return this.viaHttp();
     // mock: Don’t use it in a production environment. ViaMock is just to simulate some data to make the scaffolding work normally
     // mock：请勿在生产环境中这么使用，viaMock 单纯只是为了模拟一些数据使脚手架一开始能正常运行
-    return this.viaMockI18n();
+    // return this.viaMockI18n();
+    let siteInformationUrl = `resource/site-information`;
+    
+    if (!this.tokenService.get()?.token) {
+      // If the user has not been login, get the default
+      // site information
+
+      siteInformationUrl = `${siteInformationUrl}/default`;
+    } else {
+      const currentDateTime = new Date().getTime();
+
+
+      const expiredDateTime = new Date(this.tokenService.get()?.expired!);
+
+      if (currentDateTime >= expiredDateTime.getTime()) {
+        // OK, the current authrization is already expired. let's go back to the login form
+        // clear token and go back to the login form
+        this.tokenService.clear();
+        siteInformationUrl = `${siteInformationUrl}/default`;
+        this.goToLoginForm();
+      }
+    }
+    siteInformationUrl = `${siteInformationUrl}?companyId=${this.companyService.getCurrentCompany()?.id}`;
+    if (warehouseId) {
+      siteInformationUrl = `${siteInformationUrl}&warehouseId=${warehouseId}`;
+    }
+    else if (this.warehouseService.getCurrentWarehouse() != null) {
+      siteInformationUrl = `${siteInformationUrl}&warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+
+    } 
+
+    const defaultLang = this.i18n.defaultLang;
+    return zip(
+      this.i18n.loadLangData(defaultLang),
+      // this.httpClient.get('assets/tmp/app-data.json')
+      //this.httpClient.get(`resource/assets/i18n/${this.i18n.defaultLang}.json`),
+      this.httpClient.get(siteInformationUrl),
+    ).pipe(
+      // 接收其他拦截器后产生的异常消息
+      catchError(res => {
+        console.warn(`StartupService.load: Network request failed`, res);
+        return [];
+      }),
+      map(([langData, appData]: [Record<string, string>, NzSafeAny]) => {
+        // setting language data
+        this.i18n.use(defaultLang, langData);
+
+        // application data
+        const res = (appData as NzSafeAny).data;
+        // 应用信息：包括站点名、描述、年份
+        this.settingService.setApp(res.app);
+        // 用户信息：包括姓名、头像、邮箱地址
+        this.settingService.setUser(res.user);
+        // ACL：设置权限为全量
+        // this.aclService.setFull(true);
+
+        // 初始化菜单 
+        this.menuService.add(res.menu);
+        // setup the ACL based on the user's accessible menu
+        // console.log(`this.tokenService.get(): ${this.tokenService.get()?.token}, expired? ${this.tokenService.get()?.expired}`); 
+        if (this.tokenService.get()?.token != null) {
+
+            // we will only need to setup the ACL if the user is already login
+            this.setupMenuBasedACL(res.menu);
+        }
+
+        // 设置页面标题的后缀
+        this.titleService.default = '';
+        this.titleService.suffix = res.app.name;
+
+        // console.log(`res.webClientConfiguration: ${JSON.stringify(res.webClientConfiguration)}`);
+        this.webClientConfigurationService.setWebClientConfiguration(res.webClientConfiguration);
+
+        // setup the company information
+        this.companyService.setSingleCompanyServerFlag(res.singleCompanySite);
+        if (res.singleCompanySite === true) {
+          this.companyService.setDefaultCompanyCode(res.defaultCompanyCode);
+        } else {
+          this.companyService.setDefaultCompanyCode('');
+        }
+        this.warehouseService.setServerSidePrintingFlag(res.serverSidePrinting);
+
+      },
+        () => {
+          console.log(`error while loading infromation`);
+          (this.tokenService).clear();
+          this.goToLoginForm();
+        })
+    );
+  }
+
+  
+  private goToLoginForm() {
+    // Before we go back to login form, we may need to at least load the langugue
+    this.httpClient.get(`resource/assets/i18n/${this.i18n.defaultLang}.json`).subscribe(res => {
+      // Setting language data
+      // this.translate.setTranslation(this.i18n.defaultLang, res);
+      // this.translate.setDefaultLang(this.i18n.defaultLang);
+      setTimeout(() => this.router.navigateByUrl('/passport/login'));
+    });
+  }
+
+  
+  setupMenuBasedACL(accessibleMenu : Menu[]) {
+
+    accessibleMenu.forEach(
+      menu => {
+        if (menu.children && menu.children.length > 0) {
+          this.setupMenuBasedACL(menu.children);
+        }
+        if (menu.link && menu.link.length > 0) {
+          this.aclService.attachRole([menu.link]);
+        }
+
+      }
+    )
+
+    // add admin role and system admin role if the current 
+    // user is admin or system admin
+    this.userService.getCurrentUser().then(
+      user => {
+        if (user != null && user.admin) {
+          this.aclService.attachRole(['admin']);
+        }
+        if (user != null && user.systemAdmin) {
+          this.aclService.attachRole(['system-admin']);
+        }
+      }
+    )
   }
 }

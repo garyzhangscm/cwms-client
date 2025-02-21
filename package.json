@@ -1,6 +1,6 @@
 {
-  "name": "ng-alain-v19-without-ssr",
-  "version": "0.0.0",
+  "name": "CWMS Client",
+  "version": "19.1.57",
   "scripts": {
     "ng": "ng",
     "start": "ng s -o",

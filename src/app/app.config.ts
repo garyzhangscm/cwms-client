@@ -30,7 +30,20 @@ const defaultLang: AlainProvideLang = {
 };
 
 const alainConfig: AlainConfig = {
-  auth: { login_url: '/passport/login' }
+  auth: {
+    token_send_key: 'Authorization',
+    token_send_template: 'Bearer ${token}',
+    login_url: '/passport/login',
+    ignores: [
+      /\/login/,
+      /assets/,
+      /layout\/companies\/validate/,
+      /passport/,
+      /layout\/warehouses\/accessible\//,
+      /resource\/site-information\/default/,
+      /resource\/assets/,
+    ],
+  }
 };
 
 const ngZorroConfig: NzConfig = {};

@@ -1,5 +1,7 @@
 <form nz-form [formGroup]="form" (ngSubmit)="submit()" role="form">
   <nz-tabset [nzAnimated]="false" class="tabs" (nzSelectChange)="switch($event)">
+    
+    <!--
     <nz-tab [nzTitle]="'app.login.tab-login-credentials' | i18n">
       @if (error) {
         <nz-alert [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg" />
@@ -52,7 +54,45 @@
         </nz-form-control>
       </nz-form-item>
     </nz-tab>
+    
+    -->
+    <nz-tab>
+      <nz-alert *ngIf="error" [nzType]="'error'" [nzMessage]="error" [nzShowIcon]="true" class="mb-lg"></nz-alert>
+      <nz-form-item [hidden]="singleCompanySystem">
+        <nz-form-control [nzErrorTip]="'Please enter valid companyCode!' | i18n">
+          <nz-input-group nzSize="large" nzPrefixIcon="user">
+            <input nz-input formControlName="companyCode" placeholder="company code" (blur)="onCompanyCodeBlur()"
+              required />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Please enter username">
+          <nz-input-group nzSize="large" nzPrefixIcon="user">
+            <input nz-input formControlName="userName" placeholder="Please enter username" (blur)="loadWarehouses()" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control nzErrorTip="Please enter password">
+          <nz-input-group nzSize="large" nzPrefixIcon="lock">
+            <input nz-input type="password" formControlName="password" placeholder="Please enter password" />
+          </nz-input-group>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control nzErrorTip="'error.form.field.login.warehouse.required' | i18n">
+          <nz-select nz-input formControlName="warehouseId">
+            <nz-option *ngFor="let warehouse of warehouses" [nzLabel]="warehouse.name" [nzValue]="warehouse.id">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </nz-tab>
+
+
   </nz-tabset>
+  <!--
   <nz-form-item>
     <nz-col [nzSpan]="12">
       <label nz-checkbox formControlName="remember">{{ 'app.login.remember-me' | i18n }}</label>
@@ -66,7 +106,15 @@
       {{ 'app.login.login' | i18n }}
     </button>
   </nz-form-item>
+-->
+  <nz-form-item>
+    <button nz-button type="submit" nzType="primary" nzSize="large" [nzLoading]="loading" nzBlock>
+      {{ 'Login' | i18n }}
+    </button>
+  </nz-form-item>
 </form>
+
+<!--
 <div class="other">
   {{ 'app.login.sign-in-with' | i18n }}
   <i nz-tooltip nzTooltipTitle="in fact Auth0 via window" (click)="open('auth0', 'window')" nz-icon nzType="alipay-circle" class="icon"></i>
@@ -74,3 +122,48 @@
   <i (click)="open('weibo', 'window')" nz-icon nzType="weibo-circle" class="icon"></i>
   <a class="register" routerLink="/passport/register">{{ 'app.login.signup' | i18n }}</a>
 </div>
+
+  -->
+
+  
+
+  <!--
+  Force the user to change the password if the user's change password at next logon flag is setup
+-->  
+
+<ng-template #tplChangePasswordModalTitle>
+  <span>{{ 'page.modal.change-password.header.title' | i18n}}</span>
+</ng-template>
+<ng-template #tplChangePasswordModalContent>
+  <form nz-form [formGroup]="changePasswordRequestForm">
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="newPassword">
+            {{ 'password' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <nz-input-group nzSize="large">
+              <input nz-input   type="password" formControlName="newPassword" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div nz-row [nzGutter]="24">
+      <div nz-col [nzSpan]="12">
+        <nz-form-item nzFlex>
+          <nz-form-label [nzSpan]="8" nzFor="confirmPassword">
+            {{ 'password.confirm' | i18n }}
+          </nz-form-label>
+          <nz-form-control [nzSpan]="16">
+            <nz-input-group nzSize="large">
+              <input nz-input type="password"  formControlName="confirmPassword" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div> 
+    
+  </form>
+</ng-template>
