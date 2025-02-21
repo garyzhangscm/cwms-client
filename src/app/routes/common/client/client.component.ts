@@ -92,7 +92,7 @@ export class CommonClientComponent implements OnInit {
   search(): void {
     this.isSpinning = true;
     this.clientService.getClients(
-      this.searchForm.controls.name.value).subscribe({
+      this.searchForm.value.name.value).subscribe({
         next: (clientRes) => {
           this.clients = clientRes; 
           this.isSpinning = false;

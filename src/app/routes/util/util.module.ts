@@ -1,8 +1,7 @@
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { NgModule, Type } from '@angular/core';
 import { DownFileModule } from '@delon/abc/down-file';
-import { EllipsisModule } from '@delon/abc/ellipsis';
-import { SharedModule } from '@shared';
+import { EllipsisModule } from '@delon/abc/ellipsis'; 
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzResultModule } from 'ng-zorro-antd/result';
@@ -78,8 +77,7 @@ const COMPONENTS: Array<Type<void>> = [
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
-  imports: [
-    SharedModule,
+  imports: [ 
     UtilRoutingModule,    
     NzDescriptionsModule, 
     NzStepsModule, 

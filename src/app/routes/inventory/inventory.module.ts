@@ -1,9 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { NgModule, Type } from '@angular/core';
 import { EllipsisModule } from '@delon/abc/ellipsis';
-import { STModule } from '@delon/abc/st';
-import { SharedModule } from '@shared';
-import { PlotlyModule } from 'angular-plotly.js';
+import { STModule } from '@delon/abc/st'; 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -13,7 +11,7 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
 
-import { CommonModule } from '../common/common.module';
+import { CWMSCommonModule } from '../common/common.module';
 import { DirectivesModule } from '../directives/directives.module';  
 import { UtilModule } from '../util/util.module';
 import { WarehouseLayoutModule } from '../warehouse-layout/warehouse-layout.module'; 
@@ -116,14 +114,13 @@ const COMPONENTS: Array<Type<void>> = [
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
-  imports: [
-    SharedModule,
+  imports: [ 
     InventoryRoutingModule,
     DirectivesModule,
     NzDescriptionsModule,
     WarehouseLayoutModule,
     NzImageModule,
-    CommonModule,
+    CWMSCommonModule,
     NzStepsModule, 
     UtilModule,
     NzSkeletonModule,NzIconModule ,

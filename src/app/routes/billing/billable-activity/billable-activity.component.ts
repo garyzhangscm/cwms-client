@@ -104,10 +104,10 @@ export class BillingBillableActivityComponent implements OnInit {
     
     this.isSpinning = true; 
     
-    let startTime : Date = this.searchForm.controls.dateRanger.value ? 
-        this.searchForm.controls.dateRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.controls.dateRanger.value ? 
-        this.searchForm.controls.dateRanger.value[1] : undefined;  
+    let startTime : Date = this.searchForm.value.dateRanger.value ? 
+        this.searchForm.value.dateRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.value.dateRanger.value ? 
+        this.searchForm.value.dateRanger.value[1] : undefined;  
 
     if (startTime == null || endTime == null) {
       this.messageService.error("please choose the time range to continue");
@@ -115,7 +115,7 @@ export class BillingBillableActivityComponent implements OnInit {
       this.searchResult = '';
       return;
     }
-    if (this.searchForm.controls.client.value == null) {
+    if (this.searchForm.value.client.value == null) {
       this.messageService.error("please choose the client to continue");
       this.isSpinning = false;
       this.searchResult = '';
@@ -123,7 +123,7 @@ export class BillingBillableActivityComponent implements OnInit {
     }
 
     this.billingRequestService.generateBillingRequests(
-          startTime!,  endTime!, this.searchForm.controls.client.value,
+          startTime!,  endTime!, this.searchForm.value.client.value,
           undefined,
           false
       ).subscribe(

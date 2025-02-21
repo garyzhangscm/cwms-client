@@ -33,7 +33,7 @@
       </nz-descriptions-item>
     </nz-descriptions> 
     <nz-card nzType="inner"  *ngIf="currentReceipt" >
-        <st #receiptLineTable [data]="currentReceipt.receiptLines" [columns]="receiptLineTableColumns" 
+        <st #receiptLineTable [data]="currentReceipt?.receiptLines" [columns]="receiptLineTableColumns" 
         [scroll]="{ x: '1315px' }"  >
        
           <!--   attributeColumn colummn  -->  

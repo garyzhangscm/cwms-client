@@ -54,9 +54,9 @@ export class InboundCreateReceiptFromPoComponent implements OnInit {
     this.receiptQuantities = [];
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.poid) {
+      if (params['poid']) {
         // Get the purchase order by ID
-        this.purchaseOrderService.getPurchaseOrder(params.poid)
+        this.purchaseOrderService.getPurchaseOrder(params['poid'])
           .subscribe( {
             next: (purchaseOrderRes) => {
               console.log(`get purchase order ${purchaseOrderRes.number}`)

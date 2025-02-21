@@ -181,10 +181,10 @@ export class InboundPrintingReceivingLpnLabelComponent implements OnInit {
     this.titleService.setTitle(this.i18n.fanyi('pre-print-lpn-label'));
     this.activatedRoute.queryParams.subscribe(params => {
       // we may pre-print lpn label for receipt or work order
-      if (params.receiptId) {
+      if (params['receiptId']) {
 
         this.isSpinning = true;
-        this.receiptService.getReceipt(params.receiptId).subscribe(
+        this.receiptService.getReceipt(params['receiptId']).subscribe(
           {
             next:(receiptRes) => { 
 

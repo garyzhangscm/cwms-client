@@ -94,18 +94,18 @@
                                 /
                                 <nz-select *ngIf="!billingRate.rateByQuantity"
                                     [ngModel]="billingRate.rateUnit" style="width: 180px;" (ngModelChange)="billingRateUnitChanged(billingRate, $event)">
-                                    <nz-option *ngFor="let unit of volumeUnits"
+                                    <nz-option *ngFor="let unit of volumeUnits"
                                         [nzValue]="unit"
-                                        nzLabel="{{unit.description}}"  ></nz-option>
+                                        nzLabel="{{unit.description}}" ></nz-option>
                                 </nz-select> 
                                 <span style="width: 180px;" *ngIf="billingRate.rateByQuantity"> Unit </span>
                             </nz-list-item-action>
                             <nz-list-item-action>
 
-                                <nz-select [(ngModel)]="billingRate.billingCycle">
-                                    <nz-option *ngFor="let billingCycle of billingCycles  | keys"
-                                        [nzValue]="billingCycle.key"
-                                        nzLabel="{{ 'BILLING-CYCLE-' + billingCycle.key | i18n }}"  ></nz-option>
+                                <nz-select [(ngModel)]="billingRate.billingCycle">
+                                    <nz-option *ngFor="let billingCycle of billingCyclesKeys"
+                                        [nzValue]="billingCycle"
+                                        nzLabel="{{ 'BILLING-CYCLE-' + billingCycle | i18n }}" ></nz-option>
                                 </nz-select> 
                             </nz-list-item-action>
                             <nz-list-item-action>
