@@ -1,5 +1,5 @@
 import { NgModule, Type } from '@angular/core';
-import { SharedModule } from '@shared';
+
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 
@@ -11,6 +11,17 @@ import { WorkTaskWorkTaskConfigurationComponent } from './work-task-configuratio
 import { WorkTaskRoutingModule } from './work-task-routing.module';
 import { WorkTaskWorkTaskComponent } from './work-task/work-task.component';
 
+import { STModule } from '@delon/abc/st';
+import { I18nPipe} from '@delon/theme';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { ReactiveFormsModule } from '@angular/forms';
+import { NzListModule } from 'ng-zorro-antd/list';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { PageHeaderComponent } from '@delon/abc/page-header';
+
 const COMPONENTS: Array<Type<void>> = [
   WorkTaskWorkTaskComponent,
   WorkTaskWorkTaskConfigurationComponent,
@@ -20,11 +31,22 @@ const COMPONENTS: Array<Type<void>> = [
 
 @NgModule({
   imports: [
-    SharedModule,
+    
     WorkTaskRoutingModule,
     NzStepsModule, 
     NzDescriptionsModule, 
     WarehouseLayoutModule,
+    STModule,
+    I18nPipe,
+    NzButtonModule,
+    NzSelectModule,
+    NzFormModule,
+    ReactiveFormsModule,
+    NzListModule ,
+    NzDropDownModule ,
+    NzSpinModule ,
+    PageHeaderComponent ,
+    
   ],
   declarations: COMPONENTS,
 })

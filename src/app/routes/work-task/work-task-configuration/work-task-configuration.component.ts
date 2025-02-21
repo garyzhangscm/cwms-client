@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -26,6 +26,8 @@ import { WorkTaskConfigurationService } from '../services/work-task-configuratio
 })
 export class WorkTaskWorkTaskConfigurationComponent implements OnInit {
   isSpinning = false;
+  
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   @ViewChild('st', { static: true })
   st!: STComponent;
@@ -57,7 +59,7 @@ export class WorkTaskWorkTaskConfigurationComponent implements OnInit {
    
   displayOnly = false;
   constructor( 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
     private workTaskConfigurationService: WorkTaskConfigurationService,

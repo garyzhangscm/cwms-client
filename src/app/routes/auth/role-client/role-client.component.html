@@ -56,13 +56,13 @@
             <nz-card nzTitle="{{ 'assign-clients' | i18n}}">
                 <div nz-row style="padding: 10px" *ngIf="currentRole != null">                    
                     <div nz-col nzSpan="12" nzOffset="6">
-                        <label nz-checkbox [(ngModel)]="currentRole.nonClientDataAccessible"  >
+                        <label nz-checkbox [(ngModel)]="currentRole!.nonClientDataAccessible"  >
                             {{ "nonClientDataAccessible" | i18n}}</label> 
                     </div>  
                 </div>
                 <div nz-row style="padding: 10px" *ngIf="currentRole != null">                    
                     <div nz-col nzSpan="12" nzOffset="6">
-                        <label nz-checkbox [(ngModel)]="currentRole.allClientAccess"  >
+                        <label nz-checkbox [(ngModel)]="currentRole!.allClientAccess"  >
                             {{ "allClientAccess" | i18n}}</label> 
                     </div>  
                 </div>

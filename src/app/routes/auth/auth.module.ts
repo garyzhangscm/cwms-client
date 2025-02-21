@@ -1,5 +1,4 @@
-import { NgModule, Type } from '@angular/core';
-import { SharedModule } from '@shared';
+import { NgModule, Type } from '@angular/core'; 
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
@@ -30,6 +29,24 @@ import { AuthWorkingTeamMaintenanceComponent } from './working-team-maintenance/
 import { AuthWorkingTeamUserComponent } from './working-team-user/working-team-user.component';
 import { AuthWorkingTeamComponent } from './working-team/working-team.component';
 import { AuthRoleOperationTypeComponent } from './role-operation-type/role-operation-type.component';
+import { PageHeaderComponent } from '@delon/abc/page-header';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { STModule } from '@delon/abc/st';
+import { I18nPipe } from '@delon/theme';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzSwitchModule } from 'ng-zorro-antd/switch';
+import { CommonModule } from '@angular/common';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzSelectModule } from 'ng-zorro-antd/select';
 
 const COMPONENTS: Array<Type<void>> = [
   AuthUserComponent,
@@ -57,14 +74,32 @@ const COMPONENTS: Array<Type<void>> = [
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
-  imports: [
-    SharedModule,
+  imports: [ 
     AuthRoutingModule,
     NzDescriptionsModule,
     NzTreeModule,
     NzTransferModule,
     DirectivesModule, NzStepsModule,
     NzResultModule ,
+    PageHeaderComponent ,
+    NzSpinModule ,
+    NzFormModule,
+    FormsModule, 
+    ReactiveFormsModule,
+    STModule,
+    I18nPipe,
+    NzButtonModule,
+    NzBreadCrumbModule ,
+    NzCardModule ,
+    NzDividerModule,
+    NzTableModule ,
+    NzDropDownModule ,
+    NzTabsModule ,
+    NzSwitchModule ,
+    CommonModule ,
+    NzInputModule ,
+    NzIconModule ,
+    NzSelectModule,
   ],
   declarations: [
     ...COMPONENTS,

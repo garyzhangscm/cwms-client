@@ -13,10 +13,10 @@
           <nz-form-control [nzSpan]="18">
             <nz-select  nzMode="multiple" formControlName="type">
                 <nz-option
-                      *ngFor="let alertType of alertTypes | keys"
-                      [nzValue]="alertType.key"
-                      nzLabel="{{ 'ALERT-TYPE-' + alertType.key | i18n}}"
-                    ></nz-option>
+                 *ngFor="let alertType of alertTypeKeys"
+                [nzValue]="alertType"
+                 nzLabel="{{ 'ALERT-TYPE-' + alertType | i18n}}"
+                 ></nz-option>
           </nz-select>
           </nz-form-control>
         </nz-form-item>
@@ -29,10 +29,10 @@
           <nz-form-control [nzSpan]="18">
             <nz-select    formControlName="status">
                 <nz-option
-                      *ngFor="let alertStatus of alertStatusList | keys"
-                      [nzValue]="alertStatus.key"
-                      nzLabel="{{ 'ALERT-STATUS-' + alertStatus.key | i18n}}"
-                    ></nz-option>
+                    *ngFor="let alertStatus of  alertStatusListKeys"
+                    [nzValue]="alertStatus"
+                    nzLabel="{{ 'ALERT-STATUS-' + alertStatus | i18n}}"
+            ></nz-option>
           </nz-select>
           </nz-form-control>
         </nz-form-item>

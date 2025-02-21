@@ -1,14 +1,11 @@
 import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, UntypedFormControl, Validators } from '@angular/forms';
-import { I18NService } from '@core';
-import { STColumn } from '@delon/abc/st';
+import { I18NService } from '@core'; 
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-
-import { User } from '../../auth/models/user';
-import { UserService } from '../../auth/services/user.service';
-import { CompanyService } from '../../warehouse-layout/services/company.service';
+ 
+import { UserService } from '../../auth/services/user.service'; 
 import { AlertDeliveryChannel } from '../models/alert-delivery-channel';
 import { AlertSubscription } from '../models/alert-subscription';
 import { AlertType } from '../models/alert-type';
@@ -28,6 +25,7 @@ export class AlertSubscriptionComponent implements OnInit {
 
   alertTypes = AlertType;
   alertDeliveryChannels = AlertDeliveryChannel; 
+  alertDeliveryChannelsKeys = Object.keys(this.alertDeliveryChannels);
   currentAlertSubscription?: AlertSubscription;
 
   keyWordsFilterModal!: NzModalRef;

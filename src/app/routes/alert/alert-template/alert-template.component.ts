@@ -7,10 +7,8 @@ import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
-import { UserService } from '../../auth/services/user.service';
-import { Alert } from '../models/alert';
-import { AlertDeliveryChannel } from '../models/alert-delivery-channel';
-import { AlertStatus } from '../models/alert-status';
+import { UserService } from '../../auth/services/user.service'; 
+import { AlertDeliveryChannel } from '../models/alert-delivery-channel'; 
 import { AlertTemplate } from '../models/alert-template';
 import { AlertType } from '../models/alert-type';
 import { AlertTemplateService } from '../services/alert-template.service';
@@ -47,7 +45,9 @@ export class AlertAlertTemplateComponent implements OnInit {
   alertTemplates: AlertTemplate[] = [];
   searchResult = "";
   alertTypes = AlertType; 
+  alertTypeKeys = Object.keys(this.alertTypes);
   alertDeliveryChannels = AlertDeliveryChannel;
+  alertDeliveryChannelsKeys = Object.keys(this.alertDeliveryChannels);
    
   displayOnly = false;
 

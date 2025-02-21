@@ -49,8 +49,8 @@
 
             <ng-template #usernameErrorTpl let-control>
               <div *ngIf="username.invalid && (username.dirty || username.touched)">
-                <ng-container *ngIf="username?.errors?.errorCode">
-                  {{username?.errors?.errorCode | i18n}}</ng-container>
+                <ng-container *ngIf="username['errors'] && username['errors']['errorCode']">
+                  {{  username['errors']['errorCode'] | i18n}}</ng-container>
                 <ng-container *ngIf="control.hasError('required')">{{ 'error.form.field.required' | i18n }}
                 </ng-container>
               </div>
@@ -149,8 +149,8 @@
             <nz-select nzAllowClear  *ngIf='currentUser !== undefined' 
             nz-input [ngModel]="currentUser!.workerType" (ngModelChange)="workerTypeChanged($event)"
                     style="width: 250px"  >
-                  <nz-option *ngFor="let workerType of workerTypes | keys"
-                      nzLabel="{{ 'WORKER-TYPE-' + workerType.key | i18n }}" [nzValue]="workerType.key">
+                  <nz-option *ngFor="let workerType of workerTypesKeys"
+                      nzLabel="{{ 'WORKER-TYPE-' + workerType | i18n }}" [nzValue]="workerType">
                   </nz-option>
               </nz-select>  
           </nz-form-control>

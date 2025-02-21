@@ -1,5 +1,4 @@
-import { NgModule, Type } from '@angular/core';
-import { SharedModule } from '@shared';
+import { NgModule, Type } from '@angular/core'; 
 
 import { AdminAccessDirective } from './adminAccess.directive';
 import { AdminEnabledDirective } from './adminEnabled.directive';
@@ -15,8 +14,7 @@ const COMPONENTS: Array<Type<void>> = [];
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
-    imports: [
-        SharedModule,
+    imports: [ 
         DirectivesRoutingModule
     ],
     declarations: [
