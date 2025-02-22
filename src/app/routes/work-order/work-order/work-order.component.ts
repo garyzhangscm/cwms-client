@@ -320,6 +320,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     );
   }
   workOrderStatuses = WorkOrderStatus;
+  workOrderStatusesKeys = Object.keys(this.workOrderStatuses);
   // Form related data and functions
   searchForm!: UntypedFormGroup;
   searching = false;
@@ -380,12 +381,14 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   currentWorkOrderConsumeByBomFlag = 'yes';
   currentWorkOrderMatchedBOM: BillOfMaterial[] = [];
   materialConsumeTimings = WorkOrderMaterialConsumeTiming;
+  materialConsumeTimingsKeys = Object.keys(this.materialConsumeTimings);
   currentWorkOrderMaterialConsumeTiming?: WorkOrderMaterialConsumeTiming;
 
   recalculateQCForm!: UntypedFormGroup;
   recalculateQCModal!: NzModalRef;
   formatterPercent = (value: number): string => `${value} %`;
-  parserPercent = (value: string): string => value.replace(' %', '');
+  //parserPercent = (value: string): string => value.replace(' %', '');
+  parserPercent = (value: string): number => parseFloat(value?.replace('%', ''));
 
   ngOnInit(): void {
     // console.log(`webClientConfigurationService.getWebClientConfiguration().tabDisplayConfiguration: 

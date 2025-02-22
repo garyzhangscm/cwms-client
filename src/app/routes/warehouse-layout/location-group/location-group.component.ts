@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
-import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, FormGroup } from '@angular/forms';
+import { Component,   Inject, OnInit,  } from '@angular/core';
+import { UntypedFormBuilder,  } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ALAIN_I18N_TOKEN, TitleService } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -237,8 +237,8 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
       // after we load all the valid location groups, if the URL has a specific parameter,
       // let's query by this id
       this.activatedRoute.queryParams.subscribe(params => {
-        if (params.id) {
-          this.selectedLocationGroups = [params.id];
+        if (params['id']) {
+          this.selectedLocationGroups = [params['id']];
           this.search();
         }
       });

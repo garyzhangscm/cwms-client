@@ -1,15 +1,13 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
  
-import { UserService } from '../../auth/services/user.service';
-import { WaveStatus } from '../../outbound/models/wave-status.enum';
-import { ColumnItem } from '../../util/models/column-item';
+import { UserService } from '../../auth/services/user.service'; 
 import { WebPageTableColumnConfiguration } from '../../util/models/web-page-table-column-configuration';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service'; 
@@ -31,6 +29,7 @@ import { ProductionLineService } from '../services/production-line.service';
 })
 export class WorkOrderProductionLineComponent implements OnInit {
 
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   pageName = "productionLine";
   loadingProductionLineDetailsRequest = 0;
@@ -139,7 +138,6 @@ export class WorkOrderProductionLineComponent implements OnInit {
   constructor(
     private fb: UntypedFormBuilder,
     private productionLineService: ProductionLineService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private messageService: NzMessageService,
     private utilService: UtilService,
     private userService: UserService,

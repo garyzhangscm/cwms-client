@@ -61,10 +61,10 @@ export class WorkOrderProductionMoldCountHistoryComponent implements OnInit {
     this.searchResult = '';
      
     
-    let startTime : Date = this.searchForm.controls.dateTimeRanger.value ? 
-        this.searchForm.controls.dateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.controls.dateTimeRanger.value ? 
-        this.searchForm.controls.dateTimeRanger.value[1] : undefined; 
+    let startTime : Date = this.searchForm.value.dateTimeRanger ? 
+        this.searchForm.value.dateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.value.dateTimeRanger ? 
+        this.searchForm.value.dateTimeRanger.value[1] : undefined; 
 
     if (startTime == null || endTime == null) {
       this.isSpinning = false;
@@ -73,7 +73,7 @@ export class WorkOrderProductionMoldCountHistoryComponent implements OnInit {
     }
     this.lightMesService.getPulseCountHistory(
       startTime, endTime, 
-      this.searchForm.controls.itemName.value
+      this.searchForm.value.itemName
     ).subscribe(
       {
         next: (pulseCountHistoryByItemRes) => {

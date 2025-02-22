@@ -58,8 +58,8 @@ export class UtilCustomReportMaintenanceComponent implements OnInit {
 
   ngOnInit(): void {  
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) { 
-        this.customReportService.getCustomReport(params.id)
+      if (params['id']) { 
+        this.customReportService.getCustomReport(params['id'])
           .subscribe(customReportRes => {
             this.currentCustomReport = customReportRes;
 

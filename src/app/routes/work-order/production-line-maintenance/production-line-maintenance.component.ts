@@ -55,6 +55,7 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
   productionLineCapacityItemDataIndex = 0;
 
   timeUnits = TimeUnit;
+  timeUnitsKeys = Object.keys(this.timeUnits);
 
   isSpinning = false;
 
@@ -125,10 +126,10 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
     this.loadAvailableProductionLineTypes();
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         this.isSpinning = true;
         // Get the production line by ID
-        this.productionLineService.getProductionLine(params.id)
+        this.productionLineService.getProductionLine(params['id'])
           .subscribe({
             next: (productionLine) => {
               this.currentProductionLine = productionLine;

@@ -72,7 +72,8 @@ export class WorkOrderQcRuleConfigurationMaintenanceComponent implements OnInit 
 
   
   formatterPercent = (value: number): string => `${value} %`;
-  parserPercent = (value: string): string => value.replace(' %', '');
+  // parserPercent = (value: string): string => value.replace(' %', '');
+  parserPercent = (value: string): number => parseFloat(value?.replace('%', ''));
 
   constructor(private http: _HttpClient,
     private companyService: CompanyService,
@@ -143,9 +144,9 @@ export class WorkOrderQcRuleConfigurationMaintenanceComponent implements OnInit 
 
      
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) { 
+      if (params['id']) { 
         this.isSpinning = true;
-        this.workOrderQcRuleConfigurationService.getQCRuleConfiguration(params.id)
+        this.workOrderQcRuleConfigurationService.getQCRuleConfiguration(params['id'])
           .subscribe(qcRuleConfiguration => {
              this.currentQCRuleConfiguration = qcRuleConfiguration;
              this.newQCRuleConfiguration = false; 
@@ -571,7 +572,7 @@ export class WorkOrderQcRuleConfigurationMaintenanceComponent implements OnInit 
 
   transferListChange(ret: TransferChange): void {
     console.log('nzChange', ret);
-    const listKeys = ret.list.map(l => l.key);
+    const listKeys = ret.list.map(l => l['key']);
     console.log('listKeys', JSON.stringify(listKeys));
 
     if (ret.from === 'left' && ret.to === 'right') {

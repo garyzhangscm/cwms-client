@@ -59,9 +59,9 @@ export class WorkOrderWorkOrderMaintenanceComponent implements OnInit {
     this.stepIndex = 0;
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         this.isSpinning = true;
-        this.workOrderService.getWorkOrder(params.id).subscribe(
+        this.workOrderService.getWorkOrder(params['id']).subscribe(
           {
             next: (workOrderRes) => {
               this.currentWorkOrder = workOrderRes;

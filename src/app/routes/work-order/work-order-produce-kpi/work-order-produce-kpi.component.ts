@@ -30,6 +30,7 @@ export class WorkOrderWorkOrderProduceKpiComponent implements OnInit {
   validWorkingTeamNames: string[] = [];
 
   kpiMeasurements = KpiMeasurement;
+  kpiMeasurementsKeys = Object.keys(this.kpiMeasurements);
 
   constructor(
     @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,

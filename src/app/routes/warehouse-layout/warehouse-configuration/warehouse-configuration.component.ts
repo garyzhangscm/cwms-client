@@ -28,6 +28,7 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
   currentArchiveConfiguration: ArchiveConfiguration;
   
   printingStrategyList = PrintingStrategy;
+  printingStrategyListKeys = Object.keys(this.printingStrategyList);
 
   holidayYearIndex = 0;
   holidayYears: string[] = [];
@@ -216,8 +217,8 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
   addHoliday() {
     // make sure the user choose a date and type in the description
     
-    const holidayDate : Date = this.addHolidayForm.controls.date.value;
-    const description : string = this.addHolidayForm.controls.description.value;
+    const holidayDate : Date = this.addHolidayForm.value.date;
+    const description : string = this.addHolidayForm.value.description;
     console.log(`start to add holiday with date ${holidayDate} and description: ${description}`);
     if (holidayDate == null) {
       console.log(`holidayDate is null`);

@@ -7,19 +7,15 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { differenceInCalendarDays, eachDayOfInterval, isEqual, getMonth, isBefore, parseISO, addDays } from 'date-fns';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-
-import { Receipt } from '../../inbound/models/receipt';
+ 
 import { ReceiptLine } from '../../inbound/models/receipt-line';
 import { ReceiptLineService } from '../../inbound/services/receipt-line.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryService } from '../../inventory/services/inventory.service';
-import { ItemService } from '../../inventory/services/item.service';
-import { Order } from '../../outbound/models/order';
+import { ItemService } from '../../inventory/services/item.service'; 
 import { OrderLine } from '../../outbound/models/order-line';
 import { OrderLineService } from '../../outbound/services/order-line.service'; 
-import { ColorService } from '../../util/services/color.service';
-import { DateTimeService } from '../../util/services/date-time.service';
-import { UtilService } from '../../util/services/util.service';
+import { ColorService } from '../../util/services/color.service'; 
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { MasterProductionSchedule } from '../models/master-production-schedule';
@@ -212,9 +208,9 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
   ngOnInit(): void {
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         // Get the production line by ID
-        this.masterProductionScheduleService.getMasterProductionSchedule(params.id)
+        this.masterProductionScheduleService.getMasterProductionSchedule(params['id'])
           .subscribe(mpsRes => {
             this.currentMPS = mpsRes;
             // we may need to parse all the date before we can continue
@@ -893,7 +889,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
           this.removeMPSDates(
             productionLineId,
             this.currentMPSInterval!, 
-            this.modifyMPSDateForm.controls.moveSuccessor.value
+            this.modifyMPSDateForm.value.moveSuccessor
           );
         }
         else {
@@ -902,7 +898,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
           // if the new interval is beyond the cutoff date, make sure
           // the user choose to move the cutoff date accordingly as well
           if (this.modifiedMPSDateBeyondCutoffDate) {
-            if (this.modifyMPSDateForm.controls.moveCutoffDate.value === true) {
+            if (this.modifyMPSDateForm.value.moveCutoffDate === true) {
               // the new interval exceed the cutoff date but the user choose to move
               // the cutoff date accordingly
               this.currentMPS.cutoffDate = this.newMPSInterval!.end as Date;
@@ -917,7 +913,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
           else if (this.modifiedMPSDateOverlapWithOthers) {
             // when the new interval overlap with other MPSs, make sure the use choose
             // the "move successor mps" as well
-            if (this.modifyMPSDateForm.controls.moveSuccessor.value !== true) {
+            if (this.modifyMPSDateForm.value.moveSuccessor !== true) {
               
               this.messageService.error(this.i18n.fanyi("new-mps-date-interval-overlap-with-other-mps"));
               // this.messageService.error(this.i18n.fanyi("new-mps-date-interval-not-valid`"));
@@ -934,7 +930,7 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
             productionLineId,
             this.currentMPSInterval!, 
             this.newMPSInterval!,
-            this.modifyMPSDateForm.controls.moveSuccessor.value
+            this.modifyMPSDateForm.value.moveSuccessor
           );
         }
         return true;
@@ -1148,15 +1144,15 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
         // this.refreshReceiptResults();
       },
       nzOnOk: () => {
-        if (this.addMPSDateForm.controls.dailyQuantity.value == null ||
-              this.addMPSDateForm.controls.dailyQuantity.value <= 0) {
+        if (this.addMPSDateForm.value.dailyQuantity == null ||
+              this.addMPSDateForm.value.dailyQuantity <= 0) {
                 this.messageService.error(this.i18n.fanyi("daily-quantity-is-required"));
                 return false;
         }
         this.addMPSDates(
           productionLineId,
           this.currentMPSDates, 
-          this.addMPSDateForm.controls.dailyQuantity.value
+          this.addMPSDateForm.value.dailyQuantity
         );
         return true;
       },
@@ -1320,10 +1316,10 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
   
   refreshNewMPSInterval(){
     this.isModifiedMPSDateModalSpinning = true;
-    const movedDays = this.modifyMPSDateForm.controls.movedDays.value ? 
-        this.modifyMPSDateForm.controls.movedDays.value : 0;
-    const extendedDays = this.modifyMPSDateForm.controls.extendedDays.value ? 
-        this.modifyMPSDateForm.controls.extendedDays.value : 0;
+    const movedDays = this.modifyMPSDateForm.value.movedDays ? 
+        this.modifyMPSDateForm.value.movedDays : 0;
+    const extendedDays = this.modifyMPSDateForm.value.extendedDays ? 
+        this.modifyMPSDateForm.value.extendedDays : 0;
 
         
     // console.log(`start to move ${movedDays} days and extend ${extendedDays} days`);

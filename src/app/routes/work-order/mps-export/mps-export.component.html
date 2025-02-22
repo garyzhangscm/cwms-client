@@ -37,8 +37,8 @@
     </nz-card>
     <nz-card  nzTitle="{{'mps-export.result-group-by' | i18n}}">
         <nz-radio-group [(ngModel)]="exportType"> 
-            <label nz-radio [nzValue]="mpsExportType.key" *ngFor="let mpsExportType of mpsExportTypes  | keys">
-                {{'MPS-EXPORT-TYPE.' + mpsExportType.key | i18n}}</label> 
+            <label nz-radio [nzValue]="mpsExportType" *ngFor="let mpsExportType of mpsExportTypesKeys">
+                {{'MPS-EXPORT-TYPE.' + mpsExportType | i18n}}</label> 
         </nz-radio-group>
         <div style="padding-top: 25px;">
             <button nzType="primary" nz-button (click)="search()" [disabled]="!readyForSearch()">{{'search' | i18n}}</button>

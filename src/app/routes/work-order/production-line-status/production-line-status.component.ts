@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -17,6 +17,7 @@ import { ProductionLineService } from '../services/production-line.service';
     standalone: false
 })
 export class WorkOrderProductionLineStatusComponent implements OnInit {
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   searchForm!: UntypedFormGroup;
   searching = false;
   searchResult = '';
@@ -57,7 +58,6 @@ export class WorkOrderProductionLineStatusComponent implements OnInit {
   displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private productionLineService: ProductionLineService,
     private titleService: TitleService, 
     private userService: UserService, ) {
@@ -93,13 +93,13 @@ export class WorkOrderProductionLineStatusComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
      
-    let startTime : Date = this.searchForm.controls.transactionDateTimeRanger.value ? 
-        this.searchForm.controls.transactionDateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.controls.transactionDateTimeRanger.value ? 
-        this.searchForm.controls.transactionDateTimeRanger.value[1] : undefined;  
+    let startTime : Date = this.searchForm.value.transactionDateTimeRanger ? 
+        this.searchForm.value.transactionDateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.value.transactionDateTimeRanger ? 
+        this.searchForm.value.transactionDateTimeRanger.value[1] : undefined;  
 
     this.productionLineService.getProductionLineStatus( 
-      this.searchForm.controls.productionLine.value,
+      this.searchForm.value.productionLine,
       startTime, endTime,  ).subscribe({
 
         next: (productionLineStatusRes) => {

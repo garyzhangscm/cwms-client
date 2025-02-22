@@ -75,8 +75,8 @@
 
           <nz-input-group nzCompact>
             <nz-select [(ngModel)]="workOrderKPI.kpiMeasurement" style="width: 75%;">
-              <nz-option *ngFor="let kpiMeasurement of kpiMeasurements | keys" [nzValue]="kpiMeasurement.key"
-                nzLabel="{{ 'KPI-MEASUREMENT-' + kpiMeasurement.key | i18n }}"></nz-option>
+              <nz-option *ngFor="let kpiMeasurement of kpiMeasurementsKeys" [nzValue]="kpiMeasurement"
+                nzLabel="{{ 'KPI-MEASUREMENT-' + kpiMeasurement | i18n }}"></nz-option>
             </nz-select>
           </nz-input-group>
 

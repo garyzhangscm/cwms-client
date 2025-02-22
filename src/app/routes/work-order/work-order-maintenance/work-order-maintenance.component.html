@@ -43,8 +43,8 @@
 
           <ng-template #bomNumberErrorTpl let-control>
             <div *ngIf="bomNumber!.invalid != null  && (bomNumber!.dirty != null  || bomNumber!.touched != null )">
-              <ng-container *ngIf="bomNumber.errors?.errorCode">
-                {{ 'ERROR-NEW-WORK-ORDER-NUMBER-' + bomNumber.errors!.errorCode! | i18n }}</ng-container>
+              <ng-container *ngIf="bomNumber['errors'] && bomNumber['errors']['errorCode']">
+                {{ 'ERROR-NEW-WORK-ORDER-NUMBER-' + bomNumber['errors']['errorCode'] | i18n }}</ng-container>
               <ng-container *ngIf="control.hasError('required')">
                 {{ 'ERROR-NEW-WORK-ORDER-NUMBER-REQUIRED' | i18n }}</ng-container>
             </div>

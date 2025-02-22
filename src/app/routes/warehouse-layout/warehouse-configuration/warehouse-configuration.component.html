@@ -140,8 +140,8 @@
     
     
                       <nz-select [(ngModel)]="currentWarehouseConfiguration.printingStrategy" nzAllowClear>
-                        <nz-option *ngFor="let printingStrategy of printingStrategyList | keys" [nzValue]="printingStrategy.key"
-                          nzLabel="{{ 'PRINTING-STRATEGY-' + printingStrategy.key | i18n }}"></nz-option>
+                        <nz-option *ngFor="let printingStrategy of printingStrategyListKeys" [nzValue]="printingStrategy"
+                          nzLabel="{{ 'PRINTING-STRATEGY-' + printingStrategy | i18n }}"></nz-option>
                       </nz-select>
     
                     </nz-form-control>

@@ -1,26 +1,17 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
 
 import { UserService } from '../../auth/services/user.service';
-import { Customer } from '../../common/models/customer';
-import { Supplier } from '../../common/models/supplier';
-import { CustomerService } from '../../common/services/customer.service';
-import { SupplierService } from '../../common/services/supplier.service';
+import { Customer } from '../../common/models/customer'; 
 import { InventoryLock } from '../../inventory/models/inventory-lock';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { Item } from '../../inventory/models/item';
-import { ItemFamily } from '../../inventory/models/item-family';
-import { InventoryLockService } from '../../inventory/services/inventory-lock.service';
-import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
-import { ItemFamilyService } from '../../inventory/services/item-family.service';
-import { ItemService } from '../../inventory/services/item.service';
+import { ItemFamily } from '../../inventory/models/item-family'; 
 import { Order } from '../../outbound/models/order';
 import { OrderService } from '../../outbound/services/order.service';
 import { QCRuleConfiguration } from '../../qc/models/qc-rule-configuration';
@@ -42,10 +33,11 @@ import { WorkOrderService } from '../services/work-order.service';
 })
 export class WorkOrderQcRuleConfigurationComponent implements OnInit {
   
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+
   displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,  
     private workOrderQcRuleConfigurationService: WorkOrderQcRuleConfigurationService, 
     private localCacheService: LocalCacheService, 
     private orderService: OrderService, 
@@ -101,8 +93,8 @@ search(): void {
   this.searchResult = '';
   this.workOrderQcRuleConfigurationService.getQCRuleConfigurations(
     undefined,
-    this.searchForm!.controls.workOrder.value,
-    this.searchForm!.controls.productionLine.value, 
+    this.searchForm!.value.workOrder,
+    this.searchForm!.value.productionLine, 
   ).subscribe({
     next: (qcRuleConfigurationRes) => {
       this.listOfAllQCRuleConfiguration = qcRuleConfigurationRes; 

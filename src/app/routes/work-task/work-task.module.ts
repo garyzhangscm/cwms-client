@@ -16,11 +16,16 @@ import { I18nPipe} from '@delon/theme';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzFormModule } from 'ng-zorro-antd/form';
-import { ReactiveFormsModule } from '@angular/forms';
-import { NzListModule } from 'ng-zorro-antd/list';
-import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'; 
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { PageHeaderComponent } from '@delon/abc/page-header';
+import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzDividerModule } from 'ng-zorro-antd/divider'; 
+import { NzListModule } from 'ng-zorro-antd/list';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 
 const COMPONENTS: Array<Type<void>> = [
   WorkTaskWorkTaskComponent,
@@ -29,25 +34,36 @@ const COMPONENTS: Array<Type<void>> = [
   WorkTaskOperationTypeMaintenanceComponent,
   WorkTaskWorkTaskConfigurationMaintenanceComponent];
 
+  
+const COMPONENTS_NOROUNT: Array<Type<void>> = [];
+
 @NgModule({
-  imports: [
-    
+  imports: [    
     WorkTaskRoutingModule,
     NzStepsModule, 
     NzDescriptionsModule, 
     WarehouseLayoutModule,
-    STModule,
-    I18nPipe,
-    NzButtonModule,
-    NzSelectModule,
+    
+    STModule,    
     NzFormModule,
+    FormsModule, 
     ReactiveFormsModule,
+    PageHeaderComponent ,
+    I18nPipe,
+    NzSpinModule ,
+    NzCardModule ,
+    NzDividerModule,  
+    NzBreadCrumbModule , 
+    NzButtonModule,
+    NzSelectModule,    
+    NzInputModule ,
+    NzInputNumberModule ,
     NzListModule ,
     NzDropDownModule ,
-    NzSpinModule ,
-    PageHeaderComponent ,
-    
   ],
-  declarations: COMPONENTS,
+  declarations: [
+    ...COMPONENTS,
+    ...COMPONENTS_NOROUNT
+  ],
 })
 export class WorkTaskModule { }

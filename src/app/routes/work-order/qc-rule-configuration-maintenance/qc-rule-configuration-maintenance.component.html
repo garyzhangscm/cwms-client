@@ -119,8 +119,8 @@
               <!-- Display error if the order doesn't exists -->
                 <ng-template #orderNumberErrorTpl let-control>
                   <div *ngIf="orderNumberModel.invalid && (orderNumberModel.dirty ||orderNumberModel.touched)">
-                    <ng-container *ngIf="orderNumberModel.errors?.errorCode">
-                       {{orderNumberModel.errors!.errorCode |i18n}}</ng-container>
+                    <ng-container *ngIf="orderNumberModel['errors'] && orderNumberModel['errors']['errorCode']">
+                       {{orderNumberModel['errors']['errorCode']|i18n}}</ng-container>
                     <ng-container *ngIf="control.hasError('required')">
                        {{ 'error.form.field.required' | i18n}}
                     </ng-container>
@@ -154,8 +154,8 @@
               <!-- Display error if the customer doesn't exists -->
                 <ng-template #customerNameErrorTpl let-control>
                   <div *ngIf="customerNameModel.invalid && (customerNameModel.dirty ||customerNameModel.touched)">
-                    <ng-container *ngIf="customerNameModel.errors?.errorCode">
-                       {{customerNameModel.errors!.errorCode |i18n}}</ng-container>
+                    <ng-container *ngIf="customerNameModel['errors'] && customerNameModel['errors']['errorCode']">
+                       {{customerNameModel['errors']['errorCode']|i18n}}</ng-container>
                     <ng-container *ngIf="control.hasError('required')">
                        {{ 'error.form.field.required' | i18n}}
                     </ng-container>
@@ -341,8 +341,8 @@
           <!-- Display error if the lock doesn't exists -->
           <ng-template #lockNameErrorTpl let-control>
             <div *ngIf="lockNameModel.invalid && (lockNameModel.dirty ||lockNameModel.touched)">
-              <ng-container *ngIf="lockNameModel.errors?.errorCode">
-                 {{lockNameModel.errors!.errorCode |i18n}}</ng-container>
+              <ng-container *ngIf="lockNameModel['errors'] && lockNameModel['errors']['errorCode']">
+                 {{lockNameModel['errors']['errorCode']|i18n}}</ng-container>
               <ng-container *ngIf="control.hasError('required')">
                  {{ 'error.form.field.required' | i18n}}
               </ng-container>
@@ -374,8 +374,8 @@
             <!-- Display error if the customer doesn't exists -->
           <ng-template #futureLockNameErrorTpl let-control>
             <div *ngIf="futureLockNameModel.invalid && (futureLockNameModel.dirty ||futureLockNameModel.touched)">
-              <ng-container *ngIf="futureLockNameModel.errors?.errorCode">
-                 {{futureLockNameModel.errors!.errorCode |i18n}}</ng-container>
+              <ng-container *ngIf="futureLockNameModel['errors'] && futureLockNameModel['errors']['errorCode']">
+                 {{futureLockNameModel['errors']['errorCode']|i18n}}</ng-container>
               <ng-container *ngIf="control.hasError('required')">
                  {{ 'error.form.field.required' | i18n}}
               </ng-container>

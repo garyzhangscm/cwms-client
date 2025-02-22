@@ -57,8 +57,8 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
     this.stepIndex = 0;
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
-        this.billOfMeasureService.getBillOfMaterial(params.id).subscribe(billOfMaterailRes => {
+      if (params['id']) {
+        this.billOfMeasureService.getBillOfMaterial(params['id']).subscribe(billOfMaterailRes => {
           this.currentBillOfMaterial = billOfMaterailRes;
           billOfMaterailRes.billOfMaterialLines.forEach(bomLine => {
             // Default to the original quantity. So by default, we won't change the

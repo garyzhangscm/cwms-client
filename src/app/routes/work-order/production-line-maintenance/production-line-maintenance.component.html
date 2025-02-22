@@ -268,7 +268,7 @@
         <td>
           <nz-select style="width: 100px;" [ngModel]="productionLineCapacityItem.productionLineCapacity.capacityUnit"
             (ngModelChange)="capacityUnitChanged($event, productionLineCapacityItem.productionLineCapacity)">
-            <nz-option *ngFor="let timeUnit of timeUnits | keys" [nzValue]="timeUnit.key" [nzLabel]="timeUnit.key">
+            <nz-option *ngFor="let timeUnit of timeUnitsKeys" [nzValue]="timeUnit" [nzLabel]="timeUnit">
             </nz-option>
           </nz-select>
         </td>

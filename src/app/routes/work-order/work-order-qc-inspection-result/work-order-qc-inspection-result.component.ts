@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -20,9 +20,11 @@ import { WorkOrderQcResultService } from '../services/work-order-qc-result.servi
     standalone: false
 })
 export class WorkOrderWorkOrderQcInspectionResultComponent implements OnInit {
+  
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+
   constructor(private http: _HttpClient,    
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService, 
     private messageService: NzMessageService,
     private workOrderQcResultService: WorkOrderQcResultService,

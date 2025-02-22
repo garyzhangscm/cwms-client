@@ -30,13 +30,13 @@
             {{ 'status' | i18n }}
           </nz-form-label>
           <nz-form-control [nzSpan]="16">
-            <nz-select formControlName="status" nzAllowClear>
-               <nz-option
-                   *ngFor="let status of workOrderStatuses  | keys"
-                    [nzValue]="status.key"
-                    [nzLabel]="status.key"
-                      ></nz-option>
-               </nz-select>
+            <nz-select formControlName="status" nzAllowClear>
+              <nz-option
+                  *ngFor="let status of workOrderStatusesKeys"
+                  [nzValue]="status"
+                  [nzLabel]="status"
+              ></nz-option>
+              </nz-select>
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -1685,10 +1685,10 @@
        style="width: 150px" [(ngModel)]="currentWorkOrderMaterialConsumeTiming"
          (ngModelChange)="materialConsumeTimingChange()" >
        <nz-option
-            *ngFor="let materialConsumeTiming of materialConsumeTimings  | keys"
-            [nzValue]="materialConsumeTiming.key"
-            nzLabel="{{ 'MATERIAL-CONSUME-TIMING-' +materialConsumeTiming.key | i18n}}"
-          ></nz-option>
+          *ngFor="let materialConsumeTiming of materialConsumeTimingsKeys"
+          [nzValue]="materialConsumeTiming"
+          nzLabel="{{ 'MATERIAL-CONSUME-TIMING-' + materialConsumeTiming | i18n}}"
+        ></nz-option>
       </nz-select>
 
   </div>

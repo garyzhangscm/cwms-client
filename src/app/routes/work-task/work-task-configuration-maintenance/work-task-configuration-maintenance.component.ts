@@ -57,9 +57,9 @@ export class WorkTaskWorkTaskConfigurationMaintenanceComponent implements OnInit
     this.pageTitle = this.i18n.fanyi('new');
     
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         this.isSpinning = true;
-        this.workTaskConfigurationService.getWorkTaskConfiguration(params.id)
+        this.workTaskConfigurationService.getWorkTaskConfiguration(params['id'])
         .subscribe({
           next: (workTaskConfigurationRes) => {
             this.newWorkTaskConfiguration = false;
