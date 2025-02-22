@@ -129,8 +129,8 @@
         <nz-form-control [nzSpan]="14">
 
           <nz-select nzMode="tags" formControlName="type">
-            <nz-option *ngFor="let inventoryActivityType of inventoryActivityTypes | keys"
-              [nzLabel]="inventoryActivityType.key" [nzValue]="inventoryActivityType.key">
+            <nz-option *ngFor="let inventoryActivityType of inventoryActivityTypesKeys "
+              [nzLabel]="inventoryActivityType" [nzValue]="inventoryActivityType">
             </nz-option>
           </nz-select>
 

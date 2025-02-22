@@ -268,8 +268,8 @@
           <ng-template #itemNumberErrorTpl let-control>
             <div
               *ngIf="itemNumberModel!.invalid != null  && (itemNumberModel!.dirty != null  || itemNumberModel!.touched != null )">
-              <ng-container *ngIf="itemNumberModel?.errors?.errorCode">
-                {{itemNumberModel!.errors!.errorCode | i18n}}</ng-container>
+              <ng-container *ngIf="itemNumberModel['errors'] && itemNumberModel['errors']['errorCode']">
+                {{ itemNumberModel['errors']['errorCode'] | i18n}}</ng-container>
               <ng-container *ngIf="control.hasError('required')">
                 {{ 'error.form.field.required' | i18n }}
 

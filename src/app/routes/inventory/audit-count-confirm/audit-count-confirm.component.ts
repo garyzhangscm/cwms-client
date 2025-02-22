@@ -32,9 +32,9 @@ export class InventoryAuditCountConfirmComponent implements OnInit {
     this.titleService.setTitle(this.i18n.fanyi('page.inventory.cycle-count-confirm.title'));
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.batchId && params.locationId) {
-        this.batchId = params.batchId;
-        this.locationId = params.locationId;
+      if (params['batchId'] && params['locationId']) {
+        this.batchId = params['batchId'];
+        this.locationId = params['locationId'];
       }
     });
 

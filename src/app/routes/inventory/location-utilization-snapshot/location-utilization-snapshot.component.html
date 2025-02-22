@@ -23,10 +23,10 @@
           
           <nz-select   formControlName="status" name="status">
             <nz-option
-              *ngFor="let status of locationUtilizationSnapshotStatusList | keys"
-              [nzValue]="status.key"
-              nzLabel="{{ 'LOCATION-UTILIZATION-SNAPSHOT-STATUS-' + status.key | i18n}}"
-            ></nz-option>
+              *ngFor="let status of locationUtilizationSnapshotStatusListKeys"
+              [nzValue]="status"
+              nzLabel="{{ 'LOCATION-UTILIZATION-SNAPSHOT-STATUS-' + status | i18n}}"
+          ></nz-option>
           </nz-select>
         </nz-form-control>
       </nz-form-item>

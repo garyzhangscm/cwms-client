@@ -290,8 +290,8 @@
             <ng-template #itemUOMQuantityErrorTpl let-control>
               <div
                 *ngIf="itemUOMQuantityControl!.invalid != null && (itemUOMQuantityControl!.dirty != null || itemUOMQuantityControl!.touched != null)">
-                <ng-container *ngIf="itemUOMQuantityControl!.errors!.errorCode">
-                  {{'ERROR-NEW-ITEM-UOM-QUANTITY-' + itemUOMQuantityControl!.errors!.errorCode | i18n}}
+                <ng-container *ngIf="itemUOMQuantityControl && itemUOMQuantityControl['errors'] && itemUOMQuantityControl['errors']['errorCode']">
+                  {{'ERROR-NEW-ITEM-UOM-QUANTITY-' + itemUOMQuantityControl['errors']['errorCode'] | i18n}}
                 </ng-container>
 
                 <ng-container *ngIf="control.hasError('required')">{{ 'error.form.field.required' | i18n }}

@@ -1,18 +1,12 @@
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
-import { UntypedFormBuilder, FormControl, Validators, FormGroup, AbstractControl } from '@angular/forms';
+import { Component, Inject, OnInit } from '@angular/core';
+import { UntypedFormBuilder} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
-
-import { newItemUOMQuantityValidator } from '../../directives/newItemUOMQuantityValidator';
-import { CompanyService } from '../../warehouse-layout/services/company.service';
-import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { AllocationRoundUpStrategyType } from '../models/allocation-round-up-strategy-type.enum';
-import { InventoryStatus } from '../models/inventory-status';
-import { Item } from '../models/item';
-import { ItemPackageType } from '../models/item-package-type';
-import { ItemUnitOfMeasure } from '../models/item-unit-of-measure';
+ 
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service'; 
+import { InventoryStatus } from '../models/inventory-status'; 
 import { InventoryStatusService } from '../services/inventory-status.service';
 
 @Component({
@@ -49,9 +43,9 @@ export class InventoryInventoryStatusMaintenanceComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         this.isSpinning = true;
-        this.inventoryStatusService.getInventoryStatus(params.id).subscribe({
+        this.inventoryStatusService.getInventoryStatus(params['id']).subscribe({
            next: (inventoryStatusRes) => {
             this.currentInventoryStatus = inventoryStatusRes;
             this.newInventoryStatus = false;

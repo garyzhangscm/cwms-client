@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { NgModule, Type } from '@angular/core';
 import { EllipsisModule } from '@delon/abc/ellipsis';
 import { STModule } from '@delon/abc/st'; 
@@ -62,6 +62,27 @@ import { InventoryMovementPathComponent } from './movement-path/movement-path.co
 import { InventoryReplenishmentComponent } from './replenishment/replenishment.component';
 import { InventoryTriggerReplenishmentConfigComponent } from './trigger-replenishment-config/trigger-replenishment-config.component';
 import { InventoryItemBarcodeTypeComponent } from './item-barcode-type/item-barcode-type.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PageHeaderComponent } from '@delon/abc/page-header';
+import { I18nPipe } from '@delon/theme';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzListModule } from 'ng-zorro-antd/list';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 
 
 const COMPONENTS: Array<Type<void>> = [
@@ -127,7 +148,31 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     EllipsisModule,
     NzResultModule,    
     NzTransferModule,
-    STModule, NzButtonModule
+    STModule, NzButtonModule,     
+    NzFormModule,
+    FormsModule, 
+    ReactiveFormsModule,
+    PageHeaderComponent ,
+    I18nPipe,
+    NzBreadCrumbModule ,
+    NzTableModule ,
+    NzSelectModule,
+    NzSpinModule ,
+    NzCardModule ,
+    CommonModule ,
+    NzInputModule ,
+    NzTabsModule ,
+    NzBadgeModule ,
+    NzDividerModule,
+    NzDropDownModule ,
+    NzToolTipModule ,
+    NzPopoverModule ,
+    NzProgressModule ,
+    NzInputNumberModule ,
+    NzListModule ,
+    NzUploadModule ,
+    NzModalModule ,
+    
   ],
   declarations: [
     ...COMPONENTS,

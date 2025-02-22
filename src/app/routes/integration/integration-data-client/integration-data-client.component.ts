@@ -220,6 +220,7 @@ export class IntegrationIntegrationDataClientComponent implements OnInit {
   
   isSpinning = false;
   integrationStatusList = IntegrationStatus;
+  integrationStatusListKeys = Object.keys(this.integrationStatusList);
 
 
   integrationDataModal!: NzModalRef;
@@ -250,15 +251,15 @@ export class IntegrationIntegrationDataClientComponent implements OnInit {
 
     this.searchResult = '';
     
-    let startTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
-        this.searchForm.controls.integrationDateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
-        this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.controls.integrationDate.value;
+    let startTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+        this.searchForm.value.integrationDateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+        this.searchForm.value.integrationDateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.value.integrationDate.value;
 
     this.integrationClientDataService.getData(startTime, endTime, specificDate, 
-      this.searchForm.controls.statusList.value,
-      this.searchForm.controls.id.value,
+      this.searchForm.value.statusList.value,
+      this.searchForm.value.id.value,
       
       ).subscribe(
       integrationClientDataRes => {

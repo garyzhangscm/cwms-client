@@ -51,8 +51,8 @@
           <ng-template #itemNumberErrorTpl let-control>
             <div
               *ngIf="itemNumberControl!.invalid != null  && (itemNumberControl!.dirty != null  || itemNumberControl!.touched != null )">
-              <ng-container *ngIf="itemNumberControl?.errors?.errorCode">
-                {{ itemNumberControl!.errors!.errorCode! | i18n }}</ng-container>
+              <ng-container *ngIf="itemNumberControl['errors'] && itemNumberControl['errors']['errorCode']">
+                {{ itemNumberControl['errors']['errorCode'] | i18n }}</ng-container>
               <ng-container *ngIf="control.hasError('required')">{{ 'error.form.field.required' | i18n }}
               </ng-container>
             </div>
@@ -199,9 +199,9 @@
         <nz-form-control [nzSpan]="10">
           <nz-select nzAllowClear [(ngModel)]="currentItem.allocationRoundUpStrategyType"
             (ngModelChange)="allocationRoundUpStrategyTypeChanged($event)" style="width: 170px;">
-            <nz-option *ngFor="let allocationRoundUpStrategyType of allocationRoundUpStrategyTypes | keys"
-              nzValue="{{ allocationRoundUpStrategyType.key }}"
-              nzLabel="{{ 'ALLOCATION-ROUND-UP-STRATEGY-TYPE-' + allocationRoundUpStrategyType.key | i18n }}">
+            <nz-option *ngFor="let allocationRoundUpStrategyType of allocationRoundUpStrategyTypesKeys"
+              nzValue="{{ allocationRoundUpStrategyType }}"
+              nzLabel="{{ 'ALLOCATION-ROUND-UP-STRATEGY-TYPE-' + allocationRoundUpStrategyType | i18n }}">
             </nz-option>
           </nz-select>
         </nz-form-control>
@@ -625,8 +625,8 @@
             <ng-template #itemUOMQuantityErrorTpl let-control>
               <div
                 *ngIf="itemUOMQuantityControl!.invalid != null && (itemUOMQuantityControl!.dirty != null || itemUOMQuantityControl!.touched != null)">
-                <ng-container *ngIf="itemUOMQuantityControl!.errors!.errorCode">
-                  {{'ERROR-NEW-ITEM-UOM-QUANTITY-' + itemUOMQuantityControl!.errors!.errorCode | i18n}}
+                <ng-container *ngIf="itemUOMQuantityControl && itemUOMQuantityControl['errors'] && itemUOMQuantityControl['errors']['errorCode']">
+                  {{'ERROR-NEW-ITEM-UOM-QUANTITY-' + itemUOMQuantityControl['errors']['errorCode'] | i18n}}
                 </ng-container>
 
                 <ng-container *ngIf="control.hasError('required')">{{ 'error.form.field.required' | i18n }}

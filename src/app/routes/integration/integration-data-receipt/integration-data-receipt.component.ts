@@ -169,6 +169,7 @@ export class IntegrationIntegrationDataReceiptComponent implements OnInit {
 
   isCollapse = false;
   integrationStatusList = IntegrationStatus;
+  integrationStatusListKeys = Object.keys(this.integrationStatusList);
  
 
   constructor(
@@ -193,14 +194,14 @@ export class IntegrationIntegrationDataReceiptComponent implements OnInit {
     this.searchResult = '';
     this.isSpinning = true;
 
-    let startTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
-        this.searchForm.controls.integrationDateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
-        this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.controls.integrationDate.value;
+    let startTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+        this.searchForm.value.integrationDateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+        this.searchForm.value.integrationDateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.value.integrationDate.value;
     this.integrationReceiptService.getData(startTime, endTime, specificDate, 
-      this.searchForm.controls.statusList.value,
-      this.searchForm.controls.id.value,
+      this.searchForm.value.statusList.value,
+      this.searchForm.value.id.value,
       ).subscribe(
       integrationReceiptRes => {
         this.listOfAllIntegrationReceipts = integrationReceiptRes;

@@ -182,8 +182,8 @@
       <span style="padding-left: 15px; padding-right:15px"> {{'inventory-display-options' | i18n}}:</span> 
       <nz-select nzAllowClear  [(ngModel)]="inventoryDisplayOption"  
           (ngModelChange)="inventoryDisplayOptionChanged()" style="width: 200px;"  >
-          <nz-option *ngFor="let option of inventoryDisplayOptions | keys"
-                      nzLabel="{{ 'INVENTORY-DISPLAY-OPTIONS-' + option.key | i18n }}" [nzValue]="option.key">
+          <nz-option *ngFor="let option of inventoryDisplayOptionsKeys"
+                      nzLabel="{{ 'INVENTORY-DISPLAY-OPTIONS-' + option | i18n }}" [nzValue]="option">
           </nz-option>
       </nz-select>  
     </div>

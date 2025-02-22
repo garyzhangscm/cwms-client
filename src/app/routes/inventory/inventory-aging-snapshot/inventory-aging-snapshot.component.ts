@@ -24,6 +24,7 @@ export class InventoryInventoryAgingSnapshotComponent implements OnInit {
   isSpinning = false;
   
   inventoryAgingSnapshotStatusList = InventoryAgingSnapshotStatus;
+  inventoryAgingSnapshotStatusListKeys = Object.keys(this.inventoryAgingSnapshotStatusList);
 
   @ViewChild('st', { static: true })
   st!: STComponent;

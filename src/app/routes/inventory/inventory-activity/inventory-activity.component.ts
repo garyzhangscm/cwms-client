@@ -437,6 +437,8 @@ export class InventoryInventoryActivityComponent implements OnInit {
   clients: Array<{ label: string; value: string }> = [];
   itemFamilies: Array<{ label: string; value: string }> = [];
   inventoryActivityTypes = InventoryActivityType;
+  inventoryActivityTypesKeys = Object.keys(this.inventoryActivityTypes);
+   
   // Form related data and functions
   searchForm!: UntypedFormGroup;
 

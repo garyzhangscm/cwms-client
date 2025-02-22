@@ -20,6 +20,22 @@ import { IntegrationRoutingModule } from './integration-routing.module';
 import { IntegrationTiktokSellerShopIntegrationConfigurationComponent } from './tiktok-seller-shop-integration-configuration/tiktok-seller-shop-integration-configuration.component';
 import { IntegrationShopifyIntegrationConfigurationComponent } from './shopify-integration-configuration/shopify-integration-configuration.component';
 import { NzResultModule } from 'ng-zorro-antd/result';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PageHeaderComponent } from '@delon/abc/page-header';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { I18nPipe } from '@delon/theme';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { CommonModule } from '@angular/common';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { STModule } from '@delon/abc/st';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 
 const COMPONENTS: Array<Type<void>> =  [
   IntegrationIntegrationDataComponent,
@@ -47,6 +63,23 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
   imports: [ 
     IntegrationRoutingModule,
     NzResultModule,
+    NzFormModule,
+    FormsModule, 
+    ReactiveFormsModule,
+    PageHeaderComponent ,
+    NzTabsModule ,
+    I18nPipe,
+    NzSpinModule ,
+    NzDatePickerModule ,
+    NzSelectModule,
+    NzButtonModule,
+    NzIconModule ,
+    NzTableModule ,
+    CommonModule ,
+    NzToolTipModule ,
+    STModule,
+    NzCardModule ,
+    NzInputNumberModule ,
   ],
   declarations: [
     ...COMPONENTS,
