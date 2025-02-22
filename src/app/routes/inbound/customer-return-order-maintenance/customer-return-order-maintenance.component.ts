@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -9,17 +9,12 @@ import { Client } from '../../common/models/client';
 import { Customer } from '../../common/models/customer';
 import { ClientService } from '../../common/services/client.service';
 import { CustomerService } from '../../common/services/customer.service';
-import { InventoryStatus } from '../../inventory/models/inventory-status';
-import { Item } from '../../inventory/models/item';
+import { InventoryStatus } from '../../inventory/models/inventory-status'; 
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
-import { ItemService } from '../../inventory/services/item.service';
-import { AllocationStrategyType } from '../../outbound/models/allocation-strategy-type.enum';
-import { Order } from '../../outbound/models/order';
-import { OrderCategory } from '../../outbound/models/order-category';
-import { OrderLine } from '../../outbound/models/order-line';
-import { OrderStatus } from '../../outbound/models/order-status.enum';
-import { OrderService } from '../../outbound/services/order.service';
-import { Warehouse } from '../../warehouse-layout/models/warehouse';
+import { ItemService } from '../../inventory/services/item.service'; 
+import { Order } from '../../outbound/models/order'; 
+import { OrderLine } from '../../outbound/models/order-line'; 
+import { OrderService } from '../../outbound/services/order.service'; 
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { CustomerReturnOrder } from '../models/customer-return-order';
@@ -27,8 +22,7 @@ import { CustomerReturnOrderLine } from '../models/customer-return-order-line';
 import { ReceiptCategory } from '../models/receipt-category';
 import { ReceiptStatus } from '../models/receipt-status.enum';
 import { CustomerReturnOrderService } from '../services/customer-return-order.service';
-
-import { Address } from 'cluster';
+ 
 
 @Component({
     selector: 'app-inbound-customer-return-order-maintenance',
@@ -37,6 +31,7 @@ import { Address } from 'cluster';
 })
 export class InboundCustomerReturnOrderMaintenanceComponent implements OnInit {
   
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   currentCustomerReturnOrder?: CustomerReturnOrder;
   pageTitle: string;
@@ -59,8 +54,7 @@ export class InboundCustomerReturnOrderMaintenanceComponent implements OnInit {
 
   constructor(
     private http: _HttpClient,
-    private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private activatedRoute: ActivatedRoute, 
     private warehouseService: WarehouseService,
     private companyService: CompanyService,
     private messageService: NzMessageService,

@@ -1,4 +1,4 @@
-import { Component,  Inject, OnInit, ViewChild } from '@angular/core';
+import { Component,  inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder,   UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -20,6 +20,8 @@ import { ClientService } from '../services/client.service';
 })
 export class CommonClientComponent implements OnInit {
 
+  
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   
 
   @ViewChild('st', { static: true })
@@ -53,7 +55,6 @@ export class CommonClientComponent implements OnInit {
   displayOnly = false;
   constructor(private clientService: ClientService,
     private localCacheService: LocalCacheService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private messageService: NzMessageService,
     private activatedRoute: ActivatedRoute,
     private fb: UntypedFormBuilder,

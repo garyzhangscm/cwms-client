@@ -1,6 +1,5 @@
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms'; 
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -18,6 +17,7 @@ import { VelocityService } from '../services/velocity.service';
     standalone: false
 })
 export class CommonVelocityComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
 
   @ViewChild('st', { static: false })
@@ -45,8 +45,7 @@ export class CommonVelocityComponent implements OnInit {
 
   
   displayOnly = false;
-  constructor( 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+  constructor(  
     private velocityService: VelocityService,
     private messageService: NzMessageService, 
     private modalService: NzModalService,

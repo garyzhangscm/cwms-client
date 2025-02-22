@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -15,6 +15,7 @@ import { PurchaseOrderService } from '../services/purchase-order.service';
     standalone: false
 })
 export class InboundCreateReceiptFromPoComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentPurchaseOrder!: PurchaseOrder;
   stepIndex = 0;
   pageTitle: string; 
@@ -29,8 +30,7 @@ export class InboundCreateReceiptFromPoComponent implements OnInit {
     private warehouseService: WarehouseService,
     private purchaseOrderService: PurchaseOrderService,
     private messageService: NzMessageService,
-    private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private router: Router, 
     private activatedRoute: ActivatedRoute) {
     this.pageTitle = this.i18n.fanyi('create-receipt');
 

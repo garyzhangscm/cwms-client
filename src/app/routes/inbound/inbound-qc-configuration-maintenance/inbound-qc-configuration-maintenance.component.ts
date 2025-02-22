@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -24,6 +24,7 @@ import { InboundQcConfigurationService } from '../services/inbound-qc-configurat
 })
 export class InboundInboundQcConfigurationMaintenanceComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentQCConfiguration!: InboundQcConfiguration;
   stepIndex = 0;
   pageTitle: string = "";
@@ -40,8 +41,7 @@ export class InboundInboundQcConfigurationMaintenanceComponent implements OnInit
     private companyService: CompanyService,
     private inboundQCConfigurationService: InboundQcConfigurationService,
     private messageService: NzMessageService,
-    private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private router: Router, 
     private warehouseService: WarehouseService,
     private itemService: ItemService,
     private supplierService: SupplierService,

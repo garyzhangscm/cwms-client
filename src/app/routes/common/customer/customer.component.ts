@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -20,6 +20,8 @@ import { CustomerService } from '../services/customer.service';
     standalone: false
 })
 export class CommonCustomerComponent implements OnInit {
+  
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<Customer>> = [
     {
       name: 'name',
@@ -251,7 +253,6 @@ export class CommonCustomerComponent implements OnInit {
   displayOnly = false;
   constructor(
     private customerService: CustomerService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private fb: UntypedFormBuilder,
     private activatedRoute: ActivatedRoute,

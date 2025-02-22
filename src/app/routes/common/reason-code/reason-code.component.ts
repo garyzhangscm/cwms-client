@@ -1,11 +1,9 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, inject, OnInit, ViewChild } from '@angular/core'; 
 import { I18NService } from '@core';
 import { STComponent, STColumn, STColumnFilterMenu } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 
-import { UserService } from '../../auth/services/user.service';
-import { LocalCacheService } from '../../util/services/local-cache.service';
+import { UserService } from '../../auth/services/user.service'; 
 import { ReasonCode } from '../models/reason-code';
 import { ReasonCodeType } from '../models/reason-code-type.enum';
 import { ReasonCodeService } from '../services/reason-code.service';
@@ -17,6 +15,7 @@ import { ReasonCodeService } from '../services/reason-code.service';
 })
 export class CommonReasonCodeComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   reasonCodeTypes = ReasonCodeType;
 
   @ViewChild('st', { static: true })
@@ -58,8 +57,7 @@ export class CommonReasonCodeComponent implements OnInit {
   isSpinning = false;
 
 
-  constructor(
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+  constructor( 
     private reasonCodeService: ReasonCodeService,  
     private userService: UserService) { 
       userService.isCurrentPageDisplayOnly("/common/reason-code").then(

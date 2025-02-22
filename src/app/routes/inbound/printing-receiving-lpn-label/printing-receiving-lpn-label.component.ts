@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -28,6 +28,7 @@ import { ReceiptService } from '../services/receipt.service';
 })
 export class InboundPrintingReceivingLpnLabelComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle: string;
   
   currentReceipt?: Receipt;
@@ -147,8 +148,7 @@ export class InboundPrintingReceivingLpnLabelComponent implements OnInit {
     private unitService: UnitService,
     private inventoryConfigurationService: InventoryConfigurationService,
     private inboundReceivingConfigurationService: InboundReceivingConfigurationService,
-    private router: Router, 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) { 
+    private router: Router,  ) { 
     
     this.pageTitle = this.i18n.fanyi('pre-print-lpn-label');
     

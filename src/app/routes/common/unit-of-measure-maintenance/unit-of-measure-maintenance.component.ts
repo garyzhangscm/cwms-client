@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -13,6 +13,7 @@ import { UnitOfMeasure } from '../models/unit-of-measure';
     standalone: false
 })
 export class CommonUnitOfMeasureMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentUnitOfMeasure: UnitOfMeasure | undefined;
   pageTitle = '';
 
@@ -24,8 +25,7 @@ export class CommonUnitOfMeasureMaintenanceComponent implements OnInit {
     companyId: this.companyService.getCurrentCompany()!.id
   };
 
-  constructor(private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  constructor(private router: Router, 
     private warehouseService: WarehouseService,
     private companyService: CompanyService,
     private titleService: TitleService) { }

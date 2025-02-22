@@ -1,5 +1,4 @@
-import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { Component, ElementRef, HostListener, inject, OnInit, ViewChild } from '@angular/core'; 
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzInputDirective } from 'ng-zorro-antd/input';
@@ -17,6 +16,8 @@ import { UnitOfMeasureService } from '../services/unit-of-measure.service';
     standalone: false
 })
 export class CommonUnitOfMeasureComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  
   // Table data for display
   unitOfMeasures: UnitOfMeasure[] = [];
   listOfDisplayUnitOfMeasures: UnitOfMeasure[] = [];
@@ -47,8 +48,7 @@ export class CommonUnitOfMeasureComponent implements OnInit {
 
   displayOnly = false;
   constructor(
-    private unitOfMeasureService: UnitOfMeasureService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private unitOfMeasureService: UnitOfMeasureService, 
     private modalService: NzModalService,
     private userService: UserService,
   ) { 

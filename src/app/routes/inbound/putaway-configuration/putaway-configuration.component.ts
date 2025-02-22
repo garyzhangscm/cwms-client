@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component,  inject, OnInit,  } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -22,6 +22,7 @@ import { PutawayConfigurationService } from '../services/putaway-configuration.s
     standalone: false
 })
 export class InboundPutawayConfigurationComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<PutawayConfiguration>> = [
     {
       name: 'sequence',
@@ -145,8 +146,7 @@ export class InboundPutawayConfigurationComponent implements OnInit {
     private itemService: ItemService,
     private modalService: NzModalService,
     private userService: UserService,
-    private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private router: Router, 
   ) { 
     userService.isCurrentPageDisplayOnly("/inbound/putaway-configuration").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
