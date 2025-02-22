@@ -1,18 +1,14 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 
-import { UserService } from '../../auth/services/user.service';
-import { Trailer } from '../../outbound/models/trailer';
+import { UserService } from '../../auth/services/user.service'; 
 import { OrderLineService } from '../../outbound/services/order-line.service';
-import { LocalCacheService } from '../../util/services/local-cache.service';
-import { UtilService } from '../../util/services/util.service';
+import { LocalCacheService } from '../../util/services/local-cache.service'; 
 import { CustomerReturnOrder } from '../models/customer-return-order';
 import { ReceiptStatus } from '../models/receipt-status.enum';
 import { CustomerReturnOrderService } from '../services/customer-return-order.service';
@@ -24,6 +20,7 @@ import { CustomerReturnOrderService } from '../services/customer-return-order.se
     standalone: false
 })
 export class InboundCustomerReturnComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
   
   receiptStatusList = ReceiptStatus;
@@ -72,8 +69,7 @@ export class InboundCustomerReturnComponent implements OnInit {
   searchResult = "";
 
   displayOnly = false;
-  constructor( 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+  constructor(  
     private activatedRoute: ActivatedRoute,
     private customerReturnOrderService: CustomerReturnOrderService, 
     private fb: UntypedFormBuilder, 

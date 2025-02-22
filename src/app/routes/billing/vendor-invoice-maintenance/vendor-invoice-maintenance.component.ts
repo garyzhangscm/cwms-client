@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -23,6 +23,7 @@ import { InvoiceService } from '../services/invoice.service';
     standalone: false
 })
 export class BillingVendorInvoiceMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle = '';
   stepIndex = 0;
   currentInvoice!: Invoice;
@@ -46,7 +47,6 @@ export class BillingVendorInvoiceMaintenanceComponent implements OnInit {
     private companyService: CompanyService,
     private warehouseService: WarehouseService,
     private userService: UserService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private reportService: ReportService,
     private messageService: NzMessageService,
     private invoiceService: InvoiceService,

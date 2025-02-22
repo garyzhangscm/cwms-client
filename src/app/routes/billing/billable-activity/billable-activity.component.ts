@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms'; 
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
@@ -20,6 +20,7 @@ import { BillingRequestService } from '../services/billing-request.service';
     standalone: false
 })
 export class BillingBillableActivityComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
   
   threePartyLogisticsFlag = false;
@@ -54,7 +55,6 @@ export class BillingBillableActivityComponent implements OnInit {
    
   displayOnly = false;
   constructor( 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private messageService: NzMessageService, 
     private billingRequestService: BillingRequestService,
     private clientService: ClientService,

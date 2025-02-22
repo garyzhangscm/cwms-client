@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -15,8 +15,7 @@ import { CompanyService } from '../../warehouse-layout/services/company.service'
 import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
-import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { InboundQcConfiguration } from '../models/inbound-qc-configuration';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service'; 
 import { PutawayConfiguration } from '../models/putaway-configuration';
 import { PutawayConfigurationStrategy } from '../models/putaway-configuration-strategy';
 import { PutawayConfigurationService } from '../services/putaway-configuration.service';
@@ -28,6 +27,7 @@ import { PutawayConfigurationService } from '../services/putaway-configuration.s
     standalone: false
 })
 export class InboundPutawayConfigurationMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentPutawayConfiguration!: PutawayConfiguration;
   stepIndex = 0;
   pageTitle: string = "";
@@ -48,8 +48,7 @@ export class InboundPutawayConfigurationMaintenanceComponent implements OnInit {
     private companyService: CompanyService,
     private putawayConfigurationService: PutawayConfigurationService,
     private messageService: NzMessageService,
-    private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private router: Router, 
     private warehouseService: WarehouseService,
     private itemService: ItemService, 
     private itemFamilyService: ItemFamilyService, 
@@ -76,9 +75,9 @@ export class InboundPutawayConfigurationMaintenanceComponent implements OnInit {
 
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         // Get the production line by ID
-        this.putawayConfigurationService.getPutawayConfiguration(params.id)
+        this.putawayConfigurationService.getPutawayConfiguration(params['id'])
           .subscribe(putawayConfigurationRes => {
             this.currentPutawayConfiguration = putawayConfigurationRes;
 

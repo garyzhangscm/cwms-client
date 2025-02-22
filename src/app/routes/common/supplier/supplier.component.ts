@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
-import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
+import { Component, ElementRef, HostListener, inject, OnInit, ViewChild } from '@angular/core';
+import { UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -19,6 +19,7 @@ import { SupplierService } from '../services/supplier.service';
     standalone: false
 })
 export class CommonSupplierComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<Supplier>> = [
     {
       name: 'name',
@@ -182,8 +183,7 @@ export class CommonSupplierComponent implements OnInit {
 
   displayOnly = false;
   constructor(
-    private supplierService: SupplierService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private supplierService: SupplierService, 
     private modalService: NzModalService,
     private activatedRoute: ActivatedRoute,
     private fb: UntypedFormBuilder,
@@ -215,7 +215,7 @@ export class CommonSupplierComponent implements OnInit {
     this.isSpinning = true;
 
     this.supplierService.getSuppliers(
-      this.searchForm.controls.name.value).subscribe(
+      this.searchForm.value.name).subscribe(
         {
           next: (supplierRes) => {
 

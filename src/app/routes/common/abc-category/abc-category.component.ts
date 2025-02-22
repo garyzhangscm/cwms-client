@@ -1,13 +1,11 @@
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms'; 
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-
-import { Alert } from '../../alert/models/alert';
+ 
 import { UserService } from '../../auth/services/user.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ABCCategory } from '../models/abc-category';
@@ -19,6 +17,7 @@ import { AbcCategoryService } from '../services/abc-category.service';
     standalone: false
 })
 export class CommonAbcCategoryComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   isSpinning = false;
 
@@ -47,7 +46,6 @@ export class CommonAbcCategoryComponent implements OnInit {
 
   displayOnly = false;
   constructor( 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private abcCategoryService: AbcCategoryService,
     private messageService: NzMessageService, 
     private modalService: NzModalService,

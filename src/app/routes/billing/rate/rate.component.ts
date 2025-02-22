@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -29,6 +29,7 @@ import { BillingRateService } from '../services/billing-rate.service';
 })
 export class BillingRateComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
   availableClients: Client[] = [];
   availableWarehouses: Warehouse[] = [];
@@ -61,7 +62,6 @@ export class BillingRateComponent implements OnInit {
     private messageService: NzMessageService,
     private unitService: UnitService,
     private userService: UserService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private clientService: ClientService) { 
       userService.isCurrentPageDisplayOnly("/billing/rate").then(
         displayOnlyFlag => this.displayOnly = displayOnlyFlag

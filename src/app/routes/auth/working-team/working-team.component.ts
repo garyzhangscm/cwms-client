@@ -1,5 +1,4 @@
-import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -7,8 +6,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { ColumnItem } from '../../util/models/column-item';
-import { UtilService } from '../../util/services/util.service';
-import { Role } from '../models/role';
+import { UtilService } from '../../util/services/util.service'; 
 import { User } from '../models/user';
 import { WorkingTeam } from '../models/working-team';
 import { UserService } from '../services/user.service';
@@ -21,6 +19,7 @@ import { WorkingTeamService } from '../services/working-team.service';
     standalone: false
 })
 export class AuthWorkingTeamComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<WorkingTeam>> = [
     {
       name: 'name',
@@ -137,7 +136,6 @@ export class AuthWorkingTeamComponent implements OnInit {
     private workingTeamService: WorkingTeamService,
     private userService: UserService,
     private messageService: NzMessageService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private utilService: UtilService, 
   ) { 
@@ -171,7 +169,7 @@ export class AuthWorkingTeamComponent implements OnInit {
   search(): void {
     this.searching = true;
     this.searchResult = '';
-    this.workingTeamService.getWorkingTeams(this.searchForm!.controls.name.value).subscribe(
+    this.workingTeamService.getWorkingTeams(this.searchForm!.value.name).subscribe(
       workingTeamRes => {
         this.listOfAllWorkingTeams = workingTeamRes;
         this.listOfDisplayWorkingTeams = workingTeamRes;

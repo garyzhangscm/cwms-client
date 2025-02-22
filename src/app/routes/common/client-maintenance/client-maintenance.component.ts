@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -16,6 +16,7 @@ import { ClientService } from '../services/client.service';
     standalone: false
 })
 export class CommonClientMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentClient!: Client;
   pageTitle = '';
   isSpinning = false;
@@ -26,7 +27,6 @@ export class CommonClientMaintenanceComponent implements OnInit {
   clientNameValidateStatus = 'warning'; 
 
   constructor(private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService, private warehouseService: WarehouseService, 
     private clientService: ClientService,
     private companyService: CompanyService,

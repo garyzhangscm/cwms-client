@@ -1,16 +1,14 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 
 import { UserService } from '../../auth/services/user.service';
 import { Supplier } from '../../common/models/supplier';
-import { SupplierService } from '../../common/services/supplier.service';
-import { RF } from '../../util/models/rf';
+import { SupplierService } from '../../common/services/supplier.service'; 
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { PurchaseOrder } from '../models/purchase-order';
 import { PurchaseOrderStatus } from '../models/purchase-order-status';
@@ -26,6 +24,7 @@ import { ReceiptService } from '../services/receipt.service';
 })
 export class InboundPurchaseOrderComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
 
   mapOfReceipt: { [key: string]: Receipt[] } = {};
@@ -61,8 +60,7 @@ export class InboundPurchaseOrderComponent implements OnInit {
   purchaseOrderStatusList = PurchaseOrderStatus;
    
   displayOnly = false;
-  constructor( 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  constructor(  
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
     private purchaseOrderService: PurchaseOrderService, 

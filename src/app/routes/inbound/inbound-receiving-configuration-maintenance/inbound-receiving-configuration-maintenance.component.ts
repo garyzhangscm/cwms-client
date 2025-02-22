@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -21,6 +21,7 @@ import { InboundReceivingConfigurationService } from '../services/inbound-receiv
 })
 export class InboundInboundReceivingConfigurationMaintenanceComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentInboundReceivingConfiguration!: InboundReceivingConfiguration;
   stepIndex = 0;
   pageTitle: string = "";
@@ -38,8 +39,7 @@ export class InboundInboundReceivingConfigurationMaintenanceComponent implements
     private companyService: CompanyService,
     private inboundReceivingConfigurationService: InboundReceivingConfigurationService,
     private messageService: NzMessageService,
-    private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private router: Router, 
     private warehouseService: WarehouseService,
     private itemService: ItemService,
     private supplierService: SupplierService,

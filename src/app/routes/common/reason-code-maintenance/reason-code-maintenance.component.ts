@@ -1,11 +1,10 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, inject,  } from '@angular/core';
+import { Router,  } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
-import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { Mould } from '../../work-order/models/mould';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service'; 
 import { ReasonCode } from '../models/reason-code';
 import { ReasonCodeType } from '../models/reason-code-type.enum';
 import { ReasonCodeService } from '../services/reason-code.service';
@@ -16,6 +15,7 @@ import { ReasonCodeService } from '../services/reason-code.service';
     standalone: false
 })
 export class CommonReasonCodeMaintenanceComponent   {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentReasonCode!: ReasonCode;
   stepIndex = 0;
   pageTitle: string; 
@@ -27,8 +27,7 @@ export class CommonReasonCodeMaintenanceComponent   {
     private warehouseService: WarehouseService,
     private reasonCodeService: ReasonCodeService,
     private messageService: NzMessageService,
-    private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService) {
+    private router: Router, ) {
     this.pageTitle = this.i18n.fanyi('reason-code');
 
     this.currentReasonCode = {

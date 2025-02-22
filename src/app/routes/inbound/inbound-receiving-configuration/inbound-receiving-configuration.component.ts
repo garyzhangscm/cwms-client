@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -7,8 +7,7 @@ import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { UserService } from '../../auth/services/user.service';
 import { Supplier } from '../../common/models/supplier';
-import { SupplierService } from '../../common/services/supplier.service';
-import { InboundQcConfiguration } from '../models/inbound-qc-configuration';
+import { SupplierService } from '../../common/services/supplier.service'; 
 import { InboundReceivingConfiguration } from '../models/inbound-receiving-configuration';
 import { InboundReceivingConfigurationService } from '../services/inbound-receiving-configuration.service';
 
@@ -20,10 +19,10 @@ import { InboundReceivingConfigurationService } from '../services/inbound-receiv
 })
 export class InboundInboundReceivingConfigurationComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   displayOnly = false;
   constructor( 
-              private fb: UntypedFormBuilder,
-              @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+              private fb: UntypedFormBuilder, 
               private inboundReceivingConfigurationService: InboundReceivingConfigurationService,
               private router: Router,
               private supplierService: SupplierService, 

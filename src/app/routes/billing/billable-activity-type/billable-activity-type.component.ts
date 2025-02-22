@@ -1,12 +1,10 @@
-import { Component, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component,  inject, OnInit, ViewChild } from '@angular/core';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
 
 import { UserService } from '../../auth/services/user.service';
-import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { BillableActivityType } from '../models/billable-activity-type';
 import { BillableActivityTypeService } from '../services/billable-activity-type.service';
 
@@ -17,6 +15,7 @@ import { BillableActivityTypeService } from '../services/billable-activity-type.
     standalone: false
 })
 export class BillingBillableActivityTypeComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
  
 
   // Table data for display
@@ -46,7 +45,6 @@ export class BillingBillableActivityTypeComponent implements OnInit {
   displayOnly = false;
   constructor(
     private billableActivityTypeService: BillableActivityTypeService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private userService: UserService,
     private messageService: NzMessageService,
   ) { 

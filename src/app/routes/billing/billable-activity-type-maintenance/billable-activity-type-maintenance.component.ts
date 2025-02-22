@@ -1,13 +1,10 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzUploadChangeParam } from 'ng-zorro-antd/upload';
 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { WorkOrderQcSample } from '../../work-order/models/work-order-qc-sample';
 import { BillableActivityType } from '../models/billable-activity-type';
 import { BillableActivityTypeService } from '../services/billable-activity-type.service';
 
@@ -17,6 +14,7 @@ import { BillableActivityTypeService } from '../services/billable-activity-type.
     standalone: false
 })
 export class BillingBillableActivityTypeMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   currentBillableActivityType: BillableActivityType; 
   
@@ -30,7 +28,6 @@ export class BillingBillableActivityTypeMaintenanceComponent implements OnInit {
   constructor(private http: _HttpClient, 
     private billableActivityTypeService: BillableActivityTypeService, 
     private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private titleService: TitleService, 
     private messageService: NzMessageService, 
     private warehouseService: WarehouseService,

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Inject, Input, OnInit, Output, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, TemplateRef } from '@angular/core';
 import { UntypedFormGroup, UntypedFormControl, UntypedFormBuilder } from '@angular/forms'; 
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
@@ -17,6 +17,7 @@ import { PrintingService } from '../services/printing.service';
     standalone: false
 })
 export class CommonPrintButtonComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   @Input() printingInProcess: boolean = false;
   @Input() allowPreview: boolean = true;
@@ -31,7 +32,6 @@ export class CommonPrintButtonComponent implements OnInit {
 
   constructor(private http: _HttpClient,
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private warehouseService: WarehouseService,
     private warehouseConfigurationService: WarehouseConfigurationService,
