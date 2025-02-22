@@ -22,9 +22,9 @@
         <nz-form-control [nzSpan]="16">
           <nz-select formControlName="waveStatus" nzAllowClear>
             <nz-option
-              *ngFor="let waveStatus of waveStatuses| keys"
-              [nzValue]="waveStatus.key"
-              [nzLabel]="waveStatus.key"
+              *ngFor="let waveStatus of waveStatusesKeys"
+              [nzValue]="waveStatus"
+              [nzLabel]="waveStatus"
               ></nz-option>
             </nz-select>
         </nz-form-control>

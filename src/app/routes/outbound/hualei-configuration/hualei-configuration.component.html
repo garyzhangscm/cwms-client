@@ -580,9 +580,9 @@
                     <nz-input-group nzSize="large">
                         <nz-select nzAllowClear  
                             nz-input formControlName="shippingLabelFormat" style="width: 250px"  >
-                                <nz-option *ngFor="let hualeiShippingLabelFormat of hualeiShippingLabelFormats | keys"
-                                [nzLabel]="hualeiShippingLabelFormat.key" 
-                                [nzValue]="hualeiShippingLabelFormat.key">
+                                <nz-option *ngFor="let hualeiShippingLabelFormat of hualeiShippingLabelFormatsKeys"
+                                [nzLabel]="hualeiShippingLabelFormat" 
+                                [nzValue]="hualeiShippingLabelFormat">
                             </nz-option> 
                         </nz-select> 
                     </nz-input-group>

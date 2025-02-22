@@ -13,10 +13,10 @@
           <nz-form-control [nzSpan]="18">
             <nz-select  nzAllowClear formControlName="pickType">
                 <nz-option
-                      *ngFor="let pickType of pickTypes | keys"
-                      [nzValue]="pickType.key"
-                      nzLabel="{{ 'PICK-TYPE-' + pickType.key | i18n}}"
-                    ></nz-option>
+                    *ngFor="let pickType of pickTypesKeys"
+                    [nzValue]="pickType"
+                    nzLabel="{{ 'PICK-TYPE-' + pickType | i18n}}"
+                ></nz-option>
           </nz-select>
           </nz-form-control>
         </nz-form-item>

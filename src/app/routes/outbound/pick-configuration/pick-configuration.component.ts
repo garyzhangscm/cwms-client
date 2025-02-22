@@ -20,6 +20,7 @@ export class OutboundPickConfigurationComponent implements OnInit {
   currentBulkPickConfiguration!: BulkPickConfiguration;
   currentPickConfiguration!: PickConfiguration;
   sortDirections = SortDirection;
+  sortDirectionsKeys = Object.keys(this.sortDirections);
 
   isPickConfigurationSpinning = false;
   isBulkPickConfigurationSpinning = false;

@@ -39,12 +39,12 @@
             <nz-form-control [nzSpan]="14">
                 <nz-select  nz-input [(ngModel)]="currentAllocationConfiguration.type"
                      style="width: 250px" >
-                            <nz-option
-                              *ngFor="let allocationConfigurationType of allocationConfigurationTypes  | keys"
-                              [nzValue]="allocationConfigurationType.key"
-                              nzLabel="{{ 'ALLOCATION-CONFIGURATION-TYPE-' + allocationConfigurationType.key | i18n}}"
-                            ></nz-option>
-                          </nz-select>
+                    <nz-option
+                      *ngFor="let allocationConfigurationType of allocationConfigurationTypesKeys"
+                      [nzValue]="allocationConfigurationType"
+                      nzLabel="{{ 'ALLOCATION-CONFIGURATION-TYPE-' + allocationConfigurationType | i18n}}"
+                    ></nz-option>
+                </nz-select>
             </nz-form-control>
           </nz-form-item>
         </div>

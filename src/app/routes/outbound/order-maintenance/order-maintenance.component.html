@@ -77,10 +77,10 @@
                   <nz-select style="width: 250px"   [(ngModel)]="currentOrder!.category"
                   (ngModelChange)="orderCategoryChanged()" [disabled]="!newOrder">
                   <nz-option
-                       *ngFor="let orderCategory of orderCategories  | keys"
-                       [nzValue]="orderCategory.key"
-                            nzLabel="{{ 'ORDER-CATEGORY-' + orderCategory.key |i18n}}"
-                          ></nz-option>
+                       *ngFor="let orderCategory of orderCategoriesKeys"
+                       [nzValue]="orderCategory"
+                       nzLabel="{{ 'ORDER-CATEGORY-' + orderCategory | i18n}}"
+                  ></nz-option>
               </nz-select>
       
               </nz-form-control>
@@ -245,8 +245,8 @@
                   </nz-form-control>
                   <ng-template #supplierNameErrorTpl let-control>
                       <div *ngIf="supplierNameModel.invalid && (supplierNameModel.dirty || supplierNameModel.touched)">
-                        <ng-container *ngIf="supplierNameModel.errors?.errorCode">
-                           {{supplierNameModel.errors!.errorCode |i18n}}</ng-container>
+                        <ng-container *ngIf="supplierNameModel['errors'] && supplierNameModel['errors']['errorCode']">
+                           {{ supplierNameModel['errors']['errorCode'] |i18n}}</ng-container>
                         <ng-container *ngIf="control.hasError('required')">
                            {{ 'error.form.field.required' | i18n}}
                         </ng-container>
@@ -287,8 +287,8 @@
                       <!-- Display error if the customer doesn't exists -->
                     <ng-template #customerNameErrorTpl let-control>
                       <div *ngIf="customerNameModel.invalid && (customerNameModel.dirty ||customerNameModel.touched)">
-                        <ng-container *ngIf="customerNameModel.errors?.errorCode">
-                           {{customerNameModel.errors!.errorCode |i18n}}</ng-container>
+                        <ng-container *ngIf="customerNameModel['errors'] && customerNameModel['errors']['errorCode']">
+                           {{customerNameModel['errors']['errorCode'] |i18n}}</ng-container>
                         <ng-container *ngIf="control.hasError('required')">
                            {{ 'error.form.field.required' | i18n}}
                         </ng-container>
@@ -469,9 +469,9 @@
                         <td>
                             <nz-select style="width: 150px" *ngIf="data.id === undefined"
                                 [(ngModel)]="data.allocationStrategyType" (ngModelChange)="allocationStratetyChanged(data)" >
-                                <nz-option *ngFor="let allocationStrategyType of allocationStrategies | keys"
-                                    nzLabel="{{ 'ALLOCATION-STRATEGY-TYPE-' + allocationStrategyType.key | i18n }}"
-                                    [nzValue]="allocationStrategyType.key">
+                                <nz-option *ngFor="let allocationStrategyType of allocationStrategiesKeys"
+                                    nzLabel="{{ 'ALLOCATION-STRATEGY-TYPE-' + allocationStrategyType | i18n }}"
+                                    [nzValue]="allocationStrategyType">
                                 </nz-option>
                             </nz-select>
 

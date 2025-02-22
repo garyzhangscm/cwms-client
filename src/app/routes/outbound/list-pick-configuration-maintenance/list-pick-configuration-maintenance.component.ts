@@ -32,9 +32,11 @@ export class OutboundListPickConfigurationMaintenanceComponent implements OnInit
   newListPickConfiguration = true;
   
   pickTypes = PickType;  
+  pickTypesKeys = Object.keys(this.pickTypes);
 
   clients: Client[] = [];
   listPickGroupRuleTypes = ListPickGroupRuleType;
+  listPickGroupRuleTypesKeys = Object.keys(this.listPickGroupRuleTypes);
   selectedGroupRuleTypes = new Map();
 
   volumeUnits: Unit[] = [];
@@ -71,8 +73,8 @@ export class OutboundListPickConfigurationMaintenanceComponent implements OnInit
     this.loadClients();
 
     this.activatedRoute.queryParams.subscribe(params => {
-          if (params.id) {
-            this.listPickConfigurationService.get(params.id).subscribe(
+          if (params['id']) {
+            this.listPickConfigurationService.get(params['id']).subscribe(
               {
     
                 next: (listPickConfigurationRes) => {

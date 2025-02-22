@@ -89,7 +89,9 @@ export class OutboundOutboundOrderPopupQueryComponent implements OnInit {
   searchResult = '';
    
   orderStatuses = OrderStatus;
+  orderStatusesKeys = Object.keys(this.orderStatuses);
   orderCategories = OrderCategory;
+  orderCategoriesKeys = Object.keys(this.orderCategories);
 
   // Table data for display
   listOfAllOrders: Order[] = []; 
@@ -132,13 +134,13 @@ export class OutboundOutboundOrderPopupQueryComponent implements OnInit {
     this.searching = true;
     
     this.orderService.getOrders(
-      this.searchForm.controls.number.value, 
+      this.searchForm.value.number.value, 
       false, 
-      this.searchForm.controls.orderStatus.value, 
+      this.searchForm.value.orderStatus.value, 
       undefined, 
       undefined, undefined,       
-      this.searchForm.controls.orderCategory.value,
-      this.searchForm.controls.customer.value).subscribe(
+      this.searchForm.value.orderCategory.value,
+      this.searchForm.value.customer.value).subscribe(
       orderRes => {
  
 

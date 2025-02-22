@@ -1,10 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { NzCascaderOption } from 'ng-zorro-antd/cascader';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { Address } from 'ngx-google-places-autocomplete/objects/address';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
+import { NzMessageService } from 'ng-zorro-antd/message'; 
 
 import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
@@ -31,8 +29,7 @@ import { AllocationStrategyType } from '../models/allocation-strategy-type.enum'
 import { Order } from '../models/order';
 import { OrderCategory } from '../models/order-category';
 import { OrderLine } from '../models/order-line';
-import { OrderStatus } from '../models/order-status.enum';
-import { OrderLineService } from '../services/order-line.service';
+import { OrderStatus } from '../models/order-status.enum'; 
 import { OrderService } from '../services/order.service';
 
 @Component({
@@ -43,8 +40,10 @@ import { OrderService } from '../services/order.service';
 export class OutboundOrderMaintenanceComponent implements OnInit {
 
   orderCategories = OrderCategory;
+  orderCategoriesKeys = Object.keys(this.orderCategories);
   orderStatuses = OrderStatus;
   allocationStrategies = AllocationStrategyType;
+  allocationStrategiesKeys = Object.keys(this.allocationStrategies);
 
   currentOrder?: Order;
   pageTitle: string;
@@ -100,9 +99,9 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         // Get the production line by ID
-        this.orderService.getOrder(params.id)
+        this.orderService.getOrder(params['id'])
           .subscribe(orderRes => {
             this.currentOrder = orderRes; 
 

@@ -53,6 +53,7 @@ export class OutboundWaveComponent implements OnInit {
   // Table data for display
   listOfAllWaves: Wave[] = []; 
   waveStatuses = WaveStatus;
+  waveStatusesKeys = Object.keys(this.waveStatuses);
   inventoryConfiguration?: InventoryConfiguration;
  
 

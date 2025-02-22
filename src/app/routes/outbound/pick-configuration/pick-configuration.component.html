@@ -86,8 +86,8 @@
                     <nz-select nzAllowClear  
                         nz-input [ngModel]="currentBulkPickConfiguration!.pickSortDirection" (ngModelChange)="pickSortDirectionChanged($event)"
                                 style="width: 250px"  >
-                            <nz-option *ngFor="let sortDirection of sortDirections | keys"
-                                nzLabel="{{ 'SORT-DIRECTION-' + sortDirection.key | i18n }}" [nzValue]="sortDirection.key">
+                            <nz-option *ngFor="let sortDirection of  sortDirectionsKeys"
+                                nzLabel="{{ 'SORT-DIRECTION-' + sortDirection | i18n }}" [nzValue]="sortDirection">
                             </nz-option>
                         </nz-select>  
   

@@ -30,6 +30,7 @@ export class OutboundAllocationConfigurationMaintenanceComponent implements OnIn
  
   currentAllocationConfiguration!: AllocationConfiguration;
   allocationConfigurationTypes = AllocationConfigurationType;
+  allocationConfigurationTypesKeys = Object.keys(this.allocationConfigurationTypes);
   validItemFamilies: ItemFamily[] = [];
   validInventoryStatus: InventoryStatus[] = [];
   validLocationGroupTypes: LocationGroupType[] = [];
@@ -74,9 +75,9 @@ export class OutboundAllocationConfigurationMaintenanceComponent implements OnIn
 
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) { 
+      if (params['id']) { 
         this.isSpinning = true;
-        this.allocationConfigurationService.getAllocationConfiguration(params.id)
+        this.allocationConfigurationService.getAllocationConfiguration(params['id'])
           .subscribe(
           {
 
