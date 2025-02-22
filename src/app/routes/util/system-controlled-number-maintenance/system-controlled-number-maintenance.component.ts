@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -14,6 +14,7 @@ import { SystemControlledNumberService } from '../services/system-controlled-num
     standalone: false
 })
 export class UtilSystemControlledNumberMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle = '';
   stepIndex = 0;
   currentSystemControlledNumber!: SystemControlledNumber;
@@ -22,7 +23,6 @@ export class UtilSystemControlledNumberMaintenanceComponent implements OnInit {
     private titleService: TitleService,
     private warehouseService: WarehouseService,
     private systemControlledNumberService: SystemControlledNumberService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private messageService: NzMessageService,
     private router: Router,
     private activatedRoute: ActivatedRoute,

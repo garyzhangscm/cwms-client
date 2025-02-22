@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -24,6 +24,7 @@ import { WorkOrderService } from '../services/work-order.service';
     standalone: false
 })
 export class WorkOrderProductionPlanComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<ProductionPlan>> = [
     {
       name: 'production-plan.number',
@@ -92,8 +93,7 @@ export class WorkOrderProductionPlanComponent implements OnInit {
 
   displayOnly = false;
   constructor(
-    private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private fb: UntypedFormBuilder, 
     private modalService: NzModalService,
     private workOrderService: WorkOrderService,
     private message: NzMessageService,

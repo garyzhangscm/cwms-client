@@ -1,13 +1,9 @@
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, inject, OnInit,  } from '@angular/core'; 
+import {  Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
-
-import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
-import { LocationService } from '../../warehouse-layout/services/location.service';
+import { NzMessageService } from 'ng-zorro-antd/message'; 
+ 
 import { KpiMeasurement } from '../models/kpi-measurement.enum';
 import { WorkOrder } from '../models/work-order';
 import { WorkOrderCompleteTransaction } from '../models/work-order-complete-transaction';
@@ -36,6 +32,7 @@ interface KPI {
     standalone: false
 })
 export class WorkOrderWorkOrderCompleteConfirmComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   workOrderCompleteTransaction!: WorkOrderCompleteTransaction;
 
   currentWorkOrder!: WorkOrder;
@@ -47,8 +44,7 @@ export class WorkOrderWorkOrderCompleteConfirmComponent implements OnInit {
 
   kpis: KPI[] = [];
 
-  constructor(
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  constructor( 
     private titleService: TitleService,
     private router: Router,
     private workOrderCompleteTransactionService: WorkOrderCompleteTransactionService,

@@ -1,7 +1,7 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 
@@ -19,6 +19,7 @@ import { MouldService } from '../services/mould.service';
 })
 export class WorkOrderMouldComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<Mould>> = [
     {
       name: 'name',
@@ -72,8 +73,7 @@ export class WorkOrderMouldComponent implements OnInit {
 
   displayOnly = false;
   constructor(
-    private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private fb: UntypedFormBuilder, 
     private titleService: TitleService,
     private mouldService: MouldService,
     private activatedRoute: ActivatedRoute, 

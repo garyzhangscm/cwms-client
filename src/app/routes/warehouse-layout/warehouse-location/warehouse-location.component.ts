@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild, } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, } from '@angular/core';
 import { UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -10,9 +10,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 
 import { UserService } from '../../auth/services/user.service';
 import { UnitType } from '../../common/models/unit-type';
-import { UnitService } from '../../common/services/unit.service';
-import { WaveStatus } from '../../outbound/models/wave-status.enum';
-import { ColumnItem } from '../../util/models/column-item';
+import { UnitService } from '../../common/services/unit.service'; 
 import { WebPageTableColumnConfiguration } from '../../util/models/web-page-table-column-configuration';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
@@ -34,6 +32,7 @@ import { LocationService } from '../services/location.service';
 })
 export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageName = "location";
   tableConfigurations: {[key: string]: WebPageTableColumnConfiguration[] } = {}; 
 
@@ -191,8 +190,7 @@ export class WarehouseLayoutWarehouseLocationComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private locationService: LocationService,
     private locationGroupTypeService: LocationGroupTypeService,
-    private locationGroupService: LocationGroupService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private locationGroupService: LocationGroupService, 
     private modalService: NzModalService,
     private messageService: NzMessageService,
     private utilService: UtilService,

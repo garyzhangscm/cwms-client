@@ -1,14 +1,11 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
-
-import { TimeUnit } from '../../common/models/time-unit.enum';
-import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
+ 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { Mould } from '../models/mould';
-import { ProductionLineCapacity } from '../models/production-line-capacity';
+import { Mould } from '../models/mould'; 
 import { MouldService } from '../services/mould.service';
 
 @Component({
@@ -19,6 +16,7 @@ import { MouldService } from '../services/mould.service';
 })
 export class WorkOrderMouldMaintenanceComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentMould!: Mould;
   stepIndex = 0;
   pageTitle: string;
@@ -29,8 +27,7 @@ export class WorkOrderMouldMaintenanceComponent implements OnInit {
     private warehouseService: WarehouseService,
     private mouldService: MouldService,
     private messageService: NzMessageService,
-    private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private router: Router, 
     private activatedRoute: ActivatedRoute) {
     this.pageTitle = this.i18n.fanyi('menu.main.mould.maintenance');
 
@@ -53,9 +50,9 @@ export class WorkOrderMouldMaintenanceComponent implements OnInit {
 
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         // Get the production line by ID
-        this.mouldService.getMould(params.id)
+        this.mouldService.getMould(params['id'])
           .subscribe(mould => {
             this.currentMould = mould;
 

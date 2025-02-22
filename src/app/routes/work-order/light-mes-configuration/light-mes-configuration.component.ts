@@ -1,10 +1,9 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
-import { UserService } from '../../auth/services/user.service';
-import { SortDirection } from '../../util/models/sort-direction';
+import { UserService } from '../../auth/services/user.service'; 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { LightMesConfiguration } from '../models/light-mes-configuration';
 import { LightMesConfigurationService } from '../services/light-mes-configuration.service';
@@ -15,6 +14,7 @@ import { LightMesConfigurationService } from '../services/light-mes-configuratio
     standalone: false
 })
 export class WorkOrderLightMesConfigurationComponent implements OnInit { 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentLightMESConfiguration!: LightMesConfiguration; 
 
   avaiableZoneIds : string[] = [];
@@ -25,8 +25,7 @@ export class WorkOrderLightMesConfigurationComponent implements OnInit {
   constructor(private http: _HttpClient, 
     private warehouseService: WarehouseService,
     private messageService: NzMessageService,  
-    private lightMesConfigurationService: LightMesConfigurationService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,    
+    private lightMesConfigurationService: LightMesConfigurationService, 
     private userService: UserService, ) { 
       
       userService.isCurrentPageDisplayOnly("/workorder/light-mes-configuration").then(

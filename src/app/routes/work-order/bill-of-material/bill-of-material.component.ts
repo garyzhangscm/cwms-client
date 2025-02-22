@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
-import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
+import { Component, inject, OnInit, TemplateRef } from '@angular/core';
+import { UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -8,8 +8,6 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 import { UserService } from '../../auth/services/user.service';
-import { Customer } from '../../common/models/customer';
-import { Order } from '../../outbound/models/order';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { BillOfMaterial } from '../models/bill-of-material';
@@ -27,6 +25,7 @@ import { ProductionLineService } from '../services/production-line.service';
 })
 export class WorkOrderBillOfMaterialComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<BillOfMaterial>> = [
     {
       name: 'bill-of-material.number',
@@ -118,8 +117,7 @@ export class WorkOrderBillOfMaterialComponent implements OnInit {
 
   displayOnly = false;
   constructor(
-    private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private fb: UntypedFormBuilder, 
     private titleService: TitleService,
     private modalService: NzModalService,
     private billOfMaterialService: BillOfMaterialService,

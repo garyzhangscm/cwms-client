@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -21,6 +21,7 @@ import { WarehouseService } from '../services/warehouse.service';
     standalone: false
 })
 export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   isSpinning = false;
   isArchiveSpinning = false;
@@ -45,7 +46,6 @@ export class WarehouseLayoutWarehouseConfigurationComponent implements OnInit {
     private warehouseHolidayService: WarehouseHolidayService,
     private archiveConfigurationService: ArchiveConfigurationService,
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private userService: UserService,
     private warehouseConfigurationService: WarehouseConfigurationService) {
       

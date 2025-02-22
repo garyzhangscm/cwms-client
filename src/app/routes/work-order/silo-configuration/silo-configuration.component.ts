@@ -1,10 +1,9 @@
-import { Component, Inject, OnInit } from '@angular/core'; 
+import { Component, inject, OnInit } from '@angular/core'; 
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
-import { UserService } from '../../auth/services/user.service';
-import { UnitService } from '../../common/services/unit.service'; 
+import { UserService } from '../../auth/services/user.service'; 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { SiloConfiguration } from '../models/silo-configuration';
 import { SiloConfigurationService } from '../services/silo-configuration.service';
@@ -16,6 +15,7 @@ import { SiloConfigurationService } from '../services/silo-configuration.service
 })
 export class WorkOrderSiloConfigurationComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentSiloConfiguration!: SiloConfiguration;
   passwordVisible = false;
   
@@ -27,8 +27,7 @@ export class WorkOrderSiloConfigurationComponent implements OnInit {
     private siloConfigurationService: SiloConfigurationService,
     private warehouseService: WarehouseService, 
     private messageService: NzMessageService,   
-    private userService: UserService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) { 
+    private userService: UserService, ) { 
       userService.isCurrentPageDisplayOnly("/work-order/silo-configuration").then(
         displayOnlyFlag => this.displayOnly = displayOnlyFlag
       );                       

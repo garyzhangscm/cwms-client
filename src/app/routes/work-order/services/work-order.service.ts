@@ -1,13 +1,12 @@
 import { HttpParams } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { I18NService } from 'src/app/core/i18n/i18n.service';
 
 import { PrintingService } from '../../common/services/printing.service';
-import { Inventory } from '../../inventory/models/inventory';
-import { PickWork } from '../../outbound/models/pick-work';
+import { Inventory } from '../../inventory/models/inventory'; 
 import { ReportHistory } from '../../report/models/report-history';
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -23,15 +22,14 @@ import { WorkOrderMaterialConsumeTiming } from '../models/work-order-material-co
 @Injectable({
   providedIn: 'root',
 })
-export class WorkOrderService {
-  private PICKS_PER_PAGE = 20;
+export class WorkOrderService { 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   constructor(
     private http: _HttpClient,
     private warehouseService: WarehouseService,
     private printingService: PrintingService,
-    private utilService: UtilService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private utilService: UtilService, 
   ) { }
 
   getWorkOrders(number?: string, itemName?: string, productionPlanId?: number, statusList?:string, loadDetails?: boolean): Observable<WorkOrder[]> {

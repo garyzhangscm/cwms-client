@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, EventEmitter, Inject, OnInit, Output, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output, TemplateRef } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -22,6 +22,7 @@ import { LocationService } from '../services/location.service';
 })
 export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   scrollX = '100vw';
 
   locationNameColumn: ColumnItem<WarehouseLocation> =
@@ -224,7 +225,6 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     private locationService: LocationService,
     private locationGroupTypeService: LocationGroupTypeService,
     private locationGroupService: LocationGroupService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private utilService: UtilService,
   ) { }
@@ -242,9 +242,9 @@ export class WarehouseLayoutLocationQueryPopupComponent implements OnInit {
     this.searching = true;
     this.locationService
       .getLocations(
-        this.searchForm.controls.taggedLocationGroupTypes.value,
-        this.searchForm.controls.taggedLocationGroups.value,
-        this.searchForm.controls.locationName.value,
+        this.searchForm.value.taggedLocationGroupTypes,
+        this.searchForm.value.taggedLocationGroups,
+        this.searchForm.value.locationName,
       )
       .subscribe(
         locationRes => {

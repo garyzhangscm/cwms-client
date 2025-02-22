@@ -1,4 +1,4 @@
- import { Component, Inject, OnInit } from '@angular/core';
+ import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -14,6 +14,7 @@ import { WarehouseService } from '../services/warehouse.service';
     standalone: false
 })
 export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle: string;
   warehouseForm!: UntypedFormGroup;
   isSpinning = false;
@@ -31,8 +32,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private warehouseService: WarehouseService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private warehouseService: WarehouseService, 
     private titleService: TitleService,
   ) {
     titleService.setTitle(this.i18n.fanyi('page.warehouse-maintenance.header.title'));
@@ -83,7 +83,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
 
       // load from web server
       if (!warehouseLoaded) {
-        this.loadWarehouseFromServer(this.activatedRoute.snapshot.params.id);
+        this.loadWarehouseFromServer(this.activatedRoute.snapshot.params['id']);
       }
 
       // setup page title

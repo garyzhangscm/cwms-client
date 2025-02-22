@@ -1,9 +1,8 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { Department } from '../../auth/models/department';
+import { NzMessageService } from 'ng-zorro-antd/message'; 
 import { PickZone } from '../models/pick-zone';
 import { PickZoneService } from '../services/pick-zone.service';
 import { WarehouseService } from '../services/warehouse.service';
@@ -15,6 +14,7 @@ import { WarehouseService } from '../services/warehouse.service';
 })
 export class WarehouseLayoutPickZoneMaintenanceComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentPickZone!: PickZone;
   stepIndex = 0;
   pageTitle: string = "";
@@ -26,8 +26,7 @@ export class WarehouseLayoutPickZoneMaintenanceComponent implements OnInit {
     private warehouseService: WarehouseService,
     private pickZoneService: PickZoneService,
     private messageService: NzMessageService,
-    private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private router: Router, 
     private activatedRoute: ActivatedRoute) {
     this.pageTitle = this.i18n.fanyi('pick-zone');
 
@@ -49,8 +48,8 @@ export class WarehouseLayoutPickZoneMaintenanceComponent implements OnInit {
 
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) { 
-        this.pickZoneService.getPickZone(params.id)
+      if (params['id']) { 
+        this.pickZoneService.getPickZone(params['id'])
           .subscribe(
             {
               next: (pickZoneRes) => {

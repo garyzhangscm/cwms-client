@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormGroup , UntypedFormBuilder } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
+import { UntypedFormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -23,6 +23,7 @@ import { WorkOrderService } from '../services/work-order.service';
     standalone: false
 })
 export class WorkOrderAssignProductionLineComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   productionLineList: TransferItem[] = [];
   pageTitle: string;
@@ -41,7 +42,6 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
   isSpinning = false;
   constructor(
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private workOrderService: WorkOrderService,
     private warehouseService: WarehouseService,
     private messageService: NzMessageService,
@@ -63,9 +63,9 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
 
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.workOrderId) {
+      if (params['workOrderId']) {
         this.isSpinning = true;
-        this.workOrderService.getWorkOrder(params.workOrderId).subscribe(
+        this.workOrderService.getWorkOrder(params['workOrderId']).subscribe(
           workOrderRes => {
             this.workOrder = workOrderRes;
             this.initProductionLineAssignment();
@@ -133,7 +133,7 @@ export class WorkOrderAssignProductionLineComponent implements OnInit {
       this.productionLineList.filter(productionLine => productionLine.direction === 'right')
         .forEach(productionLine => {
           this.currentProductionLineAssignments = [...this.currentProductionLineAssignments,
-          this.getProductionLineAssignment(this.getProductionLineById(productionLine.key)!)
+          this.getProductionLineAssignment(this.getProductionLineById(productionLine['key'])!)
           ];
         });
       // average the work quantity into assigned production line, evenly

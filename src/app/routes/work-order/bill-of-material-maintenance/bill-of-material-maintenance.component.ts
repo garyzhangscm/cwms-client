@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -24,6 +24,7 @@ import { ProductionPlanService } from '../services/production-plan.service';
     standalone: false
 })
 export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle: string;
   stepIndex = 0;
   currentBillOfMaterial!: BillOfMaterial;
@@ -35,7 +36,6 @@ export class WorkOrderBillOfMaterialMaintenanceComponent implements OnInit {
   availableInventoryStatuses: InventoryStatus[] = [];
   constructor(
     private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private productionPlanService: ProductionPlanService,
     private messageService: NzMessageService,
