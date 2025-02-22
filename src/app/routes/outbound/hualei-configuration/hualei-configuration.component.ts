@@ -76,6 +76,7 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
   hualeiProducts: HualeiProduct[] = []; 
   hualeiProductsWithoutShippingLabelFormat: HualeiProduct[] = []; 
   hualeiShippingLabelFormats = HualeiShippingLabelFormat;
+  hualeiShippingLabelFormatsKeys = Object.keys(this.hualeiShippingLabelFormats);
 
   lengthUnits: Unit[] = [];
   weightUnits: Unit[] = [];
@@ -286,22 +287,22 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
         this.addProductModal.destroy(); 
       },
       nzOnOk: () => { 
-        if (this.addProductForm.controls.productId.value == null) {
+        if (this.addProductForm.value.productId.value == null) {
           this.messageService.error("please fill in the product id");
           return false; 
         }
-        if (this.addProductForm.controls.name.value == null) {
+        if (this.addProductForm.value.name.value == null) {
           this.messageService.error("please fill in the name");
           return false; 
         }
-        if (this.addProductForm.controls.description.value == null) {
+        if (this.addProductForm.value.description.value == null) {
           this.messageService.error("please fill in the description");
           return false; 
         }
         // get the carrier and service level for the hualei product
         let carrierId : number | undefined = undefined;
         let carrierServiceLevelId  : number | undefined = undefined;
-        let carrierInformation : string = this.addProductForm.controls.carrier.value.toString();
+        let carrierInformation : string = this.addProductForm.value.carrier.value.toString();
         if (carrierInformation) {
           console.log(`get carrier information ${carrierInformation}`);
           let carrierInformationArray : string[] = [];
@@ -311,9 +312,9 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
         }
 
         this.addProduct( 
-          this.addProductForm.controls.productId.value,
-          this.addProductForm.controls.name.value,
-          this.addProductForm.controls.description.value,
+          this.addProductForm.value.productId.value,
+          this.addProductForm.value.name.value,
+          this.addProductForm.value.description.value,
           carrierId, 
           carrierServiceLevelId
         );
@@ -376,17 +377,17 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
         this.addShippingLabelFormatModal.destroy(); 
       },
       nzOnOk: () => {
-        if (this.addShippingLabelFormatForm.controls.productId.value == null) {
+        if (this.addShippingLabelFormatForm.value.productId.value == null) {
           this.messageService.error("please fill in the product id");
           return false; 
         }
-        if (this.addShippingLabelFormatForm.controls.shippingLabelFormat.value == null) {
+        if (this.addShippingLabelFormatForm.value.shippingLabelFormat.value == null) {
           this.messageService.error("please fill in the shipping label format");
           return false; 
         } 
         this.addShippingLabelFormat( 
-          this.addShippingLabelFormatForm.controls.productId.value,
-          this.addShippingLabelFormatForm.controls.shippingLabelFormat.value,  
+          this.addShippingLabelFormatForm.value.productId.value,
+          this.addShippingLabelFormatForm.value.shippingLabelFormat.value,  
         );
         return true;
       },

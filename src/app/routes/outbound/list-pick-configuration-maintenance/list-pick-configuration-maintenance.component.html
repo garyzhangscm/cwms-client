@@ -49,10 +49,10 @@
         </nz-form-label>
         <nz-form-control [nzSpan]="18">
             <nz-select  nzAllowClear [(ngModel)]="currentListPickConfiguration.pickType">
-                <nz-option *ngFor="let pickType of pickTypes | keys"
-                      [nzValue]="pickType.key"
-                      nzLabel="{{ 'PICK-TYPE-' + pickType.key | i18n}}"
-                    ></nz-option>
+                <nz-option *ngFor="let pickType of pickTypesKeys"
+                    [nzValue]="pickType"
+                    nzLabel="{{ 'PICK-TYPE-' + pickType | i18n}}"
+                ></nz-option>
           </nz-select> 
         </nz-form-control>
       </nz-form-item>
@@ -102,9 +102,9 @@
     
     <nz-checkbox-wrapper style="width: 100%;" (nzOnChange)="selectedGroupRuleTypeChanged($event)">
       <div nz-row>
-        <div nz-col nzSpan="8" *ngFor="let listPickGroupRuleType of listPickGroupRuleTypes | keys" >
-              <label nz-checkbox [nzValue]="listPickGroupRuleType.key" [ngModel]="isListPickGroupRuleTypeSelected(listPickGroupRuleType.key)">
-                {{"LIST-PICK-GROUP-RULE-TYPE-" + listPickGroupRuleType.key | i18n}}
+        <div nz-col nzSpan="8" *ngFor="let listPickGroupRuleType of listPickGroupRuleTypesKeys" >
+              <label nz-checkbox [nzValue]="listPickGroupRuleType" [ngModel]="isListPickGroupRuleTypeSelected(listPickGroupRuleType)">
+                {{"LIST-PICK-GROUP-RULE-TYPE-" + listPickGroupRuleType | i18n}}
               </label>
         </div> 
       </div>

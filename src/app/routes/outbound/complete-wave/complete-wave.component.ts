@@ -4,17 +4,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { ClientService } from '../../common/services/client.service';
+import { NzMessageService } from 'ng-zorro-antd/message'; 
 import { CustomerService } from '../../common/services/customer.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryConfiguration } from '../../inventory/models/inventory-configuration';
 import { InventoryConfigurationService } from '../../inventory/services/inventory-configuration.service';
 import { LocalCacheService } from '../../util/services/local-cache.service';
-import { UtilService } from '../../util/services/util.service';
-import { Shipment } from '../models/shipment';
-import { ShipmentLine } from '../models/shipment-line';
-import { ShipmentStatus } from '../models/shipment-status.enum';
+import { UtilService } from '../../util/services/util.service'; 
+import { ShipmentLine } from '../models/shipment-line'; 
 import { Wave } from '../models/wave';
 import { WaveStatus } from '../models/wave-status.enum';
 import { PickService } from '../services/pick.service';
@@ -161,8 +158,8 @@ export class OutboundCompleteWaveComponent implements OnInit {
   
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
-        this.loadWave(params.id);
+      if (params['id']) {
+        this.loadWave(params['id']);
       }
     });
   }

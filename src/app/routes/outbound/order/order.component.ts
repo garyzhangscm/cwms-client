@@ -85,7 +85,9 @@ export class OutboundOrderComponent implements OnInit {
   orderReassignShippingStageLocationForm!: UntypedFormGroup;
 
   orderStatuses = OrderStatus;
+  orderStatusesKeys = Object.keys(this.orderStatuses);
   orderCategories = OrderCategory;
+  orderCategoriesKeys = Object.keys(this.orderCategories);
 
   availableBOM: BillOfMaterial[] = [];
 
@@ -2064,7 +2066,8 @@ export class OutboundOrderComponent implements OnInit {
   }
  
   formatterDollar = (value: number): string => `$ ${value}`;
-  parserDollar = (value: string): string => value.replace('$ ', '');
+  // parserDollar = (value: string): string => value.replace('$ ', '');
+  parserDollar = (value: string): number => parseFloat(value?.replace(/\$\s?|(,*)/g, ''));
 
   removePackage(parcelPackage: ParcelPackage) {
 

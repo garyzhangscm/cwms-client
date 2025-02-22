@@ -29,13 +29,13 @@
             {{ 'status' | i18n }}
           </nz-form-label>
           <nz-form-control [nzSpan]="16">
-            <nz-select formControlName="orderStatus" nzAllowClear >
-               <nz-option
-                   *ngFor="let orderStatus of orderStatuses  | keys"
-                    [nzValue]="orderStatus.key"
-                    [nzLabel]="orderStatus.key"
-                      ></nz-option>
-               </nz-select>
+            <nz-select formControlName="orderStatus" nzAllowClear >
+              <nz-option
+                *ngFor="let orderStatus of orderStatusesKeys"
+                [nzValue]="orderStatus"
+                [nzLabel]="orderStatus"
+              ></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
       </div>
@@ -46,13 +46,13 @@
             {{ 'order.category' | i18n }}
           </nz-form-label>
           <nz-form-control [nzSpan]="16">
-            <nz-select formControlName="orderCategory" nzAllowClear >
-               <nz-option
-                   *ngFor="let orderCategory of orderCategories  | keys"
-                    [nzValue]="orderCategory.key"
-                     nzLabel="{{ 'ORDER-CATEGORY-' + orderCategory.key |i18n}}"
-                      ></nz-option>
-               </nz-select>
+            <nz-select formControlName="orderCategory" nzAllowClear >
+              <nz-option
+                *ngFor="let orderCategory of orderCategoriesKeys"
+                [nzValue]="orderCategory"
+                nzLabel="{{ 'ORDER-CATEGORY-' + orderCategory | i18n}}"
+              ></nz-option>
+            </nz-select>
           </nz-form-control>
         </nz-form-item>
       </div>

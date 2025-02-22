@@ -48,6 +48,7 @@ export class OutboundLoadComponent implements OnInit {
 
   
   trailerAppointmentStatus = TrailerAppointmentStatus; 
+  trailerAppointmentStatusKeys = Object.keys(this.trailerAppointmentStatus);
   searchForm!: UntypedFormGroup;
   searchResult = '';
   listOfAllTrailerAppointments: TrailerAppointment[] = [];

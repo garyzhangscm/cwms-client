@@ -86,9 +86,9 @@
                     <nz-select style="width: 150px"  nzAllowClear
                         [(ngModel)]="currentOutboundConfiguration.statusAllowOrderChangeWhenUploadFile" 
                         >
-                        <nz-option *ngFor="let orderStatus of orderStatusList | keys"
-                        nzLabel="{{ 'ORDER-STATUS-' + orderStatus.key | i18n }}" 
-                            [nzValue]="orderStatus.key">
+                        <nz-option *ngFor="let orderStatus of orderStatusListKeys"
+                        nzLabel="{{ 'ORDER-STATUS-' + orderStatus | i18n }}" 
+                            [nzValue]="orderStatus">
                         </nz-option>
                     </nz-select>
  
@@ -109,9 +109,9 @@
                     <nz-select style="width: 150px"   nzAllowClear
                         [(ngModel)]="currentOutboundConfiguration.statusAllowOrderChangeFromIntegration" 
                         >
-                        <nz-option *ngFor="let orderStatus of orderStatusList | keys"
-                        nzLabel="{{ 'ORDER-STATUS-' + orderStatus.key | i18n }}" 
-                            [nzValue]="orderStatus.key">
+                        <nz-option *ngFor="let orderStatus of orderStatusListKeys"
+                        nzLabel="{{ 'ORDER-STATUS-' + orderStatus | i18n }}" 
+                            [nzValue]="orderStatus">
                         </nz-option>
                     </nz-select>
  
@@ -131,9 +131,9 @@
                     <nz-select style="width: 150px"  
                         [(ngModel)]="currentOutboundConfiguration.statusAllowOrderChangeFromWebUI" 
                         nzAllowClear >
-                        <nz-option *ngFor="let orderStatus of orderStatusList | keys"
-                        nzLabel="{{ 'ORDER-STATUS-' + orderStatus.key | i18n }}" 
-                            [nzValue]="orderStatus.key">
+                        <nz-option *ngFor="let orderStatus of orderStatusListKeys"
+                        nzLabel="{{ 'ORDER-STATUS-' + orderStatus | i18n }}" 
+                            [nzValue]="orderStatus">
                         </nz-option>
                     </nz-select> 
   

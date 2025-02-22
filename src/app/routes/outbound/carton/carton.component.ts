@@ -139,7 +139,7 @@ export class OutboundCartonComponent implements OnInit {
   }
   search(): void {
     this.cartonService
-      .getAll(this.searchForm.controls.name.value, this.searchForm.controls.enabled.value)
+      .getAll(this.searchForm.value.name.value, this.searchForm.value.enabled.value)
       .subscribe(cartonRes => {
         this.listOfAllCartons = cartonRes;
         this.listOfDisplayCartons = cartonRes;

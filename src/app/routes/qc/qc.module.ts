@@ -1,5 +1,4 @@
-import { NgModule, Type } from '@angular/core';
-import { SharedModule } from '@shared';
+import { NgModule, Type } from '@angular/core'; 
 import { NzCarouselModule } from 'ng-zorro-antd/carousel';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -7,8 +6,7 @@ import { NzImageModule } from 'ng-zorro-antd/image';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
-
-import { CommonModule } from '../common/common.module';
+ 
 import { DirectivesModule } from '../directives/directives.module';
 import { InventoryModule } from '../inventory/inventory.module';
 import { UtilModule } from '../util/util.module';
@@ -40,8 +38,7 @@ const COMPONENTS: Array<Type<void>> = [
   QcQcInspectionDocumentMaintenanceComponent];
 
 @NgModule({
-  imports: [
-    SharedModule,
+  imports: [ 
     QcRoutingModule,
     NzDescriptionsModule,
     UtilModule, 
@@ -51,8 +48,7 @@ const COMPONENTS: Array<Type<void>> = [
     WarehouseLayoutModule,NzIconModule ,
     NzSkeletonModule , 
     NzCarouselModule,
-    NzImageModule ,
-    CommonModule,
+    NzImageModule , 
     DirectivesModule, 
   ],
   declarations: COMPONENTS,

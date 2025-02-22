@@ -60,6 +60,7 @@ export class OutboundListPickConfigurationComponent implements OnInit {
   searchResult = ""; 
   
   pickTypes = PickType;
+  pickTypesKeys = Object.keys(this.pickTypes);
    
   clients: Client[] = [];
   

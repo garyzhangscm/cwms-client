@@ -8,7 +8,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
 import { UserService } from '../../auth/services/user.service';
-import { EmergencyReplenishmentConfiguration } from '../../inventory/models/emergency-replenishment-configuration';
+
 import { ItemFamily } from '../../inventory/models/item-family';
 import { ItemFamilyService } from '../../inventory/services/item-family.service';
 import { ColumnItem } from '../../util/models/column-item';
@@ -198,8 +198,8 @@ export class OutboundAllocationConfigurationComponent implements OnInit {
 
     
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.sequence) { 
-        this.search(params.sequence);
+      if (params['sequence']) { 
+        this.search(params['sequence']);
       } 
     }); 
   }

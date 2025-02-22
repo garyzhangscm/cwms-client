@@ -58,9 +58,34 @@ import { OutboundWaveComponent } from './wave/wave.component';
 import { OutboundPickConfirmStrategyComponent } from './pick-confirm-strategy/pick-confirm-strategy.component';
 import { OutboundPickConfirmStrategyMaintenanceComponent } from './pick-confirm-strategy-maintenance/pick-confirm-strategy-maintenance.component';
 import { OutboundCompleteWaveComponent } from './complete-wave/complete-wave.component';
-import { DatePipe } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { OutboundSortationComponent } from './sortation/sortation.component';
 import { OutboundSortationByShipmentComponent } from './sortation-by-shipment/sortation-by-shipment.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PageHeaderComponent } from '@delon/abc/page-header';
+import { STModule } from '@delon/abc/st';
+import { I18nPipe } from '@delon/theme';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
 
 const COMPONENTS: Array<Type<void>> = [
   OutboundOrderComponent,
@@ -131,7 +156,36 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
         NzResultModule,
         NzCascaderModule,
         NzListModule,
-        WarehouseLocalTime
+        WarehouseLocalTime,
+        STModule,        
+        NzFormModule,
+        FormsModule, 
+        ReactiveFormsModule,
+        PageHeaderComponent ,
+        I18nPipe,
+        NzSpinModule ,
+        NzSelectModule,
+        NzButtonModule,
+        NzIconModule ,
+        NzTableModule,
+        NzDropDownModule ,
+        NzBreadCrumbModule ,
+        NzCardModule ,
+        NzInputModule ,
+        NzInputNumberModule ,
+        NzDividerModule,
+        NzCheckboxModule ,
+        NzModalModule,
+        NzTabsModule ,
+        CommonModule ,
+        NzBadgeModule ,
+        NzProgressModule,
+        NzToolTipModule ,
+        NzDatePickerModule ,
+        NzUploadModule ,
+        NzAlertModule ,
+        CommonModule,
+        
     ],
     providers: [DatePipe],
 })

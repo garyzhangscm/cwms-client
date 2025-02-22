@@ -20,13 +20,13 @@
               {{ 'status' | i18n }}
             </nz-form-label>
             <nz-form-control [nzSpan]="16">
-              <nz-select formControlName="status">
-                 <nz-option
-                     *ngFor="let status of trailerAppointmentStatus  | keys"
-                      [nzValue]="status.key"
-                      [nzLabel]="status.key"
-                        ></nz-option>
-                 </nz-select>
+              <nz-select formControlName="status">
+                <nz-option
+                  *ngFor="let status of trailerAppointmentStatusKeys"
+                  [nzValue]="status"
+                  [nzLabel]="status"
+                ></nz-option>
+              </nz-select>
             </nz-form-control>
           </nz-form-item>
         </div>

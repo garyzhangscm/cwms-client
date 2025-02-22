@@ -22,6 +22,7 @@ export class OutboundOutboundConfigurationComponent implements OnInit {
   
   displayOnly = false;
   orderStatusList = OrderStatus;
+  orderStatusListKeys = Object.keys(this.orderStatusList);
 
   constructor(private http: _HttpClient, 
     private warehouseService: WarehouseService,
