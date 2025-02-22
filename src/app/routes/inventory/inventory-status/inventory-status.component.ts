@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -19,6 +19,7 @@ import { InventoryStatusService } from '../services/inventory-status.service';
     standalone: false
 })
 export class InventoryInventoryStatusComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   @ViewChild('st', { static: true })
   st!: STComponent;
@@ -43,8 +44,7 @@ export class InventoryInventoryStatusComponent implements OnInit {
 
   displayOnly = false;
   constructor(private http: _HttpClient,
-    private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private fb: UntypedFormBuilder, 
     private inventoryStatusService: InventoryStatusService,
     private modalService: NzModalService,
     private messageService: NzMessageService,

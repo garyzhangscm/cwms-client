@@ -1,5 +1,5 @@
 import { HttpParams } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
@@ -15,10 +15,11 @@ import { PickWork } from '../models/pick-work';
 })
 export class PickListService {
   PICKS_PER_PAGE = 20;
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  
   constructor(
     private http: _HttpClient,
-    private warehouseService: WarehouseService,  
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private warehouseService: WarehouseService,   
   ) {}
 
   getPickLists(number?: string, numberList?: string): Observable<PickList[]> {

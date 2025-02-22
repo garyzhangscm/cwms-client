@@ -1,12 +1,11 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { Inventory } from '../../inventory/models/inventory';
-import { InventoryConfiguration } from '../../inventory/models/inventory-configuration';
-import { InventoryDisplayOption } from '../../inventory/models/inventory-display-option.enum';
+import { InventoryConfiguration } from '../../inventory/models/inventory-configuration'; 
 import { InventoryConfigurationService } from '../../inventory/services/inventory-configuration.service';
 import { ItemService } from '../../inventory/services/item.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
@@ -35,6 +34,7 @@ interface InventoryAttributes {
 })
 export class OutboundSortationComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   gridStyle = {
     width: '33%',
     textAlign: 'center',
@@ -65,8 +65,7 @@ export class OutboundSortationComponent implements OnInit {
   constructor(private http: _HttpClient,
     private waveService: WaveService,
     private sortationService: SortationService,
-    private messageService: NzMessageService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private messageService: NzMessageService, 
     private router: Router,
     private inventoryConfigurationService: InventoryConfigurationService,
     private itemService: ItemService) { 

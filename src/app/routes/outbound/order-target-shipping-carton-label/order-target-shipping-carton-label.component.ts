@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STData } from '@delon/abc/st';
@@ -13,8 +13,7 @@ import { PrintingService } from '../../common/services/printing.service';
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { ReportType } from '../../report/models/report-type.enum';
 import { Order } from '../models/order';
-import { TargetShippnigCartonLabel } from '../models/target-shipping-carton-labels';
-import { WalmartShippnigCartonLabel } from '../models/walmart-shipping-carton-labels';
+import { TargetShippnigCartonLabel } from '../models/target-shipping-carton-labels'; 
 import { OrderService } from '../services/order.service';
 import { TargetShippnigCartonLabelService } from '../services/target-shipping-carton-label.service';
 
@@ -25,6 +24,7 @@ import { TargetShippnigCartonLabelService } from '../services/target-shipping-ca
 })
 export class OutboundOrderTargetShippingCartonLabelComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentOrder?: Order;
   isSpinning = false;
   pageTitle = "";
@@ -62,8 +62,7 @@ export class OutboundOrderTargetShippingCartonLabelComponent implements OnInit {
     
   ]; 
 
-  constructor( private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  constructor( private activatedRoute: ActivatedRoute, 
     private messageService: NzMessageService,
     private router: Router,
     private orderService: OrderService,

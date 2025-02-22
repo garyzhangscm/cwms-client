@@ -1,5 +1,5 @@
 import { HttpParams } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -12,9 +12,7 @@ import { DateTimeService } from '../../util/services/date-time.service';
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { Order } from '../models/order';
-import { OrderLine } from '../models/order-line';
-import { PickWork } from '../models/pick-work';
+import { Order } from '../models/order'; 
 import { Shipment } from '../models/shipment';
 import { Wave } from '../models/wave';
 import { WaveStatus } from '../models/wave-status.enum';
@@ -25,11 +23,11 @@ import { PickService } from './pick.service';
 })
 export class WaveService {
   private PICKS_PER_PAGE = 20;
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   constructor(
     private http: _HttpClient,
-    private warehouseService: WarehouseService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private warehouseService: WarehouseService, 
     private pickService: PickService,
     private dateTimeService: DateTimeService,
     private printingService: PrintingService,

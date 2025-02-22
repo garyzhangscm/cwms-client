@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
@@ -16,13 +16,12 @@ import { AuditCountRequest } from '../models/audit-count-request';
   providedIn: 'root',
 })
 export class AuditCountRequestService {
-  private COUNT_REQUEST_PER_PAGE = 30;
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   constructor(
     private http: _HttpClient,
     private localStorageService: LocalStorageService,
     private printingService: PrintingService,
-    private warehouseService: WarehouseService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private warehouseService: WarehouseService, 
   ) { }
 
   getAuditCountRequestDetails(batchId: string, refresh: boolean = false): Observable<AuditCountRequest[]> {

@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -38,6 +38,7 @@ import { ItemService } from '../services/item.service';
 export class InventoryItemComponent implements OnInit {
   
   
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
 
   // Select control for clients and item families
@@ -306,8 +307,7 @@ export class InventoryItemComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private itemService: ItemService,
     private clientService: ClientService,
-    private itemFamilyService: ItemFamilyService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private itemFamilyService: ItemFamilyService, 
     private modalService: NzModalService,
     private messageService: NzMessageService,
     private titleService: TitleService,

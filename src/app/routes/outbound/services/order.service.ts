@@ -1,5 +1,5 @@
 import { HttpParams } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -22,12 +22,11 @@ import { WalmartShippnigCartonLabel } from '../models/walmart-shipping-carton-la
   providedIn: 'root',
 })
 export class OrderService {
-  private PICKS_PER_PAGE = 20;
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   constructor(
     private http: _HttpClient,
     private warehouseService: WarehouseService,
-    private dateTimeService: DateTimeService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private dateTimeService: DateTimeService, 
     private utilService: UtilService
   ) { }
 

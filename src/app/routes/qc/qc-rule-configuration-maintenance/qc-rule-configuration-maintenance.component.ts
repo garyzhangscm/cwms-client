@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -7,8 +7,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { TransferChange, TransferItem } from 'ng-zorro-antd/transfer';
 
 import { Supplier } from '../../common/models/supplier';
-import { SupplierService } from '../../common/services/supplier.service';
-import { InboundQcConfiguration } from '../../inbound/models/inbound-qc-configuration';
+import { SupplierService } from '../../common/services/supplier.service'; 
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { ItemFamily } from '../../inventory/models/item-family';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
@@ -29,6 +28,7 @@ import { QcRuleService } from '../services/qc-rule.service';
 export class QcQcRuleConfigurationMaintenanceComponent implements OnInit {
 
   
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   qcRuleList: TransferItem[] = [];
   allQCRules: QCRule[] = [];
   assignedQCRuleIds: number[] = [];
@@ -50,8 +50,7 @@ export class QcQcRuleConfigurationMaintenanceComponent implements OnInit {
     private companyService: CompanyService,
     private qcRuleConfigurationService: QcRuleConfigurationService,
     private messageService: NzMessageService,
-    private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private router: Router, 
     private warehouseService: WarehouseService,
     private itemService: ItemService,
     private supplierService: SupplierService,

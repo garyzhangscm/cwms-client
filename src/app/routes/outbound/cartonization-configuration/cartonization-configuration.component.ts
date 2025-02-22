@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -6,9 +6,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 
 import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
-import { ClientService } from '../../common/services/client.service';
-import { PutawayConfiguration } from '../../inbound/models/putaway-configuration';
-import { Item } from '../../inventory/models/item';
+import { ClientService } from '../../common/services/client.service'; 
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { CartonizationConfiguration } from '../models/cartonization-configuration';
@@ -22,6 +20,7 @@ import { CartonizationConfigurationService } from '../services/cartonization-con
 })
 export class OutboundCartonizationConfigurationComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<CartonizationConfiguration>> = [
     {
       name: 'sequence',
@@ -96,8 +95,7 @@ export class OutboundCartonizationConfigurationComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private cartonizationConfigurationService: CartonizationConfigurationService,
     private clientService: ClientService,
-    private titleService: TitleService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private titleService: TitleService, 
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private userService: UserService,
@@ -122,8 +120,8 @@ export class OutboundCartonizationConfigurationComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.sequence) {
-        this.search(params.sequence);
+      if (params['sequence']) {
+        this.search(params['sequence']);
       }
     });
   }

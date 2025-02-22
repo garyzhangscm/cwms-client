@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -30,6 +30,7 @@ import { WaveService } from '../services/wave.service';
     standalone: false
 })
 export class OutboundWaveMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   hideCriteria = false;
   isSpinning = false;
   loadingOrderDetailsRequest = 0;
@@ -287,8 +288,7 @@ export class OutboundWaveMaintenanceComponent implements OnInit {
 
 
   constructor(
-    private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private activatedRoute: ActivatedRoute, 
     private titleService: TitleService,
     private fb: UntypedFormBuilder,
     private shipmentLineService: ShipmentLineService,

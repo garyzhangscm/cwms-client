@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
+import { UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -7,8 +7,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
-import { Trailer } from '../models/trailer';
-import { TrailerStatus } from '../models/trailer-status.enum';
+import { Trailer } from '../models/trailer'; 
 import { TrailerService } from '../services/trailer.service';
 
 
@@ -19,6 +18,7 @@ import { TrailerService } from '../services/trailer.service';
     standalone: false
 })
 export class OutboundTrailerComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<Trailer>> = [
     {
       name: 'trailer.number',
@@ -138,8 +138,7 @@ export class OutboundTrailerComponent implements OnInit {
   indeterminate = false;
 
   constructor(
-    private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private fb: UntypedFormBuilder, 
     private modalService: NzModalService,
     private trailerService: TrailerService,
     private message: NzMessageService,
@@ -161,7 +160,7 @@ export class OutboundTrailerComponent implements OnInit {
   }
 
   search(): void {
-    this.trailerService.getTrailers(this.searchForm.controls.number.value).subscribe(trailerRes => {
+    this.trailerService.getTrailers(this.searchForm.value.number).subscribe(trailerRes => {
       this.listOfAllTrailers = trailerRes;
       this.listOfDisplayTrailers = trailerRes;
     });

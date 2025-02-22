@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -25,8 +25,7 @@ import { BillOfMaterialService } from '../../work-order/services/bill-of-materia
 import { WorkTaskService } from '../../work-task/services/work-task.service';
 import { Order } from '../models/order';
 import { PickGroupType } from '../models/pick-group-type.enum';
-import { PickStatus } from '../models/pick-status.enum';
-import { PickType } from '../models/pick-type.enum';
+import { PickStatus } from '../models/pick-status.enum'; 
 import { PickWork } from '../models/pick-work';
 import { Shipment } from '../models/shipment';
 import { ShortAllocation } from '../models/short-allocation';
@@ -47,6 +46,7 @@ import { StopService } from '../services/stop.service';
 export class OutboundLoadComponent implements OnInit {
 
   
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   trailerAppointmentStatus = TrailerAppointmentStatus; 
   trailerAppointmentStatusKeys = Object.keys(this.trailerAppointmentStatus);
   searchForm!: UntypedFormGroup;
@@ -132,8 +132,7 @@ export class OutboundLoadComponent implements OnInit {
   displayOnly = false;
   constructor( 
     private trailerAppointmentService: TrailerAppointmentService,
-    private titleService: TitleService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private titleService: TitleService, 
     private messageService: NzMessageService,
     private printingService: PrintingService,
     private activatedRoute: ActivatedRoute,

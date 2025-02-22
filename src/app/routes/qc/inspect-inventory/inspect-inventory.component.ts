@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core'; 
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -24,6 +24,7 @@ import { QcInspectionRequestService } from '../services/qc-inspection-request.se
 })
 export class QcInspectInventoryComponent implements OnInit {
    
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   stepIndex = 0;
   pageTitle: string = ""; 
   isSpinning = false; 
@@ -39,8 +40,7 @@ export class QcInspectInventoryComponent implements OnInit {
 
   constructor( 
     private messageService: NzMessageService,
-    private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private router: Router, 
     private warehouseService: WarehouseService,
     private itemSamplingService: ItemSamplingService,
     private qcInspectionRequestService: QcInspectionRequestService,
@@ -54,8 +54,8 @@ export class QcInspectInventoryComponent implements OnInit {
 
     this.itemSamplingMap = new Map();
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.ids) { 
-        this.qcInspectionRequestService.getPendingQCInspectionRequest(undefined, params.ids)
+      if (params['ids']) { 
+        this.qcInspectionRequestService.getPendingQCInspectionRequest(undefined, params['ids'])
         .subscribe({
           next: (qcInspectionRequestRes) => {
             this.qcInspectionRequests = qcInspectionRequestRes;

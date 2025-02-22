@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
@@ -23,6 +23,7 @@ import { ParcelService } from '../services/parcel.service';
 })
 export class OutboundParcelByOrderComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentOrder?: Order;
   currentEasyPostShipment?: EasyPostShipment;
   currentWarehouse!: Warehouse;
@@ -39,8 +40,7 @@ export class OutboundParcelByOrderComponent implements OnInit {
 
   constructor(private http: _HttpClient, 
     private activatedRoute: ActivatedRoute,
-    private orderService: OrderService, 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private orderService: OrderService,  
     private parcelService: ParcelService,
     private messageService: NzMessageService,
     private router: Router, 

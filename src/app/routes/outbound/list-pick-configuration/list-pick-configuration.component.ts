@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -21,6 +21,7 @@ import { ListPickConfigurationService } from '../services/list-pick-configuratio
     standalone: false
 })
 export class OutboundListPickConfigurationComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
 
   @ViewChild('st', { static: true })
@@ -65,8 +66,7 @@ export class OutboundListPickConfigurationComponent implements OnInit {
   clients: Client[] = [];
   
   displayOnly = false;
-  constructor(private http: _HttpClient,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  constructor(private http: _HttpClient, 
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
     private listPickConfigurationService: ListPickConfigurationService,

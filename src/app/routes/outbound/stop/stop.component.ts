@@ -1,16 +1,13 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
-import { UserService } from '../../auth/services/user.service';
-import { TrailerAppointment } from '../../transportation/models/trailer-appointment';
-import { TrailerAppointmentStatus } from '../../transportation/models/trailer-appointment-status.enum';
-import { TrailerAppointmentType } from '../../transportation/models/trailer-appointment-type.enum';
+import { UserService } from '../../auth/services/user.service'; 
 import { Shipment } from '../models/shipment';
 import { Stop } from '../models/stop';
 import { StopStatus } from '../models/stop-status.enum';
@@ -32,6 +29,7 @@ interface ItemData {
 export class OutboundStopComponent implements OnInit {
 
    
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   searchForm!: UntypedFormGroup;
   searchResult = '';
   listOfAllStops: Stop[] = [];
@@ -65,8 +63,7 @@ export class OutboundStopComponent implements OnInit {
   displayOnly = false;
   constructor(private http: _HttpClient, 
     private stopService: StopService,
-    private titleService: TitleService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private titleService: TitleService, 
     private messageService: NzMessageService,
     private activatedRoute: ActivatedRoute, 
     private userService: UserService,

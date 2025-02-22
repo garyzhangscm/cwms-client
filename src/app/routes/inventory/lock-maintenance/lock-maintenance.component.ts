@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -14,6 +14,7 @@ import { InventoryLockService } from '../services/inventory-lock.service';
     standalone: false
 })
 export class InventoryLockMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentInventoryLock!: InventoryLock;
   stepIndex = 0;
   pageTitle: string;
@@ -25,8 +26,7 @@ export class InventoryLockMaintenanceComponent implements OnInit {
     private warehouseService: WarehouseService,
     private inventoryLockService: InventoryLockService,
     private messageService: NzMessageService,
-    private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private router: Router, 
     private activatedRoute: ActivatedRoute) {
     this.pageTitle = this.i18n.fanyi('menu.main.inventory.lock.maintenance');
 

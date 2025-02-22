@@ -1,16 +1,14 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { ALAIN_I18N_TOKEN,  _HttpClient } from '@delon/theme'; 
+import { NzMessageService } from 'ng-zorro-antd/message'; 
 
 import { UserService } from '../../auth/services/user.service'; 
-import { LocalCacheService } from '../../util/services/local-cache.service';
-import { UtilService } from '../../util/services/util.service';
+import { LocalCacheService } from '../../util/services/local-cache.service'; 
 import { ClientLocationUtilizationSnapshotBatch } from '../models/client-location-utilization-snapshot-batch';
 import { LocationUtilizationSnapshotBatch } from '../models/location-utilization-snapshot-batch';
 import { LocationUtilizationSnapshotStatus } from '../models/location-utilization-snapshot-status.enum';
@@ -23,6 +21,7 @@ import { LocationUtilizationSnapshotBatchService } from '../services/location-ut
     standalone: false
 })
 export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
   
   locationUtilizationSnapshotStatusList = LocationUtilizationSnapshotStatus;
@@ -75,8 +74,7 @@ export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
   searchResult = "";
 
   displayOnly = false;
-  constructor( 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+  constructor(  
     private activatedRoute: ActivatedRoute,
     private locationUtilizationSnapshotBatchService: LocationUtilizationSnapshotBatchService,
     private messageService: NzMessageService, 

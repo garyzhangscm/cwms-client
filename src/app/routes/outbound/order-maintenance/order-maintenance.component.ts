@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
@@ -39,6 +39,7 @@ import { OrderService } from '../services/order.service';
 })
 export class OutboundOrderMaintenanceComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   orderCategories = OrderCategory;
   orderCategoriesKeys = Object.keys(this.orderCategories);
   orderStatuses = OrderStatus;
@@ -76,8 +77,7 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
 
   constructor(
     private http: _HttpClient,
-    private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private activatedRoute: ActivatedRoute, 
     private warehouseService: WarehouseService,
     private companyService: CompanyService,
     private messageService: NzMessageService,

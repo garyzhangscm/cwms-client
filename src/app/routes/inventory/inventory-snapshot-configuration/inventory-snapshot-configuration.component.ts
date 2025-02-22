@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -19,6 +19,8 @@ import { LocationUtilizationSnapshotBatchService } from '../services/location-ut
     standalone: false
 })
 export class InventoryInventorySnapshotConfigurationComponent implements OnInit {
+  
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   configurationForm!: UntypedFormGroup;
   isSpinning = false;
   hours : number[] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
@@ -26,8 +28,7 @@ export class InventoryInventorySnapshotConfigurationComponent implements OnInit 
   constructor(private http: _HttpClient,
     private warehouseService: WarehouseService,
     private inventorySnapshotService: InventorySnapshotService,
-    private message: NzMessageService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private message: NzMessageService, 
     private inventorySnapshotConfigurationService: InventorySnapshotConfigurationService,
     private locationUtilizationSnapshotBatchService: LocationUtilizationSnapshotBatchService,
     private inventoryAgingSnapshotService: InventoryAgingSnapshotService,

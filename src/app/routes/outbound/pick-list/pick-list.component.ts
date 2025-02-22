@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -12,11 +12,9 @@ import { InventoryService } from '../../inventory/services/inventory.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
 import { PickList } from '../models/pick-list';
-import { PickWork } from '../models/pick-work';
-import { OrderService } from '../services/order.service';
+import { PickWork } from '../models/pick-work'; 
 import { PickListService } from '../services/pick-list.service';
-import { PickService } from '../services/pick.service';
-import { ShortAllocationService } from '../services/short-allocation.service';
+import { PickService } from '../services/pick.service'; 
 
 @Component({
     selector: 'app-outbound-pick-list',
@@ -25,6 +23,7 @@ import { ShortAllocationService } from '../services/short-allocation.service';
     standalone: false
 })
 export class OutboundPickListComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   listOfColumns: Array<ColumnItem<PickList>> = [
     {
@@ -134,8 +133,7 @@ export class OutboundPickListComponent implements OnInit {
 
   displayOnly = false;
   constructor(
-    private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private fb: UntypedFormBuilder, 
     private modalService: NzModalService,
     private messageService: NzMessageService,
     private router: Router,

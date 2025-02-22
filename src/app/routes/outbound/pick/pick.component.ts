@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
-import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
+import { UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -23,6 +23,7 @@ import { PickService } from '../services/pick.service';
 })
 export class OutboundPickComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<PickWork>> = [
     {
       name: 'pick.number',
@@ -150,8 +151,7 @@ export class OutboundPickComponent implements OnInit {
 
   displayOnly = false;
   constructor(
-    private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private fb: UntypedFormBuilder, 
     private modalService: NzModalService,
     private pickService: PickService,
     private message: NzMessageService,
@@ -193,13 +193,13 @@ export class OutboundPickComponent implements OnInit {
 
     this.pickService
       .queryPicks(
-        this.searchForm.controls.number.value,
-        this.searchForm.controls.orderNumber.value,
-        this.searchForm.controls.itemNumber.value,
-        this.searchForm.controls.sourceLocation.value,
-        this.searchForm.controls.destinationLocation.value,
+        this.searchForm.value.number,
+        this.searchForm.value.orderNumber,
+        this.searchForm.value.itemNumber,
+        this.searchForm.value.sourceLocation,
+        this.searchForm.value.destinationLocation,
         shortAllocationId,
-        this.searchForm.controls.openPickOnly.value,
+        this.searchForm.value.openPickOnly,
         false
       )
       .subscribe(
@@ -418,8 +418,8 @@ export class OutboundPickComponent implements OnInit {
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.shortAllocationId) {
-        this.search(params.shortAllocationId);
+      if (params['shortAllocationId']) {
+        this.search(params['shortAllocationId']);
       }
     });
   }

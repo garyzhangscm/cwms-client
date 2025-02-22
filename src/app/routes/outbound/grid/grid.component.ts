@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -96,6 +96,7 @@ interface InventoryData {
     standalone: false
 })
 export class OutboundGridComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   availableGrids: GridConfiguration[] = [];
   gridRows: RowData[] = [];
   listOfDistributionWork: GridDistributionWork[] = [];
@@ -123,8 +124,7 @@ export class OutboundGridComponent implements OnInit {
     private gridConfigurationService: GridConfigurationService,
     private gridLocationConfigurationService: GridLocationConfigurationService,
     private gridDistributionWorkService: GridDistributionWorkService,
-    private messageService: NzMessageService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private messageService: NzMessageService, 
     private inventoryService: InventoryService,
     private userService: UserService,
   ) { 

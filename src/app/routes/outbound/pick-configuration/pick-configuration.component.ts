@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -17,6 +17,7 @@ import { PickConfigurationService } from '../services/pick-configuration.service
     standalone: false
 })
 export class OutboundPickConfigurationComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentBulkPickConfiguration!: BulkPickConfiguration;
   currentPickConfiguration!: PickConfiguration;
   sortDirections = SortDirection;
@@ -30,8 +31,7 @@ export class OutboundPickConfigurationComponent implements OnInit {
     private warehouseService: WarehouseService,
     private messageService: NzMessageService, 
     private bulkPickConfigurationService: BulkPickConfigurationService,
-    private pickConfigurationService: PickConfigurationService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,    
+    private pickConfigurationService: PickConfigurationService, 
     private userService: UserService, ) { 
       
       userService.isCurrentPageDisplayOnly("/outbound/pick-configuration").then(

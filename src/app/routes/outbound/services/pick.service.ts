@@ -1,6 +1,6 @@
 
 import { HttpParams } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
@@ -25,10 +25,10 @@ import { PickListService } from './pick-list.service';
   providedIn: 'root',
 })
 export class PickService {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   constructor(private http: _HttpClient, 
     private warehouseService: WarehouseService, 
-    private bulkPickService: BulkPickService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private bulkPickService: BulkPickService, 
     private pickListService: PickListService ) {}
 
   getPicksByOrder(orderId: number): Observable<PickWork[]> {

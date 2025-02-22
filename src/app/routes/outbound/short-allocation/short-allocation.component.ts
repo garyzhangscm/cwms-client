@@ -1,18 +1,15 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
+import { UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
-import { UserService } from '../../auth/services/user.service';
-import { ItemService } from '../../inventory/services/item.service';
+import { UserService } from '../../auth/services/user.service'; 
 import { ColumnItem } from '../../util/models/column-item';
-import { UtilService } from '../../util/services/util.service';
-import { PickWork } from '../models/pick-work';
+import { UtilService } from '../../util/services/util.service'; 
 import { ShortAllocation } from '../models/short-allocation';
-import { ShortAllocationStatus } from '../models/short-allocation-status.enum';
-import { PickService } from '../services/pick.service';
+import { ShortAllocationStatus } from '../models/short-allocation-status.enum'; 
 import { ShortAllocationService } from '../services/short-allocation.service';
 
 @Component({
@@ -23,6 +20,7 @@ import { ShortAllocationService } from '../services/short-allocation.service';
 })
 export class OutboundShortAllocationComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<ShortAllocation>> = [
     {
       name: 'order.number',
@@ -151,8 +149,7 @@ export class OutboundShortAllocationComponent implements OnInit {
 
   displayOnly = false;
   constructor(
-    private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private fb: UntypedFormBuilder, 
     private modalService: NzModalService,
     private shortAllocationService: ShortAllocationService,
     private messageService: NzMessageService,

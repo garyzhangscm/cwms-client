@@ -1,11 +1,10 @@
-import { Component, HostListener, Inject, OnInit, TemplateRef } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
+import { Component,  inject, OnInit, TemplateRef } from '@angular/core';
+import { UntypedFormGroup, UntypedFormBuilder,  } from '@angular/forms';
 import { I18NService } from '@core';
 import { STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { UserService } from '../../auth/services/user.service';
-import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ItemBarcodeType } from '../models/item-barcode-type';
 import { ItemBarcodeTypeService } from '../services/item-barcode-type.service';
@@ -17,6 +16,7 @@ import { ItemBarcodeTypeService } from '../services/item-barcode-type.service';
     standalone: false
 })
 export class InventoryItemBarcodeTypeComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
     // Table data for display
     itemBarcodeTypes: ItemBarcodeType[] = []; 
   
@@ -45,8 +45,7 @@ export class InventoryItemBarcodeTypeComponent implements OnInit {
     constructor(
       private fb: UntypedFormBuilder,
       private itemBarcodeTypeService: ItemBarcodeTypeService,
-      private warehouseService: WarehouseService,
-      @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+      private warehouseService: WarehouseService, 
       private modalService: NzModalService,
       private userService: UserService,
     ) { 

@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -26,6 +26,7 @@ import { WaveService } from '../services/wave.service';
 })
 export class OutboundCompleteWaveComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle: string;
   
   completelyStagedShipmentLines : ShipmentLine[] = [];
@@ -126,8 +127,7 @@ export class OutboundCompleteWaveComponent implements OnInit {
   currentWave: Wave | undefined;
   
   constructor(
-    private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private activatedRoute: ActivatedRoute, 
     private titleService: TitleService,
     private fb: UntypedFormBuilder,
     private waveService: WaveService,

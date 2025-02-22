@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -37,6 +37,7 @@ import { ItemService } from '../services/item.service';
     standalone: false
 })
 export class InventoryItemMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle = '';
   stepIndex = 0;
   currentItem!: Item;
@@ -83,8 +84,7 @@ export class InventoryItemMaintenanceComponent implements OnInit {
   availableABCCategories: ABCCategory[] = [];
 
   constructor(
-    private fb: UntypedFormBuilder, 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private fb: UntypedFormBuilder,  
     private titleService: TitleService,
     private messageService: NzMessageService,
     private router: Router,

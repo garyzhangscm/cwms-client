@@ -1,5 +1,4 @@
-import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { Component, ElementRef, HostListener, inject, OnInit, ViewChild } from '@angular/core'; 
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzInputDirective } from 'ng-zorro-antd/input';
@@ -20,6 +19,7 @@ import { ItemFamilyService } from '../services/item-family.service';
 })
 export class InventoryItemFamilyComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<ItemFamily>> = [
     {
       name: 'item-family.name',
@@ -79,8 +79,7 @@ export class InventoryItemFamilyComponent implements OnInit {
 
   displayOnly = false;
   constructor(
-    private itemFamilyService: ItemFamilyService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private itemFamilyService: ItemFamilyService, 
     private modalService: NzModalService,
     private messageService: NzMessageService,
     private utilService: UtilService,

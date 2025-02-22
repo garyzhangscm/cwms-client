@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
+import { UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzModalService } from 'ng-zorro-antd/modal';
@@ -21,6 +21,7 @@ import { MovementPathService } from '../services/movement-path.service';
 })
 export class InventoryMovementPathComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<MovementPath>> = [
     {
       name: 'sequence',
@@ -111,8 +112,7 @@ export class InventoryMovementPathComponent implements OnInit {
   constructor(
     private fb: UntypedFormBuilder,
     private movementPathService: MovementPathService,
-    private locationGroupService: LocationGroupService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private locationGroupService: LocationGroupService, 
     private modalService: NzModalService,
     private utilService: UtilService,
     private userService: UserService,

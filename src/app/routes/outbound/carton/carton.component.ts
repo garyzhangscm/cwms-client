@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component,  inject, OnInit,  } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -17,6 +17,7 @@ import { CartonService } from '../services/carton.service';
     standalone: false
 })
 export class OutboundCartonComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<Carton>> = [
     {
       name: 'name',
@@ -104,8 +105,7 @@ export class OutboundCartonComponent implements OnInit {
   displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
-    private cartonService: CartonService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private cartonService: CartonService, 
     private userService: UserService,
     private messageService: NzMessageService,
     private utilService: UtilService,

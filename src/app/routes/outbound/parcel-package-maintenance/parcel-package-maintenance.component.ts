@@ -1,19 +1,17 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
+import { ALAIN_I18N_TOKEN,  _HttpClient } from '@delon/theme'; 
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzUploadFile, NzUploadChangeParam } from 'ng-zorro-antd/upload';
+import { NzUploadFile,  } from 'ng-zorro-antd/upload';
 
-import { UserService } from '../../auth/services/user.service';
 import { Carrier } from '../../transportation/models/carrier';
 import { CarrierService } from '../../transportation/services/carrier.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Order } from '../models/order'; 
 import { ParcelPackage } from '../models/parcel-package';
 import { ParcelPackageStatus } from '../models/parcel-package-status.enum';
-import { OrderDocumentService } from '../services/order-document.service';
 import { OrderService } from '../services/order.service';
 import { ParcelPackageService } from '../services/parcel-package.service';
 
@@ -32,6 +30,7 @@ const getBase64 = (file: File): Promise<string | ArrayBuffer | null> =>
     standalone: false
 })
 export class OutboundParcelPackageMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   pageTitle = '';
   stepIndex = 0;
@@ -50,8 +49,7 @@ export class OutboundParcelPackageMaintenanceComponent implements OnInit {
   
   isSpinning = false;
   constructor( 
-    private activatedRoute: ActivatedRoute, 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private activatedRoute: ActivatedRoute,  
     private orderService: OrderService, 
     private warehouseService: WarehouseService,
     private parcelPackageService: ParcelPackageService,
@@ -59,7 +57,7 @@ export class OutboundParcelPackageMaintenanceComponent implements OnInit {
     private carrierService: CarrierService,
     private router: Router
   ) {
-    this.pageTitle = i18n.fanyi("parcel-package");
+    this.pageTitle = this.i18n.fanyi("parcel-package");
     
     this.currentParcelPackage = { 
     
@@ -96,8 +94,8 @@ export class OutboundParcelPackageMaintenanceComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       
       this.isSpinning = true;
-      if (params.id) {
-        this.orderService.getOrder(params.id).subscribe({
+      if (params['id']) {
+        this.orderService.getOrder(params['id']).subscribe({
           next: (orderRes) => {
             this.currentOrder = orderRes;
             this.isSpinning = false;
@@ -220,10 +218,10 @@ export class OutboundParcelPackageMaintenanceComponent implements OnInit {
   } 
   handlePreview = async (file: NzUploadFile): Promise<void> => {
     
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj!);
+    if (!file.url && !file['preview']) {
+      file['preview'] = await getBase64(file.originFileObj!);
     }
-    this.previewImage = file.url || file.preview;
+    this.previewImage = file.url || file['preview'];
     this.previewVisible = true;
   };
 

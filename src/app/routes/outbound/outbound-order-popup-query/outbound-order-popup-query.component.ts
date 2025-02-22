@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, EventEmitter, Inject, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms'; 
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
@@ -29,6 +29,7 @@ import { ShortAllocationService } from '../services/short-allocation.service';
     standalone: false
 })
 export class OutboundOutboundOrderPopupQueryComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   scrollX = '100vw';
  
   queryModal!: NzModalRef;
@@ -110,8 +111,7 @@ export class OutboundOutboundOrderPopupQueryComponent implements OnInit {
   @Input() customerName?: string = '';
 
   constructor(
-    private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private fb: UntypedFormBuilder, 
     private modalService: NzModalService,
     private orderService: OrderService,
     private customerService: CustomerService,

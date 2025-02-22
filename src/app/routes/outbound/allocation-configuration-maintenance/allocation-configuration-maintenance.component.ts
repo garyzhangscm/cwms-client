@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -28,6 +28,7 @@ import { AllocationConfigurationService } from '../services/allocation-configura
 })
 export class OutboundAllocationConfigurationMaintenanceComponent implements OnInit {
  
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentAllocationConfiguration!: AllocationConfiguration;
   allocationConfigurationTypes = AllocationConfigurationType;
   allocationConfigurationTypesKeys = Object.keys(this.allocationConfigurationTypes);
@@ -48,8 +49,7 @@ export class OutboundAllocationConfigurationMaintenanceComponent implements OnIn
   constructor(private http: _HttpClient, 
     private allocationConfigurationService: AllocationConfigurationService,
     private messageService: NzMessageService,
-    private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private router: Router, 
     private warehouseService: WarehouseService,
     private itemService: ItemService, 
     private itemFamilyService: ItemFamilyService, 
