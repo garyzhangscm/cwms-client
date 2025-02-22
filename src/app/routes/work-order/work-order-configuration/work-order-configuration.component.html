@@ -8,13 +8,13 @@
                 {{ 'work-order-configuration.material-consume-timing' | i18n }}
             </nz-form-label>
             <nz-form-control [nzSpan]="18">
-              <nz-select [(ngModel)]="currentWorkOrderConfiguration!.materialConsumeTiming">
+              <nz-select [(ngModel)]="currentWorkOrderConfiguration!.materialConsumeTiming">
                 <nz-option
-                   *ngFor="let workOrderMaterialConsumeTiming of workOrderMaterialConsumeTimings  | keys"
-                     [nzValue]="workOrderMaterialConsumeTiming.key"
-                      nzLabel="{{ 'MATERIAL-CONSUME-TIMING-' + workOrderMaterialConsumeTiming.key | i18n}}"
+                   *ngFor="let workOrderMaterialConsumeTiming of workOrderMaterialConsumeTimingsKeys"
+                     [nzValue]="workOrderMaterialConsumeTiming"
+                      nzLabel="{{ 'MATERIAL-CONSUME-TIMING-' + workOrderMaterialConsumeTiming | i18n}}"
                     ></nz-option>
-              </nz-select>            
+              </nz-select> 
 
             </nz-form-control>
         </nz-form-item>

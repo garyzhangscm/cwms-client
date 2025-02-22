@@ -1,11 +1,9 @@
 import { formatDate } from '@angular/common';
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms'; 
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 
 import { UserService } from '../../auth/services/user.service';
 import { BillableRequest } from '../models/billable-request';
@@ -70,11 +68,11 @@ export class UtilBillableRequestComponent implements OnInit {
   search(): void {
     this.isSpinning = true; 
     
-    let startTime : Date = this.searchForm.controls.dateTimeRanger.value ? 
-        this.searchForm.controls.dateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.controls.dateTimeRanger.value ? 
-        this.searchForm.controls.dateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.controls.date.value;
+    let startTime : Date = this.searchForm.value.dateTimeRanger.value ? 
+        this.searchForm.value.dateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.value.dateTimeRanger.value ? 
+        this.searchForm.value.dateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.value.date.value;
 
     this.billableRequestService
       .getBillableRequest(undefined, startTime, endTime, specificDate)

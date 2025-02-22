@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -14,6 +14,7 @@ import { SiloService } from '../services/silo.service';
 })
 export class WorkOrderSiloMonitorComponent implements OnInit {
 
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   siloeDevices: SiloDevice[] = [];
   isSpinning = false;
 
@@ -33,8 +34,7 @@ export class WorkOrderSiloMonitorComponent implements OnInit {
   displayOnly = false;
   constructor(
     private siloService: SiloService, 
-    private userService: UserService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) { 
+    private userService: UserService,) { 
       userService.isCurrentPageDisplayOnly("/work-order/silo").then(
         displayOnlyFlag => this.displayOnly = displayOnlyFlag
       );                        

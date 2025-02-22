@@ -30,6 +30,7 @@ export class WorkOrderWorkOrderCompleteKpiComponent implements OnInit {
   validWorkingTeamNames: string[] = [];
 
   kpiMeasurements = KpiMeasurement;
+  kpiMeasurementsKeys = Object.keys(this.kpiMeasurements);
   existingWorkOrderKpis: WorkOrderKpi[] = [];
 
   constructor(

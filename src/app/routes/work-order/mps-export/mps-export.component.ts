@@ -41,6 +41,7 @@ export class WorkOrderMpsExportComponent implements OnInit {
   searchForm!: UntypedFormGroup;
   exportType = MPSExportType.BY_PRODUCTION_LINE; 
   mpsExportTypes = MPSExportType;
+  mpsExportTypesKeys = Object.keys(this.mpsExportTypes);
   
   listOfAllMPSs: MasterProductionSchedule[] = [];
   mpsByItemViewData: MPSByItemView[] = [];
@@ -77,26 +78,26 @@ export class WorkOrderMpsExportComponent implements OnInit {
   readyForSearch() : boolean{
     
      
-    return  this.searchForm.controls.productionLines.value != null ||
-                this.searchForm.controls.dateRanger.value  != null
+    return  this.searchForm.value.productionLines != null ||
+                this.searchForm.value.dateRanger  != null
 
   }
   search() { 
     this.isSpinning = true;
-    let startTime : Date = this.searchForm.controls.dateRanger.value ? 
-        this.searchForm.controls.dateRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.controls.dateRanger.value ? 
-        this.searchForm.controls.dateRanger.value[1] : undefined;  
+    let startTime : Date = this.searchForm.value.dateRanger ? 
+        this.searchForm.value.dateRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.value.dateRanger ? 
+        this.searchForm.value.dateRanger.value[1] : undefined;  
 
 
     this.masterProductionScheduleService.getMasterProductionSchedules(
       undefined, undefined, undefined,
-      this.searchForm.controls.productionLines.value, undefined,     
+      this.searchForm.value.productionLines, undefined,     
       startTime, endTime,
     ).subscribe({
       next: (masterProductionScheduleRes) => {
         this.listOfAllMPSs = masterProductionScheduleRes;
-        this.filterMPS(this.searchForm.controls.productionLines.value, startTime, endTime);
+        this.filterMPS(this.searchForm.value.productionLines, startTime, endTime);
         this.setupMPSView();
         
         this.isSpinning = false;

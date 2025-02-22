@@ -21,6 +21,7 @@ import { WorkOrderConfigurationService } from '../services/work-order-configurat
 export class WorkOrderWorkOrderConfigurationComponent implements OnInit {
 
   workOrderMaterialConsumeTimings = WorkOrderMaterialConsumeTiming;
+  workOrderMaterialConsumeTimingsKeys = Object.keys(this.workOrderMaterialConsumeTimings);
 
   
   currentWorkOrderConfiguration: WorkOrderConfiguration | undefined; 

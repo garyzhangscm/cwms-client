@@ -263,13 +263,13 @@
           </nz-form-label>
           <nz-form-control [nzSpan]="16" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
             <nz-input-group nzSize="large" >
-                <nz-select  [(ngModel)]="currentAppointment!.type" style="width: 250px" >
-                        <nz-option
-                          *ngFor="let type of trailerAppointmentTypes  | keys"
-                          [nzValue]="type.key"
-                          nzLabel="{{ 'TRAILER-APPOINTMENT-TYPE-' + type.key | i18n}}"
-                        ></nz-option>
-                      </nz-select>
+                <nz-select [(ngModel)]="currentAppointment!.type" style="width: 250px" >
+                  <nz-option
+                    *ngFor="let type of trailerAppointmentTypesKeys"
+                    [nzValue]="type"
+                    nzLabel="{{ 'TRAILER-APPOINTMENT-TYPE-' + type | i18n}}"
+                  ></nz-option>
+                </nz-select>
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>

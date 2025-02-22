@@ -42,6 +42,29 @@ import {CdkDrag} from '@angular/cdk/drag-drop';
 import { UtilCustomReportComponent } from './custom-report/custom-report.component';
 import { UtilCustomReportMaintenanceComponent } from './custom-report-maintenance/custom-report-maintenance.component';
 import { UtilExecuteCustomReportComponent } from './execute-custom-report/execute-custom-report.component';   
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PageHeaderComponent } from '@delon/abc/page-header';
+import { STModule } from '@delon/abc/st';
+import { I18nPipe } from '@delon/theme';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzListModule } from 'ng-zorro-antd/list';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { CommonModule } from '@angular/common';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 
 const COMPONENTS: Array<Type<void>> = [
   UtilFileUploadComponent,  
@@ -91,7 +114,32 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzResultModule,
     DragDropModule, 
     CdkDropList, 
-    CdkDrag
+    CdkDrag,
+    STModule,    
+    NzFormModule,
+    FormsModule, 
+    ReactiveFormsModule,
+    PageHeaderComponent ,
+    I18nPipe,
+    NzSpinModule ,
+    NzDatePickerModule ,
+    NzButtonModule,
+    NzBreadCrumbModule ,
+    NzCardModule ,
+    NzSelectModule,
+    NzListModule ,
+    NzDropDownModule ,    
+    NzDividerModule,
+    NzModalModule,
+    NzTabsModule ,
+    NzTableModule ,
+    NzProgressModule,
+    CommonModule,
+    NzUploadModule ,
+    NzIconModule ,
+    NzToolTipModule ,
+    NzInputNumberModule ,
+    
   ],
   declarations: [
     ...COMPONENTS,

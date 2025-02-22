@@ -15,6 +15,9 @@ import { TractorSchedule } from '../models/tractor-schedule';
 import { TractorScheduleService } from '../services/tractor-schedule.service';
 import { TractorService } from '../services/tractor.service'; 
 
+import moment from 'moment';
+import 'moment-timezone';
+
 @Component({
     selector: 'app-transportation-tractor-schedule',
     templateUrl: './tractor-schedule.component.html',

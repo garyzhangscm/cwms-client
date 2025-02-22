@@ -78,13 +78,13 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
     this.fileList = [];
     this.showAddNewSampleQuestion = false; 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.productionLineAssignmentId) {
+      if (params['productionLineAssignmentId']) {
 
-        this.imageFileUploadUrl = `workorder/qc-samples/${params.productionLineAssignmentId}/images`;
+        this.imageFileUploadUrl = `workorder/qc-samples/${params['productionLineAssignmentId']}/images`;
 
         this.isSpinning = true;
         this.productionLineAssignmentService.getProductionLineAssignment(
-          params.productionLineAssignmentId
+          params['productionLineAssignmentId']
         ).subscribe({
           next: (productionLineAssignmentRes) => {
             this.showAddNewSampleQuestion = true; 
@@ -107,7 +107,7 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
             }
             
 
-            this.workOrderQcSampleService.getWorkOrderQcSamples(params.productionLineAssignmentId).subscribe(
+            this.workOrderQcSampleService.getWorkOrderQcSamples(params['productionLineAssignmentId']).subscribe(
               {
                 next: (workOrderQcSampleRes) => {
     
@@ -200,10 +200,10 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
     return true;
   }
   handlePreview = async (file: NzUploadFile) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj!);
+    if (!file.url && !file['preview']) {
+      file['preview'] = await getBase64(file.originFileObj!);
     }
-    this.previewImage = file.url || file.preview;
+    this.previewImage = file.url || file['preview'];
     this.previewVisible = true;
   };
   

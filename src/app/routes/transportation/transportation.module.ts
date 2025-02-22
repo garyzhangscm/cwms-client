@@ -15,6 +15,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzSelectModule } from 'ng-zorro-antd/select';
@@ -80,6 +81,7 @@ const COMPONENTS: Array<Type<void>> = [
     NzProgressModule,
     CommonModule ,
     NzToolTipModule ,
+    NzInputNumberModule ,
   ],
   declarations: COMPONENTS,
 })

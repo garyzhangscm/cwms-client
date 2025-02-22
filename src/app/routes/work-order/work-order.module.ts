@@ -3,26 +3,22 @@ import { NgModule, Type  } from '@angular/core';
 import { EllipsisModule } from '@delon/abc/ellipsis';
 import { STModule } from '@delon/abc/st';
 import { GoogleChartsModule } from 'angular-google-charts';
-import { XlsxModule } from '@delon/abc/xlsx'; 
-import { SharedModule } from '@shared';  
-import { PlotlyModule } from 'angular-plotly.js';
+import { XlsxModule } from '@delon/abc/xlsx';   
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzCalendarModule } from 'ng-zorro-antd/calendar';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzLayoutModule } from 'ng-zorro-antd/layout';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzTransferModule } from 'ng-zorro-antd/transfer';
 import { NzTreeModule } from 'ng-zorro-antd/tree';
-import { NzTreeViewModule } from 'ng-zorro-antd/tree-view'; 
-import * as PlotlyJS from 'plotly.js-dist-min';
+import { NzTreeViewModule } from 'ng-zorro-antd/tree-view';  
 
-
-import { CommonModule } from '../common/common.module';
+ 
 import { DirectivesModule } from '../directives/directives.module';
 import { InventoryModule } from '../inventory/inventory.module';
 import { UtilModule } from '../util/util.module';
@@ -86,9 +82,35 @@ import { WorkOrderFinishGoodProductivityReportComponent } from './finish-good-pr
 import { WorkOrderProductionMoldCountHistoryComponent } from './production-mold-count-history/production-mold-count-history.component';
 import { WorkOrderWorkOrderFlowComponent } from './work-order-flow/work-order-flow.component';
 import { WorkOrderWorkOrderFlowMaintenanceComponent } from './work-order-flow-maintenance/work-order-flow-maintenance.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PageHeaderComponent } from '@delon/abc/page-header';
+import { I18nPipe } from '@delon/theme';
+import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzListModule } from 'ng-zorro-antd/list';
+import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { CWMSCommonModule } from '../common/common.module';
 
-
-PlotlyModule.plotlyjs = PlotlyJS;
+import { CommonModule } from '@angular/common';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzRadioModule } from 'ng-zorro-antd/radio';
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
+ 
 
 
 const COMPONENTS: Array<Type<void>> = [
@@ -154,13 +176,11 @@ const COMPONENTS: Array<Type<void>> = [
 const COMPONENTS_NOROUNT: Array<Type<void>> = [];
 
 @NgModule({
-  imports: [
-    SharedModule,
+  imports: [ 
     WorkOrderRoutingModule, DirectivesModule,
     NzLayoutModule,
     NzDescriptionsModule,
-    NzTransferModule,
-    CommonModule,
+    NzTransferModule, 
     WarehouseLayoutModule, 
     ScrollingModule, STModule, NzStepsModule,
     NzAutocompleteModule,
@@ -174,8 +194,38 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzTreeViewModule ,
     NzTreeModule,
     EllipsisModule,
-    XlsxModule ,
-    GoogleChartsModule
+    XlsxModule , 
+    STModule,    
+    NzFormModule,
+    FormsModule, 
+    ReactiveFormsModule,
+    PageHeaderComponent ,
+    I18nPipe,
+    NzSpinModule ,
+    NzDatePickerModule ,
+    NzButtonModule,
+    NzBreadCrumbModule ,
+    NzCardModule ,
+    NzSelectModule,
+    NzListModule ,
+    NzDropDownModule ,    
+    NzDividerModule,
+    NzModalModule,
+    NzTabsModule ,
+    NzTableModule ,
+    NzProgressModule, 
+    NzUploadModule ,
+    NzIconModule ,
+    NzToolTipModule ,
+    NzInputNumberModule ,
+    CWMSCommonModule,
+    CommonModule,
+    NzInputModule ,
+    NzRadioModule ,
+    GoogleChartsModule ,
+    NzCheckboxModule ,
+    NzPopoverModule ,
+    NzBadgeModule , 
   ],
   declarations: [
     ...COMPONENTS,

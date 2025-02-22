@@ -32,6 +32,8 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
 
   currentAppointment?: TrailerAppointment;
   trailerAppointmentTypes = TrailerAppointmentType;
+  trailerAppointmentTypesKeys = Object.keys(this.trailerAppointmentTypes);
+   
   currentTrailer!: Trailer;
   isSpinning = false;
   pageTitle = '';
@@ -82,9 +84,9 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
     this.activatedRoute.queryParams.subscribe(params => {
       // if we passed in the trailer id, then get the 
       // current appointment assigned to this trailer
-      if (params.id) {
+      if (params['id']) {
         // Get the current appoint for the trailer
-        this.trailerService.getTrailerCurrentAppointment(params.id)
+        this.trailerService.getTrailerCurrentAppointment(params['id'])
           .subscribe({
             next: (trailerAppoitmentRes) => {
               if (trailerAppoitmentRes) {
@@ -100,7 +102,7 @@ export class TransportationTrailerAppointmentMaintenanceComponent implements OnI
           });
        
           // load the trailer information as well
-        this.trailerService.getTrailer(params.id)
+        this.trailerService.getTrailer(params['id'])
           .subscribe({
             next: (trailerRes) => {
               this.currentTrailer = trailerRes;  
