@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -19,6 +19,7 @@ import { IntegrationOrderService } from '../services/integration-order.service';
     standalone: false
 })
 export class IntegrationIntegrationDataOrderComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<IntegrationOrder>> = [    
     {
           name: 'id',
@@ -141,8 +142,7 @@ export class IntegrationIntegrationDataOrderComponent implements OnInit {
 
   constructor(
     private fb: UntypedFormBuilder,
-    private integrationOrderService: IntegrationOrderService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private integrationOrderService: IntegrationOrderService, 
     private utilService: UtilService,
     private messageService: NzMessageService,
   ) {}

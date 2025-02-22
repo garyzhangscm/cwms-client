@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -7,9 +7,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 
 import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
-import { ClientService } from '../../common/services/client.service';
-import { WaveStatus } from '../../outbound/models/wave-status.enum';
-import { ColumnItem } from '../../util/models/column-item';
+import { ClientService } from '../../common/services/client.service'; 
 import { WebPageTableColumnConfiguration } from '../../util/models/web-page-table-column-configuration';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service'; 
@@ -28,6 +26,7 @@ import { ItemFamilyService } from '../services/item-family.service';
 })
 export class InventoryInventoryActivityComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageName = "inventory-activity";
   tableConfigurations: {[key: string]: WebPageTableColumnConfiguration[] } = {}; 
 /**
@@ -465,8 +464,7 @@ export class InventoryInventoryActivityComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private inventoryActivityService: InventoryActivityService,
     private clientService: ClientService,
-    private itemFamilyService: ItemFamilyService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private itemFamilyService: ItemFamilyService, 
     private titleService: TitleService,
     private localCacheService: LocalCacheService,
     private utilService: UtilService,

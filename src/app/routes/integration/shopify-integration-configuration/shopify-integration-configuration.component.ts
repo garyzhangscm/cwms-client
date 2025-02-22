@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -16,6 +16,7 @@ import { ShopifyIntegrationConfigurationService } from '../services/shopify-inte
 })
 export class IntegrationShopifyIntegrationConfigurationComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   shopifyIntegrationConfigurationList: ShopifyIntegrationConfiguration[] = [];
   shopifyOAuthUrlByCompany = "";
   threePartyLogisticsFlag = false;
@@ -26,8 +27,7 @@ export class IntegrationShopifyIntegrationConfigurationComponent implements OnIn
   shopifyOAuthUrlByClient: Map<number, string> = new Map();
 
   
-  constructor(private http: _HttpClient, 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  constructor(private http: _HttpClient,  
     private shopifyIntegrationConfigurationService: ShopifyIntegrationConfigurationService, 
     private shopifyAppConfigurationService: ShopifyAppConfigurationService,
     private clientService: ClientService,

@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -7,8 +7,7 @@ import { differenceInMilliseconds } from 'date-fns';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { ColumnItem } from '../../util/models/column-item';
-import { UtilService } from '../../util/services/util.service';
-import { IntegrationReceipt } from '../models/integration-receipt';
+import { UtilService } from '../../util/services/util.service'; 
 import { IntegrationReceiptConfirmation } from '../models/integration-receipt-confirmation';
 import { IntegrationStatus } from '../models/integration-status.enum';
 import { IntegrationReceiptConfirmationService } from '../services/integration-receipt-confirmation.service';
@@ -20,6 +19,8 @@ import { IntegrationReceiptConfirmationService } from '../services/integration-r
     standalone: false
 })
 export class IntegrationIntegrationDataReceiptConfirmComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  
   listOfColumns: Array<ColumnItem<IntegrationReceiptConfirmation>> = [    
     {
           name: 'id',
@@ -176,8 +177,7 @@ export class IntegrationIntegrationDataReceiptConfirmComponent implements OnInit
 
   constructor(
     private fb: UntypedFormBuilder,
-    private integrationReceiptConfirmationService: IntegrationReceiptConfirmationService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private integrationReceiptConfirmationService: IntegrationReceiptConfirmationService, 
     private messageService: NzMessageService,
     private utilService: UtilService,
   ) {}

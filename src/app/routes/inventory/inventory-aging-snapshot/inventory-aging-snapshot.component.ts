@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -21,6 +21,7 @@ import { InventoryAgingSnapshotService } from '../services/inventory-aging-snaps
     standalone: false
 })
 export class InventoryInventoryAgingSnapshotComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
   
   inventoryAgingSnapshotStatusList = InventoryAgingSnapshotStatus;
@@ -46,8 +47,7 @@ export class InventoryInventoryAgingSnapshotComponent implements OnInit {
   searchResult = "";
 
   displayOnly = false;
-  constructor( 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+  constructor(  
     private activatedRoute: ActivatedRoute,
     private inventoryAgingSnapshotService: InventoryAgingSnapshotService,
     private messageService: NzMessageService, 

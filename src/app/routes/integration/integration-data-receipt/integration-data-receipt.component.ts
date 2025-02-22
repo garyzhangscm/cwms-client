@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -19,6 +19,7 @@ import { IntegrationReceiptService } from '../services/integration-receipt.servi
     standalone: false
 })
 export class IntegrationIntegrationDataReceiptComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<IntegrationReceipt>> = [    
     {
           name: 'id',
@@ -174,8 +175,7 @@ export class IntegrationIntegrationDataReceiptComponent implements OnInit {
 
   constructor(
     private fb: UntypedFormBuilder,
-    private integrationReceiptService: IntegrationReceiptService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private integrationReceiptService: IntegrationReceiptService, 
     private utilService: UtilService,
     private messageService: NzMessageService,
   ) {}

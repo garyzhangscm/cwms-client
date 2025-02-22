@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, inject, OnInit,  } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -10,8 +10,7 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Customer } from '../../common/models/customer';
 import { CustomerService } from '../../common/services/customer.service';
 import { ColumnItem } from '../../util/models/column-item';
-import { UtilService } from '../../util/services/util.service';
-import { IntegrationClientData } from '../models/integration-client-data';
+import { UtilService } from '../../util/services/util.service'; 
 import { IntegrationCustomerData } from '../models/integration-customer-data';
 import { IntegrationStatus } from '../models/integration-status.enum';
 import { IntegrationCustomerDataService } from '../services/integration-customer-data.service';
@@ -23,6 +22,7 @@ import { IntegrationCustomerDataService } from '../services/integration-customer
     standalone: false
 })
 export class IntegrationIntegrationDataCustomerComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<IntegrationCustomerData>> = [    
     {
           name: 'id',
@@ -232,8 +232,7 @@ export class IntegrationIntegrationDataCustomerComponent implements OnInit {
   constructor(
     private fb: UntypedFormBuilder,
     private integrationCustomerDataService: IntegrationCustomerDataService,
-    private customerService: CustomerService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private customerService: CustomerService, 
     private modalService: NzModalService,
     private utilService: UtilService,
     private messageService: NzMessageService,

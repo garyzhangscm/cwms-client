@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -15,11 +15,11 @@ import { PutawayConfiguration } from '../models/putaway-configuration';
 })
 export class PutawayConfigurationService {
   private PUTAWAY_LINE_PER_PAGE = 20;
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   constructor(
     private http: _HttpClient,
-    private warehouseService: WarehouseService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private warehouseService: WarehouseService, 
     private printingService: PrintingService,
   ) { }
 

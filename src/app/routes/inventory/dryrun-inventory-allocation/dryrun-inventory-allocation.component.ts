@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STColumn } from '@delon/abc/st';
@@ -21,6 +21,7 @@ import { InventoryService } from '../services/inventory.service';
     standalone: false
 })
 export class InventoryDryrunInventoryAllocationComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   isSpinning = false;
   
@@ -69,8 +70,7 @@ export class InventoryDryrunInventoryAllocationComponent implements OnInit {
   allocationDryRunResults: AllocationDryRunResult[] = [];
 
   constructor(
-    private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private activatedRoute: ActivatedRoute, 
     private titleService: TitleService,
     private workOrderService: WorkOrderService, 
     private router: Router,
@@ -85,10 +85,10 @@ export class InventoryDryrunInventoryAllocationComponent implements OnInit {
     // 1. outbound order 
     // 3. work order
     this.activatedRoute.queryParams.subscribe(params => {
-      this.type = params.type ? params.type : '';
+      this.type = params['type'] ? params['type'] : '';
 
-      if (params.id) {
-        this.id = params.id;
+      if (params['id']) {
+        this.id = params['id'];
       }
       this.displayInformation();
     });

@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -22,6 +22,7 @@ import { ItemFamilyService } from '../services/item-family.service';
     standalone: false
 })
 export class InventoryInventoryAdjustmentThresholdComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<InventoryAdjustmentThreshold>> = [
     {
       name: 'item',
@@ -146,8 +147,7 @@ export class InventoryInventoryAdjustmentThresholdComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private inventoryAdjustmentThresholdService: InventoryAdjustmentThresholdService,
     private clientService: ClientService,
-    private itemFamilyService: ItemFamilyService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private itemFamilyService: ItemFamilyService, 
     private modalService: NzModalService,
     private titleService: TitleService,
     private utilService: UtilService,

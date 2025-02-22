@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -9,11 +9,8 @@ import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
-import { EmergencyReplenishmentConfiguration } from '../models/emergency-replenishment-configuration';
-import { InventoryActivity } from '../models/inventory-activity';
-import { Item } from '../models/item';
-import { ItemFamily } from '../models/item-family';
-import { ItemPackageType } from '../models/item-package-type';
+import { EmergencyReplenishmentConfiguration } from '../models/emergency-replenishment-configuration'; 
+import { ItemFamily } from '../models/item-family'; 
 import { EmergencyReplenishmentConfigurationService } from '../services/emergency-replenishment-configuration.service';
 import { ItemFamilyService } from '../services/item-family.service';
 
@@ -26,6 +23,7 @@ import { ItemFamilyService } from '../services/item-family.service';
 })
 export class InventoryEmergencyReplenishmentConfigComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<EmergencyReplenishmentConfiguration>> = [
     {
       name: 'sequence',
@@ -145,8 +143,7 @@ export class InventoryEmergencyReplenishmentConfigComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private emergencyReplenishmentConfigurationService: EmergencyReplenishmentConfigurationService,
     private unitOfMeasureService: UnitOfMeasureService,
-    private itemFamilyService: ItemFamilyService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private itemFamilyService: ItemFamilyService, 
     private modalService: NzModalService,
     private titleService: TitleService,
     private utilService: UtilService,

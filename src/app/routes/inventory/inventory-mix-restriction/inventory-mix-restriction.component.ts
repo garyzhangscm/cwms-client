@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder , UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -14,8 +14,7 @@ import { LocalCacheService } from '../../util/services/local-cache.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
 import { LocationGroupType } from '../../warehouse-layout/models/location-group-type';
 import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
-import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
-import { LocationService } from '../../warehouse-layout/services/location.service';
+import { LocationGroupService } from '../../warehouse-layout/services/location-group.service'; 
 import { InventoryMixRestriction } from '../models/inventory-mix-restriction';
 import { InventoryMixRestrictionService } from '../services/inventory-mix-restriction.service';
 
@@ -27,6 +26,7 @@ import { InventoryMixRestrictionService } from '../services/inventory-mix-restri
 })
 export class InventoryInventoryMixRestrictionComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   availableClients: Client[] = [];
   searchForm!: UntypedFormGroup; 
   inventoryMixRestrictionList: InventoryMixRestriction[] = [];
@@ -58,8 +58,7 @@ export class InventoryInventoryMixRestrictionComponent implements OnInit {
   displayOnly = false;
   constructor(
     private clientService: ClientService,
-    private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private fb: UntypedFormBuilder, 
     private messageService: NzMessageService,    
     private localCacheService: LocalCacheService, 
     private activatedRoute: ActivatedRoute,

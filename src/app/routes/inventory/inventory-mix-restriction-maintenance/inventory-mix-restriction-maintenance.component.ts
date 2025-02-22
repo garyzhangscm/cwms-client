@@ -1,5 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { UntypedFormBuilder } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core'; 
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -16,8 +15,7 @@ import { LocationGroupService } from '../../warehouse-layout/services/location-g
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service'; 
 import { InventoryMixRestriction } from '../models/inventory-mix-restriction';
-import { InventoryMixRestrictionAttribute } from '../models/inventory-mix-restriction-attribute';
-import { InventoryMixRestrictionLine } from '../models/inventory-mix-restriction-line';
+import { InventoryMixRestrictionAttribute } from '../models/inventory-mix-restriction-attribute'; 
 import { InventoryMixRestrictionLineType } from '../models/inventory-mix-restriction-line-type'; 
 import { InventoryMixRestrictionService } from '../services/inventory-mix-restriction.service';
 
@@ -27,6 +25,7 @@ import { InventoryMixRestrictionService } from '../services/inventory-mix-restri
     standalone: false
 })
 export class InventoryInventoryMixRestrictionMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle = '';
   stepIndex = 0;
   currentInventoryMixRestriction!: InventoryMixRestriction;
@@ -49,8 +48,7 @@ export class InventoryInventoryMixRestrictionMaintenanceComponent implements OnI
   assignedText: string = "";
 
 
-  constructor( 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  constructor(  
     private titleService: TitleService,
     private messageService: NzMessageService,
     private router: Router, 
@@ -82,10 +80,10 @@ export class InventoryInventoryMixRestrictionMaintenanceComponent implements OnI
     this.unassignedText = this.i18n.fanyi('unassigned');
     this.assignedText = this.i18n.fanyi('assigned');
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         this.titleService.setTitle(this.i18n.fanyi('modify'));
         this.pageTitle = this.i18n.fanyi('modify');
-        this.inventoryMixRestrictionService.getInventoryMixRestriction(params.id).subscribe(
+        this.inventoryMixRestrictionService.getInventoryMixRestriction(params['id']).subscribe(
         {
           next: (inventoryMixRestrictionRes) => {
               this.currentInventoryMixRestriction = inventoryMixRestrictionRes;
@@ -238,9 +236,9 @@ export class InventoryInventoryMixRestrictionMaintenanceComponent implements OnI
     
     // setup the assigned attribute
       const currentAssignedAttributeByLPNList = [
-        ...this.attributeByLPNList.filter(item => item.direction === 'right').map(item => item.key)]; 
+        ...this.attributeByLPNList.filter(item => item.direction === 'right').map(item => item['key'])]; 
       const currentAssignedAttributeByLocationList = [
-        ...this.attributeByLocationList.filter(item => item.direction === 'right').map(item => item.key)]; 
+        ...this.attributeByLocationList.filter(item => item.direction === 'right').map(item => item['key'])]; 
 
       this.currentInventoryMixRestriction.byLPNLines =  currentAssignedAttributeByLPNList.map(
         inventoryAttribute => {    

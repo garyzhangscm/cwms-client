@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -8,8 +8,7 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
 import { PrintPageSize } from '../../common/models/print-page-size.enum';
-import { PrintingService } from '../../common/services/printing.service';
-import { Receipt } from '../../inbound/models/receipt';
+import { PrintingService } from '../../common/services/printing.service'; 
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { ReportType } from '../../report/models/report-type.enum';
 import { ColumnItem } from '../../util/models/column-item';
@@ -38,6 +37,7 @@ import { ItemService } from '../services/item.service';
 })
 export class InventoryCycleCountMaintenanceComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   listOfOpenCycleCountTableColumns: Array<ColumnItem<CycleCountRequest>> = [
     {
@@ -344,8 +344,7 @@ export class InventoryCycleCountMaintenanceComponent implements OnInit {
   isSpinning = false;
 
   constructor(
-    private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private activatedRoute: ActivatedRoute, 
     private titleService: TitleService,
     private fb: UntypedFormBuilder,
     private cycleCountBatchService: CycleCountBatchService,
