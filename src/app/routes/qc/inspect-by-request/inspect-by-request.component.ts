@@ -5,8 +5,7 @@ import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
-
-import { Inventory } from '../../inventory/models/inventory';
+ 
 import { ItemSampling } from '../../inventory/models/item-sampling';
 import { InventoryService } from '../../inventory/services/inventory.service';
 import { ItemSamplingService } from '../../inventory/services/item-sampling.service';
@@ -58,8 +57,8 @@ export class QcInspectByRequestComponent implements OnInit {
   ngOnInit(): void {
  
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.ids) { 
-        this.qcInspectionRequestService.getQCInspectionRequest(params.ids)
+      if (params['ids']) { 
+        this.qcInspectionRequestService.getQCInspectionRequest(params['ids'])
         .subscribe({
           next: (qcInspectionRequestRes) => {
             this.qcInspectionRequest = qcInspectionRequestRes;

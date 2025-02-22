@@ -111,10 +111,10 @@
                             <nz-select style="width: 150px" *ngIf="data.id === undefined"
                                 [(ngModel)]="data.qcRuleItemType"  >
                               <nz-option
-                                  *ngFor="let qcRuleItemType of qcRuleItemTypes  | keys"
-                                  [nzValue]="qcRuleItemType.key"
-                                  nzLabel="{{ 'QC-RULE-ITEM-TYPE-' + qcRuleItemType.key | i18n}}"
-                                ></nz-option> 
+                                  *ngFor="let qcRuleItemType of qcRuleItemTypesKeys"
+                                  [nzValue]="qcRuleItemType"
+                                  nzLabel="{{ 'QC-RULE-ITEM-TYPE-' + qcRuleItemType | i18n}}"
+                              ></nz-option> 
                             </nz-select>
 
                             <span *ngIf="data.id">
@@ -126,10 +126,10 @@
                             <nz-select style="width: 150px" *ngIf="data.id === undefined"
                                 [(ngModel)]="data.qcRuleItemComparator"  >
                               <nz-option
-                                  *ngFor="let qcRuleItemComparator of qcRuleItemComparators  | keys"
-                                  [nzValue]="qcRuleItemComparator.key"
-                                  nzLabel="{{ 'QC-RULE-ITEM-COMPARATOR-' + qcRuleItemComparator.key | i18n}}"
-                                ></nz-option> 
+                                  *ngFor="let qcRuleItemComparator of qcRuleItemComparatorsKeys"
+                                  [nzValue]="qcRuleItemComparator"
+                                  nzLabel="{{ 'QC-RULE-ITEM-COMPARATOR-' + qcRuleItemComparator | i18n}}"
+                              ></nz-option> 
                             </nz-select>
 
                             <span *ngIf="data.id">

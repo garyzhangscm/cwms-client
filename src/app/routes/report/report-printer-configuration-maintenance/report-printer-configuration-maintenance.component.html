@@ -34,8 +34,8 @@
                 <nz-form-control [nzSm]="14" [nzXs]="24">
                     <nz-select nzAllowClear [(ngModel)]="currentReportPrinterConfiguration.reportType"
                         style="width: 200px;">
-                        <nz-option *ngFor="let reportType of reportTypes | keys" nzValue="{{ reportType.key }}"
-                            nzLabel="{{ 'REPORT-TYPE-' + reportType.key | i18n }}">
+                        <nz-option *ngFor="let reportType of reportTypesKeys" nzValue="{{ reportType }}"
+                            nzLabel="{{ 'REPORT-TYPE-' + reportType | i18n }}">
                         </nz-option>
                     </nz-select>
                 </nz-form-control>

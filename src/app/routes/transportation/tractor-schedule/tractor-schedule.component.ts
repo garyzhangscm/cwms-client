@@ -3,9 +3,8 @@ import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { startOfDay, endOfDay,  isWithinInterval,parseISO, toDate  } from 'date-fns';
-// import * as moment from 'moment-timezone'; 
-import moment from 'moment-timezone'; 
+import { startOfDay, endOfDay,  isWithinInterval,parseISO, toDate  } from 'date-fns'; 
+
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { DateTimeService } from '../../util/services/date-time.service';
@@ -54,8 +53,8 @@ export class TransportationTractorScheduleComponent implements OnInit {
  
     this.isSpinning = true;
     this.activatedRoute.queryParams.subscribe(params => { 
-      if (params.id) { 
-        this.tractorService.getTractor(params.id).subscribe(
+      if (params['id']) { 
+        this.tractorService.getTractor(params['id']).subscribe(
           {
             next: (tractorRes) => {
               this.currentTractor = tractorRes; 
@@ -63,7 +62,7 @@ export class TransportationTractorScheduleComponent implements OnInit {
             }
           }
         )
-        this.tractorScheduleService.getTractorSchedules(params.id).subscribe({
+        this.tractorScheduleService.getTractorSchedules(params['id']).subscribe({
           next: (tractorScheduleRes) => {
 
             this.tractorSchedules = tractorScheduleRes;

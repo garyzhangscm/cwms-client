@@ -20,7 +20,11 @@ import { QcRuleService } from '../services/qc-rule.service';
 })
 export class QcQcRuleMaintenanceComponent implements OnInit {
   qcRuleItemTypes = QCRuleItemType;
+  qcRuleItemTypesKeys = Object.keys(this.qcRuleItemTypes);
+   
   qcRuleItemComparators = QCRuleItemComparator;
+  qcRuleItemComparatorsKeys = Object.keys(this.qcRuleItemComparators);
+   
 
   currentQCRule?: QCRule;
   pageTitle: string;
@@ -47,9 +51,9 @@ export class QcQcRuleMaintenanceComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         // Get the production line by ID
-        this.qcRuleService.getQCRule(params.id)
+        this.qcRuleService.getQCRule(params['id'])
           .subscribe(qcRuleRes => {
             this.currentQCRule = qcRuleRes; 
             this.qcRuleValidateStatus = 'success'; 
