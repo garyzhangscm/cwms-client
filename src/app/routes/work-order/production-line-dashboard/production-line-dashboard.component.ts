@@ -1,10 +1,7 @@
-import {  formatDate } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, Inject, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {  Component, ElementRef, inject, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import {  FormBuilder, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { I18NService } from '@core';
-import { STComponent, STColumn } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { differenceInSeconds} from 'date-fns';
+import { I18NService } from '@core'; 
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 import { Subscription, interval } from 'rxjs';
@@ -35,6 +32,7 @@ import { WorkOrderService } from '../services/work-order.service';
 })
 export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDestroy { 
    
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
   productionLineType = "All";
   productionLineTypes: ProductionLineType[] = [];
@@ -96,8 +94,7 @@ export class WorkOrderProductionLineDashboardComponent implements OnInit , OnDes
     private productionLineService: ProductionLineService, 
     private productionLineTypeService: ProductionLineTypeService,
     private systemControlledNumberService: SystemControlledNumberService,
-    private workOrderService: WorkOrderService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private workOrderService: WorkOrderService, 
     private workOrderProduceTransactionService: WorkOrderProduceTransactionService,
     private modalService: NzModalService,
     private warehouseService: WarehouseService,

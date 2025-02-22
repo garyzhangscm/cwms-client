@@ -1,5 +1,5 @@
 import {  formatDate } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core'; 
+import { Component, inject, OnDestroy, OnInit } from '@angular/core'; 
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { differenceInSeconds} from 'date-fns';
@@ -21,6 +21,7 @@ import { WorkOrderConfigurationService } from '../services/work-order-configurat
 })
 export class WorkOrderProductionLineStatusDisplayComponent implements OnInit, OnDestroy {
  
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   public graph = {
     data: [ 
         { values: [90, 20],
@@ -129,8 +130,7 @@ export class WorkOrderProductionLineStatusDisplayComponent implements OnInit, On
    */
  
   displayOnly = false;
-  constructor(private http: _HttpClient, 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+  constructor(private http: _HttpClient,  
     private productionLineService: ProductionLineService, 
     private userService: UserService,
     private workOrderConfigurationService: WorkOrderConfigurationService,

@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component,   Inject, OnInit,  } from '@angular/core';
+import { Component,   inject, OnInit,  } from '@angular/core';
 import { UntypedFormBuilder,  } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { ALAIN_I18N_TOKEN, TitleService } from '@delon/theme';
@@ -25,6 +25,7 @@ import { LocationGroupService } from '../services/location-group.service';
     standalone: false
 })
 export class WarehouseLayoutLocationGroupComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   listOfColumns: Array<ColumnItem<LocationGroup>> = [
     {
@@ -211,7 +212,6 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private locationGroupTypeService: LocationGroupTypeService,
     private locationGroupService: LocationGroupService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private messageService: NzMessageService,
     private activatedRoute: ActivatedRoute,

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component,  inject, OnInit,  } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -8,8 +8,7 @@ import { NzModalService } from 'ng-zorro-antd/modal';
 import { UserService } from '../../auth/services/user.service';
 import { Warehouse } from '../models/warehouse';
 import { WarehouseService } from '../services/warehouse.service';
-
-import { type } from 'os';
+ 
 
 @Component({
     selector: 'app-warehouse-layout-warehouse',
@@ -17,6 +16,7 @@ import { type } from 'os';
     standalone: false
 })
 export class WarehouseLayoutWarehouseComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   warehouses: Warehouse[] = [];
   isSpinning = false;
   // Edit form on modal
@@ -27,7 +27,6 @@ export class WarehouseLayoutWarehouseComponent implements OnInit {
     private warehouseService: WarehouseService,
     private modalService: NzModalService,
     private message: NzMessageService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private userService: UserService,
   ) { 
     userService.isCurrentPageDisplayOnly("/warehouse-layout/warehouse").then(

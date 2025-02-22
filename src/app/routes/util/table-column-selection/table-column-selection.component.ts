@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Inject, Input, OnInit, Output, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, TemplateRef } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import {CdkDragDrop, CdkDropList, CdkDrag, moveItemInArray} from '@angular/cdk/drag-drop';
+import {CdkDragDrop,   moveItemInArray} from '@angular/cdk/drag-drop';
 import { WebPageTableColumnConfiguration } from '../models/web-page-table-column-configuration';
 import { WebPageTableColumnConfigurationService } from '../services/web-page-table-column-configuration.service';
 import { tap } from 'rxjs';
@@ -17,6 +17,7 @@ import { UserService } from '../../auth/services/user.service';
     standalone: false
 })
 export class UtilTableColumnSelectionComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
  
   columnChoosingModal!: NzModalRef;
    /**
@@ -87,7 +88,7 @@ export class UtilTableColumnSelectionComponent implements OnInit {
       private companyService: CompanyService,
       private userService: UserService,
       private webPageTableColumnConfigurationService: WebPageTableColumnConfigurationService,
-      @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) { }
+      ) { }
     // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
     ngOnInit() {
     } 

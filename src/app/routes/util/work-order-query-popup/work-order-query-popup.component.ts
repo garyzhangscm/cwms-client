@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, EventEmitter, Inject, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STData } from '@delon/abc/st';
@@ -18,6 +18,7 @@ import { UtilService } from '../services/util.service';
 })
 export class UtilWorkOrderQueryPopupComponent implements OnInit {
   scrollX = '100vw';
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   
   
   @ViewChild('st', { static: false })
@@ -81,7 +82,6 @@ export class UtilWorkOrderQueryPopupComponent implements OnInit {
   constructor(
     private fb: UntypedFormBuilder,
     private workOrderService: WorkOrderService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService,
     private utilService: UtilService,
   ) { }

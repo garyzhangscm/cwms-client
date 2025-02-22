@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -13,11 +13,11 @@ import { LocationGroupService } from '../services/location-group.service';
     standalone: false
 })
 export class WarehouseLayoutLocationGroupMaintenanceConfirmComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentLocationGroup!: LocationGroup;
   isSpinning = false;
   pageTitle: string;
   constructor(
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private locationGroupService: LocationGroupService,
     private router: Router,

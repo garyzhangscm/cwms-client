@@ -1,8 +1,7 @@
 import { HttpParams } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
-import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { locale } from 'moment-timezone';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -15,10 +14,10 @@ import { ProductionLineAssignment } from '../models/production-line-assignment';
 })
 export class ProductionLineAssignmentService {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   constructor(
     private http: _HttpClient,
-    private warehouseService: WarehouseService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) { }
+    private warehouseService: WarehouseService,) { }
 
 
   getProductionLineAssignments(productionLineId?: number, productionLineIds?: string): Observable<ProductionLineAssignment[]> {

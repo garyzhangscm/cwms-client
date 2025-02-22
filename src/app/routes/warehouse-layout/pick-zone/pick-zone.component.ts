@@ -1,14 +1,11 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { NzModalRef } from 'ng-zorro-antd/modal';
-import { UserService } from '../../auth/services/user.service';
-import { LocationGroup } from '../models/location-group';
-import { LocationGroupType } from '../models/location-group-type';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
+import { UserService } from '../../auth/services/user.service'; 
 import { PickZone } from '../models/pick-zone';
 import { PickZoneService } from '../services/pick-zone.service';
 
@@ -20,6 +17,7 @@ import { PickZoneService } from '../services/pick-zone.service';
 })
 export class WarehouseLayoutPickZoneComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false; 
   
   pickZones: PickZone[] = []; 
@@ -46,8 +44,7 @@ export class WarehouseLayoutPickZoneComponent implements OnInit {
   constructor(
     private fb: UntypedFormBuilder,
     private titleService: TitleService,
-    private pickZoneService: PickZoneService, 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,    
+    private pickZoneService: PickZoneService,  
     private userService: UserService,
     private activatedRoute: ActivatedRoute
   ) { 

@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -9,12 +9,10 @@ import { UnitType } from '../../common/models/unit-type';
 import { UnitService } from '../../common/services/unit.service';
 import { LocationGroup } from '../models/location-group'; 
 import { PickZone } from '../models/pick-zone';
-import { WarehouseLocation } from '../models/warehouse-location';
-import { CompanyService } from '../services/company.service'; 
+import { WarehouseLocation } from '../models/warehouse-location'; 
 import { LocationGroupService } from '../services/location-group.service';
 import { LocationService } from '../services/location.service';
-import { PickZoneService } from '../services/pick-zone.service';
-import { WarehouseService } from '../services/warehouse.service';
+import { PickZoneService } from '../services/pick-zone.service'; 
 
 @Component({
     selector: 'app-warehouse-layout-location-maintenance',
@@ -23,6 +21,7 @@ import { WarehouseService } from '../services/warehouse.service';
 })
 export class WarehouseLayoutLocationMaintenanceComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle = '';
   stepIndex = 0;
   currentLocation!: WarehouseLocation;   
@@ -42,8 +41,7 @@ export class WarehouseLayoutLocationMaintenanceComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService, 
     private locationGroupService: LocationGroupService,
-    private pickZoneService: PickZoneService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private pickZoneService: PickZoneService, 
     private locationService: LocationService,
     private messageService: NzMessageService,
     private router: Router,
@@ -84,8 +82,8 @@ export class WarehouseLayoutLocationMaintenanceComponent implements OnInit {
 
         // setup the location structure
         this.activatedRoute.queryParams.subscribe(params => {
-          if (params.id) {
-            this.locationService.getLocation(params.id).subscribe(
+          if (params['id']) {
+            this.locationService.getLocation(params['id']).subscribe(
               {
     
                 next: (locationRes) => {

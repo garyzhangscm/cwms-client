@@ -1,7 +1,6 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
-import { I18NService } from '@core';
-import { STComponent, STColumn } from '@delon/abc/st';
+import { I18NService } from '@core'; 
 import { XlsxService } from '@delon/abc/xlsx';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
 import * as XLSX from 'xlsx';
@@ -36,6 +35,7 @@ export interface MPSByItemView{
 })
 export class WorkOrderMpsExportComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
   availableProductionLines: ProductionLine[] = []; 
   searchForm!: UntypedFormGroup;
@@ -48,8 +48,7 @@ export class WorkOrderMpsExportComponent implements OnInit {
   
   constructor(private http: _HttpClient, 
     private fb: UntypedFormBuilder,
-    private masterProductionScheduleService: MasterProductionScheduleService,  
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private masterProductionScheduleService: MasterProductionScheduleService,   
     private productionLineService: ProductionLineService, private xlsx: XlsxService) { }
 
   ngOnInit(): void { 

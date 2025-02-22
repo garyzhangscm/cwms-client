@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -16,6 +16,7 @@ import { LocationGroupTypeService } from '../services/location-group-type.servic
     standalone: false
 })
 export class WarehouseLayoutLocationGroupMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle: string;
   locationGroupForm!: UntypedFormGroup;
   selectedLocationGroupType!: LocationGroupType;
@@ -27,8 +28,7 @@ export class WarehouseLayoutLocationGroupMaintenanceComponent implements OnInit 
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private router: Router, 
     private titleService: TitleService,
     private fb: UntypedFormBuilder,
     private locationGroupTypeService: LocationGroupTypeService,
@@ -59,7 +59,7 @@ export class WarehouseLayoutLocationGroupMaintenanceComponent implements OnInit 
       // We are in process of adding a location Group
       // and we already fill in all the information. Let's
       // load the location group from session storage
-      if (params.inprocess === 'true') {
+      if (params['inprocess'] === 'true') {
         const locationGroup = JSON.parse(sessionStorage.getItem('location-group-maintenance.location-group')!);
 
         this.locationGroupForm.patchValue(locationGroup);

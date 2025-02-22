@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute , Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -38,6 +38,7 @@ interface ProductionLineCapacityItemData {
 })
 export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentProductionLine!: ProductionLine;
   stepIndex = 0;
   pageTitle: string;
@@ -66,8 +67,7 @@ export class WorkOrderProductionLineMaintenanceComponent implements OnInit {
     private locationService: LocationService,
     private productionLineService: ProductionLineService,
     private messageService: NzMessageService,
-    private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private router: Router, 
     private printingService: PrintingService,
     private activatedRoute: ActivatedRoute,
     private unitOfMeasureService: UnitOfMeasureService,

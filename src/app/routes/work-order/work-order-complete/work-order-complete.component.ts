@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -24,6 +24,7 @@ import { WorkOrderService } from '../services/work-order.service';
     standalone: false
 })
 export class WorkOrderWorkOrderCompleteComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   workOrderCompleteTransaction!: WorkOrderCompleteTransaction;
 
   currentWorkOrder!: WorkOrder;
@@ -37,8 +38,7 @@ export class WorkOrderWorkOrderCompleteComponent implements OnInit {
   mapOfWorkOrderLineStatus: { [key: string]: boolean } = {};
 
   constructor(
-    private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private activatedRoute: ActivatedRoute, 
     private titleService: TitleService,
     private workOrderService: WorkOrderService,
     private inventoryStatusService: InventoryStatusService,

@@ -1,9 +1,8 @@
  
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { I18NService } from '@core';
 import { STColumn } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN,  _HttpClient } from '@delon/theme';
-import * as moment from 'moment'; 
+import { ALAIN_I18N_TOKEN,  _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { interval } from 'rxjs';
 import { Subscription } from 'rxjs/internal/Subscription';
@@ -25,6 +24,7 @@ import { WorkOrderConfigurationService } from '../services/work-order-configurat
     standalone: false
 })
 export class WorkOrderFinishGoodProductivityReportComponent implements OnInit, OnDestroy {  
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   itemProductivityReports: ItemProductivityReport[] = [];
   itemFamilies: ItemFamily[] = [];
   selectedItemFamily = "All";
@@ -70,8 +70,7 @@ export class WorkOrderFinishGoodProductivityReportComponent implements OnInit, O
   constructor(private http: _HttpClient, 
     private itemProductivityReportService: ItemProductivityReportService,  
     private itemFamilyService: ItemFamilyService,
-    private messageService: NzMessageService,  
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,  
+    private messageService: NzMessageService,   
     private workOrderConfigurationService: WorkOrderConfigurationService,
     private dateTimeService: DateTimeService,
     private warehouseService: WarehouseService,
