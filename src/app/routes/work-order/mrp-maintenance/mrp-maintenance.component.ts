@@ -1,6 +1,5 @@
-import { SelectionModel } from '@angular/cdk/collections';
-import { FlatTreeControl } from '@angular/cdk/tree';
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+ 
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -9,13 +8,10 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { differenceInCalendarDays, getMonth, parseISO } from 'date-fns';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { NzTreeNodeOptions } from 'ng-zorro-antd/tree';
-import { NzTreeFlatDataSource, NzTreeFlattener } from 'ng-zorro-antd/tree-view';
-
-import { Item } from '../../inventory/models/item';
+import { NzTreeNodeOptions } from 'ng-zorro-antd/tree'; 
+ 
 import { ItemService } from '../../inventory/services/item.service';
-import { LocalCacheService } from '../../util/services/local-cache.service';
-import { UtilService } from '../../util/services/util.service';
+import { LocalCacheService } from '../../util/services/local-cache.service'; 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { BillOfMaterial } from '../models/bill-of-material';
 import { MasterProductionSchedule } from '../models/master-production-schedule';
@@ -36,6 +32,7 @@ import { MaterialRequirementsPlanningService } from '../services/material-requir
 })
 export class WorkOrderMrpMaintenanceComponent implements OnInit {
 
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentMRP?: MaterialRequirementsPlanning;
   currentMPS?: MasterProductionSchedule;
   pageTitle = "MRP.maintenance";
@@ -61,7 +58,6 @@ export class WorkOrderMrpMaintenanceComponent implements OnInit {
 
   constructor(private http: _HttpClient,
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private materialRequirementsPlanningService: MaterialRequirementsPlanningService,
     private masterProductionScheduleService: MasterProductionScheduleService,

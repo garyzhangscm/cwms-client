@@ -1,19 +1,14 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms'; 
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
 
-import { UserService } from '../../auth/services/user.service';
-import { QcInspectionRequest } from '../../qc/models/qc-inspection-request';
+import { UserService } from '../../auth/services/user.service'; 
 import { ProductionLine } from '../models/production-line';
 import { WorkOrderLabor } from '../models/work-order-labor';
-import { ProductionLineService } from '../services/production-line.service';
-import { WorkOrderLaborActivityHistoryService } from '../services/work-order-labor-activity-history.service';
+import { ProductionLineService } from '../services/production-line.service'; 
 import { WorkOrderLaborService } from '../services/work-order-labor.service';
 
 @Component({
@@ -24,11 +19,11 @@ import { WorkOrderLaborService } from '../services/work-order-labor.service';
 })
 export class WorkOrderLaborComponent implements OnInit {
 
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   
   displayOnly = false;
   constructor(
-    private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private fb: UntypedFormBuilder, 
     private workOrderLaborService: WorkOrderLaborService, 
     private productionLineService: ProductionLineService, 
     private userService: UserService,
@@ -73,9 +68,9 @@ export class WorkOrderLaborComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     this.workOrderLaborService.getWorkOrderLabors(
-      this.searchForm.controls.productionLine.value,    
+      this.searchForm.value.productionLine,    
       undefined,  
-      this.searchForm.controls.username.value).subscribe(
+      this.searchForm.value.username).subscribe(
       {
         next: (workOrderLaborRes) => {
           this.listOfLabors = workOrderLaborRes;

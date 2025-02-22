@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
-import { Component, EventEmitter, Inject, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
+import { Component, EventEmitter, inject, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
+import { UntypedFormGroup, UntypedFormBuilder,  } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -16,6 +16,7 @@ import { UserService } from '../services/user.service';
     standalone: false
 })
 export class AuthUserQueryPopupComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   scrollX = '100vw';
 
   
@@ -48,7 +49,6 @@ export class AuthUserQueryPopupComponent implements OnInit {
   constructor(
     private fb: UntypedFormBuilder,
     private userService: UserService, 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private modalService: NzModalService, 
   ) { 
    }

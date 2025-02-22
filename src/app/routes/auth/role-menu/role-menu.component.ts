@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -18,6 +18,7 @@ import { RoleService } from '../services/role.service';
     standalone: false
 })
 export class AuthRoleMenuComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle: string;
   webMenuList: TransferItem[] = [];
   mobileMenuList: TransferItem[] = [];
@@ -33,7 +34,6 @@ export class AuthRoleMenuComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private fb: UntypedFormBuilder,
     private roleService: RoleService,
@@ -50,9 +50,9 @@ export class AuthRoleMenuComponent implements OnInit {
     this.titleService.setTitle(this.i18n.fanyi('page.auth.role.menus'));
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.roleId) {
+      if (params['roleId']) {
         // Get the role and initiate the menu assignment
-        this.roleService.getRole(params.roleId).subscribe(roleRes => {
+        this.roleService.getRole(params['roleId']).subscribe(roleRes => {
           this.currentRole = roleRes;
           this.initMenuAssignment();
           this.newRole = false;
@@ -155,21 +155,21 @@ export class AuthRoleMenuComponent implements OnInit {
     // this.accessibleMenuIds: arrays of number
     // when compare the 2 array, we may need to conver the string to number before the comparasion.
     this.processingMenu = true;
-    const currentAssignedMenuIds = [...this.webMenuList.filter(item => item.direction === 'right').map(item => item.key), 
-       ...this.mobileMenuList.filter(item => item.direction === 'right').map(item => item.key)]; 
+    const currentAssignedMenuIds = [...this.webMenuList.filter(item => item.direction === 'right').map(item => item['key']), 
+       ...this.mobileMenuList.filter(item => item.direction === 'right').map(item => item['key'])]; 
 
        
    //  const newlyAssignedFullyFunctionalMenuIds = currentAssignedMenuIds.filter(
    //    id => !this.accessibleMenuIds.some(accessibleMenuId => accessibleMenuId === +id) 
    //  );
    const newlyAssignedFullyFunctionalWebMenuIds = 
-      [...this.webMenuList.filter(item => item.direction === 'right' && !item.displayOnly).map(item => item.key)]; 
+      [...this.webMenuList.filter(item => item.direction === 'right' && !item['displayOnly']).map(item => item['key'])]; 
    
     //  const newlyAssignedDisplayOnlyMenuIds = currentAssignedMenuIds.filter(
     //    id => !this.accessibleMenuIds.some(accessibleMenuId => accessibleMenuId === +id),
     //  );
    const newlyAssignedDisplayOnlyWebMenuIds = 
-       [...this.webMenuList.filter(item => item.direction === 'right' && item.displayOnly).map(item => item.key)]; 
+       [...this.webMenuList.filter(item => item.direction === 'right' && item['displayOnly']).map(item => item['key'])]; 
 
     const newlyDeassignedMenuIds = 
     [...this.fullyAccessibleMenuIds.filter(
@@ -302,16 +302,16 @@ export class AuthRoleMenuComponent implements OnInit {
   goToNextPage(): void {
     
     const currentAssignedMobileMenuIds = [
-       ...this.mobileMenuList.filter(item => item.direction === 'right').map(item => item.key)]; 
+       ...this.mobileMenuList.filter(item => item.direction === 'right').map(item => item['key'])]; 
  
     const newlyAssignedFullyFunctionalWebMenuIds = 
-        [...this.webMenuList.filter(item => item.direction === 'right' && !item.displayOnly).map(item => item.key)]; 
+        [...this.webMenuList.filter(item => item.direction === 'right' && !item['displayOnly']).map(item => item['key'])]; 
     
       //  const newlyAssignedDisplayOnlyMenuIds = currentAssignedMenuIds.filter(
       //    id => !this.accessibleMenuIds.some(accessibleMenuId => accessibleMenuId === +id),
       //  );
     const newlyAssignedDisplayOnlyWebMenuIds = 
-        [...this.webMenuList.filter(item => item.direction === 'right' && item.displayOnly).map(item => item.key)];
+        [...this.webMenuList.filter(item => item.direction === 'right' && item['displayOnly']).map(item => item['key'])];
 
     this.currentRole!.roleMenus = [];
     this.allMenus!.forEach(menuGroup => {       

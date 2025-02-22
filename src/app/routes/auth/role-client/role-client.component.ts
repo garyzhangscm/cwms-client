@@ -1,8 +1,8 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { ALAIN_I18N_TOKEN, Menu, TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN,  TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { TransferItem } from 'ng-zorro-antd/transfer';
 
@@ -18,6 +18,7 @@ import { RoleService } from '../services/role.service';
     standalone: false
 })
 export class AuthRoleClientComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle: string;
   clientsList: TransferItem[] = []; 
   currentRole: Role | undefined; 
@@ -37,7 +38,6 @@ export class AuthRoleClientComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private localCacheService: LocalCacheService,
     private titleService: TitleService,
     private fb: UntypedFormBuilder,
@@ -56,9 +56,9 @@ export class AuthRoleClientComponent implements OnInit {
     this.titleService.setTitle(this.i18n.fanyi('page.auth.role.clients'));
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.roleId) {
+      if (params['roleId']) {
         // Get the role and initiate the menu assignment
-        this.roleService.getRole(params.roleId).subscribe(roleRes => {
+        this.roleService.getRole(params['roleId']).subscribe(roleRes => {
           this.currentRole = roleRes;
           this.initClientAssignment();
           this.newRole = false;
@@ -144,7 +144,7 @@ export class AuthRoleClientComponent implements OnInit {
 
   assignClients(): void { 
     this.isSpinning = true;
-    const currentAssignedClientIds = [...this.clientsList.filter(item => item.direction === 'right').map(item => item.key)]; 
+    const currentAssignedClientIds = [...this.clientsList.filter(item => item.direction === 'right').map(item => item['key'])]; 
 
        
     const newlyAssignedClientIds = currentAssignedClientIds.filter(
@@ -177,7 +177,7 @@ export class AuthRoleClientComponent implements OnInit {
   goToNextPage(): void {
     this.isSpinning = true;
     
-    const currentAssignedClientIds = [...this.clientsList.filter(item => item.direction === 'right').map(item => item.key)]; 
+    const currentAssignedClientIds = [...this.clientsList.filter(item => item.direction === 'right').map(item => item['key'])]; 
 
     // refresh the client access
     this.currentRole!.clientAccesses = [];

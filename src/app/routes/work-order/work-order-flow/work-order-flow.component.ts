@@ -1,43 +1,16 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, UntypedFormControl } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, inject, OnInit,  ViewChild } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup,  } from '@angular/forms';
+import { Router,  } from '@angular/router';
 import { I18NService } from '@core';
-import { STComponent, STColumn, STChange, STData } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, TitleService, User, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { UserService } from '../../auth/services/user.service';
-import { PrintPageOrientation } from '../../common/models/print-page-orientation.enum';
-import { PrintPageSize } from '../../common/models/print-page-size.enum';
-import { PrintingService } from '../../common/services/printing.service';
-import { Inventory } from '../../inventory/models/inventory';
-import { InventoryConfiguration } from '../../inventory/models/inventory-configuration';
-import { InventoryConfigurationService } from '../../inventory/services/inventory-configuration.service';
-import { InventoryService } from '../../inventory/services/inventory.service';
-import { PickGroupType } from '../../outbound/models/pick-group-type.enum';
-import { PickStatus } from '../../outbound/models/pick-status.enum';
-import { PickWork } from '../../outbound/models/pick-work';
-import { Shipment } from '../../outbound/models/shipment';
-import { ShipmentLine } from '../../outbound/models/shipment-line';
-import { ShipmentStatus } from '../../outbound/models/shipment-status.enum';
-import { ShortAllocation } from '../../outbound/models/short-allocation';
-import { ShortAllocationStatus } from '../../outbound/models/short-allocation-status.enum';
-import { Wave } from '../../outbound/models/wave';
-import { WaveStatus } from '../../outbound/models/wave-status.enum';
-import { BulkPickService } from '../../outbound/services/bulk-pick.service';
-import { PickListService } from '../../outbound/services/pick-list.service';
-import { PickService } from '../../outbound/services/pick.service';
-import { ShipmentLineService } from '../../outbound/services/shipment-line.service';
-import { ShortAllocationService } from '../../outbound/services/short-allocation.service';
-import { WaveService } from '../../outbound/services/wave.service';
-import { ReportOrientation } from '../../report/models/report-orientation.enum';
-import { ReportType } from '../../report/models/report-type.enum';
+import { STComponent, STColumn, STChange,  } from '@delon/abc/st';
+import { ALAIN_I18N_TOKEN,  _HttpClient } from '@delon/theme';
+import { NzMessageService } from 'ng-zorro-antd/message'; 
+import { UserService } from '../../auth/services/user.service';   
 import { WebPageTableColumnConfiguration } from '../../util/models/web-page-table-column-configuration';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
-import { CompanyService } from '../../warehouse-layout/services/company.service';
-import { WorkTaskService } from '../../work-task/services/work-task.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service'; 
 import { WorkOrderFlow } from '../models/work-order-flow';
 import { WorkOrderFlowLine } from '../models/work-order-flow-line';
 import { WorkOrderFlowService } from '../services/work-order-flow.service';
@@ -49,6 +22,7 @@ import { WorkOrderFlowService } from '../services/work-order-flow.service';
 })
 export class WorkOrderWorkOrderFlowComponent implements OnInit {
 
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageName = "work-order-flow";
   tableConfigurations: {[key: string]: WebPageTableColumnConfiguration[] } = {}; 
 
@@ -111,7 +85,6 @@ export class WorkOrderWorkOrderFlowComponent implements OnInit {
   displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private workOrderFlowService: WorkOrderFlowService,  
     private companyService: CompanyService,
     private messageService: NzMessageService,
@@ -364,8 +337,8 @@ export class WorkOrderWorkOrderFlowComponent implements OnInit {
   search(): void {
     this.isSpinning = true;
     this.searchResult = '';
-    this.workOrderFlowService.getWorkOrderFlows(this.searchForm.controls.name.value, 
-      this.searchForm.controls.description.value, 
+    this.workOrderFlowService.getWorkOrderFlows(this.searchForm.value.name, 
+      this.searchForm.value.description, 
       ).subscribe({
         next: (workOrderFlowRes) => {
           this.workOrderFlows = workOrderFlowRes;

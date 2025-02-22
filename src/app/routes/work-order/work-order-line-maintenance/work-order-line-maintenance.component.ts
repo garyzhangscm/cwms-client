@@ -51,8 +51,8 @@ export class WorkOrderWorkOrderLineMaintenanceComponent implements OnInit {
     this.titleService.setTitle(this.i18n.fanyi('page.work-order.line.maintenance'));
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
-        this.workOrderService.getWorkOrder(params.id).subscribe(workOrderRes => {
+      if (params['id']) {
+        this.workOrderService.getWorkOrder(params['id']).subscribe(workOrderRes => {
           this.currentWorkOrder = workOrderRes;
           workOrderRes.workOrderLines.forEach(workOrderLine => {
             // Default to the original quantity. So by default, we won't change the

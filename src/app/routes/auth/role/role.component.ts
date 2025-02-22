@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -31,6 +31,7 @@ import { UserService } from '../services/user.service';
     standalone: false
 })
 export class AuthRoleComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<Role>> = [
     {
       name: 'name',
@@ -335,9 +336,7 @@ export class AuthRoleComponent implements OnInit {
     private roleService: RoleService,
     private userService: UserService,
     private menuService: MenuService,
-    private messageService: NzMessageService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
-    private titleService: TitleService,
+    private messageService: NzMessageService,    private titleService: TitleService,
     private utilService: UtilService,
     private localCacheService: LocalCacheService, 
     private permissionService: PermissionService,

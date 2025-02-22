@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -78,6 +78,7 @@ import { WorkOrderService } from '../services/work-order.service';
 })
 export class WorkOrderMpsMaintenanceComponent implements OnInit {
 
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentMPS!: MasterProductionSchedule;
   pageTitle = "";
   isSpinning = false;
@@ -170,7 +171,6 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
   
   constructor(private http: _HttpClient, 
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private masterProductionScheduleService: MasterProductionScheduleService,
     private inventoryService: InventoryService,

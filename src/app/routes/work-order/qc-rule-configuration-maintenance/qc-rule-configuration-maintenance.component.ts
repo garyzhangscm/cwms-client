@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormBuilder , FormGroup } from '@angular/forms';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
+import { UntypedFormBuilder ,  } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -8,10 +8,8 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { TransferChange, TransferItem } from 'ng-zorro-antd/transfer';
 
 import { UserService } from '../../auth/services/user.service';
-import { Customer } from '../../common/models/customer';
-import { Supplier } from '../../common/models/supplier';
-import { CustomerService } from '../../common/services/customer.service';
-import { SupplierService } from '../../common/services/supplier.service';
+import { Customer } from '../../common/models/customer'; 
+import { CustomerService } from '../../common/services/customer.service'; 
 import { InventoryLock } from '../../inventory/models/inventory-lock';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { Item } from '../../inventory/models/item';
@@ -22,9 +20,7 @@ import { ItemFamilyService } from '../../inventory/services/item-family.service'
 import { ItemService } from '../../inventory/services/item.service';
 import { Order } from '../../outbound/models/order';
 import { OrderService } from '../../outbound/services/order.service';
-import { QCRule } from '../../qc/models/qc-rule';
-import { QCRuleConfiguration } from '../../qc/models/qc-rule-configuration';
-import { QcRuleConfigurationService } from '../../qc/services/qc-rule-configuration.service';
+import { QCRule } from '../../qc/models/qc-rule'; 
 import { QcRuleService } from '../../qc/services/qc-rule.service';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { Warehouse } from '../../warehouse-layout/models/warehouse';
@@ -44,6 +40,7 @@ import { WorkOrderService } from '../services/work-order.service';
 })
 export class WorkOrderQcRuleConfigurationMaintenanceComponent implements OnInit {
  
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   
   qcRuleList: TransferItem[] = [];
   allQCRules: QCRule[] = [];
@@ -81,7 +78,6 @@ export class WorkOrderQcRuleConfigurationMaintenanceComponent implements OnInit 
     private workOrderQcRuleConfigurationService: WorkOrderQcRuleConfigurationService,
     private messageService: NzMessageService,
     private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private warehouseService: WarehouseService,  
     private productionLineService: ProductionLineService,
     private userService: UserService,

@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -16,6 +16,7 @@ import { AlertTemplateService } from '../services/alert-template.service';
     standalone: false
 })
 export class AlertAlertTemplateMaintenanceComponent implements OnInit {
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle = '';
   stepIndex = 0;
   currentAlertTemplate!: AlertTemplate;   
@@ -32,7 +33,6 @@ export class AlertAlertTemplateMaintenanceComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
     private companyService: CompanyService,  
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private alertTemplateService: AlertTemplateService,
     private messageService: NzMessageService,
     private router: Router

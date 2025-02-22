@@ -1,4 +1,4 @@
-import { Inject , ChangeDetectorRef, Component, OnInit, ViewChild, OnDestroy, } from '@angular/core';
+import { inject , ChangeDetectorRef, Component, OnInit, ViewChild, OnDestroy, } from '@angular/core';
 import { I18NService } from '@core';
 import { STChange, STColumn, STComponent, STPage, } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -19,6 +19,7 @@ import { ProductionLineService } from '../services/production-line.service';
     standalone: false
 })
 export class WorkOrderProductionKanbanComponent implements OnInit, OnDestroy {
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   productionLineKanbanDataList: ProductionLineKanbanData[] = [];
   displayProductionLineKanbanDataList: ProductionLineKanbanData[] = [];
   productionLines: ProductionLine[] = [];
@@ -36,8 +37,7 @@ export class WorkOrderProductionKanbanComponent implements OnInit, OnDestroy {
     public msg: NzMessageService, private cdr: ChangeDetectorRef,
     private productionLineKanbanService: ProductionLineKanbanService,
     private productionLineService: ProductionLineService,
-    private userService: UserService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService) {
+    private userService: UserService,) {
       userService.isCurrentPageDisplayOnly("/work-order/production-kanban").then(
         displayOnlyFlag => this.displayOnly = displayOnlyFlag
       );                                      
