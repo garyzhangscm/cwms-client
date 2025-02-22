@@ -1,9 +1,28 @@
-import { NgModule, Type } from '@angular/core';
-import { SharedModule } from '@shared';
+import { CommonModule } from '@angular/common';
+import { NgModule, Type } from '@angular/core'; 
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PageHeaderComponent } from '@delon/abc/page-header';
+import { STModule } from '@delon/abc/st';
+import { I18nPipe } from '@delon/theme';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
+import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCalendarModule } from 'ng-zorro-antd/calendar';
+import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
-import { NzStepsModule } from 'ng-zorro-antd/steps';
-import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzPopoverModule } from 'ng-zorro-antd/popover';
+import { NzProgressModule } from 'ng-zorro-antd/progress';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzStepsModule } from 'ng-zorro-antd/steps'; 
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 
 import { DirectivesModule } from '../directives/directives.module';
 import { UtilModule } from '../util/util.module';
@@ -32,14 +51,35 @@ const COMPONENTS: Array<Type<void>> = [
   TransportationCarrierMaintenanceComponent];
 
 @NgModule({
-  imports: [
-    SharedModule,
+  imports: [ 
     TransportationRoutingModule,
     NzDescriptionsModule,
     DirectivesModule,
     NzStepsModule,
     UtilModule,
     NzCalendarModule, 
+    NzFormModule,
+    FormsModule, 
+    ReactiveFormsModule,
+    PageHeaderComponent ,
+    I18nPipe,
+    NzSpinModule ,
+    NzButtonModule,
+    STModule,
+    NzTabsModule ,
+    NzTableModule ,
+    NzDropDownModule ,
+    NzBreadCrumbModule ,    
+    NzSelectModule,
+    NzDividerModule,
+    NzCardModule ,
+    NzInputModule ,
+    NzIconModule ,
+    NzPopoverModule ,
+    NzBadgeModule ,
+    NzProgressModule,
+    CommonModule ,
+    NzToolTipModule ,
   ],
   declarations: COMPONENTS,
 })

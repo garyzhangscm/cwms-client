@@ -9,8 +9,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile, NzUploadChangeParam } from 'ng-zorro-antd/upload';
 
 import { UtilService } from '../../util/services/util.service';
-import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { WorkOrderQcSample } from '../../work-order/models/work-order-qc-sample';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service'; 
 import { QcInspectionRequest } from '../models/qc-inspection-request';
 import { QcInspectionRequestType } from '../models/qc-inspection-request-type';
 import { QCInspectionResult } from '../models/qc-inspection-result';
@@ -70,13 +69,13 @@ export class QcQcInspectionDocumentMaintenanceComponent implements OnInit {
     
     this.fileList = [];
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
 
-        this.imageFileUploadUrl = `inventory/qc-inspection-requests/${params.id}/documents`;
+        this.imageFileUploadUrl = `inventory/qc-inspection-requests/${params['id']}/documents`;
 
         this.isSpinning = true;
         this.qcInspectionRequestService.getQCInspectionRequest(
-          params.id
+          params['id']
         ).subscribe({
           next: (qcInspectionRequest) => {
              this.currentQCInspectionRequest = qcInspectionRequest; 
@@ -116,10 +115,10 @@ export class QcQcInspectionDocumentMaintenanceComponent implements OnInit {
   }
     
   handlePreview = async (file: NzUploadFile) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj!);
+    if (!file.url && !file['preview']) {
+      file['preview'] = await getBase64(file.originFileObj!);
     }
-    this.previewImage = file.url || file.preview;
+    this.previewImage = file.url || file['preview'];
     this.previewVisible = true;
   };
   

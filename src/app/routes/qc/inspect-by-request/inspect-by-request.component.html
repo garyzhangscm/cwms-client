@@ -36,7 +36,7 @@
         
         <nz-image-group [hidden]="isCollapse">
           <img *ngFor="let imageUrl of itemSampling.imageUrls.split(',')"
-               nz-image width="100px" height="100px" [nzSrc]="getImageUrl(itemSampling, imageUrl)" alt="" /> 
+               nz-image width="100px" height="100px" [nzSrc]="getImageUrl(itemSampling!, imageUrl)" alt="" /> 
         </nz-image-group>
         <div nz-row>
           <div nz-col [nzSpan]="24" class="search-area">
@@ -86,10 +86,10 @@
           </div>
         </div>
     
-        <st #st *ngIf="qcInspectionRequest !== undefined" [data]="qcInspectionRequest.inventories"  [columns]="columns" [hidden]="!showQCInventoryFlag">
+        <st #st *ngIf="qcInspectionRequest !== undefined" [data]="qcInspectionRequest?.inventories"  [columns]="columns" [hidden]="!showQCInventoryFlag">
            </st>
         <ng-template #qcInventoryTitle>               
-            <nz-badge *ngIf="qcInspectionRequest !== undefined" [nzCount]="qcInspectionRequest.inventories.length" nzShowZero>
+            <nz-badge *ngIf="qcInspectionRequest !== undefined" [nzCount]="qcInspectionRequest?.inventories?.length" nzShowZero>
               <a class="head-example">{{ 'qc-inspection-inventory' | i18n}}</a>
             </nz-badge> 
         </ng-template>
@@ -206,7 +206,7 @@
         </nz-card>
         <nz-card nzType="inner" nzTitle="{{'inventory' | i18n}}">
 
-          <st #st *ngIf="qcInspectionRequest !== undefined" [data]="qcInspectionRequest.inventories"  [columns]="columns" >
+          <st #st *ngIf="qcInspectionRequest !== undefined" [data]="qcInspectionRequest?.inventories"  [columns]="columns" >
           </st>
         </nz-card>
 

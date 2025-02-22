@@ -23,6 +23,28 @@ import { QcQcRuleConfigurationComponent } from './qc-rule-configuration/qc-rule-
 import { QcQcRuleMaintenanceComponent } from './qc-rule-maintenance/qc-rule-maintenance.component';
 import { QcQcRuleComponent } from './qc-rule/qc-rule.component';
 import { QcQcInspectionDocumentMaintenanceComponent } from './qc-inspection-document-maintenance/qc-inspection-document-maintenance.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { PageHeaderComponent } from '@delon/abc/page-header';
+import { I18nPipe } from '@delon/theme';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { STModule } from '@delon/abc/st';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { NzListModule } from 'ng-zorro-antd/list';
+import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { CWMSCommonModule } from '../common/common.module';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzUploadModule } from 'ng-zorro-antd/upload';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { CommonModule } from '@angular/common';
 
 const COMPONENTS: Array<Type<void>> = [
   QcQcRuleComponent,
@@ -50,6 +72,29 @@ const COMPONENTS: Array<Type<void>> = [
     NzCarouselModule,
     NzImageModule , 
     DirectivesModule, 
+    NzFormModule,
+    FormsModule, 
+    ReactiveFormsModule,
+    PageHeaderComponent ,
+    I18nPipe,
+    NzSpinModule ,
+    NzBreadCrumbModule ,
+    NzCardModule ,
+    STModule,
+    NzBadgeModule ,
+    NzListModule ,
+    NzInputNumberModule ,
+    NzDividerModule,
+    NzSelectModule,
+    NzInputModule ,
+    NzButtonModule,
+    NzDropDownModule ,
+    CWMSCommonModule,
+    NzTableModule ,
+    NzUploadModule ,
+    NzModalModule,        
+    NzTabsModule ,
+    CommonModule,
   ],
   declarations: COMPONENTS,
 })

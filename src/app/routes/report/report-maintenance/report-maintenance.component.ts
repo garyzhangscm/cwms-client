@@ -26,6 +26,7 @@ export class ReportReportMaintenanceComponent implements OnInit {
   stepIndex = 0;
   currentReport!: Report;
   reportTypes = ReportType;
+  reportTypesKeys = Object.keys(this.reportTypes);
   standardReport = true;
   companySpecific = false;
   warehouseSpecific = false;
@@ -55,8 +56,8 @@ export class ReportReportMaintenanceComponent implements OnInit {
       next: (printerTypeRes) =>  {
         this.printerTypes = printerTypeRes; 
         this.activatedRoute.queryParams.subscribe(params => {
-          if (params.id) {
-            this.reportService.getReport(params.id).subscribe(reportRes => {
+          if (params['id']) {
+            this.reportService.getReport(params['id']).subscribe(reportRes => {
               this.currentReport = reportRes;
     
               this.titleService.setTitle(this.i18n.fanyi('page.report.maintenance.modify'));

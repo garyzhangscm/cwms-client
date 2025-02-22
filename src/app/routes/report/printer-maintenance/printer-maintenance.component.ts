@@ -54,8 +54,8 @@ export class ReportPrinterMaintenanceComponent implements OnInit {
       next: (printerTypeRes) =>  {
         this.printerTypes = printerTypeRes; 
         this.activatedRoute.queryParams.subscribe(params => {
-          if (params.id) {
-            this.printerService.getPrinter(params.id).subscribe(
+          if (params['id']) {
+            this.printerService.getPrinter(params['id']).subscribe(
               {
     
                 next: (printerRes) => {

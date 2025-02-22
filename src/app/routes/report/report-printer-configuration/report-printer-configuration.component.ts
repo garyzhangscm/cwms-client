@@ -83,6 +83,7 @@ export class ReportReportPrinterConfigurationComponent implements OnInit {
 
   searchResult = '';
   reportTypes = ReportType;
+  reportTypesKeys = Object.keys(this.reportTypes);
   isSpinning = false;
  
   resetForm(): void {
@@ -97,7 +98,7 @@ export class ReportReportPrinterConfigurationComponent implements OnInit {
 
     this.reportPrinterConfigurationService
       .getAll(
-        this.searchForm.controls.type.value,
+        this.searchForm.value.type.value,
       )
       .subscribe(
         reportPrinterConfigurationRes => {

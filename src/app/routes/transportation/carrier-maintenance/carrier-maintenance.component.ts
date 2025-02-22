@@ -2,10 +2,8 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { Address } from 'ngx-google-places-autocomplete/objects/address';
- 
-import { Order } from '../../outbound/models/order'; 
+import { NzMessageService } from 'ng-zorro-antd/message'; 
+  
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Carrier } from '../models/carrier';
@@ -48,9 +46,9 @@ export class TransportationCarrierMaintenanceComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         // Get the production line by ID
-        this.carrierService.getCarrier(params.id)
+        this.carrierService.getCarrier(params['id'])
           .subscribe(carrierRes => {
             this.currentCarrier = carrierRes; 
 
