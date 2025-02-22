@@ -1,15 +1,9 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core'; 
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { Client } from '../../common/models/client';
-import { ClientService } from '../../common/services/client.service';
-import { InventoryConsolidationStrategy } from '../../warehouse-layout/models/inventory-consolidation-strategy.enum';
-import { LocationGroup } from '../../warehouse-layout/models/location-group';
-import { LocationGroupType } from '../../warehouse-layout/models/location-group-type';
-import { LocationVolumeTrackingPolicy } from '../../warehouse-layout/models/location-volume-tracking-policy.enum';
-import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
+import { ClientService } from '../../common/services/client.service'; 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { CartonizationConfiguration } from '../models/cartonization-configuration';
 import { CartonizationGroupRule } from '../models/cartonization-group-rule.enum';
@@ -22,6 +16,7 @@ import { CartonizationConfigurationService } from '../services/cartonization-con
     standalone: false
 })
 export class OutboundCartonizationConfigurationMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle: string;
 
   cartonizationConfiguration!: CartonizationConfiguration;
@@ -34,8 +29,7 @@ export class OutboundCartonizationConfigurationMaintenanceComponent implements O
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private router: Router, 
     private titleService: TitleService,
     private clientService: ClientService,
     private warehouseService: WarehouseService,
@@ -65,12 +59,12 @@ export class OutboundCartonizationConfigurationMaintenanceComponent implements O
       // We are in process of adding a location Group
       // and we already fill in all the information. Let's
       // load the location group from session storage
-      if (params.inprocess === 'true') {
+      if (params['inprocess'] === 'true') {
         this.cartonizationConfiguration = JSON.parse(
           sessionStorage.getItem('cartonization-configuration-maintenance.cartonization-configuration')!,
         );
-      } else if (params.id) {
-        this.cartonizationConfigurationService.get(params.id).subscribe(res => (this.cartonizationConfiguration = res));
+      } else if (params['id']) {
+        this.cartonizationConfigurationService.get(params['id']).subscribe(res => (this.cartonizationConfiguration = res));
       }
     });
 

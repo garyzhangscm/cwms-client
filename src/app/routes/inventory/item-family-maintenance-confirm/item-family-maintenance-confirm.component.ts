@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -11,12 +11,12 @@ import { ItemFamilyService } from '../services/item-family.service';
     standalone: false
 })
 export class InventoryItemFamilyMaintenanceConfirmComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentItemFamily!: ItemFamily;
 
   pageTitle = '';
 
-  constructor(
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  constructor( 
     private titleService: TitleService,
     private itemFamilyService: ItemFamilyService,
     private router: Router,

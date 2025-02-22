@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
@@ -19,13 +19,12 @@ import { CycleCountResult } from '../models/cycle-count-result';
   providedIn: 'root',
 })
 export class CycleCountRequestService {
-  private COUNT_REQUEST_PER_PAGE = 15;
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   constructor(
     private http: _HttpClient,
     private localStorageService: LocalStorageService,
     private printingService: PrintingService,
-    private warehouseService: WarehouseService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private warehouseService: WarehouseService, 
   ) { }
 
   generateCycleCountRequests(

@@ -1,5 +1,5 @@
 import { DatePipe, formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -70,6 +70,7 @@ import { DateTimeService } from '../../util/services/date-time.service';
 })
 export class OutboundOrderComponent implements OnInit {
  
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   setOfCheckedId = new Set<number>();
   checked = false;
   indeterminate = false;
@@ -132,8 +133,7 @@ export class OutboundOrderComponent implements OnInit {
   ]);
 
   constructor(
-    private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private fb: UntypedFormBuilder, 
     private modalService: NzModalService,
     private orderService: OrderService,
     private messageService: NzMessageService,

@@ -1,16 +1,14 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzMessageService } from 'ng-zorro-antd/message'; 
 import { UserService } from '../../auth/services/user.service';
 import { ItemFamily } from '../../inventory/models/item-family';
-import { ItemFamilyService } from '../../inventory/services/item-family.service';
-import { UtilService } from '../../util/services/util.service'; 
+import { ItemFamilyService } from '../../inventory/services/item-family.service'; 
 import { PickConfirmStrategy } from '../models/pick-confirm-strategy'; 
 import { PickConfirmStrategyService } from '../services/pick-confirm-strategy.service';
 
@@ -22,6 +20,7 @@ import { PickConfirmStrategyService } from '../services/pick-confirm-strategy.se
 })
 export class OutboundPickConfirmStrategyComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   // Select control for clients and item families
 
   itemFamilies: ItemFamily[] = [];
@@ -106,8 +105,7 @@ export class OutboundPickConfirmStrategyComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private pickConfirmStrategyService: PickConfirmStrategyService,
 
-    private itemFamilyService: ItemFamilyService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private itemFamilyService: ItemFamilyService, 
     private messageService: NzMessageService,
     private userService: UserService,
     private activatedRoute: ActivatedRoute

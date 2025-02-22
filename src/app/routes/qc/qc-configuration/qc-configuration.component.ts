@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -16,6 +16,7 @@ import { QcConfigurationService } from '../services/qc-configuration.service';
     standalone: false
 })
 export class QcQcConfigurationComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentQcConfiguration: QcConfiguration | undefined;
 
   availableInventoryStatuses: InventoryStatus[] = [];
@@ -26,8 +27,7 @@ export class QcQcConfigurationComponent implements OnInit {
     private warehouseService: WarehouseService,
     private inventoryStatusService: InventoryStatusService,
     private messageService: NzMessageService,
-    private userService: UserService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) {
+    private userService: UserService, ) {
 
       userService.isCurrentPageDisplayOnly("/qc/configuration").then(
         displayOnlyFlag => this.displayOnly = displayOnlyFlag

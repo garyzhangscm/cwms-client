@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -30,6 +30,7 @@ interface PackingItem {
     standalone: false
 })
 export class OutboundShippingCartonizationComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   shippingCartonizationQueryForm!: UntypedFormGroup;
   avaiableShippingCartons: Carton[] = [];
   listOfPackingItems: PackingItem[] = [];
@@ -43,8 +44,7 @@ export class OutboundShippingCartonizationComponent implements OnInit {
   constructor(
     private fb: UntypedFormBuilder,
     private shippingCartonizationService: ShippingCartonizationService,
-    private messageService: NzMessageService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private messageService: NzMessageService, 
     private inventoryService: InventoryService,
     private userService: UserService,
     private cartonService: CartonService,
@@ -73,9 +73,9 @@ export class OutboundShippingCartonizationComponent implements OnInit {
     this.itemNameTextBox.nativeElement.focus();
   }
   onUserInputInventoryIdBlur(): void {
-    if (this.shippingCartonizationQueryForm!.controls.inventoryId.value) {
+    if (this.shippingCartonizationQueryForm!.value.inventoryId) {
       this.workInProgress = true;
-      this.displayPackingItem(this.shippingCartonizationQueryForm!.controls.inventoryId.value);
+      this.displayPackingItem(this.shippingCartonizationQueryForm!.value.inventoryId);
 
       this.totalProgress = 0;
     }
@@ -155,9 +155,9 @@ export class OutboundShippingCartonizationComponent implements OnInit {
       // OK we have move everything into the shipping carton, let's pack it
       this.shippingCartonizationService
         .pack(
-          this.shippingCartonizationQueryForm!.controls.inventoryId.value,
+          this.shippingCartonizationQueryForm!.value.inventoryId,
           this.listOfPackingItems,
-          this.shippingCartonizationQueryForm!.controls.cartonName.value,
+          this.shippingCartonizationQueryForm!.value.cartonName,
         )
         .subscribe(
           packResult => {

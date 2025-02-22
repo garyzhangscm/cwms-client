@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -7,9 +7,7 @@ import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 
 import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
-import { ClientService } from '../../common/services/client.service';
-import { InventoryActivity } from '../../inventory/models/inventory-activity';
-import { ItemFamily } from '../../inventory/models/item-family';
+import { ClientService } from '../../common/services/client.service';  
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { OrderActivity } from '../models/order-activity';
 import { OrderActivityService } from '../services/order-activity.service';
@@ -21,6 +19,7 @@ import { OrderActivityService } from '../services/order-activity.service';
     standalone: false
 })
 export class OutboundOrderActivityComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   searchForm!: UntypedFormGroup;
  
 
@@ -45,8 +44,7 @@ export class OutboundOrderActivityComponent implements OnInit {
   displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
-    private orderActivityService: OrderActivityService, 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private orderActivityService: OrderActivityService,  
     private clientService: ClientService,
     private localCacheService: LocalCacheService,
     private userService: UserService,
@@ -90,11 +88,11 @@ export class OutboundOrderActivityComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     
-    let startTime : Date = this.searchForm.controls.activityDateTimeRanger.value ? 
-        this.searchForm.controls.activityDateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.controls.activityDateTimeRanger.value ? 
-        this.searchForm.controls.activityDateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.controls.activityDate.value;
+    let startTime : Date = this.searchForm.value.activityDateTimeRanger ? 
+        this.searchForm.value.activityDateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.value.activityDateTimeRanger ? 
+        this.searchForm.value.activityDateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.value.activityDate;
 
     this.orderActivityService
       .getOrderActivities(

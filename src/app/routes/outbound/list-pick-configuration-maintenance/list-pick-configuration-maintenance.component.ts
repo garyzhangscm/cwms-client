@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -25,6 +25,7 @@ import { ListPickConfigurationService } from '../services/list-pick-configuratio
     standalone: false
 })
 export class OutboundListPickConfigurationMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle = '';
   stepIndex = 0;
   currentListPickConfiguration!: ListPickConfiguration;   
@@ -50,8 +51,7 @@ export class OutboundListPickConfigurationMaintenanceComponent implements OnInit
   constructor( 
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
-    private companyService: CompanyService,  
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private companyService: CompanyService,   
     private listPickConfigurationService: ListPickConfigurationService,
     private messageService: NzMessageService,
     private warehouseService: WarehouseService,

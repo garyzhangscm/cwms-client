@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -18,11 +18,11 @@ import { QcInspectionRequestService } from '../services/qc-inspection-request.se
     standalone: false
 })
 export class QcQcResultComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   displayOnly = false;
   constructor( 
-    private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private fb: UntypedFormBuilder, 
     private userService: UserService,
     private qcInspectionRequestService: QcInspectionRequestService, 
     private activatedRoute: ActivatedRoute,

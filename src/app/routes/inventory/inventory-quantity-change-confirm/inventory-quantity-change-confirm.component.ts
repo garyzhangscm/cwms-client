@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -13,6 +13,7 @@ import { InventoryService } from '../services/inventory.service';
     standalone: false
 })
 export class InventoryInventoryQuantityChangeConfirmComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentInventory!: Inventory;
   pageTitle = '';
   originalInventoryQuantity = 0;
@@ -20,8 +21,7 @@ export class InventoryInventoryQuantityChangeConfirmComponent implements OnInit 
   documentNumber = '';
   comment = '';
   isSpinning = false;
-  constructor(
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  constructor( 
     private titleService: TitleService,
     private inventoryService: InventoryService,
     private router: Router,
@@ -39,7 +39,7 @@ export class InventoryInventoryQuantityChangeConfirmComponent implements OnInit 
     });
 
     this.activatedRoute.queryParams.subscribe(params => {
-      this.previousApplication = params.by;
+      this.previousApplication = params['by'];
     });
   }
 

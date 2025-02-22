@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -6,9 +6,7 @@ import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzUploadFile, NzUploadChangeParam } from 'ng-zorro-antd/upload';
 
-import { UserService } from '../../auth/services/user.service';
-import { Report } from '../../report/models/report';
-import { ReportOrientation } from '../../report/models/report-orientation.enum';
+import { UserService } from '../../auth/services/user.service'; 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Order } from '../models/order';
 import { OrderDocument } from '../models/order-document';
@@ -22,6 +20,7 @@ import { OrderService } from '../services/order.service';
     standalone: false
 })
 export class OutboundOrderDocumentComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle = '';
   stepIndex = 0;
   currentOrder!: Order;  
@@ -39,8 +38,7 @@ export class OutboundOrderDocumentComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
     private warehouseService: WarehouseService,
-    private userService: UserService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private userService: UserService, 
     private orderService: OrderService, 
     private orderDocumentService: OrderDocumentService,
     private messageService: NzMessageService,

@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { UntypedFormGroup, UntypedFormControl, UntypedFormBuilder } from '@angular/forms';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { UntypedFormGroup,  UntypedFormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -26,6 +26,7 @@ import { HualeiProductService } from '../services/hualei-product.service';
 })
 export class OutboundHualeiConfigurationComponent implements OnInit {
   
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   @ViewChild('hualeiProductsSt', { static: true })
   hualeiProductsSt!: STComponent;
   hualeiProductsColumns: STColumn[] = [    
@@ -100,8 +101,7 @@ export class OutboundHualeiConfigurationComponent implements OnInit {
     private modalService: NzModalService,
     private hualeiConfigurationService: HualeiConfigurationService,
     private hualeiProductService: HualeiProductService,
-    private carrierService: CarrierService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private carrierService: CarrierService, 
     private unitService: UnitService,   
     private userService: UserService, ) { 
       

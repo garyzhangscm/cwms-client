@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -26,7 +26,8 @@ import { QcInspectionRequestService } from '../services/qc-inspection-request.se
     standalone: false
 })
 export class QcInspectByRequestComponent implements OnInit {
-  stepIndex = 0;
+
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);  stepIndex = 0;
   pageTitle: string = ""; 
   isSpinning = false; 
   qcInspectionRequest?: QcInspectionRequest;
@@ -44,8 +45,7 @@ export class QcInspectByRequestComponent implements OnInit {
   constructor(private http: _HttpClient, 
     private inventoryService: InventoryService,
     private messageService: NzMessageService,
-    private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private router: Router, 
     private warehouseService: WarehouseService,
     private itemSamplingService: ItemSamplingService,
     private qcInspectionRequestService: QcInspectionRequestService,

@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, OnInit,  ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -10,8 +10,7 @@ import { NzImageService } from 'ng-zorro-antd/image';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalService } from 'ng-zorro-antd/modal';
 
-import { UserService } from '../../auth/services/user.service';
-import { DataTransferRequestType } from '../../util/models/data-transfer-request-type';
+import { UserService } from '../../auth/services/user.service'; 
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { ItemSampling } from '../models/item-sampling';
 import { ItemSamplingService } from '../services/item-sampling.service';
@@ -23,6 +22,7 @@ import { ItemSamplingService } from '../services/item-sampling.service';
     standalone: false
 })
 export class InventoryItemSamplingComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
   
  
@@ -75,8 +75,7 @@ export class InventoryItemSamplingComponent implements OnInit {
    
    
   displayOnly = false;
-  constructor(private http: _HttpClient,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  constructor(private http: _HttpClient, 
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
     private itemSamplingService: ItemSamplingService,

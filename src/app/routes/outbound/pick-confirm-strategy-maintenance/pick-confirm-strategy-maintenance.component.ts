@@ -1,12 +1,11 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { UnitOfMeasure } from '../../common/models/unit-of-measure';
 import { UnitOfMeasureService } from '../../common/services/unit-of-measure.service';
-import { ItemFamily } from '../../inventory/models/item-family';
-import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
+import { ItemFamily } from '../../inventory/models/item-family'; 
 import { ItemFamilyService } from '../../inventory/services/item-family.service';
 import { ItemService } from '../../inventory/services/item.service';
 import { LocationGroup } from '../../warehouse-layout/models/location-group';
@@ -14,10 +13,8 @@ import { LocationGroupType } from '../../warehouse-layout/models/location-group-
 import { LocationGroupTypeService } from '../../warehouse-layout/services/location-group-type.service';
 import { LocationGroupService } from '../../warehouse-layout/services/location-group.service';
 import { LocationService } from '../../warehouse-layout/services/location.service';
-import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { AllocationConfiguration } from '../models/allocation-configuration';
-import { PickConfirmStrategy } from '../models/pick-confirm-strategy';
-import { AllocationConfigurationService } from '../services/allocation-configuration.service';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service'; 
+import { PickConfirmStrategy } from '../models/pick-confirm-strategy'; 
 import { PickConfirmStrategyService } from '../services/pick-confirm-strategy.service';
 
 @Component({
@@ -26,6 +23,7 @@ import { PickConfirmStrategyService } from '../services/pick-confirm-strategy.se
     standalone: false
 })
 export class OutboundPickConfirmStrategyMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentPickConfirmStrategy!: PickConfirmStrategy; 
   validItemFamilies: ItemFamily[] = []; 
   validLocationGroupTypes: LocationGroupType[] = [];
@@ -42,8 +40,7 @@ export class OutboundPickConfirmStrategyMaintenanceComponent implements OnInit {
   constructor(private http: _HttpClient, 
     private pickConfirmStrategyService: PickConfirmStrategyService,
     private messageService: NzMessageService,
-    private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private router: Router, 
     private warehouseService: WarehouseService,
     private itemService: ItemService, 
     private itemFamilyService: ItemFamilyService,  
@@ -72,9 +69,9 @@ export class OutboundPickConfirmStrategyMaintenanceComponent implements OnInit {
 
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) { 
+      if (params['id']) { 
         this.isSpinning = true;
-        this.pickConfirmStrategyService.getPickConfirmStrategy(params.id)
+        this.pickConfirmStrategyService.getPickConfirmStrategy(params['id'])
           .subscribe(
           {
 

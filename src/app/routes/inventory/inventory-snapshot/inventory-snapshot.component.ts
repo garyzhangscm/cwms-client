@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -22,6 +22,7 @@ import { InventorySnapshotService } from '../services/inventory-snapshot.service
 })
 export class InventoryInventorySnapshotComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<InventorySnapshot>> = [
     {
       name: 'inventory-snapshot.batch-number',
@@ -87,8 +88,7 @@ export class InventoryInventorySnapshotComponent implements OnInit {
   displayOnly = false;
   constructor(private http: _HttpClient,
     private fb: UntypedFormBuilder,
-    private inventorySnapshotService: InventorySnapshotService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private inventorySnapshotService: InventorySnapshotService, 
     private titleService: TitleService,
     private messageService: NzMessageService,
     private utilService: UtilService,

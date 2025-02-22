@@ -1,11 +1,10 @@
 import { HttpUrlEncodingCodec } from '@angular/common/http';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STColumn, STComponent } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { environment } from '@env/environment';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { PrintingService } from '../../common/services/printing.service';
@@ -28,6 +27,7 @@ import { ParcelService } from '../services/parcel.service';
     standalone: false
 })
 export class OutboundShipByHualeiComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentOrder?: Order; 
   currentWarehouse!: Warehouse;
   pageTitle: string;
@@ -87,8 +87,7 @@ export class OutboundShipByHualeiComponent implements OnInit {
   constructor(private http: _HttpClient, 
     private activatedRoute: ActivatedRoute,
     private orderService: OrderService, 
-    private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private fb: UntypedFormBuilder, 
     private parcelService: ParcelService,
     private messageService: NzMessageService,
     private router: Router, 

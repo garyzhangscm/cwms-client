@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -24,6 +24,7 @@ import { AllocationConfigurationService } from '../services/allocation-configura
 })
 export class OutboundAllocationConfigurationComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<AllocationConfiguration>> = [
     {
       name: 'sequence',
@@ -144,8 +145,7 @@ export class OutboundAllocationConfigurationComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private allocationConfigurationService: AllocationConfigurationService,
 
-    private itemFamilyService: ItemFamilyService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private itemFamilyService: ItemFamilyService, 
     private modalService: NzModalService,
     private titleService: TitleService,
     private utilService: UtilService,

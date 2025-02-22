@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -17,6 +17,7 @@ import { AllocationTransactionHistoryService } from '../services/allocation-tran
 })
 export class OutboundAllocationTransactionHistoryComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   searchForm!: UntypedFormGroup;
   isSpinning = false;
   searchResult = '';
@@ -81,8 +82,7 @@ export class OutboundAllocationTransactionHistoryComponent implements OnInit {
 
   displayOnly = false;
   constructor(private http: _HttpClient,
-    private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private fb: UntypedFormBuilder, 
     private userService: UserService,
     private allocationTransactionHistoryService: AllocationTransactionHistoryService) { 
       
@@ -115,12 +115,12 @@ export class OutboundAllocationTransactionHistoryComponent implements OnInit {
      
 
     this.allocationTransactionHistoryService.getAllocationTransactionHistories(
-      this.searchForm.controls.number.value, 
-      this.searchForm.controls.transactionGroupId.value, 
-      this.searchForm.controls.orderNumber.value, 
-      this.searchForm.controls.workOrderNumber.value, 
-      this.searchForm.controls.itemName.value, 
-      this.searchForm.controls.locationName.value, 
+      this.searchForm.value.number, 
+      this.searchForm.value.transactionGroupId, 
+      this.searchForm.value.orderNumber, 
+      this.searchForm.value.workOrderNumber, 
+      this.searchForm.value.itemName, 
+      this.searchForm.value.locationName, 
       false).subscribe(
         allocationTransactionHistoryRes => {
   

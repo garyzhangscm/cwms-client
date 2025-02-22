@@ -1,11 +1,10 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { environment } from '@env/environment';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message'; 
 
 import { UserService } from '../../auth/services/user.service';
@@ -21,10 +20,8 @@ import { LocationGroupService } from '../../warehouse-layout/services/location-g
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { QcInspectionRequest } from '../models/qc-inspection-request';
 import { QcInspectionRequestType } from '../models/qc-inspection-request-type';
-import { QCInspectionResult } from '../models/qc-inspection-result';
-import { QCRule } from '../models/qc-rule';
-import { QcInspectionRequestService } from '../services/qc-inspection-request.service';
-import { QcInspectionService } from '../services/qc-inspection.service';
+import { QCInspectionResult } from '../models/qc-inspection-result'; 
+import { QcInspectionRequestService } from '../services/qc-inspection-request.service'; 
 
 @Component({
     selector: 'app-qc-qc-inspection',
@@ -35,6 +32,7 @@ import { QcInspectionService } from '../services/qc-inspection.service';
 export class QcQcInspectionComponent implements OnInit {
 
    
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   validLocationGroups: LocationGroup[] = [];
   // Form related data and functions
   searchForm!: UntypedFormGroup;
@@ -46,8 +44,7 @@ export class QcQcInspectionComponent implements OnInit {
 
   displayOnly = false;
   constructor(  
-    private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private fb: UntypedFormBuilder, 
     private messageService: NzMessageService, 
     private userService: UserService,
     private router: Router, 

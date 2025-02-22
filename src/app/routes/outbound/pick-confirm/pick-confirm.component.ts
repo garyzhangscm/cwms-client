@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -35,6 +35,7 @@ import { WaveService } from '../services/wave.service';
     standalone: false
 })
 export class OutboundPickConfirmComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   isSpinning = false;
   listOfColumns: Array<ColumnItem<PickWork>> = [
@@ -182,8 +183,7 @@ export class OutboundPickConfirmComponent implements OnInit {
 
   displayOnly = false;
   constructor(
-    private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private activatedRoute: ActivatedRoute, 
     private titleService: TitleService,
     private modalService: NzModalService,
     private message: NzMessageService,
@@ -227,10 +227,10 @@ export class OutboundPickConfirmComponent implements OnInit {
     // 3. pick list display
     // 4. replenishment display
     this.activatedRoute.queryParams.subscribe(params => {
-      this.type = params.type ? params.type : '';
+      this.type = params['type'] ? params['type'] : '';
 
-      if (params.id) {
-        this.id = params.id;
+      if (params['id']) {
+        this.id = params['id'];
       }
       this.displayInformation();
     });
@@ -283,8 +283,8 @@ export class OutboundPickConfirmComponent implements OnInit {
   }
   searchPicks(): void {
     if (this.queryForm.valid) {
-      this.containerId = this.queryForm.controls.containerId.value;
-      this.searchPicksByContainer(this.queryForm.controls.containerId.value);
+      this.containerId = this.queryForm.value.containerId;
+      this.searchPicksByContainer(this.queryForm.value.containerId);
     } else {
       this.displayFormError(this.queryForm);
     }
@@ -625,7 +625,7 @@ export class OutboundPickConfirmComponent implements OnInit {
 
       let pickToContainer = false;
       if (this.queryForm) {
-        pickToContainer = this.queryForm.controls.pickToContainerFlag.value;
+        pickToContainer = this.queryForm.value.pickToContainerFlag;
       }
       let pickMap = new Map();
       
@@ -704,7 +704,7 @@ export class OutboundPickConfirmComponent implements OnInit {
 
     let pickToContainer = false;
     if (this.queryForm) {
-      pickToContainer = this.queryForm.controls.pickToContainerFlag.value;
+      pickToContainer = this.queryForm.value.pickToContainerFlag;
     }
     this.pickService
       .confirmPick(pick, this.mapOfConfirmedQuantity[pick.number], pickToContainer, this.containerId)

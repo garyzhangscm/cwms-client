@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -9,8 +9,7 @@ import { ItemService } from '../../inventory/services/item.service';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { Shipment } from '../models/shipment';
 import { SortationByShipment } from '../models/sortation-by-shipment';
-import { SortationByShipmentLine } from '../models/sortation-by-shipment-line';
-import { Wave } from '../models/wave';
+import { SortationByShipmentLine } from '../models/sortation-by-shipment-line'; 
 import { ShipmentService } from '../services/shipment.service';
 import { SortationService } from '../services/sortation.service';
 
@@ -22,6 +21,7 @@ import { SortationService } from '../services/sortation.service';
 })
 export class OutboundSortationByShipmentComponent implements OnInit {
    
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   isSpinning = false; 
   currentShipment?: Shipment;
@@ -66,8 +66,7 @@ export class OutboundSortationByShipmentComponent implements OnInit {
     private messageService: NzMessageService,
     private activatedRoute: ActivatedRoute,
     private localCacheService: LocalCacheService,
-    private itemService: ItemService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private itemService: ItemService, 
     private router: Router ) {   
   }
 
@@ -75,9 +74,9 @@ export class OutboundSortationByShipmentComponent implements OnInit {
      
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id != null) {
+      if (params['id'] != null) {
         this.accessFromMenu = false;
-        this.loadShipmentBySortation(params.id)
+        this.loadShipmentBySortation(params['id'])
 
       }
       else {
@@ -188,7 +187,7 @@ export class OutboundSortationByShipmentComponent implements OnInit {
   }
 
   searchByOrder() {
-    let orderNumber =  this.searchForm.controls.orderNumber.value;
+    let orderNumber =  this.searchForm.value.orderNumber;
     if (orderNumber = "") {
       this.messageService.error("please input the order number");
       return;

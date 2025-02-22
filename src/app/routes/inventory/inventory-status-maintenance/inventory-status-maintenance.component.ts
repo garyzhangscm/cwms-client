@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder} from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -15,6 +15,7 @@ import { InventoryStatusService } from '../services/inventory-status.service';
     standalone: false
 })
 export class InventoryInventoryStatusMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle = '';
   stepIndex = 0;
   currentInventoryStatus!: InventoryStatus;
@@ -29,8 +30,7 @@ export class InventoryInventoryStatusMaintenanceComponent implements OnInit {
 
   constructor(
     private fb: UntypedFormBuilder,
-    private http: _HttpClient,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private http: _HttpClient, 
     private titleService: TitleService,
     private messageService: NzMessageService,
     private router: Router,

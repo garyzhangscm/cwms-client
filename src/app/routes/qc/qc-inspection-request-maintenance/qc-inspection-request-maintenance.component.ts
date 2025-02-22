@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -24,6 +24,7 @@ import { QcRuleService } from '../services/qc-rule.service';
     standalone: false
 })
 export class QcQcInspectionRequestMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentQCInspectionRequest!: QcInspectionRequest;
   stepIndex = 0;
   pageTitle: string;
@@ -46,8 +47,7 @@ export class QcQcInspectionRequestMaintenanceComponent implements OnInit {
     private router: Router,
     private itemService: ItemService,
     private workOrderService: WorkOrderService,
-    private receiptService: ReceiptService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private receiptService: ReceiptService, 
     private qcRuleService: QcRuleService,
     private activatedRoute: ActivatedRoute) {
     this.pageTitle = this.i18n.fanyi('menu.main.qc.qc-inspection-request-maintenance');
@@ -76,10 +76,10 @@ export class QcQcInspectionRequestMaintenanceComponent implements OnInit {
 
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         // Get the production line by ID
         this.isSpinning = true;
-        this.qcInspectionRequestService.getQCInspectionRequest(params.id)
+        this.qcInspectionRequestService.getQCInspectionRequest(params['id'])
           .subscribe(qcInspectionRequestRes => {
             this.currentQCInspectionRequest = qcInspectionRequestRes;
 
@@ -288,7 +288,7 @@ export class QcQcInspectionRequestMaintenanceComponent implements OnInit {
   }
 
   transferListChange(ret: TransferChange): void { 
-    const listKeys = ret.list.map(l => l.key); 
+    const listKeys = ret.list.map(l => l['key']); 
 
     if (ret.from === 'left' && ret.to === 'right') {
       // assign the qc rule 

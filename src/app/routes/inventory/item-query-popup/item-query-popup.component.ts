@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, EventEmitter, Inject, Input, OnInit, Output, TemplateRef } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output, TemplateRef } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -22,6 +22,7 @@ import { ItemService } from '../services/item.service';
     standalone: false
 })
 export class InventoryItemQueryPopupComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   scrollX = '100vw';
 
   listOfColumns: Array<ColumnItem<Item>> = [
@@ -222,8 +223,7 @@ export class InventoryItemQueryPopupComponent implements OnInit {
   constructor(
     private fb: UntypedFormBuilder,
     private itemService: ItemService,
-    private itemFamilyService: ItemFamilyService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private itemFamilyService: ItemFamilyService, 
     private modalService: NzModalService,
     private warehouseConfigurationService: WarehouseConfigurationService,
     private utilService: UtilService,
