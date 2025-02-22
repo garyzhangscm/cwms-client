@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
@@ -15,6 +15,7 @@ import { CustomReportService } from '../services/custom-report.service';
 })
 export class UtilCustomReportMaintenanceComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentCustomReport: CustomReport; 
   stepIndex = 0; 
   nameValidateStatus = 'warning'; 
@@ -32,7 +33,6 @@ export class UtilCustomReportMaintenanceComponent implements OnInit {
   constructor(private http: _HttpClient, 
     private customReportService: CustomReportService, 
     private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private titleService: TitleService,
     private messageService: NzMessageService,
     private companyService: CompanyService, 

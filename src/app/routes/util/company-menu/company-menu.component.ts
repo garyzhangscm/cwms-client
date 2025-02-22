@@ -1,17 +1,14 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { Component, Inject, OnInit } from '@angular/core'; 
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { TransferItem } from 'ng-zorro-antd/transfer';
 
-import { MenuGroup } from '../../auth/models/menu-group';
-import { MenuSubGroup } from '../../auth/models/menu-sub-group';
+import { MenuGroup } from '../../auth/models/menu-group'; 
 import { MenuType } from '../../auth/models/menu-type.enum';
 import { Role } from '../../auth/models/role';
-import { MenuService } from '../../auth/services/menu.service';
-import { RoleService } from '../../auth/services/role.service';
+import { MenuService } from '../../auth/services/menu.service'; 
 import { Company } from '../../warehouse-layout/models/company';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { CompanyMenuService } from '../services/company-menu.service';
@@ -22,6 +19,7 @@ import { CompanyMenuService } from '../services/company-menu.service';
     standalone: false
 })
 export class UtilCompanyMenuComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle: string;
   webMenuList: TransferItem[] = [];
   mobileMenuList: TransferItem[] = [];
@@ -39,7 +37,6 @@ export class UtilCompanyMenuComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService, 
     private menuService: MenuService,
     private message: NzMessageService,

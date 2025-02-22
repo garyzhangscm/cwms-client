@@ -1,13 +1,12 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
-import { STComponent, STColumn, STChange } from '@delon/abc/st';
+import { STComponent, STColumn,  } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 
 import { UserService } from '../../auth/services/user.service';
-import { PurchaseOrder } from '../../inbound/models/purchase-order';
 import { Company } from '../../warehouse-layout/models/company';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 
@@ -20,6 +19,7 @@ import { CompanyService } from '../../warehouse-layout/services/company.service'
 export class UtilCompanyComponent implements OnInit {
 
   isSpinning = false;
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   companies: Company[] = [];
 
@@ -43,7 +43,6 @@ export class UtilCompanyComponent implements OnInit {
    
   displayOnly = false;
   constructor( 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,    
     private companyService: CompanyService,

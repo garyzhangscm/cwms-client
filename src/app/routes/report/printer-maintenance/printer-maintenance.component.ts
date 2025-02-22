@@ -1,9 +1,8 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { Observable } from 'rxjs';
+import { NzMessageService } from 'ng-zorro-antd/message'; 
 
 import { PrintingService } from '../../common/services/printing.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
@@ -19,6 +18,7 @@ import { PrinterService } from '../services/printer.service';
     standalone: false
 })
 export class ReportPrinterMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle = '';
   stepIndex = 0;
   currentPrinter!: Printer;  
@@ -34,8 +34,7 @@ export class ReportPrinterMaintenanceComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
     private companyService: CompanyService, 
-    private warehouseService: WarehouseService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private warehouseService: WarehouseService, 
     private printerTypeService: PrinterTypeService,
     private printingService: PrintingService,
     private printerService: PrinterService,

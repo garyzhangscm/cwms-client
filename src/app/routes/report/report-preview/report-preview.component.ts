@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient, TitleService } from '@delon/theme';
@@ -11,8 +11,7 @@ import { PrintPageSize } from '../../common/models/print-page-size.enum';
 import { PrintingService } from '../../common/services/printing.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ReportOrientation } from '../models/report-orientation.enum';
-import { ReportType } from '../models/report-type.enum';
-import { ReportHistoryService } from '../services/report-history.service';
+import { ReportType } from '../models/report-type.enum'; 
 
 @Component({
     selector: 'app-report-report-preview',
@@ -21,6 +20,7 @@ import { ReportHistoryService } from '../services/report-history.service';
     standalone: false
 })
 export class ReportReportPreviewComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   printingInProcess = false;
   printingOrientation: PrintPageOrientation = PrintPageOrientation.Portrait;
   reportOrientation: ReportOrientation = ReportOrientation.LANDSCAPE;
@@ -37,17 +37,16 @@ export class ReportReportPreviewComponent implements OnInit {
     private messageService: NzMessageService,
     private printingService: PrintingService,
     private titleService: TitleService,
-    private webLocation: Location,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private webLocation: Location, 
     private router: Router
   ) {}
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.orientation) {
-        console.log(`params.orientation: ${params.orientation}`);
+      if (params['orientation']) {
+        console.log(`params.orientation: ${params['orientation']}`);
         //this.orientation = params.orientation;
-        this.reportOrientation = params.orientation;
+        this.reportOrientation = params['orientation'];
         if (this.reportOrientation === ReportOrientation.LANDSCAPE) {
           this.printingOrientation = PrintPageOrientation.Landscape;
         } else {
@@ -59,12 +58,12 @@ export class ReportReportPreviewComponent implements OnInit {
 
       url = `${url}/${this.warehouseService.getCurrentWarehouse().companyId}`;
       url = `${url}/${this.warehouseService.getCurrentWarehouse().id}`;
-      url = `${url}/${params.type}`;
-      url = `${url}/${params.fileName}`;
+      url = `${url}/${params['type']}`;
+      url = `${url}/${params['fileName']}`;
 
       this.pdfUrl = url;
-      this.fileName = params.fileName;
-      this.type = params.type;
+      this.fileName = params['fileName'];
+      this.type = params['type'];
       console.log(`start to get pdf from ${this.pdfUrl}`);
     });
     this.pageTitle = this.i18n.fanyi('report.preview');

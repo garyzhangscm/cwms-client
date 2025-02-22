@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -7,8 +7,7 @@ import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
-import { UserService } from '../../auth/services/user.service';
-import { RF } from '../models/rf';
+import { UserService } from '../../auth/services/user.service'; 
 import { SystemControlledNumber } from '../models/system-controlled-number';
 import { SystemControlledNumberService } from '../services/system-controlled-number.service';
 
@@ -19,6 +18,7 @@ import { SystemControlledNumberService } from '../services/system-controlled-num
     standalone: false
 })
 export class UtilSystemControlledNumberComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
 
   @ViewChild('st', { static: true })
@@ -62,8 +62,7 @@ export class UtilSystemControlledNumberComponent implements OnInit {
   searchResult = "";
    
   displayOnly = false;
-  constructor( 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  constructor(  
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
     private systemControlledNumberService: SystemControlledNumberService,

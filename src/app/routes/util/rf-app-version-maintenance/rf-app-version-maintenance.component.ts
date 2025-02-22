@@ -1,5 +1,5 @@
 
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -35,6 +35,7 @@ import { RfService } from '../services/rf.service';
 })
 export class UtilRfAppVersionMaintenanceComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentRFAppVersion: RFAppVersion; 
   stepIndex = 0; 
   versionNumberValidateStatus = 'warning'; 
@@ -56,7 +57,6 @@ export class UtilRfAppVersionMaintenanceComponent implements OnInit {
   constructor(private http: _HttpClient, 
     private rfAppVersionService: RfAppVersionService, 
     private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private titleService: TitleService,
     private companyService: CompanyService, 
     private messageService: NzMessageService,
@@ -85,8 +85,8 @@ export class UtilRfAppVersionMaintenanceComponent implements OnInit {
     this.apkFileUploadUrl = `resource/rf-app-version/new/apk-files?companyId=${this.companyService.getCurrentCompany()!.id}`;
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) { 
-        this.rfAppVersionService.getRFAppVersion(params.id)
+      if (params['id']) { 
+        this.rfAppVersionService.getRFAppVersion(params['id'])
           .subscribe(rfAppVersion => {
             this.currentRFAppVersion = rfAppVersion;
 
@@ -261,7 +261,7 @@ export class UtilRfAppVersionMaintenanceComponent implements OnInit {
     console.log('nzChange', ret);
 
     // get all the assigned RF to this version
-    const currentAssignedRFIds = [...this.rfList.filter(item => item.direction === 'right').map(item => item.key)]; 
+    const currentAssignedRFIds = [...this.rfList.filter(item => item.direction === 'right').map(item => item['key'])]; 
     console.log(`currentAssignedRFIds:${currentAssignedRFIds}`);
     this.currentRFAppVersion.rfAppVersionByRFCodes = [];
     this.allRFs.filter(

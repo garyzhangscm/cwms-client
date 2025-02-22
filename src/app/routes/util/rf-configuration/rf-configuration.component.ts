@@ -1,5 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -21,6 +20,7 @@ import { RfConfigurationService } from '../services/rf-configuration.service';
 export class UtilRfConfigurationComponent implements OnInit {
   isSpinning = false;
   
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentRFConfiguration: RfConfiguration;
   availablePrinters: Printer[] = [];
 
@@ -31,7 +31,6 @@ export class UtilRfConfigurationComponent implements OnInit {
     private userService: UserService,
     private printingService: PrintingService, 
     private warehouseConfigurationService: WarehouseConfigurationService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private warehouseService: WarehouseService,  ) { 
       userService.isCurrentPageDisplayOnly("/util/rf-configuration").then(
         displayOnlyFlag => this.displayOnly = displayOnlyFlag

@@ -1,8 +1,7 @@
 import { HttpParams } from '@angular/common/http';
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
-import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { locale } from 'moment-timezone';
+import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme'; 
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -10,16 +9,15 @@ import { Inventory } from '../../inventory/models/inventory';
 import { ReportHistory } from '../../report/models/report-history';
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { QcInspectionRequest } from '../models/qc-inspection-request';
-import { QCInspectionResult } from '../models/qc-inspection-result';
+import { QcInspectionRequest } from '../models/qc-inspection-request'; 
 
 @Injectable({
   providedIn: 'root'
 })
 export class QcInspectionRequestService {
 
-  constructor(private http: _HttpClient, private warehouseService: WarehouseService, 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  constructor(private http: _HttpClient, private warehouseService: WarehouseService,  
     private utilService: UtilService) {}
 
   getQCInspectionRequests(inventoryId? : number, inventoryIds?: string, lpn?: string,  number?: string, 

@@ -78,8 +78,8 @@ export class QcQcRuleConfigurationMaintenanceComponent implements OnInit {
 
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) { 
-        this.qcRuleConfigurationService.getQCRuleConfiguration(params.id)
+      if (params['id']) { 
+        this.qcRuleConfigurationService.getQCRuleConfiguration(params['id'])
           .subscribe(qcRuleConfiguration => {
             this.currentQCRuleConfiguration = qcRuleConfiguration;
 
@@ -275,7 +275,7 @@ loadInventoryStatus() {
 
   transferListChange(ret: TransferChange): void {
     console.log('nzChange', ret);
-    const listKeys = ret.list.map(l => l.key);
+    const listKeys = ret.list.map(l => l['key']);
     console.log('listKeys', JSON.stringify(listKeys));
 
     if (ret.from === 'left' && ret.to === 'right') {

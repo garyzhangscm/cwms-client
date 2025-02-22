@@ -1,7 +1,7 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import {  Router } from '@angular/router';
 import { I18NService } from '@core';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
+import { ALAIN_I18N_TOKEN,  _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message'; 
 
 import { CompanyService } from '../../warehouse-layout/services/company.service';
@@ -14,14 +14,14 @@ import { PrinterTypeService } from '../services/printer-type.service';
     standalone: false
 })
 export class ReportPrinterTypeMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle = '';
   stepIndex = 0;
   currentPrinterType!: PrinterType;  
   isSpinning = false;
 
 
-  constructor( 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  constructor(  
     private printerTypeService: PrinterTypeService,
     private companyService: CompanyService,
     private messageService: NzMessageService,

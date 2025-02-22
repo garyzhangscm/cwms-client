@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -26,6 +26,7 @@ import { EasyPostConfigurationService } from '../services/easy-post-configuratio
 })
 export class TransportationEasyPostComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
   currentEasyPostConfiguration!: EasyPostConfiguration;
   webhookSecretVisible = false;
@@ -66,8 +67,7 @@ export class TransportationEasyPostComponent implements OnInit {
     private warehouseService: WarehouseService,
     private modalService: NzModalService,
     private fb: UntypedFormBuilder,
-    private messageService: NzMessageService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private messageService: NzMessageService, 
     private carrierService: CarrierService,  
     private userService: UserService,
     private easyPostConfigurationService: EasyPostConfigurationService, 
@@ -332,8 +332,8 @@ export class TransportationEasyPostComponent implements OnInit {
         this.addCarrierModal.destroy(); 
       },
       nzOnOk: () => {
-        if (this.addCarrierForm.controls.carrier.value == '' ||
-          this.addCarrierForm.controls.accountNumber.value == '') {
+        if (this.addCarrierForm.value.carrier == '' ||
+          this.addCarrierForm.value.accountNumber == '') {
             return false;
           }
         
@@ -341,18 +341,18 @@ export class TransportationEasyPostComponent implements OnInit {
             nzOkDisabled: true,
             nzOkLoading: true
           });
-          console.log(`this.addCarrierForm.controls.minPickupTime.value: ${this.addCarrierForm.controls.minPickupTime.value}`);
-          console.log(`this.addCarrierForm.controls.maxPickupTime.value: ${this.addCarrierForm.controls.maxPickupTime.value}`);
+          console.log(`this.addCarrierForm.controls.minPickupTime.value: ${this.addCarrierForm.value.minPickupTime}`);
+          console.log(`this.addCarrierForm.controls.maxPickupTime.value: ${this.addCarrierForm.value.maxPickupTime}`);
           this.addCarrier( 
-            this.addCarrierForm.controls.carrier.value,
-            this.addCarrierForm.controls.accountNumber.value,
-            this.addCarrierForm.controls.type.value,
-            this.addCarrierForm.controls.printerName.value,
-            this.addCarrierForm.controls.printParcelLabelAfterManifest.value,
-            this.addCarrierForm.controls.labelCopyCount.value,
-            this.addCarrierForm.controls.schedulePickupAfterManifest.value,
-            this.addCarrierForm.controls.minPickupTime.value,
-            this.addCarrierForm.controls.maxPickupTime.value,
+            this.addCarrierForm.value.carrier,
+            this.addCarrierForm.value.accountNumber,
+            this.addCarrierForm.value.type,
+            this.addCarrierForm.value.printerName,
+            this.addCarrierForm.value.printParcelLabelAfterManifest,
+            this.addCarrierForm.value.labelCopyCount,
+            this.addCarrierForm.value.schedulePickupAfterManifest,
+            this.addCarrierForm.value.minPickupTime,
+            this.addCarrierForm.value.maxPickupTime,
           ); 
           this.addCarrierModal.destroy(); 
           return false;

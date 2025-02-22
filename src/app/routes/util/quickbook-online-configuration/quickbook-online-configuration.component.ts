@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -18,13 +18,13 @@ import { QuickbookOnlineConfigurationService } from '../services/quickbook-onlin
 export class UtilQuickbookOnlineConfigurationComponent implements OnInit {
   isSpinning = false;
   
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentQBOConfiguration: QuickbookOnlineConfiguration;
 
   displayOnly = false;
   constructor(
     private quickbookConfigurationService: QuickbookOnlineConfigurationService, 
     private messageService: NzMessageService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private warehouseService: WarehouseService,
     private companyService: CompanyService,
     private userService: UserService,
