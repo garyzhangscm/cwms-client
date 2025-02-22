@@ -112,6 +112,7 @@ export class InventoryInventoryComponent implements OnInit {
   // whether we are move inventory in a batch
   batchMovement = false;
   inventoryDisplayOptions = InventoryDisplayOption;
+  inventoryDisplayOptionsKeys = Object.keys(this.inventoryDisplayOptions);
   inventoryDisplayOption?: InventoryDisplayOption;
   
   loadingDetailsRequest = 0;

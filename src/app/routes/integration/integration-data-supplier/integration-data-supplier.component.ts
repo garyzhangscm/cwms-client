@@ -219,6 +219,7 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
   listOfDisplayIntegrationSupplierData: IntegrationSupplierData[] = []; 
   isCollapse = false;
   integrationStatusList = IntegrationStatus;
+  integrationStatusListKeys = Object.keys(this.integrationStatusList);
 
   integrationDataModal!: NzModalRef;
   integrationDataForm!: UntypedFormGroup;
@@ -247,15 +248,15 @@ export class IntegrationIntegrationDataSupplierComponent implements OnInit {
     this.searching = true;
     this.searchResult = '';
     this.isSpinning = true;
-    let startTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
-        this.searchForm.controls.integrationDateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
-        this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.controls.integrationDate.value;
+    let startTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+        this.searchForm.value.integrationDateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+        this.searchForm.value.integrationDateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.value.integrationDate.value;
     this.integrationSupplierDataService
       .getData(startTime, endTime, specificDate, 
-        this.searchForm.controls.statusList.value,
-        this.searchForm.controls.id.value,)
+        this.searchForm.value.statusList.value,
+        this.searchForm.value.id.value,)
       .subscribe(integrationSupplierDataRes => {
         this.listOfAllIntegrationSupplierData = integrationSupplierDataRes;
         this.listOfDisplayIntegrationSupplierData = integrationSupplierDataRes;

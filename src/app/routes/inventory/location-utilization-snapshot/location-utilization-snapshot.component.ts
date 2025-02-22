@@ -26,6 +26,7 @@ export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
   isSpinning = false;
   
   locationUtilizationSnapshotStatusList = LocationUtilizationSnapshotStatus;
+  locationUtilizationSnapshotStatusListKeys = Object.keys(this.locationUtilizationSnapshotStatusList);
 
   @ViewChild('st', { static: true })
   st!: STComponent;

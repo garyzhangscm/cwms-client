@@ -182,6 +182,7 @@ export class IntegrationIntegrationDataInventoryAdjustComponent implements OnIni
   // list of expanded row
   mapOfExpandedId: { [key: string]: boolean } = {};
   integrationStatusList = IntegrationStatus;
+  integrationStatusListKeys = Object.keys(this.integrationStatusList);
 
   constructor(
     private fb: UntypedFormBuilder,
@@ -203,18 +204,18 @@ export class IntegrationIntegrationDataInventoryAdjustComponent implements OnIni
   search(): void {
     this.isSpinning = true;
     this.searchResult = '';
-    let startTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
-        this.searchForm.controls.integrationDateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
-        this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.controls.integrationDate.value;
+    let startTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+        this.searchForm.value.integrationDateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+        this.searchForm.value.integrationDateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.value.integrationDate.value;
     
     this.integrationInventoryAdjustmentConfirmationService
       .getData( startTime,
         endTime, 
         specificDate,
-        this.searchForm.controls.statusList.value,
-        this.searchForm.controls.id.value,
+        this.searchForm.value.statusList.value,
+        this.searchForm.value.id.value,
          )
       .subscribe(integrationInventoryAdjustmentConfirmationRes => {
         this.listOfAllIntegrationInventoryAdjustmentConfirmations = integrationInventoryAdjustmentConfirmationRes;

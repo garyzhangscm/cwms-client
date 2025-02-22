@@ -223,6 +223,7 @@ export class IntegrationIntegrationDataCustomerComponent implements OnInit {
   integrationDataForm!: UntypedFormGroup;
   isSpinning = false;
   integrationStatusList = IntegrationStatus;
+  integrationStatusListKeys = Object.keys(this.integrationStatusList);
 
   toggleCollapse(): void {
     this.isCollapse = !this.isCollapse;
@@ -249,15 +250,15 @@ export class IntegrationIntegrationDataCustomerComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     
-    let startTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
-        this.searchForm.controls.integrationDateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
-        this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.controls.integrationDate.value;
+    let startTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+        this.searchForm.value.integrationDateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+        this.searchForm.value.integrationDateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.value.integrationDate.value;
 
     this.integrationCustomerDataService.getData(startTime, endTime, specificDate, 
-      this.searchForm.controls.statusList.value,
-      this.searchForm.controls.id.value,).subscribe(
+      this.searchForm.value.statusList.value,
+      this.searchForm.value.id.value,).subscribe(
       integrationCustomerDataRes => {
         this.listOfAllIntegrationCustomerData = integrationCustomerDataRes;
         this.listOfDisplayIntegrationCustomerData = integrationCustomerDataRes;

@@ -225,6 +225,7 @@ export class IntegrationIntegrationDataInventoryAttributeChangeComponent impleme
   isCollapse = false;
   isSpinning = false;
   integrationStatusList = IntegrationStatus;
+  integrationStatusListKeys = Object.keys(this.integrationStatusList);
   
 
   // list of expanded row
@@ -251,14 +252,14 @@ export class IntegrationIntegrationDataInventoryAttributeChangeComponent impleme
     this.searchResult = '';
     this.isSpinning = true;
 
-    let startTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
-        this.searchForm.controls.integrationDateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
-        this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.controls.integrationDate.value;
+    let startTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+        this.searchForm.value.integrationDateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+        this.searchForm.value.integrationDateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.value.integrationDate.value;
     this.integrationInventoryAdjustmentConfirmationService.getData(startTime, endTime, specificDate,
-      this.searchForm.controls.statusList.value,
-      this.searchForm.controls.id.value,).subscribe(
+      this.searchForm.value.statusList.value,
+      this.searchForm.value.id.value,).subscribe(
       integrationInventoryAdjustmentConfirmationRes => {
         this.listOfAllIntegrationInventoryAttributeChangeConfirmations = integrationInventoryAdjustmentConfirmationRes;
         this.listOfDisplayIntegrationInventoryAttributeChangeConfirmations = integrationInventoryAdjustmentConfirmationRes;

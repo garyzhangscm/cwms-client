@@ -44,6 +44,8 @@ export class InventoryItemMaintenanceComponent implements OnInit {
   
   validItemFamilies: ItemFamily[] = [];
   allocationRoundUpStrategyTypes = AllocationRoundUpStrategyType;
+  allocationRoundUpStrategyTypesKeys = Object.keys(this.allocationRoundUpStrategyTypes);
+
   lengthUnits: Unit[] = [];
   weightUnits: Unit[] = [];
   defaultLengthUnit?: Unit;
@@ -106,8 +108,8 @@ export class InventoryItemMaintenanceComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
-        this.itemService.getItem(params.id).subscribe(itemRes => {
+      if (params['id']) {
+        this.itemService.getItem(params['id']).subscribe(itemRes => {
           this.currentItem = itemRes;
           this.setupUnit(this.currentItem);
           this.newItem = false;
@@ -410,17 +412,17 @@ export class InventoryItemMaintenanceComponent implements OnInit {
     if (this.itemUOMForm.valid) {
       this.addItemUnitOfMeasure(
         this.currentItemPackageType,
-        this.itemUOMForm.controls.unitOfMeasure.value,
-        this.itemUOMForm.controls.quantity.value,
-        this.itemUOMForm.controls.weight.value, this.newUnitOfMeasureWeightUnit!.name,
-        this.itemUOMForm.controls.length.value, this.newUnitOfMeasureLengthUnit!.name,
-        this.itemUOMForm.controls.width.value, this.newUnitOfMeasureWidthUnit!.name,
-        this.itemUOMForm.controls.height.value, this.newUnitOfMeasureHeightUnit!.name, 
-        this.itemUOMForm.controls.defaultForInboundReceiving.value,
-        this.itemUOMForm.controls.defaultForWorkOrderReceiving.value,
-        this.itemUOMForm.controls.trackingLpnUOM.value,
-        this.itemUOMForm.controls.defaultForDisplay.value,
-        this.itemUOMForm.controls.caseFlag.value,
+        this.itemUOMForm.value.unitOfMeasure.value,
+        this.itemUOMForm.value.quantity.value,
+        this.itemUOMForm.value.weight.value, this.newUnitOfMeasureWeightUnit!.name,
+        this.itemUOMForm.value.length.value, this.newUnitOfMeasureLengthUnit!.name,
+        this.itemUOMForm.value.width.value, this.newUnitOfMeasureWidthUnit!.name,
+        this.itemUOMForm.value.height.value, this.newUnitOfMeasureHeightUnit!.name, 
+        this.itemUOMForm.value.defaultForInboundReceiving.value,
+        this.itemUOMForm.value.defaultForWorkOrderReceiving.value,
+        this.itemUOMForm.value.trackingLpnUOM.value,
+        this.itemUOMForm.value.defaultForDisplay.value,
+        this.itemUOMForm.value.caseFlag.value,
       );
 
       this.itemUOMModal.destroy();

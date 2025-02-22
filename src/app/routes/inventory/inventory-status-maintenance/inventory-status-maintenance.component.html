@@ -44,8 +44,8 @@
           <ng-template #inventoryStatusErrorTpl let-control>
             <div
               *ngIf="inventoryStatusControl!.invalid != null  && (inventoryStatusControl!.dirty != null  || inventoryStatusControl!.touched != null )">
-              <ng-container *ngIf="inventoryStatusControl?.errors?.errorCode">
-                {{ inventoryStatusControl!.errors!.errorCode! | i18n }}</ng-container>
+              <ng-container *ngIf="inventoryStatusControl['errors'] && inventoryStatusControl['errors']['errorCode']">
+                {{ inventoryStatusControl['errors']['errorCode'] | i18n }}</ng-container>
               <ng-container *ngIf="control.hasError('required')">{{ 'error.form.field.required' | i18n }}
               </ng-container>
             </div>

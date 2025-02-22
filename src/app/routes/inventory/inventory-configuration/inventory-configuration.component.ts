@@ -259,15 +259,15 @@ export class InventoryInventoryConfigurationComponent implements OnInit {
 
     if (this.itemUOMForm.valid) {
       this.addItemUnitOfMeasure( 
-        this.itemUOMForm.controls.unitOfMeasure.value,
-        this.itemUOMForm.controls.quantity.value,
-        this.itemUOMForm.controls.weight.value, this.newUnitOfMeasureWeightUnit!.name,
-        this.itemUOMForm.controls.length.value, this.newUnitOfMeasureLengthUnit!.name,
-        this.itemUOMForm.controls.width.value, this.newUnitOfMeasureWidthUnit!.name,
-        this.itemUOMForm.controls.height.value, this.newUnitOfMeasureHeightUnit!.name, 
-        this.itemUOMForm.controls.defaultForInboundReceiving.value,
-        this.itemUOMForm.controls.defaultForWorkOrderReceiving.value,
-        this.itemUOMForm.controls.trackingLpnUOM.value,
+        this.itemUOMForm.value.unitOfMeasure.value,
+        this.itemUOMForm.value.quantity.value,
+        this.itemUOMForm.value.weight.value, this.newUnitOfMeasureWeightUnit!.name,
+        this.itemUOMForm.value.length.value, this.newUnitOfMeasureLengthUnit!.name,
+        this.itemUOMForm.value.width.value, this.newUnitOfMeasureWidthUnit!.name,
+        this.itemUOMForm.value.height.value, this.newUnitOfMeasureHeightUnit!.name, 
+        this.itemUOMForm.value.defaultForInboundReceiving.value,
+        this.itemUOMForm.value.defaultForWorkOrderReceiving.value,
+        this.itemUOMForm.value.trackingLpnUOM.value,
       );
 
       this.itemUOMModal.destroy();

@@ -30,6 +30,7 @@ export class IntegrationIntegrationDataWorkOrderComponent implements OnInit {
 
   isCollapse = false;
   integrationStatusList = IntegrationStatus;
+  integrationStatusListKeys = Object.keys(this.integrationStatusList);
  
 
   @ViewChild('st', { static: true })
@@ -143,15 +144,15 @@ export class IntegrationIntegrationDataWorkOrderComponent implements OnInit {
     this.searchResult = '';
     this.isSpinning = true;
 
-    let startTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
-        this.searchForm.controls.integrationDateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.controls.integrationDateTimeRanger.value ? 
-        this.searchForm.controls.integrationDateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.controls.integrationDate.value;
+    let startTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+        this.searchForm.value.integrationDateTimeRanger.value[0] : undefined; 
+    let endTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+        this.searchForm.value.integrationDateTimeRanger.value[1] : undefined; 
+    let specificDate : Date = this.searchForm.value.integrationDate.value;
     this.integrationWorkOrderService.getData(startTime, endTime, specificDate, 
-      this.searchForm.controls.statusList.value,
-      this.searchForm.controls.id.value,
-      this.searchForm.controls.number.value,).subscribe(
+      this.searchForm.value.statusList.value,
+      this.searchForm.value.id.value,
+      this.searchForm.value.number.value,).subscribe(
         {
           next: (integrationWorkOrderRes) => {
             this.listOfAllIntegrationWorkOrders = integrationWorkOrderRes; 

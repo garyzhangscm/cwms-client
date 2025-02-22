@@ -50,13 +50,13 @@ export class InventoryAuditCountResultComponent implements OnInit {
     this.titleService.setTitle(this.i18n.fanyi('page.inventory.cycle-count-request.title'));
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.batchId && params.locationId) {
-        this.batchId = params.batchId;
+      if (params['batchId'] && params['locationId']) {
+        this.batchId = params['batchId'];
 
-        this.locationService.getLocation(params.locationId).subscribe(location => (this.location = location));
+        this.locationService.getLocation(params['locationId']).subscribe(location => (this.location = location));
 
         this.auditCountResultService
-          .getEmptyAuditCountResultDetails(params.batchId, params.locationId)
+          .getEmptyAuditCountResultDetails(params['batchId'], params['locationId'])
           .subscribe(emptyAuditCountResults => {
             emptyAuditCountResults = emptyAuditCountResults.map(auditCountResult => {
               if (auditCountResult.inventory === null) {
