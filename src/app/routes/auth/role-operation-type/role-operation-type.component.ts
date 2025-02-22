@@ -1,16 +1,14 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { ALAIN_I18N_TOKEN, Menu, MenuService, TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN,  MenuService, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { TransferItem } from 'ng-zorro-antd/transfer';
 
 import { OperationType } from '../../work-task/models/operation-type';
 import { OperationTypeService } from '../../work-task/services/operation-type.service';
-import { MenuGroup } from '../models/menu-group';
-import { MenuSubGroup } from '../models/menu-sub-group';
-import { MenuType } from '../models/menu-type.enum';
+
 import { Role } from '../models/role';
 import { RoleService } from '../services/role.service';
 
@@ -20,6 +18,7 @@ import { RoleService } from '../services/role.service';
     standalone: false
 })
 export class AuthRoleOperationTypeComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle: string;
   operationTypeItems: TransferItem[] = []; 
   currentRole: Role | undefined; 
@@ -31,7 +30,6 @@ export class AuthRoleOperationTypeComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private fb: UntypedFormBuilder,
     private roleService: RoleService,

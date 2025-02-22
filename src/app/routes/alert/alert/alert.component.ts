@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -20,6 +20,7 @@ import { AlertService } from '../services/alert.service';
 })
 export class AlertAlertComponent implements OnInit {
   isSpinning = false;
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   @ViewChild('st', { static: true })
   st!: STComponent;
@@ -99,7 +100,6 @@ export class AlertAlertComponent implements OnInit {
    
   displayOnly = false;
   constructor(private http: _HttpClient,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
     private alertService: AlertService,

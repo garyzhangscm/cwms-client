@@ -1,8 +1,7 @@
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STData } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { environment } from '@env/environment';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
@@ -23,6 +22,7 @@ import { WebMessageAlertService } from '../services/web-message-alert.service';
 })
 export class AlertWebMessageAlertComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false; 
   currentWebMessageAlert: WebMessageAlert | undefined;
   
@@ -30,7 +30,6 @@ export class AlertWebMessageAlertComponent implements OnInit {
   pageTitle = "";
 
   constructor(private http: _HttpClient, private companySerive: CompanyService, 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private webMessageAlertService: WebMessageAlertService,
     private modalService: NzModalService,
     private messageService: NzMessageService,

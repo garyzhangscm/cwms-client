@@ -1,11 +1,10 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import {  ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 
 import { UserService } from '../../auth/services/user.service';
 import { ProductionLine } from '../models/production-line';
@@ -20,6 +19,7 @@ import { ProductionLineService } from '../services/production-line.service';
     standalone: false
 })
 export class WorkOrderProductionLineMonitorComponent implements OnInit {
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   searchForm!: UntypedFormGroup;
   searching = false;
   searchResult = '';
@@ -49,7 +49,6 @@ export class WorkOrderProductionLineMonitorComponent implements OnInit {
   displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private productionLineMonitorService: ProductionLineMonitorService, 
     private productionLineService: ProductionLineService, 
     private activatedRoute: ActivatedRoute,

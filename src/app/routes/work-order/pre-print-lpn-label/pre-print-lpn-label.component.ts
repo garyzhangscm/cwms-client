@@ -56,9 +56,9 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
     this.titleService.setTitle(this.i18n.fanyi('pre-print-lpn-label'));
     this.activatedRoute.queryParams.subscribe(params => {
       // we may pre-print lpn label for receipt or work order
-      if (params.productionLineAssignmentId) {
+      if (params['productionLineAssignmentId']) {
         this.isSpinning = true;
-        this.productionLineAssignmentService.getProductionLineAssignment(params.productionLineAssignmentId, false)
+        this.productionLineAssignmentService.getProductionLineAssignment(params['productionLineAssignmentId'], false)
             .subscribe(
               {
                 next:(productionLineAssignmentRes) => {
@@ -70,10 +70,10 @@ export class WorkOrderPrePrintLpnLabelComponent implements OnInit {
               }
             );
       }
-      else if (params.receiptLineId) {
+      else if (params['receiptLineId']) {
 
         this.isSpinning = true;
-        this.receiptLineService.getReceiptLine(params.receiptLineId).subscribe(
+        this.receiptLineService.getReceiptLine(params['receiptLineId']).subscribe(
           {
             next:(receiptLineRes) => {
               this.currentReceiptLine = receiptLineRes;

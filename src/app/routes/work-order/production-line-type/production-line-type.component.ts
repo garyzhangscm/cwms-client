@@ -1,9 +1,8 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzMessageService } from 'ng-zorro-antd/message'; 
 
 import { UserService } from '../../auth/services/user.service';
 import { ProductionLineType } from '../models/production-line-type';
@@ -16,6 +15,7 @@ import { ProductionLineTypeService } from '../services/production-line-type.serv
     standalone: false
 })
 export class WorkOrderProductionLineTypeComponent implements OnInit {
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   // Table data for display
   productionLineTypes: ProductionLineType[] = []; 
   isSpinning = false;
@@ -36,7 +36,6 @@ export class WorkOrderProductionLineTypeComponent implements OnInit {
   displayOnly = false;
   constructor(
     private productionLineTypeService: ProductionLineTypeService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private messageService: NzMessageService,
     private userService: UserService,
   ) { 

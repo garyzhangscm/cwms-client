@@ -1,12 +1,9 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit,  } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { I18NService } from '@core';
-import { STComponent, STColumn } from '@delon/abc/st';
+import { I18NService } from '@core'; 
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { TransferChange } from 'ng-zorro-antd/transfer';
-
-import { QCRule } from '../../qc/models/qc-rule';
+import { NzMessageService } from 'ng-zorro-antd/message'; 
+ 
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { Department } from '../models/department';
 import { DepartmentService } from '../services/department.service';
@@ -17,6 +14,7 @@ import { DepartmentService } from '../services/department.service';
     standalone: false
 })
 export class AuthDepartmentMaintenanceComponent implements OnInit { 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   currentDepartment!: Department;
   stepIndex = 0;
@@ -30,7 +28,6 @@ export class AuthDepartmentMaintenanceComponent implements OnInit {
     private departmentService: DepartmentService,
     private messageService: NzMessageService,
     private router: Router,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private activatedRoute: ActivatedRoute) {
     this.pageTitle = this.i18n.fanyi('menu.main.auth.department-maintenance');
 

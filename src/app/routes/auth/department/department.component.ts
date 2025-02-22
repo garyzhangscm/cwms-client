@@ -1,13 +1,12 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
-
-import { RF } from '../../util/models/rf';
+ 
 import { Department } from '../models/department';
 import { DepartmentService } from '../services/department.service';
 import { UserService } from '../services/user.service';
@@ -19,6 +18,7 @@ import { UserService } from '../services/user.service';
     standalone: false
 })
 export class AuthDepartmentComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
 
   @ViewChild('st', { static: true })
@@ -50,7 +50,6 @@ export class AuthDepartmentComponent implements OnInit {
    
   displayOnly = false;
   constructor(private http: _HttpClient,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
     private departmentService: DepartmentService,

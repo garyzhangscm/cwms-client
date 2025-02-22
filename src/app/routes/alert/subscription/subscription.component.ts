@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import { I18NService } from '@core'; 
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -19,6 +19,7 @@ import { AlertSubscriptionService } from '../services/alert-subscription.service
 })
 export class AlertSubscriptionComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   userAlertSubscriptionMap = new Map<string, AlertSubscription>();
    
   isSpinning = false;
@@ -36,7 +37,6 @@ export class AlertSubscriptionComponent implements OnInit {
   displayOnly = false;
   constructor(
     private alertSubscriptionService: AlertSubscriptionService, 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private messageService: NzMessageService,
     private fb: UntypedFormBuilder,
     private modalService: NzModalService,

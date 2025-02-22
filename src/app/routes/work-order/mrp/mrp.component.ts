@@ -1,11 +1,10 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 
 import { UserService } from '../../auth/services/user.service';
 import { LocalCacheService } from '../../util/services/local-cache.service';
@@ -19,6 +18,8 @@ import { MaterialRequirementsPlanningService } from '../services/material-requir
     standalone: false
 })
 export class WorkOrderMrpComponent implements OnInit {
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  
   searchForm!: UntypedFormGroup;
   
   listOfAllMRPs: MaterialRequirementsPlanning[] = [];
@@ -29,7 +30,6 @@ export class WorkOrderMrpComponent implements OnInit {
   displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private materialRequirementsPlanningService: MaterialRequirementsPlanningService,
     private activatedRoute: ActivatedRoute,   

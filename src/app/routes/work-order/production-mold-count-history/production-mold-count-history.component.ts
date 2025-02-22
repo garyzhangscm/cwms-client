@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { STColumn } from '@delon/abc/st';
@@ -19,10 +19,10 @@ import { LightMesService } from '../services/light-mes.service';
 export class WorkOrderProductionMoldCountHistoryComponent implements OnInit {
 
   
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private lightMesService: LightMesService,
     private userService: UserService,
     private messageService: NzMessageService,

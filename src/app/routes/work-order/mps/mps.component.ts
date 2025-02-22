@@ -1,15 +1,14 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute,  } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STChange } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
-import { UserService } from '../../auth/services/user.service';
-import { UtilService } from '../../util/services/util.service';
+import { UserService } from '../../auth/services/user.service'; 
 import { MasterProductionSchedule } from '../models/master-production-schedule';
 import { MasterProductionScheduleService } from '../services/master-production-schedule.service';
 
@@ -21,6 +20,7 @@ import { MasterProductionScheduleService } from '../services/master-production-s
 })
 export class WorkOrderMpsComponent implements OnInit {
 
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   searchForm!: UntypedFormGroup;
   
   listOfAllMPSs: MasterProductionSchedule[] = [];
@@ -33,7 +33,6 @@ export class WorkOrderMpsComponent implements OnInit {
   displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private masterProductionScheduleService: MasterProductionScheduleService,
     private activatedRoute: ActivatedRoute, 

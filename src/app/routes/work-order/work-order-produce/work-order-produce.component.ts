@@ -89,8 +89,8 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
     this.titleService.setTitle(this.i18n.fanyi('page.work-order.produce'));
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
-        this.workOrderService.getWorkOrder(params.id).subscribe(workOrderRes => {
+      if (params['id']) {
+        this.workOrderService.getWorkOrder(params['id']).subscribe(workOrderRes => {
           this.currentWorkOrder = workOrderRes;
           this.setupEmptyWorkOrderProduceTransaction(this.currentWorkOrder);
           this.loadMatchedBillOfMaterial(workOrderRes);

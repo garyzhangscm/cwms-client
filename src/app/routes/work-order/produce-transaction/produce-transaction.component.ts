@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms'; 
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -18,6 +18,7 @@ import { WorkOrderProduceTransactionService } from '../services/work-order-produ
     standalone: false
 })
 export class WorkOrderProduceTransactionComponent implements OnInit {
+  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
  
   isSpinning = false; 
   isCollapse = false;
@@ -34,7 +35,6 @@ export class WorkOrderProduceTransactionComponent implements OnInit {
   constructor(
     private fb: UntypedFormBuilder,
     private workOrderProduceTransactionService: WorkOrderProduceTransactionService, 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private userService: UserService,
     private titleService: TitleService, 
     private productionLineService: ProductionLineService
