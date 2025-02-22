@@ -1,5 +1,5 @@
 import { DatePipe, formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -43,6 +43,7 @@ import { DateTimeService } from '../../util/services/date-time.service';
     standalone: false
 })
 export class InboundReceiptComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<Receipt>> = [
     {
       name: 'receipt.number',
@@ -212,8 +213,7 @@ export class InboundReceiptComponent implements OnInit {
   ]);
 
   constructor(
-    private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private fb: UntypedFormBuilder, 
     private modalService: NzModalService,
     private receiptService: ReceiptService,
     private receivingTransactionService: ReceivingTransactionService,

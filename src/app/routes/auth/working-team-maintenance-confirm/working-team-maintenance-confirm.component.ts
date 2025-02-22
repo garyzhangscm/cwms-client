@@ -91,7 +91,6 @@ export class AuthWorkingTeamMaintenanceConfirmComponent implements OnInit {
   pageTitle: string;
 
   constructor(
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService,
     private workingTeamService: WorkingTeamService,
     private router: Router,

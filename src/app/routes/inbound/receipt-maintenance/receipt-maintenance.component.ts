@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
@@ -47,6 +47,7 @@ import { ReceiptService } from '../services/receipt.service';
     standalone: false
 })
 export class InboundReceiptMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfReceiptLineTableColumns: Array<ColumnItem<ReceiptLine>> = [
     {
       name: 'receipt.line.number',
@@ -234,8 +235,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   // selected: print only selected record
   printPutawayWorkType = "all";
   constructor(
-    private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private activatedRoute: ActivatedRoute, 
     private titleService: TitleService,
     private fb: UntypedFormBuilder,
     private receiptService: ReceiptService,

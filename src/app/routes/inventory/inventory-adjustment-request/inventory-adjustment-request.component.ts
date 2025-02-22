@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -9,15 +9,10 @@ import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
-import { UtilService } from '../../util/services/util.service';
-import { WarehouseLocation } from '../../warehouse-layout/models/warehouse-location';
-import { Inventory } from '../models/inventory';
+import { UtilService } from '../../util/services/util.service'; 
 import { InventoryAdjustmentRequest } from '../models/inventory-adjustment-request';
 import { InventoryAdjustmentRequestStatus } from '../models/inventory-adjustment-request-status.enum';
-import { InventoryQuantityChangeType } from '../models/inventory-quantity-change-type.enum';
-import { InventoryStatus } from '../models/inventory-status';
-import { Item } from '../models/item';
-import { ItemPackageType } from '../models/item-package-type';
+import { InventoryQuantityChangeType } from '../models/inventory-quantity-change-type.enum'; 
 import { InventoryAdjustmentRequestService } from '../services/inventory-adjustment-request.service';
 
 @Component({
@@ -27,6 +22,7 @@ import { InventoryAdjustmentRequestService } from '../services/inventory-adjustm
     standalone: false
 })
 export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<InventoryAdjustmentRequest>> = [
     {
       name: 'inventory-adjustment-request.inventory-id',
@@ -222,8 +218,7 @@ export class InventoryInventoryAdjustmentRequestComponent implements OnInit {
   displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
-    private inventoryAdjustmentRequestService: InventoryAdjustmentRequestService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private inventoryAdjustmentRequestService: InventoryAdjustmentRequestService, 
     private titleService: TitleService,
     private messageService: NzMessageService,
     private modalService: NzModalService,

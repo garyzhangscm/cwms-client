@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -20,6 +20,7 @@ import { ItemService } from '../services/item.service';
     standalone: false
 })
 export class InventoryAuditCountResultComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfAllAuditCountResult: AuditCountResult[] = [];
   listOfDisplayAuditCountResult: AuditCountResult[] = [];
 
@@ -31,8 +32,7 @@ export class InventoryAuditCountResultComponent implements OnInit {
 
   pageTitle: string;
   constructor(
-    private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private activatedRoute: ActivatedRoute, 
     private titleService: TitleService,
     private auditCountResultService: AuditCountResultService,
     private locationService: LocationService,

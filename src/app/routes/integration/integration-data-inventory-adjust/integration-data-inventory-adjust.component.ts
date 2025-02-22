@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -8,8 +8,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { ColumnItem } from '../../util/models/column-item';
 import { UtilService } from '../../util/services/util.service';
-import { IntegrationInventoryAdjustmentConfirmation } from '../models/integration-inventory-adjustment-confirmation';
-import { IntegrationOrderConfirmation } from '../models/integration-order-confirmation';
+import { IntegrationInventoryAdjustmentConfirmation } from '../models/integration-inventory-adjustment-confirmation'; 
 import { IntegrationStatus } from '../models/integration-status.enum';
 import { IntegrationInventoryAdjustmentConfirmationService } from '../services/integration-inventory-adjustment-confirmation.service';
 
@@ -21,6 +20,7 @@ import { IntegrationInventoryAdjustmentConfirmationService } from '../services/i
 })
 export class IntegrationIntegrationDataInventoryAdjustComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<IntegrationInventoryAdjustmentConfirmation>> = [    
     {
           name: 'id',
@@ -186,8 +186,7 @@ export class IntegrationIntegrationDataInventoryAdjustComponent implements OnIni
 
   constructor(
     private fb: UntypedFormBuilder,
-    private integrationInventoryAdjustmentConfirmationService: IntegrationInventoryAdjustmentConfirmationService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private integrationInventoryAdjustmentConfirmationService: IntegrationInventoryAdjustmentConfirmationService, 
     private messageService: NzMessageService,
     private utilService: UtilService,
   ) {}

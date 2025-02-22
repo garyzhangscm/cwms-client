@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core'; 
+import { Component, inject, OnInit, TemplateRef } from '@angular/core'; 
 import { UntypedFormGroup,  Validators, UntypedFormBuilder, AbstractControl } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -15,8 +15,7 @@ import { newDefaultItemUOMQuantityValidator } from '../../directives/newDefaultI
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { InventoryConfiguration } from '../models/inventory-configuration'; 
-import { ItemDefaultPackageUOM } from '../models/item-default-package-UOM';
-import { ItemUnitOfMeasure } from '../models/item-unit-of-measure';
+import { ItemDefaultPackageUOM } from '../models/item-default-package-UOM'; 
 import { InventoryConfigurationService } from '../services/inventory-configuration.service';
 
 @Component({
@@ -26,6 +25,7 @@ import { InventoryConfigurationService } from '../services/inventory-configurati
 })
 export class InventoryInventoryConfigurationComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   currentInventoryConfiguration!: InventoryConfiguration;
   
@@ -63,8 +63,7 @@ export class InventoryInventoryConfigurationComponent implements OnInit {
     private unitOfMeasureService: UnitOfMeasureService,
     private modalService: NzModalService,
     private unitService: UnitService,
-    private userService: UserService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,) { 
+    private userService: UserService,) { 
 
       userService.isCurrentPageDisplayOnly("/inventory/configuration").then(
         displayOnlyFlag => this.displayOnly = displayOnlyFlag

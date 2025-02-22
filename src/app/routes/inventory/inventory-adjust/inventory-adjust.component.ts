@@ -1,11 +1,11 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalRef, NzModalService, NzModalState } from 'ng-zorro-antd/modal';
+import { NzModalRef, NzModalService,  } from 'ng-zorro-antd/modal';
 
 import { UserService } from '../../auth/services/user.service';
 import { Client } from '../../common/models/client';
@@ -25,8 +25,7 @@ import { LocationGroupService } from '../../warehouse-layout/services/location-g
 import { LocationService } from '../../warehouse-layout/services/location.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { Inventory } from '../models/inventory';
-import { InventoryStatus } from '../models/inventory-status';
-import { ItemPackageType } from '../models/item-package-type';
+import { InventoryStatus } from '../models/inventory-status'; 
 import { ItemUnitOfMeasure } from '../models/item-unit-of-measure';
 import { InventoryStatusService } from '../services/inventory-status.service';
 import { InventoryService } from '../services/inventory.service';
@@ -40,6 +39,7 @@ import { ItemService } from '../services/item.service';
 })
 export class InventoryInventoryAdjustComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   threePartyLogisticsFlag = false;
 
   listOfColumns: Array<ColumnItem<WarehouseLocation>> = [
@@ -206,8 +206,7 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private locationService: LocationService,
     private locationGroupTypeService: LocationGroupTypeService,
-    private locationGroupService: LocationGroupService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private locationGroupService: LocationGroupService, 
     private modalService: NzModalService,
     private reasonCodeService: ReasonCodeService,
     private inventoryService: InventoryService,

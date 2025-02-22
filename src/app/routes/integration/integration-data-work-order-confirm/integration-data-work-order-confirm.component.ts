@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
@@ -7,8 +7,7 @@ import { differenceInMilliseconds } from 'date-fns';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { ColumnItem } from '../../util/models/column-item';
-import { UtilService } from '../../util/services/util.service';
-import { IntegrationOrderConfirmation } from '../models/integration-order-confirmation';
+import { UtilService } from '../../util/services/util.service'; 
 import { IntegrationStatus } from '../models/integration-status.enum';
 import { IntegrationWorkOrderConfirmation } from '../models/integration-work-order-confirmation';
 import { IntegrationWorkOrderConfirmationService } from '../services/integration-work-order-confirmation.service';
@@ -21,6 +20,7 @@ import { IntegrationWorkOrderConfirmationService } from '../services/integration
 })
 export class IntegrationIntegrationDataWorkOrderConfirmComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   
   listOfColumns: Array<ColumnItem<IntegrationWorkOrderConfirmation>> = [    
     {
@@ -187,8 +187,7 @@ export class IntegrationIntegrationDataWorkOrderConfirmComponent implements OnIn
  
   constructor(
     private fb: UntypedFormBuilder,
-    private integrationWorkOrderConfirmationService: IntegrationWorkOrderConfirmationService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private integrationWorkOrderConfirmationService: IntegrationWorkOrderConfirmationService, 
     private messageService: NzMessageService,
     private utilService: UtilService,
   ) {}

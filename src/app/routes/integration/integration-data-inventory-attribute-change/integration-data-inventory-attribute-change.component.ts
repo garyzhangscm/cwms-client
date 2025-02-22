@@ -1,12 +1,11 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 
 import { ColumnItem } from '../../util/models/column-item';
-import { UtilService } from '../../util/services/util.service';
-import { IntegrationInventoryAdjustmentConfirmation } from '../models/integration-inventory-adjustment-confirmation';
+import { UtilService } from '../../util/services/util.service'; 
 import { IntegrationInventoryAttributeChangeConfirmation } from '../models/integration-inventory-attribute-change-confirmation';
 import { IntegrationStatus } from '../models/integration-status.enum';
 import { IntegrationInventoryAttributeChangeConfirmationService } from '../services/integration-inventory-attribute-change-confirmation.service';
@@ -18,6 +17,7 @@ import { IntegrationInventoryAttributeChangeConfirmationService } from '../servi
     standalone: false
 })
 export class IntegrationIntegrationDataInventoryAttributeChangeComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<IntegrationInventoryAttributeChangeConfirmation>> = [    
     {
           name: 'id',
@@ -233,8 +233,7 @@ export class IntegrationIntegrationDataInventoryAttributeChangeComponent impleme
 
   constructor(
     private fb: UntypedFormBuilder,
-    private integrationInventoryAdjustmentConfirmationService: IntegrationInventoryAttributeChangeConfirmationService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private integrationInventoryAdjustmentConfirmationService: IntegrationInventoryAttributeChangeConfirmationService, 
     private utilService: UtilService,
   ) {}
 

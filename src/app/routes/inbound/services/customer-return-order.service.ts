@@ -1,5 +1,5 @@
  
-import { Inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { I18NService } from '@core';
 import { _HttpClient, ALAIN_I18N_TOKEN } from '@delon/theme';
 import { Observable } from 'rxjs';
@@ -16,14 +16,13 @@ import { CustomerReturnOrder } from '../models/customer-return-order';
   providedIn: 'root'
 })
 export class CustomerReturnOrderService {
-  private RECEIPT_LINE_PER_PAGE = 20;
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN); 
 
   constructor(
     private http: _HttpClient,
     private warehouseService: WarehouseService,
     private printingService: PrintingService,
-    private utilService: UtilService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private utilService: UtilService, 
   ) { }
 
   getCustomerReturnOrders(number?: string, loadDetails?: boolean, statusList?: string,): Observable<CustomerReturnOrder[]> {

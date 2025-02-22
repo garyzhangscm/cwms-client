@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
-import { UntypedFormBuilder, FormControl, UntypedFormGroup } from '@angular/forms';
+import { Component, inject, OnInit } from '@angular/core';
+import { UntypedFormBuilder,  UntypedFormGroup } from '@angular/forms';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, _HttpClient } from '@delon/theme';
 
@@ -17,6 +17,7 @@ import { CycleCountBatchService } from '../services/cycle-count-batch.service';
 })
 export class InventoryCycleCountComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<CycleCountBatch>> = [
     {
       name: 'cycle-count.batchId',
@@ -116,8 +117,7 @@ export class InventoryCycleCountComponent implements OnInit {
   displayOnly = false;
   constructor(
     private fb: UntypedFormBuilder,
-    private cycleCountBatchService: CycleCountBatchService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private cycleCountBatchService: CycleCountBatchService, 
     private userService: UserService,
   ) { 
     userService.isCurrentPageDisplayOnly("/inventory/count/cycle-count").then(

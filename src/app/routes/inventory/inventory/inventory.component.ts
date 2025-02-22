@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common'; 
-import { Component, ElementRef, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component,  inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 // import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
 // import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
@@ -48,6 +48,7 @@ import * as XLSX from 'xlsx';
     standalone: false
 })
 export class InventoryInventoryComponent implements OnInit { 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   inventoryTablePI = 10;
   inventoryTablePS = 0;
 
@@ -155,8 +156,7 @@ export class InventoryInventoryComponent implements OnInit {
     private fb: UntypedFormBuilder,
     private inventoryService: InventoryService,
     private clientService: ClientService,
-    private itemFamilyService: ItemFamilyService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private itemFamilyService: ItemFamilyService, 
     private modalService: NzModalService,
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
