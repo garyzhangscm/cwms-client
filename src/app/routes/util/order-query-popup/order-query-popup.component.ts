@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, EventEmitter, Inject, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { I18NService } from '@core';
 import { STComponent, STColumn, STData } from '@delon/abc/st';
@@ -22,6 +22,7 @@ import { UtilService } from '../services/util.service';
 })
 export class UtilOrderQueryPopupComponent implements OnInit {
   scrollX = '100vw';
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   
   loadingOrderDetailsRequest = 0;
   
@@ -120,8 +121,7 @@ export class UtilOrderQueryPopupComponent implements OnInit {
 
   constructor(
     private fb: UntypedFormBuilder,
-    private orderService: OrderService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private orderService: OrderService, 
     private modalService: NzModalService,
     private utilService: UtilService,
     private localCacheService: LocalCacheService,
@@ -143,9 +143,9 @@ export class UtilOrderQueryPopupComponent implements OnInit {
     this.searching = true;
     
     this.orderService.getOrders(
-      this.searchForm.controls.number.value, 
+      this.searchForm.value.number, 
       false, 
-      this.searchForm.controls.orderStatus.value).subscribe(
+      this.searchForm.value.orderStatus).subscribe(
       orderRes => {
   
         this.searchResult = this.i18n.fanyi('search_result_analysis', {

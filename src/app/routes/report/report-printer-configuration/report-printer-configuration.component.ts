@@ -1,19 +1,15 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms'; 
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzMessageService } from 'ng-zorro-antd/message'; 
 
 import { UserService } from '../../auth/services/user.service';
 import { ColumnItem } from '../../util/models/column-item';
-import { UtilService } from '../../util/services/util.service';
-import { ReportHistory } from '../models/report-history';
+import { UtilService } from '../../util/services/util.service'; 
 import { ReportPrinterConfiguration } from '../models/report-printer-configuration';
-import { ReportType } from '../models/report-type.enum';
-import { ReportHistoryService } from '../services/report-history.service';
+import { ReportType } from '../models/report-type.enum'; 
 import { ReportPrinterConfigurationService } from '../services/report-printer-configuration.service';
 
 @Component({
@@ -23,6 +19,7 @@ import { ReportPrinterConfigurationService } from '../services/report-printer-co
     standalone: false
 })
 export class ReportReportPrinterConfigurationComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   listOfColumns: Array<ColumnItem<ReportPrinterConfiguration>> = [
     {
       name: 'report.type',
@@ -61,8 +58,7 @@ export class ReportReportPrinterConfigurationComponent implements OnInit {
 
   displayOnly = false;
   constructor(
-    private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private fb: UntypedFormBuilder, 
     private reportPrinterConfigurationService: ReportPrinterConfigurationService,
     private messageService: NzMessageService, 
     private titleService: TitleService, 

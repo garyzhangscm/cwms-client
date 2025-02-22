@@ -1,12 +1,10 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms'; 
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { environment } from '@env/environment';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import { environment } from '@env/environment'; 
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 import { UserService } from '../../auth/services/user.service';
@@ -26,6 +24,7 @@ import { DataTransferRequestService } from '../services/data-transfer-request.se
 export class UtilDataTransferComponent implements OnInit {
   isSpinning = false;
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   dataTransferRequestStatus = DataTransferRequestStatus;
 
   @ViewChild('st', { static: true })
@@ -84,8 +83,7 @@ export class UtilDataTransferComponent implements OnInit {
   dataExportRequestModal!: NzModalRef;
    
   displayOnly = false;
-  constructor( 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  constructor(  
     private titleService: TitleService, 
     private userService: UserService,
     private dataTransferRequestService: DataTransferRequestService, 

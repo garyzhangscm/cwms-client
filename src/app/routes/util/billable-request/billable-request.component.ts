@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms'; 
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
@@ -17,6 +17,7 @@ import { BillableRequestService } from '../services/billable-request.service';
 })
 export class UtilBillableRequestComponent implements OnInit {
   isSpinning = false;
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   @ViewChild('st', { static: true })
   st!: STComponent;
@@ -39,7 +40,6 @@ export class UtilBillableRequestComponent implements OnInit {
    
   displayOnly = false;
   constructor( 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
     private titleService: TitleService, 
     private billableRequestService: BillableRequestService, 
     private userService: UserService,

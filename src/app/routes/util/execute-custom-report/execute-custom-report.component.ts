@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { STColumn } from '@delon/abc/st';
@@ -19,7 +19,8 @@ import { CustomReportService } from '../services/custom-report.service';
     standalone: false
 })
 export class UtilExecuteCustomReportComponent implements OnInit {
-[x: string]: any;
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  [x: string]: any;
 
   currentCustomReport?: CustomReport;  
   customReportExecutionHistories: CustomReportExecutionHistory[] = [];
@@ -39,8 +40,7 @@ export class UtilExecuteCustomReportComponent implements OnInit {
   
   constructor(private http: _HttpClient, 
     private customReportService: CustomReportService, 
-    private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private activatedRoute: ActivatedRoute, 
     private titleService: TitleService,
     private messageService: NzMessageService,
     private companyService: CompanyService, 
@@ -53,8 +53,8 @@ export class UtilExecuteCustomReportComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) { 
-        this.customReportService.getCustomReport(params.id)
+      if (params['id']) { 
+        this.customReportService.getCustomReport(params['id'])
           .subscribe(customReportRes => {
             this.currentCustomReport = customReportRes; 
             

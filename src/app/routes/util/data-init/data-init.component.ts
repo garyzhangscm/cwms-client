@@ -1,11 +1,9 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms'; 
 import { I18NService } from '@core';
 import { STComponent, STColumn } from '@delon/abc/st';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
-import { NzMessageService } from 'ng-zorro-antd/message';
+import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
 
 import { UserService } from '../../auth/services/user.service';
@@ -20,6 +18,7 @@ import { DataInitialRequestService } from '../services/data-initial-request.serv
 })
 export class UtilDataInitComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   isSpinning = false;
 
   @ViewChild('st', { static: true })
@@ -42,8 +41,7 @@ export class UtilDataInitComponent implements OnInit {
   dataInitialRequestModal!: NzModalRef;
    
   displayOnly = false;
-  constructor( 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  constructor(  
     private titleService: TitleService, 
     private dataInitialRequestService: DataInitialRequestService, 
     private modalService: NzModalService,

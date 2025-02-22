@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -17,6 +17,7 @@ import { TrailerService } from '../services/trailer.service';
 })
 export class CommonTrailerMaintenanceComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle = '';
   stepIndex = 0;
   currentTrailer!: Trailer;
@@ -33,7 +34,6 @@ export class CommonTrailerMaintenanceComponent implements OnInit {
     private warehouseService: WarehouseService,
     private companyService: CompanyService,
     private trailerService: TrailerService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private messageService: NzMessageService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -46,9 +46,9 @@ export class CommonTrailerMaintenanceComponent implements OnInit {
     this.pageTitle = this.i18n.fanyi('trailer.maintenance');
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         // Get the production line by ID
-        this.trailerService.getTrailer(params.id)
+        this.trailerService.getTrailer(params['id'])
           .subscribe({
             next: (trailerRes) => {
               this.currentTrailer = trailerRes; 

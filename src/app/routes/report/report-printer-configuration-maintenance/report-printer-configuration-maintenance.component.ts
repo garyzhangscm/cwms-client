@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
@@ -18,6 +18,7 @@ import { ReportPrinterConfigurationService } from '../services/report-printer-co
     standalone: false
 })
 export class ReportReportPrinterConfigurationMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle = '';
   stepIndex = 0;
   currentReportPrinterConfiguration!: ReportPrinterConfiguration;
@@ -30,8 +31,7 @@ export class ReportReportPrinterConfigurationMaintenanceComponent implements OnI
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService,
     private warehouseService: WarehouseService,
-    private userService: UserService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private userService: UserService, 
     private reportPrinterConfigurationService: ReportPrinterConfigurationService,
     private messageService: NzMessageService,
     private printingService: PrintingService,

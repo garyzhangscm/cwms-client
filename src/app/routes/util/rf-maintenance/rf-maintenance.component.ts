@@ -1,12 +1,11 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { PrintingService } from '../../common/services/printing.service';
-import { Printer } from '../../report/models/printer';
-import { ReportService } from '../../report/services/report.service';
+import { Printer } from '../../report/models/printer'; 
 import { PrintingStrategy } from '../../warehouse-layout/models/printing-strategy.enum';
 import { WarehouseConfigurationService } from '../../warehouse-layout/services/warehouse-configuration.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
@@ -19,6 +18,7 @@ import { RfService } from '../services/rf.service';
     standalone: false
 })
 export class UtilRfMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle = '';
   stepIndex = 0;
   currentRF!: RF;
@@ -30,8 +30,7 @@ export class UtilRfMaintenanceComponent implements OnInit {
     private titleService: TitleService,
     private warehouseService: WarehouseService,
     private rfService: RfService,
-    private printingService: PrintingService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private printingService: PrintingService, 
     private warehouseConfigurationService: WarehouseConfigurationService,
     private messageService: NzMessageService,
     private router: Router

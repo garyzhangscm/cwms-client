@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -19,6 +19,7 @@ import { TractorService } from '../services/tractor.service';
 })
 export class CommonTractorComponent implements OnInit {
   isSpinning = false;
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   
  
   @ViewChild('st', { static: true })
@@ -80,8 +81,7 @@ export class CommonTractorComponent implements OnInit {
 
   displayOnly = false;
   constructor(
-    private userService: UserService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+    private userService: UserService, 
     private activatedRoute: ActivatedRoute,
     private tractorService: TractorService,
     private messageService: NzMessageService, 

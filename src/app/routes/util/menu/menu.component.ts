@@ -1,19 +1,17 @@
 import { formatDate } from '@angular/common';
-import { Component, Inject, OnInit,  ViewChild } from '@angular/core';
+import { Component, inject, OnInit,  ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup,  } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import {  ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { STComponent, STColumn,  } from '@delon/abc/st';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme'; 
-import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalService } from 'ng-zorro-antd/modal';
+import { NzMessageService } from 'ng-zorro-antd/message'; 
 
 import { Menu } from '../../auth/models/menu';
 import { MenuGroup } from '../../auth/models/menu-group';
 import { MenuSubGroup } from '../../auth/models/menu-sub-group';
 import { MenuService } from '../../auth/services/menu.service'; 
-import { UserService } from '../../auth/services/user.service';
-import { UtilService } from '../services/util.service';
+import { UserService } from '../../auth/services/user.service'; 
 
 @Component({
     selector: 'app-util-menu',
@@ -23,11 +21,11 @@ import { UtilService } from '../services/util.service';
 })
 export class UtilMenuComponent implements OnInit {
   
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   displayOnly = false;
   
   constructor(
     private fb: UntypedFormBuilder,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
     private messageService: NzMessageService, 
     private activatedRoute: ActivatedRoute,
     private titleService: TitleService, 

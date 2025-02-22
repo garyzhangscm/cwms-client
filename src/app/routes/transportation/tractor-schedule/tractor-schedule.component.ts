@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -25,6 +25,8 @@ import 'moment-timezone';
     standalone: false
 })
 export class TransportationTractorScheduleComponent implements OnInit { 
+
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   pageTitle = '';
   addScheduleForm!: UntypedFormGroup;
   currentTractor!: Tractor;
@@ -32,8 +34,7 @@ export class TransportationTractorScheduleComponent implements OnInit {
   tractorAppointmentTypes = TractorAppointmentType;
   tractorSchedules: TractorSchedule[] = [];
 
-  constructor(private http: _HttpClient,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, 
+  constructor(private http: _HttpClient, 
     private activatedRoute: ActivatedRoute,
     private tractorService: TractorService,
     private tractorScheduleService: TractorScheduleService,

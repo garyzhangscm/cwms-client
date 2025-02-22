@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
@@ -26,6 +26,7 @@ import { FileUploadOperationService } from '../services/file-upload-operation.se
 export class UtilFileUploadComponent implements OnInit {
 
   
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   @ViewChild('st', { static: false })
   st!: STComponent;
   columns: STColumn[] = [
@@ -59,8 +60,7 @@ export class UtilFileUploadComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private fileUploadOperationService: FileUploadOperationService,
     private fb: UntypedFormBuilder,
-    private webLocation: Location,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private webLocation: Location, 
     private titleService: TitleService,
     private msg: NzMessageService,
     private userService: UserService,
