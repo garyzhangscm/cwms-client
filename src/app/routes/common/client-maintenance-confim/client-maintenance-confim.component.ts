@@ -22,7 +22,7 @@ export class CommonClientMaintenanceConfimComponent implements OnInit {
     private clientService: ClientService,
     private router: Router,
   ) {
-    this.pageTitle = i18n.fanyi('page.client-maintenance.confirm.title');
+    this.pageTitle = this.i18n.fanyi('page.client-maintenance.confirm.title');
   }
 
   ngOnInit(): void {

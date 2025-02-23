@@ -66,9 +66,9 @@ export class InboundInboundQcConfigurationMaintenanceComponent implements OnInit
 
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         // Get the production line by ID
-        this.inboundQCConfigurationService.getInboundQcConfiguration(params.id)
+        this.inboundQCConfigurationService.getInboundQcConfiguration(params['id'])
           .subscribe(qcConfiguration => {
             this.currentQCConfiguration = qcConfiguration;
 

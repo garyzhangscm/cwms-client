@@ -118,8 +118,8 @@ export class CommonAbcCategoryComponent implements OnInit {
     this.isSpinning = true; 
     this.abcCategoryService.addABCCategory({
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
-      name: this.newABCCategoryForm.controls.abcCategoryName.value,
-      description: this.newABCCategoryForm.controls.abcCategoryDescription.value
+      name: this.newABCCategoryForm.value.abcCategoryName,
+      description: this.newABCCategoryForm.value.abcCategoryDescription
     }).subscribe({
 
       next: () => {

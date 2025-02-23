@@ -25,7 +25,7 @@ export class CommonCustomerMaintenanceConfirmComponent implements OnInit {
     private messageService: NzMessageService,
     private router: Router,
   ) {
-    this.pageTitle = i18n.fanyi('confirm');
+    this.pageTitle = this.i18n.fanyi('confirm');
   }
 
   ngOnInit(): void {

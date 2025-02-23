@@ -1,10 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes  } from '@angular/router';
-import { ACLGuard, ACLGuardType } from '@delon/acl';
+import { aclCanActivate, ACLGuardType } from '@delon/acl';
 
 import { AuthDepartmentMaintenanceComponent } from './department-maintenance/department-maintenance.component';
-import { AuthDepartmentComponent } from './department/department.component';
-import { AuthGuard } from './guard/auth.guard';
+import { AuthDepartmentComponent } from './department/department.component'; 
 import { AuthPermissionComponent } from './permission/permission.component';
 import { AuthRoleClientComponent } from './role-client/role-client.component';
 import { AuthRoleMaintenanceConfirmComponent } from './role-maintenance-confirm/role-maintenance-confirm.component';

@@ -164,6 +164,7 @@ export class InboundReceiptComponent implements OnInit {
   listOfAllReceipts: Receipt[] = [];
   listOfDisplayReceipts: Receipt[] = [];
   receiptStatusList = ReceiptStatus;
+  receiptStatusListKeys = Object.keys(this.receiptStatusList);
 
   // the item package type that will be used to calculate the 
   // quanties for receipt line. 

@@ -1,8 +1,10 @@
+import { NgxGpAutocompleteModule } from '@angular-magic/ngx-gp-autocomplete';
 import { NgModule, Type } from '@angular/core'; 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PageHeaderComponent } from '@delon/abc/page-header';
 import { STModule } from '@delon/abc/st';
 import { I18nPipe } from '@delon/theme';
+import { Loader } from '@googlemaps/js-api-loader';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -98,11 +100,21 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
         NzInputNumberModule ,
         NzIconModule ,
         NzToolTipModule ,
+        NgxGpAutocompleteModule,
     ],
     declarations: [
         ...COMPONENTS,
         ...COMPONENTS_NOROUNT
     ],
-    exports: [CommonPrintButtonComponent]
+    exports: [CommonPrintButtonComponent],
+    providers: [
+       {
+         provide: Loader,
+         useValue: new Loader({
+           apiKey: 'AIzaSyDkPmh0PEC7JTCutUhWuN3BUU38M2fvR5s',
+           libraries: ['places']
+         })
+       }, 
+     ],
 })
 export class CWMSCommonModule { }

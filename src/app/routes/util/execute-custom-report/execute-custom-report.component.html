@@ -39,7 +39,7 @@
         
         <nz-card nzTitle="{{'parameter' | i18n}}" *ngIf="currentCustomReport != null" [nzActions]="[executeTpl]"> 
             
-            <st #customReportParametersTable [data]="currentCustomReport?.customReportParameters" 
+            <st #customReportParametersTable [data]="currentCustomReport.customReportParameters" 
                 [columns]="customReportParametersTableColumns" [page]="{ show: false }">
 
                 <ng-template st-row="valueColumn" let-customReportParameter let-index="index"> 

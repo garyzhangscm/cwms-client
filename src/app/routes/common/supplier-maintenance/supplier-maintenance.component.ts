@@ -14,6 +14,8 @@ import { Supplier } from '../models/supplier';
 })
 export class CommonSupplierMaintenanceComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  private readonly warehouseService = inject(WarehouseService);
+  private readonly companyService = inject(CompanyService);
   currentSupplier: Supplier | undefined;
   pageTitle = '';
 
@@ -36,9 +38,7 @@ export class CommonSupplierMaintenanceComponent implements OnInit {
   };
 
   constructor(private router: Router, 
-    private titleService: TitleService, 
-    private warehouseService: WarehouseService, 
-    private companyService: CompanyService) { }
+    private titleService: TitleService, ) { }
 
   ngOnInit(): void {
     this.loadSupplierFromSessionStorage();

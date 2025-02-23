@@ -48,10 +48,10 @@ export class AuthRoleOperationTypeComponent implements OnInit {
 
     
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.roleId) {
+      if (params['roleId']) {
         // Get the role and initiate the menu assignment
         this.isSpinning = true;
-        this.roleService.getRole(params.roleId).subscribe({
+        this.roleService.getRole(params['roleId']).subscribe({
           next: (roleRes) => {
             this.currentRole = roleRes;
             this.initOperationTypeAssignment(); 
@@ -121,7 +121,7 @@ export class AuthRoleOperationTypeComponent implements OnInit {
    //  );
    this.isSpinning = true;
    const newlyAssignedOperationTypeIds = 
-      [...this.operationTypeItems.filter(item => item.direction === 'right').map(item => item.key)]; 
+      [...this.operationTypeItems.filter(item => item.direction === 'right').map(item => item['key'])]; 
      
  
     this.roleService.processOperationTypes(this.currentRole!.id, 

@@ -118,8 +118,8 @@ export class CommonVelocityComponent implements OnInit {
     this.isSpinning = true; 
     this.velocityService.addVelocity({
       warehouseId: this.warehouseService.getCurrentWarehouse().id,
-      name: this.newVelocityForm.controls.velocityName.value,
-      description: this.newVelocityForm.controls.velocityDescription.value
+      name: this.newVelocityForm.value.velocityName,
+      description: this.newVelocityForm.value.velocityDescription
     }).subscribe({
 
       next: () => {

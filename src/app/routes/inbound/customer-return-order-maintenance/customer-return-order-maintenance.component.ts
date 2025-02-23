@@ -72,8 +72,8 @@ export class InboundCustomerReturnOrderMaintenanceComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) { 
-        this.customerReturnOrderService.getCustomerReturnOrder(params.id)
+      if (params['id']) { 
+        this.customerReturnOrderService.getCustomerReturnOrder(params['id'])
           .subscribe(customerReturnOrderRes => {
             this.currentCustomerReturnOrder = customerReturnOrderRes; 
 

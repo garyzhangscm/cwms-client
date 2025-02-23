@@ -112,8 +112,8 @@ export class InventoryItemBarcodeTypeComponent implements OnInit {
       },
       nzOnOk: () => {
         this.addItemBarcodeType( 
-          this.addItemBarcodeTypeForm.controls.name.value,
-          this.addItemBarcodeTypeForm.controls.description.value,
+          this.addItemBarcodeTypeForm.value.name,
+          this.addItemBarcodeTypeForm.value.description,
         );
         return false;
       },

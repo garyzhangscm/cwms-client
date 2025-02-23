@@ -48,6 +48,7 @@ import { ReceiptService } from '../services/receipt.service';
 })
 export class InboundReceiptMaintenanceComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  private readonly warehouseService = inject(WarehouseService);
   listOfReceiptLineTableColumns: Array<ColumnItem<ReceiptLine>> = [
     {
       name: 'receipt.line.number',
@@ -224,7 +225,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   recalculateQCForm!: UntypedFormGroup;
   recalculateQCModal!: NzModalRef;
   formatterPercent = (value: number): string => `${value} %`;
-  parserPercent = (value: string): string => value.replace(' %', '');
+  // parserPercent = (value: string): string => value.replace(' %', '');
+  parserPercent = (value: string): number => parseFloat(value?.replace('%', ''));
 
   inventoryConfiguration?: InventoryConfiguration;
   
@@ -249,8 +251,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
     private itemService: ItemService,
     private locationService: LocationService,
     private inventoryService: InventoryService,
-    private message: NzMessageService,
-    private warehouseService: WarehouseService,
+    private message: NzMessageService, 
     private utilService: UtilService,
     private router: Router,
     private printingService: PrintingService,

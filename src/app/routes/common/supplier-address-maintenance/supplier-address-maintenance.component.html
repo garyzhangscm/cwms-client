@@ -50,7 +50,12 @@
             <input nz-input ngx-google-places-autocomplete (onAddressChange)="handleNewSupplierAddressChange($event)" />
 
             -->
-            <input nz-input  />
+            <input #ngxPlaces="ngx-places"
+                  nz-input 
+                  class="input"
+                  type="text" 
+                  ngx-gp-autocomplete
+                  (onAddressChange)="handleNewSupplierAddressChange($event)" />
           </nz-form-control>
         </nz-form-item>
       </div>

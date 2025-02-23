@@ -45,9 +45,9 @@ export class AuthRoleUserComponent implements OnInit {
     this.titleService.setTitle(this.i18n.fanyi('page.auth.role.users'));
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.roleId) {
+      if (params['roleId']) {
         // Get the role and initiate the menu assignment
-        this.roleService.getRole(params.roleId).subscribe(roleRes => {
+        this.roleService.getRole(params['roleId']).subscribe(roleRes => {
           this.currentRole = roleRes;
           this.initUserAssignment();
           this.newRole = false;
@@ -107,7 +107,7 @@ export class AuthRoleUserComponent implements OnInit {
 
   assignUser(): void {
     this.processingUser = true;
-    const currentAssignedUserIds = this.userList.filter(item => item.direction === 'right').map(item => item.key);
+    const currentAssignedUserIds = this.userList.filter(item => item.direction === 'right').map(item => item['key']);
 
     const newlyAssignedUserIds = currentAssignedUserIds.filter(
       id => !this.assignedUserIds.some(assignedUserId => assignedUserId === +id),
@@ -124,7 +124,7 @@ export class AuthRoleUserComponent implements OnInit {
   }
 
   goToNextPage(): void {
-    const currentAssignedUserIds = this.userList.filter(item => item.direction === 'right').map(item => item.key);
+    const currentAssignedUserIds = this.userList.filter(item => item.direction === 'right').map(item => item['key']);
     const assignedUser = this.allUsers.filter(user => currentAssignedUserIds.includes(user.id!.toString()));
     this.currentRole!.users = assignedUser;
     sessionStorage.setItem('role-maintenance.role', JSON.stringify(this.currentRole));

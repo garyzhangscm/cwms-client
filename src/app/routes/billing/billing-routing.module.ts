@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ACLGuard, ACLGuardType } from '@delon/acl';
+import { aclCanActivate, ACLGuardType } from '@delon/acl';
 
 import { BillingBillableActivityTypeMaintenanceComponent } from './billable-activity-type-maintenance/billable-activity-type-maintenance.component';
 import { BillingBillableActivityTypeComponent } from './billable-activity-type/billable-activity-type.component';

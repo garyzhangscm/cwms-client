@@ -148,9 +148,9 @@
         </nz-form-label>
         <nz-form-control [nzSpan]="16">
           <nz-select formControlName="volumeTrackingPolicy">
-            <nz-option *ngFor="let volumeTrackingPolicy of volumeTrackingPolicies | keys"
-              [nzValue]="volumeTrackingPolicy.key"
-              nzLabel="{{ 'LOCATION-VOLUME-TRACKING-POLICY-' + volumeTrackingPolicy.key | i18n }}"></nz-option>
+            <nz-option *ngFor="let volumeTrackingPolicy of volumeTrackingPoliciesKeys"
+              [nzValue]="volumeTrackingPolicy"
+              nzLabel="{{ 'LOCATION-VOLUME-TRACKING-POLICY-' + volumeTrackingPolicy | i18n }}"></nz-option>
           </nz-select>
         </nz-form-control>
       </nz-form-item>
@@ -165,9 +165,9 @@
         </nz-form-label>
         <nz-form-control [nzSpan]="12" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
           <nz-select formControlName="inventoryConsolidationStrategy">
-            <nz-option *ngFor="let inventoryConsolidationStrategy of inventoryConsolidationStrategies | keys"
-              nzValue="{{ inventoryConsolidationStrategy.key }}"
-              nzLabel="{{ 'INVENTORY-CONSOLIDATION-STRATEGY-' + inventoryConsolidationStrategy.key | i18n }}">
+            <nz-option *ngFor="let inventoryConsolidationStrategy of inventoryConsolidationStrategiesKeys"
+              nzValue="{{ inventoryConsolidationStrategy }}"
+              nzLabel="{{ 'INVENTORY-CONSOLIDATION-STRATEGY-' + inventoryConsolidationStrategy | i18n }}">
             </nz-option>
           </nz-select>
         </nz-form-control>

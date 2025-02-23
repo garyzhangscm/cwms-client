@@ -82,9 +82,9 @@ export class InboundInboundQcConfigurationComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     this.inboundQCConfigurationService.getInboundQcConfigurations(
-      this.searchForm!.controls.supplier.value,
+      this.searchForm!.value.supplier,
       undefined,
-      this.searchForm.controls.item.value,
+      this.searchForm.value.item,
     ).subscribe(
       qcConfigurationRes => {
         this.listOfAllQCConfiguration = qcConfigurationRes; 

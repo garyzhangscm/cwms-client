@@ -46,8 +46,8 @@ export class AuthRolePermissionComponent implements OnInit {
 
     this.isSpinning = true;
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.roleId) {
-        this.roleService.getRole(params.roleId).subscribe({
+      if (params['roleId']) {
+        this.roleService.getRole(params['roleId']).subscribe({
           next: (roleRes) => {
             this.currentRole = roleRes;
             this.previousPage = `/auth/role?name=${roleRes.name}`; 

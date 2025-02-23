@@ -81,9 +81,9 @@ export class InboundInboundReceivingConfigurationComponent implements OnInit {
     this.searchResult = '';
 
     this.inboundReceivingConfigurationService.getInboundReceivingConfigurations(
-      this.searchForm!.controls.supplier.value,
+      this.searchForm!.value.supplier,
       undefined,
-      this.searchForm.controls.item.value,
+      this.searchForm.value.item,
     ).subscribe({
          next: (inboundReceivingConfigurationRes) => {
             this.inboundReceivingConfigurations = inboundReceivingConfigurationRes; 

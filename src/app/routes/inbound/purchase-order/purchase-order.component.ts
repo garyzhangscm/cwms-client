@@ -58,6 +58,7 @@ export class InboundPurchaseOrderComponent implements OnInit {
   validSuppliers: Supplier[] = [];
 
   purchaseOrderStatusList = PurchaseOrderStatus;
+  purchaseOrderStatusListKeys = Object.keys(this.purchaseOrderStatusList);
    
   displayOnly = false;
   constructor(  

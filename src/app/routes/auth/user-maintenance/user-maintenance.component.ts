@@ -16,7 +16,8 @@ import { UserService } from '../services/user.service';
     standalone: false
 })
 export class AuthUserMaintenanceComponent implements OnInit {
-  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN); 
+  private readonly companyService = inject(CompanyService);
   currentUser: User | undefined;
   pageTitle = '';
   passwordVisible = false;
@@ -45,8 +46,7 @@ export class AuthUserMaintenanceComponent implements OnInit {
     private router: Router,
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
-    private userService: UserService,
-    private companyService: CompanyService,
+    private userService: UserService, 
     private departmentService: DepartmentService,
   ) { }
 

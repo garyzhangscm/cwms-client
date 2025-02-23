@@ -161,8 +161,8 @@
             <nz-select nzAllowClear   
             nz-input  [(ngModel)]="this.currentInboundReceivingConfiguration.statusAllowReceiptChangeWhenUploadFile"
                     style="width: 150px"  >
-                  <nz-option *ngFor="let receiptStatus of receiptStatusList | keys"
-                      nzLabel="{{ 'RECEIPT-STATUS-' + receiptStatus.key | i18n}}" [nzValue]="receiptStatus.key">
+                  <nz-option *ngFor="let receiptStatus of receiptStatusListKeys"
+                      nzLabel="{{ 'RECEIPT-STATUS-' + receiptStatus | i18n}}" [nzValue]="receiptStatus">
                   </nz-option>
               </nz-select>  
   
@@ -178,8 +178,8 @@
               <nz-select nzAllowClear   
               nz-input  [(ngModel)]="this.currentInboundReceivingConfiguration.statusAllowReceiptChangeFromIntegration"
                       style="width: 150px"  >
-                    <nz-option *ngFor="let receiptStatus of receiptStatusList | keys"
-                        nzLabel="{{ 'RECEIPT-STATUS-' + receiptStatus.key | i18n}}" [nzValue]="receiptStatus.key">
+                    <nz-option *ngFor="let receiptStatus of receiptStatusListKeys"
+                        nzLabel="{{ 'RECEIPT-STATUS-' + receiptStatus | i18n}}" [nzValue]="receiptStatus">
                     </nz-option>
                 </nz-select>  
     
@@ -195,8 +195,8 @@
                 <nz-select nzAllowClear   
                 nz-input  [(ngModel)]="this.currentInboundReceivingConfiguration.statusAllowReceiptChangeFromWebUI"
                         style="width: 150px"  >
-                      <nz-option *ngFor="let receiptStatus of receiptStatusList | keys"
-                          nzLabel="{{ 'RECEIPT-STATUS-' + receiptStatus.key | i18n}}" [nzValue]="receiptStatus.key">
+                      <nz-option *ngFor="let receiptStatus of receiptStatusListKeys"
+                          nzLabel="{{ 'RECEIPT-STATUS-' + receiptStatus | i18n}}" [nzValue]="receiptStatus">
                       </nz-option>
                   </nz-select>  
       

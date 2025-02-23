@@ -33,6 +33,7 @@ export class InboundInboundReceivingConfigurationMaintenanceComponent implements
   validItemFamilies: ItemFamily[] = []; 
 
   receiptStatusList = ReceiptStatus
+  receiptStatusListKeys = Object.keys(this.receiptStatusList);
 
 
   constructor(private http: _HttpClient,
@@ -64,9 +65,9 @@ export class InboundInboundReceivingConfigurationMaintenanceComponent implements
 
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         // Get the production line by ID
-        this.inboundReceivingConfigurationService.getInboundReceivingConfiguration(params.id)
+        this.inboundReceivingConfigurationService.getInboundReceivingConfiguration(params['id'])
           .subscribe(inboundReceivingConfiguration => {
             this.currentInboundReceivingConfiguration = inboundReceivingConfiguration;
 
