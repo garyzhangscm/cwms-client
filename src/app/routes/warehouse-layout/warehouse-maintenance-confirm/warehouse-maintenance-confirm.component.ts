@@ -23,7 +23,7 @@ export class WarehouseLayoutWarehouseMaintenanceConfirmComponent implements OnIn
     private warehouseService: WarehouseService,
     private router: Router,
   ) {
-    this.pageTitle = i18n.fanyi('page.warehouse-maintenance.confirm.header.title');
+    this.pageTitle = this.i18n.fanyi('page.warehouse-maintenance.confirm.header.title');
   }
 
   ngOnInit(): void {

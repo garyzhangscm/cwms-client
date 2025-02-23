@@ -41,6 +41,8 @@ import { NzListModule } from 'ng-zorro-antd/list';
 import { CommonModule } from '@angular/common';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NgxGpAutocompleteModule } from '@angular-magic/ngx-gp-autocomplete';
+import { Loader } from '@googlemaps/js-api-loader';
 
 const COMPONENTS: Array<Type<void>> = [
   WarehouseLayoutWarehouseComponent,
@@ -90,10 +92,21 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     CommonModule, 
     NzInputModule ,
     NzModalModule,
+    NgxGpAutocompleteModule,
   ],
   declarations: [
     ...COMPONENTS,
     ...COMPONENTS_NOROUNT
+  ],
+  providers: [
+    {
+      provide: Loader,
+      useValue: new Loader({
+        apiKey: 'AIzaSyDkPmh0PEC7JTCutUhWuN3BUU38M2fvR5s',
+        libraries: ['places']
+      })
+    },
+    //...
   ],
   exports: [WarehouseLayoutLocationQueryPopupComponent]
 })

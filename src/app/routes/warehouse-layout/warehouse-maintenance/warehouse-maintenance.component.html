@@ -108,10 +108,18 @@
           {{ 'address' | i18n }}
         </nz-form-label>
         <nz-form-control [nzSpan]="18" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
+          
+          <input #ngxPlaces="ngx-places"
+              nz-input 
+               class="input"
+               type="text"
+               matInput
+               formControlName="address"
+               ngx-gp-autocomplete
+               (onAddressChange)="handleAddressChange($event)" />
           <!--
 <input nz-input ngx-google-places-autocomplete (onAddressChange)="handleAddressChange($event)" formControlName="address"/>
-          -->
-          <input nz-input  formControlName="address"/>
+          --> 
         </nz-form-control>
       </nz-form-item>
 

@@ -1,7 +1,7 @@
 import { formatDate } from "@angular/common";
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { I18NService } from '@core';
-import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
+import { ALAIN_I18N_TOKEN,  _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 import { UserService } from "../../auth/services/user.service";
@@ -20,6 +20,7 @@ import { WorkOrderConfigurationService } from '../services/work-order-configurat
 })
 export class WorkOrderWorkOrderConfigurationComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   workOrderMaterialConsumeTimings = WorkOrderMaterialConsumeTiming;
   workOrderMaterialConsumeTimingsKeys = Object.keys(this.workOrderMaterialConsumeTimings);
 
@@ -34,8 +35,7 @@ export class WorkOrderWorkOrderConfigurationComponent implements OnInit {
     private warehouseService: WarehouseService,
     private messageService: NzMessageService,
     private userService: UserService,
-    private companyService: CompanyService,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService, ) {
+    private companyService: CompanyService,) {
       userService.isCurrentPageDisplayOnly("/work-order/work-order-configuration").then(
         displayOnlyFlag => this.displayOnly = displayOnlyFlag
       );

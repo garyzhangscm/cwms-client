@@ -1,21 +1,17 @@
-import { Component, Inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-
-import { newItemUOMQuantityValidator } from '../../directives/newItemUOMQuantityValidator';
+ 
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
-import { ItemService } from '../../inventory/services/item.service';
-import { CompanyService } from '../../warehouse-layout/services/company.service';
-import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
+import { ItemService } from '../../inventory/services/item.service'; 
 import { WorkOrderLine } from '../models/work-order-line';
 import { WorkOrderLineSparePart } from '../models/work-order-line-spare-part';
-import { WorkOrderLineSparePartDetail } from '../models/work-order-line-spare-part-detail';
-import { WorkOrderLineSparePartService } from '../services/work-order-line-spare-part.service';
+import { WorkOrderLineSparePartDetail } from '../models/work-order-line-spare-part-detail'; 
 import { WorkOrderService } from '../services/work-order.service';
 
 @Component({
@@ -25,6 +21,7 @@ import { WorkOrderService } from '../services/work-order.service';
 })
 export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnInit {
 
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentWorkOrderLine?: WorkOrderLine;
   isSpinning = false;
   stepIndex = 0;
@@ -43,8 +40,7 @@ export class WorkOrderWorkOrderLineSparePartMaintenanceComponent implements OnIn
   pageTitle = "";
 
   constructor(
-    private fb: UntypedFormBuilder, 
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private fb: UntypedFormBuilder,  
     private titleService: TitleService,
     private messageService: NzMessageService,
     private workOrderService: WorkOrderService,

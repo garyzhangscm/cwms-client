@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -10,9 +10,7 @@ import { WorkOrder } from '../models/work-order';
 import { WorkOrderCompleteTransaction } from '../models/work-order-complete-transaction';
 import { WorkOrderKpi } from '../models/work-order-kpi';
 import { WorkOrderKpiTransaction } from '../models/work-order-kpi-transaction';
-import { WorkOrderKpiTransactionType } from '../models/work-order-kpi-transaction-type.enum';
-import { WorkOrderCompleteTransactionService } from '../services/work-order-complete-transaction.service';
-import { WorkOrderService } from '../services/work-order.service';
+import { WorkOrderKpiTransactionType } from '../models/work-order-kpi-transaction-type.enum'; 
 
 @Component({
     selector: 'app-work-order-work-order-complete-kpi',
@@ -21,6 +19,7 @@ import { WorkOrderService } from '../services/work-order.service';
     standalone: false
 })
 export class WorkOrderWorkOrderCompleteKpiComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   workOrderCompleteTransaction!: WorkOrderCompleteTransaction;
 
   currentWorkOrder!: WorkOrder;
@@ -33,8 +32,7 @@ export class WorkOrderWorkOrderCompleteKpiComponent implements OnInit {
   kpiMeasurementsKeys = Object.keys(this.kpiMeasurements);
   existingWorkOrderKpis: WorkOrderKpi[] = [];
 
-  constructor(
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  constructor( 
     private titleService: TitleService,
     private router: Router,
     private userService: UserService,

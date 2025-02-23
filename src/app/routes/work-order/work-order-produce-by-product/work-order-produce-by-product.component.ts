@@ -1,24 +1,18 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, inject, OnInit } from '@angular/core';
+import {  Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
-import { InventoryService } from '../../inventory/services/inventory.service';
-import { ItemService } from '../../inventory/services/item.service';
-import { CompanyService } from '../../warehouse-layout/services/company.service';
-import { LocationService } from '../../warehouse-layout/services/location.service';
+import { InventoryService } from '../../inventory/services/inventory.service'; 
+import { CompanyService } from '../../warehouse-layout/services/company.service'; 
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { WorkOrder } from '../models/work-order';
 import { WorkOrderByProduct } from '../models/work-order-by-product';
-import { WorkOrderByProductProduceTransaction } from '../models/work-order-by-product-produce-transaction';
-import { WorkOrderLineConsumeTransaction } from '../models/work-order-line-consume-transaction';
-import { WorkOrderProduceTransaction } from '../models/work-order-produce-transaction';
-import { WorkOrderProducedInventory } from '../models/work-order-produced-inventory';
-import { BillOfMaterialService } from '../services/bill-of-material.service';
-import { WorkOrderService } from '../services/work-order.service';
+import { WorkOrderByProductProduceTransaction } from '../models/work-order-by-product-produce-transaction'; 
+import { WorkOrderProduceTransaction } from '../models/work-order-produce-transaction'; 
 
 @Component({
     selector: 'app-work-order-work-order-produce-by-product',
@@ -39,6 +33,7 @@ import { WorkOrderService } from '../services/work-order.service';
     standalone: false
 })
 export class WorkOrderWorkOrderProduceByProductComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   workOrderProduceTransaction!: WorkOrderProduceTransaction;
   currentWorkOrder!: WorkOrder;
 
@@ -47,8 +42,7 @@ export class WorkOrderWorkOrderProduceByProductComponent implements OnInit {
   pageTitle: string;
 
   mapOfWorkOrderByProduct: { [key: string]: WorkOrderByProduct } = {};
-  constructor(
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+  constructor( 
     private titleService: TitleService,
     private inventoryStatusService: InventoryStatusService,
     private inventoryService: InventoryService,
