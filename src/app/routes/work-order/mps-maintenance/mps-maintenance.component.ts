@@ -78,7 +78,7 @@ import { WorkOrderService } from '../services/work-order.service';
 })
 export class WorkOrderMpsMaintenanceComponent implements OnInit {
 
-  private i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN); 
   currentMPS!: MasterProductionSchedule;
   pageTitle = "";
   isSpinning = false;

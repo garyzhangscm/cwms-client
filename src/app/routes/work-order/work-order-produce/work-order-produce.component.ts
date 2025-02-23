@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -8,11 +8,9 @@ import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory';
 import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
-import { InventoryService } from '../../inventory/services/inventory.service';
-import { ItemService } from '../../inventory/services/item.service';
+import { InventoryService } from '../../inventory/services/inventory.service'; 
 import { Printer } from '../../report/models/printer';
-import { CompanyService } from '../../warehouse-layout/services/company.service';
-import { LocationService } from '../../warehouse-layout/services/location.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service'; 
 import { WarehouseConfigurationService } from '../../warehouse-layout/services/warehouse-configuration.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { BillOfMaterial } from '../models/bill-of-material';
@@ -44,6 +42,7 @@ import { WorkOrderService } from '../services/work-order.service';
     standalone: false
 })
 export class WorkOrderWorkOrderProduceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   workOrderProduceTransaction!: WorkOrderProduceTransaction;
   consumeByBomQuantity = 'true'; // consume by BOM
   consumeByWorkOrderBOM = 'true';  // whether we consume by the BOM on the work order, 
@@ -67,8 +66,7 @@ export class WorkOrderWorkOrderProduceComponent implements OnInit {
 
 
   constructor(
-    private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private activatedRoute: ActivatedRoute, 
     private titleService: TitleService,
     private workOrderService: WorkOrderService,
     private billOfMaterialService: BillOfMaterialService,

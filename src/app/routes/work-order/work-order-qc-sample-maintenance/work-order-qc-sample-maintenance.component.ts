@@ -1,7 +1,6 @@
-import { Component, Inject, Injector, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { I18NService } from '@core';
-import { DA_SERVICE_TOKEN, ITokenService } from '@delon/auth';
+import { I18NService } from '@core'; 
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { NzMessageService } from 'ng-zorro-antd/message';
@@ -28,6 +27,7 @@ const getBase64 = (file: File): Promise<string | ArrayBuffer | null> =>
     standalone: false
 })
 export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
 
   currentWorkOrderQcSample: WorkOrderQcSample;
   currentProductionLineAssignment?: ProductionLineAssignment;
@@ -51,8 +51,7 @@ export class WorkOrderWorkOrderQcSampleMaintenanceComponent implements OnInit {
   
   constructor(
     private workOrderQcSampleService: WorkOrderQcSampleService, 
-    private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private activatedRoute: ActivatedRoute, 
     private productionLineAssignmentService: ProductionLineAssignmentService,
     private titleService: TitleService,
     private warehouseService: WarehouseService,

@@ -42,9 +42,9 @@ export class WorkOrderProductionLineMonitorMaintenanceComponent implements OnIni
     this.pageTitle = this.i18n.fanyi('modify');
     
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
             this.isSpinning = true;
-            this.productionLineMonitorService.getProductionLineMonitor(params.id).subscribe(
+            this.productionLineMonitorService.getProductionLineMonitor(params['id']).subscribe(
               {
     
                 next: (productionLineMonitorRes) => {

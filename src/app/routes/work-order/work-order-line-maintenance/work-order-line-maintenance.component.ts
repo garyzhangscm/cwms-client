@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -8,11 +8,8 @@ import { InventoryStatus } from '../../inventory/models/inventory-status';
 import { InventoryStatusService } from '../../inventory/services/inventory-status.service';
 import { ItemService } from '../../inventory/services/item.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
-import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
-import { KpiMeasurement } from '../models/kpi-measurement.enum';
-import { WorkOrder } from '../models/work-order';
-import { WorkOrderKpiTransaction } from '../models/work-order-kpi-transaction';
-import { WorkOrderKpiTransactionType } from '../models/work-order-kpi-transaction-type.enum';
+import { WarehouseService } from '../../warehouse-layout/services/warehouse.service'; 
+import { WorkOrder } from '../models/work-order'; 
 import { WorkOrderLine } from '../models/work-order-line';
 import { WorkOrderService } from '../services/work-order.service';
 
@@ -22,6 +19,7 @@ import { WorkOrderService } from '../services/work-order.service';
     standalone: false
 })
 export class WorkOrderWorkOrderLineMaintenanceComponent implements OnInit {
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   currentWorkOrder!: WorkOrder;
 
   pageTitle = '';
@@ -33,8 +31,7 @@ export class WorkOrderWorkOrderLineMaintenanceComponent implements OnInit {
   availableInventoryStatuses: InventoryStatus[] = [];
 
   constructor(
-    private activatedRoute: ActivatedRoute,
-    @Inject(ALAIN_I18N_TOKEN) private i18n: I18NService,
+    private activatedRoute: ActivatedRoute, 
     private titleService: TitleService,
     private router: Router,
     private workOrderService: WorkOrderService,

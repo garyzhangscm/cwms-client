@@ -2,8 +2,7 @@
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
-import { ALAIN_I18N_TOKEN, TitleService } from '@delon/theme';
-import { Address } from 'ngx-google-places-autocomplete/objects/address';
+import { ALAIN_I18N_TOKEN, TitleService } from '@delon/theme'; 
 
 import { Warehouse } from '../models/warehouse';
 import { WarehouseService } from '../services/warehouse.service';
@@ -18,7 +17,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
   pageTitle: string;
   warehouseForm!: UntypedFormGroup;
   isSpinning = false;
-  warehouseAddress?: Address;
+  warehouseAddress?: google.maps.places.PlaceResult;
   addressLine1 = "";
   addressLine2? = "";
   addressCity = "";
@@ -158,7 +157,7 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
       }
       if (this.warehouseAddress != null) {
 
-        this.warehouseAddress!.address_components.forEach(
+        this.warehouseAddress!.address_components!.forEach(
           addressComponent => {
             if (addressComponent.types[0] === 'street_number') {
                 warehouse.addressLine1 = `${addressComponent.long_name} ${warehouse.addressLine1}`;
@@ -207,8 +206,8 @@ export class WarehouseLayoutWarehouseMaintenanceComponent implements OnInit {
     }
   }
 
-  handleAddressChange(address: Address) {  
-    this.warehouseAddress = address;
+  handleAddressChange(place: google.maps.places.PlaceResult) {  
+    this.warehouseAddress = place;
      
   }
 }
