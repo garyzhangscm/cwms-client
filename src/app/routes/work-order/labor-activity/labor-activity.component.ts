@@ -69,8 +69,8 @@ export class WorkOrderLaborActivityComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     this.workOrderLaborActivityHistoryService.getWorkOrderLabors(
-      this.searchForm.controls.productionLine.value,    
-      this.searchForm.controls.username.value).subscribe(
+      this.searchForm.value.productionLine,    
+      this.searchForm.value.username).subscribe(
       {
         next: (workOrderLaborActivityRes) => {
           this.listOfLaborActivities = workOrderLaborActivityRes;

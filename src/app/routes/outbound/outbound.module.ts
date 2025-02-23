@@ -86,6 +86,8 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
+import { NgxGpAutocompleteModule } from '@angular-magic/ngx-gp-autocomplete';
+import { Loader } from '@googlemaps/js-api-loader';
 
 const COMPONENTS: Array<Type<void>> = [
   OutboundOrderComponent,
@@ -185,8 +187,17 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
         NzUploadModule ,
         NzAlertModule ,
         CommonModule,
+        NgxGpAutocompleteModule,
         
     ],
-    providers: [DatePipe],
+    providers: [DatePipe, 
+        {
+            provide: Loader,
+            useValue: new Loader({
+              apiKey: 'AIzaSyDkPmh0PEC7JTCutUhWuN3BUU38M2fvR5s',
+              libraries: ['places']
+            })
+          }, 
+        ],
 })
 export class OutboundModule { }

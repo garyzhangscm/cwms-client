@@ -31,8 +31,8 @@ export class UtilSystemControlledNumberMaintenanceComponent implements OnInit {
   isSpinning = false;
   ngOnInit(): void { 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
-        this.systemControlledNumberService.getSystemControlledNumber(params.id)
+      if (params['id']) {
+        this.systemControlledNumberService.getSystemControlledNumber(params['id'])
             .subscribe({
               next: (systemControlledNumberRes) => this.currentSystemControlledNumber = systemControlledNumberRes
             });        

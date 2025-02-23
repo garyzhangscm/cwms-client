@@ -63,8 +63,8 @@
         </nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
           <nz-select [(ngModel)]="cartonizationConfiguration.pickType" name="pickType">
-            <nz-option *ngFor="let pickType of pickTypes | keys" nzLabel="{{ 'PICK-TYPE-' + pickType.key | i18n}}"
-              [nzValue]="pickType.key">
+            <nz-option *ngFor="let pickType of pickTypesKeys" nzLabel="{{ 'PICK-TYPE-' + pickType | i18n}}"
+              [nzValue]="pickType">
             </nz-option>
           </nz-select>
         </nz-form-control>
@@ -82,7 +82,7 @@
         <nz-form-control [nzSm]="14" [nzXs]="24" nzHasFeedback nzErrorTip="{{ 'error.form.field.required' | i18n }}">
           <nz-select nzMode="tags" [(ngModel)]="cartonizationConfiguration.groupRules" name="groupRules">
 
-            <nz-option *ngFor="let groupRule of groupRules | keys" [nzLabel]="groupRule.key" [nzValue]="groupRule.key">
+            <nz-option *ngFor="let groupRule of groupRulesKeys" [nzLabel]="groupRule" [nzValue]="groupRule">
             </nz-option>
 
           </nz-select>

@@ -191,8 +191,11 @@ export class WarehouseLayoutLocationGroupComponent implements OnInit {
   locationGroupTypes: LocationGroupType[] = [];
   locationGroups: LocationGroup[] = [];
   locationVolumeTrackingPolicy = LocationVolumeTrackingPolicy;
+  locationVolumeTrackingPolicyKeys = Object.keys(this.locationVolumeTrackingPolicy);
   inventoryConsolidationStrategy = InventoryConsolidationStrategy;
+  inventoryConsolidationStrategyKeys = Object.keys(this.inventoryConsolidationStrategy);
   itemVolumeTrackingLevels = ItemVolumeTrackingLevel;
+  itemVolumeTrackingLevelsKeys = Object.keys(this.itemVolumeTrackingLevels);
   selectedLocationGroupTypes: number[] = [];
   selectedLocationGroups: number[] = [];
   // Form related data and functions

@@ -180,16 +180,16 @@
           <td>
 
             <nz-select [(ngModel)]="editCache[data.id!].data.volumeTrackingPolicy">
-              <nz-option *ngFor="let policy of locationVolumeTrackingPolicy | keys" [nzValue]="policy.key"
-                nzLabel="{{ 'LOCATION-VOLUME-TRACKING-POLICY-' + policy.key | i18n }}"></nz-option>
+              <nz-option *ngFor="let policy of locationVolumeTrackingPolicyKeys" [nzValue]="policy"
+                nzLabel="{{ 'LOCATION-VOLUME-TRACKING-POLICY-' + policy | i18n }}"></nz-option>
             </nz-select>
 
           </td>
           <td>
 
             <nz-select [(ngModel)]="editCache[data.id!].data.inventoryConsolidationStrategy">
-              <nz-option *ngFor="let strategy of inventoryConsolidationStrategy | keys" [nzValue]="strategy.key"
-                nzLabel="{{ 'INVENTORY-CONSOLIDATION-STRATEGY-' + strategy.key | i18n }}"></nz-option>
+              <nz-option *ngFor="let strategy of inventoryConsolidationStrategyKeys" [nzValue]="strategy"
+                nzLabel="{{ 'INVENTORY-CONSOLIDATION-STRATEGY-' + strategy | i18n }}"></nz-option>
             </nz-select>
 
           </td>
@@ -221,8 +221,8 @@
           <td>
 
             <nz-select [(ngModel)]="editCache[data.id!].data.itemVolumeTrackingLevel">
-              <nz-option *ngFor="let itemVolumeTrackingLevel of itemVolumeTrackingLevels | keys" [nzValue]="itemVolumeTrackingLevel.key"
-                nzLabel="{{ 'ITEM-VOLUME-TRACKING-LEVEL-' + itemVolumeTrackingLevel.key | i18n }}"></nz-option>
+              <nz-option *ngFor="let itemVolumeTrackingLevel of itemVolumeTrackingLevelsKeys" [nzValue]="itemVolumeTrackingLevel"
+                nzLabel="{{ 'ITEM-VOLUME-TRACKING-LEVEL-' + itemVolumeTrackingLevel | i18n }}"></nz-option>
             </nz-select>
 
           </td>

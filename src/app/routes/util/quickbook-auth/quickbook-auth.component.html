@@ -43,8 +43,8 @@
         </button>
   <div style="padding-top: 20px">
     <nz-select nzAllowClear [(ngModel)]="currentSyncEntity" style="width: 300px;">
-      <nz-option *ngFor="let quickbookEntity of quickbookEntities | keys" nzValue="{{ quickbookEntity.key }}"
-        nzLabel="{{ quickbookEntity.key | i18n }}">
+      <nz-option *ngFor="let quickbookEntity of quickbookEntitiesKeys" nzValue="{{ quickbookEntity }}"
+        nzLabel="{{ quickbookEntity | i18n }}">
       </nz-option>
     </nz-select>
     <span>for last 

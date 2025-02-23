@@ -52,9 +52,9 @@ export class InventoryLockMaintenanceComponent implements OnInit {
 
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         // Get the production line by ID
-        this.inventoryLockService.getInventoryLock(params.id)
+        this.inventoryLockService.getInventoryLock(params['id'])
           .subscribe(inventoryLock => {
             this.currentInventoryLock = inventoryLock;
 

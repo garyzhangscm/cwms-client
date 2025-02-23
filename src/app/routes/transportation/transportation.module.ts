@@ -1,9 +1,11 @@
+import { NgxGpAutocompleteModule } from '@angular-magic/ngx-gp-autocomplete';
 import { CommonModule } from '@angular/common';
 import { NgModule, Type } from '@angular/core'; 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PageHeaderComponent } from '@delon/abc/page-header';
 import { STModule } from '@delon/abc/st';
 import { I18nPipe } from '@delon/theme';
+import { Loader } from '@googlemaps/js-api-loader';
 import { NzBadgeModule } from 'ng-zorro-antd/badge';
 import { NzBreadCrumbModule } from 'ng-zorro-antd/breadcrumb';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -82,7 +84,17 @@ const COMPONENTS: Array<Type<void>> = [
     CommonModule ,
     NzToolTipModule ,
     NzInputNumberModule ,
+    NgxGpAutocompleteModule,
   ],
   declarations: COMPONENTS,
+  providers: [
+     {
+       provide: Loader,
+       useValue: new Loader({
+         apiKey: 'AIzaSyDkPmh0PEC7JTCutUhWuN3BUU38M2fvR5s',
+         libraries: ['places']
+       })
+     }, 
+   ],
 })
 export class TransportationModule { }

@@ -23,7 +23,9 @@ export class OutboundCartonizationConfigurationMaintenanceComponent implements O
 
   clients: Client[] = [];
   pickTypes = PickType;
+  pickTypesKeys = Object.keys(this.pickTypes);
   groupRules = CartonizationGroupRule;
+  groupRulesKeys = Object.keys(this.groupRules);
 
   selectedGroupRules: CartonizationGroupRule[] = [];
 

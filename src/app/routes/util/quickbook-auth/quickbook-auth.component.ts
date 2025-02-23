@@ -19,6 +19,7 @@ export class UtilQuickbookAuthComponent implements OnInit {
   
   currentQBOToken: QuickbookOnlineToken;
   quickbookEntities = QuickbookEntity;
+  quickbookEntitiesKeys = Object.keys(this.quickbookEntities);
   currentSyncEntity: QuickbookEntity = QuickbookEntity.Vendor;
   syncTransactionDays: number = 1;
 

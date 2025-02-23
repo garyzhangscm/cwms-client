@@ -129,6 +129,7 @@ export class ReportReportComponent implements OnInit {
 
   isSpinning = false;
   reportTypes = ReportType;
+  reportTypesKeys = Object.keys(this.reportTypes);
    
 
   resetForm(): void {

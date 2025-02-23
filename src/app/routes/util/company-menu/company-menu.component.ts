@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core'; 
+import { Component, inject, OnInit } from '@angular/core'; 
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -152,8 +152,8 @@ export class UtilCompanyMenuComponent implements OnInit {
     // this.accessibleMenuIds: arrays of number
     // when compare the 2 array, we may need to conver the string to number before the comparasion.
     this.isSpinning = true;
-    const currentAssignedMenuIds = [...this.webMenuList.filter(item => item.direction === 'right').map(item => item.key), 
-       ...this.mobileMenuList.filter(item => item.direction === 'right').map(item => item.key)]; 
+    const currentAssignedMenuIds = [...this.webMenuList.filter(item => item.direction === 'right').map(item => item['key']), 
+       ...this.mobileMenuList.filter(item => item.direction === 'right').map(item => item['key'])]; 
        
     const newlyAssignedMenuIds = currentAssignedMenuIds.filter(
       id => !this.accessibleMenuIds.some(accessibleMenuId => accessibleMenuId === +id),

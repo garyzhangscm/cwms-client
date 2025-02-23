@@ -105,8 +105,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
         apiKey: 'AIzaSyDkPmh0PEC7JTCutUhWuN3BUU38M2fvR5s',
         libraries: ['places']
       })
-    },
-    //...
+    }, 
   ],
   exports: [WarehouseLayoutLocationQueryPopupComponent]
 })
