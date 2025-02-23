@@ -44,9 +44,9 @@ export class AuthWorkingTeamUserComponent implements OnInit {
     this.titleService.setTitle(this.i18n.fanyi('page.auth.working-team.users'));
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.workingTeamId) {
+      if (params['workingTeamId']) {
         // Get the role and initiate the menu assignment
-        this.workingTeamService.getWorkingTeam(params.workingTeamId).subscribe(workingTeamRes => {
+        this.workingTeamService.getWorkingTeam(params['workingTeamId']).subscribe(workingTeamRes => {
           this.currentWorkingTeam = workingTeamRes;
           this.initUserAssignment();
           this.newWorkingTeam = false;
@@ -106,7 +106,7 @@ export class AuthWorkingTeamUserComponent implements OnInit {
 
   assignUser(): void {
     this.processingUser = true;
-    const currentAssignedUserIds = this.userList.filter(item => item.direction === 'right').map(item => item.key);
+    const currentAssignedUserIds = this.userList.filter(item => item.direction === 'right').map(item => item['key']);
 
     const newlyAssignedUserIds = currentAssignedUserIds.filter(
       id => !this.assignedUserIds.some(assignedUserId => assignedUserId === +id),
@@ -125,7 +125,7 @@ export class AuthWorkingTeamUserComponent implements OnInit {
   }
 
   goToNextPage(): void {
-    const currentAssignedUserIds = this.userList.filter(item => item.direction === 'right').map(item => item.key);
+    const currentAssignedUserIds = this.userList.filter(item => item.direction === 'right').map(item => item['key']);
     const assignedUser = this.allUsers.filter(user => currentAssignedUserIds.includes(user.id!.toString()));
     this.currentWorkingTeam!.users = assignedUser;
     sessionStorage.setItem('working-team-maintenance.working-team', JSON.stringify(this.currentWorkingTeam));

@@ -21,7 +21,7 @@ export class CommonUnitOfMeasureConfirmComponent implements OnInit {
     private unitOfMeasureService: UnitOfMeasureService,
     private router: Router,
   ) {
-    this.pageTitle = i18n.fanyi('page.unit-of-measure-maintenance.confirm.title');
+    this.pageTitle = this.i18n.fanyi('page.unit-of-measure-maintenance.confirm.title');
   }
 
   ngOnInit(): void {

@@ -14,6 +14,8 @@ import { UnitOfMeasure } from '../models/unit-of-measure';
 })
 export class CommonUnitOfMeasureMaintenanceComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  private readonly warehouseService = inject(WarehouseService);
+  private readonly companyService = inject(CompanyService);
   currentUnitOfMeasure: UnitOfMeasure | undefined;
   pageTitle = '';
 
@@ -26,8 +28,6 @@ export class CommonUnitOfMeasureMaintenanceComponent implements OnInit {
   };
 
   constructor(private router: Router, 
-    private warehouseService: WarehouseService,
-    private companyService: CompanyService,
     private titleService: TitleService) { }
 
   ngOnInit(): void {

@@ -69,13 +69,13 @@ export class CommonPrintButtonComponent implements OnInit {
       },
       nzOnOk: () => {
         let selectedPrinter = this.availablePrinters.find(element => {
-          return +element.id! === +this.printerForm.controls.printer.value
+          return +element.id! === +this.printerForm.value.printer
         });
         this.printReport(
-          this.printerForm.controls.printer.value,
+          this.printerForm.value.printer,
           selectedPrinter === undefined ? "" : selectedPrinter.name,
-          this.printerForm.controls.physicalCopyCount.value,
-          this.printerForm.controls.collated.value,
+          this.printerForm.value.physicalCopyCount,
+          this.printerForm.value.collated,
           
         );
       },

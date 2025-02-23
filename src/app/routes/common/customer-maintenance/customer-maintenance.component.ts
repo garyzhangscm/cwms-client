@@ -15,6 +15,8 @@ import { Customer } from '../models/customer';
 export class CommonCustomerMaintenanceComponent implements OnInit {
   
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  private readonly warehouseService = inject(WarehouseService); 
+  private readonly companyService = inject(CompanyService); 
   currentCustomer!: Customer;
   pageTitle = '';
 
@@ -51,9 +53,7 @@ export class CommonCustomerMaintenanceComponent implements OnInit {
   };
 
   constructor(private router: Router,
-    private warehouseService: WarehouseService,
-    private titleService: TitleService, 
-    private companyService: CompanyService) {
+    private titleService: TitleService, ) {
       this.currentCustomer = this.emptyCustomer;
   }
 

@@ -81,7 +81,7 @@
     
                 <ng-template #lpnErrorTpl let-control>
                     <div *ngIf="lpnControl!.invalid != null && (lpnControl!.dirty != null || lpnControl!.touched != null)">
-                    <ng-container *ngIf="lpnControl?.errors?.errorCode">
+                    <ng-container *ngIf="lpnControl && lpnControl['errors'] && lpnControl['errors']['errorCode']">
                         {{ 'ERROR-NEW-LPN-' + lpnControl!.errors!['errorCode'] | i18n }}</ng-container>
                     <ng-container *ngIf="control.hasError('required')">{{ 'error.form.field.required' | i18n }}
                     </ng-container>

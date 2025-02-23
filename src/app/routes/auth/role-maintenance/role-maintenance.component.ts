@@ -14,6 +14,7 @@ import { RoleService } from '../services/role.service';
 })
 export class AuthRoleMaintenanceComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  private readonly companyService = inject(CompanyService); 
   currentRole: Role | undefined;
   pageTitle: string | undefined;
   roleNameValidateStatus = 'warning'; 
@@ -41,7 +42,6 @@ export class AuthRoleMaintenanceComponent implements OnInit {
     private titleService: TitleService,
     private activatedRoute: ActivatedRoute,
     private roleService: RoleService,
-    private companyService: CompanyService,
   ) { }
 
   ngOnInit(): void {

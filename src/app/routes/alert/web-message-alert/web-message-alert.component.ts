@@ -22,19 +22,20 @@ import { WebMessageAlertService } from '../services/web-message-alert.service';
 })
 export class AlertWebMessageAlertComponent implements OnInit {
 
-  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN); 
+  private readonly companyService = inject(CompanyService);
+  private readonly userService = inject(UserService);
   isSpinning = false; 
   currentWebMessageAlert: WebMessageAlert | undefined;
   
   messageModal!: NzModalRef;
   pageTitle = "";
 
-  constructor(private http: _HttpClient, private companySerive: CompanyService, 
+  constructor(private http: _HttpClient, 
     private webMessageAlertService: WebMessageAlertService,
     private modalService: NzModalService,
     private messageService: NzMessageService,
-    private titleService: TitleService,
-    private userService: UserService) { }
+    private titleService: TitleService,) { }
 
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void { 
@@ -45,7 +46,7 @@ export class AlertWebMessageAlertComponent implements OnInit {
 
   url = `./resource/web-message-alerts`;
 
-  params = { companyId: this.companySerive.getCurrentCompany()!.id, 
+  params = { companyId: this.companyService.getCurrentCompany()!.id, 
     username: this.userService.getCurrentUsername()};
   
   serverDataPreProcess = (data : STData[], rawData?: any) : STData[] => {

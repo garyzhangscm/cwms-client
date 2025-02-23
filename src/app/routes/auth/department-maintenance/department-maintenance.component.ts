@@ -47,8 +47,8 @@ export class AuthDepartmentMaintenanceComponent implements OnInit {
 
 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) { 
-        this.departmentService.getDepartment(params.id)
+      if (params['id']) { 
+        this.departmentService.getDepartment(params['id'])
           .subscribe(
             {
               next: (departmentRes) => {

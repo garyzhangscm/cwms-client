@@ -174,10 +174,10 @@
           <nz-form-control [nzSpan]="14">
             <nz-select nzMode="tags" [(ngModel)]="selectedStrategies" (ngModelChange)="selectedStrategiesChanged()">
                 <nz-option
-                      *ngFor="let putawayConfigurationStrategy of putawayConfigurationStrategies  | keys"
-                      [nzValue]="putawayConfigurationStrategy.key"
-                      [nzLabel]="putawayConfigurationStrategy.key"
-                    ></nz-option>
+                    *ngFor="let putawayConfigurationStrategy of putawayConfigurationStrategiesKeys"
+                    [nzValue]="putawayConfigurationStrategy"
+                    [nzLabel]="putawayConfigurationStrategy"
+                ></nz-option>
             </nz-select>
           </nz-form-control>
         </nz-form-item>

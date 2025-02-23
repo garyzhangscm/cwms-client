@@ -78,7 +78,7 @@
                     <!-- Display error if the customer doesn't exists -->
                   <ng-template #customerNameErrorTpl let-control>
                     <div *ngIf="customerNameModel.invalid && (customerNameModel.dirty ||customerNameModel.touched)">
-                      <ng-container *ngIf="customerNameModel.errors?.errorCode">
+                      <ng-container *ngIf="customerNameModel['errors'] && customerNameModel['errors']['errorCode']">
                           {{customerNameModel.errors!['errorCode']|i18n}}</ng-container>
                       <ng-container *ngIf="control.hasError('required')">
                           {{ 'error.form.field.required' | i18n}}

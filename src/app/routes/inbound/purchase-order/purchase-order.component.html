@@ -25,10 +25,10 @@
           
           <nz-select  nzMode="multiple" formControlName="statusList" name="statusList">
             <nz-option
-              *ngFor="let status of purchaseOrderStatusList | keys"
-              [nzValue]="status.key"
-              nzLabel="{{ 'PURCHASE-ORDER-STATUS-' + status.key | i18n}}"
-            ></nz-option>
+                *ngFor="let status of purchaseOrderStatusListKeys"
+                [nzValue]="status"
+                nzLabel="{{ 'PURCHASE-ORDER-STATUS-' + status | i18n}}"
+          ></nz-option>
           </nz-select>
         </nz-form-control>
       </nz-form-item>

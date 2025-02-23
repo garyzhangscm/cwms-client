@@ -6,9 +6,7 @@ import { map } from 'rxjs/operators';
 import { UserService } from '../../auth/services/user.service';
 import { CompanyService } from '../../warehouse-layout/services/company.service';
 import { WebMessageAlert } from '../models/web-message-alert';
-
-import { type } from 'os';
-
+ 
 @Injectable({
   providedIn: 'root'
 })

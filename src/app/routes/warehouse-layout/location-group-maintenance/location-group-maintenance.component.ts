@@ -24,7 +24,9 @@ export class WarehouseLayoutLocationGroupMaintenanceComponent implements OnInit 
   locationGroupTypes: Array<{ label: string; value: string }> = [];
 
   volumeTrackingPolicies = LocationVolumeTrackingPolicy;
+  volumeTrackingPoliciesKeys = Object.keys(this.volumeTrackingPolicies);
   inventoryConsolidationStrategies = InventoryConsolidationStrategy;
+  inventoryConsolidationStrategiesKeys = Object.keys(this.inventoryConsolidationStrategies);
 
   constructor(
     private activatedRoute: ActivatedRoute,

@@ -51,6 +51,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { CWMSCommonModule } from '../common/common.module';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 
 const COMPONENTS: Array<Type<void>> = [
   InboundReceiptComponent, InboundReceiptMaintenanceComponent, InboundReceiptConfirmComponent,
@@ -107,6 +108,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzPopoverModule , 
     CWMSCommonModule,
     NzDatePickerModule ,
+    NzDrawerModule ,
     
   ],
   providers: [DatePipe],

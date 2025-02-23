@@ -166,7 +166,7 @@ export class AuthUserComponent implements OnInit {
   search(): void {
     this.searching = true;
     this.searchResult = '';
-    this.userService.getUsers(this.searchForm!.controls.username.value).subscribe(
+    this.userService.getUsers(this.searchForm!.value.username).subscribe(
       userRes => {
         //      console.log(`user:\n${JSON.stringify(userRes)}`);
         this.listOfAllUsers = userRes;
@@ -230,9 +230,9 @@ export class AuthUserComponent implements OnInit {
       },
       nzOnOk: () => {
         this.addNewTempUser( 
-          this.newTempUserForm.controls.username.value,
-          this.newTempUserForm.controls.firstname.value,
-          this.newTempUserForm.controls.lastname.value,
+          this.newTempUserForm.value.username,
+          this.newTempUserForm.value.firstname,
+          this.newTempUserForm.value.lastname,
         );
         return false;
       },
@@ -280,9 +280,9 @@ export class AuthUserComponent implements OnInit {
       nzOnOk: () => {
         this.copyUser( 
           existingUser.id!,
-          this.copyUserForm.controls.username.value,
-          this.copyUserForm.controls.firstname.value,
-          this.copyUserForm.controls.lastname.value,
+          this.copyUserForm.value.username,
+          this.copyUserForm.value.firstname,
+          this.copyUserForm.value.lastname,
         );
         return false;
       },

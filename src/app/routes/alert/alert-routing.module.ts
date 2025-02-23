@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ACLGuard, ACLGuardType } from '@delon/acl';
+import { aclCanActivate, ACLGuardType } from '@delon/acl';
 
 import { AlertAlertTemplateMaintenanceComponent } from './alert-template-maintenance/alert-template-maintenance.component';
 import { AlertAlertTemplateComponent } from './alert-template/alert-template.component';

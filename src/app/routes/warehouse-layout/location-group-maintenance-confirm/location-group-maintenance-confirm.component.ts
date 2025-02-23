@@ -23,7 +23,7 @@ export class WarehouseLayoutLocationGroupMaintenanceConfirmComponent implements 
     private router: Router,
     private messageService: NzMessageService,
   ) {
-    this.pageTitle = i18n.fanyi('page.location-group-maintenance.confirm.header.title');
+    this.pageTitle = this.i18n.fanyi('page.location-group-maintenance.confirm.header.title');
   }
 
   ngOnInit(): void {

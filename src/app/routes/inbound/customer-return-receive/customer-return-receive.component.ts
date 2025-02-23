@@ -57,8 +57,8 @@ export class InboundCustomerReturnReceiveComponent implements OnInit {
 
     this.receivingItem = undefined;
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) { 
-        this.customerReturnOrderService.getCustomerReturnOrder(params.id)
+      if (params['id']) { 
+        this.customerReturnOrderService.getCustomerReturnOrder(params['id'])
           .subscribe(customerReturnOrderRes => {
             this.currentCustomerReturnOrder = customerReturnOrderRes;  
           });
@@ -93,9 +93,9 @@ export class InboundCustomerReturnReceiveComponent implements OnInit {
       // check if the location name is input. If so, we receive into that location
       // otherwise, we receive into the reciept location
       const locationName =
-        this.receivingForm.controls.locationName.value === ''
+        this.receivingForm.value.locationName === ''
           ? this.currentCustomerReturnOrder!.number
-          : this.receivingForm.controls.locationName.value;
+          : this.receivingForm.value.locationName;
 
       let csrLine: CustomerReturnOrderLine | undefined = this.getMatchedCSROrderLine(this.currentCustomerReturnOrder!, this.receivingItem!);
 
@@ -144,23 +144,23 @@ export class InboundCustomerReturnReceiveComponent implements OnInit {
   createReceivingInventory(csrLine: CustomerReturnOrderLine, receiptLocation: WarehouseLocation): Inventory {
     const inventoryStatus = this.availableInventoryStatuses
       .filter(
-        availableInventoryStatus => availableInventoryStatus.id === this.receivingForm.controls.inventoryStatus.value,
+        availableInventoryStatus => availableInventoryStatus.id === this.receivingForm.value.inventoryStatus,
       )
       .pop();
     const itemPackageType = this.receivingItem!.itemPackageTypes
       .filter(
-        existingItemPackageType => existingItemPackageType.id === this.receivingForm.controls.itemPackageType.value,
+        existingItemPackageType => existingItemPackageType.id === this.receivingForm.value.itemPackageType,
       )
       .pop();
 
     return {
       id: undefined,
-      lpn: this.receivingForm.controls.lpn.value,
+      lpn: this.receivingForm.value.lpn,
       location: receiptLocation,
       locationName: receiptLocation.name,
       item: this.receivingItem,
       itemPackageType,
-      quantity: this.receivingForm.controls.quantity.value,
+      quantity: this.receivingForm.value.quantity,
       inventoryStatus,
     };
   }

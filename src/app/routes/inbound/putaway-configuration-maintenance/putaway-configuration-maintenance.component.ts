@@ -42,6 +42,7 @@ export class InboundPutawayConfigurationMaintenanceComponent implements OnInit {
   validLocationGroups: LocationGroup[] = [];
   selectedStrategies: string[] = []; 
   putawayConfigurationStrategies = PutawayConfigurationStrategy;
+  putawayConfigurationStrategiesKeys = Object.keys(this.putawayConfigurationStrategies);
 
 
   constructor(private http: _HttpClient,
