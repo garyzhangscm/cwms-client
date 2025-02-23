@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { DA_SERVICE_TOKEN } from '@delon/auth';
 import { ALAIN_I18N_TOKEN } from '@delon/theme';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { I18NService } from '../i18n/i18n.service';
 
 export interface ReThrowHttpError {
   body: any;
@@ -35,6 +36,14 @@ export function goTo(injector: Injector, url: string): void {
 export function toLogin(injector: Injector): void {
   injector.get(NzNotificationService).error(`未登录或登录已过期，请重新登录。`, ``);
   goTo(injector, injector.get(DA_SERVICE_TOKEN).login_url!);
+}
+
+
+export function notification(injector: Injector): NzNotificationService {
+  return injector.get(NzNotificationService);
+}
+export function i18n(): I18NService {
+  return inject<I18NService>(ALAIN_I18N_TOKEN);
 }
 
 export function getAdditionalHeaders(headers?: HttpHeaders): { [name: string]: string } {

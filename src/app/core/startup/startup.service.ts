@@ -12,6 +12,9 @@ import { CompanyService } from 'src/app/routes/warehouse-layout/services/company
 import { WarehouseService } from 'src/app/routes/warehouse-layout/services/warehouse.service';
 import { WebClientConfigurationService } from 'src/app/routes/util/services/web-client-configuration.service';
 import { UserService } from 'src/app/routes/auth/services/user.service';
+import { NzIconService } from 'ng-zorro-antd/icon';
+import { ICONS_AUTO } from '../../../style-icons-auto';
+import { ICONS } from '../../../style-icons';
 
 /**
  * Used for application startup
@@ -55,6 +58,10 @@ export class StartupService {
       return of({});
     })
   );
+  
+  constructor(iconSrv: NzIconService) {
+    iconSrv.addIcon(...ICONS_AUTO, ...ICONS);
+  }
 
   private handleAppData(res: NzSafeAny): void {
     // Application information: including site name, description, year
