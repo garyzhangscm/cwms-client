@@ -40,7 +40,8 @@ import { HeaderI18nComponent } from '../basic/widgets/i18n.component';
     </div>
   `,
   styleUrls: ['./passport.component.less'],
-  imports: [RouterOutlet, HeaderI18nComponent, GlobalFooterModule, NzIconModule, ThemeBtnComponent]
+  // imports: [RouterOutlet, HeaderI18nComponent, GlobalFooterModule, NzIconModule, ThemeBtnComponent]
+  imports: [RouterOutlet, HeaderI18nComponent, GlobalFooterModule, NzIconModule]
 })
 export class LayoutPassportComponent implements OnInit {
   private tokenService = inject(DA_SERVICE_TOKEN);

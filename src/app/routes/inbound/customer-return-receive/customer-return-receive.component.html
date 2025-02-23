@@ -23,19 +23,19 @@
 
     <nz-descriptions nzTitle="{{ 'customer-return-order' | i18n}} - {{  currentCustomerReturnOrder!.number }}" nzBordered>
         <nz-descriptions-item nzTitle="{{ 'client' | i18n}}"> 
-            {{ currentCustomerReturnOrder?.client?.name  }}
+            {{ currentCustomerReturnOrder.client?.name  }}
         </nz-descriptions-item> 
         <nz-descriptions-item nzTitle="{{ 'RMANumber' | i18n}}"> 
-            {{ currentCustomerReturnOrder?.rmaNumber  }}
+            {{ currentCustomerReturnOrder.rmaNumber  }}
         </nz-descriptions-item> 
         <nz-descriptions-item nzTitle="{{ 'trackingNumber' | i18n}}"> 
-            {{ currentCustomerReturnOrder?.trackingNumber  }}
+            {{ currentCustomerReturnOrder.trackingNumber  }}
         </nz-descriptions-item> 
         <nz-descriptions-item nzTitle="{{ 'customer' | i18n}}"> 
-            {{ currentCustomerReturnOrder?.customer?.name  }}
+            {{ currentCustomerReturnOrder.customer?.name  }}
         </nz-descriptions-item> 
         <nz-descriptions-item nzTitle="{{ 'allowUnexpectedItem' | i18n}}"> 
-            {{ currentCustomerReturnOrder?.allowUnexpectedItem  }}
+            {{ currentCustomerReturnOrder.allowUnexpectedItem  }}
         </nz-descriptions-item> 
       </nz-descriptions>
   </nz-card>

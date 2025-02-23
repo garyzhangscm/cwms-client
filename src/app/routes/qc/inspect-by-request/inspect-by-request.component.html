@@ -86,10 +86,10 @@
           </div>
         </div>
     
-        <st #st *ngIf="qcInspectionRequest !== undefined" [data]="qcInspectionRequest?.inventories"  [columns]="columns" [hidden]="!showQCInventoryFlag">
+        <st #st *ngIf="qcInspectionRequest !== undefined" [data]="qcInspectionRequest.inventories"  [columns]="columns" [hidden]="!showQCInventoryFlag">
            </st>
         <ng-template #qcInventoryTitle>               
-            <nz-badge *ngIf="qcInspectionRequest !== undefined" [nzCount]="qcInspectionRequest?.inventories?.length" nzShowZero>
+            <nz-badge *ngIf="qcInspectionRequest !== undefined" [nzCount]="qcInspectionRequest.inventories.length" nzShowZero>
               <a class="head-example">{{ 'qc-inspection-inventory' | i18n}}</a>
             </nz-badge> 
         </ng-template>
@@ -206,7 +206,7 @@
         </nz-card>
         <nz-card nzType="inner" nzTitle="{{'inventory' | i18n}}">
 
-          <st #st *ngIf="qcInspectionRequest !== undefined" [data]="qcInspectionRequest?.inventories"  [columns]="columns" >
+          <st #st *ngIf="qcInspectionRequest !== undefined" [data]="qcInspectionRequest.inventories"  [columns]="columns" >
           </st>
         </nz-card>
 

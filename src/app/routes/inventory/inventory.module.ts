@@ -83,6 +83,7 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
 import { NzListModule } from 'ng-zorro-antd/list';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 
 
 const COMPONENTS: Array<Type<void>> = [
@@ -172,6 +173,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
     NzListModule ,
     NzUploadModule ,
     NzModalModule ,
+    NzDatePickerModule ,
     
   ],
   declarations: [

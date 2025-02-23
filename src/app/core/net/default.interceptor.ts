@@ -1,10 +1,10 @@
-import { HttpErrorResponse, HttpHandlerFn, HttpInterceptorFn, HttpRequest, HttpResponseBase } from '@angular/common/http';
+import { HttpErrorResponse, HttpHandlerFn, HttpInterceptorFn, HttpRequest, HttpResponse, HttpResponseBase } from '@angular/common/http';
 import { Injector, inject } from '@angular/core';
 import { IGNORE_BASE_URL, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
-import { Observable, of, throwError, mergeMap } from 'rxjs';
+import { Observable, of, throwError, mergeMap, catchError } from 'rxjs';
 
-import { ReThrowHttpError, checkStatus, getAdditionalHeaders, toLogin } from './helper';
+import { ReThrowHttpError, checkStatus, getAdditionalHeaders, toLogin, goTo, CODEMESSAGE, notification, i18n } from './helper';
 import { tryRefreshToken } from './refresh-token';
 
 function handleData(injector: Injector, ev: HttpResponseBase, req: HttpRequest<any>, next: HttpHandlerFn): Observable<any> {
@@ -34,7 +34,27 @@ function handleData(injector: Injector, ev: HttpResponseBase, req: HttpRequest<a
       //     return of(ev);
       //   }
       // }
-      break;
+        if (ev instanceof HttpResponse) {
+          const body: any = ev.body; 
+          if (body && body.result && body.result !== 0) {
+            // this.messageService.error(body.message);
+            // 继续抛出错误中断后续所有 Pipe、subscribe 操作，因此：
+            // this.http.get('/').subscribe() 并不会触发
+            // return throwError({});
+            const error: any = new Error();
+            return throwError({
+              status: body.result,
+              statusText: body.message,
+              url: '',
+            });
+          } else {
+            // 重新修改 `body` 内容为 `response` 内容，对于绝大多数场景已经无须再关心业务状态码
+            //        return of(new HttpResponse(Object.assign(event, { body: body.response })));
+            // 或者依然保持完整的格式
+            return of(ev);
+          }
+        }
+        break;
     case 401:
       if (environment.api.refreshTokenEnabled && environment.api.refreshTokenType === 're-request') {
         return tryRefreshToken(injector, ev, req, next);
@@ -45,6 +65,7 @@ function handleData(injector: Injector, ev: HttpResponseBase, req: HttpRequest<a
     case 404:
     case 500:
       // goTo(injector, `/exception/${ev.status}?url=${req.urlWithParams}`);
+        goTo(injector, `/exception/${ev.status}`);
       break;
     default:
       if (ev instanceof HttpErrorResponse) {
@@ -60,6 +81,7 @@ function handleData(injector: Injector, ev: HttpResponseBase, req: HttpRequest<a
     return of(ev);
   }
 }
+ 
 
 export const defaultInterceptor: HttpInterceptorFn = (req, next) => {
   // 统一加上服务端前缀
@@ -79,7 +101,23 @@ export const defaultInterceptor: HttpInterceptorFn = (req, next) => {
       }
       // 若一切都正常，则后续操作
       return of(ev);
-    })
-    // catchError((err: HttpErrorResponse) => handleData(injector, err, newReq, next))
+    }),
+    // catchError((err: HttpErrorResponse) => handleData(injector, err, newReq, next)) 
+    catchError((err: HttpErrorResponse) => {
+      console.log(`!! Get error ${err.status} while call ${url}, \n statusText: ${err.statusText}`);
+      const errortext = CODEMESSAGE[err.status] || err.statusText;
+      // this.notification.error(`请求错误 ${ev.status}: ${ev.url}`, errortext);
+      console.log(`!! will throw error ${err.status}`);
+      if (err.status === 401) {
+          console.log('reloging required')
+          toLogin(injector);
+      }
+      else {
+
+        notification(injector).error(`${err.status}: ${err.url}`, i18n().fanyi(errortext));
+      }
+      return throwError(() => err);
+
+    }),
   );
 };

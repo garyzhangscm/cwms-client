@@ -28,13 +28,13 @@
 
       <nz-descriptions-item nzTitle="{{ 'status' | i18n }}">
 
-        {{ currentWave?.status  }}
+        {{ currentWave.status  }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'wave.totalOrderCount' | i18n }}" >{{ currentWave?.totalOrderCount | number }}
+      <nz-descriptions-item nzTitle="{{ 'wave.totalOrderCount' | i18n }}" >{{ currentWave.totalOrderCount | number }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'wave.totalItemCount' | i18n }}" >{{ currentWave?.totalItemCount | number }}
+      <nz-descriptions-item nzTitle="{{ 'wave.totalItemCount' | i18n }}" >{{ currentWave.totalItemCount | number }}
       </nz-descriptions-item>
-      <nz-descriptions-item nzTitle="{{ 'wave.totalQuantity' | i18n }}" >{{ currentWave?.totalQuantity | number }}
+      <nz-descriptions-item nzTitle="{{ 'wave.totalQuantity' | i18n }}" >{{ currentWave.totalQuantity | number }}
       </nz-descriptions-item>
       
     </nz-descriptions> 
@@ -47,7 +47,7 @@
     <ng-template #waveInfo>
       {{'current-wave' | i18n }}: 
       <a routerLink="/outbound/wave" routerLinkActive="active"
-      [queryParams]="{number: currentWave?.number}">{{currentWave?.number}}</a>
+      [queryParams]="{number: currentWave.number}">{{currentWave.number}}</a>
       
       
     </ng-template>

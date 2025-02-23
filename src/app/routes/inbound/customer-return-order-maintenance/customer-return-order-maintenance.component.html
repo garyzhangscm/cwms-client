@@ -186,11 +186,11 @@
                                     <input nz-input [ngModel]="data.outboundOrderNumber"
                                                 (blur)="outboundOrderNumberChanged(data, $event)"/>
                                   </nz-input-group>
-                                  <ng-template #outboundOrderNumberSuffixIconButton> 
-                                    <app-outbound-outbound-order-popup-query (recordSelected)="procesOutboundOrderQueryResult(data, $event)"
-                                    [customerName]="currentCustomerReturnOrder?.customer?.name">
+                                  <ng-template #outboundOrderNumberSuffixIconButton> 
+                                    <app-outbound-outbound-order-popup-query (recordSelected)="procesOutboundOrderQueryResult(data, $event)"
+                                    [customerName]="currentCustomerReturnOrder.customer?.name">
                                     </app-outbound-outbound-order-popup-query> 
-                                  </ng-template>  
+                                  </ng-template>  
                           </div>
                           <span *ngIf="data.id">
                               {{ data.number }}

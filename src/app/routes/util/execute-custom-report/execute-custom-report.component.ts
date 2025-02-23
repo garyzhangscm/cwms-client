@@ -24,7 +24,7 @@ export class UtilExecuteCustomReportComponent implements OnInit {
 
   currentCustomReport?: CustomReport;  
   customReportExecutionHistories: CustomReportExecutionHistory[] = [];
-  customReportExecutionStatusUpdateTimer?: NodeJS.Timeout;
+  // customReportExecutionStatusUpdateTimer?: NodeJS.Timeout;
 
   CustomReportExecutionStatusList = CustomReportExecutionStatus;
 
@@ -66,20 +66,27 @@ export class UtilExecuteCustomReportComponent implements OnInit {
 
     
     // get status of the report execution every 5 second = 5 * 1000 = 5,000 ms
+    /**
+     * 
+     * 
     this.customReportExecutionStatusUpdateTimer = 
         setInterval(() => {
       
           this.refreshCustomReportExecutionStatus();
         }, 5000); 
+     */
 
   }
   
   ngOnDestroy() {
     console.log(`custom report on destroy, we will remove the timer that will refresh the status of the custom report execution`);
-
+/**
+ * 
     if (this.customReportExecutionStatusUpdateTimer != null) {
       clearInterval(this.customReportExecutionStatusUpdateTimer);
     }
+ * 
+ */
   }
 
   return(): void {
