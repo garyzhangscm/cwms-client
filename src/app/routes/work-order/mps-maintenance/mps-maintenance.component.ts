@@ -79,6 +79,8 @@ import { WorkOrderService } from '../services/work-order.service';
 export class WorkOrderMpsMaintenanceComponent implements OnInit {
 
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN); 
+  private readonly colorService = inject(ColorService);
+  
   currentMPS!: MasterProductionSchedule;
   pageTitle = "";
   isSpinning = false;
@@ -185,7 +187,6 @@ export class WorkOrderMpsMaintenanceComponent implements OnInit {
     private itemService: ItemService,
     private modalService: NzModalService,
     private messageService: NzMessageService, 
-    private colorService: ColorService,
     ) { 
       this.pageTitle = this.i18n.fanyi('MPS');
     this.currentMPS = {        

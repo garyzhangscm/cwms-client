@@ -50,13 +50,13 @@
                 </nz-form-label>
                 <nz-form-control [nzSpan]="16"  >
                   <nz-input-group nzSize="large" >
-                      <nz-select formControlName="type" style="width: 250px" >
-                              <nz-option
-                                *ngFor="let type of tractorAppointmentTypes  | keys"
-                                [nzValue]="type.key"
-                                nzLabel="{{ 'TRACTOR-APPOINTMENT-TYPE-' + type.key | i18n}}"
-                              ></nz-option>
-                            </nz-select>
+                      <nz-select formControlName="type" style="width: 250px" >
+                          <nz-option
+                            *ngFor="let type of tractorAppointmentTypesKeys"
+                            [nzValue]="type"
+                            nzLabel="{{ 'TRACTOR-APPOINTMENT-TYPE-' + type | i18n}}"
+                          ></nz-option>
+                      </nz-select>
                   </nz-input-group>
                 </nz-form-control>
               </nz-form-item>

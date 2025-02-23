@@ -37,9 +37,9 @@ export class OutboundCompleteOrderComponent implements OnInit {
 
   ngOnInit(): void { 
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         // Get the production line by ID
-        this.orderService.getOrder(params.id)
+        this.orderService.getOrder(params['id'])
           .subscribe(orderRes => {
             this.currentOrder = orderRes; 
             // default the ship quantity to the order quantity

@@ -134,9 +134,9 @@ export class OutboundCartonizationConfigurationComponent implements OnInit {
   search(sequence?: number): void {
     this.cartonizationConfigurationService
       .getAll(
-        this.searchForm.controls.taggedClients.value,
-        this.searchForm.controls.pickType.value,
-        this.searchForm.controls.enabled.value,
+        this.searchForm.value.taggedClients,
+        this.searchForm.value.pickType,
+        this.searchForm.value.enabled,
         sequence,
       )
       .subscribe(cartonizationConfigurationRes => {

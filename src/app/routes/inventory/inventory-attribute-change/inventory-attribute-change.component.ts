@@ -42,10 +42,10 @@ export class InventoryInventoryAttributeChangeComponent implements OnInit {
   ngOnInit(): void {
     this.titleService.setTitle(this.i18n.fanyi('page.inventory.attributeChange.header.title'));
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.inprocess === 'true') {
+      if (params['inprocess'] === 'true') {
         this.currentInventory = JSON.parse(sessionStorage.getItem('inventory-attribute-change.inventory')!);
       } else {
-        this.inventoryService.getInventoryById(params.id).subscribe(inventory => {
+        this.inventoryService.getInventoryById(params['id']).subscribe(inventory => {
           this.currentInventory = inventory;
         });
       }

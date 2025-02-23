@@ -35,9 +35,9 @@
           
           <nz-select  nzMode="multiple" formControlName="statusList" name="statusList">
             <nz-option
-                *ngFor="let status of receiptStatusList | keys"
-                [nzValue]="status.key"
-                nzLabel="{{ 'RECEIPT-STATUS-' + status.key | i18n}}"
+                *ngFor="let status of receiptStatusListKeys"
+                [nzValue]="status"
+                nzLabel="{{ 'RECEIPT-STATUS-' + status | i18n}}"
              ></nz-option>
           </nz-select>
         </nz-form-control>

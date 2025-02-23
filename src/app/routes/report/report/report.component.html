@@ -11,8 +11,8 @@
         </nz-form-label>
         <nz-form-control [nzSpan]="18">
           <nz-select nzAllowClear formControlName="type" style="width: 300px;">
-            <nz-option *ngFor="let reportType of reportTypes | keys" nzValue="{{ reportType.key }}"
-              nzLabel="{{ 'REPORT-TYPE-' + reportType.key | i18n }}">
+            <nz-option *ngFor="let reportType of reportTypesKeys" nzValue="{{ reportType }}"
+              nzLabel="{{ 'REPORT-TYPE-' + reportType | i18n }}">
             </nz-option>
           </nz-select>
         </nz-form-control>

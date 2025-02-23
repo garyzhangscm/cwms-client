@@ -65,7 +65,9 @@ export class QcQcInspectionComponent implements OnInit {
   listOfQCInspectionRequest: QcInspectionRequest[] = [];
 
   qcInspectionRequestTypes = QcInspectionRequestType;
+  qcInspectionRequestTypesKeys = Object.keys(this.qcInspectionRequestTypes);
   qcInspectionResults = QCInspectionResult;
+  qcInspectionResultsKeys = Object.keys(this.qcInspectionResults);
     
 
   ngOnInit(): void { 

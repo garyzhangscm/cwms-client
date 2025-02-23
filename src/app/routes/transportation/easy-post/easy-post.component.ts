@@ -36,10 +36,11 @@ export class TransportationEasyPostComponent implements OnInit {
   addCarrierModal!: NzModalRef;
   addCarrierForm!: UntypedFormGroup;
   reportTypes = ReportType;
+  reportTypesKeys = Object.keys(this.reportTypes);
   printers: Printer[] = [];
   
-  shipFromAddress?: Address;
-  returnAddress?: Address;
+  shipFromAddress?: google.maps.places.PlaceResult;
+  returnAddress?: google.maps.places.PlaceResult;
   
 
   @ViewChild('st', { static: true })
@@ -124,14 +125,14 @@ export class TransportationEasyPostComponent implements OnInit {
         error: () => this.isSpinning = false
       }); 
   }
-  setupShipFromAddress(address: Address) {
+  setupShipFromAddress(address: google.maps.places.PlaceResult) {
     this.currentEasyPostConfiguration.addressLine1 = "";
     this.currentEasyPostConfiguration.addressCity = "";
     this.currentEasyPostConfiguration.addressCounty = "";
     this.currentEasyPostConfiguration.addressState = "";
     this.currentEasyPostConfiguration.addressCountry = "";
     this.currentEasyPostConfiguration.addressPostcode = "";
-    address.address_components.forEach(
+    address.address_components!.forEach(
       addressComponent => {
         if (addressComponent.types[0] === 'street_number') {
             this.currentEasyPostConfiguration.addressLine1 = `${addressComponent.long_name} ${this.currentEasyPostConfiguration.addressLine1}`;
@@ -159,14 +160,14 @@ export class TransportationEasyPostComponent implements OnInit {
     )
   }
   
-  setupReturnAddress(address: Address) {
+  setupReturnAddress(address: google.maps.places.PlaceResult) {
     this.currentEasyPostConfiguration.returnAddressLine1 = "";
     this.currentEasyPostConfiguration.returnAddressCity = "";
     this.currentEasyPostConfiguration.returnAddressCounty = "";
     this.currentEasyPostConfiguration.returnAddressState = "";
     this.currentEasyPostConfiguration.returnAddressCountry = "";
     this.currentEasyPostConfiguration.returnAddressPostcode = "";
-    address.address_components.forEach(
+    address.address_components!.forEach(
       addressComponent => {
         if (addressComponent.types[0] === 'street_number') {
             this.currentEasyPostConfiguration.returnAddressLine1 = `${addressComponent.long_name} ${this.currentEasyPostConfiguration.returnAddressLine1}`;
@@ -404,11 +405,11 @@ export class TransportationEasyPostComponent implements OnInit {
     }
   }
  
-  handleShipFromAddressChange(address: Address) {  
+  handleShipFromAddressChange(address: google.maps.places.PlaceResult) {  
     this.shipFromAddress = address;
      
   }
-  handleReturnAddressChange(address: Address) {  
+  handleReturnAddressChange(address: google.maps.places.PlaceResult) {  
     this.returnAddress = address;
      
   }

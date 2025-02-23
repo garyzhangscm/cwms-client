@@ -14,6 +14,10 @@ import { ItemFamily } from '../models/item-family';
 })
 export class InventoryItemFamilyMaintenanceComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+  private readonly warehouseService = inject(WarehouseService);
+  private readonly companyService = inject(CompanyService);
+
+   
   currentItemFamily!: ItemFamily;
   pageTitle = '';
 
@@ -30,8 +34,6 @@ export class InventoryItemFamilyMaintenanceComponent implements OnInit {
   constructor(
     private router: Router, 
     private titleService: TitleService,
-    private warehouseService: WarehouseService,
-    private companyService: CompanyService,
   ) { }
 
   ngOnInit(): void {

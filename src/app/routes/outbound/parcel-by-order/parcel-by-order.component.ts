@@ -55,9 +55,9 @@ export class OutboundParcelByOrderComponent implements OnInit {
   ngOnInit(): void { 
     
     this.activatedRoute.queryParams.subscribe(params => {
-      if (params.id) {
+      if (params['id']) {
         this.isSpinning = true;
-        this.orderService.getOrder(params.id).subscribe({
+        this.orderService.getOrder(params['id']).subscribe({
           next: (orderRes) => {
             this.currentOrder = orderRes;
             this.isSpinning = false;

@@ -653,9 +653,9 @@ export class OutboundOrderMaintenanceComponent implements OnInit {
 
   }
   
-  handleNewCustomerAddressChange(address: Address) {  
+  handleNewCustomerAddressChange(address: google.maps.places.PlaceResult) {  
     // this.warehouseAddress = address;
-    address.address_components.forEach(
+    address.address_components!.forEach(
       addressComponent => {
          
         if (addressComponent.types[0] === 'street_number') {

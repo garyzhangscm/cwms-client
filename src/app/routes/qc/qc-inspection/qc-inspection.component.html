@@ -111,9 +111,9 @@
             <nz-input-group >
               <nz-select formControlName="qcInspectionRequestType" style="width: 250px" nzAllowClear >
                   <nz-option
-                       *ngFor="let qcInspectionRequestType of qcInspectionRequestTypes  | keys"
-                       [nzValue]="qcInspectionRequestType.key"
-                       nzLabel="{{ 'QC-INSPECTION-REQUEST-TYPE-' + qcInspectionRequestType.key | i18n}}"
+                       *ngFor="let qcInspectionRequestType of qcInspectionRequestTypesKeys"
+                       [nzValue]="qcInspectionRequestType"
+                       nzLabel="{{ 'QC-INSPECTION-REQUEST-TYPE-' + qcInspectionRequestType | i18n}}"
                   ></nz-option>
               </nz-select>
 
@@ -131,13 +131,13 @@
         <nz-form-control [nzSpan]="18" >
 
             <nz-input-group >
-              <nz-select formControlName="qcInspectionResult" style="width: 250px" nzAllowClear  >
+              <nz-select formControlName="qcInspectionResult" style="width: 250px" nzAllowClear  >
                   <nz-option
-                          *ngFor="let qcInspectionResult of qcInspectionResults | keys"
-                          [nzValue]="qcInspectionResult.key"
-                          nzLabel="{{ 'QC-INSPECTION-RESULT-' + qcInspectionResult.key | i18n}}"
-                        ></nz-option>
-                      </nz-select>
+                    *ngFor="let qcInspectionResult of qcInspectionResultsKeys"
+                    [nzValue]="qcInspectionResult"
+                    nzLabel="{{ 'QC-INSPECTION-RESULT-' + qcInspectionResult | i18n}}"
+                  ></nz-option>
+                </nz-select>
 
               </nz-input-group> 
         </nz-form-control>

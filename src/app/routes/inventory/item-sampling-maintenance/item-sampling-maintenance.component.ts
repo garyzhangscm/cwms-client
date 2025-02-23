@@ -68,12 +68,12 @@ export class InventoryItemSamplingMaintenanceComponent implements OnInit {
     this.fileList = [];
     this.activatedRoute.queryParams.subscribe(params => {
       // if we are changing an existing record
-      if (params.id) {
+      if (params['id']) {
 
 
         this.isSpinning = true;
         this.itemSamplingService.getItemSampling(
-          params.id
+          params['id']
         ).subscribe({
           next: (itemSamplingRes) => {
             this.imageFileUploadUrl = `inventory/item-sampling/${itemSamplingRes.item?.id}/${itemSamplingRes.number}/images`;
@@ -147,10 +147,10 @@ export class InventoryItemSamplingMaintenanceComponent implements OnInit {
     return true;
   }
   handlePreview = async (file: NzUploadFile) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj!);
+    if (!file.url && !file['preview']) {
+      file['preview'] = await getBase64(file.originFileObj!);
     }
-    this.previewImage = file.url || file.preview;
+    this.previewImage = file.url || file['preview'];
     this.previewVisible = true;
   };
   

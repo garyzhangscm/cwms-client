@@ -32,6 +32,7 @@ export class TransportationTractorScheduleComponent implements OnInit {
   currentTractor!: Tractor;
   isSpinning = false;
   tractorAppointmentTypes = TractorAppointmentType;
+  tractorAppointmentTypesKeys = Object.keys(this.tractorAppointmentTypes);
   tractorSchedules: TractorSchedule[] = [];
 
   constructor(private http: _HttpClient, 

@@ -20,6 +20,7 @@ import { CarrierService } from '../services/carrier.service';
 export class TransportationCarrierMaintenanceComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
   carrierServiceLevelTypes = CarrierServiceLevelType; 
+  carrierServiceLevelTypesKeys = Object.keys(this.carrierServiceLevelTypes);
 
   currentCarrier?: Carrier;
   pageTitle: string;
@@ -168,9 +169,9 @@ export class TransportationCarrierMaintenanceComponent implements OnInit {
     }
   }
   
-  handleNewCarrierAddressChange(address: Address) {  
+  handleNewCarrierAddressChange(address: google.maps.places.PlaceResult) {  
     // this.warehouseAddress = address;
-    address.address_components.forEach(
+    address.address_components!.forEach(
       addressComponent => {
          
         if (addressComponent.types[0] === 'street_number') {

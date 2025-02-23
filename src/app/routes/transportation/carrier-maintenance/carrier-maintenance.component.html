@@ -106,7 +106,13 @@
                     
                   <input nz-input ngx-google-places-autocomplete (onAddressChange)="handleNewCarrierAddressChange($event)" />
                   -->
-                  <input nz-input />
+                  
+                  <input #ngxPlaces="ngx-places"
+                        nz-input 
+                        class="input"
+                        type="text"
+                        ngx-gp-autocomplete
+                        (onAddressChange)="handleNewCarrierAddressChange($event)" />
                 </nz-form-control>
               </nz-form-item>
             </div>
@@ -177,8 +183,9 @@
                             <nz-select style="width: 250px" *ngIf="data.id === undefined"
                                 [(ngModel)]="data.type"  
                                 >
-                                <nz-option *ngFor="let carrierServiceLevelType of carrierServiceLevelTypes | keys"
-                                    nzLabel="{{ 'CARRIER-SERVICE-LEVEL-TYPE-' + carrierServiceLevelType.key | i18n }}" [nzValue]="carrierServiceLevelType.key">
+                                <nz-option *ngFor="let carrierServiceLevelType of carrierServiceLevelTypesKeys"
+                                    nzLabel="{{ 'CARRIER-SERVICE-LEVEL-TYPE-' + carrierServiceLevelType | i18n }}"
+                                     [nzValue]="carrierServiceLevelType">
                                 </nz-option>
                             </nz-select>
 

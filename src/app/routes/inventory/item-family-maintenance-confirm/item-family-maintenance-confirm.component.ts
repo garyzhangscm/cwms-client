@@ -21,7 +21,7 @@ export class InventoryItemFamilyMaintenanceConfirmComponent implements OnInit {
     private itemFamilyService: ItemFamilyService,
     private router: Router,
   ) {
-    this.pageTitle = i18n.fanyi('page.item-family-maintenance.confirm.title');
+    this.pageTitle = this.i18n.fanyi('page.item-family-maintenance.confirm.title');
   }
 
   ngOnInit(): void {

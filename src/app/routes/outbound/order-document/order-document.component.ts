@@ -45,7 +45,7 @@ export class OutboundOrderDocumentComponent implements OnInit {
     private router: Router
   ) {
     
-    this.pageTitle = i18n.fanyi("order-document");
+    this.pageTitle = this.i18n.fanyi("order-document");
   }
 
   ngOnInit(): void {
@@ -54,8 +54,8 @@ export class OutboundOrderDocumentComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
       
         this.isSpinning = true;
-      if (params.id) {
-        this.orderService.getOrder(params.id).subscribe({
+      if (params['id']) {
+        this.orderService.getOrder(params['id']).subscribe({
           next: (orderRes) => {
             this.currentOrder = orderRes;
             this.isSpinning = false;

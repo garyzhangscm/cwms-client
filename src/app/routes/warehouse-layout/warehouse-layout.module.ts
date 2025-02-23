@@ -105,8 +105,7 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
         apiKey: ((globalThis as any).__MES_PUBLIC_CONFIG__?.googleMapsApiKey || ''),
         libraries: ['places']
       })
-    },
-    //...
+    }, 
   ],
   exports: [WarehouseLayoutLocationQueryPopupComponent]
 })
