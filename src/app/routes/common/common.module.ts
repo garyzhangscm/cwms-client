@@ -16,6 +16,7 @@ import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number';
+import { NzListModule } from 'ng-zorro-antd/list';
 import { NzResultModule } from 'ng-zorro-antd/result';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
@@ -101,6 +102,8 @@ const COMPONENTS_NOROUNT: Array<Type<void>> = [];
         NzIconModule ,
         NzToolTipModule ,
         NgxGpAutocompleteModule,
+        NzListModule ,
+        
     ],
     declarations: [
         ...COMPONENTS,

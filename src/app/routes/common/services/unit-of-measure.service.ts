@@ -1,3 +1,4 @@
+import { HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { _HttpClient } from '@delon/theme';
 import { Observable, of } from 'rxjs';
@@ -41,8 +42,11 @@ export class UnitOfMeasureService {
       return of(data);
     }
 
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+    
     return this.http
-      .get(`common/unit-of-measures/${  unitOfMeasureId}`)
+      .get(`common/unit-of-measures/${  unitOfMeasureId}`, params)
       .pipe(map(res => res.data))
       .pipe(tap(res => this.localStorageService.setItem(`common.unit-of-measure.${  unitOfMeasureId}`, res)));
   }

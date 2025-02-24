@@ -8,6 +8,7 @@ import { I18NService } from 'src/app/core/i18n/i18n.service';
 import { PrintingService } from '../../common/services/printing.service';
 import { Inventory } from '../../inventory/models/inventory'; 
 import { ReportHistory } from '../../report/models/report-history';
+import { Page } from '../../util/models/Page';
 import { UtilService } from '../../util/services/util.service';
 import { WarehouseService } from '../../warehouse-layout/services/warehouse.service';
 import { ProductionLine } from '../models/production-line';
@@ -32,30 +33,66 @@ export class WorkOrderService {
     private utilService: UtilService, 
   ) { }
 
-  getWorkOrders(number?: string, itemName?: string, productionPlanId?: number, statusList?:string, loadDetails?: boolean): Observable<WorkOrder[]> {
+  getPageableWorkOrders(number?: string, itemName?: string, productionPlanId?: number, statusList?:string, 
+    pageIndex?: number, pageSize?: number): 
+      Observable<Page<WorkOrder[]>> {
+
+      let url = `workorder/work-orders/pagination`;
+     
     
-    let url = `workorder/work-orders?warehouseId=${this.warehouseService.getCurrentWarehouse().id}`;
+      let params = new HttpParams(); 
+      params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
+      
+
+      if (number) {
+        params = params.append('number', this.utilService.encodeValue(number.trim()));  
+      }
+      if (itemName) {
+        
+        params = params.append('itemName', this.utilService.encodeValue(itemName.trim()));   
+      }
+      if (productionPlanId) {
+        params = params.append('productionPlanId', productionPlanId);    
+      }
+      if (statusList) {
+        params = params.append('statusList', statusList);  
+      }
+      if (pageIndex && pageIndex > 0) {
+        
+        params = params.append('pageIndex', pageIndex);   
+      }
+      if (pageSize && pageSize > 0) {
+        
+        params = params.append('pageSize', pageSize);   
+      }
+      
+      return this.http.get(url, params).pipe(map(res => res.data));
+  }
+  getWorkOrders(number?: string, itemName?: string, productionPlanId?: number, statusList?:string): 
+      Observable<WorkOrder[]> {
+    
+    let url = `workorder/work-orders`;
+     
+    
+    let params = new HttpParams(); 
+    params = params.append('warehouseId', this.warehouseService.getCurrentWarehouse().id); 
      
 
     if (number) {
-      url = `${url}&number=${this.utilService.encodeValue(number.trim())}`;
+      params = params.append('number', this.utilService.encodeValue(number.trim()));  
     }
     if (itemName) {
-      url = `${url}&itemName=${this.utilService.encodeValue(itemName.trim())}`;
+      
+      params = params.append('itemName', this.utilService.encodeValue(itemName.trim()));   
     }
     if (productionPlanId) {
-      url = `${url}&productionPlanId=${productionPlanId}`;
+      params = params.append('productionPlanId', productionPlanId);    
     }
     if (statusList) {
-      url = `${url}&statusList=${statusList}`;
+      params = params.append('statusList', statusList);  
     }
-    if (loadDetails === undefined) {
-      url = `${url}&loadDetails=true`;
-    }
-    else {      
-      url = `${url}&loadDetails=${loadDetails}`;
-    }
-    return this.http.get(url).pipe(map(res => res.data));
+    
+    return this.http.get(url, params).pipe(map(res => res.data));
   }
 
   getWorkOrdersByProductionPlan(productionPlanId: number): Observable<WorkOrder[]> {

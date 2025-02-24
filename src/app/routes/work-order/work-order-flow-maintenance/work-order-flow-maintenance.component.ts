@@ -115,7 +115,7 @@ export class WorkOrderWorkOrderFlowMaintenanceComponent implements OnInit {
     if (event.from == "left" && event.to == "right") {
       this.isSpinning = true;
       this.workOrderService.getWorkOrders(event.list[0].title, 
-        undefined, undefined, undefined, false).subscribe({
+        undefined, undefined, undefined).subscribe({
           next: (workOrderRes) => {
             this.workOrderCandidates = [...this.workOrderCandidates, 
                 ...workOrderRes

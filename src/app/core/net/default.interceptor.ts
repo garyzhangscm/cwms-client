@@ -4,7 +4,7 @@ import { IGNORE_BASE_URL, _HttpClient } from '@delon/theme';
 import { environment } from '@env/environment';
 import { Observable, of, throwError, mergeMap, catchError } from 'rxjs';
 
-import { ReThrowHttpError, checkStatus, getAdditionalHeaders, toLogin, goTo, CODEMESSAGE, notification, i18n } from './helper';
+import { ReThrowHttpError, checkStatus, getAdditionalHeaders, toLogin, goTo, CODEMESSAGE, notification } from './helper';
 import { tryRefreshToken } from './refresh-token';
 
 function handleData(injector: Injector, ev: HttpResponseBase, req: HttpRequest<any>, next: HttpHandlerFn): Observable<any> {
@@ -114,7 +114,7 @@ export const defaultInterceptor: HttpInterceptorFn = (req, next) => {
       }
       else {
 
-        notification(injector).error(`${err.status}: ${err.url}`, i18n().fanyi(errortext));
+        notification(injector).error(`${err.status}: ${err.url}`, errortext);
       }
       return throwError(() => err);
 
