@@ -1,6 +1,7 @@
 import { formatDate } from '@angular/common';
-import { Component, inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { STChange, STColumn, STComponent } from '@delon/abc/st';
 import { ActivatedRoute, Router } from '@angular/router';
 import { I18NService } from '@core';
 import { ALAIN_I18N_TOKEN, TitleService, _HttpClient } from '@delon/theme';
@@ -27,6 +28,7 @@ import { ShortAllocationService } from '../../outbound/services/short-allocation
 import { ReportOrientation } from '../../report/models/report-orientation.enum';
 import { ReportType } from '../../report/models/report-type.enum';
 import { ColumnItem } from '../../util/models/column-item';
+import { WebPageTableColumnConfiguration } from '../../util/models/web-page-table-column-configuration';
 import { LocalCacheService } from '../../util/services/local-cache.service';
 import { UtilService } from '../../util/services/util.service';
 import { WebClientConfigurationService } from '../../util/services/web-client-configuration.service';
@@ -45,6 +47,7 @@ import { BillOfMaterialService } from '../services/bill-of-material.service';
 import { ProductionLineAssignmentService } from '../services/production-line-assignment.service';
 import { ProductionLineService } from '../services/production-line.service';
 import { WorkOrderService } from '../services/work-order.service';
+import { CompanyService } from '../../warehouse-layout/services/company.service';
  
 @Component({
     selector: 'app-work-order-work-order',
@@ -54,6 +57,15 @@ import { WorkOrderService } from '../services/work-order.service';
 })
 export class WorkOrderWorkOrderComponent implements OnInit {
   private readonly i18n = inject<I18NService>(ALAIN_I18N_TOKEN);
+
+  pageName = "work-order";
+  workOrderTablePagination = {
+    showSize: true,
+    pageSizes: [5, 10, 25, 50, 100],
+    front: false
+  };
+  pageIndex = -1;
+  pageSize = 10;
 
   listOfColumns: Array<ColumnItem<WorkOrder>> = [
     {
@@ -287,6 +299,93 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   
   shortAllocationStatus = ShortAllocationStatus;
 
+  
+  @ViewChild('workOrderTable', { static: false })
+  workOrderTable!: STComponent;
+  workOrderTableColumns : STColumn[] = [];
+  defaultWorkOrderTableColumns: {[key: string]: STColumn } = {
+
+    "number" : { title: this.i18n.fanyi("work-order.number"), index: 'number' , width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.number, b.number),
+      },
+      filter: {
+        menus:  [] ,
+        fn: (filter, record) => record.number === filter.value,
+        multiple: true
+      }
+    },   
+    "status" : { title: this.i18n.fanyi("status"), index: 'status' , width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableString(a.status?.toString(), b.status?.toString()),
+      }, 
+    },  
+    "item" : { title: this.i18n.fanyi("work-order.item"), render: 'itemColumn', width: 150,  
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableObjField(a.item, b.item, 'name'),
+      }, 
+    },   
+    "description" : { title: this.i18n.fanyi("description"), render: 'itemDescriptionColumn', width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableObjField(a.item?.description, b.item?.description, 'description'),
+      },
+    },  
+    "expectedQuantity" : { title: this.i18n.fanyi("work-order.expected-quantity"), render: 'expectedQuantityColumn' , width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableNumber(a.expectedQuantity, b.expectedQuantity),
+      },
+    },  
+    "producedQuantity" : { title: this.i18n.fanyi("work-order.produced-quantity"), render: 'producedQuantityColumn' , width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableNumber(a.producedQuantity, b.producedQuantity),
+      },
+    },  
+    "qcQuantity" : { title: this.i18n.fanyi("work-order.qcQuantity"), render: 'qcQuantityColumn' , width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableNumber(a.qcQuantity, b.qcQuantity),
+      },
+    },    
+    "qcPercentage" : { title: this.i18n.fanyi("work-order.qcPercentage"), index: 'qcPercentage' , width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableNumber(a.qcPercentage, b.qcPercentage),
+      },
+    },    
+    "qcQuantityRequested" : { title: this.i18n.fanyi("work-order.qcQuantityRequested"), render: 'qcQuantityRequestedColumn' , width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableNumber(a.qcQuantityRequested, b.qcQuantityRequested),
+      },
+    },    
+    "qcQuantityCompleted" : { title: this.i18n.fanyi("work-order.qcQuantityCompleted"), render: 'qcQuantityCompletedColumn' , width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableNumber(a.qcQuantityCompleted, b.qcQuantityCompleted),
+      },
+    },   
+    "totalLineExpectedQuantity" : { title: this.i18n.fanyi("work-order.totalLineExpectedQuantity"), render: 'totalLineExpectedQuantityColumn' , width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableNumber(a.totalLineExpectedQuantity, b.totalLineExpectedQuantity),
+      },
+    },   
+    "totalLineOpenQuantity" : { title: this.i18n.fanyi("work-order.totalLineOpenQuantity"), render: 'totalLineOpenQuantityColumn' , width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableNumber(a.totalLineOpenQuantity, b.totalLineOpenQuantity),
+      },
+    },  
+    "totalLineInprocessQuantity" : { title: this.i18n.fanyi("work-order.totalLineInprocessQuantity"), render: 'totalLineInprocessQuantityColumn' , width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableNumber(a.totalLineInprocessQuantity, b.totalLineInprocessQuantity),
+      },
+    }, 
+    "totalLineDeliveredQuantity" : { title: this.i18n.fanyi("work-order.totalLineDeliveredQuantity"), render: 'totalLineDeliveredQuantityColumn' , width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableNumber(a.totalLineDeliveredQuantity, b.totalLineDeliveredQuantity),
+      },
+    }, 
+    "totalLineConsumedQuantity" : { title: this.i18n.fanyi("work-order.totalLineConsumedQuantity"), render: 'totalLineConsumedQuantityColumn' , width: 150, 
+      sort: {
+        compare: (a, b) => this.utilService.compareNullableNumber(a.totalLineConsumedQuantity, b.totalLineConsumedQuantity),
+      },
+    }, 
+  };
 
   displayOnly = false;
   constructor(
@@ -304,6 +403,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     private inventoryService: InventoryService,
     private locationService: LocationService,
     private utilService: UtilService,
+    private companyService: CompanyService,
     private printingService: PrintingService,
     private webClientConfigurationService: WebClientConfigurationService,
     private productionLineAssignmentService: ProductionLineAssignmentService,
@@ -318,6 +418,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     userService.isCurrentPageDisplayOnly("/work-order/work-order").then(
       displayOnlyFlag => this.displayOnly = displayOnlyFlag
     );
+
+    
+    this.initWebPageTableColumnConfiguration();
   }
   workOrderStatuses = WorkOrderStatus;
   workOrderStatusesKeys = Object.keys(this.workOrderStatuses);
@@ -334,8 +437,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   availableProductionLines: Array<{ label: string; value: string }> = [];
 
   // Table data for display
-  listOfAllWorkOrder: WorkOrder[] = [];
-  listOfDisplayWorkOrder: WorkOrder[] = [];
+  listOfAllWorkOrder: WorkOrder[] = []; 
 
   // list of record with allocation in process
   mapOfAllocationInProcessId: { [key: string]: boolean } = {};
@@ -390,6 +492,9 @@ export class WorkOrderWorkOrderComponent implements OnInit {
   //parserPercent = (value: string): string => value.replace(' %', '');
   parserPercent = (value: string): number => parseFloat(value?.replace('%', ''));
 
+  
+  tableConfigurations: {[key: string]: WebPageTableColumnConfiguration[] } = {}; 
+  
   ngOnInit(): void {
     // console.log(`webClientConfigurationService.getWebClientConfiguration().tabDisplayConfiguration: 
     //   ${JSON.stringify(this.webClientConfigurationService.getWebClientConfiguration().tabDisplayConfiguration["work-order.work-order.work-order.delivered-inventory"])}`);
@@ -409,10 +514,213 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     });
   }
 
+  
+  initWebPageTableColumnConfiguration() {
+    this.initWorkOrderTableColumnConfiguration();
+  }
+  initWorkOrderTableColumnConfiguration() {
+    // console.log(`start to init wave table columns`);
+    this.localCacheService.getWebPageTableColumnConfiguration(this.pageName, "workOrderTable")
+    .subscribe({
+      next: (webPageTableColumnConfigurationRes) => {
+        
+        if (webPageTableColumnConfigurationRes && webPageTableColumnConfigurationRes.length > 0){
+
+          this.tableConfigurations["workOrderTable"] = webPageTableColumnConfigurationRes;
+          this.refreshWorkOrderTableColumns();
+
+        }
+        else {
+          this.tableConfigurations["workOrderTable"] = this.getDefaultWorkOrderTableColumnsConfiguration();
+          this.refreshWorkOrderTableColumns();
+        }
+      }, 
+      error: () => {
+        
+        this.tableConfigurations["workOrderTable"] = this.getDefaultWorkOrderTableColumnsConfiguration();
+        this.refreshWorkOrderTableColumns();
+      }
+    })
+  }
+
+  getDefaultWorkOrderTableColumnsConfiguration(): WebPageTableColumnConfiguration[] {
+    
+    return [
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "workOrderTable",
+        columnName: "number",
+        columnDisplayText: this.i18n.fanyi("work-order.number"),
+        columnWidth: 100,
+        columnSequence: 1, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "workOrderTable",
+        columnName: "status",
+        columnDisplayText: this.i18n.fanyi("status"),
+        columnWidth: 50,
+        columnSequence: 2, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "workOrderTable",
+        columnName: "item",
+        columnDisplayText: this.i18n.fanyi("work-order.item"),
+        columnWidth: 50,
+        columnSequence: 3, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "workOrderTable",
+        columnName: "description",
+        columnDisplayText: this.i18n.fanyi("description"),
+        columnWidth: 150,
+        columnSequence: 4, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "workOrderTable",
+        columnName: "expectedQuantity",
+        columnDisplayText: this.i18n.fanyi("work-order.expected-quantity"),
+        columnWidth: 50,
+        columnSequence: 5, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "workOrderTable",
+        columnName: "producedQuantity",
+        columnDisplayText: this.i18n.fanyi("work-order.produced-quantity"),
+        columnWidth: 50,
+        columnSequence: 6, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "workOrderTable",
+        columnName: "totalQuantity",
+        columnDisplayText: this.i18n.fanyi("work-order.totalQuantity"),
+        columnWidth: 50,
+        columnSequence: 7, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "workOrderTable",
+        columnName: "qcQuantity",
+        columnDisplayText: this.i18n.fanyi("qcQuantity"),
+        columnWidth: 50,
+        columnSequence: 8, 
+        displayFlag: true
+      },
+      {
+        companyId: this.companyService.getCurrentCompany()!.id, 
+        webPageName: this.pageName,
+        tableName: "workOrderTable",
+        columnName: "totalInprocessQuantity",
+        columnDisplayText: this.i18n.fanyi("work-order.totalInprocessQuantity"),
+        columnWidth: 50,
+        columnSequence: 9, 
+        displayFlag: true
+      }, 
+      
+    ]
+  } 
+
+  workOrderTableColumnConfigurationChanged(tableColumnConfigurationList: WebPageTableColumnConfiguration[]){
+    
+    this.tableConfigurations["workOrderTable"] = tableColumnConfigurationList;
+    this.refreshWorkOrderTableColumns();
+  }
+
+  refreshWorkOrderTableColumns() {
+      
+    if (this.tableConfigurations["workOrderTable"] == null) {
+      return;
+    }
+    // this.waveTableColumns =  this.defaultWaveTableColumns;
+    this.workOrderTableColumns = [ 
+    ];
+
+    // loop through the table column configuration and add
+    // the column if the display flag is checked, and by sequence
+    let workOrderTableConfiguration = this.tableConfigurations["workOrderTable"].filter(
+      column => column.displayFlag
+    );
+
+    workOrderTableConfiguration.sort((a, b) => a.columnSequence - b.columnSequence);
+
+    workOrderTableConfiguration.forEach(
+      columnConfig => {
+        this.defaultWorkOrderTableColumns[columnConfig.columnName].title = columnConfig.columnDisplayText;
+
+        this.workOrderTableColumns = [...this.workOrderTableColumns, 
+          this.defaultWorkOrderTableColumns[columnConfig.columnName]
+        ]
+      }
+    )
+
+    this.workOrderTableColumns = [...this.workOrderTableColumns,  
+      {
+        title: this.i18n.fanyi("action"), fixed: 'right', width: 120, 
+        render: 'actionColumn',
+        iif: () => !this.displayOnly
+      }, 
+    ];
+
+    // console.log(`wave table columns: ${this.waveTableColumns.length}`);
+    // this.waveTableColumns.forEach(
+    //   column =>  console.log(`${JSON.stringify(column)}`) 
+    // )
+
+    if (this.workOrderTable != null) {
+
+      this.workOrderTable.resetColumns({ emitReload: true });
+    }
+  /**
+  * 
+    this.waveTable.resetColumns();
+    this.waveTable.reset();
+    this.waveTable.reload();
+  * 
+  */
+    
+
+
+  }
+
+
+  workOrderTableChanged(event: STChange) : void {  
+    if (event.type === 'expand' && event.expand.expand === true) {
+      // console.log(`expanded: ${event.expand.id}`)
+      this.showWorkOrderDetails(event.expand);
+    }
+    if ((event.type === 'pi' || event.type === 'ps') && 
+        (this.workOrderTable.pi != this.pageIndex || this.workOrderTable.ps != this.pageSize)) {
+         
+          this.pageIndex = this.workOrderTable.pi;
+          this.pageSize = this.workOrderTable.ps;
+          this.search();
+    }
+
+  }
+
   resetForm(): void {
     this.searchForm.reset();
-    this.listOfAllWorkOrder = [];
-    this.listOfDisplayWorkOrder = [];
+    this.listOfAllWorkOrder = []; 
   }
 
   search(id?: number): void {
@@ -421,8 +729,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     if (id) {
       this.workOrderService.getWorkOrder(id).subscribe(
         workOrderRes => {
-          this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities([workOrderRes]);
-          this.listOfDisplayWorkOrder = this.listOfAllWorkOrder;
+          this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities([workOrderRes]); 
           this.refreshDetailInformation([workOrderRes], false);
           this.isSpinning = false;
           this.searchResult = this.i18n.fanyi('search_result_analysis', {
@@ -437,24 +744,41 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       );
     } else {
       this.workOrderService
-        .getWorkOrders(this.searchForm.value.number.value, this.searchForm.value.item.value, 
-          undefined, this.searchForm.value.status.value, false)
-        .subscribe(
-          workOrderRes => {
-            this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities(workOrderRes);
-            this.refreshDetailInformation(workOrderRes, true);
-            this.listOfDisplayWorkOrder = this.listOfAllWorkOrder;
+        .getPageableWorkOrders(this.searchForm.value.number, this.searchForm.value.item, 
+          undefined, this.searchForm.value.status, 
+          this.workOrderTable.pi, this.workOrderTable.ps)
+        .subscribe({
+          next: (page) => {
+            
+            this.workOrderTable.total = page.totalElements;
+            this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities(page.content);
+            this.refreshDetailInformation(this.listOfAllWorkOrder, true); 
             this.isSpinning = false;
             this.searchResult = this.i18n.fanyi('search_result_analysis', {
               currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
-              rowCount: workOrderRes.length,
+              rowCount: this.listOfAllWorkOrder.length,
             });
-          },
-          () => {
+            
+/**
+ * 
+              this.listOfAllWorkOrder = this.calculateWorkOrderLineTotalQuantities(workOrderRes);
+              this.refreshDetailInformation(workOrderRes, true);
+              this.listOfDisplayWorkOrder = this.listOfAllWorkOrder;
+              this.isSpinning = false;
+              this.searchResult = this.i18n.fanyi('search_result_analysis', {
+                currentDate: formatDate(new Date(), 'yyyy-MM-dd HH:mm:ss', 'en-US'),
+                rowCount: workOrderRes.length,
+              });
+ * 
+ */
+          }, 
+          error: () => {
+
             this.isSpinning = false;
             this.searchResult = '';
-          },
-        );
+          }
+
+        }); 
     }
     // we will no long load available production line here. 
     // instead we will assign production line to the work order
@@ -484,7 +808,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
     // but not the details like name / description. 
     // we will need to load the details async here to improve
     // the performance yet still show the meaningful information
-    if (loadDetails) {      
+    if (loadDetails) { 
       this.loadItemInformation(workOrders);
       this.loadInventoryStatusInformation(workOrders);
     }
@@ -496,7 +820,8 @@ export class WorkOrderWorkOrderComponent implements OnInit {
       }
     });
 
-  }
+  } 
+
   loadItemInformation(workOrders: WorkOrder[]) {
 
       // ok, we will group the items all together then 
@@ -526,45 +851,123 @@ export class WorkOrderWorkOrderComponent implements OnInit {
             itemRes.forEach(
               item =>  itemMap.set(item.id!, item)
             );
-            workOrders.forEach(
-              workOrder => {
-                // only assign if we get the item from the server
-                if (itemMap.has(workOrder.itemId!)) {
-                  workOrder.item = itemMap.get(workOrder.itemId!)
-                  this.loadDefaultStockUom(workOrder.item!);
-                  if (workOrder.item?.workOrderSOPUrl) {
-                    workOrder.item.workOrderSOP = 
-                    `${environment.api.baseUrl}inventory/items/${workOrder.item.id}/work-order-sop?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&download=false`
-                   
-                  } 
-                  
-                }
-                workOrder.workOrderLines.forEach(
-                  workOrderLine => {                    
-                    if (itemMap.has(workOrderLine.itemId!)) {
-                      workOrderLine.item = itemMap.get(workOrderLine.itemId!)
-                      this.loadDefaultStockUom(workOrderLine.item!);
-                    }
-                  }
-                )
-                workOrder.workOrderByProducts.forEach(
-                  byProduct => {                    
-                    if (itemMap.has(byProduct.itemId!)) {
-                      byProduct.item = itemMap.get(byProduct.itemId!)
-                      this.loadDefaultStockUom(byProduct.item!);
-                    }
-                  }
-                )
-              }
-            )
+
+            this.SetupWorkOrderItems(workOrders, itemMap);
+            this.loadDefaultStockUoms(workOrders);
+            
           }
         })
       }
   }
+  SetupWorkOrderItems(workOrders: WorkOrder[], itemMap : Map<number, Item>) {
+    workOrders.forEach(
+      workOrder => {
+        // only assign if we get the item from the server
+        if (itemMap.has(workOrder.itemId!)) {
+          workOrder.item = itemMap.get(workOrder.itemId!)
+          // this.loadDefaultStockUom(workOrder.item!);
+          if (workOrder.item?.workOrderSOPUrl) {
+            workOrder.item.workOrderSOP = 
+            `${environment.api.baseUrl}inventory/items/${workOrder.item.id}/work-order-sop?warehouseId=${this.warehouseService.getCurrentWarehouse().id}&download=false`
+           
+          } 
+          
+        }
+        workOrder.workOrderLines.forEach(
+          workOrderLine => {                    
+            if (itemMap.has(workOrderLine.itemId!)) {
+              workOrderLine.item = itemMap.get(workOrderLine.itemId!)
+              // this.loadDefaultStockUom(workOrderLine.item!);
+            }
+          }
+        )
+        workOrder.workOrderByProducts.forEach(
+          byProduct => {                    
+            if (itemMap.has(byProduct.itemId!)) {
+              byProduct.item = itemMap.get(byProduct.itemId!)
+              // this.loadDefaultStockUom(byProduct.item!);
+            }
+          }
+        )
+      }
+    );
+  }
+  
+  loadDefaultStockUoms(workOrders: WorkOrder[]) { 
+    let unitOfMeasureIdSet = new Set<number>(); 
+    let itemsMap = new Map<number, Set<Item>>()
+
+    // get all the unit of measure id we will need to load
+    workOrders.forEach(
+      workOrder => { 
+        
+        if (workOrder.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId != null &&
+          workOrder.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null ) {
+            let unitOfMeasureId = workOrder.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId;
+            unitOfMeasureIdSet.add(unitOfMeasureId);
+            let items : Set<Item> = itemsMap.get(unitOfMeasureId) == null ? new Set() : itemsMap.get(unitOfMeasureId)!
+            items?.add(workOrder.item);
+            itemsMap.set(unitOfMeasureId, items);
+        }
+        
+        workOrder.workOrderLines.forEach(
+          workOrderLine => {                   
+            
+            if (workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId != null &&
+              workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null ) {
+                
+                
+                let unitOfMeasureId = workOrderLine.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId;
+                unitOfMeasureIdSet.add(unitOfMeasureId);
+                let items : Set<Item> = itemsMap.get(unitOfMeasureId) == null ? new Set() : itemsMap.get(unitOfMeasureId)!
+                items?.add(workOrderLine.item);
+                itemsMap.set(unitOfMeasureId, items);
+
+            }
+          }
+        )
+        workOrder.workOrderByProducts.forEach(
+          byProduct => {   
+            
+            if (byProduct.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId != null &&
+              byProduct.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null ) {
+                
+                let unitOfMeasureId = byProduct.item?.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId;
+                unitOfMeasureIdSet.add(unitOfMeasureId);
+                let items : Set<Item> = itemsMap.get(unitOfMeasureId) == null ? new Set() : itemsMap.get(unitOfMeasureId)!
+                items?.add(byProduct.item);
+                itemsMap.set(unitOfMeasureId, items);
+ 
+            }
+          }
+        )
+      }
+    );
+
+    // console.log(`we got ${unitOfMeasureIdSet.size} unit of measure to load`);
+
+    unitOfMeasureIdSet.forEach(
+      unitOfMeasureId => {
+
+        this.localCacheService.getUnitOfMeasure(unitOfMeasureId)
+            .subscribe({
+              next: (unitOfMeasureRes) => { 
+                itemsMap.get(unitOfMeasureId)?.forEach(
+                  item => item.defaultItemPackageType!.stockItemUnitOfMeasure!.unitOfMeasure = unitOfMeasureRes
+                );  
+                this.workOrderTable.reload();
+                // this.listOfAllWorkOrder = workOrders;
+              }
+            });
+      }
+    )
+
+  }
+
   loadDefaultStockUom(item: Item) {
 
     // load the default item package type's stock item unit of measure
-    // so that we can show the stock unit of measure in the screenshot
+    // so that we can show the stock unit of measure in the screenshot 
     if (item.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasureId != null &&
                   item.defaultItemPackageType?.stockItemUnitOfMeasure?.unitOfMeasure == null ) {
         
@@ -574,7 +977,7 @@ export class WorkOrderWorkOrderComponent implements OnInit {
                     item.defaultItemPackageType!.stockItemUnitOfMeasure!.unitOfMeasure = unitOfMeasureRes;
               }
             })
-    }
+    } 
   }
   loadInventoryStatusInformation(workOrders: WorkOrder[]) {
     // we will reasonablly assume there's very few inventory status

@@ -3,8 +3,9 @@ import { Injector, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { DA_SERVICE_TOKEN } from '@delon/auth';
 import { ALAIN_I18N_TOKEN } from '@delon/theme';
-import { NzNotificationService } from 'ng-zorro-antd/notification';
-import { I18NService } from '../i18n/i18n.service';
+import { NzNotificationService } from 'ng-zorro-antd/notification'; 
+import { CompanyService } from 'src/app/routes/warehouse-layout/services/company.service';
+import { WarehouseService } from 'src/app/routes/warehouse-layout/services/warehouse.service';
 
 export interface ReThrowHttpError {
   body: any;
@@ -42,15 +43,22 @@ export function toLogin(injector: Injector): void {
 export function notification(injector: Injector): NzNotificationService {
   return injector.get(NzNotificationService);
 }
-export function i18n(): I18NService {
-  return inject<I18NService>(ALAIN_I18N_TOKEN);
-}
+
 
 export function getAdditionalHeaders(headers?: HttpHeaders): { [name: string]: string } {
   const res: { [name: string]: string } = {};
   const lang = inject(ALAIN_I18N_TOKEN).currentLang;
+  const warehouseService = inject(WarehouseService);
+  const companyService = inject(CompanyService);
   if (!headers?.has('Accept-Language') && lang) {
     res['Accept-Language'] = lang;
+  }
+  
+  if (!headers?.has('warehouseId') && warehouseService?.getCurrentWarehouse()?.id) {
+    res['warehouseId'] = warehouseService?.getCurrentWarehouse()?.id?.toString();
+  }
+  if (!headers?.has('companyId') && companyService?.getCurrentCompany()?.id) {
+    res['companyId'] = companyService?.getCurrentCompany()!.id.toString();
   }
 
   return res;
