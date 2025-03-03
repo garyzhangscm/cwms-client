@@ -246,88 +246,23 @@ export class UserLoginComponent implements OnDestroy {
         // TODO: Mock expired value
         res.user.expired = +new Date() + 1000 * 60 * 5;
         this.tokenService.set(res.user);
+        
+
+        this.reloadInfoAfterSuccessfullyLogin(res);
+
+        
 
         // get the company information
+        
+        /**
+         * 
         this.companyService.getCompanies(this.companyCode.value).subscribe(companiesRes => {
           console.log(`company res length: ${companiesRes.length}`);
           if (companiesRes.length === 1) {
             this.companyService.setCurrentCompany(companiesRes[0]);
           }
         });
-        
-        this.warehouseService.getWarehouse(this.warehouseId.value).subscribe((warehouse: Warehouse) => {
-          this.warehouseService.setCurrentWarehouse(warehouse);
-          // setup the warehouse's time zone
-          this.warehouseConfigurationService.getWarehouseConfiguration(true, warehouse.id).subscribe({
-            next: (warehouseConfigurationRes) => {
-              warehouse.timeZone = warehouseConfigurationRes.timeZone;
-              this.warehouseService.setCurrentWarehouse(warehouse);
-
-            }, 
-            error: () => {
-              var date = new Date(); 
-              var timezone = date.getTimezoneOffset();
-              warehouse.timeZone = timezone.toString();
-              this.warehouseService.setCurrentWarehouse(warehouse);
-            }
-          })
-          // setup the current user
-          this.userService.setupCurrentUser();
-          // setup caches
-          this.setupCaches();
-          // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
-          this.startupSrv.load(warehouse.id).subscribe(() => {
-            /***
-             * 
-            let url = this.tokenService.referrer!.url || '/';
-            if (url.includes('/passport')) {
-              url = '/';
-            }
-            this.router.navigateByUrl(url);
-             * 
-             */
-            // before we flow into the main page, let's check if the user need to change the password 
-            this.userService.getUsers(res.user.name).subscribe({
-              next: (userInfoRes) => {
-                if (userInfoRes.length === 1) {
-                  // setup the ACL controller to full is the user is system admin or admin
-                  if (userInfoRes[0].systemAdmin || userInfoRes[0].admin) {
-                    this.aclService.setFull(true);
-                  }
-                  else {
-                    // for non admin user, we will setup the ACL based on the menu access
-                    this.aclService.setFull(false);
-                  }
-
-                  if (userInfoRes[0].changePasswordAtNextLogon === true) {
-                    // force the user to change the password before continue
-                    this.openChangePasswordModal(userInfoRes[0]);
-  
-                  }
-                  else {
-                    this.router.navigateByUrl('/');
-  
-                  }
-                }
-                else {
-                  this.router.navigateByUrl('/')
-                }
-              }, 
-              error: () => this.router.navigateByUrl('/')
-            })
-          });
-        });
-
-        
-
-        // get the company information
-        this.companyService.getCompanies(this.companyCode.value).subscribe(companiesRes => {
-          console.log(`company res length: ${companiesRes.length}`);
-          if (companiesRes.length === 1) {
-            this.companyService.setCurrentCompany(companiesRes[0]);
-          }
-        });
-        
+        */
 
 
         // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
@@ -344,6 +279,83 @@ export class UserLoginComponent implements OnDestroy {
          */
 
       });
+  }
+
+  reloadInfoAfterSuccessfullyLogin(loginRes: any) : void {
+
+        // get the company information
+        this.companyService.getCompanies(this.companyCode.value).subscribe(companiesRes => {
+          // console.log(`1. company res length: ${companiesRes.length}`);
+          if (companiesRes.length === 1) {
+            this.companyService.setCurrentCompany(companiesRes[0]);
+            
+            this.warehouseService.getWarehouse(this.warehouseId.value).subscribe((warehouse: Warehouse) => {
+              this.warehouseService.setCurrentWarehouse(warehouse);
+              // setup the warehouse's time zone
+              this.warehouseConfigurationService.getWarehouseConfiguration(true, warehouse.id).subscribe({
+                next: (warehouseConfigurationRes) => {
+                  warehouse.timeZone = warehouseConfigurationRes.timeZone;
+                  this.warehouseService.setCurrentWarehouse(warehouse);
+
+                }, 
+                error: () => {
+                  var date = new Date(); 
+                  var timezone = date.getTimezoneOffset();
+                  warehouse.timeZone = timezone.toString();
+                  this.warehouseService.setCurrentWarehouse(warehouse);
+                }
+              })
+              // setup the current user
+              this.userService.setupCurrentUser();
+              // setup caches
+              this.setupCaches();
+              // 重新获取 StartupService 内容，我们始终认为应用信息一般都会受当前用户授权范围而影响
+              this.startupSrv.load(warehouse.id).subscribe(() => {
+                /***
+                 * 
+                let url = this.tokenService.referrer!.url || '/';
+                if (url.includes('/passport')) {
+                  url = '/';
+                }
+                this.router.navigateByUrl(url);
+                * 
+                */
+                // before we flow into the main page, let's check if the user need to change the password 
+                 
+                this.userService.getUsers(loginRes.user.name).subscribe({
+                  next: (userInfoRes) => {
+                    if (userInfoRes.length === 1) {
+                      // setup the ACL controller to full is the user is system admin or admin
+                      if (userInfoRes[0].systemAdmin || userInfoRes[0].admin) {
+                        this.aclService.setFull(true);
+                      }
+                      else {
+                        // for non admin user, we will setup the ACL based on the menu access
+                        this.aclService.setFull(false);
+                      }
+
+                      if (userInfoRes[0].changePasswordAtNextLogon === true) {
+                        // force the user to change the password before continue
+                        this.openChangePasswordModal(userInfoRes[0]);
+      
+                      }
+                      else {
+                        this.router.navigateByUrl('/');
+      
+                      }
+                    }
+                    else {
+                      this.router.navigateByUrl('/')
+                    }
+                  }, 
+                  error: () => this.router.navigateByUrl('/')
+                })
+              });
+            });
+          }
+        });
+        
+
   }
 
   open(type: string, openType: SocialOpenType = 'href'): void {
@@ -427,7 +439,7 @@ export class UserLoginComponent implements OnDestroy {
   }
   
   loadWarehouses(): void {
-    console.log(`Start to load warehouse ${this.userName.value}`);
+    
     if (this.userName.value === '' || this.companyCode.value === '') {
       this.warehouses = [];
       this.warehouseId.disable();
@@ -491,7 +503,7 @@ export class UserLoginComponent implements OnDestroy {
 
   
   changePassword(user: User, newPassword: string) {
-    console.log(`password is changed to ${newPassword}`);
+    
     this.userService.changePassword(user, newPassword).subscribe({
       next: () => this.router.navigateByUrl('/')
       

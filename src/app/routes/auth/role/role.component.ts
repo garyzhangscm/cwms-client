@@ -376,7 +376,7 @@ export class AuthRoleComponent implements OnInit {
   search(tabIndex: number = 0): void {
     this.isSpinning = true;
     this.searchResult = '';
-    this.roleService.getRoles(this.searchForm!.value.name.value).subscribe(
+    this.roleService.getRoles(this.searchForm!.value.name).subscribe(
       roleRes => {
         this.listOfAllRoles = roleRes;
         this.listOfDisplayRoles = roleRes;
