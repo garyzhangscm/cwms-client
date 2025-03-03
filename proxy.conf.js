@@ -14,4 +14,9 @@ module.exports = {
   //   secure: false, // Ignore invalid SSL certificates
   //   changeOrigin: true
   // }
+  
+  '/api': {
+    target: 'https://staging.claytechsuite.com/api',
+    secure: true
+  }
 };

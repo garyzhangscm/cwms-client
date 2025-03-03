@@ -21,9 +21,9 @@ export class WarehouseService {
 
   getWarehouse(id: number): Observable<Warehouse> {
     
-    let params = new HttpParams();
-    params = params.append('warehouseId', id);
-    return this.http.get(`layout/warehouses/${  id}`, params).pipe(map(res => res.data));
+    //let params = new HttpParams();
+    //params = params.append('warehouseId', id);
+    return this.http.get(`layout/warehouses/${  id}`).pipe(map(res => res.data));
   }
 
   getWarehouseByUser(companyCode: string, username: string): Observable<Warehouse[]> {

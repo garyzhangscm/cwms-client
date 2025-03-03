@@ -214,6 +214,18 @@ export class StartupService {
 
             // we will only need to setup the ACL if the user is already login
             this.setupMenuBasedACL(res.menu);
+
+            // setup the admin role
+            this.userService.getCurrentUser().then(
+              user => {
+                if (user != null && user.admin) {
+                  this.aclService.attachRole(['admin']);
+                }
+                if (user != null && user.systemAdmin) {
+                  this.aclService.attachRole(['system-admin']);
+                }
+              }
+            )
         }
 
         // 设置页面标题的后缀
@@ -265,19 +277,7 @@ export class StartupService {
         }
 
       }
-    )
-
-    // add admin role and system admin role if the current 
-    // user is admin or system admin
-    this.userService.getCurrentUser().then(
-      user => {
-        if (user != null && user.admin) {
-          this.aclService.attachRole(['admin']);
-        }
-        if (user != null && user.systemAdmin) {
-          this.aclService.attachRole(['system-admin']);
-        }
-      }
-    )
+    ) 
+    
   }
 }

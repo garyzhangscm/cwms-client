@@ -91,6 +91,8 @@ export const defaultInterceptor: HttpInterceptorFn = (req, next) => {
     url = baseUrl + (baseUrl.endsWith('/') && url.startsWith('/') ? url.substring(1) : url);
   }
   const newReq = req.clone({ url, setHeaders: getAdditionalHeaders(req.headers) });
+  
+  //console.log(`${url} ==> new http request header\n${JSON.stringify(newReq)}`)
   const injector = inject(Injector);
 
   return next(newReq).pipe(

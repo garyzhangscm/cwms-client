@@ -56,10 +56,11 @@ export function getAdditionalHeaders(headers?: HttpHeaders): { [name: string]: s
   
   if (!headers?.has('warehouseId') && warehouseService?.getCurrentWarehouse()?.id) {
     res['warehouseId'] = warehouseService?.getCurrentWarehouse()?.id?.toString();
-  }
+  } 
   if (!headers?.has('companyId') && companyService?.getCurrentCompany()?.id) {
-    res['companyId'] = companyService?.getCurrentCompany()!.id.toString();
+    res['companyId'] = companyService?.getCurrentCompany()!.id.toString(); 
   }
+
 
   return res;
 }
