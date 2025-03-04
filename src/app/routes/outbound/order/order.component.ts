@@ -318,33 +318,33 @@ export class OutboundOrderComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     
-    let startCompleteTime : Date = this.searchForm.value.completeTimeRanger.value ? 
+    let startCompleteTime : Date = this.searchForm.value.completeTimeRanger ? 
         this.searchForm.value.completeTimeRanger.value[0] : undefined; 
-    let endCompleteTime : Date = this.searchForm.value.completeTimeRanger.value ? 
+    let endCompleteTime : Date = this.searchForm.value.completeTimeRanger ? 
         this.searchForm.value.completeTimeRanger.value[1] : undefined; 
-    let specificCompleteDate : Date = this.searchForm.value.completeDate.value;
+    let specificCompleteDate : Date = this.searchForm.value.completeDate;
     
-    let startCreatedTime : Date = this.searchForm.value.createdTimeRanger.value ? 
+    let startCreatedTime : Date = this.searchForm.value.createdTimeRanger ? 
         this.searchForm.value.createdTimeRanger.value[0] : undefined; 
-    let endCreatedTime : Date = this.searchForm.value.createdTimeRanger.value ? 
+    let endCreatedTime : Date = this.searchForm.value.createdTimeRanger ? 
         this.searchForm.value.createdTimeRanger.value[1] : undefined; 
-    let specificCreatedDate : Date = this.searchForm.value.createdDate.value;
+    let specificCreatedDate : Date = this.searchForm.value.createdDate;
 
     console.log(`query by created date: ${startCreatedTime} - ${endCreatedTime} specificCreatedDate: ${specificCreatedDate}`);
 
     this.orderService.getOrders(
-      this.searchForm.value.number.value, 
+      this.searchForm.value.number, 
       false, 
-      this.searchForm.value.orderStatus.value, 
+      this.searchForm.value.orderStatus, 
       startCompleteTime, 
       endCompleteTime, specificCompleteDate,       
-      this.searchForm.value.orderCategory.value,
+      this.searchForm.value.orderCategory,
       undefined, 
-      this.searchForm.value.customer.value, 
+      this.searchForm.value.customer, 
       startCreatedTime, endCreatedTime, specificCreatedDate, 
       undefined, 
-      this.searchForm.value.client.value, 
-      this.searchForm.value.poNumber.value).subscribe({
+      this.searchForm.value.client, 
+      this.searchForm.value.poNumber).subscribe({
 
         next: (orderRes) => {
           this.isSpinning = false;
@@ -1134,8 +1134,8 @@ export class OutboundOrderComponent implements OnInit {
         this.unpickInventory(
           order,
           inventory,
-          this.unpickForm.value.destinationLocation.value,
-          this.unpickForm.value.immediateMove.value,
+          this.unpickForm.value.destinationLocation,
+          this.unpickForm.value.immediateMove,
         );
       },
       nzWidth: 1000,
@@ -1230,10 +1230,10 @@ export class OutboundOrderComponent implements OnInit {
  
   
   stageLocationGroupChange(): void {
-    console.log( `location group id is changed to ${this.orderReassignShippingStageLocationForm.value.stageLocationGroupId.value}`) ;
+    console.log( `location group id is changed to ${this.orderReassignShippingStageLocationForm.value.stageLocationGroupId}`) ;
 
     let locationGroupIds = this.avaiableLocationGroups.filter(
-      locationGroup => locationGroup.id === +this.orderReassignShippingStageLocationForm.value.stageLocationGroupId.value
+      locationGroup => locationGroup.id === +this.orderReassignShippingStageLocationForm.value.stageLocationGroupId
     ).map(locationGroup => locationGroup.id).join(",");
     this.locationService.getLocations(undefined, locationGroupIds, undefined, true).subscribe(
       {
@@ -1270,8 +1270,8 @@ export class OutboundOrderComponent implements OnInit {
         this.isSpinning = true;
         this.orderService.reassignShippingStageLocation(
           order,
-          this.orderReassignShippingStageLocationForm.value.stageLocationGroupId.value,
-          this.orderReassignShippingStageLocationForm.value.stageLocationId.value,
+          this.orderReassignShippingStageLocationForm.value.stageLocationGroupId,
+          this.orderReassignShippingStageLocationForm.value.stageLocationId,
         ).subscribe({
           next: (orderRes) => {
             
@@ -1601,9 +1601,9 @@ export class OutboundOrderComponent implements OnInit {
                   this.isSpinning = true;
                   this.shortAllocationService.createWorkOrder(
                     shortAllocation,
-                    this.createWorkOrderForm.value.bom.value,
-                    this.createWorkOrderForm.value.workOrderNumber.value,
-                    this.createWorkOrderForm.value.workOrderQuantity.value,
+                    this.createWorkOrderForm.value.bom,
+                    this.createWorkOrderForm.value.workOrderNumber,
+                    this.createWorkOrderForm.value.workOrderQuantity,
                   ).subscribe({
                     next: () => {
                       
@@ -1935,13 +1935,13 @@ export class OutboundOrderComponent implements OnInit {
       if (this.billableActivityOrderLine) {
 
         const orderLineBillableActivity : OrderLineBillableActivity = {        
-          billableActivityTypeId: this.billableActivityForm.value.billableActivityType.value,
-          activityTime: this.billableActivityForm.value.activityTime.value,
+          billableActivityTypeId: this.billableActivityForm.value.billableActivityType,
+          activityTime: this.billableActivityForm.value.activityTime,
           warehouseId: this.warehouseService.getCurrentWarehouse().id,
           clientId:  this.billableActivityOrder?.clientId,
-          rate: this.billableActivityForm.value.rate.value,
-          amount: this.billableActivityForm.value.amount.value,
-          totalCharge: this.billableActivityForm.value.totalCharge.value,
+          rate: this.billableActivityForm.value.rate,
+          amount: this.billableActivityForm.value.amount,
+          totalCharge: this.billableActivityForm.value.totalCharge,
         }
         this.orderLineService.addOrderLineBillableActivity(this.billableActivityOrderLine.id!, 
           orderLineBillableActivity).subscribe({
@@ -1959,13 +1959,13 @@ export class OutboundOrderComponent implements OnInit {
       else {
 
         const orderBillableActivity : OrderBillableActivity = {        
-          billableActivityTypeId: this.billableActivityForm.value.billableActivityType.value,
-          activityTime: this.billableActivityForm.value.activityTime.value,
+          billableActivityTypeId: this.billableActivityForm.value.billableActivityType,
+          activityTime: this.billableActivityForm.value.activityTime,
           warehouseId: this.warehouseService.getCurrentWarehouse().id,
           clientId:  this.billableActivityOrder?.clientId,
-          rate: this.billableActivityForm.value.rate.value,
-          amount: this.billableActivityForm.value.amount.value,
-          totalCharge: this.billableActivityForm.value.totalCharge.value,
+          rate: this.billableActivityForm.value.rate,
+          amount: this.billableActivityForm.value.amount,
+          totalCharge: this.billableActivityForm.value.totalCharge,
         }
         this.orderService.addOrderBillableActivity(
           this.billableActivityOrder!.id!, orderBillableActivity).subscribe({
@@ -1994,12 +1994,12 @@ export class OutboundOrderComponent implements OnInit {
   
   recalculateTotalCharge(): void { 
     
-    if (this.billableActivityForm.value.rate.value != null &&
-      this.billableActivityForm.value.amount.value != null) {
+    if (this.billableActivityForm.value.rate != null &&
+      this.billableActivityForm.value.amount != null) {
 
         this.billableActivityForm!.value.totalCharge.setValue(
-          this.billableActivityForm.value.rate.value * 
-          this.billableActivityForm.value.amount.value
+          this.billableActivityForm.value.rate * 
+          this.billableActivityForm.value.amount
         );
         
       } 

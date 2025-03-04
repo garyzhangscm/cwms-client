@@ -222,8 +222,8 @@ export class OutboundShipmentComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
 
-    this.shipmentService.getShipments(this.searchForm.value.number.value, 
-      this.searchForm.value.orderNumber.value).subscribe(
+    this.shipmentService.getShipments(this.searchForm.value.number, 
+      this.searchForm.value.orderNumber).subscribe(
       shipmentRes => {
         this.listOfAllShipments = this.calculateQuantities(shipmentRes);
         this.listOfDisplayShipments = this.calculateQuantities(shipmentRes);
@@ -507,8 +507,8 @@ export class OutboundShipmentComponent implements OnInit {
         this.unpickInventory(
           shipment,
           inventory,
-          this.unpickForm.value.destinationLocation.value,
-          this.unpickForm.value.immediateMove.value,
+          this.unpickForm.value.destinationLocation,
+          this.unpickForm.value.immediateMove,
         );
       },
       nzWidth: 1000,

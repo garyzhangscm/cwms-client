@@ -179,9 +179,9 @@ export class InboundPutawayConfigurationComponent implements OnInit {
     this.putawayConfigurationService
       .getPutawayConfigurations(
         undefined,
-        this.searchForm!.value.itemName.value,
-        this.searchForm!.value.itemFamilyName.value,
-        this.searchForm!.value.inventoryStatus.value,
+        this.searchForm!.value.itemName,
+        this.searchForm!.value.itemFamilyName,
+        this.searchForm!.value.inventoryStatus,
       )
       .subscribe(
         putawayConfigurationRes => {

@@ -134,13 +134,13 @@ export class OutboundOutboundOrderPopupQueryComponent implements OnInit {
     this.searching = true;
     
     this.orderService.getOrders(
-      this.searchForm.value.number.value, 
+      this.searchForm.value.number, 
       false, 
-      this.searchForm.value.orderStatus.value, 
+      this.searchForm.value.orderStatus, 
       undefined, 
       undefined, undefined,       
-      this.searchForm.value.orderCategory.value,
-      this.searchForm.value.customer.value).subscribe(
+      this.searchForm.value.orderCategory,
+      this.searchForm.value.customer).subscribe(
       orderRes => {
  
 

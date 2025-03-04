@@ -213,22 +213,22 @@ export class OutboundShipByHualeiComponent implements OnInit {
       return;
     } 
     let item : Item | undefined = this.currentOrder?.orderLines.find(
-      orderLine => orderLine.itemId == this.parcelForm.value.item.value
+      orderLine => orderLine.itemId == this.parcelForm.value.item
     )?.item;
      
 
     this.isSpinning = true;
     this.hualeiService.sendHualeiRequest(
-      this.parcelForm.value.productId.value, 
+      this.parcelForm.value.productId, 
       this.currentOrder!.id!, 
-      this.parcelForm.value.length.value, 
-      this.parcelForm.value.width.value, 
-      this.parcelForm.value.height.value, 
-      this.parcelForm.value.weight.value, 
-      this.parcelForm.value.packageCount.value, 
+      this.parcelForm.value.length, 
+      this.parcelForm.value.width, 
+      this.parcelForm.value.height, 
+      this.parcelForm.value.weight, 
+      this.parcelForm.value.packageCount, 
       item?.name,
-      this.parcelForm.value.caseQuantity.value, 
-      this.parcelForm.value.unitCost.value, 
+      this.parcelForm.value.caseQuantity, 
+      this.parcelForm.value.unitCost, 
       ).subscribe({
         next: (shipmetnResponse) => {
 
@@ -247,27 +247,27 @@ export class OutboundShipByHualeiComponent implements OnInit {
     this.loadOrder(this.currentOrder!.id!);
   }
   parcelFormValid() {
-    if (this.parcelForm.value.productId.value == null) {
+    if (this.parcelForm.value.productId == null) {
       this.messageService.error("product id is required")
       return false;
     }
-    if (this.parcelForm.value.item.value == null) {
+    if (this.parcelForm.value.item == null) {
       this.messageService.error("item is required")
       return false;
     }
-    if (this.parcelForm.value.length.value == null) {
+    if (this.parcelForm.value.length == null) {
       this.messageService.error("package length is required")
       return false;
     }
-    if (this.parcelForm.value.width.value == null) {
+    if (this.parcelForm.value.width == null) {
       this.messageService.error("package width is required")
       return false;
     }
-    if (this.parcelForm.value.height.value == null) {
+    if (this.parcelForm.value.height == null) {
       this.messageService.error("package height is required")
       return false;
     }
-    if (this.parcelForm.value.weight.value == null) {
+    if (this.parcelForm.value.weight == null) {
       this.messageService.error("package weight is required")
       return false;
     }
@@ -302,7 +302,7 @@ export class OutboundShipByHualeiComponent implements OnInit {
   }
   setupDefaultMeasurement(itemId: number) {
     let item : Item | undefined = this.currentOrder?.orderLines.find(
-      orderLine => orderLine.itemId == this.parcelForm.value.item.value
+      orderLine => orderLine.itemId == this.parcelForm.value.item
     )?.item; 
 
     let caseUnitOfMeasure : ItemUnitOfMeasure | undefined = 

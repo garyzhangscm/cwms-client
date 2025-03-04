@@ -317,8 +317,8 @@ export class OutboundPickListComponent implements OnInit {
         this.unpickInventory(
           pickList,
           inventory,
-          this.unpickForm.value.destinationLocation.value,
-          this.unpickForm.value.immediateMove.value,
+          this.unpickForm.value.destinationLocation,
+          this.unpickForm.value.immediateMove,
         );
       },
       nzWidth: 1000,

@@ -179,9 +179,9 @@ export class OutboundCartonizationComponent implements OnInit {
     this.searching = true;
     this.cartonizationService
       .getAll(
-        this.searchForm.value.number.value,
-        this.searchForm.value.status.value,
-        this.searchForm.value.cartonName.value,
+        this.searchForm.value.number,
+        this.searchForm.value.status,
+        this.searchForm.value.cartonName,
       )
       .subscribe(cartonizationRes => {
         this.listOfAllCartonization = this.calculateQuantities(cartonizationRes);
@@ -317,8 +317,8 @@ export class OutboundCartonizationComponent implements OnInit {
         this.unpickInventory(
           cartonization,
           inventory,
-          this.unpickForm.value.destinationLocation.value,
-          this.unpickForm.value.immediateMove.value,
+          this.unpickForm.value.destinationLocation,
+          this.unpickForm.value.immediateMove,
         );
       },
       nzWidth: 1000,

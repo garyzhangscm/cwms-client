@@ -548,16 +548,16 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   saveReceipt(): void {
     // Setup the value
     this.isSpinning = true;
-    this.currentReceipt.id = this.receiptForm!.value.receiptId.value;
-    this.currentReceipt.number = this.receiptForm!.value.receiptNumber.value;
+    this.currentReceipt.id = this.receiptForm!.value.receiptId;
+    this.currentReceipt.number = this.receiptForm!.value.receiptNumber;
 
     // Get the client by name
-    const client = this.getClientByName(this.receiptForm!.value.client.value);
+    const client = this.getClientByName(this.receiptForm!.value.client);
     this.currentReceipt.clientId = client ? client.id : undefined;
     this.currentReceipt.client = client ? client : undefined;
 
     // Get the supplier by name
-    const supplier = this.getSupplierByName(this.receiptForm!.value.supplier.value);
+    const supplier = this.getSupplierByName(this.receiptForm!.value.supplier);
     this.currentReceipt.supplierId = supplier ? supplier.id : undefined;
     this.currentReceipt.supplier = supplier ? supplier : undefined;
 
@@ -713,7 +713,7 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   refreshReceiptResults(selectedTabIndex: number = 0): void {
     this.isSpinning = true;
     this.selectedTabIndex = selectedTabIndex;
-    const receiptNumber = this.receiptForm!.value.receiptNumber.value;
+    const receiptNumber = this.receiptForm!.value.receiptNumber;
     if (receiptNumber) {
       this.loadReceipt(receiptNumber);
     } else {
@@ -1308,19 +1308,19 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
   createReceivingInventory(receiptLine: ReceiptLine, receiptLocation: WarehouseLocation): Inventory | undefined {
     const inventoryStatus = this.validInventoryStatuses
       .filter(
-        availableInventoryStatus => availableInventoryStatus.id === this.receivingForm.value.inventoryStatus.value,
+        availableInventoryStatus => availableInventoryStatus.id === this.receivingForm.value.inventoryStatus,
       )
       .pop();
     const itemPackageType = receiptLine.item!.itemPackageTypes
       .filter(
-        existingItemPackageType => existingItemPackageType.id === this.receivingForm.value.itemPackageType.value,
+        existingItemPackageType => existingItemPackageType.id === this.receivingForm.value.itemPackageType,
       )
       .pop();
     
-    console.log(`this.receivingForm.controls.itemUnitOfMeasure.value: ${this.receivingForm.value.itemUnitOfMeasure.value}`)
+    console.log(`this.receivingForm.controls.itemUnitOfMeasure.value: ${this.receivingForm.value.itemUnitOfMeasure}`)
     
     const itemUnitOfMeasure = itemPackageType?.itemUnitOfMeasures.find(
-      itemUnitOfMeasure => itemUnitOfMeasure.id === this.receivingForm.value.itemUnitOfMeasure.value,
+      itemUnitOfMeasure => itemUnitOfMeasure.id === this.receivingForm.value.itemUnitOfMeasure,
     )
 
     console.log(`receive by item unit of measure \n ${JSON.stringify(itemUnitOfMeasure)}`)
@@ -1333,12 +1333,12 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
 
       return {
         id: undefined,
-        lpn: this.receivingForm.value.lpn.value,
+        lpn: this.receivingForm.value.lpn,
         location: receiptLocation,
         locationName: receiptLocation.name,
         item: receiptLine.item,
         itemPackageType,
-        quantity: this.receivingForm.value.quantity.value * itemUnitOfMeasure.quantity!,
+        quantity: this.receivingForm.value.quantity * itemUnitOfMeasure.quantity!,
         inventoryStatus,
       };
     }
@@ -1628,8 +1628,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       nzOnOk: () => {
         this.reverseInventory( 
           inventory,
-          this.reverseInventoryForm.value.reverseQCQuantity.value,
-          this.reverseInventoryForm.value.allowReuseLPN.value,
+          this.reverseInventoryForm.value.reverseQCQuantity,
+          this.reverseInventoryForm.value.allowReuseLPN,
         );
       },
 
@@ -1777,8 +1777,8 @@ export class InboundReceiptMaintenanceComponent implements OnInit {
       nzOnOk: () => {
         this.recalculateQCQuantity( 
           receiptLine,
-          this.recalculateQCForm.value.newQCQuantity.value,
-          this.recalculateQCForm.value.newQCPercentage.value,
+          this.recalculateQCForm.value.newQCQuantity,
+          this.recalculateQCForm.value.newQCPercentage,
         );
       },
 

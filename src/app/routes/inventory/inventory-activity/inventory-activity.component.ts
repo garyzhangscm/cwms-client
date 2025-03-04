@@ -796,11 +796,11 @@ export class InventoryInventoryActivityComponent implements OnInit {
     this.isSpinning = true;
     this.searchResult = '';
     
-    let startTime : Date = this.searchForm.value.activityDateTimeRanger.value ? 
+    let startTime : Date = this.searchForm.value.activityDateTimeRanger ? 
         this.searchForm.value.activityDateTimeRanger.value[0] : undefined;  
-    let endTime : Date = this.searchForm.value.activityDateTimeRanger.value ? 
+    let endTime : Date = this.searchForm.value.activityDateTimeRanger ? 
         this.searchForm.value.activityDateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.value.activityDate.value;
+    let specificDate : Date = this.searchForm.value.activityDate;
 
     let clients : Client[] = [];
     if (this.searchForm.value.client != null) {

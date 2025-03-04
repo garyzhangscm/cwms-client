@@ -286,7 +286,7 @@ export class CommonCustomerComponent implements OnInit {
   search(refresh: boolean = false): void {
     this.isSpinning = true;
     this.customerService.getCustomers(
-      this.searchForm.value.name.value).subscribe(
+      this.searchForm.value.name).subscribe(
         {
           next: (customerRes) => {
 

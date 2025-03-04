@@ -144,15 +144,15 @@ export class IntegrationIntegrationDataWorkOrderComponent implements OnInit {
     this.searchResult = '';
     this.isSpinning = true;
 
-    let startTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+    let startTime : Date = this.searchForm.value.integrationDateTimeRanger ? 
         this.searchForm.value.integrationDateTimeRanger.value[0] : undefined; 
-    let endTime : Date = this.searchForm.value.integrationDateTimeRanger.value ? 
+    let endTime : Date = this.searchForm.value.integrationDateTimeRanger ? 
         this.searchForm.value.integrationDateTimeRanger.value[1] : undefined; 
-    let specificDate : Date = this.searchForm.value.integrationDate.value;
+    let specificDate : Date = this.searchForm.value.integrationDate;
     this.integrationWorkOrderService.getData(startTime, endTime, specificDate, 
-      this.searchForm.value.statusList.value,
-      this.searchForm.value.id.value,
-      this.searchForm.value.number.value,).subscribe(
+      this.searchForm.value.statusList,
+      this.searchForm.value.id,
+      this.searchForm.value.number,).subscribe(
         {
           next: (integrationWorkOrderRes) => {
             this.listOfAllIntegrationWorkOrders = integrationWorkOrderRes; 

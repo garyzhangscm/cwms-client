@@ -215,10 +215,10 @@ export class OutboundGridComponent implements OnInit {
         this.gridRows.push(currentRow);
       }
 
-      if (this.gridQueryForm.value.inventoryId.value) {
+      if (this.gridQueryForm.value.inventoryId) {
         this.displayDistributionWork(
-          this.gridQueryForm.value.locationGroupId.value,
-          this.gridQueryForm.value.inventoryId.value,
+          this.gridQueryForm.value.locationGroupId,
+          this.gridQueryForm.value.inventoryId,
         );
       }
     });
@@ -227,11 +227,11 @@ export class OutboundGridComponent implements OnInit {
     this.itemNameTextBox.nativeElement.focus();
   }
   onUserInputInventoryIdBlur(): void {
-    if (this.gridQueryForm.value.inventoryId.value) {
+    if (this.gridQueryForm.value.inventoryId) {
       this.workInProgress = true;
       this.displayDistributionWork(
-        this.gridQueryForm.value.locationGroupId.value,
-        this.gridQueryForm.value.inventoryId.value,
+        this.gridQueryForm.value.locationGroupId,
+        this.gridQueryForm.value.inventoryId,
       );
     }
   }
@@ -251,13 +251,13 @@ export class OutboundGridComponent implements OnInit {
   gridCellClicked(gridLocationConfigurationId: number): void {
     this.workInProgress = true;
     this.gridDistributionWorkService
-      .confirm(gridLocationConfigurationId, this.gridQueryForm.value.inventoryId.value)
+      .confirm(gridLocationConfigurationId, this.gridQueryForm.value.inventoryId)
       .subscribe(res => {
         this.messageService.success(this.i18n.fanyi('message.action.success'));
         // reload the grid information after confirm
         // we will clear the id and item number field as we are already
         // confirmed the whole id(container)
-        this.refreshGridDisplay(this.gridQueryForm.value.locationGroupId.value, true, true);
+        this.refreshGridDisplay(this.gridQueryForm.value.locationGroupId, true, true);
 
         this.workInProgress = false;
       });
@@ -282,17 +282,17 @@ export class OutboundGridComponent implements OnInit {
     } else {
       this.gridDistributionWorkService
         .confirmByItem(
-          this.gridQueryForm.value.locationGroupId.value,
+          this.gridQueryForm.value.locationGroupId,
           inprocessCells[0].gridLocationConfigurationId,
-          this.gridQueryForm.value.inventoryId.value,
-          this.gridQueryForm.value.itemName.value,
+          this.gridQueryForm.value.inventoryId,
+          this.gridQueryForm.value.itemName,
         )
         .subscribe(res => {
           this.messageService.success(this.i18n.fanyi('message.action.success'));
           // reload the grid information after confirm
           // we will only reset the item number field so that the user
           // can continue with the next item in the same id(container)
-          this.refreshGridDisplay(this.gridQueryForm.value.locationGroupId.value, false, true);
+          this.refreshGridDisplay(this.gridQueryForm.value.locationGroupId, false, true);
           this.workInProgress = false;
         });
     }

@@ -346,9 +346,9 @@ export class InventoryInventoryAdjustComponent implements OnInit {
     this.searchResult = '';
     this.locationService
       .getLocations(
-        this.searchForm.value.taggedLocationGroupTypes.value,
-        this.searchForm.value.taggedLocationGroups.value,
-        this.searchForm.value.location.value,
+        this.searchForm.value.taggedLocationGroupTypes,
+        this.searchForm.value.taggedLocationGroups,
+        this.searchForm.value.location,
       )
       .subscribe(
         locationRes => {

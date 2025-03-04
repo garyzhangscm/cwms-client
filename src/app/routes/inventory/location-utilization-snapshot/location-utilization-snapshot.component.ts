@@ -122,7 +122,7 @@ export class InventoryLocationUtilizationSnapshotComponent implements OnInit {
     this.isSpinning = true; 
     this.locationUtilizationSnapshotBatchService
       .getLocationUtilizationSnapshotBatches(this.searchForm.value.number ,
-        this.searchForm!.value.status.value)
+        this.searchForm!.value.status)
       .subscribe({
 
         next: (locationUtilizationSnapshotBatchesRes) => {

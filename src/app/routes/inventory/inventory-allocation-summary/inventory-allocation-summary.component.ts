@@ -170,9 +170,9 @@ export class InventoryInventoryAllocationSummaryComponent implements OnInit {
     this.searchResult = '';
     this.inventoryAllocationSummaryService.getInventoryAllocationSummary(
       undefined,
-      this.searchForm.value.itemName.value, 
+      this.searchForm.value.itemName, 
       undefined,
-      this.searchForm.value.location.value).subscribe({
+      this.searchForm.value.location).subscribe({
 
         next: (inventoryAllocationSummaryRes) => {
 

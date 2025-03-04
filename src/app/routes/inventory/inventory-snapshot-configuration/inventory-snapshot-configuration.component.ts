@@ -105,28 +105,28 @@ export class InventoryInventorySnapshotConfigurationComponent implements OnInit 
 
   saveConfiguration(): void {
     // before we save, we should convert the hours to UTC
-    let  inventorySnapshotTiming1 = this.configurationForm.value.inventorySnapshotTiming1.value == null ?
-          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.inventorySnapshotTiming1.value);
-    let  inventorySnapshotTiming2 = this.configurationForm.value.inventorySnapshotTiming2.value == null ?
-          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.inventorySnapshotTiming2.value);          
-    let  inventorySnapshotTiming3 = this.configurationForm.value.inventorySnapshotTiming3.value == null ?
-          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.inventorySnapshotTiming3.value);
+    let  inventorySnapshotTiming1 = this.configurationForm.value.inventorySnapshotTiming1 == null ?
+          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.inventorySnapshotTiming1);
+    let  inventorySnapshotTiming2 = this.configurationForm.value.inventorySnapshotTiming2 == null ?
+          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.inventorySnapshotTiming2);          
+    let  inventorySnapshotTiming3 = this.configurationForm.value.inventorySnapshotTiming3 == null ?
+          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.inventorySnapshotTiming3);
 
 
-    let  locationUtilizationSnapshotTiming1 = this.configurationForm.value.locationUtilizationSnapshotTiming1.value == null ?
-          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.locationUtilizationSnapshotTiming1.value);
-    let  locationUtilizationSnapshotTiming2 = this.configurationForm.value.locationUtilizationSnapshotTiming2.value == null ?
-          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.locationUtilizationSnapshotTiming2.value);          
-    let  locationUtilizationSnapshotTiming3 = this.configurationForm.value.locationUtilizationSnapshotTiming3.value == null ?
-          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.locationUtilizationSnapshotTiming3.value);
+    let  locationUtilizationSnapshotTiming1 = this.configurationForm.value.locationUtilizationSnapshotTiming1 == null ?
+          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.locationUtilizationSnapshotTiming1);
+    let  locationUtilizationSnapshotTiming2 = this.configurationForm.value.locationUtilizationSnapshotTiming2 == null ?
+          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.locationUtilizationSnapshotTiming2);          
+    let  locationUtilizationSnapshotTiming3 = this.configurationForm.value.locationUtilizationSnapshotTiming3 == null ?
+          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.locationUtilizationSnapshotTiming3);
  
 
-    let  inventoryAgingSnapshotTiming1 = this.configurationForm.value.inventoryAgingSnapshotTiming1.value == null ?
-          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.inventoryAgingSnapshotTiming1.value);
-    let  inventoryAgingSnapshotTiming2 = this.configurationForm.value.inventoryAgingSnapshotTiming2.value == null ?
-          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.inventoryAgingSnapshotTiming2.value);          
-    let  inventoryAgingSnapshotTiming3 = this.configurationForm.value.inventoryAgingSnapshotTiming3.value == null ?
-          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.inventoryAgingSnapshotTiming3.value); 
+    let  inventoryAgingSnapshotTiming1 = this.configurationForm.value.inventoryAgingSnapshotTiming1 == null ?
+          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.inventoryAgingSnapshotTiming1);
+    let  inventoryAgingSnapshotTiming2 = this.configurationForm.value.inventoryAgingSnapshotTiming2 == null ?
+          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.inventoryAgingSnapshotTiming2);          
+    let  inventoryAgingSnapshotTiming3 = this.configurationForm.value.inventoryAgingSnapshotTiming3 == null ?
+          undefined : this.dateTimeService.getUTCHour(this.configurationForm.value.inventoryAgingSnapshotTiming3); 
 
           
     const inventorySnapshotConfiguration: InventorySnapshotConfiguration =

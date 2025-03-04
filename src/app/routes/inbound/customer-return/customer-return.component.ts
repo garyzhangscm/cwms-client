@@ -116,7 +116,7 @@ export class InboundCustomerReturnComponent implements OnInit {
     this.isSpinning = true; 
     this.customerReturnOrderService
       .getCustomerReturnOrders(this.searchForm.value.number, false, 
-        this.searchForm!.value.statusList.value,)
+        this.searchForm!.value.statusList,)
       .subscribe({
 
         next: (customerReturnRes) => {
